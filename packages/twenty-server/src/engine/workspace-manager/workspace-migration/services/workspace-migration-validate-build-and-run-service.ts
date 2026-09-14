@@ -1,30 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import {
   AllMetadataName,
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
-import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
 
-import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
 import { WORKSPACE_MIGRATION_ACTION_COUNT_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-action-count-bucket-boundaries.constant';
 import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import { getFlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/utils/get-flat-entity-maps-exception-context.util';
 import { transpileFlatEntityOperationArrayToRecord } from 'src/engine/metadata-modules/flat-entity/utils/transpile-flat-entity-operation-array-to-record.util';
 import { MetadataSideEffectEngineService } from 'src/engine/metadata-modules/metadata-side-effect/services/metadata-side-effect-engine.service';
-import { MetadataSideEffectContext } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-context.type';
 import { MetadataEventEmitter } from 'src/engine/subscriptions/metadata-event/metadata-event-emitter';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationV2Exception } from 'src/engine/workspace-manager/workspace-migration.exception';
 import {
   enrichCreateWorkspaceMigrationActionsWithIds,
@@ -83,10 +76,7 @@ export class WorkspaceMigrationValidateBuildAndRunService {
     private readonly workspaceMigrationFlatEntityMapsService: WorkspaceMigrationFlatEntityMapsService,
     private readonly metadataEventEmitter: MetadataEventEmitter,
     private readonly metadataSideEffectEngineService: MetadataSideEffectEngineService,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectWorkspaceScopedRepository(ApiKeyEntity)
-    private readonly apiKeyRepository: WorkspaceScopedRepository<ApiKeyEntity>,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly metricsService: MetricsService,
     private readonly logger: LoggerService,
     twentyConfigService: TwentyConfigService,
@@ -321,19 +311,20 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       allFlatEntityOperationRecordByMetadataName;
 
     if (!skipSideEffectExpandEngine) {
-      const roleDeletionSideEffectContext =
-        await this.resolveRoleDeletionSideEffectContext({
-          workspaceId,
-          allFlatEntityOperationRecordByMetadataName,
-        });
+      const flatWorkspace = await this.coreEntityCacheService.get(
+        'workspaceEntity',
+        workspaceId,
+      );
 
       const sideEffectExpansionResult =
         this.metadataSideEffectEngineService.expandWithSideEffects({
           allFlatEntityOperationRecordByMetadataName,
-          sideEffectRelatedFlatEntityMaps: allRelatedFlatEntityMaps,
+          sideEffectRelatedFlatEntityMaps: {
+            ...allRelatedFlatEntityMaps,
+            flatWorkspace,
+          },
           context: {
             buildOptions: { isSystemBuild, applicationUniversalIdentifier },
-            ...roleDeletionSideEffectContext,
           },
         });
 
@@ -356,39 +347,6 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       allRelatedFlatEntityMaps,
       allMetadataNameCacheToCompute,
     });
-  }
-
-  private async resolveRoleDeletionSideEffectContext({
-    workspaceId,
-    allFlatEntityOperationRecordByMetadataName,
-  }: {
-    workspaceId: string;
-    allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
-  }): Promise<
-    Pick<
-      MetadataSideEffectContext,
-      'workspaceDefaultRoleId' | 'activeApiKeyIds'
-    >
-  > {
-    const hasRoleDeletions = Object.values(
-      allFlatEntityOperationRecordByMetadataName.role?.flatEntityToDelete ?? {},
-    ).some(isDefined);
-
-    if (!hasRoleDeletions) {
-      return { workspaceDefaultRoleId: null, activeApiKeyIds: [] };
-    }
-
-    const [workspace, activeApiKeys] = await Promise.all([
-      this.workspaceRepository.findOne({ where: { id: workspaceId } }),
-      this.apiKeyRepository.find(workspaceId, {
-        where: { revokedAt: IsNull() },
-      }),
-    ]);
-
-    return {
-      workspaceDefaultRoleId: workspace?.defaultRoleId ?? null,
-      activeApiKeyIds: activeApiKeys.map((activeApiKey) => activeApiKey.id),
-    };
   }
 
   private async computeAndRunWorkspaceMigrationFromResolvedOperations({

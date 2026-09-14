@@ -1,6 +1,7 @@
 import { gql } from 'graphql-tag';
 import request from 'supertest';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
+import { revokeApiKey } from 'test/integration/graphql/utils/revoke-api-key.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -183,6 +184,7 @@ describe('MCP tool catalog (integration)', () => {
 
   afterAll(async () => {
     for (const apiKeyId of createdApiKeyIds) {
+      await revokeApiKey({ apiKeyId });
       await testDataSource
         .query('DELETE FROM core."apiKey" WHERE id = $1', [apiKeyId])
         .catch(() => {});

@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 
 import { gql } from 'graphql-tag';
 import { generateApiKeyToken } from 'test/integration/graphql/utils/generate-api-key-token.util';
+import { revokeApiKey } from 'test/integration/graphql/utils/revoke-api-key.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
@@ -182,6 +183,7 @@ describe('callRecordingIdForCalendarEvent (integration)', () => {
     await deleteRecordsByIds('calendarEvent', [calendarEventId]);
 
     if (isDefined(restrictedApiKeyId)) {
+      await revokeApiKey({ apiKeyId: restrictedApiKeyId });
       await global.testDataSource.query(
         'DELETE FROM core."apiKey" WHERE id = $1',
         [restrictedApiKeyId],

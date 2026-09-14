@@ -72,6 +72,9 @@ export class WorkspaceMigrationFlatEntityMapsService {
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         ...allMetadataNameCacheToCompute.map(getMetadataFlatEntityMapsKey),
         ...WORKSPACE_MIGRATION_ADDITIONAL_CACHE_DATA_MAPS_KEY,
+        ...this.metadataSideEffectEngineService.getSideEffectAdditionalCacheDataMapsKeys(
+          callerMetadataNames,
+        ),
         'flatApplicationMaps',
       ]);
 

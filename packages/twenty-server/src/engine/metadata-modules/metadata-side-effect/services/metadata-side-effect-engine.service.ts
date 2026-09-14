@@ -3,13 +3,15 @@ import { Injectable } from '@nestjs/common';
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
-import { type MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity-and-related-flat-entity-maps-for-side-effect.type';
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataManyToOneRelatedNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-many-to-one-related-names.util';
+import { getMetadataSideEffectAdditionalCacheDataMapsKeys } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-side-effect-additional-cache-data-maps-keys.util';
 import { getMetadataSideEffectCompanionNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-side-effect-companion-names.util';
 import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
+import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
 import { MetadataSideEffectHandlerRegistryService } from 'src/engine/metadata-modules/metadata-side-effect/registry/metadata-side-effect-handler-registry.service';
 import { type MetadataSideEffectContext } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-context.type';
 import { type MetadataSideEffectExpansionResult } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-expansion-result.type';
@@ -20,6 +22,7 @@ import {
 import { type MetadataSideEffectFailure } from 'src/engine/metadata-modules/metadata-side-effect/types/metadata-side-effect-result.type';
 import { type SystemSideEffectUniversalIdentifierCollision } from 'src/engine/metadata-modules/metadata-side-effect/types/system-side-effect-universal-identifier-collision.type';
 import { mapSystemSideEffectCollisionToFailure } from 'src/engine/metadata-modules/metadata-side-effect/utils/map-system-side-effect-collision-to-failure.util';
+import { type AdditionalCacheDataMaps } from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import { pushToOrchestratorFailureReport } from 'src/engine/workspace-manager/workspace-migration/utils/merge-orchestrator-failure-reports.util';
 
@@ -83,13 +86,39 @@ export class MetadataSideEffectEngineService {
     return [...relatedMetadataNames];
   }
 
+  getSideEffectAdditionalCacheDataMapsKeys(
+    triggerMetadataNames: AllMetadataName[],
+  ): (keyof AdditionalCacheDataMaps)[] {
+    const additionalCacheDataMapsKeys = new Set<
+      keyof AdditionalCacheDataMaps
+    >();
+
+    for (const {
+      metadataName,
+    } of this.metadataSideEffectHandlerRegistryService.getRegisteredHandlerKeys()) {
+      if (!triggerMetadataNames.includes(metadataName)) {
+        continue;
+      }
+
+      for (const additionalCacheDataMapsKey of getMetadataSideEffectAdditionalCacheDataMapsKeys(
+        metadataName,
+      )) {
+        additionalCacheDataMapsKeys.add(additionalCacheDataMapsKey);
+      }
+    }
+
+    return [...additionalCacheDataMapsKeys];
+  }
+
   expandWithSideEffects({
     allFlatEntityOperationRecordByMetadataName,
     sideEffectRelatedFlatEntityMaps,
     context,
   }: {
     allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordByMetadataName;
-    sideEffectRelatedFlatEntityMaps: Partial<AllFlatEntityMaps>;
+    sideEffectRelatedFlatEntityMaps: Partial<AllFlatEntityMaps> & {
+      flatWorkspace: FlatWorkspace | null;
+    };
     context: MetadataSideEffectContext;
   }): MetadataSideEffectExpansionResult {
     const expandedMatrix = this.cloneMatrix(
@@ -130,7 +159,7 @@ export class MetadataSideEffectEngineService {
             allFlatEntityOperationRecordByMetadataName:
               expandedMatrix as unknown as AllFlatEntityOperationRecordByMetadataName,
             relatedFlatEntityMaps:
-              sideEffectRelatedFlatEntityMaps as unknown as MetadataFlatEntityAndRelatedFlatEntityMapsForSideEffect<AllMetadataName>,
+              sideEffectRelatedFlatEntityMaps as unknown as BuildSideEffectsArgs<AllMetadataName>['relatedFlatEntityMaps'],
             context,
           });
 

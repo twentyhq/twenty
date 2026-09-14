@@ -1,16 +1,18 @@
 import { RoleTargetRebindOnDeleteSideEffectHandlerService } from 'src/engine/metadata-modules/metadata-side-effect/handlers/role/services/role-target-rebind-on-delete-side-effect-handler.service';
 import { type BuildSideEffectsArgs } from 'src/engine/metadata-modules/metadata-side-effect/interfaces/base-metadata-side-effect-handler.service';
+import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
 
 const APPLICATION_UNIVERSAL_IDENTIFIER = 'a0a0a0a0-a0a0-4000-8000-000000000001';
 const DELETED_ROLE_ID = 'b0b0b0b0-b0b0-4000-8000-000000000001';
 const DELETED_ROLE_UNIVERSAL_IDENTIFIER =
   'b1b2b3b4-b5b6-4000-8000-000000000001';
+const DELETED_ROLE_LABEL = 'Deleted role';
 const DEFAULT_ROLE_ID = 'b0b0b0b0-b0b0-4000-8000-000000000002';
 const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b1b2b3b4-b5b6-4000-8000-000000000002';
 const STALE_DEFAULT_ROLE_ID = 'b0b0b0b0-b0b0-4000-8000-000000000003';
 const AGENT_UNIVERSAL_IDENTIFIER = 'd1d2d3d4-d5d6-4000-8000-000000000001';
-const ACTIVE_API_KEY_ID = 'e0e0e0e0-e0e0-4000-8000-000000000002';
+const API_KEY_ID = 'e0e0e0e0-e0e0-4000-8000-000000000002';
 
 type FlatRoleTargetFixture = {
   id: string;
@@ -27,11 +29,17 @@ type FlatRoleTargetFixture = {
 type FlatRoleFixture = {
   id: string;
   universalIdentifier: string;
+  label: string;
   isEditable: boolean;
   roleTargetUniversalIdentifiers: string[];
   canBeAssignedToUsers: boolean;
   canBeAssignedToAgents: boolean;
   canBeAssignedToApiKeys: boolean;
+};
+
+type FlatApiKeyFixture = {
+  id: string;
+  revokedAt: string | null;
 };
 
 const USER_FLAT_ROLE_TARGET: FlatRoleTargetFixture = {
@@ -51,7 +59,7 @@ const API_KEY_FLAT_ROLE_TARGET: FlatRoleTargetFixture = {
   id: 'c0c0c0c0-c0c0-4000-8000-000000000002',
   universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000002',
   userWorkspaceId: null,
-  apiKeyId: ACTIVE_API_KEY_ID,
+  apiKeyId: API_KEY_ID,
 };
 
 const AGENT_FLAT_ROLE_TARGET: FlatRoleTargetFixture = {
@@ -72,6 +80,7 @@ const ALL_FLAT_ROLE_TARGETS = [
 const DELETED_FLAT_ROLE: FlatRoleFixture = {
   id: DELETED_ROLE_ID,
   universalIdentifier: DELETED_ROLE_UNIVERSAL_IDENTIFIER,
+  label: DELETED_ROLE_LABEL,
   isEditable: true,
   roleTargetUniversalIdentifiers: ALL_FLAT_ROLE_TARGETS.map(
     ({ universalIdentifier }) => universalIdentifier,
@@ -84,11 +93,22 @@ const DELETED_FLAT_ROLE: FlatRoleFixture = {
 const DEFAULT_FLAT_ROLE: FlatRoleFixture = {
   id: DEFAULT_ROLE_ID,
   universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Default role',
   isEditable: true,
   roleTargetUniversalIdentifiers: [],
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
+};
+
+const ACTIVE_FLAT_API_KEY: FlatApiKeyFixture = {
+  id: API_KEY_ID,
+  revokedAt: null,
+};
+
+const REVOKED_FLAT_API_KEY: FlatApiKeyFixture = {
+  id: API_KEY_ID,
+  revokedAt: '2026-01-01T00:00:00.000Z',
 };
 
 const EMPTY_FLAT_ENTITY_OPERATION_RECORD = {
@@ -97,17 +117,28 @@ const EMPTY_FLAT_ENTITY_OPERATION_RECORD = {
   flatEntityToDelete: {},
 };
 
+const AGENT_DELETED_IN_SAME_MIGRATION = {
+  agent: {
+    ...EMPTY_FLAT_ENTITY_OPERATION_RECORD,
+    flatEntityToDelete: {
+      [AGENT_UNIVERSAL_IDENTIFIER]: {
+        universalIdentifier: AGENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  },
+};
+
 type BuildArgsOverrides = {
-  workspaceDefaultRoleId?: string | null;
-  activeApiKeyIds?: string[];
+  flatWorkspace?: { defaultRoleId: string | null } | null;
+  flatApiKeys?: FlatApiKeyFixture[];
   isSystemBuild?: boolean;
   flatRoles?: FlatRoleFixture[];
   allFlatEntityOperationRecordByMetadataName?: Record<string, unknown>;
 };
 
 const buildArgs = ({
-  workspaceDefaultRoleId = DEFAULT_ROLE_ID,
-  activeApiKeyIds = [ACTIVE_API_KEY_ID],
+  flatWorkspace = { defaultRoleId: DEFAULT_ROLE_ID },
+  flatApiKeys = [ACTIVE_FLAT_API_KEY],
   isSystemBuild = false,
   flatRoles = [DELETED_FLAT_ROLE, DEFAULT_FLAT_ROLE],
   allFlatEntityOperationRecordByMetadataName = {},
@@ -145,14 +176,16 @@ const buildArgs = ({
           ]),
         ),
       },
+      apiKeyMap: Object.fromEntries(
+        flatApiKeys.map((flatApiKey) => [flatApiKey.id, flatApiKey]),
+      ),
+      flatWorkspace,
     },
     context: {
       buildOptions: {
         isSystemBuild,
         applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       },
-      workspaceDefaultRoleId,
-      activeApiKeyIds,
     },
   }) as unknown as BuildSideEffectsArgs<'role'>;
 
@@ -175,6 +208,19 @@ const buildExpectedRebind = (flatRoleTargets: FlatRoleTargetFixture[]) => ({
   },
 });
 
+const buildExpectedFailure = (errorCodes: PermissionsExceptionCode[]) => ({
+  status: 'fail',
+  type: 'delete',
+  metadataName: 'role',
+  flatEntityMinimalInformation: {
+    universalIdentifier: DELETED_ROLE_UNIVERSAL_IDENTIFIER,
+    label: DELETED_ROLE_LABEL,
+  },
+  errors: errorCodes.map((errorCode) =>
+    expect.objectContaining({ code: errorCode }),
+  ),
+});
+
 describe('RoleTargetRebindOnDeleteSideEffectHandlerService', () => {
   const handler =
     new (RoleTargetRebindOnDeleteSideEffectHandlerService as unknown as new () => RoleTargetRebindOnDeleteSideEffectHandlerService)();
@@ -186,14 +232,14 @@ describe('RoleTargetRebindOnDeleteSideEffectHandlerService', () => {
   });
 
   it.each<[string, BuildArgsOverrides]>([
-    ['the workspace has no default role', { workspaceDefaultRoleId: null }],
+    ['the workspace is missing from the cache', { flatWorkspace: null }],
     [
-      'the workspace default role id resolves to no role',
-      { workspaceDefaultRoleId: STALE_DEFAULT_ROLE_ID },
+      'the workspace has no default role',
+      { flatWorkspace: { defaultRoleId: null } },
     ],
     [
-      'the deleted role is the workspace default role',
-      { workspaceDefaultRoleId: DELETED_ROLE_ID },
+      'the workspace default role id resolves to no role',
+      { flatWorkspace: { defaultRoleId: STALE_DEFAULT_ROLE_ID } },
     ],
     [
       'the workspace default role is deleted in the same migration',
@@ -248,6 +294,18 @@ describe('RoleTargetRebindOnDeleteSideEffectHandlerService', () => {
     });
   });
 
+  it('should fail the deletion of the workspace default role', () => {
+    expect(
+      handler.buildSideEffects(
+        buildArgs({ flatWorkspace: { defaultRoleId: DELETED_ROLE_ID } }),
+      ),
+    ).toEqual(
+      buildExpectedFailure([
+        PermissionsExceptionCode.DEFAULT_ROLE_CANNOT_BE_DELETED,
+      ]),
+    );
+  });
+
   it('should still rebind the role targets of a non-editable role on a system build', () => {
     expect(
       handler.buildSideEffects(
@@ -293,16 +351,8 @@ describe('RoleTargetRebindOnDeleteSideEffectHandlerService', () => {
     expect(
       handler.buildSideEffects(
         buildArgs({
-          allFlatEntityOperationRecordByMetadataName: {
-            agent: {
-              ...EMPTY_FLAT_ENTITY_OPERATION_RECORD,
-              flatEntityToDelete: {
-                [AGENT_UNIVERSAL_IDENTIFIER]: {
-                  universalIdentifier: AGENT_UNIVERSAL_IDENTIFIER,
-                },
-              },
-            },
-          },
+          allFlatEntityOperationRecordByMetadataName:
+            AGENT_DELETED_IN_SAME_MIGRATION,
         }),
       ),
     ).toEqual(
@@ -310,15 +360,87 @@ describe('RoleTargetRebindOnDeleteSideEffectHandlerService', () => {
     );
   });
 
-  it('should leave an API key role target alone when its key is revoked or gone', () => {
+  it.each<[string, FlatApiKeyFixture[]]>([
+    ['revoked', [REVOKED_FLAT_API_KEY]],
+    ['missing from the API key cache', []],
+  ])(
+    'should leave an API key role target alone when its key is %s',
+    (_, flatApiKeys) => {
+      expect(handler.buildSideEffects(buildArgs({ flatApiKeys }))).toEqual(
+        buildExpectedRebind([USER_FLAT_ROLE_TARGET, AGENT_FLAT_ROLE_TARGET]),
+      );
+    },
+  );
+
+  it.each<[string, Partial<FlatRoleFixture>, PermissionsExceptionCode[]]>([
+    [
+      'API keys',
+      { canBeAssignedToApiKeys: false },
+      [PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS],
+    ],
+    [
+      'agents',
+      { canBeAssignedToAgents: false },
+      [PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS],
+    ],
+    [
+      'API keys and agents',
+      { canBeAssignedToApiKeys: false, canBeAssignedToAgents: false },
+      [
+        PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS,
+        PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
+      ],
+    ],
+  ])(
+    'should fail the deletion when the default role cannot be assigned to %s still holding the deleted role',
+    (_, defaultFlatRoleOverrides, expectedErrorCodes) => {
+      expect(
+        handler.buildSideEffects(
+          buildArgs({
+            flatRoles: [
+              DELETED_FLAT_ROLE,
+              { ...DEFAULT_FLAT_ROLE, ...defaultFlatRoleOverrides },
+            ],
+          }),
+        ),
+      ).toEqual(buildExpectedFailure(expectedErrorCodes));
+    },
+  );
+
+  it('should not fail on a revoked API key when the default role cannot be assigned to API keys', () => {
     expect(
-      handler.buildSideEffects(buildArgs({ activeApiKeyIds: [] })),
+      handler.buildSideEffects(
+        buildArgs({
+          flatApiKeys: [REVOKED_FLAT_API_KEY],
+          flatRoles: [
+            DELETED_FLAT_ROLE,
+            { ...DEFAULT_FLAT_ROLE, canBeAssignedToApiKeys: false },
+          ],
+        }),
+      ),
     ).toEqual(
       buildExpectedRebind([USER_FLAT_ROLE_TARGET, AGENT_FLAT_ROLE_TARGET]),
     );
   });
 
-  it('should still emit the rebind when the default role cannot be assigned to API keys or agents, leaving the rejection to the role target validator', () => {
+  it('should not fail on an agent deleted in the same migration when the default role cannot be assigned to agents', () => {
+    expect(
+      handler.buildSideEffects(
+        buildArgs({
+          allFlatEntityOperationRecordByMetadataName:
+            AGENT_DELETED_IN_SAME_MIGRATION,
+          flatRoles: [
+            DELETED_FLAT_ROLE,
+            { ...DEFAULT_FLAT_ROLE, canBeAssignedToAgents: false },
+          ],
+        }),
+      ),
+    ).toEqual(
+      buildExpectedRebind([USER_FLAT_ROLE_TARGET, API_KEY_FLAT_ROLE_TARGET]),
+    );
+  });
+
+  it('should rebind when the same migration lets the default role be assigned to API keys and agents', () => {
     expect(
       handler.buildSideEffects(
         buildArgs({
@@ -326,10 +448,18 @@ describe('RoleTargetRebindOnDeleteSideEffectHandlerService', () => {
             DELETED_FLAT_ROLE,
             {
               ...DEFAULT_FLAT_ROLE,
-              canBeAssignedToAgents: false,
               canBeAssignedToApiKeys: false,
+              canBeAssignedToAgents: false,
             },
           ],
+          allFlatEntityOperationRecordByMetadataName: {
+            role: {
+              ...EMPTY_FLAT_ENTITY_OPERATION_RECORD,
+              flatEntityToUpdate: {
+                [DEFAULT_ROLE_UNIVERSAL_IDENTIFIER]: DEFAULT_FLAT_ROLE,
+              },
+            },
+          },
         }),
       ),
     ).toEqual(buildExpectedRebind(ALL_FLAT_ROLE_TARGETS));
