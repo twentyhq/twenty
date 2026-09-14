@@ -76,7 +76,9 @@ const parseSuggestedYarnrc = (message: string) => {
     block.push(line.slice('  '.length));
   }
 
-  return parse(block.join('\n')) as { npmPreapprovedPackages: string[] };
+  const parsed: { npmPreapprovedPackages: string[] } = parse(block.join('\n'));
+
+  return parsed;
 };
 
 const installAndCatch = () =>
