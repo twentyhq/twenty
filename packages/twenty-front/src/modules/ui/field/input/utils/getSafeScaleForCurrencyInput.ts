@@ -1,17 +1,12 @@
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
+export const CURRENCY_INPUT_MAX_SCALE = 6;
 
 type GetSafeScaleForCurrencyInputParams = {
-  value: string;
+  value?: string;
   decimals?: number;
 };
 
-const UNMASKED_VALUE_PATTERN = /^-?\d*\.(\d+)$/;
-
-export const getSafeScaleForCurrencyInput = ({
-  value,
-  decimals = DEFAULT_DECIMAL_VALUE,
-}: GetSafeScaleForCurrencyInputParams): number => {
-  const decimalPart = UNMASKED_VALUE_PATTERN.exec(value)?.[1];
-
-  return Math.max(decimals, decimalPart?.length ?? 0);
+export const getSafeScaleForCurrencyInput = (
+  _params?: GetSafeScaleForCurrencyInputParams,
+): number => {
+  return CURRENCY_INPUT_MAX_SCALE;
 };

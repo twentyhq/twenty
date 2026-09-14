@@ -1,1 +1,0 @@
-export const SLACK_CLIENT_REQUEST_TIMEOUT_MS = 3 * 1000;

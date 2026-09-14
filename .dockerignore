@@ -1,5 +1,0 @@
-.git
-.env
-**/node_modules
-.nx/cache
-packages/twenty-server/.env

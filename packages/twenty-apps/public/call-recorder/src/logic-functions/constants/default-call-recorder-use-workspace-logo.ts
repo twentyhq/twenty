@@ -1,1 +1,0 @@
-export const DEFAULT_CALL_RECORDER_USE_WORKSPACE_LOGO = true;

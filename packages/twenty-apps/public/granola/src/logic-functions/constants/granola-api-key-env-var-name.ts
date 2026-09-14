@@ -1,1 +1,0 @@
-export const GRANOLA_API_KEY_ENV_VAR_NAME = 'GRANOLA_API_KEY';

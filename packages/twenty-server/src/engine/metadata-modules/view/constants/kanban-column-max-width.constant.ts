@@ -1,1 +1,0 @@
-export const KANBAN_COLUMN_MAX_WIDTH = 400;

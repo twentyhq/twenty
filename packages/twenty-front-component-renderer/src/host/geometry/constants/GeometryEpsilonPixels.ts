@@ -1,1 +1,0 @@
-export const GEOMETRY_EPSILON_PIXELS = 0.05;

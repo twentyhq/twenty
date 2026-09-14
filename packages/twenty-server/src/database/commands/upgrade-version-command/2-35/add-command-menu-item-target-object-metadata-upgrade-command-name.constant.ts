@@ -1,2 +1,0 @@
-export const ADD_COMMAND_MENU_ITEM_TARGET_OBJECT_METADATA_UPGRADE_COMMAND_NAME =
-  '2.35.0_AddCommandMenuItemTargetObjectMetadataFastInstanceCommand_1787573269955';

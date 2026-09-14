@@ -1,1 +1,0 @@
-export const MAX_JOBS_PER_STATUS_READ = 200;

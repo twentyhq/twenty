@@ -1,7 +1,0 @@
-NEXTJS_ENV=development
-
-# Stripe — use a test-mode key locally
-STRIPE_SECRET_KEY=
-
-# Enterprise JWT — generate a test RSA keypair for local dev
-ENTERPRISE_JWT_PRIVATE_KEY=

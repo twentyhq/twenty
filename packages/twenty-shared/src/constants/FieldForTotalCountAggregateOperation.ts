@@ -1,1 +1,0 @@
-export const FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION = 'id';

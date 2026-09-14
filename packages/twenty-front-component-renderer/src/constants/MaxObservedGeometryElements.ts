@@ -1,1 +1,0 @@
-export const MAX_OBSERVED_GEOMETRY_ELEMENTS = 500;

@@ -1,1 +1,0 @@
-export const MAX_CORE_WORKFLOW_FILTER_RULES = 50;
