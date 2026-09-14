@@ -4,7 +4,7 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-import { computeSeededObjectViewFieldsToCreate } from '../compute-seeded-object-view-fields-to-create.util';
+import { computeSeededObjectViewFieldsToCreate } from 'src/engine/metadata-modules/view/utils/compute-seeded-object-view-fields-to-create.util';
 
 const applicationUniversalIdentifier = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 const objectUniversalIdentifier = 'b1b2b3b4-b5b6-4000-8000-000000000002';

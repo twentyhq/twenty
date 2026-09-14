@@ -5,8 +5,8 @@ import {
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildSeededViewFieldFlatEntity } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-seeded-view-field-flat-entity.util';
-import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-seeded-object-view-to-create.util';
+import { buildSeededViewFieldFlatEntity } from 'src/engine/metadata-modules/view/utils/build-seeded-view-field-flat-entity.util';
+import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/view/utils/compute-seeded-object-view-to-create.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
