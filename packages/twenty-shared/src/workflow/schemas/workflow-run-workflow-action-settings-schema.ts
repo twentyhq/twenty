@@ -5,6 +5,6 @@ export const workflowRunWorkflowActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
     input: z.object({
       workflowId: z.uuid(),
-      input: z.looseObject({}),
+      input: z.record(z.string(), z.any()),
     }),
   });
