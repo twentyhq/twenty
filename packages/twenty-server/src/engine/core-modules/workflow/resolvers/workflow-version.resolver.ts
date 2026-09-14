@@ -6,7 +6,7 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
-import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-query-validation-graphql-api-exception.filter';
+import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreateDraftFromWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/create-draft-from-workflow-version.input';
 import { DuplicateWorkflowInput } from 'src/engine/core-modules/workflow/dtos/duplicate-workflow.input';
@@ -20,6 +20,7 @@ import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.workspace-service';
 
 @CoreResolver()
@@ -32,12 +33,13 @@ import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-b
 @UseFilters(
   PermissionsGraphqlApiExceptionFilter,
   PreventNestToAutoLogGraphqlErrorsFilter,
-  WorkflowQueryValidationGraphqlApiExceptionFilter,
+  WorkflowVersionValidationGraphqlApiExceptionFilter,
 )
 export class WorkflowVersionResolver {
   constructor(
     private readonly workflowVersionWorkspaceService: WorkflowVersionWorkspaceService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
   ) {}
 
   @Query(() => WorkflowVersionContentDTO)
@@ -57,6 +59,32 @@ export class WorkflowVersionResolver {
       trigger: workflowVersion.trigger,
       steps: workflowVersion.steps,
     };
+  }
+
+  // Runs the exact check activation runs, without activating; a version that
+  // cannot be activated fails with NON_ACTIVABLE_WORKFLOW_VERSION.
+  @Mutation(() => Boolean)
+  async validateWorkflowVersion(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('workflowVersionId', { type: () => UUIDScalarType })
+    workflowVersionId: string,
+  ): Promise<boolean> {
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workspaceId,
+        workflowVersionId,
+      });
+
+    await this.workflowVersionValidationWorkspaceService.assertWorkflowVersionIsActivableOrThrow(
+      {
+        workspaceId,
+        workflowVersionId,
+        trigger: workflowVersion.trigger,
+        steps: workflowVersion.steps,
+      },
+    );
+
+    return true;
   }
 
   @Mutation(() => WorkflowVersionDTO)

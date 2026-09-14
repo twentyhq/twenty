@@ -22,7 +22,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowVersionBlockingMalformedGateService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-blocking-malformed-gate.service';
+import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
+import { assertWorkflowVersionIsNotMalformedOrThrow } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/assert-workflow-version-is-not-malformed-or-throw.util';
 
 @Injectable()
 export class WorkflowVersionCoreSyncService {
@@ -36,7 +37,7 @@ export class WorkflowVersionCoreSyncService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPositionService: RecordPositionService,
-    private readonly workflowVersionBlockingMalformedGateService: WorkflowVersionBlockingMalformedGateService,
+    private readonly workflowMetadataReadService: WorkflowMetadataReadService,
   ) {}
 
   async upsertToCore(
@@ -411,13 +412,22 @@ export class WorkflowVersionCoreSyncService {
           });
 
           if (isDefined(workflowVersion)) {
-            await this.workflowVersionBlockingMalformedGateService.assertWorkflowVersionIsNotMalformedOrThrow(
-              {
+            const {
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+              objectIdByNameSingular,
+            } =
+              await this.workflowMetadataReadService.getFlatEntityMaps(
                 workspaceId,
-                trigger: workflowVersion.trigger,
-                steps: workflowVersion.steps,
-              },
-            );
+              );
+
+            assertWorkflowVersionIsNotMalformedOrThrow({
+              trigger: workflowVersion.trigger,
+              steps: workflowVersion.steps,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+              objectIdByNameSingular,
+            });
 
             await this.mirrorWorkflowVersionWrite({
               workspaceId,

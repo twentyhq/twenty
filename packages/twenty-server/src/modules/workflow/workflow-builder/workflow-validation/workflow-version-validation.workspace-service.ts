@@ -8,68 +8,83 @@ import {
   validateWorkflowStructure,
   WorkflowActionType,
   type WorkflowValidationIssue,
-  type WorkflowValidationResult,
 } from 'twenty-shared/workflow';
 
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowMetadataReadService } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { OBJECT_TARGETING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/object-targeting-action-types.constant';
+import {
+  WorkflowVersionValidationException,
+  WorkflowVersionValidationExceptionCode,
+} from 'src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception';
+import { buildMissingWorkflowOutputSchemaIssue } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/build-missing-workflow-output-schema-issue.util';
 import { getWorkflowRecordStepMetadataIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-record-step-metadata-issues.util';
+import { hasWorkflowStepLevelOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/has-workflow-step-level-output-schema.util';
+import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
+import { validateWorkflowIteratorStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-iterator-step.util';
+import { validateWorkflowLogicFunctionOutputSchemaMismatch } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-logic-function-output-schema-mismatch.util';
+import { validateWorkflowRuntimeOutputStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-runtime-output-step.util';
+import { validateWorkflowStepsHaveVariableReferences } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-steps-have-variable-references.util';
+import { validateWorkflowTriggerTypeRequirements } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-trigger-type-requirements.util';
 import {
   type WorkflowAction,
   type WorkflowLogicFunctionAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
-import { hasWorkflowStepLevelOutputSchema } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/has-workflow-step-level-output-schema.util';
-import { buildMissingWorkflowOutputSchemaIssue } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/build-missing-workflow-output-schema-issue.util';
-import { validateWorkflowTriggerTypeRequirements } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-trigger-type-requirements.util';
-import { validateWorkflowRuntimeOutputStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-runtime-output-step.util';
-import { validateWorkflowStepsHaveVariableReferences } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-steps-have-variable-references.util';
-import { validateWorkflowIteratorStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-iterator-step.util';
-import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
-import { validateWorkflowLogicFunctionOutputSchemaMismatch } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-logic-function-output-schema-mismatch.util';
-import { OBJECT_TARGETING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/object-targeting-action-types.constant';
+
+type WorkflowVersionDefinition = {
+  workspaceId: string;
+  workflowVersionId: string;
+  trigger: WorkflowTrigger | null | undefined;
+  steps: WorkflowAction[] | null | undefined;
+};
 
 @Injectable()
-export class WorkflowVersionNonActivableGateService {
+export class WorkflowVersionValidationWorkspaceService {
   constructor(
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
   ) {}
 
-  async getWorkflowVersionNonActivableIssues({
+  // Malformed content never reaches this method: the write chokepoint rejects it
+  // before it is stored. What remains is everything that keeps a well-formed
+  // draft from being activated, which is why the whole error set throws here.
+  async assertWorkflowVersionIsActivableOrThrow({
     workspaceId,
     workflowVersionId,
-  }: {
-    workspaceId: string;
-    workflowVersionId: string;
-  }): Promise<WorkflowValidationResult> {
-    const workflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-        workspaceId,
-        workflowVersionId,
-      });
-
-    return this.getWorkflowDefinitionNonActivableIssues({
+    trigger,
+    steps,
+  }: WorkflowVersionDefinition): Promise<void> {
+    const issues = await this.collectIssues({
       workspaceId,
       workflowVersionId,
-      trigger: workflowVersion.trigger,
-      steps: workflowVersion.steps,
+      trigger: trigger ?? null,
+      steps: steps ?? null,
     });
+
+    const errors = issues.filter((issue) => issue.severity === 'error');
+
+    if (errors.length === 0) {
+      return;
+    }
+
+    throw new WorkflowVersionValidationException(
+      WorkflowVersionValidationExceptionCode.NON_ACTIVABLE_WORKFLOW_VERSION,
+      errors,
+    );
   }
 
-  async getWorkflowDefinitionNonActivableIssues({
+  private async collectIssues({
     workspaceId,
     workflowVersionId,
     trigger,
     steps,
   }: {
     workspaceId: string;
-    workflowVersionId?: string;
+    workflowVersionId: string;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
-  }): Promise<WorkflowValidationResult> {
+  }): Promise<WorkflowValidationIssue[]> {
     const { trigger: enrichedTrigger, steps: enrichedSteps } =
       await this.enrichOutputSchemas({
         workspaceId,
@@ -78,7 +93,7 @@ export class WorkflowVersionNonActivableGateService {
         steps,
       });
 
-    const staticResult = validateWorkflowStructure({
+    const structureResult = validateWorkflowStructure({
       trigger: enrichedTrigger,
       steps: enrichedSteps,
     });
@@ -86,7 +101,7 @@ export class WorkflowVersionNonActivableGateService {
     const triggerIssues =
       validateWorkflowTriggerTypeRequirements(enrichedTrigger);
 
-    const semanticIssues = await this.validateStepTypeRequirements({
+    const stepTypeIssues = await this.validateStepTypeRequirements({
       workspaceId,
       steps: enrichedSteps ?? [],
       trigger: enrichedTrigger,
@@ -101,12 +116,14 @@ export class WorkflowVersionNonActivableGateService {
       enrichedSteps ?? [],
     );
 
-    return mergeValidationResults(staticResult, [
+    return [
+      ...structureResult.errors,
+      ...structureResult.warnings,
       ...triggerIssues,
-      ...semanticIssues,
+      ...stepTypeIssues,
       ...metadataIssues,
       ...variableReferenceIssues,
-    ]);
+    ];
   }
 
   private async enrichOutputSchemas({
@@ -116,7 +133,7 @@ export class WorkflowVersionNonActivableGateService {
     steps,
   }: {
     workspaceId: string;
-    workflowVersionId?: string;
+    workflowVersionId: string;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<{
@@ -155,7 +172,7 @@ export class WorkflowVersionNonActivableGateService {
   }: {
     step: TStep;
     workspaceId: string;
-    workflowVersionId?: string;
+    workflowVersionId: string;
   }): Promise<TStep> {
     try {
       const computedSchema =
@@ -330,23 +347,3 @@ export class WorkflowVersionNonActivableGateService {
     });
   }
 }
-
-const mergeValidationResults = (
-  baseResult: WorkflowValidationResult,
-  additionalIssues: WorkflowValidationIssue[],
-): WorkflowValidationResult => {
-  const errors = [
-    ...baseResult.errors,
-    ...additionalIssues.filter((issue) => issue.severity === 'error'),
-  ];
-  const warnings = [
-    ...baseResult.warnings,
-    ...additionalIssues.filter((issue) => issue.severity === 'warning'),
-  ];
-
-  return {
-    valid: errors.length === 0,
-    errors,
-    warnings,
-  };
-};

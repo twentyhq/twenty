@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
+
 import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
@@ -25,6 +27,7 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
     FeatureFlagModule,
     LogicFunctionModule,
     WorkflowVersionCoreModule,
+    WorkflowVersionValidationModule,
   ],
   providers: [WorkflowTriggerWorkspaceService, WorkflowTriggerJob],
   exports: [WorkflowTriggerWorkspaceService],
