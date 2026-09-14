@@ -11,6 +11,7 @@ const {
   assertPortability,
   assertSharedReferenceConsistency,
   assertOperatingRulesShipped,
+  assertNoDanglingDocMentions,
   validatePortableSkills,
 } = require('../validate');
 
@@ -277,5 +278,65 @@ describe('assertOperatingRulesShipped', () => {
       ),
       `expected a missing link failure, got: ${failures.join('; ')}`,
     );
+  });
+});
+
+describe('assertNoDanglingDocMentions', () => {
+  let skillsRoot;
+  let failures;
+  const fail = (message) => failures.push(message);
+
+  beforeEach(() => {
+    skillsRoot = fs.mkdtempSync(
+      path.join(os.tmpdir(), 'agent-skills-mentions-'),
+    );
+    failures = [];
+  });
+
+  afterEach(() => {
+    fs.rmSync(skillsRoot, { recursive: true, force: true });
+  });
+
+  it('should fail when a skill mentions a doc another skill ships but it does not', () => {
+    writeValidSkill(skillsRoot, 'create-app');
+    writeValidSkill(skillsRoot, 'develop-app');
+    writeFixtureFile(
+      skillsRoot,
+      'develop-app/references/develop-app/front-components.md',
+      'Front components.\n',
+    );
+    writeFixtureFile(
+      skillsRoot,
+      'create-app/references/design/front-component-ui.md',
+      'Use `front-components.md` for exact imports.\n',
+    );
+
+    assertNoDanglingDocMentions(
+      skillsRoot,
+      ['create-app', 'develop-app'],
+      fail,
+    );
+
+    assert.ok(
+      failures.some(
+        (failure) =>
+          failure.includes('front-components.md') &&
+          failure.includes('create-app does not ship'),
+      ),
+      `expected a dangling mention failure, got: ${failures.join('; ')}`,
+    );
+  });
+
+  it('should ignore filenames that belong to the user rather than the collection', () => {
+    writeValidSkill(skillsRoot, 'publish-app');
+    writeFixtureFile(
+      skillsRoot,
+      'publish-app/references/concepts/basics.md',
+      'Inspect `README.md` and `package.json` in the app.\n',
+    );
+
+    assertNoDanglingDocMentions(skillsRoot, ['publish-app'], fail);
+
+    assert.deepEqual(failures, []);
   });
 });

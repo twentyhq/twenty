@@ -44,6 +44,19 @@ const listFiles = (directory) => {
   return files.sort();
 };
 
+// Reference docs are mentioned in prose by bare filename. Generic names such as
+// README.md refer to the user's own files, so only basenames that exist in the
+// references tree count as doc references.
+const findReferenceByBasename = (referencesRoot, basename) => {
+  for (const filePath of listFiles(referencesRoot)) {
+    if (path.basename(filePath) === basename) {
+      return path.relative(referencesRoot, filePath).split(path.sep).join('/');
+    }
+  }
+
+  return undefined;
+};
+
 const rewriteSkillReferenceLinks = (skillMarkdown) =>
   skillMarkdown.replaceAll('../../references/', 'references/');
 
@@ -95,6 +108,18 @@ const resolveReferenceClosure = (referencesRoot, seedReferences) => {
       // `themeCssVariables.font.size.md`; only real sibling docs are queued.
       if (fs.existsSync(path.join(referencesRoot, candidate))) {
         queue.push(candidate);
+        continue;
+      }
+
+      // A bare mention that names a reference doc living in another scope would
+      // otherwise be dropped here, shipping a skill that points at a file it
+      // does not carry. Make the author write the explicit relative path.
+      const elsewhere = findReferenceByBasename(referencesRoot, match[1]);
+
+      if (elsewhere) {
+        throw new Error(
+          `references/${relativeReference} mentions \`${match[1]}\` as a same-directory file, but it lives at references/${elsewhere}. Use an explicit relative path such as \`${path.posix.relative(scope, elsewhere)}\`.`,
+        );
       }
     }
   }
@@ -215,6 +240,7 @@ module.exports = {
   readText,
   listFiles,
   rewriteSkillReferenceLinks,
+  findReferenceByBasename,
   collectSkillSeedReferences,
   resolveReferenceClosure,
   buildPortableSkills,

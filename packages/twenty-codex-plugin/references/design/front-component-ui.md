@@ -31,7 +31,7 @@ Prefer Twenty UI primitives for CRM-native front component UI:
 - Use `Tag`, `Status`, `Chip`, `Label`, and `Avatar` for metadata, state, people, and small summaries.
 - Use `themeCssVariables` for spacing, colors, border radius, typography, borders, icon sizing, shadows, and backgrounds.
 
-Use local inline styles for layout containers and custom data displays, but keep them aligned with Twenty tokens. Use `front-components.md` for exact imports and runtime rules.
+Use local inline styles for layout containers and custom data displays, but keep them aligned with Twenty tokens. Use `../develop-app/front-components.md` for exact imports and runtime rules.
 
 Use Twenty UI icons before custom SVG. Use `themeCssVariables.icon.size.md` for default row and action icons, `themeCssVariables.icon.size.sm` for quiet chevrons, and `themeCssVariables.spacing[6]` for icon-only action targets.
 

@@ -223,3 +223,52 @@ describe('diffDirectories', () => {
     assert.deepEqual(diffDirectories(expectedRoot, actualRoot), []);
   });
 });
+
+describe('resolveReferenceClosure cross-scope mentions', () => {
+  let referencesRoot;
+
+  beforeEach(() => {
+    referencesRoot = fs.mkdtempSync(
+      path.join(os.tmpdir(), 'agent-skills-closure-'),
+    );
+  });
+
+  afterEach(() => {
+    fs.rmSync(referencesRoot, { recursive: true, force: true });
+  });
+
+  it('should throw when a bare mention names a doc that lives in another scope', () => {
+    writeFixtureFile(
+      referencesRoot,
+      'design/front-component-ui.md',
+      'Use `front-components.md` for exact imports.\n',
+    );
+    writeFixtureFile(
+      referencesRoot,
+      'develop-app/front-components.md',
+      'Front components.\n',
+    );
+
+    assert.throws(
+      () =>
+        resolveReferenceClosure(referencesRoot, [
+          'design/front-component-ui.md',
+        ]),
+      /lives at references\/develop-app\/front-components\.md/,
+    );
+  });
+
+  it('should still ignore bare mentions that name no reference doc', () => {
+    writeFixtureFile(
+      referencesRoot,
+      'publish-app/prepare-for-app-store.md',
+      'Write the app `README.md` and set `themeCssVariables.font.size.md`.\n',
+    );
+
+    const closure = resolveReferenceClosure(referencesRoot, [
+      'publish-app/prepare-for-app-store.md',
+    ]);
+
+    assert.deepEqual([...closure], ['publish-app/prepare-for-app-store.md']);
+  });
+});

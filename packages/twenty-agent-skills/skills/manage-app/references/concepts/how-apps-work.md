@@ -66,7 +66,7 @@ Publishing is separate from the development loop. It is used to share an app wit
 - `yarn twenty app:publish` publishes to npm for the public marketplace.
 - `yarn twenty app:publish --private --remote <name>` publishes privately to a specific Twenty instance's registry.
 
-Each publish requires a strictly higher semver version in `package.json`. See the `publish-app` skill and `prepare-for-app-store.md` for marketplace metadata and listing guidance.
+Each publish requires a strictly higher semver version in `package.json`. See the `publish-app` skill for marketplace metadata and listing guidance.
 
 ## Front Component Rendering
 

@@ -240,6 +240,41 @@ const assertOperatingRulesShipped = (skillsRoot, fail) => {
   }
 };
 
+// Reference docs get mentioned in prose by bare filename. Those mentions escape
+// PATH_LIKE_REFERENCE_PATTERN, so a skill can ship a doc that points at another
+// doc it does not carry. Generic names such as README.md refer to the user's own
+// files, so only basenames that exist somewhere in the collection are checked.
+const assertNoDanglingDocMentions = (skillsRoot, skillDirectories, fail) => {
+  const collectionDocNames = new Set();
+
+  for (const skillName of skillDirectories) {
+    for (const filePath of listFiles(path.join(skillsRoot, skillName))) {
+      collectionDocNames.add(path.basename(filePath));
+    }
+  }
+
+  for (const skillName of skillDirectories) {
+    const skillRoot = path.join(skillsRoot, skillName);
+    const bundledDocNames = new Set(
+      listFiles(skillRoot).map((filePath) => path.basename(filePath)),
+    );
+
+    for (const filePath of listFiles(skillRoot)) {
+      const relativePath = path.relative(skillsRoot, filePath);
+
+      for (const [, docName] of readText(filePath).matchAll(
+        /`([A-Za-z0-9_-]+\.md)`/g,
+      )) {
+        if (collectionDocNames.has(docName) && !bundledDocNames.has(docName)) {
+          fail(
+            `${relativePath} mentions ${docName}, which ${skillName} does not ship`,
+          );
+        }
+      }
+    }
+  }
+};
+
 const assertSelfHostedSupport = (skillsRoot, fail) => {
   const createAppPath = path.join(skillsRoot, 'create-app', 'SKILL.md');
   const setupPath = path.join(
@@ -278,6 +313,7 @@ const validatePortableSkills = (skillsRoot, fail) => {
 
   assertSharedReferenceConsistency(skillsRoot, skillDirectories, fail);
   assertOperatingRulesShipped(skillsRoot, fail);
+  assertNoDanglingDocMentions(skillsRoot, skillDirectories, fail);
   assertSelfHostedSupport(skillsRoot, fail);
 };
 
@@ -309,6 +345,7 @@ module.exports = {
   assertPortability,
   assertSharedReferenceConsistency,
   assertOperatingRulesShipped,
+  assertNoDanglingDocMentions,
   assertSelfHostedSupport,
   validatePortableSkills,
 };
