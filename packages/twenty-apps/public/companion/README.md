@@ -16,7 +16,7 @@ The integration has its own application registration, default role, custom field
 
 Desktop requests run as the signed-in user. Processing jobs only accept recordings with a valid `companionSession`; webhook events additionally require Recall metadata `twentyRecordingSource: companion`. An installed calendar bot can coexist: Desktop Recorder checks standard scheduled/active recording state to avoid recording that event twice. It does not read Call Recorder's custom fields or invoke its functions.
 
-The desktop signs in with this integration's public OAuth registration using PKCE. Install Desktop Recorder before connecting the desktop; an OAuth-only registration is insufficient. The app's Settings tab provides the macOS download and configuration without a dedicated page in Twenty core.
+The desktop uses the existing CLI OAuth client and PKCE flow from `twenty remote:add`. After sign-in it checks whether the Desktop Recorder backend is available and offers installation if needed. The app's Settings tab provides the macOS download and configuration without a dedicated page in Twenty core.
 
 ## Recording processing and credits
 
@@ -26,7 +26,7 @@ A conditional status update ensures only the worker completing a recording submi
 
 Summary workers claim an application-scoped key atomically before running the paid agent. They cache the generated result before writing the recording summary, so delivery retries reuse that result. Persistent cache-write failures are reported after bounded retries; no additional queue is introduced. Maintenance saves cached automatic summaries without generating new ones or replacing an existing summary. Claims do not expire automatically: a worker interrupted during a paid request has an uncertain outcome and must not silently trigger another paid request. If a generated result cannot be persisted, it cannot be recovered automatically.
 
-The prerequisites are native OAuth support for the installed integration and the `setAppKeyValueIfAbsent` mutation. Existing billing, queue, and usage services remain unchanged. Older servers without atomic claims cannot generate summaries safely and return an error rather than running an unlocked generation.
+The prerequisites are the existing CLI OAuth flow and the `setAppKeyValueIfAbsent` mutation. Existing billing, queue, and usage services remain unchanged. Older servers without atomic claims cannot generate summaries safely and return an error rather than running an unlocked generation.
 
 ## Development
 
