@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import {
   AppPath,
   CoreObjectNameSingular,
@@ -8,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useCoreWorkflowVersions } from '@/object-core/workflows/versions/hooks/useCoreWorkflowVersions';
 import { useOpenCoreWorkflowVersionSidePanel } from '@/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionSidePanel';
 import { useActiveWorkflowVersion } from '@/workflow/hooks/useActiveWorkflowVersion';
@@ -19,9 +21,11 @@ const SeeActiveCoreVersionCommand = ({
 }: {
   workflowId: string;
 }) => {
+  const { t } = useLingui();
   const { coreWorkflowVersions, loading } = useCoreWorkflowVersions(workflowId);
   const { openCoreWorkflowVersionSidePanel } =
     useOpenCoreWorkflowVersionSidePanel();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const activeCoreWorkflowVersion = coreWorkflowVersions.find(
     (coreWorkflowVersion) =>
@@ -36,6 +40,9 @@ const SeeActiveCoreVersionCommand = ({
           !isDefined(activeCoreWorkflowVersion) ||
           !isDefined(activeCoreWorkflowVersion.workspaceWorkflowVersionId)
         ) {
+          enqueueErrorSnackBar({
+            message: t`This workflow has no active version`,
+          });
           return;
         }
 

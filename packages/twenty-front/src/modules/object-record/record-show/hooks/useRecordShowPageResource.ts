@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useCoreWorkflowShowPageResource } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageResource';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -40,13 +41,22 @@ export const useRecordShowPageResource = ({
     skip: !shouldReadWorkflowThroughCore,
   });
 
+  const isCoreWorkflowMissing =
+    shouldReadWorkflowThroughCore &&
+    !coreWorkflowResult.loading &&
+    !isDefined(coreWorkflowResult.record);
+
   const workspaceResult = useFindOneRecord({
     objectRecordId: recordId,
     objectNameSingular,
     recordGqlFields: operationSignature.fields,
     withSoftDeleted: true,
-    skip: shouldReadWorkflowThroughCore,
+    skip: shouldReadWorkflowThroughCore && !isCoreWorkflowMissing,
   });
 
-  return shouldReadWorkflowThroughCore ? coreWorkflowResult : workspaceResult;
+  if (shouldReadWorkflowThroughCore && !isCoreWorkflowMissing) {
+    return coreWorkflowResult;
+  }
+
+  return workspaceResult;
 };

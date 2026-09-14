@@ -1,12 +1,12 @@
 import { buildWorkflowShowPageRecordFromCoreWorkflow } from '@/object-core/workflows/utils/buildWorkflowShowPageRecordFromCoreWorkflow';
-import { CoreWorkflowVersionStatus } from '~/generated/graphql';
+import { CoreWorkflowStatus } from '~/generated/graphql';
 
 describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
   const coreWorkflow = {
-    __typename: 'CoreWorkflow' as const,
+    __typename: 'CoreWorkflowDTO' as const,
     id: 'core-workflow-id',
     name: 'My workflow',
-    statuses: [CoreWorkflowVersionStatus.ACTIVE],
+    statuses: [CoreWorkflowStatus.ACTIVE],
     lastPublishedVersionId: 'published-version-id',
     workspaceWorkflowId: 'workspace-workflow-id',
     updatedAt: '2026-09-14T00:00:00.000Z',
@@ -19,7 +19,7 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
       __typename: 'Workflow',
       id: 'workspace-workflow-id',
       name: 'My workflow',
-      statuses: [CoreWorkflowVersionStatus.ACTIVE],
+      statuses: [CoreWorkflowStatus.ACTIVE],
       lastPublishedVersionId: 'published-version-id',
       updatedAt: '2026-09-14T00:00:00.000Z',
       deletedAt: null,

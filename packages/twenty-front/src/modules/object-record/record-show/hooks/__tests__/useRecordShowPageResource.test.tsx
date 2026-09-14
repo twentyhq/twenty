@@ -20,6 +20,21 @@ jest.mock('@/object-record/hooks/useFindOneRecord', () => ({
   useFindOneRecord: (...args: unknown[]) => mockUseFindOneRecord(...args),
 }));
 
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => false,
+}));
+
+jest.mock(
+  '@/object-core/workflows/hooks/useCoreWorkflowShowPageResource',
+  () => ({
+    useCoreWorkflowShowPageResource: () => ({
+      record: undefined,
+      loading: false,
+      error: undefined,
+    }),
+  }),
+);
+
 jest.mock(
   '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory',
   () => ({
@@ -57,6 +72,7 @@ describe('useRecordShowPageResource', () => {
       objectNameSingular: 'person',
       recordGqlFields: { id: true, name: true },
       withSoftDeleted: true,
+      skip: false,
     });
     expect(result.current.record).toEqual(record);
   });
