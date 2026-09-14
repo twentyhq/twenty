@@ -14,13 +14,7 @@ const {
   assertNoDanglingDocMentions,
   validatePortableSkills,
 } = require('../validate');
-
-const writeFixtureFile = (root, relativePath, contents) => {
-  const absolutePath = path.join(root, relativePath);
-
-  fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
-  fs.writeFileSync(absolutePath, contents);
-};
+const { writeFixtureFile } = require('./fixtures');
 
 const writeValidSkill = (skillsRoot, skillName) => {
   writeFixtureFile(
