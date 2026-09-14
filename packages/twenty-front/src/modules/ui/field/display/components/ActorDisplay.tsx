@@ -93,11 +93,11 @@ export const ActorDisplay = ({
       variant={ChipVariant.Transparent}
       leftComponent={
         <AvatarOrIcon
-          placeholderColorSeed={workspaceMemberId ?? undefined}
-          avatarShape={workspaceMemberId ? 'circle' : 'square'}
-          placeholder={name}
+          colorSeed={workspaceMemberId ?? undefined}
+          shape={workspaceMemberId ? 'circle' : 'square'}
+          name={name}
           Icon={LeftIcon}
-          avatarUrl={getAbsoluteImageUrl(avatarUrl ?? undefined)}
+          src={getAbsoluteImageUrl(avatarUrl ?? undefined)}
         />
       }
     />

@@ -46,7 +46,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'AvatarOrIcon',
-    node: <AvatarOrIcon placeholder="Jane" Icon={IconStar} />,
+    node: <AvatarOrIcon name="Jane" Icon={IconStar} />,
   },
   {
     name: 'Checkmark',

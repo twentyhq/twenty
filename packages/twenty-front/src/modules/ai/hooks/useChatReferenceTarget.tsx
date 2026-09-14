@@ -90,10 +90,10 @@ export const useChatReferenceTarget = (
           path: isNonEmptyString(recordPath) ? recordPath : undefined,
           leftComponent: (
             <AvatarOrIcon
-              placeholder={reference.displayName}
-              placeholderColorSeed={reference.recordId}
-              avatarShape="circle"
-              avatarUrl=""
+              name={reference.displayName}
+              colorSeed={reference.recordId}
+              shape="circle"
+              src=""
             />
           ),
         };

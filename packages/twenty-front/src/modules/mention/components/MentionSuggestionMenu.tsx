@@ -18,10 +18,10 @@ const renderItem = (
   <MenuItemSuggestion
     LeftIcon={() => (
       <AvatarOrIcon
-        placeholder={item.label}
-        placeholderColorSeed={item.recordId}
-        avatarShape="circle"
-        avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
+        name={item.label}
+        colorSeed={item.recordId}
+        shape="circle"
+        src={getAbsoluteImageUrl(item.imageUrl)}
       />
     )}
     text={item.label}

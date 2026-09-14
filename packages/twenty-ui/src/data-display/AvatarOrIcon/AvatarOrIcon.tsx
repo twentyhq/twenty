@@ -2,32 +2,18 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
 import { Avatar } from '@ui/data-display/Avatar/Avatar';
-import { type AvatarShape } from '@ui/data-display/Avatar/types/AvatarShape';
-import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { useTheme } from '@ui/theme-constants';
-import { type Nullable } from '@ui/utilities';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './AvatarOrIcon.module.scss';
-
-export type AvatarOrIconProps = {
-  placeholder?: string;
-  avatarUrl?: string;
-  avatarShape?: Nullable<AvatarShape>;
-  Icon?: IconComponent;
-  IconColor?: string;
-  IconBackgroundColor?: string;
-  isIconInverted?: boolean;
-  placeholderColorSeed?: string;
-  onClick?: () => void;
-};
+import { type AvatarOrIconProps } from './types/AvatarOrIconProps';
 
 export const AvatarOrIcon = ({
   Icon,
-  placeholderColorSeed,
-  avatarShape,
-  avatarUrl,
-  placeholder,
+  colorSeed,
+  shape,
+  src,
+  name,
   isIconInverted = false,
   IconColor,
   IconBackgroundColor,
@@ -38,19 +24,17 @@ export const AvatarOrIcon = ({
   if (!isDefined(Icon)) {
     return (
       <Avatar
-        src={avatarUrl}
-        colorSeed={placeholderColorSeed}
-        name={placeholder}
+        src={src}
+        colorSeed={colorSeed}
+        name={name}
         size="sm"
-        shape={avatarShape ?? undefined}
+        shape={shape ?? undefined}
         onClick={onClick}
       />
     );
   }
 
-  const accessibleLabel = isNonEmptyString(placeholder)
-    ? placeholder
-    : 'Avatar';
+  const accessibleLabel = isNonEmptyString(name) ? name : 'Avatar';
 
   const iconContent =
     isIconInverted || isDefined(IconBackgroundColor) ? (
