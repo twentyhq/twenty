@@ -10785,6 +10785,11 @@ msgstr "이 주소는 수신 거부 목록에서 제거할 수 없습니다."
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "이 API 키는 철회되어 더 이상 사용할 수 없습니다."
 
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr ""
+
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."

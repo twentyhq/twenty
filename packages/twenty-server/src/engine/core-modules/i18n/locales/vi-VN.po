@@ -10785,6 +10785,11 @@ msgstr "Không thể xóa địa chỉ này khỏi danh sách chặn gửi."
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Khóa API này đã bị thu hồi và không thể sử dụng nữa."
 
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr ""
+
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
 msgid "This API key has been revoked."
