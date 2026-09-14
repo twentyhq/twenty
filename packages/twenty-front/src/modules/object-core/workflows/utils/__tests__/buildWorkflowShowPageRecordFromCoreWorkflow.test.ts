@@ -9,6 +9,7 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
     statuses: [CoreWorkflowStatus.ACTIVE],
     lastPublishedVersionId: 'published-version-id',
     workspaceWorkflowId: 'workspace-workflow-id',
+    createdAt: '2026-09-01T00:00:00.000Z',
     updatedAt: '2026-09-14T00:00:00.000Z',
   };
 
@@ -21,6 +22,7 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
       name: 'My workflow',
       statuses: [CoreWorkflowStatus.ACTIVE],
       lastPublishedVersionId: 'published-version-id',
+      createdAt: '2026-09-01T00:00:00.000Z',
       updatedAt: '2026-09-14T00:00:00.000Z',
       deletedAt: null,
     });

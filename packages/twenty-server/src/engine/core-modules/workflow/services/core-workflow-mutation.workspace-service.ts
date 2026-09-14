@@ -135,6 +135,7 @@ export class CoreWorkflowMutationWorkspaceService {
       lastPublishedVersionId: null,
       applicationId,
       workspaceWorkflowId,
+      createdAt: coreWorkflow.createdAt.toISOString(),
       updatedAt: coreWorkflow.updatedAt.toISOString(),
     };
   }

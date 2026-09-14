@@ -19,6 +19,7 @@ export const buildWorkflowShowPageRecordFromCoreWorkflow = (
     name: coreWorkflow.name ?? '',
     statuses: coreWorkflow.statuses,
     lastPublishedVersionId: coreWorkflow.lastPublishedVersionId,
+    createdAt: coreWorkflow.createdAt,
     updatedAt: coreWorkflow.updatedAt,
     deletedAt: null,
   };
