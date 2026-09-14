@@ -1,10 +1,8 @@
 import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
-import { Children, cloneElement, isValidElement } from 'react';
-
-import { type ButtonProps } from '@ui/input/Button/types/ButtonProps';
 
 import styles from './ButtonGroup.module.scss';
+import { ButtonGroupContext } from './internal/ButtonGroupContext';
 import { type ButtonGroupProps } from './types/ButtonGroupProps';
 
 export const ButtonGroup = ({
@@ -16,23 +14,21 @@ export const ButtonGroup = ({
   render,
   ref,
   ...props
-}: ButtonGroupProps) =>
-  useRender({
+}: ButtonGroupProps) => {
+  const element = useRender({
     render,
     ref,
     props: {
       role: 'group',
       ...props,
       className: clsx(styles.container, className),
-      children: Children.map(children, (child) => {
-        if (!isValidElement<ButtonProps>(child)) {
-          return child;
-        }
-        return cloneElement(child, {
-          variant: variant ?? child.props.variant,
-          color: color ?? child.props.color,
-          size: size ?? child.props.size,
-        });
-      }),
+      children,
     },
   });
+
+  return (
+    <ButtonGroupContext.Provider value={{ variant, color, size }}>
+      {element}
+    </ButtonGroupContext.Provider>
+  );
+};

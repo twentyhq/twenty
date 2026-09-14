@@ -1,9 +1,11 @@
 import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { clsx } from 'clsx';
+import { useContext } from 'react';
 
 import { Loader } from '@ui/feedback/Loader/Loader';
 import { ButtonHotkeys } from '@ui/input/Button/internal/ButtonHotKeys';
 import { ButtonSoon } from '@ui/input/Button/internal/ButtonSoon';
+import { ButtonGroupContext } from '@ui/input/ButtonGroup/internal/ButtonGroupContext';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { useIsMobile } from '@ui/utilities';
 import { isDefined } from '@ui/utilities/utils/isDefined';
@@ -31,6 +33,10 @@ export const Button = ({
   children,
   ...props
 }: ButtonProps) => {
+  const buttonGroup = useContext(ButtonGroupContext);
+  const resolvedVariant = buttonGroup?.variant ?? variant;
+  const resolvedColor = buttonGroup?.color ?? color;
+  const resolvedSize = buttonGroup?.size ?? size;
   const isMobile = useIsMobile();
   const isNativeButton = nativeButton ?? !isDefined(href);
 
@@ -38,9 +44,9 @@ export const Button = ({
     <ButtonPrimitive
       {...props}
       className={mergeClassNames(styles.button, className)}
-      data-variant={variant}
-      data-color={color}
-      data-size={size}
+      data-variant={resolvedVariant}
+      data-color={resolvedColor}
+      data-size={resolvedSize}
       data-full-width={fullWidth || undefined}
       data-loading={loading || undefined}
       data-elevated={elevated || undefined}
