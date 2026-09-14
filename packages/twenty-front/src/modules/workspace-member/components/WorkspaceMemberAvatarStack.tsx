@@ -99,11 +99,11 @@ export const WorkspaceMemberAvatarStack = ({
           return (
             <StyledAvatarContainer key={workspaceMember.id}>
               <Avatar
-                avatarUrl={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
-                placeholder={displayName}
-                placeholderColorSeed={workspaceMember.id}
+                src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                name={displayName}
+                colorSeed={workspaceMember.id}
                 size="md"
-                type="rounded"
+                shape="circle"
               />
             </StyledAvatarContainer>
           );

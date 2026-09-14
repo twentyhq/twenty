@@ -60,7 +60,7 @@ export class CalendarChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<CalendarChannelDTO[]> {
-    await this.connectedAccountMetadataService.verifyOwnership({
+    await this.connectedAccountMetadataService.verifyUsableByCaller({
       id: connectedAccountId,
       userWorkspaceId,
       workspaceId,

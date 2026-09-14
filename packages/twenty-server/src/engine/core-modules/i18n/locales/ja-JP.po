@@ -7755,6 +7755,11 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "商談ステージ"
 
+#. js-lingui-id: znHKeT
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
+msgid "Option \"{optionLabel}\" has an unsupported color"
+msgstr "オプション \"{optionLabel}\" の色はサポートされていません"
+
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10779,6 +10784,11 @@ msgstr "このアドレスは配信抑制リストから削除できません。
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "このAPIキーは取り消され、もう使用できません。"
+
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr "この API キーは取り消されており、再有効化できません。新しい API キーを作成してください。"
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

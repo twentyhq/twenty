@@ -1,8 +1,8 @@
-import { type AvatarType } from 'twenty-ui/data-display';
+import { type AvatarShape } from 'twenty-ui/data-display';
 export type RecordChipData = {
   recordId: string;
   name: string;
-  avatarType: AvatarType;
+  avatarShape: AvatarShape;
   avatarUrl: string;
   isLabelIdentifier: boolean;
   objectNameSingular: string;

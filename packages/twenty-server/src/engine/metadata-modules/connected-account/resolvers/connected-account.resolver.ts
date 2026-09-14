@@ -5,9 +5,12 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -33,7 +36,7 @@ export class ConnectedAccountResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<ConnectedAccountPublicDTO[]> {
     const accounts =
-      await this.connectedAccountMetadataService.findByUserWorkspaceId({
+      await this.connectedAccountMetadataService.findUsableByCaller({
         userWorkspaceId,
         workspaceId: workspace.id,
       });
@@ -65,16 +68,18 @@ export class ConnectedAccountResolver {
   }
 
   @Mutation(() => ConnectedAccountPublicDTO)
-  @UseGuards(NoPermissionGuard)
+  @UseGuards(CustomPermissionGuard)
   async deleteConnectedAccount(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<ConnectedAccountPublicDTO> {
-    await this.connectedAccountMetadataService.verifyOwnership({
+    await this.connectedAccountMetadataService.verifyAdministrableByCaller({
       id,
       userWorkspaceId,
       workspaceId: workspace.id,
+      applicationId: application?.id,
     });
 
     const deleted = await this.connectedAccountMetadataService.delete({
