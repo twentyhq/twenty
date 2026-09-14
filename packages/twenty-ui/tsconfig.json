@@ -30,6 +30,9 @@
     "test-utilities/**/*.tsx",
     "vitest.config.ts",
     "setupTests.ts",
-    "vite.config.ts"
+    "vite.config.ts",
+    "scripts/generateDocsData.ts",
+    "docs/**/*.ts",
+    "scripts/checkDocsExamples.ts"
   ]
 }
