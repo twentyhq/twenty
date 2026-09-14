@@ -24020,14 +24020,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@zone-eu/mailsplit@npm:5.4.12":
-  version: 5.4.12
-  resolution: "@zone-eu/mailsplit@npm:5.4.12"
+"@zone-eu/mailsplit@npm:5.4.16":
+  version: 5.4.16
+  resolution: "@zone-eu/mailsplit@npm:5.4.16"
   dependencies:
     libbase64: "npm:1.3.0"
-    libmime: "npm:5.3.8"
+    libmime: "npm:5.4.3"
     libqp: "npm:2.1.1"
-  checksum: 10c0/1b16a17a79a8d183adb2a8bab554d8d14b6566ae11e1e4f425f217714f1352d69963e67b48767f31699331157a3a965d3d8ce444ce57b01857d9338a77635370
+  checksum: 10c0/cce6b192897b819986a07b3b82a974ad8b4694261ba88cd5119444cb6e86686df7de1a3b89b35d6610051b19297b203f7e70d6e6ea1e46264fb6c111d9458e5c
   languageName: node
   linkType: hard
 
@@ -29423,10 +29423,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"encoding-japanese@npm:2.2.0":
-  version: 2.2.0
-  resolution: "encoding-japanese@npm:2.2.0"
-  checksum: 10c0/9d1f10dde16f59da8a8a1a04499dffa3e9926b0dbd7dfab8054570527b7e6de30c47e828851f42d2727af31586ec8049a84eeae593ad8b22eea10921fd269798
+"encoding-japanese@npm:2.3.0":
+  version: 2.3.0
+  resolution: "encoding-japanese@npm:2.3.0"
+  checksum: 10c0/5c58dfbbb9bd5fa74bbd3cafb0a210848f5044320a4e50b43bd023d5e6b4aaac78a61ea7064ae4a0cffe6162d84f746f4643c2f42c9dac08e1391cd74d2b6745
   languageName: node
   linkType: hard
 
@@ -33683,12 +33683,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.7.2, iconv-lite@npm:^0.7.2":
-  version: 0.7.2
-  resolution: "iconv-lite@npm:0.7.2"
+"iconv-lite@npm:0.7.3":
+  version: 0.7.3
+  resolution: "iconv-lite@npm:0.7.3"
   dependencies:
     safer-buffer: "npm:>= 2.1.2 < 3.0.0"
-  checksum: 10c0/3c228920f3bd307f56bf8363706a776f4a060eb042f131cd23855ceca962951b264d0997ab38a1ad340e1c5df8499ed26e1f4f0db6b2a2ad9befaff22f14b722
+  checksum: 10c0/be2fd2414f7e94be3a63063fa0ad5919c16bc7b6e00c77eea0765ced6db405739f38dd51016583058fba25cc1d0106ba30b83fbb7a7e32f824d4db76f23d8d33
   languageName: node
   linkType: hard
 
@@ -33707,6 +33707,15 @@ __metadata:
   dependencies:
     safer-buffer: "npm:>= 2.1.2 < 3.0.0"
   checksum: 10c0/2382400469071c55b6746c531eed5fa4d033e5db6690b7331fb2a5f59a30d7a9782932e92253db26df33c1cf46fa200a3fbe524a2a7c62037c762283f188ec2f
+  languageName: node
+  linkType: hard
+
+"iconv-lite@npm:^0.7.2":
+  version: 0.7.2
+  resolution: "iconv-lite@npm:0.7.2"
+  dependencies:
+    safer-buffer: "npm:>= 2.1.2 < 3.0.0"
+  checksum: 10c0/3c228920f3bd307f56bf8363706a776f4a060eb042f131cd23855ceca962951b264d0997ab38a1ad340e1c5df8499ed26e1f4f0db6b2a2ad9befaff22f14b722
   languageName: node
   linkType: hard
 
@@ -33788,20 +33797,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"imapflow@npm:1.4.2":
-  version: 1.4.2
-  resolution: "imapflow@npm:1.4.2"
+"imapflow@npm:2.0.2":
+  version: 2.0.2
+  resolution: "imapflow@npm:2.0.2"
   dependencies:
-    "@zone-eu/mailsplit": "npm:5.4.12"
-    encoding-japanese: "npm:2.2.0"
-    iconv-lite: "npm:0.7.2"
+    "@zone-eu/mailsplit": "npm:5.4.16"
+    encoding-japanese: "npm:2.3.0"
+    iconv-lite: "npm:0.7.3"
     libbase64: "npm:1.3.0"
-    libmime: "npm:5.3.8"
+    libmime: "npm:5.4.3"
     libqp: "npm:2.1.1"
-    nodemailer: "npm:9.0.1"
     pino: "npm:10.3.1"
-    socks: "npm:2.8.9"
-  checksum: 10c0/568ed3981e3e402bcbe91f634894a5b57cc4ba7d00d0c2a2d9f05deea60d4868e874bac6745f52b3adc76e3a7c6e2cd28206f3ec6d94e39e5abdf5b6234f5859
+    socks: "npm:2.8.10"
+  checksum: 10c0/fd05a4cda939eeacdf9b7d0b85037635908c55e9cafc3939edae3c307a35f14574b6ea0fcbe7f625d0380f3df7e256fe5fd9a2e82e4a7609279880e7f054b31e
   languageName: node
   linkType: hard
 
@@ -37009,15 +37017,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libmime@npm:5.3.8":
-  version: 5.3.8
-  resolution: "libmime@npm:5.3.8"
+"libmime@npm:5.4.3":
+  version: 5.4.3
+  resolution: "libmime@npm:5.4.3"
   dependencies:
-    encoding-japanese: "npm:2.2.0"
-    iconv-lite: "npm:0.7.2"
+    encoding-japanese: "npm:2.3.0"
+    iconv-lite: "npm:0.7.3"
     libbase64: "npm:1.3.0"
     libqp: "npm:2.1.1"
-  checksum: 10c0/4fb65f7c07a9bdb0c0ee25bb80fac94a803807f9ac15a3d6cafc2c93303500d92c8ceb6dfe0ab938c871406fc01cb69a7a457f28b2037c47c283574e8900d8c4
+  checksum: 10c0/e94e77b6404de0c57156217507db488eb48acab276777b8ebdd1badeb9a88ba749590dab412cc36acb6927bdf1757523bf70d1283f02295b5ab81abd76dfea9d
   languageName: node
   linkType: hard
 
@@ -40226,7 +40234,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:9.1.1, nodemailer@npm:^9.0.1":
+"nodemailer@npm:^9.0.1":
   version: 9.1.1
   resolution: "nodemailer@npm:9.1.1"
   checksum: 10c0/b213a2a906697a735f6eb21103629b7a77aeac297b6d843efd4588157999bf6d19381853ac1224e472f5a34aec2e2412444151a2c6ec6e8c52150afa3055039c
@@ -46988,7 +46996,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"socks@npm:2.8.9, socks@npm:^2.8.3":
+"socks@npm:2.8.10":
+  version: 2.8.10
+  resolution: "socks@npm:2.8.10"
+  dependencies:
+    ip-address: "npm:^10.1.1"
+    smart-buffer: "npm:^4.2.0"
+  checksum: 10c0/9ac7f4329ed064585975206d9582119a1f168b249dd6119a939f839e0ea7a590d4fdccff9a4112f13b478177207959096f70224f021eaeb3ce69bc8129f80ef4
+  languageName: node
+  linkType: hard
+
+"socks@npm:^2.8.3":
   version: 2.8.9
   resolution: "socks@npm:2.8.9"
   dependencies:
@@ -49745,7 +49763,7 @@ __metadata:
     graphql-yoga: "npm:4.0.5"
     html-to-text: "npm:^9.0.5"
     ical-generator: "npm:^11.0.0"
-    imapflow: "npm:1.4.2"
+    imapflow: "npm:2.0.2"
     ioredis: "npm:5.10.1"
     jest: "npm:29.7.0"
     jest-environment-node: "npm:^29.4.1"

@@ -116,7 +116,7 @@
     "graphql-yoga": "4.0.5",
     "html-to-text": "^9.0.5",
     "ical-generator": "^11.0.0",
-    "imapflow": "1.4.2",
+    "imapflow": "2.0.2",
     "ioredis": "5.10.1",
     "jsdom": "^30.0.1",
     "json-schema": "0.4.0",
