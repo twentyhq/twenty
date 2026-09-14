@@ -4,9 +4,10 @@ import { styled } from '@linaria/react';
 import { Tag } from 'twenty-ui/data-display';
 import { type SelectOption } from 'twenty-ui/input';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ wrap?: boolean }>`
   align-items: center;
   display: flex;
+  flex-wrap: ${({ wrap }) => (wrap ? 'wrap' : 'nowrap')};
   gap: 4px;
   justify-content: flex-start;
 
@@ -20,9 +21,11 @@ const StyledContainer = styled.div`
 export const MultiSelectDisplay = ({
   values,
   options,
+  wrap = false,
 }: {
   values: FieldMultiSelectValue | undefined;
   options: SelectOption[];
+  wrap?: boolean;
 }) => {
   const selectedOptions = values
     ? options?.filter((option) => values.includes(option.value))
@@ -31,7 +34,7 @@ export const MultiSelectDisplay = ({
   if (!isDefined(selectedOptions)) return null;
 
   return (
-    <StyledContainer>
+    <StyledContainer wrap={wrap}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           preventShrink
