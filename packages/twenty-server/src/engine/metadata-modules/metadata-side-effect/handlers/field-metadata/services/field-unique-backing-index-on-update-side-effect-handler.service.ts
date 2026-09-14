@@ -20,7 +20,7 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
     metadataName: 'fieldMetadata',
     name: 'fieldUniqueBackingIndexOnUpdate',
     description:
-      "Keep a unique scalar field's backing UNIQUE index in sync when its `isUnique` flag flips or the field is renamed (drop the stale index and recreate the deterministic one).",
+      "Keep a unique scalar field's backing UNIQUE index in sync when its `isUnique` flag flips or the field is renamed (drop the stale index and recreate the deterministic one). Only an engine-owned (isSystemSideEffect) stale index is dropped: a caller-authored index living at the derived identifier is left alone.",
   },
 ) {
   buildSideEffects({
@@ -97,14 +97,18 @@ export class FieldUniqueBackingIndexOnUpdateSideEffectHandlerService extends Met
           })
         : undefined;
 
-    const flatIndexMetadataToDelete =
-      isDefined(previousFlatIndexMetadata) &&
-      isDefined(
-        relatedFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
+    const existingPreviousFlatIndexMetadata = isDefined(
+      previousFlatIndexMetadata,
+    )
+      ? relatedFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
           previousFlatIndexMetadata.universalIdentifier
-        ],
-      )
-        ? previousFlatIndexMetadata
+        ]
+      : undefined;
+
+    const flatIndexMetadataToDelete =
+      isDefined(existingPreviousFlatIndexMetadata) &&
+      existingPreviousFlatIndexMetadata.isSystemSideEffect === true
+        ? existingPreviousFlatIndexMetadata
         : undefined;
 
     const flatIndexMetadataToCreate =
