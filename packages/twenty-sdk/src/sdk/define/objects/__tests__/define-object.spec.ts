@@ -113,6 +113,28 @@ describe('defineObject', () => {
     expect(result.config.fields).toEqual([]);
   });
 
+  it('returns a validation error for malformed options in an object field', () => {
+    const config: ObjectManifest = {
+      ...validConfig,
+      fields: [
+        {
+          universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          type: FieldMetadataType.SELECT,
+          name: 'status',
+          label: 'Status',
+          options: JSON.parse('[null]'),
+        },
+      ],
+    };
+
+    const result = defineObject(config);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'Field "Status" option at index 0 must be an object',
+    ]);
+  });
+
   it('should return error when field is missing label', () => {
     const config = {
       ...validConfig,

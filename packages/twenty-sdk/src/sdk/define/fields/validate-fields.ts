@@ -7,27 +7,30 @@ import { TAG_COLORS } from 'twenty-shared/constants';
 import {
   isDefined,
   isFieldMetadataSelectKind,
+  isPlainObject,
   isTagColor,
 } from 'twenty-shared/utils';
 
-const getUnsupportedOptionColorErrors = (
-  field: ObjectFieldManifest,
-): string[] => {
+const getSelectOptionErrors = (field: ObjectFieldManifest): string[] => {
   if (!isFieldMetadataSelectKind(field.type) || !Array.isArray(field.options)) {
     return [];
   }
 
-  return field.options
-    .filter(
-      (option) =>
-        'color' in option &&
-        isDefined(option.color) &&
-        !isTagColor(option.color),
-    )
-    .map(
-      (option) =>
-        `Field "${field.label}" option "${option.label}" has an unsupported color. Supported colors: ${TAG_COLORS.join(', ')}`,
-    );
+  return field.options.flatMap((option, index) => {
+    if (!isPlainObject(option)) {
+      return [
+        `Field "${field.label}" option at index ${index} must be an object`,
+      ];
+    }
+
+    if (!isDefined(option.color) || isTagColor(option.color)) {
+      return [];
+    }
+
+    return [
+      `Field "${field.label}" option "${option.label}" has an unsupported color. Supported colors: ${TAG_COLORS.join(', ')}`,
+    ];
+  });
 };
 
 export const validateFields = (
@@ -62,7 +65,7 @@ export const validateFields = (
       );
     }
 
-    errors.push(...getUnsupportedOptionColorErrors(field));
+    errors.push(...getSelectOptionErrors(field));
 
     if (
       field.isUnique === true &&

@@ -74,6 +74,32 @@ describe('defineField', () => {
   });
 
   describe('fields validation', () => {
+    describe.each([
+      { type: FieldMetadataType.SELECT },
+      { type: FieldMetadataType.MULTI_SELECT },
+    ] as const)('$type option validation', (fieldType) => {
+      it.each(['[null]', '["invalid"]', '[42]', '[false]', '[[]]'])(
+        'returns a validation error for malformed option data %s',
+        (serializedOptions) => {
+          const config: FieldManifest = {
+            objectUniversalIdentifier: validConfig.objectUniversalIdentifier,
+            universalIdentifier: validConfig.universalIdentifier,
+            name: validConfig.name,
+            label: validConfig.label,
+            ...fieldType,
+            options: JSON.parse(serializedOptions),
+          };
+
+          const result = defineField(config);
+
+          expect(result.success).toBe(false);
+          expect(result.errors).toEqual([
+            'Field "Custom Note" option at index 0 must be an object',
+          ]);
+        },
+      );
+    });
+
     it('should return error when field is missing label', () => {
       const config = {
         objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
