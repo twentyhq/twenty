@@ -62,8 +62,10 @@ describe('getClientConfig', () => {
 
     const result = await getClientConfig();
 
+    // A config reused across a deploy silently drops every field it predates.
     expect(fetch).toHaveBeenCalledWith(
       `${REACT_APP_SERVER_BASE_URL}/client-config`,
+      { cache: 'no-store' },
     );
     expect(result).toEqual(mockClientConfig);
   });
