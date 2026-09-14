@@ -39,7 +39,7 @@
     "@clickhouse/client": "^1.18.1",
     "@e2b/code-interpreter": "^2.6.0",
     "@envelop/core": "4.0.3",
-    "@faker-js/faker": "9.8.0",
+    "@faker-js/faker": "10.5.0",
     "@file-type/pdf": "^0.3.0",
     "@graphql-tools/schema": "10.0.4",
     "@graphql-tools/utils": "9.2.1",
