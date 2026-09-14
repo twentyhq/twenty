@@ -3,34 +3,28 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { useCoreWorkflowShowPageResource } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageResource';
 import { type CoreObjectShowPageProps } from '@/object-core/types/CoreObjectShowPageProps';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
-import { useRecordShowPageOperationSignature } from '@/object-record/record-show/hooks/useRecordShowPageOperationSignature';
+import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 
 export const WorkflowCoreShowPage = ({
   objectRecordId,
 }: CoreObjectShowPageProps) => {
   const coreWorkflowResult = useCoreWorkflowShowPageResource({
     workspaceWorkflowId: objectRecordId,
-    skip: false,
   });
 
-  const isCoreWorkflowMissing =
-    !coreWorkflowResult.loading && !isDefined(coreWorkflowResult.record);
+  const isCoreWorkflowAbsent =
+    !coreWorkflowResult.loading &&
+    !isDefined(coreWorkflowResult.error) &&
+    !isDefined(coreWorkflowResult.record);
 
-  const operationSignature = useRecordShowPageOperationSignature({
+  const workspaceResult = useRecordShowPageResource({
     objectNameSingular: CoreObjectNameSingular.Workflow,
+    recordId: objectRecordId,
+    skip: !isCoreWorkflowAbsent,
   });
 
-  const workspaceResult = useFindOneRecord({
-    objectRecordId,
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-    recordGqlFields: operationSignature.fields,
-    withSoftDeleted: true,
-    skip: !isCoreWorkflowMissing,
-  });
-
-  const { record, loading, error } = isCoreWorkflowMissing
+  const { record, loading, error } = isCoreWorkflowAbsent
     ? workspaceResult
     : coreWorkflowResult;
 

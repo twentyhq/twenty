@@ -19,4 +19,16 @@ describe('findCoreObjectShowPage', () => {
     expect(findCoreObjectShowPage(undefined)).toBeUndefined();
     expect(findCoreObjectShowPage(null)).toBeUndefined();
   });
+
+  it('resolves nothing for object prototype members reachable from the route', () => {
+    for (const objectNameSingular of [
+      'constructor',
+      'toString',
+      'valueOf',
+      'hasOwnProperty',
+      '__proto__',
+    ]) {
+      expect(findCoreObjectShowPage(objectNameSingular)).toBeUndefined();
+    }
+  });
 });

@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -78,11 +77,7 @@ export const RecordShowPage = () => {
   );
 
   if (isDefined(CoreObjectShowPage) && isDefined(parameters.objectRecordId)) {
-    return (
-      <Suspense fallback={null}>
-        <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />
-      </Suspense>
-    );
+    return <CoreObjectShowPage objectRecordId={parameters.objectRecordId} />;
   }
 
   return <WorkspaceRecordShowPageContent parameters={parameters} />;
