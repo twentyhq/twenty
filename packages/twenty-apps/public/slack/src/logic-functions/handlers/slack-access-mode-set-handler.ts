@@ -1,23 +1,16 @@
-import { type RoutePayload } from 'twenty-sdk/define';
 import { kv } from 'twenty-sdk/logic-function';
 
 import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
 import { SLACK_ACCESS_MODE_KV_KEY } from 'src/logic-functions/constants/slack-access-mode-kv-key';
-import { type SlackAccessMode } from 'src/logic-functions/types/slack-access-mode.type';
+import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
+import { type SlackToolResult } from 'src/logic-functions/types/slack-tool-result.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 import { isSlackAccessMode } from 'src/logic-functions/utils/is-slack-access-mode';
 
-type SlackAccessModeSetResult = {
-  success: boolean;
-  accessMode?: SlackAccessMode;
-  message: string;
-  error?: string;
-};
-
 export const slackAccessModeSetHandler = async (
-  payload: RoutePayload,
-): Promise<SlackAccessModeSetResult> => {
+  payload: SlackRouteBody,
+): Promise<SlackToolResult> => {
   const isAllowed = await currentUserHasRolesPermission();
 
   if (!isAllowed) {
@@ -53,7 +46,6 @@ export const slackAccessModeSetHandler = async (
 
   return {
     success: true,
-    accessMode,
     message:
       accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS
         ? 'The assistant is now restricted to linked members.'

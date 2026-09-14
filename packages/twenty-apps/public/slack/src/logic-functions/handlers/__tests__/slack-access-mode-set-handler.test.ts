@@ -60,7 +60,6 @@ describe('slackAccessModeSetHandler', () => {
     );
 
     expect(result.success).toBe(true);
-    expect(result.accessMode).toBe('ONLY_LINKED_MEMBERS');
     expect(kvSetMock).toHaveBeenCalledWith(
       'slack-access-mode',
       'ONLY_LINKED_MEMBERS',
