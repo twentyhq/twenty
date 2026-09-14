@@ -2,8 +2,11 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
+import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
+import { useSwitchBillingInterval } from '@/settings/billing/hooks/useSwitchBillingInterval';
 import { useSwitchBillingPlan } from '@/settings/billing/hooks/useSwitchBillingPlan';
 import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
+import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -16,24 +19,30 @@ import { IconArrowDown, IconArrowUp, IconCheck } from 'twenty-ui/icon';
 import {
   BillingPlanKey,
   PermissionFlagType,
+  SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
 
 type UseBillingPlanActionsParams = {
   currentPlanKey: BillingPlanKey;
+  selectedInterval: SettingsBillingPlanInterval;
 };
 
 export const useBillingPlanActions = ({
   currentPlanKey,
+  selectedInterval,
 }: UseBillingPlanActionsParams) => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const subscriptionStatus = useSubscriptionStatus();
   const { openModal } = useModal();
   const { nextPlan } = useNextPlan();
+  const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
   const permissionMap = usePermissionFlagMap();
 
   const { isSwitchingPlan, switchBillingPlan } = useSwitchBillingPlan();
+  const { isSwitchingInterval, switchBillingInterval } =
+    useSwitchBillingInterval();
 
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.BillingPlans));
@@ -57,6 +66,11 @@ export const useBillingPlanActions = ({
     !isCancellationScheduled &&
     hasPermissionToManageBilling;
 
+  const isSelectedIntervalCurrent =
+    selectedInterval === currentBillingSubscription?.interval;
+  const nextInterval =
+    splitedPhaseItemsInPrices.nextBasePrice?.recurringInterval;
+
   const createBillingPortalAction = (
     title: string,
   ): SettingsBillingPlanAction => ({
@@ -73,7 +87,10 @@ export const useBillingPlanActions = ({
       return createBillingPortalAction(t`Manage billing`);
     }
 
-    if (currentPlanKey === planKey) {
+    const isCurrentPlan = currentPlanKey === planKey;
+    const isIntervalSwitch = isCurrentPlan && !isSelectedIntervalCurrent;
+
+    if (isCurrentPlan && isSelectedIntervalCurrent) {
       return {
         disabled: true,
         Icon: IconCheck,
@@ -82,7 +99,11 @@ export const useBillingPlanActions = ({
       };
     }
 
-    if (nextPlan?.planKey === planKey) {
+    const isScheduled = isIntervalSwitch
+      ? selectedInterval === nextInterval
+      : nextPlan?.planKey === planKey;
+
+    if (isScheduled) {
       return {
         disabled: true,
         title: t`Scheduled`,
@@ -106,6 +127,25 @@ export const useBillingPlanActions = ({
       };
     }
 
+    if (isIntervalSwitch) {
+      const isSwitchingToAnnual =
+        selectedInterval === SubscriptionInterval.Year;
+
+      return {
+        disabled: isSwitchingInterval,
+        Icon: isSwitchingToAnnual ? IconArrowUp : IconArrowDown,
+        isLoading: isSwitchingInterval,
+        onClick: () =>
+          openModal(
+            isSwitchingToAnnual
+              ? BILLING_MODAL_IDS.switchBillingIntervalToYearly
+              : BILLING_MODAL_IDS.switchBillingIntervalToMonthly,
+          ),
+        title: isSwitchingToAnnual ? t`Switch to annual` : t`Switch to monthly`,
+        variant: 'secondary',
+      };
+    }
+
     const isSwitchingToOrganizationPlan = planKey === BillingPlanKey.ENTERPRISE;
 
     return {
@@ -125,11 +165,13 @@ export const useBillingPlanActions = ({
   };
 
   return {
+    isSwitchingInterval,
     isSwitchingPlan,
     planActions: {
       [BillingPlanKey.PRO]: getPlanAction(BillingPlanKey.PRO),
       [BillingPlanKey.ENTERPRISE]: getPlanAction(BillingPlanKey.ENTERPRISE),
     },
+    switchBillingInterval,
     switchBillingPlan,
   };
 };

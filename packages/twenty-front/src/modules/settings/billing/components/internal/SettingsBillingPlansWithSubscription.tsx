@@ -28,11 +28,21 @@ export const SettingsBillingPlansWithSubscription = ({
 }: SettingsBillingPlansWithSubscriptionProps) => {
   const { t } = useLingui();
   const {
+    confirmationModalSwitchToMonthlyMessage,
     confirmationModalSwitchToOrganizationMessage,
     confirmationModalSwitchToProMessage,
+    confirmationModalSwitchToYearlyMessage,
   } = useBillingWording();
-  const { isSwitchingPlan, planActions, switchBillingPlan } =
-    useBillingPlanActions({ currentPlanKey });
+  const {
+    isSwitchingInterval,
+    isSwitchingPlan,
+    planActions,
+    switchBillingInterval,
+    switchBillingPlan,
+  } = useBillingPlanActions({
+    currentPlanKey,
+    selectedInterval: billingInterval,
+  });
 
   return (
     <SettingsPageContainer overflow="visible">
@@ -45,7 +55,7 @@ export const SettingsBillingPlansWithSubscription = ({
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToEnterprise}
         title={t`Change to Organization Plan?`}
-        subtitle={confirmationModalSwitchToOrganizationMessage()}
+        subtitle={confirmationModalSwitchToOrganizationMessage(billingInterval)}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.ENTERPRISE)}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
@@ -54,11 +64,29 @@ export const SettingsBillingPlansWithSubscription = ({
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
         title={t`Change to Pro Plan?`}
-        subtitle={confirmationModalSwitchToProMessage()}
+        subtitle={confirmationModalSwitchToProMessage(billingInterval)}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.PRO)}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
         loading={isSwitchingPlan}
+      />
+      <ConfirmationModal
+        modalInstanceId={BILLING_MODAL_IDS.switchBillingIntervalToYearly}
+        title={t`Change to Yearly?`}
+        subtitle={confirmationModalSwitchToYearlyMessage()}
+        onConfirmClick={switchBillingInterval}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent="blue"
+        loading={isSwitchingInterval}
+      />
+      <ConfirmationModal
+        modalInstanceId={BILLING_MODAL_IDS.switchBillingIntervalToMonthly}
+        title={t`Change to Monthly?`}
+        subtitle={confirmationModalSwitchToMonthlyMessage()}
+        onConfirmClick={switchBillingInterval}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent="blue"
+        loading={isSwitchingInterval}
       />
     </SettingsPageContainer>
   );

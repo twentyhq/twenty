@@ -1,4 +1,5 @@
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
+import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import {
   BillingPlanKey,
   SubscriptionInterval,
@@ -101,10 +102,10 @@ export const useBillingWording = () => {
 
   const confirmationModalSwitchToYearlyMessage = () => {
     if (subscriptionStatus === SubscriptionStatus.Trialing) {
-      return t`Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged $${yearlyPrice} per user per year billed annually.`;
+      return t`Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged $${yearlyPrice} per user per month billed annually.`;
     }
 
-    return t`You will be charged $${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied.`;
+    return t`You will be charged $${yearlyPrice} per user per month billed annually. A prorata with your current subscription will be applied.`;
   };
 
   const confirmationModalSwitchToMonthlyMessage = () => {
@@ -116,30 +117,72 @@ export const useBillingWording = () => {
     return t`You will be charged $${monthlyPrice} per user per month billed monthly. The change will be applied the ${beautifiedRenewDate}.`;
   };
 
-  const confirmationModalSwitchToOrganizationMessage = () => {
+  const getIntervalUnchangedNotice = (
+    selectedInterval: SettingsBillingPlanInterval,
+  ) => {
+    if (selectedInterval === currentBillingSubscription.interval) {
+      return undefined;
+    }
+
+    const currentIntervalLabel = getIntervalLabel(
+      currentBillingSubscription.interval === SubscriptionInterval.Month,
+      true,
+    );
+
+    return t`Your billing interval stays ${currentIntervalLabel}: change it separately from the Billing tab once this plan change is applied.`;
+  };
+
+  const appendIntervalUnchangedNotice = (
+    message: string,
+    selectedInterval: SettingsBillingPlanInterval,
+  ) => {
+    const notice = getIntervalUnchangedNotice(selectedInterval);
+
+    return isDefined(notice) ? `${message} ${notice}` : message;
+  };
+
+  const confirmationModalSwitchToOrganizationMessage = (
+    selectedInterval: SettingsBillingPlanInterval,
+  ) => {
     if (subscriptionStatus === SubscriptionStatus.Trialing) {
       const suffix = isYearlyPlan ? t` billed annually` : '';
 
-      return t`Your plan will switch to Organization immediately and your trial will continue. When it ends, you will be charged $${enterprisePrice} per user per month${suffix}.`;
+      return appendIntervalUnchangedNotice(
+        t`Your plan will switch to Organization immediately and your trial will continue. When it ends, you will be charged $${enterprisePrice} per user per month${suffix}.`,
+        selectedInterval,
+      );
     }
 
     const body = t`you will be charged $${enterprisePrice} per user per month`;
     const suffix = isYearlyPlan ? t` billed annually` : '';
-    return capitalize(`${body}${suffix}.`);
+
+    return appendIntervalUnchangedNotice(
+      capitalize(`${body}${suffix}.`),
+      selectedInterval,
+    );
   };
 
-  const confirmationModalSwitchToProMessage = () => {
+  const confirmationModalSwitchToProMessage = (
+    selectedInterval: SettingsBillingPlanInterval,
+  ) => {
     if (subscriptionStatus === SubscriptionStatus.Trialing) {
       const suffix = isYearlyPlan ? t` billed annually` : '';
 
-      return t`Your plan will switch to Pro immediately and your trial will continue. When it ends, you will be charged $${proPrice} per user per month${suffix}.`;
+      return appendIntervalUnchangedNotice(
+        t`Your plan will switch to Pro immediately and your trial will continue. When it ends, you will be charged $${proPrice} per user per month${suffix}.`,
+        selectedInterval,
+      );
     }
 
     const beautifiedRenewDate = getBeautifiedRenewDate();
     const suffix1 = isYearlyPlan ? t` billed annually` : '';
     const suffix2 = t`. The change will be applied the ${beautifiedRenewDate}.`;
     const body = t`You will be charged $${proPrice} per user per month`;
-    return `${body}${suffix1}${suffix2}`;
+
+    return appendIntervalUnchangedNotice(
+      `${body}${suffix1}${suffix2}`,
+      selectedInterval,
+    );
   };
 
   const confirmationModalCancelPlanSwitchingMessage = () => {

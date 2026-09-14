@@ -17,6 +17,7 @@ import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResour
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
+import { useSwitchBillingInterval } from '@/settings/billing/hooks/useSwitchBillingInterval';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -40,7 +41,6 @@ import {
   PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
-  SwitchSubscriptionIntervalDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
 
@@ -103,10 +103,6 @@ export const SettingsBillingSubscriptionInfo = ({
     getBeautifiedRenewDate,
   } = useBillingWording();
 
-  const [switchSubscriptionIntervalMutation] = useMutation(
-    SwitchSubscriptionIntervalDocument,
-  );
-
   const [cancelSwitchBillingInterval] = useMutation(
     CancelSwitchBillingIntervalDocument,
   );
@@ -140,6 +136,9 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
     useEndSubscriptionTrialPeriod();
+
+  const { isSwitchingInterval, switchBillingInterval } =
+    useSwitchBillingInterval();
 
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
@@ -330,7 +329,6 @@ export const SettingsBillingSubscriptionInfo = ({
         ]
       : []),
   ];
-  const [isSwitchingInterval, setIsSwitchingInterval] = useState(false);
   const [isCancellingPlanSwitch, setIsCancellingPlanSwitch] = useState(false);
   const [isCancellingIntervalSwitch, setIsCancellingIntervalSwitch] =
     useState(false);
@@ -386,35 +384,6 @@ export const SettingsBillingSubscriptionInfo = ({
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const switchInterval = async () => {
-    await runBillingAction({
-      action: async () => {
-        const { data } = await switchSubscriptionIntervalMutation();
-
-        if (
-          isDefined(data?.switchSubscriptionInterval.currentBillingSubscription)
-        ) {
-          applyBillingUpdate(data.switchSubscriptionInterval);
-        }
-      },
-      getErrorMessage: () => t`Error while switching subscription.`,
-      getSuccessMessage: () => {
-        const isCurrentMonth =
-          currentBillingSubscription.interval === SubscriptionInterval.Month;
-
-        if (isCurrentMonth) {
-          return t`Subscription has been switched to Yearly.`;
-        }
-
-        return isTrialPeriod
-          ? t`Subscription has been switched to Monthly.`
-          : t`Subscription will be switched to Monthly the ${getBeautifiedRenewDate()}.`;
-      },
-      isLoading: isSwitchingInterval,
-      setIsLoading: setIsSwitchingInterval,
-    });
   };
 
   const cancelPlanSwitching = async () => {
@@ -544,7 +513,7 @@ export const SettingsBillingSubscriptionInfo = ({
         onCancelResourceCreditSwitching={cancelResourceCreditSwitching}
         onEndTrialPeriod={endTrialPeriod}
         onPaymentMethodAdded={startSubscriptionAfterPaymentMethodAdded}
-        onSwitchInterval={switchInterval}
+        onSwitchInterval={switchBillingInterval}
         startSubscriptionSubtitle={startSubscriptionSubtitle}
         switchToMonthlySubtitle={confirmationModalSwitchToMonthlyMessage()}
         switchToYearlySubtitle={confirmationModalSwitchToYearlyMessage()}
