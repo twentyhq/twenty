@@ -22,6 +22,8 @@ const OTHER_APPLICATION_ID = '22222222-2222-4222-8222-222222222222';
 const WORKSPACE_ID = '33333333-3333-4333-8333-333333333333';
 const CONNECTED_ACCOUNT_ID = '44444444-4444-4444-8444-444444444444';
 const MESSAGE_CHANNEL_ID = '55555555-5555-4555-8555-555555555555';
+const ALICE_USER_WORKSPACE_ID = '99999999-9999-4999-8999-999999999999';
+const BOB_USER_WORKSPACE_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
 
 describe('ApplicationMessageChannelsService', () => {
   let service: ApplicationMessageChannelsService;
@@ -31,7 +33,12 @@ describe('ApplicationMessageChannelsService', () => {
   >;
   let workspaceEventEmitter: jest.Mocked<WorkspaceEventEmitter>;
 
-  const scope = { applicationId: APPLICATION_ID, workspaceId: WORKSPACE_ID };
+  // No request user: a cron/webhook run acting as the application itself.
+  const scope = {
+    applicationId: APPLICATION_ID,
+    workspaceId: WORKSPACE_ID,
+    requestUserWorkspaceId: null,
+  };
 
   beforeEach(async () => {
     messageChannelRepository = {
@@ -77,9 +84,15 @@ describe('ApplicationMessageChannelsService', () => {
       applicationId: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
       provider: ConnectedAccountProvider.APP,
+      visibility: 'workspace',
+      userWorkspaceId: ALICE_USER_WORKSPACE_ID,
     } as ConnectedAccountEntity);
     connectedAccountRepository.find.mockResolvedValue([
-      { id: CONNECTED_ACCOUNT_ID },
+      {
+        id: CONNECTED_ACCOUNT_ID,
+        visibility: 'workspace',
+        userWorkspaceId: ALICE_USER_WORKSPACE_ID,
+      },
     ] as ConnectedAccountEntity[]);
   };
 
@@ -130,6 +143,7 @@ describe('ApplicationMessageChannelsService', () => {
         service.create({
           applicationId: OTHER_APPLICATION_ID,
           workspaceId: WORKSPACE_ID,
+          requestUserWorkspaceId: null,
           connectedAccountId: CONNECTED_ACCOUNT_ID,
           handle: 'urn:li:person:abc',
           visibility: MessageChannelVisibility.METADATA,
@@ -171,6 +185,7 @@ describe('ApplicationMessageChannelsService', () => {
         service.update({
           applicationId: OTHER_APPLICATION_ID,
           workspaceId: WORKSPACE_ID,
+          requestUserWorkspaceId: null,
           id: MESSAGE_CHANNEL_ID,
           displayName: 'stolen',
         }),
@@ -263,7 +278,11 @@ describe('ApplicationMessageChannelsService', () => {
 
     it('refuses to filter by a connection the app does not own', async () => {
       connectedAccountRepository.find.mockResolvedValue([
-        { id: CONNECTED_ACCOUNT_ID },
+        {
+          id: CONNECTED_ACCOUNT_ID,
+          visibility: 'workspace',
+          userWorkspaceId: ALICE_USER_WORKSPACE_ID,
+        },
       ] as ConnectedAccountEntity[]);
 
       await expect(
@@ -271,6 +290,122 @@ describe('ApplicationMessageChannelsService', () => {
       ).rejects.toMatchObject({
         code: MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
       });
+    });
+  });
+  // Owning the app is not permission to administer another person's private
+  // connection. Same application, two users, one private connection.
+  describe("another user's private connection", () => {
+    const givenAlicePrivateConnection = () => {
+      const alicesAccount = {
+        id: CONNECTED_ACCOUNT_ID,
+        applicationId: APPLICATION_ID,
+        workspaceId: WORKSPACE_ID,
+        provider: ConnectedAccountProvider.APP,
+        visibility: 'user',
+        userWorkspaceId: ALICE_USER_WORKSPACE_ID,
+      } as ConnectedAccountEntity;
+
+      connectedAccountRepository.findOne.mockResolvedValue(alicesAccount);
+      connectedAccountRepository.find.mockResolvedValue([alicesAccount]);
+      messageChannelRepository.findOne.mockResolvedValue({
+        id: MESSAGE_CHANNEL_ID,
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        type: MessageChannelType.APP,
+      } as MessageChannelEntity);
+    };
+
+    const asBob = {
+      applicationId: APPLICATION_ID,
+      workspaceId: WORKSPACE_ID,
+      requestUserWorkspaceId: BOB_USER_WORKSPACE_ID,
+    };
+    const asAlice = {
+      applicationId: APPLICATION_ID,
+      workspaceId: WORKSPACE_ID,
+      requestUserWorkspaceId: ALICE_USER_WORKSPACE_ID,
+    };
+
+    it("hides Alice's channel from Bob's listing", async () => {
+      givenAlicePrivateConnection();
+
+      await expect(service.list(asBob)).resolves.toEqual([]);
+      expect(messageChannelRepository.find).not.toHaveBeenCalled();
+    });
+
+    it("refuses Bob a visibility change on Alice's channel", async () => {
+      givenAlicePrivateConnection();
+
+      await expect(
+        service.update({
+          ...asBob,
+          id: MESSAGE_CHANNEL_ID,
+          visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+        }),
+      ).rejects.toMatchObject({
+        code: MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+      });
+
+      expect(messageChannelRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("refuses Bob deletion of Alice's channel", async () => {
+      givenAlicePrivateConnection();
+
+      await expect(
+        service.delete({ ...asBob, id: MESSAGE_CHANNEL_ID }),
+      ).rejects.toMatchObject({
+        code: MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+      });
+
+      expect(messageChannelRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it("refuses Bob a channel on Alice's connection", async () => {
+      givenAlicePrivateConnection();
+
+      await expect(
+        service.create({
+          ...asBob,
+          connectedAccountId: CONNECTED_ACCOUNT_ID,
+          handle: 'urn:li:person:abc',
+          visibility: MessageChannelVisibility.METADATA,
+        }),
+      ).rejects.toMatchObject({
+        code: MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+      });
+
+      expect(messageChannelRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('still lets Alice reach her own channel', async () => {
+      givenAlicePrivateConnection();
+      messageChannelRepository.findOneOrFail.mockResolvedValue({
+        id: MESSAGE_CHANNEL_ID,
+      } as MessageChannelEntity);
+
+      await expect(
+        service.update({
+          ...asAlice,
+          id: MESSAGE_CHANNEL_ID,
+          visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+        }),
+      ).resolves.toBeDefined();
+      expect(messageChannelRepository.update).toHaveBeenCalled();
+    });
+
+    it('still lets a background run with no request user through', async () => {
+      givenAlicePrivateConnection();
+      messageChannelRepository.findOneOrFail.mockResolvedValue({
+        id: MESSAGE_CHANNEL_ID,
+      } as MessageChannelEntity);
+
+      await expect(
+        service.update({
+          ...scope,
+          id: MESSAGE_CHANNEL_ID,
+          isSyncEnabled: false,
+        }),
+      ).resolves.toBeDefined();
     });
   });
 });

@@ -63,6 +63,8 @@ export { createMessageChannel } from '@/sdk/logic-function/messaging/create-mess
 export type { CreateMessageChannelInput } from '@/sdk/logic-function/messaging/create-message-channel';
 export { listMessageChannels } from '@/sdk/logic-function/messaging/list-message-channels';
 export type { ListMessageChannelsFilter } from '@/sdk/logic-function/messaging/list-message-channels';
+export { updateMessageChannel } from '@/sdk/logic-function/messaging/update-message-channel';
+export type { UpdateMessageChannelInput } from '@/sdk/logic-function/messaging/update-message-channel';
 export { deleteMessageChannel } from '@/sdk/logic-function/messaging/delete-message-channel';
 export { ingestMessages } from '@/sdk/logic-function/messaging/ingest-messages';
 export type {

@@ -94,4 +94,5 @@ Participants you leave unlinked are still stored and still render in the thread 
 
 - **It does not fetch.** Nothing polls your provider for you; ingestion is push-only. Drive it from a webhook route or a cron logic function.
 - **It does not send.** Outbound delivery is not yet routed to apps. Link out to the provider's UI for replies.
+- **It does not cross members.** A run triggered by one workspace member cannot ingest into a channel belonging to another member's private connection. A run with nobody behind it — a webhook, a cron — acts as the application and reaches every channel the app owns.
 - **It does not create contacts.** Twenty's auto-creation derives people and companies from email domains, which is meaningless for most providers, so it is off for app channels. Create the Person yourself, then pass its `personId`.
