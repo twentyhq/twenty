@@ -3,8 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
-import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
+import {
+  canConnectedAccountPerformEmailOperation,
+  getEmailProvidersForOperation,
+  isDefined,
+} from 'twenty-shared/utils';
 
 import { ConnectionProviderLifecycleHookService } from 'src/engine/core-modules/application/connection-provider/connection-provider-lifecycle-hook.service';
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
@@ -18,7 +22,7 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
-import { type ConnectedAccountWithoutCredentials } from 'src/engine/metadata-modules/connected-account/types/connected-account-without-credentials.type';
+import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/types/connected-account-usable-by-caller.type';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
@@ -42,15 +46,21 @@ export class ConnectedAccountMetadataService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
-  async findUsableByCaller({
+  async findMailboxesUsableByCaller({
     workspaceId,
     userWorkspaceId,
+    operation,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
-  }): Promise<ConnectedAccountWithoutCredentials[]> {
+    operation: EmailOperation;
+  }): Promise<ConnectedAccountUsableByCaller[]> {
     const connectedAccounts = await this.repository.find({
-      where: { workspaceId, archivedAt: IsNull() },
+      where: {
+        workspaceId,
+        archivedAt: IsNull(),
+        provider: In(getEmailProvidersForOperation(operation)),
+      },
       order: { createdAt: 'ASC', id: 'ASC' },
       select: {
         id: true,
@@ -60,18 +70,25 @@ export class ConnectedAccountMetadataService {
         name: true,
         visibility: true,
         userWorkspaceId: true,
+        connectionParameters: true,
       },
     });
 
-    if (!isDefined(userWorkspaceId)) {
-      return connectedAccounts.filter(
-        (connectedAccount) => connectedAccount.visibility === 'workspace',
+    return connectedAccounts
+      .filter((connectedAccount) =>
+        canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation,
+        }),
+      )
+      .filter((connectedAccount) =>
+        isDefined(userWorkspaceId)
+          ? isConnectedAccountUsableByCaller({
+              connectedAccount,
+              userWorkspaceId,
+            })
+          : connectedAccount.visibility === 'workspace',
       );
-    }
-
-    return connectedAccounts.filter((connectedAccount) =>
-      isConnectedAccountUsableByCaller({ connectedAccount, userWorkspaceId }),
-    );
   }
 
   async findByUserWorkspaceId({
