@@ -119,8 +119,8 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           clickable={false}
           leftComponent={
             <AvatarOrIcon
-              avatarType="rounded"
-              avatarUrl={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+              shape="circle"
+              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
             />
           }
           label={ownerWorkspace.displayName}

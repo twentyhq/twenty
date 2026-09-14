@@ -237,6 +237,7 @@ export class RefactorNavigationCommandsCommand extends ProvisionedWorkspaceComma
         payload: { ...commandMenuItem.payload },
         hotKeys: commandMenuItem.hotKeys ? [...commandMenuItem.hotKeys] : null,
         workflowVersionId: null,
+        coreWorkflowVersionId: null,
         availabilityObjectMetadataId: null,
         availabilityObjectMetadataUniversalIdentifier: null,
         navigationTargetObjectMetadataId: null,
