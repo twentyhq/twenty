@@ -3,12 +3,17 @@ import 'twenty-ui/style.css';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, useColorScheme } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { Callout } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
+import {
+  ThemeContext,
+  themeCssVariables,
+  type ThemeType,
+} from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
@@ -64,7 +69,7 @@ const StyledCenteredState = styled.div`
   width: 100%;
 `;
 
-export const SlackUserLinksSettings = () => {
+const SlackUserLinksSettingsContent = () => {
   const { canManage, isPermissionLoading } = useCanManageSlackUserLinks();
   const {
     isSlackConnected,
@@ -287,5 +292,26 @@ export const SlackUserLinksSettings = () => {
           </StyledDisclosure>
         ))}
     </StyledContainer>
+  );
+};
+
+// twenty-ui components and this app's styled rules read the theme off
+// ThemeContext, whose default resolves every token to a var() string. The
+// sandbox document never defines those variables, so without a real theme
+// here everything renders unstyled.
+export const SlackUserLinksSettings = () => {
+  const colorScheme = useColorScheme();
+
+  return (
+    <ThemeContext.Provider
+      value={{
+        theme: (colorScheme === 'dark'
+          ? THEME_DARK
+          : THEME_LIGHT) as unknown as ThemeType,
+        colorScheme,
+      }}
+    >
+      <SlackUserLinksSettingsContent />
+    </ThemeContext.Provider>
   );
 };
