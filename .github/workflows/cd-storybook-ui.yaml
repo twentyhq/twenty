@@ -3,7 +3,7 @@ name: CD Storybook UI
 on:
   push:
     branches: [main]
-    tags: ['ui/v*']
+    tags: ['sdk/v*', 'ui/v*']
     paths:
       - .github/workflows/cd-storybook-ui.yaml
       - .github/actions/yarn-install/**
@@ -27,8 +27,6 @@ jobs:
       contents: read
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    outputs:
-      artifact-id: ${{ steps.upload.outputs.artifact-id }}
     steps:
       - name: Checkout source
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
@@ -45,7 +43,6 @@ jobs:
         run: npx tsx packages/twenty-docs/scripts/check-ui-story-embeds.mts packages/twenty-ui/storybook-static/index.json
 
       - name: Upload public Storybook
-        id: upload
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: storybook-twenty-ui-public
@@ -73,7 +70,6 @@ jobs:
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           SOURCE_RUN_ID: ${{ github.run_id }}
-          ARTIFACT_ID: ${{ needs.build.outputs.artifact-id }}
         run: |
           gh workflow run deploy-storybook-ui.yaml --repo twentyhq/twenty-infra --ref main \
-            -f source_run_id="$SOURCE_RUN_ID" -f artifact_id="$ARTIFACT_ID"
+            -f source_run_id="$SOURCE_RUN_ID"
