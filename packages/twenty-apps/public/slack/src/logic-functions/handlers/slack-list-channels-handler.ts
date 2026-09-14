@@ -1,10 +1,10 @@
 import {
   type SlackChannelType,
-  type SlackListChannelsInput,
+  type SlackListChannelsInput
 } from 'src/logic-functions/types/slack-list-channels-input.type';
 import {
   type SlackListChannelsResult,
-  type SlackListChannelsResultChannel,
+  type SlackListChannelsResultChannel
 } from 'src/logic-functions/types/slack-list-channels-result.type';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 

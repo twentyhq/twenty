@@ -50,9 +50,13 @@ describe('parseTwentyRecordLinks', () => {
       urls,
     });
 
-    expect(
-      recordLinks.map((recordLink) => recordLink.objectNameSingular),
-    ).toEqual(['person', 'company', 'opportunity', 'note', 'task']);
+    expect(recordLinks.map((recordLink) => recordLink.objectNameSingular)).toEqual([
+      'person',
+      'company',
+      'opportunity',
+      'note',
+      'task',
+    ]);
     expect(recordLinks[0]).toEqual({
       sharedUrl: urls[0],
       canonicalUrl: urls[0],
@@ -62,10 +66,7 @@ describe('parseTwentyRecordLinks', () => {
   });
 
   it.each([
-    [
-      'a query param',
-      `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}?view=table`,
-    ],
+    ['a query param', `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}?view=table`],
     ['a fragment', `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}#section`],
     ['a trailing slash', `${WORKSPACE_BASE_URL}/object/person/${RECORD_ID}/`],
   ])('should keep %s off the parsed record id', (_label, url) => {

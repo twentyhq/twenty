@@ -9,11 +9,7 @@ import { Callout } from 'twenty-ui/feedback';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
-import {
-  ThemeContext,
-  themeCssVariables,
-  type ThemeType,
-} from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
@@ -305,9 +301,7 @@ export const SlackUserLinksSettings = () => {
   return (
     <ThemeContext.Provider
       value={{
-        theme: (colorScheme === 'dark'
-          ? THEME_DARK
-          : THEME_LIGHT) as unknown as ThemeType,
+        theme: colorScheme === 'dark' ? THEME_DARK : THEME_LIGHT,
         colorScheme,
       }}
     >

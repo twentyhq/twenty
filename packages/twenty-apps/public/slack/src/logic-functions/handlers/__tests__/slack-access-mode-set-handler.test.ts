@@ -15,18 +15,7 @@ vi.mock('twenty-sdk/logic-function', () => ({
   kv: { set: kvSetMock },
 }));
 
-const buildPayload = (body: unknown) =>
-  ({
-    body,
-    headers: {},
-    queryStringParameters: {},
-    pathParameters: {},
-    isBase64Encoded: false,
-    requestContext: {
-      http: { method: 'POST', path: '/s/slack-access-mode/set' },
-    },
-    userWorkspaceId: 'workspace-1',
-  }) as never;
+const buildPayload = (body: unknown) => ({ body });
 
 describe('slackAccessModeSetHandler', () => {
   beforeEach(() => {
