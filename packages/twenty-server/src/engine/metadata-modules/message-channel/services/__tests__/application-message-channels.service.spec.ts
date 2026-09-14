@@ -190,7 +190,7 @@ describe('ApplicationMessageChannelsService', () => {
           displayName: 'stolen',
         }),
       ).rejects.toMatchObject({
-        code: MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+        code: MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
       });
 
       expect(messageChannelRepository.update).not.toHaveBeenCalled();
@@ -342,7 +342,8 @@ describe('ApplicationMessageChannelsService', () => {
           visibility: MessageChannelVisibility.SHARE_EVERYTHING,
         }),
       ).rejects.toMatchObject({
-        code: MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+        // Indistinguishable from a channel that does not exist.
+        code: MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
       });
 
       expect(messageChannelRepository.update).not.toHaveBeenCalled();
@@ -354,7 +355,7 @@ describe('ApplicationMessageChannelsService', () => {
       await expect(
         service.delete({ ...asBob, id: MESSAGE_CHANNEL_ID }),
       ).rejects.toMatchObject({
-        code: MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+        code: MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
       });
 
       expect(messageChannelRepository.delete).not.toHaveBeenCalled();
@@ -406,6 +407,26 @@ describe('ApplicationMessageChannelsService', () => {
           isSyncEnabled: false,
         }),
       ).resolves.toBeDefined();
+    });
+  });
+  it('never names the connection when refusing a channel it cannot reach', async () => {
+    messageChannelRepository.findOne.mockResolvedValue({
+      id: MESSAGE_CHANNEL_ID,
+      connectedAccountId: CONNECTED_ACCOUNT_ID,
+      type: MessageChannelType.APP,
+    } as MessageChannelEntity);
+    connectedAccountRepository.findOne.mockResolvedValue(null);
+
+    await expect(
+      service.update({
+        applicationId: OTHER_APPLICATION_ID,
+        workspaceId: WORKSPACE_ID,
+        requestUserWorkspaceId: null,
+        id: MESSAGE_CHANNEL_ID,
+        displayName: 'probe',
+      }),
+    ).rejects.toMatchObject({
+      message: expect.not.stringContaining(CONNECTED_ACCOUNT_ID),
     });
   });
 });

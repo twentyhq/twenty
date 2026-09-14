@@ -246,19 +246,24 @@ export class ApplicationMessageChannelsService {
       where: { id, workspaceId, type: MessageChannelType.APP },
     });
 
-    if (!isDefined(messageChannel)) {
+    // Missing and not-reachable answer identically, and neither names the
+    // connection. Letting the two differ would tell a caller holding a channel
+    // id that the channel exists and whose connection backs it — the same
+    // probe ownershipViolation() exists to prevent one step earlier.
+    if (
+      !isDefined(messageChannel) ||
+      !(await this.canReachConnectedAccount({
+        applicationId,
+        workspaceId,
+        requestUserWorkspaceId,
+        connectedAccountId: messageChannel.connectedAccountId,
+      }))
+    ) {
       throw new MessageChannelException(
         `Message channel ${id} not found`,
         MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
       );
     }
-
-    await this.assertOwnsConnectedAccount({
-      applicationId,
-      workspaceId,
-      requestUserWorkspaceId,
-      connectedAccountId: messageChannel.connectedAccountId,
-    });
 
     return messageChannel;
   }
@@ -268,12 +273,20 @@ export class ApplicationMessageChannelsService {
   // let any user of an app administer another user's private connection —
   // including flipping its channel to SHARE_EVERYTHING, which publishes that
   // person's messages to the whole workspace.
-  private async assertOwnsConnectedAccount({
+  private async assertOwnsConnectedAccount(
+    args: ApplicationScope & { connectedAccountId: string },
+  ): Promise<void> {
+    if (!(await this.canReachConnectedAccount(args))) {
+      throw this.ownershipViolation(args.connectedAccountId);
+    }
+  }
+
+  private async canReachConnectedAccount({
     applicationId,
     workspaceId,
     requestUserWorkspaceId,
     connectedAccountId,
-  }: ApplicationScope & { connectedAccountId: string }): Promise<void> {
+  }: ApplicationScope & { connectedAccountId: string }): Promise<boolean> {
     const connectedAccount = await this.connectedAccountRepository.findOne({
       where: {
         id: connectedAccountId,
@@ -283,15 +296,13 @@ export class ApplicationMessageChannelsService {
       },
     });
 
-    if (
-      !isDefined(connectedAccount) ||
-      isConnectionHiddenFromRequestUser({
+    return (
+      isDefined(connectedAccount) &&
+      !isConnectionHiddenFromRequestUser({
         account: connectedAccount,
         requestUserWorkspaceId,
       })
-    ) {
-      throw this.ownershipViolation(connectedAccountId);
-    }
+    );
   }
 
   private async findReachableConnectedAccountIds({
