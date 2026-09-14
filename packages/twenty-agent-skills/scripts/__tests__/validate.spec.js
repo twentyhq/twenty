@@ -85,7 +85,7 @@ describe('validatePortableSkills', () => {
       '---\nname: other-name\ndescription: Demo.\n---\n\n# When To Use\n\nText.\n',
     );
 
-    assertSkillFrontmatter(skillsRoot, 'create-app', fail);
+    assertSkillFrontmatter({ skillsRoot, skillName: 'create-app', fail });
 
     assert.ok(
       failures.includes(
@@ -101,7 +101,7 @@ describe('validatePortableSkills', () => {
       '---\nname: create-app\ndescription: Demo.\nlicense: MIT\n---\n\nNo trigger section.\n',
     );
 
-    assertSkillFrontmatter(skillsRoot, 'create-app', fail);
+    assertSkillFrontmatter({ skillsRoot, skillName: 'create-app', fail });
 
     assert.ok(
       failures.includes(
@@ -122,7 +122,11 @@ describe('validatePortableSkills', () => {
       '---\nname: create-app\ndescription: Demo.\n---\n\n# When To Use\n\nRead `../../references/concepts/basics.md`.\n',
     );
 
-    assertSelfContainedReferences(skillsRoot, 'create-app', fail);
+    assertSelfContainedReferences({
+      skillsRoot,
+      skillName: 'create-app',
+      fail,
+    });
 
     assert.ok(
       failures.some((failure) =>
@@ -138,7 +142,11 @@ describe('validatePortableSkills', () => {
       '---\nname: create-app\ndescription: Demo.\n---\n\n# When To Use\n\nRead `references/concepts/missing.md`.\n',
     );
 
-    assertSelfContainedReferences(skillsRoot, 'create-app', fail);
+    assertSelfContainedReferences({
+      skillsRoot,
+      skillName: 'create-app',
+      fail,
+    });
 
     assert.ok(
       failures.includes(
@@ -155,7 +163,11 @@ describe('validatePortableSkills', () => {
       'interface: {}\n',
     );
 
-    assertSelfContainedReferences(skillsRoot, 'create-app', fail);
+    assertSelfContainedReferences({
+      skillsRoot,
+      skillName: 'create-app',
+      fail,
+    });
 
     assert.ok(
       failures.includes(
@@ -171,7 +183,7 @@ describe('validatePortableSkills', () => {
       '---\nname: create-app\ndescription: Demo.\n---\n\n# When To Use\n\nRun `bash packages/twenty-codex-plugin/scripts/setup-mcp.sh`.\n',
     );
 
-    assertPortability(skillsRoot, 'create-app', fail);
+    assertPortability({ skillsRoot, skillName: 'create-app', fail });
 
     assert.ok(
       failures.includes(
@@ -187,7 +199,7 @@ describe('validatePortableSkills', () => {
       '---\nname: create-app\ndescription: Demo.\n---\n\n# When To Use\n\nVisit https://some-random-host.dev/docs.\n',
     );
 
-    assertPortability(skillsRoot, 'create-app', fail);
+    assertPortability({ skillsRoot, skillName: 'create-app', fail });
 
     assert.ok(
       failures.includes(
@@ -353,11 +365,11 @@ describe('verify-install argument handling', () => {
     const fail = (message) => failures.push(message);
 
     writeValidSkill(installRoot, 'create-app');
-    assertSelfContainedReferences(
-      path.resolve(installRoot),
-      'create-app',
+    assertSelfContainedReferences({
+      skillsRoot: path.resolve(installRoot),
+      skillName: 'create-app',
       fail,
-    );
+    });
 
     assert.deepEqual(failures, []);
   });

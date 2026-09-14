@@ -109,8 +109,16 @@ for (const skillName of skillNames) {
 
     // Every relative link inside every installed file must resolve inside the
     // installed directory; that is the "no manual fixes after installation" bar.
-    assertSelfContainedReferences(path.dirname(installedRoot), skillName, fail);
-    assertSkillFrontmatter(path.dirname(installedRoot), skillName, fail);
+    assertSelfContainedReferences({
+      skillsRoot: path.dirname(installedRoot),
+      skillName,
+      fail,
+    });
+    assertSkillFrontmatter({
+      skillsRoot: path.dirname(installedRoot),
+      skillName,
+      fail,
+    });
 
     console.log(
       `${skillName}: ${installedFiles.length} files verified in ${location}`,

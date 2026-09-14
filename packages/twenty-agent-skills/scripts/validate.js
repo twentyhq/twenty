@@ -57,7 +57,7 @@ const assertSkillDirectories = (skillsRoot, fail) => {
   return skillDirectories;
 };
 
-const assertSkillFrontmatter = (skillsRoot, skillName, fail) => {
+const assertSkillFrontmatter = ({ skillsRoot, skillName, fail }) => {
   const skillPath = path.join(skillsRoot, skillName, 'SKILL.md');
 
   if (!fs.existsSync(skillPath)) {
@@ -93,7 +93,7 @@ const assertSkillFrontmatter = (skillsRoot, skillName, fail) => {
   }
 };
 
-const assertSelfContainedReferences = (skillsRoot, skillName, fail) => {
+const assertSelfContainedReferences = ({ skillsRoot, skillName, fail }) => {
   const skillRoot = path.join(skillsRoot, skillName);
 
   for (const filePath of listFiles(skillRoot)) {
@@ -126,7 +126,7 @@ const assertSelfContainedReferences = (skillsRoot, skillName, fail) => {
   }
 };
 
-const assertPortability = (skillsRoot, skillName, fail) => {
+const assertPortability = ({ skillsRoot, skillName, fail }) => {
   const skillRoot = path.join(skillsRoot, skillName);
 
   for (const filePath of listFiles(skillRoot)) {
@@ -306,9 +306,9 @@ const validatePortableSkills = (skillsRoot, fail) => {
   const skillDirectories = assertSkillDirectories(skillsRoot, fail);
 
   for (const skillName of skillDirectories) {
-    assertSkillFrontmatter(skillsRoot, skillName, fail);
-    assertSelfContainedReferences(skillsRoot, skillName, fail);
-    assertPortability(skillsRoot, skillName, fail);
+    assertSkillFrontmatter({ skillsRoot, skillName, fail });
+    assertSelfContainedReferences({ skillsRoot, skillName, fail });
+    assertPortability({ skillsRoot, skillName, fail });
   }
 
   assertSharedReferenceConsistency(skillsRoot, skillDirectories, fail);
