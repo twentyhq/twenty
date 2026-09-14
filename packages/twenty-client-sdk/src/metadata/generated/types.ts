@@ -13296,6 +13296,12 @@ export default {
             "displayName": [
                 1
             ],
+            "personId": [
+                3
+            ],
+            "workspaceMemberId": [
+                3
+            ],
             "__typename": [
                 1
             ]
