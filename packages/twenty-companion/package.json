@@ -1,0 +1,58 @@
+{
+  "name": "@twentyhq/companion",
+  "productName": "Twenty",
+  "version": "0.1.0",
+  "private": true,
+  "description": "See upcoming meetings, record calls, and open transcripts and summaries in your Twenty workspace.",
+  "license": "AGPL-3.0",
+  "type": "module",
+  "main": "dist/main.cjs",
+  "packageManager": "yarn@4.13.0",
+  "engines": {
+    "node": "^24.5.0"
+  },
+  "scripts": {
+    "dev": "yarn native:setup && yarn lingui:compile && node scripts/dev.mjs",
+    "build": "yarn lingui:compile && node scripts/build.mjs",
+    "start": "yarn native:setup && electron .",
+    "preview": "yarn lingui:compile && vite --host 127.0.0.1 --port 4317",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "package": "yarn native:setup && yarn lingui:compile && node scripts/package.mjs",
+    "package:archive": "yarn native:setup && yarn lingui:compile && node scripts/archive.mjs",
+    "lingui:extract": "lingui extract",
+    "lingui:compile": "lingui compile",
+    "native:setup": "node scripts/setup-native.mjs"
+  },
+  "dependencies": {
+    "@base-ui/react": "^1.5.0",
+    "@fontsource/inter": "^5.2.8",
+    "@lingui/core": "5.9.5",
+    "@recallai/desktop-sdk": "2.0.29",
+    "clsx": "^2.1.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "twenty-ui": "workspace:*",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@electron/packager": "^19.0.0",
+    "@lingui/cli": "5.9.5",
+    "@lingui/conf": "5.9.5",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^24.7.2",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "electron": "44.1.0",
+    "esbuild": "^0.28.1",
+    "jsdom": "^30.0.1",
+    "monaco-editor": "^0.52.2",
+    "sass": "^1.83.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.0",
+    "vite-plugin-svgr": "^4.3.0",
+    "vitest": "^4.1.0"
+  }
+}
