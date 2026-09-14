@@ -25,6 +25,7 @@ import { FindRecordsWorkflowAction } from 'src/modules/workflow/workflow-executo
 import { PickRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/pick-record.workflow-action';
 import { UpdateRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/update-record.workflow-action';
 import { UpsertRecordWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/upsert-record.workflow-action';
+import { RunWorkflowWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/run-workflow/run-workflow.workflow-action';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 @Injectable()
@@ -49,6 +50,7 @@ export class WorkflowActionFactory {
     private readonly aiAgentWorkflowAction: AiAgentWorkflowAction,
     private readonly emptyWorkflowAction: EmptyWorkflowAction,
     private readonly delayWorkflowAction: DelayWorkflowAction,
+    private readonly runWorkflowWorkflowAction: RunWorkflowWorkflowAction,
   ) {}
 
   get(stepType: WorkflowActionType): WorkflowAction {
@@ -91,6 +93,8 @@ export class WorkflowActionFactory {
         return this.emptyWorkflowAction;
       case WorkflowActionType.DELAY:
         return this.delayWorkflowAction;
+      case WorkflowActionType.RUN_WORKFLOW:
+        return this.runWorkflowWorkflowAction;
       default:
         throw new WorkflowStepExecutorException(
           `Workflow step executor not found for step type '${stepType}'`,
