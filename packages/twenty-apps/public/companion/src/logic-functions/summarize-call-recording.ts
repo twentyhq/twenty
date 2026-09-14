@@ -1,4 +1,5 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
+import { enqueueJobs } from 'twenty-sdk/logic-function';
 import {
   defineLogicFunction,
   type DatabaseEventPayload,
@@ -21,8 +22,18 @@ type CallRecordingDatabaseEvent = DatabaseEventPayload<
 >;
 
 export const summarizeCallRecordingHandler = async (
-  event: CallRecordingDatabaseEvent,
+  event: CallRecordingDatabaseEvent | { callRecordingId: string },
 ): Promise<object> => {
+  if ('callRecordingId' in event) {
+    try {
+      const result = await generateCallRecordingSummary(new CoreApiClient(), {
+        callRecordingId: event.callRecordingId,
+      });
+      return { callRecordingId: event.callRecordingId, ...result };
+    } catch (error) {
+      throw buildStepError('call recording summarization', error);
+    }
+  }
   const [objectName, action] = event.name.split('.');
 
   if (objectName !== CALL_RECORDING_OBJECT_NAME || action !== 'updated') {
@@ -35,17 +46,17 @@ export const summarizeCallRecordingHandler = async (
     return { skipped: true, reason: 'transcript unchanged' };
   }
 
-  const client = new CoreApiClient();
-
-  try {
-    const result = await generateCallRecordingSummary(client, {
-      callRecordingId: event.recordId,
-    });
-
-    return { callRecordingId: event.recordId, ...result };
-  } catch (error) {
-    throw buildStepError('call recording summarization', error);
-  }
+  await enqueueJobs({
+    logicFunctionUniversalIdentifier:
+      SUMMARIZE_CALL_RECORDING_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+    jobs: [
+      {
+        jobId: `companion-summary-${event.recordId}`,
+        payload: { callRecordingId: event.recordId },
+      },
+    ],
+  });
+  return { callRecordingId: event.recordId, enqueued: true };
 };
 
 export default defineLogicFunction({

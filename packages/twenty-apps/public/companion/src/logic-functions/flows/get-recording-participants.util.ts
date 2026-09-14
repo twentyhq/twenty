@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import {
@@ -62,10 +63,7 @@ const fullName = (name: Person['name']) =>
   [name?.firstName, name?.lastName].filter(Boolean).join(' ').trim();
 const personEmails = (person: Person) =>
   [person.emails?.primaryEmail, ...(person.emails?.additionalEmails ?? [])]
-    .filter(
-      (email): email is string =>
-        typeof email === 'string' && email.trim() !== '',
-    )
+    .filter((email): email is string => isNonEmptyString(email))
     .map(normalize);
 
 const transcriptParticipants = (

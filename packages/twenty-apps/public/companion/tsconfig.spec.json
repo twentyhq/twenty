@@ -4,6 +4,6 @@
     "composite": true,
     "types": ["vitest/globals", "node"]
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "../../shared/recall/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }

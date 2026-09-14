@@ -1,4 +1,7 @@
 import { isDesktopAudioRecording } from 'src/logic-functions/domain/is-desktop-audio-recording.util';
+import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
+import { isCallRecordingMediaImportComplete } from 'src/logic-functions/domain/is-call-recording-import-complete.util';
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
@@ -74,6 +77,20 @@ export const syncCallRecording = async ({
     };
   }
 
+  if (
+    parseTranscriptMarker(updateData.transcript ?? callRecording.transcript)
+      ?.status === 'FAILED' &&
+    isCallRecordingMediaImportComplete({
+      requiresVideo: !isDesktopAudioRecording(callRecording.companionSession),
+      audio: updateData.audio ?? callRecording.audio,
+      video: updateData.video ?? callRecording.video,
+      companionFailureReason:
+        updateData.companionFailureReason ??
+        callRecording.companionFailureReason,
+    })
+  )
+    updateData.status = CallRecordingStatus.FAILED;
+
   const completesImport = shouldCompleteCallRecordingImport({
     current: callRecording,
     updateData,
@@ -93,7 +110,7 @@ export const syncCallRecording = async ({
   return { updated: true, requestedTranscript };
 };
 
-// A media size marker must not overwrite the failure reason of a FAILED recording.
+// Preserve both failures so oversized media does not prevent terminal status.
 const resolveMediaImportUpdate = ({
   mediaImportUpdate,
   currentStatus,
@@ -111,6 +128,13 @@ const resolveMediaImportUpdate = ({
 
   if (!hasNoRecording && !transcriptFailureReason) {
     return mediaImportUpdate;
+  }
+
+  if (transcriptFailureReason && mediaImportUpdate.companionFailureReason) {
+    return {
+      ...mediaImportUpdate,
+      companionFailureReason: `${transcriptFailureReason},${mediaImportUpdate.companionFailureReason}`,
+    };
   }
 
   const { companionFailureReason: _failureReason, ...scrubbedUpdate } =

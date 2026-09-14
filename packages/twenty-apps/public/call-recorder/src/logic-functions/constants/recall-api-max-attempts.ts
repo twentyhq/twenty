@@ -1,1 +1,1 @@
-export const RECALL_API_MAX_ATTEMPTS = 3;
+export { RECALL_API_MAX_ATTEMPTS } from '../../../../../shared/recall/recall-api-max-attempts';

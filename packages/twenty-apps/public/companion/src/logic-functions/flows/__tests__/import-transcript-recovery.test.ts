@@ -73,3 +73,20 @@ it('clears a confirmed deleted artifact so a later import can replace it', async
   ).toMatchObject({ recallTranscriptId: 'replacement' });
   expect(create).toHaveBeenCalledOnce();
 });
+
+it.each([429, 500, 503])(
+  'retries transcript creation after HTTP %s without suppressing future attempts',
+  async (status) => {
+    create.mockResolvedValueOnce({
+      ok: false,
+      status,
+      errorMessage: 'try later',
+    });
+    expect((await run(null)).updateData).toEqual({});
+    create.mockResolvedValueOnce({ ok: true, transcriptId: 'retried' });
+    expect((await run(null)).updateData.transcript).toMatchObject({
+      recallTranscriptId: 'retried',
+    });
+    expect(create).toHaveBeenCalledTimes(2);
+  },
+);

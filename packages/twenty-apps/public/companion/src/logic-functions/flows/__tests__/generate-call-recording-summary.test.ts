@@ -6,13 +6,6 @@ import { generateCallRecordingSummary } from 'src/logic-functions/flows/generate
 const runAgentMock = vi.hoisted(() => vi.fn());
 const stored = vi.hoisted(() => new Map<string, unknown>());
 const saveCache = vi.hoisted(() => vi.fn());
-vi.mock('src/logic-functions/data/claim-summary-generation.util', () => ({
-  claimSummaryGeneration: async (key: string) => {
-    if (stored.has(key)) return false;
-    stored.set(key, { status: 'RUNNING', startedAt: new Date().toISOString() });
-    return true;
-  },
-}));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
   ...(await importOriginal<object>()),
@@ -220,19 +213,6 @@ describe('generateCallRecordingSummary', () => {
     expect(runAgentMock).toHaveBeenCalledTimes(1);
   });
 
-  it('runs one paid generation when two deliveries both read an empty summary', async () => {
-    const results = await Promise.all([
-      generateCallRecordingSummary(CLIENT, {
-        callRecordingId: 'call-recording-1',
-      }),
-      generateCallRecordingSummary(CLIENT, {
-        callRecordingId: 'call-recording-1',
-      }),
-    ]);
-    expect(runAgentMock).toHaveBeenCalledTimes(1);
-    expect(results).toContainEqual({ outcome: 'generated' });
-  });
-
   it('reports an interrupted request without automatically charging again', async () => {
     stored.set('companion-summary:call-recording-1:automatic', {
       status: 'RUNNING',
@@ -261,6 +241,9 @@ describe('generateCallRecordingSummary', () => {
 
   it('reports persistent storage failure without repeating a paid generation', async () => {
     saveCache
+      .mockImplementationOnce(async (key: string, value: unknown) => {
+        stored.set(key, value);
+      })
       .mockRejectedValueOnce(new Error('Database unavailable'))
       .mockRejectedValueOnce(new Error('Database unavailable'))
       .mockRejectedValueOnce(new Error('Database unavailable'))
@@ -277,14 +260,18 @@ describe('generateCallRecordingSummary', () => {
   });
 
   it('retries persisting the paid output after a temporary key-value write failure', async () => {
-    saveCache.mockRejectedValueOnce(new Error('temporary storage failure'));
+    saveCache
+      .mockImplementationOnce(async (key: string, value: unknown) => {
+        stored.set(key, value);
+      })
+      .mockRejectedValueOnce(new Error('temporary storage failure'));
     expect(
       await generateCallRecordingSummary(CLIENT, {
         callRecordingId: 'call-recording-1',
       }),
     ).toEqual({ outcome: 'generated' });
     expect(runAgentMock).toHaveBeenCalledTimes(1);
-    expect(saveCache).toHaveBeenCalledTimes(2);
+    expect(saveCache).toHaveBeenCalledTimes(3);
   });
 
   it('generates for recordings another actor created when explicitly requested', async () => {

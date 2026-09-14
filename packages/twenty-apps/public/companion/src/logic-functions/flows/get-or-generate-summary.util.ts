@@ -1,7 +1,6 @@
 import { kv, runAgent } from 'twenty-sdk/logic-function';
 
 import { CALL_RECORDING_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { claimSummaryGeneration } from 'src/logic-functions/data/claim-summary-generation.util';
 import { parseCallRecordingSummaryAgentResponse } from 'src/logic-functions/domain/parse-call-recording-summary-agent-response.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 
@@ -51,10 +50,8 @@ export const getOrGenerateSummary = async (
 ): Promise<CachedSummary> => {
   const cached = await readCachedSummary(key);
   if (cached) return cached;
-  if (!(await claimSummaryGeneration(key)))
-    return (await readCachedSummary(key)) ?? { status: 'RUNNING' };
-
-  // A claim does not expire: an interrupted paid request has an uncertain outcome.
+  // The queue serializes generation; this marker preserves uncertain paid attempts on retries.
+  await kv.set(key, { status: 'RUNNING', startedAt: new Date().toISOString() });
   const response = await runAgent({
     agentUniversalIdentifier:
       CALL_RECORDING_SUMMARIZER_AGENT_UNIVERSAL_IDENTIFIER,

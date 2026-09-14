@@ -11,6 +11,6 @@ Application universal identifier: `8bdaaa9f-dc53-4247-a89b-aa386c9b3244`.
 
 ## Local verification
 
-Use a local Twenty instance with the OAuth and atomic app-state prerequisites installed. Verify installation, per-user sign-in, settings, and recording recovery before publishing a release.
+Use a local Twenty instance supporting CLI OAuth and queue job IDs. Verify installation, per-user sign-in, settings, and recording recovery before publishing a release.
 
 A temporary public tunnel is required for Recall callbacks to localhost. When its URL changes, update the dedicated Companion Recall endpoint. Keep the tunnel and Docker running while processing recordings, and retire the local endpoint when testing ends.

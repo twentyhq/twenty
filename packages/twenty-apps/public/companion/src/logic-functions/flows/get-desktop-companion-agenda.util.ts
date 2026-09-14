@@ -189,10 +189,7 @@ export const getDesktopCompanionAgenda = async (
     emails: [
       viewer?.email,
       ...metadata.data.myCalendarChannels.map((channel) => channel.handle),
-    ].filter(
-      (email): email is string =>
-        typeof email === 'string' && email.trim() !== '',
-    ),
+    ].filter((email): email is string => isNonEmptyString(email)),
     name: [viewer?.firstName, viewer?.lastName].filter(Boolean).join(' '),
     workspaceMemberId: viewer?.workspaceMember?.id,
   });

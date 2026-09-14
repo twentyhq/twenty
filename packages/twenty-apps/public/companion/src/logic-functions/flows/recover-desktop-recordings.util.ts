@@ -3,7 +3,6 @@ import { CallRecordingStatus } from 'src/logic-functions/constants/call-recordin
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { getRecallApiConfig } from 'src/logic-functions/recall-api/get-recall-api-config.util';
 import { getOwnedDesktopUpload } from 'src/logic-functions/recall-api/get-owned-desktop-upload.util';
-import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { getRecallRecording } from 'src/logic-functions/recall-api/get-recall-recording.util';
 import { normalizeRecallTimestamp } from 'src/logic-functions/recall-api/normalize-recall-timestamp.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
@@ -60,17 +59,7 @@ export const recoverDesktopRecordings = async (
         filter: {
           and: [
             { companionSession: { is: 'NOT_NULL' } },
-            {
-              or: [
-                { status: { in: ['JOINING', 'RECORDING', 'PROCESSING'] } },
-                {
-                  and: [
-                    { status: { eq: 'FAILED' } },
-                    { transcript: { like: '%FAILED%' } },
-                  ],
-                },
-              ],
-            },
+            { status: { in: ['JOINING', 'RECORDING', 'PROCESSING'] } },
             {
               updatedAt: {
                 lt: staleBefore,
@@ -93,13 +82,8 @@ export const recoverDesktopRecordings = async (
   let recovered = 0;
   for (const { node } of result.callRecordings?.edges ?? []) {
     if (!node || !isDesktopAudioRecording(node.companionSession)) continue;
-    const isFailedTranscript =
-      node.status === 'FAILED' &&
-      parseTranscriptMarker(node.transcript)?.status === 'FAILED';
-    if (node.status === 'FAILED' && !isFailedTranscript) continue;
-    const recoverableStatuses = isFailedTranscript
-      ? [...NON_TERMINAL_CALL_RECORDING_STATUSES, CallRecordingStatus.FAILED]
-      : NON_TERMINAL_CALL_RECORDING_STATUSES;
+    if (node.status === 'FAILED') continue;
+    const recoverableStatuses = NON_TERMINAL_CALL_RECORDING_STATUSES;
     const session = asRecord(node.companionSession);
     // Rotate the bounded batch so long calls cannot starve completed uploads.
     const claimed = await client.mutation({

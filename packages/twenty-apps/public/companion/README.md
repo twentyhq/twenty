@@ -24,9 +24,9 @@ The backend provisions audio-only Recall uploads, imports audio and transcripts 
 
 A conditional status update ensures only the worker completing a recording submits its charge. Completed recordings are not charged again by webhook or recovery replays. As with the existing Call Recorder path, an ambiguous charge failure is not automatically retried. This integration adds no billing endpoint, pricing policy, receipt table, or usage-accounting migration.
 
-Summary workers claim an application-scoped key atomically before running the paid agent. They cache the generated result before writing the recording summary, so delivery retries reuse that result. Persistent cache-write failures are reported after bounded retries; no additional queue is introduced. Maintenance saves cached automatic summaries without generating new ones or replacing an existing summary. Claims do not expire automatically: a worker interrupted during a paid request has an uncertain outcome and must not silently trigger another paid request. If a generated result cannot be persisted, it cannot be recovered automatically.
+Transcript updates enqueue summary generation with a stable job ID per recording. The existing queue deduplicates jobs, and the existing KV store caches results before writing the recording summary so retries reuse them. A running marker preserves uncertain paid attempts after interruption. Maintenance saves cached summaries without generating new ones or replacing an existing summary. Persistent cache-write failures are reported after bounded retries.
 
-The prerequisites are the existing CLI OAuth flow and the `setAppKeyValueIfAbsent` mutation. Existing billing, queue, and usage services remain unchanged. Older servers without atomic claims cannot generate summaries safely and return an error rather than running an unlocked generation.
+The integration uses existing CLI OAuth, queue job IDs, and KV get/set operations. No changes to core billing, queue, or application-state APIs are required.
 
 ## Development
 

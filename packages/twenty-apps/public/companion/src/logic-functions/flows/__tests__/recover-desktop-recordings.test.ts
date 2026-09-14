@@ -132,7 +132,7 @@ it('does not reopen a recording completed while Recall was being queried', async
   expect(enqueue).not.toHaveBeenCalled();
 });
 
-it('recovers audio for historical recordings marked failed solely by their transcript', async () => {
+it('does not reopen terminal transcript failures', async () => {
   const result = await query();
   const recording = result.callRecordings.edges[0].node;
   recording.status = 'FAILED';
@@ -147,15 +147,9 @@ it('recovers audio for historical recordings marked failed solely by their trans
   });
   expect(
     await recoverDesktopRecordings(client, new Date('2026-09-07T12:20:00Z')),
-  ).toEqual({ recovered: 1 });
-  expect(update).toHaveBeenCalledWith(
-    client,
-    expect.objectContaining({
-      expectedStatuses: expect.arrayContaining(['FAILED']),
-      data: { externalRecordingId: 'recall-1', status: 'PROCESSING' },
-    }),
-  );
-  expect(enqueue).toHaveBeenCalledWith({ callRecordingId: recording.id });
+  ).toEqual({ recovered: 0 });
+  expect(update).not.toHaveBeenCalled();
+  expect(request).not.toHaveBeenCalled();
 });
 
 it('does not revive other failed calls whose transcript merely contains the word FAILED', async () => {

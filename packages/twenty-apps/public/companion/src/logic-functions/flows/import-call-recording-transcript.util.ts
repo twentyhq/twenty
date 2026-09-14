@@ -69,6 +69,9 @@ export const importCallRecordingTranscript = async ({
         `[companion] failed to request transcript for Recall recording ${externalRecordingId}: ${createResult.errorMessage}`,
       );
 
+      if (createResult.status === 429 || (createResult.status ?? 0) >= 500)
+        return buildEmptyTranscriptArtifactResult();
+
       return {
         updateData: {
           transcript: buildPendingTranscriptMarker({

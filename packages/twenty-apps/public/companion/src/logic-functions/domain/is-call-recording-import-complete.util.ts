@@ -3,15 +3,13 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
 import { parseMediaFileTooLargeMarkers } from 'src/logic-functions/domain/parse-media-file-too-large-markers.util';
 
-export const isCallRecordingImportComplete = ({
-  transcript,
+export const isCallRecordingMediaImportComplete = ({
   audio,
   video,
   companionFailureReason,
   requiresVideo = true,
 }: {
   requiresVideo?: boolean;
-  transcript: unknown;
   audio: FilesFieldValue | undefined;
   video: FilesFieldValue | undefined;
   companionFailureReason: string | null | undefined;
@@ -20,8 +18,15 @@ export const isCallRecordingImportComplete = ({
     parseMediaFileTooLargeMarkers(companionFailureReason);
 
   return (
-    Array.isArray(transcript) &&
     (isNonEmptyArray(audio) || audioFileTooLarge) &&
     (!requiresVideo || isNonEmptyArray(video) || videoFileTooLarge)
   );
 };
+
+export const isCallRecordingImportComplete = ({
+  transcript,
+  ...media
+}: Parameters<typeof isCallRecordingMediaImportComplete>[0] & {
+  transcript: unknown;
+}): boolean =>
+  Array.isArray(transcript) && isCallRecordingMediaImportComplete(media);

@@ -1,3 +1,7 @@
+import {
+  enqueueJobs,
+  type LogicFunctionExecutionContext,
+} from 'twenty-sdk/logic-function';
 import { beforeEach, expect, it, vi } from 'vitest';
 
 import { reconcileDesktopRecordingsHandler } from 'src/logic-functions/reconcile-desktop-recordings';
@@ -17,9 +21,11 @@ it('still attempts summary persistence during a media recovery outage', async ()
   vi.mocked(recoverDesktopRecordings).mockRejectedValue(
     new Error('media unavailable'),
   );
-  await expect(reconcileDesktopRecordingsHandler()).rejects.toThrow(
-    'media unavailable',
-  );
+  await expect(
+    reconcileDesktopRecordingsHandler({ recover: true }, {
+      workspaceId: 'workspace-1',
+    } as LogicFunctionExecutionContext),
+  ).rejects.toThrow('media unavailable');
   expect(recoverRecordingSummaries).toHaveBeenCalledOnce();
 });
 
@@ -27,12 +33,35 @@ it('reports a summary recovery failure after media recovery has also run', async
   vi.mocked(recoverRecordingSummaries).mockRejectedValue(
     new Error('summary unavailable'),
   );
-  await expect(reconcileDesktopRecordingsHandler()).rejects.toThrow(
-    'summary unavailable',
-  );
+  await expect(
+    reconcileDesktopRecordingsHandler({ recover: true }, {
+      workspaceId: 'workspace-1',
+    } as LogicFunctionExecutionContext),
+  ).rejects.toThrow('summary unavailable');
   expect(recoverDesktopRecordings).toHaveBeenCalledOnce();
 });
 
 vi.mock('src/logic-functions/flows/recover-recording-summaries.util', () => ({
   recoverRecordingSummaries: vi.fn(),
 }));
+
+vi.mock('twenty-sdk/logic-function', () => ({ enqueueJobs: vi.fn() }));
+it('queues recovery with a stable workspace-specific delay instead of calling Recall in the cron', async () => {
+  const context = {
+    workspaceId: 'workspace-1',
+  } as LogicFunctionExecutionContext;
+  await reconcileDesktopRecordingsHandler({}, context);
+  await reconcileDesktopRecordingsHandler({}, context);
+  const [first, second] = vi.mocked(enqueueJobs).mock.calls;
+  expect(first[0].delayMs).toBe(second[0].delayMs);
+  expect(first[0].delayMs).toBeGreaterThan(0);
+  expect(first[0].delayMs).toBeLessThan(300_000);
+  expect(recoverDesktopRecordings).not.toHaveBeenCalled();
+  expect(recoverRecordingSummaries).not.toHaveBeenCalled();
+  await reconcileDesktopRecordingsHandler({}, {
+    workspaceId: 'workspace-2',
+  } as LogicFunctionExecutionContext);
+  expect(vi.mocked(enqueueJobs).mock.calls[2][0].delayMs).not.toBe(
+    first[0].delayMs,
+  );
+});
