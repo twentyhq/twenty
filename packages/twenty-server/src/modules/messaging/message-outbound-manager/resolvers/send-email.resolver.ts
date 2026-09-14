@@ -71,7 +71,6 @@ export class SendEmailResolver {
           inReplyTo: input.inReplyTo,
         },
         { workspaceId: workspace.id },
-        'send',
       );
 
       if (!result.success) {

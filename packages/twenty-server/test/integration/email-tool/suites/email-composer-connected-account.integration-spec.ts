@@ -29,13 +29,6 @@ const setVisibility = async (
   );
 };
 
-const setProvider = async (connectedAccountId: string, provider: string) => {
-  await global.testDataSource.query(
-    `UPDATE core."connectedAccount" SET provider = $1 WHERE id = $2`,
-    [provider, connectedAccountId],
-  );
-};
-
 describe('EmailComposerService connected account resolution (integration)', () => {
   let service: EmailComposerService;
 
@@ -50,7 +43,6 @@ describe('EmailComposerService connected account resolution (integration)', () =
       const result = await service.composeEmail(
         { ...baseParams, connectedAccountId: JONY_CONNECTED_ACCOUNT_ID },
         { workspaceId: WORKSPACE_ID, userWorkspaceId: PHIL_USER_WORKSPACE_ID },
-        'send',
       );
 
       expect(result.success).toBe(true);
@@ -63,7 +55,6 @@ describe('EmailComposerService connected account resolution (integration)', () =
       const result = await service.composeEmail(
         { ...baseParams, connectedAccountId: JONY_CONNECTED_ACCOUNT_ID },
         { workspaceId: WORKSPACE_ID },
-        'send',
       );
 
       expect(result.success).toBe(true);
@@ -80,7 +71,6 @@ describe('EmailComposerService connected account resolution (integration)', () =
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
-          'send',
         ),
       ).rejects.toThrow('Connected account id is not a valid UUID');
     });
@@ -93,7 +83,6 @@ describe('EmailComposerService connected account resolution (integration)', () =
             workspaceId: WORKSPACE_ID,
             userWorkspaceId: PHIL_USER_WORKSPACE_ID,
           },
-          'send',
         ),
       ).rejects.toThrow('No connected account found for id');
     });
@@ -101,14 +90,10 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
   describe('when the caller names none', () => {
     it('composes from the caller own account rather than the first of the workspace', async () => {
-      const result = await service.composeEmail(
-        baseParams,
-        {
-          workspaceId: WORKSPACE_ID,
-          userWorkspaceId: PHIL_USER_WORKSPACE_ID,
-        },
-        'send',
-      );
+      const result = await service.composeEmail(baseParams, {
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: PHIL_USER_WORKSPACE_ID,
+      });
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(
@@ -120,14 +105,10 @@ describe('EmailComposerService connected account resolution (integration)', () =
       await setVisibility(JONY_CONNECTED_ACCOUNT_ID, 'workspace');
 
       try {
-        const result = await service.composeEmail(
-          baseParams,
-          {
-            workspaceId: WORKSPACE_ID,
-            userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
-          },
-          'send',
-        );
+        const result = await service.composeEmail(baseParams, {
+          workspaceId: WORKSPACE_ID,
+          userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
+        });
 
         expect(result.success).toBe(true);
         expect(result.success && result.data.connectedAccount.id).toBe(
@@ -140,57 +121,26 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
     it('throws rather than composing from a colleague account', async () => {
       await expect(
-        service.composeEmail(
-          baseParams,
-          {
-            workspaceId: WORKSPACE_ID,
-            userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
-          },
-          'send',
-        ),
-      ).rejects.toThrow(
-        'No connected account able to send email for user workspace',
-      );
+        service.composeEmail(baseParams, {
+          workspaceId: WORKSPACE_ID,
+          userWorkspaceId: UNKNOWN_USER_WORKSPACE_ID,
+        }),
+      ).rejects.toThrow('No connected account usable by user workspace');
     });
 
     it('throws when the caller is unknown and no account is shared with the whole workspace', async () => {
       await expect(
-        service.composeEmail(baseParams, { workspaceId: WORKSPACE_ID }, 'send'),
-      ).rejects.toThrow(
-        'No connected account able to send email for this workspace',
-      );
-    });
-
-    it('skips an account whose provider carries no mailbox', async () => {
-      await setProvider(PHIL_CONNECTED_ACCOUNT_ID, 'app');
-
-      try {
-        await expect(
-          service.composeEmail(
-            baseParams,
-            {
-              workspaceId: WORKSPACE_ID,
-              userWorkspaceId: PHIL_USER_WORKSPACE_ID,
-            },
-            'send',
-          ),
-        ).rejects.toThrow('No connected account able to send email');
-      } finally {
-        await setProvider(PHIL_CONNECTED_ACCOUNT_ID, 'google');
-      }
+        service.composeEmail(baseParams, { workspaceId: WORKSPACE_ID }),
+      ).rejects.toThrow('No connected account shared with this workspace');
     });
 
     it('takes an account shared with the whole workspace when the caller is unknown', async () => {
       await setVisibility(JONY_CONNECTED_ACCOUNT_ID, 'workspace');
 
       try {
-        const result = await service.composeEmail(
-          baseParams,
-          {
-            workspaceId: WORKSPACE_ID,
-          },
-          'send',
-        );
+        const result = await service.composeEmail(baseParams, {
+          workspaceId: WORKSPACE_ID,
+        });
 
         expect(result.success).toBe(true);
         expect(result.success && result.data.connectedAccount.id).toBe(
@@ -201,48 +151,11 @@ describe('EmailComposerService connected account resolution (integration)', () =
       }
     });
 
-    it('skips an email group when drafting, it can send but holds no mailbox', async () => {
-      await setProvider(PHIL_CONNECTED_ACCOUNT_ID, 'email_group');
-
-      try {
-        const sent = await service.composeEmail(
-          baseParams,
-          {
-            workspaceId: WORKSPACE_ID,
-            userWorkspaceId: PHIL_USER_WORKSPACE_ID,
-          },
-          'send',
-        );
-
-        expect(sent.success).toBe(true);
-        expect(sent.success && sent.data.connectedAccount.id).toBe(
-          PHIL_CONNECTED_ACCOUNT_ID,
-        );
-
-        await expect(
-          service.composeEmail(
-            baseParams,
-            {
-              workspaceId: WORKSPACE_ID,
-              userWorkspaceId: PHIL_USER_WORKSPACE_ID,
-            },
-            'draft',
-          ),
-        ).rejects.toThrow('No connected account able to send email');
-      } finally {
-        await setProvider(PHIL_CONNECTED_ACCOUNT_ID, 'google');
-      }
-    });
-
     it('ignores visibility for a system run, which is the workspace acting on itself', async () => {
-      const result = await service.composeEmail(
-        baseParams,
-        {
-          workspaceId: WORKSPACE_ID,
-          callerType: 'application',
-        },
-        'send',
-      );
+      const result = await service.composeEmail(baseParams, {
+        workspaceId: WORKSPACE_ID,
+        callerType: 'application',
+      });
 
       expect(result.success).toBe(true);
       expect(result.success && result.data.connectedAccount.id).toBe(

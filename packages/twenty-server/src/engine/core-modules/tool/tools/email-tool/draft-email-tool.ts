@@ -33,7 +33,6 @@ export class DraftEmailTool implements Tool {
       const result = await this.emailComposerService.composeEmail(
         parameters,
         context,
-        'draft',
       );
 
       if (!result.success) {

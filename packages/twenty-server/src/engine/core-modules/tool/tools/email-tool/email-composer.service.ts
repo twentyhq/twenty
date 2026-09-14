@@ -22,9 +22,7 @@ import {
   EmailToolExceptionCode,
 } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
 import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
-import { type EmailComposeOperation } from 'src/engine/core-modules/tool/tools/email-tool/types/email-compose-operation.type';
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
-import { canProviderComposeEmail } from 'src/engine/core-modules/tool/tools/email-tool/utils/can-provider-compose-email.util';
 import { isCallerBypassingAccountVisibility } from 'src/engine/core-modules/tool/tools/email-tool/utils/is-caller-bypassing-account-visibility.util';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
@@ -105,10 +103,7 @@ export class EmailComposerService {
     userWorkspaceId?: string;
     callerType?: WorkspaceAuthContextType;
   }): Promise<
-    Pick<
-      ConnectedAccountEntity,
-      'id' | 'provider' | 'visibility' | 'userWorkspaceId'
-    >[]
+    Pick<ConnectedAccountEntity, 'id' | 'visibility' | 'userWorkspaceId'>[]
   > {
     if (isCallerBypassingAccountVisibility(callerType)) {
       const authContext = buildSystemAuthContext(workspaceId);
@@ -118,12 +113,7 @@ export class EmailComposerService {
           this.connectedAccountRepository.find({
             where: { workspaceId, archivedAt: IsNull() },
             order: { createdAt: 'ASC', id: 'ASC' },
-            select: {
-              id: true,
-              provider: true,
-              visibility: true,
-              userWorkspaceId: true,
-            },
+            select: { id: true, visibility: true, userWorkspaceId: true },
           }),
         authContext,
       );
@@ -139,25 +129,16 @@ export class EmailComposerService {
     workspaceId,
     userWorkspaceId,
     callerType,
-    operation,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
     callerType?: WorkspaceAuthContextType;
-    operation: EmailComposeOperation;
   }): Promise<string> {
-    const selectableAccounts = (
-      await this.findSelectableConnectedAccounts({
-        workspaceId,
-        userWorkspaceId,
-        callerType,
-      })
-    ).filter((connectedAccount) =>
-      canProviderComposeEmail({
-        provider: connectedAccount.provider,
-        operation,
-      }),
-    );
+    const selectableAccounts = await this.findSelectableConnectedAccounts({
+      workspaceId,
+      userWorkspaceId,
+      callerType,
+    });
 
     const connectedAccountId = isDefined(userWorkspaceId)
       ? selectConnectedAccountIdForCaller({
@@ -169,8 +150,8 @@ export class EmailComposerService {
     if (!isDefined(connectedAccountId)) {
       throw new EmailToolException(
         isDefined(userWorkspaceId)
-          ? `No connected account able to send email for user workspace '${userWorkspaceId}'`
-          : 'No connected account able to send email for this workspace',
+          ? `No connected account usable by user workspace '${userWorkspaceId}'`
+          : 'No connected account shared with this workspace',
         EmailToolExceptionCode.NO_USABLE_CONNECTED_ACCOUNT,
       );
     }
@@ -371,7 +352,6 @@ export class EmailComposerService {
   async composeEmail(
     parameters: ComposeEmailParams,
     context: ToolExecutionContext,
-    operation: EmailComposeOperation,
   ): Promise<EmailComposerResult> {
     const { workspaceId, userWorkspaceId, callerType } = context;
     const { subject, body, files, inReplyTo, fromHandle } = parameters;
@@ -416,7 +396,6 @@ export class EmailComposerService {
         workspaceId,
         userWorkspaceId,
         callerType,
-        operation,
       });
     }
 

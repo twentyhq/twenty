@@ -236,7 +236,7 @@ describe('Email workflow actions with no sender configured (integration)', () =>
       status: 'FAILED',
       stepStatus: 'FAILED',
       stepError: expect.stringContaining(
-        `No connected account able to send email for user workspace '${CALLER_USER_WORKSPACE_ID}'`,
+        `No connected account usable by user workspace '${CALLER_USER_WORKSPACE_ID}'`,
       ),
     });
     expect(google.sentMessages).toHaveLength(sentMessageCount);
