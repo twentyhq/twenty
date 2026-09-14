@@ -31,6 +31,7 @@ const NOTE_ATTACHMENT_ID = randomUUID();
 const PERSON_ATTACHMENT_ID = randomUUID();
 const ORPHAN_ATTACHMENT_ID = randomUUID();
 const MEMBER_ATTACHMENT_ID = randomUUID();
+const UNATTACHED_MEMBER_ATTACHMENT_ID = randomUUID();
 const NOTE_TARGET_ID = randomUUID();
 
 const ATTACHMENT_IDS = [
@@ -38,6 +39,7 @@ const ATTACHMENT_IDS = [
   PERSON_ATTACHMENT_ID,
   ORPHAN_ATTACHMENT_ID,
   MEMBER_ATTACHMENT_ID,
+  UNATTACHED_MEMBER_ATTACHMENT_ID,
 ];
 
 const collectIds = (edges: { node: { id: string } }[]): string[] =>
@@ -117,6 +119,7 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
   let recordShareService: RecordShareService;
   let noteObjectMetadataId: string;
   let personObjectMetadataId: string;
+  let attachmentObjectMetadataId: string;
 
   const sourceId = randomUUID();
 
@@ -131,6 +134,18 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     });
 
     noteObjectMetadataId = noteObjectMetadata.id;
+
+    const attachmentObjectMetadata =
+      await getCoreRepository<ObjectMetadataEntity>(
+        ObjectMetadataEntity,
+      ).findOneOrFail({
+        where: {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          nameSingular: 'attachment',
+        },
+      });
+
+    attachmentObjectMetadataId = attachmentObjectMetadata.id;
 
     const personObjectMetadata = await getCoreRepository<ObjectMetadataEntity>(
       ObjectMetadataEntity,
@@ -199,6 +214,11 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
     await recordShareService.deleteBySourceId({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       sourceId,
+    });
+    await recordShareService.deleteByRecordIds({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      objectMetadataId: attachmentObjectMetadataId,
+      recordIds: ATTACHMENT_IDS,
     });
     await setObjectReadability(noteObjectMetadataId, MetadataReadability.OPEN);
     await destroyRecords({
@@ -350,6 +370,32 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       expect(collectIds(note.noteTargets.edges)).toEqual([NOTE_TARGET_ID]);
     });
 
+    it('should show the orphan attachment once it is shared with the member itself', async () => {
+      await recordShareService.insertMany({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        recordShares: [
+          {
+            recordId: ORPHAN_ATTACHMENT_ID,
+            objectMetadataId: attachmentObjectMetadataId,
+            principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+            accessLevel: RecordShareAccessLevel.READ,
+            rowCause: RecordShareRowCause.MANUAL,
+            sourceId,
+          },
+        ],
+      });
+
+      const response = await makeGraphqlAPIRequestWithMemberRole(
+        findAttachmentsOperation,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(collectIds(response.body.data.attachments.edges)).toEqual(
+        [NOTE_ATTACHMENT_ID, PERSON_ATTACHMENT_ID, ORPHAN_ATTACHMENT_ID].sort(),
+      );
+    });
+
     it('should refuse to update or delete the attachment with READ access on the note', async () => {
       const updateResponse = await makeGraphqlAPIRequestWithMemberRole(
         updateOneOperationFactory({
@@ -468,6 +514,70 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
         PERSON_ATTACHMENT_ID,
       );
     });
+
+    it('should let the member read back an attachment created without any parent', async () => {
+      const createResponse = await makeGraphqlAPIRequestWithMemberRole(
+        createOneOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          gqlFields: 'id',
+          data: {
+            id: UNATTACHED_MEMBER_ATTACHMENT_ID,
+            name: 'unattached-member-attachment.pdf',
+          },
+        }),
+      );
+      const findResponse = await makeGraphqlAPIRequestWithMemberRole(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          objectMetadataPluralName: 'attachments',
+          gqlFields: 'id',
+          filter: { id: { eq: UNATTACHED_MEMBER_ATTACHMENT_ID } },
+        }),
+      );
+
+      expect(createResponse.body.errors).toBeUndefined();
+      expect(findResponse.body.errors).toBeUndefined();
+      expect(collectIds(findResponse.body.data.attachments.edges)).toEqual([
+        UNATTACHED_MEMBER_ATTACHMENT_ID,
+      ]);
+    });
+  });
+
+  describe('once every share row on the note is gone', () => {
+    beforeAll(async () => {
+      await recordShareService.deleteBySourceId({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        sourceId,
+      });
+    });
+
+    it('should keep showing the member the attachments they created and hide the others', async () => {
+      const response = await makeGraphqlAPIRequestWithMemberRole(
+        findAttachmentsOperation,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(collectIds(response.body.data.attachments.edges)).toEqual(
+        [MEMBER_ATTACHMENT_ID, UNATTACHED_MEMBER_ATTACHMENT_ID].sort(),
+      );
+    });
+
+    it('should let the member update the attachment they created under the note', async () => {
+      const response = await makeGraphqlAPIRequestWithMemberRole(
+        updateOneOperationFactory({
+          objectMetadataSingularName: 'attachment',
+          gqlFields: 'id name',
+          recordId: MEMBER_ATTACHMENT_ID,
+          data: { name: 'renamed-by-owner.pdf' },
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateAttachment).toEqual({
+        id: MEMBER_ATTACHMENT_ID,
+        name: 'renamed-by-owner.pdf',
+      });
+    });
   });
 
   describe('INHERITED readability without any parent field', () => {
@@ -485,18 +595,41 @@ describe('inheritedReadabilityObjectRecordsPermissions', () => {
       );
     });
 
-    it('should refuse reads instead of falling open', async () => {
-      const response = await makeGraphqlAPIRequestWithMemberRole(
-        findManyOperationFactory({
-          objectMetadataSingularName: 'person',
-          objectMetadataPluralName: 'people',
-          gqlFields: 'id',
-          filter: { id: { eq: PERSON_ID } },
-        }),
-      );
+    it('should gate reads through share rows on the record itself', async () => {
+      const findPersonOperation = findManyOperationFactory({
+        objectMetadataSingularName: 'person',
+        objectMetadataPluralName: 'people',
+        gqlFields: 'id',
+        filter: { id: { eq: PERSON_ID } },
+      });
 
-      expect(response.body.errors).toBeDefined();
-      expect(response.body.errors[0].message).toContain('not readable');
+      const unsharedResponse =
+        await makeGraphqlAPIRequestWithMemberRole(findPersonOperation);
+
+      await recordShareService.insertMany({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        recordShares: [
+          {
+            recordId: PERSON_ID,
+            objectMetadataId: personObjectMetadataId,
+            principalId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+            principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+            accessLevel: RecordShareAccessLevel.READ,
+            rowCause: RecordShareRowCause.MANUAL,
+            sourceId,
+          },
+        ],
+      });
+
+      const sharedResponse =
+        await makeGraphqlAPIRequestWithMemberRole(findPersonOperation);
+
+      expect(unsharedResponse.body.errors).toBeUndefined();
+      expect(unsharedResponse.body.data.people.edges).toHaveLength(0);
+      expect(sharedResponse.body.errors).toBeUndefined();
+      expect(collectIds(sharedResponse.body.data.people.edges)).toEqual([
+        PERSON_ID,
+      ]);
     });
   });
 });

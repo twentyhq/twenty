@@ -1881,14 +1881,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
+    // An object whose parent cannot be inferred is gated like a PRIVATE one
     if (parents.length === 0) {
-      this.denyAccessForAlias({ queryBuilder, alias, flatObjectMetadata });
+      this.applyRecordShareConditionForAlias({
+        queryBuilder,
+        alias,
+        flatObjectMetadata,
+        operationType,
+      });
 
       return;
     }
 
     const condition = this.buildInheritedReadabilityConditionForAlias({
       tableAlias: alias,
+      objectMetadataId: flatObjectMetadata.id,
       parents,
       principalIds,
       accessLevels,
@@ -1915,12 +1922,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private buildInheritedReadabilityConditionForAlias({
     tableAlias,
+    objectMetadataId,
     parents,
     principalIds,
     accessLevels,
     depth,
   }: {
     tableAlias: string;
+    objectMetadataId: string;
     parents: InheritedReadabilityParent[];
     principalIds: string[];
     accessLevels: RecordShareAccessLevel[];
@@ -1928,6 +1937,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }): { sql: string; parameters: ObjectLiteral } | undefined {
     return buildInheritedReadabilityCondition({
       tableAlias,
+      objectMetadataId,
       recordShareTableExpression: this.getRecordShareTableExpression(),
       principalIds,
       accessLevels,
@@ -1997,6 +2007,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         const parentCondition = this.buildInheritedReadabilityConditionForAlias(
           {
             tableAlias: parentTableAlias,
+            objectMetadataId: parentFlatObjectMetadata.id,
             parents: parentParents,
             principalIds,
             accessLevels,

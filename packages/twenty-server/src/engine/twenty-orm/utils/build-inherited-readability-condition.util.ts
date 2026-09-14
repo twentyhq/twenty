@@ -4,8 +4,6 @@ import { type ObjectLiteral } from 'typeorm';
 import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-const ALWAYS_FALSE_SQL = '(1=0)';
-
 export type InheritedReadabilityParentGate =
   | { kind: 'open' }
   | { kind: 'denied' }
@@ -24,12 +22,14 @@ export type InheritedReadabilityParentCondition = {
 
 export const buildInheritedReadabilityCondition = ({
   tableAlias,
+  objectMetadataId,
   parents,
   recordShareTableExpression,
   principalIds,
   accessLevels,
 }: {
   tableAlias: string;
+  objectMetadataId: string;
   parents: InheritedReadabilityParentCondition[];
   recordShareTableExpression: string;
   principalIds: string[];
@@ -39,6 +39,18 @@ export const buildInheritedReadabilityCondition = ({
   const quotedTableAlias = escapeIdentifier(tableAlias);
   const quoteColumn = (joinColumnName: string) =>
     `${quotedTableAlias}.${escapeIdentifier(joinColumnName)}`;
+
+  // The share rows on the record itself, its creator's among them, grant
+  // access on their own, as they do on a PRIVATE record
+  const ownRecordShareCondition = buildRecordShareCondition({
+    tableAlias,
+    recordShareTableExpression,
+    objectMetadataId,
+    principalIds,
+    accessLevels,
+  });
+
+  Object.assign(parameters, ownRecordShareCondition.parameters);
 
   const parentConditions = parents.flatMap(({ joinColumnName, gate }) => {
     const notNullCondition = `${quoteColumn(joinColumnName)} IS NOT NULL`;
@@ -74,12 +86,8 @@ export const buildInheritedReadabilityCondition = ({
     }
   });
 
-  if (parentConditions.length === 0) {
-    return { sql: ALWAYS_FALSE_SQL, parameters: {} };
-  }
-
   return {
-    sql: `(${parentConditions.join(' OR ')})`,
+    sql: `(${[ownRecordShareCondition.sql, ...parentConditions].join(' OR ')})`,
     parameters,
   };
 };
