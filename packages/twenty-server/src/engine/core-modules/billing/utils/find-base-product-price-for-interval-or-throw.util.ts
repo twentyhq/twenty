@@ -4,6 +4,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 
 type IntervalPrice = {
@@ -13,19 +14,26 @@ type IntervalPrice = {
   metadata?: { isLegacy?: string | null } | null;
 };
 
-// Switching interval is not a sale: a workspace on superseded packaging is
-// changing interval on the product it already has, so this resolves what is
-// billable on that product rather than what is sellable. isLegacy only breaks a
-// tie between two live prices at the same interval.
-export const findProductPriceForIntervalOrThrow = <
+// Only the base product carries a single price per interval. A product priced
+// in tiers holds one price per tier at every interval, so the tier is part of
+// what identifies the price and this lookup does not apply to it.
+export const findBaseProductPriceForIntervalOrThrow = <
   TPrice extends IntervalPrice,
 >(
   billingProduct: {
     stripeProductId: string;
+    metadata: { productKey: BillingProductKey };
     billingPrices?: TPrice[] | null;
   },
   interval: SubscriptionInterval,
 ): TPrice => {
+  if (billingProduct.metadata.productKey !== BillingProductKey.BASE_PRODUCT) {
+    throw new BillingException(
+      `Product ${billingProduct.stripeProductId} is a ${billingProduct.metadata.productKey} product, which is not priced one price per interval`,
+      BillingExceptionCode.BILLING_PRICE_INVALID,
+    );
+  }
+
   const intervalPrices = (billingProduct.billingPrices ?? []).filter(
     (billingPrice) => billingPrice.interval === interval && billingPrice.active,
   );
@@ -41,6 +49,9 @@ export const findProductPriceForIntervalOrThrow = <
     return intervalPrices[0];
   }
 
+  // Switching interval is not a sale: a workspace on superseded packaging is
+  // changing interval on the product it already has, so isLegacy only breaks a
+  // tie between two live prices at the same interval.
   const currentPrices = intervalPrices.filter(
     (billingPrice) => billingPrice.metadata?.isLegacy !== 'true',
   );
@@ -50,7 +61,7 @@ export const findProductPriceForIntervalOrThrow = <
   }
 
   throw new BillingException(
-    `Expected a single billable ${interval} price on product ${billingProduct.stripeProductId}, found ${intervalPrices.length}: ${intervalPrices
+    `Expected a single billable ${interval} price on base product ${billingProduct.stripeProductId}, found ${intervalPrices.length}: ${intervalPrices
       .map((billingPrice) => billingPrice.stripePriceId)
       .join(', ')}. Mark the superseded price with metadata isLegacy=true.`,
     BillingExceptionCode.BILLING_PRICE_INVALID,

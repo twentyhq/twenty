@@ -1,6 +1,7 @@
 import { BillingException } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
-import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
+import { findBaseProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-base-product-price-for-interval-or-throw.util';
 
 const buildPrice = ({
   stripePriceId,
@@ -19,12 +20,16 @@ const buildPrice = ({
   metadata: isLegacy ? { isLegacy } : {},
 });
 
-const buildProduct = (billingPrices: ReturnType<typeof buildPrice>[]) => ({
+const buildProduct = (
+  billingPrices: ReturnType<typeof buildPrice>[],
+  productKey: BillingProductKey = BillingProductKey.BASE_PRODUCT,
+) => ({
   stripeProductId: 'prod_base',
+  metadata: { productKey },
   billingPrices,
 });
 
-describe('findProductPriceForIntervalOrThrow', () => {
+describe('findBaseProductPriceForIntervalOrThrow', () => {
   it('returns the price matching the target interval', () => {
     const yearly = buildPrice({
       stripePriceId: 'price_year',
@@ -32,7 +37,7 @@ describe('findProductPriceForIntervalOrThrow', () => {
     });
 
     expect(
-      findProductPriceForIntervalOrThrow(
+      findBaseProductPriceForIntervalOrThrow(
         buildProduct([
           buildPrice({
             stripePriceId: 'price_month',
@@ -53,7 +58,7 @@ describe('findProductPriceForIntervalOrThrow', () => {
     });
 
     expect(
-      findProductPriceForIntervalOrThrow(
+      findBaseProductPriceForIntervalOrThrow(
         buildProduct([yearly]),
         SubscriptionInterval.Year,
       ),
@@ -67,7 +72,7 @@ describe('findProductPriceForIntervalOrThrow', () => {
     });
 
     expect(
-      findProductPriceForIntervalOrThrow(
+      findBaseProductPriceForIntervalOrThrow(
         buildProduct([
           buildPrice({
             stripePriceId: 'price_year_old',
@@ -88,7 +93,7 @@ describe('findProductPriceForIntervalOrThrow', () => {
     });
 
     expect(
-      findProductPriceForIntervalOrThrow(
+      findBaseProductPriceForIntervalOrThrow(
         buildProduct([
           buildPrice({
             stripePriceId: 'price_year_archived',
@@ -104,7 +109,7 @@ describe('findProductPriceForIntervalOrThrow', () => {
 
   it('throws when the product has no active price at that interval', () => {
     expect(() =>
-      findProductPriceForIntervalOrThrow(
+      findBaseProductPriceForIntervalOrThrow(
         buildProduct([
           buildPrice({
             stripePriceId: 'price_month',
@@ -118,7 +123,7 @@ describe('findProductPriceForIntervalOrThrow', () => {
 
   it('throws rather than pick between two current prices at one interval', () => {
     expect(() =>
-      findProductPriceForIntervalOrThrow(
+      findBaseProductPriceForIntervalOrThrow(
         buildProduct([
           buildPrice({
             stripePriceId: 'price_year_a',
@@ -131,6 +136,23 @@ describe('findProductPriceForIntervalOrThrow', () => {
         ]),
         SubscriptionInterval.Year,
       ),
-    ).toThrow(/price_year_a, price_year_b/);
+    ).toThrow(BillingException);
+  });
+
+  it('refuses a product priced in tiers, where one price per interval never holds', () => {
+    expect(() =>
+      findBaseProductPriceForIntervalOrThrow(
+        buildProduct(
+          [
+            buildPrice({
+              stripePriceId: 'price_year',
+              interval: SubscriptionInterval.Year,
+            }),
+          ],
+          BillingProductKey.RESOURCE_CREDIT,
+        ),
+        SubscriptionInterval.Year,
+      ),
+    ).toThrow(BillingException);
   });
 });

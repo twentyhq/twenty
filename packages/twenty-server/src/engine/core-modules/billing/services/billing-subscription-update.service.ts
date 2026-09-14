@@ -36,8 +36,9 @@ import {
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
+import { findBaseProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-base-product-price-for-interval-or-throw.util';
+import { findCreditTierPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-credit-tier-price-for-interval-or-throw.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
-import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
 import { getCurrentLicensedBillingSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-licensed-billing-subscription-item-or-throw.util';
@@ -812,7 +813,7 @@ export class BillingSubscriptionUpdateService {
 
     // Switching interval is not a repackaging, so the subscription stays on the
     // products it already sits on rather than being resolved from the catalog.
-    const targetLicensedPrice = findProductPriceForIntervalOrThrow(
+    const targetLicensedPrice = findBaseProductPriceForIntervalOrThrow(
       currentBillingProduct,
       newInterval,
     );
@@ -832,9 +833,12 @@ export class BillingSubscriptionUpdateService {
 
     assertIsDefinedOrThrow(currentResourceCreditProduct);
 
-    const targetResourceCreditPrice = findProductPriceForIntervalOrThrow(
+    const targetResourceCreditPrice = findCreditTierPriceForIntervalOrThrow(
       currentResourceCreditProduct,
-      newInterval,
+      {
+        referencePrice: currentResourceCreditPrice,
+        targetInterval: newInterval,
+      },
     );
 
     return {
