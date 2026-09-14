@@ -39,10 +39,6 @@ export const SettingsWorkspaceCommunications = () => {
 
   const navigateSettings = useNavigateSettings();
 
-  const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
-  );
-
   const isMessageCampaignFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
@@ -64,10 +60,6 @@ export const SettingsWorkspaceCommunications = () => {
       pill: t`Soon`,
     },
   ];
-
-  if (!isEmailGroupFeatureEnabled) {
-    return null;
-  }
 
   return (
     <SettingsPageLayout

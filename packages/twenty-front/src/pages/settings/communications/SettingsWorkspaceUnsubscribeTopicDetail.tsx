@@ -38,7 +38,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
   const { updateUnsubscribeTopic } = useUpdateUnsubscribeTopic();
   const { deleteUnsubscribeTopic, loading: deleting } =
     useDeleteUnsubscribeTopic();
-  const isEmailGroupEnabled = useIsFeatureEnabled(
+  const isMessageCampaignEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
 
@@ -62,7 +62,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
     return <SettingsSkeletonLoader />;
   }
 
-  if (!isEmailGroupEnabled || !isDefined(unsubscribeTopic)) {
+  if (!isMessageCampaignEnabled || !isDefined(unsubscribeTopic)) {
     return <NotFound />;
   }
 

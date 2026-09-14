@@ -64,7 +64,6 @@ export class EmailingSendResolver {
   ) {}
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
   async sendEmailViaEmailingDomain(
     @Args('input') input: SendEmailViaDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
