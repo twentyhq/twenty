@@ -26,7 +26,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
   const { createUnsubscribeTopic, loading } = useCreateUnsubscribeTopic();
   const isEmailGroupEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
 
   const [name, setName] = useState('');

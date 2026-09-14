@@ -19,7 +19,7 @@ export const SettingsWorkspaceUnsubscribe = () => {
   const { t } = useLingui();
 
   const isEmailGroupEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
 
   const tabs = [

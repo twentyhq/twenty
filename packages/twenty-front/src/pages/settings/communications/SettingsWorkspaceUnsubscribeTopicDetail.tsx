@@ -39,7 +39,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
   const { deleteUnsubscribeTopic, loading: deleting } =
     useDeleteUnsubscribeTopic();
   const isEmailGroupEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
 
   const unsubscribeTopic = unsubscribeTopics.find(
