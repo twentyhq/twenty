@@ -101,6 +101,7 @@ export class AwsSesSendEmailService {
 
       return {
         messageId: response.MessageId,
+        headerMessageId: null,
         deliveredRecipients: {
           to: input.to,
           cc: input.cc ?? [],
@@ -183,6 +184,7 @@ export class AwsSesSendEmailService {
             return {
               recipientIndex: index,
               messageId: null,
+              headerMessageId: null,
               errorMessage: 'SES returned no result for this destination',
             };
           }
@@ -191,6 +193,7 @@ export class AwsSesSendEmailService {
             return {
               recipientIndex: index,
               messageId: null,
+              headerMessageId: null,
               errorMessage:
                 result.Error ??
                 `SES rejected the destination (${result.Status})`,
@@ -200,6 +203,7 @@ export class AwsSesSendEmailService {
           return {
             recipientIndex: index,
             messageId: result.MessageId,
+            headerMessageId: null,
             errorMessage: null,
           };
         }),

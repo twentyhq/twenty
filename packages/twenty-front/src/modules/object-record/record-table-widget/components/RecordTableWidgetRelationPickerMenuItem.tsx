@@ -39,11 +39,11 @@ export const RecordTableWidgetRelationPickerMenuItem = ({
         focused={isSelectedItemId}
         avatar={
           <Avatar
-            avatarUrl={getAbsoluteImageUrl(relationRecord.avatarUrl)}
-            placeholderColorSeed={relationRecord.id}
-            placeholder={relationRecord.name}
+            src={getAbsoluteImageUrl(relationRecord.avatarUrl)}
+            colorSeed={relationRecord.id}
+            name={relationRecord.name}
             size="md"
-            type={relationRecord.avatarType ?? 'rounded'}
+            shape={relationRecord.avatarShape ?? 'circle'}
           />
         }
       />

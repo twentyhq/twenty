@@ -4770,6 +4770,7 @@ input UpdateLogicFunctionFromSourceInputUpdates {
 
 input CreateCommandMenuItemInput {
   workflowVersionId: UUID
+  coreWorkflowVersionId: UUID
   frontComponentId: UUID
   engineComponentKey: EngineComponentKey!
   label: String!
