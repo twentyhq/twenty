@@ -6,7 +6,7 @@ const { readSlackAccessModeMock } = vi.hoisted(() => ({
   readSlackAccessModeMock: vi.fn(),
 }));
 
-vi.mock('src/logic-functions/utils/get-slack-access-mode', () => ({
+vi.mock('src/logic-functions/utils/read-slack-access-mode', () => ({
   readSlackAccessMode: readSlackAccessModeMock,
 }));
 

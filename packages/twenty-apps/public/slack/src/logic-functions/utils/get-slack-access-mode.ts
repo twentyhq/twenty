@@ -1,29 +1,6 @@
-import { kv } from 'twenty-sdk/logic-function';
-
-import {
-  SLACK_ACCESS_MODE,
-  SLACK_ACCESS_MODE_KV_KEY,
-  type SlackAccessMode,
-} from 'src/logic-functions/constants/slack-access-mode';
-import { type SlackAccessModeRead } from 'src/logic-functions/types/slack-access-mode-read.type';
-
-export const readSlackAccessMode = async (): Promise<SlackAccessModeRead> => {
-  try {
-    const stored = await kv.get<string>(SLACK_ACCESS_MODE_KV_KEY, {
-      scope: 'WORKSPACE',
-    });
-
-    return {
-      status: 'READ',
-      accessMode:
-        stored === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS
-          ? SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS
-          : SLACK_ACCESS_MODE.ANYONE,
-    };
-  } catch {
-    return { status: 'UNREADABLE' };
-  }
-};
+import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
+import { type SlackAccessMode } from 'src/logic-functions/types/slack-access-mode.type';
+import { readSlackAccessMode } from 'src/logic-functions/utils/read-slack-access-mode';
 
 export const getSlackAccessMode = async (): Promise<SlackAccessMode> => {
   const result = await readSlackAccessMode();

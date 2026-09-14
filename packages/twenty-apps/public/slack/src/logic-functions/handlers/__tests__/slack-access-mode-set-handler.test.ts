@@ -2,19 +2,14 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { slackAccessModeSetHandler } from 'src/logic-functions/handlers/slack-access-mode-set-handler';
 
-const { currentUserHasRolesPermissionMock, kvSetMock } = vi.hoisted(
-  () => ({
-    currentUserHasRolesPermissionMock: vi.fn(),
-    kvSetMock: vi.fn(),
-  }),
-);
+const { currentUserHasRolesPermissionMock, kvSetMock } = vi.hoisted(() => ({
+  currentUserHasRolesPermissionMock: vi.fn(),
+  kvSetMock: vi.fn(),
+}));
 
-vi.mock(
-  'src/logic-functions/utils/current-user-has-roles-permission',
-  () => ({
-    currentUserHasRolesPermission: currentUserHasRolesPermissionMock,
-  }),
-);
+vi.mock('src/logic-functions/utils/current-user-has-roles-permission', () => ({
+  currentUserHasRolesPermission: currentUserHasRolesPermissionMock,
+}));
 
 vi.mock('twenty-sdk/logic-function', () => ({
   kv: { set: kvSetMock },
@@ -27,7 +22,9 @@ const buildPayload = (body: unknown) =>
     queryStringParameters: {},
     pathParameters: {},
     isBase64Encoded: false,
-    requestContext: { http: { method: 'POST', path: '/s/slack-access-mode/set' } },
+    requestContext: {
+      http: { method: 'POST', path: '/s/slack-access-mode/set' },
+    },
     userWorkspaceId: 'workspace-1',
   }) as never;
 

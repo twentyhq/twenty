@@ -1,0 +1,98 @@
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
+
+const CUSTOM = '20202020-aaaa-4aaa-8aaa-000000000001';
+const OWNER = '20202020-bbbb-4bbb-8bbb-000000000002';
+
+const view = {
+  applicationUniversalIdentifier: OWNER,
+  isActive: true,
+  overrides: { [CUSTOM]: { name: 'Mine' } },
+  universalOverrides: { [CUSTOM]: { name: 'Mine' } },
+};
+
+describe('dispatchIsActiveUpdateToAuthoredOverride', () => {
+  it('writes a non-owner deactivation on both blobs and leaves the column', () => {
+    expect(
+      dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
+        flatEntity: view,
+        isActive: false,
+        authorUniversalIdentifier: CUSTOM,
+        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+      }),
+    ).toEqual({
+      ...view,
+      overrides: { [CUSTOM]: { name: 'Mine', isActive: false } },
+      universalOverrides: { [CUSTOM]: { name: 'Mine', isActive: false } },
+    });
+  });
+
+  it('drops the entry when the restore matches the column', () => {
+    expect(
+      dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
+        flatEntity: {
+          ...view,
+          overrides: { [CUSTOM]: { isActive: false } },
+          universalOverrides: { [CUSTOM]: { isActive: false } },
+        },
+        isActive: true,
+        authorUniversalIdentifier: CUSTOM,
+        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+      }),
+    ).toEqual({ ...view, overrides: null, universalOverrides: null });
+  });
+
+  it('writes the column when the author owns the entity', () => {
+    const ownedView = { ...view, applicationUniversalIdentifier: CUSTOM };
+
+    expect(
+      dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
+        flatEntity: ownedView,
+        isActive: false,
+        authorUniversalIdentifier: CUSTOM,
+        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+      }),
+    ).toEqual({ ...ownedView, isActive: false });
+  });
+
+  it('writes the entry when the author owns an engine-managed entity', () => {
+    const engineManagedView = {
+      ...view,
+      applicationUniversalIdentifier: CUSTOM,
+      isSystemSideEffect: true,
+    };
+
+    expect(
+      dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'view',
+        flatEntity: engineManagedView,
+        isActive: false,
+        authorUniversalIdentifier: CUSTOM,
+        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+      }),
+    ).toEqual({
+      ...engineManagedView,
+      overrides: { [CUSTOM]: { name: 'Mine', isActive: false } },
+      universalOverrides: { [CUSTOM]: { name: 'Mine', isActive: false } },
+    });
+  });
+
+  it('writes the column for kinds without an overrides column', () => {
+    const viewFilter = {
+      applicationUniversalIdentifier: OWNER,
+      isActive: true,
+    };
+
+    expect(
+      dispatchIsActiveUpdateToAuthoredOverride({
+        metadataName: 'viewFilter',
+        flatEntity: viewFilter,
+        isActive: false,
+        authorUniversalIdentifier: CUSTOM,
+        workspaceCustomApplicationUniversalIdentifier: CUSTOM,
+      }),
+    ).toEqual({ ...viewFilter, isActive: false });
+  });
+});

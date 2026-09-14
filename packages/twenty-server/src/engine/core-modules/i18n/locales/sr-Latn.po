@@ -7098,6 +7098,11 @@ msgstr "Nije pronađen identifikator za pretragu."
 msgid "No input provided in form step"
 msgstr "Nije unet unos u korak formulara"
 
+#. js-lingui-id: jNd9S2
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "No mailbox is connected for this action. Connect one in Settings."
+msgstr "Nijedno poštansko sanduče nije povezano za ovu radnju. Povežite jedno u Podešavanjima."
+
 #. js-lingui-id: MWAUHo
 #: src/modules/workflow/workflow-trigger/utils/assert-version-can-be-activated.util.ts
 msgid "No pattern provided in CUSTOM cron trigger"
@@ -10846,6 +10851,11 @@ msgstr "Sadržaj e-poruke ove kampanje nije ispravan."
 #: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
 msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
 msgstr "Ova kolona je već označena kao jedinstvena. Prvo isključite opciju polja \"Unique\" ako želite da upravljate ograničenjem ovde."
+
+#. js-lingui-id: /abJpu
+#: src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception.ts
+msgid "This connected account cannot be used for this action."
+msgstr "Ovaj povezani nalog se ne može koristiti za ovu radnju."
 
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts

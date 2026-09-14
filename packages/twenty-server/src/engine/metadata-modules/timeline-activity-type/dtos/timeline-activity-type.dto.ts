@@ -9,6 +9,7 @@ import {
 } from 'class-validator';
 import { type TimelineActivityAction } from 'twenty-shared/timeline';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TimelineActivityTypeEmitDTO } from 'src/engine/metadata-modules/timeline-activity-type/dtos/timeline-activity-type-emit.dto';
 import { type TimelineActivityTypeOverrides } from 'src/engine/metadata-modules/timeline-activity-type/entities/timeline-activity-type.entity';
@@ -75,7 +76,7 @@ export class TimelineActivityTypeDTO {
   applicationId?: string;
 
   @HideField()
-  overrides: TimelineActivityTypeOverrides | null;
+  overrides: AuthoredOverrides<TimelineActivityTypeOverrides> | null;
 
   @IsDateString()
   @Field()

@@ -23,7 +23,7 @@ const {
   setSlackAssistantThreadTitleMock,
   subscribeSlackThreadMock,
   getSlackAccessModeMock,
-  resolveSlackLinkageMock,
+  resolveSlackAccessDecisionMock,
 } = vi.hoisted(() => ({
   callLog: [] as string[],
   coreApiClientMock: vi.fn(),
@@ -40,15 +40,12 @@ const {
   setSlackAssistantThreadTitleMock: vi.fn(),
   subscribeSlackThreadMock: vi.fn(),
   getSlackAccessModeMock: vi.fn(),
-  resolveSlackLinkageMock: vi.fn(),
+  resolveSlackAccessDecisionMock: vi.fn(),
 }));
 
-vi.mock(
-  'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id',
-  () => ({
-    resolveSlackLinkage: resolveSlackLinkageMock,
-  }),
-);
+vi.mock('src/logic-functions/utils/resolve-slack-access-decision', () => ({
+  resolveSlackAccessDecision: resolveSlackAccessDecisionMock,
+}));
 
 vi.mock('src/logic-functions/utils/get-slack-access-mode', () => ({
   getSlackAccessMode: getSlackAccessModeMock,
@@ -155,7 +152,7 @@ describe('slackAssistantWorkerHandler', () => {
     fetchWorkspaceBaseUrlsMock.mockResolvedValue(['https://acme.twenty.com']);
     resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
     getSlackAccessModeMock.mockResolvedValue(SLACK_ACCESS_MODE.ANYONE);
-    resolveSlackLinkageMock.mockResolvedValue({ status: 'UNLINKED' });
+    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'ALLOWED' });
     setSlackAssistantThreadTitleMock.mockResolvedValue(undefined);
     subscribeSlackThreadMock.mockResolvedValue(undefined);
 
@@ -192,20 +189,7 @@ describe('slackAssistantWorkerHandler', () => {
   });
 
   it('should decline an unlinked Slack user when access is restricted to linked members', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
-    );
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    resolveSlackLinkageMock.mockResolvedValue({ status: 'UNLINKED' });
-    fetchSlackAssistantContextMock.mockImplementation(async () => {
-      callLog.push('context:fetch');
-
-      return {
-        ...SLACK_CONTEXT,
-        slackClient: {},
-        requesterIdentity: REQUESTER_IDENTITY,
-      };
-    });
+    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'DENIED' });
 
     await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
       done: true,
@@ -228,20 +212,7 @@ describe('slackAssistantWorkerHandler', () => {
   });
 
   it('should fail the request when the denial message cannot be delivered', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
-    );
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    resolveSlackLinkageMock.mockResolvedValue({ status: 'UNLINKED' });
-    fetchSlackAssistantContextMock.mockImplementation(async () => {
-      callLog.push('context:fetch');
-
-      return {
-        ...SLACK_CONTEXT,
-        slackClient: {},
-        requesterIdentity: REQUESTER_IDENTITY,
-      };
-    });
+    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'DENIED' });
     sendSlackMessageMock.mockImplementation(async () => {
       callLog.push('reply:denied');
 
@@ -261,67 +232,9 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
-  it('should fail rather than deny when the requester identity could not be read', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
-    );
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    fetchSlackAssistantContextMock.mockImplementation(async () => {
-      callLog.push('context:fetch');
-
-      return { ...SLACK_CONTEXT, slackClient: {} };
-    });
-
-    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
-
-    expect(result).toEqual(expect.objectContaining({ failed: true }));
-    expect(resolveSlackLinkageMock).not.toHaveBeenCalled();
-    expect(sendSlackMessageMock).not.toHaveBeenCalled();
-    expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ responseText: SLACK_ACCESS_DENIED_TEXT }),
-    );
-  });
-
-  it('should fail rather than deny when the record names no Slack user', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
-    );
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    fetchSlackAssistantContextMock.mockImplementation(async () => {
-      callLog.push('context:fetch');
-
-      return { ...SLACK_CONTEXT, slackClient: {} };
-    });
-
-    const result = await slackAssistantWorkerHandler({
-      ...REQUEST_RECORD,
-      slackUserId: '',
-    });
-
-    expect(result).toEqual(expect.objectContaining({ failed: true }));
-    expect(resolveSlackLinkageMock).not.toHaveBeenCalled();
-    expect(sendSlackMessageMock).not.toHaveBeenCalled();
-    expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ responseText: SLACK_ACCESS_DENIED_TEXT }),
-    );
-  });
-
-  it('should fail rather than deny when the linkage lookup itself fails', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
-    );
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    resolveSlackLinkageMock.mockResolvedValue({ status: 'UNVERIFIABLE' });
-    fetchSlackAssistantContextMock.mockImplementation(async () => {
-      callLog.push('context:fetch');
-
-      return {
-        ...SLACK_CONTEXT,
-        slackClient: {},
-        requesterIdentity: REQUESTER_IDENTITY,
-      };
+  it('should fail rather than deny when access could not be established', async () => {
+    resolveSlackAccessDecisionMock.mockResolvedValue({
+      status: 'UNVERIFIABLE',
     });
 
     const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
@@ -336,38 +249,11 @@ describe('slackAssistantWorkerHandler', () => {
     );
   });
 
-  it('should fail rather than deny when Slack is unreachable and linkage cannot be checked', async () => {
+  it('should ask for the access decision with the stored mode and the resolved requester', async () => {
     getSlackAccessModeMock.mockResolvedValue(
       SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
     );
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    fetchSlackAssistantContextMock.mockImplementation(async () => {
-      callLog.push('context:fetch');
-
-      return { ...SLACK_CONTEXT, requesterIdentity: REQUESTER_IDENTITY };
-    });
-
-    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
-
-    expect(result).toEqual(expect.objectContaining({ failed: true }));
-    expect(finishSlackAssistantRequestWithFailureMock).toHaveBeenCalledTimes(1);
-    expect(resolveSlackLinkageMock).not.toHaveBeenCalled();
-    expect(sendSlackMessageMock).not.toHaveBeenCalled();
-    expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ responseText: SLACK_ACCESS_DENIED_TEXT }),
-    );
-  });
-
-  it('should answer a linked member whose request is not eligible for impersonation', async () => {
-    getSlackAccessModeMock.mockResolvedValue(
-      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
-    );
-    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
-    resolveSlackLinkageMock.mockResolvedValue({
-      status: 'LINKED',
-      workspaceMemberId: 'workspace-member-1',
-    });
+    resolveSlackRunAsForRequestMock.mockResolvedValue('workspace-member-1');
     fetchSlackAssistantContextMock.mockImplementation(async () => {
       callLog.push('context:fetch');
 
@@ -378,18 +264,22 @@ describe('slackAssistantWorkerHandler', () => {
       };
     });
 
-    await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
-      done: true,
-    });
+    await slackAssistantWorkerHandler(REQUEST_RECORD);
 
-    expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledTimes(1);
+    expect(resolveSlackAccessDecisionMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+        identity: REQUESTER_IDENTITY,
+        runAsWorkspaceMemberId: 'workspace-member-1',
+      }),
+    );
   });
 
-  it('should answer a linked workspace member when access is restricted to linked members', async () => {
+  it('should answer a request access allowed', async () => {
     getSlackAccessModeMock.mockResolvedValue(
       SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
     );
-    resolveSlackRunAsForRequestMock.mockResolvedValue('workspace-member-1');
+    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
 
     await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
       done: true,

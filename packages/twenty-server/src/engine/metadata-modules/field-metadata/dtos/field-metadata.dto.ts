@@ -24,6 +24,7 @@ import {
   MetadataWritability,
 } from 'twenty-shared/types';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { type FieldMetadataOverrides } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-overrides.type';
@@ -74,7 +75,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   icon?: string;
 
   @HideField()
-  overrides?: FieldMetadataOverrides | null;
+  overrides?: AuthoredOverrides<FieldMetadataOverrides> | null;
 
   @IsBoolean()
   @IsOptional()

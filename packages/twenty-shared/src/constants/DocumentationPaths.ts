@@ -82,8 +82,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/operations/sync-and-recovery',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_TESTING:
     '/developers/extend/apps/operations/testing',
-  DEVELOPERS_EXTEND_APPS_TRANSLATIONS_OVERVIEW:
-    '/developers/extend/apps/translations/overview',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_TRANSLATIONS:
+    '/developers/extend/apps/operations/translations',
   DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_AI_AGENT:
     '/developers/extend/apps/tutorials/document-generator/ai-agent',
   DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_BUILDING_THE_UI:

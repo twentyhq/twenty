@@ -1,8 +1,6 @@
-import {
-  SLACK_ACCESS_MODE,
-  type SlackAccessMode,
-} from 'src/logic-functions/constants/slack-access-mode';
-import { readSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
+import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
+import { type SlackAccessMode } from 'src/logic-functions/types/slack-access-mode.type';
+import { readSlackAccessMode } from 'src/logic-functions/utils/read-slack-access-mode';
 
 export const slackAccessModeGetHandler = async (): Promise<{
   accessMode: SlackAccessMode;

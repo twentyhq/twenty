@@ -5,6 +5,7 @@ import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { IconLock } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { THEME_COMMON } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
@@ -85,6 +86,20 @@ const OPEN_DESCRIPTION =
 const UNREADABLE_DESCRIPTION =
   'The current setting could not be loaded, so this is not showing it. Reload to try again.';
 
+const getDescription = ({
+  hasAccessModeError,
+  isRestricted,
+}: {
+  hasAccessModeError: boolean;
+  isRestricted: boolean;
+}): string => {
+  if (hasAccessModeError) {
+    return UNREADABLE_DESCRIPTION;
+  }
+
+  return isRestricted ? RESTRICTED_DESCRIPTION : OPEN_DESCRIPTION;
+};
+
 type SlackAccessModeSectionProps = {
   canManage: boolean;
 };
@@ -120,11 +135,7 @@ export const SlackAccessModeSection = ({
     });
   };
 
-  const description = hasAccessModeError
-    ? UNREADABLE_DESCRIPTION
-    : isRestricted
-      ? RESTRICTED_DESCRIPTION
-      : OPEN_DESCRIPTION;
+  const description = getDescription({ hasAccessModeError, isRestricted });
 
   return (
     <Section>
@@ -135,7 +146,7 @@ export const SlackAccessModeSection = ({
       <Card rounded>
         <StyledCardContent $disabled={isDisabled}>
           <StyledIcon>
-            <IconLock size={16} />
+            <IconLock size={THEME_COMMON.icon.size.md} />
           </StyledIcon>
           <StyledTextContainer>
             <StyledTitle>

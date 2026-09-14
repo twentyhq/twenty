@@ -6,11 +6,10 @@ import {
   SLACK_ACCESS_MODE_GET_ROUTE_PATH,
   SLACK_ACCESS_MODE_SET_ROUTE_PATH,
 } from 'src/constants/slack-access-mode-route-path.constant';
+import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
+import { type SlackAccessMode } from 'src/logic-functions/types/slack-access-mode.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
-import {
-  SLACK_ACCESS_MODE,
-  type SlackAccessMode,
-} from 'src/logic-functions/constants/slack-access-mode';
+import { isSlackAccessMode } from 'src/logic-functions/utils/is-slack-access-mode';
 
 type SaveAccessModeResult = {
   success: boolean;
@@ -34,11 +33,6 @@ const GENERIC_ERROR_RESULT: SaveAccessModeResult = {
   error: 'The request failed. Please try again.',
 };
 
-const toAccessMode = (value: unknown): SlackAccessMode =>
-  value === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS
-    ? SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS
-    : SLACK_ACCESS_MODE.ANYONE;
-
 export const useSlackAccessMode = (): SlackAccessModeState => {
   const [accessMode, setAccessMode] = useState<SlackAccessMode>(
     SLACK_ACCESS_MODE.ANYONE,
@@ -61,8 +55,16 @@ export const useSlackAccessMode = (): SlackAccessModeState => {
 
           // The route answers with the enforced fallback when its own read
           // failed, so a 200 is not by itself proof of a stored setting.
-          setAccessMode(toAccessMode(record?.accessMode));
-          setHasAccessModeError(record?.isAccessModeReadable === false);
+          const readAccessMode = record?.accessMode;
+
+          if (isSlackAccessMode(readAccessMode)) {
+            setAccessMode(readAccessMode);
+          }
+
+          setHasAccessModeError(
+            record?.isAccessModeReadable === false ||
+              !isSlackAccessMode(readAccessMode),
+          );
         }
       } catch {
         // Neither position is honest when the stored mode could not be read,

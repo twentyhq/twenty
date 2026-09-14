@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
-import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
 import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
@@ -25,9 +24,9 @@ import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-s
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
-import { resolveSlackLinkage } from 'src/logic-functions/utils/resolve-slack-run-as-workspace-member-id';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
 import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 import { setSlackAssistantThreadTitle } from 'src/logic-functions/utils/set-slack-assistant-thread-title';
@@ -127,53 +126,27 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
-    const accessMode = await getSlackAccessMode();
+    const accessDecision = await resolveSlackAccessDecision({
+      accessMode: await getSlackAccessMode(),
+      client,
+      slackClient,
+      identity: requesterIdentity,
+      runAsWorkspaceMemberId,
+    });
 
-    // run-as can be empty for a linked member whose request is not eligible for
-    // impersonation, so access asks the narrower question: is this Slack
-    // account linked at all.
-    let linkedWorkspaceMemberId = runAsWorkspaceMemberId;
+    // Unverifiable is not the same as unlinked: fail the request so the user is
+    // told the check could not be made, rather than told to link an account
+    // that may already be linked.
+    if (accessDecision.status === 'UNVERIFIABLE') {
+      await stopStatusUpdates();
 
-    if (
-      accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS &&
-      !isNonEmptyString(linkedWorkspaceMemberId)
-    ) {
-      // Unverifiable is not the same as unlinked: say the check could not be
-      // made rather than tell someone to link an account. Without a client or
-      // an identity there is no requester to look up, so nothing can establish
-      // that they are unlinked.
-      if (!isDefined(slackClient) || !isDefined(requesterIdentity)) {
-        await stopStatusUpdates();
-
-        return await finishSlackAssistantRequestWithFailure({
-          ...failureContext,
-          errorMessage: SLACK_ACCESS_UNVERIFIABLE_ERROR,
-        });
-      }
-
-      const linkage = await resolveSlackLinkage({
-        client,
-        slackClient,
-        identity: requesterIdentity,
+      return await finishSlackAssistantRequestWithFailure({
+        ...failureContext,
+        errorMessage: SLACK_ACCESS_UNVERIFIABLE_ERROR,
       });
-
-      if (linkage.status === 'UNVERIFIABLE') {
-        await stopStatusUpdates();
-
-        return await finishSlackAssistantRequestWithFailure({
-          ...failureContext,
-          errorMessage: SLACK_ACCESS_UNVERIFIABLE_ERROR,
-        });
-      }
-
-      linkedWorkspaceMemberId =
-        linkage.status === 'LINKED' ? linkage.workspaceMemberId : undefined;
     }
 
-    if (
-      accessMode === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS &&
-      !isNonEmptyString(linkedWorkspaceMemberId)
-    ) {
+    if (accessDecision.status === 'DENIED') {
       await stopStatusUpdates();
 
       const denialDelivery = await sendSlackMessage({

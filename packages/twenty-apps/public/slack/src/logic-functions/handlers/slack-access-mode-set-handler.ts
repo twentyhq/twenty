@@ -1,13 +1,12 @@
 import { type RoutePayload } from 'twenty-sdk/define';
 import { kv } from 'twenty-sdk/logic-function';
 
-import {
-  SLACK_ACCESS_MODE,
-  SLACK_ACCESS_MODE_KV_KEY,
-  type SlackAccessMode,
-} from 'src/logic-functions/constants/slack-access-mode';
+import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
+import { SLACK_ACCESS_MODE_KV_KEY } from 'src/logic-functions/constants/slack-access-mode-kv-key';
+import { type SlackAccessMode } from 'src/logic-functions/types/slack-access-mode.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
+import { isSlackAccessMode } from 'src/logic-functions/utils/is-slack-access-mode';
 
 type SlackAccessModeSetResult = {
   success: boolean;
@@ -15,10 +14,6 @@ type SlackAccessModeSetResult = {
   message: string;
   error?: string;
 };
-
-const isSlackAccessMode = (value: unknown): value is SlackAccessMode =>
-  value === SLACK_ACCESS_MODE.ANYONE ||
-  value === SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS;
 
 export const slackAccessModeSetHandler = async (
   payload: RoutePayload,
