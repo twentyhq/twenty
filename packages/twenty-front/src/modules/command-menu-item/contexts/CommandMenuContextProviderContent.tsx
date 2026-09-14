@@ -86,10 +86,10 @@ export const CommandMenuContextProviderContent = ({
           commandMenuContextApi,
         ),
       )
-      .map((item) =>
-        resolveCommandMenuItemPinning(item, commandMenuContextApi),
-      )
-      .sort((firstItem, secondItem) => firstItem.position - secondItem.position);
+      .map((item) => resolveCommandMenuItemPinning(item, commandMenuContextApi))
+      .sort(
+        (firstItem, secondItem) => firstItem.position - secondItem.position,
+      );
 
     if (!shouldDisplayGlobalRecordCreationCommands) {
       return contextCommandMenuItems;
