@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { In } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
+import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
-import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
@@ -17,7 +17,15 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import {
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
+import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
+import {
+  WorkflowVersionStatus,
+  type WorkflowVersionWorkspaceEntity,
+} from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import {
   WorkflowStatus,
   type WorkflowWorkspaceEntity,
@@ -214,33 +222,55 @@ export class CoreWorkflowMutationWorkspaceService {
             { shouldBypassPermissionChecks: true },
           );
 
-        return workflowVersionRepository.findOne({
+        const version = await workflowVersionRepository.findOne({
           where: { id: workspaceWorkflowVersionId },
+          withDeleted: true,
         });
+
+        if (!isDefined(version) || isDefined(version.deletedAt)) {
+          return version ?? null;
+        }
+
+        assertWorkflowVersionIsDraft(version);
+
+        const otherLiveVersionsExist = await workflowVersionRepository.exists({
+          where: {
+            workflowId: version.workflowId,
+            deletedAt: IsNull(),
+            id: Not(workspaceWorkflowVersionId),
+          },
+        });
+
+        if (!otherLiveVersionsExist) {
+          throw new WorkflowQueryValidationException(
+            'The initial version of a workflow can not be deleted',
+            WorkflowQueryValidationExceptionCode.FORBIDDEN,
+            {
+              userFriendlyMessage: msg`The initial version of a workflow can not be deleted`,
+            },
+          );
+        }
+
+        await workflowVersionRepository.softDelete({
+          id: workspaceWorkflowVersionId,
+          status: WorkflowVersionStatus.DRAFT,
+        });
+
+        return version;
       }, authContext);
 
     if (!isDefined(draftVersion)) {
       return null;
     }
 
-    assertWorkflowVersionIsDraft(draftVersion);
-
-    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workflowVersionRepository =
-        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
-          'workflowVersion',
-          { shouldBypassPermissionChecks: true },
-        );
-
-      await workflowVersionRepository.softDelete({
-        id: workspaceWorkflowVersionId,
-      });
-    }, authContext);
-
     await this.workflowVersionCoreSyncService.deleteCoreVersionsByWorkspaceVersionIds(
       workspaceId,
       [workspaceWorkflowVersionId],
     );
+
+    if (isDefined(draftVersion.deletedAt)) {
+      return null;
+    }
 
     return draftVersion.workflowId;
   }
