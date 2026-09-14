@@ -2957,6 +2957,7 @@ enum MessageChannelType {
   EMAIL
   SMS
   EMAIL_GROUP
+  APP
 }
 
 enum MessageChannelContactAutoCreationPolicy {
@@ -3711,6 +3712,7 @@ type Query {
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
@@ -3810,6 +3812,10 @@ input FindMessageSuppressionsInput {
   unsubscribeTopicId: UUID
   limit: Int! = 30
   offset: Int! = 0
+}
+
+input ListAppMessageChannelsInput {
+  connectedAccountId: UUID
 }
 
 input ListAppConnectionsInput {
@@ -4031,6 +4037,9 @@ type Mutation {
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
+  createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
+  updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
+  deleteAppMessageChannel(id: UUID!): MessageChannel!
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
@@ -5173,6 +5182,20 @@ input CreateEmailGroupChannelInput {
 input UpdateEmailGroupChannelInput {
   id: UUID!
   displayName: String
+}
+
+input CreateAppMessageChannelInput {
+  connectedAccountId: UUID!
+  handle: String!
+  displayName: String
+  visibility: MessageChannelVisibility!
+}
+
+input UpdateAppMessageChannelInput {
+  id: UUID!
+  displayName: String
+  visibility: MessageChannelVisibility
+  isSyncEnabled: Boolean
 }
 
 input CreateEmailingDomainInput {

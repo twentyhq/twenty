@@ -2558,7 +2558,7 @@ export interface MessageChannel {
 
 export type MessageChannelVisibility = 'METADATA' | 'SUBJECT' | 'SHARE_EVERYTHING'
 
-export type MessageChannelType = 'EMAIL' | 'SMS' | 'EMAIL_GROUP'
+export type MessageChannelType = 'EMAIL' | 'SMS' | 'EMAIL_GROUP' | 'APP'
 
 export type MessageChannelContactAutoCreationPolicy = 'SENT_AND_RECEIVED' | 'SENT' | 'NONE'
 
@@ -3248,6 +3248,7 @@ export interface Query {
     messageSuppressions: MessageSuppressionList
     unsubscribeTopics: UnsubscribeTopic[]
     myMessageChannels: MessageChannel[]
+    appMessageChannels: MessageChannel[]
     getEmailingDomains: EmailingDomain[]
     getToolIndex: ToolIndexEntry[]
     getToolInputSchema?: Scalars['JSON']
@@ -3460,6 +3461,9 @@ export interface Mutation {
     createEmailGroupChannel: CreateEmailGroupChannelOutput
     updateEmailGroupChannel: MessageChannel
     deleteEmailGroupChannel: MessageChannel
+    createAppMessageChannel: MessageChannel
+    updateAppMessageChannel: MessageChannel
+    deleteAppMessageChannel: MessageChannel
     createEmailingDomain: EmailingDomain
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
@@ -6954,6 +6958,7 @@ export interface QueryGenqlSelection{
     messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    appMessageChannels?: (MessageChannelGenqlSelection & { __args?: {filter?: (ListAppMessageChannelsInput | null)} })
     getEmailingDomains?: EmailingDomainGenqlSelection
     getToolIndex?: ToolIndexEntryGenqlSelection
     getToolInputSchema?: { __args: {toolName: Scalars['String']} }
@@ -7019,6 +7024,8 @@ id: Scalars['ID']}
 export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null)}
 
 export interface FindMessageSuppressionsInput {reason?: (MessageSuppressionReason | null),searchTerm?: (Scalars['String'] | null),unsubscribeTopicId?: (Scalars['UUID'] | null),limit: Scalars['Int'],offset: Scalars['Int']}
+
+export interface ListAppMessageChannelsInput {connectedAccountId?: (Scalars['UUID'] | null)}
 
 export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),visibility?: (Scalars['String'] | null)}
 
@@ -7201,6 +7208,9 @@ export interface MutationGenqlSelection{
     createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
     updateEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateEmailGroupChannelInput} })
     deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: CreateAppMessageChannelInput} })
+    updateAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateAppMessageChannelInput} })
+    deleteAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
     createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {input: CreateEmailingDomainInput} })
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
@@ -7644,6 +7654,10 @@ export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelV
 export interface CreateEmailGroupChannelInput {handle: Scalars['String'],displayName?: (Scalars['String'] | null)}
 
 export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null)}
+
+export interface CreateAppMessageChannelInput {connectedAccountId: Scalars['UUID'],handle: Scalars['String'],displayName?: (Scalars['String'] | null),visibility: MessageChannelVisibility}
+
+export interface UpdateAppMessageChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null),visibility?: (MessageChannelVisibility | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
@@ -10800,7 +10814,8 @@ export const enumMessageChannelVisibility = {
 export const enumMessageChannelType = {
    EMAIL: 'EMAIL' as const,
    SMS: 'SMS' as const,
-   EMAIL_GROUP: 'EMAIL_GROUP' as const
+   EMAIL_GROUP: 'EMAIL_GROUP' as const,
+   APP: 'APP' as const
 }
 
 export const enumMessageChannelContactAutoCreationPolicy = {
