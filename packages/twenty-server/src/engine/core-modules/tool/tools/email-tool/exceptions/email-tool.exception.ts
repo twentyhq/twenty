@@ -7,6 +7,7 @@ import { CustomException } from 'src/utils/custom-exception';
 export enum EmailToolExceptionCode {
   INVALID_CONNECTED_ACCOUNT_ID = 'INVALID_CONNECTED_ACCOUNT_ID',
   CONNECTED_ACCOUNT_NOT_FOUND = 'CONNECTED_ACCOUNT_NOT_FOUND',
+  NO_USABLE_CONNECTED_ACCOUNT = 'NO_USABLE_CONNECTED_ACCOUNT',
   INVALID_EMAIL = 'INVALID_EMAIL',
   WORKSPACE_ID_NOT_FOUND = 'WORKSPACE_ID_NOT_FOUND',
   FILE_NOT_FOUND = 'FILE_NOT_FOUND',
@@ -22,6 +23,8 @@ const getEmailToolExceptionUserFriendlyMessage = (
       return msg`Invalid connected account ID.`;
     case EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND:
       return msg`Connected account not found.`;
+    case EmailToolExceptionCode.NO_USABLE_CONNECTED_ACCOUNT:
+      return msg`No email account available to send from.`;
     case EmailToolExceptionCode.INVALID_EMAIL:
       return msg`Invalid email address.`;
     case EmailToolExceptionCode.WORKSPACE_ID_NOT_FOUND:

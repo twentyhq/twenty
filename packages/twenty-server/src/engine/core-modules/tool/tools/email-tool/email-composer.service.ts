@@ -24,6 +24,7 @@ import {
 import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
 import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
 import { canProviderSendEmail } from 'src/engine/core-modules/tool/tools/email-tool/utils/can-provider-send-email.util';
+import { isCallerBypassingAccountVisibility } from 'src/engine/core-modules/tool/tools/email-tool/utils/is-caller-bypassing-account-visibility.util';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
@@ -42,11 +43,6 @@ type ParentThreadContext = {
   threadExternalId?: string;
   references?: string[];
 };
-
-const CALLER_TYPES_BYPASSING_ACCOUNT_VISIBILITY: WorkspaceAuthContextType[] = [
-  'application',
-  'system',
-];
 
 @Injectable()
 export class EmailComposerService {
@@ -113,10 +109,7 @@ export class EmailComposerService {
       'id' | 'provider' | 'visibility' | 'userWorkspaceId'
     >[]
   > {
-    if (
-      isDefined(callerType) &&
-      CALLER_TYPES_BYPASSING_ACCOUNT_VISIBILITY.includes(callerType)
-    ) {
+    if (isCallerBypassingAccountVisibility(callerType)) {
       const authContext = buildSystemAuthContext(workspaceId);
 
       return this.workspaceOrmManager.executeInWorkspaceContext(
@@ -124,6 +117,12 @@ export class EmailComposerService {
           this.connectedAccountRepository.find({
             where: { workspaceId, archivedAt: IsNull() },
             order: { createdAt: 'ASC', id: 'ASC' },
+            select: {
+              id: true,
+              provider: true,
+              visibility: true,
+              userWorkspaceId: true,
+            },
           }),
         authContext,
       );
@@ -166,7 +165,7 @@ export class EmailComposerService {
         isDefined(userWorkspaceId)
           ? `No connected account able to send email for user workspace '${userWorkspaceId}'`
           : 'No connected account able to send email for this workspace',
-        EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+        EmailToolExceptionCode.NO_USABLE_CONNECTED_ACCOUNT,
       );
     }
 
