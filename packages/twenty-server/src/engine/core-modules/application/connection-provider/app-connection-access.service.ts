@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -40,7 +41,9 @@ export class AppConnectionAccessService {
       await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId,
-        setting: PermissionFlagType.APPLICATIONS,
+        setting: getConnectedAccountAdministrationPermissionFlag(
+          ConnectedAccountProvider.APP,
+        ),
         apiKeyId,
         applicationId,
       });
