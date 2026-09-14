@@ -31,14 +31,14 @@ import { validateWorkflowLogicFunctionOutputSchemaMismatch } from 'src/modules/w
 import { OBJECT_TARGETING_ACTION_TYPES } from 'src/modules/workflow/workflow-builder/workflow-validation/constants/object-targeting-action-types.constant';
 
 @Injectable()
-export class WorkflowHintsWorkspaceService {
+export class WorkflowVersionNonActivableGateService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workflowSchemaWorkspaceService: WorkflowSchemaWorkspaceService,
   ) {}
 
-  async getWorkflowVersionHints({
+  async getWorkflowVersionNonActivableIssues({
     workspaceId,
     workflowVersionId,
   }: {
@@ -51,7 +51,7 @@ export class WorkflowHintsWorkspaceService {
         workflowVersionId,
       });
 
-    return this.getWorkflowDefinitionHints({
+    return this.getWorkflowDefinitionNonActivableIssues({
       workspaceId,
       workflowVersionId,
       trigger: workflowVersion.trigger,
@@ -59,7 +59,7 @@ export class WorkflowHintsWorkspaceService {
     });
   }
 
-  async getWorkflowDefinitionHints({
+  async getWorkflowDefinitionNonActivableIssues({
     workspaceId,
     workflowVersionId,
     trigger,

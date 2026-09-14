@@ -11,7 +11,7 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
-import { WorkflowHintsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-hints.workspace-service';
+import { WorkflowVersionNonActivableGateService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-non-activable-gate.service';
 import { WorkflowVersionEdgeWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.workspace-service';
 import { WorkflowVersionStepHelpersWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-helpers.workspace-service';
 import { WorkflowVersionStepWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.workspace-service';
@@ -52,7 +52,7 @@ export class WorkflowToolWorkspaceService {
     workflowVersionService: WorkflowVersionWorkspaceService,
     workflowTriggerService: WorkflowTriggerWorkspaceService,
     workflowSchemaService: WorkflowSchemaWorkspaceService,
-    workflowHintsService: WorkflowHintsWorkspaceService,
+    workflowVersionNonActivableGateService: WorkflowVersionNonActivableGateService,
     workspaceOrmManager: WorkspaceOrmManager,
     recordPositionService: RecordPositionService,
     logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -68,7 +68,7 @@ export class WorkflowToolWorkspaceService {
       workflowVersionService,
       workflowTriggerService,
       workflowSchemaService,
-      workflowHintsService,
+      workflowVersionNonActivableGateService,
       workspaceOrmManager,
       recordPositionService,
       logicFunctionFromSourceService,

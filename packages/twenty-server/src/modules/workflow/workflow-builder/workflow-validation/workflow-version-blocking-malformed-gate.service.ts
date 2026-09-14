@@ -21,12 +21,12 @@ import {
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 @Injectable()
-export class WorkflowVersionValidationWorkspaceService {
+export class WorkflowVersionBlockingMalformedGateService {
   constructor(
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
   ) {}
 
-  async validateWorkflowVersionOrThrow({
+  async assertWorkflowVersionIsNotMalformedOrThrow({
     workspaceId,
     trigger,
     steps,

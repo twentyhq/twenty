@@ -22,7 +22,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
+import { WorkflowVersionBlockingMalformedGateService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-blocking-malformed-gate.service';
 
 @Injectable()
 export class WorkflowVersionCoreSyncService {
@@ -36,7 +36,7 @@ export class WorkflowVersionCoreSyncService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordPositionService: RecordPositionService,
-    private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
+    private readonly workflowVersionBlockingMalformedGateService: WorkflowVersionBlockingMalformedGateService,
   ) {}
 
   async upsertToCore(
@@ -411,7 +411,7 @@ export class WorkflowVersionCoreSyncService {
           });
 
           if (isDefined(workflowVersion)) {
-            await this.workflowVersionValidationWorkspaceService.validateWorkflowVersionOrThrow(
+            await this.workflowVersionBlockingMalformedGateService.assertWorkflowVersionIsNotMalformedOrThrow(
               {
                 workspaceId,
                 trigger: workflowVersion.trigger,

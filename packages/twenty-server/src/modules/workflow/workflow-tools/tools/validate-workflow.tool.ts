@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { type WorkflowHintsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-hints.workspace-service';
+import { type WorkflowVersionNonActivableGateService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-non-activable-gate.service';
 import { type WorkflowToolContext } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const validateWorkflowSchema = z.object({
@@ -14,7 +14,7 @@ type ValidateWorkflowInput = z.infer<typeof validateWorkflowSchema>;
 
 export const createValidateWorkflowTool = (
   deps: {
-    workflowHintsService: WorkflowHintsWorkspaceService;
+    workflowVersionNonActivableGateService: WorkflowVersionNonActivableGateService;
   },
   context: WorkflowToolContext,
 ) => ({
@@ -24,10 +24,13 @@ export const createValidateWorkflowTool = (
   inputSchema: validateWorkflowSchema,
   execute: async (parameters: ValidateWorkflowInput) => {
     try {
-      const result = await deps.workflowHintsService.getWorkflowVersionHints({
-        workspaceId: context.workspaceId,
-        workflowVersionId: parameters.workflowVersionId,
-      });
+      const result =
+        await deps.workflowVersionNonActivableGateService.getWorkflowVersionNonActivableIssues(
+          {
+            workspaceId: context.workspaceId,
+            workflowVersionId: parameters.workflowVersionId,
+          },
+        );
 
       return {
         success: true,
