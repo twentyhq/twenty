@@ -197,7 +197,10 @@ const ImageChangesExample = () => {
   const [src, setSrc] = useState<string | undefined>(VALID_IMAGE);
   return (
     <>
-      <Avatar src={src} name="Jane" size="xl" />
+      <a href="#jane">
+        <Avatar src={src} name="Jane" size="xl" />
+        Jane
+      </a>
       <button type="button" onClick={() => setSrc(INVALID_IMAGE)}>
         Break image
       </button>
@@ -216,22 +219,23 @@ export const ImageChanges: Story = {
   render: () => <ImageChangesExample />,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(
-      await canvas.findByRole('img', { name: 'Jane' }),
-    ).toBeVisible();
+    await expect(await canvas.findByRole('presentation')).toBeVisible();
+    const recordLink = canvas.getByRole('link', { name: 'Jane' });
+    await expect(recordLink).toHaveAccessibleName('Jane');
     await userEvent.click(canvas.getByRole('button', { name: 'Break image' }));
     await expect(await canvas.findByText('J')).toBeVisible();
+    await expect(recordLink).toHaveAccessibleName('Jane');
     await waitFor(() =>
-      expect(canvas.queryByRole('img')).not.toBeInTheDocument(),
+      expect(canvas.queryByRole('presentation')).not.toBeInTheDocument(),
     );
     await userEvent.click(
       canvas.getByRole('button', { name: 'Restore image' }),
     );
-    await expect(
-      await canvas.findByRole('img', { name: 'Jane' }),
-    ).toBeVisible();
+    await expect(await canvas.findByRole('presentation')).toBeVisible();
+    await expect(recordLink).toHaveAccessibleName('Jane');
     await userEvent.click(canvas.getByRole('button', { name: 'Remove image' }));
     await expect(await canvas.findByText('J')).toBeVisible();
+    await expect(recordLink).toHaveAccessibleName('Jane');
   },
 };
 
@@ -241,6 +245,9 @@ export const Disabled: Story = {
   play: async ({ canvasElement, args }) => {
     const avatar = within(canvasElement).getByRole('button', { name: 'Jane' });
     await expect(avatar).toBeDisabled();
+    await userEvent.hover(avatar);
+    await expect(getComputedStyle(avatar).cursor).not.toBe('pointer');
+    await expect(getComputedStyle(avatar).boxShadow).toBe('none');
     await userEvent.click(avatar);
     await expect(args.onClick).not.toHaveBeenCalled();
   },

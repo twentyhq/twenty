@@ -5,9 +5,11 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
+    WorkspaceCacheModule,
     ConnectedAccountTokenEncryptionModule,
     SecretEncryptionModule,
     // JwtModule is required by SimpleSecretEncryptionUtil. Drop both once the

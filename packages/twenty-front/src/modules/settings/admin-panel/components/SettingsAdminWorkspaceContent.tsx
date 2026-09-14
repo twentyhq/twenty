@@ -83,7 +83,7 @@ export const SettingsAdminWorkspaceContent = ({
           })}
           startElement={
             <AvatarOrIcon
-              avatarUrl={getAbsoluteImageUrl(
+              src={getAbsoluteImageUrl(
                 isNonEmptyString(activeWorkspace?.logo)
                   ? activeWorkspace?.logo
                   : DEFAULT_WORKSPACE_LOGO,

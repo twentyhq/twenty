@@ -116,10 +116,10 @@ export const Avatar = ({
         <>
           <AvatarPrimitive.Image
             src={src ?? undefined}
-            alt={name ?? ''}
+            alt=""
             className={styles.image}
           />
-          <AvatarPrimitive.Fallback className={styles.fallback}>
+          <AvatarPrimitive.Fallback className={styles.fallback} aria-hidden>
             {initial || '-'}
           </AvatarPrimitive.Fallback>
         </>

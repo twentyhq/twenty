@@ -112,8 +112,8 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           variant="soft"
           startElement={
             <AvatarOrIcon
-              avatarShape="circle"
-              avatarUrl={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+              shape="circle"
+              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
             />
           }
         >

@@ -91,11 +91,11 @@ export const ActorDisplay = ({
       variant="ghost"
       startElement={
         <AvatarOrIcon
-          placeholderColorSeed={workspaceMemberId ?? undefined}
-          avatarShape={workspaceMemberId ? 'circle' : 'square'}
-          placeholder={name}
+          colorSeed={workspaceMemberId ?? undefined}
+          shape={workspaceMemberId ? 'circle' : 'square'}
+          name={name}
           Icon={LeftIcon}
-          avatarUrl={getAbsoluteImageUrl(avatarUrl ?? undefined)}
+          src={getAbsoluteImageUrl(avatarUrl ?? undefined)}
         />
       }
       style={{ paddingInlineStart: 0 }}

@@ -16,7 +16,7 @@ export type { AvatarShape } from './Avatar/types/AvatarShape';
 export type { AvatarSize } from './Avatar/types/AvatarSize';
 export type { AvatarGroupProps } from './AvatarGroup/AvatarGroup';
 export { AvatarGroup } from './AvatarGroup/AvatarGroup';
-export type { AvatarOrIconProps } from './AvatarOrIcon/AvatarOrIcon';
+export type { AvatarOrIconProps } from './AvatarOrIcon/types/AvatarOrIconProps';
 export { AvatarOrIcon } from './AvatarOrIcon/AvatarOrIcon';
 export type { CheckmarkProps } from './Checkmark/Checkmark';
 export { Checkmark } from './Checkmark/Checkmark';

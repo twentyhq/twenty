@@ -51,10 +51,10 @@ export const MentionRecordChip = ({
       className={className}
       startElement={
         <AvatarOrIcon
-          placeholder={label}
-          placeholderColorSeed={recordId}
-          avatarShape="circle"
-          avatarUrl={getAbsoluteImageUrl(imageUrl)}
+          name={label}
+          colorSeed={recordId}
+          shape="circle"
+          src={getAbsoluteImageUrl(imageUrl)}
         />
       }
     >

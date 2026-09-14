@@ -13,8 +13,8 @@ import {
   PageLayoutTabException,
   PageLayoutTabExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
-import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
-import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export type UpdatePageLayoutTabInputWithId = {
@@ -69,6 +69,8 @@ export const fromUpdatePageLayoutTabInputToFlatPageLayoutTabToUpdateOrThrow = ({
       existingFlatEntity: existingFlatPageLayoutTabToUpdate,
       updatedEditableProperties: editableProperties,
       shouldOverride,
+      callerApplicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
     });
 
   return {

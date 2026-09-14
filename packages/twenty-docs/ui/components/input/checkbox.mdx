@@ -1,0 +1,79 @@
+---
+title: Checkbox
+description: Select independent options with checked and indeterminate states.
+---
+
+import CheckboxReference from '/snippets/ui/generated/input/checkbox.mdx';
+
+Use `Checkbox` when each option can be selected independently. For a mutually exclusive choice, use [RadioGroup](/ui/components/input/radio-group).
+
+## Uncontrolled state
+
+```tsx
+import { Checkbox } from 'twenty-ui/input';
+
+export const EmailPreference = () => (
+  <label>
+    <Checkbox name="updates" value="email" defaultChecked />
+    Receive product updates
+  </label>
+);
+```
+
+A checked, named checkbox contributes its value to a form. Set `uncheckedValue` if the form should also submit a value when it is unchecked.
+
+## Controlled and indeterminate states
+
+```tsx
+import { useState } from 'react';
+import { Checkbox } from 'twenty-ui/input';
+
+export const ColumnSelection = () => {
+  const [showEmail, setShowEmail] = useState(true);
+  const [showPhone, setShowPhone] = useState(false);
+
+  return (
+    <fieldset>
+      <legend>Visible columns</legend>
+      <label>
+        <Checkbox
+          checked={showEmail && showPhone}
+          indeterminate={showEmail !== showPhone}
+          onCheckedChange={(checked) => {
+            setShowEmail(checked);
+            setShowPhone(checked);
+          }}
+        />
+        All columns
+      </label>
+      <label>
+        <Checkbox checked={showEmail} onCheckedChange={setShowEmail} />
+        Email
+      </label>
+      <label>
+        <Checkbox checked={showPhone} onCheckedChange={setShowPhone} />
+        Phone
+      </label>
+    </fieldset>
+  );
+};
+```
+
+The indeterminate state represents a partial selection; the application derives it from the child options. `onCheckedChange` receives the next boolean and event details.
+
+## Appearance and interaction
+
+| Prop      | Values                         | Default  |
+| --------- | ------------------------------ | -------- |
+| `size`    | `sm`, `md`                     | `sm`     |
+| `variant` | `solid`, `outline`, `soft`     | `solid`  |
+| `shape`   | `square`, `round`              | `square` |
+| `color`   | `accent`, `success`, `warning` | `accent` |
+
+Tab focuses the checkbox and Space toggles it. Clicking its label also toggles it. Use `disabled` to prevent interaction, or `readOnly` when the value should remain unchanged while the control stays focusable. Keep meaning in the label rather than communicating it through color alone.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<CheckboxReference />

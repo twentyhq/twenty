@@ -8,6 +8,7 @@ import {
 } from 'src/constants/universal-identifiers';
 import { type GranolaBackfillNotePayload } from 'src/logic-functions/types/granola-backfill-note-payload.type';
 import { type GranolaBackfillWorkerPayload } from 'src/logic-functions/types/granola-backfill-worker-payload.type';
+import { assertGranolaFolderSelectionReadyOrThrow } from 'src/logic-functions/utils/assert-granola-folder-selection-ready-or-throw.util';
 import { createGranolaClientOrThrow } from 'src/logic-functions/utils/create-granola-client-or-throw.util';
 import { enqueueGranolaJobOrThrow } from 'src/logic-functions/utils/enqueue-granola-job-or-throw.util';
 import { excludeDeletedGranolaNotesOrThrow } from 'src/logic-functions/utils/exclude-deleted-granola-notes-or-throw.util';
@@ -22,6 +23,7 @@ export const granolaBackfillWorkerHandler = async (
   payload: GranolaBackfillWorkerPayload,
 ) => {
   try {
+    await assertGranolaFolderSelectionReadyOrThrow();
     const registration = await findGranolaRegistrationForCurrentKey();
 
     if (

@@ -19,17 +19,20 @@ import { expect, waitFor, within } from 'storybook/test';
 import {
   PageLayoutTabLayoutMode,
   PageLayoutType,
+  PageLayoutWidgetVerticalListHeightBehavior,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
 type WidgetCardShellStoryProps = {
   isEditable: boolean;
+  heightBehavior?: PageLayoutWidgetVerticalListHeightBehavior;
   pageLayoutType: PageLayoutType;
   variant: WidgetCardVariant;
   widgetType: WidgetType;
 };
 
 const WidgetCardShellStory = ({
+  heightBehavior,
   isEditable,
   pageLayoutType,
   variant,
@@ -39,6 +42,11 @@ const WidgetCardShellStory = ({
   const widget = {
     ...makeWidget('widget-card-shell-story', 0),
     type: widgetType,
+    position: {
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      index: 0,
+      heightBehavior,
+    },
   };
   const pageLayout: PageLayout = {
     ...makeDraft([makeTab('tab-1', [widget])]),
@@ -130,6 +138,27 @@ export const RecordPageIframe: Story = {
         `${40 * rootFontSizeInPixels}px`,
       ),
     );
+  },
+};
+
+export const RecordPageFitContentIframe: Story = {
+  args: {
+    heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
+  },
+  play: RecordPageIframe.play,
+};
+
+export const RecordPageViewportIframe: Story = {
+  args: {
+    heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+  },
+  play: async ({ canvasElement }) => {
+    const content = getWidgetContent(canvasElement);
+
+    await waitFor(() => {
+      expect(getComputedStyle(content).minHeight).toBe('0px');
+      expect(content.getBoundingClientRect().height).toBe(200);
+    });
   },
 };
 
