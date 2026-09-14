@@ -1,10 +1,8 @@
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import {
-  MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH,
-  MAX_RUN_AGENT_MESSAGE_ATTACHMENTS,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-attachment.const';
+import { MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/max-run-agent-attachment-filename-length.const';
+import { MAX_RUN_AGENT_MESSAGE_ATTACHMENTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/max-run-agent-message-attachments.const';
 import {
   AiException,
   AiExceptionCode,

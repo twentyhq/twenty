@@ -14,7 +14,7 @@ import {
 import { type RunAgentMessage } from 'twenty-shared/application';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
-import { MAX_RUN_AGENT_MESSAGE_ATTACHMENTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-attachment.const';
+import { MAX_RUN_AGENT_MESSAGE_ATTACHMENTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/max-run-agent-message-attachments.const';
 import { RunAgentMessageAttachmentInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-message-attachment.input';
 import { RunAgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/enums/run-agent-message-role.enum';
 

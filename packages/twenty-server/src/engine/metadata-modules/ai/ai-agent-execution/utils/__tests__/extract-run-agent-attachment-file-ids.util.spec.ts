@@ -1,9 +1,7 @@
 import { type RunAgentMessage } from 'twenty-shared/application';
 
-import {
-  MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH,
-  MAX_RUN_AGENT_MESSAGE_ATTACHMENTS,
-} from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-attachment.const';
+import { MAX_RUN_AGENT_ATTACHMENT_FILENAME_LENGTH } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/max-run-agent-attachment-filename-length.const';
+import { MAX_RUN_AGENT_MESSAGE_ATTACHMENTS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/max-run-agent-message-attachments.const';
 import { extractRunAgentAttachmentFileIdsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/extract-run-agent-attachment-file-ids.util';
 
 const FILE_ID = '6fdbd0ba-9a10-4b71-b0b7-2b1d64f8dc27';

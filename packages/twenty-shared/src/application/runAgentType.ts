@@ -1,9 +1,6 @@
-export type RunAgentMessageRole = 'user' | 'assistant';
+import { type RunAgentMessageAttachment } from './runAgentMessageAttachmentType';
 
-export type RunAgentMessageAttachment = {
-  fileId: string;
-  filename?: string;
-};
+export type RunAgentMessageRole = 'user' | 'assistant';
 
 export type RunAgentMessage = {
   role: RunAgentMessageRole;
