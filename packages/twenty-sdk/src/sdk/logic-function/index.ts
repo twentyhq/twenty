@@ -64,6 +64,12 @@ export type { CreateMessageChannelInput } from '@/sdk/logic-function/messaging/c
 export { listMessageChannels } from '@/sdk/logic-function/messaging/list-message-channels';
 export type { ListMessageChannelsFilter } from '@/sdk/logic-function/messaging/list-message-channels';
 export { deleteMessageChannel } from '@/sdk/logic-function/messaging/delete-message-channel';
+export { ingestMessages } from '@/sdk/logic-function/messaging/ingest-messages';
+export type {
+  IngestedMessage,
+  IngestMessage,
+  IngestMessageParticipant,
+} from '@/sdk/logic-function/messaging/ingest-messages';
 export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';
 
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';

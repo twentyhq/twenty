@@ -1,0 +1,249 @@
+import { Test, type TestingModule } from '@nestjs/testing';
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import {
+  MessageChannelType,
+  MessageParticipantRole,
+} from 'twenty-shared/types';
+
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type AppMessageInput } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { MessageChannelExceptionCode } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
+import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
+import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
+import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
+
+const APPLICATION_ID = '11111111-1111-4111-8111-111111111111';
+const WORKSPACE_ID = '33333333-3333-4333-8333-333333333333';
+const CONNECTED_ACCOUNT_ID = '44444444-4444-4444-8444-444444444444';
+const MESSAGE_CHANNEL_ID = '55555555-5555-4555-8555-555555555555';
+const CHANNEL_HANDLE = 'urn:li:person:self';
+
+describe('ApplicationMessageIngestionService', () => {
+  let service: ApplicationMessageIngestionService;
+  let channelsService: jest.Mocked<ApplicationMessageChannelsService>;
+  let saveMessagesService: jest.Mocked<MessagingSaveMessagesAndEnqueueContactCreationService>;
+
+  const scope = {
+    applicationId: APPLICATION_ID,
+    workspaceId: WORKSPACE_ID,
+    messageChannelId: MESSAGE_CHANNEL_ID,
+  };
+
+  const aMessage = (overrides: Partial<AppMessageInput> = {}) =>
+    ({
+      externalId: 'msg-1',
+      threadExternalId: 'thread-1',
+      text: 'hello',
+      receivedAt: new Date('2026-01-01T00:00:00Z'),
+      participants: [
+        {
+          role: MessageParticipantRole.FROM,
+          handle: 'urn:li:person:ada',
+          displayName: 'Ada',
+        },
+        { role: MessageParticipantRole.TO, handle: CHANNEL_HANDLE },
+      ],
+      ...overrides,
+    }) as AppMessageInput;
+
+  beforeEach(async () => {
+    channelsService = {
+      findOwnedOrThrow: jest.fn().mockResolvedValue({
+        id: MESSAGE_CHANNEL_ID,
+        connectedAccountId: CONNECTED_ACCOUNT_ID,
+        handle: CHANNEL_HANDLE,
+        type: MessageChannelType.APP,
+        isSyncEnabled: true,
+      } as MessageChannelEntity),
+    } as unknown as jest.Mocked<ApplicationMessageChannelsService>;
+
+    saveMessagesService = {
+      saveMessagesAndEnqueueContactCreation: jest.fn().mockResolvedValue({
+        messageExternalIdsAndIdsMap: new Map([['msg-1', 'message-uuid']]),
+        messageExternalIdToMessageThreadIdMap: new Map([
+          ['msg-1', 'thread-uuid'],
+        ]),
+      }),
+    } as unknown as jest.Mocked<MessagingSaveMessagesAndEnqueueContactCreationService>;
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        ApplicationMessageIngestionService,
+        {
+          provide: getRepositoryToken(MessageChannelEntity),
+          useValue: { findOne: jest.fn() },
+        },
+        {
+          provide: getRepositoryToken(ConnectedAccountEntity),
+          useValue: {
+            findOneOrFail: jest.fn().mockResolvedValue({
+              id: CONNECTED_ACCOUNT_ID,
+              handle: CHANNEL_HANDLE,
+              handleAliases: [],
+            } as unknown as ConnectedAccountEntity),
+          },
+        },
+        {
+          provide: ApplicationMessageChannelsService,
+          useValue: channelsService,
+        },
+        {
+          provide: MessagingSaveMessagesAndEnqueueContactCreationService,
+          useValue: saveMessagesService,
+        },
+      ],
+    }).compile();
+
+    service = module.get(ApplicationMessageIngestionService);
+  });
+
+  const savedMessages = () =>
+    saveMessagesService.saveMessagesAndEnqueueContactCreation.mock.calls[0][0];
+
+  it('routes through the shared save path rather than writing records directly', async () => {
+    await service.ingest({ ...scope, messages: [aMessage()] });
+
+    expect(
+      saveMessagesService.saveMessagesAndEnqueueContactCreation,
+    ).toHaveBeenCalledTimes(1);
+    expect(savedMessages()[0]).toEqual(
+      expect.objectContaining({
+        externalId: 'msg-1',
+        messageThreadExternalId: 'thread-1',
+        text: 'hello',
+        isDraft: false,
+      }),
+    );
+  });
+
+  it('namespaces the dedup key by application so apps cannot collide', async () => {
+    await service.ingest({ ...scope, messages: [aMessage()] });
+
+    expect(savedMessages()[0].headerMessageId).toBe(
+      `app:${APPLICATION_ID}:msg-1`,
+    );
+  });
+
+  it('derives direction from the sender rather than trusting the app', async () => {
+    await service.ingest({ ...scope, messages: [aMessage()] });
+    expect(savedMessages()[0].direction).toBe(MessageDirection.INCOMING);
+
+    saveMessagesService.saveMessagesAndEnqueueContactCreation.mockClear();
+
+    await service.ingest({
+      ...scope,
+      messages: [
+        aMessage({
+          participants: [
+            { role: MessageParticipantRole.FROM, handle: CHANNEL_HANDLE },
+            { role: MessageParticipantRole.TO, handle: 'urn:li:person:ada' },
+          ],
+        }),
+      ],
+    });
+    expect(savedMessages()[0].direction).toBe(MessageDirection.OUTGOING);
+  });
+
+  it('defaults a missing subject to null rather than an empty string', async () => {
+    await service.ingest({ ...scope, messages: [aMessage()] });
+
+    expect(savedMessages()[0].subject).toBeNull();
+  });
+
+  it('rejects a message with no sender', async () => {
+    await expect(
+      service.ingest({
+        ...scope,
+        messages: [
+          aMessage({
+            participants: [
+              { role: MessageParticipantRole.TO, handle: CHANNEL_HANDLE },
+            ],
+          }),
+        ],
+      }),
+    ).rejects.toMatchObject({
+      code: MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+    });
+
+    expect(
+      saveMessagesService.saveMessagesAndEnqueueContactCreation,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('rejects a message with two senders', async () => {
+    await expect(
+      service.ingest({
+        ...scope,
+        messages: [
+          aMessage({
+            participants: [
+              { role: MessageParticipantRole.FROM, handle: 'a' },
+              { role: MessageParticipantRole.FROM, handle: 'b' },
+            ],
+          }),
+        ],
+      }),
+    ).rejects.toMatchObject({
+      code: MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+    });
+  });
+
+  it('rejects a batch repeating one external id', async () => {
+    await expect(
+      service.ingest({
+        ...scope,
+        messages: [aMessage(), aMessage()],
+      }),
+    ).rejects.toMatchObject({
+      code: MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+    });
+
+    expect(
+      saveMessagesService.saveMessagesAndEnqueueContactCreation,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('refuses to ingest into a paused channel', async () => {
+    channelsService.findOwnedOrThrow.mockResolvedValue({
+      id: MESSAGE_CHANNEL_ID,
+      connectedAccountId: CONNECTED_ACCOUNT_ID,
+      handle: CHANNEL_HANDLE,
+      type: MessageChannelType.APP,
+      isSyncEnabled: false,
+    } as MessageChannelEntity);
+
+    await expect(
+      service.ingest({ ...scope, messages: [aMessage()] }),
+    ).rejects.toMatchObject({
+      code: MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+    });
+
+    expect(
+      saveMessagesService.saveMessagesAndEnqueueContactCreation,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('gates on channel ownership before touching anything else', async () => {
+    channelsService.findOwnedOrThrow.mockRejectedValue(new Error('not yours'));
+
+    await expect(
+      service.ingest({ ...scope, messages: [aMessage()] }),
+    ).rejects.toThrow('not yours');
+  });
+
+  it('returns the ids the app needs to link its own records', async () => {
+    const result = await service.ingest({ ...scope, messages: [aMessage()] });
+
+    expect(result.messages).toEqual([
+      {
+        externalId: 'msg-1',
+        messageId: 'message-uuid',
+        messageThreadId: 'thread-uuid',
+      },
+    ]);
+  });
+});

@@ -218,8 +218,9 @@ export class ApplicationMessageChannelsService {
 
   // Resolving the channel through the app's own connections is what stops one
   // app from reading or mutating another app's channels: the connected account
-  // carries the applicationId, the channel does not.
-  private async findOwnedOrThrow({
+  // carries the applicationId, the channel does not. Public because ingestion
+  // gates on the same check, and there must be exactly one of it.
+  async findOwnedOrThrow({
     applicationId,
     workspaceId,
     id,
