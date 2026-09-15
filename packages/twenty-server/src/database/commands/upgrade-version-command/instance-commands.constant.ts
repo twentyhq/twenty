@@ -191,6 +191,7 @@ import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database
 import { AddWorkspaceWorkflowIdToWorkflowFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789350000001-add-workspace-workflow-id-to-workflow';
 import { AddCoreVersionPointersFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789370101008-add-core-version-pointers';
 import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789373200000-add-readability-parent-fields-to-object-metadata';
+import { AddChatLastMessageUsageFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789463551003-add-chat-last-message-usage';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -384,4 +385,5 @@ export const INSTANCE_COMMANDS = [
   AddWorkspaceWorkflowIdToWorkflowFastInstanceCommand,
   AddCoreVersionPointersFastInstanceCommand,
   AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
+  AddChatLastMessageUsageFastInstanceCommand,
 ];

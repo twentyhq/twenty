@@ -6,6 +6,7 @@ import {
   tipTapDocumentToMarkdown,
 } from 'twenty-shared/utils';
 
+import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -95,6 +96,24 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [storeEntry.status, hasAiPermission, setAgentChatThreadsLoading]);
 
   useEffect(() => {
+    const selectedThread = agentChatVisibleThreads.find(
+      (thread) => thread.id === currentAiChatThread,
+    );
+    if (!isDefined(selectedThread)) return;
+    const usageState = agentChatUsageFamilyCallback({
+      threadId: selectedThread.id,
+    });
+    if (!isDefined(store.get(usageState))) {
+      store.set(usageState, getAgentChatUsageFromThread(selectedThread));
+    }
+  }, [
+    currentAiChatThread,
+    agentChatVisibleThreads,
+    agentChatUsageFamilyCallback,
+    store,
+  ]);
+
+  useEffect(() => {
     if (
       hasInitializedAgentChatThreads ||
       (currentAiChatThread !== null && isValidUuid(currentAiChatThread))
@@ -127,23 +146,9 @@ export const AgentChatThreadInitializationEffect = () => {
         firstThread.title ?? null,
       );
 
-      const hasUsageData =
-        (firstThread.conversationSize ?? 0) > 0 &&
-        isDefined(firstThread.contextWindowTokens);
-
       store.set(
         agentChatUsageFamilyCallback(firstThreadFamilyKey),
-        hasUsageData
-          ? {
-              lastMessage: null,
-              conversationSize: firstThread.conversationSize ?? 0,
-              contextWindowTokens: firstThread.contextWindowTokens ?? 0,
-              inputTokens: firstThread.totalInputTokens,
-              outputTokens: firstThread.totalOutputTokens,
-              inputCredits: firstThread.totalInputCredits,
-              outputCredits: firstThread.totalOutputCredits,
-            }
-          : null,
+        getAgentChatUsageFromThread(firstThread),
       );
     } else {
       store.set(hasTriggeredCreateForDraftState.atom, false);

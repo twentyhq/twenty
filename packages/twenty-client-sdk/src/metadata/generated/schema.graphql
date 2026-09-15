@@ -3321,9 +3321,19 @@ type AgentMessage {
   createdAt: DateTime!
 }
 
+type AgentChatMessageUsage {
+  inputTokens: Int!
+  outputTokens: Int!
+  cachedInputTokens: Int!
+  inputCredits: Float!
+  outputCredits: Float!
+}
+
 type AgentChatThread {
   id: ID!
   title: String
+  lastMessageUsage: AgentChatMessageUsage
+  totalCacheReadTokens: Float
   totalInputTokens: Int!
   totalOutputTokens: Int!
   contextWindowTokens: Int

@@ -1,5 +1,7 @@
 import { Field, Float, HideField, ID, Int, ObjectType } from '@nestjs/graphql';
 
+import { AgentChatMessageUsageDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-message-usage.dto';
+
 @ObjectType('AgentChatThread')
 export class AgentChatThreadDTO {
   @Field(() => ID)
@@ -7,6 +9,12 @@ export class AgentChatThreadDTO {
 
   @Field({ nullable: true })
   title: string;
+
+  @Field(() => AgentChatMessageUsageDTO, { nullable: true })
+  lastMessageUsage: AgentChatMessageUsageDTO | null;
+
+  @Field(() => Float, { nullable: true })
+  totalCacheReadTokens: number | null;
 
   @Field(() => Int)
   totalInputTokens: number;

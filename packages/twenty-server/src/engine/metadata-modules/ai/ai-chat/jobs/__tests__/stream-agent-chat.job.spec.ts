@@ -320,7 +320,16 @@ describe('StreamAgentChatJob', () => {
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
       { id: 'thread-id', activeStreamId: 'stream-id' },
-      expect.objectContaining({ lastStreamError: null }),
+      expect.objectContaining({
+        lastStreamError: null,
+        lastMessageUsage: {
+          inputTokens: 12,
+          outputTokens: 3,
+          cachedInputTokens: 0,
+          inputCredits: expect.any(Number),
+          outputCredits: expect.any(Number),
+        },
+      }),
     );
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',

@@ -43,6 +43,7 @@ const serializeThreadForBroadcast = (
 ) => ({
   id: thread.id,
   title: thread.title,
+  lastMessageUsage: thread.lastMessageUsage,
   totalInputTokens: thread.totalInputTokens,
   totalOutputTokens: thread.totalOutputTokens,
   totalCacheReadTokens: thread.totalCacheReadTokens,

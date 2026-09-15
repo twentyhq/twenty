@@ -2,7 +2,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { IconArrowUp, IconArrowDown, IconCoins } from 'twenty-ui/icon';
+import {
+  IconArrowUp,
+  IconArrowDown,
+  IconCoins,
+  IconDatabase,
+} from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
@@ -39,10 +44,6 @@ export const AiChatContextUsageDetails = () => {
   const formatTokens = (tokens: number) =>
     formatNumber(tokens, { abbreviate: true, decimals: 1 });
   const lastMessage = agentChatUsage.lastMessage;
-  const cachedLabel =
-    isDefined(lastMessage) && lastMessage.inputTokens > 0
-      ? t`${Math.round((lastMessage.cachedInputTokens / lastMessage.inputTokens) * 100)}% cached`
-      : undefined;
 
   return (
     <>
@@ -55,11 +56,13 @@ export const AiChatContextUsageDetails = () => {
               Icon={IconArrowUp}
               label={t`Input tokens`}
               value={null}
-              valueLabel={
-                <span title={cachedLabel}>
-                  {formatTokens(lastMessage.inputTokens)}
-                </span>
-              }
+              valueLabel={formatTokens(lastMessage.inputTokens)}
+            />
+            <UsageProgressRow
+              Icon={IconDatabase}
+              label={t`Cached input`}
+              value={null}
+              valueLabel={formatTokens(lastMessage.cachedInputTokens ?? 0)}
             />
             <UsageProgressRow
               Icon={IconArrowDown}
@@ -87,6 +90,12 @@ export const AiChatContextUsageDetails = () => {
           label={t`Input tokens`}
           value={null}
           valueLabel={formatTokens(agentChatUsage.inputTokens)}
+        />
+        <UsageProgressRow
+          Icon={IconDatabase}
+          label={t`Cached input`}
+          value={null}
+          valueLabel={formatTokens(agentChatUsage.cachedInputTokens ?? 0)}
         />
         <UsageProgressRow
           Icon={IconArrowDown}

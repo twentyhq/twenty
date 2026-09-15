@@ -72,6 +72,7 @@ describe('AiChatContextUsageButton', () => {
       conversationSize: 200000,
       contextWindowTokens: 1000000,
       inputTokens: 200000,
+      cachedInputTokens: 75000,
       outputTokens: 40000,
       inputCredits: 80,
       outputCredits: 20,
@@ -102,7 +103,9 @@ describe('AiChatContextUsageButton', () => {
     expect(screen.getByText('50')).toBeVisible();
     expect(screen.getAllByText('Credits')).toHaveLength(2);
     expect(screen.queryByText('Cost index')).not.toBeInTheDocument();
-    expect(screen.getByTitle('50% cached')).toBeVisible();
+    expect(screen.getAllByText('Cached input')).toHaveLength(2);
+    expect(screen.getByText('50k')).toBeVisible();
+    expect(screen.getByText('75k')).toBeVisible();
     expect(screen.getAllByText('Context window')).toHaveLength(1);
     const lessButton = screen.getByRole('button', { name: /^Less/ });
     expect(
