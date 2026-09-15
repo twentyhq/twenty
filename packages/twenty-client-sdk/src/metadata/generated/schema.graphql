@@ -5252,11 +5252,17 @@ input RunAgentInput {
 input RunAgentMessageInput {
   role: RunAgentMessageRole!
   content: String!
+  attachments: [RunAgentMessageAttachmentInput!]
 }
 
 enum RunAgentMessageRole {
   user
   assistant
+}
+
+input RunAgentMessageAttachmentInput {
+  fileId: UUID!
+  filename: String
 }
 
 input CreateWebhookInput {
