@@ -2,14 +2,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { IconArrowUp, IconArrowDown, IconCurrencyDollar } from 'twenty-ui/icon';
+import { IconArrowUp, IconArrowDown, IconCoins } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { billingState } from '@/client-config/states/billingState';
 import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { formatNumber } from '~/utils/format/formatNumber';
@@ -36,20 +34,6 @@ export const AiChatContextUsageDetails = () => {
     agentChatUsageComponentFamilyState,
     { threadId: currentAiChatThread },
   );
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const { formatUsageValue } = useUsageValueFormatter();
-
-  // Values from the streaming API arrive as display credits (micro-credits).
-  const formatChatCost = (displayCredits: number): string => {
-    if (isBillingEnabled) {
-      return `${formatUsageValue(displayCredits)}`;
-    }
-    const dollars = displayCredits / 1000;
-
-    return `$${formatNumber(dollars, { decimals: 2 })}`;
-  };
-
   if (!agentChatUsage) return null;
 
   const formatTokens = (tokens: number) => {
@@ -91,11 +75,12 @@ export const AiChatContextUsageDetails = () => {
               valueLabel={formatTokens(lastMessage.outputTokens)}
             />
             <UsageProgressRow
-              Icon={IconCurrencyDollar}
-              label={t`Cost index`}
+              Icon={IconCoins}
+              label={t`Credits`}
               value={null}
-              valueLabel={formatChatCost(
+              valueLabel={formatNumber(
                 lastMessage.inputCredits + lastMessage.outputCredits,
+                { decimals: 7 },
               )}
             />
           </StyledSection>
@@ -117,11 +102,12 @@ export const AiChatContextUsageDetails = () => {
           valueLabel={formatTokens(agentChatUsage.outputTokens)}
         />
         <UsageProgressRow
-          Icon={IconCurrencyDollar}
-          label={t`Cost index`}
+          Icon={IconCoins}
+          label={t`Credits`}
           value={null}
-          valueLabel={formatChatCost(
+          valueLabel={formatNumber(
             agentChatUsage.inputCredits + agentChatUsage.outputCredits,
+            { decimals: 7 },
           )}
         />
       </StyledSection>

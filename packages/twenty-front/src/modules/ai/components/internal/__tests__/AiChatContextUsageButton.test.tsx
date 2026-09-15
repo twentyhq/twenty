@@ -98,12 +98,15 @@ describe('AiChatContextUsageButton', () => {
     expect(screen.getByText('20k (2%)')).toBeVisible();
     expect(screen.getByText('200k (20%)')).toBeVisible();
     expect(screen.getByText('40k (4%)')).toBeVisible();
-    expect(screen.getByText('$0.1')).toBeVisible();
+    expect(screen.getByText('100')).toBeVisible();
+    expect(screen.getByText('50')).toBeVisible();
+    expect(screen.getAllByText('Credits')).toHaveLength(2);
+    expect(screen.queryByText('Cost index')).not.toBeInTheDocument();
     expect(screen.getByTitle('50% cached')).toBeVisible();
     expect(screen.getAllByText('Context window')).toHaveLength(1);
     const lessButton = screen.getByRole('button', { name: /^Less/ });
     expect(
-      screen.getByText('$0.1').compareDocumentPosition(lessButton) &
+      screen.getByText('100').compareDocumentPosition(lessButton) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
     await user.click(lessButton);
