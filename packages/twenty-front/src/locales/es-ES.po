@@ -17670,6 +17670,11 @@ msgstr "Guardar como nueva vista"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "Guarda o cancela los cambios del panel antes de editar el diseño."
 
+#. js-lingui-id: bL2pm9
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Save the record before attaching a file"
+msgstr ""
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -20544,6 +20549,11 @@ msgstr "Este componente se ejecuta sin una interfaz de usuario y no muestra nada
 msgid "This connection does not exist or is not available for this application."
 msgstr "Esta conexión no existe o no está disponible para esta aplicación."
 
+#. js-lingui-id: 2bcQ5P
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "This content was saved in an older format and cannot be edited here"
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
@@ -21364,6 +21374,11 @@ msgstr "¡La configuración de la autenticación de dos factores se completó co
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Type"
 msgstr "Tipo"
+
+#. js-lingui-id: RS98db
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Type '/' for commands"
+msgstr ""
 
 #. js-lingui-id: SKD2e4
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
