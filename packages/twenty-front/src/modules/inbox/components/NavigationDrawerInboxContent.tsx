@@ -45,7 +45,7 @@ export const NavigationDrawerInboxContent = () => {
           or sent straight here. Not a queue, which is why it is not named
           after one. */}
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label={t`Mine`} />
+        <NavigationDrawerSectionTitle label={t`My Inbox`} />
         {INBOX_SECTIONS.map((inboxSection) => {
           const sectionPath = getInboxSectionPath(inboxSection);
           const count = getSectionCount(inboxSection.scope);

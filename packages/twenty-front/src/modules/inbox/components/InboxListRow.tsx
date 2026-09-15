@@ -141,12 +141,14 @@ const StyledButtonsSlot = styled.div`
 type InboxListRowProps = {
   inboxItem: InboxItem;
   isSelected: boolean;
+  isSharedInboxList: boolean;
   onClick: () => void;
 };
 
 export const InboxListRow = ({
   inboxItem,
   isSelected,
+  isSharedInboxList,
   onClick,
 }: InboxListRowProps) => {
   const { theme } = useContext(ThemeContext);
@@ -211,9 +213,11 @@ export const InboxListRow = ({
             </StyledSecondLine>
           )}
         </StyledOpenTarget>
-        <StyledButtonsSlot className="inbox-list-row-buttons">
-          <InboxListRowButtons inboxItem={inboxItem} />
-        </StyledButtonsSlot>
+        {isSharedInboxList && (
+          <StyledButtonsSlot className="inbox-list-row-buttons">
+            <InboxListRowButtons inboxItem={inboxItem} />
+          </StyledButtonsSlot>
+        )}
       </StyledRow>
     </StyledRowContainer>
   );

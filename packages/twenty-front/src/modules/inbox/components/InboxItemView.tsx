@@ -9,8 +9,7 @@ import { Button, LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemSubjectChip } from '@/inbox/components/InboxItemSubjectChip';
-import { InboxItemAssignee } from '@/inbox/components/InboxItemAssignee';
-import { InboxListRowButtons } from '@/inbox/components/InboxListRowButtons';
+import { InboxItemPlacement } from '@/inbox/components/InboxItemPlacement';
 import { InboxPlanActionsSummary } from '@/inbox/components/InboxPlanActionsSummary';
 import { InboxPlanEntityGraph } from '@/inbox/components/InboxPlanEntityGraph';
 import { InboxPlanToolCallRow } from '@/inbox/components/InboxPlanToolCallRow';
@@ -41,6 +40,12 @@ const StyledScroll = styled.div`
   min-height: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledHeaderEnd = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledHeader = styled.div`
@@ -235,9 +240,12 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
             <InboxItemTypeIcon size={theme.icon.size.sm} color="currentColor" />
             {inboxItem.inboxItemType.label}
           </StyledType>
-          <span>
-            {t`Updated ${beautifyPastDateRelativeToNow(inboxItem.lastEventAt)}`}
-          </span>
+          <StyledHeaderEnd>
+            <InboxItemPlacement inboxItem={inboxItem} />
+            <span>
+              {t`Updated ${beautifyPastDateRelativeToNow(inboxItem.lastEventAt)}`}
+            </span>
+          </StyledHeaderEnd>
         </StyledHeader>
         <StyledTitle>{inboxItem.title}</StyledTitle>
 
@@ -297,8 +305,6 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
       </StyledScroll>
 
       <StyledFooter>
-        <InboxItemAssignee inboxItem={inboxItem} hasName />
-        <InboxListRowButtons inboxItem={inboxItem} />
         <StyledFooterEnd>
           {isDone ? (
             <>

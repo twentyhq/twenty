@@ -70,6 +70,20 @@ export class InboxTransitionService {
       });
     }
 
+    // Moving work into an inbox the actor cannot read would put it somewhere
+    // they can no longer follow it, so the destination is held to the same
+    // reach as everything else they can see.
+    if (
+      transition.kind === 'MOVE' &&
+      isDefined(transition.toQueueId) &&
+      !accessibleQueueIds.includes(transition.toQueueId)
+    ) {
+      throw new InboxException(
+        `Inbox queue ${transition.toQueueId} is not one you can reach`,
+        InboxExceptionCode.UNKNOWN_INBOX_QUEUE,
+      );
+    }
+
     // The version guard lives in the WHERE clause, so losing the race means
     // updating nothing rather than overwriting the winner.
     const updateResult = await this.inboxItemRepository.update(
@@ -183,6 +197,34 @@ export class InboxTransitionService {
           resurfaceAt: null,
           outcome: null,
         };
+
+      case 'MOVE': {
+        if (transition.toQueueId === inboxItem.queueId) {
+          return {};
+        }
+
+        // The database refuses an item that belongs to no inbox and nobody, so
+        // taking the last shared inbox away leaves it with the person doing it
+        // rather than with no one.
+        const assignee =
+          isDefined(transition.toQueueId) ||
+          isDefined(inboxItem.assigneeUserWorkspaceId)
+            ? inboxItem.assigneeUserWorkspaceId
+            : actorUserWorkspaceId;
+
+        // Landing somewhere new is a fresh start there, the same way handing
+        // work to a person is: a team should not inherit the snooze of whoever
+        // held it before.
+        return {
+          queueId: transition.toQueueId,
+          assigneeUserWorkspaceId: assignee,
+          readAt: null,
+          clearedAt: null,
+          clearedByUserWorkspaceId: null,
+          resurfaceAt: null,
+          outcome: null,
+        };
+      }
 
       case 'ASSIGN': {
         const assignee = this.readAssignee(

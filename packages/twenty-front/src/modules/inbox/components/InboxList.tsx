@@ -41,6 +41,9 @@ type InboxListProps = {
   hasMoreItems: boolean;
   // Splitting by priority only earns its keep where work is still pending.
   shouldSplitByPriority: boolean;
+  // Taking work off a row is triage, which only happens where the team's
+  // unclaimed work is listed.
+  isSharedInboxList: boolean;
   onInboxItemClick: (inboxItem: InboxItem) => void;
   onLoadMoreItems: () => void;
 };
@@ -51,6 +54,7 @@ export const InboxList = ({
   selectedInboxItemId,
   hasMoreItems,
   shouldSplitByPriority,
+  isSharedInboxList,
   onInboxItemClick,
   onLoadMoreItems,
 }: InboxListProps) => {
@@ -75,6 +79,7 @@ export const InboxList = ({
         key={inboxItem.id}
         inboxItem={inboxItem}
         isSelected={selectedInboxItemId === inboxItem.id}
+        isSharedInboxList={isSharedInboxList}
         onClick={() => onInboxItemClick(inboxItem)}
       />
     ));

@@ -13,7 +13,11 @@ export type InboxItemTransition =
   | {
       kind: 'ASSIGN';
       toUserWorkspaceId: string | null | typeof SELF_ASSIGNMENT;
-    };
+    }
+  // Which inbox the work sits in, which is a different question from who is
+  // doing it: a shared inbox item can be assigned, and a personal one can be
+  // handed to a team.
+  | { kind: 'MOVE'; toQueueId: string | null };
 
 // Distinct from null, which means "nobody". The actor is only known server
 // side, so the client says "me" rather than naming itself.
@@ -25,4 +29,5 @@ export const INBOX_ITEM_TRANSITION_KINDS = [
   'CLEAR',
   'REOPEN',
   'ASSIGN',
+  'MOVE',
 ] as const satisfies readonly InboxItemTransitionKind[];

@@ -30,4 +30,11 @@ export class TransitionInboxItemInput {
   @IsOptional()
   @IsUUID()
   toUserWorkspaceId?: string | null;
+
+  // Null is meaningful here too: it takes the work out of every shared inbox
+  // and leaves it with its assignee.
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  toQueueId?: string | null;
 }

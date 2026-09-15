@@ -1047,6 +1047,7 @@ export type TransitionInboxItemInput = {
   kind: Scalars['String']['input'];
   outcome?: InputMaybe<InboxItemOutcome>;
   resurfaceAt?: InputMaybe<Scalars['DateTime']['input']>;
+  toQueueId?: InputMaybe<Scalars['UUID']['input']>;
   toUserWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;
 };
 

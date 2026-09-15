@@ -24,6 +24,7 @@ type InboxItemTransitionInput = {
   outcome?: InboxItemOutcome;
   resurfaceAt?: string;
   toUserWorkspaceId?: string | null;
+  toQueueId?: string | null;
 };
 
 export const useInboxItemActions = () => {
@@ -101,6 +102,28 @@ export const useInboxItemActions = () => {
             kind: 'ASSIGN',
             ...(toUserWorkspaceId === undefined ? {} : { toUserWorkspaceId }),
           },
+          expectedVersion,
+        },
+      }),
+    [transitionInboxItemMutation],
+  );
+
+  // Which inbox the work sits in, which is a different question from who is
+  // doing it, so it is its own call rather than another argument to assign.
+  const moveInboxItem = useCallback(
+    async ({
+      inboxItemId,
+      toQueueId,
+      expectedVersion,
+    }: {
+      inboxItemId: string;
+      toQueueId: string | null;
+      expectedVersion?: number;
+    }) =>
+      transitionInboxItemMutation({
+        variables: {
+          inboxItemId,
+          transition: { kind: 'MOVE', toQueueId },
           expectedVersion,
         },
       }),
@@ -199,6 +222,7 @@ export const useInboxItemActions = () => {
     markInboxItemRead,
     transitionInboxItem,
     assignInboxItem,
+    moveInboxItem,
     reopenInboxItem,
     updateInboxItemToolCallInput,
     setInboxItemToolCallRejected,

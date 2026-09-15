@@ -46,7 +46,7 @@ export const isInboxItemUnread = (inboxItem: InboxItemAttention): boolean =>
 // the TypeORM `Raw` filters below and the grouped count that cannot express
 // itself as a FindOptions tree. Keeping them in terms of the same builders is
 // what stops two notions of "handled" from drifting apart.
-export const buildClearIsCurrentSql = (alias: string): string =>
+const buildClearIsCurrentSql = (alias: string): string =>
   `("${alias}"."clearedAt" IS NOT NULL AND "${alias}"."lastEventAt" <= "${alias}"."clearedAt")`;
 
 export const buildWantsAttentionSql = (alias: string): string =>

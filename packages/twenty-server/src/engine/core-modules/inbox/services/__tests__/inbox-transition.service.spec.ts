@@ -477,4 +477,93 @@ describe('InboxTransitionService', () => {
       );
     });
   });
+
+  describe('moving between inboxes', () => {
+    it('leaves a personal item with its owner when it goes to a shared inbox', async () => {
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
+        buildInboxItem({
+          queueId: null,
+          assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        }),
+      );
+
+      await service.transition({
+        inboxItemId: INBOX_ITEM_ID,
+        workspaceId: WORKSPACE_ID,
+        actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        accessibleQueueIds: [QUEUE_ID],
+        transition: { kind: 'MOVE', toQueueId: QUEUE_ID },
+      });
+
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.anything(),
+        expect.objectContaining({
+          queueId: QUEUE_ID,
+          assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+          clearedAt: null,
+        }),
+      );
+    });
+
+    it('keeps unclaimed work addressed by giving it to whoever takes it out of every inbox', async () => {
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
+        buildInboxItem({ queueId: QUEUE_ID, assigneeUserWorkspaceId: null }),
+      );
+
+      await service.transition({
+        inboxItemId: INBOX_ITEM_ID,
+        workspaceId: WORKSPACE_ID,
+        actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        accessibleQueueIds: [QUEUE_ID],
+        transition: { kind: 'MOVE', toQueueId: null },
+      });
+
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.anything(),
+        expect.objectContaining({
+          queueId: null,
+          assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        }),
+      );
+    });
+
+    it('refuses an inbox the actor cannot reach', async () => {
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
+        buildInboxItem({ queueId: QUEUE_ID }),
+      );
+
+      await expect(
+        service.transition({
+          inboxItemId: INBOX_ITEM_ID,
+          workspaceId: WORKSPACE_ID,
+          actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+          accessibleQueueIds: [QUEUE_ID],
+          transition: { kind: 'MOVE', toQueueId: 'a-queue-i-cannot-see' },
+        }),
+      ).rejects.toThrow('is not one you can reach');
+
+      expect(inboxItemRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('writes nothing when the item is already in that inbox', async () => {
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
+        buildInboxItem({ queueId: QUEUE_ID }),
+      );
+
+      await service.transition({
+        inboxItemId: INBOX_ITEM_ID,
+        workspaceId: WORKSPACE_ID,
+        actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        accessibleQueueIds: [QUEUE_ID],
+        transition: { kind: 'MOVE', toQueueId: QUEUE_ID },
+      });
+
+      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
+
+      expect(partialUpdate).not.toHaveProperty('queueId');
+      expect(partialUpdate).not.toHaveProperty('clearedAt');
+    });
+  });
 });

@@ -209,6 +209,7 @@ export const InboxPage = () => {
                   selectedInboxItemId={inboxItemId ?? null}
                   hasMoreItems={hasMoreItems}
                   shouldSplitByPriority={shouldSplitByPriority}
+                  isSharedInboxList={isDefined(inboxQueueSlug)}
                   onInboxItemClick={openItem}
                   onLoadMoreItems={loadMoreItems}
                 />

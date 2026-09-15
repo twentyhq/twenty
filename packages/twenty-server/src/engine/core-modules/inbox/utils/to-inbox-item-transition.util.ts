@@ -47,6 +47,18 @@ export const toInboxItemTransition = (
             : SELF_ASSIGNMENT,
       };
 
+    // Unlike an assignment, an absent target is not "me": there is no such
+    // thing as a default inbox to move to, so it has to be said.
+    case 'MOVE':
+      if (!('toQueueId' in input)) {
+        throw new InboxException(
+          'A move has to name the inbox it is moving to, or null for none',
+          InboxExceptionCode.INVALID_INBOX_ACTION,
+        );
+      }
+
+      return { kind: 'MOVE', toQueueId: input.toQueueId ?? null };
+
     default:
       throw new InboxException(
         `Unknown transition kind ${input.kind}`,
