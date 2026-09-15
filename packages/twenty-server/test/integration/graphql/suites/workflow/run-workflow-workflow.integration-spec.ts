@@ -1,3 +1,4 @@
+import { STEP_RETRY_DELAYS_MS } from 'twenty-shared/workflow';
 import request from 'supertest';
 
 import {
@@ -19,9 +20,16 @@ const client = request(`http://localhost:${APP_PORT}`);
 
 // Same blocked-URL constant used by step-error-handling-workflow.integration-spec.ts:17
 // - connecting to a closed local port fails fast (ECONNREFUSED) and
-// deterministically, giving reliable retry/stop-window timing. Reused (not
-// redeclared) by the 'retry parity' describe block added in Task 2.
+// deterministically, giving reliable retry/stop-window timing. Shared by the
+// stop-parity fixture above and the 'retry parity' describe block below.
 const BLOCKED_REQUEST_URL = 'http://127.0.0.1:1/';
+
+const TOTAL_RETRY_DELAY_MS = STEP_RETRY_DELAYS_MS.reduce(
+  (total, delay) => total + delay,
+  0,
+);
+
+const RETRY_TEST_TIMEOUT_MS = TOTAL_RETRY_DELAY_MS + 60_000;
 
 const MANUAL_TRIGGER = {
   name: 'Manual Trigger',
@@ -307,6 +315,16 @@ describe('Run workflow action - integration (e2e)', () => {
       trigger: MANUAL_TRIGGER,
     });
 
+    // A version needs at least one step to be activated
+    // (assert-version-can-be-activated.util.ts) - EMPTY is a genuine no-op
+    // action (always resolves with an empty result), so it satisfies that
+    // requirement without introducing any real side effect or config.
+    await createWorkflowVersionStep({
+      workflowVersionId: childDraftVersionId,
+      stepType: 'EMPTY',
+      parentStepId: 'trigger',
+    });
+
     await activateWorkflowVersion(childDraftVersionId);
     childPublishedVersionId = childDraftVersionId;
 
@@ -558,5 +576,136 @@ describe('Run workflow action - integration (e2e)', () => {
         await destroyWorkflowRun(parentRunId);
       }
     });
+  });
+
+  describe('retry parity', () => {
+    // Separate, self-contained fixture pair - does not reuse or mutate the
+    // shared linkage fixtures above, nor the stop-parity fixtures.
+    let failingChildWorkflowId: string;
+    let httpRequestStepId: string;
+    let retryParentWorkflowId: string;
+    let retryParentVersionId: string;
+    let retryRunWorkflowStepId: string;
+
+    beforeAll(async () => {
+      failingChildWorkflowId = await createWorkflow(
+        'RUN_WORKFLOW Test - Failing Child',
+      );
+
+      const failingChildVersionId = await findDraftWorkflowVersionId(
+        failingChildWorkflowId,
+      );
+
+      await updateWorkflowVersionTrigger({
+        workflowVersionId: failingChildVersionId,
+        trigger: MANUAL_TRIGGER,
+      });
+
+      await createWorkflowVersionStep({
+        workflowVersionId: failingChildVersionId,
+        stepType: 'HTTP_REQUEST',
+        parentStepId: 'trigger',
+      });
+
+      const httpRequestStep = await findWorkflowVersionStep({
+        workflowVersionId: failingChildVersionId,
+        stepType: 'HTTP_REQUEST',
+      });
+
+      httpRequestStepId = httpRequestStep.id;
+
+      await configureBlockedHttpRequestStep({
+        workflowVersionId: failingChildVersionId,
+        step: httpRequestStep,
+        retryOnFailure: STEP_RETRY_DELAYS_MS.length,
+      });
+
+      await activateWorkflowVersion(failingChildVersionId);
+
+      retryParentWorkflowId = await createWorkflow(
+        'RUN_WORKFLOW Test - Retry Parent',
+      );
+      retryParentVersionId = await findDraftWorkflowVersionId(
+        retryParentWorkflowId,
+      );
+
+      await updateWorkflowVersionTrigger({
+        workflowVersionId: retryParentVersionId,
+        trigger: MANUAL_TRIGGER,
+      });
+
+      await createWorkflowVersionStep({
+        workflowVersionId: retryParentVersionId,
+        stepType: 'RUN_WORKFLOW',
+        parentStepId: 'trigger',
+      });
+
+      const runWorkflowStep = await findWorkflowVersionStep({
+        workflowVersionId: retryParentVersionId,
+        stepType: 'RUN_WORKFLOW',
+      });
+
+      retryRunWorkflowStepId = runWorkflowStep.id;
+
+      // The parent step's own errorHandlingOptions is left at defaults -
+      // the parent's RUN_WORKFLOW step itself resolves synchronously and is
+      // not what is being retried here; the child's own HTTP_REQUEST step
+      // is.
+      await setRunWorkflowStepInput({
+        workflowVersionId: retryParentVersionId,
+        step: runWorkflowStep,
+        workflowId: failingChildWorkflowId,
+        input: {},
+      });
+    });
+
+    afterAll(async () => {
+      await destroyWorkflow(retryParentWorkflowId);
+      await destroyWorkflow(failingChildWorkflowId);
+    });
+
+    it(
+      'retries the failing child step and fails the child run exactly like any independently-triggered run',
+      async () => {
+        const parentRunId = await runWorkflowVersion({
+          workflowVersionId: retryParentVersionId,
+        });
+
+        let childRunId: string | undefined;
+
+        try {
+          // The RUN_WORKFLOW step itself still succeeds - it only starts
+          // the child, it does not wait on it.
+          const parentRun = await waitForWorkflowCompletion(parentRunId);
+
+          childRunId = parentRun?.state?.stepInfos?.[retryRunWorkflowStepId]
+            ?.result?.workflowRunId as string | undefined;
+
+          expect(typeof childRunId).toBe('string');
+
+          const childRun = await waitForWorkflowCompletion(
+            childRunId as string,
+            Math.ceil(TOTAL_RETRY_DELAY_MS / 500) + 60,
+          );
+
+          // Proves the CHILD run's own retry mechanics are indistinguishable
+          // from step-error-handling-workflow.integration-spec.ts's
+          // directly-triggered case.
+          expect(childRun?.status).toBe('FAILED');
+          expect(
+            childRun?.state?.stepInfos?.[httpRequestStepId]?.status,
+          ).toBe('FAILED');
+          expect(
+            childRun?.state?.stepInfos?.[httpRequestStepId]?.history,
+          ).toHaveLength(STEP_RETRY_DELAYS_MS.length);
+        } finally {
+          if (childRunId) {
+            await destroyWorkflowRun(childRunId);
+          }
+          await destroyWorkflowRun(parentRunId);
+        }
+      },
+      RETRY_TEST_TIMEOUT_MS,
+    );
   });
 });
