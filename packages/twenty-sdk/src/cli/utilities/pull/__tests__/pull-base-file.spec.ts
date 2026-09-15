@@ -313,6 +313,48 @@ describe('pull base file', () => {
     expect(await readBase()).toBeNull();
   });
 
+  it('should ignore a base whose role object permissions contain an entry that is not an object', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          roles: [
+            {
+              universalIdentifier: ROLE_UID,
+              label: 'Support',
+              objectPermissions: [null],
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
+  it('should ignore a base whose role field permissions are not a list', async () => {
+    await writeRawBaseFile(
+      JSON.stringify({
+        version: 1,
+        applicationUniversalIdentifier: APP_UID,
+        manifest: {
+          ...MANIFEST,
+          roles: [
+            {
+              universalIdentifier: ROLE_UID,
+              label: 'Support',
+              fieldPermissions: { fieldUniversalIdentifier: NAME_FIELD_UID },
+            },
+          ],
+        },
+      }),
+    );
+
+    expect(await readBase()).toBeNull();
+  });
+
   it('should ignore a base whose permission flags contain an entry without a universal identifier', async () => {
     await writeRawBaseFile(
       JSON.stringify({
