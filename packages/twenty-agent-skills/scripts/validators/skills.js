@@ -3,20 +3,13 @@ const path = require('node:path');
 
 const {
   PLUGIN_ROOT,
+  CANONICAL_SKILL_NAMES,
   LEGACY_SKILL_NAMES,
   readText,
   listFiles,
   parseSkillFrontmatter,
   parseQuotedYamlField,
 } = require('./lib');
-
-const EXPECTED_CANONICAL_SKILLS = [
-  'create-app',
-  'develop-app',
-  'manage-app',
-  'publish-app',
-  'use-twenty-mcp',
-];
 
 const assertSkills = (fail) => {
   const skillsRoot = path.join(PLUGIN_ROOT, 'skills');
@@ -26,7 +19,7 @@ const assertSkills = (fail) => {
     .map((entry) => entry.name)
     .sort();
 
-  for (const skillName of EXPECTED_CANONICAL_SKILLS) {
+  for (const skillName of CANONICAL_SKILL_NAMES) {
     if (!skillDirectories.includes(skillName)) {
       fail(`canonical skill is missing: ${skillName}`);
     }
@@ -34,13 +27,20 @@ const assertSkills = (fail) => {
 
   for (const skillName of LEGACY_SKILL_NAMES) {
     if (skillDirectories.includes(skillName)) {
-      fail(`legacy skill directory must be transferred out of skills/: ${skillName}`);
+      fail(
+        `legacy skill directory must be transferred out of skills/: ${skillName}`,
+      );
     }
   }
 
   for (const skillName of skillDirectories) {
     const skillPath = path.join(skillsRoot, skillName, 'SKILL.md');
-    const agentsPath = path.join(skillsRoot, skillName, 'agents', 'openai.yaml');
+    const agentsPath = path.join(
+      skillsRoot,
+      skillName,
+      'agents',
+      'openai.yaml',
+    );
 
     if (!fs.existsSync(skillPath)) {
       fail(`${skillName} is missing SKILL.md`);
@@ -62,8 +62,12 @@ const assertSkills = (fail) => {
         fail(`${skillName}/SKILL.md frontmatter description is required`);
       }
 
-      if (frontmatterKeys.some((key) => !['description', 'name'].includes(key))) {
-        fail(`${skillName}/SKILL.md frontmatter should only include name and description`);
+      if (
+        frontmatterKeys.some((key) => !['description', 'name'].includes(key))
+      ) {
+        fail(
+          `${skillName}/SKILL.md frontmatter should only include name and description`,
+        );
       }
     }
 
@@ -74,7 +78,10 @@ const assertSkills = (fail) => {
 
     const agentsYaml = readText(agentsPath);
     const displayName = parseQuotedYamlField(agentsYaml, 'display_name');
-    const shortDescription = parseQuotedYamlField(agentsYaml, 'short_description');
+    const shortDescription = parseQuotedYamlField(
+      agentsYaml,
+      'short_description',
+    );
     const defaultPrompt = parseQuotedYamlField(agentsYaml, 'default_prompt');
 
     if (!displayName) {
@@ -82,15 +89,23 @@ const assertSkills = (fail) => {
     }
 
     if (!shortDescription) {
-      fail(`${skillName}/agents/openai.yaml is missing interface.short_description`);
+      fail(
+        `${skillName}/agents/openai.yaml is missing interface.short_description`,
+      );
     } else if (shortDescription.length > 64) {
-      fail(`${skillName}/agents/openai.yaml short_description must be 64 characters or fewer`);
+      fail(
+        `${skillName}/agents/openai.yaml short_description must be 64 characters or fewer`,
+      );
     }
 
     if (!defaultPrompt) {
-      fail(`${skillName}/agents/openai.yaml is missing interface.default_prompt`);
+      fail(
+        `${skillName}/agents/openai.yaml is missing interface.default_prompt`,
+      );
     } else if (!defaultPrompt.includes(`$${skillName}`)) {
-      fail(`${skillName}/agents/openai.yaml default_prompt must mention $${skillName}`);
+      fail(
+        `${skillName}/agents/openai.yaml default_prompt must mention $${skillName}`,
+      );
     }
   }
 };
@@ -112,7 +127,9 @@ const assertSkillTriggerPhrases = (fail) => {
     const contents = readText(skillPath);
 
     if (!/^#+\s+When To Use\s*$/m.test(contents)) {
-      fail(`${skillName}/SKILL.md must include a "When To Use" section with representative trigger phrases`);
+      fail(
+        `${skillName}/SKILL.md must include a "When To Use" section with representative trigger phrases`,
+      );
     }
   }
 };
@@ -130,7 +147,9 @@ const assertNoLegacySkillReferences = (fail) => {
 
     for (const legacySkillName of LEGACY_SKILL_NAMES) {
       if (contents.includes(`name: ${legacySkillName}`)) {
-        fail(`${relativePath} must not declare legacy skill name ${legacySkillName}`);
+        fail(
+          `${relativePath} must not declare legacy skill name ${legacySkillName}`,
+        );
       }
 
       const mentionPattern =
@@ -141,14 +160,16 @@ const assertNoLegacySkillReferences = (fail) => {
             );
 
       if (mentionPattern.test(contents)) {
-        fail(`${relativePath} must not mention legacy skill name ${legacySkillName}`);
+        fail(
+          `${relativePath} must not mention legacy skill name ${legacySkillName}`,
+        );
       }
     }
   }
 };
 
 module.exports = {
-  EXPECTED_CANONICAL_SKILLS,
+  CANONICAL_SKILL_NAMES,
   assertSkills,
   assertSkillTriggerPhrases,
   assertNoLegacySkillReferences,

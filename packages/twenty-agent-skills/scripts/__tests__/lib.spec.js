@@ -10,7 +10,7 @@ const {
   resolveReferenceClosure,
   buildPortableSkills,
   buildDistribution,
-  PORTABLE_SKILLS,
+  CANONICAL_SKILL_NAMES,
   listFiles,
 } = require('../lib');
 const { writeFixtureFile } = require('./fixtures');
@@ -287,7 +287,7 @@ describe('buildDistribution', () => {
       'Shared concept.',
     );
 
-    for (const skillName of PORTABLE_SKILLS) {
+    for (const skillName of CANONICAL_SKILL_NAMES) {
       writeFixtureFile(
         sourceRoot,
         `skills/${skillName}/SKILL.md`,
@@ -330,7 +330,7 @@ describe('buildDistribution', () => {
     );
 
     fs.rmSync(sourceRoot, { recursive: true });
-    for (const skillName of PORTABLE_SKILLS) {
+    for (const skillName of CANONICAL_SKILL_NAMES) {
       const skillRoot = path.join(outputRoot, 'skills', skillName);
       assert.equal(
         fs.readFileSync(path.join(skillRoot, 'SKILL.md'), 'utf8'),

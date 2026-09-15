@@ -5,7 +5,7 @@ const path = require('node:path');
 
 const {
   DISTRIBUTION_ROOT,
-  PORTABLE_SKILLS,
+  CANONICAL_SKILL_NAMES,
   listFiles,
   readText,
 } = require('./lib');
@@ -25,7 +25,7 @@ if (!installRoot) {
 }
 
 const skillNames =
-  requestedSkills.length > 0 ? requestedSkills : PORTABLE_SKILLS;
+  requestedSkills.length > 0 ? requestedSkills : CANONICAL_SKILL_NAMES;
 
 // assertSelfContainedReferences resolves references to absolute paths, so the
 // roots it compares them against must be absolute too.

@@ -4,7 +4,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { afterEach, beforeEach, describe, it } = require('node:test');
 
-const { PORTABLE_SKILLS } = require('../lib');
+const { CANONICAL_SKILL_NAMES } = require('../lib');
 const {
   assertSkillFrontmatter,
   assertSelfContainedReferences,
@@ -51,7 +51,7 @@ describe('validatePortableSkills', () => {
   });
 
   it('should pass for a complete, self-contained skill set', () => {
-    for (const skillName of PORTABLE_SKILLS) {
+    for (const skillName of CANONICAL_SKILL_NAMES) {
       writeValidSkill(skillsRoot, skillName);
     }
 
@@ -240,7 +240,7 @@ describe('assertOperatingRulesShipped', () => {
   });
 
   it('should fail when an app skill does not ship the operating rules', () => {
-    for (const skillName of PORTABLE_SKILLS) {
+    for (const skillName of CANONICAL_SKILL_NAMES) {
       writeValidSkill(skillsRoot, skillName);
     }
 
@@ -262,7 +262,7 @@ describe('assertOperatingRulesShipped', () => {
   });
 
   it('should fail when an app skill does not link to the operating rules', () => {
-    for (const skillName of PORTABLE_SKILLS) {
+    for (const skillName of CANONICAL_SKILL_NAMES) {
       writeValidSkill(skillsRoot, skillName);
     }
 

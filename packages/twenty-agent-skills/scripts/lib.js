@@ -1,18 +1,14 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { readText, listFiles } = require('./validators/lib');
+const {
+  CANONICAL_SKILL_NAMES,
+  readText,
+  listFiles,
+} = require('./validators/lib');
 
 const PACKAGE_ROOT = path.resolve(__dirname, '..');
 const DISTRIBUTION_ROOT = path.join(PACKAGE_ROOT, 'dist');
-
-const PORTABLE_SKILLS = [
-  'create-app',
-  'develop-app',
-  'manage-app',
-  'publish-app',
-  'use-twenty-mcp',
-];
 
 const SKILL_REFERENCE_PATTERN =
   /(?:\.\.\/\.\.\/)?references\/([A-Za-z0-9._/-]+\.md)/g;
@@ -106,7 +102,7 @@ const resolveReferenceClosure = (referencesRoot, seedReferences) => {
 const buildPortableSkills = ({
   sourceRoot = PACKAGE_ROOT,
   outputRoot,
-  skillNames = PORTABLE_SKILLS,
+  skillNames = CANONICAL_SKILL_NAMES,
 }) => {
   const referencesRoot = path.join(sourceRoot, 'references');
 
@@ -201,7 +197,7 @@ const buildDistribution = ({
 module.exports = {
   PACKAGE_ROOT,
   DISTRIBUTION_ROOT,
-  PORTABLE_SKILLS,
+  CANONICAL_SKILL_NAMES,
   readText,
   listFiles,
   rewriteSkillReferenceLinks,

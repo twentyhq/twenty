@@ -5,7 +5,7 @@ const path = require('node:path');
 
 const {
   DISTRIBUTION_ROOT,
-  PORTABLE_SKILLS,
+  CANONICAL_SKILL_NAMES,
   readText,
   listFiles,
 } = require('./lib');
@@ -42,14 +42,14 @@ const assertSkillDirectories = (skillsRoot, fail) => {
     .map((entry) => entry.name)
     .sort();
 
-  for (const skillName of PORTABLE_SKILLS) {
+  for (const skillName of CANONICAL_SKILL_NAMES) {
     if (!skillDirectories.includes(skillName)) {
       fail(`portable skill is missing: ${skillName}`);
     }
   }
 
   for (const skillName of skillDirectories) {
-    if (!PORTABLE_SKILLS.includes(skillName)) {
+    if (!CANONICAL_SKILL_NAMES.includes(skillName)) {
       fail(`unexpected skill directory: ${skillName}`);
     }
   }
