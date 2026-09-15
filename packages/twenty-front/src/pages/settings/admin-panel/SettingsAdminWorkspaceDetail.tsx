@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -16,7 +17,6 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminWorkspaceBillingContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent';
 import { SETTINGS_ADMIN_FEATURE_FLAG_METADATA } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
@@ -46,8 +46,12 @@ import {
   IconSettings2,
   IconUsers,
 } from 'twenty-ui/icon';
-import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
+import {
+  Card,
+  OverflowingTextWithTooltip,
+  TooltipPosition,
+} from 'twenty-ui/surfaces';
+import { H2Title, Text } from 'twenty-ui/typography';
 import { Button, Switch } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -59,6 +63,13 @@ import {
   GetUpgradeStatusDocument,
   UpdateWorkspaceFeatureFlagDocument,
 } from '~/generated-admin/graphql';
+
+const StyledFeatureFlagName = styled(Text)`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.regular};
+  min-width: 0;
+`;
 
 const WORKSPACE_DETAIL_TABS_ID = 'settings-admin-workspace-detail-tabs';
 
@@ -371,11 +382,15 @@ export const SettingsAdminWorkspaceDetail = () => {
                   label: t`Name`,
                   overflow: 'hidden',
                   Cell: ({ item }) => (
-                    <SettingsTableFirstColumn
-                      label={item.label}
-                      tooltipContent={item.id}
-                      isFocusable
-                    />
+                    <StyledFeatureFlagName>
+                      <OverflowingTextWithTooltip
+                        text={<>{item.label}</>}
+                        tooltipContent={item.id}
+                        tooltipPlace={TooltipPosition.Top}
+                        alwaysShowTooltip
+                        isFocusable
+                      />
+                    </StyledFeatureFlagName>
                   ),
                 },
                 {
