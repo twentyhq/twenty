@@ -24,17 +24,14 @@ import { useStore } from 'jotai';
 import { type AnimationEvent, useCallback, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledSidePanelWrapper = styled.div<{
-  isOpen: boolean;
-  isResizing: boolean;
-}>`
+// Width is not transitioned: the main content is a flex sibling, so animating
+// it lays out the whole page on every frame. The background hides the reserved
+// room until the panel has slid over it.
+const StyledSidePanelWrapper = styled.div<{ isOpen: boolean }>`
+  background: ${themeCssVariables.background.primary};
   flex-shrink: 0;
   min-width: 0;
-  overflow: hidden;
-  transition: ${({ isResizing }) =>
-    isResizing
-      ? 'none'
-      : `width calc(${themeCssVariables.animation.duration.normal} * 1s)`};
+  position: relative;
   width: ${({ isOpen }) => (isOpen ? `var(${SIDE_PANEL_WIDTH_VAR})` : '0px')};
 
   @keyframes sidePanelShrinkFromFullWidth {
@@ -49,7 +46,12 @@ const StyledSidePanelWrapper = styled.div<{
   }
 `;
 
-const StyledSidePanel = styled.aside<{ isShrinkingFromFullWidth: boolean }>`
+// Pinned to the right edge of the row and slid with `transform`, which needs no
+// layout. When closed it is clipped by the main container's `overflow: hidden`.
+const StyledSidePanel = styled.aside<{
+  isOpen: boolean;
+  isShrinkingFromFullWidth: boolean;
+}>`
   background: ${themeCssVariables.background.primary};
   border-left: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
@@ -57,7 +59,12 @@ const StyledSidePanel = styled.aside<{ isShrinkingFromFullWidth: boolean }>`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  position: relative;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: ${({ isOpen }) => (isOpen ? 'none' : 'translateX(100%)')};
+  transition: transform
+    calc(${themeCssVariables.animation.duration.normal} * 1s);
   width: ${({ isShrinkingFromFullWidth }) =>
     isShrinkingFromFullWidth ? '100%' : `var(${SIDE_PANEL_WIDTH_VAR})`};
 `;
@@ -84,7 +91,6 @@ export const SidePanelForDesktop = () => {
   const [modalContainer, setModalContainer] = useState<HTMLDivElement | null>(
     null,
   );
-  const [isResizing, setIsResizing] = useState(false);
   const [shouldRenderContent, setShouldRenderContent] =
     useState(isSidePanelOpened);
   const [isShrinkingFromFullWidth, setIsShrinkingFromFullWidth] =
@@ -139,20 +145,17 @@ export const SidePanelForDesktop = () => {
   const handleWidthChange = useCallback(
     (width: number) => {
       setSidePanelWidth(width);
-      setIsResizing(false);
       setTableWidthResizeIsActive(true);
     },
     [setSidePanelWidth, setTableWidthResizeIsActive],
   );
 
   const handleResizeStart = useCallback(() => {
-    setIsResizing(true);
     setTableWidthResizeIsActive(false);
   }, [setTableWidthResizeIsActive]);
 
   const handleCollapse = useCallback(() => {
     closeSidePanelMenu();
-    setIsResizing(false);
     setTableWidthResizeIsActive(true);
   }, [closeSidePanelMenu, setTableWidthResizeIsActive]);
 
@@ -175,14 +178,16 @@ export const SidePanelForDesktop = () => {
 
       <StyledSidePanelWrapper
         isOpen={isSidePanelOpened}
-        isResizing={isResizing}
         onTransitionEnd={handleTransitionEnd}
         onAnimationEnd={handleAnimationEnd}
         data-shrink-from-full-width={isShrinkingFromFullWidth}
         data-side-panel=""
         data-click-outside-id={SIDE_PANEL_CLICK_OUTSIDE_ID}
       >
-        <StyledSidePanel isShrinkingFromFullWidth={isShrinkingFromFullWidth}>
+        <StyledSidePanel
+          isOpen={isSidePanelOpened}
+          isShrinkingFromFullWidth={isShrinkingFromFullWidth}
+        >
           <StyledModalContainer ref={handleModalContainerRef} />
           <ModalContainerContext.Provider value={{ container: modalContainer }}>
             <ParentClickOutsideIdContext.Provider
