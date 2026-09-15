@@ -203,7 +203,9 @@ export class RecordAccessPolicyService {
 
     if (liveSnapshotIds.length > 0) {
       const childRows = await this.workspaceOrmManager
-        .getRepository(childNameSingular)
+        .getRepository(childNameSingular, {
+          shouldBypassPermissionChecks: true,
+        })
         .createQueryBuilder()
         .select(['id', parent.childJoinColumnName])
         .where({ [parent.childJoinColumnName]: In(liveSnapshotIds) })
@@ -365,6 +367,7 @@ export class RecordAccessPolicyService {
 
     const repository = this.workspaceOrmManager.getRepository(
       objectMetadata.nameSingular,
+      { shouldBypassPermissionChecks: true },
     );
     const policy = repository.buildRowAccessPolicy({
       subject,
