@@ -149,9 +149,6 @@ export class AgentRunService {
         success: true,
       };
     } catch (error) {
-      // Attachment validation runs inside executeAgent, so its input errors land
-      // here; collapsing them into the generic failure leaves the caller unable to
-      // tell a bad fileId from a model outage
       if (
         error instanceof AiException &&
         error.code === AiExceptionCode.INVALID_AGENT_INPUT
