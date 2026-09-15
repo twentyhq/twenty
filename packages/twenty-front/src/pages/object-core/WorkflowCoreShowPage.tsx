@@ -2,6 +2,7 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { useCoreWorkflowShowPageResource } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageResource';
 import { type CoreObjectShowPageProps } from '@/object-core/types/CoreObjectShowPageProps';
+import { useRefetchCoreRecordOnWorkspaceRecordLifecycleChange } from '@/object-core/hooks/useRefetchCoreRecordOnWorkspaceRecordLifecycleChange';
 import { isCoreRecordAbsent } from '@/object-core/utils/isCoreRecordAbsent';
 import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
 import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
@@ -13,6 +14,12 @@ export const WorkflowCoreShowPage = ({
 }: WorkflowCoreShowPageProps) => {
   const coreWorkflowResult = useCoreWorkflowShowPageResource({
     workspaceWorkflowId: objectRecordId,
+  });
+
+  useRefetchCoreRecordOnWorkspaceRecordLifecycleChange({
+    objectNameSingular: CoreObjectNameSingular.Workflow,
+    recordId: objectRecordId,
+    refetch: coreWorkflowResult.refetch,
   });
 
   const isCoreWorkflowAbsent = isCoreRecordAbsent(coreWorkflowResult);

@@ -12,7 +12,7 @@ export const useCoreWorkflowShowPageResource = ({
 }) => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data, loading, error } = useQuery(GetCoreWorkflowDocument, {
+  const { data, loading, error, refetch } = useQuery(GetCoreWorkflowDocument, {
     client: apolloCoreClient,
     fetchPolicy: 'cache-and-network',
     variables: { workspaceWorkflowId },
@@ -23,5 +23,5 @@ export const useCoreWorkflowShowPageResource = ({
     [data?.coreWorkflow],
   );
 
-  return { record, loading, error };
+  return { record, loading, error, refetch };
 };
