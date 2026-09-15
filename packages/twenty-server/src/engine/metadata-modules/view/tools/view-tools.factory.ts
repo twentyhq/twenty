@@ -652,6 +652,7 @@ export class ViewToolsFactory {
             parameters.viewId,
             workspaceId,
             currentWorkspaceMemberId,
+            userWorkspaceId,
           );
         },
       },

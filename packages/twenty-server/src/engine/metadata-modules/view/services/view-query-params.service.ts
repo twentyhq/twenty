@@ -22,6 +22,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { DEFAULT_TIMEZONE } from 'src/engine/metadata-modules/view/constants/default-timezone.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { canResolveView } from 'src/engine/metadata-modules/view/utils/can-resolve-view.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -45,6 +46,7 @@ export class ViewQueryParamsService {
     viewId: string,
     workspaceId: string,
     currentWorkspaceMemberId?: string,
+    currentUserWorkspaceId?: string,
   ): Promise<ViewQueryParams> {
     const view = await this.viewService.findByIdWithRelations(
       viewId,
@@ -52,6 +54,13 @@ export class ViewQueryParamsService {
     );
 
     if (!view) {
+      throw new Error(`View with id ${viewId} not found`);
+    }
+
+    // An UNLISTED view is private to the user workspace that created it.
+    // Resolving it for anyone else would leak its name, filters and sorts, so
+    // an inaccessible one is treated as absent rather than confirmed to exist.
+    if (!canResolveView(view, currentUserWorkspaceId)) {
       throw new Error(`View with id ${viewId} not found`);
     }
 
