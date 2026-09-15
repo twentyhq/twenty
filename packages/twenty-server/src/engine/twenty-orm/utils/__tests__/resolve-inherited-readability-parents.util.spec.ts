@@ -7,10 +7,7 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import {
-  resolveInheritedReadabilityChildLinks,
-  resolveInheritedReadabilityParents,
-} from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
+import { resolveInheritedReadabilityParents } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
 
 const ATTACHMENT_OBJECT_ID = 'attachment-object-id';
 const NOTE_OBJECT_ID = 'note-object-id';
@@ -279,38 +276,6 @@ describe('resolveInheritedReadabilityParents', () => {
   it('should resolve nothing when no parent field is declared', () => {
     expect(
       resolveInheritedReadabilityParents({
-        flatObjectMetadata: buildAttachmentObject(null),
-        flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
-        flatObjectMetadataMaps: buildObjectMetadataMaps(),
-      }),
-    ).toEqual([]);
-  });
-});
-
-describe('resolveInheritedReadabilityChildLinks', () => {
-  it('should link a row to the records that inherit through it', () => {
-    expect(
-      resolveInheritedReadabilityChildLinks({
-        flatObjectMetadata: buildAttachmentObject(null),
-        flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
-        flatObjectMetadataMaps: buildObjectMetadataMaps({
-          noteFlatObjectMetadata: buildNoteObject({
-            readability: MetadataReadability.INHERITED,
-            readabilityParentFieldUniversalIdentifiers: [
-              noteAttachmentsField.universalIdentifier,
-            ],
-          }),
-        }),
-      }).map(({ joinColumnName, parentFlatObjectMetadata }) => ({
-        joinColumnName,
-        parentNameSingular: parentFlatObjectMetadata.nameSingular,
-      })),
-    ).toEqual([{ joinColumnName: 'targetNoteId', parentNameSingular: 'note' }]);
-  });
-
-  it('should link nothing when the pointed record does not inherit through the row', () => {
-    expect(
-      resolveInheritedReadabilityChildLinks({
         flatObjectMetadata: buildAttachmentObject(null),
         flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
         flatObjectMetadataMaps: buildObjectMetadataMaps(),

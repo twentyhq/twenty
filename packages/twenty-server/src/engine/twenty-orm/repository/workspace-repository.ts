@@ -32,6 +32,9 @@ import {
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type InheritedReadabilityChildrenParent } from 'src/engine/twenty-orm/types/inherited-readability-children-parent.type';
+import { type InheritedReadabilityParent } from 'src/engine/twenty-orm/types/inherited-readability-parent.type';
+import { type InheritedReadabilityParentLink } from 'src/engine/twenty-orm/types/inherited-readability-parent-link.type';
 import {
   buildInheritedReadabilityCondition,
   type InheritedReadabilityChildGate,
@@ -49,13 +52,8 @@ import {
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
-import {
-  type InheritedReadabilityChildrenParent,
-  type InheritedReadabilityParent,
-  type InheritedReadabilityParentLink,
-  resolveInheritedReadabilityChildLinks,
-  resolveInheritedReadabilityParents,
-} from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
+import { resolveInheritedReadabilityChildLinks } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-child-links.util';
+import { resolveInheritedReadabilityParents } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import {
