@@ -18,8 +18,9 @@ export const findSlackUserLinksBySlackUserIds = async (
   const linkBySlackUserId = new Map<string, SlackUserLinkSummary>();
 
   const teamFilters = [...slackUserIdsBySlackTeamId.entries()]
-    .filter(([slackTeamId, slackUserIds]) =>
-      isNonEmptyString(slackTeamId) && slackUserIds.length > 0,
+    .filter(
+      ([slackTeamId, slackUserIds]) =>
+        isNonEmptyString(slackTeamId) && slackUserIds.length > 0,
     )
     .map(([slackTeamId, slackUserIds]) => ({
       and: [

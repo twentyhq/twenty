@@ -174,10 +174,10 @@ msgstr "S'ha detectat una entrada duplicada."
 msgid "A field with this name already exists."
 msgstr "Ja existeix un camp amb aquest nom."
 
-#. js-lingui-id: cWaEaJ
+#. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "A free development instance requires an active production instance on this enterprise subscription."
-msgstr "Una instància de desenvolupament gratuïta requereix una instància de producció activa en aquesta subscripció Enterprise."
+msgid "A free development instance requires an active production instance on this Organization subscription."
+msgstr ""
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -491,6 +491,11 @@ msgstr "Una versió de flux de treball"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Un membre de l'espai de treball"
+
+#. js-lingui-id: ysZV7o
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "A workspace-wide blocklist entry cannot target a workspace member."
+msgstr ""
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1319,6 +1324,11 @@ msgctxt "fieldMetadata.description"
 msgid "Blocklist record position"
 msgstr "Posició del registre de la llista de bloqueig"
 
+#. js-lingui-id: HSo0Xn
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist scope cannot be updated."
+msgstr ""
+
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1381,6 +1391,17 @@ msgstr "El camí del component construït no és vàlid"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Built handler path is invalid"
 msgstr "El camí del handler construït no és vàlid"
+
+#. js-lingui-id: DKvxoP
+#: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
+msgid "Bulk deletion of blocklist entries is not allowed."
+msgstr ""
+
+#. js-lingui-id: Az75zM
+#: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
+msgid "Bulk restoration of blocklist entries is not allowed."
+msgstr ""
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1839,11 +1860,6 @@ msgstr "No es poden afegir permisos als objectes del sistema."
 msgid "Cannot complete operation due to related records."
 msgstr "No es pot completar l'operació a causa de registres relacionats."
 
-#. js-lingui-id: 6Sk/wo
-#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
-msgid "Cannot create blocklist entry for another workspace member."
-msgstr "No es pot crear una entrada de la llista de bloqueig per a un altre membre de l'espai de treball."
-
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
@@ -1917,6 +1933,11 @@ msgstr "No es pot donar permís d'escriptura sense permís de lectura."
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "No pot haver-hi més d'una versió activa de fluxe de treball"
+
+#. js-lingui-id: 9hWalM
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot manage a blocklist entry of another workspace member."
+msgstr ""
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5170,11 +5191,6 @@ msgstr "Adreça de correu electrònic no vàlida."
 msgid "Invalid email or domain."
 msgstr "Correu electrònic o domini no vàlids."
 
-#. js-lingui-id: pOHI+b
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "Invalid enterprise key."
-msgstr "Clau d'Enterprise no vàlida."
-
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
 msgid "Invalid event input."
@@ -5387,6 +5403,11 @@ msgstr "Paràmetre order by no vàlid."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
 msgstr "Paràmetre order by amb group by no vàlid."
+
+#. js-lingui-id: 4rRyz1
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid Organization key."
+msgstr ""
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6474,6 +6495,11 @@ msgstr "Fusionar"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "Fusiona {objectLabelPlural}"
+
+#. js-lingui-id: 27Moeu
+#: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
+msgid "Merging blocklist entries is not allowed."
+msgstr ""
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -9329,18 +9355,6 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Security"
 msgstr "Seguretat"
 
-#. js-lingui-id: BqBYOO
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Active Version"
-msgstr "Veure la versió activa"
-
-#. js-lingui-id: BWZaOR
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Active Version"
-msgstr "Veure la versió activa"
-
 #. js-lingui-id: BCRQC8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10357,10 +10371,10 @@ msgstr "El rol per defecte no es pot suprimir."
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "No es pot trobar el rol predeterminat d'aquest espai de treball. Si us plau, contacta amb el suport per obtenir ajuda."
 
-#. js-lingui-id: hmg/aY
+#. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "The development instance slot for this enterprise key is already in use on another server."
-msgstr "La ranura d'instància de desenvolupament per a aquesta clau Enterprise ja està en ús en un altre servidor."
+msgid "The development instance slot for this Organization key is already in use on another server."
+msgstr ""
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10424,6 +10438,7 @@ msgid "The happensAt field used by this timeline activity type is not available"
 msgstr "El camp happensAt utilitzat per aquest tipus d'activitat de línia de temps no està disponible"
 
 #. js-lingui-id: EJUSll
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "La versió inicial d'un flux de treball no es pot eliminar"
@@ -10918,20 +10933,15 @@ msgstr "Aquest endpoint s'ha desplaçat. Fes la crida a {publicFunctionUrl}."
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "Aquest endpoint ja no està disponible a /s/. Utilitza en canvi l'URL de domini públic dedicada."
 
-#. js-lingui-id: i4wotH
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr "Aquesta clau Enterprise ja està en ús en una altra instància de servidor. Allibera-la d'aquest servidor o transfereix-la a aquest."
-
 #. js-lingui-id: mjE4RD
 #: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
 msgid "This evaluation target could not be found."
 msgstr "No s'ha pogut trobar aquest objectiu d'avaluació."
 
-#. js-lingui-id: uNp8ZA
+#. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr "Aquesta funcionalitat és gratuïta fins a {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seients. La vostra instància supera aquest límit, de manera que cal una clau empresarial."
+msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
+msgstr ""
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -11092,6 +11102,11 @@ msgstr "Aquesta operació no és compatible."
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Aquesta operació fa referència a un registre que no existeix o que no es pot modificar a causa de relacions existents."
+
+#. js-lingui-id: 8TiDJj
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+msgstr ""
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11868,12 +11883,6 @@ msgstr "Missatge d'error amigable per a l'usuari"
 msgctxt "fieldMetadata.label"
 msgid "User ID"
 msgstr "ID d'usuari"
-
-#. js-lingui-id: NJT8W8
-#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
-#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
-msgid "User id is required."
-msgstr "Es requereix l'ID d'usuari."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -12818,6 +12827,7 @@ msgid "Workflow version does not contain trigger"
 msgstr "La versió del flux de treball no conté cap trigger"
 
 #. js-lingui-id: bqFL4g
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "La versió del flux de treball no està en estatus d'esborrany"
@@ -12964,9 +12974,9 @@ msgstr "L'espai de treball no està preparat per donar la benvinguda a nous memb
 msgid "Workspace is suspended."
 msgstr "L'espai de treball està suspès."
 
-#. js-lingui-id: iN7doz
+#. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
+msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
 msgstr ""
 
 #. js-lingui-id: foYipq
@@ -13307,6 +13317,11 @@ msgstr "No tens permís per suplantar usuaris en aquest espai de treball."
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "No tens permís per suplantar els usuaris. Si us plau, contacta amb l'administrador del teu espai de treball per obtenir accés."
 
+#. js-lingui-id: cpivo2
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
+msgid "You do not have permission to manage the workspace blocklist."
+msgstr ""
+
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13365,20 +13380,20 @@ msgstr "Has esgotat els teus crèdits. Actualitza el teu pla per continuar."
 msgid "You have reached the maximum number of invitations for this step."
 msgstr "Has arribat al nombre màxim d'invitacions per a aquest pas."
 
-#. js-lingui-id: 4kMeNM
+#. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
-msgstr "Has arribat al nombre màxim d'actualitzacions de llicència permeses avui per a aquesta clau Enterprise. Torna-ho a provar més tard."
+msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
+msgstr ""
 
-#. js-lingui-id: 475gCs
+#. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
-msgstr "Has arribat al nombre màxim de transferències de servidor permeses en els últims 30 dies per a aquesta clau Enterprise. Torna-ho a provar més tard."
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
+msgstr ""
 
-#. js-lingui-id: nq15cs
-#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
-msgid "You must be authenticated to manage blocklist."
-msgstr "Heu d'estar autenticat per gestionar la llista de bloqueig."
+#. js-lingui-id: GFlHFf
+#: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
+msgid "You must be authenticated to manage the blocklist."
+msgstr ""
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

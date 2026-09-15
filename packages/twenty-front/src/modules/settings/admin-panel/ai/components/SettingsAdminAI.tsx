@@ -304,8 +304,8 @@ export const SettingsAdminAI = () => {
           )
         ) : (
           <SettingsEnterpriseFeatureGateCard
-            title={t`Enterprise feature`}
-            description={t`AI usage analytics across workspaces is available with an Enterprise key.`}
+            title={t`Organization feature`}
+            description={t`AI usage analytics across workspaces is available with an Organization key.`}
             buttonTitle={t`Activate`}
           />
         )}

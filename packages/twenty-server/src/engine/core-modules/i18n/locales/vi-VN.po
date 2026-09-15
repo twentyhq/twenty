@@ -174,10 +174,10 @@ msgstr "Đã phát hiện mục trùng lặp."
 msgid "A field with this name already exists."
 msgstr "Một trường có tên này đã tồn tại."
 
-#. js-lingui-id: cWaEaJ
+#. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "A free development instance requires an active production instance on this enterprise subscription."
-msgstr "Một phiên bản phát triển miễn phí yêu cầu một phiên bản sản xuất đang hoạt động trên gói doanh nghiệp này."
+msgid "A free development instance requires an active production instance on this Organization subscription."
+msgstr ""
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -491,6 +491,11 @@ msgstr "Một phiên bản quy trình làm việc"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Một thành viên không gian làm việc"
+
+#. js-lingui-id: ysZV7o
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "A workspace-wide blocklist entry cannot target a workspace member."
+msgstr ""
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1319,6 +1324,11 @@ msgctxt "fieldMetadata.description"
 msgid "Blocklist record position"
 msgstr "Vị trí bản ghi danh sách chặn"
 
+#. js-lingui-id: HSo0Xn
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist scope cannot be updated."
+msgstr ""
+
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1381,6 +1391,17 @@ msgstr "Đường dẫn thành phần đã xây dựng không hợp lệ"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Built handler path is invalid"
 msgstr "Đường dẫn trình xử lý đã xây dựng không hợp lệ"
+
+#. js-lingui-id: DKvxoP
+#: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
+msgid "Bulk deletion of blocklist entries is not allowed."
+msgstr ""
+
+#. js-lingui-id: Az75zM
+#: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
+msgid "Bulk restoration of blocklist entries is not allowed."
+msgstr ""
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1839,11 +1860,6 @@ msgstr "Không thể thêm quyền trên các đối tượng hệ thống."
 msgid "Cannot complete operation due to related records."
 msgstr "Không thể hoàn tất thao tác do các bản ghi liên quan."
 
-#. js-lingui-id: 6Sk/wo
-#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
-msgid "Cannot create blocklist entry for another workspace member."
-msgstr "Không thể tạo mục trong danh sách chặn cho thành viên không gian làm việc khác."
-
 #. js-lingui-id: LIPsWu
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
@@ -1917,6 +1933,11 @@ msgstr "Không thể cấp quyền ghi khi không có quyền đọc."
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Không thể có nhiều hơn một phiên bản quy trình làm việc đang hoạt động"
+
+#. js-lingui-id: 9hWalM
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot manage a blocklist entry of another workspace member."
+msgstr ""
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5170,11 +5191,6 @@ msgstr "Địa chỉ email không hợp lệ."
 msgid "Invalid email or domain."
 msgstr "Email hoặc tên miền không hợp lệ."
 
-#. js-lingui-id: pOHI+b
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "Invalid enterprise key."
-msgstr "Khóa Enterprise không hợp lệ."
-
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
 msgid "Invalid event input."
@@ -5387,6 +5403,11 @@ msgstr "Tham số order by không hợp lệ."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
 msgstr "Tham số order by với group by không hợp lệ."
+
+#. js-lingui-id: 4rRyz1
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid Organization key."
+msgstr ""
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6474,6 +6495,11 @@ msgstr "Ghép"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "Gộp {objectLabelPlural}"
+
+#. js-lingui-id: 27Moeu
+#: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
+msgid "Merging blocklist entries is not allowed."
+msgstr ""
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -9329,18 +9355,6 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Security"
 msgstr "Bảo mật"
 
-#. js-lingui-id: BqBYOO
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Active Version"
-msgstr "Xem phiên bản đang hoạt động"
-
-#. js-lingui-id: BWZaOR
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Active Version"
-msgstr "Xem phiên bản đang hoạt động"
-
 #. js-lingui-id: BCRQC8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10357,10 +10371,10 @@ msgstr "Không thể xóa vai trò mặc định."
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "Không thể tìm thấy vai trò mặc định cho không gian làm việc này. Vui lòng liên hệ bộ phận hỗ trợ để được trợ giúp."
 
-#. js-lingui-id: hmg/aY
+#. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "The development instance slot for this enterprise key is already in use on another server."
-msgstr "Suất phiên bản phát triển cho khóa doanh nghiệp này đã được sử dụng trên một máy chủ khác."
+msgid "The development instance slot for this Organization key is already in use on another server."
+msgstr ""
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10424,6 +10438,7 @@ msgid "The happensAt field used by this timeline activity type is not available"
 msgstr "Trường happensAt được loại hoạt động dòng thời gian này sử dụng không khả dụng"
 
 #. js-lingui-id: EJUSll
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Phiên bản ban đầu của quy trình làm việc không thể bị xóa"
@@ -10918,20 +10933,15 @@ msgstr "Điểm cuối này đã được chuyển. Hãy gọi nó tại {public
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "Điểm cuối này không còn khả dụng trên /s/. Thay vào đó, hãy sử dụng URL tên miền công khai chuyên dụng."
 
-#. js-lingui-id: i4wotH
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr "Khóa doanh nghiệp này đã được sử dụng trên một phiên bản máy chủ khác. Hãy giải phóng nó khỏi máy chủ đó hoặc chuyển sang máy chủ này."
-
 #. js-lingui-id: mjE4RD
 #: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
 msgid "This evaluation target could not be found."
 msgstr "Không thể tìm thấy mục tiêu đánh giá này."
 
-#. js-lingui-id: uNp8ZA
+#. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr "Tính năng này được miễn phí cho tối đa {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} chỗ ngồi. Phiên bản của bạn vượt quá mức đó, vì vậy cần có khóa doanh nghiệp."
+msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
+msgstr ""
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -11092,6 +11102,11 @@ msgstr "Thao tác này không được hỗ trợ."
 #: src/engine/api/graphql/workspace-query-runner/constants/postgres-error-messages.constants.ts
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Thao tác này tham chiếu đến một bản ghi không tồn tại hoặc không thể sửa đổi do các mối quan hệ hiện có."
+
+#. js-lingui-id: 8TiDJj
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+msgstr ""
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11868,12 +11883,6 @@ msgstr "Thông báo lỗi thân thiện với người dùng"
 msgctxt "fieldMetadata.label"
 msgid "User ID"
 msgstr "ID người dùng"
-
-#. js-lingui-id: NJT8W8
-#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
-#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
-msgid "User id is required."
-msgstr "Id người dùng là bắt buộc."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -12818,6 +12827,7 @@ msgid "Workflow version does not contain trigger"
 msgstr "Phiên bản quy trình làm việc không có kích hoạt"
 
 #. js-lingui-id: bqFL4g
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "Phiên bản quy trình làm việc không ở trạng thái nháp"
@@ -12964,10 +12974,10 @@ msgstr "Không gian làm việc chưa sẵn sàng để chào đón thành viên
 msgid "Workspace is suspended."
 msgstr "Không gian làm việc đang bị tạm ngưng."
 
-#. js-lingui-id: iN7doz
+#. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
-msgstr "Đã đạt giới hạn số lượng không gian làm việc. Cần có khóa doanh nghiệp hợp lệ để tạo thêm không gian làm việc."
+msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
+msgstr ""
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -13307,6 +13317,11 @@ msgstr "Bạn không có quyền mạo danh người dùng trong không gian là
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Bạn không có quyền giả lập người dùng. Vui lòng liên hệ quản trị viên không gian làm việc của bạn để được truy cập."
 
+#. js-lingui-id: cpivo2
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
+msgid "You do not have permission to manage the workspace blocklist."
+msgstr ""
+
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13365,20 +13380,20 @@ msgstr "Bạn đã dùng hết credit. Vui lòng nâng cấp gói dịch vụ đ
 msgid "You have reached the maximum number of invitations for this step."
 msgstr "Bạn đã đạt đến số lượng lời mời tối đa cho bước này."
 
-#. js-lingui-id: 4kMeNM
+#. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
-msgstr "Bạn đã đạt đến số lần làm mới giấy phép tối đa được phép trong hôm nay cho khóa doanh nghiệp này. Vui lòng thử lại sau."
+msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
+msgstr ""
 
-#. js-lingui-id: 475gCs
+#. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
-msgstr "Bạn đã đạt đến số lần chuyển máy chủ tối đa được phép trong 30 ngày qua cho khóa doanh nghiệp này. Vui lòng thử lại sau."
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
+msgstr ""
 
-#. js-lingui-id: nq15cs
-#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
-msgid "You must be authenticated to manage blocklist."
-msgstr "Bạn phải được xác thực để quản lý danh sách chặn."
+#. js-lingui-id: GFlHFf
+#: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
+msgid "You must be authenticated to manage the blocklist."
+msgstr ""
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
