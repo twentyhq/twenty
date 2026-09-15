@@ -28,28 +28,25 @@ export const useEnqueueToast = () => {
       const visibleToasts = toasts.filter(isVisibleToast);
       const existingToast = visibleToasts.find(
         ({ notification }) =>
-          (isDefined(options.dedupeKey) &&
-            notification.dedupeKey === options.dedupeKey) ||
-          (isDefined(options.id) && notification.id === options.id),
+          isDefined(options.dedupeKey) &&
+          notification.dedupeKey === options.dedupeKey,
       );
 
       if (isDefined(existingToast)) {
         return existingToast.notification.id;
       }
 
-      const renderKey = v4();
-      const id = options.id ?? renderKey;
+      const id = v4();
       const limit = store.get(toastLimitState);
       const removedCount = Math.max(0, visibleToasts.length - limit + 1);
 
       dismissToasts({
         toastsToClose: visibleToasts.slice(0, removedCount),
         nextToasts: [
-          ...toasts.filter((toast) => toast.notification.id !== id),
+          ...toasts,
           {
             notification: { ...options, id },
             status: 'visible',
-            renderKey,
           },
         ],
       });

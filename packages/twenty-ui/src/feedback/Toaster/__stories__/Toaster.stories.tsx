@@ -7,11 +7,9 @@ import { ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
 
 import { Toaster } from '../Toaster';
-import {
-  ToastControls,
-  ToasterExample,
-  type ToasterExampleProps,
-} from './ToasterExample';
+import { ToastControls } from './ToastControls';
+import { ToasterExample } from './ToasterExample';
+import { type ToasterExampleProps } from './ToasterExampleProps';
 
 const meta: Meta<typeof ToasterExample> = {
   title: 'UI/Feedback/Toaster',
@@ -418,7 +416,8 @@ export const ReopenDuringExit: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const add = canvas.getByRole('button', { name: 'Add notification' });
-    await userEvent.click(add);
+    const addDuplicate = canvas.getByRole('button', { name: 'Add duplicate' });
+    await userEvent.click(addDuplicate);
     await userEvent.click(add);
     await userEvent.click(add);
     const region = body.getByRole('region', { name: 'Notifications' });
@@ -431,19 +430,17 @@ export const ReopenDuringExit: Story = {
     if (isMotionEnabled()) {
       expect(toast).toBeInTheDocument();
     }
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Restore last notification' }),
-    );
+    await userEvent.click(addDuplicate);
     await waitFor(() =>
       expect(region.getAnimations({ subtree: true })).toHaveLength(0),
     );
     const restoredToasts = body.getAllByRole('status');
-    expect(restoredToasts.map((notification) => notification.id)).toEqual([
-      secondToast.id,
-      thirdToast.id,
-      id,
-    ]);
-    expect(restoredToasts[2]).toHaveTextContent('Restored notification');
+    expect(
+      restoredToasts.slice(0, 2).map((notification) => notification.id),
+    ).toEqual([secondToast.id, thirdToast.id]);
+    expect(toast).not.toBeInTheDocument();
+    expect(restoredToasts[2].id).not.toBe(id);
+    expect(restoredToasts[2]).toHaveTextContent('Already saved');
     expect(restoredToasts[2]).toBeVisible();
     expect(args.onClose).toHaveBeenCalledOnce();
   },

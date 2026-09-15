@@ -20,7 +20,7 @@ export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
 
   return toasts.map((toast) => (
     <ToasterItem
-      key={toast.renderKey}
+      key={toast.notification.id}
       toastEntry={toast}
       getToastProps={getToastProps}
       onClose={closeToast}
