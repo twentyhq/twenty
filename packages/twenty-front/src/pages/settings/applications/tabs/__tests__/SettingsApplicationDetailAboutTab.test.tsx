@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { type DeveloperLinks } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
@@ -54,6 +54,7 @@ const renderAboutTab = ({
         ]}
         author="Twenty"
         version="2.0"
+        installCount={1200}
         category="Finance"
         pricingDescription="Free"
         developerLinks={developerLinks}
@@ -70,6 +71,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
     expect(screen.getByText(SHORT_DESCRIPTION)).toBeVisible();
     expect(screen.getByText('by Twenty')).toBeVisible();
     expect(screen.getByText('2.0')).toBeVisible();
+    expect(screen.getByText('1,200 installs')).toBeVisible();
     expect(screen.getByText('Finance')).toBeVisible();
     expect(screen.getByText('Free')).toBeVisible();
 
@@ -112,6 +114,36 @@ describe('SettingsApplicationDetailAboutTab', () => {
     expect(screen.getByAltText('Stripe screenshot 2')).toHaveAttribute(
       'src',
       'https://cdn.example.com/screenshot-2.png',
+    );
+  });
+
+  it('opens the screenshots in full screen and navigates between them', async () => {
+    const user = userEvent.setup();
+
+    renderAboutTab();
+
+    await user.click(
+      screen.getByRole('button', { name: 'View screenshot in full screen' }),
+    );
+
+    const lightbox = await screen.findByRole('dialog');
+
+    expect(
+      within(lightbox).getByAltText('Stripe screenshot 1'),
+    ).toHaveAttribute('src', 'https://cdn.example.com/screenshot-1.png');
+
+    await user.click(
+      within(lightbox).getByRole('button', { name: 'Next screenshot' }),
+    );
+
+    expect(
+      within(lightbox).getByAltText('Stripe screenshot 2'),
+    ).toHaveAttribute('src', 'https://cdn.example.com/screenshot-2.png');
+
+    await user.click(within(lightbox).getByRole('button', { name: 'Close' }));
+
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
     );
   });
 

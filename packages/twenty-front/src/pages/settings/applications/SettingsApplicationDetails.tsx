@@ -232,6 +232,7 @@ export const SettingsApplicationDetails = () => {
             screenshots={screenshots}
             author={detail?.author ?? undefined}
             version={currentVersion ?? undefined}
+            installCount={detail?.installCount}
             category={detail?.category ?? undefined}
             developerLinks={
               isDefined(detail)

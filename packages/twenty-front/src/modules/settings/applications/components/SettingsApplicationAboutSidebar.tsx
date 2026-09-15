@@ -1,6 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
+import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -9,6 +9,7 @@ import {
   IconBrandNpm,
   type IconComponent,
   IconCurrencyDollar,
+  IconDownload,
   IconLink,
   IconMail,
   IconShare2,
@@ -36,6 +37,7 @@ type SettingsApplicationAboutSidebarProps = {
   onShare?: () => void;
   author?: string;
   version?: string;
+  installCount?: number;
   category?: string;
   pricingDescription?: string;
   developerLinks?: DeveloperLinks;
@@ -157,6 +159,7 @@ export const SettingsApplicationAboutSidebar = ({
   onShare,
   author,
   version,
+  installCount,
   category,
   pricingDescription,
   developerLinks,
@@ -169,6 +172,17 @@ export const SettingsApplicationAboutSidebar = ({
       : []),
     ...(isNonEmptyString(version)
       ? [{ Icon: IconVersions, label: version }]
+      : []),
+    ...(isDefined(installCount)
+      ? [
+          {
+            Icon: IconDownload,
+            label: plural(installCount, {
+              one: '# install',
+              other: '# installs',
+            }),
+          },
+        ]
       : []),
     ...(isNonEmptyString(category) ? [{ Icon: IconTag, label: category }] : []),
     ...(isNonEmptyString(pricingDescription)

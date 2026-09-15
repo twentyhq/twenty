@@ -1,6 +1,11 @@
+import { SettingsApplicationScreenshotLightbox } from '@/settings/applications/components/SettingsApplicationScreenshotLightbox';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const SCREENSHOT_LIGHTBOX_MODAL_ID = 'application-screenshot-lightbox-modal';
 
 type SettingsApplicationScreenshotGalleryProps = {
   screenshots: string[];
@@ -16,11 +21,14 @@ const StyledGalleryContainer = styled.div`
   width: 100%;
 `;
 
-const StyledHeroContainer = styled.div`
+const StyledHeroButton = styled.button`
   aspect-ratio: 59 / 30;
   background-color: ${themeCssVariables.background.secondary};
+  border: none;
   border-radius: ${themeCssVariables.border.radius.md};
+  cursor: zoom-in;
   overflow: hidden;
+  padding: 0;
   width: 100%;
 `;
 
@@ -70,6 +78,7 @@ export const SettingsApplicationScreenshotGallery = ({
   displayName,
 }: SettingsApplicationScreenshotGalleryProps) => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
+  const { openModal, closeModal } = useModal();
 
   if (screenshots.length === 0) {
     return null;
@@ -79,12 +88,16 @@ export const SettingsApplicationScreenshotGallery = ({
 
   return (
     <StyledGalleryContainer>
-      <StyledHeroContainer>
+      <StyledHeroButton
+        type="button"
+        aria-label={t`View screenshot in full screen`}
+        onClick={() => openModal(SCREENSHOT_LIGHTBOX_MODAL_ID)}
+      >
         <StyledHeroImage
           src={screenshots[safeIndex]}
           alt={`${displayName} screenshot ${safeIndex + 1}`}
         />
-      </StyledHeroContainer>
+      </StyledHeroButton>
       {screenshots.length > 1 && (
         <StyledThumbnails>
           {screenshots.map((screenshot, index) => (
@@ -102,6 +115,14 @@ export const SettingsApplicationScreenshotGallery = ({
           ))}
         </StyledThumbnails>
       )}
+      <SettingsApplicationScreenshotLightbox
+        modalInstanceId={SCREENSHOT_LIGHTBOX_MODAL_ID}
+        screenshots={screenshots}
+        displayName={displayName}
+        selectedIndex={safeIndex}
+        onSelectedIndexChange={setSelectedScreenshotIndex}
+        onClose={() => closeModal(SCREENSHOT_LIGHTBOX_MODAL_ID)}
+      />
     </StyledGalleryContainer>
   );
 };

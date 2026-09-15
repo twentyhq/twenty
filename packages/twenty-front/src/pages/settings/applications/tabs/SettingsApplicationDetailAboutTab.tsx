@@ -21,6 +21,7 @@ type SettingsApplicationDetailAboutTabProps = {
   screenshots?: string[];
   author?: string;
   version?: string;
+  installCount?: number;
   category?: string;
   developerLinks?: DeveloperLinks;
   onShare?: () => void;
@@ -123,6 +124,7 @@ export const SettingsApplicationDetailAboutTab = ({
   screenshots,
   author,
   version,
+  installCount,
   category,
   developerLinks,
   onShare,
@@ -160,6 +162,7 @@ export const SettingsApplicationDetailAboutTab = ({
           onShare={onShare}
           author={author}
           version={version}
+          installCount={installCount}
           category={category}
           pricingDescription={pricingDescription}
           developerLinks={developerLinks}
@@ -175,7 +178,7 @@ export const SettingsApplicationDetailAboutTab = ({
         )}
         {isDefined(markdownText) && (
           <StyledMarkdownContent>
-            <LazyMarkdownRenderer text={markdownText} />
+            <LazyMarkdownRenderer text={markdownText} allowSanitizedHtml />
           </StyledMarkdownContent>
         )}
       </StyledMainColumn>

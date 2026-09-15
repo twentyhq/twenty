@@ -158,6 +158,7 @@ export const SettingsAvailableApplicationDetails = () => {
             screenshots={detail.galleryImages}
             author={detail.author ?? undefined}
             version={currentVersion ?? latestAvailableVersion ?? undefined}
+            installCount={detail.installCount}
             category={detail.category ?? undefined}
             developerLinks={{
               websiteUrl: detail.websiteUrl ?? undefined,
