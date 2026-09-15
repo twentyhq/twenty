@@ -36,12 +36,12 @@ describe('updateContacts', () => {
       contacts: {
         'people/1': { names: [{ givenName: 'p1' }], etag: 'etag-p1' },
       },
-      updateMask: 'names',
+      updateMask: 'names,emailAddresses,phoneNumbers,organizations,urls',
       readMask: 'names,emailAddresses',
     });
   });
 
-  it('should send one request per distinct set of mapped fields', async () => {
+  it('should mask every owned field so the emptied ones are cleared', async () => {
     const post = vi.fn().mockResolvedValue({ data: { updateResult: {} } });
 
     await updateContacts({
@@ -52,11 +52,10 @@ describe('updateContacts', () => {
       ],
     });
 
-    expect(post).toHaveBeenCalledTimes(2);
-    expect(post.mock.calls.map(([, body]) => body.updateMask)).toEqual([
-      'names',
-      'urls',
-    ]);
+    expect(post).toHaveBeenCalledTimes(1);
+    expect(post.mock.calls[0][1].updateMask).toBe(
+      'names,emailAddresses,phoneNumbers,organizations,urls',
+    );
   });
 
   it('should hold back a person sharing a merged contact with another', async () => {

@@ -7,11 +7,11 @@ import {
 } from 'src/logic-functions/types/google-response.type';
 
 export type GoogleContactWriteInput = {
-  emailAddresses?: EmailAddress[];
-  names?: Name[];
-  organizations?: Organization[];
-  phoneNumbers?: PhoneNumber[];
-  urls?: PersonUrl[];
+  emailAddresses: EmailAddress[];
+  names: Name[];
+  organizations: Organization[];
+  phoneNumbers: PhoneNumber[];
+  urls: PersonUrl[];
 };
 
 export type GoogleContactUpdateInput = GoogleContactWriteInput & {

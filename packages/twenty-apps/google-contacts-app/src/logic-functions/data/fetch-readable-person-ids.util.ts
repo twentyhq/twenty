@@ -1,9 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { BATCH_SIZE } from 'src/constants/batch-sizes.constant';
-import { chunk } from 'src/logic-functions/data/chunk.util';
-import { executeWithRetry } from 'src/logic-functions/data/execute-with-retry.util';
+import { queryEdgesInBatches } from 'src/logic-functions/data/query-edges-in-batches.util';
 
 export const fetchReadablePersonIds = async ({
   client,
@@ -12,27 +10,19 @@ export const fetchReadablePersonIds = async ({
   client: CoreApiClient;
   personIds: string[];
 }): Promise<string[]> => {
-  const readablePersonIds: string[] = [];
+  const readablePeople = await queryEdgesInBatches<
+    string,
+    { id?: string | null }
+  >(personIds, async (batch) => {
+    const { people } = await client.query({
+      people: {
+        __args: { filter: { id: { in: batch } }, first: batch.length },
+        edges: { node: { id: true } },
+      },
+    });
 
-  for (const personIdsBatch of chunk(personIds, BATCH_SIZE)) {
-    const { people } = await executeWithRetry(() =>
-      client.query({
-        people: {
-          __args: {
-            filter: { id: { in: personIdsBatch } },
-            first: personIdsBatch.length,
-          },
-          edges: { node: { id: true } },
-        },
-      }),
-    );
+    return people;
+  });
 
-    for (const edge of people?.edges ?? []) {
-      if (isNonEmptyString(edge.node.id)) {
-        readablePersonIds.push(edge.node.id);
-      }
-    }
-  }
-
-  return readablePersonIds;
+  return readablePeople.map(({ id }) => id).filter(isNonEmptyString);
 };

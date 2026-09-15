@@ -10,6 +10,7 @@ import {
 import { isDefined } from 'twenty-sdk/utils';
 
 import { EXPORT_CONTACTS_ROUTE_PATH } from 'src/constants/route-paths';
+import { buildExportJobId } from 'src/logic-functions/data/build-export-job-id.util';
 import { fetchReadablePersonIds } from 'src/logic-functions/data/fetch-readable-person-ids.util';
 import { readRecordIds } from 'src/logic-functions/data/read-record-ids.util';
 import {
@@ -23,7 +24,7 @@ const jsonResponse = (body: unknown, status: number): Response =>
     headers: { 'Content-Type': 'application/json' },
   });
 
-const handler = async (payload: RoutePayload<{ recordIds?: string[] }>) => {
+const handler = async (payload: RoutePayload<{ recordIds?: unknown }>) => {
   const connection = findConnectionForRequest(
     await listConnections({ providerName: 'google-contacts' }),
     payload,
@@ -61,7 +62,10 @@ const handler = async (payload: RoutePayload<{ recordIds?: string[] }>) => {
           connectionId: connection.id,
           recordIds: readableRecordIds,
         },
-        jobId: connection.id,
+        jobId: buildExportJobId({
+          connectionId: connection.id,
+          recordIds: readableRecordIds,
+        }),
       },
     ],
   });

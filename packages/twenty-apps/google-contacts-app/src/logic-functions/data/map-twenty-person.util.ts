@@ -6,7 +6,10 @@ import {
   X_DOMAINS,
 } from 'src/logic-functions/data/link-domain.util';
 import { type GoogleContactWriteInput } from 'src/logic-functions/types/google-request.type';
-import { type Person } from 'src/logic-functions/types/google-response.type';
+import {
+  type Organization,
+  type Person,
+} from 'src/logic-functions/types/google-response.type';
 import { type TwentyPersonRecord } from 'src/logic-functions/types/twenty-person.type';
 
 const mapNames = (
@@ -16,7 +19,7 @@ const mapNames = (
   const familyName = person.name?.lastName?.trim() ?? '';
 
   if (givenName === '' && familyName === '') {
-    return undefined;
+    return [];
   }
 
   return [{ givenName, familyName }];
@@ -24,18 +27,10 @@ const mapNames = (
 
 const mapEmailAddresses = (
   person: TwentyPersonRecord,
-): GoogleContactWriteInput['emailAddresses'] => {
-  const emails = [
-    person.emails?.primaryEmail,
-    ...(person.emails?.additionalEmails ?? []),
-  ]
+): GoogleContactWriteInput['emailAddresses'] =>
+  [person.emails?.primaryEmail, ...(person.emails?.additionalEmails ?? [])]
     .filter(isNonEmptyString)
-    .map((email) => email.trim());
-
-  return emails.length === 0
-    ? undefined
-    : emails.map((email) => ({ value: email }));
-};
+    .map((email) => ({ value: email.trim() }));
 
 const formatPhoneNumber = (
   number: string | null | undefined,
@@ -52,8 +47,8 @@ const formatPhoneNumber = (
 
 const mapPhoneNumbers = (
   person: TwentyPersonRecord,
-): GoogleContactWriteInput['phoneNumbers'] => {
-  const phoneNumbers = [
+): GoogleContactWriteInput['phoneNumbers'] =>
+  [
     formatPhoneNumber(
       person.phones?.primaryPhoneNumber,
       person.phones?.primaryPhoneCallingCode,
@@ -61,12 +56,9 @@ const mapPhoneNumbers = (
     ...(person.phones?.additionalPhones ?? []).map((additionalPhone) =>
       formatPhoneNumber(additionalPhone.number, additionalPhone.callingCode),
     ),
-  ].filter(isNonEmptyString);
-
-  return phoneNumbers.length === 0
-    ? undefined
-    : phoneNumbers.map((phoneNumber) => ({ value: phoneNumber }));
-};
+  ]
+    .filter(isNonEmptyString)
+    .map((phoneNumber) => ({ value: phoneNumber }));
 
 const mapOrganizations = (
   person: TwentyPersonRecord,
@@ -75,21 +67,25 @@ const mapOrganizations = (
   const companyName = person.company?.name?.trim();
   const jobTitle = person.jobTitle?.trim();
 
-  if (!isNonEmptyString(companyName) && !isNonEmptyString(jobTitle)) {
-    return undefined;
-  }
-
   const [existingOrganization, ...otherOrganizations] =
     existingContact?.organizations ?? [];
 
-  return [
-    {
-      ...existingOrganization,
-      ...(isNonEmptyString(companyName) ? { name: companyName } : {}),
-      ...(isNonEmptyString(jobTitle) ? { title: jobTitle } : {}),
-    },
-    ...otherOrganizations,
-  ];
+  // Twenty owns the name and the title, so both are rebuilt from the record
+  // while everything else Google stored on that organization is carried over.
+  const preservedFields: Organization = { ...existingOrganization };
+
+  delete preservedFields.name;
+  delete preservedFields.title;
+
+  const organization = {
+    ...preservedFields,
+    ...(isNonEmptyString(companyName) ? { name: companyName } : {}),
+    ...(isNonEmptyString(jobTitle) ? { title: jobTitle } : {}),
+  };
+
+  return Object.keys(organization).length === 0
+    ? otherOrganizations
+    : [organization, ...otherOrganizations];
 };
 
 const mapUrls = (
@@ -101,10 +97,6 @@ const mapUrls = (
     person.xLink?.primaryLinkUrl,
   ].filter(isNonEmptyString);
 
-  if (twentyUrls.length === 0) {
-    return undefined;
-  }
-
   const preservedUrls = (existingContact?.urls ?? []).filter(
     (url) =>
       isNonEmptyString(url.value) &&
@@ -114,21 +106,18 @@ const mapUrls = (
   return [...preservedUrls, ...twentyUrls.map((url) => ({ value: url }))];
 };
 
+// Every field Twenty owns is always present, empty included: the update mask
+// covers them all, so a value cleared in Twenty has to clear in Google too.
 export const mapTwentyPerson = (
   person: TwentyPersonRecord,
   existingContact?: Person,
-): GoogleContactWriteInput => {
-  const names = mapNames(person);
-  const emailAddresses = mapEmailAddresses(person);
-  const phoneNumbers = mapPhoneNumbers(person);
-  const organizations = mapOrganizations(person, existingContact);
-  const urls = mapUrls(person, existingContact);
+): GoogleContactWriteInput => ({
+  names: mapNames(person),
+  emailAddresses: mapEmailAddresses(person),
+  phoneNumbers: mapPhoneNumbers(person),
+  organizations: mapOrganizations(person, existingContact),
+  urls: mapUrls(person, existingContact),
+});
 
-  return {
-    ...(names ? { names } : {}),
-    ...(emailAddresses ? { emailAddresses } : {}),
-    ...(phoneNumbers ? { phoneNumbers } : {}),
-    ...(organizations ? { organizations } : {}),
-    ...(urls ? { urls } : {}),
-  };
-};
+export const hasContactContent = (contact: GoogleContactWriteInput): boolean =>
+  Object.values(contact).some((fieldValues) => fieldValues.length > 0);

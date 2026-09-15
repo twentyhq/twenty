@@ -6,11 +6,14 @@ import { BATCH_SIZE } from 'src/constants/batch-sizes.constant';
 import { chunk } from 'src/logic-functions/data/chunk.util';
 import {
   buildCompanyKey,
+  buildDomainKey,
+  buildNameKey,
   readCompanyDomain,
   readCompanyName,
 } from 'src/logic-functions/data/company-key.util';
 import { describeError } from 'src/logic-functions/data/describe-error.util';
 import { executeWithRetry } from 'src/logic-functions/data/execute-with-retry.util';
+import { queryEdgesInBatches } from 'src/logic-functions/data/query-edges-in-batches.util';
 import { type Organization } from 'src/logic-functions/types/google-response.type';
 
 const COMPANY_LOOKUP_CHUNK_SIZE = 50;
@@ -31,27 +34,26 @@ const registerCompany = (
   const domain = readCompanyDomain(company.domainName?.primaryLinkUrl);
   const name = readCompanyName(company.name);
 
-  if (isNonEmptyString(domain) && !companyIdsByKey.has(`domain:${domain}`)) {
-    companyIdsByKey.set(`domain:${domain}`, company.id);
+  if (
+    isNonEmptyString(domain) &&
+    !companyIdsByKey.has(buildDomainKey(domain))
+  ) {
+    companyIdsByKey.set(buildDomainKey(domain), company.id);
   }
 
-  if (
-    isNonEmptyString(name) &&
-    !companyIdsByKey.has(`name:${name.toLowerCase()}`)
-  ) {
-    companyIdsByKey.set(`name:${name.toLowerCase()}`, company.id);
+  if (isNonEmptyString(name) && !companyIdsByKey.has(buildNameKey(name))) {
+    companyIdsByKey.set(buildNameKey(name), company.id);
   }
 };
 
-const findCompanies = async (
+const findCompanies = (
   client: CoreApiClient,
   filters: Record<string, unknown>[],
-): Promise<FoundCompany[]> => {
-  const foundCompanies: FoundCompany[] = [];
-
-  for (const filtersBatch of chunk(filters, COMPANY_LOOKUP_CHUNK_SIZE)) {
-    const { companies } = await executeWithRetry(() =>
-      client.query({
+): Promise<FoundCompany[]> =>
+  queryEdgesInBatches(
+    filters,
+    async (filtersBatch) => {
+      const { companies } = await client.query({
         companies: {
           __args: { filter: { or: filtersBatch }, first: BATCH_SIZE },
           edges: {
@@ -62,16 +64,12 @@ const findCompanies = async (
             },
           },
         },
-      }),
-    );
+      });
 
-    for (const edge of companies?.edges ?? []) {
-      foundCompanies.push(edge.node);
-    }
-  }
-
-  return foundCompanies;
-};
+      return companies;
+    },
+    COMPANY_LOOKUP_CHUNK_SIZE,
+  );
 
 const createCompaniesBatch = async (
   client: CoreApiClient,
@@ -196,11 +194,26 @@ export const resolveCompanyIds = async ({
 
     const name = readCompanyName(organization.name);
 
-    if (!isNonEmptyString(name) || claimedNames.has(name.toLowerCase())) {
+    if (!isNonEmptyString(name)) {
       continue;
     }
 
-    claimedNames.add(name.toLowerCase());
+    const nameKey = buildNameKey(name);
+    const companyMatchedOnName = companyIdsByKey.get(nameKey);
+
+    // A domain-keyed organization still falls back to the name match, otherwise
+    // an existing Company with no website would be duplicated.
+    if (isNonEmptyString(companyMatchedOnName)) {
+      companyIdsByKey.set(key, companyMatchedOnName);
+
+      continue;
+    }
+
+    if (claimedNames.has(nameKey)) {
+      continue;
+    }
+
+    claimedNames.add(nameKey);
     organizationsToCreate.push(organization);
   }
 

@@ -199,6 +199,22 @@ describe('resolveCompanyIds', () => {
     expect(companyIds.get('name:acme')).toBe('c1');
   });
 
+  it('should reuse a company matched on name when the contact carries a domain', async () => {
+    const query = vi
+      .fn()
+      .mockResolvedValueOnce(NO_COMPANIES)
+      .mockResolvedValue(buildCompanies([{ id: 'c1', name: 'Acme' }]));
+    const mutation = vi.fn();
+
+    const companyIds = await resolveCompanyIds({
+      client: buildClient(query, mutation),
+      organizations: [{ name: 'Acme', domain: 'acme.com' }],
+    });
+
+    expect(mutation).not.toHaveBeenCalled();
+    expect(companyIds.get('domain:acme.com')).toBe('c1');
+  });
+
   it('should create one company for a named organization and a domainless one sharing that name', async () => {
     const query = vi.fn().mockResolvedValue(NO_COMPANIES);
     const mutation = vi.fn().mockResolvedValue({

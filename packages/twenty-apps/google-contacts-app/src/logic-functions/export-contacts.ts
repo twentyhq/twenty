@@ -19,7 +19,10 @@ import {
   describeGoogleError,
 } from 'src/logic-functions/data/google-client.util';
 import { linkCreatedContacts } from 'src/logic-functions/data/link-created-contacts.util';
-import { mapTwentyPerson } from 'src/logic-functions/data/map-twenty-person.util';
+import {
+  hasContactContent,
+  mapTwentyPerson,
+} from 'src/logic-functions/data/map-twenty-person.util';
 import { updateContacts } from 'src/logic-functions/data/update-contacts.util';
 import {
   type ContactToCreate,
@@ -66,15 +69,17 @@ const exportPeople = async ({
 
     const contact = mapTwentyPerson(person, existingContact);
 
-    if (Object.keys(contact).length === 0) {
+    if (isDefined(existingContact)) {
+      contactsToUpdate.push({ person, contact, existingContact });
+
       continue;
     }
 
-    if (isDefined(existingContact)) {
-      contactsToUpdate.push({ person, contact, existingContact });
-    } else {
-      contactsToCreate.push({ person, contact });
+    if (!hasContactContent(contact)) {
+      continue;
     }
+
+    contactsToCreate.push({ person, contact });
   }
 
   const createdContacts = await createContacts({

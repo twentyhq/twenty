@@ -1,3 +1,5 @@
+import { describeError } from 'src/logic-functions/data/describe-error.util';
+
 const MAX_ATTEMPTS = 5;
 const INITIAL_RETRY_DELAY_MS = 2_000;
 const MAX_RETRY_DELAY_MS = 30_000;
@@ -32,11 +34,8 @@ export type RetryPolicy = {
 const sleep = (durationMs: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, durationMs));
 
-const getErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : String(error);
-
 const CORE_API_RETRY_POLICY: RetryPolicy = {
-  isRetryable: (error) => isRetryableCoreApiError(getErrorMessage(error)),
+  isRetryable: (error) => isRetryableCoreApiError(describeError(error)),
 };
 
 export const executeWithRetry = async <TResult>(

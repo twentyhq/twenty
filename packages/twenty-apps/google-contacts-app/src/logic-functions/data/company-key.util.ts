@@ -25,16 +25,21 @@ export const readCompanyName = (
   return isNonEmptyString(name) ? name : undefined;
 };
 
+export const buildDomainKey = (domain: string): string => `domain:${domain}`;
+
+export const buildNameKey = (name: string): string =>
+  `name:${name.toLowerCase()}`;
+
 export const buildCompanyKey = (
   organization: Organization | undefined,
 ): string | undefined => {
   const domain = readCompanyDomain(organization?.domain);
 
   if (isNonEmptyString(domain)) {
-    return `domain:${domain}`;
+    return buildDomainKey(domain);
   }
 
   const name = readCompanyName(organization?.name);
 
-  return isNonEmptyString(name) ? `name:${name.toLowerCase()}` : undefined;
+  return isNonEmptyString(name) ? buildNameKey(name) : undefined;
 };

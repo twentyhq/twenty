@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { mapTwentyPerson } from 'src/logic-functions/data/map-twenty-person.util';
+import {
+  hasContactContent,
+  mapTwentyPerson,
+} from 'src/logic-functions/data/map-twenty-person.util';
 import { type Person } from 'src/logic-functions/types/google-response.type';
 import { type TwentyPersonRecord } from 'src/logic-functions/types/twenty-person.type';
 
@@ -25,12 +28,12 @@ describe('mapTwentyPerson', () => {
     ]);
   });
 
-  it('should omit a name nobody filled in', () => {
+  it('should clear a name nobody filled in', () => {
     const person = buildTwentyPerson({
       name: { firstName: '', lastName: null },
     });
 
-    expect(mapTwentyPerson(person).names).toBeUndefined();
+    expect(mapTwentyPerson(person).names).toEqual([]);
   });
 
   it('should map the primary email before the additional ones', () => {
@@ -86,11 +89,34 @@ describe('mapTwentyPerson', () => {
   it('should keep organization details Twenty does not model', () => {
     const person = buildTwentyPerson({ jobTitle: 'CTO' });
     const existingContact = buildExistingContact({
-      organizations: [{ name: 'Twenty', title: 'CEO' }],
+      organizations: [{ name: 'Twenty', title: 'CEO', domain: 'twenty.com' }],
     });
 
     expect(mapTwentyPerson(person, existingContact).organizations).toEqual([
-      { name: 'Twenty', title: 'CTO' },
+      { domain: 'twenty.com', title: 'CTO' },
+    ]);
+  });
+
+  it('should clear the employer Twenty no longer has', () => {
+    const existingContact = buildExistingContact({
+      organizations: [{ name: 'Twenty', title: 'CTO' }],
+    });
+
+    expect(
+      mapTwentyPerson(buildTwentyPerson(), existingContact).organizations,
+    ).toEqual([]);
+  });
+
+  it('should clear the social links Twenty no longer has', () => {
+    const existingContact = buildExistingContact({
+      urls: [
+        { value: 'https://johndoe.com' },
+        { value: 'https://linkedin.com/in/john' },
+      ],
+    });
+
+    expect(mapTwentyPerson(buildTwentyPerson(), existingContact).urls).toEqual([
+      { value: 'https://johndoe.com' },
     ]);
   });
 
@@ -123,15 +149,25 @@ describe('mapTwentyPerson', () => {
     ]);
   });
 
-  it('should leave untouched fields out so the update mask never clears them', () => {
+  it('should send every owned field so the update mask clears the empty ones', () => {
     expect(mapTwentyPerson(buildTwentyPerson())).toEqual({
       names: [{ givenName: 'John', familyName: 'Doe' }],
+      emailAddresses: [],
+      phoneNumbers: [],
+      organizations: [],
+      urls: [],
     });
   });
+});
 
-  it('should map an empty person to an empty contact', () => {
-    expect(
-      mapTwentyPerson({ id: 'c9a0e1f2-3b4c-4d5e-8f90-123456789abc' }),
-    ).toEqual({});
+describe('hasContactContent', () => {
+  it('should report a contact carrying at least one value', () => {
+    expect(hasContactContent(mapTwentyPerson(buildTwentyPerson()))).toBe(true);
+  });
+
+  it('should report an empty person as having nothing to create', () => {
+    const person = { id: 'c9a0e1f2-3b4c-4d5e-8f90-123456789abc' };
+
+    expect(hasContactContent(mapTwentyPerson(person))).toBe(false);
   });
 });
