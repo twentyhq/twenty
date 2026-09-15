@@ -30,11 +30,11 @@ type ObjectFixture = {
   universalIdentifier: string;
   labelPlural: string;
   isRemote: boolean;
+  viewUniversalIdentifiers: string[];
 };
 
 type ViewFixture = {
   universalIdentifier: string;
-  objectMetadataUniversalIdentifier: string;
   key: ViewKey | null;
   deletedAt: string | null;
   viewFieldUniversalIdentifiers: string[];
@@ -62,11 +62,19 @@ const PET_OBJECT: ObjectFixture = {
   universalIdentifier: PET_OBJECT_UNIVERSAL_IDENTIFIER,
   labelPlural: 'Pets',
   isRemote: false,
+  viewUniversalIdentifiers: [PET_INDEX_VIEW_UNIVERSAL_IDENTIFIER],
+};
+
+const SEEDED_PET_OBJECT: ObjectFixture = {
+  ...PET_OBJECT,
+  viewUniversalIdentifiers: [
+    PET_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
+    SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
+  ],
 };
 
 const PET_INDEX_VIEW: ViewFixture = {
   universalIdentifier: PET_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
-  objectMetadataUniversalIdentifier: PET_OBJECT_UNIVERSAL_IDENTIFIER,
   key: ViewKey.INDEX,
   deletedAt: null,
   viewFieldUniversalIdentifiers: [
@@ -110,11 +118,7 @@ const buildMaps = ({
   views: ViewFixture[];
   viewFields: ViewFieldFixture[];
 }) => ({
-  flatObjectMetadataMaps: {
-    byUniversalIdentifier: Object.fromEntries(
-      objects.map((object) => [object.universalIdentifier, object]),
-    ),
-  },
+  flatObjectMetadatas: objects,
   flatViewMaps: {
     byUniversalIdentifier: Object.fromEntries(
       views.map((view) => [view.universalIdentifier, view]),
@@ -201,7 +205,6 @@ describe('computeSeedObjectDefaultViewOperations', () => {
 
     const existingSeededView: ViewFixture = {
       universalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
-      objectMetadataUniversalIdentifier: PET_OBJECT_UNIVERSAL_IDENTIFIER,
       key: null,
       deletedAt: null,
       viewFieldUniversalIdentifiers: [seededNameViewFieldUniversalIdentifier],
@@ -210,7 +213,7 @@ describe('computeSeedObjectDefaultViewOperations', () => {
     const { viewsToCreate, viewFieldsToCreate } =
       computeSeedObjectDefaultViewOperations({
         ...buildMaps({
-          objects: [PET_OBJECT],
+          objects: [SEEDED_PET_OBJECT],
           views: [PET_INDEX_VIEW, existingSeededView],
           viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
         }),
@@ -228,7 +231,6 @@ describe('computeSeedObjectDefaultViewOperations', () => {
   it('produces nothing for a fully seeded object', () => {
     const existingSeededView: ViewFixture = {
       universalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
-      objectMetadataUniversalIdentifier: PET_OBJECT_UNIVERSAL_IDENTIFIER,
       key: null,
       deletedAt: null,
       viewFieldUniversalIdentifiers: [
@@ -247,7 +249,7 @@ describe('computeSeedObjectDefaultViewOperations', () => {
     const { viewsToCreate, viewFieldsToCreate } =
       computeSeedObjectDefaultViewOperations({
         ...buildMaps({
-          objects: [PET_OBJECT],
+          objects: [SEEDED_PET_OBJECT],
           views: [PET_INDEX_VIEW, existingSeededView],
           viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
         }),
@@ -264,11 +266,13 @@ describe('computeSeedObjectDefaultViewOperations', () => {
       universalIdentifier: '5f4a1c1e-0000-4000-8000-000000000008',
       labelPlural: 'Remotes',
       isRemote: true,
+      viewUniversalIdentifiers: [],
     };
     const objectWithoutIndexView: ObjectFixture = {
       universalIdentifier: '5f4a1c1e-0000-4000-8000-000000000009',
       labelPlural: 'Orphans',
       isRemote: false,
+      viewUniversalIdentifiers: [],
     };
 
     const { viewsToCreate, viewFieldsToCreate } =

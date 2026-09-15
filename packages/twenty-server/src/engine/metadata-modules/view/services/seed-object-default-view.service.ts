@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type AllFlatEntityOperationByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-to-create-delete-update.type';
 import {
@@ -20,8 +22,10 @@ export class SeedObjectDefaultViewService {
 
   async computeMissingSeedOperations({
     workspaceId,
+    objectMetadataUniversalIdentifiers,
   }: {
     workspaceId: string;
+    objectMetadataUniversalIdentifiers?: string[];
   }): Promise<{
     seedOperations: SeedOperations;
     applicationUniversalIdentifier: string;
@@ -39,8 +43,20 @@ export class SeedObjectDefaultViewService {
         { workspaceId },
       );
 
+    const flatObjectMetadatas = Object.values(
+      flatObjectMetadataMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (flatObjectMetadata) =>
+          !isDefined(objectMetadataUniversalIdentifiers) ||
+          objectMetadataUniversalIdentifiers.includes(
+            flatObjectMetadata.universalIdentifier,
+          ),
+      );
+
     const seedOperations = computeSeedObjectDefaultViewOperations({
-      flatObjectMetadataMaps,
+      flatObjectMetadatas,
       flatViewMaps,
       flatViewFieldMaps,
       seededViewApplicationUniversalIdentifier:
@@ -59,11 +75,16 @@ export class SeedObjectDefaultViewService {
 
   async seedMissingObjectDefaultViews({
     workspaceId,
+    objectMetadataUniversalIdentifiers,
   }: {
     workspaceId: string;
+    objectMetadataUniversalIdentifiers?: string[];
   }): Promise<number> {
     const { seedOperations, applicationUniversalIdentifier, totalCreateCount } =
-      await this.computeMissingSeedOperations({ workspaceId });
+      await this.computeMissingSeedOperations({
+        workspaceId,
+        objectMetadataUniversalIdentifiers,
+      });
 
     if (totalCreateCount === 0) {
       return 0;

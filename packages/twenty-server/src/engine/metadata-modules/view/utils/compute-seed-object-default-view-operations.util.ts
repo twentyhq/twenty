@@ -13,15 +13,15 @@ import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-m
 
 type SeedInputFlatObjectMetadata = Pick<
   UniversalFlatObjectMetadata,
-  'universalIdentifier' | 'labelPlural' | 'isRemote'
+  | 'universalIdentifier'
+  | 'labelPlural'
+  | 'isRemote'
+  | 'viewUniversalIdentifiers'
 >;
 
 type SeedInputFlatView = Pick<
   UniversalFlatView,
-  | 'key'
-  | 'deletedAt'
-  | 'objectMetadataUniversalIdentifier'
-  | 'viewFieldUniversalIdentifiers'
+  'key' | 'deletedAt' | 'viewFieldUniversalIdentifiers'
 >;
 
 type SeedInputFlatViewField = Pick<
@@ -35,12 +35,6 @@ type SeedInputFlatViewField = Pick<
 >;
 
 type SeedInputFlatEntityMaps = {
-  flatObjectMetadataMaps: {
-    byUniversalIdentifier: Record<
-      string,
-      SeedInputFlatObjectMetadata | undefined
-    >;
-  };
   flatViewMaps: {
     byUniversalIdentifier: Record<string, SeedInputFlatView | undefined>;
   };
@@ -55,11 +49,12 @@ export type SeedOperations = {
 };
 
 export const computeSeedObjectDefaultViewOperations = ({
-  flatObjectMetadataMaps,
+  flatObjectMetadatas,
   flatViewMaps,
   flatViewFieldMaps,
   seededViewApplicationUniversalIdentifier,
 }: SeedInputFlatEntityMaps & {
+  flatObjectMetadatas: SeedInputFlatObjectMetadata[];
   seededViewApplicationUniversalIdentifier: string;
 }): SeedOperations => {
   const seedOperations: SeedOperations = {
@@ -69,34 +64,22 @@ export const computeSeedObjectDefaultViewOperations = ({
 
   const createdAt = new Date().toISOString();
 
-  const flatIndexViewByObjectUniversalIdentifier = new Map<
-    string,
-    SeedInputFlatView
-  >();
-
-  for (const flatView of Object.values(flatViewMaps.byUniversalIdentifier)) {
-    if (
-      isDefined(flatView) &&
-      flatView.key === ViewKey.INDEX &&
-      !isDefined(flatView.deletedAt)
-    ) {
-      flatIndexViewByObjectUniversalIdentifier.set(
-        flatView.objectMetadataUniversalIdentifier,
-        flatView,
-      );
-    }
-  }
-
-  for (const flatObjectMetadata of Object.values(
-    flatObjectMetadataMaps.byUniversalIdentifier,
-  )) {
-    if (!isDefined(flatObjectMetadata) || flatObjectMetadata.isRemote) {
+  for (const flatObjectMetadata of flatObjectMetadatas) {
+    if (flatObjectMetadata.isRemote) {
       continue;
     }
 
-    const flatIndexView = flatIndexViewByObjectUniversalIdentifier.get(
-      flatObjectMetadata.universalIdentifier,
-    );
+    const flatIndexView = flatObjectMetadata.viewUniversalIdentifiers
+      .map(
+        (viewUniversalIdentifier) =>
+          flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
+      )
+      .find(
+        (flatView) =>
+          isDefined(flatView) &&
+          flatView.key === ViewKey.INDEX &&
+          !isDefined(flatView.deletedAt),
+      );
 
     if (!isDefined(flatIndexView)) {
       continue;

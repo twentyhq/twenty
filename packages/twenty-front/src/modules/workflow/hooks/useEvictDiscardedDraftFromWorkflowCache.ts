@@ -1,4 +1,3 @@
-import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -6,12 +5,11 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type Workflow, type WorkflowVersion } from '@/workflow/types/Workflow';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useDeleteOneWorkflowVersion = () => {
+export const useEvictDiscardedDraftFromWorkflowCache = () => {
   const apolloCoreClient = useApolloCoreClient();
   const getWorkflowVersionFromCache = useGetRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
@@ -23,9 +21,13 @@ export const useDeleteOneWorkflowVersion = () => {
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Workflow,
     });
+  const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    });
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const handleUpdate = useCallback(
+  const evictDiscardedDraftFromWorkflowCache = useCallback(
     (workflowVersionId: string) => {
       if (!workflowVersionId) {
         return;
@@ -39,6 +41,21 @@ export const useDeleteOneWorkflowVersion = () => {
       if (!isDefined(cachedWorkflowVersion)) {
         return;
       }
+
+      const discardedAt = new Date().toISOString();
+
+      modifyRecordFromCache({
+        objectMetadataItem: objectMetadataItemWorkflowVersion,
+        cache,
+        recordId: workflowVersionId,
+        fieldModifiers: {
+          deletedAt: () => discardedAt,
+        },
+      });
+
+      upsertRecordsInStore({
+        partialRecords: [{ ...cachedWorkflowVersion, deletedAt: discardedAt }],
+      });
 
       const cachedWorkflow = getWorkflowFromCache<Workflow>(
         cachedWorkflowVersion.workflowId,
@@ -86,24 +103,10 @@ export const useDeleteOneWorkflowVersion = () => {
       getWorkflowFromCache,
       getWorkflowVersionFromCache,
       objectMetadataItemWorkflow,
+      objectMetadataItemWorkflowVersion,
       upsertRecordsInStore,
     ],
   );
 
-  const { deleteOneRecord } = useDeleteOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
-  });
-
-  const deleteOneWorkflowVersion = async ({
-    workflowVersionId,
-  }: {
-    workflowVersionId: string;
-  }) => {
-    await deleteOneRecord(workflowVersionId);
-    handleUpdate(workflowVersionId);
-
-    await invalidateCoreWorkflowVersions(apolloCoreClient);
-  };
-
-  return { deleteOneWorkflowVersion };
+  return { evictDiscardedDraftFromWorkflowCache };
 };

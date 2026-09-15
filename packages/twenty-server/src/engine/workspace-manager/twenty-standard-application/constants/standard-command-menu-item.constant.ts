@@ -544,29 +544,6 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.TEST_WORKFLOW,
     hotKeys: null,
   },
-  seeActiveVersionWorkflow: {
-    universalIdentifier: '31790508-75ff-4e4c-a768-83bd1b0718e0',
-    label: i18nLabel(
-      msg({ message: `See Active Version`, context: 'commandMenuItem.label' }),
-    ),
-    icon: 'IconVersions',
-    isPinned: false,
-    position: 27,
-    shortLabel: i18nLabel(
-      msg({
-        message: `See Active Version`,
-        context: 'commandMenuItem.shortLabel',
-      }),
-    ),
-    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
-    conditionalAvailabilityExpression:
-      'includesEvery(selectedRecords, "statuses", "ACTIVE") and includesEvery(selectedRecords, "statuses", "DRAFT") and noneDefined(selectedRecords, "deletedAt")',
-    availabilityObjectMetadataUniversalIdentifier:
-      STANDARD_OBJECTS.workflow.universalIdentifier,
-    frontComponentUniversalIdentifier: null,
-    engineComponentKey: EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW,
-    hotKeys: null,
-  },
   seeRunsWorkflow: {
     universalIdentifier: 'e57efc2d-00a2-493a-b76c-f2dabd23a5eb',
     label: i18nLabel(

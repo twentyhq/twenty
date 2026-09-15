@@ -47,6 +47,12 @@ export const Default: Story = {
   },
 };
 
+export const Documentation: Story = {
+  ...Default,
+  args: { defaultOpen: false },
+  play: undefined,
+};
+
 export const Small: Story = {
   ...Default,
   args: { defaultOpen: true, size: 'sm' },
