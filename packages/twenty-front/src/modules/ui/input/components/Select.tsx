@@ -22,7 +22,11 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import {
+  MenuItem,
+  MenuItemSelect,
+  MenuItemSelectTag,
+} from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -36,6 +40,7 @@ export type CallToActionButton = {
 
 export type SelectProps<Value extends SelectValue> = {
   className?: string;
+  renderAsTag?: boolean;
   disabled?: boolean;
   selectSizeVariant?: SelectSizeVariant;
   dropdownId: string;
@@ -103,6 +108,7 @@ export const Select = <Value extends SelectValue>({
   showIconInControl = true,
   isDropdownInModal = false,
   variant = 'default',
+  renderAsTag = false,
 }: SelectProps<Value>) => {
   const selectContainerRef = useRef<HTMLDivElement>(null);
 
@@ -208,6 +214,7 @@ export const Select = <Value extends SelectValue>({
       {isNonEmptyString(label) && <StyledLabel>{label}</StyledLabel>}
       {isDisabled ? (
         <SelectControl
+          renderAsTag={renderAsTag}
           selectedOption={controlSelectedOption}
           isDisabled={isDisabled}
           selectSizeVariant={selectSizeVariant}
@@ -223,6 +230,7 @@ export const Select = <Value extends SelectValue>({
           onOpen={handleDropdownOpen}
           clickableComponent={
             <SelectControl
+              renderAsTag={renderAsTag}
               selectedOption={controlSelectedOption}
               isDisabled={isDisabled}
               selectSizeVariant={selectSizeVariant}
@@ -282,23 +290,39 @@ export const Select = <Value extends SelectValue>({
                           closeDropdown(dropdownId);
                         }}
                       >
-                        <MenuItemSelect
-                          LeftIcon={option.Icon}
-                          LeftComponent={option.LeftComponent}
-                          leftIconColor={option.iconThemeColor}
-                          text={option.label}
-                          contextualText={option.contextualText}
-                          selected={
-                            controlSelectedOption.value === option.value
-                          }
-                          focused={selectedItemId === option.label}
-                          needIconCheck={needIconCheck}
-                          onClick={() => {
-                            onChange?.(option.value);
-                            onBlur?.();
-                            closeDropdown(dropdownId);
-                          }}
-                        />
+                        {renderAsTag && isDefined(option.color) ? (
+                          <MenuItemSelectTag
+                            text={option.label}
+                            color={option.color}
+                            selected={
+                              controlSelectedOption.value === option.value
+                            }
+                            focused={selectedItemId === option.label}
+                            onClick={() => {
+                              onChange?.(option.value);
+                              onBlur?.();
+                              closeDropdown(dropdownId);
+                            }}
+                          />
+                        ) : (
+                          <MenuItemSelect
+                            LeftIcon={option.Icon}
+                            LeftComponent={option.LeftComponent}
+                            leftIconColor={option.iconThemeColor}
+                            text={option.label}
+                            contextualText={option.contextualText}
+                            selected={
+                              controlSelectedOption.value === option.value
+                            }
+                            focused={selectedItemId === option.label}
+                            needIconCheck={needIconCheck}
+                            onClick={() => {
+                              onChange?.(option.value);
+                              onBlur?.();
+                              closeDropdown(dropdownId);
+                            }}
+                          />
+                        )}
                       </SelectableListItem>
                     ))}
                   </SelectableList>

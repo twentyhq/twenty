@@ -44,7 +44,7 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   border: none;
   display: flex;
   font-family: inherit;
-  padding-inline: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -55,7 +55,7 @@ const StyledDisplayModeContainer = styled.div`
   cursor: pointer;
   display: flex;
   font-family: inherit;
-  padding-inline: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -220,6 +220,7 @@ export const FormMultiSelectFieldInput = ({
               <StyledDisplayModeReadonlyContainer>
                 {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
                   <MultiSelectDisplay
+                    wrap
                     values={selectedNames}
                     options={selectedOptions}
                   />
@@ -242,6 +243,7 @@ export const FormMultiSelectFieldInput = ({
 
                 {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
                   <MultiSelectDisplay
+                    wrap
                     values={selectedNames}
                     options={selectedOptions}
                   />
