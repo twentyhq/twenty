@@ -17670,6 +17670,11 @@ msgstr "Mentés új nézetként"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "Mentse vagy vesse el az irányítópult módosításait, mielőtt szerkeszti az elrendezést."
 
+#. js-lingui-id: bL2pm9
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Save the record before attaching a file"
+msgstr ""
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -20542,6 +20547,11 @@ msgstr "Ez a komponens felület nélkül fut, és itt nem jelenít meg semmit."
 msgid "This connection does not exist or is not available for this application."
 msgstr "Ez a kapcsolat nem létezik, vagy nem érhető el ehhez az alkalmazáshoz."
 
+#. js-lingui-id: 2bcQ5P
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "This content was saved in an older format and cannot be edited here"
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
@@ -21362,6 +21372,11 @@ msgstr "Kétfaktoros hitelesítési beállítás sikeresen befejezve!"
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Type"
 msgstr "Típus"
+
+#. js-lingui-id: RS98db
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Type '/' for commands"
+msgstr ""
 
 #. js-lingui-id: SKD2e4
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx

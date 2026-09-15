@@ -17670,6 +17670,11 @@ msgstr "새 보기로 저장"
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "레이아웃을 편집하기 전에 대시보드 변경 사항을 저장하거나 취소하세요."
 
+#. js-lingui-id: bL2pm9
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Save the record before attaching a file"
+msgstr ""
+
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
 msgid "Scale"
@@ -20542,6 +20547,11 @@ msgstr "이 구성 요소는 UI 없이 실행되며 여기에는 아무것도 �
 msgid "This connection does not exist or is not available for this application."
 msgstr "이 연결이 존재하지 않거나 이 애플리케이션에서 사용할 수 없습니다."
 
+#. js-lingui-id: 2bcQ5P
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "This content was saved in an older format and cannot be edited here"
+msgstr ""
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
@@ -21362,6 +21372,11 @@ msgstr "이중 인증 설정이 성공적으로 완료되었습니다!"
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 msgid "Type"
 msgstr "유형"
+
+#. js-lingui-id: RS98db
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Type '/' for commands"
+msgstr ""
 
 #. js-lingui-id: SKD2e4
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
