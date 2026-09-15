@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { nextToastRenderKeyState } from '../states/nextToastRenderKeyState';
 import { toastLimitState } from '../states/toastLimitState';
 import { toastsState } from '../states/toastsState';
 import { type ToastOptions } from '../types/ToastOptions';
@@ -37,14 +36,10 @@ export const useEnqueueToast = () => {
         return existingToast.notification.id;
       }
 
-      const id =
-        options.id ??
-        `toast-${crypto.getRandomValues(new Uint32Array(4)).join('-')}`;
+      const renderKey = `toast-${crypto.getRandomValues(new Uint32Array(4)).join('-')}`;
+      const id = options.id ?? renderKey;
       const limit = store.get(toastLimitState);
-      const renderKey = store.get(nextToastRenderKeyState);
       const removedCount = Math.max(0, visibleToasts.length - limit + 1);
-
-      store.set(nextToastRenderKeyState, renderKey + 1);
 
       dismissToasts({
         toastsToClose: visibleToasts.slice(0, removedCount),
