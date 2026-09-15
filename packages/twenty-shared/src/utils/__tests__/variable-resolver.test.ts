@@ -221,4 +221,12 @@ describe('resolveStringTemplate', () => {
       '{"source":"form"}',
     );
   });
+
+  it('serializes an array variable as JSON', () => {
+    expect(
+      resolveStringTemplate('IDs: {{trigger.ids}}', {
+        trigger: { ids: [1, 2, 3] },
+      }),
+    ).toBe('IDs: [1,2,3]');
+  });
 });
