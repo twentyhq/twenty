@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -19,8 +19,6 @@ import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/w
 // TODO completely deprecate this file once we've created the twenty-standard twenty-app manifest
 @Injectable()
 export class TwentyStandardApplicationService {
-  private readonly logger = new Logger(TwentyStandardApplicationService.name);
-
   constructor(
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
@@ -106,25 +104,18 @@ export class TwentyStandardApplicationService {
       );
     }
 
-    try {
-      await this.seedStandardObjectInitialViews({
-        workspaceId,
-        standardObjectMetadataUniversalIdentifiers: new Set(
-          Object.keys(
-            toTwentyStandardAllFlatEntityMaps.flatObjectMetadataMaps
-              .byUniversalIdentifier,
-          ),
+    await this.seedStandardObjectInitialViewsOrThrow({
+      workspaceId,
+      standardObjectMetadataUniversalIdentifiers: new Set(
+        Object.keys(
+          toTwentyStandardAllFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier,
         ),
-      });
-    } catch (error) {
-      this.logger.error(
-        `Non-critical: failed to seed initial object views for workspace ${workspaceId}`,
-        error,
-      );
-    }
+      ),
+    });
   }
 
-  private async seedStandardObjectInitialViews({
+  private async seedStandardObjectInitialViewsOrThrow({
     workspaceId,
     standardObjectMetadataUniversalIdentifiers,
   }: {
