@@ -37,29 +37,8 @@ export class CheckEmailingDomainVerificationCronJob {
   )
   async handle(): Promise<void> {
     await this.refreshUnverifiedDomains();
-    await this.refreshVerifiedDomainRecords();
     await this.refreshPendingUnsubscribeHostnames();
     await this.reprovisionVerifiedWorkspaces();
-  }
-
-  private async refreshVerifiedDomainRecords(): Promise<void> {
-    const verifiedDomains = await this.emailingDomainRepository.find({
-      where: { status: EmailingDomainStatus.VERIFIED },
-      select: ['id', 'workspaceId', 'domain'],
-    });
-
-    for (const emailingDomain of verifiedDomains) {
-      await this.emailingDomainService
-        .refreshVerificationRecords({
-          workspaceId: emailingDomain.workspaceId,
-          emailingDomainId: emailingDomain.id,
-        })
-        .catch((error) => {
-          this.logger.error(
-            `[${CheckEmailingDomainVerificationCronJob.name}] Cannot refresh DNS records of emailing domain ${emailingDomain.domain} of workspace ${emailingDomain.workspaceId}: ${error}`,
-          );
-        });
-    }
   }
 
   private async reprovisionVerifiedWorkspaces(): Promise<void> {

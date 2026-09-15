@@ -1,10 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-
-import { VerificationRecordPurpose } from 'src/engine/core-modules/emailing-domain/drivers/types/verification-record-purpose.type';
-
-registerEnumType(VerificationRecordPurpose, {
-  name: 'VerificationRecordPurpose',
-});
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType('VerificationRecord')
 export class VerificationRecordDTO {
@@ -22,10 +16,4 @@ export class VerificationRecordDTO {
 
   @Field(() => String, { nullable: true })
   status?: string;
-
-  @Field(() => VerificationRecordPurpose, { nullable: true })
-  purpose?: VerificationRecordPurpose;
-
-  @Field(() => Boolean, { nullable: true })
-  isRequired?: boolean;
 }

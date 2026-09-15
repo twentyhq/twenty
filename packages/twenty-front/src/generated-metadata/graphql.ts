@@ -6972,22 +6972,12 @@ export type ValidatePasswordResetToken = {
 
 export type VerificationRecord = {
   __typename?: 'VerificationRecord';
-  isRequired?: Maybe<Scalars['Boolean']['output']>;
   key: Scalars['String']['output'];
   priority?: Maybe<Scalars['Float']['output']>;
-  purpose?: Maybe<VerificationRecordPurpose>;
   status?: Maybe<Scalars['String']['output']>;
   type: Scalars['String']['output'];
   value: Scalars['String']['output'];
 };
-
-export enum VerificationRecordPurpose {
-  DKIM = 'DKIM',
-  DMARC = 'DMARC',
-  MAIL_FROM = 'MAIL_FROM',
-  RECEIVING = 'RECEIVING',
-  UNSUBSCRIBE = 'UNSUBSCRIBE'
-}
 
 export type VerifyEmailAndGetLoginToken = {
   __typename?: 'VerifyEmailAndGetLoginToken';

@@ -77,11 +77,6 @@ export class EmailingDomainService {
       workspaceId,
     });
 
-    const { verificationRecords } = await emailingDomainDriver.getDomainStatus({
-      domain,
-      workspaceId,
-    });
-
     const isVerifiedOnCreation =
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
@@ -89,7 +84,7 @@ export class EmailingDomainService {
       await this.emailingDomainRepository.insertAndReturnOne(workspaceId, {
         domain,
         status: verificationResult.status,
-        verificationRecords,
+        verificationRecords: verificationResult.verificationRecords,
         verifiedAt: isVerifiedOnCreation ? new Date() : null,
       });
 
@@ -214,18 +209,10 @@ export class EmailingDomainService {
     const emailingDomainDriver =
       this.emailingDomainDriverFactory.getCurrentDriver();
 
-    const domainResource = {
+    const verificationResult = await emailingDomainDriver.verifyDomain({
       domain: emailingDomain.domain,
       workspaceId: emailingDomain.workspaceId,
-    };
-
-    const verificationResult =
-      await emailingDomainDriver.verifyDomain(domainResource);
-
-    await emailingDomainDriver.registerDomain(domainResource);
-
-    const { verificationRecords } =
-      await emailingDomainDriver.getDomainStatus(domainResource);
+    });
 
     const hasJustBecomeVerified =
       emailingDomain.status !== EmailingDomainStatus.VERIFIED &&
@@ -236,7 +223,7 @@ export class EmailingDomainService {
       { id: emailingDomain.id },
       {
         status: verificationResult.status,
-        verificationRecords,
+        verificationRecords: verificationResult.verificationRecords,
         ...(hasJustBecomeVerified ? { verifiedAt: new Date() } : {}),
       },
     );
@@ -249,42 +236,6 @@ export class EmailingDomainService {
       await this.emailingDomainRepository.findOneOrFail(workspaceId, {
         where: { id: emailingDomain.id },
       }),
-    );
-  }
-
-  async refreshVerificationRecords({
-    workspaceId,
-    emailingDomainId,
-  }: {
-    workspaceId: string;
-    emailingDomainId: string;
-  }): Promise<void> {
-    const emailingDomain = await this.findEmailingDomainByIdOrThrow(
-      workspaceId,
-      emailingDomainId,
-    );
-
-    const emailingDomainDriver =
-      this.emailingDomainDriverFactory.getCurrentDriver();
-
-    const domainResource = {
-      domain: emailingDomain.domain,
-      workspaceId: emailingDomain.workspaceId,
-    };
-
-    await emailingDomainDriver.registerDomain(domainResource);
-
-    const { verificationRecords } =
-      await emailingDomainDriver.getDomainStatus(domainResource);
-
-    if (verificationRecords.length === 0) {
-      return;
-    }
-
-    await this.emailingDomainRepository.update(
-      workspaceId,
-      { id: emailingDomain.id },
-      { verificationRecords },
     );
   }
 

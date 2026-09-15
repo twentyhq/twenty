@@ -73,7 +73,10 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         await this.assertProductionAccessOrThrow();
       }
 
-      return { status, verificationRecords };
+      return {
+        status,
+        verificationRecords: this.withRecordStatus(verificationRecords, status),
+      };
     } catch (error) {
       if (error instanceof EmailingDomainDriverException) {
         throw error;
@@ -102,10 +105,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       const verificationRecords = buildAwsSesVerificationRecords({
         domain: input.domain,
         dkimTokens: identityResponse.DkimAttributes?.Tokens ?? [],
-        dkimStatus: identityResponse.DkimAttributes?.Status,
         mailFromDomain: identityResponse.MailFromAttributes?.MailFromDomain,
-        mailFromStatus:
-          identityResponse.MailFromAttributes?.MailFromDomainStatus,
         region: this.config.region,
       });
 
@@ -113,7 +113,10 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         await this.assertProductionAccessOrThrow();
       }
 
-      return { status, verificationRecords };
+      return {
+        status,
+        verificationRecords: this.withRecordStatus(verificationRecords, status),
+      };
     } catch (error) {
       if (error instanceof EmailingDomainDriverException) {
         throw error;
@@ -148,10 +151,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   }
 
   async registerDomain(input: EmailingDomainResourceInput): Promise<void> {
-    await this.awsSesRegisterDomainService.registerDomain(
-      input.domain,
-      this.config,
-    );
+    await this.awsSesRegisterDomainService.registerDomain(input.domain);
   }
 
   async sendEmail(
@@ -286,10 +286,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       const verificationRecords = buildAwsSesVerificationRecords({
         domain,
         dkimTokens: existingIdentity.DkimAttributes?.Tokens ?? [],
-        dkimStatus: existingIdentity.DkimAttributes?.Status,
         mailFromDomain: existingIdentity.MailFromAttributes?.MailFromDomain,
-        mailFromStatus:
-          existingIdentity.MailFromAttributes?.MailFromDomainStatus,
         region: this.config.region,
       });
 
@@ -327,9 +324,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     const verificationRecords = buildAwsSesVerificationRecords({
       domain,
       dkimTokens,
-      dkimStatus: createResponse.DkimAttributes?.Status,
-      mailFromDomain: undefined,
-      mailFromStatus: undefined,
       region: this.config.region,
     });
 
@@ -413,5 +407,19 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     }
 
     return EmailingDomainStatus.PENDING;
+  }
+
+  private withRecordStatus(
+    records: VerificationRecord[],
+    status: EmailingDomainStatus,
+  ): VerificationRecord[] {
+    const recordStatus =
+      status === EmailingDomainStatus.VERIFIED
+        ? 'success'
+        : status === EmailingDomainStatus.FAILED
+          ? 'error'
+          : 'pending';
+
+    return records.map((record) => ({ ...record, status: recordStatus }));
   }
 }

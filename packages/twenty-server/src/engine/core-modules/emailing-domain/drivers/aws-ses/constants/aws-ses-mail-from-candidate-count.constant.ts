@@ -1,1 +1,0 @@
-export const AWS_SES_MAIL_FROM_CANDIDATE_COUNT = 5;
