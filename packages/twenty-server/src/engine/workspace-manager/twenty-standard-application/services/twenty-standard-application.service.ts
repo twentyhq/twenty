@@ -105,6 +105,10 @@ export class TwentyStandardApplicationService {
 
     await this.seedObjectDefaultViewService.seedMissingObjectDefaultViews({
       workspaceId,
+      objectMetadataUniversalIdentifiers: Object.keys(
+        toTwentyStandardAllFlatEntityMaps.flatObjectMetadataMaps
+          .byUniversalIdentifier,
+      ),
     });
   }
 }
