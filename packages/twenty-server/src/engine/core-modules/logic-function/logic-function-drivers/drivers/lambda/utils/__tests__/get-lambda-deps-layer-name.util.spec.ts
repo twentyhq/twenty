@@ -1,54 +1,49 @@
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
+import { getDepsLayerChecksum } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/get-deps-layer-checksum.util';
 
 const buildFlatApplication = (
   overrides: Partial<FlatApplication> = {},
 ): FlatApplication =>
   ({
+    packageJsonChecksum: 'pkg123',
     yarnLockChecksum: 'abc123',
     ...overrides,
   }) as FlatApplication;
 
 describe('getLambdaDepsLayerName', () => {
-  it('returns deps-<checksum> when yarnLockChecksum is set', () => {
-    expect(
-      getLambdaDepsLayerName({ flatApplication: buildFlatApplication() }),
-    ).toBe('deps-abc123');
-  });
+  it('returns deps-<combined checksum>', () => {
+    const flatApplication = buildFlatApplication();
 
-  it('falls back to deps-default when yarnLockChecksum is undefined', () => {
-    expect(
-      getLambdaDepsLayerName({
-        flatApplication: buildFlatApplication({ yarnLockChecksum: undefined }),
-      }),
-    ).toBe('deps-default');
-  });
-
-  it('falls back to deps-default when yarnLockChecksum is null', () => {
-    expect(
-      getLambdaDepsLayerName({
-        flatApplication: buildFlatApplication({
-          yarnLockChecksum: null as unknown as string,
-        }),
-      }),
-    ).toBe('deps-default');
+    expect(getLambdaDepsLayerName({ flatApplication })).toBe(
+      `deps-${getDepsLayerChecksum(flatApplication)}`,
+    );
   });
 
   it('inserts the namespace segment when provided', () => {
+    const flatApplication = buildFlatApplication();
+
     expect(
-      getLambdaDepsLayerName({
-        flatApplication: buildFlatApplication(),
-        namespace: 'ns123',
-      }),
-    ).toBe('deps-ns123-abc123');
+      getLambdaDepsLayerName({ flatApplication, namespace: 'ns123' }),
+    ).toBe(`deps-ns123-${getDepsLayerChecksum(flatApplication)}`);
   });
 
   it('omits the namespace segment when it is an empty string', () => {
-    expect(
-      getLambdaDepsLayerName({
-        flatApplication: buildFlatApplication(),
-        namespace: '',
-      }),
-    ).toBe('deps-abc123');
+    const flatApplication = buildFlatApplication();
+
+    expect(getLambdaDepsLayerName({ flatApplication, namespace: '' })).toBe(
+      `deps-${getDepsLayerChecksum(flatApplication)}`,
+    );
+  });
+
+  it('does not share a layer name between applications with the same yarn.lock but a different package.json', () => {
+    const nameA = getLambdaDepsLayerName({
+      flatApplication: buildFlatApplication({ packageJsonChecksum: 'pkg-a' }),
+    });
+    const nameB = getLambdaDepsLayerName({
+      flatApplication: buildFlatApplication({ packageJsonChecksum: 'pkg-b' }),
+    });
+
+    expect(nameA).not.toBe(nameB);
   });
 });
