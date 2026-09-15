@@ -11,7 +11,7 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { styled } from '@linaria/react';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { isDefined } from 'twenty-shared/utils';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { isRecordCalendarCardSelectedComponentFamilyState } from '@/object-record/record-calendar/record-calendar-card/states/isRecordCalendarCardSelectedComponentFamilyState';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

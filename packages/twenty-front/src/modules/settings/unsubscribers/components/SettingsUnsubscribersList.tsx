@@ -14,8 +14,8 @@ import { SETTINGS_UNSUBSCRIBERS_ALL_FILTER } from '@/settings/unsubscribers/cons
 import { MESSAGE_SUPPRESSIONS_PAGE_SIZE } from '@/settings/unsubscribers/constants/MessageSuppressionsPageSize';
 import { useMessageSuppressions } from '@/settings/unsubscribers/hooks/useMessageSuppressions';
 import { getMessageSuppressionReasonBadge } from '@/settings/unsubscribers/utils/getMessageSuppressionReasonBadge';
-import { Status } from 'twenty-ui/data-display';
-import { SearchInput } from 'twenty-ui/input';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { SearchInput } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   MessageSuppressionReason,

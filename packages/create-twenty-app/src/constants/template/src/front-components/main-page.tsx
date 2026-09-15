@@ -1,6 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   IconBox,
   IconHierarchy,

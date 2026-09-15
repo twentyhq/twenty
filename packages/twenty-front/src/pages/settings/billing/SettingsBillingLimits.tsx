@@ -2,8 +2,8 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 import { SettingsBillingLimitsContent } from '@/settings/billing/components/SettingsBillingLimitsContent';
 import { SettingsBillingPageLayout } from '@/settings/billing/components/SettingsBillingPageLayout';

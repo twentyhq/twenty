@@ -9,7 +9,7 @@ import {
   type UnsubscribeTopicsQuery,
   UnsubscribeTopicVisibility,
 } from '~/generated-metadata/graphql';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledTopicName = styled.span`
