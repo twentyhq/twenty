@@ -8,6 +8,7 @@ export const isRecallRecordingDoneSignal = ({
   return (
     event === 'recording.done' ||
     event === 'recording.failed' ||
-    statusCode === 'done'
+    statusCode === 'done' ||
+    statusCode === 'media_expired'
   );
 };

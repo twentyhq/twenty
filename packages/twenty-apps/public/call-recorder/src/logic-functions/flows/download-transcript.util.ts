@@ -8,6 +8,7 @@ export type DownloadTranscriptResult =
   | { outcome: 'filled'; content: unknown }
   | { outcome: 'failed'; subCode: string | null }
   | { outcome: 'pending' }
+  | { outcome: 'deleted' }
   | { outcome: 'error'; errorMessage: string };
 
 export const downloadTranscript = async ({
@@ -29,6 +30,10 @@ export const downloadTranscript = async ({
 
   if (statusCode === 'error' || statusCode === 'failed') {
     return { outcome: 'failed', subCode: statusSubCode ?? null };
+  }
+
+  if (statusCode === 'deleted') {
+    return { outcome: 'deleted' };
   }
 
   return { outcome: 'pending' };

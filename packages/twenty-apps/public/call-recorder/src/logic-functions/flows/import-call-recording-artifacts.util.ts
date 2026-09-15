@@ -52,12 +52,13 @@ export const importCallRecordingArtifacts = async ({
     };
   }
 
+  const now = new Date();
   const artifactImportExecution = await runCallRecordingArtifactImportWithClaim(
     {
       client,
       callRecordingId: initialCallRecording.id,
       scope,
-      now: new Date(),
+      now,
       runImport: async (callRecording) => {
         const recallBot =
           await fetchRecallBotWhenRecordingIdMissing(callRecording);
@@ -68,6 +69,7 @@ export const importCallRecordingArtifacts = async ({
           treatRecordingAsDone: true,
           requestedAt: request.requestedAt,
           artifactScope: scope,
+          now,
         });
 
         if (callRecordingSyncResult.hasRetryableArtifactFailure) {
@@ -76,11 +78,14 @@ export const importCallRecordingArtifacts = async ({
           );
         }
 
-        const hasCompletedImport = await settleCallRecordingImport(client, {
+        const settlementOutcome = await settleCallRecordingImport(client, {
           callRecordingId: callRecording.id,
         });
 
-        if (!callRecordingSyncResult.updated && !hasCompletedImport) {
+        if (
+          !callRecordingSyncResult.updated &&
+          settlementOutcome === 'pending'
+        ) {
           return {
             status: 'skipped',
             callRecordingId: callRecording.id,

@@ -25,6 +25,7 @@ type CallRecordingNode = {
   botScheduleIdempotencyKey?: string | null;
   externalRecordingId?: string | null;
   callRecorderFailureReason?: string | null;
+  mediaExpiresAt?: string | null;
 };
 
 export const findCallRecordingsByFilter = async (
@@ -61,6 +62,7 @@ export const findCallRecordingsByFilter = async (
               botScheduleIdempotencyKey: true,
               externalRecordingId: true,
               callRecorderFailureReason: true,
+              mediaExpiresAt: true,
             },
           },
         },
@@ -98,6 +100,7 @@ export const findCallRecordingsByFilter = async (
     callRecorderFailureReason: normalizeOptionalString(
       callRecording.callRecorderFailureReason,
     ),
+    mediaExpiresAt: normalizeOptionalString(callRecording.mediaExpiresAt),
   }));
 };
 

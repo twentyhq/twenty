@@ -117,6 +117,17 @@ describe('isCallRecordingImportComplete', () => {
     ).toBe(true);
   });
 
+  it('treats a media file whose import expired as resolved', () => {
+    expect(
+      isCallRecordingImportComplete({
+        transcript: TRANSCRIPT_CONTENT,
+        audio: AUDIO_VALUE,
+        video: undefined,
+        callRecorderFailureReason: 'video_import_expired',
+      }),
+    ).toBe(true);
+  });
+
   it('does not let a size marker excuse the other missing artifact', () => {
     expect(
       isCallRecordingImportComplete({

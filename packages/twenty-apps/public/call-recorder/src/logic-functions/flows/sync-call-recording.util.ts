@@ -2,6 +2,7 @@ import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { buildExpiredMediaImportUpdate } from 'src/logic-functions/domain/build-expired-media-import-update.util';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
@@ -25,6 +26,7 @@ export type SyncableCallRecording = {
   endedAt: string | undefined;
   externalRecordingId: string | undefined;
   callRecorderFailureReason: string | undefined;
+  mediaExpiresAt: string | undefined;
   transcript: unknown;
   audio: FilesFieldValue | undefined;
   video: FilesFieldValue | undefined;
@@ -34,6 +36,12 @@ export type SyncCallRecordingResult = {
   updated: boolean;
   requestedTranscript: boolean;
   hasRetryableArtifactFailure: boolean;
+};
+
+type ArtifactImportResult = {
+  updateData: CallRecordingUpdateFields;
+  requestedTranscript: boolean;
+  hasRetryableFailure: boolean;
 };
 
 // The single-record sync shared by webhook-driven imports and the scheduled
@@ -46,6 +54,7 @@ export const syncCallRecording = async ({
   treatRecordingAsDone,
   requestedAt,
   artifactScope,
+  now,
 }: {
   client: CoreApiClient;
   callRecording: SyncableCallRecording;
@@ -55,6 +64,7 @@ export const syncCallRecording = async ({
   treatRecordingAsDone: boolean;
   requestedAt: string;
   artifactScope: CallRecordingArtifactImportScope;
+  now: Date;
 }): Promise<SyncCallRecordingResult> => {
   const syncState = isUndefined(bot)
     ? undefined
@@ -63,6 +73,11 @@ export const syncCallRecording = async ({
     callRecording.externalRecordingId ?? syncState?.externalRecordingId;
   const isRecordingDone =
     treatRecordingAsDone || syncState?.isRecallRecordingDone === true;
+  const mediaExpiresAt =
+    callRecording.mediaExpiresAt ?? syncState?.mediaExpiredAt;
+  const isMediaExpired =
+    !isUndefined(mediaExpiresAt) &&
+    new Date(mediaExpiresAt).getTime() <= now.getTime();
 
   const syncStateUpdate: CallRecordingUpdateFields = isUndefined(syncState)
     ? {}
@@ -71,6 +86,7 @@ export const syncCallRecording = async ({
   const missingArtifactsFailureUpdate =
     syncState?.isRecallRecordingDone === true &&
     isUndefined(externalRecordingId) &&
+    !isMediaExpired &&
     !hasRecordingArtifactPath({
       callRecording,
       updateData: syncStateUpdate,
@@ -82,44 +98,21 @@ export const syncCallRecording = async ({
         })
       : {};
 
-  const transcriptImportResult =
-    isRecordingDone &&
-    !isUndefined(externalRecordingId) &&
-    artifactScope === 'transcript'
-      ? await importCallRecordingTranscript({
-          callRecordingId: callRecording.id,
-          currentStatus: callRecording.status,
-          externalRecordingId,
-          requestedAt,
-          transcript: callRecording.transcript,
-        })
-      : undefined;
-
-  const mediaImportResult =
-    isRecordingDone &&
-    !isUndefined(externalRecordingId) &&
-    artifactScope === 'media'
-      ? await importCallRecordingMedia({
-          callRecordingId: callRecording.id,
-          externalRecordingId,
-          hasAudio: isNonEmptyArray(callRecording.audio),
-          hasVideo: isNonEmptyArray(callRecording.video),
-        })
-      : undefined;
-
-  const mediaImportUpdate = isUndefined(mediaImportResult)
-    ? {}
-    : resolveMediaImportUpdate({
-        mediaImportUpdate: mediaImportResult.updateData,
-        currentStatus: callRecording.status,
+  const artifactImportResult = isRecordingDone
+    ? await importArtifactScope({
+        callRecording,
+        externalRecordingId,
+        requestedAt,
+        artifactScope,
+        isMediaExpired,
         pendingStatus: syncStateUpdate.status,
-      });
+      })
+    : undefined;
 
   const updateData: CallRecordingUpdateFields = {
     ...syncStateUpdate,
     ...missingArtifactsFailureUpdate,
-    ...(transcriptImportResult?.updateData ?? {}),
-    ...mediaImportUpdate,
+    ...(artifactImportResult?.updateData ?? {}),
   };
 
   const { status, callRecorderFailureReason, ...callRecordingProgressUpdate } =
@@ -153,12 +146,88 @@ export const syncCallRecording = async ({
 
   return {
     updated: hasCallRecordingProgressUpdate || hasUpdatedCallRecordingState,
-    requestedTranscript: transcriptImportResult?.requestedTranscript ?? false,
+    requestedTranscript: artifactImportResult?.requestedTranscript ?? false,
     hasRetryableArtifactFailure:
-      transcriptImportResult?.hasRetryableFailure ??
-      mediaImportResult?.hasRetryableFailure ??
-      false,
+      artifactImportResult?.hasRetryableFailure ?? false,
   };
+};
+
+const importArtifactScope = async ({
+  callRecording,
+  externalRecordingId,
+  requestedAt,
+  artifactScope,
+  isMediaExpired,
+  pendingStatus,
+}: {
+  callRecording: SyncableCallRecording;
+  externalRecordingId: string | undefined;
+  requestedAt: string;
+  artifactScope: CallRecordingArtifactImportScope;
+  isMediaExpired: boolean;
+  pendingStatus: string | undefined;
+}): Promise<ArtifactImportResult> => {
+  if (artifactScope === 'transcript') {
+    return importCallRecordingTranscript({
+      callRecordingId: callRecording.id,
+      currentStatus: callRecording.status,
+      externalRecordingId,
+      requestedAt,
+      transcript: callRecording.transcript,
+      isMediaExpired,
+    });
+  }
+
+  const mediaImportResult = await importMediaScope({
+    callRecording,
+    externalRecordingId,
+    isMediaExpired,
+  });
+
+  return {
+    updateData: resolveMediaImportUpdate({
+      mediaImportUpdate: dropUnchangedMediaExpiresAt({
+        mediaImportUpdate: mediaImportResult.updateData,
+        callRecording,
+      }),
+      currentStatus: callRecording.status,
+      pendingStatus,
+    }),
+    requestedTranscript: false,
+    hasRetryableFailure: mediaImportResult.hasRetryableFailure,
+  };
+};
+
+const importMediaScope = async ({
+  callRecording,
+  externalRecordingId,
+  isMediaExpired,
+}: {
+  callRecording: SyncableCallRecording;
+  externalRecordingId: string | undefined;
+  isMediaExpired: boolean;
+}): Promise<{
+  updateData: CallRecordingUpdateFields;
+  hasRetryableFailure: boolean;
+}> => {
+  // Expired media never comes back, so the recording is settled without a provider read.
+  if (isMediaExpired) {
+    return {
+      updateData: buildExpiredMediaImportUpdate(callRecording),
+      hasRetryableFailure: false,
+    };
+  }
+
+  if (isUndefined(externalRecordingId)) {
+    return { updateData: {}, hasRetryableFailure: false };
+  }
+
+  return importCallRecordingMedia({
+    callRecordingId: callRecording.id,
+    externalRecordingId,
+    hasAudio: isNonEmptyArray(callRecording.audio),
+    hasVideo: isNonEmptyArray(callRecording.video),
+  });
 };
 
 const buildSyncStateFieldUpdates = ({
@@ -202,6 +271,13 @@ const buildSyncStateFieldUpdates = ({
     !isUndefined(syncState.externalRecordingId)
   ) {
     updateData.externalRecordingId = syncState.externalRecordingId;
+  }
+
+  if (
+    isUndefined(callRecording.mediaExpiresAt) &&
+    !isUndefined(syncState.mediaExpiredAt)
+  ) {
+    updateData.mediaExpiresAt = syncState.mediaExpiredAt;
   }
 
   return updateData;
@@ -253,6 +329,21 @@ const hasReachableTranscript = (transcript: unknown): boolean => {
   const transcriptMarker = parseTranscriptMarker(transcript);
 
   return isUndefined(transcriptMarker) || transcriptMarker.status !== 'FAILED';
+};
+
+const dropUnchangedMediaExpiresAt = ({
+  mediaImportUpdate,
+  callRecording,
+}: {
+  mediaImportUpdate: CallRecordingUpdateFields;
+  callRecording: SyncableCallRecording;
+}): CallRecordingUpdateFields => {
+  const { mediaExpiresAt, ...mediaImportUpdateWithoutExpiry } =
+    mediaImportUpdate;
+
+  return mediaExpiresAt === callRecording.mediaExpiresAt
+    ? mediaImportUpdateWithoutExpiry
+    : mediaImportUpdate;
 };
 
 // A media size marker must not overwrite the failure reason of a FAILED recording.

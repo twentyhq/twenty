@@ -125,6 +125,7 @@ const handleRecallStatusEvent = async ({
       status: callRecordingStatus,
     }),
     ...buildRecordingTimestampsUpdate({ webhookEvent, callRecording }),
+    ...buildMediaExpiresAtUpdate({ webhookEvent, callRecording }),
   };
 
   await updateCallRecording(client, {
@@ -293,6 +294,19 @@ const buildRecordingTimestampsUpdate = ({
       : {}),
   };
 };
+
+const buildMediaExpiresAtUpdate = ({
+  webhookEvent,
+  callRecording,
+}: {
+  webhookEvent: RecallWebhookEvent;
+  callRecording: CallRecordingRecord;
+}): { mediaExpiresAt?: string } =>
+  webhookEvent.statusCode === 'media_expired' &&
+  isUndefined(callRecording.mediaExpiresAt) &&
+  !isUndefined(webhookEvent.statusTimestamp)
+    ? { mediaExpiresAt: webhookEvent.statusTimestamp }
+    : {};
 
 const buildExternalRecordingIdUpdate = (
   webhookEvent: RecallWebhookEvent,
