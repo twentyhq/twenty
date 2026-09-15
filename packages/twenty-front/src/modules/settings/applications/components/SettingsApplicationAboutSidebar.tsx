@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useId } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isSafeUrl } from 'twenty-shared/utils';
 import {
   IconAlertTriangle,
   IconBrandNpm,
@@ -57,17 +57,8 @@ type ResourceLink = AboutRow & {
   href: string;
 };
 
-const isSafeUrl = (url: string | undefined): url is string => {
-  if (!isNonEmptyString(url)) return false;
-
-  try {
-    const parsed = new URL(url);
-
-    return ['http:', 'https:', 'mailto:'].includes(parsed.protocol);
-  } catch {
-    return false;
-  }
-};
+const isResourceLinkUrl = (url: string | undefined): url is string =>
+  isNonEmptyString(url) && isSafeUrl(url);
 
 const StyledSidebar = styled.div`
   display: flex;
@@ -224,10 +215,10 @@ export const SettingsApplicationAboutSidebar = ({
   } = developerLinks ?? {};
 
   const resourceLinks: ResourceLink[] = [
-    ...(isSafeUrl(websiteUrl)
+    ...(isResourceLinkUrl(websiteUrl)
       ? [{ Icon: IconWorld, label: t`Website`, href: websiteUrl }]
       : []),
-    ...(isSafeUrl(termsUrl)
+    ...(isResourceLinkUrl(termsUrl)
       ? [{ Icon: IconLink, label: t`Terms / Privacy`, href: termsUrl }]
       : []),
     ...(isNonEmptyString(emailSupport)
@@ -239,7 +230,7 @@ export const SettingsApplicationAboutSidebar = ({
           },
         ]
       : []),
-    ...(isSafeUrl(issueReportUrl)
+    ...(isResourceLinkUrl(issueReportUrl)
       ? [
           {
             Icon: IconAlertTriangle,
@@ -248,7 +239,7 @@ export const SettingsApplicationAboutSidebar = ({
           },
         ]
       : []),
-    ...(isSafeUrl(sourcePackageUrl)
+    ...(isResourceLinkUrl(sourcePackageUrl)
       ? [{ Icon: IconBrandNpm, label: t`Npm package`, href: sourcePackageUrl }]
       : []),
   ];

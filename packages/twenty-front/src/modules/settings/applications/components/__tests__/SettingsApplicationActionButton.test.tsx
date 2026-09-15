@@ -1,32 +1,9 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
-
-const mockOpenModal = jest.fn();
-const mockConfirmationModal = jest.fn();
-
-jest.mock('@/ui/layout/modal/hooks/useModal', () => ({
-  useModal: () => ({ openModal: mockOpenModal }),
-}));
-
-jest.mock('@/ui/layout/modal/components/ConfirmationModal', () => ({
-  ConfirmationModal: (props: {
-    confirmButtonText: string;
-    modalInstanceId: string;
-    onConfirmClick: () => void;
-  }) => {
-    mockConfirmationModal(props);
-
-    return (
-      <button onClick={props.onConfirmClick}>
-        Confirm {props.confirmButtonText}
-      </button>
-    );
-  },
-}));
 
 type RenderActionButtonOptions = {
   isInstalled?: boolean;
@@ -68,11 +45,6 @@ const renderActionButton = ({
   );
 
 describe('SettingsApplicationActionButton', () => {
-  beforeEach(() => {
-    mockOpenModal.mockClear();
-    mockConfirmationModal.mockClear();
-  });
-
   it('renders nothing without the applications permission', () => {
     const { container } = renderActionButton({
       canInstallMarketplaceApps: false,
@@ -130,13 +102,19 @@ describe('SettingsApplicationActionButton', () => {
 
     await user.click(screen.getByRole('button', { name: /^Uninstall\b/ }));
 
-    const { modalInstanceId } = mockConfirmationModal.mock.lastCall[0];
+    const confirmationDialog = await screen.findByRole('dialog');
 
-    expect(mockOpenModal).toHaveBeenCalledWith(modalInstanceId);
+    expect(
+      within(confirmationDialog).getByText('Uninstall Application?'),
+    ).toBeVisible();
     expect(onUninstall).not.toHaveBeenCalled();
 
+    await user.type(
+      within(confirmationDialog).getByPlaceholderText('yes'),
+      'yes',
+    );
     await user.click(
-      screen.getByRole('button', { name: /^Confirm Uninstall\b/ }),
+      within(confirmationDialog).getByRole('button', { name: /^Uninstall\b/ }),
     );
 
     expect(onUninstall).toHaveBeenCalledTimes(1);
