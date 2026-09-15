@@ -7,10 +7,11 @@ export type NavigationDrawerItemBreadcrumbProps = {
 };
 
 const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
-  height: 28px;
+  height: ${themeCssVariables.spacing[7]};
 
   margin-inline-end: ${themeCssVariables.spacing[2]};
   margin-inline-start: 7.5px;
+  position: relative;
   width: 9px;
 
   [data-dnd-dragging] & {
@@ -29,7 +30,7 @@ const StyledGapVerticalLine = styled.div<{ darker: boolean }>`
       : themeCssVariables.border.color.strong};
 
   height: 2px;
-  position: relative;
+  position: absolute;
 
   top: -2px;
   width: 1px;
@@ -41,14 +42,10 @@ const StyledSecondaryFullVerticalBar = styled.div<{ darker: boolean }>`
       ? themeCssVariables.font.color.tertiary
       : themeCssVariables.border.color.strong};
 
-  height: calc(${themeCssVariables.spacing[7]} + 1px);
-  position: relative;
-  top: -17px;
+  height: 100%;
+  position: absolute;
+  top: 0;
   width: 1px;
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    height: calc(${themeCssVariables.spacing[8]} + 1px);
-  }
 `;
 
 const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`
@@ -67,8 +64,8 @@ const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`
 
   height: 14px;
 
-  position: relative;
-  top: -2px;
+  position: absolute;
+  top: 0;
   width: 8px;
   z-index: ${({ darker }) => (darker ? '1' : 'auto')};
 `;
