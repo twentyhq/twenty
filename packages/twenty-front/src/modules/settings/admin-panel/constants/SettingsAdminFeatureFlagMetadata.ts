@@ -26,9 +26,9 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
     label: msg`JSON filters`,
     description: msg`Allow filtering records by values inside JSON fields.`,
   },
-  [FeatureFlagKey.IS_EMAIL_GROUP_ENABLED]: {
+  [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED]: {
     label: msg`Email campaigns`,
-    description: msg`Enable email campaigns and sending domain management.`,
+    description: msg`Enable email campaigns, lists, and unsubscribe management.`,
   },
   [FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT]: {
     label: msg`Direct REST metadata responses`,
