@@ -9,7 +9,8 @@ import { useRunWorkflowActionWorkflowOptions } from '@/workflow/workflow-steps/w
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useDebouncedCallback } from 'use-debounce';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/feedback';
@@ -64,6 +65,29 @@ export const WorkflowEditActionRunWorkflow = ({
     });
   };
 
+  const saveInput = useDebouncedCallback((input: Record<string, unknown>) => {
+    if (actionOptions.readonly === true) {
+      return;
+    }
+
+    actionOptions.onActionUpdate({
+      ...action,
+      settings: {
+        ...action.settings,
+        input: {
+          ...action.settings.input,
+          input,
+        },
+      },
+    });
+  }, 500);
+
+  useEffect(() => {
+    return () => {
+      saveInput.flush();
+    };
+  }, [saveInput]);
+
   const handleInputJsonChange = (value: string | null) => {
     if (actionOptions.readonly === true) {
       return;
@@ -82,16 +106,7 @@ export const WorkflowEditActionRunWorkflow = ({
 
     setInputJsonError(undefined);
 
-    actionOptions.onActionUpdate({
-      ...action,
-      settings: {
-        ...action.settings,
-        input: {
-          ...action.settings.input,
-          input: parsingResult.data,
-        },
-      },
-    });
+    saveInput(parsingResult.data);
   };
 
   const selectedWorkflowId = action.settings.input.workflowId;
