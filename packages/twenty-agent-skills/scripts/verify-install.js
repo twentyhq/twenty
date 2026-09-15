@@ -29,7 +29,7 @@ const absoluteInstallRoot = path.resolve(installRoot);
 // `skills add` writes to an agent-specific directory (.agents/skills, .claude/skills,
 // .codex/skills, ...) and may symlink between them, so the installed copies are
 // discovered rather than assumed.
-const findInstalledSkillRoots = (root, skillName) => {
+const findInstalledSkillRoots = ({ root, skillName }) => {
   const found = [];
   const walk = (directory) => {
     for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
@@ -69,10 +69,10 @@ const fail = (message) => failures.push(message);
 
 for (const skillName of skillNames) {
   const sourceRoot = path.join(PACKAGE_ROOT, 'skills', skillName);
-  const installedRoots = findInstalledSkillRoots(
-    absoluteInstallRoot,
+  const installedRoots = findInstalledSkillRoots({
+    root: absoluteInstallRoot,
     skillName,
-  );
+  });
 
   if (installedRoots.length === 0) {
     fail(

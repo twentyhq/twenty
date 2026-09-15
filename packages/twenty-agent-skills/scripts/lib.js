@@ -30,7 +30,7 @@ const SIBLING_REFERENCE_PATTERN =
   /\.\.\/([A-Za-z0-9._-]+)\/([A-Za-z0-9._-]+\.md)/g;
 const SAME_DIRECTORY_REFERENCE_PATTERN = /`([A-Za-z0-9._-]+\.md)`/g;
 
-const findReferenceByBasename = (referencesRoot, basename) => {
+const findReferenceByBasename = ({ referencesRoot, basename }) => {
   for (const filePath of listFiles(referencesRoot)) {
     if (path.basename(filePath) === basename) {
       return path.relative(referencesRoot, filePath).split(path.sep).join('/');
@@ -97,7 +97,10 @@ const resolveReferenceClosure = (referencesRoot, seedReferences) => {
       // A bare mention that names a reference doc living in another scope would
       // otherwise be dropped here, shipping a skill that points at a file it
       // does not carry. Make the author write the explicit relative path.
-      const elsewhere = findReferenceByBasename(referencesRoot, match[1]);
+      const elsewhere = findReferenceByBasename({
+        referencesRoot,
+        basename: match[1],
+      });
 
       if (elsewhere) {
         throw new Error(
