@@ -41,7 +41,7 @@ export type ButtonProps = {
   ariaLabel?: string;
   ariaExpanded?: boolean;
   isLoading?: boolean;
-} & Pick<React.ComponentProps<'button'>, 'type'> &
+} & Omit<React.ComponentPropsWithRef<'button'>, 'children'> &
   ClickOutsideAttributes;
 
 export const Button = ({
@@ -67,9 +67,15 @@ export const Button = ({
   dataGloballyPreventClickOutside,
   hotkeys,
   ariaLabel,
+  'aria-label': nativeAriaLabel,
   ariaExpanded,
+  'aria-expanded': nativeAriaExpanded,
+  onFocus,
+  onBlur,
+  style,
   type,
   isLoading = false,
+  ...buttonProps
 }: ButtonProps) => {
   const isMobile = useIsMobile();
 
@@ -91,6 +97,7 @@ export const Button = ({
       )}
     >
       <ButtonComponent
+        {...buttonProps}
         id={id}
         className={clsx(
           styles.button,
@@ -111,12 +118,18 @@ export const Button = ({
         data-testid={dataTestId}
         data-click-outside-id={dataClickOutsideId}
         data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
-        aria-label={ariaLabel}
-        aria-expanded={ariaExpanded}
+        aria-label={ariaLabel ?? nativeAriaLabel}
+        aria-expanded={ariaExpanded ?? nativeAriaExpanded}
         type={type}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        style={{ '--btn-justify': justify } as React.CSSProperties}
+        onFocus={(event: React.FocusEvent<HTMLButtonElement>) => {
+          setIsFocused(true);
+          onFocus?.(event);
+        }}
+        onBlur={(event: React.FocusEvent<HTMLButtonElement>) => {
+          setIsFocused(false);
+          onBlur?.(event);
+        }}
+        style={{ ...style, '--btn-justify': justify } as React.CSSProperties}
       >
         {(isLoading || Icon) && (
           <ButtonIcon Icon={Icon} isLoading={!!isLoading} />
