@@ -10,13 +10,13 @@ export const computeObjectViewTargetIds = <
 >({
   views,
   objectMetadataId,
-  isSeededDefaultViewEnabled,
+  isInitialObjectViewEnabled,
 }: {
   views: TView[];
   objectMetadataId?: string;
-  isSeededDefaultViewEnabled: boolean;
+  isInitialObjectViewEnabled: boolean;
 }): {
-  seededDefaultViewId?: string;
+  initialObjectViewId?: string;
   indexViewId?: string;
   firstAvailableViewId?: string;
 } => {
@@ -29,7 +29,7 @@ export const computeObjectViewTargetIds = <
     .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
 
   return {
-    seededDefaultViewId: isSeededDefaultViewEnabled
+    initialObjectViewId: isInitialObjectViewEnabled
       ? selectableViewsOnObject.find((view) => view.key !== ViewKey.INDEX)?.id
       : undefined,
     indexViewId: selectableViewsOnObject.find(

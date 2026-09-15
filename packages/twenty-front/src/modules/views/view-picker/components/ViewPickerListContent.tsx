@@ -45,14 +45,14 @@ export const ViewPickerListContent = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
 
   const visibleViews = computeViewPickerVisibleViews({
     views: viewsOnCurrentObject,
     currentViewId: currentView?.id,
-    isSeededDefaultViewEnabled,
+    isInitialObjectViewEnabled,
   });
 
   const workspaceViews = visibleViews.filter(

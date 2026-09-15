@@ -64,8 +64,8 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
-  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
 
   const canReadObjectRecords = getObjectPermissionsForObject(
@@ -97,7 +97,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         objectMetadataItems,
         views,
         lastVisitedViewPerObjectMetadataItem,
-        isSeededDefaultViewEnabled,
+        isInitialObjectViewEnabled,
       })
     : getAppPath(
         AppPath.RecordIndexPage,

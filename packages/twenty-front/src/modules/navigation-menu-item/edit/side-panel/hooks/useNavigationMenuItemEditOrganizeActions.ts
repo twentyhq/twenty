@@ -74,8 +74,8 @@ export const useNavigationMenuItemEditOrganizeActions =
     const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
       lastVisitedViewPerObjectMetadataItemState,
     );
-    const isSeededDefaultViewEnabled = useIsFeatureEnabled(
-      FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+    const isInitialObjectViewEnabled = useIsFeatureEnabled(
+      FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
     );
 
     const selectedItem = selectedNavigationMenuItemIdInEditMode
@@ -133,7 +133,7 @@ export const useNavigationMenuItemEditOrganizeActions =
           objectMetadataItems,
           views,
           lastVisitedViewPerObjectMetadataItem,
-          isSeededDefaultViewEnabled,
+          isInitialObjectViewEnabled,
         });
         if (isNonEmptyString(link)) {
           navigateToNavigationMenuItemLink(link);

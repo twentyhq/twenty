@@ -7,13 +7,13 @@ export const computeViewPickerVisibleViews = <
 >({
   views,
   currentViewId,
-  isSeededDefaultViewEnabled,
+  isInitialObjectViewEnabled,
 }: {
   views: TView[];
   currentViewId?: string;
-  isSeededDefaultViewEnabled: boolean;
+  isInitialObjectViewEnabled: boolean;
 }): TView[] => {
-  if (!isSeededDefaultViewEnabled) {
+  if (!isInitialObjectViewEnabled) {
     return views;
   }
 

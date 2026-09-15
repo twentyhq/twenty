@@ -10,13 +10,13 @@ export const getObjectNavigationMenuItemComputedLink = ({
   objectMetadataItems,
   views,
   lastVisitedViewId,
-  isSeededDefaultViewEnabled = false,
+  isInitialObjectViewEnabled = false,
 }: {
   item: Pick<NavigationMenuItem, 'targetObjectMetadataId'>;
   objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'namePlural'>[];
   views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type' | 'position'>[];
   lastVisitedViewId?: string;
-  isSeededDefaultViewEnabled?: boolean;
+  isInitialObjectViewEnabled?: boolean;
 }): string => {
   const objectMetadataItem = objectMetadataItems.find(
     (meta) => meta.id === item.targetObjectMetadataId,
@@ -25,19 +25,19 @@ export const getObjectNavigationMenuItemComputedLink = ({
     return '';
   }
 
-  const { seededDefaultViewId, indexViewId } = computeObjectViewTargetIds({
+  const { initialObjectViewId, indexViewId } = computeObjectViewTargetIds({
     views,
     objectMetadataId: objectMetadataItem.id,
-    isSeededDefaultViewEnabled,
+    isInitialObjectViewEnabled,
   });
 
   const applicableLastVisitedViewId =
-    isSeededDefaultViewEnabled && lastVisitedViewId === indexViewId
+    isInitialObjectViewEnabled && lastVisitedViewId === indexViewId
       ? undefined
       : lastVisitedViewId;
 
   const targetViewId =
-    applicableLastVisitedViewId ?? seededDefaultViewId ?? indexViewId;
+    applicableLastVisitedViewId ?? initialObjectViewId ?? indexViewId;
 
   return getAppPath(
     AppPath.RecordIndexPage,

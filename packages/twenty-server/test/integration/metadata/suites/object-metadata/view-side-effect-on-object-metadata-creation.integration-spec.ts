@@ -150,7 +150,7 @@ describe('View side effect on object creation', () => {
       const [initialView, ...extraInitialViews] = findInitialViews(createdViews);
 
       if (!isDefined(initialView)) {
-        throw new Error('expected a initial user-owned view to be exposed');
+        throw new Error('expected an initial user-owned view to be exposed');
       }
 
       expect(extraInitialViews).toHaveLength(0);

@@ -40,8 +40,8 @@ export const useDefaultHomePagePath = () => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
   const navigationMenuItemsInDisplayOrder = useNavigationMenuItemSectionItems();
-  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
 
   const readableNonSystemObjectMetadataItems = useMemo(
@@ -71,14 +71,14 @@ export const useDefaultHomePagePath = () => {
         objectMetadataItems,
         views,
         objectPermissionsByObjectMetadataId,
-        isSeededDefaultViewEnabled,
+        isInitialObjectViewEnabled,
       }),
     [
       objectMetadataItems,
       objectPermissionsByObjectMetadataId,
       views,
       navigationMenuItemsInDisplayOrder,
-      isSeededDefaultViewEnabled,
+      isInitialObjectViewEnabled,
     ],
   );
 

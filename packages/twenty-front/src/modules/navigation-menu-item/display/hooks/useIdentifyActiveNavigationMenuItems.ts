@@ -29,8 +29,8 @@ export const useIdentifyActiveNavigationMenuItems = (): {
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
-  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
   const { activeObjectMetadataItems, objectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -78,7 +78,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
               objectMetadataItems,
               views,
               lastVisitedViewPerObjectMetadataItem,
-              isSeededDefaultViewEnabled,
+              isInitialObjectViewEnabled,
             });
           const lastClickedObjectMetadataId =
             getObjectMetadataForNavigationMenuItem(
@@ -116,7 +116,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
               objectMetadataItems,
               views,
               lastVisitedViewPerObjectMetadataItem,
-              isSeededDefaultViewEnabled,
+              isInitialObjectViewEnabled,
             });
             return link === currentPath;
           })
@@ -193,7 +193,7 @@ export const useIdentifyActiveNavigationMenuItems = (): {
       currentObjectMetadataItem,
       isOnRecordShowPage,
       contextStoreCurrentViewId,
-      isSeededDefaultViewEnabled,
+      isInitialObjectViewEnabled,
     ]);
 
   return { activeNavigationMenuItemIds, objectMetadataIdForOpenedSection };

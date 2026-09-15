@@ -15,7 +15,7 @@ type GetFirstNavigationMenuItemLinkArgs = {
   objectPermissionsByObjectMetadataId: Parameters<
     typeof getObjectPermissionsForObject
   >[0];
-  isSeededDefaultViewEnabled?: boolean;
+  isInitialObjectViewEnabled?: boolean;
 };
 
 const OBJECT_BACKED_NAVIGATION_MENU_ITEM_TYPES = [
@@ -29,7 +29,7 @@ export const getFirstNavigationMenuItemLink = ({
   objectMetadataItems,
   views,
   objectPermissionsByObjectMetadataId,
-  isSeededDefaultViewEnabled = false,
+  isInitialObjectViewEnabled = false,
 }: GetFirstNavigationMenuItemLinkArgs): string | null => {
   for (const item of navigationMenuItemsInDisplayOrder) {
     if (
@@ -62,7 +62,7 @@ export const getFirstNavigationMenuItemLink = ({
       item,
       objectMetadataItems,
       views,
-      isSeededDefaultViewEnabled,
+      isInitialObjectViewEnabled,
     });
 
     if (isNonEmptyString(link)) {

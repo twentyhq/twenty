@@ -26,13 +26,13 @@ const mockViews: Pick<
   },
 ];
 
-const mockViewsWithSeededView: Pick<
+const mockViewsWithInitialView: Pick<
   View,
   'id' | 'objectMetadataId' | 'key' | 'type' | 'position'
 >[] = [
   ...mockViews,
   {
-    id: 'view-seeded',
+    id: 'view-initial',
     objectMetadataId: 'metadata-1',
     key: null,
     type: ViewType.TABLE,
@@ -83,34 +83,34 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
     expect(result).toBe('');
   });
 
-  it('should keep linking to the index view when the seeded default view flag is off', () => {
+  it('should keep linking to the index view when the initial object view flag is off', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
-      views: mockViewsWithSeededView,
-      isSeededDefaultViewEnabled: false,
+      views: mockViewsWithInitialView,
+      isInitialObjectViewEnabled: false,
     });
 
     expect(result).toBe('/objects/people?viewId=view-index');
   });
 
-  it('should link to the seeded view instead of the index view when the flag is on', () => {
+  it('should link to the initial view instead of the index view when the flag is on', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
-      views: mockViewsWithSeededView,
-      isSeededDefaultViewEnabled: true,
+      views: mockViewsWithInitialView,
+      isInitialObjectViewEnabled: true,
     });
 
-    expect(result).toBe('/objects/people?viewId=view-seeded');
+    expect(result).toBe('/objects/people?viewId=view-initial');
   });
 
-  it('should fall back to the index view when the flag is on and no seeded view exists', () => {
+  it('should fall back to the index view when the flag is on and no initial view exists', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
       views: mockViews,
-      isSeededDefaultViewEnabled: true,
+      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toBe('/objects/people?viewId=view-index');
@@ -130,7 +130,7 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
           position: 2,
         },
       ],
-      isSeededDefaultViewEnabled: true,
+      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toBe('/objects/people?viewId=view-index');
@@ -140,21 +140,21 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
-      views: mockViewsWithSeededView,
+      views: mockViewsWithInitialView,
       lastVisitedViewId: 'view-index',
-      isSeededDefaultViewEnabled: true,
+      isInitialObjectViewEnabled: true,
     });
 
-    expect(result).toBe('/objects/people?viewId=view-seeded');
+    expect(result).toBe('/objects/people?viewId=view-initial');
   });
 
   it('should still honour a last visited view that is not the index view when the flag is on', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
-      views: mockViewsWithSeededView,
+      views: mockViewsWithInitialView,
       lastVisitedViewId: 'view-42',
-      isSeededDefaultViewEnabled: true,
+      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toBe('/objects/people?viewId=view-42');
@@ -164,9 +164,9 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
-      views: mockViewsWithSeededView,
+      views: mockViewsWithInitialView,
       lastVisitedViewId: 'view-index',
-      isSeededDefaultViewEnabled: false,
+      isInitialObjectViewEnabled: false,
     });
 
     expect(result).toBe('/objects/people?viewId=view-index');
@@ -184,11 +184,11 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
           type: ViewType.TABLE,
           position: 7,
         },
-        ...mockViewsWithSeededView,
+        ...mockViewsWithInitialView,
       ],
-      isSeededDefaultViewEnabled: true,
+      isInitialObjectViewEnabled: true,
     });
 
-    expect(result).toBe('/objects/people?viewId=view-seeded');
+    expect(result).toBe('/objects/people?viewId=view-initial');
   });
 });

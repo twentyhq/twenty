@@ -60,8 +60,8 @@ export const WorkspaceSection = () => {
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
   );
-  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const hasLayoutsPermission = useHasPermissionFlag(PermissionFlagType.LAYOUTS);
@@ -107,7 +107,7 @@ export const WorkspaceSection = () => {
         objectMetadataItems,
         views,
         lastVisitedViewPerObjectMetadataItem,
-        isSeededDefaultViewEnabled,
+        isInitialObjectViewEnabled,
       });
       return isNonEmptyString(link);
     });
@@ -117,7 +117,7 @@ export const WorkspaceSection = () => {
         objectMetadataItems,
         views,
         lastVisitedViewPerObjectMetadataItem,
-        isSeededDefaultViewEnabled,
+        isInitialObjectViewEnabled,
       });
       if (isNonEmptyString(link)) {
         navigate(link);
@@ -145,7 +145,7 @@ export const WorkspaceSection = () => {
       objectMetadataItems,
       views,
       lastVisitedViewPerObjectMetadataItem,
-      isSeededDefaultViewEnabled,
+      isInitialObjectViewEnabled,
     });
     if (isNonEmptyString(link)) {
       navigate(link);

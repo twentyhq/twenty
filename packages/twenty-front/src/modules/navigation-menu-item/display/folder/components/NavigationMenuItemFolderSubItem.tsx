@@ -58,8 +58,8 @@ export const NavigationMenuItemFolderSubItem = ({
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
-  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
   const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
     lastVisitedViewPerObjectMetadataItemState,
@@ -85,7 +85,7 @@ export const NavigationMenuItemFolderSubItem = ({
     objectMetadataItems,
     views,
     lastVisitedViewPerObjectMetadataItem,
-    isSeededDefaultViewEnabled,
+    isInitialObjectViewEnabled,
   });
   const objectNameSingular = getNavigationMenuItemObjectNameSingular(
     navigationMenuItem,

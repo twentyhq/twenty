@@ -24,13 +24,13 @@ const getViewId = ({
   indexViewId,
   lastVisitedViewId,
   firstAvailableViewId,
-  seededDefaultViewId,
+  initialObjectViewId,
 }: {
   viewIdFromQueryParams: string | null;
   indexViewId?: string;
   lastVisitedViewId?: string;
   firstAvailableViewId?: string;
-  seededDefaultViewId?: string;
+  initialObjectViewId?: string;
 }) => {
   if (isDefined(viewIdFromQueryParams)) {
     return viewIdFromQueryParams;
@@ -40,8 +40,8 @@ const getViewId = ({
     return lastVisitedViewId;
   }
 
-  if (isDefined(seededDefaultViewId)) {
-    return seededDefaultViewId;
+  if (isDefined(initialObjectViewId)) {
+    return initialObjectViewId;
   }
 
   if (isDefined(indexViewId)) {
@@ -106,22 +106,22 @@ export const RouteContextStoreProvider = () => {
     (view) => view.id === lastVisitedViewIdRaw,
   );
 
-  const isSeededDefaultViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
   );
 
   const lastVisitedViewId =
     isDefined(lastVisitedView) &&
     lastVisitedView.type !== ViewType.FIELDS_WIDGET &&
-    !(isSeededDefaultViewEnabled && lastVisitedView.key === ViewKey.INDEX)
+    !(isInitialObjectViewEnabled && lastVisitedView.key === ViewKey.INDEX)
       ? lastVisitedViewIdRaw
       : undefined;
 
-  const { seededDefaultViewId, indexViewId, firstAvailableViewId } =
+  const { initialObjectViewId, indexViewId, firstAvailableViewId } =
     computeObjectViewTargetIds({
       views,
       objectMetadataId: objectMetadataItem?.id,
-      isSeededDefaultViewEnabled,
+      isInitialObjectViewEnabled,
     });
 
   const viewId = getViewId({
@@ -129,7 +129,7 @@ export const RouteContextStoreProvider = () => {
     indexViewId,
     lastVisitedViewId,
     firstAvailableViewId,
-    seededDefaultViewId,
+    initialObjectViewId,
   });
 
   const shouldComputeContextStore =
