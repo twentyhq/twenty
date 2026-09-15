@@ -7,11 +7,11 @@ This repository contains several families of Agent Skills. They have different a
 [`packages/twenty-agent-skills`](./packages/twenty-agent-skills) is the official, harness-agnostic collection for creating, developing, operating, and publishing Twenty apps. It works in Claude Code, Codex, Cursor, Pi, and any other harness supported by the `skills` CLI, against any Twenty instance including self-hosted and localhost.
 
 ```bash
-npx skills add twentyhq/twenty/packages/twenty-agent-skills --list
-npx skills add twentyhq/twenty/packages/twenty-agent-skills --skill create-app
+npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --list
+npx skills add https://github.com/twentyhq/twenty/tree/agent-skills --skill create-app
 ```
 
-Always pass the package path. Pointing the CLI at the bare repository finds the repository's own contributor skills instead, and a deep scan of it (`--full-depth`) pulls in every skill family below, neither of which is what someone building an app wants.
+Install from the `agent-skills` branch, which contains only the built app skills and Codex plugin. The source package on `main` keeps references shared and must be built before installation. The branch becomes available after the first successful publish from `main`; until then, use the [local build instructions](./packages/twenty-agent-skills#local-development).
 
 | Skill            | Use it for                                                                            |
 | ---------------- | ------------------------------------------------------------------------------------- |
@@ -29,7 +29,7 @@ Always pass the package path. Pointing the CLI at the bare repository finds the 
 
 [`.claude/skills`](./.claude/skills) holds the skills for agents and contributors working in this checkout: `qa-scout` for browser QA of a pull request, and the `syncable-entity-*` series covering Twenty's own workspace migration system. They assume a checkout of this repository and are not useful for app development, which the `syncable-entity-*` descriptions state in their first sentence.
 
-These are what a bare-repository listing (`npx skills add twentyhq/twenty --list`) returns. Someone building an app wants the package-scoped command above instead.
+These are what a bare-repository listing (`npx skills add twentyhq/twenty --list`) returns. Use the `agent-skills` branch above for app development.
 
 ## Shipped inside apps
 
@@ -37,4 +37,4 @@ These are what a bare-repository listing (`npx skills add twentyhq/twenty --list
 
 ## Codex plugin
 
-[`packages/twenty-codex-plugin`](./packages/twenty-codex-plugin) is the Codex marketplace wrapper around the app-development skills. It is the canonical source: `packages/twenty-agent-skills` is generated from it, so both distributions always carry the same content.
+[`packages/twenty-agent-skills`](./packages/twenty-agent-skills) owns both the canonical skills and the Codex metadata. Its build produces one distribution, published at the root of the `agent-skills` branch, for the `skills` CLI and the Codex plugin named `twenty`. Generated copies are not committed to `main`.

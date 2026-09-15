@@ -2,7 +2,7 @@ name: CI Agent Skills Drift
 
 # When a PR changes the app-development surface (twenty-sdk, create-twenty-app,
 # twenty-client-sdk, or the shared manifest types), an agent checks whether the
-# canonical skill content under packages/twenty-codex-plugin is impacted and,
+# canonical skill content under packages/twenty-agent-skills is impacted and,
 # only when it is, posts a single sticky comment with its findings.
 #
 # This is the skills counterpart to ci-app-docs-drift.yaml: the same source
@@ -60,7 +60,7 @@ jobs:
             You are the agent-skills drift checker for the twenty repository.
 
             A pull request changed files in the app-development platform. Your job is to
-            decide whether the skill guidance under `packages/twenty-codex-plugin/`
+            decide whether the skill guidance under `packages/twenty-agent-skills/`
             is impacted, and report your findings as ONE pull request comment.
 
             These skills tell coding agents how to build Twenty apps. When they go stale
@@ -69,13 +69,11 @@ jobs:
 
             ## Canonical source only
 
-            `packages/twenty-codex-plugin/skills/` and
-            `packages/twenty-codex-plugin/references/` are the canonical content.
+            `packages/twenty-agent-skills/skills/` and
+            `packages/twenty-agent-skills/references/` are the canonical content.
 
-            `packages/twenty-agent-skills/skills/` is GENERATED from it and is committed
-            output. Never report it as needing an edit: fixing it directly would be
-            overwritten. Report the canonical file, and note that the fix is applied by
-            editing the canonical file and running `npx nx run twenty-agent-skills:build`.
+            `packages/twenty-agent-skills/dist/` is generated for distribution and is
+            not committed to main. Report the canonical file that needs an edit.
 
             ## Step 1 — Understand the change
 
@@ -106,7 +104,7 @@ jobs:
             ## Step 2 — Map to skill content
 
             Use this mapping to know which files to check (read the actual files, all
-            paths relative to `packages/twenty-codex-plugin/`):
+            paths relative to `packages/twenty-agent-skills/`):
 
             | Source area | Skill content |
             |---|---|
@@ -153,7 +151,7 @@ jobs:
               (`✅ already updated in this PR` / `⚠️ needs update`), and **Suggested fix**
               (one concrete sentence, e.g. the exact command to replace).
             - When any row needs an update, end with one line reminding the author to run
-              `npx nx run twenty-agent-skills:build` so the generated collection matches.
+              `npx nx run twenty-agent-skills:validate` after editing the canonical content.
             - Be terse. No preamble, no sign-off. Only report genuine drift — if unsure
               whether something is user-facing, say it's uncertain rather than asserting.
 

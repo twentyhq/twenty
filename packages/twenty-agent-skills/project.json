@@ -10,23 +10,41 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "node ./scripts/build.js"
-      }
+      },
+      "inputs": [
+        "{projectRoot}/.codex-plugin/**/*",
+        "{projectRoot}/.mcp.json",
+        "{projectRoot}/*.md",
+        "{projectRoot}/assets/**/*",
+        "{projectRoot}/package.json",
+        "{projectRoot}/references/**/*",
+        "{projectRoot}/scripts/**/*",
+        "{projectRoot}/skills/**/*",
+        "{projectRoot}/templates/**/*"
+      ],
+      "outputs": ["{projectRoot}/dist"]
     },
     "validate": {
       "executor": "nx:run-commands",
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "node ./scripts/build.js --check && node ./scripts/validate.js"
+        "command": "node ./scripts/validate-source.js && node ./scripts/build.js && node ./scripts/validate-distribution.js"
       },
       "inputs": [
+        "{projectRoot}/.codex-plugin/**/*",
+        "{projectRoot}/.mcp.json",
+        "{projectRoot}/*.md",
+        "{projectRoot}/assets/**/*",
         "{projectRoot}/package.json",
+        "{projectRoot}/references/**/*",
         "{projectRoot}/scripts/**/*",
         "{projectRoot}/skills/**/*",
-        "{workspaceRoot}/packages/twenty-codex-plugin/skills/**/*",
-        "{workspaceRoot}/packages/twenty-codex-plugin/references/**/*",
-        "{workspaceRoot}/packages/twenty-codex-plugin/scripts/validators/lib.js"
-      ]
+        "{projectRoot}/templates/**/*",
+        "{projectRoot}/.gitignore",
+        "{workspaceRoot}/.agents/plugins/marketplace.json"
+      ],
+      "outputs": ["{projectRoot}/dist"]
     },
     "test": {
       "executor": "nx:run-commands",
@@ -36,8 +54,17 @@
         "command": "node --test ./scripts/__tests__/*.spec.js"
       },
       "inputs": [
+        "{projectRoot}/.codex-plugin/**/*",
+        "{projectRoot}/.mcp.json",
+        "{projectRoot}/*.md",
+        "{projectRoot}/assets/**/*",
+        "{projectRoot}/package.json",
+        "{projectRoot}/references/**/*",
         "{projectRoot}/scripts/**/*",
-        "{workspaceRoot}/packages/twenty-codex-plugin/scripts/validators/lib.js"
+        "{projectRoot}/skills/**/*",
+        "{projectRoot}/templates/**/*",
+        "{projectRoot}/.gitignore",
+        "{workspaceRoot}/.agents/plugins/marketplace.json"
       ]
     },
     "verify:install": {
@@ -59,6 +86,13 @@
         "fix": {
           "command": "prettier . --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
         }
+      }
+    },
+    "setup:mcp": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "bash ./scripts/setup-mcp.sh"
       }
     }
   }

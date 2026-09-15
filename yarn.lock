@@ -49792,12 +49792,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-codex-plugin@workspace:packages/twenty-codex-plugin":
-  version: 0.0.0-use.local
-  resolution: "twenty-codex-plugin@workspace:packages/twenty-codex-plugin"
-  languageName: unknown
-  linkType: soft
-
 "twenty-docs@workspace:packages/twenty-docs":
   version: 0.0.0-use.local
   resolution: "twenty-docs@workspace:packages/twenty-docs"

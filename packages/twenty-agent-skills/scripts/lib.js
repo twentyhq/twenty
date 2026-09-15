@@ -1,21 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const {
-  readText,
-  listFiles,
-} = require('../../twenty-codex-plugin/scripts/validators/lib');
+const { readText, listFiles } = require('./validators/lib');
 
 const PACKAGE_ROOT = path.resolve(__dirname, '..');
-const CODEX_PLUGIN_ROOT = path.resolve(
-  PACKAGE_ROOT,
-  '..',
-  'twenty-codex-plugin',
-);
+const DISTRIBUTION_ROOT = path.join(PACKAGE_ROOT, 'dist');
 
-// The portable collection is generated from the canonical skill content in
-// packages/twenty-codex-plugin. Codex-only wrapper files (.codex-plugin,
-// .mcp.json, agents/openai.yaml, setup-mcp.sh) are intentionally left behind.
 const PORTABLE_SKILLS = [
   'create-app',
   'develop-app',
@@ -114,7 +104,7 @@ const resolveReferenceClosure = (referencesRoot, seedReferences) => {
 };
 
 const buildPortableSkills = ({
-  sourceRoot = CODEX_PLUGIN_ROOT,
+  sourceRoot = PACKAGE_ROOT,
   outputRoot,
   skillNames = PORTABLE_SKILLS,
 }) => {
@@ -139,7 +129,9 @@ const buildPortableSkills = ({
     const skillMarkdown = readText(sourceSkillPath);
     const outputSkillRoot = path.join(outputRoot, skillName);
 
-    fs.mkdirSync(outputSkillRoot, { recursive: true });
+    fs.cpSync(path.dirname(sourceSkillPath), outputSkillRoot, {
+      recursive: true,
+    });
     fs.writeFileSync(
       path.join(outputSkillRoot, 'SKILL.md'),
       rewriteSkillReferenceLinks(skillMarkdown),
@@ -167,40 +159,48 @@ const buildPortableSkills = ({
   }
 };
 
-const diffDirectories = ({ expectedRoot, actualRoot }) => {
-  const relativize = (root, files) =>
-    files.map((filePath) => path.relative(root, filePath));
-  const expectedFiles = fs.existsSync(expectedRoot)
-    ? relativize(expectedRoot, listFiles(expectedRoot))
-    : [];
-  const actualFiles = fs.existsSync(actualRoot)
-    ? relativize(actualRoot, listFiles(actualRoot))
-    : [];
-  const differences = [];
+const buildDistribution = ({
+  sourceRoot = PACKAGE_ROOT,
+  outputRoot = DISTRIBUTION_ROOT,
+} = {}) => {
+  const packageJson = JSON.parse(
+    readText(path.join(sourceRoot, 'package.json')),
+  );
 
-  for (const relativePath of expectedFiles) {
-    if (!actualFiles.includes(relativePath)) {
-      differences.push(`missing file: ${relativePath}`);
-    } else if (
-      readText(path.join(expectedRoot, relativePath)) !==
-      readText(path.join(actualRoot, relativePath))
-    ) {
-      differences.push(`outdated file: ${relativePath}`);
+  fs.rmSync(outputRoot, { recursive: true, force: true });
+  fs.mkdirSync(outputRoot, { recursive: true });
+
+  for (const relativePath of packageJson.files) {
+    if (relativePath !== 'skills') {
+      fs.cpSync(
+        path.join(sourceRoot, relativePath),
+        path.join(outputRoot, relativePath),
+        {
+          recursive: true,
+        },
+      );
     }
   }
 
-  for (const relativePath of actualFiles) {
-    if (!expectedFiles.includes(relativePath)) {
-      differences.push(`unexpected file: ${relativePath}`);
-    }
-  }
+  buildPortableSkills({
+    sourceRoot,
+    outputRoot: path.join(outputRoot, 'skills'),
+  });
+  const { name, version, description, license, files } = packageJson;
 
-  return differences;
+  fs.writeFileSync(
+    path.join(outputRoot, 'package.json'),
+    JSON.stringify(
+      { name, version, description, license, private: true, files },
+      null,
+      2,
+    ) + '\n',
+  );
 };
 
 module.exports = {
   PACKAGE_ROOT,
-  CODEX_PLUGIN_ROOT,
+  DISTRIBUTION_ROOT,
   PORTABLE_SKILLS,
   readText,
   listFiles,
@@ -209,5 +209,5 @@ module.exports = {
   collectSkillSeedReferences,
   resolveReferenceClosure,
   buildPortableSkills,
-  diffDirectories,
+  buildDistribution,
 };
