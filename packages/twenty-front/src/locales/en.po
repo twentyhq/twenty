@@ -8087,10 +8087,10 @@ msgstr "Empty tab"
 msgid "Enable bypass options"
 msgstr "Enable bypass options"
 
-#. js-lingui-id: Fecpp6
+#. js-lingui-id: vs9cre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns and sending domain management."
-msgstr "Enable email campaigns and sending domain management."
+msgid "Enable email campaigns, lists, and unsubscribe management."
+msgstr "Enable email campaigns, lists, and unsubscribe management."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
