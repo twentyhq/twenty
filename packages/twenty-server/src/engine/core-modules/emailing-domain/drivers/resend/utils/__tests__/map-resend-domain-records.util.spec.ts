@@ -1,4 +1,5 @@
 import { mapResendDomainRecords } from 'src/engine/core-modules/emailing-domain/drivers/resend/utils/map-resend-domain-records.util';
+import { VerificationRecordPurpose } from 'src/engine/core-modules/emailing-domain/drivers/types/verification-record-purpose.type';
 
 describe('mapResendDomainRecords', () => {
   it('should map DNS records with per-record statuses and MX priority', () => {
@@ -33,6 +34,8 @@ describe('mapResendDomainRecords', () => {
         key: 'send.example.com',
         value: 'v=spf1 include:amazonses.com ~all',
         status: 'success',
+        purpose: VerificationRecordPurpose.MAIL_FROM,
+        isRequired: true,
       },
       {
         type: 'MX',
@@ -40,13 +43,37 @@ describe('mapResendDomainRecords', () => {
         value: 'feedback-smtp.us-east-1.amazonses.com',
         priority: 10,
         status: 'pending',
+        purpose: VerificationRecordPurpose.MAIL_FROM,
+        isRequired: true,
       },
       {
         type: 'TXT',
         key: 'resend._domainkey.example.com',
         value: 'p=abc',
         status: 'error',
+        purpose: VerificationRecordPurpose.DKIM,
+        isRequired: true,
       },
+    ]);
+  });
+
+  it('should mark the receiving MX record as optional since sending does not depend on it', () => {
+    expect(
+      mapResendDomainRecords([
+        {
+          record: 'Receiving',
+          name: 'example.com',
+          type: 'MX',
+          value: 'inbound-smtp.us-east-1.amazonaws.com',
+          priority: 10,
+          status: 'pending',
+        },
+      ]),
+    ).toEqual([
+      expect.objectContaining({
+        purpose: VerificationRecordPurpose.RECEIVING,
+        isRequired: false,
+      }),
     ]);
   });
 

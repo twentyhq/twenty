@@ -1,11 +1,14 @@
+import { VerificationRecordPurpose } from 'src/engine/core-modules/emailing-domain/drivers/types/verification-record-purpose.type';
 import { buildDmarcVerificationRecord } from 'src/engine/core-modules/emailing-domain/utils/build-dmarc-verification-record.util';
 
 describe('buildDmarcVerificationRecord', () => {
-  it('should publish the policy at the _dmarc subdomain of the sending domain', () => {
+  it('should publish an optional policy at the _dmarc subdomain of the sending domain', () => {
     expect(buildDmarcVerificationRecord('acme.com')).toEqual({
       type: 'TXT',
       key: '_dmarc.acme.com',
       value: 'v=DMARC1; p=none; rua=mailto:dmarc@acme.com',
+      purpose: VerificationRecordPurpose.DMARC,
+      isRequired: false,
     });
   });
 

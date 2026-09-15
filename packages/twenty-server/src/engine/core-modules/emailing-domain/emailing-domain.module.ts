@@ -8,6 +8,7 @@ import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modu
 import { CheckEmailingDomainVerificationCronJob } from 'src/engine/core-modules/emailing-domain/crons/jobs/check-emailing-domain-verification.cron.job';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 import { AwsSesAccountService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-account.service';
+import { AwsSesMailFromDomainService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-mail-from-domain.service';
 import { AwsSesObservabilityService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-observability.service';
 import { AwsSesOutboundEventDestinationService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-outbound-event-destination.service';
 import { AwsSesRegisterDomainService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-register-domain.service';
@@ -67,6 +68,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainWorkspaceCleanupJob,
     AwsSesClientProvider,
     AwsSesAccountService,
+    AwsSesMailFromDomainService,
     AwsSesHandleErrorService,
     AwsSesObservabilityService,
     AwsSesOutboundEventDestinationService,

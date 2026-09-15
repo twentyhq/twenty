@@ -1,6 +1,8 @@
 import { type QueryRunner } from 'typeorm';
 
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
+import { AWS_SES_MAIL_FROM_SUBDOMAIN } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-mail-from-subdomain.constant';
+import { VerificationRecordPurpose } from 'src/engine/core-modules/emailing-domain/drivers/types/verification-record-purpose.type';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
@@ -62,14 +64,21 @@ export const seedEmailingDomains = async ({
         status: EmailingDomainStatus.PENDING,
         verificationRecords: [
           {
-            type: 'TXT',
-            key: `_amazonses.${pending}`,
-            value: 'seed-verification-token',
-          },
-          {
             type: 'CNAME',
             key: `seed1._domainkey.${pending}`,
             value: 'seed1.dkim.amazonses.com',
+            status: 'pending',
+            purpose: VerificationRecordPurpose.DKIM,
+            isRequired: true,
+          },
+          {
+            type: 'MX',
+            key: `${AWS_SES_MAIL_FROM_SUBDOMAIN}.${pending}`,
+            value: 'feedback-smtp.us-east-1.amazonses.com',
+            priority: 10,
+            status: 'pending',
+            purpose: VerificationRecordPurpose.MAIL_FROM,
+            isRequired: true,
           },
         ],
         verifiedAt: null,

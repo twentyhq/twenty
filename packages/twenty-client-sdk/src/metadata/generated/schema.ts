@@ -2509,8 +2509,12 @@ export interface VerificationRecord {
     value: Scalars['String']
     priority?: Scalars['Float']
     status?: Scalars['String']
+    purpose?: VerificationRecordPurpose
+    isRequired?: Scalars['Boolean']
     __typename: 'VerificationRecord'
 }
+
+export type VerificationRecordPurpose = 'DKIM' | 'MAIL_FROM' | 'DMARC' | 'UNSUBSCRIBE' | 'RECEIVING'
 
 export interface EmailingDomain {
     id: Scalars['UUID']
@@ -6207,6 +6211,8 @@ export interface VerificationRecordGenqlSelection{
     value?: boolean | number
     priority?: boolean | number
     status?: boolean | number
+    purpose?: boolean | number
+    isRequired?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -10838,6 +10844,14 @@ export const enumFileFolder = {
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
    Dpa: 'Dpa' as const
+}
+
+export const enumVerificationRecordPurpose = {
+   DKIM: 'DKIM' as const,
+   MAIL_FROM: 'MAIL_FROM' as const,
+   DMARC: 'DMARC' as const,
+   UNSUBSCRIBE: 'UNSUBSCRIBE' as const,
+   RECEIVING: 'RECEIVING' as const
 }
 
 export const enumEmailingDomainStatus = {
