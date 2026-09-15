@@ -21,6 +21,7 @@ import { type SendMessageResult } from 'src/modules/messaging/message-outbound-m
 import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
 import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
 import { getConnectedAccountSendableHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util';
+import { normalizeCrlf } from 'src/modules/messaging/message-outbound-manager/utils/normalize-crlf.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
@@ -149,6 +150,19 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       const DRAFT_FLAG = '\\Draft';
 
       await imapClient.append(draftsFolder.path, messageBuffer, [DRAFT_FLAG]);
+    } catch (error) {
+      if (
+        isDefined(error) &&
+        typeof error === 'object' &&
+        'responseText' in error &&
+        isNonEmptyString((error as { responseText?: unknown }).responseText)
+      ) {
+        throw new Error(
+          `Failed to create draft: ${(error as { responseText: string }).responseText}`,
+        );
+      }
+
+      throw error;
     } finally {
       await this.imapClientProvider.closeClient(imapClient);
     }
@@ -212,7 +226,9 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       toMailComposerOptions(from, sendMessageInput),
     );
 
-    return mail.compile().build();
+    const built = await mail.compile().build();
+
+    return normalizeCrlf(built);
   }
 
   private assertHandleIsDefined(
