@@ -1,15 +1,30 @@
+import { type Repository } from 'typeorm';
+
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { type ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
+import { type ImapFindDraftsFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-drafts-folder.service';
+import { type SmtpClientProvider } from 'src/modules/messaging/message-import-manager/drivers/smtp/providers/smtp-client.provider';
 import { ImapSmtpMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/drivers/imap/services/imap-smtp-message-outbound.service';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
-import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 describe('ImapSmtpMessageOutboundService', () => {
   let service: ImapSmtpMessageOutboundService;
-  let mockSmtpClientProvider: any;
-  let mockImapClientProvider: any;
-  let mockImapFindDraftsFolderService: any;
-  let mockMessageChannelRepository: any;
-  let mockMessageFolderRepository: any;
-  let mockImapClient: any;
+  let mockSmtpClientProvider: jest.Mocked<Partial<SmtpClientProvider>>;
+  let mockImapClientProvider: jest.Mocked<Partial<ImapClientProvider>>;
+  let mockImapFindDraftsFolderService: jest.Mocked<
+    Partial<ImapFindDraftsFolderService>
+  >;
+  let mockMessageChannelRepository: jest.Mocked<
+    Partial<Repository<MessageChannelEntity>>
+  >;
+  let mockMessageFolderRepository: jest.Mocked<
+    Partial<Repository<MessageFolderEntity>>
+  >;
+  let mockImapClient: {
+    append: jest.Mock;
+  };
 
   beforeEach(() => {
     jest.useRealTimers();
@@ -23,14 +38,14 @@ describe('ImapSmtpMessageOutboundService', () => {
     };
 
     mockImapClientProvider = {
-      getClient: jest.fn().mockResolvedValue(mockImapClient),
+      getClient: jest.fn().mockResolvedValue(mockImapClient as never),
       closeClient: jest.fn().mockResolvedValue(undefined),
     };
 
     mockImapFindDraftsFolderService = {
       findOrCreateDraftsFolder: jest
         .fn()
-        .mockResolvedValue({ path: 'Drafts' }),
+        .mockResolvedValue({ path: 'Drafts' } as never),
     };
 
     mockMessageChannelRepository = {
@@ -42,11 +57,11 @@ describe('ImapSmtpMessageOutboundService', () => {
     };
 
     service = new ImapSmtpMessageOutboundService(
-      mockSmtpClientProvider,
-      mockImapClientProvider,
-      mockImapFindDraftsFolderService,
-      mockMessageChannelRepository,
-      mockMessageFolderRepository,
+      mockSmtpClientProvider as SmtpClientProvider,
+      mockImapClientProvider as ImapClientProvider,
+      mockImapFindDraftsFolderService as ImapFindDraftsFolderService,
+      mockMessageChannelRepository as Repository<MessageChannelEntity>,
+      mockMessageFolderRepository as Repository<MessageFolderEntity>,
     );
   });
 
@@ -82,7 +97,7 @@ describe('ImapSmtpMessageOutboundService', () => {
     expect(bufferStr).toContain('\r\n');
   });
 
-  it('should surface responseText in error when imap append fails with server rejection', async () => {
+  it('should surface responseText and preserve cause in error when imap append fails with server rejection', async () => {
     const imapError = new Error('Command failed') as Error & {
       responseText?: string;
     };
@@ -90,9 +105,18 @@ describe('ImapSmtpMessageOutboundService', () => {
 
     mockImapClient.append.mockRejectedValueOnce(imapError);
 
-    await expect(
-      service.createDraft(sendMessageInput, connectedAccount),
-    ).rejects.toThrow('Failed to create draft: Message contains bare newlines');
+    let thrownError: Error | undefined;
+    try {
+      await service.createDraft(sendMessageInput, connectedAccount);
+    } catch (err) {
+      thrownError = err as Error;
+    }
+
+    expect(thrownError).toBeDefined();
+    expect(thrownError?.message).toBe(
+      'Failed to create draft: Message contains bare newlines',
+    );
+    expect((thrownError as Error & { cause?: unknown })?.cause).toBe(imapError);
 
     expect(mockImapClientProvider.closeClient).toHaveBeenCalledWith(
       mockImapClient,

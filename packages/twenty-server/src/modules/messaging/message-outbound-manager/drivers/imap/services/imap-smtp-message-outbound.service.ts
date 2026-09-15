@@ -159,6 +159,7 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       ) {
         throw new Error(
           `Failed to create draft: ${(error as { responseText: string }).responseText}`,
+          { cause: error },
         );
       }
 
