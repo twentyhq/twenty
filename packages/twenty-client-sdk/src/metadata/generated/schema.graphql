@@ -4820,9 +4820,6 @@ input UpdateApplicationRegistrationPayload {
   name: String
   oAuthRedirectUris: [String!]
   oAuthScopes: [String!]
-  isListed: Boolean
-  isPreInstalled: Boolean
-  isVetted: Boolean
 }
 
 input CreateApplicationRegistrationVariableInput {

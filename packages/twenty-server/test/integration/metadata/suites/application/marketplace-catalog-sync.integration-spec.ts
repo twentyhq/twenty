@@ -243,7 +243,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
             const updateResponse = await makeAdminPanelAPIRequest({
               query: gql`
                 mutation UpdateAdminApplicationRegistration(
-                  $input: UpdateApplicationRegistrationInput!
+                  $input: AdminUpdateApplicationRegistrationInput!
                 ) {
                   updateAdminApplicationRegistration(input: $input) {
                     id
