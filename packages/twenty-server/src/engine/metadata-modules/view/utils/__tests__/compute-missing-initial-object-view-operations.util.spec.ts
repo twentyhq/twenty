@@ -145,7 +145,7 @@ const AGE_INDEX_VIEW_FIELD = buildIndexViewFieldFixture({
 });
 
 describe('computeMissingInitialObjectViewOperations', () => {
-  it('seeds one view and copies the INDEX layout for an uninitial object', () => {
+  it('seeds one view and copies the INDEX layout for an object without an initial view', () => {
     const { viewsToCreate, viewFieldsToCreate } =
       computeMissingInitialObjectViewOperations({
         ...buildMaps({
@@ -195,71 +195,31 @@ describe('computeMissingInitialObjectViewOperations', () => {
     ).toBe(true);
   });
 
-  it('creates only the missing view fields when the initial view already exists (partial-run recovery)', () => {
-    const initialNameViewFieldUniversalIdentifier =
-      getViewFieldUniversalIdentifier({
-        applicationUniversalIdentifier:
-          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-        viewUniversalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
-        fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      });
-
-    const existingInitialView: ViewFixture = {
+  it('produces nothing when the initial view already exists, live or soft-deleted', () => {
+    const buildExistingInitialView = (
+      deletedAt: string | null,
+    ): ViewFixture => ({
       universalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
       key: null,
-      deletedAt: null,
-      viewFieldUniversalIdentifiers: [initialNameViewFieldUniversalIdentifier],
-    };
+      deletedAt,
+      viewFieldUniversalIdentifiers: [],
+    });
 
-    const { viewsToCreate, viewFieldsToCreate } =
-      computeMissingInitialObjectViewOperations({
-        ...buildMaps({
-          objects: [PET_OBJECT_WITH_INITIAL_VIEW],
-          views: [PET_INDEX_VIEW, existingInitialView],
-          viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
-        }),
-        initialViewApplicationUniversalIdentifier:
-          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-      });
-
-    expect(viewsToCreate).toHaveLength(0);
-    expect(viewFieldsToCreate).toHaveLength(1);
-    expect(viewFieldsToCreate[0].fieldMetadataUniversalIdentifier).toBe(
-      AGE_FIELD_UNIVERSAL_IDENTIFIER,
-    );
-  });
-
-  it('produces nothing for a fully initial object', () => {
-    const existingInitialView: ViewFixture = {
-      universalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
-      key: null,
-      deletedAt: null,
-      viewFieldUniversalIdentifiers: [
-        NAME_FIELD_UNIVERSAL_IDENTIFIER,
-        AGE_FIELD_UNIVERSAL_IDENTIFIER,
-      ].map((fieldMetadataUniversalIdentifier) =>
-        getViewFieldUniversalIdentifier({
-          applicationUniversalIdentifier:
+    for (const deletedAt of [null, '2024-01-01T00:00:00.000Z']) {
+      const { viewsToCreate, viewFieldsToCreate } =
+        computeMissingInitialObjectViewOperations({
+          ...buildMaps({
+            objects: [PET_OBJECT_WITH_INITIAL_VIEW],
+            views: [PET_INDEX_VIEW, buildExistingInitialView(deletedAt)],
+            viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
+          }),
+          initialViewApplicationUniversalIdentifier:
             WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-          viewUniversalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
-          fieldMetadataUniversalIdentifier,
-        }),
-      ),
-    };
+        });
 
-    const { viewsToCreate, viewFieldsToCreate } =
-      computeMissingInitialObjectViewOperations({
-        ...buildMaps({
-          objects: [PET_OBJECT_WITH_INITIAL_VIEW],
-          views: [PET_INDEX_VIEW, existingInitialView],
-          viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
-        }),
-        initialViewApplicationUniversalIdentifier:
-          WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-      });
-
-    expect(viewsToCreate).toHaveLength(0);
-    expect(viewFieldsToCreate).toHaveLength(0);
+      expect(viewsToCreate).toHaveLength(0);
+      expect(viewFieldsToCreate).toHaveLength(0);
+    }
   });
 
   it('skips objects without a live INDEX view, remote objects and system objects', () => {

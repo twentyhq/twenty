@@ -96,26 +96,17 @@ export const computeMissingInitialObjectViewOperations = ({
     const existingInitialFlatView =
       flatViewMaps.byUniversalIdentifier[initialViewUniversalIdentifier];
 
-    if (
-      isDefined(existingInitialFlatView) &&
-      isDefined(existingInitialFlatView.deletedAt)
-    ) {
+    if (isDefined(existingInitialFlatView)) {
       continue;
     }
 
-    const existingInitialViewFieldUniversalIdentifiers = new Set(
-      existingInitialFlatView?.viewFieldUniversalIdentifiers ?? [],
+    seedOperations.viewsToCreate.push(
+      computeInitialObjectViewToCreate({
+        objectMetadata: flatObjectMetadata,
+        applicationUniversalIdentifier:
+          initialViewApplicationUniversalIdentifier,
+      }),
     );
-
-    if (!isDefined(existingInitialFlatView)) {
-      seedOperations.viewsToCreate.push(
-        computeInitialObjectViewToCreate({
-          objectMetadata: flatObjectMetadata,
-          applicationUniversalIdentifier:
-            initialViewApplicationUniversalIdentifier,
-        }),
-      );
-    }
 
     for (const viewFieldUniversalIdentifier of flatIndexView.viewFieldUniversalIdentifiers) {
       const flatViewField =
@@ -133,14 +124,6 @@ export const computeMissingInitialObjectViewOperations = ({
           fieldMetadataUniversalIdentifier:
             flatViewField.fieldMetadataUniversalIdentifier,
         });
-
-      if (
-        existingInitialViewFieldUniversalIdentifiers.has(
-          initialViewFieldUniversalIdentifier,
-        )
-      ) {
-        continue;
-      }
 
       seedOperations.viewFieldsToCreate.push(
         buildInitialViewFieldFlatEntity({
