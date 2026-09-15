@@ -9,7 +9,7 @@ import {
 } from 'framer-motion';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-const COLLAPSED_GROUP_WIDTH = 24;
+const COLLAPSED_GROUP_WIDTH = 32;
 
 const StyledAnimationGroupContainerBase = styled.div<{
   isCollapsedGroup: boolean;
