@@ -1,4 +1,3 @@
-import { type CommandMenuWorkflowFromCore } from '@/command-menu-item/types/CommandMenuWorkflow';
 import { isCoreWorkflowEnrichmentConsistent } from '@/command-menu-item/utils/isCoreWorkflowEnrichmentConsistent';
 
 const buildCoreWorkflow = ({
@@ -7,11 +6,10 @@ const buildCoreWorkflow = ({
 }: {
   id: string;
   workspaceWorkflowId: string | null;
-}) =>
-  ({
-    id,
-    workspaceWorkflowId,
-  }) as CommandMenuWorkflowFromCore;
+}) => ({
+  id,
+  workspaceWorkflowId,
+});
 
 describe('isCoreWorkflowEnrichmentConsistent', () => {
   it('accepts a result whose workspace id matches the selected record', () => {

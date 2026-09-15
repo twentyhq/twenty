@@ -7,7 +7,10 @@ export const isCoreWorkflowEnrichmentConsistent = ({
   coreWorkflows,
 }: {
   selectedWorkflowRecords: { id: string; coreWorkflowId?: string | null }[];
-  coreWorkflows: CommandMenuWorkflowFromCore[];
+  coreWorkflows: Pick<
+    CommandMenuWorkflowFromCore,
+    'id' | 'workspaceWorkflowId'
+  >[];
 }): boolean =>
   selectedWorkflowRecords.every((selectedWorkflowRecord) => {
     const coreWorkflow = coreWorkflows.find(
