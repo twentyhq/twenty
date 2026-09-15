@@ -1,12 +1,13 @@
 import { useCreateBlockNote } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useId } from 'react';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Field } from 'twenty-ui/input';
 
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
-import { filterBlocksSupportedByBlockSchema } from '@/blocknote-editor/utils/filterBlocksSupportedByBlockSchema';
+import { filterBlocksSupportedBySchema } from '@/blocknote-editor/utils/filterBlocksSupportedBySchema';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
@@ -40,10 +41,17 @@ export const FormRecordRichTextFieldInput = ({
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
+  const supportedBlocks = filterBlocksSupportedBySchema(
+    parseInitialBlocknote(defaultValue?.blocknote),
+    BLOCK_SCHEMA.blockSchema,
+  );
+
+  const initialBlocks = isNonEmptyArray(supportedBlocks)
+    ? supportedBlocks
+    : undefined;
+
   const editor = useCreateBlockNote({
-    initialContent: filterBlocksSupportedByBlockSchema(
-      parseInitialBlocknote(defaultValue?.blocknote),
-    ),
+    initialContent: initialBlocks,
     domAttributes: { editor: { class: 'editor' } },
     schema: BLOCK_SCHEMA,
     placeholders: {
