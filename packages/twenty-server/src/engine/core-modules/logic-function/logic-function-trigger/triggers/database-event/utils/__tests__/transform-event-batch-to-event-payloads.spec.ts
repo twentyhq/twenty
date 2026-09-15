@@ -1,4 +1,7 @@
-import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+import type {
+  ObjectRecordDeleteEvent,
+  ObjectRecordEvent,
+} from 'twenty-shared/database-events';
 
 import { MAX_EVENTS_PER_TRIGGER_JOB } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/constants/max-events-per-trigger-job.constant';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
@@ -830,7 +833,7 @@ describe('transformEventBatchToEventPayloads with a deletion capture', () => {
               updatedFields: ['deletedAt'],
               diff: {},
               inheritedReadabilityChildRecords: { noteTarget: [] },
-            },
+            } as ObjectRecordDeleteEvent['properties'],
           }),
         ],
       }),

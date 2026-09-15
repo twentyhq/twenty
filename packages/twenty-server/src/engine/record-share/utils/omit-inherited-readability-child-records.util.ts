@@ -1,7 +1,7 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type InheritedReadabilityChildRecords } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
+import { type InheritedReadabilityChildRecordsCarrier } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
 
 export const omitInheritedReadabilityChildRecords = <
   TEvent extends ObjectRecordEvent,
@@ -9,9 +9,8 @@ export const omitInheritedReadabilityChildRecords = <
   event: TEvent,
 ): TEvent => {
   const { inheritedReadabilityChildRecords, ...properties } =
-    event.properties as TEvent['properties'] & {
-      inheritedReadabilityChildRecords?: InheritedReadabilityChildRecords;
-    };
+    event.properties as TEvent['properties'] &
+      InheritedReadabilityChildRecordsCarrier;
 
   return isDefined(inheritedReadabilityChildRecords)
     ? ({ ...event, properties } as TEvent)

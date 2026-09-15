@@ -14,6 +14,7 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
+import { type InheritedReadabilityChildRecordsCarrier } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
 
 describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
   const workspaceId = 'workspace-id';
@@ -297,7 +298,10 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       const [deleteEvent1, deleteEvent2] =
         result?.events as ObjectRecordDeleteEvent[];
 
-      expect(deleteEvent1.properties.inheritedReadabilityChildRecords).toEqual({
+      expect(
+        (deleteEvent1.properties as InheritedReadabilityChildRecordsCarrier)
+          .inheritedReadabilityChildRecords,
+      ).toEqual({
         noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
       });
       expect(deleteEvent2.properties).not.toHaveProperty(
@@ -321,9 +325,10 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       const [destroyEvent1, destroyEvent2] =
         result?.events as ObjectRecordDestroyEvent[];
 
-      expect(destroyEvent1.properties.inheritedReadabilityChildRecords).toEqual(
-        { noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }] },
-      );
+      expect(
+        (destroyEvent1.properties as InheritedReadabilityChildRecordsCarrier)
+          .inheritedReadabilityChildRecords,
+      ).toEqual({ noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }] });
       expect(destroyEvent2.properties).not.toHaveProperty(
         'inheritedReadabilityChildRecords',
       );

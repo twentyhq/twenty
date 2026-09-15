@@ -9,9 +9,5 @@ export class ObjectRecordDeleteEvent<
     after: T;
     updatedFields: string[];
     diff: Partial<ObjectRecordDiff<T>>;
-    inheritedReadabilityChildRecords?: Record<
-      string,
-      Record<string, unknown>[]
-    >;
   };
 }

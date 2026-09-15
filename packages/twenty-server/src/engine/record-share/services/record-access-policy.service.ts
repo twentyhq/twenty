@@ -47,28 +47,6 @@ export class RecordAccessPolicyService {
     private readonly recordShareService: RecordShareService,
   ) {}
 
-  async resolveReadableRecordIds({
-    workspaceId,
-    objectMetadata,
-    recordIds,
-    subject,
-  }: {
-    workspaceId: string;
-    objectMetadata: FlatObjectMetadata;
-    recordIds: string[];
-    subject: RowAccessPolicySubject;
-  }): Promise<Set<string>> {
-    if (recordIds.length === 0) {
-      return new Set();
-    }
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.selectReadableRecordIds({ objectMetadata, recordIds, subject }),
-      buildSystemAuthContext(workspaceId),
-    );
-  }
-
   async resolveRecordIdsReadableThroughParents({
     workspaceId,
     objectMetadata,
