@@ -13,6 +13,7 @@ import {
   MessageChannelVisibility,
   MessageParticipantRole,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { INGEST_APP_MESSAGES_MAX_BATCH_SIZE } from 'src/engine/metadata-modules/message-channel/dtos/ingest-app-messages.input';
@@ -181,6 +182,7 @@ const buildMessage = ({
 
 describe('app message channels API (e2e)', () => {
   let owningApplicationToken: string;
+  let otherApplicationToken: string;
   let adminUserWorkspaceId: string;
   let owningApplicationDbId: string;
   let owningProviderDbId: string;
@@ -357,6 +359,15 @@ describe('app message channels API (e2e)', () => {
     owningApplicationToken =
       data.generateApplicationToken.applicationAccessToken.token;
 
+    const { data: otherApplicationTokenData } = await generateApplicationToken({
+      applicationId: otherApplicationDbId,
+      expectToFail: false,
+    });
+
+    otherApplicationToken =
+      otherApplicationTokenData.generateApplicationToken.applicationAccessToken
+        .token;
+
     ownConnectionId = uuidv4();
     otherAppConnectionId = uuidv4();
     foreignMemberConnectionId = uuidv4();
@@ -401,9 +412,7 @@ describe('app message channels API (e2e)', () => {
       ...new Set(
         ingestedMessages
           .map((message) => message.messageThreadId)
-          .filter((messageThreadId): messageThreadId is string =>
-            Boolean(messageThreadId),
-          ),
+          .filter(isDefined),
       ),
     ];
 
@@ -541,6 +550,12 @@ describe('app message channels API (e2e)', () => {
   describe('appMessageChannels', () => {
     it("lists the application's own channels and nothing else", async () => {
       const channel = await createChannelOrThrow();
+      // A channel that exists, is type APP, and lives in the same workspace —
+      // so a list query that forgot to scope by application would return it.
+      const foreignChannel = await createChannelOrThrow({
+        connectedAccountId: otherAppConnectionId,
+        token: otherApplicationToken,
+      });
 
       const response = await request({ query: LIST_CHANNELS_QUERY });
 
@@ -554,6 +569,9 @@ describe('app message channels API (e2e)', () => {
         type: MessageChannelType.APP,
         connectedAccountId: ownConnectionId,
       });
+      expect(channels.map((listed: { id: string }) => listed.id)).not.toContain(
+        foreignChannel.id,
+      );
     });
 
     it('refuses a filter on a connection owned by another application', async () => {
@@ -594,17 +612,12 @@ describe('app message channels API (e2e)', () => {
     it('does not tell another application that the channel exists', async () => {
       const channel = await createChannelOrThrow();
 
-      const { data } = await generateApplicationToken({
-        applicationId: otherApplicationDbId,
-        expectToFail: false,
-      });
-
       const response = await request(
         {
           query: UPDATE_CHANNEL_MUTATION,
           variables: { input: { id: channel.id, displayName: 'Stolen' } },
         },
-        data.generateApplicationToken.applicationAccessToken.token,
+        otherApplicationToken,
       );
 
       expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
@@ -742,11 +755,6 @@ describe('app message channels API (e2e)', () => {
     it('refuses a channel owned by another application', async () => {
       const channel = await createChannelOrThrow();
 
-      const { data } = await generateApplicationToken({
-        applicationId: otherApplicationDbId,
-        expectToFail: false,
-      });
-
       const response = await ingest({
         messageChannelId: channel.id,
         messages: [
@@ -756,7 +764,7 @@ describe('app message channels API (e2e)', () => {
             senderHandle: 'candidate@linkedin.test',
           }),
         ],
-        token: data.generateApplicationToken.applicationAccessToken.token,
+        token: otherApplicationToken,
       });
 
       expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
