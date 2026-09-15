@@ -127,25 +127,27 @@ export class CoreWorkflowResolver {
         }),
       ]);
 
-    const coreWorkflowsWithVersions = coreWorkflows.map((coreWorkflow) => ({
-      ...coreWorkflow,
-      versions: isDefined(coreWorkflow.workspaceWorkflowId)
-        ? (coreWorkflowVersionsByWorkspaceWorkflowId[
-            coreWorkflow.workspaceWorkflowId
-          ] ?? [])
-        : [],
-    }));
-
-    const currentVersionWorkspaceIds = coreWorkflowsWithVersions.flatMap(
+    const coreWorkflowsWithCurrentVersion = coreWorkflows.map(
       (coreWorkflow) => {
-        const currentVersion = selectCurrentCoreWorkflowVersion(
-          coreWorkflow.versions,
-        );
-
-        return isDefined(currentVersion?.workspaceWorkflowVersionId)
-          ? [currentVersion.workspaceWorkflowVersionId]
+        const versions = isDefined(coreWorkflow.workspaceWorkflowId)
+          ? (coreWorkflowVersionsByWorkspaceWorkflowId[
+              coreWorkflow.workspaceWorkflowId
+            ] ?? [])
           : [];
+
+        return {
+          coreWorkflow,
+          versions,
+          currentVersionMetadata: selectCurrentCoreWorkflowVersion(versions),
+        };
       },
+    );
+
+    const currentVersionWorkspaceIds = coreWorkflowsWithCurrentVersion.flatMap(
+      ({ currentVersionMetadata }) =>
+        isDefined(currentVersionMetadata?.workspaceWorkflowVersionId)
+          ? [currentVersionMetadata.workspaceWorkflowVersionId]
+          : [],
     );
 
     const currentVersionsWithContent =
@@ -156,20 +158,22 @@ export class CoreWorkflowResolver {
         },
       );
 
-    return coreWorkflowsWithVersions.map((coreWorkflow) => {
-      const currentVersion = selectCurrentCoreWorkflowVersion(
-        coreWorkflow.versions,
-      );
+    const currentVersionContentById = Object.fromEntries(
+      currentVersionsWithContent.map((currentVersionWithContent) => [
+        currentVersionWithContent.id,
+        currentVersionWithContent,
+      ]),
+    );
 
-      return {
+    return coreWorkflowsWithCurrentVersion.map(
+      ({ coreWorkflow, versions, currentVersionMetadata }) => ({
         ...coreWorkflow,
-        currentVersion:
-          currentVersionsWithContent.find(
-            (versionWithContent) =>
-              versionWithContent.id === currentVersion?.id,
-          ) ?? null,
-      };
-    });
+        versions,
+        currentVersion: isDefined(currentVersionMetadata)
+          ? (currentVersionContentById[currentVersionMetadata.id] ?? null)
+          : null,
+      }),
+    );
   }
 
   @Query(() => CoreWorkflowDTO, { nullable: true })
