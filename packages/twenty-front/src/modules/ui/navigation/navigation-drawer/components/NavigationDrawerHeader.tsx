@@ -1,4 +1,3 @@
-import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/icon';
@@ -96,7 +95,6 @@ export const NavigationDrawerHeader = ({
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
-  const isSettingsDrawer = useIsSettingsDrawer();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
@@ -106,7 +104,7 @@ export const NavigationDrawerHeader = ({
         <MultiWorkspaceDropdownButton />
       </StyledWorkspaceDropdownContainer>
       <StyledRightActions isExpanded={isExpanded}>
-        {!isMobile && !isSettingsDrawer && (
+        {!isMobile && (
           <StyledSearchButtonContainer isExpanded={isExpanded}>
             <LightIconButton
               Icon={IconSearch}
