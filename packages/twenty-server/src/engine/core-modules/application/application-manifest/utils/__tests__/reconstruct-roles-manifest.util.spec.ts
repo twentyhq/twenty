@@ -3,6 +3,7 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-object-permission-manifest-to-universal-flat-object-permission.util';
@@ -517,7 +518,7 @@ const reconstruct = () =>
   });
 
 const isSoftDeleted = ({ deletedAt }: { deletedAt: string | null }) =>
-  deletedAt !== null;
+  isDefined(deletedAt);
 
 describe('reconstructRolesManifest', () => {
   it('should export the permission flags the application declares', () => {

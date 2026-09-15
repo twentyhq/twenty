@@ -14,74 +14,53 @@ export const computeExportedRowLevelPermissionPredicateGroupUniversalIdentifiers
       flatRowLevelPermissionPredicateGroup: UniversalFlatRowLevelPermissionPredicateGroup,
     ) => boolean;
   }): Set<string> => {
-    const isExportedByUniversalIdentifier = new Map<string, boolean>();
+    const flatRowLevelPermissionPredicateGroups: UniversalFlatRowLevelPermissionPredicateGroup[] =
+      Object.values(
+        flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
+      ).filter(isDefined);
+    const childGroupsByParentUniversalIdentifier = new Map<
+      string,
+      UniversalFlatRowLevelPermissionPredicateGroup[]
+    >();
 
-    for (const flatRowLevelPermissionPredicateGroup of Object.values(
-      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
-    ).filter(isDefined)) {
-      const unresolvedGroups: UniversalFlatRowLevelPermissionPredicateGroup[] =
-        [];
-      const unresolvedUniversalIdentifiers = new Set<string>();
-      let currentGroup: UniversalFlatRowLevelPermissionPredicateGroup =
-        flatRowLevelPermissionPredicateGroup;
-      let isAncestryExported = true;
+    for (const flatRowLevelPermissionPredicateGroup of flatRowLevelPermissionPredicateGroups) {
+      const parentUniversalIdentifier =
+        flatRowLevelPermissionPredicateGroup.parentRowLevelPermissionPredicateGroupUniversalIdentifier;
 
-      while (true) {
-        const knownExportability = isExportedByUniversalIdentifier.get(
-          currentGroup.universalIdentifier,
-        );
-
-        if (isDefined(knownExportability)) {
-          isAncestryExported = knownExportability;
-          break;
-        }
-
-        if (
-          unresolvedUniversalIdentifiers.has(currentGroup.universalIdentifier)
-        ) {
-          isAncestryExported = false;
-          break;
-        }
-
-        unresolvedGroups.push(currentGroup);
-        unresolvedUniversalIdentifiers.add(currentGroup.universalIdentifier);
-
-        const parentUniversalIdentifier =
-          currentGroup.parentRowLevelPermissionPredicateGroupUniversalIdentifier;
-
-        if (!isDefined(parentUniversalIdentifier)) {
-          break;
-        }
-
-        const parentGroup =
-          flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier[
-            parentUniversalIdentifier
-          ];
-
-        if (
-          !isDefined(parentGroup) ||
-          !isSameRowLevelPermissionScope(currentGroup, parentGroup)
-        ) {
-          isAncestryExported = false;
-          break;
-        }
-
-        currentGroup = parentGroup;
-      }
-
-      for (const unresolvedGroup of unresolvedGroups.reverse()) {
-        isAncestryExported =
-          isAncestryExported && isExportableOnItsOwn(unresolvedGroup);
-        isExportedByUniversalIdentifier.set(
-          unresolvedGroup.universalIdentifier,
-          isAncestryExported,
-        );
+      if (isDefined(parentUniversalIdentifier)) {
+        childGroupsByParentUniversalIdentifier.set(parentUniversalIdentifier, [
+          ...(childGroupsByParentUniversalIdentifier.get(
+            parentUniversalIdentifier,
+          ) ?? []),
+          flatRowLevelPermissionPredicateGroup,
+        ]);
       }
     }
 
+    const exportedGroups = flatRowLevelPermissionPredicateGroups.filter(
+      (flatRowLevelPermissionPredicateGroup) =>
+        !isDefined(
+          flatRowLevelPermissionPredicateGroup.parentRowLevelPermissionPredicateGroupUniversalIdentifier,
+        ) && isExportableOnItsOwn(flatRowLevelPermissionPredicateGroup),
+    );
+
+    for (const exportedGroup of exportedGroups) {
+      const exportedChildGroups = (
+        childGroupsByParentUniversalIdentifier.get(
+          exportedGroup.universalIdentifier,
+        ) ?? []
+      ).filter(
+        (childGroup) =>
+          isSameRowLevelPermissionScope({
+            scope: childGroup,
+            otherScope: exportedGroup,
+          }) && isExportableOnItsOwn(childGroup),
+      );
+
+      exportedGroups.push(...exportedChildGroups);
+    }
+
     return new Set(
-      [...isExportedByUniversalIdentifier]
-        .filter(([, isExported]) => isExported)
-        .map(([universalIdentifier]) => universalIdentifier),
+      exportedGroups.map(({ universalIdentifier }) => universalIdentifier),
     );
   };

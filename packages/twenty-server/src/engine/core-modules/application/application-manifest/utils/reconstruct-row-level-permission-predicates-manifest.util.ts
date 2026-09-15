@@ -29,11 +29,15 @@ type RowLevelPermissionMetadataName = Extract<
   'rowLevelPermissionPredicate' | 'rowLevelPermissionPredicateGroup'
 >;
 
-const appendByRole = <TManifest>(
-  manifestsByRoleUniversalIdentifier: Map<string, TManifest[]>,
-  roleUniversalIdentifier: string,
-  manifest: TManifest,
-): void => {
+const appendByRole = <TManifest>({
+  manifestsByRoleUniversalIdentifier,
+  roleUniversalIdentifier,
+  manifest,
+}: {
+  manifestsByRoleUniversalIdentifier: Map<string, TManifest[]>;
+  roleUniversalIdentifier: string;
+  manifest: TManifest;
+}): void => {
   const manifests =
     manifestsByRoleUniversalIdentifier.get(roleUniversalIdentifier) ?? [];
 
@@ -79,10 +83,13 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
     getParentUniversalIdentifier: ({ roleUniversalIdentifier }) =>
       roleUniversalIdentifier,
   });
-  const getUnresolvableObjectReason = (
-    metadataName: RowLevelPermissionMetadataName,
-    objectMetadataUniversalIdentifier: string,
-  ) =>
+  const getUnresolvableObjectReason = ({
+    metadataName,
+    objectMetadataUniversalIdentifier,
+  }: {
+    metadataName: RowLevelPermissionMetadataName;
+    objectMetadataUniversalIdentifier: string;
+  }) =>
     getUnresolvableReferenceReason({
       metadataName,
       referenceMetadataName: 'objectMetadata',
@@ -92,9 +99,11 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
       resolvableReferenceUniversalIdentifiers:
         exportedObjectUniversalIdentifiers,
     });
-  const getUnresolvableFieldReason = (
-    fieldMetadataUniversalIdentifier: string | null,
-  ) =>
+  const getUnresolvableFieldReason = ({
+    fieldMetadataUniversalIdentifier,
+  }: {
+    fieldMetadataUniversalIdentifier: string | null;
+  }) =>
     getUnresolvableReferenceReason({
       metadataName: 'rowLevelPermissionPredicate',
       referenceMetadataName: 'fieldMetadata',
@@ -114,18 +123,23 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
           flatRowLevelPermissionPredicateGroup.roleUniversalIdentifier,
         ) === 'exported' &&
         !isDefined(
-          getUnresolvableObjectReason(
-            'rowLevelPermissionPredicateGroup',
-            flatRowLevelPermissionPredicateGroup.objectMetadataUniversalIdentifier,
-          ),
+          getUnresolvableObjectReason({
+            metadataName: 'rowLevelPermissionPredicateGroup',
+            objectMetadataUniversalIdentifier:
+              flatRowLevelPermissionPredicateGroup.objectMetadataUniversalIdentifier,
+          }),
         ),
     });
 
-  const getUnexportedPredicateGroupReason = (
-    metadataName: RowLevelPermissionMetadataName,
-    scope: RowLevelPermissionScope,
-    predicateGroupUniversalIdentifier: string | null,
-  ): string | undefined => {
+  const getUnexportedPredicateGroupReason = ({
+    metadataName,
+    scope,
+    predicateGroupUniversalIdentifier,
+  }: {
+    metadataName: RowLevelPermissionMetadataName;
+    scope: RowLevelPermissionScope;
+    predicateGroupUniversalIdentifier: string | null;
+  }): string | undefined => {
     if (!isDefined(predicateGroupUniversalIdentifier)) {
       return undefined;
     }
@@ -136,10 +150,10 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
       ];
 
     return isDefined(flatRowLevelPermissionPredicateGroup) &&
-      isSameRowLevelPermissionScope(
+      isSameRowLevelPermissionScope({
         scope,
-        flatRowLevelPermissionPredicateGroup,
-      ) &&
+        otherScope: flatRowLevelPermissionPredicateGroup,
+      }) &&
       exportedPredicateGroupUniversalIdentifiers.has(
         predicateGroupUniversalIdentifier,
       )
@@ -168,24 +182,29 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
         metadataName: 'rowLevelPermissionPredicateGroup',
         flatEntity: flatRowLevelPermissionPredicateGroup,
         unsupportedReason:
-          getUnresolvableObjectReason(
-            'rowLevelPermissionPredicateGroup',
-            flatRowLevelPermissionPredicateGroup.objectMetadataUniversalIdentifier,
-          ) ??
-          getUnexportedPredicateGroupReason(
-            'rowLevelPermissionPredicateGroup',
-            flatRowLevelPermissionPredicateGroup,
-            flatRowLevelPermissionPredicateGroup.parentRowLevelPermissionPredicateGroupUniversalIdentifier,
-          ),
+          getUnresolvableObjectReason({
+            metadataName: 'rowLevelPermissionPredicateGroup',
+            objectMetadataUniversalIdentifier:
+              flatRowLevelPermissionPredicateGroup.objectMetadataUniversalIdentifier,
+          }) ??
+          getUnexportedPredicateGroupReason({
+            metadataName: 'rowLevelPermissionPredicateGroup',
+            scope: flatRowLevelPermissionPredicateGroup,
+            predicateGroupUniversalIdentifier:
+              flatRowLevelPermissionPredicateGroup.parentRowLevelPermissionPredicateGroupUniversalIdentifier,
+          }),
       }) === 'nested'
     ) {
-      appendByRole(
-        predicateGroupsByRoleUniversalIdentifier,
-        flatRowLevelPermissionPredicateGroup.roleUniversalIdentifier,
-        fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
-          { flatRowLevelPermissionPredicateGroup },
-        ),
-      );
+      appendByRole({
+        manifestsByRoleUniversalIdentifier:
+          predicateGroupsByRoleUniversalIdentifier,
+        roleUniversalIdentifier:
+          flatRowLevelPermissionPredicateGroup.roleUniversalIdentifier,
+        manifest:
+          fromFlatRowLevelPermissionPredicateGroupToRowLevelPermissionPredicateGroupManifest(
+            { flatRowLevelPermissionPredicateGroup },
+          ),
+      });
     }
   }
 
@@ -201,30 +220,36 @@ export const reconstructRowLevelPermissionPredicatesManifest = ({
         metadataName: 'rowLevelPermissionPredicate',
         flatEntity: flatRowLevelPermissionPredicate,
         unsupportedReason:
-          getUnresolvableObjectReason(
-            'rowLevelPermissionPredicate',
-            flatRowLevelPermissionPredicate.objectMetadataUniversalIdentifier,
-          ) ??
-          getUnresolvableFieldReason(
-            flatRowLevelPermissionPredicate.fieldMetadataUniversalIdentifier,
-          ) ??
-          getUnresolvableFieldReason(
-            flatRowLevelPermissionPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
-          ) ??
-          getUnexportedPredicateGroupReason(
-            'rowLevelPermissionPredicate',
-            flatRowLevelPermissionPredicate,
-            flatRowLevelPermissionPredicate.rowLevelPermissionPredicateGroupUniversalIdentifier,
-          ),
+          getUnresolvableObjectReason({
+            metadataName: 'rowLevelPermissionPredicate',
+            objectMetadataUniversalIdentifier:
+              flatRowLevelPermissionPredicate.objectMetadataUniversalIdentifier,
+          }) ??
+          getUnresolvableFieldReason({
+            fieldMetadataUniversalIdentifier:
+              flatRowLevelPermissionPredicate.fieldMetadataUniversalIdentifier,
+          }) ??
+          getUnresolvableFieldReason({
+            fieldMetadataUniversalIdentifier:
+              flatRowLevelPermissionPredicate.workspaceMemberFieldMetadataUniversalIdentifier,
+          }) ??
+          getUnexportedPredicateGroupReason({
+            metadataName: 'rowLevelPermissionPredicate',
+            scope: flatRowLevelPermissionPredicate,
+            predicateGroupUniversalIdentifier:
+              flatRowLevelPermissionPredicate.rowLevelPermissionPredicateGroupUniversalIdentifier,
+          }),
       }) === 'nested'
     ) {
-      appendByRole(
-        predicatesByRoleUniversalIdentifier,
-        flatRowLevelPermissionPredicate.roleUniversalIdentifier,
-        fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest(
-          { flatRowLevelPermissionPredicate },
-        ),
-      );
+      appendByRole({
+        manifestsByRoleUniversalIdentifier: predicatesByRoleUniversalIdentifier,
+        roleUniversalIdentifier:
+          flatRowLevelPermissionPredicate.roleUniversalIdentifier,
+        manifest:
+          fromFlatRowLevelPermissionPredicateToRowLevelPermissionPredicateManifest(
+            { flatRowLevelPermissionPredicate },
+          ),
+      });
     }
   }
 
