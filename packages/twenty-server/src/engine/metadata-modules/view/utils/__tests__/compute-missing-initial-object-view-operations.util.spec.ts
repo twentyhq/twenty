@@ -1,10 +1,10 @@
 import {
-  getSeededObjectViewUniversalIdentifier,
+  getInitialObjectViewUniversalIdentifier,
   getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { type AggregateOperations, ViewKey } from 'twenty-shared/types';
 
-import { computeSeedObjectDefaultViewOperations } from 'src/engine/metadata-modules/view/utils/compute-seed-object-default-view-operations.util';
+import { computeMissingInitialObjectViewOperations } from 'src/engine/metadata-modules/view/utils/compute-missing-initial-object-view-operations.util';
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '5f4a1c1e-0000-4000-8000-000000000001';
@@ -18,13 +18,12 @@ const NAME_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
 const AGE_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
   '5f4a1c1e-0000-4000-8000-000000000007';
 
-const SEEDED_VIEW_UNIVERSAL_IDENTIFIER = getSeededObjectViewUniversalIdentifier(
-  {
+const INITIAL_VIEW_UNIVERSAL_IDENTIFIER =
+  getInitialObjectViewUniversalIdentifier({
     objectMetadataApplicationUniversalIdentifier:
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: PET_OBJECT_UNIVERSAL_IDENTIFIER,
-  },
-);
+  });
 
 type ObjectFixture = {
   universalIdentifier: string;
@@ -65,11 +64,11 @@ const PET_OBJECT: ObjectFixture = {
   viewUniversalIdentifiers: [PET_INDEX_VIEW_UNIVERSAL_IDENTIFIER],
 };
 
-const SEEDED_PET_OBJECT: ObjectFixture = {
+const PET_OBJECT_WITH_INITIAL_VIEW: ObjectFixture = {
   ...PET_OBJECT,
   viewUniversalIdentifiers: [
     PET_INDEX_VIEW_UNIVERSAL_IDENTIFIER,
-    SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
+    INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
   ],
 };
 
@@ -143,22 +142,22 @@ const AGE_INDEX_VIEW_FIELD = buildIndexViewFieldFixture({
   position: 1,
 });
 
-describe('computeSeedObjectDefaultViewOperations', () => {
-  it('seeds one view and copies the INDEX layout for an unseeded object', () => {
+describe('computeMissingInitialObjectViewOperations', () => {
+  it('seeds one view and copies the INDEX layout for an uninitial object', () => {
     const { viewsToCreate, viewFieldsToCreate } =
-      computeSeedObjectDefaultViewOperations({
+      computeMissingInitialObjectViewOperations({
         ...buildMaps({
           objects: [PET_OBJECT],
           views: [PET_INDEX_VIEW],
           viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
         }),
-        seededViewApplicationUniversalIdentifier:
+        initialViewApplicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       });
 
     expect(viewsToCreate).toHaveLength(1);
     expect(viewsToCreate[0]).toMatchObject({
-      universalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
+      universalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
       name: 'All Pets',
       key: null,
       isSystemSideEffect: false,
@@ -172,14 +171,14 @@ describe('computeSeedObjectDefaultViewOperations', () => {
     ]);
     expect(viewFieldsToCreate[0]).toMatchObject({
       fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      viewUniversalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
+      viewUniversalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
       isSystemSideEffect: false,
       applicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       universalIdentifier: getViewFieldUniversalIdentifier({
         applicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-        viewUniversalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
+        viewUniversalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
         fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
       }),
     });
@@ -194,30 +193,30 @@ describe('computeSeedObjectDefaultViewOperations', () => {
     ).toBe(true);
   });
 
-  it('creates only the missing view fields when the seeded view already exists (partial-run recovery)', () => {
-    const seededNameViewFieldUniversalIdentifier =
+  it('creates only the missing view fields when the initial view already exists (partial-run recovery)', () => {
+    const initialNameViewFieldUniversalIdentifier =
       getViewFieldUniversalIdentifier({
         applicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-        viewUniversalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
+        viewUniversalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
         fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
       });
 
-    const existingSeededView: ViewFixture = {
-      universalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
+    const existingInitialView: ViewFixture = {
+      universalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
       key: null,
       deletedAt: null,
-      viewFieldUniversalIdentifiers: [seededNameViewFieldUniversalIdentifier],
+      viewFieldUniversalIdentifiers: [initialNameViewFieldUniversalIdentifier],
     };
 
     const { viewsToCreate, viewFieldsToCreate } =
-      computeSeedObjectDefaultViewOperations({
+      computeMissingInitialObjectViewOperations({
         ...buildMaps({
-          objects: [SEEDED_PET_OBJECT],
-          views: [PET_INDEX_VIEW, existingSeededView],
+          objects: [PET_OBJECT_WITH_INITIAL_VIEW],
+          views: [PET_INDEX_VIEW, existingInitialView],
           viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
         }),
-        seededViewApplicationUniversalIdentifier:
+        initialViewApplicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       });
 
@@ -228,9 +227,9 @@ describe('computeSeedObjectDefaultViewOperations', () => {
     );
   });
 
-  it('produces nothing for a fully seeded object', () => {
-    const existingSeededView: ViewFixture = {
-      universalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
+  it('produces nothing for a fully initial object', () => {
+    const existingInitialView: ViewFixture = {
+      universalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
       key: null,
       deletedAt: null,
       viewFieldUniversalIdentifiers: [
@@ -240,20 +239,20 @@ describe('computeSeedObjectDefaultViewOperations', () => {
         getViewFieldUniversalIdentifier({
           applicationUniversalIdentifier:
             WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
-          viewUniversalIdentifier: SEEDED_VIEW_UNIVERSAL_IDENTIFIER,
+          viewUniversalIdentifier: INITIAL_VIEW_UNIVERSAL_IDENTIFIER,
           fieldMetadataUniversalIdentifier,
         }),
       ),
     };
 
     const { viewsToCreate, viewFieldsToCreate } =
-      computeSeedObjectDefaultViewOperations({
+      computeMissingInitialObjectViewOperations({
         ...buildMaps({
-          objects: [SEEDED_PET_OBJECT],
-          views: [PET_INDEX_VIEW, existingSeededView],
+          objects: [PET_OBJECT_WITH_INITIAL_VIEW],
+          views: [PET_INDEX_VIEW, existingInitialView],
           viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
         }),
-        seededViewApplicationUniversalIdentifier:
+        initialViewApplicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       });
 
@@ -276,13 +275,13 @@ describe('computeSeedObjectDefaultViewOperations', () => {
     };
 
     const { viewsToCreate, viewFieldsToCreate } =
-      computeSeedObjectDefaultViewOperations({
+      computeMissingInitialObjectViewOperations({
         ...buildMaps({
           objects: [remoteObject, objectWithoutIndexView],
           views: [],
           viewFields: [],
         }),
-        seededViewApplicationUniversalIdentifier:
+        initialViewApplicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
       });
 

@@ -1,5 +1,5 @@
-import { computeSeededObjectViewFieldsToCreate } from 'src/engine/metadata-modules/view/utils/compute-seeded-object-view-fields-to-create.util';
-import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/view/utils/compute-seeded-object-view-to-create.util';
+import { computeInitialObjectViewFieldsToCreate } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-fields-to-create.util';
+import { computeInitialObjectViewToCreate } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-to-create.util';
 import { fromArrayToUniqueKeyRecord } from 'twenty-shared/utils';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -7,7 +7,7 @@ import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/w
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
-export const computeSeededObjectViewOperationsOnObjectCreation = ({
+export const computeInitialObjectViewOperationsOnObjectCreation = ({
   flatObjectMetadataToCreate,
   callerFlatFieldMetadatasToCreate,
 }: {
@@ -20,19 +20,19 @@ export const computeSeededObjectViewOperationsOnObjectCreation = ({
   >;
   callerFlatFieldMetadatasToCreate: UniversalFlatFieldMetadata[];
 }): {
-  flatSeededViewToCreate: UniversalFlatView;
-  flatSeededViewFieldsToCreate: UniversalFlatViewField[];
+  flatInitialViewToCreate: UniversalFlatView;
+  flatInitialViewFieldsToCreate: UniversalFlatViewField[];
 } => {
   const { applicationUniversalIdentifier } = flatObjectMetadataToCreate;
 
-  const flatSeededViewToCreate = computeSeededObjectViewToCreate({
+  const flatInitialViewToCreate = computeInitialObjectViewToCreate({
     objectMetadata: flatObjectMetadataToCreate,
     applicationUniversalIdentifier,
   });
 
-  const flatSeededViewFieldsToCreate = computeSeededObjectViewFieldsToCreate({
+  const flatInitialViewFieldsToCreate = computeInitialObjectViewFieldsToCreate({
     sourceFlatObjectMetadata: flatObjectMetadataToCreate,
-    seededViewUniversalIdentifier: flatSeededViewToCreate.universalIdentifier,
+    initialViewUniversalIdentifier: flatInitialViewToCreate.universalIdentifier,
     allFlatEntityOperationRecordByMetadataName: {
       fieldMetadata: {
         flatEntityToCreate: fromArrayToUniqueKeyRecord({
@@ -45,5 +45,5 @@ export const computeSeededObjectViewOperationsOnObjectCreation = ({
     },
   });
 
-  return { flatSeededViewToCreate, flatSeededViewFieldsToCreate };
+  return { flatInitialViewToCreate, flatInitialViewFieldsToCreate };
 };

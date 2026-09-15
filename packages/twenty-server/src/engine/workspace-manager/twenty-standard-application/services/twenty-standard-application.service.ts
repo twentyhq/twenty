@@ -6,7 +6,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
-import { computeSeedObjectDefaultViewOperations } from 'src/engine/metadata-modules/view/utils/compute-seed-object-default-view-operations.util';
+import { computeMissingInitialObjectViewOperations } from 'src/engine/metadata-modules/view/utils/compute-missing-initial-object-view-operations.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
@@ -134,7 +134,7 @@ export class TwentyStandardApplicationService {
         { workspaceId },
       );
 
-    const seedOperations = computeSeedObjectDefaultViewOperations({
+    const seedOperations = computeMissingInitialObjectViewOperations({
       flatObjectMetadatas: Object.values(
         flatObjectMetadataMaps.byUniversalIdentifier,
       )
@@ -146,7 +146,7 @@ export class TwentyStandardApplicationService {
         ),
       flatViewMaps,
       flatViewFieldMaps,
-      seededViewApplicationUniversalIdentifier:
+      initialViewApplicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
     });
 

@@ -82,6 +82,7 @@ export { getFieldUniversalIdentifier } from './deterministic-identifier/get-fiel
 export { getFrontComponentUniversalIdentifier } from './deterministic-identifier/get-front-component-universal-identifier.util';
 export { getIndexFieldUniversalIdentifier } from './deterministic-identifier/get-index-field-universal-identifier.util';
 export { getIndexUniversalIdentifier } from './deterministic-identifier/get-index-universal-identifier.util';
+export { getInitialObjectViewUniversalIdentifier } from './deterministic-identifier/get-initial-object-view-universal-identifier.util';
 export { getLogicFunctionUniversalIdentifier } from './deterministic-identifier/get-logic-function-universal-identifier.util';
 export {
   getFolderNavigationMenuItemUniversalIdentifier,
@@ -97,7 +98,6 @@ export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identi
 export { getRoleTargetUniversalIdentifier } from './deterministic-identifier/get-role-target-universal-identifier.util';
 export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
 export { getSearchFieldUniversalIdentifier } from './deterministic-identifier/get-search-field-universal-identifier.util';
-export { getSeededObjectViewUniversalIdentifier } from './deterministic-identifier/get-seeded-object-view-universal-identifier.util';
 export { getSelectOptionUniversalIdentifier } from './deterministic-identifier/get-select-option-universal-identifier.util';
 export { getSkillUniversalIdentifier } from './deterministic-identifier/get-skill-universal-identifier.util';
 export { getSystemFormFieldPageLayoutWidgetUniversalIdentifier } from './deterministic-identifier/get-system-form-field-page-layout-widget-universal-identifier.util';

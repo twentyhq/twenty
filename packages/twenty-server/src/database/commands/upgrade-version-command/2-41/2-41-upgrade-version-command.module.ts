@@ -10,7 +10,7 @@ import { MakeNotesAndTasksInheritTheirTargetsCommand } from 'src/database/comman
 import { BackfillTimelineActivityMessageCampaignIndexesCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789461462000-backfill-timeline-activity-message-campaign-indexes.command';
 import { MoveMessageCampaignCommandsToCampaignFlagCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789468244000-move-message-campaign-commands-to-campaign-flag.command';
 import { RemoveSeeActiveVersionCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789470915878-remove-see-active-version-command-menu-item.command';
-import { SeedObjectDefaultViewCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789472356542-seed-object-default-view.command';
+import { SeedObjectInitialViewCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789472356542-seed-object-initial-view.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
@@ -39,7 +39,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     BackfillTimelineActivityMessageCampaignIndexesCommand,
     MoveMessageCampaignCommandsToCampaignFlagCommand,
     RemoveSeeActiveVersionCommandMenuItemCommand,
-    SeedObjectDefaultViewCommand,
+    SeedObjectInitialViewCommand,
   ],
 })
 export class V2_41_UpgradeVersionCommandModule {}

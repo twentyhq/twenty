@@ -11,7 +11,7 @@ import { isDefined, uncapitalize } from 'twenty-shared/utils';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { isSeededObjectView } from 'src/engine/metadata-modules/view/utils/is-seeded-object-view.util';
+import { isInitialObjectView } from 'src/engine/metadata-modules/view/utils/is-initial-object-view.util';
 import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/collection-hash.dto';
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
@@ -143,9 +143,9 @@ export class MinimalMetadataService {
         };
       });
 
-    const isSeededDefaultViewEnabled =
+    const isInitialObjectViewEnabled =
       await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+        FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
         workspaceId,
       );
 
@@ -155,7 +155,7 @@ export class MinimalMetadataService {
       .filter(isDefined)
       .filter(
         (flatView) =>
-          isSeededDefaultViewEnabled || !isSeededObjectView(flatView),
+          isInitialObjectViewEnabled || !isInitialObjectView(flatView),
       )
       .filter((flatView) => flatView.workspaceId === workspaceId)
       .filter((flatView) => flatView.deletedAt === null)

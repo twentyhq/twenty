@@ -1,28 +1,28 @@
-import { getSeededObjectViewUniversalIdentifier } from 'twenty-shared/application';
+import { getInitialObjectViewUniversalIdentifier } from 'twenty-shared/application';
 import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { ViewType } from 'twenty-shared/types';
 
 import { buildBaseUniversalFlatView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-base-universal-flat-view.util';
-import { SEEDED_OBJECT_VIEW_POSITION } from 'src/engine/metadata-modules/view/constants/seeded-object-view-position.constant';
+import { INITIAL_OBJECT_VIEW_POSITION } from 'src/engine/metadata-modules/view/constants/initial-object-view-position.constant';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
-type SeededObjectViewObjectMetadata = Pick<
+type InitialObjectViewObjectMetadata = Pick<
   UniversalFlatObjectMetadata,
   'universalIdentifier' | 'labelPlural'
 >;
 
-export const computeSeededObjectViewToCreate = ({
+export const computeInitialObjectViewToCreate = ({
   objectMetadata,
   applicationUniversalIdentifier,
 }: {
   applicationUniversalIdentifier: string;
-  objectMetadata: SeededObjectViewObjectMetadata;
+  objectMetadata: InitialObjectViewObjectMetadata;
 }): UniversalFlatView & { id: string } =>
   buildBaseUniversalFlatView({
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
     applicationUniversalIdentifier,
-    universalIdentifier: getSeededObjectViewUniversalIdentifier({
+    universalIdentifier: getInitialObjectViewUniversalIdentifier({
       objectMetadataApplicationUniversalIdentifier:
         applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadata.universalIdentifier,
@@ -31,6 +31,6 @@ export const computeSeededObjectViewToCreate = ({
     key: null,
     icon: VIEW_TYPE_DEFAULT_ICONS[ViewType.TABLE],
     type: ViewType.TABLE,
-    position: SEEDED_OBJECT_VIEW_POSITION,
+    position: INITIAL_OBJECT_VIEW_POSITION,
     isSystemSideEffect: false,
   });

@@ -4,11 +4,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 
-import { computeSeededObjectViewFieldsToCreate } from 'src/engine/metadata-modules/view/utils/compute-seeded-object-view-fields-to-create.util';
+import { computeInitialObjectViewFieldsToCreate } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-fields-to-create.util';
 
 const applicationUniversalIdentifier = 'a1a2a3a4-a5a6-4000-8000-000000000001';
 const objectUniversalIdentifier = 'b1b2b3b4-b5b6-4000-8000-000000000002';
-const seededViewUniversalIdentifier = 'c1c2c3c4-c5c6-4000-8000-000000000003';
+const initialViewUniversalIdentifier = 'c1c2c3c4-c5c6-4000-8000-000000000003';
 const labelIdentifierFieldMetadataUniversalIdentifier =
   'd1d2d3d4-d5d6-4000-8000-000000000004';
 const callerFieldUniversalIdentifier = 'e1e2e3e4-e5e6-4000-8000-000000000005';
@@ -58,53 +58,54 @@ const allFlatEntityOperationRecordByMetadataName: AllFlatEntityOperationRecordBy
     },
   };
 
-describe('computeSeededObjectViewFieldsToCreate', () => {
+describe('computeInitialObjectViewFieldsToCreate', () => {
   it('should include caller fields from the same batch, label identifier first', () => {
-    const seededViewFields = computeSeededObjectViewFieldsToCreate({
+    const initialViewFields = computeInitialObjectViewFieldsToCreate({
       sourceFlatObjectMetadata,
-      seededViewUniversalIdentifier,
+      initialViewUniversalIdentifier,
       allFlatEntityOperationRecordByMetadataName,
     });
 
-    const fieldUniversalIdentifiers = seededViewFields.map(
-      (seededViewField) => seededViewField.fieldMetadataUniversalIdentifier,
+    const fieldUniversalIdentifiers = initialViewFields.map(
+      (initialViewField) => initialViewField.fieldMetadataUniversalIdentifier,
     );
 
     expect(fieldUniversalIdentifiers).toContain(callerFieldUniversalIdentifier);
     expect(
-      seededViewFields.find((seededViewField) => seededViewField.position === 0)
-        ?.fieldMetadataUniversalIdentifier,
+      initialViewFields.find(
+        (initialViewField) => initialViewField.position === 0,
+      )?.fieldMetadataUniversalIdentifier,
     ).toBe(labelIdentifierFieldMetadataUniversalIdentifier);
   });
 
   it('should include system fields alongside caller fields', () => {
-    const seededViewFields = computeSeededObjectViewFieldsToCreate({
+    const initialViewFields = computeInitialObjectViewFieldsToCreate({
       sourceFlatObjectMetadata,
-      seededViewUniversalIdentifier,
+      initialViewUniversalIdentifier,
       allFlatEntityOperationRecordByMetadataName,
     });
 
-    expect(seededViewFields.length).toBeGreaterThan(2);
+    expect(initialViewFields.length).toBeGreaterThan(2);
   });
 
   it('should emit user-owned view fields keyed under the object application', () => {
-    const seededViewFields = computeSeededObjectViewFieldsToCreate({
+    const initialViewFields = computeInitialObjectViewFieldsToCreate({
       sourceFlatObjectMetadata,
-      seededViewUniversalIdentifier,
+      initialViewUniversalIdentifier,
       allFlatEntityOperationRecordByMetadataName,
     });
 
-    for (const seededViewField of seededViewFields) {
-      expect(seededViewField.isSystemSideEffect).toBe(false);
-      expect(seededViewField.viewUniversalIdentifier).toBe(
-        seededViewUniversalIdentifier,
+    for (const initialViewField of initialViewFields) {
+      expect(initialViewField.isSystemSideEffect).toBe(false);
+      expect(initialViewField.viewUniversalIdentifier).toBe(
+        initialViewUniversalIdentifier,
       );
-      expect(seededViewField.universalIdentifier).toBe(
+      expect(initialViewField.universalIdentifier).toBe(
         getViewFieldUniversalIdentifier({
           applicationUniversalIdentifier,
-          viewUniversalIdentifier: seededViewUniversalIdentifier,
+          viewUniversalIdentifier: initialViewUniversalIdentifier,
           fieldMetadataUniversalIdentifier:
-            seededViewField.fieldMetadataUniversalIdentifier,
+            initialViewField.fieldMetadataUniversalIdentifier,
         }),
       );
     }

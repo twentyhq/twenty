@@ -75,7 +75,7 @@ describe('View side effect on object creation', () => {
     return createOneObject;
   };
 
-  const findSeededViews = <TView extends { key: string | null; type: string }>(
+  const findInitialViews = <TView extends { key: string | null; type: string }>(
     views: TView[],
   ) =>
     views.filter(
@@ -116,7 +116,7 @@ describe('View side effect on object creation', () => {
     });
 
     expect(createdViews.length).toBe(2);
-    expect(findSeededViews(createdViews)).toHaveLength(0);
+    expect(findInitialViews(createdViews)).toHaveLength(0);
 
     const {
       data: { getViewFields: indexViewFields },
@@ -128,13 +128,13 @@ describe('View side effect on object creation', () => {
     expect(indexViewFields.length).toBe(5);
   });
 
-  it('should expose the seeded view and its view fields once the feature flag is enabled', async () => {
+  it('should expose the initial view and its view fields once the feature flag is enabled', async () => {
     const createOneObject = await createDishesObject();
 
     createdObjectMetadataId = createOneObject.id;
 
     await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+      featureFlag: FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
       value: true,
       expectToFail: false,
     });
@@ -147,31 +147,31 @@ describe('View side effect on object creation', () => {
         expectToFail: false,
       });
 
-      const [seededView, ...extraSeededViews] = findSeededViews(createdViews);
+      const [initialView, ...extraInitialViews] = findInitialViews(createdViews);
 
-      if (!isDefined(seededView)) {
-        throw new Error('expected a seeded user-owned view to be exposed');
+      if (!isDefined(initialView)) {
+        throw new Error('expected a initial user-owned view to be exposed');
       }
 
-      expect(extraSeededViews).toHaveLength(0);
+      expect(extraInitialViews).toHaveLength(0);
 
-      expect(seededView).toMatchObject<Partial<FlatView>>({
+      expect(initialView).toMatchObject<Partial<FlatView>>({
         objectMetadataId: createdObjectMetadataId,
         type: ViewType.TABLE,
         name: 'All Dishes I love',
       });
 
       const {
-        data: { getViewFields: seededViewFields },
+        data: { getViewFields: initialViewFields },
       } = await findViewFields({
-        viewId: seededView.id,
+        viewId: initialView.id,
         expectToFail: false,
       });
 
-      expect(seededViewFields.length).toBe(5);
+      expect(initialViewFields.length).toBe(5);
     } finally {
       await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_SEEDED_DEFAULT_VIEW_ENABLED,
+        featureFlag: FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
         value: false,
         expectToFail: false,
       });
