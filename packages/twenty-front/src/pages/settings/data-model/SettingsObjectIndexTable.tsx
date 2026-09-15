@@ -105,7 +105,9 @@ export const SettingsObjectIndexTable = ({
                 gridTemplateColumns={OBJECT_INDEX_TABLE_GRID_TEMPLATE_COLUMNS}
                 key={item.id}
               >
-                <TableCell>{item.indexFields}</TableCell>
+                <TableCell color={themeCssVariables.font.color.primary}>
+                  {item.indexFields}
+                </TableCell>
                 <TableCell>
                   {item.isUnique ? <IconSquareKey size={14} /> : ''}
                 </TableCell>

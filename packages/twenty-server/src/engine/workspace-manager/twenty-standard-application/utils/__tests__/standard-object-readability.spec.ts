@@ -16,8 +16,10 @@ const NOW = '2024-01-01T00:00:00.000Z';
 const INHERITED_STANDARD_OBJECT_PARENT_FIELDS = {
   attachment: STANDARD_OBJECT_FIELDS.attachment.targetNote,
   timelineActivity: STANDARD_OBJECT_FIELDS.timelineActivity.targetPerson,
-  noteTarget: STANDARD_OBJECT_FIELDS.noteTarget.note,
-  taskTarget: STANDARD_OBJECT_FIELDS.taskTarget.task,
+  note: STANDARD_OBJECT_FIELDS.note.noteTargets,
+  noteTarget: STANDARD_OBJECT_FIELDS.noteTarget.targetPerson,
+  task: STANDARD_OBJECT_FIELDS.task.taskTargets,
+  taskTarget: STANDARD_OBJECT_FIELDS.taskTarget.targetPerson,
   messageThreadTarget: STANDARD_OBJECT_FIELDS.messageThreadTarget.messageThread,
   calendarEventTarget: STANDARD_OBJECT_FIELDS.calendarEventTarget.calendarEvent,
 } as const;
@@ -42,6 +44,18 @@ describe('Standard object readability', () => {
         flatObjectMetadata.universalIdentifier ===
         STANDARD_OBJECTS[objectName].universalIdentifier,
     );
+
+  const resolveParents = (objectName: keyof typeof STANDARD_OBJECTS) => {
+    const flatObjectMetadata = findStandardFlatObjectMetadata(objectName);
+
+    expect(flatObjectMetadata).toBeDefined();
+
+    return resolveInheritedReadabilityParents({
+      flatObjectMetadata: flatObjectMetadata!,
+      flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
+      flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
+    });
+  };
 
   const inheritedObjectNames = Object.keys(
     INHERITED_STANDARD_OBJECT_PARENT_FIELDS,
@@ -82,17 +96,8 @@ describe('Standard object readability', () => {
   );
 
   it('resolves every attachment target as a parent of attachment', () => {
-    const attachmentFlatObjectMetadata =
-      findStandardFlatObjectMetadata('attachment');
-
-    expect(attachmentFlatObjectMetadata).toBeDefined();
-
-    const parentJoinColumnNames = resolveInheritedReadabilityParents({
-      flatObjectMetadata: attachmentFlatObjectMetadata!,
-      flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
-      flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
-    })
-      .map(({ joinColumnName }) => joinColumnName)
+    const parentJoinColumnNames = resolveParents('attachment')
+      .map((parent) => (parent.kind === 'column' ? parent.joinColumnName : ''))
       .sort();
 
     expect(parentJoinColumnNames).toEqual(
@@ -108,22 +113,60 @@ describe('Standard object readability', () => {
     );
   });
 
-  it('resolves the note as the only parent of noteTarget', () => {
-    const noteTargetFlatObjectMetadata =
-      findStandardFlatObjectMetadata('noteTarget');
+  it('resolves every target of a noteTarget as its parent, not the note', () => {
+    const parents = resolveParents('noteTarget').map((parent) =>
+      parent.kind === 'column'
+        ? {
+            joinColumnName: parent.joinColumnName,
+            parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+          }
+        : parent.kind,
+    );
 
-    expect(noteTargetFlatObjectMetadata).toBeDefined();
+    expect(parents).toEqual(
+      expect.arrayContaining([
+        { joinColumnName: 'targetPersonId', parentNameSingular: 'person' },
+        { joinColumnName: 'targetCompanyId', parentNameSingular: 'company' },
+        {
+          joinColumnName: 'targetOpportunityId',
+          parentNameSingular: 'opportunity',
+        },
+      ]),
+    );
+    expect(parents).not.toContainEqual({
+      joinColumnName: 'noteId',
+      parentNameSingular: 'note',
+    });
+  });
 
+  it('resolves its note targets as the parents of a note, through the noteId column', () => {
     expect(
-      resolveInheritedReadabilityParents({
-        flatObjectMetadata: noteTargetFlatObjectMetadata!,
-        flatFieldMetadataMaps: allFlatEntityMaps.flatFieldMetadataMaps,
-        flatObjectMetadataMaps: allFlatEntityMaps.flatObjectMetadataMaps,
-      }).map(({ joinColumnName, parentFlatObjectMetadata }) => ({
-        joinColumnName,
-        parentNameSingular: parentFlatObjectMetadata.nameSingular,
-      })),
-    ).toEqual([{ joinColumnName: 'noteId', parentNameSingular: 'note' }]);
+      resolveParents('note').map((parent) =>
+        parent.kind === 'children'
+          ? {
+              childNameSingular: parent.childFlatObjectMetadata.nameSingular,
+              childJoinColumnName: parent.childJoinColumnName,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { childNameSingular: 'noteTarget', childJoinColumnName: 'noteId' },
+    ]);
+  });
+
+  it('resolves its task targets as the parents of a task, through the taskId column', () => {
+    expect(
+      resolveParents('task').map((parent) =>
+        parent.kind === 'children'
+          ? {
+              childNameSingular: parent.childFlatObjectMetadata.nameSingular,
+              childJoinColumnName: parent.childJoinColumnName,
+            }
+          : parent.kind,
+      ),
+    ).toEqual([
+      { childNameSingular: 'taskTarget', childJoinColumnName: 'taskId' },
+    ]);
   });
 
   it('leaves every other standard object OPEN for readability', () => {
