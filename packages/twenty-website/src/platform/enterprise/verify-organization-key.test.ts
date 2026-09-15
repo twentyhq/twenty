@@ -1,7 +1,7 @@
 import { generateKeyPairSync } from 'node:crypto';
 
-import { signEnterpriseKey } from './sign-enterprise-key';
-import { verifyEnterpriseKey } from './verify-enterprise-key';
+import { signEnterpriseKey } from './sign-organization-key';
+import { verifyEnterpriseKey } from './verify-organization-key';
 
 describe('verifyEnterpriseKey', () => {
   beforeAll(() => {
