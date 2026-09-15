@@ -17673,7 +17673,7 @@ msgstr ""
 #. js-lingui-id: bL2pm9
 #: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Save the record before attaching a file"
-msgstr ""
+msgstr "Desa el registre abans d'adjuntar un fitxer"
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -20550,7 +20550,7 @@ msgstr "Aquesta connexió no existeix o no està disponible per a aquesta aplica
 #. js-lingui-id: 2bcQ5P
 #: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "This content was saved in an older format and cannot be edited here"
-msgstr ""
+msgstr "Aquest contingut es va desar en un format antic i no es pot editar aquí"
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -21376,7 +21376,7 @@ msgstr "Tipus"
 #. js-lingui-id: RS98db
 #: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Type '/' for commands"
-msgstr ""
+msgstr "Escriu '/' per a les ordres"
 
 #. js-lingui-id: SKD2e4
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
