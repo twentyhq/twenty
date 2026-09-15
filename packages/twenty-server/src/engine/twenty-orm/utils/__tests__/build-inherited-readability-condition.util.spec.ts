@@ -99,7 +99,7 @@ describe('buildInheritedReadabilityCondition', () => {
     expect(countOccurrences(sql, 'EXISTS')).toBe(1);
   });
 
-  it('should accept any live child row of an OPEN child object', () => {
+  it('should accept a live child row, or one trashed with the record, of an OPEN child object', () => {
     const { sql } = build([
       {
         kind: 'children',
@@ -111,7 +111,7 @@ describe('buildInheritedReadabilityCondition', () => {
     ]);
 
     expect(sql).toContain(
-      ' OR EXISTS (SELECT 1 FROM "workspace_abc"."noteTarget" AS "attachment_noteTarget" WHERE "attachment_noteTarget"."noteId" = "attachment"."id" AND "attachment_noteTarget"."deletedAt" IS NULL))',
+      ' OR EXISTS (SELECT 1 FROM "workspace_abc"."noteTarget" AS "attachment_noteTarget" WHERE "attachment_noteTarget"."noteId" = "attachment"."id" AND ("attachment_noteTarget"."deletedAt" IS NULL OR ("attachment"."deletedAt" IS NOT NULL AND "attachment_noteTarget"."deletedAt" >= "attachment"."deletedAt"))))',
     );
   });
 
@@ -140,7 +140,7 @@ describe('buildInheritedReadabilityCondition', () => {
     ]);
 
     expect(sql).toContain(
-      ' OR EXISTS (SELECT 1 FROM "workspace_abc"."noteTarget" AS "attachment_noteTarget" WHERE "attachment_noteTarget"."noteId" = "attachment"."id" AND "attachment_noteTarget"."deletedAt" IS NULL AND "attachment_noteTarget"."targetPersonId" IS NOT NULL))',
+      ' OR EXISTS (SELECT 1 FROM "workspace_abc"."noteTarget" AS "attachment_noteTarget" WHERE "attachment_noteTarget"."noteId" = "attachment"."id" AND ("attachment_noteTarget"."deletedAt" IS NULL OR ("attachment"."deletedAt" IS NOT NULL AND "attachment_noteTarget"."deletedAt" >= "attachment"."deletedAt")) AND "attachment_noteTarget"."targetPersonId" IS NOT NULL))',
     );
     expect(sql).not.toContain('secret');
     expect(parameters.nested).toBe('value');

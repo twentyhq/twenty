@@ -24,6 +24,15 @@ export type InheritedReadabilityParentCondition =
       policy: RowAccessPolicy;
     };
 
+const buildChildLinkBoundCondition = ({
+  quotedTableAlias,
+  quotedChildTableAlias,
+}: {
+  quotedTableAlias: string;
+  quotedChildTableAlias: string;
+}): string =>
+  `(${quotedChildTableAlias}."deletedAt" IS NULL OR (${quotedTableAlias}."deletedAt" IS NOT NULL AND ${quotedChildTableAlias}."deletedAt" >= ${quotedTableAlias}."deletedAt"))`;
+
 export const buildInheritedReadabilityCondition = ({
   tableAlias,
   objectMetadataId,
@@ -63,7 +72,10 @@ export const buildInheritedReadabilityCondition = ({
       const quotedChildTableAlias = escapeIdentifier(parent.childTableAlias);
       const childRowConditions = [
         `${quotedChildTableAlias}.${escapeIdentifier(parent.childJoinColumnName)} = ${quotedTableAlias}."id"`,
-        `${quotedChildTableAlias}."deletedAt" IS NULL`,
+        buildChildLinkBoundCondition({
+          quotedTableAlias,
+          quotedChildTableAlias,
+        }),
       ];
 
       if (parent.policy.kind === 'gated') {

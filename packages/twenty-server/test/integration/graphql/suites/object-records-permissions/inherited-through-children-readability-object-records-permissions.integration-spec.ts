@@ -687,9 +687,15 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       );
 
       expect(deleteResponse.body.errors).toBeUndefined();
+      expect(deleteResponse.body.data.deleteNotes).toEqual([
+        { id: NOTE_ON_PERSON_ID },
+      ]);
       expect(restoreResponse.body.errors).toBeUndefined();
-      expect(readableThroughLiveLinks).toEqual(new Set());
-      expect(readableThroughCapturedLinks).toEqual(new Set([NOTE_ON_PERSON_ID]));
+      expect(restoreResponse.body.data.restoreNotes).toEqual([
+        { id: NOTE_ON_PERSON_ID },
+      ]);
+      expect([...readableThroughLiveLinks]).toEqual([]);
+      expect([...readableThroughCapturedLinks]).toEqual([NOTE_ON_PERSON_ID]);
     });
   });
 });
