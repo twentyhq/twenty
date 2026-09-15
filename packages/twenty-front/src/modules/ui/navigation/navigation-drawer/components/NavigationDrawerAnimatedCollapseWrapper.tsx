@@ -1,4 +1,3 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import {
@@ -20,27 +19,26 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
   children: React.ReactNode;
 }) => {
   const { theme } = useContext(ThemeContext);
-  const isSettingsPage = useIsSettingsPage();
   const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
 
-  const shouldShowContent = isSettingsPage || isNavigationDrawerExpanded;
-
-  const animate: AnimationControls | TargetAndTransition = shouldShowContent
-    ? {
-        opacity: 1,
-        width: 'auto',
-        height: 'auto',
-        pointerEvents: 'auto',
-      }
-    : {
-        opacity: 0,
-        width: 0,
-        height: 0,
-        pointerEvents: 'none',
-      };
+  const animate: AnimationControls | TargetAndTransition =
+    isNavigationDrawerExpanded
+      ? {
+          opacity: 1,
+          width: 'auto',
+          height: 'auto',
+          pointerEvents: 'auto',
+        }
+      : {
+          opacity: 0,
+          width: 0,
+          height: 0,
+          pointerEvents: 'none',
+        };
 
   return (
     <StyledAnimatedContainer
+      inert={!isNavigationDrawerExpanded || undefined}
       initial={false}
       animate={animate}
       transition={{

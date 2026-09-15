@@ -1,7 +1,7 @@
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { getLinkFaviconUrl, isDefined } from 'twenty-shared/utils';
-import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -21,18 +21,8 @@ const StyledCompositeContainer = styled.div`
   width: 16px;
 `;
 
-const StyledMainIconWrapper = styled.div<{
-  $backgroundColor: string;
-  $borderColor?: string;
-  $noBackgroundOrBorder?: boolean;
-}>`
+const StyledMainIconWrapper = styled.div`
   align-items: center;
-  background-color: ${({ $backgroundColor, $noBackgroundOrBorder }) =>
-    $noBackgroundOrBorder ? 'transparent' : $backgroundColor};
-  border: ${({ $borderColor, $noBackgroundOrBorder }) =>
-    $noBackgroundOrBorder || !$borderColor
-      ? 'none'
-      : `1px solid ${$borderColor}`};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
@@ -82,17 +72,9 @@ export const LinkIconWithLinkOverlay = ({
   const showFavicon =
     isDefined(faviconUrl) && !isKnownFailed && localFailedLink !== linkKey;
 
-  const linkStyle = getIconTileColorShades(
-    navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
-  );
-
   return (
     <StyledCompositeContainer>
-      <StyledMainIconWrapper
-        $backgroundColor={linkStyle.backgroundColor}
-        $borderColor={linkStyle.borderColor}
-        $noBackgroundOrBorder={showFavicon}
-      >
+      <StyledMainIconWrapper>
         {showFavicon ? (
           <StyledFaviconImage
             src={faviconUrl}
@@ -103,10 +85,9 @@ export const LinkIconWithLinkOverlay = ({
             }}
           />
         ) : (
-          <DefaultIcon
-            size="14px"
-            stroke={theme.icon.stroke.md}
-            color={linkStyle.iconColor}
+          <ColoredIcon
+            Icon={DefaultIcon}
+            color={navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK}
           />
         )}
       </StyledMainIconWrapper>

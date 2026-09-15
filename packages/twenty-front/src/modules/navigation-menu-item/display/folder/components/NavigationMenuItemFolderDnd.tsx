@@ -1,18 +1,15 @@
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
+import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
+import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import React, { Fragment, useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronDown,
-  IconChevronRight,
-  IconFolder,
-  IconHeartOff,
-  IconPlus,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconFolder, IconHeartOff, IconPlus, useIcons } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -104,9 +101,12 @@ export const NavigationMenuItemFolderDnd = ({
   orphanIndex,
 }: NavigationMenuItemFolderDndProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const isMobile = useIsMobile();
+  const isNavigationDrawerExpanded = useAtomStateValue(
+    isNavigationDrawerExpandedState,
+  );
+  const isExpanded = isNavigationDrawerExpanded || isMobile;
 
   const section: NavigationMenuItemSection = isEditInPlace
     ? 'favorite'
@@ -197,19 +197,7 @@ export const NavigationMenuItemFolderDnd = ({
         handleToggle();
       }}
     >
-      {isOpen ? (
-        <IconChevronDown
-          size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.tertiary}
-        />
-      ) : (
-        <IconChevronRight
-          size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.tertiary}
-        />
-      )}
+      <NavigationMenuItemFolderChevron isOpen={isOpen} />
     </div>
   );
 
@@ -228,11 +216,13 @@ export const NavigationMenuItemFolderDnd = ({
   const header = headerOverride ?? (
     <NavigationDrawerItem
       label={folderName}
-      Icon={FolderIcon}
-      iconColor={iconColor}
+      Icon={() => <ColoredIcon Icon={FolderIcon} color={iconColor} />}
       active={
         (!isOpen && hasActiveChild) ||
         (isWorkspace && isSelectedInEditMode && !isOpen)
+      }
+      isSelectedInEditMode={
+        isWorkspace && isFolderEditHighlighted && !isExpanded
       }
       onClick={handleHeaderClick}
       rightOptions={headerRightOptions}
@@ -315,7 +305,9 @@ export const NavigationMenuItemFolderDnd = ({
   return (
     <>
       <StyledFolderContainer
-        $isSelectedInEditMode={isWorkspace && isFolderEditHighlighted}
+        $isSelectedInEditMode={
+          isWorkspace && isFolderEditHighlighted && isExpanded
+        }
         data-drag-over-header={isDragOverFolderHeader ? 'true' : undefined}
         data-forbidden-drop-target={isForbiddenDropTarget ? 'true' : undefined}
       >
@@ -391,19 +383,21 @@ export const NavigationMenuItemFolderDnd = ({
                 )}
               />
               {isWorkspace && isLayoutCustomizationModeEnabled && (
-                <NavigationDrawerSubItem
-                  label={t`Add menu item`}
-                  Icon={IconPlus}
-                  onClick={handleAddMenuItemToFolder}
-                  triggerEvent="CLICK"
-                  variant="tertiary"
-                  isSelectedInEditMode={false}
-                  subItemState={getNavigationSubItemLeftAdornment({
-                    index: navigationMenuItems.length,
-                    arrayLength: folderContentLength,
-                    selectedIndex: -1,
-                  })}
-                />
+                <NavigationMenuItemEntrance>
+                  <NavigationDrawerSubItem
+                    label={t`Add menu item`}
+                    Icon={IconPlus}
+                    onClick={handleAddMenuItemToFolder}
+                    triggerEvent="CLICK"
+                    variant="tertiary"
+                    isSelectedInEditMode={false}
+                    subItemState={getNavigationSubItemLeftAdornment({
+                      index: navigationMenuItems.length,
+                      arrayLength: folderContentLength,
+                      selectedIndex: -1,
+                    })}
+                  />
+                </NavigationMenuItemEntrance>
               )}
             </NavigationMenuItemDroppableSlot>
           </StyledFolderDroppableContent>

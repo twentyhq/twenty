@@ -1,5 +1,5 @@
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useWorkspaceSurfaceHeaderPortal } from '@/ui/layout/hooks/useWorkspaceSurfaceHeaderPortal';
 import {
@@ -37,7 +37,7 @@ const StyledHeader = styled.div<{ centerTitle?: boolean }>`
     centerTitle
       ? 'minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr)'
       : 'minmax(0, auto) minmax(min-content, 1fr)'};
-  min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
+  min-height: ${APP_HEADER_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
 `;

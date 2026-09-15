@@ -1,7 +1,7 @@
-import { Suspense, lazy, useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
+import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
+import { Suspense, lazy } from 'react';
+import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -113,7 +113,6 @@ const NavigationMenuItemFolderReadOnlyContent = ({
 }: NavigationMenuItemFolderReadOnlyContentProps) => {
   const { getIcon } = useIcons();
   const isMobile = useIsMobile();
-  const { theme } = useContext(ThemeContext);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
 
   const { isOpen, handleToggle, hasActiveChild, activeChildIndex } =
@@ -127,33 +126,19 @@ const NavigationMenuItemFolderReadOnlyContent = ({
       header={
         <NavigationDrawerItem
           label={folderName}
-          Icon={FolderIcon}
-          iconColor={
-            isDefined(folderColor)
-              ? folderColor
-              : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
-          }
+          Icon={() => (
+            <ColoredIcon
+              Icon={FolderIcon}
+              color={folderColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
+            />
+          )}
           active={!isOpen && hasActiveChild}
           onClick={handleToggle}
           className="navigation-drawer-item"
           triggerEvent="CLICK"
           preventCollapseOnMobile={isMobile}
           alwaysShowRightOptions
-          rightOptions={
-            isOpen ? (
-              <IconChevronDown
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
-                color={themeCssVariables.font.color.tertiary}
-              />
-            ) : (
-              <IconChevronRight
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
-                color={themeCssVariables.font.color.tertiary}
-              />
-            )
-          }
+          rightOptions={<NavigationMenuItemFolderChevron isOpen={isOpen} />}
         />
       }
       isOpen={isOpen}

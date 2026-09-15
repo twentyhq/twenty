@@ -19,6 +19,16 @@ jest.mock('@/ai/hooks/useSwitchToNewAiChat');
 jest.mock('@/navigation/hooks/useDefaultHomePagePath');
 jest.mock('@/ui/utilities/responsive/hooks/useIsMobile');
 
+jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
+  useSidePanelMenu: () => ({ closeSidePanelMenu: jest.fn() }),
+}));
+jest.mock('@/ai/hooks/useSelectAiChatThread', () => ({
+  useSelectAiChatThread: () => ({ selectAiChatThread: jest.fn() }),
+}));
+jest.mock('@/side-panel/hooks/useOpenAskAiPageInSidePanel', () => ({
+  useOpenAskAiPageInSidePanel: () => ({ openAskAiPage: jest.fn() }),
+}));
+
 const DEFAULT_HOME_PAGE_PATH = '/objects/companies';
 const AI_CHAT_PATH = '/chat/20202020-0687-4c41-b707-ed1bfca972a7';
 
@@ -77,7 +87,8 @@ describe('useSwitchNavigationDrawerMode', () => {
     jest.mocked(useIsMobile).mockReturnValue(false);
   });
 
-  it('leaves settings for the memorized location and restores the drawer', () => {
+  it('leaves settings for the memorized location and restores the mobile drawer', () => {
+    jest.mocked(useIsMobile).mockReturnValue(true);
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: '/settings/profile',
       expandedMemorized: false,
@@ -176,6 +187,110 @@ describe('useSwitchNavigationDrawerMode', () => {
     );
 
     expect(mockSwitchToNewChat).not.toHaveBeenCalled();
+  });
+
+  it.each([false, true])(
+    'preserves desktop sidebar expansion (%s) when opening settings and returning home',
+    (isExpanded) => {
+      const { result, store } = renderSwitchNavigationDrawerMode({
+        pathname: '/objects/people',
+      });
+      act(() => store.set(isNavigationDrawerExpandedState.atom, isExpanded));
+
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.SETTINGS,
+        ),
+      );
+
+      expect(result.current.location.pathname).toBe('/settings/profile');
+      expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(isExpanded);
+
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+        ),
+      );
+
+      expect(result.current.location.pathname).toBe('/objects/people');
+      expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(isExpanded);
+    },
+  );
+
+  it.each([false, true])(
+    'keeps the latest desktop sidebar choice (%s) when leaving settings',
+    (isExpanded) => {
+      const { result, store } = renderSwitchNavigationDrawerMode({
+        pathname: DEFAULT_HOME_PAGE_PATH,
+      });
+      act(() => store.set(isNavigationDrawerExpandedState.atom, !isExpanded));
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.SETTINGS,
+        ),
+      );
+      expect(result.current.location.pathname).toBe('/settings/profile');
+
+      act(() => store.set(isNavigationDrawerExpandedState.atom, isExpanded));
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+        ),
+      );
+
+      expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
+      expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(isExpanded);
+    },
+  );
+
+  it('stays collapsed through Home → Settings → AI → Home', () => {
+    jest.mocked(useSwitchToNewAiChat).mockImplementation(
+      jest.requireActual<{
+        useSwitchToNewAiChat: typeof useSwitchToNewAiChat;
+      }>('@/ai/hooks/useSwitchToNewAiChat').useSwitchToNewAiChat,
+    );
+    jest.mocked(useReturnFromExpandedAiChat).mockImplementation(
+      jest.requireActual<{
+        useReturnFromExpandedAiChat: typeof useReturnFromExpandedAiChat;
+      }>('@/ai/hooks/useReturnFromExpandedAiChat').useReturnFromExpandedAiChat,
+    );
+    const { result, store } = renderSwitchNavigationDrawerMode({
+      pathname: DEFAULT_HOME_PAGE_PATH,
+    });
+    act(() => store.set(isNavigationDrawerExpandedState.atom, false));
+
+    expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
+    expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(false);
+
+    for (const [mode, pathname] of [
+      [NAVIGATION_DRAWER_TABS.SETTINGS, '/settings/profile'],
+      [NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY, '/chat'],
+      [NAVIGATION_DRAWER_TABS.NAVIGATION_MENU, DEFAULT_HOME_PAGE_PATH],
+    ] as const) {
+      window.history.replaceState(null, '', result.current.location.pathname);
+      act(() => result.current.switchNavigationDrawerMode(mode));
+
+      expect(result.current.location.pathname).toBe(pathname);
+      expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(false);
+    }
+    window.history.replaceState(null, '', '/');
+  });
+
+  it('opens the settings drawer on mobile even when it was closed', () => {
+    jest.mocked(useIsMobile).mockReturnValue(true);
+    const { result, store } = renderSwitchNavigationDrawerMode({
+      pathname: '/objects/people',
+    });
+    act(() => store.set(isNavigationDrawerExpandedState.atom, false));
+
+    act(() =>
+      result.current.switchNavigationDrawerMode(
+        NAVIGATION_DRAWER_TABS.SETTINGS,
+      ),
+    );
+
+    expect(result.current.location.pathname).toBe('/settings/profile');
+    expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(true);
   });
 
   it('opens settings and memorizes where it came from', () => {

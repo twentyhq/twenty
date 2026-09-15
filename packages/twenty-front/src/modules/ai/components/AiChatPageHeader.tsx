@@ -1,3 +1,4 @@
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,7 +13,6 @@ import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByTh
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -24,7 +24,7 @@ const StyledHeader = styled.header`
   display: flex;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
+  height: ${APP_HEADER_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
 `;
 

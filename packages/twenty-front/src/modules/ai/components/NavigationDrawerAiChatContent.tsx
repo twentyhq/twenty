@@ -1,3 +1,4 @@
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -55,6 +56,7 @@ const AI_CHAT_RECENTS_NAVIGATION_SECTION_ID = 'AiChatRecents';
 
 export const NavigationDrawerAiChatContent = () => {
   const { t } = useLingui();
+  const isExpanded = useIsNavigationDrawerContentExpanded();
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const { handleThreadClick } = useAiChatThreadClick({
@@ -67,7 +69,7 @@ export const NavigationDrawerAiChatContent = () => {
   if (loading && threads.length === 0) {
     return (
       <StyledContainer>
-        <AiChatSkeletonLoader />
+        {isExpanded && <AiChatSkeletonLoader />}
       </StyledContainer>
     );
   }
@@ -110,7 +112,7 @@ export const NavigationDrawerAiChatContent = () => {
             rightIcon={filterDropdown}
           />
         )}
-        {threads.length === 0 ? (
+        {threads.length === 0 && isExpanded ? (
           <StyledEmptyState>{t`No chat`}</StyledEmptyState>
         ) : null}
         {hasNextPage ? <StyledFetchMoreTrigger ref={fetchMoreRef} /> : null}

@@ -1,4 +1,3 @@
-import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -11,13 +10,13 @@ const StyledSection = styled.div`
 
 const StyledSectionInnerContainerMinusScrollPadding = styled.div<{
   isMobile: boolean;
-  isMainNavCollapsed: boolean;
+  isCollapsed: boolean;
 }>`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.betweenSiblingsGap};
-  width: ${({ isMobile, isMainNavCollapsed }) =>
-    isMobile || isMainNavCollapsed
+  width: ${({ isMobile, isCollapsed }) =>
+    isMobile || isCollapsed
       ? '100%'
       : `calc(100% - ${themeCssVariables.spacing[2]})`};
 `;
@@ -30,18 +29,16 @@ export const NavigationDrawerSection = ({
   className?: string;
 }) => {
   const isMobile = useIsMobile();
-  const isSettingsDrawer = useIsSettingsDrawer();
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
-  const isMainNavCollapsed =
-    !isSettingsDrawer && !isMobile && !isNavigationDrawerExpanded;
+  const isCollapsed = !isMobile && !isNavigationDrawerExpanded;
 
   return (
     <StyledSection className={className}>
       <StyledSectionInnerContainerMinusScrollPadding
         isMobile={isMobile}
-        isMainNavCollapsed={isMainNavCollapsed}
+        isCollapsed={isCollapsed}
       >
         {children}
       </StyledSectionInnerContainerMinusScrollPadding>

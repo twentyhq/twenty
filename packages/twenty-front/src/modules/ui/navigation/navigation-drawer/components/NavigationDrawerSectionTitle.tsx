@@ -1,4 +1,3 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
@@ -83,10 +82,9 @@ export const NavigationDrawerSectionTitle = ({
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
-  const isSettingsPage = useIsSettingsPage();
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
-    if (isDefined(onClick) && (isNavigationDrawerExpanded || isSettingsPage)) {
+    if (isDefined(onClick) && isNavigationDrawerExpanded) {
       onClick();
     }
   };

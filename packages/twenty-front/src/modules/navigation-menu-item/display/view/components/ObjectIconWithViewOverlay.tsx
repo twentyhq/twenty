@@ -1,6 +1,6 @@
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -10,26 +10,10 @@ const StyledCompositeContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
-  height: 16px;
+  height: calc(${themeCssVariables.icon.size.md} * 1px);
   justify-content: center;
   position: relative;
-  width: 16px;
-`;
-
-const StyledObjectIconWrapper = styled.div<{
-  $backgroundColor: string;
-  $borderColor?: string;
-}>`
-  align-items: center;
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
-  border: ${({ $borderColor }) =>
-    $borderColor ? `1px solid ${$borderColor}` : 'none'};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  position: absolute;
+  width: calc(${themeCssVariables.icon.size.md} * 1px);
 `;
 
 const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
@@ -57,20 +41,10 @@ export const ObjectIconWithViewOverlay = ({
   objectColor,
 }: ObjectIconWithViewOverlayProps) => {
   const { theme } = useContext(ThemeContext);
-  const objectStyle = getIconTileColorShades(objectColor);
 
   return (
     <StyledCompositeContainer>
-      <StyledObjectIconWrapper
-        $backgroundColor={objectStyle.backgroundColor}
-        $borderColor={objectStyle.borderColor}
-      >
-        <ObjectIcon
-          size="14px"
-          stroke={theme.icon.stroke.md}
-          color={objectStyle.iconColor}
-        />
-      </StyledObjectIconWrapper>
+      <ColoredIcon Icon={ObjectIcon} color={objectColor} />
       <StyledViewOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <ViewIcon
           size="12px"
