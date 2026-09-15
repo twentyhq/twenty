@@ -110,6 +110,11 @@ export const Default: Story = {
   },
 };
 
+export const Documentation: Story = {
+  ...Default,
+  play: undefined,
+};
+
 export const Controlled: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 360 } },
