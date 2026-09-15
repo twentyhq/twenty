@@ -44,7 +44,7 @@ export const SettingsAiUsageTab = () => {
           adornment={<OrganizationAdornment />}
         />
         <SettingsEnterpriseFeatureGateCard
-          title={t`Enterprise feature`}
+          title={t`Organization feature`}
           description={t`AI usage analytics is available with an Organization key.`}
           buttonTitle={t`Activate`}
         />
