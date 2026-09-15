@@ -64,7 +64,7 @@ export const Light: Story = {
     expect(
       canvas.getByText('Customize how your record page looks.'),
     ).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Customize ...' })).toBeEnabled();
+    expect(canvas.getByRole('button', { name: 'Customize' })).toBeEnabled();
   },
 };
 
@@ -77,6 +77,6 @@ export const Dark: Story = {
     expect(
       canvas.getByText('Customize how your record page looks.'),
     ).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Customize ...' })).toBeEnabled();
+    expect(canvas.getByRole('button', { name: 'Customize' })).toBeEnabled();
   },
 };
