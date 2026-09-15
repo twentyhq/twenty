@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip } from 'twenty-ui/primitives';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import { LinkChip } from 'twenty-ui/data-display';
 
 import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';

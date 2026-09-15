@@ -5,7 +5,8 @@ import { type BackgroundMockCompany } from '@/sign-in-background-mock/constants/
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-import { Avatar, Chip, Checkbox } from 'twenty-ui/primitives';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconLink } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

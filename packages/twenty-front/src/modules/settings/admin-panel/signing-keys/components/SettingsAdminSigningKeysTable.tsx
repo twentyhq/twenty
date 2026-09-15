@@ -12,7 +12,7 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag, type TagColor } from 'twenty-ui/primitives';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { IconCopy } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { Button } from 'twenty-ui/input';

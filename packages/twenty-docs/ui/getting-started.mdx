@@ -28,7 +28,7 @@ If you are building a Twenty app, follow [Using Twenty UI components](/developer
 Import the component stylesheet and a theme stylesheet once at your application entry point. `ThemeProvider` applies the active theme class and makes theme values available to components.
 
 ```tsx
-import { Field, Input } from 'twenty-ui/primitives';
+import { Field, Input } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import 'twenty-ui/style.css';
@@ -60,16 +60,22 @@ The source folders follow this distinction: `primitives/` contains foundational
 controls, and `components/` is reserved for higher-level building blocks.
 Primitives retain the `input/`, `data-display/`, `navigation/`, `surfaces/`,
 `feedback/`, and `typography/` family subfolders.
+Each family has a matching public barrel, such as `twenty-ui/primitives/input`.
 
 | Import                      | Contents                                                          |
 | --------------------------- | ----------------------------------------------------------------- |
-| `twenty-ui/primitives`      | Form controls, display primitives, menus, tabs, and notifications |
+| `twenty-ui/primitives/input` | Form controls |
+| `twenty-ui/primitives/data-display` | Avatar, Chip, Tag, and Status |
+| `twenty-ui/primitives/navigation` | ListItem and Tabs |
+| `twenty-ui/primitives/surfaces` | AlertDialog, Menu, and Popover |
+| `twenty-ui/primitives/feedback` | Toast |
+| `twenty-ui/primitives/typography` | Text |
 | `twenty-ui/input`           | Buttons and additional inputs                                     |
 | `twenty-ui/data-display`    | Display helpers and composed displays                             |
 | `twenty-ui/feedback`        | Banners, progress bars, and loaders                               |
 | `twenty-ui/navigation`      | Links and navigation components                                   |
 | `twenty-ui/surfaces`        | Cards, modals, and tooltips                                       |
-| `twenty-ui/typography`      | Text and typography                                               |
+| `twenty-ui/typography`      | Headings and typography helpers                                   |
 | `twenty-ui/icon`            | Icons                                                             |
 | `twenty-ui/theme-constants` | Theme provider, hooks, and CSS variable references                |
 

@@ -48,18 +48,26 @@ import { Button } from 'twenty-ui/input';
 | `twenty-ui` | All components, icons, theme tokens, and utilities |
 | `twenty-ui/accessibility` | Accessibility helpers |
 | `twenty-ui/assets` | Logos and static assets |
-| `twenty-ui/data-display` | Avatars, chips, tags, and other display components |
+| `twenty-ui/components` | Reserved for reusable app building blocks |
+| `twenty-ui/data-display` | Display helpers and composed displays |
 | `twenty-ui/feedback` | Progress bars, loaders, and status feedback |
 | `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/input` | Buttons, switches, and form inputs |
+| `twenty-ui/input` | Buttons and additional inputs |
 | `twenty-ui/json-visualizer` | JSON tree viewer |
 | `twenty-ui/layout` | Layout primitives |
 | `twenty-ui/navigation` | Menus, links, and navigation components |
+| `twenty-ui/primitives` | All primitive families |
+| `twenty-ui/primitives/data-display` | Avatar, Chip, Tag, and Status |
+| `twenty-ui/primitives/feedback` | Toast |
+| `twenty-ui/primitives/input` | Form controls |
+| `twenty-ui/primitives/navigation` | ListItem and Tabs |
+| `twenty-ui/primitives/surfaces` | AlertDialog, Menu, and Popover |
+| `twenty-ui/primitives/typography` | Text |
 | `twenty-ui/surfaces` | Cards, tooltips, and surface components |
 | `twenty-ui/testing` | Storybook and test decorators |
 | `twenty-ui/theme` | Theme types and helpers |
 | `twenty-ui/theme-constants` | Design tokens, `ThemeProvider`, and `useTheme` |
-| `twenty-ui/typography` | Text and typography components |
+| `twenty-ui/typography` | Headings and typography helpers |
 | `twenty-ui/utilities` | Hooks and shared utilities |
 
 # Theming

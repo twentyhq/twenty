@@ -35,7 +35,7 @@ import {
   RadioGroup,
   Slider,
   Switch,
-} from 'twenty-ui/primitives';
+} from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {

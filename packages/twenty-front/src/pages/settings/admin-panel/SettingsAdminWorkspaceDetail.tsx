@@ -40,7 +40,9 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Avatar, Switch, Text } from 'twenty-ui/primitives';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
 import {
   IconCreditCard,
   IconEyeShare,

@@ -5,7 +5,7 @@ import { getDocumentationImportDiagnostics } from '../../../../twenty-ui/docs/ge
 
 const allowedModules = new Set([
   'twenty-ui',
-  'twenty-ui/primitives',
+  'twenty-ui/primitives/input',
   'twenty-ui/style.css',
   'react',
 ]);
@@ -26,7 +26,7 @@ describe('documentation imports', () => {
   it('allows public entry points, exported CSS, and peer dependencies', () => {
     expect(
       checkImports(`
-      import { Input } from 'twenty-ui/primitives';
+      import { Input } from 'twenty-ui/primitives/input';
       import 'twenty-ui/style.css';
       export { Text } from 'twenty-ui';
       import { useState } from 'react';

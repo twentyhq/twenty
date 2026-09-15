@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { Status } from 'twenty-ui/primitives';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { AdminPanelHealthServiceStatus } from '~/generated-admin/graphql';
 
 export const SettingsAdminHealthStatusRightContainer = ({

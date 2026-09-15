@@ -26,6 +26,36 @@
     "limit": "170 kB"
   },
   {
+    "name": "primitives/data-display",
+    "path": "dist/primitives/data-display.mjs",
+    "limit": "105 kB"
+  },
+  {
+    "name": "primitives/feedback",
+    "path": "dist/primitives/feedback.mjs",
+    "limit": "15 kB"
+  },
+  {
+    "name": "primitives/input",
+    "path": "dist/primitives/input.mjs",
+    "limit": "75 kB"
+  },
+  {
+    "name": "primitives/navigation",
+    "path": "dist/primitives/navigation.mjs",
+    "limit": "20 kB"
+  },
+  {
+    "name": "primitives/surfaces",
+    "path": "dist/primitives/surfaces.mjs",
+    "limit": "70 kB"
+  },
+  {
+    "name": "primitives/typography",
+    "path": "dist/primitives/typography.mjs",
+    "limit": "5 kB"
+  },
+  {
     "name": "testing",
     "path": "dist/testing.mjs",
     "limit": "50 kB"

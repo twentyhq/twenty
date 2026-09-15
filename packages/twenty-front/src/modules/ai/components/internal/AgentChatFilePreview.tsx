@@ -11,7 +11,7 @@ import { useCallback, useContext } from 'react';
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { AvatarOrIcon } from 'twenty-ui/data-display';
-import { Chip } from 'twenty-ui/primitives';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { ThemeContext } from 'twenty-ui/theme-constants';

@@ -10,7 +10,7 @@ import {
   IconPlayerPlay,
 } from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/input';
-import { Slider } from 'twenty-ui/primitives';
+import { Slider } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledAudioBar = styled.div`

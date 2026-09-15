@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/primitives';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

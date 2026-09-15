@@ -6,7 +6,7 @@ import {
   AVATAR_PROPERTIES_BY_SIZE,
   Avatar,
   type AvatarProps,
-} from 'twenty-ui/primitives';
+} from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -3,7 +3,7 @@ import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Radio, RadioGroup } from 'twenty-ui/primitives';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { Card, CardContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

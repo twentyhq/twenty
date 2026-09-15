@@ -6,7 +6,7 @@ import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { Checkbox } from 'twenty-ui/primitives';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { IconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -3,7 +3,7 @@ import { type FieldActorValue } from '@/object-record/record-field/ui/types/Fiel
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { AvatarOrIcon } from 'twenty-ui/data-display';
-import { Chip } from 'twenty-ui/primitives';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import {
   IconApi,
   IconCalendar,

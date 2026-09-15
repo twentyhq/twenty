@@ -27,7 +27,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   IconDotsVertical,
   IconLogout,

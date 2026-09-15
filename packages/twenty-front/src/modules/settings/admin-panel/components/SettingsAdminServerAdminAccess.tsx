@@ -14,7 +14,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { OTPInput } from 'input-otp';
 import { useState } from 'react';
-import { Status } from 'twenty-ui/primitives';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';

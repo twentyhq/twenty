@@ -9,7 +9,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Avatar, Status } from 'twenty-ui/primitives';
+import { Avatar, Status } from 'twenty-ui/primitives/data-display';
 import { Info } from 'twenty-ui/feedback';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';

@@ -13,7 +13,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { formatUpgradeCommandName, getSettingsPath } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/primitives';
+import { Status } from 'twenty-ui/primitives/data-display';
 import {
   IconAlertTriangle,
   IconCalendar,

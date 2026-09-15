@@ -20,7 +20,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { Avatar } from 'twenty-ui/primitives';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';

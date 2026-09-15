@@ -1,7 +1,7 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
-import { Tag } from 'twenty-ui/primitives';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { type SelectOption } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`

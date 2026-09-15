@@ -29,7 +29,7 @@ import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, Loader } from 'twenty-ui/feedback';
 import { MainButton } from 'twenty-ui/input';
-import { RadioGroup } from 'twenty-ui/primitives';
+import { RadioGroup } from 'twenty-ui/primitives/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {

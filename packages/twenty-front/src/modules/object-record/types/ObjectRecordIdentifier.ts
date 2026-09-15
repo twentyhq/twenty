@@ -1,4 +1,4 @@
-import { type AvatarShape } from 'twenty-ui/primitives';
+import { type AvatarShape } from 'twenty-ui/primitives/data-display';
 export type ObjectRecordIdentifier = {
   id: string;
   name: string;

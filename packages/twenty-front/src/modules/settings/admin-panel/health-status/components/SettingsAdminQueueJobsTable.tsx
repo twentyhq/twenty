@@ -19,7 +19,7 @@ import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
-import { Checkbox } from 'twenty-ui/primitives';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {

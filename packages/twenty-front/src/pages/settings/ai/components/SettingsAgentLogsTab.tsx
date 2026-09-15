@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import Skeleton from 'react-loading-skeleton';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/primitives';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/input';
 import {

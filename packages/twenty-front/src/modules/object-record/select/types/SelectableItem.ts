@@ -1,4 +1,4 @@
-import { type AvatarShape } from 'twenty-ui/primitives';
+import { type AvatarShape } from 'twenty-ui/primitives/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 
 export type SelectableItem<T = object> = T & {

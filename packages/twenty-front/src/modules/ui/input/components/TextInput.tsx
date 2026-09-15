@@ -1,4 +1,4 @@
-import { Field } from 'twenty-ui/primitives';
+import { Field } from 'twenty-ui/primitives/input';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { css } from '@linaria/core';

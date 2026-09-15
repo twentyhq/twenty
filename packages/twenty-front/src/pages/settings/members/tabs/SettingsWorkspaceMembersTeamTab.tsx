@@ -20,7 +20,7 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   IconArrowUpRight,
   IconChevronRight,

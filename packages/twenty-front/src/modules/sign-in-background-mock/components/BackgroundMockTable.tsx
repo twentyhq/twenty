@@ -7,7 +7,7 @@ import { BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/B
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
 import { IconChevronDown, IconPlus, useIcons } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Checkbox } from 'twenty-ui/primitives';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTableWrapper = styled.div`

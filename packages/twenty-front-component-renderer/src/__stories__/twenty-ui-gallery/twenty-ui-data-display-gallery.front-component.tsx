@@ -12,7 +12,7 @@ import {
   StyledTintedIconTileContainer,
   TintedIconTile,
 } from 'twenty-ui/data-display';
-import { Avatar, Chip, Status, Tag } from 'twenty-ui/primitives';
+import { Avatar, Chip, Status, Tag } from 'twenty-ui/primitives/data-display';
 import { IconStar } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 

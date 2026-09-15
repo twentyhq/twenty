@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { IconReload, IconX } from 'twenty-ui/icon';
-import { Checkbox } from 'twenty-ui/primitives';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedRotate } from 'twenty-ui/layout';
 

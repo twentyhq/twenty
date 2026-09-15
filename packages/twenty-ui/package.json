@@ -158,6 +158,36 @@
       "import": "./dist/primitives.mjs",
       "require": "./dist/primitives.cjs"
     },
+    "./primitives/data-display": {
+      "types": "./dist/primitives/data-display/index.d.ts",
+      "import": "./dist/primitives/data-display.mjs",
+      "require": "./dist/primitives/data-display.cjs"
+    },
+    "./primitives/feedback": {
+      "types": "./dist/primitives/feedback/index.d.ts",
+      "import": "./dist/primitives/feedback.mjs",
+      "require": "./dist/primitives/feedback.cjs"
+    },
+    "./primitives/input": {
+      "types": "./dist/primitives/input/index.d.ts",
+      "import": "./dist/primitives/input.mjs",
+      "require": "./dist/primitives/input.cjs"
+    },
+    "./primitives/navigation": {
+      "types": "./dist/primitives/navigation/index.d.ts",
+      "import": "./dist/primitives/navigation.mjs",
+      "require": "./dist/primitives/navigation.cjs"
+    },
+    "./primitives/surfaces": {
+      "types": "./dist/primitives/surfaces/index.d.ts",
+      "import": "./dist/primitives/surfaces.mjs",
+      "require": "./dist/primitives/surfaces.cjs"
+    },
+    "./primitives/typography": {
+      "types": "./dist/primitives/typography/index.d.ts",
+      "import": "./dist/primitives/typography.mjs",
+      "require": "./dist/primitives/typography.cjs"
+    },
     "./styles": {
       "types": "./dist/styles/index.d.ts",
       "import": "./dist/styles.mjs",
@@ -228,6 +258,24 @@
       ],
       "primitives": [
         "dist/primitives/index.d.ts"
+      ],
+      "primitives/data-display": [
+        "dist/primitives/data-display/index.d.ts"
+      ],
+      "primitives/feedback": [
+        "dist/primitives/feedback/index.d.ts"
+      ],
+      "primitives/input": [
+        "dist/primitives/input/index.d.ts"
+      ],
+      "primitives/navigation": [
+        "dist/primitives/navigation/index.d.ts"
+      ],
+      "primitives/surfaces": [
+        "dist/primitives/surfaces/index.d.ts"
+      ],
+      "primitives/typography": [
+        "dist/primitives/typography/index.d.ts"
       ],
       "styles": [
         "dist/styles/index.d.ts"

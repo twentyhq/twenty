@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
 import { Button } from 'twenty-ui/input';
-import { Checkbox } from 'twenty-ui/primitives';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { HorizontalSeparator, Section } from 'twenty-ui/layout';
 import { Card } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';

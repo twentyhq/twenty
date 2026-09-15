@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { type Key } from 'react';
 import { type Column } from 'react-data-grid';
-import { Radio } from 'twenty-ui/primitives';
+import { Radio } from 'twenty-ui/primitives/input';
 
 export const getSpreadsheetImportSingleSelectColumn = <
   TData,

@@ -10,7 +10,7 @@ Use `Textarea` for notes, descriptions, and other multiline values. It integrate
 ## Basic textarea
 
 ```tsx
-import { Field, Textarea } from 'twenty-ui/primitives';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
 
 export const NotesField = () => (
   <Field.Root name="notes">
@@ -27,7 +27,7 @@ Native textarea attributes such as `rows`, `maxLength`, `required`, and `readOnl
 
 ```tsx
 import { useState } from 'react';
-import { Field, Textarea } from 'twenty-ui/primitives';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
 
 export const DescriptionField = () => {
   const [description, setDescription] = useState('');

@@ -10,7 +10,7 @@ import InputReference from '/snippets/ui/generated/input/input.mdx';
 ## Label an input
 
 ```tsx
-import { Field, Input } from 'twenty-ui/primitives';
+import { Field, Input } from 'twenty-ui/primitives/input';
 
 export const EmailField = () => (
   <Field.Root>
@@ -27,7 +27,7 @@ export const EmailField = () => (
 
 ```tsx
 import { useState } from 'react';
-import { Input } from 'twenty-ui/primitives';
+import { Input } from 'twenty-ui/primitives/input';
 
 export const SearchField = () => {
   const [query, setQuery] = useState('');
@@ -48,7 +48,7 @@ export const SearchField = () => {
 
 ```tsx
 import { IconSearch } from 'twenty-ui/icon';
-import { Input, InputGroup } from 'twenty-ui/primitives';
+import { Input, InputGroup } from 'twenty-ui/primitives/input';
 
 export const CompactSearch = () => (
   <InputGroup size="sm" startElement={<IconSearch size={16} aria-hidden />}>

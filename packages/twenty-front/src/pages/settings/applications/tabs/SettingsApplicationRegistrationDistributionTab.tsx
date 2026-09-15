@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { CommandBlock } from 'twenty-ui/data-display';
-import { Tag } from 'twenty-ui/primitives';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconCopy } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';

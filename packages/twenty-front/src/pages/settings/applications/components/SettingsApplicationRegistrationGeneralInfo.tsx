@@ -24,7 +24,7 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import { AvatarOrIcon } from 'twenty-ui/data-display';
-import { Chip, Tag } from 'twenty-ui/primitives';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/layout';
 import { SettingsPath } from 'twenty-shared/types';

@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
-import { Tag, type TagColor } from 'twenty-ui/primitives';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { IconHelpCircle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
