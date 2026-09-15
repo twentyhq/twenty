@@ -23,6 +23,10 @@ import {
 } from '~/generated-metadata/graphql';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 
+const StyledEmailAddress = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+`;
+
 type MessageSuppression =
   MessageSuppressionsQuery['messageSuppressions']['records'][number];
 
@@ -145,7 +149,9 @@ export const SettingsUnsubscribersList = () => {
         columns={[
           {
             label: t`Email address`,
-            Cell: ({ item }) => <>{item.emailAddress}</>,
+            Cell: ({ item }) => (
+              <StyledEmailAddress>{item.emailAddress}</StyledEmailAddress>
+            ),
           },
           {
             label: t`Scope`,
