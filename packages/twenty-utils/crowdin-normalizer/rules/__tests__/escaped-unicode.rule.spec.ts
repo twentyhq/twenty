@@ -16,7 +16,8 @@ describe('ESCAPED_UNICODE_RULE', () => {
 
   it('keeps an escape the source writes itself, such as a code sample', () => {
     const sourceText = 'Escape the accent as \\u00e9 in the config';
-    const translationText = "Echappez l'accent en \\u00e9 dans la configuration";
+    const translationText =
+      "Echappez l'accent en \\u00e9 dans la configuration";
 
     expect(detect(translationText, sourceText)).toBe(false);
     expect(fix(translationText, sourceText)).toBe(translationText);

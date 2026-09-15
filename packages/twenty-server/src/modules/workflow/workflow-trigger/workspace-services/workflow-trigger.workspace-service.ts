@@ -284,11 +284,7 @@ export class WorkflowTriggerWorkspaceService {
       );
     }
 
-    await this.createOrUpdateCommandMenuItem(
-      workflow,
-      workflowVersion,
-      workspaceId,
-    );
+    let mirroredCoreWorkflowVersionIdForCommandMenuItem: string | null = null;
 
     await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
@@ -352,11 +348,21 @@ export class WorkflowTriggerWorkspaceService {
             transactionScope,
           );
 
+        mirroredCoreWorkflowVersionIdForCommandMenuItem =
+          mirroredCoreWorkflowVersionId;
+
         await this.enableAutomatedTrigger(workflowVersion, workspaceId, {
           transactionScope,
           coreWorkflowVersionId: mirroredCoreWorkflowVersionId,
         });
       },
+    );
+
+    await this.createOrUpdateCommandMenuItem(
+      workflow,
+      workflowVersion,
+      workspaceId,
+      mirroredCoreWorkflowVersionIdForCommandMenuItem,
     );
 
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
@@ -473,6 +479,7 @@ export class WorkflowTriggerWorkspaceService {
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workspaceId: string,
+    mirroredCoreWorkflowVersionId: string | null,
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
@@ -510,6 +517,10 @@ export class WorkflowTriggerWorkspaceService {
       await this.commandMenuItemService.create(
         {
           workflowVersionId: workflowVersion.id,
+          coreWorkflowVersionId:
+            mirroredCoreWorkflowVersionId ??
+            workflowVersion.coreWorkflowVersionId ??
+            undefined,
           engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
           label,
           shortLabel: label,

@@ -169,7 +169,11 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     mobileGridAutoColumns="2fr 1fr 1fr 72px"
                     key={workspaceInvitation.id}
                   >
-                    <TableCell minWidth="0" overflow="hidden">
+                    <TableCell
+                      color={themeCssVariables.font.color.primary}
+                      minWidth="0"
+                      overflow="hidden"
+                    >
                       <StyledIconWrapper>
                         <IconMail
                           size={theme.icon.size.md}

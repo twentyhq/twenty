@@ -18,8 +18,9 @@ export const findSlackUserLinksBySlackUserIds = async (
   const linkBySlackUserId = new Map<string, SlackUserLinkSummary>();
 
   const teamFilters = [...slackUserIdsBySlackTeamId.entries()]
-    .filter(([slackTeamId, slackUserIds]) =>
-      isNonEmptyString(slackTeamId) && slackUserIds.length > 0,
+    .filter(
+      ([slackTeamId, slackUserIds]) =>
+        isNonEmptyString(slackTeamId) && slackUserIds.length > 0,
     )
     .map(([slackTeamId, slackUserIds]) => ({
       and: [
@@ -56,7 +57,8 @@ export const findSlackUserLinksBySlackUserIds = async (
     const node = edge?.node;
 
     if (
-      !isNonEmptyString(node?.slackUserId) ||
+      !isNonEmptyString(node?.id) ||
+      !isNonEmptyString(node.slackUserId) ||
       !isNonEmptyString(node.slackTeamId)
     ) {
       continue;
@@ -80,6 +82,7 @@ export const findSlackUserLinksBySlackUserIds = async (
     }
 
     linkBySlackUserId.set(node.slackUserId, {
+      id: node.id,
       slackUserId: node.slackUserId,
       slackTeamId: node.slackTeamId,
       name: isNonEmptyString(node.name) ? node.name : undefined,

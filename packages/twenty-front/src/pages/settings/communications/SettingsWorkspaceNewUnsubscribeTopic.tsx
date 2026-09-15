@@ -25,8 +25,8 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
   const navigate = useNavigateSettings();
   const { enqueueToast } = useToast();
   const { createUnsubscribeTopic, loading } = useCreateUnsubscribeTopic();
-  const isEmailGroupEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+  const isMessageCampaignEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
 
   const [name, setName] = useState('');
@@ -82,7 +82,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
     t,
   ]);
 
-  if (!isEmailGroupEnabled) {
+  if (!isMessageCampaignEnabled) {
     return <NotFound />;
   }
 

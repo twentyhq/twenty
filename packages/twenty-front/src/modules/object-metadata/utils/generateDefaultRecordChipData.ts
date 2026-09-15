@@ -15,7 +15,7 @@ export const generateDefaultRecordChipData = ({
     : (record.name ?? '');
 
   return {
-    avatarType: 'rounded',
+    avatarShape: 'circle',
     avatarUrl: name,
     isLabelIdentifier: false,
     name,

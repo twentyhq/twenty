@@ -71,9 +71,10 @@ export const SettingsApplicationConnectionsSection = ({
               adornment={
                 isNonEmptyString(provider.logoUrl) ? (
                   <Avatar
-                    type="app"
-                    avatarUrl={getAbsoluteImageUrl(provider.logoUrl)}
-                    placeholder={provider.displayName}
+                    shape="square"
+                    variant="outline"
+                    src={getAbsoluteImageUrl(provider.logoUrl)}
+                    name={provider.displayName}
                   />
                 ) : undefined
               }
@@ -112,6 +113,7 @@ export const SettingsApplicationConnectionsSection = ({
                       )}
                     >
                       <TableCell
+                        color={themeCssVariables.font.color.primary}
                         clickable
                         minWidth="0"
                         overflow="hidden"

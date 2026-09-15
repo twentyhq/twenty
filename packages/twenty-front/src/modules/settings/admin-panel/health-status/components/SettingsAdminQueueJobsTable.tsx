@@ -318,6 +318,7 @@ export const SettingsAdminQueueJobsTable = ({
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell
+                        color={themeCssVariables.font.color.primary}
                         title={job.name}
                         maxWidth="200px"
                         overflow="hidden"

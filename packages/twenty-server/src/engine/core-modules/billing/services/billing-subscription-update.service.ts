@@ -806,6 +806,10 @@ export class BillingSubscriptionUpdateService {
 
     assertIsDefinedOrThrow(currentBillingProduct);
 
+    const currentPlanKey = currentBillingProduct.metadata.planKey;
+
+    assertIsDefinedOrThrow(currentPlanKey);
+
     if (currentInterval === newInterval) {
       return currentPrices;
     }
@@ -820,22 +824,23 @@ export class BillingSubscriptionUpdateService {
     const currentResourceCreditPrice =
       await this.billingPriceRepository.findOneOrFail({
         where: { stripePriceId: currentPrices.resourceCreditPriceId },
-        relations: ['billingProduct', 'billingProduct.billingPrices'],
+        relations: ['billingProduct'],
       });
 
     billingValidator.assertIsLicensedResourceCreditPrice(
       currentResourceCreditPrice,
     );
 
-    const currentResourceCreditProduct =
-      currentResourceCreditPrice.billingProduct;
-
-    assertIsDefinedOrThrow(currentResourceCreditProduct);
-
-    const targetResourceCreditPrice = findProductPriceForIntervalOrThrow(
-      currentResourceCreditProduct,
-      newInterval,
-    );
+    // Resource credit has one price per package, not per interval, so match the
+    // equivalent package scaled for the interval change.
+    const targetResourceCreditPrice =
+      await this.billingPriceService.findEquivalentResourceCreditPrice({
+        referencePrice: currentResourceCreditPrice,
+        targetInterval: newInterval,
+        targetPlanKey: currentPlanKey,
+        hasSameInterval: false,
+        hasSamePlanKey: true,
+      });
 
     return {
       ...currentPrices,

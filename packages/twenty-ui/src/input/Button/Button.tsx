@@ -39,6 +39,7 @@ export type ButtonProps = {
   dataTestId?: string;
   hotkeys?: string[];
   ariaLabel?: string;
+  ariaExpanded?: boolean;
   isLoading?: boolean;
 } & Pick<React.ComponentProps<'button'>, 'type'> &
   ClickOutsideAttributes;
@@ -66,6 +67,7 @@ export const Button = ({
   dataGloballyPreventClickOutside,
   hotkeys,
   ariaLabel,
+  ariaExpanded,
   type,
   isLoading = false,
 }: ButtonProps) => {
@@ -110,6 +112,7 @@ export const Button = ({
         data-click-outside-id={dataClickOutsideId}
         data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
         aria-label={ariaLabel}
+        aria-expanded={ariaExpanded}
         type={type}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}

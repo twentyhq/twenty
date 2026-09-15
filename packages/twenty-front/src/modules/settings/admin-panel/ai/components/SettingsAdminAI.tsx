@@ -32,6 +32,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
 import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
@@ -202,30 +203,32 @@ export const SettingsAdminAI = () => {
           />
 
           <Card rounded>
-            {AI_MODEL_TIERS.map((tier, index) => (
-              <SettingsOptionCardContentSelect
-                key={tier}
-                title={getAiModelTierLabel(tier)}
-                divider={index < AI_MODEL_TIERS.length - 1}
-              >
-                <AiModelPinSelect
-                  dropdownId={`admin-default-model-select-${tier}`}
-                  modelId={
-                    defaultModelByTier.find(
-                      (defaultModel) => defaultModel.tier === tier,
-                    )?.modelId ?? null
-                  }
-                  onChange={(modelId) => {
-                    if (isDefined(modelId)) {
-                      void handleDefaultModelChange(tier, modelId);
+            <StyledSettingsSelectGroup controlWidth={260}>
+              {AI_MODEL_TIERS.map((tier, index) => (
+                <SettingsOptionCardContentSelect
+                  key={tier}
+                  title={getAiModelTierLabel(tier)}
+                  divider={index < AI_MODEL_TIERS.length - 1}
+                >
+                  <AiModelPinSelect
+                    dropdownId={`admin-default-model-select-${tier}`}
+                    modelId={
+                      defaultModelByTier.find(
+                        (defaultModel) => defaultModel.tier === tier,
+                      )?.modelId ?? null
                     }
-                  }}
-                  aiModels={enabledModels}
-                  selectSizeVariant="small"
-                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-                />
-              </SettingsOptionCardContentSelect>
-            ))}
+                    onChange={(modelId) => {
+                      if (isDefined(modelId)) {
+                        void handleDefaultModelChange(tier, modelId);
+                      }
+                    }}
+                    aiModels={enabledModels}
+                    selectSizeVariant="small"
+                    dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+                  />
+                </SettingsOptionCardContentSelect>
+              ))}
+            </StyledSettingsSelectGroup>
           </Card>
         </Section>
       )}
@@ -302,8 +305,8 @@ export const SettingsAdminAI = () => {
           )
         ) : (
           <SettingsEnterpriseFeatureGateCard
-            title={t`Enterprise feature`}
-            description={t`AI usage analytics across workspaces is available with an Enterprise key.`}
+            title={t`Organization feature`}
+            description={t`AI usage analytics across workspaces is available with an Organization key.`}
             buttonTitle={t`Activate`}
           />
         )}
