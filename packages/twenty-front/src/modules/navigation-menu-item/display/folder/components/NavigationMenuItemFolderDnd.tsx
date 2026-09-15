@@ -1,3 +1,4 @@
+import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
@@ -102,6 +103,10 @@ export const NavigationMenuItemFolderDnd = ({
   const { t } = useLingui();
   const { getIcon } = useIcons();
   const isMobile = useIsMobile();
+  const isNavigationDrawerExpanded = useAtomStateValue(
+    isNavigationDrawerExpandedState,
+  );
+  const isExpanded = isNavigationDrawerExpanded || isMobile;
 
   const section: NavigationMenuItemSection = isEditInPlace
     ? 'favorite'
@@ -216,6 +221,9 @@ export const NavigationMenuItemFolderDnd = ({
         (!isOpen && hasActiveChild) ||
         (isWorkspace && isSelectedInEditMode && !isOpen)
       }
+      isSelectedInEditMode={
+        isWorkspace && isFolderEditHighlighted && !isExpanded
+      }
       onClick={handleHeaderClick}
       rightOptions={headerRightOptions}
       className="navigation-drawer-item"
@@ -297,7 +305,9 @@ export const NavigationMenuItemFolderDnd = ({
   return (
     <>
       <StyledFolderContainer
-        $isSelectedInEditMode={isWorkspace && isFolderEditHighlighted}
+        $isSelectedInEditMode={
+          isWorkspace && isFolderEditHighlighted && isExpanded
+        }
         data-drag-over-header={isDragOverFolderHeader ? 'true' : undefined}
         data-forbidden-drop-target={isForbiddenDropTarget ? 'true' : undefined}
       >
