@@ -35,6 +35,7 @@ import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSe
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
 import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
+import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -59,24 +60,6 @@ const StyledTrigger = styled.button`
   &:focus-visible {
     outline: 2px solid ${themeCssVariables.color.blue};
   }
-`;
-
-const StyledHoverCard = styled.div`
-  backdrop-filter: blur(20px);
-  background: ${themeCssVariables.background.transparent.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-shadow: ${themeCssVariables.boxShadow.strong};
-  max-width: calc(100vw - 16px);
-  width: 300px;
-  z-index: ${themeCssVariables.lastLayerZIndex};
-`;
-
-const StyledRows = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledFooter = styled.div`
@@ -179,71 +162,69 @@ export const AiChatContextUsageButton = () => {
       </StyledTrigger>
       {isMounted && (
         <FloatingPortal>
-          <StyledHoverCard
+          <StyledInformationCard
             ref={refs.setFloating}
             style={{ ...floatingStyles, ...transitionStyles }}
             aria-label={t`Context and usage`}
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...getFloatingProps()}
           >
-            <StyledRows>
+            <UsageProgressRow
+              Icon={IconWindow}
+              label={t`Context window`}
+              value={percentage}
+              valueLabel={
+                contextWindow > 0
+                  ? `(${formatTokens(conversationSize)}/${formatTokens(contextWindow)}) ${formatNumber(percentage, { decimals: 1 })}%`
+                  : t`Not available`
+              }
+              barColor={getUsageLimitRingColor({
+                consumedPercentage: percentage,
+                isExhausted: percentage >= 100,
+              })}
+            />
+            {!isWorkspaceSetupChat && (
               <UsageProgressRow
-                Icon={IconWindow}
-                label={t`Context window`}
-                value={percentage}
+                Icon={IconGauge}
+                label={t`Usage`}
+                value={
+                  loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
+                }
                 valueLabel={
-                  contextWindow > 0
-                    ? `(${formatTokens(conversationSize)}/${formatTokens(contextWindow)}) ${formatNumber(percentage, { decimals: 1 })}%`
-                    : t`Not available`
+                  loading
+                    ? t`Loading…`
+                    : isDefined(error)
+                      ? t`Not available`
+                      : !isDefined(creditUsage)
+                        ? t`No limit`
+                        : isDefined(daysUntilReset) &&
+                            isDefined(creditPercentage)
+                          ? t`Reset in ${daysUntilReset} days (${formatNumber(creditPercentage, { decimals: 1 })}%)`
+                          : !isDefined(creditPercentage)
+                            ? '—'
+                            : undefined
                 }
                 barColor={getUsageLimitRingColor({
-                  consumedPercentage: percentage,
-                  isExhausted: percentage >= 100,
+                  consumedPercentage: creditPercentage ?? 0,
+                  isExhausted: creditPercentage === 100,
                 })}
               />
-              {!isWorkspaceSetupChat && (
-                <UsageProgressRow
-                  Icon={IconGauge}
-                  label={t`Usage`}
-                  value={
-                    loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
-                  }
-                  valueLabel={
-                    loading
-                      ? t`Loading…`
-                      : isDefined(error)
-                        ? t`Not available`
-                        : !isDefined(creditUsage)
-                          ? t`No limit`
-                          : isDefined(daysUntilReset) &&
-                              isDefined(creditPercentage)
-                            ? t`Reset in ${daysUntilReset} days (${formatNumber(creditPercentage, { decimals: 1 })}%)`
-                            : !isDefined(creditPercentage)
-                              ? '—'
-                              : undefined
-                  }
-                  barColor={getUsageLimitRingColor({
-                    consumedPercentage: creditPercentage ?? 0,
-                    isExhausted: creditPercentage === 100,
-                  })}
-                />
-              )}
-              {showDetails && <AiChatContextUsageDetails />}
-              {isDefined(agentChatUsage) && (
-                <>
-                  <HorizontalSeparator noMargin />
-                  <StyledFooter>
-                    <Button
-                      title={showDetails ? t`Less` : t`More`}
-                      size="small"
-                      variant="secondary"
-                      onClick={() => setShowDetails(!showDetails)}
-                    />
-                  </StyledFooter>
-                </>
-              )}
-            </StyledRows>
-          </StyledHoverCard>
+            )}
+            {showDetails && <AiChatContextUsageDetails />}
+            {isDefined(agentChatUsage) && (
+              <>
+                <HorizontalSeparator noMargin />
+                <StyledFooter>
+                  <Button
+                    title={showDetails ? t`Less` : t`More`}
+                    size="small"
+                    variant="secondary"
+                    onClick={() => setShowDetails(!showDetails)}
+                  />
+                </StyledFooter>
+              </>
+            )}
+          </StyledInformationCard>
         </FloatingPortal>
       )}
     </>
