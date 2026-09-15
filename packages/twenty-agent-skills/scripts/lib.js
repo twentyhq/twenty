@@ -212,27 +212,6 @@ const diffDirectories = ({ expectedRoot, actualRoot }) => {
   return differences;
 };
 
-const parseSkillFrontmatter = (skillPath) => {
-  const contents = readText(skillPath);
-  const match = contents.match(/^---\n([\s\S]*?)\n---\n/);
-
-  if (!match) {
-    return undefined;
-  }
-
-  const frontmatter = {};
-
-  for (const line of match[1].split('\n')) {
-    const fieldMatch = line.match(/^([a-zA-Z0-9_-]+):\s*(.*)$/);
-
-    if (fieldMatch) {
-      frontmatter[fieldMatch[1]] = fieldMatch[2].replace(/^["']|["']$/g, '');
-    }
-  }
-
-  return frontmatter;
-};
-
 module.exports = {
   PACKAGE_ROOT,
   CODEX_PLUGIN_ROOT,
@@ -245,5 +224,4 @@ module.exports = {
   resolveReferenceClosure,
   buildPortableSkills,
   diffDirectories,
-  parseSkillFrontmatter,
 };

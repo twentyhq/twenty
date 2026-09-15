@@ -3,15 +3,10 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const {
-  PACKAGE_ROOT,
-  PORTABLE_SKILLS,
-  readText,
-  listFiles,
-  parseSkillFrontmatter,
-} = require('./lib');
+const { PACKAGE_ROOT, PORTABLE_SKILLS, readText, listFiles } = require('./lib');
 const {
   isAllowedDocumentationHost,
+  parseSkillFrontmatter,
 } = require('../../twenty-codex-plugin/scripts/validators/lib');
 
 // The portable skills must work after `npx skills add` copies a single skill
