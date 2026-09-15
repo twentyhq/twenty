@@ -3756,11 +3756,6 @@ msgstr "German"
 msgid "Germany 🇩🇪"
 msgstr "Germany 🇩🇪"
 
-#. js-lingui-id: W85I60
-#: src/sections/pricing-plans/plans-data.ts
-msgid "Get a license"
-msgstr "Get a license"
-
 #. js-lingui-id: WoPlNk
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners."
@@ -5616,10 +5611,10 @@ msgstr "Open case study: {0}"
 msgid "Open menu"
 msgstr "Open menu"
 
-#. js-lingui-id: xxpabu
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Enterprise."
-msgstr "Open your Twenty self-hosted instance Settings → Admin Panel → Enterprise."
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
+msgstr "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -7176,6 +7171,7 @@ msgid "Start automating at huge scale!"
 msgstr "Start automating at huge scale!"
 
 #. js-lingui-id: XO628f
+#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts

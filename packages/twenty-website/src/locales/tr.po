@@ -3761,11 +3761,6 @@ msgstr "Almanca"
 msgid "Germany 🇩🇪"
 msgstr "Almanya 🇩🇪"
 
-#. js-lingui-id: W85I60
-#: src/sections/pricing-plans/plans-data.ts
-msgid "Get a license"
-msgstr "Lisans alın"
-
 #. js-lingui-id: WoPlNk
 #: src/sections/partner-hero/PartnerHero.tsx
 msgid "Get certified as a Twenty partner: a vetted badge, a directory profile your clients can check, and matched client briefs for the best partners."
@@ -5621,10 +5616,10 @@ msgstr "Vaka çalışmasını aç: {0}"
 msgid "Open menu"
 msgstr "Menüyü aç"
 
-#. js-lingui-id: xxpabu
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Enterprise."
-msgstr "Twenty self-hosted örneğinizin Ayarlar → Yönetici Paneli → Enterprise bölümünü açın."
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
+msgstr ""
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -7181,6 +7176,7 @@ msgid "Start automating at huge scale!"
 msgstr "Büyük ölçekte otomatikleştirmeye başlayın!"
 
 #. js-lingui-id: XO628f
+#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
