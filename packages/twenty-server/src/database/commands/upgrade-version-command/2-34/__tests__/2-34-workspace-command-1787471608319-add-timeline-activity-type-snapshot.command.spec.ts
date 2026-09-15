@@ -76,11 +76,12 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
       total: 1,
     });
 
-    expect(query).toHaveBeenCalledTimes(2);
-    expect(query.mock.calls[0][0]).toContain(
+    expect(query).toHaveBeenCalledTimes(3);
+    expect(query.mock.calls[0][0]).toContain('information_schema.columns');
+    expect(query.mock.calls[1][0]).toContain(
       'WHERE "timelineActivityTypeId" IS NULL',
     );
-    expect(query.mock.calls[1][0]).toContain(
+    expect(query.mock.calls[2][0]).toContain(
       'WHERE timeline_activity."timelineActivityTypeSnapshot" IS NULL',
     );
 
@@ -101,6 +102,8 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
       'ffffffff-ffff-4fff-8fff-ffffffffffff';
     const query = jest
       .fn()
+      // Fork guard probes the timelineActivity.name column first.
+      .mockResolvedValueOnce([{ exists: 1 }])
       .mockResolvedValueOnce([[], 0])
       .mockResolvedValueOnce([
         Array.from({ length: 5000 }, () => ({ id: lastTimelineActivityId })),
@@ -163,8 +166,8 @@ describe('AddTimelineActivityTypeSnapshotCommand', () => {
       total: 1,
     });
 
-    expect(query).toHaveBeenCalledTimes(3);
-    expect(query.mock.calls[1][1]).toEqual([null, 5000]);
-    expect(query.mock.calls[2][1]).toEqual([lastTimelineActivityId, 5000]);
+    expect(query).toHaveBeenCalledTimes(4);
+    expect(query.mock.calls[2][1]).toEqual([null, 5000]);
+    expect(query.mock.calls[3][1]).toEqual([lastTimelineActivityId, 5000]);
   });
 });
