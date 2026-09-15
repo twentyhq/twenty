@@ -106,6 +106,23 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
       return;
     }
 
+    // Without that field upsertToCore cannot write the generated core ids back,
+    // so every run would leave a fresh set of orphan core versions behind.
+    const hasCoreWorkflowVersionIdField = isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.workflowVersion.fields.coreWorkflowVersionId
+          .universalIdentifier
+      ],
+    );
+
+    if (!hasCoreWorkflowVersionIdField) {
+      this.logger.warn(
+        `${isDryRun ? '[DRY RUN] ' : ''}Normalized rich text record fields in ${rewrittenCount} workflow version(s) for workspace ${workspaceId}; workflowVersion.coreWorkflowVersionId is missing, skipping the core sync`,
+      );
+
+      return;
+    }
+
     if (!isDryRun) {
       await this.workflowVersionCoreSyncService.upsertToCore(
         workspaceId,

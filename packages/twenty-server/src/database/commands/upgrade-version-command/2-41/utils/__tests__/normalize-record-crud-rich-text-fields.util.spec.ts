@@ -2,21 +2,29 @@ import { normalizeRecordCrudRichTextFieldsInSteps } from 'src/database/commands/
 
 const richTextFieldNamesByObjectName = { person: ['relationshipSummary'] };
 
-const buildStep = (objectRecord: Record<string, unknown>) => ({
+const buildStep = (
+  objectRecord: Record<string, unknown>,
+  type = 'CREATE_RECORD',
+) => ({
   id: 'step-1',
   name: 'Create person',
-  type: 'CREATE_RECORD',
+  type,
   settings: { input: { objectName: 'person', objectRecord } },
 });
 
 describe('normalizeRecordCrudRichTextFieldsInSteps', () => {
-  it('wraps a bare-string rich text field into the markdown object shape', () => {
-    const steps = [
-      buildStep({
-        name: 'Amina',
-        relationshipSummary: 'Latest donation: {{trigger.body.amount}}',
-      }),
-    ];
+  it.each(['CREATE_RECORD', 'UPDATE_RECORD', 'UPSERT_RECORD'])(
+    'wraps a bare-string rich text field into the markdown object shape in a %s step',
+    (type) => {
+      const steps = [
+        buildStep(
+          {
+            name: 'Amina',
+            relationshipSummary: 'Latest donation: {{trigger.body.amount}}',
+          },
+          type,
+        ),
+      ];
 
     const { value, hasChanged, isRecordCrudRichTextCandidate } =
       normalizeRecordCrudRichTextFieldsInSteps({
