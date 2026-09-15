@@ -2,16 +2,16 @@ import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 import { type MouseEvent, useState } from 'react';
 
-import { ProgressBar } from '@ui/feedback/ProgressBar/ProgressBar';
+import { ProgressBar } from '@ui/primitives/feedback/ProgressBar/ProgressBar';
 import {
   IconAlertTriangle,
   IconInfoCircle,
   IconSquareRoundedCheck,
   IconX,
 } from '@ui/icon';
-import { LightButton } from '@ui/input/LightButton/LightButton';
-import { LightIconButton } from '@ui/input/LightIconButton/LightIconButton';
-import { HorizontalSeparator } from '@ui/layout/HorizontalSeparator/HorizontalSeparator';
+import { LightButton } from '@ui/primitives/input/LightButton/LightButton';
+import { LightIconButton } from '@ui/primitives/input/LightIconButton/LightIconButton';
+import { HorizontalSeparator } from '@ui/primitives/layout/HorizontalSeparator/HorizontalSeparator';
 import { useTheme } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 

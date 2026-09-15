@@ -9,7 +9,7 @@ import {
 } from '@ui/testing';
 
 import { Textarea } from '@ui/primitives/input/Textarea/Textarea';
-import { type InputSize } from '@ui/input/types/InputSize';
+import { type InputSize } from '@ui/primitives/input/types/InputSize';
 
 const meta: Meta<typeof Textarea> = {
   title: 'UI/Input/Textarea',

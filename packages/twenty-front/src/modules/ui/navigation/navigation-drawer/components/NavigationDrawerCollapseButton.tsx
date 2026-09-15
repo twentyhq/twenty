@@ -4,8 +4,12 @@ import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigatio
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useId } from 'react';
-import { LightIconButton } from 'twenty-ui/input';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import { LightIconButton } from 'twenty-ui/primitives/input';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCollapseButton = styled.div`

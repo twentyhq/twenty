@@ -12,7 +12,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { Checkbox, Switch } from 'twenty-ui/primitives/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 

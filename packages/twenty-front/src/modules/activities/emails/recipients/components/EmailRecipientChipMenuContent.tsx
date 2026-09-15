@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { MenuItem, MenuItemAvatar } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemAvatar } from 'twenty-ui/primitives/navigation';
 
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
 import { type EmailRecipient } from '@/activities/emails/recipients/types/EmailRecipient';

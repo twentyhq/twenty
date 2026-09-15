@@ -8,8 +8,12 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon, LinkChip } from 'twenty-ui/data-display';
-import { Chip, type ChipSize } from 'twenty-ui/primitives/data-display';
+import {
+  AvatarOrIcon,
+  LinkChip,
+  Chip,
+  type ChipSize,
+} from 'twenty-ui/primitives/data-display';
 import { type TriggerEventType } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {

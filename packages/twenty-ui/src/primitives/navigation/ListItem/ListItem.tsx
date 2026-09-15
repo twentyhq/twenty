@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { type MouseEvent } from 'react';
 
 import { IconCheck, IconChevronRight } from '@ui/icon';
-import { MenuItemHotKeys } from '@ui/navigation/MenuItemHotKeys/MenuItemHotKeys';
+import { MenuItemHotKeys } from '@ui/primitives/navigation/MenuItemHotKeys/MenuItemHotKeys';
 
 import { isRenderableSlot } from './internal/isRenderableSlot';
 import { ListItemCheckboxIndicator } from './internal/ListItemCheckboxIndicator';

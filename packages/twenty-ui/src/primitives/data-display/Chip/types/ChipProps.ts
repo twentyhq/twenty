@@ -1,7 +1,7 @@
 import { type useRender } from '@base-ui/react/use-render';
 import { type ReactNode } from 'react';
 
-import { type TooltipPosition } from '@ui/surfaces/AppTooltip/AppTooltip';
+import { type TooltipPosition } from '@ui/primitives/surfaces/AppTooltip/AppTooltip';
 
 import { type ChipSize } from './ChipSize';
 import { type ChipVariant } from './ChipVariant';

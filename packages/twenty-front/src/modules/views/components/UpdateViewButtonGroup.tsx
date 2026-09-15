@@ -23,8 +23,8 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { t } from '@lingui/core/macro';
 import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
-import { Button, ButtonGroup, IconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Button, ButtonGroup, IconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`

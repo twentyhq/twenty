@@ -1,7 +1,7 @@
 import { type useRender } from '@base-ui/react/use-render';
 import { type ReactNode } from 'react';
 
-import { type InputSize } from '@ui/input/types/InputSize';
+import { type InputSize } from '@ui/primitives/input/types/InputSize';
 
 export type InputGroupProps = useRender.ComponentProps<'div'> & {
   /** Visual size of the group and its input. */

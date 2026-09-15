@@ -7,7 +7,7 @@ import {
   Avatar,
   type AvatarProps,
 } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const HEADER_IDENTIFIER_TILE_SIZE = AVATAR_PROPERTIES_BY_SIZE.lg.width;

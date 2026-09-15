@@ -4,8 +4,8 @@ import { useLingui } from '@lingui/react/macro';
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Toast } from 'twenty-ui/primitives/feedback';
-import { LightButton } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { LightButton } from 'twenty-ui/primitives/input';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 export enum SnackBarVariant {
   Default = 'default',

@@ -1,11 +1,11 @@
 import { styled } from '@linaria/react';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
-import { H3Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
+import { H3Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';

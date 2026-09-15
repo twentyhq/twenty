@@ -27,8 +27,6 @@ import {
   StyledTabContainer,
   TabButton,
   TabContent,
-} from 'twenty-ui/input';
-import {
   CardPicker,
   Checkbox,
   Radio,
@@ -260,7 +258,10 @@ const INPUT_ENTRIES: GalleryEntry[] = [
 
 const InputGallery = () => (
   <ThemeProvider colorScheme="light">
-    <ComponentGallery title="twenty-ui/input" entries={INPUT_ENTRIES} />
+    <ComponentGallery
+      title="twenty-ui/primitives/input"
+      entries={INPUT_ENTRIES}
+    />
   </ThemeProvider>
 );
 
@@ -268,6 +269,6 @@ export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000107',
   name: 'twenty-ui-input-gallery',
   description:
-    'Renders every twenty-ui/input component (except monaco CodeEditor) in the sandbox',
+    'Renders every twenty-ui/primitives/input component (except monaco CodeEditor) in the sandbox',
   component: InputGallery,
 });

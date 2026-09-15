@@ -12,7 +12,7 @@ import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 const StyledIconChevronDownContainer = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;

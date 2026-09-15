@@ -24,10 +24,10 @@ import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam'
 import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { IconButton } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { IconButton } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';

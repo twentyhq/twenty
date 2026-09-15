@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
-import styles from '@ui/surfaces/internal/Dialog.module.scss';
+import styles from '@ui/primitives/surfaces/internal/Dialog.module.scss';
 import { AlertDialog } from '../AlertDialog';
 
 const AlertDialogRootWrapper = ({ children }: { children: ReactNode }) => (

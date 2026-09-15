@@ -37,12 +37,12 @@ import {
   IconSwitchHorizontal,
   IconUserPlus,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import {
   MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/navigation';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

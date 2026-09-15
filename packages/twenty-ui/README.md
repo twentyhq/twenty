@@ -22,7 +22,7 @@ Import the base styles once, pick a theme stylesheet, and wrap your app in `Them
 
 ```tsx
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
@@ -38,7 +38,7 @@ Components are available from the root entry point or from a specific subpath fo
 
 ```tsx
 import { Button } from 'twenty-ui';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 ```
 
 # Entry points
@@ -46,28 +46,22 @@ import { Button } from 'twenty-ui/input';
 | Subpath | Contents |
 | --- | --- |
 | `twenty-ui` | All components, icons, theme tokens, and utilities |
-| `twenty-ui/accessibility` | Accessibility helpers |
 | `twenty-ui/assets` | Logos and static assets |
 | `twenty-ui/components` | Reserved for reusable app building blocks |
-| `twenty-ui/data-display` | Display helpers and composed displays |
-| `twenty-ui/feedback` | Progress bars, loaders, and status feedback |
 | `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/input` | Buttons and additional inputs |
-| `twenty-ui/json-visualizer` | JSON tree viewer |
-| `twenty-ui/layout` | Layout primitives |
-| `twenty-ui/navigation` | Menus, links, and navigation components |
-| `twenty-ui/primitives` | All primitive families |
-| `twenty-ui/primitives/data-display` | Avatar, Chip, Tag, and Status |
-| `twenty-ui/primitives/feedback` | Toast |
-| `twenty-ui/primitives/input` | Form controls |
-| `twenty-ui/primitives/navigation` | ListItem and Tabs |
-| `twenty-ui/primitives/surfaces` | AlertDialog, Menu, and Popover |
-| `twenty-ui/primitives/typography` | Text |
-| `twenty-ui/surfaces` | Cards, tooltips, and surface components |
+| `twenty-ui/primitives` | All existing UI component families |
+| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |
+| `twenty-ui/primitives/data-display` | Avatars, chips, tags, status indicators, and display helpers |
+| `twenty-ui/primitives/feedback` | Toasts, banners, progress bars, and loaders |
+| `twenty-ui/primitives/input` | Buttons, form controls, pickers, and code editors |
+| `twenty-ui/primitives/json-visualizer` | JSON tree viewer |
+| `twenty-ui/primitives/layout` | Layout, animation, resizing, and section components |
+| `twenty-ui/primitives/navigation` | Links, list items, menus, and tabs |
+| `twenty-ui/primitives/surfaces` | Cards, dialogs, menus, popovers, and tooltips |
+| `twenty-ui/primitives/typography` | Text, headings, labels, and typography helpers |
 | `twenty-ui/testing` | Storybook and test decorators |
 | `twenty-ui/theme` | Theme types and helpers |
 | `twenty-ui/theme-constants` | Design tokens, `ThemeProvider`, and `useTheme` |
-| `twenty-ui/typography` | Headings and typography helpers |
 | `twenty-ui/utilities` | Hooks and shared utilities |
 
 # Theming

@@ -2,7 +2,7 @@ import { useApplicationChipData } from '@/applications/hooks/useApplicationChipD
 import { styled } from '@linaria/react';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppChipProps = {

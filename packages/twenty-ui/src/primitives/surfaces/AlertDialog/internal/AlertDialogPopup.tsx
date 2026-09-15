@@ -4,7 +4,7 @@ import { useDirection } from '@base-ui/react/direction-provider';
 import { useThemeContainer } from '@ui/theme-constants';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
-import styles from '@ui/surfaces/internal/Dialog.module.scss';
+import styles from '@ui/primitives/surfaces/internal/Dialog.module.scss';
 import { type AlertDialogPopupProps } from '../types/AlertDialogPopupProps';
 
 export const AlertDialogPopup = ({

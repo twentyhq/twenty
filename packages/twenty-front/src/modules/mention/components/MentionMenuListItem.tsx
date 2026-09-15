@@ -3,7 +3,7 @@ import { type MouseEvent } from 'react';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemSuggestion } from 'twenty-ui/navigation';
+import { MenuItemSuggestion } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type MentionMenuListItemProps = {

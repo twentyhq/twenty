@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useId } from 'react';
-import { CardContent } from 'twenty-ui/surfaces';
+import { CardContent } from 'twenty-ui/primitives/surfaces';
 import { type IconComponent } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

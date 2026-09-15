@@ -13,7 +13,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItem, MenuItemMultiSelectAvatar } from 'twenty-ui/navigation';
+import {
+  MenuItem,
+  MenuItemMultiSelectAvatar,
+} from 'twenty-ui/primitives/navigation';
 
 export const MultipleSelectDropdown = ({
   selectableListId,

@@ -12,7 +12,7 @@ import { IconSearch } from '@ui/icon';
 import { Input } from '@ui/primitives/input/Input/Input';
 import inputStyles from '@ui/primitives/input/Input/Input.module.scss';
 import { InputGroup } from '@ui/primitives/input/InputGroup/InputGroup';
-import { type InputSize } from '@ui/input/types/InputSize';
+import { type InputSize } from '@ui/primitives/input/types/InputSize';
 
 const meta: Meta<typeof InputGroup> = {
   title: 'UI/Input/InputGroup',

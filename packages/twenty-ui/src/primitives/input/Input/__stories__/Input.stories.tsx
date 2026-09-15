@@ -10,7 +10,7 @@ import {
 
 import { Field } from '@ui/primitives/input/Field/Field';
 import { Input } from '@ui/primitives/input/Input/Input';
-import { type InputSize } from '@ui/input/types/InputSize';
+import { type InputSize } from '@ui/primitives/input/types/InputSize';
 
 const meta: Meta<typeof Input> = {
   title: 'UI/Input/Input',

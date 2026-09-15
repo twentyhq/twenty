@@ -5,7 +5,7 @@ import { MemoryRouter, Route, Routes } from 'react-router-dom';
 // Mock component that just renders the error state of VerifyEmail directly
 // (since normal VerifyEmail has async logic that's hard to test in Storybook)
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const VerifyEmailErrorState = ({ email = 'user@example.com' }) => {

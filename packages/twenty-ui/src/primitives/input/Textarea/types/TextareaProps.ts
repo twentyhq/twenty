@@ -1,7 +1,7 @@
 import { type Input as InputPrimitive } from '@base-ui/react/input';
 import { type useRender } from '@base-ui/react/use-render';
 
-import { type InputSize } from '@ui/input/types/InputSize';
+import { type InputSize } from '@ui/primitives/input/types/InputSize';
 
 export type TextareaProps = Omit<
   useRender.ComponentProps<'textarea'>,

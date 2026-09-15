@@ -3,7 +3,7 @@ import { useContext } from 'react';
 import { IconReload, IconX } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedRotate } from 'twenty-ui/layout';
+import { AnimatedRotate } from 'twenty-ui/primitives/layout';
 
 export type OverridableCheckboxType = 'default' | 'override' | 'no_cta';
 

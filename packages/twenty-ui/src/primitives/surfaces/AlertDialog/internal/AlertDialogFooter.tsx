@@ -1,7 +1,7 @@
 import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 
-import styles from '@ui/surfaces/internal/Dialog.module.scss';
+import styles from '@ui/primitives/surfaces/internal/Dialog.module.scss';
 import { type AlertDialogFooterProps } from '../types/AlertDialogFooterProps';
 
 export const AlertDialogFooter = ({

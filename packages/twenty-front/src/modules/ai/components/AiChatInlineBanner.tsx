@@ -1,5 +1,5 @@
 import { type ComponentProps } from 'react';
-import { InlineBanner } from 'twenty-ui/feedback';
+import { InlineBanner } from 'twenty-ui/primitives/feedback';
 
 type AiChatInlineBannerProps = Pick<
   ComponentProps<typeof InlineBanner>,

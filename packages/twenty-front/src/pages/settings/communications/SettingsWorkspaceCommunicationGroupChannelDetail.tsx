@@ -29,9 +29,9 @@ import {
 } from '~/generated-metadata/graphql';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { NotFound } from '~/pages/not-found/NotFound';

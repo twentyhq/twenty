@@ -5,7 +5,7 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type RecordTableWidgetRelationPickerMenuItemProps = {

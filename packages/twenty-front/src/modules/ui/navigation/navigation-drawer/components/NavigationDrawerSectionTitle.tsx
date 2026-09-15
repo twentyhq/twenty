@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { Label } from 'twenty-ui/typography';
+import { Label } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTitle = styled.div`

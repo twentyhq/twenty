@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconBell } from '@ui/icon';
-import { LightButton } from '@ui/input/LightButton/LightButton';
+import { LightButton } from '@ui/primitives/input/LightButton/LightButton';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,

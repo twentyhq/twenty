@@ -20,7 +20,7 @@ import {
   IconMicrosoft,
   IconPassword,
 } from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import {

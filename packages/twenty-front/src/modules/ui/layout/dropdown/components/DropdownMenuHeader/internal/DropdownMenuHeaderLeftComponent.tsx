@@ -5,7 +5,7 @@ import {
   type AvatarProps,
 } from 'twenty-ui/primitives/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNonClickableStartIcon = styled.div`

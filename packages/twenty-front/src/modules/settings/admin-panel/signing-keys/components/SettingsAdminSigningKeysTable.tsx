@@ -14,8 +14,8 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { IconCopy } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Button } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetSigningKeysDocument,

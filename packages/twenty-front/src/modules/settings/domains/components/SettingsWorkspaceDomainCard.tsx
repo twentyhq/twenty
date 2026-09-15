@@ -9,7 +9,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { IconWorld, IconWorldWww } from 'twenty-ui/icon';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`

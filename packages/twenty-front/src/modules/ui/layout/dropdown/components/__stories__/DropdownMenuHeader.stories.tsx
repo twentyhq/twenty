@@ -7,7 +7,7 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronLeft, IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { AVATAR_URL_MOCK, ComponentDecorator } from 'twenty-ui/testing';
 
 const meta: Meta<typeof DropdownMenuHeader> = {

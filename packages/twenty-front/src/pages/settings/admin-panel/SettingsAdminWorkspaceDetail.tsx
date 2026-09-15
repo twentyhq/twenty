@@ -41,8 +41,8 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { Switch } from 'twenty-ui/primitives/input';
-import { Text } from 'twenty-ui/primitives/typography';
+import { Switch, Button } from 'twenty-ui/primitives/input';
+import { Text, H2Title } from 'twenty-ui/primitives/typography';
 import {
   IconCreditCard,
   IconEyeShare,
@@ -55,10 +55,8 @@ import {
   Card,
   OverflowingTextWithTooltip,
   TooltipPosition,
-} from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+} from 'twenty-ui/primitives/surfaces';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import {

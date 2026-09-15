@@ -3,7 +3,7 @@ import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
 
-import { Loader } from '@ui/feedback/Loader/Loader';
+import { Loader } from '@ui/primitives/feedback/Loader/Loader';
 import { themeCssVariables } from '@ui/theme-constants';
 import { parseThemeColor } from '@ui/utilities';
 import { isDefined } from '@ui/utilities/utils/isDefined';

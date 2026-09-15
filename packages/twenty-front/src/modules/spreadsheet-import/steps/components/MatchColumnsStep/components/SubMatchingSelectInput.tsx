@@ -4,8 +4,8 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useMemo, useRef, useState } from 'react';
 import { type TagColor } from 'twenty-ui/primitives/data-display';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelectTag } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { MenuItemSelectTag } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 interface SubMatchingSelectInputProps {

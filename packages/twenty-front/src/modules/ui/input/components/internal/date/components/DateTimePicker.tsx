@@ -24,7 +24,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-datepicker/dist/react-datepicker.css';
 
 import { IconCalendarX } from 'twenty-ui/icon';
-import { MenuItemLeftContent } from 'twenty-ui/navigation';
+import { MenuItemLeftContent } from 'twenty-ui/primitives/navigation';
 
 import { useGetShiftedDateToSystemTimeZone } from '@/ui/input/components/internal/date/hooks/useGetShiftedDateToSystemTimeZone';
 import { useUserFirstDayOfTheWeek } from '@/ui/input/components/internal/date/hooks/useUserFirstDayOfTheWeek';

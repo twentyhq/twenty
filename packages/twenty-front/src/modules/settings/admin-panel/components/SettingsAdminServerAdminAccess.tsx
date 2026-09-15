@@ -16,8 +16,8 @@ import { OTPInput } from 'input-otp';
 import { useState } from 'react';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetServerAdminsDocument,

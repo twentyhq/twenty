@@ -68,25 +68,19 @@ const twentySharedAliases = Object.fromEntries(
 );
 
 const TWENTY_UI_SUBMODULES = [
-  'accessibility',
   'components',
-  'data-display',
-  'feedback',
   'icon',
-  'input',
-  'json-visualizer',
-  'layout',
-  'navigation',
   'primitives',
+  'primitives/accessibility',
   'primitives/data-display',
   'primitives/feedback',
   'primitives/input',
+  'primitives/json-visualizer',
+  'primitives/layout',
   'primitives/navigation',
   'primitives/surfaces',
   'primitives/typography',
-  'surfaces',
   'theme-constants',
-  'typography',
   'utilities',
 ];
 

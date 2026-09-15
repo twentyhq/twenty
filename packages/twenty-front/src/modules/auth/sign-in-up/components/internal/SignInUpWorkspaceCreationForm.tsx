@@ -17,7 +17,11 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
-import { Button, LightIconButton, MainButton } from 'twenty-ui/input';
+import {
+  Button,
+  LightIconButton,
+  MainButton,
+} from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContentContainer = styled.div`

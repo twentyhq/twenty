@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useContext } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { AnimatedCheckmark } from 'twenty-ui/data-display';
+import { AnimatedCheckmark } from 'twenty-ui/primitives/data-display';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
