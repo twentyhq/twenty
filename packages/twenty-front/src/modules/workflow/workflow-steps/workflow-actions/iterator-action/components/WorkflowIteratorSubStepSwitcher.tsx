@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`

@@ -7,7 +7,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { FindOneApplicationRegistrationDocument } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
-import { Avatar, Tag } from 'twenty-ui/data-display';
+import { Avatar, Tag } from 'twenty-ui/primitives/data-display';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   IconInfoCircle,

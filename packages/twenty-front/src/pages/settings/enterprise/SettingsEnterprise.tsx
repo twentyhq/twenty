@@ -15,7 +15,7 @@ import {
 } from '@/settings/enterprise/components/EnterprisePlanModal';
 import { REFRESH_ENTERPRISE_VALIDITY_TOKEN } from '@/settings/enterprise/graphql/mutations/refreshEnterpriseValidityToken';
 import { RELEASE_ENTERPRISE_SERVER_BINDING } from '@/settings/enterprise/graphql/mutations/releaseEnterpriseServerBinding';
-import { SET_ENTERPRISE_KEY } from '@/settings/enterprise/graphql/mutations/setEnterpriseKey';
+import { SET_ENTERPRISE_KEY } from '@/settings/enterprise/graphql/mutations/setOrganizationKey';
 import { ENTERPRISE_PORTAL_SESSION } from '@/settings/enterprise/graphql/queries/enterprisePortalSession';
 import { ENTERPRISE_SUBSCRIPTION_STATUS } from '@/settings/enterprise/graphql/queries/enterpriseSubscriptionStatus';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -40,10 +40,10 @@ import {
   IconKey,
   IconUser,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
@@ -254,7 +254,7 @@ export const SettingsEnterprise = ({
 
   const cancellationMessage =
     isCancelScheduled && isDefined(cancelAt)
-      ? t`Your enterprise features will remain active until ${cancelAtDate}.`
+      ? t`Your premium features will remain active until ${cancelAtDate}.`
       : null;
 
   const cancellationOrPeriodEndDate = isCancelScheduled
@@ -276,7 +276,7 @@ export const SettingsEnterprise = ({
 
       if (result.data?.setEnterpriseKey.isValid === true) {
         enqueueSuccessSnackBar({
-          message: t`Enterprise license activated successfully`,
+          message: t`Organization license activated successfully`,
         });
         setEnterpriseKey('');
         const { data: statusData } = await fetchSubscriptionStatus();
@@ -285,7 +285,7 @@ export const SettingsEnterprise = ({
         await loadCurrentUser();
       } else {
         enqueueErrorSnackBar({
-          message: t`Failed to activate enterprise license. Please check your key or contact support.`,
+          message: t`Failed to activate Organization license. Please check your key or contact support.`,
         });
       }
     } catch (error) {
@@ -316,7 +316,7 @@ export const SettingsEnterprise = ({
         });
       } else {
         enqueueErrorSnackBar({
-          message: t`Error activating enterprise license`,
+          message: t`Error activating Organization license`,
         });
       }
     } finally {
@@ -333,7 +333,7 @@ export const SettingsEnterprise = ({
   ]);
 
   const returnUrlPath = isAdminPanelTab
-    ? getSettingsPath(SettingsPath.AdminPanelEnterprise)
+    ? getSettingsPath(SettingsPath.AdminPanelOrganization)
     : getSettingsPath(SettingsPath.Enterprise);
 
   const openBillingPortal = useCallback(async () => {
@@ -348,7 +348,7 @@ export const SettingsEnterprise = ({
         window.open(portalUrl, '_blank', 'noopener');
       } else {
         enqueueErrorSnackBar({
-          message: t`Could not open billing portal. Please check your enterprise key is present, or contact support.`,
+          message: t`Could not open billing portal. Please check your Organization key is present, or contact support.`,
         });
       }
     } catch {
@@ -427,7 +427,7 @@ export const SettingsEnterprise = ({
       if (result.data?.releaseEnterpriseServerBinding.isValid === true) {
         setIsBoundToAnotherServer(false);
         enqueueSuccessSnackBar({
-          message: t`Enterprise key transferred to this server`,
+          message: t`Organization key transferred to this server`,
         });
         const { data: statusData } = await fetchSubscriptionStatus();
 
@@ -435,17 +435,17 @@ export const SettingsEnterprise = ({
         await loadCurrentUser();
       } else {
         enqueueErrorSnackBar({
-          message: t`Could not transfer the enterprise key. Please contact support.`,
+          message: t`Could not transfer the Organization key. Please contact support.`,
         });
       }
     } catch (error) {
       if (isGraphqlErrorOfType(error, 'ENTERPRISE_RELEASE_RATE_LIMITED')) {
         enqueueErrorSnackBar({
-          message: t`You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later or contact support.`,
+          message: t`You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later or contact support.`,
         });
       } else {
         enqueueErrorSnackBar({
-          message: t`Error transferring the enterprise key`,
+          message: t`Error transferring the Organization key`,
         });
       }
     } finally {
@@ -532,16 +532,16 @@ export const SettingsEnterprise = ({
   const activateKeySection = (
     <Section>
       <H2Title
-        title={t`Activate Enterprise Key`}
-        description={t`Paste your enterprise key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server.`}
+        title={t`Activate Organization Key`}
+        description={t`Paste your Organization key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server.`}
       />
       <StyledInputContainer>
         <StyledInputWrapper>
           <SettingsTextInput
-            instanceId="enterprise-key-input"
+            instanceId="organization-key-input"
             value={enterpriseKey}
             onChange={(value) => setEnterpriseKey(value)}
-            placeholder={t`Paste your enterprise key here`}
+            placeholder={t`Paste your Organization key here`}
             fullWidth
             onInputEnter={handleActivate}
           />
@@ -563,7 +563,7 @@ export const SettingsEnterprise = ({
     <Section>
       <H2Title
         title={t`Key in use on another server`}
-        description={t`This enterprise key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one.`}
+        description={t`This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one.`}
       />
       <Button
         Icon={IconKey}
@@ -585,8 +585,8 @@ export const SettingsEnterprise = ({
   const enterpriseKeyInfoSection = (
     <Section>
       <H2Title
-        title={t`Your enterprise key`}
-        description={t`This server has an enterprise key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support.`}
+        title={t`Your Organization key`}
+        description={t`This server has an Organization key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support.`}
       />
     </Section>
   );
@@ -598,7 +598,7 @@ export const SettingsEnterprise = ({
         description={
           instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
             ? t`This server is registered as a development instance and is not billed additionally. A subscription can have a single development instance in addition to its production one. Switching it back to a production instance will make its seats count toward billing.`
-            : t`One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats.`
+            : t`One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats.`
         }
       />
       {instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT ? (
@@ -641,12 +641,12 @@ export const SettingsEnterprise = ({
         <>
           <Section>
             <H2Title
-              title={t`Enterprise License`}
-              description={t`Your enterprise features are active but your enterprise key is missing or invalid. This may be expected, but if not, please set a valid signed enterprise key to manage your subscription, or contact support.`}
+              title={t`Organization License`}
+              description={t`Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support.`}
             />
             <Button
               Icon={IconKey}
-              title={t`Get Enterprise Key`}
+              title={t`Get Organization Key`}
               variant="secondary"
               onClick={openCheckoutModal}
             />
@@ -661,12 +661,12 @@ export const SettingsEnterprise = ({
         <>
           <Section>
             <H2Title
-              title={t`Get Enterprise`}
-              description={t`Unlock enterprise features like SSO, row-level security, and audit logs.`}
+              title={t`Get Organization`}
+              description={t`Unlock premium features like SSO, row-level security, and audit logs.`}
             />
             <Button
               Icon={IconKey}
-              title={t`Get Enterprise Key`}
+              title={t`Get Organization Key`}
               variant="secondary"
               onClick={openCheckoutModal}
             />
@@ -681,7 +681,7 @@ export const SettingsEnterprise = ({
         <>
           <Section>
             <H2Title
-              title={t`Enterprise License`}
+              title={t`Organization License`}
               description={t`Your subscription is active but your validity token is invalid or has expired. Try reloading it or contact support.`}
             />
             <Button
@@ -748,11 +748,11 @@ export const SettingsEnterprise = ({
         <>
           <Section>
             <H2Title
-              title={t`Enterprise License`}
+              title={t`Organization License`}
               description={
                 isCancelScheduled
                   ? t`Your subscription is scheduled for cancellation`
-                  : t`Your enterprise features are active`
+                  : t`Your premium features are active`
               }
             />
             <SubscriptionInfoContainer>
@@ -811,7 +811,7 @@ export const SettingsEnterprise = ({
             <Section>
               <H2Title
                 title={t`Cancel your subscription`}
-                description={t`Your enterprise features will be disabled`}
+                description={t`Your premium features will be disabled`}
               />
               <Button
                 Icon={IconCircleX}
@@ -831,8 +831,8 @@ export const SettingsEnterprise = ({
         <>
           <Section>
             <H2Title
-              title={t`Enterprise License`}
-              description={t`Your enterprise subscription has been canceled.`}
+              title={t`Organization License`}
+              description={t`Your Organization subscription has been canceled.`}
             />
             <SubscriptionInfoContainer>
               <SubscriptionInfoRowContainer
@@ -861,12 +861,12 @@ export const SettingsEnterprise = ({
           </Section>
           <Section>
             <H2Title
-              title={t`Get Enterprise`}
-              description={t`Start a new enterprise subscription to re-enable enterprise features.`}
+              title={t`Get Organization`}
+              description={t`Start a new Organization subscription to re-enable premium features.`}
             />
             <Button
               Icon={IconKey}
-              title={t`Get Enterprise Key`}
+              title={t`Get Organization Key`}
               variant="secondary"
               onClick={openCheckoutModal}
             />
@@ -881,11 +881,11 @@ export const SettingsEnterprise = ({
         <>
           <Section>
             <H2Title
-              title={t`Enterprise License`}
+              title={t`Organization License`}
               description={
                 hasValidityToken
-                  ? t`A payment on your subscription failed. Your enterprise features stay active while we retry it.`
-                  : t`There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one.`
+                  ? t`A payment on your subscription failed. Your premium features stay active while we retry it.`
+                  : t`There is a payment issue with your subscription. Your premium features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one.`
               }
             />
             <SubscriptionInfoContainer>
@@ -932,8 +932,8 @@ export const SettingsEnterprise = ({
               title={t`Update payment method`}
               description={
                 hasValidityToken
-                  ? t`Fix the payment issue to keep your enterprise features active.`
-                  : t`Fix the payment issue to restore your enterprise features.`
+                  ? t`Fix the payment issue to keep your premium features active.`
+                  : t`Fix the payment issue to restore your premium features.`
               }
             />
             <Button
@@ -953,7 +953,7 @@ export const SettingsEnterprise = ({
         <>
           <Section>
             <H2Title
-              title={t`Enterprise License`}
+              title={t`Organization License`}
               description={t`Your subscription setup was not completed.`}
             />
             <SubscriptionInfoContainer>
@@ -971,12 +971,12 @@ export const SettingsEnterprise = ({
           </Section>
           <Section>
             <H2Title
-              title={t`Get Enterprise`}
-              description={t`Start a new enterprise subscription.`}
+              title={t`Get Organization`}
+              description={t`Start a new Organization subscription.`}
             />
             <Button
               Icon={IconKey}
-              title={t`Get Enterprise Key`}
+              title={t`Get Organization Key`}
               onClick={openCheckoutModal}
             />
           </Section>
@@ -989,7 +989,7 @@ export const SettingsEnterprise = ({
       <>
         <Section>
           <H2Title
-            title={t`Enterprise License`}
+            title={t`Organization License`}
             description={(() => {
               const statusLabel = stripeStatus ?? 'unknown';
 
@@ -1015,8 +1015,8 @@ export const SettingsEnterprise = ({
       <EnterprisePlanModal />
       <ConfirmationModal
         modalInstanceId={RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID}
-        title={t`Release & transfer enterprise key`}
-        subtitle={t`This enterprise key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?`}
+        title={t`Release & transfer Organization key`}
+        subtitle={t`This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?`}
         confirmButtonText={t`Release & transfer`}
         confirmButtonAccent="blue"
         loading={isReleasing}
@@ -1034,13 +1034,13 @@ export const SettingsEnterprise = ({
 
   return (
     <SettingsPageLayout
-      title={t`Enterprise`}
+      title={t`Organization`}
       links={[
         {
           children: <Trans>Workspace</Trans>,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: <Trans>Enterprise</Trans> },
+        { children: <Trans>Organization</Trans> },
       ]}
     >
       <SettingsPageContainer>{innerContent}</SettingsPageContainer>

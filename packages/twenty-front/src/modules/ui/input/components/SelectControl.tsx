@@ -3,10 +3,10 @@ import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVaria
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { type SelectOption } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SelectControlTextAccent = 'default' | 'placeholder';

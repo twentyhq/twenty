@@ -16,8 +16,8 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

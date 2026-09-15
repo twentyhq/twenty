@@ -1,7 +1,7 @@
 [
   {
     "name": "Field",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/field",
     "props": [],
     "parts": [
@@ -242,7 +242,7 @@
   },
   {
     "name": "Input",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/input",
     "props": [
       {
@@ -298,7 +298,7 @@
   },
   {
     "name": "InputGroup",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/input-group",
     "props": [
       {
@@ -333,7 +333,7 @@
   },
   {
     "name": "Textarea",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/textarea",
     "props": [
       {
@@ -382,7 +382,7 @@
   },
   {
     "name": "Checkbox",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/checkbox",
     "props": [
       {
@@ -550,7 +550,7 @@
   },
   {
     "name": "Radio",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/radio",
     "props": [
       {
@@ -627,7 +627,7 @@
   },
   {
     "name": "RadioGroup",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/radio-group",
     "props": [
       {
@@ -718,7 +718,7 @@
   },
   {
     "name": "Select",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/select",
     "props": [],
     "parts": [
@@ -1228,7 +1228,7 @@
   },
   {
     "name": "Slider",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/slider",
     "props": [],
     "parts": [
@@ -1614,7 +1614,7 @@
   },
   {
     "name": "Switch",
-    "entryPoint": "twenty-ui/input",
+    "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/switch",
     "props": [
       {
@@ -1740,7 +1740,7 @@
   },
   {
     "name": "ListItem",
-    "entryPoint": "twenty-ui/navigation",
+    "entryPoint": "twenty-ui/primitives/navigation",
     "slug": "navigation/list-item",
     "props": [
       {
@@ -1838,7 +1838,7 @@
   },
   {
     "name": "Tabs",
-    "entryPoint": "twenty-ui/navigation",
+    "entryPoint": "twenty-ui/primitives/navigation",
     "slug": "navigation/tabs",
     "props": [],
     "parts": [
@@ -2048,7 +2048,7 @@
   },
   {
     "name": "AlertDialog",
-    "entryPoint": "twenty-ui/surfaces",
+    "entryPoint": "twenty-ui/primitives/surfaces",
     "slug": "surfaces/alert-dialog",
     "props": [],
     "parts": [
@@ -2360,7 +2360,7 @@
   },
   {
     "name": "Menu",
-    "entryPoint": "twenty-ui/surfaces",
+    "entryPoint": "twenty-ui/primitives/surfaces",
     "slug": "surfaces/menu",
     "props": [],
     "parts": [
@@ -3324,7 +3324,7 @@
   },
   {
     "name": "Popover",
-    "entryPoint": "twenty-ui/surfaces",
+    "entryPoint": "twenty-ui/primitives/surfaces",
     "slug": "surfaces/popover",
     "props": [],
     "parts": [
@@ -3663,7 +3663,7 @@
   },
   {
     "name": "Toast",
-    "entryPoint": "twenty-ui/feedback",
+    "entryPoint": "twenty-ui/primitives/feedback",
     "slug": "feedback/toast",
     "props": [
       {
@@ -3754,7 +3754,7 @@
   },
   {
     "name": "Text",
-    "entryPoint": "twenty-ui/typography",
+    "entryPoint": "twenty-ui/primitives/typography",
     "slug": "typography/text",
     "props": [
       {

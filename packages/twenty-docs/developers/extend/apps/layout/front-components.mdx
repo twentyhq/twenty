@@ -646,7 +646,11 @@ By default, every front component bundles its own copy of the libraries it impor
 
 ```json package.json
 {
-  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+  "frontComponentSharedDependencies": [
+    "react",
+    "react-dom/client",
+    "twenty-ui/primitives/input"
+  ]
 }
 ```
 
@@ -672,7 +676,7 @@ export default defineFrontComponent({
 A few things to know:
 
 - **One shared dependencies bundle per app.** The bundle is built from your app's own dependencies, so you keep full control of the versions you ship.
-- **List the exact specifiers you import.** `twenty-ui/input` and `twenty-ui/display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
+- **List the exact specifiers you import.** `twenty-ui/primitives/input` and `twenty-ui/primitives/data-display` are two entries; a package name alone does not cover its subpaths. Listing `react` automatically covers `react/jsx-runtime`.
 - **Share `react-dom/client` alongside `react`.** Every component renders through `createRoot`, so leaving it out means each component still bundles React DOM.
 - **The bundle is cached.** It is served under a content-hash URL with a long-lived immutable cache, so it is downloaded once and reused across all components of the app until one of its dependencies changes.
 - **Components that import none of the shared packages never download it.**
@@ -693,7 +697,8 @@ Front components support multiple styling approaches. You can use:
 Twenty ships its component library as the [`twenty-ui`](https://www.npmjs.com/package/twenty-ui) package. Front components can use it for buttons, tags, status pills, chips, avatars, icons, typography, and theme tokens that automatically match the workspace's light and dark theme.
 
 <Warning>
-`twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
+  `twenty-ui` is still in alpha. Its version number follows the Twenty SDK
+  release cycle. APIs and component behavior may change between releases.
 </Warning>
 
 ### Installation
@@ -710,26 +715,34 @@ yarn add -D twenty-ui@2.40.0
 
 Import from the matching subpath rather than the package root, so only the components you use end up in your bundle:
 
+All existing UI components are grouped under `twenty-ui/primitives/<family>`.
+The `components/` folder is reserved for higher-level app building blocks.
+
 | Subpath | What it exports |
 | --- | --- |
-| `twenty-ui/input` | `Button` and form inputs |
-| `twenty-ui/data-display` | `Tag`, `Status`, `Chip`, `Avatar`, and more |
-| `twenty-ui/feedback` | `Callout`, `Banner`, `Info`, and more |
-| `twenty-ui/typography` | `H1Title`, `H2Title`, `H3Title`, `Label`, and more |
+| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |
+| `twenty-ui/primitives/data-display` | Avatars, chips, tags, status indicators, and display helpers |
+| `twenty-ui/primitives/feedback` | Toasts, banners, progress bars, and loaders |
+| `twenty-ui/primitives/input` | Buttons, form controls, pickers, and code editors |
+| `twenty-ui/primitives/json-visualizer` | JSON tree viewer |
+| `twenty-ui/primitives/layout` | Layout, animation, resizing, and section components |
+| `twenty-ui/primitives/navigation` | Links, list items, menus, and tabs |
+| `twenty-ui/primitives/surfaces` | Cards, dialogs, menus, popovers, and tooltips |
+| `twenty-ui/primitives/typography` | Text, headings, labels, and typography helpers |
 | `twenty-ui/icon` | `Icon*` components (e.g. `IconCheck`) |
 | `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables` |
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Status, Tag } from 'twenty-ui/data-display';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Status, Tag } from 'twenty-ui/primitives/data-display';
 
 const StyledWidget = () => {
   return (
     <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
       <Button title="Click me" onClick={() => alert('Clicked!')} />
-      <Tag text="Active" color="green" />
-      <Status color="green" text="Online" />
+      <Tag color="green">Active</Tag>
+      <Status color="green">Online</Status>
     </div>
   );
 };

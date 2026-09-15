@@ -1,5 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Modal } from 'twenty-ui/surfaces';
+import { Modal } from 'twenty-ui/primitives/surfaces';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {
@@ -25,7 +25,7 @@ const MODAL_OPEN_ENTRIES: GalleryEntry[] = [
 const ModalOpenGallery = () => (
   <ThemeProvider colorScheme="light">
     <ComponentGallery
-      title="twenty-ui/surfaces Modal (open)"
+      title="twenty-ui/primitives/surfaces Modal (open)"
       entries={MODAL_OPEN_ENTRIES}
     />
   </ThemeProvider>

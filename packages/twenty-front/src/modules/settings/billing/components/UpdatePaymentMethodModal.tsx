@@ -8,10 +8,14 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
 
 type UpdatePaymentMethodModalProps = {
   modalInstanceId: string;

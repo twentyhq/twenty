@@ -15,7 +15,7 @@ import {
   JsonNestedNode,
   JsonTreeContextProvider,
   type ShouldExpandNodeInitiallyProps,
-} from 'twenty-ui/json-visualizer';
+} from 'twenty-ui/primitives/json-visualizer';
 import { type JsonValue } from 'type-fest';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

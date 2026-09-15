@@ -3,14 +3,22 @@ title: Field
 description: Connect a form control to its label, description, and validation feedback.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import FieldReference from '/snippets/ui/generated/input/field.mdx';
 
 Use `Field` to group one control with its accessible label and helper text. Components such as [Input](/ui/components/input/input) integrate with the field directly.
 
+<StoryEmbed
+  storyId="ui-input-field--default"
+  title="Field example"
+  height={240}
+/>
+
 ## Labeled control
 
 ```tsx
-import { Field, Input } from 'twenty-ui/input';
+import { Field, Input } from 'twenty-ui/primitives/input';
 
 export const EmailField = () => (
   <Field.Root name="email" validationMode="onBlur">
@@ -32,7 +40,7 @@ export const EmailField = () => (
 Use `invalid` when your application owns the error state. An explicit `match` makes the error message visible.
 
 ```tsx
-import { Field, Input } from 'twenty-ui/input';
+import { Field, Input } from 'twenty-ui/primitives/input';
 
 type UsernameFieldProps = { error?: string };
 

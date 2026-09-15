@@ -15,30 +15,14 @@ import { isDefined } from './src/utilities/utils/isDefined';
 
 const isVitest = isDefined(process.env.VITEST);
 
-const entries = Object.keys(packageJson.exports)
-  .filter((el) => !el.endsWith('.css'))
-  .map((module) => `src/${module}/index.ts`);
-
-const entryFileNames = (chunk: any, extension: 'cjs' | 'mjs') => {
-  if (!chunk.isEntry) {
-    throw new Error(
-      `Should never occurs, encountered a non entry chunk ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const splitFaceModuleId = chunk.facadeModuleId?.split('/');
-  if (splitFaceModuleId === undefined) {
-    throw new Error(
-      `Should never occurs splitFaceModuleId is undefined ${chunk.facadeModuleId}`,
-    );
-  }
-
-  const moduleDirectory = splitFaceModuleId[splitFaceModuleId?.length - 2];
-  if (moduleDirectory === 'src') {
-    return `${chunk.name}.${extension}`;
-  }
-  return `${moduleDirectory}.${extension}`;
-};
+const entries = Object.fromEntries(
+  Object.keys(packageJson.exports)
+    .filter((subpath) => !subpath.endsWith('.css'))
+    .map((subpath) => [
+      subpath === '.' ? 'index' : subpath.slice(2),
+      `src/${subpath}/index.ts`,
+    ]),
+);
 
 export default defineConfig(({ command }) => {
   const isBuildCommand = command === 'build';
@@ -143,7 +127,7 @@ export default defineConfig(({ command }) => {
         requireReturnsDefault: 'auto',
       },
       lib: {
-        entry: ['src/index.ts', ...entries],
+        entry: entries,
         name: 'twenty-ui',
       },
       rollupOptions: {
@@ -157,7 +141,7 @@ export default defineConfig(({ command }) => {
               'react-dom': 'ReactDOM',
             },
             format: 'es',
-            entryFileNames: (chunk) => entryFileNames(chunk, 'mjs'),
+            entryFileNames: '[name].mjs',
           },
           {
             assetFileNames: 'style.css',
@@ -168,7 +152,7 @@ export default defineConfig(({ command }) => {
             },
             esModule: true,
             exports: 'named',
-            entryFileNames: (chunk) => entryFileNames(chunk, 'cjs'),
+            entryFileNames: '[name].cjs',
           },
         ],
       },

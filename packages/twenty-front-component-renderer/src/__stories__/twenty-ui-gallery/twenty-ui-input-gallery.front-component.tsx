@@ -5,8 +5,6 @@ import {
   AnimatedLightIconButton,
   Button,
   ButtonGroup,
-  CardPicker,
-  Checkbox,
   ColorPickerButton,
   ColorSchemeCard,
   ColorSchemePicker,
@@ -23,17 +21,19 @@ import {
   LightIconButton,
   LightIconButtonGroup,
   MainButton,
-  Radio,
-  RadioGroup,
   RoundedIconButton,
   SearchInput,
   SegmentedControl,
-  Slider,
   StyledTabContainer,
   TabButton,
   TabContent,
+  CardPicker,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  Slider,
   Switch,
-} from 'twenty-ui/input';
+} from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {
@@ -258,7 +258,10 @@ const INPUT_ENTRIES: GalleryEntry[] = [
 
 const InputGallery = () => (
   <ThemeProvider colorScheme="light">
-    <ComponentGallery title="twenty-ui/input" entries={INPUT_ENTRIES} />
+    <ComponentGallery
+      title="twenty-ui/primitives/input"
+      entries={INPUT_ENTRIES}
+    />
   </ThemeProvider>
 );
 
@@ -266,6 +269,6 @@ export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000107',
   name: 'twenty-ui-input-gallery',
   description:
-    'Renders every twenty-ui/input component (except monaco CodeEditor) in the sandbox',
+    'Renders every twenty-ui/primitives/input component (except monaco CodeEditor) in the sandbox',
   component: InputGallery,
 });

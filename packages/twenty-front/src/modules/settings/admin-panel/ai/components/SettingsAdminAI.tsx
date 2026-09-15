@@ -6,11 +6,11 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { IconMessage } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -304,8 +304,8 @@ export const SettingsAdminAI = () => {
           )
         ) : (
           <SettingsEnterpriseFeatureGateCard
-            title={t`Enterprise feature`}
-            description={t`AI usage analytics across workspaces is available with an Enterprise key.`}
+            title={t`Organization feature`}
+            description={t`AI usage analytics across workspaces is available with an Organization key.`}
             buttonTitle={t`Activate`}
           />
         )}

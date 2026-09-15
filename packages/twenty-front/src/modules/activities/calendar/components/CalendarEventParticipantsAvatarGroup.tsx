@@ -3,7 +3,7 @@ import { type CalendarEventCallRecording } from '@/activities/calendar/types/Cal
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { isTimelineCalendarEventParticipant } from '@/activities/calendar/types/guards/IsTimelineCalendarEventParticipant';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, AvatarGroup } from 'twenty-ui/data-display';
+import { Avatar, AvatarGroup } from 'twenty-ui/primitives/data-display';
 import { type TimelineCalendarEventParticipant } from '~/generated/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

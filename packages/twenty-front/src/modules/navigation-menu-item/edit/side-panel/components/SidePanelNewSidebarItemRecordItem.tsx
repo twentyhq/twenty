@@ -1,4 +1,4 @@
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useIcons } from 'twenty-ui/icon';
 import {
   CoreObjectNameSingular,

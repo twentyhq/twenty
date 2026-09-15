@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
 import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsAdminChatCollapsibleSectionProps = {

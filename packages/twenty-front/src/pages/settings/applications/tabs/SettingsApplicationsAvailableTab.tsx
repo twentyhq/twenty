@@ -5,11 +5,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
-import { InlineBanner } from 'twenty-ui/feedback';
+import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { IconSparkles } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemSwitch } from 'twenty-ui/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMarketplaceApps } from '~/modules/marketplace/hooks/useMarketplaceApps';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
