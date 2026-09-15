@@ -31,7 +31,7 @@ The full URL form works too:
 npx skills add https://github.com/twentyhq/twenty/tree/main/packages/twenty-agent-skills --list
 ```
 
-Both forms scope discovery to this package. Pointing the CLI at the bare repository instead (`twentyhq/twenty`) discovers every skill in the monorepo, including internal contributor skills that are not meant for app development; see [`SKILLS.md`](../../SKILLS.md) for what those are.
+Both forms scope discovery to this package. Pointing the CLI at the bare repository instead (`twentyhq/twenty`) finds only the repository's own agent skills, and adding `--full-depth` pulls in every skill family in the monorepo, including internal contributor skills that are not meant for app development; see [`SKILLS.md`](../../SKILLS.md) for what those are.
 
 The CLI prompts for the target agents, or accepts them directly with `--agent` (for example `--agent claude-code`, `--agent codex`, `--agent cursor`, or `--agent '*'`).
 
