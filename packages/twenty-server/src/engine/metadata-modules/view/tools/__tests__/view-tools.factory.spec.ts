@@ -292,6 +292,7 @@ describe('ViewToolsFactory', () => {
           mockViewId,
           mockWorkspaceId,
           'workspace-member-id',
+          mockUserWorkspaceId,
         );
         expect(result).toEqual(mockQueryParams);
       });
