@@ -1,4 +1,5 @@
-import { isObject, isString } from '@sniptt/guards';
+import { isString } from '@sniptt/guards';
+import { richTextValueSchema } from 'twenty-shared/types';
 import {
   resolveRichTextVariables,
   resolveStringTemplate,
@@ -7,11 +8,12 @@ import {
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
 
-// A rich text value is text, so its variables are substituted as text here, before
-// the generic resolver runs and would hand a whole-string variable back in its own type.
 export const resolveRichTextFieldsInRecord = (
   objectRecord: Record<string, unknown>,
-  objectMetadataInfo: ObjectMetadataInfo,
+  objectMetadataInfo: Pick<
+    ObjectMetadataInfo,
+    'flatObjectMetadata' | 'flatFieldMetadataMaps'
+  >,
   context: Record<string, unknown>,
 ): Record<string, unknown> => {
   const richTextFieldNames = findRichTextFieldNames(objectMetadataInfo);
@@ -19,29 +21,24 @@ export const resolveRichTextFieldsInRecord = (
   const resolvedRecord = { ...objectRecord };
 
   for (const fieldName of richTextFieldNames) {
-    const fieldValue = resolvedRecord[fieldName];
+    const parsedRichTextValue = richTextValueSchema.safeParse(
+      resolvedRecord[fieldName],
+    );
 
-    if (!isObject(fieldValue)) {
+    if (!parsedRichTextValue.success) {
       continue;
     }
 
-    const richTextValue: Record<string, unknown> = { ...fieldValue };
+    const { blocknote, markdown } = parsedRichTextValue.data;
 
-    if ('blocknote' in fieldValue && isString(fieldValue.blocknote)) {
-      richTextValue.blocknote = resolveRichTextVariables(
-        fieldValue.blocknote,
-        context,
-      );
-    }
-
-    if ('markdown' in fieldValue && isString(fieldValue.markdown)) {
-      richTextValue.markdown = resolveStringTemplate(
-        fieldValue.markdown,
-        context,
-      );
-    }
-
-    resolvedRecord[fieldName] = richTextValue;
+    resolvedRecord[fieldName] = {
+      blocknote: isString(blocknote)
+        ? resolveRichTextVariables(blocknote, context)
+        : blocknote,
+      markdown: isString(markdown)
+        ? resolveStringTemplate(markdown, context)
+        : markdown,
+    };
   }
 
   return resolvedRecord;

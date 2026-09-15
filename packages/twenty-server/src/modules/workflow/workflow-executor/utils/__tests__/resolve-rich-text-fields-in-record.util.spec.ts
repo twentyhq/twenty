@@ -1,29 +1,49 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
-import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
 
-const objectMetadataInfo = {
-  flatObjectMetadata: { fieldIds: ['body-field', 'title-field'] },
-  flatFieldMetadataMaps: {
-    byUniversalIdentifier: {
-      'body-universal-id': {
-        id: 'body-field',
-        name: 'body',
-        type: FieldMetadataType.RICH_TEXT,
-      },
-      'title-universal-id': {
-        id: 'title-field',
-        name: 'title',
-        type: FieldMetadataType.TEXT,
-      },
-    },
-    universalIdentifierById: {
-      'body-field': 'body-universal-id',
-      'title-field': 'title-universal-id',
-    },
+const bodyField = getFlatFieldMetadataMock({
+  id: 'body-field',
+  universalIdentifier: 'body-universal-id',
+  objectMetadataId: 'note-object',
+  name: 'body',
+  type: FieldMetadataType.RICH_TEXT,
+});
+
+const titleField = getFlatFieldMetadataMock({
+  id: 'title-field',
+  universalIdentifier: 'title-universal-id',
+  objectMetadataId: 'note-object',
+  name: 'title',
+  type: FieldMetadataType.TEXT,
+});
+
+const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
+  byUniversalIdentifier: {
+    [bodyField.universalIdentifier]: bodyField,
+    [titleField.universalIdentifier]: titleField,
   },
-} as unknown as ObjectMetadataInfo;
+  universalIdentifierById: {
+    [bodyField.id]: bodyField.universalIdentifier,
+    [titleField.id]: titleField.universalIdentifier,
+  },
+  universalIdentifiersByApplicationId: {},
+};
+
+const objectMetadataInfo = {
+  flatObjectMetadata: getFlatObjectMetadataMock({
+    id: 'note-object',
+    universalIdentifier: 'note-universal-id',
+    nameSingular: 'note',
+    namePlural: 'notes',
+    fieldIds: [bodyField.id, titleField.id],
+  }),
+  flatFieldMetadataMaps,
+};
 
 const context = {
   trigger: { body: { amount: 42, currency: 'EUR', meta: { source: 'form' } } },
@@ -72,7 +92,7 @@ describe('resolveRichTextFieldsInRecord', () => {
     });
   });
 
-  it('leaves a non-object rich text value untouched instead of crashing', () => {
+  it('leaves a value that is not a rich text object untouched', () => {
     const resolved = resolveRichTextFieldsInRecord(
       { body: 'legacy bare string {{trigger.body.amount}}', title: 'x' },
       objectMetadataInfo,

@@ -1,11 +1,20 @@
-import { isNonEmptyArray, isObject } from '@sniptt/guards';
+import { isNonEmptyArray, isString } from '@sniptt/guards';
 import { WorkflowActionType } from 'twenty-shared/workflow';
+import { z } from 'zod';
 
-const RECORD_CRUD_ACTION_TYPES_WITH_OBJECT_RECORD = new Set<string>([
-  WorkflowActionType.CREATE_RECORD,
-  WorkflowActionType.UPDATE_RECORD,
-  WorkflowActionType.UPSERT_RECORD,
-]);
+const recordCrudStepSchema = z.object({
+  type: z.enum([
+    WorkflowActionType.CREATE_RECORD,
+    WorkflowActionType.UPDATE_RECORD,
+    WorkflowActionType.UPSERT_RECORD,
+  ]),
+  settings: z.object({
+    input: z.object({
+      objectName: z.string(),
+      objectRecord: z.record(z.string(), z.unknown()),
+    }),
+  }),
+});
 
 export const normalizeRecordCrudRichTextFieldsInSteps = <TSteps>({
   steps,
@@ -30,30 +39,13 @@ export const normalizeRecordCrudRichTextFieldsInSteps = <TSteps>({
   let isRecordCrudRichTextCandidate = false;
 
   const nextSteps = steps.map((step) => {
-    if (
-      !isObject(step) ||
-      typeof step.type !== 'string' ||
-      !RECORD_CRUD_ACTION_TYPES_WITH_OBJECT_RECORD.has(step.type)
-    ) {
+    const parsedStep = recordCrudStepSchema.safeParse(step);
+
+    if (!parsedStep.success) {
       return step;
     }
 
-    const settings = step.settings;
-    const input =
-      isObject(settings) && 'input' in settings ? settings.input : undefined;
-
-    if (!isObject(input)) {
-      return step;
-    }
-
-    const objectName = 'objectName' in input ? input.objectName : undefined;
-    const objectRecord =
-      'objectRecord' in input ? input.objectRecord : undefined;
-
-    if (typeof objectName !== 'string' || !isObject(objectRecord)) {
-      return step;
-    }
-
+    const { objectName, objectRecord } = parsedStep.data.settings.input;
     const richTextFieldNames = richTextFieldNamesByObjectName[objectName];
 
     if (!isNonEmptyArray(richTextFieldNames)) {
@@ -68,7 +60,7 @@ export const normalizeRecordCrudRichTextFieldsInSteps = <TSteps>({
     for (const fieldName of richTextFieldNames) {
       const value = nextObjectRecord[fieldName];
 
-      if (typeof value === 'string') {
+      if (isString(value)) {
         nextObjectRecord[fieldName] = { blocknote: null, markdown: value };
         hasStepChanged = true;
       }
@@ -83,8 +75,8 @@ export const normalizeRecordCrudRichTextFieldsInSteps = <TSteps>({
     return {
       ...step,
       settings: {
-        ...settings,
-        input: { ...input, objectRecord: nextObjectRecord },
+        ...step.settings,
+        input: { ...step.settings.input, objectRecord: nextObjectRecord },
       },
     };
   });

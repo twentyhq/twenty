@@ -15,6 +15,7 @@ import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modu
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
@@ -37,8 +38,17 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
   override async runOnWorkspace({
     workspaceId,
     options,
+    dataSource,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
+
+    if (!isDefined(dataSource)) {
+      this.logger.warn(
+        `No data source for workspace ${workspaceId}, skipping backfill`,
+      );
+
+      return;
+    }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -98,7 +108,10 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
       rewrittenCount += 1;
 
       if (!isDryRun) {
-        await workflowVersionRepository.update(version.id, { steps: value });
+        await dataSource.query(
+          `UPDATE "${getWorkspaceSchemaName(workspaceId)}"."workflowVersion" SET steps = $1::jsonb WHERE id = $2`,
+          [JSON.stringify(value), version.id],
+        );
       }
     }
 
@@ -106,8 +119,6 @@ export class NormalizeWorkflowRecordCrudRichTextFieldsCommand extends Provisione
       return;
     }
 
-    // Without that field upsertToCore cannot write the generated core ids back,
-    // so every run would leave a fresh set of orphan core versions behind.
     const hasCoreWorkflowVersionIdField = isDefined(
       flatFieldMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.workflowVersion.fields.coreWorkflowVersionId

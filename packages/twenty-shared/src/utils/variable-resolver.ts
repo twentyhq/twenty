@@ -1,9 +1,7 @@
+import { isObject, isString } from '@sniptt/guards';
+
 import { evalFromContext } from '@/utils/evalFromContext';
 import { isDefined } from '@/utils/validation';
-
-const isString = (value: unknown): value is string => {
-  return typeof value === 'string';
-};
 
 const VARIABLE_PATTERN = RegExp('\\{\\{([^{}]+)\\}\\}', 'g');
 
@@ -26,7 +24,7 @@ export const resolveInput = (
     return resolveArray(unresolvedInput, context);
   }
 
-  if (typeof unresolvedInput === 'object' && unresolvedInput !== null) {
+  if (isObject(unresolvedInput)) {
     return resolveObject(unresolvedInput, context);
   }
 
@@ -55,7 +53,7 @@ const resolveObject = (
       const resolvedKey = resolveInput(key, context);
 
       resolvedObject[
-        typeof resolvedKey === 'string' ? resolvedKey : String(resolvedKey)
+        isString(resolvedKey) ? resolvedKey : String(resolvedKey)
       ] = resolveInput(value, context);
 
       return resolvedObject;
@@ -64,8 +62,6 @@ const resolveObject = (
   );
 };
 
-// Substitutes every variable into the text; the result is always a string,
-// which is what a text-typed value such as a rich text markdown needs
 export const resolveStringTemplate = (
   input: string,
   context: Record<string, unknown>,
@@ -73,7 +69,7 @@ export const resolveStringTemplate = (
   return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
     const processedToken = evalFromContext(matchedToken, context);
 
-    if (typeof processedToken === 'object' && processedToken !== null) {
+    if (isObject(processedToken)) {
       return JSON.stringify(processedToken);
     }
 
