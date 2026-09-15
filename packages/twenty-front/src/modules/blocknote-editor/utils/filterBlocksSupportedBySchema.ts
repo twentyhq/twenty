@@ -5,10 +5,7 @@ const filterBlockRecursively = (
   block: PartialBlock,
   supportedBlockTypes: string[],
 ): PartialBlock | undefined => {
-  if (
-    !isDefined(block.type) ||
-    !supportedBlockTypes.includes(block.type as string)
-  ) {
+  if (!isDefined(block.type) || !supportedBlockTypes.includes(block.type)) {
     return undefined;
   }
 
