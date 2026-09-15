@@ -1,4 +1,5 @@
 import { FormRecordRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput';
+import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -29,6 +30,8 @@ const BLOCKNOTE_BULLET_LIST = JSON.stringify([
     content: [{ type: 'text', text: 'Second item', styles: {} }],
   },
 ]);
+
+const handleRichTextChange = fn<(value: FieldRichTextValue) => void>();
 
 const meta: Meta<typeof FormRecordRichTextFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRecordRichTextFieldInput',
@@ -80,9 +83,9 @@ export const WithBulletList: Story = {
 
 export const WritesBlockNoteBlocks: Story = {
   args: {
-    onChange: fn(),
+    onChange: handleRichTextChange,
   },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const editor = await waitFor(() => {
       const editorElement = canvasElement.querySelector('.ProseMirror');
 
@@ -99,15 +102,25 @@ export const WritesBlockNoteBlocks: Story = {
     await userEvent.keyboard('Hello');
 
     await waitFor(() => {
-      expect(args.onChange).toHaveBeenCalled();
+      expect(handleRichTextChange).toHaveBeenCalled();
     });
 
-    expect(args.onChange).toHaveBeenLastCalledWith(
+    const lastWrittenValue = handleRichTextChange.mock.lastCall?.[0];
+
+    expect(lastWrittenValue?.markdown).toBeNull();
+    expect(JSON.parse(lastWrittenValue?.blocknote ?? 'null')).toEqual([
       expect.objectContaining({
-        blocknote: expect.stringContaining('"styles"'),
-        markdown: null,
+        type: 'paragraph',
+        props: expect.any(Object),
+        content: [
+          expect.objectContaining({
+            type: 'text',
+            text: 'Hello',
+            styles: expect.any(Object),
+          }),
+        ],
       }),
-    );
+    ]);
   },
 };
 
