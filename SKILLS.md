@@ -11,7 +11,7 @@ npx skills add twentyhq/twenty/packages/twenty-agent-skills --list
 npx skills add twentyhq/twenty/packages/twenty-agent-skills --skill create-app
 ```
 
-Always pass the package path. Pointing the CLI at the bare repository finds only `qa-scout`, and a deep scan of it (`--full-depth`) pulls in every skill family below, neither of which is what someone building an app wants.
+Always pass the package path. Pointing the CLI at the bare repository finds the repository's own contributor skills instead, and a deep scan of it (`--full-depth`) pulls in every skill family below, neither of which is what someone building an app wants.
 
 | Skill            | Use it for                                                                            |
 | ---------------- | ------------------------------------------------------------------------------------- |
@@ -27,9 +27,9 @@ Always pass the package path. Pointing the CLI at the bare repository finds only
 
 ## Contributing to Twenty itself
 
-[`.cursor/skills`](./.cursor/skills) holds internal skills for contributors changing Twenty's own server code, such as the `syncable-entity-*` series covering the workspace migration system. They assume a checkout of this repository and are not useful for app development. Only a deep scan reaches them, so they stay out of the default listing.
+[`.claude/skills`](./.claude/skills) holds the skills for agents and contributors working in this checkout: `qa-scout` for browser QA of a pull request, and the `syncable-entity-*` series covering Twenty's own workspace migration system. They assume a checkout of this repository and are not useful for app development, which the `syncable-entity-*` descriptions state in their first sentence.
 
-`.claude/skills` holds repository-level skills for agents working in this checkout.
+These are what a bare-repository listing (`npx skills add twentyhq/twenty --list`) returns. Someone building an app wants the package-scoped command above instead.
 
 ## Shipped inside apps
 
