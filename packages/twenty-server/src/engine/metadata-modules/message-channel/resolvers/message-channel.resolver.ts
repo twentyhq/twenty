@@ -29,6 +29,7 @@ import { UpdateMessageChannelInput } from 'src/engine/metadata-modules/message-c
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
+import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import {
   MessageChannelException,
   MessageChannelExceptionCode,
@@ -49,6 +50,7 @@ export class MessageChannelResolver {
   constructor(
     private readonly messageChannelMetadataService: MessageChannelMetadataService,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
+    private readonly applicationMessageChannelsService: ApplicationMessageChannelsService,
     @InjectRepository(MessageFolderEntity)
     private readonly messageFolderRepository: Repository<MessageFolderEntity>,
     private readonly messagingProcessGroupEmailActionsService: MessagingProcessGroupEmailActionsService,
@@ -60,7 +62,8 @@ export class MessageChannelResolver {
   async connectedAccount(
     @Parent() messageChannel: MessageChannelDTO,
     @AuthWorkspace() workspace: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
+    @AuthApplication({ allowUndefined: true }) application?: FlatApplication,
   ): Promise<ConnectedAccountPublicDTO | null> {
     if (messageChannel.type === MessageChannelType.EMAIL_GROUP) {
       const account = await this.connectedAccountMetadataService.findById({
@@ -69,6 +72,32 @@ export class MessageChannelResolver {
       });
 
       return buildPublicConnectedAccount(account);
+    }
+
+    // An app channel's connection belongs to the application, not to a member,
+    // so there is no userWorkspaceId to resolve it through on a cron, webhook
+    // or install hook. Reachability is delegated rather than re-derived: the
+    // same predicate the app-facing channel API gates on also decides this,
+    // including the boundary that stops one member reaching another's private
+    // connection through the app.
+    if (isDefined(application)) {
+      const account =
+        await this.applicationMessageChannelsService.findReachableConnectedAccount(
+          {
+            applicationId: application.id,
+            workspaceId: workspace.id,
+            requestUserWorkspaceId: userWorkspaceId ?? null,
+            connectedAccountId: messageChannel.connectedAccountId,
+          },
+        );
+
+      return isDefined(account) ? buildPublicConnectedAccount(account) : null;
+    }
+
+    // Reached only by a user session, where the decorator above guarantees a
+    // user. An application-less call without one has no connection to resolve.
+    if (!isDefined(userWorkspaceId)) {
+      return null;
     }
 
     const account =

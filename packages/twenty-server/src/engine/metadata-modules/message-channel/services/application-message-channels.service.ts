@@ -285,7 +285,11 @@ export class ApplicationMessageChannelsService {
     }
   }
 
-  private async findReachableConnectedAccount({
+  // Public because the shared MessageChannelResolver resolves an app channel's
+  // connectedAccount field through it: the app-facing reachability rule —
+  // owned by this application, and not another member's private connection —
+  // must have exactly one implementation.
+  async findReachableConnectedAccount({
     applicationId,
     workspaceId,
     requestUserWorkspaceId,
