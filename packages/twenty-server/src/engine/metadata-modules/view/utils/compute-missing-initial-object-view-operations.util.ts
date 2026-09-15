@@ -1,12 +1,12 @@
 import {
-  getSeededObjectViewUniversalIdentifier,
+  getInitialObjectViewUniversalIdentifier,
   getViewFieldUniversalIdentifier,
 } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { buildSeededViewFieldFlatEntity } from 'src/engine/metadata-modules/view/utils/build-seeded-view-field-flat-entity.util';
-import { computeSeededObjectViewToCreate } from 'src/engine/metadata-modules/view/utils/compute-seeded-object-view-to-create.util';
+import { buildInitialViewFieldFlatEntity } from 'src/engine/metadata-modules/view/utils/build-initial-view-field-flat-entity.util';
+import { computeInitialObjectViewToCreate } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-to-create.util';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
@@ -48,14 +48,14 @@ export type SeedOperations = {
   viewFieldsToCreate: UniversalFlatViewField[];
 };
 
-export const computeSeedObjectDefaultViewOperations = ({
+export const computeMissingInitialObjectViewOperations = ({
   flatObjectMetadatas,
   flatViewMaps,
   flatViewFieldMaps,
-  seededViewApplicationUniversalIdentifier,
+  initialViewApplicationUniversalIdentifier,
 }: SeedInputFlatEntityMaps & {
   flatObjectMetadatas: SeedInputFlatObjectMetadata[];
-  seededViewApplicationUniversalIdentifier: string;
+  initialViewApplicationUniversalIdentifier: string;
 }): SeedOperations => {
   const seedOperations: SeedOperations = {
     viewsToCreate: [],
@@ -85,33 +85,33 @@ export const computeSeedObjectDefaultViewOperations = ({
       continue;
     }
 
-    const seededViewUniversalIdentifier =
-      getSeededObjectViewUniversalIdentifier({
+    const initialViewUniversalIdentifier =
+      getInitialObjectViewUniversalIdentifier({
         objectMetadataApplicationUniversalIdentifier:
-          seededViewApplicationUniversalIdentifier,
+          initialViewApplicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       });
 
-    const existingSeededFlatView =
-      flatViewMaps.byUniversalIdentifier[seededViewUniversalIdentifier];
+    const existingInitialFlatView =
+      flatViewMaps.byUniversalIdentifier[initialViewUniversalIdentifier];
 
     if (
-      isDefined(existingSeededFlatView) &&
-      isDefined(existingSeededFlatView.deletedAt)
+      isDefined(existingInitialFlatView) &&
+      isDefined(existingInitialFlatView.deletedAt)
     ) {
       continue;
     }
 
-    const existingSeededViewFieldUniversalIdentifiers = new Set(
-      existingSeededFlatView?.viewFieldUniversalIdentifiers ?? [],
+    const existingInitialViewFieldUniversalIdentifiers = new Set(
+      existingInitialFlatView?.viewFieldUniversalIdentifiers ?? [],
     );
 
-    if (!isDefined(existingSeededFlatView)) {
+    if (!isDefined(existingInitialFlatView)) {
       seedOperations.viewsToCreate.push(
-        computeSeededObjectViewToCreate({
+        computeInitialObjectViewToCreate({
           objectMetadata: flatObjectMetadata,
           applicationUniversalIdentifier:
-            seededViewApplicationUniversalIdentifier,
+            initialViewApplicationUniversalIdentifier,
         }),
       );
     }
@@ -124,28 +124,28 @@ export const computeSeedObjectDefaultViewOperations = ({
         continue;
       }
 
-      const seededViewFieldUniversalIdentifier =
+      const initialViewFieldUniversalIdentifier =
         getViewFieldUniversalIdentifier({
           applicationUniversalIdentifier:
-            seededViewApplicationUniversalIdentifier,
-          viewUniversalIdentifier: seededViewUniversalIdentifier,
+            initialViewApplicationUniversalIdentifier,
+          viewUniversalIdentifier: initialViewUniversalIdentifier,
           fieldMetadataUniversalIdentifier:
             flatViewField.fieldMetadataUniversalIdentifier,
         });
 
       if (
-        existingSeededViewFieldUniversalIdentifiers.has(
-          seededViewFieldUniversalIdentifier,
+        existingInitialViewFieldUniversalIdentifiers.has(
+          initialViewFieldUniversalIdentifier,
         )
       ) {
         continue;
       }
 
       seedOperations.viewFieldsToCreate.push(
-        buildSeededViewFieldFlatEntity({
+        buildInitialViewFieldFlatEntity({
           applicationUniversalIdentifier:
-            seededViewApplicationUniversalIdentifier,
-          seededViewUniversalIdentifier,
+            initialViewApplicationUniversalIdentifier,
+          initialViewUniversalIdentifier,
           fieldMetadataUniversalIdentifier:
             flatViewField.fieldMetadataUniversalIdentifier,
           isVisible: flatViewField.isVisible,

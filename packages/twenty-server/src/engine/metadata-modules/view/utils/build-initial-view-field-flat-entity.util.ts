@@ -2,9 +2,9 @@ import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
 
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
-export const buildSeededViewFieldFlatEntity = ({
+export const buildInitialViewFieldFlatEntity = ({
   applicationUniversalIdentifier,
-  seededViewUniversalIdentifier,
+  initialViewUniversalIdentifier,
   fieldMetadataUniversalIdentifier,
   isVisible,
   size,
@@ -22,18 +22,18 @@ export const buildSeededViewFieldFlatEntity = ({
   | 'aggregateOperation'
   | 'isActive'
 > & {
-  seededViewUniversalIdentifier: string;
+  initialViewUniversalIdentifier: string;
   createdAt: string;
 }): UniversalFlatViewField => ({
   fieldMetadataUniversalIdentifier,
-  viewUniversalIdentifier: seededViewUniversalIdentifier,
+  viewUniversalIdentifier: initialViewUniversalIdentifier,
   viewFieldGroupUniversalIdentifier: null,
   createdAt,
   updatedAt: createdAt,
   deletedAt: null,
   universalIdentifier: getViewFieldUniversalIdentifier({
     applicationUniversalIdentifier,
-    viewUniversalIdentifier: seededViewUniversalIdentifier,
+    viewUniversalIdentifier: initialViewUniversalIdentifier,
     fieldMetadataUniversalIdentifier,
   }),
   isVisible,
