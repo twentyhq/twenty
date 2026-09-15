@@ -1,11 +1,11 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
-import { useCoreWorkflowByIdShowPageResource } from '@/object-core/workflows/hooks/useCoreWorkflowByIdShowPageResource';
 import { useRefetchCoreRecordOnWorkspaceRecordLifecycleChange } from '@/object-core/hooks/useRefetchCoreRecordOnWorkspaceRecordLifecycleChange';
+import { useCoreWorkflowByIdShowPageResource } from '@/object-core/workflows/hooks/useCoreWorkflowByIdShowPageResource';
 import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
 
 export const WorkflowCoreShowPage = () => {

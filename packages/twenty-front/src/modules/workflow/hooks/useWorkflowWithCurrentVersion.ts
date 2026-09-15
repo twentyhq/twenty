@@ -1,10 +1,12 @@
+import { useQuery } from '@apollo/client/react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
 import { useCoreWorkflowForShowPage } from '@/object-core/workflows/hooks/useCoreWorkflowForShowPage';
 import { useCoreWorkflowVersionContent } from '@/object-core/workflows/hooks/useCoreWorkflowVersionContent';
-import { useQuery } from '@apollo/client/react';
-
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { GetCoreWorkflowByIdDocument } from '~/generated/graphql';
 import { useEffectiveDraftVersionId } from '@/workflow/hooks/useEffectiveDraftVersionId';
 import {
   type Workflow,
@@ -12,9 +14,7 @@ import {
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { GetCoreWorkflowByIdDocument } from '~/generated/graphql';
 
 type WorkflowWithAllVersions = Omit<Workflow, 'versions'> & {
   versions: Array<
