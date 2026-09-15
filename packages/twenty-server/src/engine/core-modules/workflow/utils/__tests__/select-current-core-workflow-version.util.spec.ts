@@ -1,4 +1,3 @@
-import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { selectCurrentCoreWorkflowVersion } from 'src/engine/core-modules/workflow/utils/select-current-core-workflow-version.util';
 
@@ -10,12 +9,11 @@ const buildVersion = ({
   id: string;
   status: WorkflowVersionStatus;
   createdAt: string;
-}) =>
-  ({
-    id,
-    status,
-    createdAt,
-  }) as CoreWorkflowVersionDTO;
+}) => ({
+  id,
+  status,
+  createdAt,
+});
 
 describe('selectCurrentCoreWorkflowVersion', () => {
   it('prefers the draft version over a newer published one', () => {

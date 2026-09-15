@@ -116,6 +116,10 @@ export class CoreWorkflowVersionListService {
         ),
       });
 
+    const requestedWorkspaceWorkflowVersionIds = new Set(
+      workspaceWorkflowVersionIds,
+    );
+
     const coreWorkflowVersionMetadatas = Object.values(
       coreWorkflowVersionsByWorkspaceWorkflowId,
     )
@@ -123,7 +127,7 @@ export class CoreWorkflowVersionListService {
       .filter(
         (coreWorkflowVersion) =>
           isDefined(coreWorkflowVersion.workspaceWorkflowVersionId) &&
-          workspaceWorkflowVersionIds.includes(
+          requestedWorkspaceWorkflowVersionIds.has(
             coreWorkflowVersion.workspaceWorkflowVersionId,
           ),
       );
