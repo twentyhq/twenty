@@ -16,7 +16,7 @@ import { ensureAbsoluteUrl, isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight, IconCopy, IconMail } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
-export const useGetSecondaryRecordTableCellButton = () => {
+export const useGetSecondaryFieldButton = () => {
   const { fieldDefinition, recordId } = useContext(FieldContext);
   const { copyToClipboard } = useCopyToClipboard();
 
@@ -107,10 +107,17 @@ export const useGetSecondaryRecordTableCellButton = () => {
     [FieldMetadataSettingsOnClickAction.OPEN_IN_APP]: IconMail,
   };
 
+  const ariaLabelByAction = {
+    [FieldMetadataSettingsOnClickAction.OPEN_LINK]: t`Open link`,
+    [FieldMetadataSettingsOnClickAction.COPY]: t`Copy`,
+    [FieldMetadataSettingsOnClickAction.OPEN_IN_APP]: t`Open in app`,
+  };
+
   return [
     {
       onClick: onClickByAction[secondaryActionOnClick],
       Icon: iconByAction[secondaryActionOnClick],
+      ariaLabel: ariaLabelByAction[secondaryActionOnClick],
     },
   ];
 };
