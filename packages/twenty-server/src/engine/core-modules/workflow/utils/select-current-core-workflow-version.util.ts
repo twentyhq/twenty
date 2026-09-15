@@ -1,6 +1,19 @@
 import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { WorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 
+const selectNewestCoreWorkflowVersion = <
+  TCoreWorkflowVersion extends Pick<CoreWorkflowVersionDTO, 'createdAt'>,
+>(
+  coreWorkflowVersions: TCoreWorkflowVersion[],
+): TCoreWorkflowVersion | undefined =>
+  coreWorkflowVersions.reduce<TCoreWorkflowVersion | undefined>(
+    (newest, coreWorkflowVersion) =>
+      newest === undefined || coreWorkflowVersion.createdAt > newest.createdAt
+        ? coreWorkflowVersion
+        : newest,
+    undefined,
+  );
+
 export const selectCurrentCoreWorkflowVersion = <
   TCoreWorkflowVersion extends Pick<
     CoreWorkflowVersionDTO,
@@ -9,20 +22,14 @@ export const selectCurrentCoreWorkflowVersion = <
 >(
   coreWorkflowVersions: TCoreWorkflowVersion[],
 ): TCoreWorkflowVersion | undefined => {
-  const draftVersion = coreWorkflowVersions.find(
-    (coreWorkflowVersion) =>
-      coreWorkflowVersion.status === WorkflowVersionStatus.DRAFT,
+  const newestDraftVersion = selectNewestCoreWorkflowVersion(
+    coreWorkflowVersions.filter(
+      (coreWorkflowVersion) =>
+        coreWorkflowVersion.status === WorkflowVersionStatus.DRAFT,
+    ),
   );
 
-  const newestVersion = coreWorkflowVersions.reduce<
-    TCoreWorkflowVersion | undefined
-  >(
-    (newest, coreWorkflowVersion) =>
-      newest === undefined || coreWorkflowVersion.createdAt > newest.createdAt
-        ? coreWorkflowVersion
-        : newest,
-    undefined,
+  return (
+    newestDraftVersion ?? selectNewestCoreWorkflowVersion(coreWorkflowVersions)
   );
-
-  return draftVersion ?? newestVersion;
 };

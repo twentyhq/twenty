@@ -40,6 +40,25 @@ describe('getCurrentWorkflowVersionId', () => {
     ).toBe('draft');
   });
 
+  it('prefers the newest draft when several drafts exist', () => {
+    expect(
+      getCurrentWorkflowVersionId(
+        buildWorkflow([
+          buildVersion({
+            id: 'old-draft',
+            status: 'DRAFT',
+            createdAt: '2026-01-01',
+          }),
+          buildVersion({
+            id: 'new-draft',
+            status: 'DRAFT',
+            createdAt: '2026-01-02',
+          }),
+        ]),
+      ),
+    ).toBe('new-draft');
+  });
+
   it('falls back to the newest version when there is no draft', () => {
     expect(
       getCurrentWorkflowVersionId(

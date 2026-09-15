@@ -33,6 +33,23 @@ describe('selectCurrentCoreWorkflowVersion', () => {
     expect(current?.id).toBe('draft');
   });
 
+  it('prefers the newest draft when several drafts exist', () => {
+    const current = selectCurrentCoreWorkflowVersion([
+      buildVersion({
+        id: 'old-draft',
+        status: WorkflowVersionStatus.DRAFT,
+        createdAt: '2026-01-01',
+      }),
+      buildVersion({
+        id: 'new-draft',
+        status: WorkflowVersionStatus.DRAFT,
+        createdAt: '2026-01-02',
+      }),
+    ]);
+
+    expect(current?.id).toBe('new-draft');
+  });
+
   it('falls back to the newest version when there is no draft', () => {
     const current = selectCurrentCoreWorkflowVersion([
       buildVersion({
