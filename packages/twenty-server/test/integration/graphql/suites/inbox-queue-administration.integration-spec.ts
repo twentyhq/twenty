@@ -14,7 +14,7 @@ const CREATE_INBOX_QUEUE = gql`
     createInboxQueue(input: $input) {
       id
       name
-      slug
+      label
       isDefault
       roleIds
     }
@@ -52,7 +52,7 @@ const GET_INBOX_QUEUE_SETTINGS = gql`
     inboxQueueSettings {
       id
       name
-      slug
+      label
       isDefault
     }
   }
@@ -62,7 +62,7 @@ const GET_INBOX_ITEM_TYPE_SETTINGS = gql`
   query GetInboxItemTypeSettings {
     inboxItemTypeSettings {
       id
-      key
+      name
       defaultQueueId
     }
   }
@@ -72,14 +72,14 @@ const GET_MY_INBOX_QUEUES = gql`
   query GetMyInboxQueues {
     myInboxQueues {
       id
-      slug
+      name
     }
   }
 `;
 
 const GET_MY_INBOX_ITEMS = gql`
-  query GetMyInboxItems($queueSlug: String) {
-    myInboxItems(queueSlug: $queueSlug) {
+  query GetMyInboxItems($queueName: String) {
+    myInboxItems(queueName: $queueName) {
       id
     }
   }
@@ -138,10 +138,10 @@ describe('inbox queue administration', () => {
     });
   });
 
-  const createQueue = async (name: string) => {
+  const createQueue = async (label: string) => {
     const response = await makeGraphqlAPIRequest({
       query: CREATE_INBOX_QUEUE,
-      variables: { input: { name, roleIds: [] } },
+      variables: { input: { label, roleIds: [] } },
     });
 
     const queue = response.body.data?.createInboxQueue;
@@ -153,13 +153,13 @@ describe('inbox queue administration', () => {
     return { response, queue };
   };
 
-  it('should derive an address from the name when a shared inbox is created', async () => {
+  it('should derive an address from the label when a shared inbox is created', async () => {
     const { response, queue } = await createQueue('Integration Support');
 
     expect(response.body.errors).toBeUndefined();
     expect(queue).toMatchObject({
-      name: 'Integration Support',
-      slug: 'integration-support',
+      label: 'Integration Support',
+      name: 'integration-support',
       isDefault: false,
     });
   });
@@ -168,8 +168,8 @@ describe('inbox queue administration', () => {
   it('should not reuse an address another shared inbox already holds', async () => {
     const { queue } = await createQueue('Integration Support');
 
-    expect(queue.slug).not.toBe('integration-support');
-    expect(queue.slug).toMatch(/^integration-support-\d+$/);
+    expect(queue.name).not.toBe('integration-support');
+    expect(queue.name).toMatch(/^integration-support-\d+$/);
   });
 
   // A role from another workspace satisfies the foreign key, so the workspace
@@ -260,7 +260,7 @@ describe('inbox queue administration', () => {
       const { queue } = await createQueue('Integration Private');
 
       const memberResponse = await makeGraphqlAPIRequest(
-        { query: GET_MY_INBOX_ITEMS, variables: { queueSlug: queue.slug } },
+        { query: GET_MY_INBOX_ITEMS, variables: { queueName: queue.name } },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 
@@ -291,7 +291,7 @@ describe('inbox queue administration', () => {
       expect(await jonyQueueIds()).toContain(queue.id);
 
       const readable = await makeGraphqlAPIRequest(
-        { query: GET_MY_INBOX_ITEMS, variables: { queueSlug: queue.slug } },
+        { query: GET_MY_INBOX_ITEMS, variables: { queueName: queue.name } },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
       );
 
@@ -330,7 +330,7 @@ describe('inbox queue administration', () => {
         {
           query: CREATE_INBOX_QUEUE,
           variables: {
-            input: { name: 'Integration Escalation', roleIds: [] },
+            input: { label: 'Integration Escalation', roleIds: [] },
           },
         },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
