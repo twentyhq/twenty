@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 21:09\n"
+"PO-Revision-Date: 2026-09-15 12:25\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -824,12 +824,12 @@ msgstr "Acțiune"
 #. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
 msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
-msgstr ""
+msgstr "Activează-ți licența Twenty Organization după finalizarea plății și copiază cheia în instanța ta self-hosted."
 
 #. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Activating your Organization license…"
-msgstr ""
+msgstr "Se activează licența dvs. Organization…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2160,7 +2160,7 @@ msgstr "Copiază transcrierea sau linkul video al unei înregistrări de apel di
 #. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Copy the Organization key above."
-msgstr ""
+msgstr "Copiază cheia Organization de mai sus."
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -3320,7 +3320,7 @@ msgstr "Stocare Dataverse suplimentară (10 GB)"
 #. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Failed to activate Organization key. Please try again."
-msgstr ""
+msgstr "Nu s-a reușit activarea cheii Organization. Te rugăm să încerci din nou."
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -3764,7 +3764,7 @@ msgstr "Germania 🇩🇪"
 #. js-lingui-id: W85I60
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Get a license"
-msgstr ""
+msgstr "Obține o licență"
 
 #. js-lingui-id: WoPlNk
 #: src/sections/partner-hero/PartnerHero.tsx
@@ -5624,7 +5624,7 @@ msgstr "Deschide meniul"
 #. js-lingui-id: xxpabu
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Enterprise."
-msgstr ""
+msgstr "Deschide Setări → Panou de administrare → Enterprise în instanța ta Twenty autogăzduită."
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5660,12 +5660,12 @@ msgstr "Organizație"
 #. js-lingui-id: hjEu3O
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 msgid "Organization *activation*"
-msgstr ""
+msgstr "*Activarea* organizației"
 
 #. js-lingui-id: CKppYD
 #: src/platform/routing/static-website-routes.ts
 msgid "Organization Activation | Twenty"
-msgstr ""
+msgstr "Activarea organizației | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -9170,12 +9170,12 @@ msgstr "Rețeaua ta, cartografiată complet."
 #. js-lingui-id: 91Ysnw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your Organization key"
-msgstr ""
+msgstr "Cheia organizației tale"
 
 #. js-lingui-id: sarabV
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your Organization license has been activated successfully."
-msgstr ""
+msgstr "Licența organizației tale a fost activată cu succes."
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

@@ -8,7 +8,7 @@ msgstr ""
 "Language: de\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 21:09\n"
+"PO-Revision-Date: 2026-09-15 12:25\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -824,12 +824,12 @@ msgstr "Aktion"
 #. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
 msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
-msgstr ""
+msgstr "Aktivieren Sie nach dem Checkout Ihre Twenty-Organization-Lizenz und kopieren Sie Ihren Schlüssel in Ihre selbstgehostete Instanz."
 
 #. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Activating your Organization license…"
-msgstr ""
+msgstr "Ihre Organization-Lizenz wird aktiviert…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2160,7 +2160,7 @@ msgstr "Kopieren Sie das Transkript oder den Videolink einer Anrufaufzeichnung d
 #. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Copy the Organization key above."
-msgstr ""
+msgstr "Kopieren Sie den oben stehenden Organization-Schlüssel."
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -3320,7 +3320,7 @@ msgstr "Zusätzlicher Dataverse-Speicher (10 GB)"
 #. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Failed to activate Organization key. Please try again."
-msgstr ""
+msgstr "Der Organization-Schlüssel konnte nicht aktiviert werden. Bitte versuchen Sie es erneut."
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -3764,7 +3764,7 @@ msgstr "Deutschland 🇩🇪"
 #. js-lingui-id: W85I60
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Get a license"
-msgstr ""
+msgstr "Eine Lizenz erwerben"
 
 #. js-lingui-id: WoPlNk
 #: src/sections/partner-hero/PartnerHero.tsx
@@ -5624,7 +5624,7 @@ msgstr "Menü öffnen"
 #. js-lingui-id: xxpabu
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Enterprise."
-msgstr ""
+msgstr "Öffnen Sie die Einstellungen Ihrer selbstgehosteten Twenty-Instanz → Admin-Bereich → Enterprise."
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5660,12 +5660,12 @@ msgstr "Organisation"
 #. js-lingui-id: hjEu3O
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 msgid "Organization *activation*"
-msgstr ""
+msgstr "Aktivierung der Organisation"
 
 #. js-lingui-id: CKppYD
 #: src/platform/routing/static-website-routes.ts
 msgid "Organization Activation | Twenty"
-msgstr ""
+msgstr "Aktivierung der Organisation | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -9170,12 +9170,12 @@ msgstr "Ihr Netzwerk, vollständig abgebildet."
 #. js-lingui-id: 91Ysnw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your Organization key"
-msgstr ""
+msgstr "Ihr Organisationsschlüssel"
 
 #. js-lingui-id: sarabV
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your Organization license has been activated successfully."
-msgstr ""
+msgstr "Ihre Organisationslizenz wurde erfolgreich aktiviert."
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

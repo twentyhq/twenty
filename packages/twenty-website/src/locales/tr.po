@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 21:09\n"
+"PO-Revision-Date: 2026-09-15 12:25\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -824,12 +824,12 @@ msgstr "Eylem"
 #. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
 msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
-msgstr ""
+msgstr "Ödeme sonrasında Twenty Organization lisansınızı etkinleştirin ve anahtarınızı kendi kendinize barındırdığınız örneğinize kopyalayın."
 
 #. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Activating your Organization license…"
-msgstr ""
+msgstr "Organization lisansınız etkinleştiriliyor…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2160,7 +2160,7 @@ msgstr "Bir çağrı kaydının dökümünü veya video bağlantısını doğrud
 #. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Copy the Organization key above."
-msgstr ""
+msgstr "Yukarıdaki Organization anahtarını kopyalayın."
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -3320,7 +3320,7 @@ msgstr "Ek Dataverse depolaması (10 GB)"
 #. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Failed to activate Organization key. Please try again."
-msgstr ""
+msgstr "Organization anahtarı etkinleştirilemedi. Lütfen tekrar deneyin."
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -3764,7 +3764,7 @@ msgstr "Almanya 🇩🇪"
 #. js-lingui-id: W85I60
 #: src/sections/pricing-plans/plans-data.ts
 msgid "Get a license"
-msgstr ""
+msgstr "Lisans alın"
 
 #. js-lingui-id: WoPlNk
 #: src/sections/partner-hero/PartnerHero.tsx
@@ -5624,7 +5624,7 @@ msgstr "Menüyü aç"
 #. js-lingui-id: xxpabu
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Enterprise."
-msgstr ""
+msgstr "Twenty self-hosted örneğinizin Ayarlar → Yönetici Paneli → Enterprise bölümünü açın."
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5660,12 +5660,12 @@ msgstr "Organization"
 #. js-lingui-id: hjEu3O
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 msgid "Organization *activation*"
-msgstr ""
+msgstr "Kuruluş *etkinleştirme*"
 
 #. js-lingui-id: CKppYD
 #: src/platform/routing/static-website-routes.ts
 msgid "Organization Activation | Twenty"
-msgstr ""
+msgstr "Kuruluş Etkinleştirme | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -9160,12 +9160,12 @@ msgstr "Ağınız, tamamen haritalanmış durumda."
 #. js-lingui-id: 91Ysnw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your Organization key"
-msgstr ""
+msgstr "Kuruluş anahtarınız"
 
 #. js-lingui-id: sarabV
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your Organization license has been activated successfully."
-msgstr ""
+msgstr "Kuruluş lisansınız başarıyla etkinleştirildi."
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx
