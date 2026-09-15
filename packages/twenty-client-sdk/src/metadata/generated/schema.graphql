@@ -1974,7 +1974,7 @@ type ApplicationConnectedAccountDTO {
   createdAt: DateTime!
   updatedAt: DateTime!
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
-  isOwnedByCurrentUser: Boolean!
+  isOwnedByCurrentUser: Boolean! @deprecated(reason: "Ownership no longer gates connection actions, every application admin manages a workspace-shared connection")
 }
 
 type FeatureFlag {
@@ -1997,7 +1997,6 @@ enum FeatureFlagKey {
   IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_SHARING_ENABLED
-  IS_INBOX_ENABLED
   IS_WEBHOOK_RATE_LIMIT_ENABLED
 }
 
@@ -3134,6 +3133,28 @@ type ImapSmtpCaldavConnectionSuccess {
   connectedAccountId: String!
 }
 
+type Webhook {
+  id: UUID!
+  targetUrl: String!
+  operations: [String!]!
+  description: String
+  secret: String!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
+type ToolIndexEntry {
+  name: String!
+  label: String!
+  description: String!
+  category: String!
+  objectName: String
+  icon: String
+  inputSchema: JSON
+}
+
 type AgentMessagePart {
   id: UUID!
   messageId: UUID!
@@ -3168,28 +3189,6 @@ type RunAgentResult {
   result: JSON
   error: String
   success: Boolean!
-}
-
-type Webhook {
-  id: UUID!
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String!
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  deletedAt: DateTime
-}
-
-type ToolIndexEntry {
-  name: String!
-  label: String!
-  description: String!
-  category: String!
-  objectName: String
-  icon: String
-  inputSchema: JSON
 }
 
 type ChannelSyncSuccess {
@@ -3686,30 +3685,6 @@ type Query {
   commandMenuItem(id: UUID!): CommandMenuItem
   frontComponents: [FrontComponent!]!
   frontComponent(id: UUID!): FrontComponent
-  getToolIndex: [ToolIndexEntry!]!
-  getToolInputSchema(toolName: String!): JSON
-  previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
-  messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
-  unsubscribeTopics: [UnsubscribeTopic!]!
-  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
-  appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
-  getEmailingDomains: [EmailingDomain!]!
-  getRoles: [Role!]!
-  webhooks: [Webhook!]!
-  webhook(id: UUID!): Webhook
-  fields(
-    """Limit or page results."""
-    paging: CursorPaging! = {first: 10}
-
-    """Specify to filter the records returned."""
-    filter: FieldFilter! = {}
-  ): FieldConnection!
-  field(
-    """The id of the record to find."""
-    id: UUID!
-  ): Field!
-  getViewGroups(viewId: String): [ViewGroup!]!
-  getViewGroup(id: String!): ViewGroup
   currentWorkspace: Workspace!
   getPublicWorkspaceDataByDomain(origin: String): PublicWorkspaceData!
   getPublicWorkspaceDataById(id: UUID!): PublicWorkspaceDataSummary!
@@ -3730,6 +3705,30 @@ type Query {
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
   publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
+  fields(
+    """Limit or page results."""
+    paging: CursorPaging! = {first: 10}
+
+    """Specify to filter the records returned."""
+    filter: FieldFilter! = {}
+  ): FieldConnection!
+  field(
+    """The id of the record to find."""
+    id: UUID!
+  ): Field!
+  getViewGroups(viewId: String): [ViewGroup!]!
+  getViewGroup(id: String!): ViewGroup
+  getRoles: [Role!]!
+  previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
+  messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
+  unsubscribeTopics: [UnsubscribeTopic!]!
+  myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
+  getEmailingDomains: [EmailingDomain!]!
+  getToolIndex: [ToolIndexEntry!]!
+  getToolInputSchema(toolName: String!): JSON
+  webhooks: [Webhook!]!
+  webhook(id: UUID!): Webhook
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
@@ -3993,50 +3992,6 @@ type Mutation {
   createFrontComponent(input: CreateFrontComponentInput!): FrontComponent!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
   deleteFrontComponent(id: UUID!): FrontComponent!
-  sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
-  sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
-  cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
-  sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
-  duplicateMessageList(id: UUID!): DuplicatedMessageList!
-  createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
-  deleteMessageSuppression(id: UUID!): Boolean!
-  createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
-  updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
-  deleteUnsubscribeTopic(id: String!): Boolean!
-  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
-  createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
-  updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
-  deleteEmailGroupChannel(id: UUID!): MessageChannel!
-  createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
-  updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
-  deleteAppMessageChannel(id: UUID!): MessageChannel!
-  ingestAppMessages(input: IngestAppMessagesInput!): IngestAppMessagesOutput!
-  createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
-  deleteEmailingDomain(id: String!): Boolean!
-  verifyEmailingDomain(id: String!): EmailingDomain!
-  updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
-  createOneRole(createRoleInput: CreateRoleInput!): Role!
-  updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
-  deleteOneRole(roleId: UUID!): String!
-  upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
-  upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
-  upsertFieldPermissions(upsertFieldPermissionsInput: UpsertFieldPermissionsInput!): [FieldPermission!]!
-  upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
-  assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
-  removeRoleFromAgent(agentId: UUID!): Boolean!
-  createWebhook(input: CreateWebhookInput!): Webhook!
-  updateWebhook(input: UpdateWebhookInput!): Webhook!
-  deleteWebhook(id: UUID!): Webhook!
-  createOneField(input: CreateOneFieldMetadataInput!): Field!
-  updateOneField(input: UpdateOneFieldMetadataInput!): Field!
-  deleteOneField(input: DeleteOneFieldInput!): Field!
-  createViewGroup(input: CreateViewGroupInput!): ViewGroup!
-  createManyViewGroups(inputs: [CreateViewGroupInput!]!): [ViewGroup!]!
-  updateViewGroup(input: UpdateViewGroupInput!): ViewGroup!
-  updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
-  deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
-  destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
-  runAgent(input: RunAgentInput!): RunAgentResult!
   activateWorkspace(data: ActivateWorkspaceInput!): Workspace!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
   deleteCurrentWorkspace: Workspace!
@@ -4060,6 +4015,50 @@ type Mutation {
   updateApplication(id: UUID!, input: UpdateApplicationInput!): Application!
   uninstallApplication(universalIdentifier: String!): Boolean!
   syncMarketplaceCatalog: Boolean!
+  createOneField(input: CreateOneFieldMetadataInput!): Field!
+  updateOneField(input: UpdateOneFieldMetadataInput!): Field!
+  deleteOneField(input: DeleteOneFieldInput!): Field!
+  createViewGroup(input: CreateViewGroupInput!): ViewGroup!
+  createManyViewGroups(inputs: [CreateViewGroupInput!]!): [ViewGroup!]!
+  updateViewGroup(input: UpdateViewGroupInput!): ViewGroup!
+  updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
+  deleteViewGroup(input: DeleteViewGroupInput!): ViewGroup!
+  destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
+  updateWorkspaceMemberRole(workspaceMemberId: UUID!, roleId: UUID!): WorkspaceMember!
+  createOneRole(createRoleInput: CreateRoleInput!): Role!
+  updateOneRole(updateRoleInput: UpdateRoleInput!): Role!
+  deleteOneRole(roleId: UUID!): String!
+  upsertObjectPermissions(upsertObjectPermissionsInput: UpsertObjectPermissionsInput!): [ObjectPermission!]!
+  upsertPermissionFlags(upsertPermissionFlagsInput: UpsertPermissionFlagsInput!): [RolePermissionFlag!]!
+  upsertFieldPermissions(upsertFieldPermissionsInput: UpsertFieldPermissionsInput!): [FieldPermission!]!
+  upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
+  assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
+  removeRoleFromAgent(agentId: UUID!): Boolean!
+  sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
+  sendMessageCampaign(input: SendMessageCampaignInput!): SendMessageCampaignOutputDTO!
+  cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
+  sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
+  duplicateMessageList(id: UUID!): DuplicatedMessageList!
+  createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
+  deleteMessageSuppression(id: UUID!): Boolean!
+  createUnsubscribeTopic(input: CreateUnsubscribeTopicInput!): UnsubscribeTopic!
+  updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
+  deleteUnsubscribeTopic(id: String!): Boolean!
+  updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
+  createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
+  updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
+  deleteEmailGroupChannel(id: UUID!): MessageChannel!
+  createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
+  updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
+  deleteAppMessageChannel(id: UUID!): MessageChannel!
+  ingestAppMessages(input: IngestAppMessagesInput!): IngestAppMessagesOutput!
+  createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
+  deleteEmailingDomain(id: String!): Boolean!
+  verifyEmailingDomain(id: String!): EmailingDomain!
+  runAgent(input: RunAgentInput!): RunAgentResult!
+  createWebhook(input: CreateWebhookInput!): Webhook!
+  updateWebhook(input: UpdateWebhookInput!): Webhook!
+  deleteWebhook(id: UUID!): Webhook!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
@@ -4846,6 +4845,283 @@ input UpdateFrontComponentInputUpdates {
   description: String
 }
 
+input ActivateWorkspaceInput {
+  """
+  Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
+  """
+  displayName: String
+}
+
+input UpdateWorkspaceInput {
+  subdomain: String
+  customDomain: String
+  displayName: String
+  logo: String
+  inviteHash: String
+  isPublicInviteLinkEnabled: Boolean
+  workspaceDiscoverability: WorkspaceDiscoverability
+  allowImpersonation: Boolean
+  isGoogleAuthEnabled: Boolean
+  isMicrosoftAuthEnabled: Boolean
+  isPasswordAuthEnabled: Boolean
+  isGoogleAuthBypassEnabled: Boolean
+  isMicrosoftAuthBypassEnabled: Boolean
+  isPasswordAuthBypassEnabled: Boolean
+  defaultRoleId: UUID
+  isTwoFactorAuthenticationEnforced: Boolean
+  trashRetentionDays: Float
+  eventLogRetentionDays: Float
+  aiChatModelTier: AiModelTier
+  aiAgentModelTier: AiModelTier
+  isAutoModelSelectionEnabled: Boolean
+  aiModelIdByTier: JSON
+  aiAdditionalInstructions: String
+  editableProfileFields: [String!]
+  isInternalMessagesImportEnabled: Boolean
+}
+
+input CreateApplicationRegistrationInput {
+  name: String!
+  universalIdentifier: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
+}
+
+input UpdateApplicationRegistrationInput {
+  id: String!
+  update: UpdateApplicationRegistrationPayload!
+}
+
+input UpdateApplicationRegistrationPayload {
+  name: String
+  oAuthRedirectUris: [String!]
+  oAuthScopes: [String!]
+}
+
+input CreateApplicationRegistrationVariableInput {
+  applicationRegistrationId: String!
+  key: String!
+  value: String!
+  description: String
+  isSecret: Boolean
+}
+
+input UpdateApplicationRegistrationVariableInput {
+  id: String!
+  update: UpdateApplicationRegistrationVariablePayload!
+}
+
+input UpdateApplicationRegistrationVariablePayload {
+  value: String
+  resetValue: Boolean
+  description: String
+}
+
+input TriggerInstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
+input TriggerUninstallApplicationJobInput {
+  universalIdentifier: String!
+}
+
+input UpdateApplicationInput {
+  autoUpgrade: Boolean
+}
+
+input CreateOneFieldMetadataInput {
+  """The record to create"""
+  field: CreateFieldInput!
+}
+
+input CreateFieldInput {
+  type: FieldMetadataType!
+  name: String!
+  label: String!
+  description: String
+  icon: String
+  isActive: Boolean
+  isSystem: Boolean
+  isUIEditable: Boolean
+  isUIReadOnly: Boolean
+  isNullable: Boolean
+  isUnique: Boolean
+  isSearchable: Boolean
+  isAuditLogged: Boolean
+  defaultValue: JSON
+  options: JSON
+  settings: JSON
+  objectMetadataId: UUID!
+  isLabelSyncedWithName: Boolean
+  isRemoteCreation: Boolean
+  relationCreationPayload: JSON
+  morphRelationsCreationPayload: [JSON!]
+}
+
+input UpdateOneFieldMetadataInput {
+  """The id of the record to update"""
+  id: UUID!
+
+  """The record to update"""
+  update: UpdateFieldInput!
+}
+
+input UpdateFieldInput {
+  universalIdentifier: String
+  name: String
+  label: String
+  description: String
+  icon: String
+  isActive: Boolean
+  isSystem: Boolean
+  isUIEditable: Boolean
+  isUIReadOnly: Boolean
+  isNullable: Boolean
+  isUnique: Boolean
+  isSearchable: Boolean
+  isAuditLogged: Boolean
+  defaultValue: JSON
+  options: JSON
+  settings: JSON
+  objectMetadataId: UUID
+  isLabelSyncedWithName: Boolean
+  morphRelationsUpdatePayload: [JSON!]
+  translations: [MetadataTranslationOverrideInput!]
+}
+
+input DeleteOneFieldInput {
+  """The id of the field to delete."""
+  id: UUID!
+}
+
+input CreateViewGroupInput {
+  id: UUID
+  isVisible: Boolean = true
+  fieldValue: String!
+  position: Float = 0
+  viewId: UUID!
+}
+
+input UpdateViewGroupInput {
+  """The id of the view group to update"""
+  id: UUID!
+
+  """The view group to update"""
+  update: UpdateViewGroupInputUpdates!
+}
+
+input UpdateViewGroupInputUpdates {
+  fieldMetadataId: UUID
+  isVisible: Boolean
+  fieldValue: String
+  position: Float
+}
+
+input DeleteViewGroupInput {
+  """The id of the view group to delete."""
+  id: UUID!
+}
+
+input DestroyViewGroupInput {
+  """The id of the view group to destroy."""
+  id: UUID!
+}
+
+input CreateRoleInput {
+  id: String
+  label: String!
+  description: String
+  icon: String
+  canUpdateAllSettings: Boolean
+  canAccessAllTools: Boolean
+  canReadAllObjectRecords: Boolean
+  canUpdateAllObjectRecords: Boolean
+  canSoftDeleteAllObjectRecords: Boolean
+  canDestroyAllObjectRecords: Boolean
+  canBeAssignedToUsers: Boolean
+  canBeAssignedToAgents: Boolean
+  canBeAssignedToApiKeys: Boolean
+}
+
+input UpdateRoleInput {
+  update: UpdateRolePayload!
+
+  """The id of the role to update"""
+  id: UUID!
+}
+
+input UpdateRolePayload {
+  label: String
+  description: String
+  icon: String
+  canUpdateAllSettings: Boolean
+  canAccessAllTools: Boolean
+  canReadAllObjectRecords: Boolean
+  canUpdateAllObjectRecords: Boolean
+  canSoftDeleteAllObjectRecords: Boolean
+  canDestroyAllObjectRecords: Boolean
+  canBeAssignedToUsers: Boolean
+  canBeAssignedToAgents: Boolean
+  canBeAssignedToApiKeys: Boolean
+}
+
+input UpsertObjectPermissionsInput {
+  roleId: UUID!
+  objectPermissions: [ObjectPermissionInput!]!
+}
+
+input ObjectPermissionInput {
+  objectMetadataId: UUID!
+  canReadObjectRecords: Boolean
+  canUpdateObjectRecords: Boolean
+  canSoftDeleteObjectRecords: Boolean
+  canDestroyObjectRecords: Boolean
+}
+
+input UpsertPermissionFlagsInput {
+  roleId: UUID!
+  permissionFlagKeys: [String!]!
+}
+
+input UpsertFieldPermissionsInput {
+  roleId: UUID!
+  fieldPermissions: [FieldPermissionInput!]!
+}
+
+input FieldPermissionInput {
+  objectMetadataId: UUID!
+  fieldMetadataId: UUID!
+  canReadFieldValue: Boolean
+  canUpdateFieldValue: Boolean
+}
+
+input UpsertRowLevelPermissionPredicatesInput {
+  roleId: UUID!
+  objectMetadataId: UUID!
+  predicates: [RowLevelPermissionPredicateInput!]!
+  predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
+}
+
+input RowLevelPermissionPredicateInput {
+  id: UUID
+  fieldMetadataId: UUID!
+  operand: RowLevelPermissionPredicateOperand!
+  value: JSON
+  subFieldName: String
+  workspaceMemberFieldMetadataId: String
+  workspaceMemberSubFieldName: String
+  rowLevelPermissionPredicateGroupId: UUID
+  positionInRowLevelPermissionPredicateGroup: Float
+}
+
+input RowLevelPermissionPredicateGroupInput {
+  id: UUID
+  objectMetadataId: UUID!
+  parentRowLevelPermissionPredicateGroupId: UUID
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
+  positionInRowLevelPermissionPredicateGroup: Float
+}
+
 input SendEmailViaDomainInput {
   emailingDomainId: String!
   to: [String!]!
@@ -4966,99 +5242,27 @@ input CreateEmailingDomainInput {
   domain: String!
 }
 
-input CreateRoleInput {
-  id: String
-  label: String!
-  description: String
-  icon: String
-  canUpdateAllSettings: Boolean
-  canAccessAllTools: Boolean
-  canReadAllObjectRecords: Boolean
-  canUpdateAllObjectRecords: Boolean
-  canSoftDeleteAllObjectRecords: Boolean
-  canDestroyAllObjectRecords: Boolean
-  canBeAssignedToUsers: Boolean
-  canBeAssignedToAgents: Boolean
-  canBeAssignedToApiKeys: Boolean
+input RunAgentInput {
+  agentUniversalIdentifier: String!
+  prompt: String
+  runAsWorkspaceMemberId: UUID
+  messages: [RunAgentMessageInput!]
 }
 
-input UpdateRoleInput {
-  update: UpdateRolePayload!
-
-  """The id of the role to update"""
-  id: UUID!
+input RunAgentMessageInput {
+  role: RunAgentMessageRole!
+  content: String!
+  attachments: [RunAgentMessageAttachmentInput!]
 }
 
-input UpdateRolePayload {
-  label: String
-  description: String
-  icon: String
-  canUpdateAllSettings: Boolean
-  canAccessAllTools: Boolean
-  canReadAllObjectRecords: Boolean
-  canUpdateAllObjectRecords: Boolean
-  canSoftDeleteAllObjectRecords: Boolean
-  canDestroyAllObjectRecords: Boolean
-  canBeAssignedToUsers: Boolean
-  canBeAssignedToAgents: Boolean
-  canBeAssignedToApiKeys: Boolean
+enum RunAgentMessageRole {
+  user
+  assistant
 }
 
-input UpsertObjectPermissionsInput {
-  roleId: UUID!
-  objectPermissions: [ObjectPermissionInput!]!
-}
-
-input ObjectPermissionInput {
-  objectMetadataId: UUID!
-  canReadObjectRecords: Boolean
-  canUpdateObjectRecords: Boolean
-  canSoftDeleteObjectRecords: Boolean
-  canDestroyObjectRecords: Boolean
-}
-
-input UpsertPermissionFlagsInput {
-  roleId: UUID!
-  permissionFlagKeys: [String!]!
-}
-
-input UpsertFieldPermissionsInput {
-  roleId: UUID!
-  fieldPermissions: [FieldPermissionInput!]!
-}
-
-input FieldPermissionInput {
-  objectMetadataId: UUID!
-  fieldMetadataId: UUID!
-  canReadFieldValue: Boolean
-  canUpdateFieldValue: Boolean
-}
-
-input UpsertRowLevelPermissionPredicatesInput {
-  roleId: UUID!
-  objectMetadataId: UUID!
-  predicates: [RowLevelPermissionPredicateInput!]!
-  predicateGroups: [RowLevelPermissionPredicateGroupInput!]!
-}
-
-input RowLevelPermissionPredicateInput {
-  id: UUID
-  fieldMetadataId: UUID!
-  operand: RowLevelPermissionPredicateOperand!
-  value: JSON
-  subFieldName: String
-  workspaceMemberFieldMetadataId: String
-  workspaceMemberSubFieldName: String
-  rowLevelPermissionPredicateGroupId: UUID
-  positionInRowLevelPermissionPredicateGroup: Float
-}
-
-input RowLevelPermissionPredicateGroupInput {
-  id: UUID
-  objectMetadataId: UUID!
-  parentRowLevelPermissionPredicateGroupId: UUID
-  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
-  positionInRowLevelPermissionPredicateGroup: Float
+input RunAgentMessageAttachmentInput {
+  fileId: UUID!
+  filename: String
 }
 
 input CreateWebhookInput {
@@ -5082,205 +5286,6 @@ input UpdateWebhookInputUpdates {
   operations: [String!]
   description: String
   secret: String
-}
-
-input CreateOneFieldMetadataInput {
-  """The record to create"""
-  field: CreateFieldInput!
-}
-
-input CreateFieldInput {
-  type: FieldMetadataType!
-  name: String!
-  label: String!
-  description: String
-  icon: String
-  isActive: Boolean
-  isSystem: Boolean
-  isUIEditable: Boolean
-  isUIReadOnly: Boolean
-  isNullable: Boolean
-  isUnique: Boolean
-  isSearchable: Boolean
-  isAuditLogged: Boolean
-  defaultValue: JSON
-  options: JSON
-  settings: JSON
-  objectMetadataId: UUID!
-  isLabelSyncedWithName: Boolean
-  isRemoteCreation: Boolean
-  relationCreationPayload: JSON
-  morphRelationsCreationPayload: [JSON!]
-}
-
-input UpdateOneFieldMetadataInput {
-  """The id of the record to update"""
-  id: UUID!
-
-  """The record to update"""
-  update: UpdateFieldInput!
-}
-
-input UpdateFieldInput {
-  universalIdentifier: String
-  name: String
-  label: String
-  description: String
-  icon: String
-  isActive: Boolean
-  isSystem: Boolean
-  isUIEditable: Boolean
-  isUIReadOnly: Boolean
-  isNullable: Boolean
-  isUnique: Boolean
-  isSearchable: Boolean
-  isAuditLogged: Boolean
-  defaultValue: JSON
-  options: JSON
-  settings: JSON
-  objectMetadataId: UUID
-  isLabelSyncedWithName: Boolean
-  morphRelationsUpdatePayload: [JSON!]
-  translations: [MetadataTranslationOverrideInput!]
-}
-
-input DeleteOneFieldInput {
-  """The id of the field to delete."""
-  id: UUID!
-}
-
-input CreateViewGroupInput {
-  id: UUID
-  isVisible: Boolean = true
-  fieldValue: String!
-  position: Float = 0
-  viewId: UUID!
-}
-
-input UpdateViewGroupInput {
-  """The id of the view group to update"""
-  id: UUID!
-
-  """The view group to update"""
-  update: UpdateViewGroupInputUpdates!
-}
-
-input UpdateViewGroupInputUpdates {
-  fieldMetadataId: UUID
-  isVisible: Boolean
-  fieldValue: String
-  position: Float
-}
-
-input DeleteViewGroupInput {
-  """The id of the view group to delete."""
-  id: UUID!
-}
-
-input DestroyViewGroupInput {
-  """The id of the view group to destroy."""
-  id: UUID!
-}
-
-input RunAgentInput {
-  agentUniversalIdentifier: String!
-  prompt: String
-  runAsWorkspaceMemberId: UUID
-  messages: [RunAgentMessageInput!]
-}
-
-input RunAgentMessageInput {
-  role: RunAgentMessageRole!
-  content: String!
-}
-
-enum RunAgentMessageRole {
-  user
-  assistant
-}
-
-input ActivateWorkspaceInput {
-  """
-  Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility.
-  """
-  displayName: String
-}
-
-input UpdateWorkspaceInput {
-  subdomain: String
-  customDomain: String
-  displayName: String
-  logo: String
-  inviteHash: String
-  isPublicInviteLinkEnabled: Boolean
-  workspaceDiscoverability: WorkspaceDiscoverability
-  allowImpersonation: Boolean
-  isGoogleAuthEnabled: Boolean
-  isMicrosoftAuthEnabled: Boolean
-  isPasswordAuthEnabled: Boolean
-  isGoogleAuthBypassEnabled: Boolean
-  isMicrosoftAuthBypassEnabled: Boolean
-  isPasswordAuthBypassEnabled: Boolean
-  defaultRoleId: UUID
-  isTwoFactorAuthenticationEnforced: Boolean
-  trashRetentionDays: Float
-  eventLogRetentionDays: Float
-  aiChatModelTier: AiModelTier
-  aiAgentModelTier: AiModelTier
-  isAutoModelSelectionEnabled: Boolean
-  aiModelIdByTier: JSON
-  aiAdditionalInstructions: String
-  editableProfileFields: [String!]
-  isInternalMessagesImportEnabled: Boolean
-}
-
-input CreateApplicationRegistrationInput {
-  name: String!
-  universalIdentifier: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-}
-
-input UpdateApplicationRegistrationInput {
-  id: String!
-  update: UpdateApplicationRegistrationPayload!
-}
-
-input UpdateApplicationRegistrationPayload {
-  name: String
-  oAuthRedirectUris: [String!]
-  oAuthScopes: [String!]
-}
-
-input CreateApplicationRegistrationVariableInput {
-  applicationRegistrationId: String!
-  key: String!
-  value: String!
-  description: String
-  isSecret: Boolean
-}
-
-input UpdateApplicationRegistrationVariableInput {
-  id: String!
-  update: UpdateApplicationRegistrationVariablePayload!
-}
-
-input UpdateApplicationRegistrationVariablePayload {
-  value: String
-  resetValue: Boolean
-  description: String
-}
-
-input TriggerInstallApplicationJobInput {
-  universalIdentifier: String!
-}
-
-input TriggerUninstallApplicationJobInput {
-  universalIdentifier: String!
-}
-
-input UpdateApplicationInput {
-  autoUpgrade: Boolean
 }
 
 input UpdateMessageFolderInput {

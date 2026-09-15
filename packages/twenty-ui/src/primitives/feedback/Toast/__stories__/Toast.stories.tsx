@@ -3,7 +3,9 @@ import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconBell } from '@ui/icon';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { LightButton } from '@ui/primitives/input/LightButton/LightButton';
+import { ClickToActionLink } from '@ui/primitives/navigation/ClickToActionLink/ClickToActionLink';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -74,7 +76,10 @@ export const CustomIconAndLink: Story = {
   ...Default,
   args: { icon: <IconBell size={16} />, onClick: fn() },
   render: (args) => (
-    <Toast {...args} action={<a href="#record">View record</a>} />
+    <Toast
+      {...args}
+      action={<ClickToActionLink href="#record">View record</ClickToActionLink>}
+    />
   ),
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
@@ -101,9 +106,12 @@ const DismissibleToast = ({ onClose, ...props }: ToastProps) => {
 
   return (
     <>
-      <button type="button" onClick={() => setIsOpen(true)}>
-        Show notification
-      </button>
+      <Button
+        type="button"
+        title="Show notification"
+        ariaLabel="Show notification"
+        onClick={() => setIsOpen(true)}
+      />
       {isOpen && (
         <Toast
           {...props}

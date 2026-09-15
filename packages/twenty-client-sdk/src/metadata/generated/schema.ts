@@ -1596,6 +1596,7 @@ export interface ApplicationConnectedAccountDTO {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     connectionParameters?: PublicImapSmtpCaldavConnectionParameters
+    /** @deprecated Ownership no longer gates connection actions, every application admin manages a workspace-shared connection */
     isOwnedByCurrentUser: Scalars['Boolean']
     __typename: 'ApplicationConnectedAccountDTO'
 }
@@ -5225,6 +5226,7 @@ export interface ApplicationConnectedAccountDTOGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     connectionParameters?: PublicImapSmtpCaldavConnectionParametersGenqlSelection
+    /** @deprecated Ownership no longer gates connection actions, every application admin manages a workspace-shared connection */
     isOwnedByCurrentUser?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -7687,7 +7689,9 @@ id: Scalars['UUID']}
 
 export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null)}
 
-export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String']}
+export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String'],attachments?: (RunAgentMessageAttachmentInput[] | null)}
+
+export interface RunAgentMessageAttachmentInput {fileId: Scalars['UUID'],filename?: (Scalars['String'] | null)}
 
 export interface ActivateWorkspaceInput {
 /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
