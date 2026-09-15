@@ -4475,7 +4475,6 @@ input UpdateViewFieldGroupInputUpdates {
   name: String
   position: Float
   isVisible: Boolean
-  deletedAt: String
 }
 
 input CreateViewFieldGroupInput {
