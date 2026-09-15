@@ -111,7 +111,22 @@
       }
     },
     "typecheck": {},
-    "storybook:build": { "configurations": { "test": {} } },
+    "storybook:build": {
+      "configurations": {
+        "test": {},
+        "docs": {
+          "command": "STORYBOOK_DOCS=true NODE_OPTIONS='--max-old-space-size=10240' storybook build --disable-telemetry"
+        }
+      }
+    },
+    "storybook:index": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "mkdir -p ../../.cache/ui-docs && storybook index --output-file ../../.cache/ui-docs/storybook-index.json --disable-telemetry"
+      }
+    },
     "storybook:serve:dev": { "options": { "port": 6008 } },
     "storybook:serve:static": {
       "options": { "buildTarget": "twenty-ui:storybook:build", "port": 6008 },
