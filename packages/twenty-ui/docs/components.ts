@@ -1,3 +1,8 @@
+import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
+import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
+import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
+import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
+
 export const DOCUMENTED_COMPONENTS = [
   {
     name: 'Field',
@@ -100,5 +105,33 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/typography/Text/Text.tsx',
     entryPoint: 'twenty-ui/primitives/typography',
     slug: 'typography/text',
+  },
+  {
+    name: 'Avatar',
+    source: 'primitives/data-display/Avatar/Avatar.tsx',
+    entryPoint: 'twenty-ui/primitives/data-display',
+    slug: 'data-display/avatar',
+    propDescriptions: AVATAR_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Chip',
+    source: 'primitives/data-display/Chip/Chip.tsx',
+    entryPoint: 'twenty-ui/primitives/data-display',
+    slug: 'data-display/chip',
+    propDescriptions: CHIP_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Tag',
+    source: 'primitives/data-display/Tag/Tag.tsx',
+    entryPoint: 'twenty-ui/primitives/data-display',
+    slug: 'data-display/tag',
+    propDescriptions: TAG_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Status',
+    source: 'primitives/data-display/Status/Status.tsx',
+    entryPoint: 'twenty-ui/primitives/data-display',
+    slug: 'data-display/status',
+    propDescriptions: STATUS_PROP_DESCRIPTIONS,
   },
 ] as const;
