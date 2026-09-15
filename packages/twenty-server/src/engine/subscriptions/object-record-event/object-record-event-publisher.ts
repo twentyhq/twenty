@@ -613,8 +613,6 @@ export class ObjectRecordEventPublisher {
     });
   }
 
-  // The subscriber as the row access policy sees them, so that the records an
-  // event reaches through a parent are the ones a query of theirs would return
   private buildSubscriberRowAccessPolicySubject({
     subscriberAuthContext,
     roleIds,

@@ -12,8 +12,6 @@ import { resolveInheritedReadabilityParents } from 'src/engine/twenty-orm/utils/
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// Decides for an identity that holds no auth context, an event consumer, what
-// a query of that identity would return, by running the same row access policy
 @Injectable()
 export class RecordAccessPolicyService {
   constructor(
@@ -43,10 +41,6 @@ export class RecordAccessPolicyService {
     );
   }
 
-  // The records of an INHERITED object readable through a parent: a record the
-  // snapshot points at or a live child row pointing back at it, readable under
-  // the subject's policy. The snapshot stands in for the row so that a record
-  // destroyed by the event is still decided on
   async resolveRecordIdsReadableThroughParents({
     workspaceId,
     objectMetadata,

@@ -9,9 +9,6 @@ import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metada
 import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 
-// An event consumer acting for a role rather than a member: everyone's rows
-// plus the role's, under the role's object permissions and row-level
-// predicates. Without a role, a webhook among them, only everyone's rows
 export const buildRoleRowAccessPolicySubject = ({
   roleId,
   owningApplicationId,

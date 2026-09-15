@@ -1776,8 +1776,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    // The object the query is about is reported with the error the API
-    // documents for a missing object permission, not filtered out silently
     if (
       alias === queryBuilder.alias &&
       !this.isObjectOperationPermitted({ flatObjectMetadata, operationType })
@@ -1828,8 +1826,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
   }
 
-  // A caller holding a system-context repository gates rows for another
-  // identity under the policy a query of that identity would apply
   buildRowAccessPolicy({
     subject,
     operationType,

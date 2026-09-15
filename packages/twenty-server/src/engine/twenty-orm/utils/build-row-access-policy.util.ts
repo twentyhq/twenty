@@ -29,10 +29,6 @@ import { resolveInheritedReadabilityParents } from 'src/engine/twenty-orm/utils/
 
 const MAX_INHERITED_READABILITY_DEPTH = 3;
 
-// The pieces of an identity the policy depends on, so that a caller holding no
-// auth context, an event consumer deciding who may see an event among them, is
-// gated by the same policy as a query. Undefined permissions leave the objects
-// ungated by role, undefined principals leave the share rows out
 export type RowAccessPolicySubject = {
   objectsPermissions: ObjectsPermissions | undefined;
   principalIds: string[] | undefined;
@@ -63,11 +59,6 @@ type RowAccessPolicyTarget = {
   joinParentRelationShape?: WorkspaceRelationShape;
 };
 
-// The complete policy a row of an object is read or written under: the role's
-// permission on the object, its row-level predicate and the record share gate.
-// Direct queries and the records reached through inheritance both go through
-// it, so a parent grants nothing on a row the caller could not reach by
-// querying the parent itself
 export const buildRowAccessPolicy = ({
   subject,
   environment,
@@ -144,16 +135,12 @@ const buildRecordShareGate = (
 
       return buildInheritedReadabilityGate(context, target);
     case MetadataReadability.SYSTEM:
-      // recordShare rows are SYSTEM and hold the whole ACL, so they stay
-      // unreadable whether or not the workspace has enabled record sharing
       return { kind: 'denied' };
     case MetadataReadability.APPLICATION:
       return isRecordSharingEnabled && !isOwningApplication
         ? { kind: 'denied' }
         : { kind: 'open' };
     case MetadataReadability.PRIVATE:
-      // the owning application syncs and backfills every record of its
-      // object, so it reads them all instead of holding share rows
       if (!isRecordSharingEnabled || isOwningApplication) {
         return { kind: 'open' };
       }
@@ -222,7 +209,6 @@ const buildInheritedReadabilityGate = (
     flatObjectMetadataMaps: context.environment.flatObjectMetadataMaps,
   });
 
-  // A join through a parent field is the canonical foreign key equality and its parent alias is already gated
   if (
     isDefined(joinParentRelationShape) &&
     parents.some(
@@ -235,7 +221,6 @@ const buildInheritedReadabilityGate = (
     return { kind: 'open' };
   }
 
-  // An object whose parent cannot be inferred is gated like a PRIVATE one
   if (parents.length === 0) {
     return buildOwnRecordShareGate(context, target);
   }
