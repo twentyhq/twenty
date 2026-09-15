@@ -105,7 +105,16 @@ export class ApiKeyResolver {
       updateData.revokedAt = input.revokedAt ? new Date(input.revokedAt) : null;
     }
 
-    return this.apiKeyService.update(input.id, workspace.id, updateData);
+    try {
+      return await this.apiKeyService.update(
+        input.id,
+        workspace.id,
+        updateData,
+      );
+    } catch (error) {
+      apiKeyGraphqlApiExceptionHandler(error);
+      throw error;
+    }
   }
 
   @UseGuards(RequireAccessTokenGuard)

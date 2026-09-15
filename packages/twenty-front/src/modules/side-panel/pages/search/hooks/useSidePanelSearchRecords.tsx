@@ -15,7 +15,7 @@ export type SearchResultItem = {
   recordId: string;
   imageUrl?: string | null;
   objectLabel: string;
-  avatarType: 'squared' | 'rounded';
+  avatarShape: 'square' | 'circle';
 };
 
 export const useSidePanelSearchRecords = () => {
@@ -47,10 +47,10 @@ export const useSidePanelSearchRecords = () => {
         readableObjectMetadataItems.find(
           (item) => item.nameSingular === searchRecord.objectNameSingular,
         )?.labelSingular ?? searchRecord.objectNameSingular,
-      avatarType:
+      avatarShape:
         searchRecord.objectNameSingular === CoreObjectNameSingular.Company
-          ? ('squared' as const)
-          : ('rounded' as const),
+          ? ('square' as const)
+          : ('circle' as const),
     }));
   }, [searchRecords, readableObjectMetadataItems]);
 

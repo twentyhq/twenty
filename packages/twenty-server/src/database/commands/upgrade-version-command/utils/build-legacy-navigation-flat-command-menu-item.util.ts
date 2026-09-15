@@ -72,6 +72,7 @@ export const buildLegacyNavigationFlatCommandMenuItem = ({
       ? ['G', objectMetadata.shortcut]
       : null,
     workflowVersionId: null,
+    coreWorkflowVersionId: null,
     availabilityObjectMetadataId: null,
     availabilityObjectMetadataUniversalIdentifier: null,
     pageLayoutId: null,

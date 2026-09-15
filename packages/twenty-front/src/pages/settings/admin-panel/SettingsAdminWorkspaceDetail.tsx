@@ -211,9 +211,9 @@ export const SettingsAdminWorkspaceDetail = () => {
       title={workspaceName}
       icon={
         <Avatar
-          avatarUrl={getAbsoluteImageUrl(workspaceLogo)}
-          placeholder={workspaceName}
-          placeholderColorSeed={workspace?.id}
+          src={getAbsoluteImageUrl(workspaceLogo)}
+          name={workspaceName}
+          colorSeed={workspace?.id}
           size="md"
         />
       }
@@ -283,14 +283,14 @@ export const SettingsAdminWorkspaceDetail = () => {
                         overflow="hidden"
                       >
                         <Avatar
-                          avatarUrl={getAbsoluteImageUrl(user.avatarUrl)}
-                          placeholder={
+                          src={getAbsoluteImageUrl(user.avatarUrl)}
+                          name={
                             `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                             user.email
                           }
-                          placeholderColorSeed={user.id}
+                          colorSeed={user.id}
                           size="md"
-                          type="rounded"
+                          shape="circle"
                         />
                         <OverflowingTextWithTooltip
                           text={
