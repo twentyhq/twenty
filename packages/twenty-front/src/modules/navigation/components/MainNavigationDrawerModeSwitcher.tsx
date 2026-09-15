@@ -26,7 +26,7 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   border-bottom: ${({ isExpanded }) =>
     isExpanded ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
   border-top: ${({ isExpanded }) =>
-    isExpanded ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
+    isExpanded ? '1px solid transparent' : 'none'};
   box-sizing: border-box;
   display: flex;
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
@@ -39,6 +39,19 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   // Align the top border with the page header's inset bottom border.
   margin-top: ${({ isExpanded }) => (isExpanded ? '-1px' : '0')};
   min-width: 0;
+  position: relative;
+
+  // Extend the divider through the drawer's horizontal content insets.
+  &::before {
+    border-top: 1px solid ${themeCssVariables.border.color.light};
+    content: '';
+    display: ${({ isExpanded }) => (isExpanded ? 'block' : 'none')};
+    left: calc(-1 * ${themeCssVariables.spacing[2]});
+    pointer-events: none;
+    position: absolute;
+    right: calc(-1 * ${themeCssVariables.spacing[2]});
+    top: -1px;
+  }
 `;
 
 const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
