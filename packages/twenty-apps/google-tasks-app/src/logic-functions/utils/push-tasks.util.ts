@@ -96,21 +96,31 @@ export const pushTasks = async (
     return { hasFailures: false };
   }
 
-  const defaultListId = await resolveDefaultListId(axiosInstance);
+  const requiresDefaultList = tasks.some(
+    (task) => !isNonEmptyString(task.googleTasksListId),
+  );
+  const defaultListId = requiresDefaultList
+    ? await resolveDefaultListId(axiosInstance)
+    : null;
   let hasFailures = false;
 
   for (const batch of chunk(tasks, PUSH_CONCURRENCY)) {
     const outcomes = await Promise.all(
       batch.map(async (task): Promise<boolean> => {
         const payload = buildGoogleTaskPayload(task);
+        const listId = isNonEmptyString(task.googleTasksListId)
+          ? task.googleTasksListId
+          : defaultListId;
+
+        if (!isNonEmptyString(listId)) {
+          return false;
+        }
 
         try {
           if (isNonEmptyString(task.googleTasksId)) {
             await patchGoogleTask(
               axiosInstance,
-              isNonEmptyString(task.googleTasksListId)
-                ? task.googleTasksListId
-                : defaultListId,
+              listId,
               task.googleTasksId,
               payload,
             );
@@ -120,11 +130,11 @@ export const pushTasks = async (
 
           const googleTasksId = await createGoogleTask(
             axiosInstance,
-            defaultListId,
+            listId,
             payload,
           );
 
-          await linkTaskToGoogle(client, task.id, googleTasksId, defaultListId);
+          await linkTaskToGoogle(client, task.id, googleTasksId, listId);
 
           return true;
         } catch (error) {

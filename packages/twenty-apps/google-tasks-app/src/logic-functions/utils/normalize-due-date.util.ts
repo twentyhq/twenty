@@ -1,11 +1,10 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 
 const DUE_TIME_OF_DAY_UTC = 'T12:00:00.000Z';
 const GOOGLE_DUE_TIME_OF_DAY_UTC = 'T00:00:00.000Z';
 
-const toUtcDayAt = (
+export const toComparableDueDate = (
   date: string | null | undefined,
-  timeOfDayUtc: string,
 ): string | null => {
   if (!isNonEmptyString(date)) {
     return null;
@@ -13,14 +12,19 @@ const toUtcDayAt = (
 
   const parsedDate = new Date(date);
 
-  if (Number.isNaN(parsedDate.getTime())) {
-    return null;
-  }
-
-  return `${parsedDate.toISOString().slice(0, 10)}${timeOfDayUtc}`;
+  return Number.isNaN(parsedDate.getTime()) ? null : parsedDate.toISOString();
 };
 
-export const normalizeDueDate = (due: string | undefined): string | null =>
+const toUtcDayAt = (
+  date: string | null | undefined,
+  timeOfDayUtc: string,
+): string | null => {
+  const instant = toComparableDueDate(date);
+
+  return isNull(instant) ? null : `${instant.slice(0, 10)}${timeOfDayUtc}`;
+};
+
+export const normalizeDueDate = (due: string | null | undefined): string | null =>
   toUtcDayAt(due, DUE_TIME_OF_DAY_UTC);
 
 // Google Tasks stores a day, not an instant: it records the date part and

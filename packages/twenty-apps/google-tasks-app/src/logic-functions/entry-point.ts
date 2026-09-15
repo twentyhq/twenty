@@ -9,6 +9,7 @@ import {
 import {
   GOOGLE_TASKS_CONNECTION_PROVIDER_NAME,
   MAX_JOBS_PER_ENQUEUE,
+  SYNC_TASKS_JOB_RETRY_LIMIT,
 } from 'src/constants/sync';
 
 const handler = async () => {
@@ -29,6 +30,7 @@ const handler = async () => {
         logicFunctionUniversalIdentifier:
           SYNC_TASKS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
         jobs: batch,
+        retryLimit: SYNC_TASKS_JOB_RETRY_LIMIT,
       }),
     );
   }

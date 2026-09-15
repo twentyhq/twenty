@@ -1,19 +1,15 @@
 import { defineLogicFunction, RoutePayload } from 'twenty-sdk/define';
-import axios from 'axios';
 import { isNonEmptyArray } from '@sniptt/guards';
 import {
   findConnectionForRequest,
   listConnections,
-  RetryableLogicFunctionError,
 } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { fetchTaskNodes } from 'src/logic-functions/utils/fetch-task-nodes.util';
 import { pushTasks } from 'src/logic-functions/utils/push-tasks.util';
+import { createGoogleTasksClient } from 'src/logic-functions/utils/create-google-tasks-client.util';
 import { executeWithRetry } from 'src/logic-functions/utils/execute-with-retry.util';
-import {
-  isGoogleAuthorizationFailure,
-  isTransientGoogleError,
-} from 'src/logic-functions/utils/google-error.util';
+import { toGoogleFailureResponseOrThrow } from 'src/logic-functions/utils/to-google-failure-response.util';
 import { PUSH_TASKS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import {
   AUTHORIZATION_FAILED_ERROR,
@@ -21,7 +17,6 @@ import {
   NO_CONNECTION_ERROR,
 } from 'src/constants/push-tasks-errors';
 import {
-  GOOGLE_TASKS_BASE_API_URL,
   GOOGLE_TASKS_CONNECTION_PROVIDER_NAME,
   PUSH_TASKS_ROUTE_PATH,
 } from 'src/constants/sync';
@@ -50,13 +45,7 @@ const handler = async (params: RoutePayload<{ taskIds: string[] }>) => {
   }
 
   const client = new CoreApiClient();
-  const axiosInstance = axios.create({
-    baseURL: GOOGLE_TASKS_BASE_API_URL,
-    timeout: 10000,
-    headers: {
-      Authorization: `Bearer ${connection.accessToken}`,
-    },
-  });
+  const axiosInstance = createGoogleTasksClient(connection.accessToken);
 
   const tasks = await fetchTaskNodes(client, {
     id: { in: taskIds },
@@ -71,20 +60,11 @@ const handler = async (params: RoutePayload<{ taskIds: string[] }>) => {
       hasFailures,
     };
   } catch (error) {
-    if (isTransientGoogleError(error)) {
-      throw new RetryableLogicFunctionError(
-        `Google Tasks is temporarily unavailable for connection ${connection.id}: ${(error as Error).message}`,
-      );
-    }
-
-    if (isGoogleAuthorizationFailure(error)) {
-      return {
-        success: false,
-        error: AUTHORIZATION_FAILED_ERROR,
-      };
-    }
-
-    throw error;
+    return toGoogleFailureResponseOrThrow({
+      error,
+      connectionId: connection.id,
+      authorizationError: AUTHORIZATION_FAILED_ERROR,
+    });
   }
 };
 

@@ -1,3 +1,5 @@
+import { getErrorMessage } from 'src/logic-functions/utils/get-error-message.util';
+
 const MAX_ATTEMPTS = 5;
 const INITIAL_RETRY_DELAY_MS = 2_000;
 const MAX_RETRY_DELAY_MS = 30_000;
@@ -8,9 +10,6 @@ const RETRYABLE_ERROR_PATTERN =
 
 const sleep = (durationMs: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, durationMs));
-
-const getErrorMessage = (error: unknown): string =>
-  error instanceof Error ? error.message : String(error);
 
 // Last resort for callers with no structured error to inspect, such as the
 // GraphQL client: prefer passing an explicit classifier, since a message match

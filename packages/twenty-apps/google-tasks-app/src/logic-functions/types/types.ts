@@ -4,8 +4,6 @@ export type TaskListsResponse = {
 
 type TaskList = {
   id: string;
-  title: string;
-  selfLink: string;
 };
 
 export type TasksResponse = {
@@ -56,8 +54,6 @@ export type TaskUpdate = {
   fields: TaskFields;
 };
 
-// No delete bucket by design: a task removed in Google stays in the CRM as the
-// last known state.
 export type TasksSyncPlan = {
   tasksToCreate: GoogleTask[];
   tasksToUpdate: TaskUpdate[];

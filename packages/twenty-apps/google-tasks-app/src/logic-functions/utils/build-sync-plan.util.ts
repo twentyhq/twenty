@@ -1,5 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { isNull, isString, isUndefined } from '@sniptt/guards';
+import { isString, isUndefined } from '@sniptt/guards';
 import {
   type GoogleTask,
   TaskFields,
@@ -7,30 +7,11 @@ import {
   TasksSyncPlan,
 } from 'src/logic-functions/types/types';
 import { fetchTaskNodes } from 'src/logic-functions/utils/fetch-task-nodes.util';
-import { normalizeDueDate } from 'src/logic-functions/utils/normalize-due-date.util';
+import {
+  normalizeDueDate,
+  toComparableDueDate,
+} from 'src/logic-functions/utils/normalize-due-date.util';
 import { normalizeNotes } from 'src/logic-functions/utils/normalize-notes.util';
-
-const isSameDueDate = (
-  due: string | undefined,
-  dueAt: string | null | undefined,
-) => {
-  const normalizedDue = normalizeDueDate(due);
-
-  if (isNull(normalizedDue)) {
-    return !isString(dueAt);
-  }
-
-  if (!isString(dueAt)) {
-    return false;
-  }
-
-  return new Date(normalizedDue).getTime() === new Date(dueAt).getTime();
-};
-
-const isSameStatus = (
-  completed: string | undefined,
-  status: string | null | undefined,
-) => (isUndefined(completed) ? status !== 'DONE' : status === 'DONE');
 
 const diffTask = (
   googleTask: GoogleTask,
@@ -49,12 +30,17 @@ const diffTask = (
     fields.bodyV2 = { markdown };
   }
 
-  if (!isSameDueDate(googleTask.due, existingTask.dueAt)) {
-    fields.dueAt = normalizeDueDate(googleTask.due);
+  const dueAt = normalizeDueDate(googleTask.due);
+
+  if (dueAt !== toComparableDueDate(existingTask.dueAt)) {
+    fields.dueAt = dueAt;
   }
 
-  if (!isSameStatus(googleTask.completed, existingTask.status)) {
-    fields.status = googleTask.completed ? 'DONE' : 'TODO';
+  // Google has no in-progress state, so only the DONE boundary is comparable.
+  const isCompletedInGoogle = !isUndefined(googleTask.completed);
+
+  if (isCompletedInGoogle !== (existingTask.status === 'DONE')) {
+    fields.status = isCompletedInGoogle ? 'DONE' : 'TODO';
   }
 
   if (listId !== existingTask.googleTasksListId) {

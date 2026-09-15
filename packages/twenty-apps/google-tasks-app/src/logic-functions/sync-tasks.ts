@@ -1,25 +1,17 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import axios, { type AxiosInstance } from 'axios';
+import { type AxiosInstance } from 'axios';
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import {
-  getConnection,
-  kv,
-  RetryableLogicFunctionError,
-} from 'twenty-sdk/logic-function';
+import { getConnection, kv } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { buildSyncPlan } from 'src/logic-functions/utils/build-sync-plan.util';
 import { createTasks } from 'src/logic-functions/utils/create-tasks.util';
 import { updateTasks } from 'src/logic-functions/utils/update-tasks.util';
+import { createGoogleTasksClient } from 'src/logic-functions/utils/create-google-tasks-client.util';
 import { executeWithRetry } from 'src/logic-functions/utils/execute-with-retry.util';
-import {
-  isGoogleAuthorizationFailure,
-  isTransientGoogleError,
-} from 'src/logic-functions/utils/google-error.util';
+import { isTransientGoogleError } from 'src/logic-functions/utils/google-error.util';
+import { toGoogleFailureResponseOrThrow } from 'src/logic-functions/utils/to-google-failure-response.util';
 import { SYNC_TASKS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import {
-  GOOGLE_TASKS_BASE_API_URL,
-  GOOGLE_TASKS_PAGE_SIZE,
-} from 'src/constants/sync';
+import { GOOGLE_TASKS_PAGE_SIZE } from 'src/constants/sync';
 import {
   TaskListsResponse,
   TasksResponse,
@@ -88,13 +80,7 @@ const handler = async ({ connectionId }: { connectionId?: string }) => {
   }
 
   const client = new CoreApiClient();
-  const axiosInstance = axios.create({
-    baseURL: GOOGLE_TASKS_BASE_API_URL,
-    timeout: 10000,
-    headers: {
-      Authorization: `Bearer ${connection.accessToken}`,
-    },
-  });
+  const axiosInstance = createGoogleTasksClient(connection.accessToken);
 
   const startedAt = new Date().toISOString();
   const updatedMin = await executeWithRetry(() =>
@@ -122,20 +108,11 @@ const handler = async ({ connectionId }: { connectionId?: string }) => {
       totals.updated += counts.updated;
     }
   } catch (error) {
-    if (isTransientGoogleError(error)) {
-      throw new RetryableLogicFunctionError(
-        `Google Tasks is temporarily unavailable for connection ${connectionId}: ${(error as Error).message}`,
-      );
-    }
-
-    if (isGoogleAuthorizationFailure(error)) {
-      return {
-        success: false,
-        error: `Google Tasks rejected the credentials for connection ${connectionId}; the user must reconnect`,
-      };
-    }
-
-    throw error;
+    return toGoogleFailureResponseOrThrow({
+      error,
+      connectionId,
+      authorizationError: `Google Tasks rejected the credentials for connection ${connectionId}; the user must reconnect`,
+    });
   }
 
   await executeWithRetry(() =>
