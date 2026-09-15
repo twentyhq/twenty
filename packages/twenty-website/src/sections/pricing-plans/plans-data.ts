@@ -159,7 +159,7 @@ export const PLANS_DATA: Record<PlansTierId, PlansTier> = {
       },
       selfHost: {
         href: SITE_URLS.docsSelfHostLicense,
-        label: msg`Get a license`,
+        label: msg`Start for free`,
       },
     },
     heading: { cloud: msg`Organization`, selfHost: msg`Organization` },
