@@ -11,9 +11,11 @@ const StyledInlineCellButtonContainer = styled.div`
 export const RecordInlineCellButton = ({
   Icon,
   onClick,
+  ariaLabel,
 }: {
   Icon: IconComponent;
   onClick?: () => void;
+  ariaLabel?: string;
 }) => {
   return (
     <AnimatedContainer>
@@ -21,6 +23,7 @@ export const RecordInlineCellButton = ({
         <FloatingIconButton
           size="small"
           Icon={Icon}
+          ariaLabel={ariaLabel}
           data-testid="inline-cell-edit-mode-container"
         />
       </StyledInlineCellButtonContainer>
