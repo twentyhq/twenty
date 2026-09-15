@@ -429,15 +429,28 @@ describe('EmailComposerService connected account resolution (integration)', () =
     });
 
     it('refuses an unidentified caller when no account is shared with the workspace', async () => {
-      await expect(
-        service.composeEmail({
-          parameters: baseParams,
-          context: { workspaceId: WORKSPACE_ID },
-          operation: EmailOperation.SEND,
-        }),
-      ).rejects.toThrow(
-        'No connected account in this workspace can send email',
-      );
+      const sharedConnectedAccountIds =
+        await getWorkspaceSharedConnectedAccountIds();
+
+      for (const connectedAccountId of sharedConnectedAccountIds) {
+        await setVisibility(connectedAccountId, 'user');
+      }
+
+      try {
+        await expect(
+          service.composeEmail({
+            parameters: baseParams,
+            context: { workspaceId: WORKSPACE_ID },
+            operation: EmailOperation.SEND,
+          }),
+        ).rejects.toThrow(
+          'No connected account in this workspace can send email',
+        );
+      } finally {
+        for (const connectedAccountId of sharedConnectedAccountIds) {
+          await setVisibility(connectedAccountId, 'workspace');
+        }
+      }
     });
 
     it('serves an unidentified caller the account shared with the workspace', async () => {
