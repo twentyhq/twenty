@@ -7,6 +7,7 @@ import { Field } from 'twenty-ui/input';
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
+import { countBlocksDeep } from '@/blocknote-editor/utils/countBlocksDeep';
 import { filterBlocksSupportedBySchema } from '@/blocknote-editor/utils/filterBlocksSupportedBySchema';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -59,7 +60,7 @@ export const FormRecordRichTextFieldInput = ({
         ? supportedBlocks
         : undefined,
       hasUnreadableStoredValue:
-        isNonEmptyArray(parsedBlocks) && !isNonEmptyArray(supportedBlocks),
+        countBlocksDeep(supportedBlocks) < countBlocksDeep(parsedBlocks),
     };
   });
 
@@ -68,7 +69,7 @@ export const FormRecordRichTextFieldInput = ({
       message: t`Save the record before attaching a file`,
     });
 
-    throw new Error('Cannot attach a file before the record exists');
+    return '';
   };
 
   const editor = useCreateBlockNote({

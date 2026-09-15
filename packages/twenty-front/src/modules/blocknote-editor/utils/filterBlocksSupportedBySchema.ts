@@ -1,10 +1,14 @@
-import { type BlockSchema, type PartialBlock } from '@blocknote/core';
 import { isDefined } from 'twenty-shared/utils';
 
-const filterBlockRecursively = (
-  block: PartialBlock,
+export type FilterableBlock = {
+  type?: string;
+  children?: FilterableBlock[];
+};
+
+const filterBlockRecursively = <TBlock extends FilterableBlock>(
+  block: TBlock,
   supportedBlockTypes: string[],
-): PartialBlock | undefined => {
+): TBlock | undefined => {
   if (!isDefined(block.type) || !supportedBlockTypes.includes(block.type)) {
     return undefined;
   }
@@ -16,13 +20,13 @@ const filterBlockRecursively = (
         filterBlockRecursively(childBlock, supportedBlockTypes),
       )
       .filter(isDefined),
-  } as PartialBlock;
+  };
 };
 
-export const filterBlocksSupportedBySchema = (
-  blocks: PartialBlock[] | undefined,
-  blockSchema: BlockSchema,
-): PartialBlock[] | undefined => {
+export const filterBlocksSupportedBySchema = <TBlock extends FilterableBlock>(
+  blocks: TBlock[] | undefined,
+  blockSchema: Record<string, unknown>,
+): TBlock[] | undefined => {
   if (!isDefined(blocks)) {
     return undefined;
   }

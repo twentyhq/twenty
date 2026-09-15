@@ -1,11 +1,12 @@
-import { type BlockSchema, type PartialBlock } from '@blocknote/core';
-
-import { filterBlocksSupportedBySchema } from '@/blocknote-editor/utils/filterBlocksSupportedBySchema';
+import {
+  type FilterableBlock,
+  filterBlocksSupportedBySchema,
+} from '@/blocknote-editor/utils/filterBlocksSupportedBySchema';
 
 const blockSchema = {
   paragraph: {},
   bulletListItem: {},
-} as unknown as BlockSchema;
+};
 
 describe('filterBlocksSupportedBySchema', () => {
   it('should return undefined when there is nothing to filter', () => {
@@ -15,9 +16,7 @@ describe('filterBlocksSupportedBySchema', () => {
   });
 
   it('should keep blocks the schema knows', () => {
-    const blocks = [
-      { type: 'paragraph', content: [] },
-    ] as unknown as PartialBlock[];
+    const blocks = [{ type: 'paragraph', content: [] }];
 
     expect(filterBlocksSupportedBySchema(blocks, blockSchema)).toEqual([
       { type: 'paragraph', content: [], children: undefined },
@@ -28,7 +27,7 @@ describe('filterBlocksSupportedBySchema', () => {
     const blocks = [
       { type: 'image', props: { url: 'https://example.com/a.png' } },
       { type: 'paragraph', content: [] },
-    ] as unknown as PartialBlock[];
+    ];
 
     const filtered = filterBlocksSupportedBySchema(blocks, blockSchema);
 
@@ -37,7 +36,7 @@ describe('filterBlocksSupportedBySchema', () => {
   });
 
   it('should drop a block with no type', () => {
-    const blocks = [{ content: [] }] as unknown as PartialBlock[];
+    const blocks: FilterableBlock[] = [{}];
 
     expect(filterBlocksSupportedBySchema(blocks, blockSchema)).toEqual([]);
   });
@@ -48,7 +47,7 @@ describe('filterBlocksSupportedBySchema', () => {
         type: 'bulletListItem',
         children: [{ type: 'image' }, { type: 'paragraph' }],
       },
-    ] as unknown as PartialBlock[];
+    ];
 
     const filtered = filterBlocksSupportedBySchema(blocks, blockSchema);
 
@@ -58,17 +57,13 @@ describe('filterBlocksSupportedBySchema', () => {
   });
 
   it('should drop a whole subtree when its root is unsupported', () => {
-    const blocks = [
-      { type: 'image', children: [{ type: 'paragraph' }] },
-    ] as unknown as PartialBlock[];
+    const blocks = [{ type: 'image', children: [{ type: 'paragraph' }] }];
 
     expect(filterBlocksSupportedBySchema(blocks, blockSchema)).toEqual([]);
   });
 
   it('should drop every block of a stored TipTap document', () => {
-    const blocks = [
-      { type: 'bulletList', content: [{ type: 'listItem' }] },
-    ] as unknown as PartialBlock[];
+    const blocks = [{ type: 'bulletList', content: [{ type: 'listItem' }] }];
 
     expect(filterBlocksSupportedBySchema(blocks, blockSchema)).toEqual([]);
   });
