@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
@@ -19,14 +20,17 @@ export const useRefetchCoreRecordOnWorkspaceRecordLifecycleChange = ({
   refetch,
 }: {
   objectNameSingular: string;
-  recordId: string;
+  recordId: string | undefined;
   refetch: () => void;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
   const handleObjectRecordOperationBrowserEvent = useCallback(
     ({ operation }: ObjectRecordOperationBrowserEventDetail) => {
-      if (!doesObjectRecordOperationTargetRecordId({ operation, recordId })) {
+      if (
+        !isNonEmptyString(recordId) ||
+        !doesObjectRecordOperationTargetRecordId({ operation, recordId })
+      ) {
         return;
       }
 

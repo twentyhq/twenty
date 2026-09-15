@@ -18,7 +18,7 @@ export const WorkflowCoreShowPage = () => {
 
   useRefetchCoreRecordOnWorkspaceRecordLifecycleChange({
     objectNameSingular: CoreObjectNameSingular.Workflow,
-    recordId: isNonEmptyString(workspaceWorkflowId) ? workspaceWorkflowId : '',
+    recordId: workspaceWorkflowId ?? undefined,
     refetch,
   });
 
