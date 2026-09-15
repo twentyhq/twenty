@@ -31,6 +31,12 @@ export class RunWorkflowWorkflowAction implements WorkflowAction {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    // WorkflowRunnerWorkspaceService closes the WorkflowRunnerModule ->
+    // WorkflowExecutorModule -> RunWorkflowActionModule -> WorkflowRunnerModule
+    // cycle. Constructor-injecting it directly makes TypeScript's decorator
+    // metadata reference the class eagerly at module-load time, which throws
+    // a TDZ ReferenceError given the circular require chain; resolving it
+    // lazily through ModuleRef inside execute() avoids that.
     private readonly moduleRef: ModuleRef,
   ) {}
 
