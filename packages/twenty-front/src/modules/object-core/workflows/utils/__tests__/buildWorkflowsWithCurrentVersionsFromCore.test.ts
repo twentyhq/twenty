@@ -2,59 +2,64 @@ import {
   buildWorkflowFromCoreWorkflowWithVersions,
   buildWorkflowsWithCurrentVersionsFromCore,
 } from '@/object-core/workflows/utils/buildWorkflowsWithCurrentVersionsFromCore';
-import { getCurrentWorkflowVersionId } from '@/command-menu-item/utils/getCurrentWorkflowVersionId';
 import {
   CoreWorkflowVersionStatus,
   type GetCoreWorkflowsWithVersionsQuery,
-  type GetCoreWorkflowVersionsByIdsQuery,
 } from '~/generated/graphql';
 
 type CoreWorkflow =
   GetCoreWorkflowsWithVersionsQuery['coreWorkflowsWithVersions'][number];
-type CoreVersion =
-  GetCoreWorkflowVersionsByIdsQuery['coreWorkflowVersionsByIds'][number];
 
 const buildCoreVersion = ({
-  id,
   workspaceWorkflowVersionId,
-  status = CoreWorkflowVersionStatus.ARCHIVED,
-  createdAt = '2026-01-01T00:00:00.000Z',
+  status = CoreWorkflowVersionStatus.DRAFT,
 }: {
-  id: string;
   workspaceWorkflowVersionId: string | null;
   status?: CoreWorkflowVersionStatus;
-  createdAt?: string;
 }) => ({
   __typename: 'CoreWorkflowVersionDTO' as const,
-  id,
-  label: `v${id}`,
+  id: 'core-version-1',
+  label: 'v1',
   status,
   workspaceWorkflowVersionId,
   workspaceWorkflowId: 'workspace-workflow-1',
-  createdAt,
-  updatedAt: createdAt,
+  trigger: { type: 'MANUAL' },
+  steps: [],
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
 });
 
-const buildCoreWorkflow = (versions: CoreWorkflow['versions']): CoreWorkflow =>
+const buildCoreWorkflow = ({
+  versions,
+  currentVersion,
+  workspaceWorkflowId = 'workspace-workflow-1',
+}: {
+  versions: unknown[];
+  currentVersion: unknown;
+  workspaceWorkflowId?: string | null;
+}): CoreWorkflow =>
   ({
     __typename: 'CoreWorkflowWithVersionsDTO',
     id: 'core-workflow-1',
     name: 'My workflow',
     statuses: [],
     lastPublishedVersionId: null,
-    workspaceWorkflowId: 'workspace-workflow-1',
+    workspaceWorkflowId,
     versions,
+    currentVersion,
   }) as CoreWorkflow;
 
 describe('buildWorkflowFromCoreWorkflowWithVersions', () => {
   it('keys the workflow and its versions on workspace ids', () => {
     const workflow = buildWorkflowFromCoreWorkflowWithVersions(
-      buildCoreWorkflow([
-        buildCoreVersion({
-          id: 'core-version-1',
-          workspaceWorkflowVersionId: 'workspace-version-1',
-        }),
-      ]),
+      buildCoreWorkflow({
+        versions: [
+          buildCoreVersion({
+            workspaceWorkflowVersionId: 'workspace-version-1',
+          }),
+        ],
+        currentVersion: null,
+      }),
     );
 
     expect(workflow?.id).toBe('workspace-workflow-1');
@@ -65,61 +70,61 @@ describe('buildWorkflowFromCoreWorkflowWithVersions', () => {
 
   it('drops versions that have no workspace counterpart', () => {
     const workflow = buildWorkflowFromCoreWorkflowWithVersions(
-      buildCoreWorkflow([
-        buildCoreVersion({
-          id: 'core-version-1',
-          workspaceWorkflowVersionId: null,
-        }),
-      ]),
+      buildCoreWorkflow({
+        versions: [buildCoreVersion({ workspaceWorkflowVersionId: null })],
+        currentVersion: null,
+      }),
     );
 
     expect(workflow?.versions).toEqual([]);
   });
+
+  it('returns nothing when the core row has no workspace counterpart', () => {
+    expect(
+      buildWorkflowFromCoreWorkflowWithVersions(
+        buildCoreWorkflow({
+          versions: [],
+          currentVersion: null,
+          workspaceWorkflowId: null,
+        }),
+      ),
+    ).toBeUndefined();
+  });
 });
 
 describe('buildWorkflowsWithCurrentVersionsFromCore', () => {
-  const draftVersion = buildCoreVersion({
-    id: 'core-version-2',
-    workspaceWorkflowVersionId: 'workspace-version-2',
-    status: CoreWorkflowVersionStatus.DRAFT,
-    createdAt: '2026-01-02T00:00:00.000Z',
-  });
-
-  it('attaches the current version content to its workflow', () => {
-    const result = buildWorkflowsWithCurrentVersionsFromCore({
-      coreWorkflows: [buildCoreWorkflow([draftVersion])],
-      coreWorkflowVersionsWithContent: [
-        {
-          ...draftVersion,
-          trigger: { type: 'MANUAL' },
-          steps: [],
-        } as unknown as CoreVersion,
-      ],
-      getCurrentVersionId: getCurrentWorkflowVersionId,
+  it('attaches the current version with its content', () => {
+    const currentVersion = buildCoreVersion({
+      workspaceWorkflowVersionId: 'workspace-version-1',
     });
+
+    const result = buildWorkflowsWithCurrentVersionsFromCore([
+      buildCoreWorkflow({ versions: [currentVersion], currentVersion }),
+    ]);
 
     expect(result).toHaveLength(1);
-    expect(result[0]?.currentVersion.id).toBe('workspace-version-2');
+    expect(result[0]?.currentVersion.id).toBe('workspace-version-1');
     expect(result[0]?.currentVersion.trigger).toEqual({ type: 'MANUAL' });
+    expect(result[0]?.currentVersion.workflowId).toBe('workspace-workflow-1');
   });
 
-  it('omits a workflow whose current version content is missing', () => {
-    const result = buildWorkflowsWithCurrentVersionsFromCore({
-      coreWorkflows: [buildCoreWorkflow([draftVersion])],
-      coreWorkflowVersionsWithContent: [],
-      getCurrentVersionId: getCurrentWorkflowVersionId,
-    });
-
-    expect(result).toEqual([]);
+  it('omits a workflow that has no current version', () => {
+    expect(
+      buildWorkflowsWithCurrentVersionsFromCore([
+        buildCoreWorkflow({ versions: [], currentVersion: null }),
+      ]),
+    ).toEqual([]);
   });
 
-  it('omits a workflow with no versions at all', () => {
-    const result = buildWorkflowsWithCurrentVersionsFromCore({
-      coreWorkflows: [buildCoreWorkflow([])],
-      coreWorkflowVersionsWithContent: [],
-      getCurrentVersionId: getCurrentWorkflowVersionId,
+  it('omits a workflow whose current version is not mirrored', () => {
+    const currentVersion = buildCoreVersion({
+      workspaceWorkflowVersionId: null,
     });
 
-    expect(result).toEqual([]);
+    expect(
+      buildWorkflowsWithCurrentVersionsFromCore([
+        buildCoreWorkflow({ versions: [currentVersion], currentVersion }),
+      ]),
+    ).toEqual([]);
   });
 });

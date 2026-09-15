@@ -24,16 +24,22 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   selectedWorkflowRecordIds,
   isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
-  const { workflows: coreWorkflowsWithCurrentVersions, isCoreDataComplete } =
-    useCoreWorkflowsWithCurrentVersions(selectedWorkflowRecordIds);
+  const {
+    workflows: coreWorkflowsWithCurrentVersions,
+    isCoreEnrichmentLoading,
+    isCoreEnrichmentComplete,
+  } = useCoreWorkflowsWithCurrentVersions(selectedWorkflowRecordIds);
+
+  const shouldFallBackToWorkspaceWorkflows =
+    !isCoreEnrichmentLoading && !isCoreEnrichmentComplete;
 
   const workspaceWorkflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
-    isCoreDataComplete ? [] : selectedWorkflowRecordIds,
+    shouldFallBackToWorkspaceWorkflows ? selectedWorkflowRecordIds : [],
   );
 
-  const workflowsWithCurrentVersions = isCoreDataComplete
-    ? coreWorkflowsWithCurrentVersions
-    : workspaceWorkflowsWithCurrentVersions;
+  const workflowsWithCurrentVersions = shouldFallBackToWorkspaceWorkflows
+    ? workspaceWorkflowsWithCurrentVersions
+    : coreWorkflowsWithCurrentVersions;
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {

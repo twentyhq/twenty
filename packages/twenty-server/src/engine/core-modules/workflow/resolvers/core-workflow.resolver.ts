@@ -16,8 +16,8 @@ import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/cor
 import { CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { CoreWorkflowVersionArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.input';
 import { CoreWorkflowVersionsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions.input';
-import { CoreWorkflowVersionsByIdsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions-by-ids.input';
 import { CoreWorkflowWithVersionsDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-versions.dto';
+import { selectCurrentCoreWorkflowVersion } from 'src/engine/core-modules/workflow/utils/select-current-core-workflow-version.util';
 import { CoreWorkflowsWithVersionsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows-with-versions.input';
 import { CoreWorkflowArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow.input';
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
@@ -127,7 +127,7 @@ export class CoreWorkflowResolver {
         }),
       ]);
 
-    return coreWorkflows.map((coreWorkflow) => ({
+    const coreWorkflowsWithVersions = coreWorkflows.map((coreWorkflow) => ({
       ...coreWorkflow,
       versions: isDefined(coreWorkflow.workspaceWorkflowId)
         ? (coreWorkflowVersionsByWorkspaceWorkflowId[
@@ -135,19 +135,41 @@ export class CoreWorkflowResolver {
           ] ?? [])
         : [],
     }));
-  }
 
-  @Query(() => [CoreWorkflowVersionDTO])
-  async coreWorkflowVersionsByIds(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args() { workspaceWorkflowVersionIds }: CoreWorkflowVersionsByIdsArgs,
-  ): Promise<CoreWorkflowVersionDTO[]> {
-    return this.coreWorkflowVersionListService.findManyByWorkspaceWorkflowVersionIds(
-      {
-        workspaceId,
-        workspaceWorkflowVersionIds,
+    const currentVersionWorkspaceIds = coreWorkflowsWithVersions.flatMap(
+      (coreWorkflow) => {
+        const currentVersion = selectCurrentCoreWorkflowVersion(
+          coreWorkflow.versions,
+        );
+
+        return isDefined(currentVersion?.workspaceWorkflowVersionId)
+          ? [currentVersion.workspaceWorkflowVersionId]
+          : [];
       },
     );
+
+    const currentVersionsWithContent =
+      await this.coreWorkflowVersionListService.findManyByWorkspaceWorkflowVersionIds(
+        {
+          workspaceId,
+          workspaceWorkflowVersionIds: currentVersionWorkspaceIds,
+        },
+      );
+
+    return coreWorkflowsWithVersions.map((coreWorkflow) => {
+      const currentVersion = selectCurrentCoreWorkflowVersion(
+        coreWorkflow.versions,
+      );
+
+      return {
+        ...coreWorkflow,
+        currentVersion:
+          currentVersionsWithContent.find(
+            (versionWithContent) =>
+              versionWithContent.id === currentVersion?.id,
+          ) ?? null,
+      };
+    });
   }
 
   @Query(() => CoreWorkflowDTO, { nullable: true })

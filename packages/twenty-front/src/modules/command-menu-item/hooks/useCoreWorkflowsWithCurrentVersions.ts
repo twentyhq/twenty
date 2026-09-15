@@ -2,24 +2,21 @@ import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { getCurrentWorkflowVersionId } from '@/command-menu-item/utils/getCurrentWorkflowVersionId';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import {
-  buildWorkflowFromCoreWorkflowWithVersions,
-  buildWorkflowsWithCurrentVersionsFromCore,
-} from '@/object-core/workflows/utils/buildWorkflowsWithCurrentVersionsFromCore';
+import { buildWorkflowsWithCurrentVersionsFromCore } from '@/object-core/workflows/utils/buildWorkflowsWithCurrentVersionsFromCore';
 import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import {
-  GetCoreWorkflowsWithVersionsDocument,
-  GetCoreWorkflowVersionsByIdsDocument,
-} from '~/generated/graphql';
+import { GetCoreWorkflowsWithVersionsDocument } from '~/generated/graphql';
 
 export const useCoreWorkflowsWithCurrentVersions = (
   workflowIds: string[],
-): { workflows: WorkflowWithCurrentVersion[]; isCoreDataComplete: boolean } => {
+): {
+  workflows: WorkflowWithCurrentVersion[];
+  isCoreEnrichmentLoading: boolean;
+  isCoreEnrichmentComplete: boolean;
+} => {
   const apolloCoreClient = useApolloCoreClient();
 
-  const { data: coreWorkflowsData, error: coreWorkflowsError } = useQuery(
+  const { data, loading, error } = useQuery(
     GetCoreWorkflowsWithVersionsDocument,
     {
       client: apolloCoreClient,
@@ -29,52 +26,20 @@ export const useCoreWorkflowsWithCurrentVersions = (
     },
   );
 
-  const coreWorkflows = useMemo(
-    () => coreWorkflowsData?.coreWorkflowsWithVersions ?? [],
-    [coreWorkflowsData?.coreWorkflowsWithVersions],
-  );
-
-  const currentVersionIds = useMemo(
-    () =>
-      coreWorkflows.flatMap((coreWorkflow) => {
-        const workflow =
-          buildWorkflowFromCoreWorkflowWithVersions(coreWorkflow);
-
-        if (!isDefined(workflow)) {
-          return [];
-        }
-
-        const currentVersionId = getCurrentWorkflowVersionId(workflow);
-
-        return isDefined(currentVersionId) ? [currentVersionId] : [];
-      }),
-    [coreWorkflows],
-  );
-
-  const { data: coreWorkflowVersionsData } = useQuery(
-    GetCoreWorkflowVersionsByIdsDocument,
-    {
-      client: apolloCoreClient,
-      fetchPolicy: 'cache-and-network',
-      variables: { workspaceWorkflowVersionIds: currentVersionIds },
-      skip: currentVersionIds.length === 0,
-    },
-  );
-
   const workflows = useMemo(
     () =>
-      buildWorkflowsWithCurrentVersionsFromCore({
-        coreWorkflows,
-        coreWorkflowVersionsWithContent:
-          coreWorkflowVersionsData?.coreWorkflowVersionsByIds ?? [],
-        getCurrentVersionId: getCurrentWorkflowVersionId,
-      }),
-    [coreWorkflows, coreWorkflowVersionsData?.coreWorkflowVersionsByIds],
+      buildWorkflowsWithCurrentVersionsFromCore(
+        data?.coreWorkflowsWithVersions ?? [],
+      ),
+    [data?.coreWorkflowsWithVersions],
   );
 
-  const isCoreDataComplete =
-    !isDefined(coreWorkflowsError) &&
-    coreWorkflows.length === workflowIds.length;
+  const isCoreEnrichmentLoading = workflowIds.length > 0 && loading;
 
-  return { workflows, isCoreDataComplete };
+  const isCoreEnrichmentComplete =
+    !isDefined(error) &&
+    new Set(workflows.map((workflow) => workflow.id)).size ===
+      new Set(workflowIds).size;
+
+  return { workflows, isCoreEnrichmentLoading, isCoreEnrichmentComplete };
 };

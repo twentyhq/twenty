@@ -7,4 +7,7 @@ import { CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-work
 export class CoreWorkflowWithVersionsDTO extends CoreWorkflowDTO {
   @Field(() => [CoreWorkflowVersionDTO])
   versions: CoreWorkflowVersionDTO[];
+
+  @Field(() => CoreWorkflowVersionDTO, { nullable: true })
+  currentVersion: CoreWorkflowVersionDTO | null;
 }

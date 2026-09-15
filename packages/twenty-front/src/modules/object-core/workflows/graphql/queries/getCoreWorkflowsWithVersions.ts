@@ -13,7 +13,16 @@ export const GET_CORE_WORKFLOWS_WITH_VERSIONS = gql`
         label
         status
         workspaceWorkflowVersionId
+        createdAt
+      }
+      currentVersion {
+        id
+        label
+        status
+        workspaceWorkflowVersionId
         workspaceWorkflowId
+        trigger
+        steps
         createdAt
         updatedAt
       }

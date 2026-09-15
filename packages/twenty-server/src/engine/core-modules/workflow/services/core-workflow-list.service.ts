@@ -236,33 +236,12 @@ export class CoreWorkflowListService {
     workspaceId: string;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
-    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
+    const [coreWorkflow] = await this.findManyByWorkspaceWorkflowIds({
+      workspaceId,
+      workspaceWorkflowIds: [workspaceWorkflowId],
+    });
 
-    const rows: CoreWorkflowRow[] = await this.coreDataSource.query(
-      `SELECT
-         c.id,
-         null AS "cursorSortValue",
-         wf.id::text AS "workspaceWorkflowId",
-         ${CORE_WORKFLOW_AGGREGATE_COLUMNS}
-       FROM core."workflow" c
-       JOIN ${schemaName}."workflow" wf
-         ON wf."coreWorkflowId" = c.id
-         AND wf."deletedAt" IS NULL
-         AND wf.id = $2
-       LEFT JOIN core."workflowVersion" v
-         ON v."workflowId" = wf.id AND v."workspaceId" = $1
-       WHERE c."workspaceId" = $1
-       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", wf.id`,
-      [workspaceId, workspaceWorkflowId],
-    );
-
-    const [row] = rows;
-
-    if (!isDefined(row)) {
-      return null;
-    }
-
-    return toCoreWorkflowDTO(row);
+    return coreWorkflow ?? null;
   }
 
   private async countByWorkspaceId({

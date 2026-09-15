@@ -5,16 +5,14 @@ import {
   type WorkflowVersion,
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-import {
-  type GetCoreWorkflowVersionsByIdsQuery,
-  type GetCoreWorkflowsWithVersionsQuery,
-} from '~/generated/graphql';
+import { type GetCoreWorkflowsWithVersionsQuery } from '~/generated/graphql';
 
 type CoreWorkflowWithVersions =
   GetCoreWorkflowsWithVersionsQuery['coreWorkflowsWithVersions'][number];
 
-type CoreWorkflowVersionWithContent =
-  GetCoreWorkflowVersionsByIdsQuery['coreWorkflowVersionsByIds'][number];
+type CoreCurrentVersion = NonNullable<
+  CoreWorkflowWithVersions['currentVersion']
+>;
 
 export const buildWorkflowFromCoreWorkflowWithVersions = (
   coreWorkflow: CoreWorkflowWithVersions,
@@ -44,61 +42,39 @@ export const buildWorkflowFromCoreWorkflowWithVersions = (
   };
 };
 
-export const buildWorkflowVersionFromCoreWorkflowVersion = (
-  coreWorkflowVersion: CoreWorkflowVersionWithContent,
+export const buildWorkflowVersionFromCoreCurrentVersion = (
+  coreCurrentVersion: CoreCurrentVersion,
 ): WorkflowVersion | undefined => {
-  if (!isDefined(coreWorkflowVersion.workspaceWorkflowVersionId)) {
+  if (!isDefined(coreCurrentVersion.workspaceWorkflowVersionId)) {
     return undefined;
   }
 
   return {
     __typename: 'WorkflowVersion',
-    id: coreWorkflowVersion.workspaceWorkflowVersionId,
-    name: coreWorkflowVersion.label,
-    createdAt: coreWorkflowVersion.createdAt,
-    updatedAt: coreWorkflowVersion.updatedAt,
-    workflowId: coreWorkflowVersion.workspaceWorkflowId,
-    trigger: coreWorkflowVersion.trigger ?? null,
-    steps: coreWorkflowVersion.steps ?? null,
-    status: coreWorkflowVersion.status,
+    id: coreCurrentVersion.workspaceWorkflowVersionId,
+    name: coreCurrentVersion.label,
+    createdAt: coreCurrentVersion.createdAt,
+    updatedAt: coreCurrentVersion.updatedAt,
+    workflowId: coreCurrentVersion.workspaceWorkflowId,
+    trigger: coreCurrentVersion.trigger ?? null,
+    steps: coreCurrentVersion.steps ?? null,
+    status: coreCurrentVersion.status,
   };
 };
 
-export const buildWorkflowsWithCurrentVersionsFromCore = ({
-  coreWorkflows,
-  coreWorkflowVersionsWithContent,
-  getCurrentVersionId,
-}: {
-  coreWorkflows: CoreWorkflowWithVersions[];
-  coreWorkflowVersionsWithContent: CoreWorkflowVersionWithContent[];
-  getCurrentVersionId: (workflow: Workflow) => string | undefined;
-}): WorkflowWithCurrentVersion[] => {
-  const currentVersionById = new Map(
-    coreWorkflowVersionsWithContent.flatMap((coreWorkflowVersion) => {
-      const workflowVersion =
-        buildWorkflowVersionFromCoreWorkflowVersion(coreWorkflowVersion);
-
-      return isDefined(workflowVersion)
-        ? [[workflowVersion.id, workflowVersion] as const]
-        : [];
-    }),
-  );
-
-  return coreWorkflows.flatMap((coreWorkflow) => {
+export const buildWorkflowsWithCurrentVersionsFromCore = (
+  coreWorkflows: CoreWorkflowWithVersions[],
+): WorkflowWithCurrentVersion[] =>
+  coreWorkflows.flatMap((coreWorkflow) => {
     const workflow = buildWorkflowFromCoreWorkflowWithVersions(coreWorkflow);
 
-    if (!isDefined(workflow)) {
+    if (!isDefined(workflow) || !isDefined(coreWorkflow.currentVersion)) {
       return [];
     }
 
-    const currentVersionId = getCurrentVersionId(workflow);
-
-    if (!isDefined(currentVersionId)) {
-      return [];
-    }
-
-    const currentVersion = currentVersionById.get(currentVersionId);
+    const currentVersion = buildWorkflowVersionFromCoreCurrentVersion(
+      coreWorkflow.currentVersion,
+    );
 
     return isDefined(currentVersion) ? [{ ...workflow, currentVersion }] : [];
   });
-};
