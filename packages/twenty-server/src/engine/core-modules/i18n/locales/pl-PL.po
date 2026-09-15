@@ -13327,6 +13327,11 @@ msgstr "Nie masz uprawnień do podszywania się pod użytkowników w tej przestr
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Nie masz uprawnień do podszywania się pod użytkowników. Skontaktuj się z administratorem obszaru roboczego, aby uzyskać dostęp."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
 msgid "You do not have permission to manage the workspace blocklist."

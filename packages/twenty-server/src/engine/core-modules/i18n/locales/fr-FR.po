@@ -13327,6 +13327,11 @@ msgstr "Vous n'avez pas l'autorisation d'usurper l'identité d'utilisateurs dans
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Vous n'avez pas la permission d'usurper l'identité des utilisateurs. Veuillez contacter votre administrateur de l'espace de travail pour obtenir l'accès."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
 msgid "You do not have permission to manage the workspace blocklist."
