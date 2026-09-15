@@ -159,32 +159,26 @@ export class InboxItemResolver {
       userWorkspaceId,
     });
 
-    return Promise.all(
-      queues.map(async (queue) => {
-        const counts = await this.inboxItemService.countByScope({
-          workspaceId,
-          actorUserWorkspaceId: userWorkspaceId,
-          // The badge is what the team still has to pick up: counting items a
-          // teammate already took would make it grow as work gets claimed.
-          readScope: {
-            kind: 'queue',
-            queueId: queue.id,
-            assignment: InboxQueueAssignment.UNASSIGNED,
-          },
-          now,
-          shouldCountSnoozed: false,
-        });
+    const countsByQueueId = await this.inboxItemService.countUnassignedByQueue({
+      workspaceId,
+      queueIds: queues.map((queue) => queue.id),
+      now,
+    });
 
-        return {
-          id: queue.id,
-          name: queue.name,
-          slug: queue.slug,
-          icon: queue.icon,
-          unread: counts.unread,
-          needsAction: counts.needsAction,
-        };
-      }),
-    );
+    return queues.map((queue) => {
+      // A queue with nothing waiting has no row in the grouped result, which
+      // is a zero rather than a missing count.
+      const counts = countsByQueueId.get(queue.id);
+
+      return {
+        id: queue.id,
+        name: queue.name,
+        slug: queue.slug,
+        icon: queue.icon,
+        unread: counts?.unread ?? 0,
+        needsAction: counts?.needsAction ?? 0,
+      };
+    });
   }
 
   @Mutation(() => InboxItemDTO)

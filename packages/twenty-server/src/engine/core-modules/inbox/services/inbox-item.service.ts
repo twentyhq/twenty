@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type FindOptionsWhere, In, IsNull, Not } from 'typeorm';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
@@ -14,9 +14,13 @@ import {
 import {
   buildInboxItemScopeCriteria,
   buildInboxItemUnreadCriteria,
+  buildIsUnreadSql,
+  buildWantsAttentionSql,
 } from 'src/engine/core-modules/inbox/utils/inbox-item-scope.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+const INBOX_ITEM_ALIAS = 'inboxItem';
 
 export const DEFAULT_INBOX_PAGE_SIZE = 50;
 export const MAX_INBOX_PAGE_SIZE = 100;
@@ -115,6 +119,59 @@ export class InboxItemService {
     ]);
 
     return { unread, needsAction, snoozed };
+  }
+
+  // One grouped query rather than a pair per queue: the drawer polls these
+  // badges every few seconds, so the round trips would grow with the number of
+  // shared inboxes a role can reach.
+  async countUnassignedByQueue({
+    workspaceId,
+    queueIds,
+    now,
+  }: {
+    workspaceId: string;
+    queueIds: string[];
+    now: Date;
+  }): Promise<Map<string, { unread: number; needsAction: number }>> {
+    if (!isNonEmptyArray(queueIds)) {
+      return new Map();
+    }
+
+    const rows = await this.inboxItemRepository
+      .createQueryBuilder(INBOX_ITEM_ALIAS)
+      .select(`"${INBOX_ITEM_ALIAS}"."queueId"`, 'queueId')
+      .addSelect(
+        `COUNT(*) FILTER (WHERE ${buildIsUnreadSql(INBOX_ITEM_ALIAS)})`,
+        'unread',
+      )
+      .addSelect(
+        `COUNT(*) FILTER (WHERE "${INBOX_ITEM_ALIAS}"."priority" = :needsActionPriority)`,
+        'needsAction',
+      )
+      .where(`"${INBOX_ITEM_ALIAS}"."workspaceId" = :workspaceId`)
+      .andWhere(`"${INBOX_ITEM_ALIAS}"."queueId" IN (:...queueIds)`)
+      // The badge is what the team still has to pick up: counting items a
+      // teammate already took would make it grow as work gets claimed.
+      .andWhere(`"${INBOX_ITEM_ALIAS}"."assigneeUserWorkspaceId" IS NULL`)
+      .andWhere(buildWantsAttentionSql(INBOX_ITEM_ALIAS))
+      .setParameters({
+        workspaceId,
+        queueIds,
+        now,
+        needsActionPriority: InboxItemPriority.NEEDS_ACTION,
+      })
+      .groupBy(`"${INBOX_ITEM_ALIAS}"."queueId"`)
+      .getRawMany<{ queueId: string; unread: string; needsAction: string }>();
+
+    return new Map(
+      rows.map((row) => [
+        row.queueId,
+        {
+          unread: Number(row.unread),
+          needsAction: Number(row.needsAction),
+        },
+      ]),
+    );
   }
 
   // Reading an item is not activity on it: it moves nothing and bumps no

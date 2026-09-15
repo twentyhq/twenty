@@ -46,17 +46,36 @@ const ownedItemArgs = {
 describe('InboxItemService', () => {
   let service: InboxItemService;
 
+  // The builder is chainable, so every step returns it and only the terminal
+  // call resolves.
+  const queryBuilder = {
+    select: jest.fn(),
+    addSelect: jest.fn(),
+    where: jest.fn(),
+    andWhere: jest.fn(),
+    setParameters: jest.fn(),
+    groupBy: jest.fn(),
+    getRawMany: jest.fn(),
+  };
+
   const inboxItemRepository = {
     find: jest.fn(),
     findOne: jest.fn(),
     count: jest.fn(),
     update: jest.fn(),
+    createQueryBuilder: jest.fn(),
   };
 
   beforeEach(async () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
     jest.setSystemTime(NOW);
+
+    for (const step of Object.values(queryBuilder)) {
+      step.mockReturnValue(queryBuilder);
+    }
+    queryBuilder.getRawMany.mockResolvedValue([]);
+    inboxItemRepository.createQueryBuilder.mockReturnValue(queryBuilder);
 
     inboxItemRepository.find.mockResolvedValue([]);
     inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
@@ -387,6 +406,49 @@ describe('InboxItemService', () => {
           },
         },
       );
+    });
+  });
+
+  describe('countUnassignedByQueue', () => {
+    it('asks the database once rather than once per queue', async () => {
+      queryBuilder.getRawMany.mockResolvedValue([
+        { queueId: 'sales-queue-id', unread: '2', needsAction: '1' },
+      ]);
+
+      const counts = await service.countUnassignedByQueue({
+        workspaceId: WORKSPACE_ID,
+        queueIds: ['sales-queue-id', 'support-queue-id'],
+        now: NOW,
+      });
+
+      expect(inboxItemRepository.createQueryBuilder).toHaveBeenCalledTimes(1);
+      expect(counts.get('sales-queue-id')).toEqual({
+        unread: 2,
+        needsAction: 1,
+      });
+    });
+
+    it('reads a queue with nothing waiting as zero rather than as missing', async () => {
+      queryBuilder.getRawMany.mockResolvedValue([]);
+
+      const counts = await service.countUnassignedByQueue({
+        workspaceId: WORKSPACE_ID,
+        queueIds: ['sales-queue-id'],
+        now: NOW,
+      });
+
+      expect(counts.get('sales-queue-id')).toBeUndefined();
+    });
+
+    it('does not query at all when the role reaches no shared inbox', async () => {
+      const counts = await service.countUnassignedByQueue({
+        workspaceId: WORKSPACE_ID,
+        queueIds: [],
+        now: NOW,
+      });
+
+      expect(inboxItemRepository.createQueryBuilder).not.toHaveBeenCalled();
+      expect(counts.size).toBe(0);
     });
   });
 });

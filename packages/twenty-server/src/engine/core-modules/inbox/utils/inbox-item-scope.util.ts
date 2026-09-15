@@ -42,26 +42,33 @@ export const isInboxItemUnread = (inboxItem: InboxItemAttention): boolean =>
   !isDefined(inboxItem.readAt) ||
   toTime(inboxItem.lastEventAt) > toTime(inboxItem.readAt);
 
-// TypeORM hands the callback one qualified column, so the others in the same
-// predicate are built from its table. Its quoting is not guaranteed, so the
-// table is unquoted and requoted rather than passed through: an unquoted alias
-// reaches Postgres as a missing FROM-clause entry.
-const siblingColumn = (columnAlias: string, column: string): string => {
-  const tableAlias = columnAlias
-    .slice(0, columnAlias.lastIndexOf('.'))
-    .replace(/"/g, '');
+// One predicate, written once against a table alias and reused by both callers:
+// the TypeORM `Raw` filters below and the grouped count that cannot express
+// itself as a FindOptions tree. Keeping them in terms of the same builders is
+// what stops two notions of "handled" from drifting apart.
+export const buildClearIsCurrentSql = (alias: string): string =>
+  `("${alias}"."clearedAt" IS NOT NULL AND "${alias}"."lastEventAt" <= "${alias}"."clearedAt")`;
 
-  return `"${tableAlias}"."${column}"`;
-};
+export const buildWantsAttentionSql = (alias: string): string =>
+  `(NOT ${buildClearIsCurrentSql(alias)} OR "${alias}"."resurfaceAt" <= :now)`;
+
+export const buildIsUnreadSql = (alias: string): string =>
+  `("${alias}"."readAt" IS NULL OR "${alias}"."lastEventAt" > "${alias}"."readAt")`;
+
+// TypeORM hands the callback one qualified column, and its quoting is not
+// guaranteed, so the table is unquoted and requoted rather than passed through:
+// an unquoted alias reaches Postgres as a missing FROM-clause entry.
+const aliasOf = (columnAlias: string): string =>
+  columnAlias.slice(0, columnAlias.lastIndexOf('.')).replace(/"/g, '');
 
 const clearIsCurrentSql = (clearedAt: string): string =>
-  `(${clearedAt} IS NOT NULL AND ${siblingColumn(clearedAt, 'lastEventAt')} <= ${clearedAt})`;
+  buildClearIsCurrentSql(aliasOf(clearedAt));
 
 const wantsAttentionSql = (clearedAt: string): string =>
-  `(NOT ${clearIsCurrentSql(clearedAt)} OR ${siblingColumn(clearedAt, 'resurfaceAt')} <= :now)`;
+  buildWantsAttentionSql(aliasOf(clearedAt));
 
 const isUnreadSql = (readAt: string): string =>
-  `(${readAt} IS NULL OR ${siblingColumn(readAt, 'lastEventAt')} > ${readAt})`;
+  buildIsUnreadSql(aliasOf(readAt));
 
 export const buildInboxItemScopeCriteria = (
   scope: InboxItemScope,
