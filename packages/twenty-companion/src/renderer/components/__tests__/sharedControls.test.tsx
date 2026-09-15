@@ -2,8 +2,8 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 import { IconSettings } from 'twenty-ui/icon';
-import { IconButton } from '@ui/input/IconButton/IconButton';
-import { Button } from '@ui/input/Button/Button';
+import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { Button } from '@ui/primitives/input/Button/Button';
 
 afterEach(cleanup);
 
