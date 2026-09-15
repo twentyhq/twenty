@@ -13,6 +13,7 @@ import {
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
 import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
 import { pathExists } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/path-exists.util';
+import { getDepsLayerChecksum } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/get-deps-layer-checksum.util';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -44,7 +45,7 @@ export class LocalLayerManagerService {
       return;
     }
 
-    const lockKey = `local-driver-deps-layer:${flatApplication.yarnLockChecksum ?? 'default'}`;
+    const lockKey = `local-driver-deps-layer:${getDepsLayerChecksum(flatApplication)}`;
 
     await this.cacheLockService.withLock(
       async () => {
