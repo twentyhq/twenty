@@ -2,9 +2,7 @@ import { isAppEffectRedirectEnabledState } from '@/app/states/isAppEffectRedirec
 import { useMarkSessionActive } from '@/auth/hooks/useMarkSessionActive';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
@@ -37,16 +35,7 @@ export const useRedeemSsoExchangeToken = () => {
 
         markSessionActive();
       } catch (error: unknown) {
-        if (CombinedGraphQLErrors.is(error)) {
-          enqueueToast(getToastOptionsFromError({ error }));
-        } else {
-          enqueueToast({
-            variant: 'error',
-            children:
-              (error instanceof Error ? error.message : undefined) ??
-              t`An error occurred.`,
-          });
-        }
+        enqueueToast(getToastOptionsFromError({ error }));
       } finally {
         setIsAppEffectRedirectEnabled(true);
       }

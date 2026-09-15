@@ -23,11 +23,11 @@ export const useVerifyLogin = () => {
     try {
       await getAuthTokensFromLoginToken(loginToken);
     } catch (error) {
-      if (CombinedGraphQLErrors.is(error)) {
-        enqueueToast(getToastOptionsFromError({ error }));
-      } else {
-        enqueueToast({ variant: 'error', children: t`Authentication failed` });
-      }
+      enqueueToast(
+        CombinedGraphQLErrors.is(error)
+          ? getToastOptionsFromError({ error })
+          : { variant: 'error', children: t`Authentication failed` },
+      );
       navigate(AppPath.SignInUp);
     } finally {
       setIsAppEffectRedirectEnabled(true);

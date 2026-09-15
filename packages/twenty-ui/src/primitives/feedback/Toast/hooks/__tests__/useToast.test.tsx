@@ -184,15 +184,13 @@ it('can restore a notification from its close callback', () => {
 
   expect(store.get(toastsState)).toEqual([
     {
-      notification: { id: firstId, dedupeKey: 'saved', onClose },
+      notification: { id: firstId, onClose },
+      dedupeKey: 'saved',
       status: 'closing',
     },
     {
-      notification: {
-        id: expect.any(String),
-        dedupeKey: 'saved',
-        children: 'Restored',
-      },
+      notification: { id: expect.any(String), children: 'Restored' },
+      dedupeKey: 'saved',
       status: 'visible',
     },
   ]);

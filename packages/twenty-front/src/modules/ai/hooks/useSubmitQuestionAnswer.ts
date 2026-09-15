@@ -134,11 +134,7 @@ export const useSubmitQuestionAnswer = () => {
           );
         }
 
-        enqueueToast(
-          getToastOptionsFromError({
-            error: CombinedGraphQLErrors.is(error) ? error : undefined,
-          }),
-        );
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
     [apolloClient, store, enqueueToast, modelIdForRequest],

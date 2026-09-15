@@ -8,7 +8,6 @@ import { useCreateSsoIdentityProvider } from '@/settings/security/hooks/useCreat
 import { type SettingSecurityNewSsoIdentityFormValues } from '@/settings/security/types/SsoIdentityProvider';
 import { ssoIdentityProviderDefaultValues } from '@/settings/security/utils/ssoIdentityProviderDefaultValues';
 import { ssoIdentitiesProvidersParamsSchema } from '@/settings/security/validation-schemas/ssoIdentityProviderSchema';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
@@ -52,11 +51,7 @@ export const SettingsSecuritySsoIdentifyProvider = () => {
 
       navigate(SettingsPath.Security);
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

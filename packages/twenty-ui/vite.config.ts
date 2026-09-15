@@ -86,7 +86,6 @@ export default defineConfig(({ command }) => {
         'react-dom/client',
         'react/jsx-runtime',
         'react/jsx-dev-runtime',
-        'uuid',
       ],
     },
     root: __dirname,

@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { type ErrorLike } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -108,9 +107,7 @@ export const useCoreWorkflows = ({
       });
     } catch (fetchMoreError) {
       logError(`useCoreWorkflows fetchMore error : ${fetchMoreError}`);
-      enqueueToast(
-        getToastOptionsFromError({ error: fetchMoreError as ErrorLike }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: fetchMoreError }));
     } finally {
       setIsFetchingMore(false);
     }

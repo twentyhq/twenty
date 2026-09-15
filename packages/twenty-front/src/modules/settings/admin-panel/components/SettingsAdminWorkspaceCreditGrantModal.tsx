@@ -8,7 +8,6 @@ import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -141,11 +140,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       });
       handleClose();
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

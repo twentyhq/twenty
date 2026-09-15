@@ -1,3 +1,4 @@
+import { isPositiveInteger } from '@sniptt/guards';
 import { createStore } from 'jotai';
 import { useState } from 'react';
 
@@ -11,7 +12,7 @@ export const ToastProvider = ({
   limit = DEFAULT_TOAST_LIMIT,
 }: ToastProviderProps) => {
   const [store] = useState(() => {
-    if (!Number.isInteger(limit) || limit < 1) {
+    if (!isPositiveInteger(limit)) {
       throw new Error('Toast limit must be a positive integer.');
     }
 

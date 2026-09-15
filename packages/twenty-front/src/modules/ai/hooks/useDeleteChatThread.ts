@@ -1,4 +1,3 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 
@@ -69,11 +68,7 @@ export const useDeleteChatThread = () => {
         );
       }
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

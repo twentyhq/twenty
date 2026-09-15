@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { useCallback, useEffect } from 'react';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -50,11 +49,7 @@ export const PromiseRejectionEffect = () => {
         checkIfItsAViteStaleChunkLazyLoadingError(error);
 
       if (!isAbortError && !isViteStaleChunkLazyLoadingError) {
-        if (error instanceof Error) {
-          enqueueToast({ variant: 'error', children: error.message });
-        } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
-        }
+        enqueueToast(getToastOptionsFromError({ error }));
       }
 
       try {

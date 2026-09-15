@@ -6,7 +6,6 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -109,11 +108,7 @@ export const SettingsSecurityEditableProfileFields = () => {
       setCurrentWorkspace((prev) =>
         prev ? { ...prev, editableProfileFields: previousFields } : prev,
       );
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(err) ? err : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: err }));
     });
   };
 

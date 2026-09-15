@@ -11,7 +11,6 @@ import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCr
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -85,11 +84,7 @@ export const WorkspaceActivation = () => {
       setIsCreatingWorkspace(false);
       setOnboardingActivationFailed(true);
 
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   }, [
     activateWorkspace,

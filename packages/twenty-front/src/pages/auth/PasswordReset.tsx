@@ -15,7 +15,6 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
@@ -203,11 +202,7 @@ export const PasswordReset = () => {
       redirect(AppPath.Index);
     } catch (err) {
       logError(err);
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(err) ? err : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   };
 

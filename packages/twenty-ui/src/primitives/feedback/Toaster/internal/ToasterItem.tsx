@@ -21,7 +21,7 @@ export const ToasterItem = ({
   onExitComplete,
 }: ToasterItemProps) => {
   const { notification, status } = toastEntry;
-  const { id, dedupeKey: _dedupeKey, ...toastProps } = notification;
+  const { id, ...toastProps } = notification;
   const elementRef = useRef<HTMLDivElement>(null);
 
   return (

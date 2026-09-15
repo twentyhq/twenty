@@ -15,7 +15,6 @@ import {
   webhookFormSchema,
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -119,11 +118,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
           : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
@@ -154,11 +149,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         children: t`Webhook ${targetUrl} updated successfully`,
       });
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
@@ -221,11 +212,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

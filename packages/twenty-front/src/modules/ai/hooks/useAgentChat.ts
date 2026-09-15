@@ -306,11 +306,7 @@ export const useAgentChat = (
         variables: { threadId },
       });
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   }, [store, apolloClient, enqueueToast]);
 

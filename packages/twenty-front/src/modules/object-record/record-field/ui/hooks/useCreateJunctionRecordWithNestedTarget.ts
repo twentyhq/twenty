@@ -1,4 +1,3 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
@@ -139,13 +138,7 @@ export const useCreateJunctionRecordWithNestedTarget = ({
           isMatchingSearchFilter: true,
         };
       } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          enqueueToast(getToastOptionsFromError({ error }));
-        } else if (error instanceof Error) {
-          enqueueToast({ variant: 'error', children: error.message });
-        } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
-        }
+        enqueueToast(getToastOptionsFromError({ error }));
         return undefined;
       } finally {
         setLoading(false);

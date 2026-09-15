@@ -117,11 +117,7 @@ export const useSettingsAgentSave = ({
 
       setOriginalFormValues({ ...formValues });
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsSubmitting(false);
     }
@@ -185,11 +181,7 @@ export const useSettingsAgentSave = ({
 
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsSubmitting(false);
     }

@@ -3,7 +3,6 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -71,19 +70,11 @@ export const SettingsSecurityApprovedAccessDomain = () => {
           navigate(SettingsPath.WorkspaceMembersPage);
         },
         onError: (error) => {
-          enqueueToast(
-            getToastOptionsFromError({
-              error: CombinedGraphQLErrors.is(error) ? error : undefined,
-            }),
-          );
+          enqueueToast(getToastOptionsFromError({ error }));
         },
       });
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

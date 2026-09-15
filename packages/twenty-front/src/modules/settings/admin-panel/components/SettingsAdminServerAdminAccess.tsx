@@ -133,14 +133,14 @@ export const SettingsAdminServerAdminAccess = ({
         children: t`Server administrator access updated.`,
       });
     } catch (error) {
-      if (CombinedGraphQLErrors.is(error)) {
-        enqueueToast(getToastOptionsFromError({ error }));
-      } else {
-        enqueueToast({
-          variant: 'error',
-          children: t`Failed to update server administrator access.`,
-        });
-      }
+      enqueueToast(
+        CombinedGraphQLErrors.is(error)
+          ? getToastOptionsFromError({ error })
+          : {
+              variant: 'error',
+              children: t`Failed to update server administrator access.`,
+            },
+      );
     } finally {
       setOtp('');
       setPendingChange(null);
