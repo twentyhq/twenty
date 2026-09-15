@@ -34,7 +34,7 @@ Omit skill names to verify all five. CI exercises both single-skill and all-skil
 
 1. Create `skills/<name>/SKILL.md` (frontmatter: `name`, `description` only) and `skills/<name>/agents/openai.yaml` (`display_name`, `short_description` ≤ 64, `default_prompt` mentioning `$<name>`).
 2. Add a `## When To Use` section with 4–6 user-language triggers and “do not use this skill for X” callouts referencing siblings.
-3. Add the name to the expected skill lists in `scripts/lib.js` and `scripts/validators/skills.js`.
+3. Add the name to `CANONICAL_SKILL_NAMES` in `scripts/validators/lib.js`.
 
 ## Adding a Reference
 
