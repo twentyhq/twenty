@@ -3582,6 +3582,7 @@ msgstr "Configurações do bloco"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "Lista de Bloqueio"
 
@@ -5320,6 +5321,11 @@ msgstr "Continuar com o Google"
 #: src/pages/onboarding/ImportContacts.tsx
 msgid "Continue with Microsoft"
 msgstr "Continuar com a Microsoft"
+
+#. js-lingui-id: Rdhzdv
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Control what the workspace imports from connected mailboxes and calendars"
+msgstr ""
 
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -8788,6 +8794,11 @@ msgstr "Excluir as seguintes pessoas e domínios da minha sincronização de e-m
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Excluir as seguintes pessoas e domínios da sincronização do meu e-mail. Conversas internas não serão importadas"
 
+#. js-lingui-id: aCFYU+
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
+msgid "Exclude the following people and domains from the email and calendar sync of every workspace member"
+msgstr ""
+
 #. js-lingui-id: g3jaWB
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Executed copies"
@@ -11036,7 +11047,7 @@ msgid "Inactive Skill Options"
 msgstr "Opções da habilidade inativa"
 
 #. js-lingui-id: j8Bj7e
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Include emails where all participants share the same domain."
 msgstr "Incluir e-mails em que todos os participantes compartilham o mesmo domínio."
 
@@ -19796,6 +19807,11 @@ msgstr "Mudar para anual"
 msgid "Switched to a production instance."
 msgstr "Alterado para uma instância de produção."
 
+#. js-lingui-id: Nu4DdT
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Sync"
+msgstr ""
+
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync Account"
@@ -19822,7 +19838,7 @@ msgid "Sync failed"
 msgstr "Sincronização falhou"
 
 #. js-lingui-id: tVKt7G
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync Internal Emails"
 msgstr "Sincronizar e-mails internos"
 

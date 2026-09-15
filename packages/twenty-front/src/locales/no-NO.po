@@ -3582,6 +3582,7 @@ msgstr "Blokkinnstillinger"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "Svarteliste"
 
@@ -5320,6 +5321,11 @@ msgstr "Fortsett med Google"
 #: src/pages/onboarding/ImportContacts.tsx
 msgid "Continue with Microsoft"
 msgstr "Fortsett med Microsoft"
+
+#. js-lingui-id: Rdhzdv
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Control what the workspace imports from connected mailboxes and calendars"
+msgstr ""
 
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -8788,6 +8794,11 @@ msgstr "Ekskluder følgende personer og domener fra min e-postsynkronisering."
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Ekskluder følgende personer og domener fra e-postsynkroniseringen min. Interne samtaler vil ikke bli importert"
 
+#. js-lingui-id: aCFYU+
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
+msgid "Exclude the following people and domains from the email and calendar sync of every workspace member"
+msgstr ""
+
 #. js-lingui-id: g3jaWB
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Executed copies"
@@ -11036,7 +11047,7 @@ msgid "Inactive Skill Options"
 msgstr "Alternativer for inaktiv ferdighet"
 
 #. js-lingui-id: j8Bj7e
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Include emails where all participants share the same domain."
 msgstr "Inkluder e-poster der alle deltakere deler samme domene."
 
@@ -19796,6 +19807,11 @@ msgstr "Bytt til årlig"
 msgid "Switched to a production instance."
 msgstr "Byttet til en produksjonsinstans."
 
+#. js-lingui-id: Nu4DdT
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Sync"
+msgstr ""
+
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync Account"
@@ -19822,7 +19838,7 @@ msgid "Sync failed"
 msgstr "Synkronisering mislyktes"
 
 #. js-lingui-id: tVKt7G
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync Internal Emails"
 msgstr "Synkroniser interne e-poster"
 
