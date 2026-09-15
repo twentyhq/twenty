@@ -3300,6 +3300,12 @@ type EventLogQueryResult {
   pageInfo: EventLogPageInfo!
 }
 
+type AiChatUsage {
+  limitValue: BigInt!
+  consumedValue: BigInt
+  periodEnd: DateTime
+}
+
 type Skill {
   id: UUID!
   name: String!
@@ -3330,6 +3336,7 @@ type AgentMessage {
 type AgentChatThread {
   id: ID!
   title: String
+  totalCacheReadTokens: Int!
   totalInputTokens: Int!
   totalOutputTokens: Int!
   contextWindowTokens: Int
@@ -3738,6 +3745,7 @@ type Query {
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
+  aiChatUsage: AiChatUsage
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!

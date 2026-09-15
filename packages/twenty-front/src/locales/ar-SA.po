@@ -17673,7 +17673,7 @@ msgstr "احفظ أو ألغِ تغييرات لوحة المعلومات قبل
 #. js-lingui-id: bL2pm9
 #: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Save the record before attaching a file"
-msgstr ""
+msgstr "احفظ السجل قبل إرفاق ملف"
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -20550,7 +20550,7 @@ msgstr "هذا الاتصال غير موجود أو غير متاح لهذا ا
 #. js-lingui-id: 2bcQ5P
 #: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "This content was saved in an older format and cannot be edited here"
-msgstr ""
+msgstr "تم حفظ هذا المحتوى بتنسيق أقدم ولا يمكن تعديله هنا"
 
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
@@ -21376,7 +21376,7 @@ msgstr "النوع"
 #. js-lingui-id: RS98db
 #: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
 msgid "Type '/' for commands"
-msgstr ""
+msgstr "اكتب '/' للأوامر"
 
 #. js-lingui-id: SKD2e4
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx

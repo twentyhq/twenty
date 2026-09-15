@@ -11253,12 +11253,12 @@ msgstr "Uygulamanın bu sürümü bu çalışma alanında zaten yüklü."
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "Bu iş akışı sürümü hatalı veri içeriyor ve kaydedilemez."
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "Bu iş akışı sürümü etkinleştirilmeye hazır değil."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13330,7 +13330,7 @@ msgstr "Kullanıcıları taklit etmek için izniniz yok. Erişim için çalışm
 #. js-lingui-id: wFDl+C
 #: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
 msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
-msgstr ""
+msgstr "Çalışma alanıyla paylaşılan bağlantıları yönetme izniniz yok. Erişim için lütfen çalışma alanı yöneticinizle iletişime geçin."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
