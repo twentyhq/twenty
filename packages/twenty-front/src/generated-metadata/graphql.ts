@@ -304,6 +304,21 @@ export enum AppKeyValueScope {
   WORKSPACE = 'WORKSPACE'
 }
 
+export type AppMessageInput = {
+  externalId: Scalars['String']['input'];
+  participants: Array<AppMessageParticipantInput>;
+  receivedAt: Scalars['DateTime']['input'];
+  subject?: InputMaybe<Scalars['String']['input']>;
+  text: Scalars['String']['input'];
+  threadExternalId: Scalars['String']['input'];
+};
+
+export type AppMessageParticipantInput = {
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  handle: Scalars['String']['input'];
+  role: MessageParticipantRole;
+};
+
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
@@ -2399,6 +2414,23 @@ export enum IndexType {
   GIN = 'GIN'
 }
 
+export type IngestAppMessagesInput = {
+  messageChannelId: Scalars['UUID']['input'];
+  messages: Array<AppMessageInput>;
+};
+
+export type IngestAppMessagesOutput = {
+  __typename?: 'IngestAppMessagesOutput';
+  messages: Array<IngestedAppMessage>;
+};
+
+export type IngestedAppMessage = {
+  __typename?: 'IngestedAppMessage';
+  externalId: Scalars['String']['output'];
+  messageId: Scalars['UUID']['output'];
+  messageThreadId: Scalars['UUID']['output'];
+};
+
 export type InitiateTwoFactorAuthenticationProvisioning = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioning';
   uri: Scalars['String']['output'];
@@ -2768,6 +2800,14 @@ export enum MessageFolderPendingSyncAction {
   NONE = 'NONE'
 }
 
+export enum MessageParticipantRole {
+  BCC = 'BCC',
+  CC = 'CC',
+  FROM = 'FROM',
+  REPLY_TO = 'REPLY_TO',
+  TO = 'TO'
+}
+
 export type MessageSuppression = {
   __typename?: 'MessageSuppression';
   createdAt: Scalars['DateTime']['output'];
@@ -3033,6 +3073,7 @@ export type Mutation = {
   getLoginTokenFromCredentials: LoginToken;
   goBackToPreviousOnboardingStep: OnboardingStepNavigation;
   impersonate: Impersonate;
+  ingestAppMessages: IngestAppMessagesOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioning;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
   installApplication: Application;
@@ -3812,6 +3853,11 @@ export type MutationGetLoginTokenFromCredentialsArgs = {
 export type MutationImpersonateArgs = {
   userId: Scalars['UUID']['input'];
   workspaceId: Scalars['UUID']['input'];
+};
+
+
+export type MutationIngestAppMessagesArgs = {
+  input: IngestAppMessagesInput;
 };
 
 

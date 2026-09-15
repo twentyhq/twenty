@@ -2997,6 +2997,16 @@ enum MessageChannelSyncStage {
   FAILED
 }
 
+type IngestedAppMessage {
+  externalId: String!
+  messageId: UUID!
+  messageThreadId: UUID!
+}
+
+type IngestAppMessagesOutput {
+  messages: [IngestedAppMessage!]!
+}
+
 type CreateEmailGroupChannelOutput {
   messageChannel: MessageChannel!
   forwardingAddress: String!
@@ -4041,6 +4051,7 @@ type Mutation {
   createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
   updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
   deleteAppMessageChannel(id: UUID!): MessageChannel!
+  ingestAppMessages(input: IngestAppMessagesInput!): IngestAppMessagesOutput!
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
@@ -5198,6 +5209,34 @@ input UpdateAppMessageChannelInput {
   displayName: String
   visibility: MessageChannelVisibility
   isSyncEnabled: Boolean
+}
+
+input IngestAppMessagesInput {
+  messageChannelId: UUID!
+  messages: [AppMessageInput!]!
+}
+
+input AppMessageInput {
+  externalId: String!
+  threadExternalId: String!
+  subject: String
+  text: String!
+  receivedAt: DateTime!
+  participants: [AppMessageParticipantInput!]!
+}
+
+input AppMessageParticipantInput {
+  role: MessageParticipantRole!
+  handle: String!
+  displayName: String
+}
+
+enum MessageParticipantRole {
+  FROM
+  TO
+  CC
+  BCC
+  REPLY_TO
 }
 
 input CreateEmailingDomainInput {
