@@ -1,5 +1,3 @@
-import { isUndefined } from '@sniptt/guards';
-
 import { RECALL_API_MAX_IN_PROCESS_RETRY_WAIT_MS } from './recall-api-max-in-process-retry-wait-ms';
 import { RECALL_API_MAX_ATTEMPTS } from './recall-api-max-attempts';
 type RecallApiConfig = { apiKey: string; baseUrl: string };
@@ -85,12 +83,12 @@ const performRecallBotApiRequestAttempt = async <TData>({
       method,
       headers: {
         Authorization: buildRecallApiAuthorizationHeader(config.apiKey),
-        ...(isUndefined(idempotencyKey)
+        ...(idempotencyKey === undefined
           ? {}
           : { 'Idempotency-Key': idempotencyKey }),
-        ...(isUndefined(body) ? {} : { 'Content-Type': 'application/json' }),
+        ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
       },
-      ...(isUndefined(body) ? {} : { body: JSON.stringify(body) }),
+      ...(body === undefined ? {} : { body: JSON.stringify(body) }),
     });
   } catch (error) {
     return {

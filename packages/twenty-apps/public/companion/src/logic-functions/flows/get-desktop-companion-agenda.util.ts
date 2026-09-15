@@ -108,7 +108,8 @@ export const getDesktopCompanionAgenda = async (
     : undefined;
   const botEventIds = new Set(
     botRecordings?.callRecordings?.edges.map(
-      ({ node }) => node.calendarEventId,
+      ({ node }: { node: { calendarEventId?: string } }) =>
+        node.calendarEventId,
     ) ?? [],
   );
   const meetings = events
