@@ -13327,6 +13327,11 @@ msgstr "您沒有權限在此工作區中模擬使用者。"
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "您無權冒充用戶。請與您的工作區管理員聯繫以獲取訪問權限。"
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
 msgid "You do not have permission to manage the workspace blocklist."

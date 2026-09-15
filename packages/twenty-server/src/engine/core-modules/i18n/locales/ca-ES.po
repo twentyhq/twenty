@@ -13327,6 +13327,11 @@ msgstr "No tens permís per suplantar usuaris en aquest espai de treball."
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "No tens permís per suplantar els usuaris. Si us plau, contacta amb l'administrador del teu espai de treball per obtenir accés."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
 msgid "You do not have permission to manage the workspace blocklist."

@@ -13327,6 +13327,11 @@ msgstr "Bạn không có quyền mạo danh người dùng trong không gian là
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Bạn không có quyền giả lập người dùng. Vui lòng liên hệ quản trị viên không gian làm việc của bạn để được truy cập."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr ""
+
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
 msgid "You do not have permission to manage the workspace blocklist."
