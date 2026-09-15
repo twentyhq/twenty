@@ -32,7 +32,11 @@ class UpdateViewFieldGroupInputUpdates {
 
   @IsOptional()
   @IsString()
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead.',
+  })
   deletedAt?: string;
 }
 

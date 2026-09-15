@@ -397,6 +397,7 @@ describe('View Group REST API', () => {
 
       assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body).toEqual({ success: true });
+      testViewGroupId = undefined;
     });
 
     it('should return 404 for non-existent view group', async () => {
@@ -409,14 +410,12 @@ describe('View Group REST API', () => {
       assertRestApiErrorNotFoundResponse(response);
     });
 
-    it('should return success even when group is already deleted', async () => {
+    it('should return 404 when the view group is already deleted', async () => {
       const viewGroup = await createTestViewGroupWithRestApi({
         viewId: testViewId,
         fieldMetadataId: testFieldMetadataId,
         fieldValue: 'double-delete-test',
       });
-
-      testViewGroupId = viewGroup.id;
 
       const deleteResponse = await makeRestAPIRequest({
         method: 'delete',
@@ -426,13 +425,13 @@ describe('View Group REST API', () => {
 
       assertRestApiSuccessfulResponse(deleteResponse);
 
-      const deleteResponse2 = await makeRestAPIRequest({
+      const secondDeleteResponse = await makeRestAPIRequest({
         method: 'delete',
         path: `/metadata/viewGroups/${viewGroup.id}`,
         bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
       });
 
-      assertRestApiSuccessfulResponse(deleteResponse2);
+      assertRestApiErrorNotFoundResponse(secondDeleteResponse);
     });
   });
 });
