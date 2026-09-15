@@ -8,6 +8,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { labPublicFeatureFlagsState } from '@/client-config/states/labPublicFeatureFlagsState';
 import { billingState } from '@/client-config/states/billingState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
@@ -81,6 +82,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);
+  const publicFeatureFlags = useAtomStateValue(labPublicFeatureFlagsState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -341,6 +343,9 @@ export const SettingsAdminWorkspaceDetail = () => {
                 }
 
                 const metadata = SETTINGS_ADMIN_FEATURE_FLAG_METADATA[flag.key];
+                const publicMetadata = publicFeatureFlags.find(
+                  (publicFeatureFlag) => publicFeatureFlag.key === flag.key,
+                )?.metadata;
                 const currentWorkspaceValue =
                   currentWorkspace?.id === workspaceId
                     ? currentWorkspace?.featureFlags?.find(
@@ -351,10 +356,12 @@ export const SettingsAdminWorkspaceDetail = () => {
                 return [
                   {
                     id: flag.key,
-                    label: isDefined(metadata) ? t(metadata.label) : flag.key,
-                    description: isDefined(metadata)
-                      ? t(metadata.description)
-                      : '',
+                    label:
+                      publicMetadata?.label ??
+                      (isDefined(metadata) ? t(metadata.label) : flag.key),
+                    description:
+                      publicMetadata?.description ??
+                      (isDefined(metadata) ? t(metadata.description) : ''),
                     value: currentWorkspaceValue ?? flag.value,
                   },
                 ];
@@ -367,6 +374,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                     <SettingsTableFirstColumn
                       label={item.label}
                       tooltipContent={item.id}
+                      isFocusable
                     />
                   ),
                 },

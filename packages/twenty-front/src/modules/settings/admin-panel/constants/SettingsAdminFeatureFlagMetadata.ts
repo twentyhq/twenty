@@ -3,9 +3,12 @@ import { msg } from '@lingui/core/macro';
 
 import { FeatureFlagKey } from '~/generated-admin/graphql';
 
-export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
-  FeatureFlagKey,
-  { label: MessageDescriptor; description: MessageDescriptor }
+// Public flags use server-provided client config metadata to stay consistent with the lab.
+export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Partial<
+  Record<
+    FeatureFlagKey,
+    { label: MessageDescriptor; description: MessageDescriptor }
+  >
 > = {
   [FeatureFlagKey.IS_APP_CLAIMING_ENABLED]: {
     label: msg`App claiming`,
@@ -26,10 +29,6 @@ export const SETTINGS_ADMIN_FEATURE_FLAG_METADATA: Record<
   [FeatureFlagKey.IS_EMAIL_GROUP_ENABLED]: {
     label: msg`Email campaigns`,
     description: msg`Enable email campaigns and sending domain management.`,
-  },
-  [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: {
-    label: msg`Junction relations`,
-    description: msg`Allow many-to-many relationships between records using junction objects.`,
   },
   [FeatureFlagKey.IS_REST_METADATA_API_NEW_FORMAT_DIRECT]: {
     label: msg`Direct REST metadata responses`,
