@@ -4,7 +4,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { type SlackChannelRuleDraft } from 'src/logic-functions/types/slack-channel-rule-draft.type';
 
 export const createSlackChannelRule = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   draft: SlackChannelRuleDraft,
 ): Promise<string> => {
   const result = await client.mutation({

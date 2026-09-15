@@ -4,7 +4,9 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
 
+// The REST page cap; the page bound only guards against a runaway cursor
 const SLACK_CHANNEL_RULES_PAGE_SIZE = 200;
+const SLACK_CHANNEL_RULES_MAX_PAGES = 10;
 
 const SLACK_CHANNEL_RULES_ERROR_MESSAGE =
   'Could not load Slack channel rules. Please try again later.';
@@ -20,6 +22,50 @@ type SlackChannelRuleRestRecord = {
 type SlackChannelRulesResponse = {
   data?: { slackChannelRules?: SlackChannelRuleRestRecord[] | null } | null;
   totalCount?: number | null;
+  pageInfo?: {
+    hasNextPage?: boolean | null;
+    endCursor?: string | null;
+  } | null;
+};
+
+const fetchAllSlackChannelRulePages = async (): Promise<{
+  records: SlackChannelRuleRestRecord[];
+  totalCount: number | undefined;
+}> => {
+  const client = new RestApiClient();
+  const records: SlackChannelRuleRestRecord[] = [];
+  let startingAfter: string | undefined;
+  let totalCount: number | undefined;
+
+  for (let page = 0; page < SLACK_CHANNEL_RULES_MAX_PAGES; page += 1) {
+    const response = await client.get<SlackChannelRulesResponse>(
+      '/rest/slackChannelRules',
+      {
+        query: {
+          limit: String(SLACK_CHANNEL_RULES_PAGE_SIZE),
+          starting_after: startingAfter,
+        },
+      },
+    );
+
+    records.push(...(response.data?.slackChannelRules ?? []));
+    totalCount = isNumber(response.totalCount)
+      ? response.totalCount
+      : totalCount;
+
+    const endCursor = response.pageInfo?.endCursor;
+
+    if (
+      response.pageInfo?.hasNextPage !== true ||
+      !isNonEmptyString(endCursor)
+    ) {
+      break;
+    }
+
+    startingAfter = endCursor;
+  }
+
+  return { records, totalCount };
 };
 
 type SlackChannelRulesState = {
@@ -55,16 +101,12 @@ export const useSlackChannelRules = ({
     setChannelRulesErrorMessage(undefined);
 
     try {
-      const response = await new RestApiClient().get<SlackChannelRulesResponse>(
-        '/rest/slackChannelRules',
-        {
-          query: { limit: String(SLACK_CHANNEL_RULES_PAGE_SIZE) },
-        },
-      );
+      const { records: restRecords, totalCount } =
+        await fetchAllSlackChannelRulePages();
 
       const records: SlackChannelRuleRecord[] = [];
 
-      for (const record of response.data?.slackChannelRules ?? []) {
+      for (const record of restRecords) {
         if (!isNonEmptyString(record.id)) {
           continue;
         }
@@ -89,7 +131,7 @@ export const useSlackChannelRules = ({
       }
 
       setHasMoreSlackChannelRules(
-        isNumber(response.totalCount) && response.totalCount > records.length,
+        isNumber(totalCount) && totalCount > records.length,
       );
       setSlackChannelRules(records);
     } catch {

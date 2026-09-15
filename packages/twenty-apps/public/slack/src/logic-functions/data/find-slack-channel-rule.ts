@@ -5,7 +5,7 @@ import { type SlackChannelRule } from 'src/logic-functions/types/slack-channel-r
 import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 
 export const findSlackChannelRule = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'query'>,
   { slackChannelId }: { slackChannelId: string },
 ): Promise<SlackChannelRule | undefined> => {
   const queryResult = await client.query({

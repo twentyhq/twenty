@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { findSlackChannelRule } from 'src/logic-functions/data/find-slack-channel-rule';
@@ -7,7 +6,7 @@ const SLACK_CHANNEL_ID = 'C0ENG';
 
 const queryMock = vi.fn();
 
-const client = { query: queryMock } as unknown as CoreApiClient;
+const client = { query: queryMock };
 
 const buildQueryResult = (node: Record<string, unknown> | undefined) => ({
   slackChannelRules: { edges: node === undefined ? [] : [{ node }] },

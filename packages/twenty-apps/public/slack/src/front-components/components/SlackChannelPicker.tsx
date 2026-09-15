@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { SearchDropdownPicker } from 'src/front-components/components/SearchDropdownPicker';
 import { useSlackChannelSearch } from 'src/front-components/hooks/use-slack-channel-search';
@@ -9,7 +10,7 @@ const getChannelMeta = (channel: SlackChannelSearchOption): string =>
     channel.isPrivate ? 'Private' : 'Public',
     channel.isMember ? undefined : 'Bot is not a member yet',
   ]
-    .filter((part) => part !== undefined)
+    .filter(isDefined)
     .join(' · ');
 
 type SlackChannelPickerProps = {

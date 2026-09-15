@@ -139,7 +139,44 @@ describe('slackSearchChannelsHandler', () => {
     );
   });
 
-  it('should stop reading pages after the page budget', async () => {
+  it('should keep following the cursor past the first pages until Slack exhausts the list', async () => {
+    const pages = Array.from({ length: 6 }, (_, index) => ({
+      channels: [ENG],
+      response_metadata: { next_cursor: index < 5 ? `page-${index + 2}` : '' },
+    }));
+
+    for (const page of pages) {
+      conversationsListMock.mockResolvedValueOnce(page);
+    }
+
+    const result = await slackSearchChannelsHandler(
+      buildPayload('nothing-matches'),
+    );
+
+    expect(result).toEqual({ success: true, slackChannels: [] });
+    expect(conversationsListMock).toHaveBeenCalledTimes(6);
+    expect(conversationsListMock).toHaveBeenCalledWith(
+      expect.objectContaining({ limit: 1000 }),
+    );
+  });
+
+  it('should stop once it has enough matches without reading further pages', async () => {
+    conversationsListMock.mockResolvedValue({
+      channels: Array.from({ length: 12 }, (_, index) => ({
+        id: `C${index}`,
+        name: `eng-${index}`,
+      })),
+      response_metadata: { next_cursor: 'more' },
+    });
+
+    const result = await slackSearchChannelsHandler(buildPayload('eng'));
+
+    expect(result.success).toBe(true);
+    expect(result.success && result.slackChannels).toHaveLength(10);
+    expect(conversationsListMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should stop reading pages after the page bound even if Slack keeps returning a cursor', async () => {
     conversationsListMock.mockResolvedValue({
       channels: [ENG],
       response_metadata: { next_cursor: 'more' },
@@ -147,7 +184,7 @@ describe('slackSearchChannelsHandler', () => {
 
     await slackSearchChannelsHandler(buildPayload('nothing-matches'));
 
-    expect(conversationsListMock).toHaveBeenCalledTimes(3);
+    expect(conversationsListMock).toHaveBeenCalledTimes(20);
   });
 
   it('should fail with a structured result when Slack errors', async () => {

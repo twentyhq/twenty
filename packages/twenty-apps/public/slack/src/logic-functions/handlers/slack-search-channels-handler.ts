@@ -12,8 +12,9 @@ import { readOptionalString } from 'src/logic-functions/utils/read-optional-stri
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const MAX_RESULTS = 10;
-const MAX_PAGES = 3;
-const SLACK_PAGE_SIZE = 200;
+// Slack's largest page; the page bound only guards against a runaway cursor
+const SLACK_PAGE_SIZE = 1000;
+const MAX_PAGES = 20;
 const CHANNEL_TYPES = 'public_channel,private_channel';
 
 export const slackSearchChannelsHandler = async (

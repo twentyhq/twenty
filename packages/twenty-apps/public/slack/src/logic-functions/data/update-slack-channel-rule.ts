@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-sdk/utils';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 
 export const updateSlackChannelRule = async (
-  client: CoreApiClient,
+  client: Pick<CoreApiClient, 'mutation'>,
   {
     id,
     name,
