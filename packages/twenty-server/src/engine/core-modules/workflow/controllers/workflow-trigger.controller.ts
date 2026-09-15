@@ -9,7 +9,6 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { Request } from 'express';
 import { ApiPath, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -22,6 +21,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
@@ -102,12 +102,6 @@ export class WorkflowTriggerController {
     const authContext = buildSystemAuthContext(workspaceId);
 
     try {
-      const workspaceWorkflowIdFromCoreWorkflowId =
-        await this.findWorkspaceWorkflowIdByCoreWorkflowId({
-          workspaceId,
-          coreWorkflowId: workflowId,
-        });
-
       const { workflow } =
         await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
           const workflowRepository =
@@ -120,11 +114,11 @@ export class WorkflowTriggerController {
             (await workflowRepository.findOne({
               where: { id: workflowId },
             })) ??
-            (isNonEmptyString(workspaceWorkflowIdFromCoreWorkflowId)
-              ? await workflowRepository.findOne({
-                  where: { id: workspaceWorkflowIdFromCoreWorkflowId },
-                })
-              : null);
+            (await this.findWorkspaceWorkflowByCoreWorkflowId({
+              workspaceId,
+              coreWorkflowId: workflowId,
+              workflowRepository,
+            }));
 
           if (!isDefined(workflow)) {
             throw new WorkflowTriggerException(
@@ -199,22 +193,32 @@ export class WorkflowTriggerController {
     }
   }
 
-  private async findWorkspaceWorkflowIdByCoreWorkflowId({
+  private async findWorkspaceWorkflowByCoreWorkflowId({
     workspaceId,
     coreWorkflowId,
+    workflowRepository,
   }: {
     workspaceId: string;
     coreWorkflowId: string;
-  }): Promise<string | null> {
+    workflowRepository: WorkspaceRepository<WorkflowWorkspaceEntity>;
+  }): Promise<WorkflowWorkspaceEntity | null> {
     const coreWorkflow = await this.coreWorkflowRepository.findOne(
       workspaceId,
       {
         where: { id: coreWorkflowId },
-        select: { id: true, workspaceWorkflowId: true },
+        select: { workspaceWorkflowId: true },
       },
     );
 
-    return coreWorkflow?.workspaceWorkflowId ?? null;
+    const workspaceWorkflowId = coreWorkflow?.workspaceWorkflowId;
+
+    if (!isDefined(workspaceWorkflowId)) {
+      return null;
+    }
+
+    return await workflowRepository.findOne({
+      where: { id: workspaceWorkflowId },
+    });
   }
 
   private rethrowWorkspaceNotFoundAsTriggerException(

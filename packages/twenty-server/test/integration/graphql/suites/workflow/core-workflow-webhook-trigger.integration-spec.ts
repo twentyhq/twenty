@@ -1,24 +1,52 @@
 import request from 'supertest';
 import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
-import { destroyWorkflowRun } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
+import {
+  destroyWorkflowRun,
+  waitForWorkflowCompletion,
+} from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
+import { isDefined } from 'twenty-shared/utils';
 
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_YCOMBINATOR_WORKSPACE_ID,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
+const WORKFLOW_NAME = 'Webhook Id Resolution';
 
 describe('webhook trigger workflow id resolution (e2e)', () => {
   let coreWorkflowId: string;
   let workspaceWorkflowId: string;
   const workflowRunIds: string[] = [];
 
-  const triggerWebhook = (workflowIdInPath: string) =>
+  const triggerWebhook = (
+    workflowIdInPath: string,
+    workspaceIdInPath: string = SEED_APPLE_WORKSPACE_ID,
+  ) =>
     request(`http://localhost:${APP_PORT}`).get(
-      `/webhooks/workflows/${SEED_APPLE_WORKSPACE_ID}/${workflowIdInPath}`,
+      `/webhooks/workflows/${workspaceIdInPath}/${workflowIdInPath}`,
     );
+
+  const expectWebhookRanTheWorkflow = async (
+    response: request.Response,
+  ): Promise<void> => {
+    expect(response.status).toBe(200);
+    expect(response.body.success).toBe(true);
+    expect(response.body.workflowName).toBe(WORKFLOW_NAME);
+
+    const workflowRunId = response.body.workflowRunId;
+
+    expect(isDefined(workflowRunId)).toBe(true);
+
+    workflowRunIds.push(workflowRunId);
+
+    await waitForWorkflowCompletion(workflowRunId);
+  };
 
   beforeAll(async () => {
     const createResponse = await workflowGraphqlRequest(`
       mutation {
-        createCoreWorkflow(input: { name: "Webhook Id Resolution" }) {
+        createCoreWorkflow(input: { name: "${WORKFLOW_NAME}" }) {
           id
           workspaceWorkflowId
         }
@@ -47,6 +75,8 @@ describe('webhook trigger workflow id resolution (e2e)', () => {
       `,
       { id: workspaceWorkflowId },
     );
+
+    expect(versionsResponse.body.errors).toBeUndefined();
 
     const workflowVersionId =
       versionsResponse.body.data.workflow.versions.edges[0].node.id;
@@ -118,19 +148,13 @@ describe('webhook trigger workflow id resolution (e2e)', () => {
   });
 
   it('runs the workflow when the path carries the workspace workflow id', async () => {
-    const response = await triggerWebhook(workspaceWorkflowId);
-
-    expect(response.body.success).toBe(true);
-
-    workflowRunIds.push(response.body.workflowRunId);
+    await expectWebhookRanTheWorkflow(
+      await triggerWebhook(workspaceWorkflowId),
+    );
   });
 
   it('runs the workflow when the path carries the core workflow id', async () => {
-    const response = await triggerWebhook(coreWorkflowId);
-
-    expect(response.body.success).toBe(true);
-
-    workflowRunIds.push(response.body.workflowRunId);
+    await expectWebhookRanTheWorkflow(await triggerWebhook(coreWorkflowId));
   });
 
   it('does not run anything for an id that is neither', async () => {
@@ -138,6 +162,17 @@ describe('webhook trigger workflow id resolution (e2e)', () => {
       '00000000-0000-4000-8000-000000000000',
     );
 
+    expect(response.status).toBe(404);
+    expect(response.body.success).toBeUndefined();
+  });
+
+  it('does not resolve a core workflow id belonging to another workspace', async () => {
+    const response = await triggerWebhook(
+      coreWorkflowId,
+      SEED_YCOMBINATOR_WORKSPACE_ID,
+    );
+
+    expect(response.status).toBe(404);
     expect(response.body.success).toBeUndefined();
   });
 });
