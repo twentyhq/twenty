@@ -61,3 +61,34 @@ describe('tool output reaching the model', () => {
     ).toBe(true);
   });
 });
+
+describe('normalizeToolOutputToJsonValues fallback', () => {
+  it('keeps a bigint-bearing output JSON-safe', () => {
+    const bigintOutput = {
+      success: true,
+      message: 'Found 1 company record',
+      result: { records: [{ id: '1', externalId: 9007199254740993n }] },
+    };
+
+    const normalized = normalizeToolOutputToJsonValues(
+      bigintOutput as never,
+    ) as Record<string, any>;
+
+    expect(() => JSON.stringify(normalized)).not.toThrow();
+  });
+
+  it('keeps a circular output JSON-safe', () => {
+    const circularOutput: Record<string, any> = {
+      success: true,
+      message: 'Found 1 company record',
+      result: { records: [{ id: '1' }] },
+    };
+    circularOutput.result.self = circularOutput;
+
+    const normalized = normalizeToolOutputToJsonValues(
+      circularOutput as never,
+    ) as Record<string, any>;
+
+    expect(() => JSON.stringify(normalized)).not.toThrow();
+  });
+});
