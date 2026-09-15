@@ -11,8 +11,18 @@ import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNa
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { useContext } from 'react';
+import { styled } from '@linaria/react';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledAvatar = styled(Avatar)<{ isExpanded: boolean }>`
+  && {
+    block-size: ${({ isExpanded }) =>
+      isExpanded ? themeCssVariables.spacing[4] : themeCssVariables.spacing[8]};
+    inline-size: ${({ isExpanded }) =>
+      isExpanded ? themeCssVariables.spacing[4] : themeCssVariables.spacing[8]};
+  }
+`;
 
 type MultiWorkspaceDropdownClickableComponentProps = {
   disabled?: boolean;
@@ -33,7 +43,9 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       isNavigationDrawerExpanded={isNavigationDrawerExpanded}
       disabled={disabled}
     >
-      <Avatar
+      <StyledAvatar
+        isExpanded={isNavigationDrawerExpanded}
+        size={isNavigationDrawerExpanded ? 'md' : 'xl'}
         name={currentWorkspace?.displayName || ''}
         src={getAbsoluteImageUrl(
           currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,

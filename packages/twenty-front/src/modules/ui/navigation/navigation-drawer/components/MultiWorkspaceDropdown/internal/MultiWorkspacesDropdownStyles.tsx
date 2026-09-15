@@ -7,7 +7,8 @@ export const StyledContainer = styled.div<{
   disabled?: boolean;
 }>`
   align-items: center;
-  border: 1px solid transparent;
+  border: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded ? '1px solid transparent' : 'none'};
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
@@ -15,11 +16,17 @@ export const StyledContainer = styled.div<{
   display: flex;
   gap: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded ? themeCssVariables.spacing[2] : '0'};
-  height: ${themeCssVariables.spacing[7]};
+  height: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded
+      ? themeCssVariables.spacing[7]
+      : themeCssVariables.spacing[8]};
   max-width: 100%;
   min-width: 0;
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
-  padding: calc(${themeCssVariables.spacing[1]} - 1px);
+  padding: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded
+      ? `calc(${themeCssVariables.spacing[1]} - 1px)`
+      : '0'};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   width: fit-content;
 
@@ -28,9 +35,8 @@ export const StyledContainer = styled.div<{
       disabled
         ? 'transparent'
         : themeCssVariables.background.transparent.lighter};
-    border: 1px solid
-      ${({ disabled }) =>
-        disabled ? 'transparent' : themeCssVariables.border.color.medium};
+    border-color: ${({ disabled }) =>
+      disabled ? 'transparent' : themeCssVariables.border.color.medium};
   }
 `;
 
