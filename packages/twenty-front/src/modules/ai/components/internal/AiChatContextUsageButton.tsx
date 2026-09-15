@@ -72,48 +72,68 @@ const StyledFooter = styled.div`
 
 export const AiChatContextUsageButton = () => {
   const { t, i18n } = useLingui();
+
   const shouldReduceMotion = useReducedMotion();
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [showDetails, setShowDetails] = useState(false);
+
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+
   const agentChatUsage = useAtomComponentFamilyStateValue(
     agentChatUsageComponentFamilyState,
     { threadId: currentAiChatThread },
   );
+
   const tiers = useAiModelTiers();
+
   const { chatTier } = useWorkspaceAiModelTiers();
+
   const agentChatUserSelectedModelTier = useAtomStateValue(
     agentChatUserSelectedModelTierState,
   );
+
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
+
   const modelTier = isWorkspaceSetupChat
     ? 'fast'
     : (agentChatUserSelectedModelTier ?? chatTier);
+
   const contextWindow =
     agentChatUsage?.contextWindowTokens ??
     tiers.find(({ tier }) => tier === modelTier)?.model?.contextWindowTokens ??
     0;
+
   const conversationSize = agentChatUsage?.conversationSize ?? 0;
+
   const percentage =
     contextWindow > 0
       ? Math.min(100, Math.max(0, (conversationSize / contextWindow) * 100))
       : 0;
+
   const { data, loading, error } = useQuery(GetAiChatUsageDocument, {
     skip: !isOpen || isWorkspaceSetupChat,
     fetchPolicy: 'network-only',
   });
+
   const creditUsage = data?.aiChatUsage;
+
   const limitValue = isDefined(creditUsage)
     ? Number(creditUsage.limitValue)
     : null;
+
   const consumedValue = isDefined(creditUsage?.consumedValue)
     ? Number(creditUsage?.consumedValue)
     : null;
+
   const progress = isDefined(limitValue)
     ? computeUsageLimitProgress({ limitValue, consumedValue })
     : null;
+
   const creditPercentage =
     limitValue === 0 ? 100 : (progress?.consumedPercentage ?? null);
+
   const daysUntilReset = isDefined(creditUsage?.periodEnd)
     ? Math.max(
         0,
@@ -122,6 +142,7 @@ export const AiChatContextUsageButton = () => {
         ),
       )
     : null;
+
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: (open) => {
@@ -134,15 +155,22 @@ export const AiChatContextUsageButton = () => {
     middleware: [offset(8), flip(), shift({ padding: 8 })],
     whileElementsMounted: autoUpdate,
   });
+
   const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
     duration: shouldReduceMotion ? 0 : { open: 150, close: 100 },
     initial: { opacity: 0 },
   });
+
   const hover = useHover(context, { handleClose: safePolygon() });
+
   const focus = useFocus(context);
+
   const click = useClick(context);
+
   const dismiss = useDismiss(context);
+
   const role = useRole(context, { role: 'dialog' });
+
   const { getReferenceProps, getFloatingProps } = useInteractions([
     hover,
     focus,

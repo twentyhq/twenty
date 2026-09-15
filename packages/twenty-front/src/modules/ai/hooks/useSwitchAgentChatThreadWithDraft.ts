@@ -11,7 +11,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
+import { isDefined, tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 export const useSwitchAgentChatThreadWithDraft = () => {
   const [currentAiChatThread, setCurrentAiChatThread] = useAtomState(
@@ -37,7 +37,7 @@ export const useSwitchAgentChatThreadWithDraft = () => {
         const thread = threads.find(({ id }) => id === toThreadId);
         store.set(
           usageFamilyCallback({ threadId: toThreadId }),
-          thread ? getAgentChatUsageFromThread(thread) : null,
+          isDefined(thread) ? getAgentChatUsageFromThread(thread) : null,
         );
         const destinationDraft =
           store.get(agentChatDraftsByThreadIdState.atom)[toThreadId] ?? '';
