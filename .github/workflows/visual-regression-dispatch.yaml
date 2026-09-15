@@ -10,7 +10,7 @@ name: Visual Regression Dispatch
 
 on:
   workflow_run:
-    workflows: ['CI UI', 'CI Front']
+    workflows: ['CI UI', 'CI Front', 'CI Main']
     types: [completed]
 
 permissions:
@@ -25,55 +25,54 @@ jobs:
     timeout-minutes: 5
     outputs:
       workflow_name: ${{ steps.context.outputs.workflow_name }}
-      project: ${{ steps.context.outputs.project }}
-      artifact_name: ${{ steps.context.outputs.artifact_name }}
-      has_artifact: ${{ steps.check-artifact.outputs.exists }}
+      projects: ${{ steps.context.outputs.projects }}
+      has_artifact: ${{ steps.context.outputs.has_artifact }}
       is_pr: ${{ steps.pr-info.outputs.has_pr }}
       pr_number: ${{ steps.pr-info.outputs.pr_number }}
       merge_base_sha: ${{ steps.merge-base.outputs.sha }}
       parent_commits: ${{ steps.merge-base.outputs.parent_commits }}
     steps:
-      - name: Resolve workflow context
+      - name: Resolve projects with a screenshots artifact
         id: context
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
             const name = context.payload.workflow_run.name;
-            const projectByWorkflow = {
-              'CI UI': 'twenty-ui',
-              'CI Front': 'twenty-front',
-            };
-            const project = projectByWorkflow[name] ?? 'twenty-front';
-            const artifactName = `argos-screenshots-${project}`;
-            core.setOutput('workflow_name', name);
-            core.setOutput('project', project);
-            core.setOutput('artifact_name', artifactName);
-            core.info(`Workflow: ${name}, project: ${project}, artifact: ${artifactName}`);
-
-      - name: Check if screenshots artifact exists
-        id: check-artifact
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
-        with:
-          script: |
-            const artifactName = '${{ steps.context.outputs.artifact_name }}';
             const runId = context.payload.workflow_run.id;
+            // CI Main calls both CI UI and CI Front, so a single run can carry
+            // the screenshots of both projects.
+            const projectsByWorkflow = {
+              'CI UI': ['twenty-ui'],
+              'CI Front': ['twenty-front'],
+              'CI Main': ['twenty-ui', 'twenty-front'],
+            };
+            const candidateProjects = projectsByWorkflow[name] ?? ['twenty-front'];
 
-            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               run_id: runId,
+              per_page: 100,
             });
+            const artifactNames = new Set(artifacts.map((artifact) => artifact.name));
 
-            const found = artifacts.artifacts.some(a => a.name === artifactName);
-            core.setOutput('exists', found ? 'true' : 'false');
+            const projects = candidateProjects.filter((project) =>
+              artifactNames.has(`argos-screenshots-${project}`),
+            );
 
-            if (!found) {
-              core.info(`Artifact "${artifactName}" not found in run ${runId} — skipping`);
+            core.setOutput('workflow_name', name);
+            core.setOutput('projects', JSON.stringify(projects));
+            core.setOutput('has_artifact', projects.length > 0 ? 'true' : 'false');
+
+            if (projects.length === 0) {
+              core.info(`No screenshots artifact found in run ${runId} for ${name} — skipping`);
+            } else {
+              core.info(`Workflow: ${name}, projects with screenshots: ${projects.join(', ')}`);
             }
 
       - name: Get PR number
         if: >-
-          steps.check-artifact.outputs.exists == 'true' &&
+          steps.context.outputs.has_artifact == 'true' &&
           github.event.workflow_run.event == 'pull_request'
         id: pr-info
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
@@ -115,7 +114,7 @@ jobs:
             core.info(`PR #${prNumber}`);
 
       - name: Compute merge-base for Argos reference
-        if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
+        if: steps.context.outputs.has_artifact == 'true' && steps.pr-info.outputs.has_pr == 'true'
         id: merge-base
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
@@ -155,12 +154,16 @@ jobs:
               core.setOutput('parent_commits', '');
             }
 
-  # ── Dispatch: pixel diff for the triggering workflow's project (PRs + main) ──
+  # ── Dispatch: one pixel diff per project with screenshots in the run (PRs + main) ──
   dispatch-pixel-diff:
     needs: resolve-context
     if: needs.resolve-context.outputs.has_artifact == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJSON(needs.resolve-context.outputs.projects) }}
     steps:
       - name: Mint twenty-factory dispatch token
         id: app-token
@@ -175,7 +178,7 @@ jobs:
       - name: Dispatch to twenty-factory
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
-          PROJECT: ${{ needs.resolve-context.outputs.project }}
+          PROJECT: ${{ matrix.project }}
           PR_NUMBER: ${{ needs.resolve-context.outputs.pr_number }}
           WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
           REPOSITORY: ${{ github.repository }}
@@ -183,7 +186,7 @@ jobs:
           COMMIT: ${{ github.event.workflow_run.head_sha }}
           REFERENCE_COMMIT: ${{ needs.resolve-context.outputs.merge_base_sha }}
           PARENT_COMMITS: ${{ needs.resolve-context.outputs.parent_commits }}
-          ARTIFACT_NAME: ${{ needs.resolve-context.outputs.artifact_name }}
+          ARTIFACT_NAME: argos-screenshots-${{ matrix.project }}
         run: |
           ARGS=(
             -f project="$PROJECT"

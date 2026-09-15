@@ -1,0 +1,62 @@
+name: CI Main
+
+# Single entry point for CI on main: every workflow below is a reusable
+# workflow called from here, so main CI can be enabled, disabled or
+# monitored as one unit. PR and merge queue CI keep their own triggers.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# A called workflow cannot exceed the caller's permissions, so the two calls
+# that need a write scope get it on their own job and nothing else does.
+permissions:
+  contents: read
+
+jobs:
+  app-prod-parity-e2e-dispatch:
+    uses: ./.github/workflows/app-prod-parity-e2e-dispatch.yaml
+    secrets: inherit
+    permissions:
+      contents: read
+      statuses: write
+  codex-plugin:
+    uses: ./.github/workflows/ci-codex-plugin.yaml
+    secrets: inherit
+  create-app:
+    uses: ./.github/workflows/ci-create-app.yaml
+    secrets: inherit
+  create-app-e2e-minimal:
+    uses: ./.github/workflows/ci-create-app-e2e-minimal.yaml
+    secrets: inherit
+  docs:
+    uses: ./.github/workflows/ci-docs.yaml
+    secrets: inherit
+  e2e-main:
+    uses: ./.github/workflows/ci-e2e-main.yaml
+    secrets: inherit
+    permissions:
+      contents: read
+      pull-requests: write
+  emails:
+    uses: ./.github/workflows/ci-emails.yaml
+    secrets: inherit
+  example-app-hello-world:
+    uses: ./.github/workflows/ci-example-app-hello-world.yaml
+    secrets: inherit
+  example-app-postcard:
+    uses: ./.github/workflows/ci-example-app-postcard.yaml
+    secrets: inherit
+  front:
+    uses: ./.github/workflows/ci-front.yaml
+    secrets: inherit
+  twenty-apps:
+    uses: ./.github/workflows/ci-twenty-apps.yaml
+    secrets: inherit
+  ui:
+    uses: ./.github/workflows/ci-ui.yaml
+    secrets: inherit
+  utils-test:
+    uses: ./.github/workflows/ci-utils-test.yaml
+    secrets: inherit
