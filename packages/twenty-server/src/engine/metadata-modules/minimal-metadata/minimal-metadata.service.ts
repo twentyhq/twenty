@@ -5,11 +5,13 @@ import {
   type AllMetadataName,
 } from 'twenty-shared/metadata';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ViewVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, ViewVisibility } from 'twenty-shared/types';
 import { isDefined, uncapitalize } from 'twenty-shared/utils';
 
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { isInitialObjectView } from 'src/engine/metadata-modules/view/utils/is-initial-object-view.util';
 import { type CollectionHashDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/collection-hash.dto';
 import { MinimalMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-metadata.dto';
 import { MinimalObjectMetadataDTO } from 'src/engine/metadata-modules/minimal-metadata/dtos/minimal-object-metadata.dto';
@@ -38,6 +40,7 @@ export class MinimalMetadataService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly i18nService: I18nService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async getMinimalMetadata({
@@ -140,10 +143,20 @@ export class MinimalMetadataService {
         };
       });
 
+    const isInitialObjectViewEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+        workspaceId,
+      );
+
     const views: MinimalViewDTO[] = Object.values(
       flatViewMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
+      .filter(
+        (flatView) =>
+          isInitialObjectViewEnabled || !isInitialObjectView(flatView),
+      )
       .filter((flatView) => flatView.workspaceId === workspaceId)
       .filter((flatView) => flatView.deletedAt === null)
       .filter(

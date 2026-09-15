@@ -3,6 +3,7 @@ import { type View } from '@/views/types/View';
 import {
   NavigationMenuItemType,
   ViewKey,
+  ViewType,
   type NavigationMenuItem,
 } from '~/generated-metadata/graphql';
 
@@ -13,8 +14,17 @@ const objectMetadataItems = [
   { id: 'obj-2', namePlural: 'companies' },
 ] as EnrichedObjectMetadataItem[];
 
-const views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[] = [
-  { id: 'view-index', objectMetadataId: 'obj-1', key: ViewKey.INDEX },
+const views: Pick<
+  View,
+  'id' | 'objectMetadataId' | 'key' | 'type' | 'position'
+>[] = [
+  {
+    id: 'view-index',
+    objectMetadataId: 'obj-1',
+    key: ViewKey.INDEX,
+    type: ViewType.TABLE,
+    position: 0,
+  },
 ];
 
 const objectItem: NavigationMenuItem = {

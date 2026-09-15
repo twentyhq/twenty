@@ -7,24 +7,41 @@ import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMeta
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
+import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { ViewKey, ViewType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  ViewKey,
+  ViewType,
+} from '~/generated-metadata/graphql';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
-const getViewId = (
-  viewIdFromQueryParams: string | null,
-  indexViewId?: string,
-  lastVisitedViewId?: string,
-  firstAvailableViewId?: string,
-) => {
+const getViewId = ({
+  viewIdFromQueryParams,
+  indexViewId,
+  lastVisitedViewId,
+  firstAvailableViewId,
+  initialObjectViewId,
+}: {
+  viewIdFromQueryParams: string | null;
+  indexViewId?: string;
+  lastVisitedViewId?: string;
+  firstAvailableViewId?: string;
+  initialObjectViewId?: string;
+}) => {
   if (isDefined(viewIdFromQueryParams)) {
     return viewIdFromQueryParams;
   }
 
   if (isDefined(lastVisitedViewId)) {
     return lastVisitedViewId;
+  }
+
+  if (isDefined(initialObjectViewId)) {
+    return initialObjectViewId;
   }
 
   if (isDefined(indexViewId)) {
@@ -89,30 +106,31 @@ export const RouteContextStoreProvider = () => {
     (view) => view.id === lastVisitedViewIdRaw,
   );
 
+  const isInitialObjectViewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
+  );
+
   const lastVisitedViewId =
     isDefined(lastVisitedView) &&
-    lastVisitedView.type !== ViewType.FIELDS_WIDGET
+    lastVisitedView.type !== ViewType.FIELDS_WIDGET &&
+    !(isInitialObjectViewEnabled && lastVisitedView.key === ViewKey.INDEX)
       ? lastVisitedViewIdRaw
       : undefined;
 
-  const indexViewId = views.find(
-    (view) =>
-      view.objectMetadataId === objectMetadataItem?.id &&
-      view.key === ViewKey.INDEX,
-  )?.id;
+  const { initialObjectViewId, indexViewId, firstAvailableViewId } =
+    computeObjectViewTargetIds({
+      views,
+      objectMetadataId: objectMetadataItem?.id,
+      isInitialObjectViewEnabled,
+    });
 
-  const firstAvailableViewId = views.find(
-    (view) =>
-      view.objectMetadataId === objectMetadataItem?.id &&
-      view.type !== ViewType.FIELDS_WIDGET,
-  )?.id;
-
-  const viewId = getViewId(
-    viewIdQueryParam,
+  const viewId = getViewId({
+    viewIdFromQueryParams: viewIdQueryParam,
     indexViewId,
     lastVisitedViewId,
     firstAvailableViewId,
-  );
+    initialObjectViewId,
+  });
 
   const shouldComputeContextStore =
     (isRecordIndexPage ||
