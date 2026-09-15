@@ -4,3 +4,10 @@ export type ViewChildEntityKind =
   | 'viewFilterGroup'
   | 'viewGroup'
   | 'viewSort';
+
+export type ViewAccessContext = {
+  workspaceId: string;
+  userWorkspaceId?: string;
+  apiKeyId?: string;
+  applicationId?: string;
+};
