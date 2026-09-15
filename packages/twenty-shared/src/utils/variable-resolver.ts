@@ -64,6 +64,23 @@ const resolveObject = (
   );
 };
 
+// Substitutes every variable into the text; the result is always a string,
+// which is what a text-typed value such as a rich text markdown needs
+export const resolveStringTemplate = (
+  input: string,
+  context: Record<string, unknown>,
+): string => {
+  return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
+    const processedToken = evalFromContext(matchedToken, context);
+
+    if (typeof processedToken === 'object' && processedToken !== null) {
+      return JSON.stringify(processedToken);
+    }
+
+    return String(processedToken);
+  });
+};
+
 // Returns the resolved value itself when the whole string is one variable, so
 // `{{step.amount}}` keeps its type instead of being stringified
 const resolveString = (
@@ -80,13 +97,5 @@ const resolveString = (
     return evalFromContext(input, context);
   }
 
-  return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
-    const processedToken = evalFromContext(matchedToken, context);
-
-    if (typeof processedToken === 'object' && processedToken !== null) {
-      return JSON.stringify(processedToken);
-    }
-
-    return String(processedToken);
-  });
+  return resolveStringTemplate(input, context);
 };

@@ -1,34 +1,14 @@
 import { isObject, isString } from '@sniptt/guards';
 import {
-  isDefined,
-  resolveInput,
   resolveRichTextVariables,
+  resolveStringTemplate,
 } from 'twenty-shared/utils';
 
 import { type ObjectMetadataInfo } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { findRichTextFieldNames } from 'src/modules/workflow/workflow-executor/utils/find-rich-text-field-names.util';
 
-// resolveInput hands back the referenced value's own type when a string is exactly
-// one variable, and a rich text markdown must stay a string for the blocknote parser.
-const resolveMarkdownToString = (
-  markdown: string,
-  context: Record<string, unknown>,
-): string => {
-  const resolvedMarkdown = resolveInput(markdown, context);
-
-  if (isString(resolvedMarkdown)) {
-    return resolvedMarkdown;
-  }
-
-  if (!isDefined(resolvedMarkdown)) {
-    return '';
-  }
-
-  return isObject(resolvedMarkdown)
-    ? JSON.stringify(resolvedMarkdown)
-    : String(resolvedMarkdown);
-};
-
+// A rich text value is text, so its variables are substituted as text here, before
+// the generic resolver runs and would hand a whole-string variable back in its own type.
 export const resolveRichTextFieldsInRecord = (
   objectRecord: Record<string, unknown>,
   objectMetadataInfo: ObjectMetadataInfo,
@@ -55,7 +35,7 @@ export const resolveRichTextFieldsInRecord = (
     }
 
     if ('markdown' in fieldValue && isString(fieldValue.markdown)) {
-      richTextValue.markdown = resolveMarkdownToString(
+      richTextValue.markdown = resolveStringTemplate(
         fieldValue.markdown,
         context,
       );
