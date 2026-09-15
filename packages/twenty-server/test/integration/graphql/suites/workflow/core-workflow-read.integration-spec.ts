@@ -64,22 +64,18 @@ type CoreWorkflowVersionResult = {
   updatedAt: string;
 };
 
-const CORE_WORKFLOWS_WITH_VERSIONS_QUERY = `
-  query CoreWorkflowsWithVersions($workspaceWorkflowIds: [UUID!]!) {
-    coreWorkflowsWithVersions(workspaceWorkflowIds: $workspaceWorkflowIds) {
+const CORE_WORKFLOWS_WITH_CURRENT_VERSION_QUERY = `
+  query CoreWorkflowsWithCurrentVersion($workspaceWorkflowIds: [UUID!]!) {
+    coreWorkflowsWithCurrentVersion(
+      workspaceWorkflowIds: $workspaceWorkflowIds
+    ) {
       id
       name
       statuses
       workspaceWorkflowId
-      versions {
-        id
-        label
-        status
-        workspaceWorkflowVersionId
-        createdAt
-      }
       currentVersion {
         id
+        label
         status
         workspaceWorkflowVersionId
         workspaceWorkflowId
@@ -195,15 +191,15 @@ describe('coreWorkflow (e2e)', () => {
     );
   });
 
-  it('should read many workflows with their versions and current version in one query', async () => {
+  it('should read many workflows with their current version in one query', async () => {
     const response = await workflowGraphqlRequest(
-      CORE_WORKFLOWS_WITH_VERSIONS_QUERY,
+      CORE_WORKFLOWS_WITH_CURRENT_VERSION_QUERY,
       { workspaceWorkflowIds: [workspaceWorkflowId] },
     );
 
     expect(response.body.errors).toBeUndefined();
 
-    const coreWorkflows = response.body.data.coreWorkflowsWithVersions;
+    const coreWorkflows = response.body.data.coreWorkflowsWithCurrentVersion;
 
     expect(coreWorkflows).toHaveLength(1);
     expect(coreWorkflows[0]).toEqual(
@@ -212,12 +208,11 @@ describe('coreWorkflow (e2e)', () => {
         name: 'Core Workflow Read',
       }),
     );
-    expect(coreWorkflows[0].versions).toHaveLength(1);
     expect(coreWorkflows[0].currentVersion).toEqual(
       expect.objectContaining({
-        workspaceWorkflowVersionId:
-          coreWorkflows[0].versions[0].workspaceWorkflowVersionId,
+        workspaceWorkflowVersionId: expect.any(String),
         workspaceWorkflowId,
+        label: 'v1',
         status: 'DRAFT',
       }),
     );
@@ -225,11 +220,11 @@ describe('coreWorkflow (e2e)', () => {
 
   it('should return nothing for workspace workflow ids of another workspace', async () => {
     const response = await workflowGraphqlRequest(
-      CORE_WORKFLOWS_WITH_VERSIONS_QUERY,
+      CORE_WORKFLOWS_WITH_CURRENT_VERSION_QUERY,
       { workspaceWorkflowIds: ['20202020-0000-4000-8000-000000000000'] },
     );
 
     expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.coreWorkflowsWithVersions).toEqual([]);
+    expect(response.body.data.coreWorkflowsWithCurrentVersion).toEqual([]);
   });
 });

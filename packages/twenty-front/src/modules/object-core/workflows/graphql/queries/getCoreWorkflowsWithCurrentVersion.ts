@@ -1,20 +1,15 @@
 import { gql } from '@apollo/client';
 
-export const GET_CORE_WORKFLOWS_WITH_VERSIONS = gql`
-  query GetCoreWorkflowsWithVersions($workspaceWorkflowIds: [UUID!]!) {
-    coreWorkflowsWithVersions(workspaceWorkflowIds: $workspaceWorkflowIds) {
+export const GET_CORE_WORKFLOWS_WITH_CURRENT_VERSION = gql`
+  query GetCoreWorkflowsWithCurrentVersion($workspaceWorkflowIds: [UUID!]!) {
+    coreWorkflowsWithCurrentVersion(
+      workspaceWorkflowIds: $workspaceWorkflowIds
+    ) {
       id
       name
       statuses
       lastPublishedVersionId
       workspaceWorkflowId
-      versions {
-        id
-        label
-        status
-        workspaceWorkflowVersionId
-        createdAt
-      }
       currentVersion {
         id
         label

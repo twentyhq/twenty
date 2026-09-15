@@ -2,22 +2,22 @@ import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type CommandMenuWorkflow } from '@/command-menu-item/types/CommandMenuWorkflow';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { buildWorkflowsWithCurrentVersionsFromCore } from '@/object-core/workflows/utils/buildWorkflowsWithCurrentVersionsFromCore';
-import { type WorkflowWithCurrentVersion } from '@/workflow/types/Workflow';
-import { GetCoreWorkflowsWithVersionsDocument } from '~/generated/graphql';
+import { buildCommandMenuWorkflowsFromCore } from '@/object-core/workflows/utils/buildCommandMenuWorkflowsFromCore';
+import { GetCoreWorkflowsWithCurrentVersionDocument } from '~/generated/graphql';
 
 export const useCoreWorkflowsWithCurrentVersions = (
   workflowIds: string[],
 ): {
-  workflows: WorkflowWithCurrentVersion[];
+  workflows: CommandMenuWorkflow[];
   isCoreEnrichmentLoading: boolean;
   isCoreEnrichmentComplete: boolean;
 } => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { data, loading, error } = useQuery(
-    GetCoreWorkflowsWithVersionsDocument,
+    GetCoreWorkflowsWithCurrentVersionDocument,
     {
       client: apolloCoreClient,
       fetchPolicy: 'cache-and-network',
@@ -28,10 +28,10 @@ export const useCoreWorkflowsWithCurrentVersions = (
 
   const workflows = useMemo(
     () =>
-      buildWorkflowsWithCurrentVersionsFromCore(
-        data?.coreWorkflowsWithVersions ?? [],
+      buildCommandMenuWorkflowsFromCore(
+        data?.coreWorkflowsWithCurrentVersion ?? [],
       ),
-    [data?.coreWorkflowsWithVersions],
+    [data?.coreWorkflowsWithCurrentVersion],
   );
 
   const isCoreEnrichmentLoading = workflowIds.length > 0 && loading;

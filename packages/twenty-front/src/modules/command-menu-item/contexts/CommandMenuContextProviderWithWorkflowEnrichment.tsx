@@ -54,7 +54,6 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
       return {
         ...record,
         currentVersion: workflowWithCurrentVersion.currentVersion,
-        versions: workflowWithCurrentVersion.versions,
         statuses: workflowWithCurrentVersion.statuses,
         lastPublishedVersionId:
           workflowWithCurrentVersion.lastPublishedVersionId,

@@ -1,15 +1,10 @@
-import { type GetCoreWorkflowsWithVersionsQuery } from '~/generated/graphql';
+import { type GetCoreWorkflowsWithCurrentVersionQuery } from '~/generated/graphql';
 
-type CoreWorkflowWithVersionsQueryNode =
-  GetCoreWorkflowsWithVersionsQuery['coreWorkflowsWithVersions'][number];
-
-export type CoreWorkflowVersionMetadata = Pick<
-  CoreWorkflowWithVersionsQueryNode['versions'][number],
-  'label' | 'status' | 'workspaceWorkflowVersionId' | 'createdAt'
->;
+type CoreWorkflowWithCurrentVersionQueryNode =
+  GetCoreWorkflowsWithCurrentVersionQuery['coreWorkflowsWithCurrentVersion'][number];
 
 export type CoreWorkflowCurrentVersion = Pick<
-  NonNullable<CoreWorkflowWithVersionsQueryNode['currentVersion']>,
+  NonNullable<CoreWorkflowWithCurrentVersionQueryNode['currentVersion']>,
   | 'label'
   | 'status'
   | 'workspaceWorkflowVersionId'
@@ -20,10 +15,9 @@ export type CoreWorkflowCurrentVersion = Pick<
   | 'updatedAt'
 >;
 
-export type CoreWorkflowWithVersions = Pick<
-  CoreWorkflowWithVersionsQueryNode,
-  'name' | 'statuses' | 'lastPublishedVersionId' | 'workspaceWorkflowId'
+export type CoreWorkflowWithCurrentVersion = Pick<
+  CoreWorkflowWithCurrentVersionQueryNode,
+  'statuses' | 'lastPublishedVersionId' | 'workspaceWorkflowId'
 > & {
-  versions: CoreWorkflowVersionMetadata[];
   currentVersion?: CoreWorkflowCurrentVersion | null;
 };
