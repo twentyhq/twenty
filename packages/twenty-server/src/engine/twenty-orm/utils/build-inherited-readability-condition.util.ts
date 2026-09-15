@@ -4,6 +4,8 @@ import { type ObjectLiteral } from 'typeorm';
 import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
+type SqlCondition = { sql: string; parameters: ObjectLiteral };
+
 export type InheritedReadabilityParentGate =
   | { kind: 'open' }
   | { kind: 'denied' }
@@ -12,13 +14,27 @@ export type InheritedReadabilityParentGate =
       kind: 'inherited';
       parentTableAlias: string;
       parentTableExpression: string;
-      parentCondition: { sql: string; parameters: ObjectLiteral };
+      parentCondition: SqlCondition;
     };
 
-export type InheritedReadabilityParentCondition = {
-  joinColumnName: string;
-  gate: InheritedReadabilityParentGate;
-};
+export type InheritedReadabilityChildGate =
+  | { kind: 'open' }
+  | { kind: 'denied' }
+  | { kind: 'gated'; condition: SqlCondition };
+
+export type InheritedReadabilityParentCondition =
+  | {
+      kind: 'column';
+      joinColumnName: string;
+      gate: InheritedReadabilityParentGate;
+    }
+  | {
+      kind: 'children';
+      childTableAlias: string;
+      childTableExpression: string;
+      childJoinColumnName: string;
+      gate: InheritedReadabilityChildGate;
+    };
 
 export const buildInheritedReadabilityCondition = ({
   tableAlias,
@@ -34,7 +50,7 @@ export const buildInheritedReadabilityCondition = ({
   recordShareTableExpression: string;
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
-}): { sql: string; parameters: ObjectLiteral } | undefined => {
+}): SqlCondition | undefined => {
   const parameters: ObjectLiteral = {};
   const quotedTableAlias = escapeIdentifier(tableAlias);
   const quoteColumn = (joinColumnName: string) =>
@@ -52,7 +68,36 @@ export const buildInheritedReadabilityCondition = ({
 
   Object.assign(parameters, ownRecordShareCondition.parameters);
 
-  const parentConditions = parents.flatMap(({ joinColumnName, gate }) => {
+  const parentConditions = parents.flatMap((parent) => {
+    if (parent.kind === 'children') {
+      const {
+        childTableAlias,
+        childTableExpression,
+        childJoinColumnName,
+        gate,
+      } = parent;
+
+      if (gate.kind === 'denied') {
+        return [];
+      }
+
+      const quotedChildTableAlias = escapeIdentifier(childTableAlias);
+      const childRowConditions = [
+        `${quotedChildTableAlias}.${escapeIdentifier(childJoinColumnName)} = ${quotedTableAlias}."id"`,
+        `${quotedChildTableAlias}."deletedAt" IS NULL`,
+      ];
+
+      if (gate.kind === 'gated') {
+        Object.assign(parameters, gate.condition.parameters);
+        childRowConditions.push(gate.condition.sql);
+      }
+
+      return [
+        `EXISTS (SELECT 1 FROM ${childTableExpression} AS ${quotedChildTableAlias} WHERE ${childRowConditions.join(' AND ')})`,
+      ];
+    }
+
+    const { joinColumnName, gate } = parent;
     const notNullCondition = `${quoteColumn(joinColumnName)} IS NOT NULL`;
 
     switch (gate.kind) {

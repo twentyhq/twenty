@@ -48,7 +48,7 @@ const jestConfig: JestConfigWithTsJest = {
   // @workflow/serde dependency ship ESM only; let swc transform them
   // (and .mjs below) so jest can require them.
   transformIgnorePatterns: [
-    '/node_modules/(?!(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser|ai|@ai-sdk|@workflow)/)',
+    '/node_modules/(?!(.*/node_modules/)?(jsdom|html-encoding-sniffer|whatwg-encoding|@exodus|parse5|entities|tough-cookie|@csstools|@asamuzakjp|msw|@mswjs|until-async|@bundled-es-modules|@open-draft|strict-event-emitter|headers-polyfill|outvariant|is-node-process|path-to-regexp|statuses|cookie|digest-fetch|md5|email-reply-parser|ai|@ai-sdk|@workflow|htmlparser2|domhandler|domutils|dom-serializer|domelementtype|@faker-js)/)',
   ],
   transform: {
     '^.+\\.(t|j|mj)s$': [
