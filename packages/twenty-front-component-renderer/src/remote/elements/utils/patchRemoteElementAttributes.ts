@@ -24,8 +24,14 @@ type RemoteElementWithAttributeUpdater = Element &
     updateRemoteProperty: (propertyName: string, value?: unknown) => void;
   };
 
+type RemotePropertyDefinition = {
+  name: string;
+  attribute?: string;
+};
+
 type RemoteElementConstructor = CustomElementConstructor & {
   observedAttributes?: string[];
+  remotePropertyDefinitions?: Map<string, RemotePropertyDefinition>;
   prototype: RemoteElementWithAttributeUpdater;
 };
 
@@ -49,12 +55,35 @@ export const patchRemoteElementAttributes = (): void => {
       isAriaOrDataAttribute(attributeName) &&
       !attributeNamesAlreadySyncedByRemoteDom.has(attributeName);
 
+    // React 18 writes camelCase prop names (className, viewBox, strokeWidth)
+    // as raw attributes on custom elements, while remote-dom only observes
+    // their kebab-case attribute form.
+    const toCanonicalAttributeName = (attributeName: string): string => {
+      if (attributeName === 'className') {
+        return 'class';
+      }
+
+      if (ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.has(attributeName)) {
+        return attributeName;
+      }
+
+      const remotePropertyAttributeName =
+        elementConstructor.remotePropertyDefinitions?.get(
+          attributeName,
+        )?.attribute;
+
+      return isDefined(remotePropertyAttributeName)
+        ? remotePropertyAttributeName
+        : attributeName;
+    };
+
     const originalGetAttribute = elementConstructor.prototype.getAttribute;
 
     elementConstructor.prototype.getAttribute = function (
       this: RemoteElementWithAttributeUpdater,
-      attributeName: string,
+      rawAttributeName: string,
     ) {
+      const attributeName = toCanonicalAttributeName(rawAttributeName);
       const mappedElementPropertyName =
         ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
@@ -73,8 +102,9 @@ export const patchRemoteElementAttributes = (): void => {
 
     elementConstructor.prototype.hasAttribute = function (
       this: RemoteElementWithAttributeUpdater,
-      attributeName: string,
+      rawAttributeName: string,
     ) {
+      const attributeName = toCanonicalAttributeName(rawAttributeName);
       const mappedElementPropertyName =
         ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
@@ -102,9 +132,10 @@ export const patchRemoteElementAttributes = (): void => {
 
     elementConstructor.prototype.setAttribute = function (
       this: RemoteElementWithAttributeUpdater,
-      attributeName: string,
+      rawAttributeName: string,
       attributeValue: string,
     ) {
+      const attributeName = toCanonicalAttributeName(rawAttributeName);
       const mappedElementPropertyName =
         ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
@@ -130,8 +161,9 @@ export const patchRemoteElementAttributes = (): void => {
 
     elementConstructor.prototype.removeAttribute = function (
       this: RemoteElementWithAttributeUpdater,
-      attributeName: string,
+      rawAttributeName: string,
     ) {
+      const attributeName = toCanonicalAttributeName(rawAttributeName);
       const mappedElementPropertyName =
         ATTRIBUTE_NAME_TO_ELEMENT_PROPERTY_NAME.get(attributeName);
 
