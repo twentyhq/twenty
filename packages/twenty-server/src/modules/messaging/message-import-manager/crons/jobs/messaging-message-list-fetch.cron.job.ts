@@ -1,12 +1,12 @@
 import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { POLLED_MESSAGE_CHANNEL_TYPES } from 'twenty-shared/constants';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import {
   MessageChannelSyncStage,
-  MessageChannelType,
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
@@ -62,7 +62,7 @@ export class MessagingMessageListFetchCronJob {
               workspaceId: activeWorkspace.id,
               isSyncEnabled: true,
               syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-              type: Not(MessageChannelType.EMAIL_GROUP),
+              type: In([...POLLED_MESSAGE_CHANNEL_TYPES]),
             },
           },
         );

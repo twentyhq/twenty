@@ -3,10 +3,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageChannelGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/message-channel/interceptors/message-channel-graphql-api-exception.interceptor';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
+import { ApplicationMessageChannelsResolver } from 'src/engine/metadata-modules/message-channel/resolvers/application-message-channels.resolver';
 import { MessageChannelResolver } from 'src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver';
+import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/message-channel/services/application-message-channels.service';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
@@ -14,7 +17,11 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([MessageChannelEntity, MessageFolderEntity]),
+    TypeOrmModule.forFeature([
+      MessageChannelEntity,
+      MessageFolderEntity,
+      ConnectedAccountEntity,
+    ]),
     PermissionsModule,
     ConnectedAccountMetadataModule,
     MessagingImportManagerModule,
@@ -24,6 +31,8 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
   providers: [
     MessageChannelMetadataService,
     MessageChannelResolver,
+    ApplicationMessageChannelsService,
+    ApplicationMessageChannelsResolver,
     MessageChannelGraphqlApiExceptionInterceptor,
   ],
   exports: [MessageChannelMetadataService],

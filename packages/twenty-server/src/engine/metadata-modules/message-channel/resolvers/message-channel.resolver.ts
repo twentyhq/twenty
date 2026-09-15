@@ -124,6 +124,18 @@ export class MessageChannelResolver {
         applicationId: application?.id,
       });
 
+    // An app channel's settings belong to the app that created it: its
+    // visibility is the app's statement about how private its provider's
+    // messages are, and the mailbox fields on this input (folder import
+    // policy, group-email exclusions, contact auto-creation) have no meaning
+    // for it. Mutations go through updateAppMessageChannel instead.
+    if (messageChannel.type === MessageChannelType.APP) {
+      throw new MessageChannelException(
+        `Message channel ${input.id} is owned by an application and cannot be updated through this endpoint`,
+        MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+      );
+    }
+
     const isSyncOngoing =
       messageChannel.syncStage ===
       MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING;
