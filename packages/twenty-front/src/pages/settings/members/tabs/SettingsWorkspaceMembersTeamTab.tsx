@@ -246,7 +246,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                     });
                   }}
                 >
-                  <TableCell>
+                  <TableCell color={themeCssVariables.font.color.primary}>
                     <StyledIconWrapper>
                       <Avatar
                         src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}

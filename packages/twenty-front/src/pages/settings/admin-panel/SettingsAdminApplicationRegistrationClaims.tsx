@@ -1,3 +1,4 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -49,7 +50,10 @@ export const SettingsAdminApplicationRegistrationClaims = ({
               key={claim.workspaceId}
               gridAutoColumns={CLAIMS_TABLE_GRID}
             >
-              <TableCell overflow="hidden">
+              <TableCell
+                color={themeCssVariables.font.color.primary}
+                overflow="hidden"
+              >
                 {claim.workspaceDisplayName ?? claim.workspaceId}
               </TableCell>
               <TableCell>

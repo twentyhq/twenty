@@ -112,7 +112,11 @@ export const SettingsAdminSigningKeysTable = () => {
                 key={signingKey.id}
                 gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}
               >
-                <TableCell overflow="hidden" gap={themeCssVariables.spacing[1]}>
+                <TableCell
+                  color={themeCssVariables.font.color.primary}
+                  overflow="hidden"
+                  gap={themeCssVariables.spacing[1]}
+                >
                   <OverflowingTextWithTooltip
                     text={signingKey.id}
                     tooltipContent={t`Created on ${beautifyExactDateTime(signingKey.createdAt)}`}

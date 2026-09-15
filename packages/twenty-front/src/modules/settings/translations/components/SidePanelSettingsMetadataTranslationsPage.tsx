@@ -127,7 +127,9 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
                     key={`${property}:${locale}`}
                     gridAutoColumns={TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS}
                   >
-                    <TableCell>{localeLabel}</TableCell>
+                    <TableCell color={themeCssVariables.font.color.primary}>
+                      {localeLabel}
+                    </TableCell>
                     <TableCell>
                       <MetadataTranslationValueCell
                         row={row}
