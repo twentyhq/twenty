@@ -63,6 +63,16 @@ export class RunWorkflowWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowRunWorkflowActionInput;
 
+    // 'metadata' is reserved on the child's trigger payload for the depth
+    // counter below; without this check a user-mapped 'metadata' key would
+    // be silently clobbered instead of surfacing a configuration error.
+    if (isDefined(workflowActionInput.input?.metadata)) {
+      throw new WorkflowStepExecutorException(
+        "'metadata' is a reserved key in the run workflow input",
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
     // Only RUN_WORKFLOW itself writes runDepth onto the payload (D-10) — a
     // mapped `input` field can never spoof this counter, it is read from
     // context.trigger.metadata, which the runner populates on each hop.
