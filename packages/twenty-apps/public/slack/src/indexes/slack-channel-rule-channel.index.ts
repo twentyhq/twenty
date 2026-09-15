@@ -1,0 +1,22 @@
+import { defineIndex } from 'twenty-sdk/define';
+
+import {
+  SLACK_CHANNEL_RULE_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
+  SLACK_CHANNEL_RULE_CHANNEL_INDEX_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
+  SLACK_CHANNEL_RULE_CHANNEL_INDEX_UNIVERSAL_IDENTIFIER,
+  SLACK_CHANNEL_RULE_OBJECT_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineIndex({
+  universalIdentifier: SLACK_CHANNEL_RULE_CHANNEL_INDEX_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: SLACK_CHANNEL_RULE_OBJECT_UNIVERSAL_IDENTIFIER,
+  isUnique: true,
+  fields: [
+    {
+      universalIdentifier:
+        SLACK_CHANNEL_RULE_CHANNEL_INDEX_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
+      fieldUniversalIdentifier:
+        SLACK_CHANNEL_RULE_CHANNEL_ID_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  ],
+});

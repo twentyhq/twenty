@@ -7,6 +7,7 @@
 - **A CRM assistant in Slack**: `@twenty how many open opportunities do we have?` It answers as whoever tagged it
 - **Slack steps for your workflows**: post, update or delete messages, send ephemerals, add reactions, list channels
 - **Open by default, restrict when you want**: in the Settings tab, limit the assistant to Slack accounts linked to a workspace member
+- **Per-channel rules**: open a channel to anyone, restrict it to linked members, or silence the assistant there
 
 ## 💳 Billing
 
