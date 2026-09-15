@@ -13,16 +13,14 @@ import { MultiItemFieldInput } from './MultiItemFieldInput';
 
 import { FieldInputEventContext } from '@/object-record/record-field/ui/contexts/FieldInputEventContext';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
-import { createPhonesFromFieldValue } from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
 import {
-  type FieldPhonesValue,
-  type PhoneRecord,
-} from '@/object-record/record-field/ui/types/FieldMetadata';
-import { phonesFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/phonesFieldValueSchema';
+  createPhonesFromFieldValue,
+  parsePhonesToFieldValue,
+} from '@/object-record/record-field/ui/meta-types/input/utils/phonesUtils';
+import { type PhoneRecord } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { useContext } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -100,27 +98,8 @@ export const PhonesFieldInput = () => {
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
 
-  const parseArrayToPhonesValue = (phones: PhoneRecord[]) => {
-    const [nextPrimaryPhone, ...nextAdditionalPhones] = phones;
-
-    const nextValue: FieldPhonesValue = {
-      primaryPhoneNumber: nextPrimaryPhone?.number ?? '',
-      primaryPhoneCountryCode: nextPrimaryPhone?.countryCode ?? '',
-      primaryPhoneCallingCode: nextPrimaryPhone?.callingCode ?? '',
-      additionalPhones: nextAdditionalPhones,
-    };
-    const parseResponse = phonesFieldValueSchema.safeParse(nextValue);
-    if (parseResponse.success) {
-      return parseResponse.data;
-    }
-  };
-
   const handlePhonesChange = (updatedPhones: PhoneRecord[]) => {
-    const nextValue = parseArrayToPhonesValue(updatedPhones);
-
-    if (isDefined(nextValue)) {
-      setDraftValue(nextValue);
-    }
+    setDraftValue(parsePhonesToFieldValue(updatedPhones));
   };
 
   const validateInput = (input: string) => ({
@@ -145,22 +124,22 @@ export const PhonesFieldInput = () => {
     event: MouseEvent | TouchEvent,
   ) => {
     onClickOutside?.({
-      newValue: parseArrayToPhonesValue(updatedPhones),
+      newValue: parsePhonesToFieldValue(updatedPhones),
       event,
     });
   };
 
   const handleEscape = (updatedPhones: PhoneRecord[]) => {
-    onEscape?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+    onEscape?.({ newValue: parsePhonesToFieldValue(updatedPhones) });
   };
 
   const handleEnter = (updatedPhones: PhoneRecord[]) => {
-    onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
+    onEnter?.({ newValue: parsePhonesToFieldValue(updatedPhones) });
   };
 
   const handleSubmit = (updatedPhones: PhoneRecord[]) => {
     onSubmit?.({
-      newValue: parseArrayToPhonesValue(updatedPhones),
+      newValue: parsePhonesToFieldValue(updatedPhones),
       skipClose: true,
     });
   };
