@@ -49,9 +49,8 @@ const StyledFetchMoreSentinel = styled.div`
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
   isDefined(workflow.workspaceWorkflowId)
-    ? getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: workflow.workspaceWorkflowId,
+    ? getAppPath(AppPath.WorkflowCoreShowPage, {
+        coreWorkflowId: workflow.id,
       })
     : undefined;
 

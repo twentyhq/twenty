@@ -1,43 +1,34 @@
+import { useParams } from 'react-router-dom';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
-import { useCoreWorkflowShowPageResource } from '@/object-core/workflows/hooks/useCoreWorkflowShowPageResource';
-import { type CoreObjectShowPageProps } from '@/object-core/types/CoreObjectShowPageProps';
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { useRefetchCoreRecordOnWorkspaceRecordLifecycleChange } from '@/object-core/hooks/useRefetchCoreRecordOnWorkspaceRecordLifecycleChange';
-import { isCoreRecordAbsent } from '@/object-core/utils/isCoreRecordAbsent';
+import { useCoreWorkflowByIdShowPageResource } from '@/object-core/workflows/hooks/useCoreWorkflowByIdShowPageResource';
 import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
-import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 
-type WorkflowCoreShowPageProps = CoreObjectShowPageProps;
+export const WorkflowCoreShowPage = () => {
+  const { coreWorkflowId = '' } = useParams<{ coreWorkflowId: string }>();
 
-export const WorkflowCoreShowPage = ({
-  objectRecordId,
-}: WorkflowCoreShowPageProps) => {
-  const coreWorkflowResult = useCoreWorkflowShowPageResource({
-    workspaceWorkflowId: objectRecordId,
-  });
+  const { record, loading, error, refetch } =
+    useCoreWorkflowByIdShowPageResource({ coreWorkflowId });
+
+  const workspaceWorkflowId = record?.workspaceWorkflowId;
 
   useRefetchCoreRecordOnWorkspaceRecordLifecycleChange({
     objectNameSingular: CoreObjectNameSingular.Workflow,
-    recordId: objectRecordId,
-    refetch: coreWorkflowResult.refetch,
+    recordId: workspaceWorkflowId ?? undefined,
+    refetch,
   });
 
-  const isCoreWorkflowAbsent = isCoreRecordAbsent(coreWorkflowResult);
-
-  const workspaceResult = useRecordShowPageResource({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-    recordId: objectRecordId,
-    skip: !isCoreWorkflowAbsent,
-  });
-
-  const { record, loading, error } = isCoreWorkflowAbsent
-    ? workspaceResult
-    : coreWorkflowResult;
+  if (!loading && !isDefined(error) && !isDefined(record)) {
+    return <WorkspaceRouteUnavailable />;
+  }
 
   return (
     <RecordShowPageShell
       objectNameSingular={CoreObjectNameSingular.Workflow}
-      objectRecordId={objectRecordId}
+      objectRecordId={coreWorkflowId}
       record={record}
       loading={loading}
       error={error}

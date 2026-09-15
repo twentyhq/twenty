@@ -1,4 +1,8 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { getWorkflowVisualizerComponentInstanceId } from '@/workflow/utils/getWorkflowVisualizerComponentInstanceId';
 import { WorkflowDiagramCanvasEditable } from '@/workflow/workflow-diagram/components/WorkflowDiagramCanvasEditable';
 import { WorkflowDiagramEffect } from '@/workflow/workflow-diagram/components/WorkflowDiagramEffect';
@@ -9,6 +13,15 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 export const WorkflowCard = () => {
   const targetRecord = useTargetRecord();
 
+  const recordStore = useAtomFamilyStateValue(
+    recordStoreFamilyState,
+    targetRecord.id,
+  );
+
+  const workflowId = isNonEmptyString(recordStore?.workspaceWorkflowId)
+    ? recordStore.workspaceWorkflowId
+    : targetRecord.id;
+
   return (
     <WorkflowVisualizerComponentInstanceContext.Provider
       value={{
@@ -17,8 +30,8 @@ export const WorkflowCard = () => {
         }),
       }}
     >
-      <WorkflowVisualizerEffect workflowId={targetRecord.id} />
-      <WorkflowSSESubscribeEffect workflowId={targetRecord.id} />
+      <WorkflowVisualizerEffect workflowId={workflowId} />
+      <WorkflowSSESubscribeEffect workflowId={workflowId} />
       <WorkflowDiagramEffect />
       <WorkflowDiagramCanvasEditable />
     </WorkflowVisualizerComponentInstanceContext.Provider>
