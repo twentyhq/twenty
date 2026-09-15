@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { toastState } from '../states/toastState';
+import { toastsState } from '../states/toastsState';
 import { type ToastEntry } from '../types/ToastEntry';
 import { useToastContext } from './useToastContext';
 
@@ -9,18 +9,18 @@ export const useCompleteToastExit = () => {
 
   const completeToastExit = useCallback(
     (toast: ToastEntry) => {
-      const state = store.get(toastState);
+      const toasts = store.get(toastsState);
       const isCurrentClosingToast =
-        toast.status === 'closing' && state.toasts.includes(toast);
+        toast.status === 'closing' && toasts.includes(toast);
 
       if (!isCurrentClosingToast) {
         return;
       }
 
-      store.set(toastState, {
-        ...state,
-        toasts: state.toasts.filter((currentToast) => currentToast !== toast),
-      });
+      store.set(
+        toastsState,
+        toasts.filter((currentToast) => currentToast !== toast),
+      );
     },
     [store],
   );

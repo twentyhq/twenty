@@ -3,7 +3,7 @@ import { useState } from 'react';
 
 import { DEFAULT_TOAST_LIMIT } from './constants/DefaultToastLimit';
 import { ToastContext } from './contexts/ToastContext';
-import { toastState } from './states/toastState';
+import { toastLimitState } from './states/toastLimitState';
 import { type ToastProviderProps } from './types/ToastProviderProps';
 
 export const ToastProvider = ({
@@ -16,7 +16,7 @@ export const ToastProvider = ({
     }
 
     const toastStore = createStore();
-    toastStore.set(toastState, (state) => ({ ...state, limit }));
+    toastStore.set(toastLimitState, limit);
     return toastStore;
   });
 

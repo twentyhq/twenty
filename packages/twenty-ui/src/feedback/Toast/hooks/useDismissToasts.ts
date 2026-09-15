@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { toastState } from '../states/toastState';
+import { mountedToasterCountState } from '../states/mountedToasterCountState';
+import { toastsState } from '../states/toastsState';
 import { type ToastEntry } from '../types/ToastEntry';
-import { type ToastState } from '../types/ToastState';
 import { isVisibleToast } from '../utils/isVisibleToast';
 import { useToastContext } from './useToastContext';
 
@@ -12,25 +12,28 @@ export const useDismissToasts = () => {
   const dismissToasts = useCallback(
     ({
       toastsToClose,
-      nextState = store.get(toastState),
+      nextToasts = store.get(toastsState),
     }: {
       toastsToClose: ToastEntry[];
-      nextState?: ToastState;
+      nextToasts?: ToastEntry[];
     }) => {
-      const toasts = nextState.toasts.map(
+      const toasts = nextToasts.map(
         (toast): ToastEntry =>
           toastsToClose.includes(toast)
             ? { ...toast, status: 'closing' }
             : toast,
       );
 
-      store.set(toastState, {
-        ...nextState,
-        toasts: nextState.isToasterMounted
-          ? toasts
-          : toasts.filter(isVisibleToast),
-      });
-      toastsToClose.forEach((toast) => toast.notification.onClose?.());
+      const isToasterMounted = store.get(mountedToasterCountState) > 0;
+
+      store.set(
+        toastsState,
+        isToasterMounted ? toasts : toasts.filter(isVisibleToast),
+      );
+
+      for (const toast of toastsToClose) {
+        toast.notification.onClose?.();
+      }
     },
     [store],
   );

@@ -7,6 +7,7 @@ import { useThemeContainer } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { ToasterItems } from './internal/ToasterItems';
+import { ToasterLifecycleEffect } from './internal/ToasterLifecycleEffect';
 import styles from './Toaster.module.scss';
 import { type ToasterProps } from './types/ToasterProps';
 
@@ -35,7 +36,12 @@ export const Toaster = ({
       'aria-label': 'Notifications',
       ...props,
       className: clsx(styles.root, className),
-      children: <ToasterItems getToastProps={getToastProps} />,
+      children: (
+        <>
+          <ToasterLifecycleEffect />
+          <ToasterItems getToastProps={getToastProps} />
+        </>
+      ),
     },
   });
 
