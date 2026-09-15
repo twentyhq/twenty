@@ -122,6 +122,52 @@ export const Default: Story = {
   },
 };
 
+export const Documentation: Story = {
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240, height: 200 } },
+  render: () => (
+    <Popover.Root>
+      <Popover.Trigger style={{ alignSelf: 'flex-start' }}>
+        Show details
+      </Popover.Trigger>
+      <Popover.Popup>
+        <Popover.Title>Contact details</Popover.Title>
+        <Popover.Description>
+          Add notes and contact information here.
+        </Popover.Description>
+        <Popover.Close>Close</Popover.Close>
+      </Popover.Popup>
+    </Popover.Root>
+  ),
+};
+
+export const DocumentationInteractions: Story = {
+  ...Documentation,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Show details' });
+
+    await expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    await userEvent.click(trigger);
+    const dialog = await body.findByRole('dialog', {
+      name: 'Contact details',
+    });
+
+    await waitFor(() => expect(dialog).toBeVisible());
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await expect(trigger).toHaveFocus();
+    await userEvent.keyboard(' ');
+    await userEvent.click(await body.findByRole('button', { name: 'Close' }));
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+  },
+};
+
 const ArrowPopoverStory = (props: PopoverStoryProps) => {
   const [arrow, setArrow] = useState(true);
 

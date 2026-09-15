@@ -35,6 +35,12 @@ export const Default: Story = {
   },
 };
 
+export const Documentation: Story = {
+  ...Default,
+  render: (args) => <DismissibleToast {...args} />,
+  play: undefined,
+};
+
 export const WithDescriptionAndAction: Story = {
   ...Default,
   parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },

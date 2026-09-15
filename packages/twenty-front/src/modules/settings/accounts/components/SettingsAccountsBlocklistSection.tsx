@@ -8,7 +8,7 @@ import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/S
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { BlocklistScope, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
@@ -53,6 +53,7 @@ export const SettingsAccountsBlocklistSection = () => {
       recordsToCreate: [...new Set(handles)].map((handle) => {
         return {
           handle,
+          scope: BlocklistScope.WORKSPACE_MEMBER,
           workspaceMemberId: currentWorkspaceMember.id,
         };
       }),

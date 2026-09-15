@@ -113,6 +113,7 @@ export const SettingsApplicationConnectionsSection = ({
                       )}
                     >
                       <TableCell
+                        color={themeCssVariables.font.color.primary}
                         clickable
                         minWidth="0"
                         overflow="hidden"

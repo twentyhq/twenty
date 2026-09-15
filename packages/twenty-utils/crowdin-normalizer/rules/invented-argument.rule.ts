@@ -38,15 +38,13 @@ function inventedArgumentNames(text: string, sourceText: string): string[] {
 }
 
 function renameArgument(text: string, from: string, to: string): string {
-  return text.replace(
-    new RegExp(`\\{\\s*${from}\\s*(?=[,}])`, 'g'),
-    `{${to}`,
-  );
+  return text.replace(new RegExp(`\\{\\s*${from}\\s*(?=[,}])`, 'g'), `{${to}`);
 }
 
 function hasInventedArgument(text: string, sourceText?: string): boolean {
   return (
-    sourceText !== undefined && inventedArgumentNames(text, sourceText).length > 0
+    sourceText !== undefined &&
+    inventedArgumentNames(text, sourceText).length > 0
   );
 }
 

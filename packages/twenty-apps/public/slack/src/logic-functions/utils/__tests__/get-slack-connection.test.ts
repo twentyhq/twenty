@@ -17,7 +17,11 @@ describe('getSlackConnection', () => {
 
   it('should query connections for the slack provider', async () => {
     listConnectionsMock.mockResolvedValue([
-      { id: 'conn-ws', visibility: 'workspace', accessToken: 'workspace-token' },
+      {
+        id: 'conn-ws',
+        visibility: 'workspace',
+        accessToken: 'workspace-token',
+      },
     ]);
 
     await getSlackConnection();
@@ -27,8 +31,16 @@ describe('getSlackConnection', () => {
 
   it('should prefer a workspace-visibility connection over a personal one', async () => {
     listConnectionsMock.mockResolvedValue([
-      { id: 'conn-personal', visibility: 'personal', accessToken: 'personal-token' },
-      { id: 'conn-ws', visibility: 'workspace', accessToken: 'workspace-token' },
+      {
+        id: 'conn-personal',
+        visibility: 'personal',
+        accessToken: 'personal-token',
+      },
+      {
+        id: 'conn-ws',
+        visibility: 'workspace',
+        accessToken: 'workspace-token',
+      },
     ]);
 
     const result = await getSlackConnection();
@@ -43,7 +55,11 @@ describe('getSlackConnection', () => {
   it('should fall back to the first connection when none are workspace-visible', async () => {
     listConnectionsMock.mockResolvedValue([
       { id: 'conn-first', visibility: 'personal', accessToken: 'first-token' },
-      { id: 'conn-second', visibility: 'personal', accessToken: 'second-token' },
+      {
+        id: 'conn-second',
+        visibility: 'personal',
+        accessToken: 'second-token',
+      },
     ]);
 
     const result = await getSlackConnection();

@@ -189,6 +189,7 @@ export interface Object {
     isSearchable: Scalars['Boolean']
     openRecordIn: ObjectOpenRecordIn
     readability: MetadataReadability
+    readabilityParentFieldUniversalIdentifiers?: Scalars['UUID'][]
     writability: MetadataWritability
     applicationId: Scalars['UUID']
     createdAt: Scalars['DateTime']
@@ -1605,7 +1606,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_EMAIL_GROUP_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2558,7 +2559,7 @@ export interface MessageChannel {
 
 export type MessageChannelVisibility = 'METADATA' | 'SUBJECT' | 'SHARE_EVERYTHING'
 
-export type MessageChannelType = 'EMAIL' | 'SMS' | 'EMAIL_GROUP'
+export type MessageChannelType = 'EMAIL' | 'SMS' | 'EMAIL_GROUP' | 'APP'
 
 export type MessageChannelContactAutoCreationPolicy = 'SENT_AND_RECEIVED' | 'SENT' | 'NONE'
 
@@ -2569,6 +2570,18 @@ export type MessageChannelPendingGroupEmailsAction = 'GROUP_EMAILS_DELETION' | '
 export type MessageChannelSyncStatus = 'NOT_SYNCED' | 'ONGOING' | 'ACTIVE' | 'FAILED_INSUFFICIENT_PERMISSIONS' | 'FAILED_UNKNOWN'
 
 export type MessageChannelSyncStage = 'PENDING_CONFIGURATION' | 'MESSAGE_LIST_FETCH_PENDING' | 'MESSAGE_LIST_FETCH_SCHEDULED' | 'MESSAGE_LIST_FETCH_ONGOING' | 'MESSAGES_IMPORT_PENDING' | 'MESSAGES_IMPORT_SCHEDULED' | 'MESSAGES_IMPORT_ONGOING' | 'FAILED'
+
+export interface IngestedAppMessage {
+    externalId: Scalars['String']
+    messageId: Scalars['UUID']
+    messageThreadId: Scalars['UUID']
+    __typename: 'IngestedAppMessage'
+}
+
+export interface IngestAppMessagesOutput {
+    messages: IngestedAppMessage[]
+    __typename: 'IngestAppMessagesOutput'
+}
 
 export interface CreateEmailGroupChannelOutput {
     messageChannel: MessageChannel
@@ -3248,6 +3261,7 @@ export interface Query {
     messageSuppressions: MessageSuppressionList
     unsubscribeTopics: UnsubscribeTopic[]
     myMessageChannels: MessageChannel[]
+    appMessageChannels: MessageChannel[]
     getEmailingDomains: EmailingDomain[]
     getToolIndex: ToolIndexEntry[]
     getToolInputSchema?: Scalars['JSON']
@@ -3460,6 +3474,10 @@ export interface Mutation {
     createEmailGroupChannel: CreateEmailGroupChannelOutput
     updateEmailGroupChannel: MessageChannel
     deleteEmailGroupChannel: MessageChannel
+    createAppMessageChannel: MessageChannel
+    updateAppMessageChannel: MessageChannel
+    deleteAppMessageChannel: MessageChannel
+    ingestAppMessages: IngestAppMessagesOutput
     createEmailingDomain: EmailingDomain
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
@@ -3552,6 +3570,8 @@ export interface Mutation {
     renewApplicationToken: ApplicationTokenPair
     __typename: 'Mutation'
 }
+
+export type MessageParticipantRole = 'FROM' | 'TO' | 'CC' | 'BCC' | 'REPLY_TO'
 
 export type RunAgentMessageRole = 'user' | 'assistant'
 
@@ -3756,6 +3776,7 @@ export interface ObjectGenqlSelection{
     isSearchable?: boolean | number
     openRecordIn?: boolean | number
     readability?: boolean | number
+    readabilityParentFieldUniversalIdentifiers?: boolean | number
     writability?: boolean | number
     applicationId?: boolean | number
     createdAt?: boolean | number
@@ -6231,6 +6252,20 @@ export interface MessageChannelGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface IngestedAppMessageGenqlSelection{
+    externalId?: boolean | number
+    messageId?: boolean | number
+    messageThreadId?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface IngestAppMessagesOutputGenqlSelection{
+    messages?: IngestedAppMessageGenqlSelection
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CreateEmailGroupChannelOutputGenqlSelection{
     messageChannel?: MessageChannelGenqlSelection
     forwardingAddress?: boolean | number
@@ -6954,6 +6989,7 @@ export interface QueryGenqlSelection{
     messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
+    appMessageChannels?: (MessageChannelGenqlSelection & { __args?: {filter?: (ListAppMessageChannelsInput | null)} })
     getEmailingDomains?: EmailingDomainGenqlSelection
     getToolIndex?: ToolIndexEntryGenqlSelection
     getToolInputSchema?: { __args: {toolName: Scalars['String']} }
@@ -7019,6 +7055,8 @@ id: Scalars['ID']}
 export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null)}
 
 export interface FindMessageSuppressionsInput {reason?: (MessageSuppressionReason | null),searchTerm?: (Scalars['String'] | null),unsubscribeTopicId?: (Scalars['UUID'] | null),limit: Scalars['Int'],offset: Scalars['Int']}
+
+export interface ListAppMessageChannelsInput {connectedAccountId?: (Scalars['UUID'] | null)}
 
 export interface ListAppConnectionsInput {providerName?: (Scalars['String'] | null),userWorkspaceId?: (Scalars['String'] | null),visibility?: (Scalars['String'] | null)}
 
@@ -7201,6 +7239,10 @@ export interface MutationGenqlSelection{
     createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
     updateEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateEmailGroupChannelInput} })
     deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
+    createAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: CreateAppMessageChannelInput} })
+    updateAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateAppMessageChannelInput} })
+    deleteAppMessageChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
+    ingestAppMessages?: (IngestAppMessagesOutputGenqlSelection & { __args: {input: IngestAppMessagesInput} })
     createEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {input: CreateEmailingDomainInput} })
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
@@ -7525,7 +7567,7 @@ update: UpdateLogicFunctionFromSourceInputUpdates}
 
 export interface UpdateLogicFunctionFromSourceInputUpdates {name?: (Scalars['String'] | null),description?: (Scalars['String'] | null),timeoutSeconds?: (Scalars['Float'] | null),sourceHandlerCode?: (Scalars['String'] | null),handlerName?: (Scalars['String'] | null),sourceHandlerPath?: (Scalars['String'] | null),cronTriggerSettings?: (Scalars['JSON'] | null),databaseEventTriggerSettings?: (Scalars['JSON'] | null),httpRouteTriggerSettings?: (Scalars['JSON'] | null),toolTriggerSettings?: (Scalars['JSON'] | null),workflowActionTriggerSettings?: (Scalars['JSON'] | null)}
 
-export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalPinnedExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
+export interface CreateCommandMenuItemInput {workflowVersionId?: (Scalars['UUID'] | null),coreWorkflowVersionId?: (Scalars['UUID'] | null),frontComponentId?: (Scalars['UUID'] | null),engineComponentKey: EngineComponentKey,label: Scalars['String'],icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),hotKeys?: (Scalars['String'][] | null),conditionalAvailabilityExpression?: (Scalars['String'] | null),conditionalPinnedExpression?: (Scalars['String'] | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),payload?: (Scalars['JSON'] | null),navigationTargetObjectMetadataId?: (Scalars['UUID'] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
 export interface UpdateCommandMenuItemInput {id: Scalars['UUID'],label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortLabel?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isPinned?: (Scalars['Boolean'] | null),availabilityType?: (CommandMenuItemAvailabilityType | null),availabilityObjectMetadataId?: (Scalars['UUID'] | null),engineComponentKey?: (EngineComponentKey | null),hotKeys?: (Scalars['String'][] | null),pageLayoutId?: (Scalars['UUID'] | null)}
 
@@ -7549,7 +7591,7 @@ export interface CreateApplicationRegistrationInput {name: Scalars['String'],uni
 
 export interface UpdateApplicationRegistrationInput {id: Scalars['String'],update: UpdateApplicationRegistrationPayload}
 
-export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null),isListed?: (Scalars['Boolean'] | null),isPreInstalled?: (Scalars['Boolean'] | null),isVetted?: (Scalars['Boolean'] | null)}
+export interface UpdateApplicationRegistrationPayload {name?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
 
 export interface CreateApplicationRegistrationVariableInput {applicationRegistrationId: Scalars['String'],key: Scalars['String'],value: Scalars['String'],description?: (Scalars['String'] | null),isSecret?: (Scalars['Boolean'] | null)}
 
@@ -7644,6 +7686,16 @@ export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelV
 export interface CreateEmailGroupChannelInput {handle: Scalars['String'],displayName?: (Scalars['String'] | null)}
 
 export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null)}
+
+export interface CreateAppMessageChannelInput {connectedAccountId: Scalars['UUID'],handle: Scalars['String'],displayName?: (Scalars['String'] | null),visibility: MessageChannelVisibility}
+
+export interface UpdateAppMessageChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null),visibility?: (MessageChannelVisibility | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
+
+export interface IngestAppMessagesInput {messageChannelId: Scalars['UUID'],messages: AppMessageInput[]}
+
+export interface AppMessageInput {externalId: Scalars['String'],threadExternalId: Scalars['String'],subject?: (Scalars['String'] | null),text: Scalars['String'],receivedAt: Scalars['DateTime'],participants: AppMessageParticipantInput[]}
+
+export interface AppMessageParticipantInput {role: MessageParticipantRole,handle: Scalars['String'],displayName?: (Scalars['String'] | null),personId?: (Scalars['UUID'] | null),workspaceMemberId?: (Scalars['UUID'] | null)}
 
 export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
@@ -9595,6 +9647,22 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const IngestedAppMessage_possibleTypes: string[] = ['IngestedAppMessage']
+    export const isIngestedAppMessage = (obj?: { __typename?: any } | null): obj is IngestedAppMessage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIngestedAppMessage"')
+      return IngestedAppMessage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const IngestAppMessagesOutput_possibleTypes: string[] = ['IngestAppMessagesOutput']
+    export const isIngestAppMessagesOutput = (obj?: { __typename?: any } | null): obj is IngestAppMessagesOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isIngestAppMessagesOutput"')
+      return IngestAppMessagesOutput_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const CreateEmailGroupChannelOutput_possibleTypes: string[] = ['CreateEmailGroupChannelOutput']
     export const isCreateEmailGroupChannelOutput = (obj?: { __typename?: any } | null): obj is CreateEmailGroupChannelOutput => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
@@ -10647,7 +10715,7 @@ export const enumFeatureFlagKey = {
    IS_UNIQUE_INDEXES_ENABLED: 'IS_UNIQUE_INDEXES_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_JSON_FILTER_ENABLED: 'IS_JSON_FILTER_ENABLED' as const,
-   IS_EMAIL_GROUP_ENABLED: 'IS_EMAIL_GROUP_ENABLED' as const,
+   IS_MESSAGE_CAMPAIGN_ENABLED: 'IS_MESSAGE_CAMPAIGN_ENABLED' as const,
    IS_JUNCTION_RELATIONS_ENABLED: 'IS_JUNCTION_RELATIONS_ENABLED' as const,
    IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
    IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' as const,
@@ -10800,7 +10868,8 @@ export const enumMessageChannelVisibility = {
 export const enumMessageChannelType = {
    EMAIL: 'EMAIL' as const,
    SMS: 'SMS' as const,
-   EMAIL_GROUP: 'EMAIL_GROUP' as const
+   EMAIL_GROUP: 'EMAIL_GROUP' as const,
+   APP: 'APP' as const
 }
 
 export const enumMessageChannelContactAutoCreationPolicy = {
@@ -10950,6 +11019,14 @@ export const enumEventLogTable = {
    OBJECT_EVENT: 'OBJECT_EVENT' as const,
    USAGE_EVENT: 'USAGE_EVENT' as const,
    APPLICATION_LOG: 'APPLICATION_LOG' as const
+}
+
+export const enumMessageParticipantRole = {
+   FROM: 'FROM' as const,
+   TO: 'TO' as const,
+   CC: 'CC' as const,
+   BCC: 'BCC' as const,
+   REPLY_TO: 'REPLY_TO' as const
 }
 
 export const enumRunAgentMessageRole = {

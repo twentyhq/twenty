@@ -9,7 +9,8 @@ import {
 } from '@ui/testing';
 import { MemoryRouter } from 'react-router-dom';
 
-import { ChipAccent, ChipSize, ChipVariant } from '@ui/data-display/Chip/Chip';
+import { type ChipSize } from '@ui/data-display/Chip/types/ChipSize';
+import { type ChipVariant } from '@ui/data-display/Chip/types/ChipVariant';
 import { LinkChip } from '@ui/data-display/LinkChip/LinkChip';
 
 const meta: Meta<typeof LinkChip> = {
@@ -29,21 +30,21 @@ type Story = StoryObj<typeof LinkChip>;
 
 export const Default: Story = {
   args: {
-    label: 'Link Chip',
+    children: 'Link Chip',
     to: '/example',
-    size: ChipSize.Small,
-    variant: ChipVariant.Regular,
-    accent: ChipAccent.TextPrimary,
+    size: 'sm',
+    variant: 'ghost',
+    color: 'primary',
   },
   decorators: [ComponentDecorator],
 };
 
 export const WithAvatar: Story = {
   args: {
-    label: 'John Doe',
+    children: 'John Doe',
     to: '/users/john-doe',
-    variant: ChipVariant.Regular,
-    leftComponent: (
+    variant: 'ghost',
+    startElement: (
       <Avatar name="JD" colorSeed="John Doe" size="sm" shape="circle" />
     ),
   },
@@ -52,23 +53,23 @@ export const WithAvatar: Story = {
 
 export const WithIcon: Story = {
   args: {
-    label: 'Company',
+    children: 'Company',
     to: '/companies/1',
-    variant: ChipVariant.Regular,
-    leftComponent: <IconUser size={14} />,
+    variant: 'ghost',
+    startElement: <IconUser size={14} />,
   },
   decorators: [ComponentDecorator],
 };
 
 export const Catalog: CatalogStory<Story, typeof LinkChip> = {
-  args: { label: 'Link Chip', to: '/example' },
+  args: { children: 'Link Chip', to: '/example' },
   argTypes: {
     size: { control: false },
     variant: { control: false },
-    accent: { control: false },
+    color: { control: false },
     className: { control: false },
-    rightComponent: { control: false },
-    leftComponent: { control: false },
+    endElement: { control: false },
+    startElement: { control: false },
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
@@ -77,12 +78,12 @@ export const Catalog: CatalogStory<Story, typeof LinkChip> = {
       dimensions: [
         {
           name: 'variants',
-          values: Object.values(ChipVariant),
+          values: ['ghost', 'soft', 'solid'],
           props: (variant: ChipVariant) => ({ variant }),
         },
         {
           name: 'sizes',
-          values: Object.values(ChipSize),
+          values: ['sm', 'md'],
           props: (size: ChipSize) => ({ size }),
         },
         {
@@ -98,11 +99,6 @@ export const Catalog: CatalogStory<Story, typeof LinkChip> = {
             }
           },
         },
-        {
-          name: 'accents',
-          values: Object.values(ChipAccent),
-          props: (accent: ChipAccent) => ({ accent }),
-        },
       ],
     },
   },
@@ -111,19 +107,19 @@ export const Catalog: CatalogStory<Story, typeof LinkChip> = {
 
 export const WithAvatarCatalog: CatalogStory<Story, typeof LinkChip> = {
   args: {
-    label: 'John Doe',
+    children: 'John Doe',
     to: '/users/john-doe',
-    leftComponent: (
+    startElement: (
       <Avatar name="JD" colorSeed="John Doe" size="sm" shape="circle" />
     ),
   },
   argTypes: {
     size: { control: false },
     variant: { control: false },
-    accent: { control: false },
+    color: { control: false },
     className: { control: false },
-    rightComponent: { control: false },
-    leftComponent: { control: false },
+    endElement: { control: false },
+    startElement: { control: false },
   },
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
@@ -132,12 +128,12 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof LinkChip> = {
       dimensions: [
         {
           name: 'variants',
-          values: Object.values(ChipVariant),
+          values: ['ghost', 'soft', 'solid'],
           props: (variant: ChipVariant) => ({ variant }),
         },
         {
           name: 'sizes',
-          values: Object.values(ChipSize),
+          values: ['sm', 'md'],
           props: (size: ChipSize) => ({ size }),
         },
         {
@@ -161,14 +157,14 @@ export const WithAvatarCatalog: CatalogStory<Story, typeof LinkChip> = {
 
 export const WithRightComponentDivider: Story = {
   args: {
-    label: 'document.pdf',
+    children: 'document.pdf',
     to: '/files/document.pdf',
-    variant: ChipVariant.Static,
-    leftComponent: (
+    variant: 'soft',
+    startElement: (
       <Avatar name="D" colorSeed="document" size="sm" shape="square" />
     ),
-    rightComponent: <IconX size={14} />,
-    rightComponentDivider: true,
+    endElement: <IconX size={14} />,
+    endElementDivider: true,
   },
   decorators: [ComponentDecorator],
 };

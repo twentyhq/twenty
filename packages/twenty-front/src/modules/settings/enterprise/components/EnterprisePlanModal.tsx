@@ -153,7 +153,7 @@ export const EnterprisePlanModal = () => {
       isClosable
     >
       <ModalContent isVerticallyCentered>
-        <Title noMarginTop>{t`Get Enterprise`}</Title>
+        <Title noMarginTop>{t`Get Organization`}</Title>
         <SubTitle>{t`Enjoy a 30-day free trial`}</SubTitle>
 
         <StyledSubscriptionContainer>

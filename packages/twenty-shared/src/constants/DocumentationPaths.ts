@@ -68,6 +68,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
     '/developers/extend/apps/logic/logic-functions',
+  DEVELOPERS_EXTEND_APPS_LOGIC_MESSAGING_CHANNELS:
+    '/developers/extend/apps/logic/messaging-channels',
   DEVELOPERS_EXTEND_APPS_LOGIC_OVERVIEW:
     '/developers/extend/apps/logic/overview',
   DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:

@@ -1,3 +1,4 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
@@ -34,7 +35,12 @@ export const SettingsDpaAgreementRow = ({
 
   return (
     <TableRow gridAutoColumns={DPA_AGREEMENT_ROW_GRID_COLUMNS}>
-      <TableCell whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
+      <TableCell
+        color={themeCssVariables.font.color.primary}
+        whiteSpace="nowrap"
+        overflow="hidden"
+        textOverflow="ellipsis"
+      >
         <StyledEllipsisLabel>{label}</StyledEllipsisLabel>
       </TableCell>
       <TableCell>{agreement.templateVersion}</TableCell>
