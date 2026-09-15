@@ -19,7 +19,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   RECORD_EXPORT_MAX_DURATION_MS,
-  RECORD_EXPORT_CONNECTION_TTL_MS,
+  RECORD_EXPORT_CLEANUP_JOB_OPTIONS,
   RECORD_EXPORT_MISSING_JOB_TIMEOUT_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
@@ -76,13 +76,8 @@ export class RecordExportWorkspaceService {
         'DeleteRecordExportJob',
         { workspaceId, recordExportId: recordExport.id },
         {
+          ...RECORD_EXPORT_CLEANUP_JOB_OPTIONS,
           id: recordExport.id,
-          delay: RECORD_EXPORT_CONNECTION_TTL_MS,
-          retryLimit: 10,
-          backoff: {
-            strategy: 'exponential',
-            initialDelayMilliseconds: 60_000,
-          },
         },
       );
       if (!isDefined(cleanupJobId)) {
