@@ -1,7 +1,4 @@
-import {
-  getInitialObjectViewUniversalIdentifier,
-  getViewFieldUniversalIdentifier,
-} from 'twenty-shared/application';
+import { getInitialObjectViewUniversalIdentifier } from 'twenty-shared/application';
 import { ViewKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -115,15 +112,6 @@ export const computeMissingInitialObjectViewOperations = ({
       if (!isDefined(flatViewField)) {
         continue;
       }
-
-      const initialViewFieldUniversalIdentifier =
-        getViewFieldUniversalIdentifier({
-          applicationUniversalIdentifier:
-            initialViewApplicationUniversalIdentifier,
-          viewUniversalIdentifier: initialViewUniversalIdentifier,
-          fieldMetadataUniversalIdentifier:
-            flatViewField.fieldMetadataUniversalIdentifier,
-        });
 
       seedOperations.viewFieldsToCreate.push(
         buildInitialViewFieldFlatEntity({
