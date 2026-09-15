@@ -1,11 +1,5 @@
-import { useQuery } from '@apollo/client/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
-
 import { useCoreWorkflowForShowPage } from '@/object-core/workflows/hooks/useCoreWorkflowForShowPage';
 import { useCoreWorkflowVersionContent } from '@/object-core/workflows/hooks/useCoreWorkflowVersionContent';
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useEffectiveDraftVersionId } from '@/workflow/hooks/useEffectiveDraftVersionId';
 import {
@@ -14,7 +8,8 @@ import {
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { GetCoreWorkflowByIdDocument } from '~/generated/graphql';
+import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 type WorkflowWithAllVersions = Omit<Workflow, 'versions'> & {
   versions: Array<
@@ -29,26 +24,10 @@ export const useWorkflowWithCurrentVersion = (
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
   );
 
-  const apolloCoreClient = useApolloCoreClient();
-
-  const { data: coreWorkflowByIdData } = useQuery(GetCoreWorkflowByIdDocument, {
-    client: apolloCoreClient,
-    fetchPolicy: 'cache-only',
-    variables: { coreWorkflowId: workflowId ?? '' },
-    skip: !isDefined(workflowId),
-  });
-
-  const workspaceWorkflowIdFromCore =
-    coreWorkflowByIdData?.coreWorkflowById?.workspaceWorkflowId;
-
-  const effectiveWorkflowId = isNonEmptyString(workspaceWorkflowIdFromCore)
-    ? workspaceWorkflowIdFromCore
-    : workflowId;
-
   const { record: workspaceWorkflow } =
     useFindOneRecord<WorkflowWithAllVersions>({
       objectNameSingular: CoreObjectNameSingular.Workflow,
-      objectRecordId: effectiveWorkflowId,
+      objectRecordId: workflowId,
       recordGqlFields: {
         id: true,
         name: true,
@@ -61,7 +40,7 @@ export const useWorkflowWithCurrentVersion = (
           createdAt: true,
         },
       },
-      skip: !isDefined(effectiveWorkflowId) || isWorkflowCoreIndexPageEnabled,
+      skip: !isDefined(workflowId) || isWorkflowCoreIndexPageEnabled,
     });
 
   const {
@@ -69,7 +48,7 @@ export const useWorkflowWithCurrentVersion = (
     versions: coreVersions,
     draftVersionIdFromServer,
   } = useCoreWorkflowForShowPage({
-    workspaceWorkflowId: effectiveWorkflowId,
+    workspaceWorkflowId: workflowId,
     skip: !isWorkflowCoreIndexPageEnabled,
   });
 
@@ -120,7 +99,7 @@ export const useWorkflowWithCurrentVersion = (
   );
 
   const coreCurrentVersion = useCoreWorkflowVersionContent({
-    workspaceWorkflowId: effectiveWorkflowId,
+    workspaceWorkflowId: workflowId,
     workspaceWorkflowVersionId: currentVersionId,
     skip: !isWorkflowCoreIndexPageEnabled,
   });

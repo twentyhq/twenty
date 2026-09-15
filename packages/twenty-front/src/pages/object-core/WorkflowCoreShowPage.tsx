@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { useParams } from 'react-router-dom';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,9 +29,6 @@ export const WorkflowCoreShowPage = () => {
     <RecordShowPageShell
       objectNameSingular={CoreObjectNameSingular.Workflow}
       objectRecordId={coreWorkflowId}
-      sseRecordId={
-        isNonEmptyString(workspaceWorkflowId) ? workspaceWorkflowId : undefined
-      }
       record={record}
       loading={loading}
       error={error}
