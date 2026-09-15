@@ -16,7 +16,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const SEE_ACTIVE_VERSION_WORKFLOW_UNIVERSAL_IDENTIFIER =
   '31790508-75ff-4e4c-a768-83bd1b0718e0';
 
-@RegisteredWorkspaceCommand('2.41.0', 1789457580288)
+@RegisteredWorkspaceCommand('2.41.0', 1789461462001)
 @Command({
   name: 'upgrade:2-41:remove-see-active-version-command-menu-item',
   description:

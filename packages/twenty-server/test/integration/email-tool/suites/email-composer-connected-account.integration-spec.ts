@@ -329,7 +329,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
       }
     });
 
-    it('skips an older SSO connection when there is no caller (workflow run)', async () => {
+    it('skips an older SSO connection on a run that no user started', async () => {
       const oidcConnectedAccountId = '20202020-0000-4000-8000-0000000000a3';
 
       await insertNonMailboxConnectedAccount({
@@ -344,7 +344,7 @@ describe('EmailComposerService connected account resolution (integration)', () =
 
         const result = await service.composeEmail({
           parameters: baseParams,
-          context: { workspaceId: WORKSPACE_ID },
+          context: { workspaceId: WORKSPACE_ID, callerType: 'application' },
           operation: EmailOperation.SEND,
         });
 
@@ -412,13 +412,13 @@ describe('EmailComposerService connected account resolution (integration)', () =
       }
     });
 
-    it('takes the first workspace account when there is no caller (workflow run)', async () => {
+    it('takes the first workspace account on a run that no user started', async () => {
       const firstWorkspaceConnectedAccountId =
         await getFirstWorkspaceConnectedAccountId();
 
       const result = await service.composeEmail({
         parameters: baseParams,
-        context: { workspaceId: WORKSPACE_ID },
+        context: { workspaceId: WORKSPACE_ID, callerType: 'application' },
         operation: EmailOperation.SEND,
       });
 
@@ -426,6 +426,54 @@ describe('EmailComposerService connected account resolution (integration)', () =
       expect(result.success && result.data.connectedAccount.id).toBe(
         firstWorkspaceConnectedAccountId,
       );
+    });
+
+    it('refuses an unidentified caller when no account is shared with the workspace', async () => {
+      const sharedConnectedAccountIds =
+        await getWorkspaceSharedConnectedAccountIds();
+
+      for (const connectedAccountId of sharedConnectedAccountIds) {
+        await setVisibility(connectedAccountId, 'user');
+      }
+
+      try {
+        await expect(
+          service.composeEmail({
+            parameters: baseParams,
+            context: { workspaceId: WORKSPACE_ID },
+            operation: EmailOperation.SEND,
+          }),
+        ).rejects.toThrow(
+          'No connected account in this workspace can send email',
+        );
+      } finally {
+        for (const connectedAccountId of sharedConnectedAccountIds) {
+          await setVisibility(connectedAccountId, 'workspace');
+        }
+      }
+    });
+
+    it('serves an unidentified caller the account shared with the workspace', async () => {
+      const { visibility } = await readConnectedAccountState(
+        JONY_CONNECTED_ACCOUNT_ID,
+      );
+
+      await setVisibility(JONY_CONNECTED_ACCOUNT_ID, 'workspace');
+
+      try {
+        const result = await service.composeEmail({
+          parameters: baseParams,
+          context: { workspaceId: WORKSPACE_ID },
+          operation: EmailOperation.SEND,
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.success && result.data.connectedAccount.id).toBe(
+          JONY_CONNECTED_ACCOUNT_ID,
+        );
+      } finally {
+        await setVisibility(JONY_CONNECTED_ACCOUNT_ID, visibility);
+      }
     });
   });
 });
