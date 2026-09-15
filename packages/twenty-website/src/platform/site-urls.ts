@@ -27,7 +27,7 @@ export const SITE_URLS: Record<
   docsSelfHost:
     'https://docs.twenty.com/developers/self-host/capabilities/docker-compose',
   docsSelfHostLicense:
-    'https://docs.twenty.com/user-guide/billing/capabilities/pricing-plans#obtain-an-organization-key-self-hosted',
+    'https://docs.twenty.com/user-guide/billing/capabilities/pricing-plans#get-an-organization-key',
   docsUserGuide: 'https://docs.twenty.com/user-guide/introduction',
   github: 'https://github.com/twentyhq/twenty',
   linkedin: 'https://www.linkedin.com/company/twenty',
