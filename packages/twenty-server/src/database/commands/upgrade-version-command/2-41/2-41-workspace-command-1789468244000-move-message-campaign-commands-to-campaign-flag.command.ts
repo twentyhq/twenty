@@ -9,7 +9,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.41.0', 1789400834000)
+@RegisteredWorkspaceCommand('2.41.0', 1789468244000)
 @Command({
   name: 'upgrade:2-41:move-message-campaign-commands-to-campaign-flag',
   description:

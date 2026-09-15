@@ -304,6 +304,23 @@ export enum AppKeyValueScope {
   WORKSPACE = 'WORKSPACE'
 }
 
+export type AppMessageInput = {
+  externalId: Scalars['String']['input'];
+  participants: Array<AppMessageParticipantInput>;
+  receivedAt: Scalars['DateTime']['input'];
+  subject?: InputMaybe<Scalars['String']['input']>;
+  text: Scalars['String']['input'];
+  threadExternalId: Scalars['String']['input'];
+};
+
+export type AppMessageParticipantInput = {
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  handle: Scalars['String']['input'];
+  personId?: InputMaybe<Scalars['UUID']['input']>;
+  role: MessageParticipantRole;
+  workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
+};
+
 export type Application = {
   __typename?: 'Application';
   agents: Array<Agent>;
@@ -1223,6 +1240,13 @@ export type CreateApiKeyInput = {
   name: Scalars['String']['input'];
   revokedAt?: InputMaybe<Scalars['String']['input']>;
   roleId: Scalars['UUID']['input'];
+};
+
+export type CreateAppMessageChannelInput = {
+  connectedAccountId: Scalars['UUID']['input'];
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  handle: Scalars['String']['input'];
+  visibility: MessageChannelVisibility;
 };
 
 export type CreateApplicationFileUploadsResult = {
@@ -2392,6 +2416,23 @@ export enum IndexType {
   GIN = 'GIN'
 }
 
+export type IngestAppMessagesInput = {
+  messageChannelId: Scalars['UUID']['input'];
+  messages: Array<AppMessageInput>;
+};
+
+export type IngestAppMessagesOutput = {
+  __typename?: 'IngestAppMessagesOutput';
+  messages: Array<IngestedAppMessage>;
+};
+
+export type IngestedAppMessage = {
+  __typename?: 'IngestedAppMessage';
+  externalId: Scalars['String']['output'];
+  messageId: Scalars['UUID']['output'];
+  messageThreadId: Scalars['UUID']['output'];
+};
+
 export type InitiateTwoFactorAuthenticationProvisioning = {
   __typename?: 'InitiateTwoFactorAuthenticationProvisioning';
   uri: Scalars['String']['output'];
@@ -2496,6 +2537,10 @@ export type ListAppConnectionsInput = {
   providerName?: InputMaybe<Scalars['String']['input']>;
   userWorkspaceId?: InputMaybe<Scalars['String']['input']>;
   visibility?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ListAppMessageChannelsInput = {
+  connectedAccountId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type Location = {
@@ -2720,6 +2765,7 @@ export enum MessageChannelSyncStatus {
 }
 
 export enum MessageChannelType {
+  APP = 'APP',
   EMAIL = 'EMAIL',
   EMAIL_GROUP = 'EMAIL_GROUP',
   SMS = 'SMS'
@@ -2754,6 +2800,14 @@ export enum MessageFolderPendingSyncAction {
   FOLDER_DELETION = 'FOLDER_DELETION',
   FOLDER_IMPORT = 'FOLDER_IMPORT',
   NONE = 'NONE'
+}
+
+export enum MessageParticipantRole {
+  BCC = 'BCC',
+  CC = 'CC',
+  FROM = 'FROM',
+  REPLY_TO = 'REPLY_TO',
+  TO = 'TO'
 }
 
 export type MessageSuppression = {
@@ -2904,6 +2958,7 @@ export type Mutation = {
   completeBookCallOnboardingStep: OnboardingStepSuccess;
   completeFileUpload: FileWithSignedUrl;
   createApiKey: ApiKey;
+  createAppMessageChannel: MessageChannel;
   createApplicationFileUploads: CreateApplicationFileUploadsResult;
   createApplicationRegistration: CreateApplicationRegistration;
   createApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -2950,6 +3005,7 @@ export type Mutation = {
   createWebhook: Webhook;
   deactivateSkill: Skill;
   deleteAppKeyValue: Scalars['Boolean']['output'];
+  deleteAppMessageChannel: MessageChannel;
   deleteApplicationRegistration: Scalars['Boolean']['output'];
   deleteApplicationRegistrationVariable: Scalars['Boolean']['output'];
   deleteApprovedAccessDomain: Scalars['Boolean']['output'];
@@ -3019,6 +3075,7 @@ export type Mutation = {
   getLoginTokenFromCredentials: LoginToken;
   goBackToPreviousOnboardingStep: OnboardingStepNavigation;
   impersonate: Impersonate;
+  ingestAppMessages: IngestAppMessagesOutput;
   initiateOTPProvisioning: InitiateTwoFactorAuthenticationProvisioning;
   initiateOTPProvisioningForAuthenticatedUser: InitiateTwoFactorAuthenticationProvisioning;
   installApplication: Application;
@@ -3079,6 +3136,7 @@ export type Mutation = {
   unarchiveChatThread: AgentChatThread;
   uninstallApplication: Scalars['Boolean']['output'];
   updateApiKey?: Maybe<ApiKey>;
+  updateAppMessageChannel: MessageChannel;
   updateApplication: Application;
   updateApplicationRegistration: ApplicationRegistration;
   updateApplicationRegistrationVariable: ApplicationRegistrationVariable;
@@ -3234,6 +3292,11 @@ export type MutationCompleteFileUploadArgs = {
 
 export type MutationCreateApiKeyArgs = {
   input: CreateApiKeyInput;
+};
+
+
+export type MutationCreateAppMessageChannelArgs = {
+  input: CreateAppMessageChannelInput;
 };
 
 
@@ -3469,6 +3532,11 @@ export type MutationDeactivateSkillArgs = {
 export type MutationDeleteAppKeyValueArgs = {
   key: Scalars['String']['input'];
   scope?: InputMaybe<AppKeyValueScope>;
+};
+
+
+export type MutationDeleteAppMessageChannelArgs = {
+  id: Scalars['UUID']['input'];
 };
 
 
@@ -3790,6 +3858,11 @@ export type MutationImpersonateArgs = {
 };
 
 
+export type MutationIngestAppMessagesArgs = {
+  input: IngestAppMessagesInput;
+};
+
+
 export type MutationInitiateOtpProvisioningArgs = {
   loginToken: Scalars['String']['input'];
   origin: Scalars['String']['input'];
@@ -4080,6 +4153,11 @@ export type MutationUninstallApplicationArgs = {
 
 export type MutationUpdateApiKeyArgs = {
   input: UpdateApiKeyInput;
+};
+
+
+export type MutationUpdateAppMessageChannelArgs = {
+  input: UpdateAppMessageChannelInput;
 };
 
 
@@ -4925,6 +5003,7 @@ export type Query = {
   appConnection: AppConnection;
   appConnections: Array<AppConnection>;
   appKeyValue?: Maybe<AppKeyValue>;
+  appMessageChannels: Array<MessageChannel>;
   applicationConnectedAccounts: Array<ApplicationConnectedAccountDto>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']['output']>;
@@ -5073,6 +5152,11 @@ export type QueryAppConnectionsArgs = {
 export type QueryAppKeyValueArgs = {
   key: Scalars['String']['input'];
   scope?: InputMaybe<AppKeyValueScope>;
+};
+
+
+export type QueryAppMessageChannelsArgs = {
+  filter?: InputMaybe<ListAppMessageChannelsInput>;
 };
 
 
@@ -6110,6 +6194,13 @@ export type UpdateApiKeyInput = {
   id: Scalars['UUID']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
   revokedAt?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateAppMessageChannelInput = {
+  displayName?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['UUID']['input'];
+  isSyncEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  visibility?: InputMaybe<MessageChannelVisibility>;
 };
 
 export type UpdateApplicationInput = {
