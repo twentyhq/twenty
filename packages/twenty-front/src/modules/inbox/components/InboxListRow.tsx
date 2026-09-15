@@ -5,6 +5,7 @@ import { useContext } from 'react';
 import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { InboxItemAssignee } from '@/inbox/components/InboxItemAssignee';
 import { InboxListRowButtons } from '@/inbox/components/InboxListRowButtons';
 import { getInboxItemContext } from '@/inbox/utils/getInboxItemContext';
 import { type InboxItem, InboxItemPriority } from '~/generated/graphql';
@@ -191,6 +192,7 @@ export const InboxListRow = ({
             <StyledTitle isUnread={inboxItem.isUnread}>
               {inboxItem.title}
             </StyledTitle>
+            <InboxItemAssignee inboxItem={inboxItem} />
             <StyledLastEventAt className="inbox-list-row-last-event-at">
               {beautifyPastDateRelativeToNowShort(inboxItem.lastEventAt)}
             </StyledLastEventAt>

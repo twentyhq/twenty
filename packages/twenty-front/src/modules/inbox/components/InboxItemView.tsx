@@ -9,6 +9,7 @@ import { Button, LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemSubjectChip } from '@/inbox/components/InboxItemSubjectChip';
+import { InboxItemAssignee } from '@/inbox/components/InboxItemAssignee';
 import { InboxListRowButtons } from '@/inbox/components/InboxListRowButtons';
 import { InboxPlanActionsSummary } from '@/inbox/components/InboxPlanActionsSummary';
 import { InboxPlanEntityGraph } from '@/inbox/components/InboxPlanEntityGraph';
@@ -299,6 +300,7 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
       </StyledScroll>
 
       <StyledFooter>
+        <InboxItemAssignee inboxItem={inboxItem} hasName />
         <InboxListRowButtons inboxItem={inboxItem} />
         <StyledFooterEnd>
           {isDone ? (

@@ -41,8 +41,11 @@ export const NavigationDrawerInboxContent = () => {
 
   return (
     <StyledContainer>
+      {/* Everything addressed to you, whether it was taken from a shared inbox
+          or sent straight here. Not a queue, which is why it is not named
+          after one. */}
       <NavigationDrawerSection>
-        <NavigationDrawerSectionTitle label={t`Triage`} />
+        <NavigationDrawerSectionTitle label={t`Mine`} />
         {INBOX_SECTIONS.map((inboxSection) => {
           const sectionPath = getInboxSectionPath(inboxSection);
           const count = getSectionCount(inboxSection.scope);

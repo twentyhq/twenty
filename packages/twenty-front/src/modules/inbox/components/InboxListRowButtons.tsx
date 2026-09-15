@@ -34,6 +34,9 @@ export const InboxListRowButtons = ({
     return null;
   }
 
+  const isAssignedToSomeoneElse =
+    isDefined(inboxItem.assigneeUserWorkspaceId) && !inboxItem.isAssignedToMe;
+
   const toggleOwnership = () =>
     void assignInboxItem({
       inboxItemId: inboxItem.id,
@@ -43,13 +46,27 @@ export const InboxListRowButtons = ({
       enqueueErrorSnackBar({ message: t`That could not be applied` }),
     );
 
+  // Taking work a colleague already holds is a different act from picking up
+  // something nobody has, so it does not borrow the same word.
+  const getOwnershipLabel = () => {
+    if (inboxItem.isAssignedToMe) {
+      return t`Give back`;
+    }
+
+    return isAssignedToSomeoneElse ? t`Take over` : t`Take`;
+  };
+
   return (
     <StyledButtons>
       <Button
-        accent={inboxItem.isAssignedToMe ? 'default' : 'blue'}
+        accent={
+          inboxItem.isAssignedToMe || isAssignedToSomeoneElse
+            ? 'default'
+            : 'blue'
+        }
         onClick={toggleOwnership}
         size="small"
-        title={inboxItem.isAssignedToMe ? t`Give back` : t`Take`}
+        title={getOwnershipLabel()}
         variant="secondary"
       />
     </StyledButtons>
