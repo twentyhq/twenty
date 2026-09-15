@@ -1,7 +1,7 @@
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
-import { Chip } from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import { MultiItemFieldMenuItem } from './MultiItemFieldMenuItem';
 
 type FilesFieldMenuItemProps = {

@@ -1,0 +1,1 @@
+export const RECALL_REGION_ENV_VAR_NAME = 'RECALL_REGION';

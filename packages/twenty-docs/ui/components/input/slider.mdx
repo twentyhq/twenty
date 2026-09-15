@@ -3,14 +3,22 @@ title: Slider
 description: Choose a numeric value or range with draggable, keyboard-accessible thumbs.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import SliderReference from '/snippets/ui/generated/input/slider.mdx';
 
 `Slider` supports a single number or an array of numbers for a range. Compose its label, track, indicator, and thumbs inside `Root`.
 
+<StoryEmbed
+  storyId="ui-input-slider--default"
+  title="Slider example"
+  height={240}
+/>
+
 ## Single value
 
 ```tsx
-import { Slider } from 'twenty-ui/input';
+import { Slider } from 'twenty-ui/primitives/input';
 
 export const VolumeSlider = () => (
   <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
@@ -31,7 +39,7 @@ Use `value` and `onValueChange` for controlled state. `onValueCommitted` handles
 ## Range
 
 ```tsx
-import { Slider } from 'twenty-ui/input';
+import { Slider } from 'twenty-ui/primitives/input';
 
 export const PriceRange = () => (
   <Slider.Root

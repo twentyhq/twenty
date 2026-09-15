@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, MetadataReadability } from 'twenty-shared/types';
 
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
@@ -15,6 +15,8 @@ const PERSON_OBJECT_ID = 'person-object-id';
 const WORKSPACE_MEMBER_OBJECT_ID = 'workspace-member-object-id';
 const TARGET_MORPH_ID = 'target-morph-id';
 const OTHER_MORPH_ID = 'other-morph-id';
+const NOTE_ATTACHMENTS_FIELD_ID = 'note-attachments-field-id';
+const TARGET_NOTE_FIELD_ID = 'target-note-field-id';
 
 const buildManyToOneField = ({
   id,
@@ -22,6 +24,7 @@ const buildManyToOneField = ({
   type,
   objectMetadataId,
   relationTargetObjectMetadataId,
+  relationTargetFieldMetadataId,
   morphId,
 }: {
   id: string;
@@ -29,6 +32,7 @@ const buildManyToOneField = ({
   type: FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION;
   objectMetadataId: string;
   relationTargetObjectMetadataId: string;
+  relationTargetFieldMetadataId?: string;
   morphId?: string;
 }) =>
   getFlatFieldMetadataMock({
@@ -38,6 +42,7 @@ const buildManyToOneField = ({
     universalIdentifier: `${id}-universal-identifier`,
     objectMetadataId,
     relationTargetObjectMetadataId,
+    relationTargetFieldMetadataId: relationTargetFieldMetadataId ?? null,
     morphId: morphId ?? null,
     settings: {
       relationType: RelationType.MANY_TO_ONE,
@@ -46,11 +51,12 @@ const buildManyToOneField = ({
   } as Parameters<typeof getFlatFieldMetadataMock>[0]);
 
 const targetNoteField = buildManyToOneField({
-  id: 'target-note-field-id',
+  id: TARGET_NOTE_FIELD_ID,
   name: 'targetNote',
   type: FieldMetadataType.MORPH_RELATION,
   objectMetadataId: ATTACHMENT_OBJECT_ID,
   relationTargetObjectMetadataId: NOTE_OBJECT_ID,
+  relationTargetFieldMetadataId: NOTE_ATTACHMENTS_FIELD_ID,
   morphId: TARGET_MORPH_ID,
 });
 
@@ -81,12 +87,13 @@ const authorField = buildManyToOneField({
 });
 
 const noteAttachmentsField = getFlatFieldMetadataMock({
-  id: 'note-attachments-field-id',
+  id: NOTE_ATTACHMENTS_FIELD_ID,
   name: 'attachments',
   type: FieldMetadataType.RELATION,
-  universalIdentifier: 'note-attachments-field-id-universal-identifier',
+  universalIdentifier: `${NOTE_ATTACHMENTS_FIELD_ID}-universal-identifier`,
   objectMetadataId: NOTE_OBJECT_ID,
   relationTargetObjectMetadataId: ATTACHMENT_OBJECT_ID,
+  relationTargetFieldMetadataId: TARGET_NOTE_FIELD_ID,
   settings: { relationType: RelationType.ONE_TO_MANY },
 } as Parameters<typeof getFlatFieldMetadataMock>[0]);
 
@@ -129,13 +136,42 @@ const buildFlatEntityMaps = <T extends FlatFieldMetadata | FlatObjectMetadata>(
   universalIdentifiersByApplicationId: {},
 });
 
-const buildObjectMetadataMaps = () =>
+const buildAttachmentObject = (
+  readabilityParentFieldUniversalIdentifiers: string[] | null,
+) =>
+  getFlatObjectMetadataMock({
+    id: ATTACHMENT_OBJECT_ID,
+    universalIdentifier: 'attachment-object-universal-identifier',
+    nameSingular: 'attachment',
+    fieldIds: attachmentFields.map((field) => field.id),
+    readabilityParentFieldUniversalIdentifiers,
+  });
+
+const buildNoteObject = ({
+  readability,
+  readabilityParentFieldUniversalIdentifiers,
+}: {
+  readability: MetadataReadability;
+  readabilityParentFieldUniversalIdentifiers: string[] | null;
+}) =>
+  getFlatObjectMetadataMock({
+    id: NOTE_OBJECT_ID,
+    universalIdentifier: 'note-object-universal-identifier',
+    nameSingular: 'note',
+    fieldIds: [noteAttachmentsField.id],
+    readability,
+    readabilityParentFieldUniversalIdentifiers,
+  });
+
+const buildObjectMetadataMaps = ({
+  noteFlatObjectMetadata = buildNoteObject({
+    readability: MetadataReadability.OPEN,
+    readabilityParentFieldUniversalIdentifiers: null,
+  }),
+}: { noteFlatObjectMetadata?: FlatObjectMetadata } = {}) =>
   buildFlatEntityMaps([
-    getFlatObjectMetadataMock({
-      id: NOTE_OBJECT_ID,
-      universalIdentifier: 'note-object-universal-identifier',
-      nameSingular: 'note',
-    }),
+    buildAttachmentObject(null),
+    noteFlatObjectMetadata,
     getFlatObjectMetadataMock({
       id: PERSON_OBJECT_ID,
       universalIdentifier: 'person-object-universal-identifier',
@@ -148,39 +184,88 @@ const buildObjectMetadataMaps = () =>
     }),
   ]);
 
-const resolve = (readabilityParentFieldUniversalIdentifiers: string[]) =>
+const describeParent = (
+  parent: ReturnType<typeof resolveInheritedReadabilityParents>[number],
+) =>
+  parent.kind === 'column'
+    ? {
+        kind: parent.kind,
+        joinColumnName: parent.joinColumnName,
+        parentNameSingular: parent.parentFlatObjectMetadata.nameSingular,
+      }
+    : {
+        kind: parent.kind,
+        childJoinColumnName: parent.childJoinColumnName,
+        childNameSingular: parent.childFlatObjectMetadata.nameSingular,
+      };
+
+const resolveForAttachment = (
+  readabilityParentFieldUniversalIdentifiers: string[],
+) =>
   resolveInheritedReadabilityParents({
-    flatObjectMetadata: getFlatObjectMetadataMock({
-      id: ATTACHMENT_OBJECT_ID,
-      universalIdentifier: 'attachment-object-universal-identifier',
-      nameSingular: 'attachment',
-      fieldIds: attachmentFields.map((field) => field.id),
+    flatObjectMetadata: buildAttachmentObject(
       readabilityParentFieldUniversalIdentifiers,
-    }),
+    ),
     flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
     flatObjectMetadataMaps: buildObjectMetadataMaps(),
-  }).map(({ joinColumnName, parentFlatObjectMetadata }) => ({
-    joinColumnName,
-    parentNameSingular: parentFlatObjectMetadata.nameSingular,
-  }));
+  }).map(describeParent);
 
 describe('resolveInheritedReadabilityParents', () => {
   it('should resolve a declared plain relation field to its join column and parent', () => {
-    expect(resolve([authorField.universalIdentifier])).toEqual([
-      { joinColumnName: 'authorId', parentNameSingular: 'workspaceMember' },
+    expect(resolveForAttachment([authorField.universalIdentifier])).toEqual([
+      {
+        kind: 'column',
+        joinColumnName: 'authorId',
+        parentNameSingular: 'workspaceMember',
+      },
     ]);
   });
 
   it('should expand a declared morph relation field to every field sharing its morph id', () => {
-    expect(resolve([targetNoteField.universalIdentifier])).toEqual([
-      { joinColumnName: 'targetNoteId', parentNameSingular: 'note' },
-      { joinColumnName: 'targetPersonId', parentNameSingular: 'person' },
+    expect(resolveForAttachment([targetNoteField.universalIdentifier])).toEqual(
+      [
+        {
+          kind: 'column',
+          joinColumnName: 'targetNoteId',
+          parentNameSingular: 'note',
+        },
+        {
+          kind: 'column',
+          joinColumnName: 'targetPersonId',
+          parentNameSingular: 'person',
+        },
+      ],
+    );
+  });
+
+  it('should resolve a declared one-to-many field to the child object and its join column', () => {
+    const noteFlatObjectMetadata = buildNoteObject({
+      readability: MetadataReadability.INHERITED,
+      readabilityParentFieldUniversalIdentifiers: [
+        noteAttachmentsField.universalIdentifier,
+      ],
+    });
+
+    expect(
+      resolveInheritedReadabilityParents({
+        flatObjectMetadata: noteFlatObjectMetadata,
+        flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
+        flatObjectMetadataMaps: buildObjectMetadataMaps({
+          noteFlatObjectMetadata,
+        }),
+      }).map(describeParent),
+    ).toEqual([
+      {
+        kind: 'children',
+        childJoinColumnName: 'targetNoteId',
+        childNameSingular: 'attachment',
+      },
     ]);
   });
 
-  it('should ignore declared fields that are not to-one relations of the object', () => {
+  it('should ignore declared fields that are not relations of the object', () => {
     expect(
-      resolve([
+      resolveForAttachment([
         nameField.universalIdentifier,
         noteAttachmentsField.universalIdentifier,
         'unknown-universal-identifier',
@@ -191,12 +276,7 @@ describe('resolveInheritedReadabilityParents', () => {
   it('should resolve nothing when no parent field is declared', () => {
     expect(
       resolveInheritedReadabilityParents({
-        flatObjectMetadata: getFlatObjectMetadataMock({
-          id: ATTACHMENT_OBJECT_ID,
-          universalIdentifier: 'attachment-object-universal-identifier',
-          fieldIds: attachmentFields.map((field) => field.id),
-          readabilityParentFieldUniversalIdentifiers: null,
-        }),
+        flatObjectMetadata: buildAttachmentObject(null),
         flatFieldMetadataMaps: buildFlatEntityMaps(allFields),
         flatObjectMetadataMaps: buildObjectMetadataMaps(),
       }),

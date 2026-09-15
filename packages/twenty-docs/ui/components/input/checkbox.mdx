@@ -3,14 +3,22 @@ title: Checkbox
 description: Select independent options with checked and indeterminate states.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import CheckboxReference from '/snippets/ui/generated/input/checkbox.mdx';
 
 Use `Checkbox` when each option can be selected independently. For a mutually exclusive choice, use [RadioGroup](/ui/components/input/radio-group).
 
+<StoryEmbed
+  storyId="ui-input-checkbox-checkbox--default"
+  title="Checkbox example"
+  height={240}
+/>
+
 ## Uncontrolled state
 
 ```tsx
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 export const EmailPreference = () => (
   <label>
@@ -26,7 +34,7 @@ A checked, named checkbox contributes its value to a form. Set `uncheckedValue` 
 
 ```tsx
 import { useState } from 'react';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 export const ColumnSelection = () => {
   const [showEmail, setShowEmail] = useState(true);

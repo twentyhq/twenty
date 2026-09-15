@@ -6,7 +6,7 @@ import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 import { IconAddressBook, IconPencil } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCanvas = styled.div`

@@ -3,15 +3,23 @@ title: Toast
 description: Display status messages with optional details, actions, and progress.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import ToastReference from '/snippets/ui/generated/feedback/toast.mdx';
 
 `Toast` renders one notification. Your application controls when it appears, its position, and when it is removed.
+
+<StoryEmbed
+  storyId="ui-feedback-toast--documentation"
+  title="Toast example"
+  height={240}
+/>
 
 ## Dismissible notification
 
 ```tsx
 import { useState } from 'react';
-import { Toast } from 'twenty-ui/feedback';
+import { Toast } from 'twenty-ui/primitives/feedback';
 
 export const SaveNotification = () => {
   const [visible, setVisible] = useState(false);
@@ -41,7 +49,7 @@ export const SaveNotification = () => {
 ## Progress and cancellation
 
 ```tsx
-import { Toast } from 'twenty-ui/feedback';
+import { Toast } from 'twenty-ui/primitives/feedback';
 
 type ImportProgressProps = { progress: number; onCancel: () => void };
 

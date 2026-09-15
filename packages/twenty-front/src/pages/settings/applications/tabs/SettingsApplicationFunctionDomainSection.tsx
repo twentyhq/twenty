@@ -5,9 +5,9 @@ import { SettingsPublicDomainsListCard } from '@/settings/domains/components/Set
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { IconCopy } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContent = styled.div`

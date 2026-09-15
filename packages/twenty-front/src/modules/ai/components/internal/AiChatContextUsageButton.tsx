@@ -3,8 +3,8 @@ import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui/layout';
-import { ProgressBar } from 'twenty-ui/feedback';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';

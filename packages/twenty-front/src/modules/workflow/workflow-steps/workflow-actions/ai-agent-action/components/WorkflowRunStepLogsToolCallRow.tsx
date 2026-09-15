@@ -13,8 +13,8 @@ import {
   IconChevronUp,
   IconCircleX,
 } from 'twenty-ui/icon';
-import { JsonTree } from 'twenty-ui/json-visualizer';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { JsonTree } from 'twenty-ui/primitives/json-visualizer';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
