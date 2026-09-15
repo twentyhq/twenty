@@ -17,19 +17,21 @@ const StyledLabel = styled(Text)`
 type SettingsTableFirstColumnProps = {
   label: string;
   tooltipContent?: string;
+  isFocusable?: boolean;
 };
 
 export const SettingsTableFirstColumn = ({
   label,
   tooltipContent,
+  isFocusable = false,
 }: SettingsTableFirstColumnProps) => (
   <StyledLabel>
     <OverflowingTextWithTooltip
-      text={label}
-      tooltipContent={tooltipContent}
+      text={<>{label}</>}
+      tooltipContent={tooltipContent ?? label}
       tooltipPlace={TooltipPosition.Top}
       alwaysShowTooltip={isDefined(tooltipContent)}
-      isFocusable
+      isFocusable={isFocusable}
     />
   </StyledLabel>
 );

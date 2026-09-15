@@ -116,6 +116,7 @@ export const SettingsAdminSigningKeysTable = () => {
                 <TableCell overflow="hidden" gap={themeCssVariables.spacing[1]}>
                   <SettingsTableFirstColumn
                     label={signingKey.id}
+                    isFocusable
                     tooltipContent={t`Created on ${beautifyExactDateTime(signingKey.createdAt)}`}
                   />
                   <Button
