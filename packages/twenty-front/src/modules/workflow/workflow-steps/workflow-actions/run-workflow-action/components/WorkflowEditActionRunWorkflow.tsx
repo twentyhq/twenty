@@ -113,7 +113,7 @@ export const WorkflowEditActionRunWorkflow = ({
           onChange={handleWorkflowChange}
           disabled={actionOptions.readonly}
           emptyOption={{
-            label: t`No other workflows available`,
+            label: t`Select a workflow`,
             value: '',
           }}
         />
