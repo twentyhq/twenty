@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -9,7 +10,6 @@ import { useUpsertFieldPermissionInDraftRole } from '@/settings/roles/role-permi
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { styled } from '@linaria/react';
 import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
@@ -22,14 +22,6 @@ import {
 
 export const FIELD_PERMISSION_TABLE_ROW_GRID_TEMPLATE_COLUMNS =
   '180px minmax(0, 1fr) 60px 60px';
-
-const StyledNameLabel = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  user-select: none;
-
-  white-space: nowrap;
-`;
 
 type SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRowProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -166,9 +158,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTableRow =
               stroke={theme.icon.stroke.sm}
             />
           )}
-          <StyledNameLabel title={fieldMetadataItem.label}>
-            {fieldMetadataItem.label}
-          </StyledNameLabel>
+          <SettingsTableFirstColumn label={fieldMetadataItem.label} />
         </TableCell>
         <TableCell>
           <SettingsObjectFieldDataType

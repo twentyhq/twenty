@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsAdminDeleteJobsConfirmationModal } from '@/settings/admin-panel/health-status/components/SettingsAdminDeleteJobsConfirmationModal';
 import { SettingsAdminJobDetailsExpandable } from '@/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable';
@@ -318,7 +319,7 @@ export const SettingsAdminQueueJobsTable = ({
                         textOverflow="ellipsis"
                         whiteSpace="nowrap"
                       >
-                        {job.name}
+                        <SettingsTableFirstColumn label={job.name} />
                       </TableCell>
                       <TableCell>
                         <SettingsAdminJobStateBadge

@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useUpsertObjectPermission } from '@/settings/roles/role-permissions/object-level-permissions/hooks/useUpsertObjectPermission';
 import { OverridableCheckbox } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/OverridableCheckbox';
 import { objectPermissionKeyToHumanReadable } from '@/settings/roles/role-permissions/object-level-permissions/utils/objectPermissionKeyToHumanReadableText';
@@ -20,10 +21,6 @@ const StyledPermissionContent = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   white-space: nowrap;
-`;
-
-const StyledPermissionLabel = styled.span`
-  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledOverrideInfo = styled.div`
@@ -138,7 +135,7 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow =
               permission={permission.key as SettingsRoleObjectPermissionKey}
               state={isRevoked ? 'revoked' : 'granted'}
             />
-            <StyledPermissionLabel>{label}</StyledPermissionLabel>
+            <SettingsTableFirstColumn label={label} />
           </StyledPermissionContent>
           <StyledOverrideInfo>
             {isRevoked ? (

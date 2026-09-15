@@ -1,11 +1,10 @@
-import { styled } from '@linaria/react';
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { type ReactNode, useContext } from 'react';
 
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type Skill } from '~/generated-metadata/graphql';
@@ -15,12 +14,6 @@ export type SettingsSkillTableRowProps = {
   action?: ReactNode;
   link?: string;
 };
-
-const StyledIconContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-`;
 
 export const SettingsSkillTableRow = ({
   skill,
@@ -44,10 +37,12 @@ export const SettingsSkillTableRow = ({
         minWidth="0"
         overflow="hidden"
       >
-        <StyledIconContainer>
-          <Icon size={theme.icon.size.md} color={theme.color.blue9} />
-        </StyledIconContainer>
-        <OverflowingTextWithTooltip text={skill.label} />
+        <SettingsTableFirstColumn
+          label={skill.label}
+          leadingContent={
+            <Icon size={theme.icon.size.md} color={theme.color.blue9} />
+          }
+        />
       </TableCell>
       <TableCell>
         <SettingsItemTypeTag item={skill} />

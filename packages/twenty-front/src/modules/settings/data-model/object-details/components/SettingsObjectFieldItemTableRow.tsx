@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useDeleteOneFieldMetadataItem } from '@/object-metadata/hooks/useDeleteOneFieldMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
@@ -51,12 +52,6 @@ const StyledNameContainer = styled.div`
   flex: 1;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
-`;
-
-const StyledNameLabel = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 `;
 
 const StyledIconChevronRightContainer = styled.span`
@@ -186,9 +181,7 @@ export const SettingsObjectFieldItemTableRow = ({
             />
           )}
           <StyledNameContainer>
-            <StyledNameLabel title={fieldMetadataItem.label}>
-              {fieldMetadataItem.label}
-            </StyledNameLabel>
+            <SettingsTableFirstColumn label={fieldMetadataItem.label} />
             {!fieldMetadataItem.isActive && (
               <SettingsNameCellSecondaryLabel>
                 {t`Deactivated`}

@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -24,7 +25,6 @@ import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam'
 import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/data-display';
 import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 import { IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -49,12 +49,6 @@ const StyledTableContainer = styled.div`
   > div {
     border-bottom: 1px solid ${themeCssVariables.border.color.light};
   }
-`;
-
-const StyledIconWrapper = styled.div`
-  align-items: center;
-  display: flex;
-  margin-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTextContainerWithEllipsis = styled.div`
@@ -172,24 +166,14 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     key={workspaceInvitation.id}
                   >
                     <TableCell minWidth="0" overflow="hidden">
-                      <StyledIconWrapper>
-                        <IconMail
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
-                        />
-                      </StyledIconWrapper>
-                      <StyledTextContainerWithEllipsis
-                        id={`invitation-email-${workspaceInvitation.id}`}
-                      >
-                        {workspaceInvitation.email}
-                      </StyledTextContainerWithEllipsis>
-                      <AppTooltip
-                        anchorSelect={`#invitation-email-${workspaceInvitation.id}`}
-                        title={workspaceInvitation.email}
-                        noArrow
-                        place="top"
-                        positionStrategy="fixed"
-                        delay={TooltipDelay.shortDelay}
+                      <SettingsTableFirstColumn
+                        label={workspaceInvitation.email}
+                        leadingContent={
+                          <IconMail
+                            size={theme.icon.size.md}
+                            stroke={theme.icon.stroke.sm}
+                          />
+                        }
                       />
                     </TableCell>
                     <TableCell minWidth="0" overflow="hidden">

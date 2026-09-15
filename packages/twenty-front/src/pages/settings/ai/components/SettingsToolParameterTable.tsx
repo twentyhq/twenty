@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -19,11 +20,7 @@ import {
   IllustrationIconText,
   IllustrationIconToggle,
 } from 'twenty-ui/icon';
-import {
-  AppTooltip,
-  OverflowingTextWithTooltip,
-  TooltipDelay,
-} from 'twenty-ui/surfaces';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { Button } from 'twenty-ui/input';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -134,7 +131,7 @@ export const SettingsToolParameterTable = ({
                     textOverflow="ellipsis"
                     whiteSpace="nowrap"
                   >
-                    <OverflowingTextWithTooltip text={paramName} />
+                    <SettingsTableFirstColumn label={paramName} />
                   </TableCell>
                   <TableCell gap={themeCssVariables.spacing[1]}>
                     {isDefined(TypeIcon) && (

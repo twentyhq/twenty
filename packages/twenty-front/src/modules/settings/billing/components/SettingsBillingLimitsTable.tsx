@@ -42,12 +42,6 @@ const StyledNameContainer = styled.div`
   min-width: 0;
 `;
 
-const StyledNameIcon = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex-shrink: 0;
-`;
-
 const StyledUsed = styled.div`
   align-items: center;
   display: flex;
@@ -83,14 +77,16 @@ const NameCell = ({ item }: { item: UsageLimitRow }) => {
 
   return (
     <StyledCell>
-      <StyledNameIcon>
-        <item.NameIcon
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.sm}
-        />
-      </StyledNameIcon>
       <StyledNameContainer>
-        <SettingsTableFirstColumn label={item.name} />
+        <SettingsTableFirstColumn
+          label={item.name}
+          leadingContent={
+            <item.NameIcon
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+          }
+        />
         {!item.isEnforced && (
           <>
             <SettingsNameCellSecondaryLabel id={deactivatedAnchorId}>

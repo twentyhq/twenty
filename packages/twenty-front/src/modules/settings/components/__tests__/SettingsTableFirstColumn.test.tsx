@@ -14,7 +14,10 @@ describe('SettingsTableFirstColumn', () => {
     render(
       <MemoryRouter>
         <TableRow to="/settings/api-keys/key-id">
-          <SettingsTableFirstColumn label={LABEL} />
+          <SettingsTableFirstColumn
+            label={LABEL}
+            leadingContent={<span aria-hidden="true">Icon</span>}
+          />
         </TableRow>
         <button>Next action</button>
       </MemoryRouter>,

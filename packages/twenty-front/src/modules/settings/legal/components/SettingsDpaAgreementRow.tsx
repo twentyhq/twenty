@@ -1,4 +1,4 @@
-import { styled } from '@linaria/react';
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useLingui } from '@lingui/react/macro';
 import { Button } from 'twenty-ui/input';
 import { IconDownload } from 'twenty-ui/icon';
@@ -9,12 +9,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { beautifyExactDateTime } from '~/utils/date-utils';
 
 export const DPA_AGREEMENT_ROW_GRID_COLUMNS = '3fr 2fr 2fr 140px';
-
-const StyledEllipsisLabel = styled.div`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
 
 type SettingsDpaAgreementRowProps = {
   agreement: DpaAgreement;
@@ -35,7 +29,7 @@ export const SettingsDpaAgreementRow = ({
   return (
     <TableRow gridAutoColumns={DPA_AGREEMENT_ROW_GRID_COLUMNS}>
       <TableCell whiteSpace="nowrap" overflow="hidden" textOverflow="ellipsis">
-        <StyledEllipsisLabel>{label}</StyledEllipsisLabel>
+        <SettingsTableFirstColumn label={label} />
       </TableCell>
       <TableCell>{agreement.templateVersion}</TableCell>
       <TableCell>{beautifyExactDateTime(agreement.acceptedAt)}</TableCell>

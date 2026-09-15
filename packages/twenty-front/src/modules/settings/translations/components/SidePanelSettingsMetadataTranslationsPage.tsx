@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
 import { MetadataTranslationValueCell } from '@/settings/translations/components/MetadataTranslationValueCell';
 import {
@@ -127,7 +128,9 @@ export const SidePanelSettingsMetadataTranslationsPage = () => {
                     key={`${property}:${locale}`}
                     gridAutoColumns={TRANSLATIONS_ROW_GRID_TEMPLATE_COLUMNS}
                   >
-                    <TableCell>{localeLabel}</TableCell>
+                    <TableCell>
+                      <SettingsTableFirstColumn label={localeLabel} />
+                    </TableCell>
                     <TableCell>
                       <MetadataTranslationValueCell
                         row={row}

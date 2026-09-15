@@ -1,9 +1,8 @@
-import { styled } from '@linaria/react';
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { type ReactNode } from 'react';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { StyledNameTableCell } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { AppChip } from '@/applications/components/AppChip';
@@ -17,12 +16,6 @@ export type SettingsToolTableRowProps = {
 };
 
 export const TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 100px 36px';
-
-const StyledIconContainer = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-`;
 
 export const SettingsToolTableRow = ({
   leftIcon,
@@ -42,8 +35,7 @@ export const SettingsToolTableRow = ({
         minWidth="0"
         overflow="hidden"
       >
-        <StyledIconContainer>{leftIcon}</StyledIconContainer>
-        <OverflowingTextWithTooltip text={name} />
+        <SettingsTableFirstColumn label={name} leadingContent={leftIcon} />
       </TableCell>
       <StyledNameTableCell minWidth="0" overflow="hidden">
         <AppChip applicationId={applicationId} />

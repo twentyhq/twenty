@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import styled from '@emotion/styled';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -8,7 +9,6 @@ import { Avatar } from 'twenty-ui/data-display';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -169,14 +169,16 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
                   gap={themeCssVariables.spacing[2]}
                   overflow="hidden"
                 >
-                  <Avatar
-                    src={getAbsoluteImageUrl(workspace.logo ?? undefined)}
-                    name={workspace.displayName ?? '—'}
-                    colorSeed={workspace.id}
-                    size="md"
-                  />
-                  <OverflowingTextWithTooltip
-                    text={workspace.displayName ?? '—'}
+                  <SettingsTableFirstColumn
+                    label={workspace.displayName ?? '—'}
+                    leadingContent={
+                      <Avatar
+                        src={getAbsoluteImageUrl(workspace.logo ?? undefined)}
+                        name={workspace.displayName ?? '—'}
+                        colorSeed={workspace.id}
+                        size="md"
+                      />
+                    }
                   />
                 </TableCell>
                 <TableCell

@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -70,8 +71,12 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
       >
         <TableCell>
           <StyledNameCell>
-            <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-            {role.label}
+            <SettingsTableFirstColumn
+              label={role.label}
+              leadingContent={
+                <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+              }
+            />
             {!role.isEditable && (
               <StyledIconLockContainer>
                 <IconLock

@@ -1,3 +1,4 @@
+import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -50,7 +51,9 @@ export const SettingsAdminApplicationRegistrationClaims = ({
               gridAutoColumns={CLAIMS_TABLE_GRID}
             >
               <TableCell overflow="hidden">
-                {claim.workspaceDisplayName ?? claim.workspaceId}
+                <SettingsTableFirstColumn
+                  label={claim.workspaceDisplayName ?? claim.workspaceId}
+                />
               </TableCell>
               <TableCell>
                 <Tag color="green">{t`Owner`}</Tag>
