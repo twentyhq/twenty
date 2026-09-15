@@ -26,9 +26,9 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-const MAX_SLUG_ATTEMPTS = 3;
+const MAX_NAME_ATTEMPTS = 3;
 
-export const DEFAULT_INBOX_QUEUE_SLUG = 'triage';
+export const DEFAULT_INBOX_QUEUE_NAME = 'triage';
 
 @Injectable()
 export class InboxQueueService {
@@ -122,18 +122,18 @@ export class InboxQueueService {
 
     return this.inboxQueueRepository.find(workspaceId, {
       where: { id: In(queueIds) },
-      order: { name: 'ASC' },
+      order: { label: 'ASC' },
     });
   }
 
-  async findAccessibleQueueBySlug({
+  async findAccessibleQueueByName({
     workspaceId,
     userWorkspaceId,
-    slug,
+    name,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-    slug: string;
+    name: string;
   }): Promise<InboxQueueEntity | null> {
     const queueIds = await this.findAccessibleQueueIds({
       workspaceId,
@@ -145,7 +145,7 @@ export class InboxQueueService {
     }
 
     return this.inboxQueueRepository.findOne(workspaceId, {
-      where: { id: In(queueIds), slug },
+      where: { id: In(queueIds), name },
     });
   }
 
@@ -164,8 +164,8 @@ export class InboxQueueService {
 
     try {
       return await this.inboxQueueRepository.insertAndReturnOne(workspaceId, {
-        name: 'Triage',
-        slug: DEFAULT_INBOX_QUEUE_SLUG,
+        label: 'Triage',
+        name: DEFAULT_INBOX_QUEUE_NAME,
         icon: 'IconInbox',
         isDefault: true,
       });
@@ -190,7 +190,7 @@ export class InboxQueueService {
     workspaceId: string;
   }): Promise<InboxQueueEntity[]> {
     return this.inboxQueueRepository.find(workspaceId, {
-      order: { isDefault: 'DESC', name: 'ASC' },
+      order: { isDefault: 'DESC', label: 'ASC' },
     });
   }
 
@@ -212,21 +212,21 @@ export class InboxQueueService {
 
   async createQueue({
     workspaceId,
-    name,
+    label,
     icon,
     roleIds,
   }: {
     workspaceId: string;
-    name: string;
+    label: string;
     icon?: string | null;
     roleIds: string[];
   }): Promise<InboxQueueEntity> {
     // Checked before the insert so a bad grant cannot leave an orphan queue.
     await this.assertRolesBelongToWorkspace({ workspaceId, roleIds });
 
-    const queue = await this.insertQueueWithAvailableSlug({
+    const queue = await this.insertQueueWithAvailableName({
       workspaceId,
-      name,
+      label,
       icon,
     });
 
@@ -239,22 +239,22 @@ export class InboxQueueService {
     return queue;
   }
 
-  // Two admins creating queues with the same name at once can both pick the
-  // same free slug; the unique index arbitrates and the loser tries the next.
-  private async insertQueueWithAvailableSlug({
+  // Two admins creating queues with the same label at once can both pick the
+  // same free name; the unique index arbitrates and the loser tries the next.
+  private async insertQueueWithAvailableName({
     workspaceId,
-    name,
+    label,
     icon,
   }: {
     workspaceId: string;
-    name: string;
+    label: string;
     icon?: string | null;
   }): Promise<InboxQueueEntity> {
-    for (let attempt = 0; attempt < MAX_SLUG_ATTEMPTS; attempt += 1) {
+    for (let attempt = 0; attempt < MAX_NAME_ATTEMPTS; attempt += 1) {
       try {
         return await this.inboxQueueRepository.insertAndReturnOne(workspaceId, {
-          name,
-          slug: await this.buildAvailableSlug({ workspaceId, name }),
+          label,
+          name: await this.buildAvailableName({ workspaceId, label }),
           icon: icon ?? null,
           isDefault: false,
         });
@@ -266,22 +266,22 @@ export class InboxQueueService {
     }
 
     throw new InboxException(
-      `Could not find an available address for inbox queue ${name}`,
+      `Could not find an available address for inbox queue ${label}`,
       InboxExceptionCode.INTERNAL_SERVER_ERROR,
     );
   }
 
-  // The slug is not regenerated on rename: it is in the URL of every link and
-  // bookmark to the queue, so the display name moves and the address does not.
+  // The name is not regenerated on rename: it is in the URL of every link and
+  // bookmark to the queue, so the display label moves and the address does not.
   async updateQueue({
     workspaceId,
     queueId,
-    name,
+    label,
     icon,
   }: {
     workspaceId: string;
     queueId: string;
-    name?: string;
+    label?: string;
     icon?: string | null;
   }): Promise<InboxQueueEntity> {
     const queue = await this.findQueueOrThrow({ workspaceId, queueId });
@@ -290,7 +290,7 @@ export class InboxQueueService {
       workspaceId,
       { id: queue.id },
       {
-        ...(isDefined(name) ? { name } : {}),
+        ...(isDefined(label) ? { label } : {}),
         ...(icon === undefined ? {} : { icon }),
       },
     );
@@ -473,36 +473,36 @@ export class InboxQueueService {
     }
   }
 
-  // Two queues can share a display name, but not an address, and the triage
+  // Two queues can share a display label, but not an address, and the triage
   // address stays reserved even before triage is created on demand.
-  private async buildAvailableSlug({
+  private async buildAvailableName({
     workspaceId,
-    name,
+    label,
   }: {
     workspaceId: string;
-    name: string;
+    label: string;
   }): Promise<string> {
-    const baseSlug = getSubdomainSlugFromDisplayName(name) ?? 'inbox';
+    const baseName = getSubdomainSlugFromDisplayName(label) ?? 'inbox';
 
-    const takenSlugs = new Set([
-      DEFAULT_INBOX_QUEUE_SLUG,
+    const takenNames = new Set([
+      DEFAULT_INBOX_QUEUE_NAME,
       ...(
         await this.inboxQueueRepository.find(workspaceId, {
-          select: { slug: true },
+          select: { name: true },
         })
-      ).map((queue) => queue.slug),
+      ).map((queue) => queue.name),
     ]);
 
-    if (!takenSlugs.has(baseSlug)) {
-      return baseSlug;
+    if (!takenNames.has(baseName)) {
+      return baseName;
     }
 
     let suffix = 2;
 
-    while (takenSlugs.has(`${baseSlug}-${suffix}`)) {
+    while (takenNames.has(`${baseName}-${suffix}`)) {
       suffix += 1;
     }
 
-    return `${baseSlug}-${suffix}`;
+    return `${baseName}-${suffix}`;
   }
 }

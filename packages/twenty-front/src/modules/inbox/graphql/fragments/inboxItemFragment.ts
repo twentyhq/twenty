@@ -58,7 +58,7 @@ export const INBOX_ITEM_FRAGMENT = gql`
     }
     inboxItemType {
       id
-      key
+      name
       label
       icon
     }

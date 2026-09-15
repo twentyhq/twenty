@@ -32,8 +32,8 @@ export enum AppPath {
   InboxPage = '/inbox',
   InboxSectionPage = '/inbox/:inboxSectionSlug',
   InboxItemPage = '/inbox/:inboxSectionSlug/:inboxItemId',
-  InboxQueuePage = '/inbox/q/:inboxQueueSlug',
-  InboxQueueItemPage = '/inbox/q/:inboxQueueSlug/:inboxItemId',
+  InboxQueuePage = '/inbox/q/:inboxQueueName',
+  InboxQueueItemPage = '/inbox/q/:inboxQueueName/:inboxItemId',
 
   Settings = `settings`,
   SettingsCatchAll = `/${Settings}/*`,

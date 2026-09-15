@@ -6,7 +6,7 @@ export const workflowCreateInboxItemActionSettingsSchema =
     input: z.object({
       title: z.string(),
       summary: z.string().optional(),
-      typeKey: z.string(),
+      typeName: z.string(),
       queueId: z.string().optional(),
       assigneeWorkspaceMemberId: z.string().optional(),
       priority: z.enum(['NEEDS_ACTION', 'UPDATE']).optional(),

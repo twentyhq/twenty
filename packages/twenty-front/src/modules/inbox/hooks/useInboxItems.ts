@@ -19,20 +19,20 @@ import {
 // extra item is requested to tell "exactly a full page" from "there is more".
 type UseInboxItemsParams = {
   scope?: InboxItemScope;
-  queueSlug?: string;
+  queueName?: string;
   assignment?: InboxQueueAssignment;
 };
 
 export const useInboxItems = ({
   scope,
-  queueSlug,
+  queueName,
   assignment,
 }: UseInboxItemsParams = {}) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
   // The grown page belongs to one view, so switching section, queue or
   // assignment starts again from the first page.
-  const viewKey = `${scope ?? ''}|${queueSlug ?? ''}|${assignment ?? ''}`;
+  const viewKey = `${scope ?? ''}|${queueName ?? ''}|${assignment ?? ''}`;
   const [pagination, setPagination] = useState({
     viewKey,
     limit: INBOX_ITEMS_PAGE_SIZE,
@@ -51,13 +51,13 @@ export const useInboxItems = ({
     { myInboxItems: InboxItem[] },
     {
       scope?: InboxItemScope;
-      queueSlug?: string;
+      queueName?: string;
       assignment?: InboxQueueAssignment;
       limit: number;
     }
   >(GET_MY_INBOX_ITEMS, {
     client: apolloCoreClient,
-    variables: { scope, queueSlug, assignment, limit: limit + 1 },
+    variables: { scope, queueName, assignment, limit: limit + 1 },
     pollInterval: INBOX_ITEMS_POLL_INTERVAL,
     skipPollAttempt: shouldSkipInboxPoll,
     skip: !isInboxEnabled,

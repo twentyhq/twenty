@@ -5,8 +5,8 @@ import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
 
 export const getInboxListKey = ({
   inboxSectionSlug,
-  inboxQueueSlug,
+  inboxQueueName,
 }: InboxListLocation): string =>
-  isDefined(inboxQueueSlug)
-    ? `queue:${inboxQueueSlug}`
+  isDefined(inboxQueueName)
+    ? `queue:${inboxQueueName}`
     : `section:${inboxSectionSlug ?? DEFAULT_INBOX_SECTION.slug}`;

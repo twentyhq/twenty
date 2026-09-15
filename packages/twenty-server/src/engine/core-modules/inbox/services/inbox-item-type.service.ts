@@ -26,32 +26,32 @@ export class InboxItemTypeService {
     private readonly inboxQueueService: InboxQueueService,
   ) {}
 
-  async findByKey({
+  async findByName({
     workspaceId,
-    key,
+    name,
   }: {
     workspaceId: string;
-    key: string;
+    name: string;
   }): Promise<InboxItemTypeEntity | null> {
     const existingType = await this.inboxItemTypeRepository.findOne(
       workspaceId,
-      { where: { key, deletedAt: IsNull() } },
+      { where: { name, deletedAt: IsNull() } },
     );
 
     if (isDefined(existingType)) {
       return existingType;
     }
 
-    // Only a standard key can be missing because seeding has not run; an
-    // unknown key would pay for a seed on every call and still return nothing.
-    if (!STANDARD_INBOX_ITEM_TYPES.some((type) => type.key === key)) {
+    // Only a standard name can be missing because seeding has not run; an
+    // unknown one would pay for a seed on every call and still return nothing.
+    if (!STANDARD_INBOX_ITEM_TYPES.some((type) => type.name === name)) {
       return null;
     }
 
     await this.seedStandardTypes({ workspaceId });
 
     return this.inboxItemTypeRepository.findOne(workspaceId, {
-      where: { key, deletedAt: IsNull() },
+      where: { name, deletedAt: IsNull() },
     });
   }
 
@@ -134,13 +134,13 @@ export class InboxItemTypeService {
       STANDARD_INBOX_ITEM_TYPES.map((standardType) => ({
         applicationId: twentyStandardApplication.id,
         universalIdentifier: standardType.universalIdentifier,
-        key: standardType.key,
+        name: standardType.name,
         label: standardType.label,
         icon: standardType.icon,
         defaultPriority: standardType.defaultPriority,
         // A standard type that was soft deleted comes back on the next seed.
         // Leaving deletedAt set would strand it: every read filters it out, so
-        // findByKey would re-seed and still find nothing, on every call.
+        // findByName would re-seed and still find nothing, on every call.
         deletedAt: null,
       })),
       { conflictPaths: ['workspaceId', 'universalIdentifier'] },

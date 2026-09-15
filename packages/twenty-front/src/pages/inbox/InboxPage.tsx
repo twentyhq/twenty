@@ -112,25 +112,25 @@ export const InboxPage = () => {
   );
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
-  const { inboxSectionSlug, inboxQueueSlug, inboxItemId } = useParams<{
+  const { inboxSectionSlug, inboxQueueName, inboxItemId } = useParams<{
     inboxSectionSlug?: string;
-    inboxQueueSlug?: string;
+    inboxQueueName?: string;
     inboxItemId?: string;
   }>();
   const { getIcon } = useIcons();
   const { inboxQueues } = useInboxQueues({ isPolling: true });
 
-  const inboxQueue = inboxQueues.find((queue) => queue.slug === inboxQueueSlug);
+  const inboxQueue = inboxQueues.find((queue) => queue.name === inboxQueueName);
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
   const QueueIcon = getIcon(inboxQueue?.icon);
-  const SectionIcon = isDefined(inboxQueueSlug) ? QueueIcon : inboxSection.Icon;
+  const SectionIcon = isDefined(inboxQueueName) ? QueueIcon : inboxSection.Icon;
   const inboxSectionSlugToUse = inboxSection.slug;
   const inboxListLocation = useMemo<InboxListLocation>(
     () =>
-      isDefined(inboxQueueSlug)
-        ? { inboxQueueSlug }
+      isDefined(inboxQueueName)
+        ? { inboxQueueName }
         : { inboxSectionSlug: inboxSectionSlugToUse },
-    [inboxQueueSlug, inboxSectionSlugToUse],
+    [inboxQueueName, inboxSectionSlugToUse],
   );
 
   const {
@@ -141,15 +141,15 @@ export const InboxPage = () => {
     hasMoreItems,
     loadMoreItems,
   } = useInboxItems({
-    scope: isDefined(inboxQueueSlug)
+    scope: isDefined(inboxQueueName)
       ? InboxItemScope.INBOX
       : inboxSection.scope,
-    queueSlug: inboxQueueSlug,
-    assignment: isDefined(inboxQueueSlug) ? queueAssignment : undefined,
+    queueName: inboxQueueName,
+    assignment: isDefined(inboxQueueName) ? queueAssignment : undefined,
   });
   const { openInboxItem } = useOpenInboxItem(inboxListLocation);
   const shouldSplitByPriority =
-    isDefined(inboxQueueSlug) || inboxSection.scope === InboxItemScope.INBOX;
+    isDefined(inboxQueueName) || inboxSection.scope === InboxItemScope.INBOX;
 
   const openItem = (inboxItem: InboxItem) =>
     openInboxItem(
@@ -176,7 +176,7 @@ export const InboxPage = () => {
               icon={<SectionIcon size={theme.icon.size.md} />}
               title={inboxQueue?.name ?? t(inboxSection.label)}
               actionButton={
-                isDefined(inboxQueueSlug) && (
+                isDefined(inboxQueueName) && (
                   <SegmentedControl
                     ariaLabel={t`Filter this shared inbox`}
                     itemWidth="content"
@@ -209,7 +209,7 @@ export const InboxPage = () => {
                   selectedInboxItemId={inboxItemId ?? null}
                   hasMoreItems={hasMoreItems}
                   shouldSplitByPriority={shouldSplitByPriority}
-                  isSharedInboxList={isDefined(inboxQueueSlug)}
+                  isSharedInboxList={isDefined(inboxQueueName)}
                   onInboxItemClick={openItem}
                   onLoadMoreItems={loadMoreItems}
                 />

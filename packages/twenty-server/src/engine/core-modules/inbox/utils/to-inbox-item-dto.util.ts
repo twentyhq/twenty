@@ -63,7 +63,7 @@ export const toInboxItemDto = (
     id: inboxItem.id,
     inboxItemType: {
       id: inboxItemType.id,
-      key: inboxItemType.key,
+      name: inboxItemType.name,
       label: inboxItemType.label,
       icon: inboxItemType.icon,
     },

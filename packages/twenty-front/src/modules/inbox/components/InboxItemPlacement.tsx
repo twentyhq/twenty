@@ -48,7 +48,7 @@ export const InboxItemPlacement = ({ inboxItem }: InboxItemPlacementProps) => {
     { value: PERSONAL_QUEUE_VALUE, label: t`No shared inbox`, Icon: IconUser },
     ...inboxQueues.map((inboxQueue) => ({
       value: inboxQueue.id,
-      label: inboxQueue.name,
+      label: inboxQueue.label,
       Icon: getIcon(inboxQueue.icon),
     })),
   ];

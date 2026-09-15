@@ -62,7 +62,7 @@ export class InboxRouterService {
 
   async route(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
     return this.bestEffort(
-      `route inbox item of type ${args.typeKey}`,
+      `route inbox item of type ${args.typeName}`,
       args.workspaceId,
       async () => {
         if (!(await this.isInboxEnabled(args.workspaceId))) {
@@ -86,7 +86,7 @@ export class InboxRouterService {
 
     if (!isDefined(item)) {
       throw new InboxException(
-        `Failed to route inbox item of type ${args.typeKey}`,
+        `Failed to route inbox item of type ${args.typeName}`,
         InboxExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
@@ -95,14 +95,14 @@ export class InboxRouterService {
   }
 
   async routeItem(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
-    const inboxItemType = await this.inboxItemTypeService.findByKey({
+    const inboxItemType = await this.inboxItemTypeService.findByName({
       workspaceId: args.workspaceId,
-      key: args.typeKey,
+      name: args.typeName,
     });
 
     if (!isDefined(inboxItemType)) {
       throw new InboxException(
-        `Unknown inbox item type ${args.typeKey}`,
+        `Unknown inbox item type ${args.typeName}`,
         InboxExceptionCode.UNKNOWN_INBOX_ITEM_TYPE,
       );
     }

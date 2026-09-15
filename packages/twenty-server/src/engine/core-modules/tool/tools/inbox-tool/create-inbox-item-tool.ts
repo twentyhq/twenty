@@ -52,7 +52,7 @@ export class CreateInboxItemTool implements Tool {
       const inboxItem = await this.inboxRouterService.routeOrThrow({
         workspaceId: context.workspaceId,
         producer: 'inboxTool',
-        typeKey: parameters.typeKey,
+        typeName: parameters.typeName,
         title: parameters.title,
         ...(isDefined(parameters.summary)
           ? { summary: parameters.summary }

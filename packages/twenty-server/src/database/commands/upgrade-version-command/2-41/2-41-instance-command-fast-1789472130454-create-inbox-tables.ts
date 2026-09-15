@@ -21,7 +21,7 @@ export class CreateInboxTablesFastInstanceCommand
         "workspaceId" uuid NOT NULL,
         "universalIdentifier" uuid NOT NULL,
         "applicationId" uuid NOT NULL,
-        "key" character varying NOT NULL,
+        "name" character varying NOT NULL,
         "label" character varying NOT NULL,
         "icon" character varying,
         "defaultPriority" "core"."inboxItemType_defaultpriority_enum" NOT NULL DEFAULT 'UPDATE',
@@ -38,8 +38,8 @@ export class CreateInboxTablesFastInstanceCommand
     );
 
     await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_TYPE_KEY_WORKSPACE_ID_UNIQUE"
-        ON "core"."inboxItemType" ("key", "workspaceId")`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_TYPE_NAME_WORKSPACE_ID_UNIQUE"
+        ON "core"."inboxItemType" ("name", "workspaceId")`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_TYPE_WORKSPACE_ID_UNIVERSAL_IDENTIFIER_UNIQUE"
@@ -57,7 +57,7 @@ export class CreateInboxTablesFastInstanceCommand
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "workspaceId" uuid NOT NULL,
         "name" character varying NOT NULL,
-        "slug" character varying NOT NULL,
+        "label" character varying NOT NULL,
         "icon" character varying,
         "isDefault" boolean NOT NULL DEFAULT false,
         "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -68,8 +68,8 @@ export class CreateInboxTablesFastInstanceCommand
       )`,
     );
     await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_QUEUE_WORKSPACE_ID_SLUG_UNIQUE"
-        ON "core"."inboxQueue" ("workspaceId", "slug")`,
+      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_QUEUE_WORKSPACE_ID_NAME_UNIQUE"
+        ON "core"."inboxQueue" ("workspaceId", "name")`,
     );
     await queryRunner.query(
       `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_QUEUE_WORKSPACE_ID_DEFAULT_UNIQUE"

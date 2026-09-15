@@ -72,14 +72,14 @@ export const useInboxSettings = () => {
   );
 
   const createInboxQueue = useCallback(
-    async (input: { name: string; icon?: string; roleIds: string[] }) => {
+    async (input: { label: string; icon?: string; roleIds: string[] }) => {
       await createInboxQueueMutation({ variables: { input } });
     },
     [createInboxQueueMutation],
   );
 
   const updateInboxQueue = useCallback(
-    async (input: { queueId: string; name?: string; icon?: string }) => {
+    async (input: { queueId: string; label?: string; icon?: string }) => {
       await updateInboxQueueMutation({ variables: { input } });
     },
     [updateInboxQueueMutation],

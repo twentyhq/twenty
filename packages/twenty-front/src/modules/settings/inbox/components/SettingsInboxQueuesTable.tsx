@@ -66,12 +66,12 @@ export const SettingsInboxQueuesTable = ({
               <TableCell>
                 <StyledName>
                   <QueueIcon size={16} />
-                  {inboxQueue.name}
+                  {inboxQueue.label}
                 </StyledName>
               </TableCell>
               <TableCell>
                 <StyledAddress>
-                  {getInboxQueuePath(inboxQueue.slug)}
+                  {getInboxQueuePath(inboxQueue.name)}
                 </StyledAddress>
               </TableCell>
               <TableCell>

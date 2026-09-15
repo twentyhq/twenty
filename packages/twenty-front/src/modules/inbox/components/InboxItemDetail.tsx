@@ -94,8 +94,8 @@ export const InboxItemDetail = ({
   const { hasPrevious, hasNext, position, total, goToPrevious, goToNext } =
     useInboxItemPagination({ inboxListLocation, inboxItemId });
 
-  const listPath = isDefined(inboxListLocation.inboxQueueSlug)
-    ? getInboxQueuePath(inboxListLocation.inboxQueueSlug)
+  const listPath = isDefined(inboxListLocation.inboxQueueName)
+    ? getInboxQueuePath(inboxListLocation.inboxQueueName)
     : getAppPath(AppPath.InboxSectionPage, {
         inboxSectionSlug: inboxListLocation.inboxSectionSlug ?? '',
       });

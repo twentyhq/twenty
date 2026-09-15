@@ -6,7 +6,7 @@ import { IsNull } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
-  INBOX_ITEM_TYPE_KEY,
+  INBOX_ITEM_TYPE_NAME,
   STANDARD_INBOX_ITEM_TYPES,
 } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
@@ -21,7 +21,7 @@ const QUEUE_ID = 'inbox-queue-id';
 const existingType = {
   id: 'inbox-item-type-id',
   workspaceId: WORKSPACE_ID,
-  key: INBOX_ITEM_TYPE_KEY.conversation,
+  name: INBOX_ITEM_TYPE_NAME.conversation,
 } as InboxItemTypeEntity;
 
 describe('InboxItemTypeService', () => {
@@ -76,11 +76,11 @@ describe('InboxItemTypeService', () => {
     expect(service).toBeDefined();
   });
 
-  describe('findByKey', () => {
+  describe('findByName', () => {
     it('should return the existing type without seeding when the key already exists', async () => {
-      const result = await service.findByKey({
+      const result = await service.findByName({
         workspaceId: WORKSPACE_ID,
-        key: INBOX_ITEM_TYPE_KEY.conversation,
+        name: INBOX_ITEM_TYPE_NAME.conversation,
       });
 
       expect(result).toEqual(existingType);
@@ -89,7 +89,7 @@ describe('InboxItemTypeService', () => {
         WORKSPACE_ID,
         {
           where: {
-            key: INBOX_ITEM_TYPE_KEY.conversation,
+            name: INBOX_ITEM_TYPE_NAME.conversation,
             deletedAt: IsNull(),
           },
         },
@@ -103,9 +103,9 @@ describe('InboxItemTypeService', () => {
         .mockResolvedValueOnce(null)
         .mockResolvedValueOnce(existingType);
 
-      const result = await service.findByKey({
+      const result = await service.findByName({
         workspaceId: WORKSPACE_ID,
-        key: INBOX_ITEM_TYPE_KEY.conversation,
+        name: INBOX_ITEM_TYPE_NAME.conversation,
       });
 
       expect(inboxItemTypeRepository.upsert).toHaveBeenCalledTimes(1);
@@ -116,9 +116,9 @@ describe('InboxItemTypeService', () => {
     it('should not seed for a key that is not a standard type', async () => {
       inboxItemTypeRepository.findOne.mockResolvedValue(null);
 
-      const result = await service.findByKey({
+      const result = await service.findByName({
         workspaceId: WORKSPACE_ID,
-        key: 'not_a_standard_type',
+        name: 'not_a_standard_type',
       });
 
       expect(result).toBeNull();
@@ -147,11 +147,11 @@ describe('InboxItemTypeService', () => {
         expect.arrayContaining([
           expect.objectContaining({
             applicationId: APPLICATION_ID,
-            key: INBOX_ITEM_TYPE_KEY.conversation,
+            name: INBOX_ITEM_TYPE_NAME.conversation,
           }),
           expect.objectContaining({
             applicationId: APPLICATION_ID,
-            key: INBOX_ITEM_TYPE_KEY.workflowRunFailed,
+            name: INBOX_ITEM_TYPE_NAME.workflowRunFailed,
           }),
         ]),
       );
@@ -163,7 +163,7 @@ describe('InboxItemTypeService', () => {
     });
 
     // A standard type that was soft deleted is stranded without this: every read
-    // filters on deletedAt, so findByKey would re-seed and still find nothing
+    // filters on deletedAt, so findByName would re-seed and still find nothing
     it('should clear deletedAt so a soft deleted standard type comes back', async () => {
       await service.seedStandardTypes({ workspaceId: WORKSPACE_ID });
 

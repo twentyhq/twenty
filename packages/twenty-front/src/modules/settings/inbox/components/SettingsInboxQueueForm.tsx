@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { INBOX_QUEUE_NAME_MAX_LENGTH } from 'twenty-shared/constants';
+import { INBOX_QUEUE_LABEL_MAX_LENGTH } from 'twenty-shared/constants';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/primitives/typography';
@@ -20,13 +20,13 @@ const StyledNameInput = styled.div`
 `;
 
 export type InboxQueueDraft = {
-  name: string;
+  label: string;
   icon: string;
   roleIds: string[];
 };
 
-// The address is derived from the name once and then never moves, so it is not
-// editable here.
+// The address is derived from the label once and then never moves, so it is
+// not editable here.
 export const SettingsInboxQueueForm = ({
   draft,
   onChange,
@@ -50,10 +50,10 @@ export const SettingsInboxQueueForm = ({
           />
           <StyledNameInput>
             <TextInput
-              value={draft.name}
-              onChange={(name) => onChange({ ...draft, name })}
+              value={draft.label}
+              onChange={(label) => onChange({ ...draft, label })}
               placeholder={t`Support`}
-              maxLength={INBOX_QUEUE_NAME_MAX_LENGTH}
+              maxLength={INBOX_QUEUE_LABEL_MAX_LENGTH}
               fullWidth
             />
           </StyledNameInput>

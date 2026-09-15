@@ -6,11 +6,11 @@ import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
 
 export const getInboxItemPath = ({
   inboxSectionSlug,
-  inboxQueueSlug,
+  inboxQueueName,
   inboxItemId,
 }: InboxListLocation & { inboxItemId: string }): string =>
-  isDefined(inboxQueueSlug)
-    ? getAppPath(AppPath.InboxQueueItemPage, { inboxQueueSlug, inboxItemId })
+  isDefined(inboxQueueName)
+    ? getAppPath(AppPath.InboxQueueItemPage, { inboxQueueName, inboxItemId })
     : getAppPath(AppPath.InboxItemPage, {
         inboxSectionSlug: inboxSectionSlug ?? DEFAULT_INBOX_SECTION.slug,
         inboxItemId,

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
+import { INBOX_ITEM_TYPE_NAME } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 
 type ThreadContext = {
@@ -27,7 +27,7 @@ export class AgentChatInboxService {
     await this.inboxRouterService.route({
       workspaceId,
       producer: 'agentChat',
-      typeKey: INBOX_ITEM_TYPE_KEY.conversation,
+      typeName: INBOX_ITEM_TYPE_NAME.conversation,
       title,
       subject: {
         kind: 'thread',
@@ -50,9 +50,9 @@ export class AgentChatInboxService {
     await this.inboxRouterService.route({
       workspaceId,
       producer: 'agentChat',
-      typeKey: hasPendingQuestion
-        ? INBOX_ITEM_TYPE_KEY.agentQuestion
-        : INBOX_ITEM_TYPE_KEY.conversation,
+      typeName: hasPendingQuestion
+        ? INBOX_ITEM_TYPE_NAME.agentQuestion
+        : INBOX_ITEM_TYPE_NAME.conversation,
       ...(isDefined(summary) ? { summary } : {}),
       subject: {
         kind: 'thread',
@@ -91,7 +91,7 @@ export class AgentChatInboxService {
     await this.inboxRouterService.route({
       workspaceId,
       producer: 'agentChat',
-      typeKey: INBOX_ITEM_TYPE_KEY.agentRunFailed,
+      typeName: INBOX_ITEM_TYPE_NAME.agentRunFailed,
       ...(isNonEmptyString(errorMessage) ? { summary: errorMessage } : {}),
       subject: {
         kind: 'thread',

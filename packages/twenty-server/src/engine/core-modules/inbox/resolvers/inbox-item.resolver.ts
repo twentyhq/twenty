@@ -75,8 +75,8 @@ export class InboxItemResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @Args('scope', { type: () => InboxItemScope, nullable: true })
     scope?: InboxItemScope,
-    @Args('queueSlug', { type: () => String, nullable: true })
-    queueSlug?: string,
+    @Args('queueName', { type: () => String, nullable: true })
+    queueName?: string,
     // Only read for a queue, where it defaults to what nobody has taken.
     @Args('assignment', { type: () => InboxQueueAssignment, nullable: true })
     assignment?: InboxQueueAssignment,
@@ -90,7 +90,7 @@ export class InboxItemResolver {
       readScope: await this.resolveReadScope({
         workspaceId,
         userWorkspaceId,
-        queueSlug,
+        queueName,
         assignment,
       }),
       scope: scope ?? InboxItemScope.INBOX,
@@ -130,8 +130,8 @@ export class InboxItemResolver {
   async myInboxCounts(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Args('queueSlug', { type: () => String, nullable: true })
-    queueSlug?: string,
+    @Args('queueName', { type: () => String, nullable: true })
+    queueName?: string,
     @Args('assignment', { type: () => InboxQueueAssignment, nullable: true })
     assignment?: InboxQueueAssignment,
   ): Promise<InboxCountsDTO> {
@@ -141,7 +141,7 @@ export class InboxItemResolver {
       readScope: await this.resolveReadScope({
         workspaceId,
         userWorkspaceId,
-        queueSlug,
+        queueName,
         assignment,
       }),
       now: new Date(),
@@ -173,7 +173,7 @@ export class InboxItemResolver {
       return {
         id: queue.id,
         name: queue.name,
-        slug: queue.slug,
+        label: queue.label,
         icon: queue.icon,
         unread: counts?.unread ?? 0,
         needsAction: counts?.needsAction ?? 0,
@@ -311,27 +311,27 @@ export class InboxItemResolver {
   private async resolveReadScope({
     workspaceId,
     userWorkspaceId,
-    queueSlug,
+    queueName,
     assignment,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
-    queueSlug?: string;
+    queueName?: string;
     assignment?: InboxQueueAssignment;
   }): Promise<InboxReadScope> {
-    if (!isDefined(queueSlug)) {
+    if (!isDefined(queueName)) {
       return { kind: 'personal' };
     }
 
-    const queue = await this.inboxQueueService.findAccessibleQueueBySlug({
+    const queue = await this.inboxQueueService.findAccessibleQueueByName({
       workspaceId,
       userWorkspaceId,
-      slug: queueSlug,
+      name: queueName,
     });
 
     if (!isDefined(queue)) {
       throw new InboxException(
-        `Unknown inbox queue ${queueSlug}`,
+        `Unknown inbox queue ${queueName}`,
         InboxExceptionCode.UNKNOWN_INBOX_QUEUE,
       );
     }

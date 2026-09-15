@@ -20,7 +20,7 @@ export const SettingsInboxQueueNew = () => {
   const { createInboxQueue } = useInboxSettings();
 
   const [draft, setDraft] = useState<InboxQueueDraft>({
-    name: '',
+    label: '',
     icon: 'IconInbox',
     roleIds: [],
   });
@@ -33,7 +33,7 @@ export const SettingsInboxQueueNew = () => {
 
     try {
       await createInboxQueue({
-        name: draft.name.trim(),
+        label: draft.label.trim(),
         icon: draft.icon,
         roleIds: draft.roleIds,
       });
@@ -58,7 +58,7 @@ export const SettingsInboxQueueNew = () => {
         <SaveAndCancelButtons
           onSave={handleSave}
           onCancel={goBack}
-          isSaveDisabled={draft.name.trim().length === 0}
+          isSaveDisabled={draft.label.trim().length === 0}
           isLoading={isSaving}
         />
       }

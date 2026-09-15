@@ -37,7 +37,7 @@ const toInboxItemTypeSettingsDto = (
   inboxItemType: InboxItemTypeEntity,
 ): InboxItemTypeSettingsDTO => ({
   id: inboxItemType.id,
-  key: inboxItemType.key,
+  name: inboxItemType.name,
   label: inboxItemType.label,
   icon: inboxItemType.icon,
   defaultQueueId: inboxItemType.defaultQueueId,
@@ -86,7 +86,7 @@ export class InboxSettingsResolver {
     const roleIds = input.roleIds ?? [];
     const queue = await this.inboxQueueService.createQueue({
       workspaceId: workspace.id,
-      name: input.name,
+      label: input.label,
       icon: input.icon,
       roleIds,
     });
@@ -102,7 +102,7 @@ export class InboxSettingsResolver {
     const queue = await this.inboxQueueService.updateQueue({
       workspaceId: workspace.id,
       queueId: input.queueId,
-      name: input.name,
+      label: input.label,
       icon: input.icon,
     });
 
@@ -179,7 +179,7 @@ export class InboxSettingsResolver {
     return {
       id: queue.id,
       name: queue.name,
-      slug: queue.slug,
+      label: queue.label,
       icon: queue.icon,
       isDefault: queue.isDefault,
       roleIds,

@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
+import { INBOX_ITEM_TYPE_NAME } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { AgentChatInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox.service';
 
@@ -42,7 +42,7 @@ describe('AgentChatInboxService', () => {
       expect(inboxRouterService.route).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeKey: INBOX_ITEM_TYPE_KEY.agentRunFailed,
+        typeName: INBOX_ITEM_TYPE_NAME.agentRunFailed,
         summary: 'The model stopped responding',
         subject: {
           kind: 'thread',
@@ -77,7 +77,7 @@ describe('AgentChatInboxService', () => {
 
       expect(inboxRouterService.route).toHaveBeenCalledWith(
         expect.objectContaining({
-          typeKey: INBOX_ITEM_TYPE_KEY.agentQuestion,
+          typeName: INBOX_ITEM_TYPE_NAME.agentQuestion,
         }),
       );
     });
@@ -92,7 +92,7 @@ describe('AgentChatInboxService', () => {
 
       expect(inboxRouterService.route).toHaveBeenCalledWith(
         expect.objectContaining({
-          typeKey: INBOX_ITEM_TYPE_KEY.conversation,
+          typeName: INBOX_ITEM_TYPE_NAME.conversation,
         }),
       );
     });

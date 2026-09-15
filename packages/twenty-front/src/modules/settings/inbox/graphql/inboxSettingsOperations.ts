@@ -4,7 +4,7 @@ const INBOX_QUEUE_SETTINGS_FRAGMENT = gql`
   fragment InboxQueueSettingsFields on InboxQueueSettings {
     id
     name
-    slug
+    label
     icon
     isDefault
     roleIds
@@ -14,7 +14,7 @@ const INBOX_QUEUE_SETTINGS_FRAGMENT = gql`
 const INBOX_ITEM_TYPE_SETTINGS_FRAGMENT = gql`
   fragment InboxItemTypeSettingsFields on InboxItemTypeSettings {
     id
-    key
+    name
     label
     icon
     defaultQueueId

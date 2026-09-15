@@ -84,8 +84,8 @@ describe('InboxQueueService', () => {
     inboxQueueRepository.find.mockResolvedValue([]);
     inboxQueueRepository.findOne.mockResolvedValue({
       id: QUEUE_ID,
-      name: 'Support',
-      slug: 'support',
+      label: 'Support',
+      name: 'support',
       isDefault: false,
     });
     inboxQueueRepository.insertAndReturnOne.mockImplementation(
@@ -140,61 +140,61 @@ describe('InboxQueueService', () => {
   });
 
   describe('createQueue', () => {
-    it('should derive an address from the name', async () => {
+    it('should derive an address from the label', async () => {
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
-        name: 'Customer Support',
+        label: 'Customer Support',
         roleIds: [],
       });
 
       expect(inboxQueueRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ slug: 'customer-support', isDefault: false }),
+        expect.objectContaining({ name: 'customer-support', isDefault: false }),
       );
     });
 
     it('should keep the triage address free before triage exists', async () => {
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
-        name: 'Triage',
+        label: 'Triage',
         roleIds: [],
       });
 
       expect(inboxQueueRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ slug: 'triage-2', isDefault: false }),
+        expect.objectContaining({ name: 'triage-2', isDefault: false }),
       );
     });
 
     // Two teams can both call their inbox "Support"; they cannot both own /q/support
     it('should not reuse an address another queue already holds', async () => {
       inboxQueueRepository.find.mockResolvedValue([
-        { slug: 'support' },
-        { slug: 'support-2' },
+        { name: 'support' },
+        { name: 'support-2' },
       ]);
 
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
-        name: 'Support',
+        label: 'Support',
         roleIds: [],
       });
 
       expect(inboxQueueRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ slug: 'support-3' }),
+        expect.objectContaining({ name: 'support-3' }),
       );
     });
 
-    it('should still find an address for a name that slugifies to nothing', async () => {
+    it('should still find an address for a label that slugifies to nothing', async () => {
       await service.createQueue({
         workspaceId: WORKSPACE_ID,
-        name: '🚀',
+        label: '🚀',
         roleIds: [],
       });
 
       expect(inboxQueueRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ slug: 'inbox' }),
+        expect.objectContaining({ name: 'inbox' }),
       );
     });
   });
@@ -361,17 +361,17 @@ describe('InboxQueueService', () => {
   });
 
   describe('updateQueue', () => {
-    // The slug is in every link to the queue, so renaming must not move it
-    it('should leave the address alone when the name changes', async () => {
+    // The name is in every link to the queue, so renaming must not move it
+    it('should leave the address alone when the label changes', async () => {
       await service.updateQueue({
         workspaceId: WORKSPACE_ID,
         queueId: QUEUE_ID,
-        name: 'Customer Support',
+        label: 'Customer Support',
       });
 
       const [, , partialUpdate] = inboxQueueRepository.update.mock.calls[0];
 
-      expect(partialUpdate).toEqual({ name: 'Customer Support' });
+      expect(partialUpdate).toEqual({ label: 'Customer Support' });
     });
   });
 });

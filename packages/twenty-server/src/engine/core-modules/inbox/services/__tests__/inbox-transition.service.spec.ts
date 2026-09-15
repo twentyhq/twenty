@@ -19,7 +19,7 @@ const NOW = new Date('2026-08-07T10:00:00.000Z');
 
 const APPROVAL_TYPE = {
   id: 'approval-type-id',
-  key: 'approval',
+  name: 'approval',
 } as InboxItemTypeEntity;
 
 const buildInboxItem = (

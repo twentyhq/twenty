@@ -5,7 +5,7 @@ export const GET_MY_INBOX_QUEUES = gql`
     myInboxQueues {
       id
       name
-      slug
+      label
       icon
       unread
       needsAction

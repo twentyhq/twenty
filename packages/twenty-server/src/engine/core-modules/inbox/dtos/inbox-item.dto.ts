@@ -73,7 +73,7 @@ export class InboxItemTypeDTO {
   id: string;
 
   @Field(() => String)
-  key: string;
+  name: string;
 
   @Field(() => String)
   label: string;
@@ -91,7 +91,7 @@ export class InboxQueueDTO {
   name: string;
 
   @Field(() => String)
-  slug: string;
+  label: string;
 
   @Field(() => String, { nullable: true })
   icon: string | null;

@@ -44,7 +44,7 @@ export const SettingsInboxRoutingTable = ({
       .filter((inboxQueue) => !inboxQueue.isDefault)
       .map((inboxQueue) => ({
         value: inboxQueue.id,
-        label: inboxQueue.name,
+        label: inboxQueue.label,
       })),
   ];
 

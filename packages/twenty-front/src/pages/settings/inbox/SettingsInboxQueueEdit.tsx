@@ -55,7 +55,7 @@ export const SettingsInboxQueueEdit = () => {
     : isDefined(editedQueue) && editedQueue.queueId === inboxQueue.id
       ? editedQueue.draft
       : {
-          name: inboxQueue.name,
+          label: inboxQueue.label,
           icon: inboxQueue.icon ?? 'IconInbox',
           roleIds: inboxQueue.roleIds,
         };
@@ -92,7 +92,7 @@ export const SettingsInboxQueueEdit = () => {
     try {
       await updateInboxQueue({
         queueId: inboxQueue.id,
-        name: draft.name.trim(),
+        label: draft.label.trim(),
         icon: draft.icon,
       });
       await setInboxQueueRoles({
@@ -125,20 +125,20 @@ export const SettingsInboxQueueEdit = () => {
 
   return (
     <SettingsPageLayout
-      title={inboxQueue.name}
+      title={inboxQueue.label}
       links={[
         { children: t`Workspace`, href: getSettingsPath(SettingsPath.General) },
         {
           children: t`Communication`,
           href: getSettingsPath(SettingsPath.WorkspaceCommunications),
         },
-        { children: inboxQueue.name },
+        { children: inboxQueue.label },
       ]}
       actionButton={
         <SaveAndCancelButtons
           onSave={handleSave}
           onCancel={goBack}
-          isSaveDisabled={draft.name.trim().length === 0}
+          isSaveDisabled={draft.label.trim().length === 0}
           isLoading={isSaving}
         />
       }
@@ -169,7 +169,7 @@ export const SettingsInboxQueueEdit = () => {
       </SettingsPageContainer>
       <ConfirmationModal
         modalInstanceId={DELETE_INBOX_QUEUE_MODAL_ID}
-        title={t`Delete ${inboxQueue.name}`}
+        title={t`Delete ${inboxQueue.label}`}
         subtitle={t`Everyone loses access to this inbox. Work still in it moves to Triage.`}
         onConfirmClick={handleDelete}
         confirmButtonText={t`Delete`}

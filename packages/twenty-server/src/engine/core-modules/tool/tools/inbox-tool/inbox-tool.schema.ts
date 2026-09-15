@@ -50,7 +50,7 @@ export const CreateInboxItemToolInputZodSchema = z.object({
     .string()
     .describe('A short second line giving context under the title')
     .optional(),
-  typeKey: z
+  typeName: z
     .string()
     .describe(
       'The kind of work this is, used for its icon and routing. One of: approval, conversation, agent_question, workflow_run_failed, agent_plan.',

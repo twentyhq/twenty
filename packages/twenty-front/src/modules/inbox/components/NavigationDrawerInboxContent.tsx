@@ -68,12 +68,12 @@ export const NavigationDrawerInboxContent = () => {
         <NavigationDrawerSection>
           <NavigationDrawerSectionTitle label={t`Shared`} />
           {inboxQueues.map((inboxQueue) => {
-            const queuePath = getInboxQueuePath(inboxQueue.slug);
+            const queuePath = getInboxQueuePath(inboxQueue.name);
 
             return (
               <NavigationDrawerItem
                 key={inboxQueue.id}
-                label={inboxQueue.name}
+                label={inboxQueue.label}
                 Icon={getIcon(inboxQueue.icon)}
                 to={queuePath}
                 active={isMatchingPathname(location.pathname, `${queuePath}/*`)}

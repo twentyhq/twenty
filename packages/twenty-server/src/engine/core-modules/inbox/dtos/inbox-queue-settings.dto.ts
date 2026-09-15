@@ -13,7 +13,7 @@ export class InboxQueueSettingsDTO {
   name: string;
 
   @Field(() => String)
-  slug: string;
+  label: string;
 
   @Field(() => String, { nullable: true })
   icon: string | null;
@@ -33,7 +33,7 @@ export class InboxItemTypeSettingsDTO {
   id: string;
 
   @Field(() => String)
-  key: string;
+  name: string;
 
   @Field(() => String)
   label: string;

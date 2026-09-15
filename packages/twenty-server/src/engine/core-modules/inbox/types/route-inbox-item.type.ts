@@ -24,7 +24,7 @@ export type InboxPrincipalRef =
 
 export type RouteInboxItemArgs = {
   workspaceId: string;
-  typeKey: string;
+  typeName: string;
   // Every producer names itself, so a row can always be traced back to what
   // wrote it and a bad producer is identifiable from the data.
   producer: InboxItemProducer;

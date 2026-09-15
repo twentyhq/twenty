@@ -24,9 +24,13 @@ import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,
 })
-@Index('IDX_INBOX_ITEM_TYPE_KEY_WORKSPACE_ID_UNIQUE', ['key', 'workspaceId'], {
-  unique: true,
-})
+@Index(
+  'IDX_INBOX_ITEM_TYPE_NAME_WORKSPACE_ID_UNIQUE',
+  ['name', 'workspaceId'],
+  {
+    unique: true,
+  },
+)
 @Index('IDX_INBOX_ITEM_TYPE_APPLICATION_ID', ['applicationId'])
 @Index(
   'IDX_INBOX_ITEM_TYPE_WORKSPACE_ID_UNIVERSAL_IDENTIFIER_UNIQUE',
@@ -63,7 +67,7 @@ export class InboxItemTypeEntity {
   application: EntityRelation<ApplicationEntity>;
 
   @Column({ nullable: false, type: 'varchar' })
-  key: string;
+  name: string;
 
   @Column({ nullable: false, type: 'varchar' })
   label: string;

@@ -7,16 +7,16 @@ import { shouldSkipInboxPoll } from '@/inbox/utils/shouldSkipInboxPoll';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type InboxCounts } from '~/generated/graphql';
 
-export const useInboxCounts = (queueSlug?: string) => {
+export const useInboxCounts = (queueName?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const isInboxEnabled = useIsInboxEnabled();
 
   const { data } = useQuery<
     { myInboxCounts: InboxCounts },
-    { queueSlug?: string }
+    { queueName?: string }
   >(GET_MY_INBOX_COUNTS, {
     client: apolloCoreClient,
-    variables: { queueSlug },
+    variables: { queueName },
     pollInterval: INBOX_ITEMS_POLL_INTERVAL,
     skipPollAttempt: shouldSkipInboxPoll,
     skip: !isInboxEnabled,

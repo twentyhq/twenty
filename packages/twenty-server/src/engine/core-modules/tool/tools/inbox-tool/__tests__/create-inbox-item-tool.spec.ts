@@ -47,7 +47,7 @@ describe('CreateInboxItemTool', () => {
 
   it('should route by the workspace settings when nothing named a recipient', async () => {
     const output = await tool.execute(
-      { title: 'Approve the discount', typeKey: 'approval' },
+      { title: 'Approve the discount', typeName: 'approval' },
       { workspaceId: WORKSPACE_ID },
     );
 
@@ -55,7 +55,7 @@ describe('CreateInboxItemTool', () => {
     expect(inboxRouterService.routeOrThrow).toHaveBeenCalledWith(
       expect.objectContaining({
         workspaceId: WORKSPACE_ID,
-        typeKey: 'approval',
+        typeName: 'approval',
         target: undefined,
       }),
     );
@@ -66,7 +66,7 @@ describe('CreateInboxItemTool', () => {
     await tool.execute(
       {
         title: 'Approve the discount',
-        typeKey: 'approval',
+        typeName: 'approval',
         assigneeWorkspaceMemberId: WORKSPACE_MEMBER_ID,
       },
       { workspaceId: WORKSPACE_ID },
@@ -86,7 +86,7 @@ describe('CreateInboxItemTool', () => {
     const output = await tool.execute(
       {
         title: 'Approve the discount',
-        typeKey: 'approval',
+        typeName: 'approval',
         assigneeWorkspaceMemberId: 'someone-elses-workspace-member-id',
       },
       { workspaceId: WORKSPACE_ID },
@@ -108,7 +108,7 @@ describe('CreateInboxItemTool', () => {
     const output = await tool.execute(
       {
         title: 'Approve the discount',
-        typeKey: 'approval',
+        typeName: 'approval',
         queueId: 'someone-elses-queue-id',
       },
       { workspaceId: WORKSPACE_ID },
@@ -127,7 +127,7 @@ describe('CreateInboxItemTool', () => {
     );
 
     const output = await tool.execute(
-      { title: 'Approve the discount', typeKey: 'approval' },
+      { title: 'Approve the discount', typeName: 'approval' },
       { workspaceId: WORKSPACE_ID },
     );
 

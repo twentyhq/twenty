@@ -5,13 +5,13 @@ import { INBOX_ITEM_FRAGMENT } from '@/inbox/graphql/fragments/inboxItemFragment
 export const GET_MY_INBOX_ITEMS = gql`
   query GetMyInboxItems(
     $scope: InboxItemScope
-    $queueSlug: String
+    $queueName: String
     $assignment: InboxQueueAssignment
     $limit: Int
   ) {
     myInboxItems(
       scope: $scope
-      queueSlug: $queueSlug
+      queueName: $queueName
       assignment: $assignment
       limit: $limit
     ) {

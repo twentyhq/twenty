@@ -22,7 +22,7 @@ import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration
 @WasIntroducedInUpgrade({
   upgradeCommandName: CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME,
 })
-@Index('IDX_INBOX_QUEUE_WORKSPACE_ID_SLUG_UNIQUE', ['workspaceId', 'slug'], {
+@Index('IDX_INBOX_QUEUE_WORKSPACE_ID_NAME_UNIQUE', ['workspaceId', 'name'], {
   unique: true,
 })
 // Exactly one queue catches work that no rule could address. Without it a
@@ -45,11 +45,12 @@ export class InboxQueueEntity {
   })
   workspace: EntityRelation<WorkspaceEntity>;
 
+  // The key the queue is addressed by, in its URL and in producer config.
   @Column({ nullable: false, type: 'varchar' })
   name: string;
 
   @Column({ nullable: false, type: 'varchar' })
-  slug: string;
+  label: string;
 
   @Column({ nullable: true, type: 'varchar' })
   icon: string | null;
