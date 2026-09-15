@@ -17,7 +17,10 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { SettingsAdminWorkspaceBillingContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent';
 import { SETTINGS_ADMIN_FEATURE_FLAG_METADATA } from '@/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata';
 import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components/SettingsAdminWorkspaceContent';
-import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
+import {
+  SettingsTableListSection,
+  type SettingsTableListSectionColumn,
+} from '@/settings/components/SettingsTableListSection';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
@@ -218,6 +221,81 @@ export const SettingsAdminWorkspaceDetail = () => {
     ? workspace.logo
     : DEFAULT_WORKSPACE_LOGO;
 
+  const featureFlagItems = (workspace?.featureFlags ?? []).flatMap((flag) => {
+    if (!isDefined(flag.key)) {
+      return [];
+    }
+
+    const metadata = SETTINGS_ADMIN_FEATURE_FLAG_METADATA[flag.key];
+    const publicMetadata = labPublicFeatureFlags.find(
+      (publicFeatureFlag) => publicFeatureFlag.key === flag.key,
+    )?.metadata;
+    const currentWorkspaceValue =
+      currentWorkspace?.id === workspaceId
+        ? currentWorkspace?.featureFlags?.find(
+            (featureFlag) => featureFlag.key === flag.key,
+          )?.value
+        : undefined;
+
+    return [
+      {
+        id: flag.key,
+        label:
+          publicMetadata?.label ??
+          (isDefined(metadata) ? t(metadata.label) : flag.key),
+        description:
+          publicMetadata?.description ??
+          (isDefined(metadata) ? t(metadata.description) : ''),
+        value: currentWorkspaceValue ?? flag.value,
+      },
+    ];
+  });
+
+  const featureFlagColumns: SettingsTableListSectionColumn<
+    (typeof featureFlagItems)[number]
+  >[] = [
+    {
+      label: t`Name`,
+      overflow: 'hidden',
+      Cell: ({ item }) => (
+        <StyledFeatureFlagName>
+          <OverflowingTextWithTooltip
+            text={<>{item.label}</>}
+            tooltipContent={item.id}
+            tooltipPlace={TooltipPosition.Top}
+            alwaysShowTooltip
+            isFocusable
+          />
+        </StyledFeatureFlagName>
+      ),
+    },
+    {
+      label: t`Description`,
+      overflow: 'hidden',
+      Cell: ({ item }) => (
+        <OverflowingTextWithTooltip
+          text={item.description}
+          isTooltipMultiline
+          isFocusable
+        />
+      ),
+    },
+    {
+      label: t`Status`,
+      align: 'right',
+      Cell: ({ item }) => (
+        <Switch
+          aria-label={item.label}
+          aria-description={item.description}
+          checked={item.value}
+          onCheckedChange={(newValue) =>
+            handleFeatureFlagUpdate(item.id, newValue)
+          }
+        />
+      ),
+    },
+  ];
+
   if (isLoadingWorkspace) {
     return <SettingsSkeletonLoader />;
   }
@@ -348,77 +426,8 @@ export const SettingsAdminWorkspaceDetail = () => {
               title={t`Feature Flags`}
               description={t`Manage feature flags for this workspace`}
               gridAutoColumns="minmax(0, 240px) minmax(0, 1fr) 56px"
-              items={(workspace.featureFlags ?? []).flatMap((flag) => {
-                if (!isDefined(flag.key)) {
-                  return [];
-                }
-
-                const metadata = SETTINGS_ADMIN_FEATURE_FLAG_METADATA[flag.key];
-                const publicMetadata = labPublicFeatureFlags.find(
-                  (publicFeatureFlag) => publicFeatureFlag.key === flag.key,
-                )?.metadata;
-                const currentWorkspaceValue =
-                  currentWorkspace?.id === workspaceId
-                    ? currentWorkspace?.featureFlags?.find(
-                        (featureFlag) => featureFlag.key === flag.key,
-                      )?.value
-                    : undefined;
-
-                return [
-                  {
-                    id: flag.key,
-                    label:
-                      publicMetadata?.label ??
-                      (isDefined(metadata) ? t(metadata.label) : flag.key),
-                    description:
-                      publicMetadata?.description ??
-                      (isDefined(metadata) ? t(metadata.description) : ''),
-                    value: currentWorkspaceValue ?? flag.value,
-                  },
-                ];
-              })}
-              columns={[
-                {
-                  label: t`Name`,
-                  overflow: 'hidden',
-                  Cell: ({ item }) => (
-                    <StyledFeatureFlagName>
-                      <OverflowingTextWithTooltip
-                        text={<>{item.label}</>}
-                        tooltipContent={item.id}
-                        tooltipPlace={TooltipPosition.Top}
-                        alwaysShowTooltip
-                        isFocusable
-                      />
-                    </StyledFeatureFlagName>
-                  ),
-                },
-                {
-                  label: t`Description`,
-                  overflow: 'hidden',
-                  Cell: ({ item }) => (
-                    <OverflowingTextWithTooltip
-                      text={item.description}
-                      isTooltipMultiline
-                      isFocusable
-                    />
-                  ),
-                },
-                {
-                  label: t`Status`,
-                  align: 'right',
-                  Cell: ({ item }) => (
-                    <Switch
-                      aria-label={item.label}
-                      aria-description={item.description}
-                      checked={item.value}
-                      onCheckedChange={(newValue) =>
-                        handleFeatureFlagUpdate(item.id, newValue)
-                      }
-                    />
-                  ),
-                },
-              ]}
+              items={featureFlagItems}
+              columns={featureFlagColumns}
             />
           )}
 
