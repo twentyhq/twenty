@@ -114,15 +114,14 @@ export const AddToNavigationDragHandle = ({
       ) : showCustomContentWithoutWrapper ? (
         customIconContent
       ) : (payload.type === NavigationMenuItemType.OBJECT ||
-          payload.type === NavigationMenuItemType.LINK) &&
+          payload.type === NavigationMenuItemType.LINK ||
+          payload.type === NavigationMenuItemType.FOLDER) &&
         ObjectIcon ? (
         <ObjectIcon
           size={16}
           stroke={theme.icon.stroke.md}
           color={getIconTileColorShades(effectiveColor).iconColor}
         />
-      ) : payload.type === NavigationMenuItemType.FOLDER && icon ? (
-        <TintedIconTile Icon={icon} color={effectiveColor} size={16} />
       ) : hasBackgroundColor && icon ? (
         <TintedIconTile Icon={icon} color={effectiveColor} />
       ) : (

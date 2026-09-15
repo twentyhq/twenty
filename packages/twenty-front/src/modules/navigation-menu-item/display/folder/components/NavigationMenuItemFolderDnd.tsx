@@ -1,6 +1,6 @@
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
+import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import React, { Fragment, useCallback, useContext } from 'react';
@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconHeartOff, IconPlus, useIcons } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -100,6 +100,7 @@ export const NavigationMenuItemFolderDnd = ({
   orphanIndex,
 }: NavigationMenuItemFolderDndProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const isMobile = useIsMobile();
 
@@ -212,7 +213,11 @@ export const NavigationMenuItemFolderDnd = ({
     <NavigationDrawerItem
       label={folderName}
       Icon={() => (
-        <TintedIconTile Icon={FolderIcon} size={16} color={iconColor} />
+        <FolderIcon
+          size={16}
+          stroke={theme.icon.stroke.md}
+          color={getIconTileColorShades(iconColor).iconColor}
+        />
       )}
       active={
         (!isOpen && hasActiveChild) ||

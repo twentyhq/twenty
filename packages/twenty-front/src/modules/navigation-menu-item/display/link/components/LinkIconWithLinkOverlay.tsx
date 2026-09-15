@@ -21,18 +21,8 @@ const StyledCompositeContainer = styled.div`
   width: 16px;
 `;
 
-const StyledMainIconWrapper = styled.div<{
-  $backgroundColor: string;
-  $borderColor?: string;
-  $noBackgroundOrBorder?: boolean;
-}>`
+const StyledMainIconWrapper = styled.div`
   align-items: center;
-  background-color: ${({ $backgroundColor, $noBackgroundOrBorder }) =>
-    $noBackgroundOrBorder ? 'transparent' : $backgroundColor};
-  border: ${({ $borderColor, $noBackgroundOrBorder }) =>
-    $noBackgroundOrBorder || !$borderColor
-      ? 'none'
-      : `1px solid ${$borderColor}`};
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
@@ -88,11 +78,7 @@ export const LinkIconWithLinkOverlay = ({
 
   return (
     <StyledCompositeContainer>
-      <StyledMainIconWrapper
-        $backgroundColor={linkStyle.backgroundColor}
-        $borderColor={linkStyle.borderColor}
-        $noBackgroundOrBorder={showFavicon}
-      >
+      <StyledMainIconWrapper>
         {showFavicon ? (
           <StyledFaviconImage
             src={faviconUrl}
@@ -104,7 +90,7 @@ export const LinkIconWithLinkOverlay = ({
           />
         ) : (
           <DefaultIcon
-            size="14px"
+            size={16}
             stroke={theme.icon.stroke.md}
             color={linkStyle.iconColor}
           />
