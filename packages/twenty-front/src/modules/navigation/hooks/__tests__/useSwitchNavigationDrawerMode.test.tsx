@@ -178,6 +178,51 @@ describe('useSwitchNavigationDrawerMode', () => {
     expect(mockSwitchToNewChat).not.toHaveBeenCalled();
   });
 
+  it.each([false, true])(
+    'preserves desktop sidebar expansion (%s) when opening settings and returning home',
+    (isExpanded) => {
+      const { result, store } = renderSwitchNavigationDrawerMode({
+        pathname: '/objects/people',
+      });
+      act(() => store.set(isNavigationDrawerExpandedState.atom, isExpanded));
+
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.SETTINGS,
+        ),
+      );
+
+      expect(result.current.location.pathname).toBe('/settings/profile');
+      expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(isExpanded);
+
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+        ),
+      );
+
+      expect(result.current.location.pathname).toBe('/objects/people');
+      expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(isExpanded);
+    },
+  );
+
+  it('opens the settings drawer on mobile even when it was closed', () => {
+    jest.mocked(useIsMobile).mockReturnValue(true);
+    const { result, store } = renderSwitchNavigationDrawerMode({
+      pathname: '/objects/people',
+    });
+    act(() => store.set(isNavigationDrawerExpandedState.atom, false));
+
+    act(() =>
+      result.current.switchNavigationDrawerMode(
+        NAVIGATION_DRAWER_TABS.SETTINGS,
+      ),
+    );
+
+    expect(result.current.location.pathname).toBe('/settings/profile');
+    expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(true);
+  });
+
   it('opens settings and memorizes where it came from', () => {
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: '/objects/people',
