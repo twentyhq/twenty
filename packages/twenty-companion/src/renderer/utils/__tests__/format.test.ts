@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { elapsedRecording } from '../format';
-import { type ActiveRecording } from '../../shared/types';
+import { elapsedRecording } from '../elapsedRecording';
+import { type ActiveRecording } from '../../../shared/types/ActiveRecording';
 
 const RECORDING: ActiveRecording = {
   id: 'recording',

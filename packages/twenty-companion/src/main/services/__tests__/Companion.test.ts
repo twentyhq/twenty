@@ -1,6 +1,6 @@
-import { createDeferred } from './create-deferred';
+import { createDeferred } from '../../utils/createDeferred';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { DEFAULT_SETTINGS } from '../../shared/types';
+import { DEFAULT_SETTINGS } from '../../../shared/constants/DEFAULT_SETTINGS';
 import { nativeTheme } from 'electron';
 
 const mocks = vi.hoisted(() => ({
@@ -68,8 +68,8 @@ vi.mock('@recallai/desktop-sdk', () => ({
     ) => mocks.listeners.set(name, callback),
   },
 }));
-vi.mock('../secure-store', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../secure-store')>()),
+vi.mock('../SecureStore', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../SecureStore')>()),
   SecureStore: class {
     readSettings = mocks.readSettings;
     readHandledMeetings = async () => [];
@@ -77,11 +77,11 @@ vi.mock('../secure-store', async (importOriginal) => ({
     writeSettings = mocks.writeSettings;
   },
 }));
-vi.mock('../oauth', async (importOriginal) => ({
-  ...(await importOriginal<typeof import('../oauth')>()),
+vi.mock('../../utils/connectOAuth', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../../utils/connectOAuth')>()),
   connectOAuth: mocks.oauth,
 }));
-vi.mock('../twenty-client', () => ({
+vi.mock('../TwentyClient', () => ({
   TwentyClient: class {
     workspaceUrl = 'https://acme.twenty.com';
     restore = mocks.restore;
@@ -90,7 +90,7 @@ vi.mock('../twenty-client', () => ({
     disconnect = vi.fn();
   },
 }));
-import { Companion } from '../companion';
+import { Companion } from '../Companion';
 
 const originalPlatform = process.platform;
 const originalArch = process.arch;
@@ -761,7 +761,8 @@ describe('desktop capture lifecycle', () => {
 });
 
 it('merges simultaneous preference changes and does not reset omitted values', async () => {
-  const { commandSchema } = await import('../../shared/types');
+  const { commandSchema } =
+    await import('../../../shared/validation-schemas/commandSchema');
   await Promise.all([
     companion.command(
       commandSchema.parse({
@@ -896,7 +897,8 @@ it('does not save a new login that finishes after quitting', async () => {
 
 it('initializes with recovered settings and reports the recovery after loading the workspace', async () => {
   await companion.shutdown();
-  const { SettingsRecoveryError } = await import('../secure-store');
+  const { SettingsRecoveryError } =
+    await import('../../errors/SettingsRecoveryError');
   mocks.readSettings.mockRejectedValueOnce(
     new SettingsRecoveryError(
       {
@@ -920,7 +922,8 @@ it('initializes with recovered settings and reports the recovery after loading t
 });
 
 it('keeps the installation recovery action with the failure', async () => {
-  const { DesktopRecorderUnavailableError } = await import('../oauth');
+  const { DesktopRecorderUnavailableError } =
+    await import('../../errors/DesktopRecorderUnavailableError');
   mocks.request.mockRejectedValueOnce(
     new DesktopRecorderUnavailableError('https://acme.twenty.com'),
   );

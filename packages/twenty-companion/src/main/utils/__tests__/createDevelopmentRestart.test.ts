@@ -1,5 +1,5 @@
 import { afterEach, expect, it, vi } from 'vitest';
-import { createDevelopmentRestart } from '../development-restart';
+import { createDevelopmentRestart } from '../createDevelopmentRestart';
 
 let dispose: (() => void) | undefined;
 afterEach(() => {

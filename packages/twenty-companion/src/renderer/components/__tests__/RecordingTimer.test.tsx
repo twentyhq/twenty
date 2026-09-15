@@ -3,9 +3,9 @@ import { Profiler } from 'react';
 import { act, cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 import { RecordingTimer } from '../RecordingTimer';
-import { useCompanion } from '../useCompanion';
-import { createInitialState } from '../../shared/create-initial-state';
-import { type ActiveRecording } from '../../shared/types';
+import { useCompanion } from '../../hooks/useCompanion';
+import { createInitialState } from '../../../shared/utils/createInitialState';
+import { type ActiveRecording } from '../../../shared/types/ActiveRecording';
 
 const START = Date.parse('2026-09-08T12:00:00Z');
 const recording: ActiveRecording = {

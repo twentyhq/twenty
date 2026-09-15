@@ -1,18 +1,14 @@
 import { createServer } from 'node:http';
 import { createHash } from 'node:crypto';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  connectOAuth,
-  getDesktopInstallationUrl,
-  validateServerUrl,
-} from '../oauth';
+import { connectOAuth } from '../connectOAuth';
+import { getDesktopInstallationUrl } from '../getDesktopInstallationUrl';
+import { validateServerUrl } from '../validateServerUrl';
 
 const servers: ReturnType<typeof createServer>[] = [];
 const listen = async (server: ReturnType<typeof createServer>) => {
   servers.push(server);
-  await new Promise<void>((resolve) =>
-    server.listen(0, '127.0.0.1', resolve),
-  );
+  await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
   const address = server.address();
   if (!address || typeof address === 'string')
     throw new Error('Missing address');
@@ -213,7 +209,7 @@ it.each(['discovery', 'token'])(
 );
 
 it('keeps a request deadline when a caller supplies its own signal', async () => {
-  const { requestJson } = await import('../oauth');
+  const { requestJson } = await import('../requestJson');
   const caller = new AbortController();
   const timeout = new AbortController();
   const deadline = vi

@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import { shortcutFromKeyboardEvent, formatShortcut } from '../shortcut';
-import { DEFAULT_SETTINGS } from '../../shared/types';
+import { shortcutFromKeyboardEvent } from '../shortcutFromKeyboardEvent';
+import { formatShortcut } from '../formatShortcut';
+import { DEFAULT_SETTINGS } from '../../../shared/constants/DEFAULT_SETTINGS';
 
 const key = {
   key: 'a',

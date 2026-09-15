@@ -1,8 +1,8 @@
-import { createDeferred } from './create-deferred';
+import { createDeferred } from '../../utils/createDeferred';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { type Agenda } from '../../shared/types';
-import { TwentyClient } from '../twenty-client';
-import { DesktopRecorderUnavailableError } from '../oauth';
+import { type Agenda } from '../../../shared/types/Agenda';
+import { TwentyClient } from '../TwentyClient';
+import { DesktopRecorderUnavailableError } from '../../errors/DesktopRecorderUnavailableError';
 
 const fetchMock = vi.fn();
 const credentials = {

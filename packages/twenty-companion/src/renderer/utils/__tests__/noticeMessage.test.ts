@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { afterEach, expect, it } from 'vitest';
-import { messages } from '../locales/en';
-import { noticeMessage } from '../notice-message';
+import { messages } from '../../locales/en';
+import { noticeMessage } from '../noticeMessage';
 
 afterEach(() => {
   i18n.load('en', messages);

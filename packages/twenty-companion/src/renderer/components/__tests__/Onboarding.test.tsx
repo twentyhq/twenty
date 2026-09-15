@@ -5,9 +5,9 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { i18n } from '@lingui/core';
 import { Onboarding } from '../Onboarding';
 import { ThemeProvider } from '@ui/theme-constants/ThemeProvider';
-import { createInitialState } from '../../shared/create-initial-state';
-import { type CompanionState } from '../../shared/types';
-import { messages } from '../locales/en';
+import { createInitialState } from '../../../shared/utils/createInitialState';
+import { type CompanionState } from '../../../shared/types/CompanionState';
+import { messages } from '../../locales/en';
 
 const command = vi.fn().mockResolvedValue(undefined);
 const page = (state: CompanionState) => (

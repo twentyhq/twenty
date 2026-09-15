@@ -2,8 +2,9 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { DEFAULT_SETTINGS } from '../../shared/types';
-import { SecureStore, SettingsRecoveryError } from '../secure-store';
+import { DEFAULT_SETTINGS } from '../../../shared/constants/DEFAULT_SETTINGS';
+import { SecureStore } from '../SecureStore';
+import { SettingsRecoveryError } from '../../errors/SettingsRecoveryError';
 
 vi.mock('electron', () => ({ safeStorage: {} }));
 let directory: string;

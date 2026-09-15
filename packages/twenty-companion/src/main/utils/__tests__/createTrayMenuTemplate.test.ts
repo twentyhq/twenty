@@ -4,12 +4,11 @@ import {
   type MenuItem,
   type KeyboardEvent,
 } from 'electron';
-import {
-  DEFAULT_SETTINGS,
-  type CompanionState,
-  type Meeting,
-} from '../../shared/types';
-import { createTrayMenuTemplate, getTrayTitle } from '../tray-menu';
+import { DEFAULT_SETTINGS } from '../../../shared/constants/DEFAULT_SETTINGS';
+import { type CompanionState } from '../../../shared/types/CompanionState';
+import { type Meeting } from '../../../shared/types/Meeting';
+import { createTrayMenuTemplate } from '../createTrayMenuTemplate';
+import { getTrayTitle } from '../getTrayTitle';
 
 const NOW = Date.parse('2026-09-07T12:00:00Z');
 const state = (overrides: Partial<CompanionState> = {}): CompanionState => ({

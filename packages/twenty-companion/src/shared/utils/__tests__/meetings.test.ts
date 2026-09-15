@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
-import { getDueMeetings, getMeetingUrl, matchMeeting } from '../meetings';
-import { type Meeting } from '../types';
+import { getDueMeetings } from '../getDueMeetings';
+import { getMeetingUrl } from '../getMeetingUrl';
+import { matchMeeting } from '../matchMeeting';
+import { type Meeting } from '../../types/Meeting';
 
 const NOW = Date.parse('2026-09-07T12:00:10Z');
 const MEETING: Meeting = {

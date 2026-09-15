@@ -4,10 +4,10 @@ import { cleanup, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import { i18n } from '@lingui/core';
-import { messages } from '../locales/en';
-import { createInitialState } from '../../shared/create-initial-state';
-import { type CompanionCommand } from '../../shared/types';
-import { createDeferred } from '../../main/__tests__/create-deferred';
+import { messages } from '../../locales/en';
+import { createInitialState } from '../../../shared/utils/createInitialState';
+import { type CompanionCommand } from '../../../shared/types/CompanionCommand';
+import { createDeferred } from '../../../main/utils/createDeferred';
 import { useCompanion } from '../useCompanion';
 
 const Controls = () => {
