@@ -4,5 +4,5 @@ export const SETTINGS_ADMIN_TABS = {
   AI: 'ai',
   CONFIG_VARIABLES: 'config-variables',
   HEALTH_STATUS: 'health-status',
-  ENTERPRISE: 'enterprise',
+  ORGANIZATION: 'organization',
 };

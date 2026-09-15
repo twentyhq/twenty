@@ -2,7 +2,9 @@ import { Scope } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type ObjectRecordDeleteEvent } from 'twenty-shared/database-events';
-import { Not, type Repository } from 'typeorm';
+import { CalendarChannelSyncStage } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import { type FindOptionsWhere, Not, type Repository } from 'typeorm';
 
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
@@ -13,9 +15,9 @@ import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
+import { groupBlocklistHandlesByOwner } from 'src/modules/blocklist/utils/group-blocklist-handles-by-owner.util';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import { CalendarChannelSyncStage } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type BlocklistReimportCalendarEventsJobData = WorkspaceEventBatch<
   ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>
@@ -43,51 +45,106 @@ export class BlocklistReimportCalendarEventsJob {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository('workspaceMember', {
-            shouldBypassPermissionChecks: true,
-          });
+        const { workspaceScopedHandles, handlesByWorkspaceMemberId } =
+          groupBlocklistHandlesByOwner(
+            data.events.map((eventPayload) => eventPayload.properties.before),
+          );
 
-        for (const eventPayload of data.events) {
-          const workspaceMemberId =
-            eventPayload.properties.before.workspaceMemberId;
+        const calendarChannelIdsToReset = new Set<string>();
 
-          const workspaceMember = await workspaceMemberRepository.findOne({
-            where: { id: workspaceMemberId },
-          });
-
-          if (!isDefined(workspaceMember)) {
-            continue;
+        if (workspaceScopedHandles.length > 0) {
+          for (const calendarChannelId of await this.findCalendarChannelIdsToReset(
+            { workspaceId, userWorkspaceId: null },
+          )) {
+            calendarChannelIdsToReset.add(calendarChannelId);
           }
+        }
 
-          const userWorkspace = await this.userWorkspaceRepository.findOne({
-            where: { userId: workspaceMember.userId, workspaceId },
-            select: ['id'],
-          });
-
-          if (!isDefined(userWorkspace)) {
-            continue;
-          }
-
-          const calendarChannels = await this.calendarChannelRepository.find({
-            select: ['id'],
-            where: {
-              connectedAccount: { userWorkspaceId: userWorkspace.id },
-              syncStage: Not(
-                CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
-              ),
+        for (const workspaceMemberId of handlesByWorkspaceMemberId.keys()) {
+          const userWorkspaceId = await this.findWorkspaceMemberUserWorkspaceId(
+            {
+              workspaceMemberId,
               workspaceId,
             },
-          });
-
-          await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
-            calendarChannels.map((calendarChannel) => calendarChannel.id),
-            workspaceId,
           );
+
+          if (!isDefined(userWorkspaceId)) {
+            continue;
+          }
+
+          for (const calendarChannelId of await this.findCalendarChannelIdsToReset(
+            { workspaceId, userWorkspaceId },
+          )) {
+            calendarChannelIdsToReset.add(calendarChannelId);
+          }
         }
+
+        if (calendarChannelIdsToReset.size === 0) {
+          return;
+        }
+
+        await this.calendarChannelSyncStatusService.resetAndMarkAsCalendarEventListFetchPending(
+          [...calendarChannelIdsToReset],
+          workspaceId,
+        );
       },
       authContext,
       { lite: true },
     );
+  }
+
+  private async findWorkspaceMemberUserWorkspaceId({
+    workspaceMemberId,
+    workspaceId,
+  }: {
+    workspaceMemberId: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    const workspaceMemberRepository =
+      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        'workspaceMember',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const workspaceMember = await workspaceMemberRepository.findOne({
+      where: { id: workspaceMemberId },
+    });
+
+    if (!isDefined(workspaceMember)) {
+      return null;
+    }
+
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId: workspaceMember.userId, workspaceId },
+      select: ['id'],
+    });
+
+    return userWorkspace?.id ?? null;
+  }
+
+  private async findCalendarChannelIdsToReset({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | null;
+  }): Promise<string[]> {
+    const where: FindOptionsWhere<CalendarChannelEntity> = {
+      syncStage: Not(
+        CalendarChannelSyncStage.CALENDAR_EVENT_LIST_FETCH_PENDING,
+      ),
+      workspaceId,
+    };
+
+    if (isDefined(userWorkspaceId)) {
+      where.connectedAccount = { userWorkspaceId };
+    }
+
+    const calendarChannels = await this.calendarChannelRepository.find({
+      select: ['id'],
+      where,
+    });
+
+    return calendarChannels.map((calendarChannel) => calendarChannel.id);
   }
 }

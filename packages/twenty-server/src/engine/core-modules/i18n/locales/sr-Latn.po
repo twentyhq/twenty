@@ -174,10 +174,10 @@ msgstr "Otkriven je duplikatni unos."
 msgid "A field with this name already exists."
 msgstr "Polje sa ovim imenom već postoji."
 
-#. js-lingui-id: cWaEaJ
+#. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "A free development instance requires an active production instance on this enterprise subscription."
-msgstr "Besplatna razvojna instanca zahteva aktivnu produkcionu instancu na ovoj enterprise pretplati."
+msgid "A free development instance requires an active production instance on this Organization subscription."
+msgstr "Besplatna razvojna instanca zahteva aktivnu produkcionu instancu na ovoj pretplati organizacije."
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -491,6 +491,11 @@ msgstr "Verzija toka rada"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Član radnog prostora"
+
+#. js-lingui-id: ysZV7o
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "A workspace-wide blocklist entry cannot target a workspace member."
+msgstr "Unos liste blokiranja za ceo radni prostor ne može ciljati člana radnog prostora."
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1319,6 +1324,11 @@ msgctxt "fieldMetadata.description"
 msgid "Blocklist record position"
 msgstr "Pozicija zapisa blok-liste"
 
+#. js-lingui-id: HSo0Xn
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist scope cannot be updated."
+msgstr "Opseg liste blokiranja se ne može ažurirati."
+
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1381,6 +1391,17 @@ msgstr "Generisana putanja komponente je nevažeća"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Built handler path is invalid"
 msgstr "Putanja generisanog hendlera je nevažeća"
+
+#. js-lingui-id: DKvxoP
+#: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
+msgid "Bulk deletion of blocklist entries is not allowed."
+msgstr "Masovno brisanje unosa liste blokiranja nije dozvoljeno."
+
+#. js-lingui-id: Az75zM
+#: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
+msgid "Bulk restoration of blocklist entries is not allowed."
+msgstr "Masovno vraćanje unosa liste blokiranja nije dozvoljeno."
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1839,18 +1860,13 @@ msgstr "Nije moguće dodati dozvole na sistemske objekte."
 msgid "Cannot complete operation due to related records."
 msgstr "Operaciju nije moguće dovršiti zbog povezanih zapisa."
 
-#. js-lingui-id: 6Sk/wo
-#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
-msgid "Cannot create blocklist entry for another workspace member."
-msgstr "Nije moguće kreirati unos liste blokiranja za drugog člana radnog prostora."
-
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Ne može se kreirati više nacrt verzija za isti tok rada"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Ne može se kreirati verzija toka rada sa statusom različitim od nacrta"
 
@@ -1917,6 +1933,11 @@ msgstr "Nije moguće dati dozvolu za pisanje bez dozvole za čitanje."
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Ne može imati više od jedne aktivne verzije toka rada"
+
+#. js-lingui-id: 9hWalM
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot manage a blocklist entry of another workspace member."
+msgstr "Nije moguće upravljati unosom liste blokiranja drugog člana radnog prostora."
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5170,11 +5191,6 @@ msgstr "Nevažeća adresa e-pošte."
 msgid "Invalid email or domain."
 msgstr "Nevalidan imejl ili domen."
 
-#. js-lingui-id: pOHI+b
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "Invalid enterprise key."
-msgstr "Nevažeći ključ enterprajza."
-
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
 msgid "Invalid event input."
@@ -5387,6 +5403,11 @@ msgstr "Nevažeći parametar sortiranja."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
 msgstr "Nevažeće sortiranje sa parametrom grupisanja."
+
+#. js-lingui-id: 4rRyz1
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid Organization key."
+msgstr "Nevažeći ključ organizacije."
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6474,6 +6495,11 @@ msgstr "Spoji"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "Spoji {objectLabelPlural}"
+
+#. js-lingui-id: 27Moeu
+#: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
+msgid "Merging blocklist entries is not allowed."
+msgstr "Spajanje unosa liste blokiranja nije dozvoljeno."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -9329,18 +9355,6 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Security"
 msgstr "Bezbednost"
 
-#. js-lingui-id: BqBYOO
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Active Version"
-msgstr "Pogledajte aktivnu verziju"
-
-#. js-lingui-id: BWZaOR
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Active Version"
-msgstr "Pogledajte aktivnu verziju"
-
 #. js-lingui-id: BCRQC8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10357,10 +10371,10 @@ msgstr "Podrazumevanu ulogu nije moguće obrisati."
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "Nije moguće pronaći podrazumijevanu ulogu za ovu radnu okolinu. Molimo kontaktirajte podršku za pomoć."
 
-#. js-lingui-id: hmg/aY
+#. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "The development instance slot for this enterprise key is already in use on another server."
-msgstr "Slot za razvojnu instancu za ovaj enterprise ključ se već koristi na drugom serveru."
+msgid "The development instance slot for this Organization key is already in use on another server."
+msgstr "Slot za razvojnu instancu za ovaj ključ organizacije se već koristi na drugom serveru."
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10424,7 +10438,8 @@ msgid "The happensAt field used by this timeline activity type is not available"
 msgstr "Polje happensAt koje koristi ovaj tip aktivnosti vremenske linije nije dostupno"
 
 #. js-lingui-id: EJUSll
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Početna verzija toka rada ne može se izbrisati"
 
@@ -10918,20 +10933,15 @@ msgstr "Ovaj endpoint je premešten. Pozovite ga na {publicFunctionUrl}."
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "Ovaj endpoint više nije dostupan na /s/. Koristite namenski URL javnog domena."
 
-#. js-lingui-id: i4wotH
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr "Ovaj Enterprise ključ se već koristi na drugoj serverskoj instanci. Oslobodite ga sa tog servera ili ga prebacite na ovaj."
-
 #. js-lingui-id: mjE4RD
 #: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
 msgid "This evaluation target could not be found."
 msgstr "Cilj ocenjivanja nije pronađen."
 
-#. js-lingui-id: uNp8ZA
+#. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr "Ova funkcija je besplatna za najviše {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} mesta. Vaša instanca premašuje taj broj, pa je potreban enterprise ključ."
+msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
+msgstr "Ova funkcija je besplatna za najviše {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} mesta. Vaša instanca premašuje taj broj, pa je potreban ključ organizacije."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10944,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Ovo polje nije moguće izmeniti."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Ovo polje ne može biti direktno ažurirano na verziji radnog toka"
 
@@ -11093,6 +11103,11 @@ msgstr "Ova operacija nije podržana."
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ova operacija referencira zapis koji ne postoji ili se ne može izmeniti zbog postojećih odnosa."
 
+#. js-lingui-id: 8TiDJj
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+msgstr "Ovaj ključ organizacije se već koristi na drugoj serverskoj instanci. Oslobodite ga sa tog servera ili ga prebacite na ovaj."
+
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11234,6 +11249,16 @@ msgstr "Ova verzija nije novija od trenutno raspoređene verzije. Povećajte bro
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Ova verzija aplikacije je već instalirana u ovom radnom prostoru."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Ova verzija toka rada sadrži neispravne podatke i ne može da se sačuva."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Ova verzija toka rada nije spremna za aktiviranje."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11868,12 +11893,6 @@ msgstr "Korisniku prilagođena poruka o grešci"
 msgctxt "fieldMetadata.label"
 msgid "User ID"
 msgstr "Identifikator korisnika"
-
-#. js-lingui-id: NJT8W8
-#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
-#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
-msgid "User id is required."
-msgstr "ID korisnika je obavezan."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -12818,6 +12837,7 @@ msgid "Workflow version does not contain trigger"
 msgstr "Verzija toka rada ne sadrži pokretač"
 
 #. js-lingui-id: bqFL4g
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "Verzija toka rada nije u nacrt statusu"
@@ -12964,10 +12984,10 @@ msgstr "Radni prostor nije spreman za prijem novih članova"
 msgid "Workspace is suspended."
 msgstr "Radni prostor je suspendovan."
 
-#. js-lingui-id: iN7doz
+#. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
-msgstr "Dostignut je limit radnih prostora. Potreban je važeći enterprajz ključ da biste kreirali još radnih prostora."
+msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
+msgstr "Dostignut je limit radnih prostora. Potreban je važeći ključ organizacije da biste kreirali još radnih prostora."
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -13307,6 +13327,16 @@ msgstr "Nemate dozvolu da preuzimate identitet korisnika u ovom prostoru za rad.
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Nemate dozvolu da imitirate korisnike. Molimo kontaktirajte administratora vaše radne površine za pristup."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Nemate dozvolu da upravljate vezama koje se dele sa radnim prostorom. Molimo kontaktirajte administratora radnog prostora za pristup."
+
+#. js-lingui-id: cpivo2
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
+msgid "You do not have permission to manage the workspace blocklist."
+msgstr "Nemate dozvolu da upravljate listom blokiranja radnog prostora."
+
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13365,19 +13395,19 @@ msgstr "Potrošili ste sve svoje kredite. Molimo vas, nadogradite svoj plan da b
 msgid "You have reached the maximum number of invitations for this step."
 msgstr "Dostigli ste maksimalan broj pozivnica za ovaj korak."
 
-#. js-lingui-id: 4kMeNM
+#. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
-msgstr "Dostigli ste maksimalan broj danas dozvoljenih osvežavanja licence za ovaj Enterprise ključ. Pokušajte ponovo kasnije."
+msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
+msgstr "Dostigli ste maksimalan broj danas dozvoljenih osvežavanja licence za ovaj ključ organizacije. Pokušajte ponovo kasnije."
 
-#. js-lingui-id: 475gCs
+#. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
-msgstr "Dostigli ste maksimalan broj prenosa servera dozvoljen u poslednjih 30 dana za ovaj Enterprise ključ. Pokušajte ponovo kasnije."
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
+msgstr "Dostigli ste maksimalan broj prenosa servera dozvoljen u poslednjih 30 dana za ovaj ključ organizacije. Pokušajte ponovo kasnije."
 
-#. js-lingui-id: nq15cs
-#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
-msgid "You must be authenticated to manage blocklist."
+#. js-lingui-id: GFlHFf
+#: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
+msgid "You must be authenticated to manage the blocklist."
 msgstr "Morate biti autentifikovani da biste upravljali listom blokiranja."
 
 #. js-lingui-id: z+7x/s
