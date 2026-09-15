@@ -266,7 +266,6 @@ export class ActionToolProvider implements ToolProvider {
       workspaceId: context.workspaceId,
       userId: context.userId,
       userWorkspaceId: context.userWorkspaceId,
-      callerType: context.authContext?.type,
       threadId: context.threadId,
       onCodeExecutionUpdate: context.onCodeExecutionUpdate,
     });

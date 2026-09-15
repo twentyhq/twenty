@@ -1,6 +1,6 @@
 import { forwardRef } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/data-display';
-import { MenuItemSuggestion } from 'twenty-ui/navigation';
+import { AvatarOrIcon } from 'twenty-ui/primitives/data-display';
+import { MenuItemSuggestion } from 'twenty-ui/primitives/navigation';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';

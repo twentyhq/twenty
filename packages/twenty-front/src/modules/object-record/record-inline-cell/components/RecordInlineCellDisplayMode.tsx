@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
+import { useGetSecondaryFieldButton } from '@/object-record/record-field/ui/hooks/useGetSecondaryFieldButton';
 import { useIsFieldEmpty } from '@/object-record/record-field/ui/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/ui/hooks/useIsFieldInputOnly';
 import {
@@ -84,6 +85,11 @@ export const RecordInlineCellDisplayMode = ({
     !isFieldEmpty &&
     !editModeContentOnly;
 
+  const secondaryButtons = useGetSecondaryFieldButton();
+
+  const showSecondaryButtons =
+    isHovered && !isFieldEmpty && !editModeContentOnly && !isForbidden;
+
   const isFieldInputOnly = useIsFieldInputOnly();
 
   const emptyPlaceHolder = label ?? t`Empty`;
@@ -107,6 +113,15 @@ export const RecordInlineCellDisplayMode = ({
           ) : null}
         </StyledRecordInlineCellNormalModeInnerContainer>
       </StyledRecordInlineCellNormalModeOuterContainer>
+      {showSecondaryButtons &&
+        secondaryButtons.map((button) => (
+          <RecordInlineCellButton
+            key={button.ariaLabel}
+            Icon={button.Icon}
+            onClick={button.onClick}
+            ariaLabel={button.ariaLabel}
+          />
+        ))}
       {showEditButton && (
         <RecordInlineCellButton Icon={buttonIcon} onClick={onClick} />
       )}

@@ -33,8 +33,12 @@ import {
   IconLayoutList,
   IconTable,
 } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { MenuItem, MenuItemSelect, MenuItemSwitch } from 'twenty-ui/navigation';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import {
+  MenuItem,
+  MenuItemSelect,
+  MenuItemSwitch,
+} from 'twenty-ui/primitives/navigation';
 import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownLayoutContent = () => {

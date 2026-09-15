@@ -174,10 +174,10 @@ msgstr "Ismétlődő bejegyzést észleltünk."
 msgid "A field with this name already exists."
 msgstr "Már létezik ilyen nevű mező."
 
-#. js-lingui-id: cWaEaJ
+#. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "A free development instance requires an active production instance on this enterprise subscription."
-msgstr "Egy ingyenes fejlesztői példányhoz egy aktív éles példány szükséges ezen vállalati előfizetés keretében."
+msgid "A free development instance requires an active production instance on this Organization subscription."
+msgstr "Egy ingyenes fejlesztői példányhoz aktív éles példány szükséges ezen szervezeti előfizetés keretében."
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -491,6 +491,11 @@ msgstr "Egy munkafolyamat verziója"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Egy munkaterület tagja"
+
+#. js-lingui-id: ysZV7o
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "A workspace-wide blocklist entry cannot target a workspace member."
+msgstr "A munkaterület egészére vonatkozó tiltólista-bejegyzés nem célozhat munkaterület-tagot."
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1319,6 +1324,11 @@ msgctxt "fieldMetadata.description"
 msgid "Blocklist record position"
 msgstr "Tiltólista rekord pozíciója"
 
+#. js-lingui-id: HSo0Xn
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist scope cannot be updated."
+msgstr "A tiltólista hatóköre nem frissíthető."
+
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1381,6 +1391,17 @@ msgstr "Az összeállított komponens elérési útja érvénytelen"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Built handler path is invalid"
 msgstr "Az összeállított handler elérési útja érvénytelen"
+
+#. js-lingui-id: DKvxoP
+#: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
+msgid "Bulk deletion of blocklist entries is not allowed."
+msgstr "A tiltólista-bejegyzések tömeges törlése nem engedélyezett."
+
+#. js-lingui-id: Az75zM
+#: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
+msgid "Bulk restoration of blocklist entries is not allowed."
+msgstr "A tiltólista-bejegyzések tömeges visszaállítása nem engedélyezett."
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1839,18 +1860,13 @@ msgstr "Rendszerobjektumokhoz nem adhatók engedélyek."
 msgid "Cannot complete operation due to related records."
 msgstr "A művelet nem fejezhető be kapcsolódó rekordok miatt."
 
-#. js-lingui-id: 6Sk/wo
-#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
-msgid "Cannot create blocklist entry for another workspace member."
-msgstr "Nem hozható létre tiltólista-bejegyzés másik munkaterület-tag számára."
-
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Nem lehet több vázlat verziót létrehozni ugyanahhoz a munkafolyamathoz"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Nem hozható létre munkafolyamat verzió nem vázlatos állapottal"
 
@@ -1917,6 +1933,11 @@ msgstr "Olvasási engedély nélkül nem adható írási engedély."
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Nem lehet egynél több aktív munkafolyamat verzió"
+
+#. js-lingui-id: 9hWalM
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot manage a blocklist entry of another workspace member."
+msgstr "Másik munkaterület-tag tiltólista-bejegyzése nem kezelhető."
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5170,11 +5191,6 @@ msgstr "Érvénytelen e-mail-cím."
 msgid "Invalid email or domain."
 msgstr "Érvénytelen email vagy domain."
 
-#. js-lingui-id: pOHI+b
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "Invalid enterprise key."
-msgstr "Érvénytelen vállalati kulcs."
-
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
 msgid "Invalid event input."
@@ -5387,6 +5403,11 @@ msgstr "Érvénytelen rendezési paraméter."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
 msgstr "Érvénytelen rendezés a csoportosítási paraméterrel."
+
+#. js-lingui-id: 4rRyz1
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid Organization key."
+msgstr "Érvénytelen szervezeti kulcs."
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6474,6 +6495,11 @@ msgstr "Összevonás"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "{objectLabelPlural} egyesítése"
+
+#. js-lingui-id: 27Moeu
+#: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
+msgid "Merging blocklist entries is not allowed."
+msgstr "A tiltólista-bejegyzések összevonása nem engedélyezett."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -9329,18 +9355,6 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Security"
 msgstr "Biztonság"
 
-#. js-lingui-id: BqBYOO
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Active Version"
-msgstr "Aktív verzió megtekintése"
-
-#. js-lingui-id: BWZaOR
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Active Version"
-msgstr "Aktív verzió megtekintése"
-
 #. js-lingui-id: BCRQC8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10357,10 +10371,10 @@ msgstr "Az alapértelmezett szerepkör nem törölhető."
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "Az alapértelmezett szerepkör nem található meg ebben a munkaterületen. Kérjük, vegye fel a kapcsolatot a támogatással segítségért."
 
-#. js-lingui-id: hmg/aY
+#. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "The development instance slot for this enterprise key is already in use on another server."
-msgstr "A fejlesztői példányhely ehhez a vállalati kulcshoz már egy másik kiszolgálón használatban van."
+msgid "The development instance slot for this Organization key is already in use on another server."
+msgstr "A fejlesztői példányhely ehhez a szervezeti kulcshoz már egy másik kiszolgálón használatban van."
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10424,7 +10438,8 @@ msgid "The happensAt field used by this timeline activity type is not available"
 msgstr "Az ezzel az idővonal-tevékenységtípussal használt happensAt mező nem érhető el."
 
 #. js-lingui-id: EJUSll
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "A munkafolyamat kezdeti verziója nem törölhető"
 
@@ -10918,20 +10933,15 @@ msgstr "Ez a végpont áthelyezésre került. Hívja meg inkább a következő c
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "Ez a végpont már nem érhető el a /s/ útvonalon. Használja helyette a dedikált nyilvános tartomány URL-címét."
 
-#. js-lingui-id: i4wotH
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr "Ez a vállalati kulcs már használatban van egy másik kiszolgálópéldányon. Vonja vissza azon a kiszolgálón, vagy helyezze át erre."
-
 #. js-lingui-id: mjE4RD
 #: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
 msgid "This evaluation target could not be found."
 msgstr "Ez az értékelési cél nem található."
 
-#. js-lingui-id: uNp8ZA
+#. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr "Ez a funkció legfeljebb {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} felhasználói helyig ingyenes. Az Ön példánya ennél több felhasználói hellyel rendelkezik, ezért vállalati kulcs szükséges."
+msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
+msgstr "Ez a funkció {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} felhasználói helyig díjmentes. Az Ön példánya ezt meghaladja, ezért szervezeti kulcs szükséges."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10944,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Ez a mező nem módosítható."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Ezt a mezőt nem lehet közvetlenül frissíteni egy munkafolyamat‑verzión."
 
@@ -11093,6 +11103,11 @@ msgstr "Ez a művelet nem támogatott."
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Ez a művelet egy olyan rekordra hivatkozik, amely nem létezik, vagy nem módosítható a meglévő kapcsolatok miatt."
 
+#. js-lingui-id: 8TiDJj
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+msgstr "Ez a szervezeti kulcs már használatban van egy másik kiszolgálópéldányon. Szabadítsa fel azon a kiszolgálón, vagy helyezze át erre."
+
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11234,6 +11249,16 @@ msgstr "Ez a verzió nem újabb a jelenleg élesített verziónál. Kérjük, n�
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Az alkalmazásnak ez a verziója már telepítve van ezen a munkaterületen."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Ez a munkafolyamat-verzió hibásan formázott adatokat tartalmaz, ezért nem menthető."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Ez a munkafolyamat-verzió nem áll készen az aktiválásra."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11868,12 +11893,6 @@ msgstr "Felhasználóbarát hibaüzenet"
 msgctxt "fieldMetadata.label"
 msgid "User ID"
 msgstr "Felhasználói azonosító"
-
-#. js-lingui-id: NJT8W8
-#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
-#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
-msgid "User id is required."
-msgstr "Felhasználói azonosító szükséges."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -12818,6 +12837,7 @@ msgid "Workflow version does not contain trigger"
 msgstr "A munkafolyamat verzió nem tartalmaz trigger"
 
 #. js-lingui-id: bqFL4g
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "A munkafolyamat verzió nem vázlatos állapotban van"
@@ -12964,10 +12984,10 @@ msgstr "A munkaterület nem áll készen új tagok fogadására"
 msgid "Workspace is suspended."
 msgstr "A(z) munkaterület fel lett függesztve."
 
-#. js-lingui-id: iN7doz
+#. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
-msgstr "Elérte a munkaterületek számának korlátját. További munkaterületek létrehozásához érvényes vállalati kulcs szükséges."
+msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
+msgstr "Elérte a munkaterületek számának korlátját. További munkaterületek létrehozásához érvényes szervezeti kulcs szükséges."
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -13307,6 +13327,16 @@ msgstr "Nincs jogosultsága a felhasználók megszemélyesítéséhez ezen a mun
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Nincs engedélye felhasználók megszemélyesítésére. Kérjük, lépjen kapcsolatba munkaterületének adminisztrátorával a hozzáférés érdekében."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Nincs engedélye a munkaterülettel megosztott kapcsolatok kezelésére. Kérjük, a hozzáférésért lépjen kapcsolatba a munkaterület adminisztrátorával."
+
+#. js-lingui-id: cpivo2
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
+msgid "You do not have permission to manage the workspace blocklist."
+msgstr "Nincs jogosultsága a munkaterület tiltólistájának kezeléséhez."
+
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13365,19 +13395,19 @@ msgstr ""
 msgid "You have reached the maximum number of invitations for this step."
 msgstr "Elérte a maximális meghívásszámot ennél a lépésnél."
 
-#. js-lingui-id: 4kMeNM
+#. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
-msgstr "Elérte a mai napra engedélyezett maximális licencfrissítési számot ehhez a vállalati kulcshoz. Próbálja meg később újra."
+msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
+msgstr "Elérte a mai napra engedélyezett maximális licencfrissítési számot ehhez a szervezeti kulcshoz. Próbálja meg később újra."
 
-#. js-lingui-id: 475gCs
+#. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
-msgstr "Elérte az elmúlt 30 napra engedélyezett maximális kiszolgáló‑áthelyezési számot ehhez a vállalati kulcshoz. Próbálja meg később újra."
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
+msgstr "Elérte az elmúlt 30 napra engedélyezett maximális kiszolgáló-áthelyezési számot ehhez a szervezeti kulcshoz. Próbálja meg később újra."
 
-#. js-lingui-id: nq15cs
-#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
-msgid "You must be authenticated to manage blocklist."
+#. js-lingui-id: GFlHFf
+#: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
+msgid "You must be authenticated to manage the blocklist."
 msgstr "A tiltólista kezeléséhez hitelesítés szükséges."
 
 #. js-lingui-id: z+7x/s

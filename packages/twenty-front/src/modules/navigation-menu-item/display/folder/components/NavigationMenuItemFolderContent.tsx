@@ -1,5 +1,5 @@
 import { IconHeartOff } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import {
   FeatureFlagKey,
   type NavigationMenuItem,

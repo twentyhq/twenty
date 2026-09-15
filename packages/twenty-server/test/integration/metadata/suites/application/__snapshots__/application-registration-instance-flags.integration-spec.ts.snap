@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Application registration instance flags (integration) updateAdminApplicationRegistration should fail for a caller without the SECURITY permission flag 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Application registration instance flags (integration) updateApplicationRegistration should fail when another workspace owns the registration 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_REGISTRATION_NOT_FOUND",
+    "userFriendlyMessage": "Application registration not found.",
+  },
+  "message": "Application registration with id <applicationRegistrationId> not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Application registration instance flags (integration) updateApplicationRegistration should fail when no workspace has claimed the registration 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_REGISTRATION_NOT_FOUND",
+    "userFriendlyMessage": "Application registration not found.",
+  },
+  "message": "Application registration with id <applicationRegistrationId> not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Application registration instance flags (integration) updateApplicationRegistration should fail when the payload carries isListed 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "isListed" is not defined by type "UpdateApplicationRegistrationPayload".",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Application registration instance flags (integration) updateApplicationRegistration should fail when the payload carries isPreInstalled 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "isPreInstalled" is not defined by type "UpdateApplicationRegistrationPayload".",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Application registration instance flags (integration) updateApplicationRegistration should fail when the payload carries isVetted 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Field "isVetted" is not defined by type "UpdateApplicationRegistrationPayload".",
+  "name": "GraphQLError",
+}
+`;

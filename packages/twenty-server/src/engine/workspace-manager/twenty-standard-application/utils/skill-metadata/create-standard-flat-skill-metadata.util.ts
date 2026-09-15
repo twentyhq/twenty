@@ -111,11 +111,9 @@ Always rely on tool schema definitions:
 
 ## Validation Strategy
 
-Build steps fully configured up front so the workflow is correct on the first try. Mutation tools (\`create_complete_workflow\`, \`update_workflow_version_step\`) return a compact validation summary (error codes, messages, suggestions) — fix any reported errors.
+Build steps fully configured up front so the workflow is correct on the first try. Malformed content (a bare string in a rich text field, a step targeting an object that does not exist, a broken graph) is rejected at write time: the mutation tool fails with the error and nothing is saved, so fix the payload and retry.
 
-Do NOT call \`validate_workflow\` after every change:
-- When making several step edits in a row, pass \`validate: false\` to \`update_workflow_version_step\` to skip per-edit validation.
-- Call \`validate_workflow\` exactly ONCE at the end, before activating. It returns the full report including warnings and available variable paths.
+Do NOT call \`validate_workflow\` after every change. Call it exactly ONCE at the end, before activating: it runs the exact check activation runs and, when the version is not ready, fails with the list of issues (code, message, stepId). Fix them and call it again until it succeeds, then activate.
 
 
 ## Approach

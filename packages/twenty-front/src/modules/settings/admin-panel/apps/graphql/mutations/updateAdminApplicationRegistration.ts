@@ -4,7 +4,7 @@ import { APPLICATION_REGISTRATION_FRAGMENT } from '@/settings/application-regist
 
 export const UPDATE_ADMIN_APPLICATION_REGISTRATION = gql`
   mutation UpdateAdminApplicationRegistration(
-    $input: UpdateApplicationRegistrationInput!
+    $input: AdminUpdateApplicationRegistrationInput!
   ) {
     updateAdminApplicationRegistration(input: $input) {
       ...ApplicationRegistrationFragment

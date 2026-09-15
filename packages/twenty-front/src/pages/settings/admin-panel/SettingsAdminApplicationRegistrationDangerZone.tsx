@@ -9,10 +9,18 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import {
+  H1Title,
+  H1TitleFontColor,
+  H2Title,
+} from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui/primitives/layout';
 import {
   type ApplicationRegistration,
   ClaimApplicationRegistrationOwnershipDocument,
