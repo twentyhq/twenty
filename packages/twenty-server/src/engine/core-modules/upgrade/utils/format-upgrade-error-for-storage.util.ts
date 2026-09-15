@@ -1,4 +1,4 @@
-import { CustomError } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 import { QueryFailedError } from 'typeorm';
 
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -18,6 +18,31 @@ const joinParts = (parts: (string | null)[]): string => {
   }
 
   return joined.slice(0, MAX_ERROR_MESSAGE_LENGTH) + '\n[truncated]';
+};
+
+const indent = (text: string): string =>
+  text
+    .split('\n')
+    .map((line) => `  ${line}`)
+    .join('\n');
+
+// Recurse so a nested QueryFailedError keeps its pg code/detail, not just its message.
+const buildNestedErrorParts = ({
+  label,
+  error,
+}: {
+  label: string;
+  error: unknown;
+}): (string | null)[] => {
+  if (!isDefined(error)) {
+    return [];
+  }
+
+  const nestedParts = buildErrorParts(error).filter((part): part is string =>
+    Boolean(part),
+  );
+
+  return [`${label}:`, ...nestedParts.map(indent)];
 };
 
 const buildErrorParts = (error: unknown): (string | null)[] => {
@@ -40,15 +65,18 @@ const buildErrorParts = (error: unknown): (string | null)[] => {
       error.action
         ? `Action: ${error.action.type} on ${error.action.metadataName}`
         : null,
-      error.errors?.metadata
-        ? `Metadata error: ${error.errors.metadata.message}`
-        : null,
-      error.errors?.workspaceSchema
-        ? `Schema error: ${error.errors.workspaceSchema.message}`
-        : null,
-      error.errors?.actionTranspilation
-        ? `Transpilation error: ${error.errors.actionTranspilation.message}`
-        : null,
+      ...buildNestedErrorParts({
+        label: 'Metadata error',
+        error: error.errors?.metadata,
+      }),
+      ...buildNestedErrorParts({
+        label: 'Schema error',
+        error: error.errors?.workspaceSchema,
+      }),
+      ...buildNestedErrorParts({
+        label: 'Transpilation error',
+        error: error.errors?.actionTranspilation,
+      }),
       formatStack(error.stack),
     ];
   }

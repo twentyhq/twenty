@@ -26,8 +26,8 @@ Spouští pracovní postup, když je vytvořen nový záznam ve vybraném objekt
 **Konfigurace**: Vyberte typ objektu, který chcete sledovat ohledně nových záznamů.
 
 <Note>
-* Tento spouštěč je skvělý pro záznamy vytvořené pomocí CSV, synchronizace poštovní schránky a kalendáře nebo API.
-* **Nedoporučuje se pro záznamy vytvářené ručně**: s tímto spouštěčem se pracovní postupy spouštějí okamžitě po vytvoření záznamu. Protože Twenty UI nabízí průběžné automatické ukládání (neexistuje režim úprav a následné potvrzení pro uložení záznamů), pracovní postup bude spuštěn dříve, než uživatel vyplní všechna pole.
+* Tento spouštěč je skvělý pro záznamy vytvořené CSV, poštovní schránkou a synchronizací kalendáře nebo API.
+* **Nedoporučuje se pro záznamy vytvářené ručně**: s tímto spouštěčem se pracovní postupy spouštějí okamžitě po vytvoření záznamu. Vzhledem k tomu, že dvacet UI nabízí automatické ukládání na létání (neexistuje žádný režim úprav a pak ověření pro uložení záznamů), pracovní postup bude spuštěn před zadáním všech polí uživatele.
   Chcete-li tento pracovní postup spouštět u záznamů vytvořených ručně, doporučujeme místo toho použít spouštěč `Record is created or updated`.
 </Note>
 
@@ -70,15 +70,17 @@ Spustí pracovní postup, když jej vyvolá uživatelská akce. K tomuto spoušt
 **Konfigurace dostupnosti**:
 Vyberte, jak má pracovní postup zpracovávat výběr záznamů:
 
-* **Globální**: K aktivaci tohoto pracovního postupu není vyžadován žádný záznam. Pracovní postup se spouští z příkazové nabídky `Cmd + K` odkudkoli (z jakéhokoli objektu) a nepoužívá jako vstup žádné záznamy.
+* **Globální**: K aktivaci tohoto pracovního postupu není vyžadován žádný záznam. Pracovní postup je spuštěn z menu příkazu `Cmd+K` kdekoli (z libovolného objektu) a jako vstup nepoužívá záznam(y).
 
-* **Jednotlivé**: Vybraný záznam či záznamy budou předány vašemu pracovnímu postupu. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup se spustí od začátku do konce tolikrát, kolik je vybraných záznamů.
+Pro **single** a **Bulk** dostupnost budou vybrané záznamy předány vašemu pracovnímu postupu. Toto je konfigurováno pro daný objekt a před spuštěním pracovního postupu lze vybrat několik záznamů.
+
+* **Jedno**: Pracovní postup běží od začátku do konce tolikrát, kolikrát jsou vybrány záznamy.
 
   <Note>
     **Měkký limit: 100 běhů za minutu**. Po překročení tohoto limitu zůstanou pracovní postupy ve stavu "Not Started" a budou zpracovávány postupně—buď úlohou na pozadí, nebo když do fronty vstoupí další pracovní postup. To znamená, že se spouštěčem Jednotlivé můžete vybrat více než 100 záznamů; provádění bude jen pomalejší.
   </Note>
 
-* **Hromadné**: Vybrané záznamy budou předány do vašeho pracovního postupu. Toto je nastaveno pro daný objekt. Před spuštěním pracovního postupu je možné vybrat několik záznamů. Pracovní postup poběží jednou, přičemž celý seznam záznamů bude použit jako vstup. To znamená, že pracovní postup musí obsahovat [akci Iterator](/l/cs/user-guide/workflows/capabilities/workflow-actions#iterator).
+* **Hromadné**: Pracovní postup bude spuštěn jednou, poskytne celý seznam záznamů jako vstup. To znamená, že pracovní postup musí obsahovat [akci Iterator](/l/cs/user-guide/workflows/capabilities/workflow-actions#iterator).
 
 <Note>
 Toto je pokročilejší a hodí se pro uživatele, kteří chtějí optimalizovat počet běhů pracovního postupu.

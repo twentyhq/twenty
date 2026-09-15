@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
@@ -16,35 +17,37 @@ import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
-import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
+import { useAdminUpdateFeatureFlag } from '@/settings/admin-panel/hooks/useAdminUpdateFeatureFlag';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Avatar } from 'twenty-ui/data-display';
 import {
-  Avatar,
-  H2Title,
   IconCreditCard,
   IconEyeShare,
   IconFlag,
   IconMessage,
-  OverflowingTextWithTooltip,
   IconSettings2,
   IconUsers,
-} from 'twenty-ui/display';
-import { Button, Toggle } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
+} from 'twenty-ui/icon';
+import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
+import { Button, Switch } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
@@ -78,10 +81,13 @@ export const SettingsAdminWorkspaceDetail = () => {
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { updateFeatureFlagState } = useFeatureFlagState();
+  const { updateFeatureFlagState } = useAdminUpdateFeatureFlag();
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument, {
     client: apolloAdminClient,
+    refetchQueries: [
+      { query: WORKSPACE_LOOKUP_ADMIN_PANEL, variables: { workspaceId } },
+    ],
   });
 
   const { data: workspaceData, loading: isLoadingWorkspace } =
@@ -192,13 +198,25 @@ export const SettingsAdminWorkspaceDetail = () => {
   ];
 
   const workspaceName = workspace?.name || workspaceId || '';
+  const workspaceLogo = isNonEmptyString(workspace?.logo)
+    ? workspace.logo
+    : DEFAULT_WORKSPACE_LOGO;
 
   if (isLoadingWorkspace) {
     return <SettingsSkeletonLoader />;
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
+      title={workspaceName}
+      icon={
+        <Avatar
+          src={getAbsoluteImageUrl(workspaceLogo)}
+          name={workspaceName}
+          colorSeed={workspace?.id}
+          size="md"
+        />
+      }
       links={[
         {
           children: t`Other`,
@@ -212,14 +230,15 @@ export const SettingsAdminWorkspaceDetail = () => {
           children: workspaceName,
         },
       ]}
-    >
-      <SettingsPageContainer>
-        <TabList
+      secondaryBar={
+        <SettingsTabBar
           tabs={tabs}
           behaveAsLinks={false}
           componentInstanceId={WORKSPACE_DETAIL_TABS_ID}
         />
-
+      }
+    >
+      <SettingsPageContainer>
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
           <SettingsAdminWorkspaceContent
             activeWorkspace={workspace}
@@ -264,14 +283,14 @@ export const SettingsAdminWorkspaceDetail = () => {
                         overflow="hidden"
                       >
                         <Avatar
-                          avatarUrl={user.avatarUrl}
-                          placeholder={
+                          src={getAbsoluteImageUrl(user.avatarUrl)}
+                          name={
                             `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                             user.email
                           }
-                          placeholderColorSeed={user.id}
+                          colorSeed={user.id}
                           size="md"
-                          type="rounded"
+                          shape="circle"
                         />
                         <OverflowingTextWithTooltip
                           text={
@@ -282,20 +301,22 @@ export const SettingsAdminWorkspaceDetail = () => {
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell align="right">
-                        {workspace.allowImpersonation && (
-                          <Button
-                            Icon={IconEyeShare}
-                            variant="secondary"
-                            size="small"
-                            title={t`Impersonate`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleImpersonate(userId, workspaceId!);
-                            }}
-                            disabled={impersonatingUserId === userId}
-                          />
-                        )}
+                        {workspace.allowImpersonation &&
+                          isDefined(currentUser?.id) &&
+                          userId !== currentUser.id && (
+                            <Button
+                              Icon={IconEyeShare}
+                              variant="secondary"
+                              size="small"
+                              title={t`Impersonate`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleImpersonate(userId, workspaceId!);
+                              }}
+                              disabled={impersonatingUserId === userId}
+                            />
+                          )}
                       </TableCell>
                     </TableRow>
                   );
@@ -338,9 +359,10 @@ export const SettingsAdminWorkspaceDetail = () => {
                         <TableCell>{flag.key}</TableCell>
                         <TableCell align="right">
                           {isDefined(flag.key) && (
-                            <Toggle
-                              value={displayedValue}
-                              onChange={(newValue) =>
+                            <Switch
+                              aria-label={flag.key}
+                              checked={displayedValue}
+                              onCheckedChange={(newValue) =>
                                 handleFeatureFlagUpdate(flag.key!, newValue)
                               }
                             />
@@ -395,9 +417,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                     <TableCell color={themeCssVariables.font.color.primary}>
                       {thread.title || t`Untitled`}
                     </TableCell>
-                    <TableCell align="right">
-                      {thread.conversationSize}
-                    </TableCell>
+                    <TableCell align="right">{thread.messageCount}</TableCell>
                     <TableCell align="right">
                       {new Date(thread.updatedAt).toLocaleDateString()}
                     </TableCell>
@@ -408,6 +428,6 @@ export const SettingsAdminWorkspaceDetail = () => {
           </Section>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

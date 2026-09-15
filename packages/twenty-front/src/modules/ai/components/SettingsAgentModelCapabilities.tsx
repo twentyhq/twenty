@@ -1,12 +1,10 @@
-import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { InputLabel } from '@/ui/input/components/InputLabel';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useResolvedAiModel } from '@/ai/hooks/useResolvedAiModel';
+import { InputLabel, Checkbox } from 'twenty-ui/input';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBrandX, IconWorld } from 'twenty-ui/display';
-import { Checkbox } from 'twenty-ui/input';
+import { IconBrandX, IconWorld } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -60,16 +58,17 @@ export const SettingsAgentModelCapabilities = ({
   disabled = false,
 }: SettingsAgentModelCapabilitiesProps) => {
   const { theme } = useContext(ThemeContext);
-  const aiModels = useAtomStateValue(aiModelsState);
-
-  const selectedModel = aiModels.find((m) => m.modelId === selectedModelId);
+  const selectedModel = useResolvedAiModel(selectedModelId);
   const nativeCapabilities = selectedModel?.nativeCapabilities;
 
   if (!isDefined(nativeCapabilities)) {
     return null;
   }
 
-  if (!nativeCapabilities.webSearch && !nativeCapabilities.twitterSearch) {
+  const showNativeWebSearch = nativeCapabilities.webSearch;
+  const showNativeTwitterSearch = nativeCapabilities.twitterSearch;
+
+  if (!showNativeWebSearch && !showNativeTwitterSearch) {
     return null;
   }
 
@@ -91,7 +90,7 @@ export const SettingsAgentModelCapabilities = ({
   };
 
   const capabilities = [
-    ...(nativeCapabilities.webSearch
+    ...(showNativeWebSearch
       ? [
           {
             key: 'webSearch' as const,
@@ -101,7 +100,7 @@ export const SettingsAgentModelCapabilities = ({
           },
         ]
       : []),
-    ...(nativeCapabilities.twitterSearch
+    ...(showNativeTwitterSearch
       ? [
           {
             key: 'twitterSearch' as const,
@@ -130,12 +129,13 @@ export const SettingsAgentModelCapabilities = ({
               <span>{capability.label}</span>
             </StyledCheckboxLabel>
             <Checkbox
+              aria-label={capability.label}
               checked={capability.enabled}
-              onChange={(event) => {
-                event.stopPropagation();
-                handleCapabilityToggle(capability.key, event.target.checked);
+              onCheckedChange={(isChecked) => {
+                handleCapabilityToggle(capability.key, isChecked);
               }}
               disabled={disabled}
+              onClick={(event) => event.stopPropagation()}
             />
           </StyledCheckboxContainer>
         ))}

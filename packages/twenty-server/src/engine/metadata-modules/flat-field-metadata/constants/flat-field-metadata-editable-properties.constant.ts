@@ -6,7 +6,9 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'description',
     'icon',
     'isActive',
+    'isAuditLogged',
     'isLabelSyncedWithName',
+    'isSearchable',
     'isUnique',
     'label',
     'name',
@@ -18,12 +20,18 @@ export const FLAT_FIELD_METADATA_EDITABLE_PROPERTIES = {
     'description',
     'icon',
     'isActive',
+    'isAuditLogged',
     'label',
     'options',
     'settings',
+    'isSearchable',
     'isUnique',
   ],
 } as const satisfies Record<
   'standard' | 'custom',
   MetadataEntityPropertyName<'fieldMetadata'>[]
 >;
+
+export const FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES = [
+  'isActive',
+] as const satisfies MetadataEntityPropertyName<'fieldMetadata'>[];

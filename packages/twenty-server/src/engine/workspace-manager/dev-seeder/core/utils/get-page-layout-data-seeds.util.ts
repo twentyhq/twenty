@@ -1,6 +1,6 @@
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 import { PAGE_LAYOUT_SEEDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/page-layout-seeds.constant';
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
 
@@ -23,6 +23,8 @@ export const getPageLayoutFlatEntitySeeds = ({
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       workspaceId,
+      isSystemSideEffect: false,
+      isFirstTabPinned: true,
       name: 'Sales Dashboard Layout',
       type: PageLayoutType.DASHBOARD,
       objectMetadataId: null,
@@ -44,6 +46,8 @@ export const getPageLayoutFlatEntitySeeds = ({
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       workspaceId,
+      isSystemSideEffect: false,
+      isFirstTabPinned: true,
       name: 'Customer Dashboard Layout',
       type: PageLayoutType.DASHBOARD,
       objectMetadataId: null,
@@ -65,6 +69,8 @@ export const getPageLayoutFlatEntitySeeds = ({
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       workspaceId,
+      isSystemSideEffect: false,
+      isFirstTabPinned: true,
       name: 'Team Dashboard Layout',
       type: PageLayoutType.DASHBOARD,
       objectMetadataId: null,
@@ -89,6 +95,8 @@ export const getPageLayoutFlatEntitySeeds = ({
       applicationId: flatApplication.id,
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       workspaceId,
+      isSystemSideEffect: false,
+      isFirstTabPinned: true,
       name: 'Documentation',
       type: PageLayoutType.STANDALONE_PAGE,
       objectMetadataId: null,

@@ -2,44 +2,41 @@ import { Injectable } from '@nestjs/common';
 
 import { type Event } from '@microsoft/microsoft-graph-types';
 
+import { MicrosoftCalendarEventsImportErrorHandler } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/services/microsoft-calendar-events-import-error-handler.service';
 import { formatMicrosoftCalendarEvents } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/format-microsoft-calendar-event.util';
-import { parseMicrosoftCalendarError } from 'src/modules/calendar/calendar-event-import-manager/drivers/microsoft-calendar/utils/parse-microsoft-calendar-error.util';
 import { type FetchedCalendarEvent } from 'src/modules/calendar/common/types/fetched-calendar-event';
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 @Injectable()
 export class MicrosoftCalendarImportEventsService {
   constructor(
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
+    private readonly microsoftCalendarEventsImportErrorHandler: MicrosoftCalendarEventsImportErrorHandler,
   ) {}
 
   public async getCalendarEvents(
-    connectedAccount: Pick<
-      ConnectedAccountEntity,
-      'provider' | 'accessToken' | 'refreshToken' | 'id'
-    >,
-    changedEventIds: string[],
+    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
+    eventExternalIds: string[],
   ): Promise<FetchedCalendarEvent[]> {
-    try {
-      const microsoftClient =
-        await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
-          connectedAccount,
+    const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
+
+    const events: Event[] = [];
+
+    for (const eventExternalId of eventExternalIds) {
+      const event = await microsoftClient
+        .api(`/me/calendar/events/${eventExternalId}`)
+        .header('Prefer', 'outlook.body-content-type="text"')
+        .get()
+        .catch((error: unknown) =>
+          this.microsoftCalendarEventsImportErrorHandler.handleError(error),
         );
 
-      const events: Event[] = [];
-
-      for (const changedEventId of changedEventIds) {
-        const event = await microsoftClient
-          .api(`/me/calendar/events/${changedEventId}`)
-          .get();
-
-        events.push(event);
-      }
-
-      return formatMicrosoftCalendarEvents(events);
-    } catch (error) {
-      throw parseMicrosoftCalendarError(error);
+      events.push(event);
     }
+
+    return formatMicrosoftCalendarEvents(events);
   }
 }

@@ -1,19 +1,19 @@
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 
 import { type OutputSchemaField } from '@/ai/constants/OutputFieldTypeOptions';
 import { createDefaultOutputSchemaField } from '@/ai/utils/createDefaultOutputSchemaField';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import {
+  InputLabel,
+  AnimatedLightIconButton,
+  LightIconButton,
+} from 'twenty-ui/input';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
-import {
-  IconChevronDown,
-  IconPlus,
-  IconVariable,
-  IconX,
-} from 'twenty-ui/display';
-import { AnimatedLightIconButton, LightIconButton } from 'twenty-ui/input';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
+import { IconChevronDown, IconPlus, IconVariable, IconX } from 'twenty-ui/icon';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -153,6 +153,17 @@ export const WorkflowOutputSchemaBuilder = ({
     );
   };
 
+  const getVariableNameError = (name: string): string | undefined => {
+    if (
+      !isNonEmptyString(name) ||
+      isValidAgentResponseSchemaPropertyKey(name)
+    ) {
+      return undefined;
+    }
+
+    return t`Use only letters, numbers, underscores, dots or hyphens (max 64 characters).`;
+  };
+
   return (
     <StyledOutputSchemaContainer>
       <InputLabel>{t`Output`}</InputLabel>
@@ -186,7 +197,7 @@ export const WorkflowOutputSchemaBuilder = ({
                   <AnimatedLightIconButton
                     Icon={IconChevronDown}
                     size="small"
-                    animate={{ rotate: isExpanded ? -180 : 0 }}
+                    rotate={isExpanded ? -180 : 0}
                   />
                   {showRemoveFieldButton && (
                     <LightIconButton
@@ -210,6 +221,7 @@ export const WorkflowOutputSchemaBuilder = ({
                         label={t`Variable Name`}
                         placeholder={t`e.g., summary, status, count`}
                         defaultValue={field.name}
+                        error={getVariableNameError(field.name)}
                         onChange={(value) =>
                           updateField(field.id, { name: value.trim() })
                         }

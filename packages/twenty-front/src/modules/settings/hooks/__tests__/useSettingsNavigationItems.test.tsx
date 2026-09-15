@@ -126,6 +126,59 @@ describe('useSettingsNavigationItems', () => {
     expect(workspaceSection?.items.some((item) => !item.isHidden)).toBe(true);
   });
 
+  it('should hide billing navigation when billing is disabled', () => {
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+      [PermissionFlagType.WORKSPACE]: true,
+      [PermissionFlagType.WORKSPACE_MEMBERS]: true,
+      [PermissionFlagType.DATA_MODEL]: true,
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: true,
+      [PermissionFlagType.ROLES]: true,
+      [PermissionFlagType.SECURITY]: true,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: true,
+    }));
+
+    const { result } = renderHook(() => useSettingsNavigationItems(), {
+      wrapper: Wrapper,
+    });
+
+    const workspaceSection = result.current.find(
+      (section) => section.label === 'Workspace',
+    );
+    const billingItem = workspaceSection?.items.find(
+      (item) => item.label === 'Billing',
+    );
+
+    expect(billingItem?.isHidden).toBe(true);
+    expect(billingItem?.path).toBe(SettingsPath.Billing);
+  });
+
+  it('should hide billing navigation until billing config is loaded', () => {
+    jotaiStore.set(billingState.atom, null);
+
+    (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
+      [PermissionFlagType.WORKSPACE]: true,
+      [PermissionFlagType.WORKSPACE_MEMBERS]: true,
+      [PermissionFlagType.DATA_MODEL]: true,
+      [PermissionFlagType.API_KEYS_AND_WEBHOOKS]: true,
+      [PermissionFlagType.ROLES]: true,
+      [PermissionFlagType.SECURITY]: true,
+      [PermissionFlagType.CONNECTED_ACCOUNTS]: true,
+    }));
+
+    const { result } = renderHook(() => useSettingsNavigationItems(), {
+      wrapper: Wrapper,
+    });
+
+    const workspaceSection = result.current.find(
+      (section) => section.label === 'Workspace',
+    );
+    const billingItem = workspaceSection?.items.find(
+      (item) => item.label === 'Billing',
+    );
+
+    expect(billingItem?.isHidden).toBe(true);
+  });
+
   it('should show user section items regardless of permissions', () => {
     (usePermissionFlagMap as jest.Mock).mockImplementation(() => ({
       [PermissionFlagType.WORKSPACE]: false,

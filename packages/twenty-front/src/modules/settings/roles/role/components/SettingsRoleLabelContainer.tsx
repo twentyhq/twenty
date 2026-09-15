@@ -1,21 +1,8 @@
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { TitleInput } from '@/ui/input/components/TitleInput';
-import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledHeaderTitle = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  max-width: 420px;
-  width: fit-content;
-  & > input:disabled {
-    color: ${themeCssVariables.font.color.primary};
-  }
-`;
 
 type SettingsRoleLabelContainerProps = {
   roleId: string;
@@ -41,15 +28,12 @@ export const SettingsRoleLabelContainer = ({
   };
 
   return (
-    <StyledHeaderTitle>
-      <TitleInput
-        instanceId="role-label-input"
-        disabled={!settingsDraftRole.isEditable}
-        sizeVariant="md"
-        value={settingsDraftRole.label}
-        onChange={handleChange}
-        placeholder={t`Role name`}
-      />
-    </StyledHeaderTitle>
+    <SettingsEditableTitle
+      instanceId="role-label-input"
+      disabled={!settingsDraftRole.isEditable}
+      value={settingsDraftRole.label}
+      onChange={handleChange}
+      placeholder={t`Role name`}
+    />
   );
 };

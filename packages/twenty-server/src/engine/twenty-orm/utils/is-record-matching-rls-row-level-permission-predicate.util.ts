@@ -50,7 +50,7 @@ import {
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const isLeafFilter = (
@@ -81,11 +81,11 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
   flatFieldMetadataMaps,
   shouldIgnoreSoftDeleteDefaultFilter,
 }: {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   record: any;
   filter: RecordGqlOperationFilter;
   flatObjectMetadata: FlatObjectMetadata;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   shouldIgnoreSoftDeleteDefaultFilter?: boolean;
 }): boolean => {
   if (Object.keys(filter).length === 0 && record.deletedAt === null) {
@@ -208,7 +208,8 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
       objectFields.find((field) => field.name === filterKey) ??
       objectFields.find(
         (field) =>
-          field.type === FieldMetadataType.RELATION &&
+          (field.type === FieldMetadataType.RELATION ||
+            field.type === FieldMetadataType.MORPH_RELATION) &&
           computeMorphOrRelationFieldJoinColumnName({ name: field.name }) ===
             filterKey,
       );
@@ -237,6 +238,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         return isMatchingRatingFilter({
           ratingFilter: filterValue as RatingFilter,
           value: recordFieldValue,
+          options: objectMetadataField.options,
         });
       case FieldMetadataType.TEXT: {
         return isMatchingStringFilter({
@@ -254,6 +256,7 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
         return isMatchingSelectFilter({
           selectFilter: filterValue as SelectFilter,
           value: recordFieldValue,
+          options: objectMetadataField.options,
         });
       case FieldMetadataType.MULTI_SELECT:
         return isMatchingMultiSelectFilter({
@@ -411,7 +414,8 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           });
         });
       }
-      case FieldMetadataType.RELATION: {
+      case FieldMetadataType.RELATION:
+      case FieldMetadataType.MORPH_RELATION: {
         const isJoinColumn =
           computeMorphOrRelationFieldJoinColumnName({
             name: objectMetadataField.name,
@@ -424,9 +428,10 @@ export const isRecordMatchingRLSRowLevelPermissionPredicate = ({
           });
         }
 
-        throw new Error(
-          `Not implemented yet, use UUID filter instead on the corresponding "${filterKey}Id" field`,
-        );
+        return isMatchingUUIDFilter({
+          uuidFilter: filterValue as UUIDFilter,
+          value: recordFieldValue?.id ?? null,
+        });
       }
       case FieldMetadataType.TS_VECTOR: {
         return isMatchingTSVectorFilter({

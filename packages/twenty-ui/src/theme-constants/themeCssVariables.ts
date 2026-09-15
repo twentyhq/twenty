@@ -1,5 +1,5 @@
-// This file is generated from packages/twenty-ui/src/theme/constants/.
-// Do not edit manually — regenerate by running the generation script.
+// Generated from design-tokens by scripts/generateThemeTokens.ts.
+// Do not edit manually. Regenerate with: npx nx generateTokens twenty-ui.
 export const themeCssVariables = {
   icon: {
     size: {
@@ -45,6 +45,11 @@ export const themeCssVariables = {
     iconStrikeLight: 'var(--t-text-icon-strike-light)',
     iconStrikeMedium: 'var(--t-text-icon-strike-medium)',
     iconStrikeBold: 'var(--t-text-icon-strike-bold)',
+  },
+  tooltip: {
+    background: 'var(--t-tooltip-background)',
+    color: 'var(--t-tooltip-color)',
+    descriptionColor: 'var(--t-tooltip-description-color)',
   },
   animation: {
     duration: {
@@ -174,6 +179,9 @@ export const themeCssVariables = {
       xs: 'var(--t-border-radius-xs)',
       sm: 'var(--t-border-radius-sm)',
       md: 'var(--t-border-radius-md)',
+      smRound: 'var(--t-border-radius-sm-round)',
+      mdRound: 'var(--t-border-radius-md-round)',
+      lg: 'var(--t-border-radius-lg)',
       xl: 'var(--t-border-radius-xl)',
       xxl: 'var(--t-border-radius-xxl)',
       pill: 'var(--t-border-radius-pill)',
@@ -316,12 +324,12 @@ export const themeCssVariables = {
   },
   IllustrationIcon: {
     color: {
-      blue: 'var(--t--illustration-icon-color-blue)',
-      gray: 'var(--t--illustration-icon-color-gray)',
+      blue: 'var(--t-illustration-icon-color-blue)',
+      gray: 'var(--t-illustration-icon-color-gray)',
     },
     fill: {
-      blue: 'var(--t--illustration-icon-fill-blue)',
-      gray: 'var(--t--illustration-icon-fill-gray)',
+      blue: 'var(--t-illustration-icon-fill-blue)',
+      gray: 'var(--t-illustration-icon-fill-gray)',
     },
   },
   grayScale: {

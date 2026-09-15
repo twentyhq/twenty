@@ -1,16 +1,19 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 export const NOTE_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '1253e3e5-5b00-4a34-93b8-02f3dc6e2b7c',
   nameSingular: 'note',
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   namePlural: 'notes',
   labelSingular: 'Note',
   labelPlural: 'Notes',
   description: 'A note',
   icon: 'IconNotes',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: false,

@@ -2,7 +2,7 @@
 
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 @ArgsType()
 export class BillingSessionInput {
@@ -10,4 +10,9 @@ export class BillingSessionInput {
   @IsString()
   @IsOptional()
   returnUrlPath?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  forPaymentMethodUpdate?: boolean;
 }

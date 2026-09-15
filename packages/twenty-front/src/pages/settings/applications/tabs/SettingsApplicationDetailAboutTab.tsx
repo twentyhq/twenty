@@ -5,12 +5,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconCheck,
-  IconDownload,
-  IconTrash,
-  IconUpload,
-} from 'twenty-ui/display';
+import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -27,6 +22,7 @@ type SettingsApplicationDetailAboutTabProps = {
   displayName: string;
   description?: string;
   aboutDescription?: string;
+  pricingDescription?: string;
   screenshots?: string[];
   author?: string;
   category?: string;
@@ -103,6 +99,7 @@ export const SettingsApplicationDetailAboutTab = ({
   displayName,
   description,
   aboutDescription,
+  pricingDescription,
   screenshots,
   author,
   category,
@@ -135,7 +132,7 @@ export const SettingsApplicationDetailAboutTab = ({
       return null;
     }
 
-    if (!isInstalled) {
+    if (!isInstalled || isInstalling) {
       return (
         <Button
           Icon={IconDownload}
@@ -155,7 +152,7 @@ export const SettingsApplicationDetailAboutTab = ({
           title={
             isUpgrading
               ? t`Upgrading...`
-              : t`Upgrade to ${latestAvailableVersion}`
+              : t`Upgrade to ${latestAvailableVersion ?? ''}`
           }
           variant={'secondary'}
           accent={'blue'}
@@ -211,6 +208,7 @@ export const SettingsApplicationDetailAboutTab = ({
 
         <SettingsApplicationAboutSidebar
           actionButton={getActionButton()}
+          pricingDescription={pricingDescription}
           author={author}
           category={category}
           contentEntries={contentEntries}

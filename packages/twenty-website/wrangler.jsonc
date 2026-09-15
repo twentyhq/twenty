@@ -1,0 +1,100 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "twenty-website",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-04-15",
+  // `global_fetch_strictly_public` forces the skew handler's cross-version
+  // fetch to `<version>-<worker>.<account>.workers.dev` to take the public
+  // Internet path. Without it, Cloudflare's optimized intra-account routing
+  // self-loops back to the current worker (timeouts → 522).
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+    // Worker must intercept asset requests so it can route /_next/static/*
+    // and /_next/data/* from a stale client to the matching old Worker
+    // version (skew protection). Cloudflare's edge cache still absorbs hot
+    // paths, so this isn't a 5× Worker invocation tax in practice.
+    "run_worker_first": true,
+  },
+  // Per-version preview URLs are how skew protection routes a stale request
+  // to the old deployment: `<version>-<worker>.<account>.workers.dev`.
+  "preview_urls": true,
+  "observability": {
+    "enabled": true,
+  },
+  "env": {
+    "dev": {
+      "name": "twenty-website-dev",
+      "routes": [
+        {
+          "pattern": "twenty-main.com",
+          "custom_domain": true,
+        },
+        {
+          "pattern": "www.twenty-main.com",
+          "custom_domain": true,
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "twenty-website-cache-dev",
+        },
+      ],
+      // Self-reference so OpenNext can fire-and-forget background ISR
+      // revalidations instead of blocking the request. Per-env because the
+      // service name must match the deployed worker name.
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "twenty-website-dev",
+        },
+      ],
+      // Skew-protection runtime inputs. The handler reads these to construct
+      // `<old-version-id>-<CF_WORKER_NAME>.<CF_PREVIEW_DOMAIN>.workers.dev`
+      // when routing a stale request to an older Worker version.
+      "vars": {
+        "CF_WORKER_NAME": "twenty-website-dev",
+        // OpenNext appends `.workers.dev` itself when constructing the
+        // per-version preview URL — passing the full `twentyhq.workers.dev`
+        // here would yield `…twentyhq.workers.dev.workers.dev` and 404.
+        // See https://github.com/opennextjs/opennextjs-cloudflare/issues/811
+        "CF_PREVIEW_DOMAIN": "twentyhq",
+      },
+    },
+    "prod": {
+      "name": "twenty-website-prod",
+      "routes": [
+        {
+          "pattern": "twenty.com",
+          "custom_domain": true,
+        },
+        {
+          "pattern": "www.twenty.com",
+          "custom_domain": true,
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "NEXT_INC_CACHE_R2_BUCKET",
+          "bucket_name": "twenty-website-cache-prod",
+        },
+      ],
+      "services": [
+        {
+          "binding": "WORKER_SELF_REFERENCE",
+          "service": "twenty-website-prod",
+        },
+      ],
+      "vars": {
+        "CF_WORKER_NAME": "twenty-website-prod",
+        // OpenNext appends `.workers.dev` itself when constructing the
+        // per-version preview URL — passing the full `twentyhq.workers.dev`
+        // here would yield `…twentyhq.workers.dev.workers.dev` and 404.
+        // See https://github.com/opennextjs/opennextjs-cloudflare/issues/811
+        "CF_PREVIEW_DOMAIN": "twentyhq",
+      },
+    },
+  },
+}

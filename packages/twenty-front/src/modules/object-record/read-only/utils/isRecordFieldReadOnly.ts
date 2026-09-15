@@ -1,5 +1,6 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isFieldMetadataReadOnlyByPermissions } from '@/object-record/read-only/utils/internal/isFieldMetadataReadOnlyByPermissions';
+import { isMetadataWritabilityRestricted } from '@/object-record/read-only/utils/internal/isMetadataWritabilityRestricted';
 import { isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission } from '@/object-record/read-only/utils/isOneToManyRelationFieldReadOnlyDueToTargetUpdatePermission';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -14,10 +15,9 @@ type ObjectPermissionsByObjectMetadataId = Record<
 
 type IsRecordFieldReadOnlyParams = {
   isRecordReadOnly: boolean;
-  isSystemObject?: boolean;
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'id' | 'isUIReadOnly' | 'isCustom'
+    'id' | 'isUIEditable' | 'writability'
   >;
   objectPermissions: ObjectPermission;
   fieldDefinition?: FieldDefinition<FieldMetadata>;
@@ -27,7 +27,6 @@ type IsRecordFieldReadOnlyParams = {
 export const isRecordFieldReadOnly = ({
   objectPermissions,
   isRecordReadOnly,
-  isSystemObject,
   fieldMetadataItem,
   fieldDefinition,
   objectPermissionsByObjectMetadataId,
@@ -47,8 +46,8 @@ export const isRecordFieldReadOnly = ({
 
   return (
     isRecordReadOnly ||
-    (isSystemObject === true && fieldMetadataItem.isCustom !== true) ||
-    fieldMetadataItem.isUIReadOnly ||
+    !(fieldMetadataItem.isUIEditable ?? true) ||
+    isMetadataWritabilityRestricted(fieldMetadataItem.writability) ||
     fieldReadOnlyByPermissions ||
     oneToManyTargetReadOnly
   );

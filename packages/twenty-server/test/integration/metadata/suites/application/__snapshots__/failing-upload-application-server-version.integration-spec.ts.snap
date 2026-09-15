@@ -1,0 +1,13 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Publish application is gated by the instance server version rejects publishing when the app requires a server version the instance does not satisfy 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "SERVER_VERSION_INCOMPATIBLE",
+    "userFriendlyMessage": "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version.",
+  },
+  "message": "App requires Twenty server >=<version> but this server is <version>.",
+  "name": "UserInputError",
+}
+`;

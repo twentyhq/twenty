@@ -1,7 +1,11 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
-import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useReadDefaultDomainFromConfiguration } from '@/domain-manager/hooks/useReadDefaultDomainFromConfiguration';
+import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
+import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
+import { Select } from '@/ui/input/components/Select';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { styled } from '@linaria/react';
@@ -12,18 +16,20 @@ import { capitalize } from 'twenty-shared/utils';
 import {
   IconGoogle,
   IconLink,
+  IconList,
   IconMicrosoft,
   IconPassword,
-} from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
+} from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import {
   type AuthProviders,
   UpdateWorkspaceDocument,
+  WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 
-import { Toggle2FA } from './Toggle2FA';
+import { TwoFactorAuthenticationSwitch } from './TwoFactorAuthenticationSwitch';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledSettingsSecurityOptionsList = styled.div`
@@ -36,8 +42,12 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
   const { t } = useLingui();
 
   const { enqueueErrorSnackBar } = useSnackBar();
-  const SSOIdentitiesProviders = useAtomStateValue(SSOIdentitiesProvidersState);
+  const ssoIdentitiesProviders = useAtomStateValue(ssoIdentitiesProvidersState);
   const authProviders = useAtomStateValue(authProvidersState);
+  const isMultiWorkspaceEnabled = useAtomStateValue(
+    isMultiWorkspaceEnabledState,
+  );
+  const { defaultDomain } = useReadDefaultDomainFromConfiguration();
 
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
@@ -69,7 +79,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
       currentWorkspace.isGoogleAuthEnabled,
       currentWorkspace.isMicrosoftAuthEnabled,
       currentWorkspace.isPasswordAuthEnabled,
-      (SSOIdentitiesProviders?.length ?? 0) > 0,
+      (ssoIdentitiesProviders?.length ?? 0) > 0,
     ];
 
     if (
@@ -94,7 +104,6 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         },
       },
     }).catch((err) => {
-      // rollback optimistic update if err
       setCurrentWorkspace({
         ...currentWorkspace,
         [key]: !currentWorkspace[key],
@@ -128,13 +137,74 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
     }
   };
 
+  const discoverabilityOptions = [
+    {
+      value: WorkspaceDiscoverability.PUBLIC,
+      label: t`Discoverable`,
+    },
+    {
+      value: WorkspaceDiscoverability.MEMBERS_AND_INVITEES,
+      label: t`Members & invitees`,
+    },
+    {
+      value: WorkspaceDiscoverability.HIDDEN,
+      label: t`Hidden`,
+    },
+  ];
+
+  const getDiscoverabilityDescription = (value: WorkspaceDiscoverability) => {
+    switch (value) {
+      case WorkspaceDiscoverability.MEMBERS_AND_INVITEES:
+        return t`Hidden from email-domain discovery. Members and invitees still see it.`;
+      case WorkspaceDiscoverability.HIDDEN:
+        return t`Never shown at sign-in. Members use the workspace URL.`;
+      case WorkspaceDiscoverability.PUBLIC:
+      default:
+        return t`Anyone with an approved email domain can find and join.`;
+    }
+  };
+
+  const handleDiscoverabilityChange = (value: WorkspaceDiscoverability) => {
+    if (!currentWorkspace) {
+      return;
+    }
+
+    const previousValue = currentWorkspace.workspaceDiscoverability;
+
+    setCurrentWorkspace((currentWorkspaceValue) =>
+      currentWorkspaceValue
+        ? { ...currentWorkspaceValue, workspaceDiscoverability: value }
+        : currentWorkspaceValue,
+    );
+
+    updateWorkspace({
+      variables: {
+        input: {
+          workspaceDiscoverability: value,
+        },
+      },
+    }).catch((err) => {
+      setCurrentWorkspace((currentWorkspaceValue) =>
+        currentWorkspaceValue
+          ? {
+              ...currentWorkspaceValue,
+              workspaceDiscoverability: previousValue,
+            }
+          : currentWorkspaceValue,
+      );
+      enqueueErrorSnackBar({
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
+      });
+    });
+  };
+
   return (
     <StyledSettingsSecurityOptionsList>
       {currentWorkspace && (
         <>
           <Card rounded>
             {authProviders.google === true && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 Icon={IconGoogle}
                 title={t`Google`}
                 description={t`Allow logins through Google's single sign-on functionality.`}
@@ -147,7 +217,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               />
             )}
             {authProviders.microsoft === true && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 Icon={IconMicrosoft}
                 title={t`Microsoft`}
                 description={t`Allow logins through Microsoft's single sign-on functionality.`}
@@ -160,7 +230,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
               />
             )}
             {authProviders.password === true && (
-              <SettingsOptionCardContentToggle
+              <SettingsOptionCardContentSwitch
                 Icon={IconPassword}
                 title={t`Password`}
                 description={t`Allow users to sign in with an email and password.`}
@@ -171,7 +241,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             )}
           </Card>
           <Card rounded>
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={IconLink}
               title={t`Invite by Link`}
               description={t`Allow the invitation of new users by sharing an invite link.`}
@@ -182,7 +252,27 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
                 handleChange(!currentWorkspace.isPublicInviteLinkEnabled)
               }
             />
-            <Toggle2FA />
+            {isMultiWorkspaceEnabled && (
+              <SettingsOptionCardContentSelect
+                Icon={IconList}
+                title={t`Discovery on ${defaultDomain}`}
+                description={getDiscoverabilityDescription(
+                  currentWorkspace.workspaceDiscoverability,
+                )}
+                divider
+              >
+                <Select<WorkspaceDiscoverability>
+                  dropdownId="workspace-discoverability-select"
+                  dropdownWidth={220}
+                  value={currentWorkspace.workspaceDiscoverability}
+                  onChange={handleDiscoverabilityChange}
+                  options={discoverabilityOptions}
+                  selectSizeVariant="small"
+                  withSearchInput={false}
+                />
+              </SettingsOptionCardContentSelect>
+            )}
+            <TwoFactorAuthenticationSwitch />
           </Card>
         </>
       )}

@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui/display';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { ProgressBar } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -28,6 +28,7 @@ const StyledContainer = styled.div`
 
 const StyledTrigger = styled.div<{ hasUsage: boolean }>`
   align-items: center;
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: ${({ hasUsage }) => (hasUsage ? 'pointer' : 'default')};
   display: flex;
   height: 24px;

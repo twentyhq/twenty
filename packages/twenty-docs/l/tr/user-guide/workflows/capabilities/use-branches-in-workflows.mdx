@@ -20,8 +20,6 @@ Belirli koşullara göre yalnızca bir dalı çalıştırmak için, **her dalın
 3. Her Filter üzerinde, o dalın ne zaman devam etmesi gerektiğini belirlemek için koşullar ayarlayın
 4. Yalnızca Filter koşulları sağlanan dal(lar) devam edecektir
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
-
 ### Filter'lar Nasıl Çalışır
 
 * Filter koşulu **sağlanırsa**: Dal çalışmaya devam eder
@@ -65,13 +63,13 @@ Paralel dallar işlerini tamamladıktan sonra, onları yeniden tek bir yolda bir
 ```
 Trigger
    │
-   ├── Dal A: Müşteri Kaydını Güncelle
+   ├── Branch A: Update Customer Record
    │
-   └── Dal B: Destek Talebi Oluştur
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Birleştirilen Adım: Onay E-postası Gönder
+   Merged Step: Send Confirmation Email
 ```
 
 Onay e-postası, hem müşteri güncellemesi hem de talep oluşturma tamamlandıktan sonra gönderilir.

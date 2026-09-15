@@ -1,0 +1,110 @@
+---
+title: キーバリューストア
+description: 組み込みのアプリケーション用キー・バリュー ストアを使って、中間結果を永続化し、データをキャッシュし、ロジック関数の実行間で状態を共有します。
+icon: database
+---
+
+ロジック関数は短命な Node.js プロセス内でサンドボックス実行されます。1 回の実行が終了すると、メモリ上に保持されていたものは何も残りません。 実行間で**何かを記憶しておく必要がある**場合（高コストな API レスポンスのキャッシュ、増分同期のためのカーソルの保存、処理のデバウンス、ある関数から別の関数への状態の受け渡しなど）、組み込みのキー・バリュー ストアに永続化します。
+
+各アプリケーションには独自の分離された名前空間が割り当てられます。エントリは認証済みアプリ単位でキー付けされるため、別のアプリケーションとキーが衝突したり、読み取られたりすることは決してありません。
+
+```text
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
+```
+
+## 取得、設定、削除
+
+`kv` を `twenty-sdk/logic-function` からインポートします。 値には、任意の JSON シリアライズ可能なペイロードを指定できます。
+
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
+
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
+
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## スコープ
+
+各エントリにはスコープがあり、すべての呼び出しでオプションとして渡されます。 デフォルトは `WORKSPACE` です。
+
+* **`WORKSPACE`**（デフォルト） — エントリは、アプリの現在のワークスペース インストールに対してのみプライベートです。 アプリをインストールした各ワークスペースは、独立したキーセットをそれぞれ取得します。 これは、キャッシュやカーソル、ワークスペース単位の状態に適したスコープです。
+* **`SERVER`** — エントリは、サーバー上の**すべてのインストール**間で共有されます。 サーバーエントリは **クレーム** のように動作します。保存される値は常にキーをクレームした workspaceId であり（現在のワークスペースでキーをクレームするには、`set` 時に `value` を省略します）、そのワークスペースだけが上書きや削除を行えます。 どのインストールからでも、そのエントリを読み取ることができます。
+
+サーバークレームは、ワークスペース間ルーティングのために存在します。 [server-route resolver](/l/ja/developers/extend/apps/logic/logic-functions#server-route-trigger) はアプリケーション登録オーナーのワークスペース内で実行されますが、受信 Webhook は通常、外部アカウント ID のみを保持しており、Twenty の workspaceId は持っていません。 各ワークスペースが接続時に自分の外部 ID をクレームし、その後ルート内で解決します。
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
+});
+```
+
+サーバーキーは呼び出し元自身のワークスペースに対してのみクレームでき、他のワークスペースによって上書きされることはないため、あるワークスペースが他人のマッピングを乗っ取ることはできません。 キーがすでに別のワークスペースによってクレームされている場合、`kv.set` は例外をスローします。
+
+## 使ってみる：高コストな呼び出しをキャッシュする
+
+典型的な用途としては、遅い、またはレート制限されたサードパーティのレスポンスをキャッシュしておき、毎回コストを支払うのではなく、繰り返しの実行で再利用することが挙げられます。
+
+```ts src/logic-functions/getExchangeRate.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+type CachedRate = { rate: number; fetchedAt: number };
+
+const handler = async (params: { from: string; to: string }) => {
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
+
+  if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
+    return { rate: cached.rate, cached: true };
+  }
+
+  const response = await fetch(
+    `https://api.example.com/rate?from=${params.from}&to=${params.to}`,
+  );
+  const { rate } = (await response.json()) as { rate: number };
+
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
+
+  return { rate, cached: false };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'd9b2f4e6-1c83-4a07-9e52-6b1d3c8a0f47',
+  name: 'get-exchange-rate',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+## パターン & ヒント
+
+* **ネームスペース化。** さまざまな用途を分離するため、また `sync-cursor:linear`、`cache:exchange-rate:USD:EUR`、`lock:nightly-report` のように、キーにプレフィックスを付けておくとまとめてルックアップしやすくなります。
+* **期限 (TTL)。** ストアには組み込みの有効期限はありません。 値の中にタイムスタンプを保存して（キャッシュの例のように）読み取り時にチェックするか、[cron-triggered function](/l/ja/developers/extend/apps/logic/logic-functions) から古くなったキーを定期的にクリアします。
+* **何を保存するか。** 数値、文字列、配列、オブジェクトなど、任意の JSON シリアライズ可能な値を保存できます。 エントリは小さく保ってください。これは調整やキャッシュのためのものであり、大きな BLOB やファイル用ではありません。 ファイルには `FILES` フィールドと [`uploadFile`](/l/ja/developers/extend/apps/logic/logic-functions#uploading-files) を使用してください。
+* **可視性。** エントリはインスタンス データベースに保存され、ワークスペースレコードとしては存在しません。そのためワークスペースの UI に表示されることはなく、アプリのデータモデルの一部にもならず、ロールやオブジェクトの権限設定も不要です。
+
+## 代替案：クエリ可能なストアオブジェクト
+
+組み込みストアは、あえて中身が見えないように設計されています。エントリはレコードではないため、UI で閲覧したり、他のオブジェクトと関連付けたり、レコードクエリでフィルタしたりすることはできません。 そうしたものが必要な場合、たとえば可視化された同期ログやレコード単位の状態などには、代わりに一意な `key` フィールドと `RAW_JSON` の `value` フィールドを持つ小さな**テクニカルオブジェクト**を定義し、[typed API client](/l/ja/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk) を通じてクエリします。 `defineObject` のリファレンスについては [Objects](/l/ja/developers/extend/apps/data/objects) を、キーの一意性を強制する方法については [Data → Unique indexes](/l/ja/developers/extend/apps/data/overview#unique-indexes) を参照してください。
+
+* **レコードへのスコープ設定。** id をキーにエンコードするのではなく、ストアオブジェクトから対象オブジェクトへの [relation](/l/ja/developers/extend/apps/data/relations) を追加して関連付けます。
+* **可視性と権限。** 行は他のレコードと同様にワークスペースのデータベース内に存在するため、API を通じてクエリでき、アプリの [role](/l/ja/developers/extend/apps/config/roles) に従った権限が適用されます。 ストアをメイン UI から隠しておきたい場合は、[navigation menu](/l/ja/developers/extend/apps/layout/navigation-menu-items) に追加しないでください。
+
+<Note>
+組み込みストアとは異なり、カスタムオブジェクトは常に 1 つのワークスペースにスコープされます。`SERVER` キーのように、インストール間でエントリを共有することはできません。
+</Note>

@@ -7,6 +7,7 @@ export const LOGIC_FUNCTION_FRAGMENT = gql`
     description
     runtime
     timeoutSeconds
+    executionMode
     sourceHandlerPath
     handlerName
     cronTriggerSettings

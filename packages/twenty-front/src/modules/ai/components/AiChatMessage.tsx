@@ -34,11 +34,8 @@ const StyledMessageText = styled.div<{ isUser?: boolean }>`
   background: ${({ isUser }) =>
     isUser ? themeCssVariables.background.tertiary : 'transparent'};
   border-radius: ${({ isUser }) =>
-    isUser ? themeCssVariables.border.radius.sm : '0'};
-  color: ${({ isUser }) =>
-    isUser
-      ? themeCssVariables.font.color.secondary
-      : themeCssVariables.font.color.primary};
+    isUser ? themeCssVariables.border.radius.lg : '0'};
+  color: ${themeCssVariables.font.color.primary};
   font-weight: ${({ isUser }) => (isUser ? 500 : 400)};
   line-height: 1.4em;
   max-width: 100%;
@@ -144,12 +141,14 @@ type AiChatMessageProps = {
   messageId: string;
   isLastMessageStreaming?: boolean;
   error?: AiChatError | undefined;
+  onRetry?: () => void;
 };
 
 export const AiChatMessage = ({
   messageId,
   isLastMessageStreaming = false,
   error,
+  onRetry,
 }: AiChatMessageProps) => {
   const agentChatMessage = useAtomComponentFamilySelectorValue(
     agentChatMessageComponentFamilySelector,
@@ -187,7 +186,7 @@ export const AiChatMessage = ({
           </StyledFilesContainer>
         )}
         {shouldShowError && isDefined(error) && (
-          <AiChatErrorRenderer error={error} />
+          <AiChatErrorRenderer error={error} onRetry={onRetry} />
         )}
       </StyledMessageContainer>
       {agentChatMessage.parts.length > 0 && (

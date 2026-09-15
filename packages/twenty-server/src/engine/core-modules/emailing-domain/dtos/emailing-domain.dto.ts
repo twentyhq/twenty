@@ -1,25 +1,26 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
-
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import {
-  EmailingDomainDriver,
-  EmailingDomainStatus,
-} from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
+import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { VerificationRecordDTO } from 'src/engine/core-modules/emailing-domain/dtos/verification-record.dto';
-
-registerEnumType(EmailingDomainDriver, {
-  name: 'EmailingDomainDriver',
-});
 
 registerEnumType(EmailingDomainStatus, {
   name: 'EmailingDomainStatus',
 });
 
+registerEnumType(EmailingDomainTenantStatus, {
+  name: 'EmailingDomainTenantStatus',
+});
+
+registerEnumType(UnsubscribeHostnameStatus, {
+  name: 'UnsubscribeHostnameStatus',
+});
+
 @ObjectType('EmailingDomain')
 export class EmailingDomainDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field(() => Date)
@@ -31,11 +32,14 @@ export class EmailingDomainDTO {
   @Field(() => String)
   domain: string;
 
-  @Field(() => EmailingDomainDriver)
-  driver: EmailingDomainDriver;
-
   @Field(() => EmailingDomainStatus)
   status: EmailingDomainStatus;
+
+  @Field(() => EmailingDomainTenantStatus)
+  tenantStatus: EmailingDomainTenantStatus;
+
+  @Field(() => UnsubscribeHostnameStatus, { nullable: true })
+  unsubscribeHostnameStatus: UnsubscribeHostnameStatus | null;
 
   @Field(() => [VerificationRecordDTO], { nullable: true })
   verificationRecords: VerificationRecordDTO[] | null;

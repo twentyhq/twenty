@@ -18,7 +18,6 @@ import { type UpsertObjectPermissionsInput } from 'src/engine/metadata-modules/o
 type GlobalTestContext = {
   editableRoleId: string;
   nonEditableRoleId: string;
-  systemObjectMetadataId: string;
   nonSystemObjectMetadataId: string;
   editableRoleWithNoReadId: string;
 };
@@ -98,24 +97,8 @@ const failingObjectPermissionUpsertTestCases: EachTestingContext<TestContext>[] 
       },
     },
     {
-      title: 'when object is system object',
-      context: {
-        input: (globalContext) => ({
-          roleId: globalContext.editableRoleId,
-          objectPermissions: [
-            {
-              objectMetadataId: globalContext.systemObjectMetadataId,
-              canReadObjectRecords: true,
-              canUpdateObjectRecords: false,
-              canSoftDeleteObjectRecords: false,
-              canDestroyObjectRecords: false,
-            },
-          ],
-        }),
-      },
-    },
-    {
-      title: 'when read=false but canUpdateObjectRecords=true (read/write consistency)',
+      title:
+        'when read=false but canUpdateObjectRecords=true (read/write consistency)',
       context: {
         input: (globalContext) => ({
           roleId: globalContext.editableRoleWithNoReadId,
@@ -136,7 +119,6 @@ const failingObjectPermissionUpsertTestCases: EachTestingContext<TestContext>[] 
 describe('Object permission upsert should fail', () => {
   let editableRoleId: string;
   let nonEditableRoleId: string;
-  let systemObjectMetadataId: string;
   let nonSystemObjectMetadataId: string;
   let editableRoleWithNoReadId: string;
 
@@ -220,13 +202,6 @@ describe('Object permission upsert should fail', () => {
       getObjectMetadataOperation,
     );
     const edges = objectMetadataResponse.body.data?.objects?.edges ?? [];
-    const systemObjectNode = edges.find(
-      (edge: { node: { isSystem: boolean | string } }) =>
-        edge.node.isSystem === true || String(edge.node.isSystem) === 'true',
-    )?.node;
-    jestExpectToBeDefined(systemObjectNode);
-    systemObjectMetadataId = systemObjectNode.id;
-
     const nonSystemObjectNode = edges.find(
       (edge: { node: { isSystem: boolean | string } }) =>
         edge.node.isSystem === false || String(edge.node.isSystem) === 'false',
@@ -256,7 +231,6 @@ describe('Object permission upsert should fail', () => {
       const globalContext: GlobalTestContext = {
         editableRoleId: editableRoleId ?? '',
         nonEditableRoleId: nonEditableRoleId ?? '',
-        systemObjectMetadataId: systemObjectMetadataId ?? '',
         nonSystemObjectMetadataId: nonSystemObjectMetadataId ?? '',
         editableRoleWithNoReadId: editableRoleWithNoReadId ?? '',
       };

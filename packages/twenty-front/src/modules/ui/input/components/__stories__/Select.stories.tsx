@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { userEvent, within } from 'storybook/test';
 
 import { Select, type SelectProps } from '@/ui/input/components/Select';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 type RenderProps = SelectProps<string | number | boolean | null>;

@@ -32,7 +32,7 @@ Puteți importa date pentru orice obiect folosind fișiere CSV, XLSX sau XLS. Fi
 6. Revizuiți erorile (evidențiate cu galben) și corectați-le, editând direct în interfața utilizator
 7. Confirmați importul
 
-### Importarea relațiilor dintre obiecte
+### Importă relații între obiecte
 
 Puteți importa relații între obiecte folosind funcția de import CSV. Trebuie să faceți referire la obiectul înrudit folosind un câmp unic al acestuia: `id`, `email` pentru Persoane și membri ai spațiului de lucru, `domain` pentru companii, orice alt câmp setat ca unic în modelul de date pentru orice alt obiect.
 
@@ -43,8 +43,8 @@ Puteți importa relații între obiecte folosind funcția de import CSV. Trebuie
 
 Când importați obiecte înrudite, încărcați fișierele în această ordine:
 1. **Companiile** mai întâi (partea "one" a relațiilor)
-2. **Persoanele** în al doilea rând (legate de companii prin companyId)
-3. **Oportunitățile** în al treilea rând (legate de companii/persoane)
+2. **Persoane** al doilea (legat de companii prin intermediul Id)
+3. **Oportunități** în al treilea rând (legate de Companii/Persoane)
 4. **Obiectele personalizate** cu relații, la final
 
 De ce? Partea "one" a unei relații unul-la-mulți trebuie să existe înainte de a o putea referi. De exemplu, înregistrarea Companiei trebuie să existe înainte de a importa o Persoană cu ID-ul acelei companii.

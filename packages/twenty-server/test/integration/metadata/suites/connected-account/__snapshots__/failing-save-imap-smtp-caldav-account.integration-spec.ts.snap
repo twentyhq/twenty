@@ -1,0 +1,67 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Connected account creation should fail when CALDAV password is missing on creation 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Please check your connection settings. Make sure the server host, port, and password are correct.",
+  },
+  "message": "Protocol connection validation failed: password: Invalid input: expected string, received undefined",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Connected account creation should fail when IMAP host is empty 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Please check your connection settings. Make sure the server host, port, and password are correct.",
+  },
+  "message": "Protocol connection validation failed: host: Host is required",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Connected account creation should fail when IMAP password is empty string on creation 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Please check your connection settings. Make sure the server host, port, and password are correct.",
+  },
+  "message": "Protocol connection validation failed: password: Password is required",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Connected account creation should fail when IMAP password is missing on creation 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Please check your connection settings. Make sure the server host, port, and password are correct.",
+  },
+  "message": "Protocol connection validation failed: password: Invalid input: expected string, received undefined",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Connected account creation should fail when IMAP port is zero 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Please check your connection settings. Make sure the server host, port, and password are correct.",
+  },
+  "message": "Protocol connection validation failed: port: Port must be a positive number",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Connected account creation should fail when SMTP password is missing on creation 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "Please check your connection settings. Make sure the server host, port, and password are correct.",
+  },
+  "message": "Protocol connection validation failed: password: Invalid input: expected string, received undefined",
+  "name": "UserInputError",
+}
+`;

@@ -4,7 +4,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { In, Repository } from 'typeorm';
 
@@ -18,21 +18,25 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
+import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
+import { type SubscriptionWithSchedule } from 'src/engine/core-modules/billing/types/billing-subscription-with-schedule.type';
+import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   CleanWorkspaceDeletionWarningUserVarsJob,
@@ -49,19 +53,20 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeCustomerService: StripeCustomerService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
+    // Stripe webhook upserts conflict-resolve globally on stripeSubscriptionId.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     private readonly workspaceService: WorkspaceService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
-    private readonly stripeBillingAlertService: StripeBillingAlertService,
-    private readonly billingUsageService: BillingUsageService,
+    private readonly billingUsageCacheService: BillingUsageCacheService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -79,7 +84,7 @@ export class BillingWebhookSubscriptionService {
       withDeleted: true,
     });
 
-    if (!workspace) {
+    if (!isDefined(workspace)) {
       throw new BillingException(
         `Workspace not found for subscription event ${event.id} / workspaceId: ${workspaceId}`,
         BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
@@ -103,6 +108,7 @@ export class BillingWebhookSubscriptionService {
     }
 
     await this.billingCustomerRepository.upsert(
+      workspaceId,
       transformStripeSubscriptionEventToDatabaseCustomer(workspaceId, data),
       {
         conflictPaths: ['workspaceId'],
@@ -110,28 +116,64 @@ export class BillingWebhookSubscriptionService {
       },
     );
 
-    await this.billingSubscriptionRepository.upsert(
+    const liveCustomerSubscriptions =
+      await this.stripeSubscriptionScheduleService.listCustomerNotEndedSubscriptionsWithSchedule(
+        String(data.object.customer),
+      );
+
+    const subscriptionFromList = liveCustomerSubscriptions.find(
+      (customerSubscription) => customerSubscription.id === data.object.id,
+    );
+
+    const subscriptionWithSchedule = isDefined(subscriptionFromList)
+      ? subscriptionFromList
+      : await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
+          data.object.id,
+        );
+
+    const allLiveSubscriptions = isDefined(subscriptionFromList)
+      ? liveCustomerSubscriptions
+      : [...liveCustomerSubscriptions, subscriptionWithSchedule];
+
+    const incomingSubscription =
       transformStripeSubscriptionEventToDatabaseSubscription(
         workspaceId,
-        await this.stripeSubscriptionScheduleService.getSubscriptionWithSchedule(
-          data.object.id,
-        ),
-      ),
+        subscriptionWithSchedule,
+      );
+
+    const storedSubscription = await this.billingSubscriptionRepository.findOne(
+      {
+        where: {
+          stripeSubscriptionId: incomingSubscription.stripeSubscriptionId,
+        },
+        select: {
+          id: true,
+          currentPeriodStart: true,
+          currentPeriodEnd: true,
+        },
+      },
+    );
+
+    await this.billingSubscriptionRepository.upsert(
+      {
+        ...incomingSubscription,
+        ...resolveBillingPeriodBoundaryUpdate({
+          incomingPeriodStart: incomingSubscription.currentPeriodStart,
+          storedSubscription,
+        }),
+      },
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
 
-    const billingSubscriptions = await this.billingSubscriptionRepository.find({
-      where: { workspaceId },
-    });
+    const updatedBillingSubscription =
+      await this.billingSubscriptionRepository.findOne({
+        where: { workspaceId, stripeSubscriptionId: data.object.id },
+      });
 
-    const updatedBillingSubscription = billingSubscriptions.find(
-      (subscription) => subscription.stripeSubscriptionId === data.object.id,
-    );
-
-    if (!updatedBillingSubscription) {
+    if (!isDefined(updatedBillingSubscription)) {
       throw new BillingException(
         'Billing subscription not found after upsert',
         BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_FOUND,
@@ -144,37 +186,65 @@ export class BillingWebhookSubscriptionService {
       workspaceId,
     );
 
-    await this.billingUsageService.flushAvailableCreditsFromCache(workspace.id);
+    await this.billingUsageCacheService.flushAvailableCredits(workspace.id);
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
-      'billingSubscription',
+      'currentBillingSubscription',
     ]);
 
-    const shouldSuspend = this.shouldSuspendWorkspace(data);
+    await this.usageLimitQuotaService.dropAllowanceCounter(workspace.id);
 
-    if (shouldSuspend) {
-      if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
-        await this.workspaceRepository.update(workspaceId, {
-          activationStatus: WorkspaceActivationStatus.SUSPENDED,
-          suspendedAt: new Date(),
-        });
-      } else if (
-        workspace.activationStatus ===
-        WorkspaceActivationStatus.PENDING_CREATION
-      ) {
-        await this.workspaceService.deleteWorkspace(workspace.id);
-      }
-    } else if (
-      workspace.activationStatus === WorkspaceActivationStatus.SUSPENDED
-    ) {
-      await this.workspaceRepository.update(workspaceId, {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-        suspendedAt: null,
+    const shouldSuspendWorkspace = allLiveSubscriptions.every(
+      (customerSubscription) =>
+        this.shouldSuspendWorkspace(customerSubscription),
+    );
+    const shouldReactivateWorkspace = allLiveSubscriptions.some(
+      (customerSubscription) =>
+        this.shouldReactivateWorkspace(customerSubscription),
+    );
+
+    if (shouldSuspendWorkspace) {
+      const refreshedWorkspace = await this.workspaceRepository.findOne({
+        where: { id: workspaceId },
+        withDeleted: true,
       });
 
-      await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
-        CleanWorkspaceDeletionWarningUserVarsJob.name,
-        { workspaceId },
-      );
+      if (!isDefined(refreshedWorkspace)) {
+        throw new BillingException(
+          `Workspace not found on re-read for subscription event ${event.id} / workspaceId: ${workspaceId}`,
+          BillingExceptionCode.BILLING_SUBSCRIPTION_EVENT_WORKSPACE_NOT_FOUND,
+          {
+            userFriendlyMessage: msg`Workspace ${workspaceId} is not found.`,
+          },
+        );
+      }
+
+      if (!isDefined(refreshedWorkspace.deletedAt)) {
+        switch (refreshedWorkspace.activationStatus) {
+          case WorkspaceActivationStatus.PENDING_CREATION:
+            await this.workspaceService.deleteWorkspace(workspaceId, true);
+            break;
+          case WorkspaceActivationStatus.ACTIVE:
+            await this.workspaceService.suspendWorkspace(workspaceId);
+            break;
+          case WorkspaceActivationStatus.SUSPENDED:
+          case WorkspaceActivationStatus.CREATED:
+          case WorkspaceActivationStatus.ONGOING_CREATION:
+          case WorkspaceActivationStatus.INACTIVE:
+            break;
+          default:
+            assertUnreachable(refreshedWorkspace.activationStatus);
+        }
+      }
+    } else if (shouldReactivateWorkspace) {
+      const hasBeenReactivated =
+        await this.workspaceService.reactivateWorkspace(workspaceId);
+
+      if (hasBeenReactivated) {
+        await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
+          CleanWorkspaceDeletionWarningUserVarsJob.name,
+          { workspaceId },
+        );
+      }
     }
 
     await this.stripeCustomerService.updateCustomerMetadataWorkspaceId(
@@ -188,29 +258,38 @@ export class BillingWebhookSubscriptionService {
     };
   }
 
-  shouldSuspendWorkspace(
-    data:
-      | Stripe.CustomerSubscriptionUpdatedEvent.Data
-      | Stripe.CustomerSubscriptionCreatedEvent.Data
-      | Stripe.CustomerSubscriptionDeletedEvent.Data,
-  ): boolean {
-    const status = data.object.status as SubscriptionStatus;
+  shouldSuspendWorkspace(subscription: SubscriptionWithSchedule): boolean {
+    const status = subscription.status as SubscriptionStatus;
 
     const suspendedStatuses = [
       SubscriptionStatus.Canceled,
       SubscriptionStatus.Unpaid,
-      SubscriptionStatus.Paused, // TODO: remove this once paused subscriptions are deprecated
     ];
 
     if (suspendedStatuses.includes(status)) {
       return true;
     }
 
-    const timeSinceTrialEnd = Date.now() / 1000 - (data.object.trial_end || 0);
+    const timeSinceTrialEnd = Date.now() / 1000 - (subscription.trial_end || 0);
     const hasTrialJustEnded =
       timeSinceTrialEnd > 0 && timeSinceTrialEnd < 60 * 60 * 24;
 
-    return hasTrialJustEnded && status === SubscriptionStatus.PastDue;
+    const canceledDuringTrial =
+      subscription.cancel_at_period_end &&
+      isDefined(subscription.canceled_at) &&
+      isDefined(subscription.trial_end) &&
+      subscription.canceled_at <= subscription.trial_end;
+
+    return (
+      hasTrialJustEnded &&
+      (status === SubscriptionStatus.PastDue || canceledDuringTrial)
+    );
+  }
+
+  shouldReactivateWorkspace(subscription: SubscriptionWithSchedule): boolean {
+    const status = subscription.status as SubscriptionStatus;
+
+    return WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(status);
   }
 
   async updateBillingSubscriptionItems(

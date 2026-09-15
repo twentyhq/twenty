@@ -8,7 +8,7 @@ import { WorkspaceFlatRoleTargetByAgentIdService } from 'src/engine/metadata-mod
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -22,6 +22,9 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
   providers: [
     WorkspaceFlatAgentMapCacheService,
     WorkspaceFlatRoleTargetByAgentIdService,
+    provideWorkspaceScopedRepository(AgentEntity),
+    provideWorkspaceScopedRepository(RoleEntity),
+    provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [
     WorkspaceFlatAgentMapCacheService,

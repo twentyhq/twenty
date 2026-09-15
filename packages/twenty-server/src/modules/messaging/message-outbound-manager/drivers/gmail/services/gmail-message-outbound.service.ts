@@ -1,23 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1, google } from 'googleapis';
 import MailComposer from 'nodemailer/lib/mail-composer';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
 import { extractMessageIdFromBuffer } from 'src/modules/messaging/message-outbound-manager/utils/extract-message-id-from-buffer.util';
+import { formatMessageFromHeader } from 'src/modules/messaging/message-outbound-manager/utils/format-message-from-header.util';
+import { getConnectedAccountSendableHandleOrThrow } from 'src/modules/messaging/message-outbound-manager/utils/get-connected-account-sendable-handle-or-throw.util';
 import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-manager/utils/to-mail-composer-options.util';
 
 @Injectable()
 export class GmailMessageOutboundService implements MessageOutboundDriver {
+  private readonly logger = new Logger(GmailMessageOutboundService.name);
+
   constructor(
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
   ) {}
 
   async sendMessage(
@@ -31,7 +35,7 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       userId: 'me',
       requestBody: {
         raw: encodedMessage,
-        ...(sendMessageInput.threadExternalId
+        ...(isNonEmptyString(sendMessageInput.threadExternalId)
           ? { threadId: sendMessageInput.threadExternalId }
           : {}),
       },
@@ -58,9 +62,84 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       requestBody: {
         message: {
           raw: encodedMessage,
+          ...(isNonEmptyString(sendMessageInput.threadExternalId)
+            ? { threadId: sendMessageInput.threadExternalId }
+            : {}),
         },
       },
     });
+  }
+
+  async sendDraft(
+    draftExternalId: string,
+    sendMessageInput: SendMessageInput,
+    connectedAccount: ConnectedAccountEntity,
+  ): Promise<SendMessageResult> {
+    const sendResult = await this.sendMessage(
+      sendMessageInput,
+      connectedAccount,
+    );
+
+    try {
+      await this.deleteDraftByMessageId(connectedAccount, draftExternalId);
+    } catch (error) {
+      this.logger.warn(
+        `Failed to delete Gmail draft for message ${draftExternalId} after send: ${error}`,
+      );
+    }
+
+    return sendResult;
+  }
+
+  private async deleteDraftByMessageId(
+    connectedAccount: ConnectedAccountEntity,
+    messageId: string,
+  ): Promise<void> {
+    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
+
+    const gmailClient = google.gmail({ version: 'v1', auth: oAuth2Client });
+
+    const draftId = await this.findDraftIdByMessageId(gmailClient, messageId);
+
+    if (isDefined(draftId)) {
+      await gmailClient.users.drafts.delete({ userId: 'me', id: draftId });
+
+      return;
+    }
+
+    this.logger.warn(
+      `No Gmail draft found for message ${messageId}; skipping delete`,
+    );
+  }
+
+  private async findDraftIdByMessageId(
+    gmailClient: gmail_v1.Gmail,
+    messageId: string,
+  ): Promise<string | undefined> {
+    let pageToken: string | undefined = undefined;
+
+    do {
+      const { data }: { data: gmail_v1.Schema$ListDraftsResponse } =
+        await gmailClient.users.drafts.list({
+          userId: 'me',
+          maxResults: 500,
+          pageToken,
+        });
+
+      const draft = (data.drafts ?? []).find(
+        (currentDraft) => currentDraft.message?.id === messageId,
+      );
+
+      if (isDefined(draft?.id)) {
+        return draft.id;
+      }
+
+      pageToken = data.nextPageToken ?? undefined;
+    } while (isDefined(pageToken));
+
+    return undefined;
   }
 
   private async composeGmailMessage(
@@ -71,10 +150,9 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     encodedMessage: string;
     messageBuffer: Buffer;
   }> {
-    const oAuth2Client =
-      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
-        connectedAccount,
-      );
+    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
 
     const gmailClient = google.gmail({
       version: 'v1',
@@ -86,11 +164,12 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
       auth: oAuth2Client,
     });
 
-    const { data: gmailData } = await gmailClient.users.getProfile({
-      userId: 'me',
-    });
-
-    const fromEmail = gmailData.emailAddress;
+    const fromEmail = isNonEmptyString(sendMessageInput.fromHandle)
+      ? getConnectedAccountSendableHandleOrThrow({
+          connectedAccount,
+          requestedFromHandle: sendMessageInput.fromHandle,
+        })
+      : connectedAccount.handle;
 
     const { data: peopleData } = await peopleClient.people.get({
       resourceName: 'people/me',
@@ -99,9 +178,10 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
 
     const fromName = peopleData?.names?.[0]?.displayName;
 
-    const from = isDefined(fromName)
-      ? `"${mimeEncode(fromName)}" <${fromEmail}>`
-      : `${fromEmail}`;
+    const from = formatMessageFromHeader({
+      fromEmail,
+      fromName,
+    });
 
     const mail = new MailComposer(
       toMailComposerOptions(from, sendMessageInput),

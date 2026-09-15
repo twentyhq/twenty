@@ -7,6 +7,7 @@
  *                              |___/
  */
 
+export { A11Y_DEFER_COLOR_CONTRAST } from './a11yParameters';
 export { ComponentStorybookLayout } from './ComponentStorybookLayout';
 export type {
   CatalogDimension,
@@ -20,7 +21,6 @@ export {
   computeLocation,
   ComponentWithRouterDecorator,
 } from './decorators/ComponentWithRouterDecorator';
-export { JotaiRootDecorator } from './decorators/JotaiRootDecorator';
 export { RouterDecorator } from './decorators/RouterDecorator';
 export { AVATAR_URL_MOCK } from './mocks/avatarUrlMock';
 export type { CatalogStory } from './types/CatalogStory';

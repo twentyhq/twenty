@@ -3,9 +3,7 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { SETTINGS_COMPOSITE_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsCompositeFieldTypeConfigs';
 import { FieldMetadataType } from 'twenty-shared/types';
 
-export const canBeUnique = (
-  field: Pick<FieldMetadataItem, 'type' | 'isCustom'>,
-) => {
+export const canBeUnique = (field: Pick<FieldMetadataItem, 'type'>) => {
   if (
     [
       FieldMetadataType.MORPH_RELATION,

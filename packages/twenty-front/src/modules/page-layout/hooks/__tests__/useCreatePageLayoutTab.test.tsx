@@ -16,6 +16,7 @@ import {
 } from './PageLayoutTestWrapper';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn(),
 }));
 
@@ -141,7 +142,7 @@ describe('useCreatePageLayoutTab', () => {
     expect(result.current.pageLayoutDraft.tabs[1].title).toBe('Tab 2');
   });
 
-  it('should default icon to IconAppWindow for new RECORD_PAGE tabs', () => {
+  it('should default icon to IconPerspective for new RECORD_PAGE tabs', () => {
     const uuidModule = require('uuid');
     uuidModule.v4.mockReturnValue('mock-uuid');
 
@@ -173,6 +174,7 @@ describe('useCreatePageLayoutTab', () => {
         id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.RECORD_PAGE,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [],
       });
@@ -182,7 +184,7 @@ describe('useCreatePageLayoutTab', () => {
       result.current.createTab.createPageLayoutTab();
     });
 
-    expect(result.current.pageLayoutDraft.tabs[0].icon).toBe('IconAppWindow');
+    expect(result.current.pageLayoutDraft.tabs[0].icon).toBe('IconPerspective');
   });
 
   it('should leave icon as null for new DASHBOARD tabs', () => {
@@ -246,6 +248,7 @@ describe('useCreatePageLayoutTab', () => {
         id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.RECORD_PAGE,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [],
       });
@@ -375,9 +378,12 @@ describe('useCreatePageLayoutTab', () => {
         id: 'test-layout',
         name: 'Test Layout',
         type: PageLayoutType.DASHBOARD,
+        isFirstTabPinned: true,
         objectMetadataId: null,
         tabs: [
           {
+            isSystemSideEffect: false,
+            universalIdentifier: 'universal-identifier-mock',
             id: 'existing-tab',
             applicationId: '',
             title: 'Existing Tab',

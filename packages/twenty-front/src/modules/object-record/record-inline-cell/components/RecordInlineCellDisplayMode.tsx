@@ -23,7 +23,7 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
     isHovered && !readonly && !disableHoverEffect
       ? themeCssVariables.background.transparent.light
       : 'transparent'};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   cursor: ${({ isHovered, readonly }) =>
     isHovered && !readonly ? 'pointer' : 'default'};
   display: flex;

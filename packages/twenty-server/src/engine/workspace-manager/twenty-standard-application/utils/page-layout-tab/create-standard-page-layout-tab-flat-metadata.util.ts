@@ -1,4 +1,7 @@
-import { type PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import {
+  type PageLayoutTabLayoutMode,
+  PageLayoutType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
@@ -36,6 +39,7 @@ export const createStandardPageLayoutTabFlatMetadata = ({
     layoutName as keyof typeof STANDARD_PAGE_LAYOUTS
   ] as {
     universalIdentifier: string;
+    type: PageLayoutType;
     tabs: Record<
       string,
       StandardPageLayoutTabConfig & {
@@ -69,6 +73,7 @@ export const createStandardPageLayoutTabFlatMetadata = ({
     widgetIds,
     widgetUniversalIdentifiers,
     isActive: true,
+    isSystemSideEffect: layout.type === PageLayoutType.RECORD_PAGE,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,

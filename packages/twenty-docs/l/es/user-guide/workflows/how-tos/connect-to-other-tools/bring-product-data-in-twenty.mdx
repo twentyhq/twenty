@@ -54,7 +54,7 @@ export const main = async () => {
 ```
 
 <Tip>
-  Filtra por `updated_at >= last X minutes` para recuperar solo los registros cambiados recientemente. Esto mantiene la sincronización eficiente.
+Filtra por `updated_at >= last X minutes` para recuperar solo los registros cambiados recientemente. Esto mantiene la sincronización eficiente.
 </Tip>
 
 ## Paso 3: Formatear los datos (opcional)
@@ -163,7 +163,7 @@ Dentro del iterador, añade una acción **Upsert Record**:
 | **Precio**        | `{{iterator.item.price}}`              |
 
 <Tip>
-  Usa **Upsert** (actualizar o crear) en lugar de construir ramas separadas para crear frente a actualizar. Es más rápido de construir y más fácil de depurar.
+Usa **Upsert** (actualizar o crear) en lugar de construir ramas separadas para crear frente a actualizar. Es más rápido de construir y más fácil de depurar.
 </Tip>
 
 ## Casos de uso de ejemplo

@@ -1,8 +1,6 @@
 /* @license Enterprise */
 
-import { ObjectType, registerEnumType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import {
   Column,
   CreateDateColumn,
@@ -19,7 +17,7 @@ export enum IdentityProviderType {
   SAML = 'SAML',
 }
 
-export enum OIDCResponseType {
+export enum OidcResponseType {
   // Only Authorization Code is used for now
   CODE = 'code',
   ID_TOKEN = 'id_token',
@@ -31,21 +29,21 @@ registerEnumType(IdentityProviderType, {
   name: 'IdentityProviderType',
 });
 
-export enum SSOIdentityProviderStatus {
+export enum SsoIdentityProviderStatus {
   Active = 'Active',
   Inactive = 'Inactive',
   Error = 'Error',
 }
 
-registerEnumType(SSOIdentityProviderStatus, {
+registerEnumType(SsoIdentityProviderStatus, {
   name: 'SSOIdentityProviderStatus',
 });
 
 @Entity({ name: 'workspaceSSOIdentityProvider', schema: 'core' })
 @ObjectType('WorkspaceSSOIdentityProvider')
-export class WorkspaceSSOIdentityProviderEntity extends WorkspaceRelatedEntity {
+export class WorkspaceSsoIdentityProviderEntity extends WorkspaceRelatedEntity {
   // COMMON
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -54,10 +52,10 @@ export class WorkspaceSSOIdentityProviderEntity extends WorkspaceRelatedEntity {
 
   @Column({
     type: 'enum',
-    enum: SSOIdentityProviderStatus,
-    default: SSOIdentityProviderStatus.Active,
+    enum: SsoIdentityProviderStatus,
+    default: SsoIdentityProviderStatus.Active,
   })
-  status: SSOIdentityProviderStatus;
+  status: SsoIdentityProviderStatus;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -153,4 +153,67 @@ describe('View Sort update should succeed', () => {
       direction: ViewSortDirection.ASC,
     });
   });
+
+  it('should set subFieldName on a sort that did not have one', async () => {
+    const { data } = await updateOneViewSort({
+      expectToFail: false,
+      input: {
+        id: createdViewSortId,
+        update: {
+          subFieldName: 'lastName',
+        },
+      },
+    });
+
+    expect(data.updateViewSort).toMatchObject({
+      id: createdViewSortId,
+      subFieldName: 'lastName',
+    });
+  });
+
+  it('should overwrite an existing subFieldName', async () => {
+    await updateOneViewSort({
+      expectToFail: false,
+      input: {
+        id: createdViewSortId,
+        update: { subFieldName: 'lastName' },
+      },
+    });
+
+    const { data } = await updateOneViewSort({
+      expectToFail: false,
+      input: {
+        id: createdViewSortId,
+        update: { subFieldName: 'firstName' },
+      },
+    });
+
+    expect(data.updateViewSort).toMatchObject({
+      id: createdViewSortId,
+      subFieldName: 'firstName',
+    });
+  });
+
+  it('should clear subFieldName when set back to null', async () => {
+    await updateOneViewSort({
+      expectToFail: false,
+      input: {
+        id: createdViewSortId,
+        update: { subFieldName: 'lastName' },
+      },
+    });
+
+    const { data } = await updateOneViewSort({
+      expectToFail: false,
+      input: {
+        id: createdViewSortId,
+        update: { subFieldName: null },
+      },
+    });
+
+    expect(data.updateViewSort).toMatchObject({
+      id: createdViewSortId,
+      subFieldName: null,
+    });
+  });
 });

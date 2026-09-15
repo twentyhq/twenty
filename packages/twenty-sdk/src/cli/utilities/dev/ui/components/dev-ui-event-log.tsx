@@ -16,7 +16,7 @@ export const DevUiEventItem = ({
   const time = formatTime(event.timestamp);
 
   return (
-    <Box>
+    <Box marginTop={event.spacingBefore ? 1 : 0}>
       <Text dimColor>{time} </Text>
       <Text color={color}>{event.message}</Text>
     </Box>

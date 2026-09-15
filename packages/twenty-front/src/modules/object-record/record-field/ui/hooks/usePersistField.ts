@@ -153,7 +153,9 @@ export const usePersistField = ({
       const fieldIsFiles =
         isFieldFiles(fieldDefinition) && isFieldFilesValue(valueToPersist);
 
-      const fieldIsUIReadOnly = fieldDefinition.metadata.isUIReadOnly ?? false;
+      const fieldIsUIReadOnly = !(
+        fieldDefinition.metadata.isUIEditable ?? true
+      );
 
       if (fieldIsRawJson && fieldIsUIReadOnly) {
         return;

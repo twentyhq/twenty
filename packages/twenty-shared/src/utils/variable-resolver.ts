@@ -7,6 +7,9 @@ const isString = (value: unknown): value is string => {
 
 const VARIABLE_PATTERN = RegExp('\\{\\{([^{}]+)\\}\\}', 'g');
 
+export const isVariableReference = (input: unknown): boolean =>
+  isString(input) && isDefined(input.match(VARIABLE_PATTERN));
+
 export const resolveInput = (
   unresolvedInput: unknown,
   context: Record<string, unknown>,
@@ -61,10 +64,12 @@ const resolveObject = (
   );
 };
 
+// Returns the resolved value itself when the whole string is one variable, so
+// `{{step.amount}}` keeps its type instead of being stringified
 const resolveString = (
   input: string,
   context: Record<string, unknown>,
-): string => {
+): unknown => {
   const matchedTokens = input.match(VARIABLE_PATTERN);
 
   if (!matchedTokens || matchedTokens.length === 0) {
@@ -78,6 +83,10 @@ const resolveString = (
   return input.replace(VARIABLE_PATTERN, (matchedToken, _) => {
     const processedToken = evalFromContext(matchedToken, context);
 
-    return processedToken;
+    if (typeof processedToken === 'object' && processedToken !== null) {
+      return JSON.stringify(processedToken);
+    }
+
+    return String(processedToken);
   });
 };

@@ -1,14 +1,11 @@
-// oxlint-disable-next-line @typescripttypescript/ban-ts-comment
+// oxlint-disable-next-line typescript/ban-ts-comment
 // @ts-nocheck
 // Disabled type checking due to tsgo performance issue with deep spread operations
 // See: https://github.com/microsoft/typescript-go/issues/2551
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
 
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
-import {
-  type WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowTrigger,
   WorkflowTriggerType,
@@ -36,7 +33,7 @@ describe('removeStep', () => {
       },
       outputSchema: {},
       errorHandlingOptions: {
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
         continueOnFailure: { value: false },
       },
     },
@@ -188,7 +185,7 @@ describe('removeStep', () => {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -254,7 +251,7 @@ describe('removeStep', () => {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -319,7 +316,7 @@ describe('removeStep', () => {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -354,6 +351,54 @@ describe('removeStep', () => {
     expect(hasEmptyNode).toBe(false);
   });
 
+  it('should clear the If/Else own nextStepIds', () => {
+    const ifElseStep = {
+      id: '2',
+      name: 'If/Else',
+      type: WorkflowActionType.IF_ELSE,
+      settings: {
+        input: {
+          stepFilterGroups: [],
+          stepFilters: [],
+          branches: [
+            {
+              id: 'branch-if',
+              filterGroupId: 'fg-1',
+              nextStepIds: ['3'],
+            },
+            {
+              id: 'branch-else',
+              nextStepIds: ['4'],
+            },
+          ],
+        },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: 0 },
+          continueOnFailure: { value: false },
+        },
+      },
+      valid: true,
+      nextStepIds: ['3', '4'],
+    } as WorkflowAction;
+
+    const step1 = createMockAction('1', ['2']);
+    const step3 = createMockAction('3');
+    const step4 = createMockAction('4');
+
+    const result = removeStep({
+      existingTrigger: mockTrigger,
+      existingSteps: [step1, ifElseStep, step3, step4],
+      stepIdToDelete: '3',
+    });
+
+    const updatedIfElse = result.updatedSteps?.find(
+      (step) => step.id === '2',
+    ) as WorkflowAction;
+
+    expect(updatedIfElse.nextStepIds).toEqual([]);
+  });
+
   it('should handle removing a step that is part of iteratorLoopStepIds', () => {
     const step1 = createMockAction('1', ['2']);
     const iteratorStep = {
@@ -368,7 +413,7 @@ describe('removeStep', () => {
         },
         outputSchema: {},
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },

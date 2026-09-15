@@ -1,8 +1,6 @@
 /* @license Enterprise */
 
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
-
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import graphqlTypeJson from 'graphql-type-json';
 import {
   Column,
@@ -52,11 +50,11 @@ registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
 @Entity({ name: 'billingSubscription', schema: 'core' })
 @Index('IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE', ['workspaceId'], {
   unique: true,
-  where: `status IN ('trialing', 'active', 'past_due')`,
+  where: `status IN ('trialing', 'active', 'past_due', 'incomplete', 'incomplete_expired', 'unpaid', 'paused')`,
 })
 @ObjectType('BillingSubscription')
 export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -134,6 +132,15 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   })
   currentPeriodStart: Date;
 
+  // Where the period before the current one began. Stripe only ever reports the
+  // current window, so once currentPeriodStart advances the previous boundary
+  // is unrecoverable: calendar arithmetic clamps month-end anchors, and the
+  // ledger only shows it when the last transition happened to close a grant.
+  // Written whenever the period moves, and read by the rollover to bound the
+  // usage it settles.
+  @Column({ nullable: true, type: 'timestamptz' })
+  previousPeriodStart: Date | null;
+
   @Field(() => graphqlTypeJson)
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;
@@ -142,6 +149,7 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: false, type: 'jsonb', default: [] })
   phases: Array<BillingSubscriptionSchedulePhaseDTO>;
 
+  @Field(() => Date, { nullable: true })
   @Column({ nullable: true, type: 'timestamptz' })
   cancelAt: Date | null;
 

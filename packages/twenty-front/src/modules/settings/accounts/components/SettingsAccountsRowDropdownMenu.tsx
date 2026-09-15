@@ -23,7 +23,7 @@ import {
   IconPlayerPlay,
   IconRefresh,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -75,7 +75,11 @@ export const SettingsAccountsRowDropdownMenu = ({
         dropdownId={dropdownId}
         dropdownPlacement="right-start"
         clickableComponent={
-          <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+          <LightIconButton
+            Icon={IconDotsVertical}
+            accent="tertiary"
+            aria-label={t`More options`}
+          />
         }
         dropdownComponents={
           <DropdownContent>

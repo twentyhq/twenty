@@ -11,7 +11,8 @@ import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconSparkles } from 'twenty-ui/display';
+import { IconSparkles } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
@@ -73,6 +74,11 @@ export const SettingsUsageAnalyticsSection = () => {
         title={t`Usage by Type`}
         breakdownField="operationType"
         sectionId="usage-type"
+      />
+      <UsageBreakdownPieSection
+        title={t`Usage by App`}
+        breakdownField="application"
+        sectionId="usage-app"
       />
       <UsageDailyChartSection
         title={t`Daily Usage`}

@@ -1,6 +1,8 @@
 import { type Expect, type HasAllProperties } from 'twenty-shared/testing';
 import {
   type AllFieldMetadataSettings,
+  type FieldMetadataComplexOption,
+  type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValueForAnyType,
   type FieldMetadataDefaultValueMapping,
   type FieldMetadataOptionForAnyType,
@@ -11,10 +13,6 @@ import {
 import { type Relation as TypeOrmRelation } from 'typeorm';
 
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
-import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
@@ -114,7 +112,6 @@ type NotDefinedSettings = {
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type SettingsAssertions = [
-  Expect<HasAllProperties<CurrencyFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<FullNameFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<RatingFieldMetadata, NotDefinedSettings>>,
   Expect<HasAllProperties<SelectFieldMetadata, NotDefinedSettings>>,
@@ -141,6 +138,16 @@ type SettingsAssertions = [
       {
         settings: JsonbProperty<
           FieldMetadataSettingsMapping[FieldMetadataType.NUMBER]
+        >;
+      }
+    >
+  >,
+  Expect<
+    HasAllProperties<
+      CurrencyFieldMetadata,
+      {
+        settings: JsonbProperty<
+          FieldMetadataSettingsMapping[FieldMetadataType.CURRENCY]
         >;
       }
     >

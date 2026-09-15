@@ -1,6 +1,3 @@
-import { Field, ObjectType } from '@nestjs/graphql';
-
-import { BeforeCreateOne, IDField } from '@ptc-org/nestjs-query-graphql';
 import { isDefined } from 'twenty-shared/utils';
 import {
   BeforeInsert,
@@ -8,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -15,9 +13,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
+import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum AppTokenType {
@@ -26,15 +23,18 @@ export enum AppTokenType {
   AuthorizationCode = 'AUTHORIZATION_CODE',
   PasswordResetToken = 'PASSWORD_RESET_TOKEN',
   InvitationToken = 'INVITATION_TOKEN',
+  OnboardingInvitationToken = 'ONBOARDING_INVITATION_TOKEN',
   EmailVerificationToken = 'EMAIL_VERIFICATION_TOKEN',
   EnterpriseValidityToken = 'ENTERPRISE_VALIDITY_TOKEN',
+  SsoExchangeToken = 'SSO_EXCHANGE_TOKEN',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
-@ObjectType('AppToken')
-@BeforeCreateOne(BeforeCreateOneAppToken)
+@Index('IDX_APP_TOKEN_TYPE_VALUE_SSO_EXCHANGE_UNIQUE', ['type', 'value'], {
+  unique: true,
+  where: `"type" = 'SSO_EXCHANGE_TOKEN' AND "deletedAt" IS NULL AND "revokedAt" IS NULL`,
+})
 export class AppTokenEntity {
-  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -56,14 +56,12 @@ export class AppTokenEntity {
   @Column({ nullable: true, type: 'uuid' })
   workspaceId: string | null;
 
-  @Field()
   @Column({ nullable: false, type: 'text', default: AppTokenType.RefreshToken })
   type: AppTokenType;
 
   @Column({ nullable: true, type: 'text' })
   value: string;
 
-  @Field()
   @Column({ type: 'timestamptz' })
   expiresAt: Date;
 
@@ -73,11 +71,9 @@ export class AppTokenEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   revokedAt: Date | null;
 
-  @Field()
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @Field()
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
@@ -97,5 +93,6 @@ export class AppTokenEntity {
     clientId?: string;
     codeChallenge?: string;
     scope?: string;
+    authProvider?: AuthProviderEnum;
   } | null;
 }

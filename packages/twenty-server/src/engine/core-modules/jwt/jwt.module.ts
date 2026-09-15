@@ -1,7 +1,21 @@
 import { Module } from '@nestjs/common';
 import { JwtModule as NestJwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
+import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
+import {
+  JWT_LEGACY_ALGORITHM,
+  JWT_SUPPORTED_VERIFY_ALGORITHMS,
+} from 'src/engine/core-modules/jwt/constants/jwt-algorithm.constant';
+import { RotateSigningKeysCronJob } from 'src/engine/core-modules/jwt/crons/jobs/rotate-signing-keys.cron.job';
+import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
+import { JwtKeyManagerService } from 'src/engine/core-modules/jwt/services/jwt-key-manager.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { SigningKeyEntityCacheProviderService } from 'src/engine/core-modules/jwt/services/signing-key-entity-cache-provider.service';
+import { SigningKeyRotationService } from 'src/engine/core-modules/jwt/services/signing-key-rotation.service';
+import { SigningKeyVerifyCounterService } from 'src/engine/core-modules/jwt/services/signing-key-verify-counter.service';
+import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -10,11 +24,11 @@ const InternalJwtModule = NestJwtModule.registerAsync({
     return {
       secret: twentyConfigService.get('APP_SECRET'),
       signOptions: {
-        algorithm: 'HS256',
+        algorithm: JWT_LEGACY_ALGORITHM,
         expiresIn: twentyConfigService.get('ACCESS_TOKEN_EXPIRES_IN'),
       },
       verifyOptions: {
-        algorithms: ['HS256'],
+        algorithms: [...JWT_SUPPORTED_VERIFY_ALGORITHMS],
       },
     };
   },
@@ -22,9 +36,28 @@ const InternalJwtModule = NestJwtModule.registerAsync({
 });
 
 @Module({
-  imports: [InternalJwtModule, TwentyConfigModule],
+  imports: [
+    InternalJwtModule,
+    TwentyConfigModule,
+    TypeOrmModule.forFeature([SigningKeyEntity]),
+    CoreEntityCacheModule,
+    SecretEncryptionModule,
+    EnterpriseModule,
+  ],
   controllers: [],
-  providers: [JwtWrapperService],
-  exports: [JwtWrapperService],
+  providers: [
+    JwtWrapperService,
+    JwtKeyManagerService,
+    SigningKeyEntityCacheProviderService,
+    SigningKeyVerifyCounterService,
+    SigningKeyRotationService,
+    RotateSigningKeysCronJob,
+  ],
+  exports: [
+    JwtWrapperService,
+    JwtKeyManagerService,
+    SigningKeyVerifyCounterService,
+    SigningKeyRotationService,
+  ],
 })
 export class JwtModule {}

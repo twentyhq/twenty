@@ -4,7 +4,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/display';
+import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/icon';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -19,8 +19,12 @@ const StyledFilterRow = styled.div<{ isMobile: boolean }>`
   gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: ${({ isMobile }) =>
     isMobile
-      ? `${OBJECT_MOBILE_WIDTH}px ${ACTION_MOBILE_WIDTH}px auto`
-      : `${OBJECT_DROPDOWN_WIDTH}px ${ACTION_DROPDOWN_WIDTH}px auto`};
+      ? `minmax(${OBJECT_MOBILE_WIDTH}px, 1fr) ${ACTION_MOBILE_WIDTH}px ${
+          themeCssVariables.spacing[8]
+        }`
+      : `minmax(${OBJECT_DROPDOWN_WIDTH}px, 1fr) ${ACTION_DROPDOWN_WIDTH}px ${
+          themeCssVariables.spacing[8]
+        }`};
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
@@ -91,6 +95,7 @@ export const SettingsDatabaseEventsForm = ({
               Icon={IconTrash}
               variant="tertiary"
               size="medium"
+              ariaLabel={t`Remove filter`}
               onClick={() => removeOperation?.(index)}
             />
           ) : (

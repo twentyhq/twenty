@@ -9,6 +9,7 @@ describe('evaluateWidgetVisibility', () => {
       conditionalDisplay: undefined,
       context: {
         device: 'DESKTOP',
+        selectedRecords: [],
       },
     });
 
@@ -29,6 +30,7 @@ describe('evaluateWidgetVisibility', () => {
       conditionalDisplay,
       context: {
         device: 'MOBILE',
+        selectedRecords: [],
       },
     });
 
@@ -49,6 +51,7 @@ describe('evaluateWidgetVisibility', () => {
       conditionalDisplay,
       context: {
         device: 'DESKTOP',
+        selectedRecords: [],
       },
     });
 
@@ -69,6 +72,7 @@ describe('evaluateWidgetVisibility', () => {
       conditionalDisplay,
       context: {
         device: 'DESKTOP',
+        selectedRecords: [],
       },
     });
 
@@ -89,6 +93,7 @@ describe('evaluateWidgetVisibility', () => {
       conditionalDisplay,
       context: {
         device: 'MOBILE',
+        selectedRecords: [],
       },
     });
 
@@ -112,6 +117,7 @@ describe('evaluateWidgetVisibility', () => {
       conditionalDisplay,
       context: {
         device: 'MOBILE',
+        selectedRecords: [],
       },
     });
 
@@ -120,6 +126,7 @@ describe('evaluateWidgetVisibility', () => {
       conditionalDisplay,
       context: {
         device: 'DESKTOP',
+        selectedRecords: [],
       },
     });
 
@@ -138,6 +145,7 @@ describe('evaluateWidgetVisibility', () => {
         conditionalDisplay: invalidConditionalDisplay,
         context: {
           device: 'DESKTOP',
+          selectedRecords: [],
         },
       });
     }).toThrow();
@@ -150,6 +158,7 @@ describe('evaluateWidgetVisibility', () => {
         conditionalDisplay: undefined,
         context: {
           device: 'MOBILE',
+          selectedRecords: [],
         },
       });
 
@@ -162,6 +171,7 @@ describe('evaluateWidgetVisibility', () => {
         conditionalDisplay: undefined,
         context: {
           device: 'DESKTOP',
+          selectedRecords: [],
         },
       });
 
@@ -174,6 +184,7 @@ describe('evaluateWidgetVisibility', () => {
         conditionalDisplay: undefined,
         context: {
           device: 'DESKTOP',
+          selectedRecords: [],
         },
       });
 
@@ -194,6 +205,7 @@ describe('evaluateWidgetVisibility', () => {
         conditionalDisplay,
         context: {
           device: 'DESKTOP',
+          selectedRecords: [],
         },
       });
 
@@ -216,6 +228,7 @@ describe('evaluateWidgetVisibility', () => {
         conditionalDisplay,
         context: {
           device: 'DESKTOP',
+          selectedRecords: [],
         },
       });
 
@@ -238,6 +251,7 @@ describe('evaluateWidgetVisibility', () => {
         conditionalDisplay,
         context: {
           device: 'DESKTOP',
+          selectedRecords: [],
         },
       });
 

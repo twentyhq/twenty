@@ -23,6 +23,12 @@ description: 遍历记录数组，对每个项执行操作。
 3. 移动到下一个元素
 4. 重复，直到所有元素处理完毕
 
+### 选择要循环的数组
+
+大多数数组来源（Search Records、Webhook 数组字段、Bulk manual trigger）都可以直接在变量选择器中选择。
+
+当 **Code** 或 **Logic Function** 步骤返回一个*顶级数组*时，其输出会在变量选择器中显示为带索引的条目（`0`、`1`、`2`，…）。 若要对整个数组进行循环，请为该步骤选择 **Whole list** 选项 — Iterator 会自动从列表中推断每个项目的结构。
+
 ## 基本设置
 
 ### 示例：向搜索结果中的所有人发送电子邮件
@@ -76,6 +82,8 @@ description: 遍历记录数组，对每个项执行操作。
 | `{{iterator.currentItem.email}}`        | 电子邮件字段            |
 | `{{iterator.currentItem.company.name}}` | 关联的公司名称           |
 | `{{iterator.index}}`                    | 在数组中的当前位置（从 0 开始） |
+
+在变量选择器中，你可以深入当前项目的特定字段，或者选择 **Use the whole item** 来引用整个当前项目（`{{iterator.currentItem}}`）。 在你希望将完整记录直接传入下游步骤，而不是逐个字段重新构建时，选择整个项目会非常方便。
 
 ## 常见模式
 

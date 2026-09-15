@@ -6,81 +6,100 @@ description: Preguntas frecuentes sobre los precios y la facturación de Twenty.
 ## Precios
 
 <AccordionGroup>
-  <Accordion title="¿Puedo usar Twenty gratis mientras lo alojo por mi cuenta?">
-    Sí, puedes usar Twenty gratis mientras lo alojas por tu cuenta. Tendrás acceso a todo lo incluido en el plan Pro (nube), excepto el soporte de nuestro equipo central. El soporte está disponible a través de nuestra comunidad en Discord.
+<Accordion title="¿Puedo usar Twenty gratis mientras lo alojo por mi cuenta?">
+Sí, puedes usar Twenty gratis mientras lo alojas por tu cuenta. Obtendrás acceso a todo lo incluido en el plan Pro (Cloud), excepto el apoyo de nuestro equipo central. El soporte está disponible a través de nuestra comunidad en Discord.
 
-    Si quieres alojar por tu cuenta y necesitas las funciones Premium (SSO y permisos a nivel de registro), puedes elegir la licencia de pago de Organization (Self-Hosted). Esto también incluye soporte del equipo de Twenty y elimina el requisito de publicar el código personalizado como código abierto antes de distribuirlo.
-  </Accordion>
+Si quieres alojar por tu cuenta y necesitas las funciones Premium (SSO, permisos a nivel de registro y más), puedes elegir la licencia de pago de Organization (Self-Hosted). Esto también incluye soporte del equipo de Twenty y elimina el requisito de publicar el código personalizado como código abierto antes de distribuirlo.
+</Accordion>
 
-  <Accordion title="¿Cuáles son las funciones Premium?">
-    Las funciones Premium solo están disponibles en los planes Organization (nube o Self-Hosted):
+<Accordion title="¿Cuáles son las funciones Premium?">
+Las funciones Premium solo están disponibles en los planes Organization (nube o Self-Hosted):
+* **Integración de SSO**: inicio de sesión único con tu proveedor de identidad
+* **Permisos a nivel de registro**: control de acceso granular a nivel de registro
+* **Datos de uso de IA**: Realice un seguimiento del consumo de IA en su espacio de trabajo
+* **Registros de auditoría**: comprueba qué ha estado haciendo cada miembro del espacio de trabajo
+* **Campañas de correo electrónico**: Planifica qué correos electrónicos se deben enviar (disponible pronto)
+* **Espacios de trabajo ilimitados**: Crea tantos espacios de trabajo como quieras (solo para instalaciones autoalojadas)
+* **Código fuente privado**: No es necesario publicar cambios en un repositorio disponible públicamente (sólo alojado)
+</Accordion>
 
-    * **Integración de SSO**: inicio de sesión único con tu proveedor de identidad
-    * **Permisos a nivel de registro**: control de acceso granular a nivel de registro
-  </Accordion>
+<Accordion title="¿Son los planes de la nube y de la organización autosuficiente lo mismo?">
+Ofrecen las mismas funciones Premium. Sin embargo, una suscripción en la nube no puede usarse para implementaciones autoalojadas. La versión autoalojada requiere una clave Enterprise.
+</Accordion>
 
-  <Accordion title="¿Ofrecen licencias gratuitas para usuarios de solo lectura?">
-    No ofrecemos asientos gratuitos. El precio es por usuario y cada usuario necesita una licencia para acceder a Twenty.
-  </Accordion>
+<Accordion title="¿Ofrecen licencias gratuitas para usuarios de solo lectura?">
+No ofrecemos asientos gratuitos. El precio es por usuario y cada usuario necesita una licencia para acceder a Twenty.
+</Accordion>
 
-  <Accordion title="¿Dónde puedo cambiar mi suscripción al plan de Organización?">
-    Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Cambiar a Organización`.
-  </Accordion>
+<Accordion title="¿Dónde puedo cambiar mi suscripción al plan de Organización?">
+Puedes hacerlo en `Configuración → Facturación → Planes`. Luego haz clic en `Cambiar a Organización`.
+</Accordion>
 
-  <Accordion title="¿Dónde puedo cambiar mi suscripción al plan Pro?">
-    Por favor, comunícate directamente con nuestro equipo a través del Soporte, no hay una forma sencilla de hacer esto utilizando la IU en este momento.
-  </Accordion>
+<Accordion title="¿Dónde puedo cambiar mi suscripción al plan Pro?">
+Puedes hacerlo en `Configuración → Facturación → Planes`. Luego haz clic en `Cambiar a Pro`.
+</Accordion>
 
-  <Accordion title="¿Dónde puedo cambiar mi suscripción a Anual?">
-    Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Cambiar a Anual`.
-  </Accordion>
+<Accordion title="¿Dónde puedo cambiar mi suscripción a anual?">
+Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Cambiar a Anual`.
+</Accordion>
 
-  <Accordion title="¿Dónde puedo cambiar mi suscripción a Mensual?">
-    Por favor, comunícate directamente con nuestro equipo a través del Soporte, no hay una forma sencilla de hacer esto utilizando la IU en este momento.
-  </Accordion>
+<Accordion title="¿Dónde puedo cambiar mi suscripción a mensual?">
+Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Cambiar a Mensual`.
+</Accordion>
 
-  <Accordion title="¿Dónde puedo ver mi uso de créditos?">
-    Lo encontrarás en `Configuración → Facturación`.
-  </Accordion>
+<Accordion title="¿Dónde puedo ver mi uso de créditos?">
+Lo encontrarás en `Configuración → Facturación`.
+</Accordion>
 
-  <Accordion title="¿Cuántos créditos de flujo de trabajo tenemos?">
-    Los créditos se basan en tu ciclo de facturación, no en tu plan:
+<Accordion title="¿Cuántos créditos de flujo de trabajo tenemos?">
+Los créditos se basan en tu ciclo de facturación, no en tu plan:
+* **Suscripciones mensuales**: 5 créditos por mes
+* **Suscripciones anuales**: 50 créditos por año
+</Accordion>
 
-    * **Suscripciones mensuales**: 5 millones de créditos por mes
-    * **Suscripciones anuales**: 50 millones de créditos por año
-  </Accordion>
+<Accordion title="¿Cómo funciona el consumo de créditos de flujo de trabajo?">
+Cada acción de flujo de trabajo consume créditos según su complejidad:
+* **Operaciones internas básicas** (como buscar, actualizar o crear registros) consumen muy pocos créditos
+* Las **operaciones más complejas** como nodos de código y solicitudes a servicios externos consumen más créditos.
+* Los prompts de IA también consumen más créditos según el uso
+* Las **aplicaciones** también consumen más créditos de forma similar a los nodos de código
 
-  <Accordion title="¿Cómo funciona el consumo de créditos de flujo de trabajo?">
-    Cada acción de flujo de trabajo consume créditos según su complejidad:
+Los créditos se deducen en tiempo real cuando se ejecutan los flujos de trabajo o las apps. Puedes monitorear tu uso en **Configuración → Facturación** para seguir el consumo y los créditos restantes.
+</Accordion>
 
-    * Las **operaciones internas básicas** (como búsqueda, actualización, creación de registros) consumen muy pocos créditos.
-    * Las **operaciones más complejas** como nodos de código y solicitudes a servicios externos consumen más créditos.
-    * **Consultas de IA** (próximamente) también consumirán más créditos según el uso.
+<Accordion title="¿Puedo comprar más créditos de flujo de trabajo?">
+Puedes comprar créditos adicionales en `Configuración → Facturación`.
+</Accordion>
 
-    Los créditos se deducen en tiempo real cuando se ejecutan los flujos de trabajo. Puedes monitorear tu uso en **Configuración → Facturación** para seguir el consumo y los créditos restantes.
-  </Accordion>
-
-  <Accordion title="¿Puedo comprar más créditos de flujo de trabajo?">
-    Puedes comprar créditos adicionales en `Configuración → Facturación`.
-  </Accordion>
+<Accordion title="¿Puedo comprar más créditos de flujo de trabajo solo por 1 mes?">
+Sí, ve a `Ajustes → Facturación`, haz clic en el botón `Increase`, elige cuántos créditos quieres, y confirma. Se aplicarán durante el período de facturación actual. Luego haga clic en el botón 'Incrementar' de nuevo, cambie el valor de vuelta al original, y confirmar — el descenso se aplicará a partir del próximo período de facturación.
+</Accordion>
 </AccordionGroup>
 
 ## Facturación
 
 <AccordionGroup>
-  <Accordion title="¿Dónde puedo gestionar los detalles de Facturación?">
-    Puedes hacerlo en `Configuración → Facturación`.
-  </Accordion>
+<Accordion title="¿Dónde puedo gestionar los detalles de Facturación?">
+Puedes hacerlo en `Configuración → Facturación`.
+</Accordion>
 
-  <Accordion title="¿Dónde puedo actualizar mi método de pago?">
-    Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Ver detalles de facturación`. Allí podrás agregar un nuevo método de pago.
-  </Accordion>
+<Accordion title="¿Dónde puedo actualizar mi método de pago?">
+Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Ver detalles de facturación`. Allí podrás agregar un nuevo método de pago.
+</Accordion>
 
-  <Accordion title="¿Dónde puedo actualizar mi información de facturación?">
-    Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Ver detalles de facturación`. Allí podrás editar la información de facturación.
-  </Accordion>
+<Accordion title="¿Dónde puedo actualizar mi información de facturación?">
+Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Ver detalles de facturación`. Allí podrás editar la información de facturación.
+</Accordion>
 
-  <Accordion title="¿Dónde puedo acceder a mis facturas?">
-    Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Ver detalles de facturación`. Verás todas tus facturas al final de la pantalla.
-  </Accordion>
+<Accordion title="¿Dónde puedo acceder a mis facturas?">
+Puedes hacerlo en `Configuración → Facturación`. Luego haz clic en `Ver detalles de facturación`. Verás todas tus facturas al final de la pantalla.
+</Accordion>
+
+<Accordion title="¿Por qué mis plazas son diferentes del número de usuarios en mi espacio de trabajo?">
+El recuento de plazas del espacio de trabajo se sincroniza con el sistema de pagos cada 6 horas; las facturas se ajustan en función de la diferencia.
+</Accordion>
+
+<Accordion title="¿Por qué he recibido una factura por un nuevo miembro del espacio de trabajo?">
+Cuando un nuevo miembro del área de trabajo es añadido al área de trabajo, se envía una factura para cubrir la diferencia. Cuando se elimina un miembro del espacio de trabajo, el cambio se aplica en la siguiente factura mensual/anual estándar.
+</Accordion>
 </AccordionGroup>

@@ -1,0 +1,146 @@
+---
+title: 3. HTTP 路由
+icon: globe
+description: 通过 HTTP 触发函数并将文档渲染为 web 页面。
+---
+
+相同的处理程序也可以回答 HTTP 请求。 我们将添加两个路由：
+
+* a **POST** 让UI 调用来生成文档的端点，和
+* 一个公开的 **GET** 端点，将文档作为可打印的网页。
+
+两者都使用 `httpRouteTriggerSettings` 。 应用路由使用 `/s/` 路径；在本地和自托管实例上，该路径由你的 Twenty 服务器提供服务（例如：`http://localhost:2020/s/documents/generate`）。 在 Twenty Cloud 上，`RestApiClient` 通过工作区的 functions 域名来解析该路径。
+
+## POST 路由 — 按需生成
+
+这会重用\`generateDocuments Handler'，所以没有重复的逻辑——只是一个能读取请求正文的薄
+适配器。
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+共享处理程序在失败时会返回建议的 `status`，因此路由可以使用适当的 `4xx`/`5xx` 状态码进行响应。 `isauth：true`是指调用者
+必须提供一个有效的令牌——下一章的前面组件自动通过
+用户的访问令牌。
+
+## GET 路由 — 渲染为网页
+
+若要返回HTML而不是JSON，将物体用
+`Content-Type`标头包装`Response`。 此路由是公开的(`isauth：必填：false`)，所以
+生成的文档可以作为链接共享。
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`documentHtmlPage`将Markdown体变成HTML(带 [marked](https://marked.js.org/),
+净化) 只显示模板
+内容的可打印页面——与 PDF 和应用程序内预览相同。
+[参见辅助函数](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts)。
+
+## 试试
+
+在您的工作区内有一个模板和一个人, 调用路由(从
+**设置 -> API 和 Webhooks**获取一个令牌):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+在您的浏览器中打开返回的文档：
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="公开的 GET 路由使文档成为一个可打印的页面。">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="呈现的文档页面" />
+</Frame>
+
+<Tip>
+您也可以在测试
+`yarn 20dev:functions:logs`时串流函数日志，或直接通过
+`yarn 20dev:function:exec` 直接调用。
+</Tip>
+
+**在这一步之后：** 应用程序可以通过 HTTP 生成文档并以
+网页服务。 现在让我们让它在没有“curl”的情况下可以使用。
+
+<Card title="下一步：构建界面→" icon="table-columns" href="/l/zh/developers/extend/apps/tutorials/document-generator/building-the-ui">
+  查看、导航、命令和前端组件。
+</Card>

@@ -1,4 +1,5 @@
 import { isRecordReadOnly } from '@/object-record/read-only/utils/isRecordReadOnly';
+import { MetadataWritability } from '~/generated-metadata/graphql';
 
 describe('isRecordReadOnly', () => {
   it('should return false if record is not deleted, has update permissions and object metadata is not read only', () => {
@@ -9,8 +10,9 @@ describe('isRecordReadOnly', () => {
       },
       isRecordDeleted: false,
       objectMetadataItem: {
-        isUIReadOnly: false,
+        isUIEditable: true,
         isRemote: false,
+        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -25,8 +27,9 @@ describe('isRecordReadOnly', () => {
       },
       isRecordDeleted: false,
       objectMetadataItem: {
-        isUIReadOnly: false,
+        isUIEditable: true,
         isRemote: false,
+        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -41,8 +44,9 @@ describe('isRecordReadOnly', () => {
       },
       isRecordDeleted: true,
       objectMetadataItem: {
-        isUIReadOnly: false,
+        isUIEditable: true,
         isRemote: false,
+        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -57,8 +61,9 @@ describe('isRecordReadOnly', () => {
       },
       isRecordDeleted: true,
       objectMetadataItem: {
-        isUIReadOnly: true,
+        isUIEditable: false,
         isRemote: false,
+        writability: MetadataWritability.OPEN,
       },
     });
 
@@ -73,8 +78,9 @@ describe('isRecordReadOnly', () => {
       },
       isRecordDeleted: false,
       objectMetadataItem: {
-        isUIReadOnly: false,
+        isUIEditable: true,
         isRemote: true,
+        writability: MetadataWritability.OPEN,
       },
     });
 

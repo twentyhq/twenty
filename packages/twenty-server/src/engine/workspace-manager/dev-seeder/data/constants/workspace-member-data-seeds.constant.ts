@@ -31,6 +31,7 @@ export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
   JONY: '20202020-77d5-4cb6-b60a-f4a835a85d61',
   PHIL: '20202020-1553-45c6-a028-5a9064cce07f',
   JANE: '20202020-463f-435b-828c-107e007a2711',
+  SCOTT: '20202020-1111-4a01-8001-000000000003',
 };
 
 const {
@@ -79,6 +80,20 @@ const originalWorkspaceMembers: WorkspaceMemberDataSeed[] = [
   },
 ];
 
+// Scott only belongs to the Apple workspace (he has no YCombinator
+// user-workspace), so he must never leak into other workspaces' member seeds.
+const appleOnlyWorkspaceMembers: WorkspaceMemberDataSeed[] = [
+  {
+    id: WORKSPACE_MEMBER_DATA_SEED_IDS.SCOTT,
+    nameFirstName: 'Scott',
+    nameLastName: 'Forstall',
+    locale: 'en',
+    colorScheme: 'Light',
+    userEmail: 'scott.forstall@apple.dev',
+    userId: USER_DATA_SEED_IDS.SCOTT,
+  },
+];
+
 export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
   ...originalWorkspaceMembers,
   ...randomWorkspaceMembers,
@@ -88,13 +103,16 @@ export const getWorkspaceMemberDataSeeds = (
   workspaceId: string,
 ): WorkspaceMemberDataSeed[] => {
   // In test environment, only return original members to avoid conflicts
+  // (Scott is appended for Apple to back the impersonation escalation test).
   if (process.env.NODE_ENV === 'test') {
-    return originalWorkspaceMembers;
+    return workspaceId === SEED_APPLE_WORKSPACE_ID
+      ? [...originalWorkspaceMembers, ...appleOnlyWorkspaceMembers]
+      : originalWorkspaceMembers;
   }
 
   if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
-    // Apple workspace gets all workspace members (original + random)
-    return WORKSPACE_MEMBER_DATA_SEEDS;
+    // Apple workspace gets all workspace members (original + random + Scott)
+    return [...WORKSPACE_MEMBER_DATA_SEEDS, ...appleOnlyWorkspaceMembers];
   } else if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
     // YC workspace gets all 4 original workspace members
     return originalWorkspaceMembers;

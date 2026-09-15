@@ -19,7 +19,8 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class AdminPanelUserLookupService {
   constructor(
@@ -32,8 +33,8 @@ export class AdminPanelUserLookupService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-    @InjectRepository(FeatureFlagEntity)
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    @InjectWorkspaceScopedRepository(FeatureFlagEntity)
+    private readonly featureFlagRepository: WorkspaceScopedRepository<FeatureFlagEntity>,
   ) {}
 
   private buildFallbackAvatarUrlsByUserId(
@@ -99,8 +100,9 @@ export class AdminPanelUserLookupService {
           activationStatus: userWorkspace.workspace.activationStatus,
           createdAt: userWorkspace.workspace.createdAt,
           logo:
-            this.fileUrlService.signWorkspaceLogoUrl(userWorkspace.workspace) ??
-            undefined,
+            (await this.fileUrlService.signWorkspaceLogoUrl(
+              userWorkspace.workspace,
+            )) ?? undefined,
           allowImpersonation: userWorkspace.workspace.allowImpersonation,
           workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
             subdomain: userWorkspace.workspace.subdomain,
@@ -159,9 +161,7 @@ export class AdminPanelUserLookupService {
         where: { workspaceId },
         relations: { user: true },
       }),
-      this.featureFlagRepository.find({
-        where: { workspaceId },
-      }),
+      this.featureFlagRepository.find(workspaceId),
     ]);
 
     const allFeatureFlagKeys = Object.values(FeatureFlagKey);
@@ -182,7 +182,9 @@ export class AdminPanelUserLookupService {
       totalUsers: workspaceUsers.length,
       activationStatus: workspace.activationStatus,
       createdAt: workspace.createdAt,
-      logo: this.fileUrlService.signWorkspaceLogoUrl(workspace) ?? undefined,
+      logo:
+        (await this.fileUrlService.signWorkspaceLogoUrl(workspace)) ??
+        undefined,
       allowImpersonation: workspace.allowImpersonation,
       workspaceUrls: this.workspaceDomainsService.getWorkspaceUrls({
         subdomain: workspace.subdomain,

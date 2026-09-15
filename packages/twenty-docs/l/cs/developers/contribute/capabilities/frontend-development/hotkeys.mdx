@@ -127,9 +127,9 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
 };
 ```
 
-It's important to use this pattern when you're not sure that just using a useEffect with mount/unmount will be enough to avoid conflicts.
+Je důležité použít tento vzor, když si nejste jisti, že pouhé použití useEffect s připojením/odpojením bude stačit k tomu, aby se předešlo konfliktům.
 
-Those conflicts can be hard to debug, and it might happen more often than not with useEffects.
+Tyto konflikty mohou být těžko laditelné a může se to stát častěji než s useEffects.
 
 ## Co je to hotkey scope?
 

@@ -2,42 +2,42 @@ import { gql, InMemoryCache } from '@apollo/client';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
 
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
+import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
+import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
+import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
-import { WorkspaceActivationStatus } from '~/generated-metadata/graphql';
+import {
+  AiModelTier,
+  WorkspaceActivationStatus,
+  WorkspaceDiscoverability,
+} from '~/generated-metadata/graphql';
 
 enableFetchMocks();
 
-jest.mock('@/auth/services/AuthService', () => {
-  const initialAuthService = jest.requireActual('@/auth/services/AuthService');
-  return {
-    ...initialAuthService,
-    renewToken: jest.fn().mockReturnValue(
-      Promise.resolve({
-        accessOrWorkspaceAgnosticToken: {
-          token: 'newAccessToken',
-          expiresAt: '',
-        },
-        refreshToken: { token: 'newRefreshToken', expiresAt: '' },
-      }),
-    ),
-  };
+jest.mock('~/utils/sleep', () => ({
+  sleep: jest.fn().mockResolvedValue(undefined),
+}));
+
+const UNAUTHENTICATED_RESPONSE = JSON.stringify({
+  data: {},
+  errors: [{ extensions: { code: 'UNAUTHENTICATED' } }],
 });
 
-jest.mock('@/apollo/utils/getTokenPair', () => ({
-  getTokenPair: jest.fn().mockReturnValue({
-    accessOrWorkspaceAgnosticToken: { token: 'testAccessToken', expiresAt: '' },
-    refreshToken: { token: 'testRefreshToken', expiresAt: '' },
-  }),
-}));
+const PERMISSION_DENIED_RESPONSE = JSON.stringify({
+  data: { trackAnalytics: null },
+  errors: [
+    {
+      message: 'Entity performing the request does not have permission',
+      extensions: { code: 'FORBIDDEN' },
+    },
+  ],
+});
 
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
+const mockOnUnauthenticatedError = jest.fn();
 
 const mockWorkspaceMember = {
   id: 'workspace-member-id',
@@ -60,6 +60,7 @@ const mockWorkspace = {
   currentBillingSubscription: null,
   workspaceMembersCount: 0,
   isPublicInviteLinkEnabled: false,
+  workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
   isGoogleAuthEnabled: false,
   isMicrosoftAuthEnabled: false,
   isPasswordAuthEnabled: false,
@@ -67,7 +68,6 @@ const mockWorkspace = {
   isGoogleAuthBypassEnabled: false,
   isPasswordAuthBypassEnabled: false,
   isMicrosoftAuthBypassEnabled: false,
-  hasValidEnterpriseKey: false,
   hasActivatedAndValidEnterpriseKey: false,
   hasValidSignedEnterpriseKey: false,
   hasValidEnterpriseValidityToken: false,
@@ -80,11 +80,11 @@ const mockWorkspace = {
   isTwoFactorAuthenticationEnforced: false,
   trashRetentionDays: 14,
   eventLogRetentionDays: 365 * 3,
-  fastModel: AUTO_SELECT_FAST_MODEL_ID,
-  smartModel: AUTO_SELECT_SMART_MODEL_ID,
-  routerModel: 'auto',
-  enabledAiModelIds: [],
-  useRecommendedModels: true,
+  aiChatModelTier: AiModelTier.fast,
+  aiAgentModelTier: AiModelTier.fast,
+  isAutoModelSelectionEnabled: true,
+  aiModelIdByTier: {},
+  isInternalMessagesImportEnabled: false,
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
   installedApplications: [],
@@ -99,16 +99,18 @@ const createMockOptions = (): Options => ({
   onError: mockOnError,
   onNetworkError: mockOnNetworkError,
   onPayloadTooLarge: mockOnPayloadTooLarge,
+  onUnauthenticatedError: mockOnUnauthenticatedError,
   appVersion: '1.0.0',
 });
 
-const makeRequest = async () => {
+const makeRequestWithContext = async (context?: Record<string, unknown>) => {
   const options = createMockOptions();
   const apolloFactory = new ApolloFactory(options);
 
   const client = apolloFactory.getClient();
 
   await client.mutate({
+    context,
     mutation: gql`
       mutation TrackAnalytics(
         $type: AnalyticsType!
@@ -129,7 +131,15 @@ const makeRequest = async () => {
   });
 };
 
+const makeRequest = async () => makeRequestWithContext();
+
 describe('ApolloFactory', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    fetchMock.resetMocks();
+    clearSessionGeneration();
+  });
+
   it('should create an instance of ApolloFactory', () => {
     const options = createMockOptions();
     const apolloFactory = new ApolloFactory(options);
@@ -215,7 +225,7 @@ describe('ApolloFactory', () => {
     }
   }, 10000);
 
-  it('should call renewToken when encountering any error', async () => {
+  it('should call onNetworkError when the request itself fails', async () => {
     fetchMock.mockReject(() => Promise.reject({ message: 'Unknown error' }));
 
     try {
@@ -261,4 +271,89 @@ describe('ApolloFactory', () => {
       );
     }
   }, 10000);
+
+  // fetch normalises header names, so assert case-insensitively rather than
+  // depending on the casing the mock happens to expose.
+  const readHeader = (
+    headers: Record<string, string>,
+    name: string,
+  ): string | undefined =>
+    Object.entries(headers).find(
+      ([key]) => key.toLowerCase() === name.toLowerCase(),
+    )?.[1];
+
+  it('should not attach an Authorization header', async () => {
+    fetchMock.mockResponse(() =>
+      Promise.resolve({ body: JSON.stringify({ data: {} }) }),
+    );
+
+    await makeRequest();
+
+    const headers = fetchMock.mock.calls[0]?.[1]?.headers as Record<
+      string,
+      string
+    >;
+
+    expect(readHeader(headers, 'authorization')).toBeUndefined();
+    // Version-mismatch detection must keep working without one.
+    expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
+  });
+
+  // The session cookie is issued and refreshed server-side, so a rejection is
+  // the end of the session rather than something the client can retry.
+  it('should sign out on an unauthenticated response', async () => {
+    fetchMock.mockResponse(UNAUTHENTICATED_RESPONSE);
+    mockOnUnauthenticatedError.mockImplementation(clearSessionGeneration);
+    rotateSessionGeneration();
+
+    expect(getSessionGeneration()).not.toBeNull();
+
+    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(mockOnUnauthenticatedError).toHaveBeenCalledTimes(1);
+    expect(getSessionGeneration()).toBeNull();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should ignore an unauthenticated response from an older session', async () => {
+    let markRequestStarted!: () => void;
+    const requestStarted = new Promise<void>((resolve) => {
+      markRequestStarted = resolve;
+    });
+    let releaseResponse!: (response: { body: string }) => void;
+    const pendingResponse = new Promise<{ body: string }>((resolve) => {
+      releaseResponse = resolve;
+    });
+
+    fetchMock.mockResponse(() => {
+      markRequestStarted();
+
+      return pendingResponse;
+    });
+
+    rotateSessionGeneration();
+    const requestSessionGeneration = getSessionGeneration();
+    const request = makeRequest();
+
+    expect(requestSessionGeneration).not.toBeNull();
+
+    await requestStarted;
+    rotateSessionGeneration();
+
+    expect(getSessionGeneration()).not.toBe(requestSessionGeneration);
+
+    releaseResponse({ body: UNAUTHENTICATED_RESPONSE });
+
+    await expect(request).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
+
+  it('should leave a permission denial alone', async () => {
+    fetchMock.mockResponse(PERMISSION_DENIED_RESPONSE);
+
+    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
 });

@@ -1,0 +1,47 @@
+---
+title: Veri modeli
+description: Twenty'nin verilerinizi nesneler, alanlar ve ilişkilerle nasıl yapılandırdığını anlayın.
+icon: database
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Twenty içindeki her şey, veri modelinizin yapı taşları olan **nesneler** ve **alanlar** etrafında oluşturulmuştur.
+
+## Nesneler
+
+Nesneler, verilerinizi tutan tablolardır. Twenty, kutudan çıktığı haliyle standart nesnelerle birlikte gelir:
+
+* **Companies** — İş yaptığınız organizasyonlar
+* **People** — Bireysel kişiler
+* **Opportunities** — Satış sürecinizdeki anlaşmalar
+* **Tasks** — Ekibiniz için yapılacak işler
+* **Notes** — Kayıtlarla ilişkilendirilmiş serbest biçimli metin
+
+Ayrıca işletmenizin ihtiyaç duyduğu her şey için **özel nesneler** oluşturabilirsiniz — projeler, destek talepleri, ürünler, sözleşmeler veya başka herhangi bir şey.
+
+## Alanlar
+
+Alanlar, her nesnenin üzerindeki özelliklerdir. Twenty, çok çeşitli alan türlerini destekler:
+
+| Kategori    | Türler                                                               |
+| ----------- | -------------------------------------------------------------------- |
+| **Temel**   | Text, Number, Boolean, Date, Currency, Rating, Select                |
+| **Bileşik** | Address (street, city, state, zip), Full Name, Links, Phones, Emails |
+| **Özel**    | Relation, File Attachment, JSON, Actor (who created/modified)        |
+
+Her nesne ayrıca otomatik sistem alanları da alır: `id`, `createdAt`, `updatedAt`, `createdBy` ve `position`.
+
+## İlişkiler
+
+Nesneler, ilişkiler aracılığıyla birbirine bağlanır. Bir Company'nin birçok People'ı vardır, bir Opportunity bir Company'ye aittir, vb. İstediğiniz nesneler arasında, çoktan çoğa ilişkiler de dahil, özel ilişkiler oluşturabilirsiniz.
+
+## Bunu güçlü kılan nedir
+
+Önceden tanımlanmış nesneler üzerindeki önceden tanımlanmış alanlarla sınırlı olduğunuz geleneksel CRM'lerin aksine, Twenty verilerinizi işletmenizin çalışma şekline tam olarak uygun biçimde modellemenizi sağlar. Özel nesneler, API uç noktaları, görünümler, izinler ve iş akışı tetikleyicileri dahil olmak üzere, yerleşik olanlarla aynı birinci sınıf muameleyi görür.
+
+<Card title="Veri modeline derinlemesine bakış" icon="arrow-right" href="/l/tr/user-guide/data-model/overview">
+  Nesneler, alanlar, ilişkiler ve bunların nasıl yapılandırılacağına ilişkin tam başvuru.
+</Card>
+
+<VimeoEmbed videoId="1185511827" title="Veri modeli" />

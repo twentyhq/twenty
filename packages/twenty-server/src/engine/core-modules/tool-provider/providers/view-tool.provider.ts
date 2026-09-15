@@ -14,6 +14,7 @@ import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/ut
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { ViewFieldToolsFactory } from 'src/engine/metadata-modules/view-field/tools/view-field-tools.factory';
 import { ViewFilterToolsFactory } from 'src/engine/metadata-modules/view-filter/tools/view-filter-tools.factory';
 import { ViewSortToolsFactory } from 'src/engine/metadata-modules/view-sort/tools/view-sort-tools.factory';
 import { ViewToolsFactory } from 'src/engine/metadata-modules/view/tools/view-tools.factory';
@@ -24,6 +25,7 @@ export class ViewToolProvider implements ToolProvider {
 
   constructor(
     private readonly viewToolsFactory: ViewToolsFactory,
+    private readonly viewFieldToolsFactory: ViewFieldToolsFactory,
     private readonly viewFilterToolsFactory: ViewFilterToolsFactory,
     private readonly viewSortToolsFactory: ViewSortToolsFactory,
     private readonly permissionsService: PermissionsService,
@@ -56,13 +58,15 @@ export class ViewToolProvider implements ToolProvider {
 
   private async buildToolSet(context: ToolProviderContext): Promise<ToolSet> {
     const workspaceMemberId = context.actorContext?.workspaceMemberId;
+    const userWorkspaceId = context.userWorkspaceId;
 
     const readTools = {
       ...this.viewToolsFactory.generateReadTools(
         context.workspaceId,
-        workspaceMemberId ?? undefined,
+        userWorkspaceId,
         workspaceMemberId ?? undefined,
       ),
+      ...this.viewFieldToolsFactory.generateReadTools(context.workspaceId),
       ...this.viewFilterToolsFactory.generateReadTools(context.workspaceId),
       ...this.viewSortToolsFactory.generateReadTools(context.workspaceId),
     };
@@ -81,8 +85,9 @@ export class ViewToolProvider implements ToolProvider {
     const writeTools = {
       ...this.viewToolsFactory.generateWriteTools(
         context.workspaceId,
-        workspaceMemberId ?? undefined,
+        userWorkspaceId,
       ),
+      ...this.viewFieldToolsFactory.generateWriteTools(context.workspaceId),
       ...this.viewFilterToolsFactory.generateWriteTools(context.workspaceId),
       ...this.viewSortToolsFactory.generateWriteTools(context.workspaceId),
     };

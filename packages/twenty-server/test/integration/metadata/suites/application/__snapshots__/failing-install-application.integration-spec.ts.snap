@@ -1,16 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
-
-exports[`Install application should fail when entity does not exist should fail with execution error when installing non-existent app registration 1`] = `
-{
-  "extensions": {
-    "code": "NOT_FOUND",
-    "subCode": "APPLICATION_NOT_FOUND",
-    "userFriendlyMessage": "Application not found.",
-  },
-  "message": "Application registration with id 20202020-0000-0000-0000-000000000000 not found",
-  "name": "NotFoundError",
-}
-`;
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Install application should fail when entity does not exist should fail when a role has an invalid universalIdentifier 1`] = `
 {
@@ -44,5 +32,17 @@ exports[`Install application should fail when entity does not exist should fail 
   },
   "message": "Validation errors occurred while syncing application manifest metadata",
   "name": "GraphQLError",
+}
+`;
+
+exports[`Install application should fail when entity does not exist should fail with execution error when installing non-existent app registration 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_REGISTRATION_NOT_FOUND",
+    "userFriendlyMessage": "Application registration not found.",
+  },
+  "message": "No application registration found for identifier "20202020-0000-0000-0000-000000000000"",
+  "name": "NotFoundError",
 }
 `;

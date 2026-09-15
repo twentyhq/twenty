@@ -1,0 +1,15 @@
+.list {
+  margin: 0;
+  padding: 0;
+
+  display: grid;
+  row-gap: var(--t-spacing-2);
+}
+
+.nested {
+  padding-left: var(--t-spacing-8);
+
+  > :first-of-type {
+    margin-top: var(--t-spacing-2);
+  }
+}

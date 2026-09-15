@@ -17,7 +17,7 @@ Twenty prend en charge le SSO avec :
 
 * **SAML 2.0** : Fonctionne avec la plupart des fournisseurs d'identité d'entreprise
 * **Google Workspace** : Pour les organisations utilisant Google
-* **Microsoft Entra ID** : (anciennement Azure AD) Pour les environnements Microsoft
+* **Microsoft Entra ID** (anciennement Azure AD): Pour les environnements Microsoft
 
 ## Configuration du SSO
 
@@ -25,11 +25,7 @@ Twenty prend en charge le SSO avec :
 
 * Offre Organization (espaces de travail cloud et auto-hébergés)
 * Accès administrateur à votre fournisseur d'identité
-* Accès administrateur à l'espace de travail Twenty
-
-<Note>
-  **Pour les utilisateurs en auto-hébergement souhaitant configurer le SSO**, contactez contact@twenty.com
-</Note>
+* Accès administrateur à votre espace de travail de 20 ans
 
 ### Étapes de configuration
 
@@ -68,14 +64,14 @@ Vous devrez configurer votre fournisseur d'identité avec :
 ### Approvisionnement Just-in-Time (JIT)
 
 * Les utilisateurs sont créés automatiquement lors de la première connexion
-* Le rôle par défaut est attribué automatiquement
+* Les utilisateurs sont assignés automatiquement un rôle par défaut
 * Aucune création manuelle d'utilisateurs nécessaire
 
 ### Approvisionnement manuel
 
 * Invitez les utilisateurs avant qu'ils ne puissent se connecter
 * Préattribuez des rôles spécifiques
-* Plus de contrôle sur les personnes autorisées à accéder
+* Plus de contrôle sur qui peut accéder à l'espace de travail
 
 ## Gestion des utilisateurs SSO
 
@@ -112,8 +108,8 @@ Pour supprimer l'accès des utilisateurs SSO :
 
 ### Problèmes courants
 
-* **Erreurs de certificat** : Assurez-vous que le certificat n'a pas expiré
-* **Incohérences d'URL** : Vérifiez que l'URL ACS correspond exactement
+* **Erreurs de certificats** : Assurez-vous que le certificat n'a pas expiré
+* **Incompatibilité des URLs**: Vérifiez que l'URL ACS correspond exactement à
 * **Utilisateur introuvable** : Vérifiez les paramètres d'approvisionnement JIT
 
 ### Obtenir de l'aide
@@ -123,3 +119,7 @@ Si vous rencontrez des problèmes, contactez le support avec :
 * Messages d'erreur reçus
 * Fournisseur d'identité utilisé
 * Détails de configuration (sans données sensibles)
+
+<Tip>
+Vous avez besoin de configurer le SSO pour votre organisation ? [Trouvez un partenaire Twenty certifié](https://twenty.com/partners/list?categories=SOLUTIONING\&ref=docs-sso) spécialisé en SSO et en gestion des identités. *(Vous préférez impliquer directement Twenty ? [contact@twenty.com](mailto:contact@twenty.com))*
+</Tip>

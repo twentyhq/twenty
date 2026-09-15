@@ -15,7 +15,7 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { useContext } from 'react';
-import { IconArrowRight } from 'twenty-ui/display';
+import { IconArrowRight } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type CalendarEventRowProps = {
@@ -125,9 +125,11 @@ export const CalendarEventRow = ({
           <CalendarEventNotSharedContent />
         )}
       </StyledLabels>
-      {!!calendarEvent.participants?.length && (
+      {(!!calendarEvent.participants?.length ||
+        !!calendarEvent.callRecordings?.length) && (
         <CalendarEventParticipantsAvatarGroup
-          participants={calendarEvent.participants}
+          participants={calendarEvent.participants ?? []}
+          callRecordings={calendarEvent.callRecordings}
         />
       )}
     </StyledContainer>

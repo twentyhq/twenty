@@ -17,6 +17,7 @@ const UNIVERSAL_IDENTIFIERS_PATH = join(
   'constants',
   'universal-identifiers.ts',
 );
+const YARNRC_PATH = 'yarnrc.yml';
 
 // Template content matching template/src/constants/universal-identifiers.ts
 const TEMPLATE_UNIVERSAL_IDENTIFIERS = `export const APP_DISPLAY_NAME = 'DISPLAY-NAME-TO-BE-GENERATED';
@@ -31,9 +32,11 @@ const TEMPLATE_PACKAGE_JSON = {
   version: '0.1.0',
   license: 'MIT',
   scripts: { twenty: 'twenty' },
-  dependencies: {
-    'twenty-sdk': '0.0.0',
+  dependencies: {},
+  devDependencies: {
     'twenty-client-sdk': '0.0.0',
+    'twenty-sdk': '0.0.0',
+    'twenty-ui': '0.0.0',
   },
 };
 
@@ -134,7 +137,7 @@ describe('copyBaseApplicationProject', () => {
     expect(uuidMatches![0]).not.toBe(uuidMatches![1]);
   });
 
-  it('should update package.json with app name and SDK versions', async () => {
+  it('should update package.json with app name and matching package versions', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
       appDisplayName: 'My Test App',
@@ -146,10 +149,13 @@ describe('copyBaseApplicationProject', () => {
       join(testAppDirectory, 'package.json'),
     );
     expect(packageJson.name).toBe('my-test-app');
-    expect(packageJson.dependencies['twenty-sdk']).toBe(
+    expect(packageJson.devDependencies['twenty-sdk']).toBe(
       createTwentyAppPackageJson.version,
     );
-    expect(packageJson.dependencies['twenty-client-sdk']).toBe(
+    expect(packageJson.devDependencies['twenty-client-sdk']).toBe(
+      createTwentyAppPackageJson.version,
+    );
+    expect(packageJson.devDependencies['twenty-ui']).toBe(
       createTwentyAppPackageJson.version,
     );
   });
@@ -173,6 +179,27 @@ describe('copyBaseApplicationProject', () => {
     expect(publicDirectoryContents).toHaveLength(0);
   });
 
+  it('should rename yarnrc.yml to .yarnrc.yml in the scaffolded project', async () => {
+    await fs.writeFile(
+      join(testAppDirectory, YARNRC_PATH),
+      'nodeLinker: node-modules',
+    );
+
+    await copyBaseApplicationProject({
+      appName: 'my-test-app',
+      appDisplayName: 'My Test App',
+      appDescription: 'A test application',
+      appDirectory: testAppDirectory,
+    });
+
+    expect(await fs.pathExists(join(testAppDirectory, YARNRC_PATH))).toBe(
+      false,
+    );
+    expect(await fs.pathExists(join(testAppDirectory, '.yarnrc.yml'))).toBe(
+      true,
+    );
+  });
+
   it('should handle empty description', async () => {
     await copyBaseApplicationProject({
       appName: 'my-test-app',
@@ -188,6 +215,23 @@ describe('copyBaseApplicationProject', () => {
 
     expect(content).toContain("APP_DESCRIPTION = ''");
   });
+
+  it.each(['CHANGELOG.md', 'SETUP.md', 'locales/en.json'])(
+    'should seed %s in the base template',
+    async (seedFileName) => {
+      const templateDirectory = join(
+        __dirname,
+        '..',
+        '..',
+        'constants',
+        'template',
+      );
+
+      expect(await fs.pathExists(join(templateDirectory, seedFileName))).toBe(
+        true,
+      );
+    },
+  );
 
   it('should generate unique UUIDs across different scaffolds', async () => {
     const firstAppDir = join(testAppDirectory, 'app1');

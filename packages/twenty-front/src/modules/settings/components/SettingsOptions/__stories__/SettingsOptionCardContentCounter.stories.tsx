@@ -2,7 +2,7 @@ import { SettingsOptionCardContentCounter } from '@/settings/components/Settings
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { IconUsers } from 'twenty-ui/display';
+import { IconUsers } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const StyledContainer = styled.div`

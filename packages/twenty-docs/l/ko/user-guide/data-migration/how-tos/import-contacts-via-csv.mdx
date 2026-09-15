@@ -5,36 +5,36 @@ description: Twenty로 사람/연락처를 가져오는 포괄적인 단계별 �
 
 ## 개요
 
-이 가이드는 연락처(People)를 Twenty로 가져오는 과정을 단계별로 안내합니다. **회사를 먼저 가져오세요** — 사람을 회사에 연결하려면.
+이 가이드는 연락처(People)를 Twenty로 가져오는 과정을 단계별로 안내합니다.
 
 ## 시작하기 전에
 
 ### 사전 준비 체크리스트
 
 <Check>
-  파일이 CSV, XLSX 또는 XLS 형식임
+파일이 CSV, XLSX 또는 XLS 형식임
 </Check>
 
 <Check>
-  파일의 레코드가 10,000개 미만임
+파일의 레코드가 10,000개 미만임
 </Check>
 
 <Check>
-  파일에 중복된 이메일 주소가 없음
+파일에 중복된 이메일 주소가 없음
 </Check>
 
 <Check>
-  **회사를 먼저 가져옴**(사람을 회사에 연결하는 경우)
+**회사를 먼저 가져옴**(사람을 회사에 연결하는 경우)
 </Check>
 
 <Check>
-  모든 사용자 정의 필드가 **Settings → Data Model**에 존재함
+모든 사용자 정의 필드가 **Settings → Data Model**에 존재함
 </Check>
 
 <Warning>
-  **사람보다 회사를 먼저 가져오기**
+**사람보다 회사를 먼저 가져오기**
 
-  사람을 회사에 연결하려면 먼저 회사를 가져오세요. 참조하려면 회사가 먼저 존재해야 합니다.
+사람을 회사에 연결하려면 먼저 회사를 가져오세요. 참조하려면 회사가 먼저 존재해야 합니다.
 </Warning>
 
 ## 1단계: 연락처 데이터 준비
@@ -58,7 +58,7 @@ description: Twenty로 사람/연락처를 가져오는 포괄적인 단계별 �
 * 추가 이메일은 **Emails / Additional Emails** 열을 사용하세요:
 
 ```
-[\"jane@twenty.com\",\"jane.doe@twenty.com\"]
+["jane@twenty.com","jane.doe@twenty.com"]
 ```
 
 ### 전화 형식
@@ -81,7 +81,7 @@ description: Twenty로 사람/연락처를 가져오는 포괄적인 단계별 �
 | `companyId`     | UUID   | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-  **도메인 URL 형식을 사용하세요**(`https://acme.com`), 라벨은 사용하지 마세요. 이는 Twenty에서 회사가 저장되는 방식과 일치합니다.
+**도메인 URL 형식을 사용하세요**(`https://acme.com`), 라벨은 사용하지 마세요. 이는 Twenty에서 회사가 저장되는 방식과 일치합니다.
 </Note>
 
 ### CSV 예시 구조
@@ -93,7 +93,7 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-  **전문가 팁:** 가져오기 중에 **Download sample file**을 클릭하거나 기존 People 몇 명을 내보내 Twenty가 기대하는 정확한 열 이름을 확인하세요.
+**전문가 팁:** 가져오기 중에 **Download sample file**을 클릭하거나 기존 People 몇 명을 내보내 Twenty가 기대하는 정확한 열 이름을 확인하세요.
 </Note>
 
 ## 2단계: 가져오기 기능에 액세스
@@ -145,9 +145,9 @@ Twenty가 열을 필드에 자동으로 매칭하려고 시도합니다. 검토 
 3. Twenty가 각 사람을 일치하는 회사에 연결합니다
 
 <Warning>
-  **관계에는 고유 식별자를 하나만 매핑하세요.**
+**관계에는 고유 식별자를 하나만 매핑하세요.**
 
-  `companyId`와 `companyDomain`을 둘 다 매핑하지 마세요. 하나만 선택하세요—사람이 읽기 쉬우므로 도메인을 권장합니다.
+`companyId`와 `companyDomain`을 둘 다 매핑하지 마세요. 하나만 선택하세요—사람이 읽기 쉬우므로 도메인을 권장합니다.
 </Warning>
 
 ## 5단계: 선택 필드 값 매핑
@@ -159,7 +159,7 @@ Twenty가 열을 필드에 자동으로 매칭하려고 시도합니다. 검토 
 3. 필요하면 새 옵션을 만드세요
 
 <Note>
-  선택 옵션은 표시 레이블이 아니라 **API 이름**을 사용합니다. API 이름을 보려면 **Settings → Data Model**에서 **Advanced mode**를 활성화하세요.
+선택 옵션은 표시 레이블이 아니라 **API 이름**을 사용합니다. API 이름을 보려면 **Settings → Data Model**에서 **Advanced mode**를 활성화하세요.
 </Note>
 
 ## 6단계: 오류 검토 및 수정

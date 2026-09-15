@@ -1,6 +1,7 @@
 import { filterSuggestionItems } from '@blocknote/core/extensions';
 import { BlockNoteView } from '@blocknote/mantine';
 import { SuggestionMenuController } from '@blocknote/react';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { type ClipboardEvent, useContext } from 'react';
 
@@ -20,16 +21,18 @@ type DashboardsBlockEditorProps = {
   onPaste?: (event: ClipboardEvent) => void;
   onChange?: () => void;
   readonly?: boolean;
-  boundaryElement?: HTMLElement | null;
 };
+
+const StyledEditor = styled.div`
+  width: 100%;
+`;
 
 // TODO: Refactor these BlockNote CSS overrides - some may be dead code now that we have custom components
 // (DashboardEditorSideMenu, DashboardColorSelectionMenu).
 // Test removing each selector and move necessary styles to appropriate components.
+// BlockNote shares this class with its body portal to preserve menu styles outside the widget.
 // oxlint-disable-next-line twenty/no-hardcoded-colors
-const StyledEditor = styled.div`
-  width: 100%;
-
+const editorStyles = css`
   & .editor {
     background: transparent;
     color: ${themeCssVariables.font.color.primary};
@@ -48,7 +51,7 @@ const StyledEditor = styled.div`
     height: 20px;
     width: 20px;
   }
-  & .bn-container .bn-drag-handle {
+  & .bn-drag-handle {
     height: 20px;
     width: 20px;
   }
@@ -63,7 +66,7 @@ const StyledEditor = styled.div`
     backdrop-filter: ${themeCssVariables.blur.medium};
     background: ${themeCssVariables.background.transparent.secondary};
     border: 1px solid ${themeCssVariables.border.color.medium};
-    border-radius: 8px;
+    border-radius: ${themeCssVariables.border.radius.md};
     box-shadow:
       0px 2px 4px rgba(0, 0, 0, 0.04),
       2px 4px 16px rgba(0, 0, 0, 0.12);
@@ -76,11 +79,21 @@ const StyledEditor = styled.div`
     padding-inline: 0px;
   }
 
-  & .bn-inline-content {
-    width: 100%;
+  & .bn-block-content {
+    min-width: 0;
   }
 
-  & .bn-container .bn-suggestion-menu-item:hover {
+  & .bn-block-content,
+  & .bn-inline-content {
+    overflow-wrap: anywhere;
+  }
+
+  & .bn-inline-content {
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  & .bn-suggestion-menu-item:hover {
     background-color: blue;
   }
 
@@ -88,7 +101,7 @@ const StyledEditor = styled.div`
     backdrop-filter: ${themeCssVariables.blur.medium};
     background: ${themeCssVariables.background.transparent.secondary};
     border: 1px solid ${themeCssVariables.border.color.medium};
-    border-radius: 8px;
+    border-radius: ${themeCssVariables.border.radius.md};
     padding: 4px;
   }
 
@@ -115,7 +128,7 @@ const StyledEditor = styled.div`
     width: 16px;
   }
 
-  & .bn-mantine .bn-side-menu > [draggable='true'] {
+  & .bn-side-menu > [draggable='true'] {
     margin-bottom: 5px;
   }
   & .bn-color-picker-dropdown {
@@ -129,7 +142,7 @@ const StyledEditor = styled.div`
   & .bn-inline-content code {
     background-color: ${themeCssVariables.background.transparent.light};
     border: 1px solid ${themeCssVariables.font.color.extraLight};
-    border-radius: 4px;
+    border-radius: ${themeCssVariables.border.radius.sm};
     color: ${themeCssVariables.font.color.danger};
     font-family: monospace;
     font-size: 0.9rem;
@@ -144,7 +157,6 @@ export const DashboardsBlockEditor = ({
   onChange,
   onPaste,
   readonly,
-  boundaryElement,
 }: DashboardsBlockEditorProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const blockNoteTheme = colorScheme === 'light' ? 'light' : 'dark';
@@ -168,6 +180,7 @@ export const DashboardsBlockEditor = ({
   return (
     <StyledEditor>
       <BlockNoteView
+        className={editorStyles}
         onFocus={handleFocus}
         onBlur={handleBlur}
         onPaste={handlePaste}
@@ -178,10 +191,11 @@ export const DashboardsBlockEditor = ({
         sideMenu={false}
         formattingToolbar={false}
         editable={!readonly}
+        portalElements={{ default: null }}
       >
         {!readonly && (
           <>
-            <DashboardFormattingToolbar boundaryElement={boundaryElement} />
+            <DashboardFormattingToolbar />
             <DashboardEditorSideMenu editor={editor} />
             <SuggestionMenuController
               triggerCharacter="/"

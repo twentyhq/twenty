@@ -1,18 +1,33 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
 import { TWENTY_ICONS_BASE_URL } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { Repository, type DataSource, type QueryRunner } from 'typeorm';
+import {
+  IsNull,
+  QueryFailedError,
+  Repository,
+  type DataSource,
+  type QueryRunner,
+} from 'typeorm';
 import { v4 } from 'uuid';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/workspace/workspace-created';
-import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
+import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/user/user-signup';
+import { WORKSPACE_CREATED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/workspace/workspace-created';
+import {
+  type AppTokenEntity,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   AuthException,
   AuthExceptionCode,
@@ -23,6 +38,12 @@ import {
   hashPassword,
 } from 'src/engine/core-modules/auth/auth.util';
 import { MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY } from 'src/engine/core-modules/auth/constants/max-workspaces-without-enterprise-key.constants';
+import { getSignUpWithoutWorkspaceDecision } from 'src/engine/core-modules/auth/utils/get-sign-up-without-workspace-decision.util';
+import { hasProvisionedSignUpDestination } from 'src/engine/core-modules/auth/utils/has-provisioned-sign-up-destination.util';
+import { DEFAULT_DPA_REGION } from 'src/engine/core-modules/dpa/config/dpa-region-config.constant';
+import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agreement.entity';
+import { DpaAgreementType } from 'src/engine/core-modules/dpa/enums/dpa-agreement-type.enum';
+import { buildDpaAgreementRecord } from 'src/engine/core-modules/dpa/utils/build-dpa-agreement-record.util';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrPartialUserWithPicture,
@@ -32,6 +53,7 @@ import {
 } from 'src/engine/core-modules/auth/types/signInUp.type';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
@@ -44,14 +66,20 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
-import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
+import { getDomainFromEmailOrThrow } from 'src/utils/get-domain-from-email-or-throw';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
 export class SignInUpService {
+  private readonly logger = new Logger(SignInUpService.name);
+
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
@@ -68,8 +96,11 @@ export class SignInUpService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     private readonly fileCorePictureService: FileCorePictureService,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly enterprisePlanService: EnterprisePlanService,
-    private readonly auditService: AuditService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly billingCreditService: BillingCreditService,
+    private readonly billingService: BillingService,
     @InjectDataSource()
     private readonly dataSource: DataSource,
   ) {}
@@ -215,6 +246,28 @@ export class SignInUpService {
       roleId: params.invitation.context?.roleId,
     });
 
+    if (
+      params.invitation.type === AppTokenType.OnboardingInvitationToken &&
+      params.userData.type === 'newUserWithPicture'
+    ) {
+      try {
+        await this.billingCreditService.grantCredits({
+          workspaceId: invitationValidation.workspace.id,
+          amountMicro: this.twentyConfigService.get(
+            'ONBOARDING_INVITE_TEAM_CREDITS_REWARD_PER_USER',
+          ),
+          type: BillingCreditGrantType.ONBOARDING_REWARD,
+          reason: 'Onboarding reward: invited teammate signed up',
+          idempotencyKey: `onboarding-invite-team:${invitationValidation.workspace.id}:${updatedUser.id}`,
+        });
+      } catch (error) {
+        this.logger.error(
+          `Failed to credit onboarding invite reward for workspace ${invitationValidation.workspace.id}`,
+          error,
+        );
+      }
+    }
+
     await this.workspaceInvitationService.invalidateWorkspaceInvitation(
       invitationValidation.workspace.id,
       email,
@@ -229,7 +282,12 @@ export class SignInUpService {
     workspace: WorkspaceEntity,
     user: ExistingUserOrPartialUserWithPicture,
   ) {
-    if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) return;
+    if (
+      workspace.activationStatus === WorkspaceActivationStatus.ACTIVE ||
+      workspace.activationStatus === WorkspaceActivationStatus.CREATED
+    ) {
+      return;
+    }
 
     if (user.userData.type !== 'existingUser') {
       throw new AuthException(
@@ -249,10 +307,10 @@ export class SignInUpService {
 
     if (!userWorkspaceExists) {
       throw new AuthException(
-        'User is not part of the workspace',
+        'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: msg`User is not part of the workspace`,
+          userFriendlyMessage: msg`Workspace is not ready to welcome new members`,
         },
       );
     }
@@ -282,7 +340,8 @@ export class SignInUpService {
       await this.activateOnboardingForUser({
         user,
         workspace: params.workspace,
-        shouldShowConnectAccountStep: false,
+        shouldShowConnectAccountStep: true,
+        shouldShowInstallAppsStep: false,
       });
 
       await this.userWorkspaceService.addUserToWorkspaceIfUserNotInWorkspace(
@@ -315,10 +374,12 @@ export class SignInUpService {
       user,
       workspace,
       shouldShowConnectAccountStep,
+      shouldShowInstallAppsStep,
     }: {
       user: Pick<UserEntity, 'id' | 'firstName' | 'lastName'>;
       workspace: WorkspaceEntity;
       shouldShowConnectAccountStep: boolean;
+      shouldShowInstallAppsStep: boolean;
     },
     queryRunner?: QueryRunner,
   ) {
@@ -333,8 +394,17 @@ export class SignInUpService {
       );
     }
 
-    if (user.firstName === '' && user.lastName === '') {
-      await this.onboardingService.setOnboardingCreateProfilePending(
+    await this.onboardingService.setOnboardingCreateProfilePending(
+      {
+        userId: user.id,
+        workspaceId: workspace.id,
+        value: true,
+      },
+      queryRunner,
+    );
+
+    if (shouldShowInstallAppsStep) {
+      await this.onboardingService.setOnboardingInstallAppsPending(
         {
           userId: user.id,
           workspaceId: workspace.id,
@@ -384,7 +454,14 @@ export class SignInUpService {
       undefined,
     );
 
-    this.metricsService.incrementCounter({
+    void this.eventLogEmitterService
+      .createContext({
+        workspaceId: savedUser.currentWorkspace?.id,
+        userId: savedUser.id,
+      })
+      .insertWorkspaceEvent(USER_SIGNUP_EVENT, {});
+
+    void this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.SignUpSuccess,
       shouldStoreInCache: false,
     });
@@ -408,6 +485,55 @@ export class SignInUpService {
         AuthExceptionCode.SIGNUP_DISABLED,
       );
     }
+  }
+
+  // Enforced here rather than at workspace creation so a restricted instance
+  // stops accumulating verified users that can never reach a workspace.
+  private async assertSignUpWithoutWorkspaceAllowed(
+    email: string,
+  ): Promise<void> {
+    const decision = getSignUpWithoutWorkspaceDecision({
+      isMultiWorkspaceEnabled: this.twentyConfigService.get(
+        'IS_MULTIWORKSPACE_ENABLED',
+      ),
+      isWorkspaceCreationLimitedToServerAdmins: this.twentyConfigService.get(
+        'IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS',
+      ),
+      workspaceCount: await this.workspaceRepository.count(),
+    });
+
+    if (decision === 'allowed') {
+      return;
+    }
+
+    if (
+      decision === 'requiresDestination' &&
+      (await this.hasProvisionedDestination(email))
+    ) {
+      return;
+    }
+
+    throw new AuthException(
+      'New workspace setup is disabled',
+      AuthExceptionCode.SIGNUP_DISABLED,
+    );
+  }
+
+  private async hasProvisionedDestination(email: string): Promise<boolean> {
+    // Invitations are read directly instead of through the sign-in picker,
+    // which hides HIDDEN workspaces: that is a listing rule, not a statement
+    // that the invitee has nowhere to land.
+    const invitations =
+      await this.workspaceInvitationService.findInvitationsByEmail(email);
+
+    if (hasProvisionedSignUpDestination(invitations)) {
+      return true;
+    }
+
+    const { availableWorkspacesForSignUp } =
+      await this.userWorkspaceService.findAvailableWorkspacesByEmail(email);
+
+    return hasProvisionedSignUpDestination(availableWorkspacesForSignUp);
   }
 
   private async hasServerAdmin(): Promise<boolean> {
@@ -476,8 +602,95 @@ export class SignInUpService {
     );
   }
 
+  private async deleteInferredWorkspaceLogo({
+    fileId,
+    workspaceId,
+  }: {
+    fileId: string;
+    workspaceId: string;
+  }): Promise<void> {
+    try {
+      await this.fileCorePictureService.deleteCorePicture({
+        fileId,
+        workspaceId,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to clean up inferred logo for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+        additionalData: { source: 'inferred-workspace-logo-cleanup' },
+      });
+    }
+  }
+
+  private async uploadInferredWorkspaceLogo({
+    email,
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    email: string;
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<string | undefined> {
+    let uploadedLogoFileId: string | undefined;
+
+    try {
+      const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainFromEmailOrThrow(email)}`;
+      const logoFile =
+        await this.fileCorePictureService.uploadWorkspaceLogoFromUrl({
+          imageUrl: logoUrl,
+          workspaceId,
+          applicationUniversalIdentifier,
+        });
+
+      if (!isDefined(logoFile)) {
+        return;
+      }
+
+      uploadedLogoFileId = logoFile.id;
+
+      const updateResult = await this.workspaceRepository.update(
+        { id: workspaceId, logoFileId: IsNull() },
+        { logoFileId: logoFile.id },
+      );
+
+      if ((updateResult.affected ?? 0) === 0) {
+        await this.deleteInferredWorkspaceLogo({
+          fileId: logoFile.id,
+          workspaceId,
+        });
+
+        return;
+      }
+
+      return logoFile.id;
+    } catch (error) {
+      this.logger.error(
+        `Failed to upload inferred logo for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error], {
+        workspace: { id: workspaceId },
+        additionalData: { source: 'inferred-workspace-logo' },
+      });
+
+      if (isDefined(uploadedLogoFileId)) {
+        await this.deleteInferredWorkspaceLogo({
+          fileId: uploadedLogoFileId,
+          workspaceId,
+        });
+      }
+
+      return;
+    }
+  }
+
   async signUpOnNewWorkspace(
     userData: ExistingUserOrPartialUserWithPicture['userData'],
+    options?: { displayName?: string; subdomain?: string },
   ) {
     const email =
       userData.type === 'newUserWithPicture'
@@ -496,119 +709,183 @@ export class SignInUpService {
 
     await this.assertWorkspaceCreationAllowed(userData);
 
+    const displayName = options?.displayName?.trim();
+
+    if (!displayName) {
+      throw new AuthException(
+        'Workspace name is required',
+        AuthExceptionCode.INVALID_INPUT,
+        {
+          userFriendlyMessage: msg`Workspace name is required`,
+        },
+      );
+    }
+
+    const requestedSubdomain = options?.subdomain;
+
+    if (isDefined(requestedSubdomain)) {
+      await this.subdomainManagerService.validateSubdomainOrThrow(
+        requestedSubdomain,
+      );
+    }
+
     const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 
     const isWorkEmailFound = isWorkEmail(email);
 
     const workspaceId = v4();
     const workspaceCustomApplicationId = v4();
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
 
     try {
-      const workspaceToCreate = this.workspaceRepository.create({
-        id: workspaceId,
-        subdomain: await this.subdomainManagerService.generateSubdomain(
-          isWorkEmailFound ? { userEmail: email } : {},
-        ),
-        workspaceCustomApplicationId,
-        displayName: '',
-        inviteHash: v4(),
-        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-      });
+      const { user, workspace, customApplicationUniversalIdentifier } =
+        await this.dataSource.transaction(async (entityManager) => {
+          const queryRunner = entityManager.queryRunner as QueryRunner;
 
-      const workspace = await queryRunner.manager.save(
-        WorkspaceEntity,
-        workspaceToCreate,
-      );
-
-      const customApplication =
-        await this.applicationService.createWorkspaceCustomApplication(
-          {
-            workspaceId,
-            applicationId: workspaceCustomApplicationId,
-          },
-          queryRunner,
-        );
-
-      if (isWorkEmailFound) {
-        const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
-        const logoFile =
-          await this.fileCorePictureService.uploadWorkspaceLogoFromUrl({
-            imageUrl: logoUrl,
-            workspaceId,
-            applicationUniversalIdentifier:
-              customApplication.universalIdentifier,
-            queryRunner,
+          const workspaceToCreate = this.workspaceRepository.create({
+            id: workspaceId,
+            subdomain: isDefined(requestedSubdomain)
+              ? requestedSubdomain
+              : await this.subdomainManagerService.generateSubdomain(
+                  isWorkEmailFound ? { userEmail: email } : {},
+                ),
+            workspaceCustomApplicationId,
+            displayName,
+            inviteHash: v4(),
+            activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
           });
 
-        if (isDefined(logoFile)) {
-          await queryRunner.manager.update(
+          const workspace = await queryRunner.manager.save(
             WorkspaceEntity,
-            { id: workspaceId },
-            { logoFileId: logoFile.id },
+            workspaceToCreate,
           );
-        }
-      }
 
-      const isExistingUser = userData.type === 'existingUser';
-      const user = isExistingUser
-        ? userData.existingUser
-        : await this.saveNewUser(
-            userData.newUserWithPicture,
+          const customApplication =
+            await this.applicationService.createWorkspaceCustomApplication(
+              {
+                workspaceId,
+                applicationId: workspaceCustomApplicationId,
+              },
+              queryRunner,
+            );
+
+          const isExistingUser = userData.type === 'existingUser';
+          const user = isExistingUser
+            ? userData.existingUser
+            : await this.saveNewUser(
+                userData.newUserWithPicture,
+                {
+                  canImpersonate: shouldGrantServerAdmin,
+                  canAccessFullAdminPanel: shouldGrantServerAdmin,
+                },
+                queryRunner,
+              );
+
+          await this.userWorkspaceService.create(
             {
-              canImpersonate: shouldGrantServerAdmin,
-              canAccessFullAdminPanel: shouldGrantServerAdmin,
+              userId: user.id,
+              workspaceId: workspace.id,
+              isExistingUser,
+              pictureUrl: isExistingUser
+                ? undefined
+                : userData.newUserWithPicture.picture,
+              applicationUniversalIdentifier:
+                customApplication.universalIdentifier,
+              locale: user.locale,
             },
             queryRunner,
           );
 
-      await this.userWorkspaceService.create(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          isExistingUser,
-          pictureUrl: isExistingUser
-            ? undefined
-            : userData.newUserWithPicture.picture,
-          applicationUniversalIdentifier: customApplication.universalIdentifier,
-        },
-        queryRunner,
-      );
+          await this.activateOnboardingForUser(
+            {
+              user,
+              workspace,
+              shouldShowConnectAccountStep: true,
+              shouldShowInstallAppsStep: true,
+            },
+            queryRunner,
+          );
 
-      await this.activateOnboardingForUser(
-        {
-          user,
-          workspace,
-          shouldShowConnectAccountStep: true,
-        },
-        queryRunner,
-      );
+          await this.onboardingService.setOnboardingInviteTeamPending(
+            {
+              workspaceId: workspace.id,
+              value: true,
+            },
+            queryRunner,
+          );
 
-      await this.onboardingService.setOnboardingInviteTeamPending(
-        {
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
+          // Click-through DPA: the DPA is incorporated by reference into the
+          // ToS/signup, so acceptance = execution. Only relevant on Twenty's
+          // managed cloud (multi-workspace), where Twenty is the Processor
+          // hosting the data; on self-hosted deployments Twenty is not the
+          // Processor, so there is nothing to record. Done atomically with
+          // workspace creation so we can later prove what was agreed. (Billing
+          // is an independent feature flag and must not be used to detect cloud.)
+          if (
+            this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') === true
+          ) {
+            await queryRunner.manager.save(
+              DpaAgreementEntity,
+              buildDpaAgreementRecord({
+                workspaceId: workspace.id,
+                type: DpaAgreementType.CLICK_THROUGH,
+                region:
+                  this.twentyConfigService.get('DPA_DEPLOYMENT_REGION') ??
+                  DEFAULT_DPA_REGION,
+                acceptedAt: new Date(),
+                acceptedByUserId: user.id,
+                acceptedByEmail: email,
+              }),
+            );
+          }
 
-      await queryRunner.commitTransaction();
+          return {
+            user,
+            workspace,
+            customApplicationUniversalIdentifier:
+              customApplication.universalIdentifier,
+          };
+        });
 
-      this.auditService
+      if (isWorkEmailFound) {
+        const inferredLogoFileId = await this.uploadInferredWorkspaceLogo({
+          email,
+          workspaceId,
+          applicationUniversalIdentifier: customApplicationUniversalIdentifier,
+        });
+
+        if (isDefined(inferredLogoFileId)) {
+          workspace.logoFileId = inferredLogoFileId;
+        }
+      }
+
+      void this.eventLogEmitterService
         .createContext({ workspaceId })
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
 
+      if (this.billingService.isBillingEnabled()) {
+        await this.billingService.ensureBillingCustomer({
+          userEmail: email,
+          workspaceId: workspace.id,
+          workspaceDisplayName: workspace.displayName,
+        });
+      }
+
       return { user, workspace };
     } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
+      const isSubdomainConflict =
+        error instanceof QueryFailedError &&
+        (error as QueryFailedErrorWithCode).code ===
+          POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
+
+      if (isDefined(requestedSubdomain) && isSubdomainConflict) {
+        throw new WorkspaceException(
+          'Subdomain already taken',
+          WorkspaceExceptionCode.SUBDOMAIN_ALREADY_TAKEN,
+        );
       }
+
       throw error;
     } finally {
-      await queryRunner.release();
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatApplicationMaps',
       ]);
@@ -631,7 +908,7 @@ export class SignInUpService {
       );
     }
 
-    await this.assertSignUpEnabled();
+    await this.assertSignUpWithoutWorkspaceAllowed(newUserParams.email);
 
     const shouldGrantServerAdmin = !(await this.hasServerAdmin());
 

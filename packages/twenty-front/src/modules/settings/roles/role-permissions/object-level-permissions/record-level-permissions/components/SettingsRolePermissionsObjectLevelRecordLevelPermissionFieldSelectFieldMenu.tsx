@@ -4,10 +4,12 @@ import { useLingui } from '@lingui/react/macro';
 import { getFilterTypeFromFieldType } from 'twenty-shared/utils';
 
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { AdvancedFilterFieldSelectSearchInput } from '@/object-record/advanced-filter/components/AdvancedFilterFieldSelectSearchInput';
 import { useAdvancedFilterFieldSelectDropdown } from '@/object-record/advanced-filter/hooks/useAdvancedFilterFieldSelectDropdown';
-import { useSelectFieldUsedInAdvancedFilterDropdown } from '@/object-record/advanced-filter/hooks/useSelectFieldUsedInAdvancedFilterDropdown';
+import { useApplyAdvancedFilterSourceField } from '@/object-record/advanced-filter/hooks/useApplyAdvancedFilterSourceField';
+import { usePushFocusForLeafFieldValuePicker } from '@/object-record/advanced-filter/hooks/usePushFocusForLeafFieldValuePicker';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { ObjectFilterDropdownFilterSelectMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownFilterSelectMenuItem';
 import { fieldMetadataItemIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemIdUsedInDropdownComponentState';
@@ -17,6 +19,7 @@ import { objectFilterDropdownSubMenuFieldTypeComponentState } from '@/object-rec
 import { isCompositeFilterableFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFilterableFieldType';
 import { useFilterableFieldMetadataItems } from '@/object-record/record-filter/hooks/useFilterableFieldMetadataItems';
 import { RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/constants/RecordLevelPermissionPredicateFieldTypes';
+import { getComparableWorkspaceMemberRelationFields } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/utils/getComparableWorkspaceMemberRelationFields';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSectionLabel } from '@/ui/layout/dropdown/components/DropdownMenuSectionLabel';
@@ -54,18 +57,50 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       objectMetadataItem.id,
     );
 
+    const { objectMetadataItem: workspaceMemberObjectMetadataItem } =
+      useObjectMetadataItem({
+        objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+      });
+
+    const isPredicateFieldMetadataItem = (
+      fieldMetadataItem: FieldMetadataItem,
+    ) => {
+      if (
+        RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
+          fieldMetadataItem.type,
+        )
+      ) {
+        return true;
+      }
+
+      if (fieldMetadataItem.type !== FieldMetadataType.RELATION) {
+        return false;
+      }
+
+      if (
+        fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
+        CoreObjectNameSingular.WorkspaceMember
+      ) {
+        return true;
+      }
+
+      return (
+        getComparableWorkspaceMemberRelationFields({
+          workspaceMemberFieldMetadataItems:
+            workspaceMemberObjectMetadataItem?.fields ?? [],
+          targetObjectMetadataId:
+            fieldMetadataItem.relation?.targetObjectMetadata.id,
+        }).length > 0
+      );
+    };
+
     const filteredFieldMetadataItems = filterableFieldMetadataItems
       .filter(
         (fieldMetadataItem) =>
           fieldMetadataItem.label
             .toLocaleLowerCase()
             .includes(objectFilterDropdownSearchInput.toLocaleLowerCase()) &&
-          (RECORD_LEVEL_PERMISSION_PREDICATE_FIELD_TYPES.includes(
-            fieldMetadataItem.type,
-          ) ||
-            (fieldMetadataItem.type === FieldMetadataType.RELATION &&
-              fieldMetadataItem.relation?.targetObjectMetadata.nameSingular ===
-                CoreObjectNameSingular.WorkspaceMember)),
+          isPredicateFieldMetadataItem(fieldMetadataItem),
       )
       .sort((a, b) => a.label.localeCompare(b.label));
 
@@ -73,8 +108,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       advancedFilterFieldSelectDropdownId,
     );
 
-    const { selectFieldUsedInAdvancedFilterDropdown } =
-      useSelectFieldUsedInAdvancedFilterDropdown();
+    const { applyAdvancedFilterSourceField } =
+      useApplyAdvancedFilterSourceField();
 
     const [, setObjectFilterDropdownSubMenuFieldType] = useAtomComponentState(
       objectFilterDropdownSubMenuFieldTypeComponentState,
@@ -89,6 +124,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
       fieldMetadataItemIdUsedInDropdownComponentState,
     );
 
+    const { pushFocusForLeafFieldValuePicker } =
+      usePushFocusForLeafFieldValuePicker();
+
     const handleFieldSelect = (
       selectedFieldMetadataItem: FieldMetadataItem,
     ) => {
@@ -102,13 +140,17 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectF
         setObjectFilterDropdownSubMenuFieldType(filterType);
         setFieldMetadataItemIdUsedInDropdown(selectedFieldMetadataItem.id);
         setObjectFilterDropdownIsSelectingCompositeField(true);
-      } else {
-        selectFieldUsedInAdvancedFilterDropdown({
-          fieldMetadataItemId: selectedFieldMetadataItem.id,
-          recordFilterId,
-        });
-        closeAdvancedFilterFieldSelectDropdown();
+        return;
       }
+
+      applyAdvancedFilterSourceField({
+        sourceFieldMetadataItem: selectedFieldMetadataItem,
+        recordFilterId,
+      });
+
+      pushFocusForLeafFieldValuePicker(selectedFieldMetadataItem);
+
+      closeAdvancedFilterFieldSelectDropdown();
     };
 
     const selectableItemIdArray = filteredFieldMetadataItems.map(

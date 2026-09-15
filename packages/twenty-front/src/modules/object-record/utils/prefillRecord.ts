@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFieldValue';
 import {
@@ -26,10 +27,7 @@ export const prefillRecord = <T extends ObjectRecord>({
         const fieldValue = isUndefined(inputValue)
           ? generateEmptyFieldValue({ fieldMetadataItem })
           : inputValue;
-        if (
-          fieldMetadataItem.type === FieldMetadataType.RELATION &&
-          fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE
-        ) {
+        if (isManyToOneRelationField(fieldMetadataItem)) {
           const joinColumnName = computeRelationGqlFieldJoinColumnName({
             name: fieldMetadataItem.name,
           });

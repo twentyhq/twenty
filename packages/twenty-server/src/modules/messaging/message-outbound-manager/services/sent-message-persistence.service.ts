@@ -1,11 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { type PersistSentMessageInput } from 'src/modules/messaging/message-outbound-manager/types/persist-sent-message-input.type';
+import { type PersistedSentMessage } from 'src/modules/messaging/message-outbound-manager/types/persisted-sent-message.type';
 import { formatSentMessage } from 'src/modules/messaging/message-outbound-manager/utils/format-sent-message.util';
 
 @Injectable()
@@ -16,7 +18,9 @@ export class SentMessagePersistenceService {
     private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
   ) {}
 
-  async persistSentMessage(input: PersistSentMessageInput): Promise<void> {
+  async persistSentMessage(
+    input: PersistSentMessageInput,
+  ): Promise<PersistedSentMessage | undefined> {
     const messageChannel = await this.messageChannelRepository.findOneOrFail({
       where: {
         id: input.messageChannelId,
@@ -27,11 +31,26 @@ export class SentMessagePersistenceService {
 
     const messageToSave = formatSentMessage(input);
 
-    await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
-      [messageToSave],
-      messageChannel,
-      messageChannel.connectedAccount,
-      input.workspaceId,
+    const savedMessagesResult =
+      await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
+        [messageToSave],
+        messageChannel,
+        messageChannel.connectedAccount,
+        input.workspaceId,
+      );
+
+    const messageId = savedMessagesResult?.messageExternalIdsAndIdsMap.get(
+      messageToSave.externalId,
     );
+    const messageThreadId =
+      savedMessagesResult?.messageExternalIdToMessageThreadIdMap.get(
+        messageToSave.externalId,
+      );
+
+    if (!isDefined(messageId) || !isDefined(messageThreadId)) {
+      return undefined;
+    }
+
+    return { messageId, messageThreadId };
   }
 }

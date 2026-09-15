@@ -25,7 +25,7 @@ export const LogicFunctionExecutionResult = ({
   const isError =
     logicFunctionTestData.output.status === LogicFunctionExecutionStatus.ERROR;
 
-  const duration = logicFunctionTestData.output.duration;
+  const duration = logicFunctionTestData.output.duration ?? 0;
   const status: ExecutionStatus = {
     isSuccess,
     isError,

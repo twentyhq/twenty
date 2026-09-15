@@ -5,6 +5,7 @@ import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/
 import { ClientConfigService } from 'src/engine/core-modules/client-config/services/client-config.service';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
 
 import { ClientConfigController } from './client-config.controller';
 
@@ -46,6 +47,7 @@ describe('ClientConfigController', () => {
             },
           ],
         },
+        aiModelTiers: [],
         aiModels: [
           {
             modelId: 'openai/gpt-4o' as ModelId,
@@ -68,6 +70,7 @@ describe('ClientConfigController', () => {
         isEmailVerificationRequired: false,
         defaultSubdomain: 'app',
         frontDomain: 'localhost',
+        publicFunctionDomain: null,
         support: {
           supportDriver: SupportDriver.NONE,
           supportFrontChatId: undefined,
@@ -76,6 +79,7 @@ describe('ClientConfigController', () => {
           environment: 'development',
           release: '1.0.0',
           dsn: undefined,
+          tracesSampleRate: 0.1,
         },
         captcha: {
           provider: undefined,
@@ -84,23 +88,34 @@ describe('ClientConfigController', () => {
         api: {
           mutationMaximumAffectedRecords: 100,
         },
+        onboarding: {
+          importContactsCreditsReward: 2,
+          inviteTeamCreditsRewardPerUser: 3,
+          upgradeCreditsReward: 5,
+          installAppsCreditsRewardPerApp: 1,
+        },
         isAttachmentPreviewEnabled: true,
         analyticsEnabled: false,
         canManageFeatureFlags: true,
         publicFeatureFlags: [],
+        isCookieSessionEnabled: true,
         isMicrosoftMessagingEnabled: false,
         isMicrosoftCalendarEnabled: false,
         isGoogleMessagingEnabled: false,
         isGoogleCalendarEnabled: false,
         isConfigVariablesInDbEnabled: false,
         isImapSmtpCaldavEnabled: false,
-        isEmailGroupEnabled: false,
+        isEmailingDomainInDemoMode: false,
         calendarBookingPageId: undefined,
+        isBookCallOnboardingStepEnabled: false,
+        isCompanyEnrichmentEnabled: false,
         isTwoFactorAuthenticationEnabled: false,
         allowRequestsToTwentyIcons: true,
         isCloudflareIntegrationEnabled: false,
         isClickHouseConfigured: false,
         isWorkspaceSchemaDDLLocked: false,
+        isOnboardingAiChatEnabled: false,
+        enterpriseInstanceType: ENTERPRISE_INSTANCE_TYPE.PRODUCTION,
       };
 
       jest

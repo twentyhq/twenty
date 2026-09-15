@@ -88,7 +88,7 @@ export const RecordIndexGroupAggregateQueryEffect = ({
             setRecordIndexAggregateDisplayValueForRecordGroupValue(
               recordIndexGroupAggregateOperation,
               recordIndexGroupAggregateFieldMetadataItem,
-              foundAggregateValueForGroup.recordGroupValue,
+              foundAggregateValueForGroup.recordGroupValue ?? '',
               foundAggregateValueForGroup.recordAggregateValue,
             );
           } else {

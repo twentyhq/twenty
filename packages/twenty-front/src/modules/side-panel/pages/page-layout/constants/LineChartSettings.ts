@@ -9,6 +9,7 @@ import { DATA_LABELS_SETTING } from '@/side-panel/pages/page-layout/constants/se
 import { DATE_GRANULARITY_X_SETTING } from '@/side-panel/pages/page-layout/constants/settings/DateGranularityXSetting';
 import { DATE_GRANULARITY_Y_SETTING } from '@/side-panel/pages/page-layout/constants/settings/DateGranularityYSetting';
 import { FILTER_SETTING } from '@/side-panel/pages/page-layout/constants/settings/FilterSetting';
+import { FORMAT_SETTING } from '@/side-panel/pages/page-layout/constants/settings/FormatSetting';
 import { GROUP_BY_SETTING } from '@/side-panel/pages/page-layout/constants/settings/GroupBySetting';
 import { OMIT_NULL_VALUES_SETTING } from '@/side-panel/pages/page-layout/constants/settings/OmitNullValuesSetting';
 import { PRIMARY_SORT_BY_SETTING } from '@/side-panel/pages/page-layout/constants/settings/PrimarySortBySetting';
@@ -56,6 +57,7 @@ export const LINE_CHART_SETTINGS: ChartSettingsGroup[] = [
       AXIS_NAME_SETTING,
       STACKED_LINES_SETTING,
       DATA_LABELS_SETTING,
+      FORMAT_SETTING,
       SHOW_LEGEND_SETTING,
     ],
   },

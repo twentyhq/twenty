@@ -56,9 +56,7 @@ const BACKFILL_DEFINITIONS: BackfillDefinition[] = [
 const TABLES = BACKFILL_DEFINITIONS.map((definition) => definition.table);
 
 @RegisteredInstanceCommand('1.22.0', 1775758621018, { type: 'slow' })
-export class BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class BackfillWorkspaceIdOnIndirectEntitiesSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     for (const { table, parentTable, foreignKey } of BACKFILL_DEFINITIONS) {
       await dataSource.query(

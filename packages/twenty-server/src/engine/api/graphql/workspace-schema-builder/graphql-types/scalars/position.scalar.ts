@@ -10,7 +10,7 @@ const isValidStringPosition = (value: string): boolean =>
 const isValidNumberPosition = (value: number): boolean =>
   typeof value === 'number';
 
-// oxlint-disable-next-line @typescripttypescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 const checkPosition = (value: any): PositionType => {
   if (isValidNumberPosition(value) || isValidStringPosition(value)) {
     return value;

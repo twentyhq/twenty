@@ -10,7 +10,8 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title, IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -20,7 +21,7 @@ import {
   CreateOneRoleDocument,
   GetRolesDocument,
 } from '~/generated-metadata/graphql';
-import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/hooks/useSettingsAgentFormState';
+import { type SettingsAiAgentFormValues } from '~/pages/settings/ai/validation-schemas/settingsAiAgentFormSchema';
 
 const StyledWarningText = styled.div`
   color: ${themeCssVariables.font.color.tertiary};

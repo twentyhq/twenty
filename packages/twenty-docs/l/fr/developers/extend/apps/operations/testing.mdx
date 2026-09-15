@@ -1,0 +1,264 @@
+---
+title: Tests
+description: Configuration de Vitest, tests d’intégration sur un serveur Twenty réel, vérification des types et CI avec GitHub Actions.
+icon: flask
+---
+
+Le SDK fournit des API programmatiques qui vous permettent de construire, déployer, installer et désinstaller votre application depuis le code de test. Combiné avec [Vitest](https://vitest.dev/) et les clients d'API typés, vous pouvez écrire des tests d'intégration qui vérifient que votre application fonctionne de bout en bout sur un serveur Twenty réel.
+
+## Utilisation de packages npm
+
+Vous pouvez installer et utiliser n'importe quel package npm dans votre application. Les fonctions logiques et les composants frontaux sont tous deux empaquetés avec [esbuild](https://esbuild.github.io/), qui intègre leurs dépendances dans la sortie — aucun `node_modules` n'est nécessaire à l'exécution.
+
+### Installation d'un package
+
+```bash filename="Terminal"
+yarn add axios
+```
+
+Puis importez-le dans votre code :
+
+```ts src/logic-functions/fetch-data.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import axios from 'axios';
+
+const handler = async (): Promise<any> => {
+  const { data } = await axios.get('https://api.example.com/data');
+
+  return { data };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-data',
+  description: 'Fetches data from an external API',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+Il en va de même pour les composants frontaux :
+
+```tsx src/front-components/chart.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { format } from 'date-fns';
+
+const DateWidget = () => {
+  return <p>Today is {format(new Date(), 'MMMM do, yyyy')}</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'date-widget',
+  component: DateWidget,
+});
+```
+
+### Comment fonctionne le bundling
+
+L'étape de build utilise esbuild pour produire un seul fichier autonome par fonction logique et par composant frontal. Les paquets importés sont intégrés dans le bundle, à l’exception de ceux listés ci-dessous.
+
+**Les fonctions logiques** s'exécutent dans un environnement Node.js. Les modules intégrés de Node (`fs`, `path`, `crypto`, `http`, etc.) sont disponibles et n'ont pas besoin d'être installés.
+
+**Les composants frontaux** s'exécutent dans un Web Worker. Les modules intégrés de Node ne sont **pas** disponibles — seuls les packages npm qui fonctionnent dans un environnement navigateur sont pris en charge. Notez que le bac à sable implémente un DOM *partiel*, de sorte qu’un package peut être compilé sans erreur tout en échouant à l’exécution ; voir [Limitations actuelles](/l/fr/developers/extend/apps/layout/front-components#current-limitations).
+
+Les deux environnements disposent de `twenty-client-sdk/core` et `twenty-client-sdk/metadata` en tant que modules pré-fournis — ils ne sont pas intégrés au bundle mais résolus à l'exécution par le serveur.
+
+Les composants frontaux peuvent également partager des dépendances via un [bundle de dépendances partagées](/l/fr/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). Les paquets listés dans le champ `frontComponentSharedDependencies` du fichier package.json de l'application sont construits une fois dans un fichier séparé et chargés à partir de celui-ci à l'exécution au lieu d'être intégrés à chaque composant, de sorte qu'un composant qui n'importe que des paquets partagés n'embarque quasiment aucun code de dépendance propre.
+
+## Installation
+
+L'application générée inclut déjà Vitest. Si vous le configurez manuellement, installez les dépendances :
+
+```bash filename="Terminal"
+yarn add -D vitest vite-tsconfig-paths
+```
+
+Créez un `vitest.config.ts` à la racine de votre application :
+
+```ts vitest.config.ts
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
+
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
+export default defineConfig({
+  plugins: [
+    tsconfigPaths({
+      projects: ['tsconfig.spec.json'],
+      ignoreConfigErrors: true,
+    }),
+  ],
+  test: {
+    testTimeout: 120_000,
+    hookTimeout: 120_000,
+    fileParallelism: false,
+    include: ['src/**/*.integration-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
+    env: {
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
+    },
+  },
+});
+```
+
+Créez un fichier de configuration global qui vérifie que le serveur est joignable, écrit une configuration de test pour le SDK (`~/.twenty/config.test.json`) et synchronise l’application avant l’exécution des tests :
+
+```ts src/__tests__/global-setup.ts
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
+
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
+  // Verify the server is running
+  const response = await fetch(`${apiUrl}/healthz`);
+  if (!response.ok) {
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
+  }
+
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
+  fs.writeFileSync(
+    path.join(CONFIG_DIR, 'config.test.json'),
+    JSON.stringify({
+      remotes: { local: { apiUrl, apiKey } },
+      defaultRemote: 'local',
+    }, null, 2),
+  );
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
+```
+
+## APIs programmatiques du SDK
+
+Le sous-chemin `twenty-sdk/cli` exporte des fonctions que vous pouvez appeler directement depuis le code de test :
+
+| Fonction       | Description                                                                         |
+| -------------- | ----------------------------------------------------------------------------------- |
+| `appBuild`     | Construire l'application et éventuellement créer une archive tarball                |
+| `appDeploy`    | Téléverser une archive tarball vers le serveur                                      |
+| `appDevOnce`   | Construire et synchroniser l’application une fois (identique à `yarn twenty apply`) |
+| `appInstall`   | Installer l'application sur l'espace de travail actif                               |
+| `appUninstall` | Désinstaller l'application de l'espace de travail actif                             |
+
+Chaque fonction retourne un objet résultat avec `success: boolean` et soit `data` soit `error`.
+
+## Écrire un test d'intégration
+
+Voici un exemple complet qui construit, déploie et installe l'application, puis vérifie qu'elle apparaît dans l'espace de travail :
+
+```ts src/__tests__/app-install.integration-test.ts
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
+import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const APP_PATH = process.cwd();
+
+describe('App installation', () => {
+  beforeAll(async () => {
+    const buildResult = await appBuild({
+      appPath: APP_PATH,
+      tarball: true,
+      onProgress: (message: string) => console.log(`[build] ${message}`),
+    });
+
+    if (!buildResult.success) {
+      throw new Error(`Build failed: ${buildResult.error?.message}`);
+    }
+
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+      onProgress: (message: string) => console.log(`[deploy] ${message}`),
+    });
+
+    if (!deployResult.success) {
+      throw new Error(`Deploy failed: ${deployResult.error?.message}`);
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(`Install failed: ${installResult.error?.message}`);
+    }
+  });
+
+  afterAll(async () => {
+    await appUninstall({ appPath: APP_PATH });
+  });
+
+  it('should find the installed app in the workspace', async () => {
+    const metadataClient = new MetadataApiClient();
+
+    const result = await metadataClient.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    const installedApp = result.findManyApplications.find(
+      (app: { universalIdentifier: string }) =>
+        app.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(installedApp).toBeDefined();
+  });
+});
+```
+
+## Exécuter les tests
+
+Assurez-vous que votre serveur Twenty local est en cours d'exécution, puis :
+
+```bash filename="Terminal"
+yarn test
+```
+
+Ou en mode surveillance (watch) pendant le développement :
+
+```bash filename="Terminal"
+yarn test:watch
+```
+
+## Vérification des types
+
+Vous pouvez également exécuter une vérification des types sur votre application sans exécuter les tests :
+
+```bash filename="Terminal"
+yarn twenty dev:typecheck
+```
+
+Cela exécute `tsc --noEmit` sur le `tsconfig.json` de votre application et signale toute erreur de type. Les applications générées contiennent également un script `yarn typecheck` qui couvre aussi les fichiers de test (`tsconfig.spec.json`).
+
+## CI avec GitHub Actions
+
+Le générateur crée un workflow prêt à l’emploi dans `.github/workflows/ci.yml`. À chaque push sur `main` et à chaque pull request, il lance un serveur Twenty éphémère dans le runner (via l’action `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`), puis exécute `yarn lint`, `yarn typecheck`, `yarn test:unit` et `yarn test` avec `TWENTY_API_URL` / `TWENTY_API_KEY` pointant vers ce serveur. Aucun secret n’est requis, et vous pouvez fixer la version du serveur via la variable d’environnement `TWENTY_VERSION` en haut du workflow.
+
+Voir [Publication → CI/CD automatisé](/l/fr/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) pour un guide complet des trois workflows générés (`ci.yml`, le pipeline de déploiement `cd.yml` et `publish.yml` pour la publication sur npm).

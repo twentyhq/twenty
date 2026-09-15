@@ -5,24 +5,40 @@ description: Information about booking meetings directly from Twenty.
 
 ## Current Status
 
-**No, Twenty does not currently support booking meetings directly from the platform.**
+Yes. Twenty's calendar integration syncs and displays your existing events, and you can also create a new event straight from a record page. The event is created on your connected calendar, not just inside Twenty.
 
-Twenty's calendar integration is designed to **sync and display** your existing calendar events, not to create new ones. All meeting scheduling should be done through your native calendar application (Google Calendar, Microsoft Outlook, etc.).
+## How to create a meeting from Twenty
+
+Prerequisite: a connected Google, Microsoft or CalDAV account with calendar sync enabled
+
+1. Open a Person, Company or Opportunity record
+2. Click the **Create calendar event** action
+3. Pick the calendar account to create the event on
+4. Add guests, a title, a location and a description
+5. Set the start and end (or toggle **All day**) and check the time zone
+6. Toggle **Invitations** to email guests, and **Video call** to add a meeting link
+7. Click **Create event**
+
+The record you started from is linked to the event automatically, so the meeting shows up on its timeline.
+
+<Note>
+The action is hidden if your role doesn't have the "Create calendar event" permission, and disabled if the record has no email address to invite.
+</Note>
+
+## Scheduling Meetings via Workflows
+
+You can also create events automatically with workflows:
+
+1. Create a new workflow
+2. Select any trigger depending on your needs
+3. Add the **Create Calendar Event** node
+4. Configure all necessary data
+5. Activate the workflow
 
 ## What You Can Do
 
+- **Create events** on your connected calendar from a record
 - **View meeting history** on People, Companies, and Opportunities records
 - **See upcoming meetings** with contacts in your CRM
 - **Track meeting context** alongside email communications
 - **Auto-create contacts** from meeting participants
-
-## How to Schedule Meetings
-
-1. Use your native calendar app (Google Calendar, Outlook, etc.)
-2. Create the meeting as you normally would
-3. The meeting will automatically sync to Twenty within 5 minutes
-4. View the meeting on the relevant CRM records
-
-## Future Plans
-
-Meeting creation from within Twenty is on our roadmap. Join our [GitHub discussions](https://github.com/twentyhq/twenty/discussions) to share your use case and help prioritize this feature.

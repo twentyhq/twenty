@@ -4,5 +4,4 @@ export enum GraphType {
   LINE = 'LINE',
   PIE = 'PIE',
   AGGREGATE = 'AGGREGATE',
-  GAUGE = 'GAUGE',
 }

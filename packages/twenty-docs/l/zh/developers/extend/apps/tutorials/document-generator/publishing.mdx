@@ -1,0 +1,136 @@
+---
+title: 6. 发布
+icon: rocket
+description: 添加市场元数据并发布您的应用。
+---
+
+您的应用正常工作。 最后一步是为市场描述并发布。
+
+## 添加市场元数据
+
+[应用程序配置](/l/zh/developers/extend/apps/config/application) 带有显示在市场中的
+身份：作者、类别、标志和支持
+链接。 将一个 logo 放入 `public/` 中，并使用 `logo` 来引用它。
+
+```ts filename="src/application-config.ts"
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Document Generator',
+  description:
+    'Create reusable document templates and generate personalized documents from your CRM records.',
+  logo: 'public/document-generator.svg',
+  author: 'Twenty',
+  category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/l/zh/developers/extend/apps',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+});
+```
+
+<Tip>
+默认角色在其自身文件中使用 `defineApplicationRole()` 声明——你不再在这里传递 `defaultRoleUniversalIdentifier`。
+</Tip>
+
+也将 `twentapp` 关键字添加到 `package.json` 中，所以应用程序是可以发现的：
+
+```json filename="package.json"
+{ "keywords": ["twenty-app"] }
+```
+
+## 添加相册截图
+
+市场列表用屏幕截图销售自己。 将几个 PNG 放入
+`public/gallery/` 中，并使用 `galleryImages` 来引用它们——它们会按照数组顺序在列表页面上
+以画廊形式渲染。
+
+```ts filename="src/application-config.ts"
+export default defineApplication({
+  // ...identity from above
+  galleryImages: [
+    'public/gallery/01-generated-document.png',
+    'public/gallery/02-command-menu.png',
+    'public/gallery/03-template-editor.png',
+    'public/gallery/04-documents.png',
+  ],
+});
+```
+
+<Tip>
+领取付款: 让第一个屏幕截图完成的结果(生成的
+文档)，然后显示它是如何触发和编写的。 使用简洁的高分辨率
+抓取 — — 他们是用户看到的第一件事。
+</Tip>
+
+给`README.md`同样的处理方法——它是npm 和 GitHub 的首页。
+打开时使用值建议和屏幕截图，列出标题功能，
+然后保留折叠下方的构建详细信息。
+
+## 在您发货前检查
+
+运行相同的 CI 门：
+
+```bash filename="Terminal"
+yarn lint          # oxlint
+yarn typecheck     # tsgo
+yarn test:unit     # unit tests
+yarn twenty plan   # preview the metadata diff
+```
+
+该计划会精确列出在服务器上将发生的更改，而不会实际应用这些更改——
+这是一次很好的最终健全性检查。 见
+[Testing](/l/zh/developers/extend/apps/operations/testing) 和
+[同步和恢复](/l/zh/developers/extend/apps/operations/sync-and-recovery)。
+
+## 发布
+
+```bash filename="Terminal"
+# Public app → npm (default)
+yarn twenty app:publish
+
+# Or deploy privately to a specific server's registry
+yarn twenty app:publish --private -r <remote>
+```
+
+`app:publish` 构建并默认向npm 发布；`--private`上传一个
+tarball到20个服务器的私人注册表。 要在一个实例的市场上显示一个已发布的应用
+，触发一个目录同步：
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+详细信息和发布检查列表：
+[Publishing](/l/zh/developers/extend/apps/operations/publishing)。
+
+## 您构建了一个应用 :party_popper：
+
+在六章中，你使用了大部分SDK表面：
+
+* **对象、字段和关系** 以模拟数据
+* 一个**逻辑函数** 显示为 **AI 工具**，一个 **Workflow 动作** 和 **HTTP 路由**
+* 界面**查看、导航、命令和前面组件**
+* 用于生成自然语言的 **agent + 技能**
+* **市场元数据** 和发布流
+
+已完成的应用位于
+[\`软件包/二十个应用/示例/文件生成器'](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator)。
+
+## 下一步
+
+<CardGroup cols={2}>
+  <Card title="数据参考" icon="database" href="/l/zh/developers/extend/apps/data/overview">
+    每个字段类型、关系和索引选项。
+  </Card>
+  <Card title="逻辑引用" icon="bolt" href="/l/zh/developers/extend/apps/logic/overview">
+    Cron 和数据库事件触发了密钥价值存储，OAuth 连接。
+  </Card>
+  <Card title="布局引用" icon="table-columns" href="/l/zh/developers/extend/apps/layout/overview">
+    页面布局、仪表板小部件和更多用户界面。
+  </Card>
+  <Card title="操作" icon="rocket" href="/l/zh/developers/extend/apps/operations/overview">
+    CLI, test, remotes, and CI.
+  </Card>
+</CardGroup>

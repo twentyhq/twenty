@@ -25,12 +25,11 @@ test('Sign up with invite link via email', async ({
 
   await test.step('Go to invite link', async () => {
     await settingsPage.logout();
+    // Logging out replaces the document, which would interrupt the goto below.
+    await page.waitForURL('**/welcome');
 
-    await Promise.all([
-      expect(page.getByText(/Join .+ team/)).toBeVisible(),
-
-      page.goto(inviteLink),
-    ]);
+    await page.goto(inviteLink);
+    await expect(page.getByText(/Join .+ team/)).toBeVisible();
   });
 
   await test.step('Create new account', async () => {
@@ -39,13 +38,15 @@ test('Sign up with invite link via email', async ({
     await loginPage.clickContinueButton();
     await loginPage.typePassword(process.env.DEFAULT_PASSWORD);
     await loginPage.clickSignUpButton();
+    await expect(page.getByText('Create profile')).toBeVisible();
+    await expect(page.getByPlaceholder('Head of Partnerships')).toBeVisible();
     await loginPage.typeFirstName(firstName);
     await loginPage.typeLastName(lastName);
     await loginPage.clickContinueButton();
   });
 
   await test.step('Delete account from workspace', async () => {
-    await expect(page.getByRole('button', { name: 'Settings' })).toBeVisible();
+    await expect(page.getByTestId('workspace-dropdown')).toBeVisible();
     await leftMenu.goToSettings();
     await settingsPage.goToProfileSection();
     await profileSection.deleteAccount();

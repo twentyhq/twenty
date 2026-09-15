@@ -1,0 +1,70 @@
+---
+title: 5. Bir yapay zekâ ajanı
+icon: robot
+description: Bir ajanın, sizin aracınızı kullanarak bir sohbetten belgeler oluşturmasına izin verin.
+---
+
+`generate-document` bir **araç** olarak sunulduğu için, bir yapay zekâ ajanı onu çağırabilir.
+Kullanıcıların yalnızca *"Jeffery Griffin için bir teklif hazırla"* diyebilmesi için bir ajan ve bir beceri ekleyelim.
+
+## Beceri
+
+Bir [skill](/l/tr/developers/extend/apps/logic/skills-and-agents), ajanlara eklediğiniz bilgi — yeniden kullanılabilir talimatlardır. Bizimki modele aracı nasıl kullanacağını öğretir.
+
+```ts filename="src/skills/document-drafting.skill.ts"
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: DOCUMENT_SKILL_UNIVERSAL_IDENTIFIER,
+  name: 'document-drafting',
+  label: 'Document drafting',
+  icon: 'IconFileText',
+  content: [
+    'To generate a document, call the `generate-document` tool with:',
+    '- `templateId`: the id of the document template to use.',
+    '- `recordId`: the id of the Person or Company the document is for.',
+    '',
+    'If the user names a template or person instead of an id, find the record first,',
+    'then pass its id. Make sure the template target matches the record type.',
+  ].join('\n'),
+});
+```
+
+## Ajan
+
+Bir [ajan](/l/tr/developers/extend/apps/logic/skills-and-agents), bir istemi bir modelle eşleştirir. Bir derleme uyarısından kaçınmak için `responseFormat` değerini açıkça ayarlayın.
+
+```ts filename="src/agents/document-assistant.agent.ts"
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: DOCUMENT_AGENT_UNIVERSAL_IDENTIFIER,
+  name: 'document-assistant',
+  label: 'Document Assistant',
+  description: 'Generates documents from your templates and CRM records.',
+  icon: 'IconFileText',
+  responseFormat: { type: 'text' },
+  prompt: [
+    'You are the Document Assistant for a CRM.',
+    'You help users generate personalized documents from reusable templates',
+    'and the data already in their CRM. Use the generate-document tool, and',
+    'always confirm what you created.',
+  ].join(' '),
+});
+```
+
+<Note>
+Ajan yalnızca rolü izin veriyorsa aracı çağırabilir. Uygulamanın rolünde `canAccessAllTools: true` ve `canBeAssignedToAgents: true` değerlerini [Bölüm 2](/l/tr/developers/extend/apps/tutorials/document-generator/generating-documents#grant-it-access) içinde zaten ayarladık.
+</Note>
+
+## Deneyin
+
+**Document Assistant** ile bir sohbet açın ve CRM’inizdeki bir kişi için bir belge taslağı hazırlamasını isteyin. Kaydı bulur, `generate-document` çağrısını yapar ve oluşturduğu belgeyi size bildirir — bu belge artık **Documents** görünümünüzde, komut menüsü ve iş akışı yollarındakiyle tam olarak aynı şekilde görünür.
+
+Mantığı bir araç olarak açığa çıkarmanın getirisi budur: **tek fonksiyon, birçok ön kapı** — komut menüsü, HTTP, iş akışı adımı ve şimdi de doğal dil.
+
+**Bu adımdan sonra:** uygulama özellik açısından tamamlanmış ve gerçekten kullanışlıdır. Artık onu yayımlama zamanı.
+
+<Card title="Sonraki: yayımlama →" icon="rocket" href="/l/tr/developers/extend/apps/tutorials/document-generator/publishing">
+  Pazar yeri meta verilerini ekleyin ve yayımlayın.
+</Card>

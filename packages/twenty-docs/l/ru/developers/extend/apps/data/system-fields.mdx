@@ -1,0 +1,211 @@
+---
+title: Обращение к системным метаданным
+description: Определяйте детерминированные универсальные идентификаторы метаданных, которые Twenty автоматически подготавливает для каждого объекта, чтобы ваше приложение могло ссылаться на них без жёсткого кодирования.
+icon: gears
+---
+
+Каждый объект в Twenty содержит **системные метаданные**, которые вы сами никогда не объявляете, например набор полей и основное представление списка с его столбцами. Сервер создаёт всё это при подготовке объекта, и этот набор растёт по мере развития Twenty.
+
+Поскольку вы это не объявляете, у вас нет константы `universalIdentifier`, которую можно импортировать. Вместо этого сервер **выводит** каждый идентификатор детерминированным образом, а `twenty-sdk` предоставляет тот же механизм вывода, чтобы ваш манифест мог получить точное значение, которое использует сервер.
+
+## Системные поля
+
+Скалярные поля, присутствующие в каждом объекте, ни одно из которых вы не объявляете с помощью [`defineField()`](/l/ru/developers/extend/apps/data/extending-objects):
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+Тогда как сослаться на `createdAt` как на столбец в [представлении](/l/ru/developers/extend/apps/layout/views)?
+
+### Проблема
+
+Начиная с Twenty 2.19, универсальный идентификатор системного поля **детерминированно выводится** сервером из трех входных данных: универсального идентификатора приложения, универсального идентификатора объекта и имени поля. Придумать id и захардкодить его не получится: он не соответствует ничему на сервере, и синхронизация отклоняет висящую ссылку:
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+### Решение
+
+<Note>
+  `getFieldUniversalIdentifier` доступен, начиная с `twenty-sdk` версии 2.21.
+</Note>
+
+Используйте `getFieldUniversalIdentifier`, чтобы получить в точности то же значение, которое использует сервер. Он принимает три входных параметра и возвращает универсальный идентификатор поля:
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier` — это идентификатор вашего приложения, тот, который вы передаете в [`defineApplication()`](/l/ru/developers/extend/apps/config/application).
+* `objectUniversalIdentifier` — это идентификатор объекта, к которому принадлежит поле.
+* `name` — это имя системного поля, одно из значений, перечисленных выше.
+
+### Пример: столбец createdAt в представлении
+
+Типичный случай — добавление столбца `createdAt` в представление одного из ваших пользовательских объектов. Разрешите id поля и ссылайтесь на него так же, как на любой другой `fieldMetadataUniversalIdentifier`:
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Тот же разрешенный id работает везде, где ожидается `fieldMetadataUniversalIdentifier`: поля представления, фильтры, сортировки, группировки и виджеты макета страницы.
+
+<Note>
+  Разрешайте id, не хардкодьте его. Поскольку сервер выводит значение из
+  id приложения, id объекта и имени поля, вызов
+  `getFieldUniversalIdentifier` сохраняет вашу ссылку корректной, даже если эти
+  входные данные изменятся, и предотвращает расхождение, если способ вывода когда-нибудь изменится.
+</Note>
+
+### Системные поля связей
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` доступен в `twenty-sdk`, начиная с версии 2.23, и требует сервер Twenty версии 2.23 или новее.
+</Note>
+
+Помимо перечисленных выше скалярных системных полей, сервер также подготавливает четыре **системных поля связей** для каждого объекта: `timelineActivities`, `attachments`, `noteTargets` и `taskTargets`, каждое из которых указывает на соответствующий стандартный объект связи.
+
+Таким образом, эти поля не разрешаются с помощью `getFieldUniversalIdentifier`: их идентификатор выводится **безотносительно имени** из объекта, содержащего поле, и объекта, на который поле указывает. Таким образом, переименование объекта никогда не изменяет идентификаторы его полей связей.
+
+Используйте `getSystemRelationFieldUniversalIdentifier`, чтобы разрешить их:
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` — это объект, **содержащий** поле.
+* `relationTargetObjectUniversalIdentifier` — это объект, на который **указывает** поле.
+
+Направление кодируется порядком аргументов. Чтобы получить обратную сторону (например, `attachment.targetRocket`, morph‑поле, которое сервер создаёт на стандартном объекте связи), поменяйте их местами:
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+Как и в случае со скалярными системными полями, разрешённый id работает везде, где ожидается `fieldMetadataUniversalIdentifier`.
+
+## Системные представления
+
+<Note>
+  `getSystemViewUniversalIdentifier` и `getSystemViewFieldUniversalIdentifier`
+  доступны в `twenty-sdk`, начиная с версии 2.26, и требуют сервер Twenty
+  версии 2.26 или новее.
+</Note>
+
+Сервер также подготавливает **системное представление** для каждого объекта: основное представление списка (`All {objectLabelPlural}`, с ключом `ViewKey.INDEX` (полученным с помощью `SYSTEM_VIEW_KEYS.INDEX`)), с одним столбцом на каждое отображаемое поле. Как и у системных полей связей, их идентификаторы выводятся **без использования имён**, поэтому переименование объекта или поля никогда их не меняет.
+
+Используйте `getSystemViewUniversalIdentifier`, чтобы получить идентификатор представления:
+
+```ts
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
+});
+```
+
+* `objectMetadataApplicationUniversalIdentifier` — это приложение, которому принадлежит **объект**, и именно по нему задаётся пространство имён представления.
+* `objectUniversalIdentifier` — это объект, который отображается в представлении.
+* `viewKey` — это дискриминатор системного представления: `SYSTEM_VIEW_KEYS.INDEX` для основного представления списка, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` для представления виджета полей на странице записи. Он определяет способ вычисления представления; только `INDEX` также сохраняется в строке представления.
+
+Полученный идентификатор подходит везде, где ожидается `viewUniversalIdentifier`, например для пункта боковой панели [`NavigationMenuItemType.VIEW`](/l/ru/developers/extend/apps/layout/navigation-menu-items). Чтобы просто открыть основной список объекта, предпочитайте `NavigationMenuItemType.OBJECT` с `targetObjectUniversalIdentifier`: здесь не нужен вывод идентификатора.
+
+`getSystemViewFieldUniversalIdentifier` определяет идентификатор одного **столбца** в системном представлении по самому представлению и отображаемому в нём полю:
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Обратите внимание на первый аргумент: пространство имён столбца задаётся приложением, которому принадлежит **поле, отображаемое в нём**, а не приложением, которому принадлежит представление. Поле, которое ваше приложение добавляет к стандартному объекту, получает свой столбец, выводимый в пространстве имён вашего приложения, на представлении, принадлежащем Twenty.
+
+<Warning>
+  Системные представления и их столбцы **принадлежат серверу**: разрешайте их идентификаторы, чтобы ссылаться на них, но никогда не объявляйте их сами. `key` в
+  [`defineView()`](/l/ru/developers/extend/apps/layout/views) устарел и
+  игнорируется, поэтому представление из манифеста никогда не может заявить ключ `INDEX`, а сервер уже подготавливает столбец для каждого добавленного вами поля, так что объявление собственного
+  `defineViewField()` для того же поля в системном представлении конфликтует с ним.
+</Warning>
+
+## Стандартные объекты Twenty
+
+Для **стандартного** объекта Twenty (Person, Company, Opportunity, …) вам не нужно ничего выводить: идентификаторы как полей, так и представлений — это заранее вычисленные константы, которые вы можете импортировать напрямую.
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
+```
+
+Используйте указанные выше вспомогательные функции, когда объект — это объект, который **ваше приложение** определяет с помощью [`defineObject()`](/l/ru/developers/extend/apps/data/objects), где такой константы не существует.
+
+<Note>
+  `name` — это **поле по умолчанию**, а не системное поле. У него есть собственный захардкоженный
+  универсальный идентификатор, и он не разрешается через
+  `getFieldUniversalIdentifier`. В определяемых вами объектах ссылайтесь на поле
+  `name` по идентификатору, который вы задали ему в `defineObject()`.
+</Note>

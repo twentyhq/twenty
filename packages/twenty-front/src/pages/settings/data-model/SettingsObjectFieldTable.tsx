@@ -5,12 +5,14 @@ import {
   OBJECT_FIELD_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SettingsObjectFieldItemTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
+import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { settingsObjectFieldsFamilyState } from '@/settings/data-model/object-details/states/settingsObjectFieldsFamilyState';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
@@ -23,10 +25,11 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useEffect, useMemo, useState } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { IconArchive, IconSettings } from 'twenty-ui/display';
+import { IconArchive, IconCircleDashed, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useMostlyEmptyFieldMetadataIds } from '@/settings/data-model/object-details/hooks/useMostlyEmptyFieldMetadataIds';
 import { useMapFieldMetadataItemToSettingsObjectDetailTableItem } from '~/pages/settings/data-model/hooks/useMapFieldMetadataItemToSettingsObjectDetailTableItem';
 import { type SettingsObjectDetailTableItem } from '~/pages/settings/data-model/types/SettingsObjectDetailTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -60,7 +63,7 @@ const SETTINGS_OBJECT_FIELD_TABLE_METADATA: TableMetadata<SettingsObjectDetailTa
     ],
     initialSort: {
       fieldName: 'label',
-      orderBy: 'AscNullsLast',
+      direction: 'asc',
     },
   };
 
@@ -80,6 +83,12 @@ export const SettingsObjectFieldTable = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [showInactive, setShowInactive] = useState(true);
   const [showSystemFields, setShowSystemFields] = useState(false);
+  const [showOnlyMostlyEmpty, setShowOnlyMostlyEmpty] = useState(false);
+
+  const { mostlyEmptyFieldMetadataIds } = useMostlyEmptyFieldMetadataIds({
+    objectMetadataItemId: objectMetadataItem.id,
+    skip: mode !== 'view',
+  });
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
 
@@ -140,13 +149,23 @@ export const SettingsObjectFieldTable = ({
       const matchesActiveFilter =
         showInactive || item.fieldMetadataItem.isActive;
 
+      const matchesMostlyEmptyFilter =
+        !showOnlyMostlyEmpty ||
+        mostlyEmptyFieldMetadataIds.has(item.fieldMetadataItem.id);
+
       const matchesSearch =
         normalizeSearchText(item.label).includes(searchNormalized) ||
         normalizeSearchText(item.dataType).includes(searchNormalized);
 
-      return matchesActiveFilter && matchesSearch;
+      return matchesActiveFilter && matchesMostlyEmptyFilter && matchesSearch;
     });
-  }, [sortedAllObjectSettingsDetailItems, searchTerm, showInactive]);
+  }, [
+    sortedAllObjectSettingsDetailItems,
+    searchTerm,
+    showInactive,
+    showOnlyMostlyEmpty,
+    mostlyEmptyFieldMetadataIds,
+  ]);
 
   return (
     <>
@@ -164,22 +183,34 @@ export const SettingsObjectFieldTable = ({
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconArchive}
-                      onToggleChange={() => setShowInactive(!showInactive)}
-                      toggled={showInactive}
+                      onCheckedChange={() => setShowInactive(!showInactive)}
+                      checked={showInactive}
                       text={t`Inactive`}
-                      toggleSize="small"
+                      size="sm"
                     />
+                    {(mostlyEmptyFieldMetadataIds.size > 0 ||
+                      showOnlyMostlyEmpty) && (
+                      <MenuItemSwitch
+                        LeftIcon={IconCircleDashed}
+                        onCheckedChange={() =>
+                          setShowOnlyMostlyEmpty(!showOnlyMostlyEmpty)
+                        }
+                        checked={showOnlyMostlyEmpty}
+                        text={t`Mostly empty`}
+                        size="sm"
+                      />
+                    )}
                     {isAdvancedModeEnabled && (
-                      <MenuItemToggle
+                      <MenuItemSwitch
                         LeftIcon={IconSettings}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           setShowSystemFields(!showSystemFields)
                         }
-                        toggled={showSystemFields}
+                        checked={showSystemFields}
                         text={t`System fields`}
-                        toggleSize="small"
+                        size="sm"
                       />
                     )}
                   </DropdownMenuItemsContainer>
@@ -204,20 +235,27 @@ export const SettingsObjectFieldTable = ({
           ))}
           <TableHeader></TableHeader>
         </TableRow>
-        {filteredItems.map((objectSettingsDetailItem) => {
-          const status = objectSettingsDetailItem.fieldMetadataItem.isActive
-            ? 'active'
-            : 'disabled';
+        <StyledSettingsDataModelTableBodyContainer>
+          <TableBody>
+            {filteredItems.map((objectSettingsDetailItem) => {
+              const status = objectSettingsDetailItem.fieldMetadataItem.isActive
+                ? 'active'
+                : 'disabled';
 
-          return (
-            <SettingsObjectFieldItemTableRow
-              key={objectSettingsDetailItem.fieldMetadataItem.id}
-              settingsObjectDetailTableItem={objectSettingsDetailItem}
-              status={status}
-              mode={mode}
-            />
-          );
-        })}
+              return (
+                <SettingsObjectFieldItemTableRow
+                  key={objectSettingsDetailItem.fieldMetadataItem.id}
+                  settingsObjectDetailTableItem={objectSettingsDetailItem}
+                  status={status}
+                  mode={mode}
+                  isMostlyEmpty={mostlyEmptyFieldMetadataIds.has(
+                    objectSettingsDetailItem.fieldMetadataItem.id,
+                  )}
+                />
+              );
+            })}
+          </TableBody>
+        </StyledSettingsDataModelTableBodyContainer>
       </Table>
     </>
   );

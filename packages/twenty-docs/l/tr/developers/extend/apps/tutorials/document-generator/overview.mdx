@@ -1,0 +1,61 @@
+---
+title: "Eğitim: Belge Oluşturucu"
+icon: wand-magic-sparkles
+description: CRM verilerinizden kişiselleştirilmiş belgeler oluşturan gerçek bir Twenty uygulaması geliştirin.
+---
+
+Bu eğitimde, yeniden kullanılabilir şablonları CRM’inizde zaten bulunan verileri kullanarak kişiselleştirilmiş belgelere dönüştüren bir uygulama olan **Belge Oluşturucu**’yu geliştireceksiniz.
+
+`{{placeholders}}` ile bir kez şablon yazın, sonra komut menüsünden, bir yapay zekâ ajanından veya bir iş akışından tek tıklamayla herhangi bir Kişi veya Şirket için doldurulmuş bir belge oluşturun.
+
+<Frame caption="Belirli bir kişi için oluşturulmuş, yazdırılabilir bir sayfa olarak açılan bir şablon.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Oluşturulmuş bir Satış teklifi belgesi" />
+</Frame>
+
+## Neler öğreneceksiniz
+
+Her bölüm bir yetenek ekler. Sonunda SDK'nin büyük kısmını kullanmış olacaksınız.
+
+| Bölüm                                                                                                    | Yetenek                                                                                                      | Başvuru                                                                     |
+| -------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
+| [1. Veri Modeli](/l/tr/developers/extend/apps/tutorials/document-generator/data-model)                        | Nesneler, alanlar ve bir ilişki                                                                              | [Veri](/l/tr/developers/extend/apps/data/overview)                               |
+| [2. Belgeler oluşturma](/l/tr/developers/extend/apps/tutorials/document-generator/generating-documents)       | Bir Markdown şablonunu dolduran ve cilalı bir PDF ekleyen mantık işlevi (Yapay zekâ aracı + iş akışı eylemi) | [Mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions)           |
+| [3. HTTP rotaları](/l/tr/developers/extend/apps/tutorials/document-generator/http-routes)                     | Rotalardan JSON ve paylaşılabilir bir HTML sayfası sunma                                                     | [Mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions)           |
+| [4. Kullanıcı arayüzünü oluşturma](/l/tr/developers/extend/apps/tutorials/document-generator/building-the-ui) | Görünümler, gezinme, komut menüsü ve bir belgeyi önizleyen ve bir şablonu düzenleyen ön uç bileşenleri       | [Düzen](/l/tr/developers/extend/apps/layout/overview)                            |
+| [5. Bir yapay zekâ ajanı](/l/tr/developers/extend/apps/tutorials/document-generator/ai-agent)                 | Ajan + beceri                                                                                                | [Beceriler ve Temsilciler](/l/tr/developers/extend/apps/logic/skills-and-agents) |
+| [6. Yayınlama](/l/tr/developers/extend/apps/tutorials/document-generator/publishing)                          | Onu pazaryerine gönderin                                                                                     | [Yayınlama](/l/tr/developers/extend/apps/operations/publishing)                  |
+
+## Ön Gereksinimler
+
+[Hızlı Başlangıç](/l/tr/developers/extend/apps/getting-started/quick-start) bölümünü tamamlamış olmalısınız:
+`2020` portunda çalışan yerel bir Twenty sunucusu ve ona kimliği doğrulanmış CLI.
+
+Değilse, şimdi bir tane iskeletini oluşturup başlatın:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest document-generator
+cd document-generator
+yarn twenty dev
+```
+
+<Note>
+Bitmiş kodu okumayı mı tercih edersiniz? Tam uygulama şurada bulunur:
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+Aşağıdaki her kod parçası oradan kopyalanmıştır.
+</Note>
+
+## Uygulamanın nasıl bir araya geldiği
+
+<Frame>
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="Yer tutucular içeren bir şablon, komut menüsünden, bir yapay zekâ ajanından, bir iş akışından veya paylaşılabilir bir bağlantıdan tetiklenerek PDF’li cilalı bir belgeye dönüştürülür" />
+</Frame>
+
+`{{placeholders}}` ile zengin metin düzenleyicide bir **şablonu** bir kez yazarsınız. Bir şablon ve bir CRM kaydı seçmek, yer tutucuları doldurur ve cilalı bir **belgeyi** (PDF dosyasıyla birlikte) depolar. Geri kalan her şey — komut menüsü, yapay zekâ ajanı, iş akışı adımı, paylaşılabilir bağlantı — o tek oluşturucuyu tetiklemenin sadece farklı bir yoludur.
+
+## Bu döngüyü çalışır durumda tutun
+
+Tüm eğitim boyunca bir terminalde `yarn twenty dev` komutunu çalışır durumda bırakın. `src/` altında her dosya eklediğinizde veya düzenlediğinizde, birkaç saniye içinde sunucunuzla yeniden eşitlenir; böylece siz oluştururken her yeteneğin kullanıcı arayüzünde nasıl ortaya çıktığını izleyebilirsiniz.
+
+<Card title="Oluşturmaya başlayın →" icon="database" href="/l/tr/developers/extend/apps/tutorials/document-generator/data-model">
+  1. Bölüm: belgeleri ve şablonları modelleyin.
+</Card>

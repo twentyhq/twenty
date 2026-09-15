@@ -50,10 +50,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     title: 'emails field default value with empty values',
     context: {
       input: {
-        defaultValue: {
-          primaryEmail: "''",
-          additionalEmails: null,
-        },
+        defaultValue: null,
       },
     },
   },

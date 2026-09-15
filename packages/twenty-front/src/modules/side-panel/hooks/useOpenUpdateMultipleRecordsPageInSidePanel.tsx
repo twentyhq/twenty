@@ -3,7 +3,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 
 import { msg, t } from '@lingui/core/macro';
 import { useCallback } from 'react';
-import { IconBoxMultiple } from 'twenty-ui/display';
+import { IconBoxMultiple } from 'twenty-ui/icon';
 
 type UseOpenUpdateMultipleRecordsPageInSidePanelProps = {
   contextStoreInstanceId: string;

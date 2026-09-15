@@ -145,6 +145,14 @@
               "label": "Anleitungen"
             }
           }
+        },
+        "legal": {
+          "label": "Rechtliches",
+          "groups": {
+            "legalHowTos": {
+              "label": "Anleitungen"
+            }
+          }
         }
       }
     },
@@ -159,6 +167,9 @@
           "groups": {
             "appsGettingStarted": {
               "label": "Erste Schritte"
+            },
+            "appsTutorial": {
+              "label": "Tutorial"
             },
             "appsConfig": {
               "label": "Konfiguration"

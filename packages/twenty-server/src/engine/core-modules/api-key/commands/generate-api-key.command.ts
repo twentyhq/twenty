@@ -13,6 +13,8 @@ import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 
 type GenerateApiKeyCommandOptions = {
@@ -33,8 +35,8 @@ export class GenerateApiKeyCommand extends CommandRunner {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly apiKeyService: ApiKeyService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
@@ -104,9 +106,8 @@ export class GenerateApiKeyCommand extends CommandRunner {
       return;
     }
 
-    const adminRole = await this.roleRepository.findOne({
+    const adminRole = await this.roleRepository.findOne(workspace.id, {
       where: {
-        workspaceId: workspace.id,
         universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
       },
     });

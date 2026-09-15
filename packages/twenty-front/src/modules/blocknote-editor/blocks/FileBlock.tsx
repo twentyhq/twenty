@@ -93,6 +93,7 @@ export const FileBlock = createReactBlockSpec(
           <StyledFileLine>
             <FileIcon
               fileCategory={block.props.fileCategory as AttachmentFileCategory}
+              thumbnailUrl={safeUrl}
             />
             <StyledLink
               href={safeUrl}

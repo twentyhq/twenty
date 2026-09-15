@@ -1,0 +1,849 @@
+---
+title: المكوّنات الأمامية
+description: أنشئ مكونات React تُعرَض داخل واجهة مستخدم Twenty ضمن بيئة معزولة (sandbox).
+icon: window-maximize
+---
+
+المكوّنات الأمامية هي مكوّنات React تُعرَض مباشرة داخل واجهة مستخدم Twenty. تعمل ضمن **Web Worker معزول** باستخدام Remote DOM — تُنفَّذ شيفرتك داخل iframe معزول ذو منشأ غير شفاف، ومع ذلك لا تزال واجهتها تُعرَض محليًا داخل الصفحة بدلًا من أن تظل محصورة داخل ذلك الـ iframe.
+
+<Warning>
+لا تزال مكوّنات Front قيد التطوير النشط. يعمل الكود الخاص بك على DOM جزئي، وليس على صفحة متصفح حقيقية، لذلك يمكن أن تفشل الاستخدامات المتقدمة، وغالبًا من دون أي إشعار. راجع [القيود الحالية](#current-limitations).
+</Warning>
+
+## أين يمكن استخدام مكوّنات الواجهة الأمامية
+
+يمكن عرض مكوّنات الواجهة الأمامية في ثلاثة مواقع داخل Twenty:
+
+* **اللوحة الجانبية** — المكوّنات غير عديمة الرأس تفتح في اللوحة الجانبية اليمنى. هذا هو السلوك الافتراضي عندما يتم تشغيل مكوّن واجهة أمامية من قائمة الأوامر.
+* **الويدجت (لوحات المعلومات وصفحات السجلات)** — يمكن تضمين مكوّنات الواجهة الأمامية كويدجت داخل [تخطيطات الصفحات](/l/ar/developers/extend/apps/layout/page-layouts). عند تكوين لوحة معلومات أو تخطيط صفحة سجل، يمكن للمستخدمين إضافة ويدجت لمكوّن واجهة أمامية.
+* **App settings** — يتم تعريفها باستخدام [`defineSettingsFrontComponent()`](#custom-settings-component)، حيث يُعرَض مكوّن الواجهة الأمامية كقسم داخل علامة تبويب **Settings** في التطبيق، ليحل محل واجهة مستخدم تكوين المتغيرات الافتراضية.
+
+مكوّن الواجهة الأمامية بمفرده لا يمكن الوصول إليه من واجهة المستخدم — تحتاج إلى *عرضه*. الطرق الثلاث للقيام بذلك هي:
+
+* **إقرانه مع [عنصر قائمة الأوامر](/l/ar/developers/extend/apps/layout/command-menu-items)** — يقوم بتسجيله في قائمة الأوامر (Cmd+K) واختياريًا كإجراء سريع مُثبّت.
+* **تضمينه كويدجت في [تخطيط صفحة](/l/ar/developers/extend/apps/layout/page-layouts)** — يضعه في صفحة تفاصيل السجل أو لوحة المعلومات.
+* **عرِّفه باستخدام [`defineSettingsFrontComponent()`](#custom-settings-component)** — يعرضه كقسم داخل علامة تبويب **Settings** في التطبيق، ليحل محل واجهة مستخدم تكوين المتغيرات الافتراضية.
+
+## مثال أساسي
+
+أسرع طريقة لرؤية مكوّن الواجهة الأمامية أثناء العمل هي إقرانه مع [`defineCommandMenuItem`](/l/ar/developers/extend/apps/layout/command-menu-items)، بحيث يظهر كزر إجراء سريع في الزاوية العلوية اليمنى من الصفحة:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+بعد المزامنة باستخدام `yarn twenty dev` (أو تشغيل الأمر لمرة واحدة `yarn twenty apply`)، يظهر الإجراء السريع في الزاوية العلوية اليمنى من الصفحة:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="زر إجراء سريع في الزاوية العلوية اليمنى" />
+</div>
+
+انقره لعرض المكوّن مضمنًا داخل الصفحة.
+
+## حقول التكوين
+
+| الحقل                 | مطلوب | الوصف                                                         |
+| --------------------- | ----- | ------------------------------------------------------------- |
+| `universalIdentifier` | نعم   | معرّف فريد ثابت لهذا المكوّن                                  |
+| `component`           | نعم   | دالة مكوّن React                                              |
+| `name`                | لا    | الاسم المعروض                                                 |
+| `description`         | لا    | وصف لما يفعله المكوّن                                         |
+| `isHeadless`          | لا    | عيّنه على `true` إذا كان المكوّن بلا واجهة مرئية (انظر أدناه) |
+
+## وضع مكوّن أمامي على صفحة
+
+إضافةً إلى الأوامر، يمكنك تضمين مكوّن أمامي مباشرةً في صفحة سجل عبر إضافته كودجت في **تخطيط صفحة**. لمزيد من التفاصيل، راجع [تخطيطات الصفحات](/l/ar/developers/extend/apps/layout/page-layouts).
+
+## مكوّن إعدادات مخصص
+
+لاستبدال واجهة مستخدم تكوين المتغيرات المولَّدة تلقائيًا في علامة تبويب **Settings** في تطبيقك بمكوّنك الخاص، عرِّفه باستخدام `defineSettingsFrontComponent` بدلًا من `defineFrontComponent`. يستخدم نفس [حقول الإعدادات](#configuration-fields) (باستثناء `isHeadless`، الذي لا يُقبل لأن مكوّن الإعدادات يعرض دائمًا واجهة مستخدم مرئية)، ويُحدِّد أيضًا هذا المكوّن باعتباره واجهة إعدادات التطبيق.
+
+يتم عرض المكوّن كقسم **داخل** علامة تبويب الإعدادات، وليس كبديل لعلامة التبويب بالكامل. الأقسام التي يديرها نظام Twenty — الترقية التلقائية، و App URL، والاتصالات — يتم عرضها دائمًا أعلاه ولا يمكن تجاوزها بواسطة التطبيق.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+يُسمَح بمكوّن واجهة إعدادات واحد فقط لكل تطبيق؛ إعلان أكثر من واحد يؤدي إلى فشل عملية الإنشاء. عند وجوده، تعرض علامة تبويب **الإعدادات** الخاصة بالتطبيق هذا المكوّن بدلًا من واجهة مستخدم تكوين المتغيّرات الافتراضية.
+
+## عديم الرأس مقابل غير عديم الرأس
+
+تأتي مكوّنات الواجهة الأمامية بوضعَي عرض يتحكّم بهما الخيار `isHeadless`:
+
+**غير عديم الرأس (افتراضي)** — يعرض المكوّن واجهة مستخدم مرئية. عند تشغيله من قائمة الأوامر يفتح في اللوحة الجانبية. هذا هو السلوك الافتراضي عندما تكون `isHeadless` تساوي `false` أو يتم تجاهلها.
+
+**عديم الرأس (`isHeadless: true`)** — يتم تركيب المكوّن بشكل غير مرئي في الخلفية. لا يفتح اللوحة الجانبية. تم تصميم المكوّنات عديمة الرأس لإجراءات تنفّذ منطقًا ثم تُزيل تركيبها ذاتيًا — على سبيل المثال، تشغيل مهمة غير متزامنة، أو الانتقال إلى صفحة، أو إظهار نافذة تأكيد منبثقة. تتوافق بشكل طبيعي مع مكوّنات Command في SDK الموصوفة أدناه.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const [recordId] = useSelectedRecordIds();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+نظرًا لأن المكوّن يُرجع `null`، فإن Twenty يتخطّى عرض حاوية له — ولن تظهر مساحة فارغة في التخطيط. لا يزال لدى المكوّن إمكانية الوصول إلى جميع الخطافات وواجهة برمجة الاتصال مع المضيف.
+
+## مكوّنات Command في SDK
+
+توفر حزمة `twenty-sdk` أربعة مكوّنات مساعدة من نوع Command مصممة للمكوّنات عديمة الرأس في الواجهة الأمامية. كل مكوّن ينفّذ إجراءً عند التركيب، ويتعامل مع الأخطاء بعرض إشعار Snackbar، ويزيل تركيب مكوّن الواجهة الأمامية تلقائيًا عند الانتهاء.
+
+استوردها من `twenty-sdk/front-component`:
+
+* **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
+* **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
+* **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — يفتح صفحة في اللوحة الجانبية. الـ props تعتمد على `page` — على سبيل المثال، `ViewRecord` يأخذ `recordId` + `objectNameSingular` (بالإضافة إلى معرّف `tab` اختياري لفتح السجل في تبويب معيّن)، بينما الصفحات الأخرى تأخذ `pageTitle` + `pageIcon`.
+
+فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+ومثال يستخدم `CommandModal` لطلب التأكيد قبل التنفيذ:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/front-component';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+ومثال يستخدم `CommandOpenSidePanelPage` لفتح السجل الحالي في اللوحة الجانبية على تبويب معيّن. `tab` هو معرّف تبويب تخطيط الصفحة (تستخدم التخطيطات الافتراضية معرّفات مثل `company-tab-emails` أو `company-tab-timeline`؛ وتستخدم التخطيطات المخصّصة معرّف التبويب نفسه). إذا لم يكن المعرّف موجودًا في تخطيط السجل، فسيتم فتح التبويب الافتراضي بدلًا منه:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
+## استدعاء دالة منطقية
+
+تعمل مكونات الواجهة الأمامية على جانب المتصفح داخل Web Worker مُعزَل داخل iframe ذو origin غير شفاف، بينما تعمل [الدوال المنطقية](/l/ar/developers/extend/apps/logic/logic-functions) على جانب الخادم. لا توجد استدعاءات مباشرة ضمن العملية بين الاثنين — بدلاً من ذلك، يصل مكون الواجهة الأمامية إلى الدالة المنطقية عبر HTTP.
+
+يتم الوصول إلى الدالة المنطقية المُعلَنة باستخدام `httpRouteTriggerSettings` عبر HTTP عند مسار التوجيه الخاص بها. يتعامل `RestApiClient` مع المسارات التي تبدأ بـ `/s/` باعتبارها مسارات للتطبيق، ويُحوِّلها إلى عنوان الـ URL الذي تُقدَّم منه الدوال الخاصة بك، ويُجري عملية المصادقة عليها باستخدام `TWENTY_APP_ACCESS_TOKEN`.
+
+> **على Twenty Cloud، يتم تقديم الدوال المنطقية المُفعَّلة عبر HTTP على نطاق مخصص لكل مساحة عمل** عند `https://\<your-workspace-subdomain>.withtwenty.com\<path>`. للمتصلين الخارجيين، انسخ عنوان URL الدقيق من إعدادات **HTTP trigger** الخاصة بالدالة أو من علامة تبويب **Settings** في التطبيق.
+
+يمكن لمكون واجهة أمامية عديم الرأس تنفيذ الاستدعاء عند التركيب عبر مكون `Command`، ثم إلغاء التركيب تلقائيًا:
+
+```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/front-component';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+المسار المُمرَّر إلى `RestApiClient` هو قيمة `httpRouteTriggerSettings.path` الخاصة بدالة المنطق (logic function) مع إضافة البادئة `/s`. أبقِ `isAuthRequired: true`؛ فرمز `TWENTY_APP_ACCESS_TOKEN` الذي تُنشئه Twenty لمكوِّنك هو ما يصادق على الطلب:
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+يتم حقن `TWENTY_APP_ACCESS_TOKEN` تلقائيًا — انظر [متغيرات التطبيق](#application-variables). نظرًا لأن متغيرات التطبيق السرية لا تُعرَض أبدًا على مكونات الواجهة الأمامية، احتفِظ بمفاتيح واجهة برمجة التطبيقات والمنطق الحساس الآخر داخل الدالة المنطقية، وليس في مكون الواجهة الأمامية.
+</Note>
+
+### استدعاء واجهة REST API الخاصة بـ Twenty
+
+لاستدعاء مسارات HTTP الخاصة بالتطبيق أو لقراءة سجلات Twenty وكتابتها من مكوِّن واجهة أمامية، استخدم `RestApiClient` من `twenty-client-sdk/rest`. يُرسل المسارات من نوع `/s/...` إلى عنوان URL الأساسي للدوال في مساحة العمل الخاصة بك، ويُرسل أي مسار آخر، بما في ذلك `/rest/...`، إلى `TWENTY_API_URL`.
+
+يتصرف دائمًا بصفته الشخص الذي ينظر إلى الصفحة. `runAs: 'application'` هو خيار لدالة منطقية فقط: لا يتلقى المكوّن أبدًا الرمز المميز الخاص بتطبيقك، لذا فإن طلبه هنا يؤدي إلى طرح استثناء. ضع العمل الذي يحتاج إلى وصول التطبيق الخاص خلف دالة منطقية واستدعها بدلًا من ذلك.
+
+| طريقة                             | الوصف                                                                   |
+| --------------------------------- | ----------------------------------------------------------------------- |
+| `get(path, options?)`             | يرسل طلبًا من نوع `GET`                                                 |
+| `post(path, body?, options?)`     | يرسل طلبًا من نوع `POST`                                                |
+| `put(path, body?, options?)`      | يرسل طلبًا من نوع `PUT`                                                 |
+| `patch(path, body?, options?)`    | يرسل طلبًا من نوع `PATCH`                                               |
+| `delete(path, options?)`          | يرسل طلبًا من نوع `DELETE`                                              |
+| `request(method, path, options?)` | طلب عام بأي طريقة HTTP                                                  |
+| `resolveUrl(path, options?)`      | يُحوِّل مسارًا إلى عنوان URL كامل بدون إرسال طلب (لاستخدامه في الروابط) |
+
+تدعم `options` كلًا من `headers` و`query` (سجل لمعاملات query-string؛ يتم تخطي القيم nullish) و`AbortSignal` عبر `signal`. يتم تسلسل كائن `body` غير من النوع `FormData` إلى JSON تلقائيًا. عند حدوث `401`، يقوم العميل بتحديث رمز الوصول مرة واحدة عبر المضيف ثم يعيد محاولة الطلب.
+
+يتم تحديد عنوان URL الأساسي والرمز من بيئة التشغيل بشكل افتراضي. مرِّر معاملات تجاوز (overrides) إلى المُنشئ (constructor) عند الحاجة — على سبيل المثال في الاختبارات:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://myworkspace.twenty.com',
+  token: 'my-token',
+});
+```
+
+ترمي الطلبات الفاشلة خطأً من نوع `RestApiClientError` يعرِّض خصائص `status` و`statusText` و`url` بالإضافة إلى `body` بعد تحليله (parsed):
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
+
+## الوصول إلى سياق وقت التشغيل
+
+داخل مكوّنك، استخدم خطافات SDK للوصول إلى المستخدم الحالي، والسجل، ومثيل المكوّن:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useSelectedRecordIds,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const [recordId] = useSelectedRecordIds();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+الخطافات المتاحة:
+
+| الخطّاف                                       | القيم المعادة         | الوصف                                                                  |
+| --------------------------------------------- | --------------------- | ---------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` أو `null`    | معرّف المستخدم الحالي                                                  |
+| `useSelectedRecordIds()`                      | `string[]`            | جميع معرّفات السجلات المحددة (مصفوفة فارغة إذا لم يتم تحديد أي منها)   |
+| `useRecordId()`                               | `string` أو `null`    | **مهمل.** استخدم `useSelectedRecordIds()` بدلاً من ذلك                 |
+| `useFrontComponentId()`                       | `string`              | معرّف مثيل هذا المكوّن                                                 |
+| `useTimelineActivityId()`                     | `string` أو `null`    | معرّف نشاط المخطط الزمني الحالي عند عرض صف مخصص في المخطط الزمني       |
+| `useColorScheme()`                            | `'light'` أو `'dark'` | نظام الألوان النشط لواجهة المستخدم المضيفة (`System` تم تحديده بالفعل) |
+| `useFrontComponentExecutionContext(selector)` | يختلف                 | الوصول إلى سياق التنفيذ الكامل عبر دالة محدِّد                         |
+
+## متغيرات التطبيق
+
+متغيرات التطبيق المُعرَّفة في [`defineApplication()`](/l/ar/developers/extend/apps/config/application) مع `isSecret: false` تكون متاحة داخل مكوّنات الواجهة عبر أداة `getApplicationVariable`:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+المتغيرات السرّية (`isSecret: true`) **لا** يتم كشفها لمكوّنات الواجهة. هي متاحة فقط في [دوال المنطق](/l/ar/developers/extend/apps/logic/logic-functions)، التي تعمل على جهة الخادم. هذا يمنع إرسال القيم الحساسة مثل مفاتيح API إلى المتصفح.
+</Warning>
+
+تُرجِع الدالة `getApplicationVariable` دائمًا **سلسلة نصية** (أو `undefined`)، بغضّ النظر عن `type` المُعلَن للمتغيّر. تُسلسَل السلسلة النصية بشكل متسق حسب النوع (القيم المنطقية على هيئة "true" / "false"، الأعداد كسلاسل عشرية، والمصفوفات/الكائنات كـ JSON)، وهو نفس التنسيق المستخدم مع `process.env` في وظائف المنطق — قم بتحليلها بنفسك (`Number(...)`، ‏`JSON.parse(...)`، ‏`=== 'true'`). انظر قسم [أنواع المتغيرات](/l/ar/developers/extend/apps/config/application#variable-types).
+
+متغيرات النظام التالية تكون متاحة دائمًا عبر `process.env`:
+
+| المتغيّر                  | الوصف                                                                                                                                                            |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | عنوان URL الأساسي لـ Twenty Core API                                                                                                                             |
+| `TWENTY_APP_ACCESS_TOKEN` | رمز مميز قصير العمر يقتصر نطاقه على دور الشخص المسجّل دخوله والمتقاطع مع دور تطبيقك، لذا لا يمكن للمكوّن أبدًا أن يفعل أكثر مما يستطيع الشخص الذي ينظر إليه فعله |
+
+### `TWENTY_FUNCTIONS_URL`
+
+يقوم Twenty أيضًا بحقن `TWENTY_FUNCTIONS_URL` في مكوِّنات الواجهة الأمامية والدوال المنطقية: وهو عنوان URL الأساسي الذي تُقدَّم منه الدوال المنطقية المُفعَّلة عبر HTTP في تطبيقك.
+
+وهو موجود لأن ذلك العنوان (URL) ليس دائمًا هو خادم Twenty نفسه. على Twenty Cloud، يتم تقديم مسارات التطبيق على نطاق مخصص لكل مساحة عمل (`https://\<your-workspace-subdomain>.withtwenty.com`، أو نطاق التطبيق العمومي الأساسي عندما يتم تكوينه) بحيث تعمل الاستجابات المنشأة من التطبيق على أصل (origin) معزول بدلاً من أصل تطبيق Twenty. تُقدِّم النسخ المستضافة ذاتيًا والمحلية مسارات التطبيق تحت البادئة `/s` على الخادم نفسه وقد لا تضبط المتغير إطلاقًا. نظرًا لاختلاف عنوان URL الأساسي حسب مساحة العمل وحسب كل نسخة، لا يمكن لشفرتك (code) أن تُضمِّنه بشكل ثابت (hard-code) — يقوم الخادم بحقن القيمة الصحيحة وقت التشغيل.
+
+نادرًا ما تحتاج إلى قراءته مباشرة. استدعِ مساراتك عبر `RestApiClient` باستخدام مسار يبدأ بالبادئة `/s/`، وسيقوم العميل بحل عنوان URL نيابةً عنك: يزيل بادئة `/s` ويستخدم `TWENTY_FUNCTIONS_URL` كهدف، مع الرجوع إلى `\<TWENTY_API_URL>/s` عندما لا يكون المتغير مضبوطًا. استخدم `resolveUrl('/s/\<path>')` للحصول على عنوان URL مطلق بدون إرسال طلب، على سبيل المثال لاستخدامه في رابط. اقرأ المتغير مباشرةً فقط عند إنشاء عنوان URL يدويًا:
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
+
+## واجهة الاتصال مع المضيف
+
+يمكن للمكوّنات الأمامية تشغيل التنقّل والنوافذ المنبثقة والإشعارات باستخدام دوال من `twenty-sdk`:
+
+| دالة                                               | الوصف                                                                                                                                                                                                    |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | الانتقال إلى صفحة داخل التطبيق                                                                                                                                                                           |
+| `openSidePanelPage(params)`                        | فتح لوحة جانبية                                                                                                                                                                                          |
+| `closeSidePanel()`                                 | إغلاق اللوحة الجانبية                                                                                                                                                                                    |
+| `openCommandConfirmationModal(params)`             | عرض مربع حوار تأكيد                                                                                                                                                                                      |
+| `enqueueSnackbar(params)`                          | عرض إشعار توست                                                                                                                                                                                           |
+| `unmountFrontComponent()`                          | إلغاء تركيب المكوّن                                                                                                                                                                                      |
+| `updateProgress(progress)`                         | تحديث مؤشّر التقدّم                                                                                                                                                                                      |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | تحميل كائن `Blob` إلى حقل من نوع FILES؛ تُعاد نتيجة على شكل `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` أو `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
+
+فيما يلي مثال يستخدم واجهة برمجة تطبيقات المضيف لعرض Snackbar وإغلاق اللوحة الجانبية بعد اكتمال الإجراء:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const ArchiveRecord = () => {
+  const [recordId] = useSelectedRecordIds();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### التخزين
+
+`localStorage` و`sessionStorage` يعملان كما يعملان في صفحة عادية، باستخدام واجهة برمجة التطبيقات المتزامنة القياسية. مفاتيحك يُحدَّد نطاقها بتثبيت تطبيقك والمستخدم المسجَّل دخوله: لا يمكن لأي تطبيق آخر قراءتها، وأي مستخدم آخر يسجّل الدخول في المتصفح نفسه يبدأ من مخزن فارغ. القيم المكتوبة في `localStorage` تبقى على الجهاز عبر عمليات إعادة التحميل؛ أمّا `sessionStorage` فيستمر طوال جلسة المتصفح.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty تخزّن القيم نيابةً عن تطبيقك، لذا تُطبَّق عملية الكتابة محليًا فورًا ويتم حفظها في الخلفية. لا تنتظر عمليات القراءة أبدًا على المضيف. لا تتم مزامنة أي شيء: لا تنتقل القيم مع المستخدم إلى متصفح أو جهاز آخر، لذا استخدم [مخزن القيم المفتاحية](/l/ar/developers/extend/apps/logic/key-value-store) لدالة منطقية لأي شيء يجب أن يظل قائمًا بعد تغيير الجهاز.
+
+يتم تقييد عمليات الكتابة، ويُحتسب كل حد بعدد الأحرف بدلاً من البايتات: لا يزيد طول المفاتيح عن 512 حرفًا، ولا تزيد قيمة واحدة عن 262,144 حرفًا، ولا تزيد سعة كل مساحة تخزين عن 1,048,576 حرفًا لكل تطبيق ومستخدم. تؤدي عملية كتابة تتجاوز حدًا معينًا إلى طرح استثناء `QuotaExceededError`، مثل واجهة برمجة تطبيقات المتصفح.
+
+### العمل مع سجلات متعددة
+
+استخدم `useSelectedRecordIds()` لمعالجة عدة سجلات محددة. هذا مفيد للعمليات المجمّعة:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+});
+```
+
+أبرِزْه باستخدام [عنصر قائمة الأوامر](/l/ar/developers/extend/apps/layout/command-menu-items) المقيّد بتحديدات السجلات:
+
+```ts src/command-menu-items/bulk-export.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+  label: 'Bulk Export',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+});
+```
+
+## الأصول العامة
+
+يمكن للمكوّنات الأمامية الوصول إلى ملفات من دليل `public/` للتطبيق باستخدام `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+راجع [قسم الأصول العامة](/l/ar/developers/extend/apps/config/public-assets) للتفاصيل.
+
+## مشاركة التبعيات عبر مكوّنات الواجهة الأمامية
+
+افتراضيًا، يضمّن كل مكوّن واجهة أمامية نسخته الخاصة من المكتبات التي يستوردها، لذا فإن تطبيقًا يحتوي على خمسة مكوّنات سيتضمّن React خمس مرات. صرّح بالتبعيات المشتركة في ملف `package.json` الخاص بتطبيقك لبناء تلك المكتبات مرة واحدة وجعل كل مكوّن في التطبيق يحمّلها من ملف واحد مخزَّن في الذاكرة المخبئية:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+بعد ذلك، يستورد كل مكوّن تبعياته تمامًا كما كان من قبل — دون أي تغيير في كود المكوّن الخاص بك:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+بعض الأمور التي يجب معرفتها:
+
+* **حزمة تبعيات مشتركة واحدة لكل تطبيق.** يتم إنشاء الحزمة من تبعيات تطبيقك نفسه، بحيث تحتفظ بالتحكم الكامل في الإصدارات التي تُصدِرها.
+* **اسرد المعرّفات (specifiers) الدقيقة التي تستوردها.** يُعَدّ `twenty-ui/input` و `twenty-ui/display` مدخلين منفصلين؛ اسم الحزمة وحده لا يشمل المسارات الفرعية. إدراج `react` يغطي تلقائيًا `react/jsx-runtime`.
+* **شارك `react-dom/client` جنبًا إلى جنب مع `react`.** كل مكوّن يقوم بعملية التصيير من خلال `createRoot`، لذا فإن تركه خارجًا يعني أن كل مكوّن ما زال يضمّن React DOM داخل حزمتِه الخاصة.
+* **الحزمة مُخزَّنة في الذاكرة المخبئية.** يتم تقديمها عبر عنوان URL يعتمد على قيمة تجزئة المحتوى (content-hash) مع ذاكرة مخبئية ثابتة طويلة الأجل، لذا يتم تنزيلها مرة واحدة وإعادة استخدامها عبر جميع مكوّنات التطبيق حتى تتغيّر إحدى تبعياتها.
+* **المكوّنات التي لا تستورد أيًا من الحزم المشتركة لا تقوم بتنزيلها أبدًا.**
+
+## التنسيق
+
+تدعم المكوّنات الأمامية عدة أساليب للتنسيق. يمكنك استخدام:
+
+* **أنماط مضمنة** — `style={{ color: 'red' }}`
+* **مكوّنات Twenty UI** — مكتبة المكوّنات الخاصة بـ Twenty؛ راجع [استخدام مكوّنات Twenty UI](#using-twenty-ui-components) أدناه
+* **Emotion** — CSS-in-JS مع `@emotion/react`
+* **Styled-components** — أنماط `styled.div`
+* **Tailwind CSS** — أصناف مساعدة
+* **أي مكتبة CSS-in-JS** متوافقة مع React
+
+## استخدام مكوّنات Twenty UI
+
+توفّر Twenty مكتبة المكوّنات الخاصة بها على شكل حزمة [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). يمكن للمكوّنات الأمامية استخدامه للأزرار، والوسوم، وشارات الحالة، والرقاقات، والصور الرمزية، والأيقونات، والطباعة، ورموز السمات التي تتطابق تلقائيًا مع نسق مساحة العمل الفاتح أو الداكن.
+
+### التثبيت
+
+أضِف الحزمة إلى تطبيقك، مع تثبيتها على الإصدار الذي تأتي به نسخة Twenty لديك:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` تكون مضمّنة في المكوّن الأمامي لديك وقت البناء، لذلك تحتاج فقط إلى أن تكون تابعة (dependency) لتطبيقك — ولا يوجد ما يلزم تهيئته وقت التشغيل.
+
+### استيراد المكوّنات
+
+استورِد من المسار الفرعي المطابق بدلًا من جذر الحزمة، حتى لا ينتهي الأمر إلا بالمكوّنات التي تستخدمها داخل حزمة التطبيق (bundle) لديك:
+
+| المسار الفرعي               | ما الذي يصدِّره                                       |
+| --------------------------- | ----------------------------------------------------- |
+| `twenty-ui/input`           | `Button` ومدخلات النماذج                              |
+| `twenty-ui/data-display`    | `Tag`، و`Status`، و`Chip`، و`Avatar`، وغير ذلك        |
+| `twenty-ui/feedback`        | `Callout`، و`Banner`، و`Info`، وغير ذلك               |
+| `twenty-ui/typography`      | `H1Title`، و`H2Title`، و`H3Title`، و`Label`، وغير ذلك |
+| `twenty-ui/icon`            | مكوّنات `Icon*` (مثلًا `IconCheck`)                   |
+| `twenty-ui/theme-constants` | `ThemeProvider`، و`themeCssVariables`                 |
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```
+
+### الأيقونات
+
+استورِد الأيقونات الفردية من `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+كل أيقونة مسمّاة قابلة للإزالة عبر تقنية tree-shaking، لذا فإن استيراد عدد قليل منها لا يزيد حجم الحزمة إلا قليلًا. تجنّب استخدام `IconsProvider`، و`useIcons`، و`iconsState` — لأنها تجلب مجموعة أيقونات Tabler الكاملة (عدة ميغابايت).
+
+### التنسيق ورموز السمات
+
+تتكيّف مكوّنات Twenty UI تلقائيًا مع نسق مساحة العمل الفاتح أو الداكن — إذ يطبّق المُصيّر (renderer) مخطط الألوان النشط على المضيف، وتضبط المكوّنات ألوانها وفقًا له.
+
+لاستخدام نفس رموز التصميم في أنماطك المضمّنة (inline styles)، استدعِ الخطّاف `useTheme()`. يُرجِع هذا الخطّاف رموز سمة Twenty (للمسافات، والألوان، وأنصاف الأقطار، والخطوط) المرتبطة بالنسق النشِط، دون الحاجة إلى إعداد `ThemeProvider` في المكوّن لديك:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+نظرًا لأن `useTheme()` خطّاف، فإنك تقرأ الرموز داخل جسم المكوّن، لذا تعكس القيم دائمًا النسق المباشر (الحالي). تُصدَّر خريطة الرموز نفسها أيضًا كثابت `themeCssVariables`، لكن يُفضَّل استخدام `useTheme()` في المكوّنات الأمامية — إذ يمكن أن يكون الثابت على مستوى الوحدة الذي يفكّ مرجعية `themeCssVariables` غير معرَّف أثناء استخراج بيان التطبيق (app manifest).
+
+للتفرّع بناءً على النظام النشِط (active scheme) صراحةً، اقرأه باستخدام `useColorScheme()` من `twenty-sdk/front-component`، والذي يعيد `'light'` أو `'dark'`.
+
+## القيود الحالية
+
+مكوّنات Front قيد التطوير النشط. الترسيم، والتنسيق، والتعامل مع الأحداث، وقياس العناصر، وتخزين المتصفح تعمل جميعها بشكل جيد. أي شيء يتجاوز *تلك* الحدود (استدعاء دالة DOM على ref، مراقبة تغيير أحجام العناصر، إنشاء portal خارج الشجرة الخاصة بك) مفقود أو غير مكتمل حاليًا، ومعظم هذه الحالات تفشل بصمت: لا يتم رمي استثناء، ولا يظهر خطأ TypeScript أيضًا، لأن القالب مكتوب استنادًا إلى DOM الكامل للمتصفح.
+
+إذا كان أحد هذه الأمور يعيقك، [افتح تذكرة](https://github.com/twentyhq/twenty/issues/new/choose) ليتم إعطاؤه أولوية.
+
+### التخطيط والقياس
+
+يمكن للعناصر قياس نفسها: المضيف يعكس الإحداثيات الهندسية داخل وضع الحماية، بحيث تتم الإجابة عن عمليات القراءة محليًا ولكن يمكن أن تتأخر حتى إطار واحد، وتعيد أول عملية قراءة لعنصر لم يُقَس من قبل قيمًا صفرية. بعد الكتابة، أعد القراءة داخل استدعاء `requestAnimationFrame` أو داخل تأثير.
+
+| واجهة برمجة التطبيقات                                                                    | ما الذي يحدث                                                                                          |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | يعمل، من المرآة؛ تعيين `scrollTop` / `scrollLeft` بلا تأثير                                           |
+| `getClientRects()`, `window.matchMedia()`                                                | يرمي استثناء                                                                                          |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | يعمل، مع الإبلاغ عن منفذ عرض المتصفح؛ حجم أداتك نفسها هو `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | يُرجع أنماط العنصر المضمّنة فقط، وليس سلسلة الأنماط المحسوبة من المضيف مطلقًا                         |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (`typeof` guards تعمل)                                                               |
+| `MutationObserver`                                                                       | يعمل، بما في ذلك `subtree` و `attributeFilter` والقيم القديمة و `takeRecords()`                       |
+
+أصبح التموضع باستخدام `getBoundingClientRect` يعمل الآن، ولكن أي شيء يراقب تغيّر الأحجام عبر `ResizeObserver` (مثل `ResponsiveContainer` في recharts و `autoUpdate` في Floating UI) ما زال لا يعمل. يفضَّل استخدام CSS للتخطيط على أي حال: ورقة الأنماط الخاصة بك تصل إلى الصفحة الحقيقية، لذا فإن flexbox و grid و `aspect-ratio` و `clamp()` و ‎`@container` تعمل بشكل طبيعي، بدون أي تأخير في الإطار.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` و `queueMicrotask` تعمل بدون بادئة `window.`. فقط `window.requestAnimationFrame(...)` وما شابهها ترمي استثناء.
+</Note>
+
+### الوصول إلى DOM
+
+يعطيك `ref` عنصرًا في sandbox، وليس `HTMLElement`.
+
+| ما الذي تكتبه                                                                                               | ما الذي يحدث                                          | استخدم بدلًا من ذلك                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | يرمي استثناء                                          | مكوّنات مضبوطة (Controlled components)؛ اقرأ القيم من `event.target`                                                                                               |
+| `element.classList.add(...)`                                                                                | يرمي استثناء (`classList` هو `undefined`)             | قم ببناء سلسلة `className` بنفسك                                                                                                                                   |
+| `document.createTreeWalker()`                                                                               | يرمي استثناء                                          | تعمل `querySelector()` / `querySelectorAll()` و `getElementById()`؛ تعمل `getElementsByClassName()` أيضًا، ولكنها تُرجِع مجموعة ثابتة، وليس `HTMLCollection` حيًّا |
+| `document.activeElement`                                                                                    | دائمًا `undefined`                                    | تتبّع التركيز باستخدام `onFocus` / `onBlur`                                                                                                                        |
+| `canvas`                                                                                                    | لا يَرسُم أي شيء، بدون خطأ                            | SVG، أو الرسم خارج الشاشة وعرض النتيجة في عنصر `img`                                                                                                               |
+| `createPortal(node, document.body)`                                                                         | لا يَرسُم أي شيء، بينما `isConnected` يُبلغ عن النجاح | استخدم الطبقات العائمة (overlays) داخل التخطيط نفسه مع `position: absolute`، أو مرّر إلى المكتبة عنصر الحاوية الخاص بك                                             |
+
+فجوة الـ portal هي السبب في أن عناصر popover في Radix و Headless UI و MUI و react-select لا ترسُم أي شيء بشكل افتراضي. معظمها يقبل خاصية container؛ وجّهها إلى عنصر قمت بترسيمه.
+
+### الأحداث
+
+أحداث الماوس، والمؤشر، واللمس، والسحب، ولوحة المفاتيح، والتركيز، و`input`/`change`/`submit`، و`scroll`/`wheel`/`contextmenu` و`animationend`/`transitionend` تُمرَّر إلى المضيف، بالإضافة إلى بعض الأحداث الخاصة بكل عنصر: `load`/`error` على `img`، والحافظة والتركيب على `input`/`textarea`، والوسائط على `video`/`audio`، و`toggle` على `details`/`dialog`. أي شيء آخر (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, التقاط المؤشر، `onLoad` خارج `img`) يتم إسقاطه دون تحذير.
+
+`document.addEventListener()` و `window.addEventListener()` تُسجِّلان بدون خطأ لكن لا تُطلقان أبدًا، وهذا هو السبب في أن السحب يتوقف بمجرد أن يغادر المؤشر العنصر الذي بدأ عليه. `event.preventDefault()` لا يعبر أيضًا؛ إرسال النماذج، و`dragover`/`drop` ونقرات الروابط محمية مسبقًا من أجلك.
+
+### السمات والأنماط
+
+كل عنصر يمرّر خصائصه الخاصة إلى DOM المضيف (`href` على `a`، و`src`/`alt` على `img`، و`value`/`placeholder`/`disabled` على `input`، وهكذا)، بالإضافة إلى مجموعة مشتركة على كل عنصر: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` وأي سمة `aria-*` / `data-*` (مفصولة بشرطات، لذا يتم إسقاط `ariaLabel`). أي شيء خارج ذلك يتم تجاهله بصمت، لذا عبّر عن الحالة المخصّصة كـ `data-*`.
+
+يتم حقن CSS الخاص بالمكوّن، سواءً من `import './styles.css'` أو CSS-in-JS أو عنصر `style`، في وسم `head` لصفحة المضيف **بدون نطاق**. لذا تتصادم أسماء الأصناف مع أسماء Twenty نفسها (قم بإضافة بادئة لها، ولا تكتب أبدًا محددًا مثل `div { ... }`)، و `@media` تطابِق نافذة المتصفح بدلاً من الودجت الخاص بك (استخدم `@container` مع `container-type` الخاص بك). خصائص `style` المضمنة لا تتأثر.
+
+### التخزين والشبكة
+
+يتم توفير `localStorage` و`sessionStorage` بواسطة Twenty وليس بواسطة المتصفح: حيث يعمل المكون في عامل (worker) ضمن أصل غير شفاف، لذلك يقوم المضيف بتخزين القيم نيابةً عن تطبيقك. راجع قسم [التخزين](#storage) للاطلاع على نطاقاتها وحدودها. لا تزال IndexedDB وملفات تعريف الارتباط (cookies) وواجهة برمجة تطبيقات Cache و`BroadcastChannel` غير متاحة. للاحتفاظ بالحالة عبر الأجهزة، استدعِ [دالة منطقية](/l/ar/developers/extend/apps/logic/logic-functions) واستخدم [مخزن القيم المفتاحية](/l/ar/developers/extend/apps/logic/key-value-store) الخاص بها.
+
+`fetch` يعمل، مع بعض التحفّظات:
+
+* يتم تمرير الاستدعاءات إلى Twenty API ومسارات تطبيقك عبر المضيف، لذا يُفضَّل استخدام [`RestApiClient`](#calling-the-twenty-rest-api). في الاستدعاءات الممرَّرة عبر الوكيل، يتم إسقاط `AbortSignal` وخيارات `RequestInit` الأخرى، ولا يتم دعم سوى الأجسام من نوع `string` و`URLSearchParams`.
+* تغادر النطاقات (origins) الأخرى صندوق العزل مع `Origin: null`، لذلك يجيب طرف ثالث لواجهة برمجة التطبيقات فقط إذا أرسل `Access-Control-Allow-Origin: *`. استدعِها من دالة منطقية بدلًا من ذلك.
+* `fetch('/rest/people')` لا يتطابق أبدًا مع Twenty API، لأن صندوق العزل ليس لديه عنوان URL للصفحة لحساب مسار نسبي بناءً عليه.
+
+### التقاط الوسائط
+
+تعمل `navigator.mediaDevices.getUserMedia()` و`MediaRecorder` داخل مكوّنات الواجهة الأمامية من خلال sandbox polyfills، لذا يعمل كود التسجيل القياسي دون تغيير، وتُرجِع `MediaRecorder.isTypeSupported` إجابات لأنواع حاويات/ترميزات شائعة. يتم قبول كائنات قيود `getUserMedia` التفصيلية ولكن لا يتم تمريرها إلى المضيف — حيث يقوم المضيف بالالتقاط باستخدام الإعدادات الافتراضية لأنواع الوسائط المطلوبة — ولا يمكن أن يكون هناك أكثر من عملية التقاط واحدة نشطة في الوقت نفسه عبر التطبيقات. خزِّن كائن `Blob` المسجَّل باستخدام دالة المضيف `uploadFile`.
+
+### فجوات أخرى
+
+* **محتويات الملفات.** يُرجِع `input` من النوع `file` إلى معالجك بيانات تعريف الملف فقط، وليس البايتات، لذا فإن `FileReader` غير متاح. لرفع كائن `Blob` الذي يملكه كودك بالفعل — على سبيل المثال كائن تم إنتاجه بواسطة `MediaRecorder` — استخدم دالة المضيف `uploadFile`.
+* **حمولات السحب والإفلات.** أحداث السحب تُطلق، لكن `event.dataTransfer` هي `undefined`.
+* **الوحدات المدمجة في Node.** `fs` و`path` و`node:crypto` تفشل في عملية البناء، لذا انقل ذلك العمل إلى [دالة منطقية](/l/ar/developers/extend/apps/logic/logic-functions). Web Crypto و `fetch` و `TextEncoder` و `URL` متوفرة.
+* يتم دائمًا إعادة عزل **`iframe`** دون `allow-same-origin`، لذلك يعمل التضمين الذي يعتمد على جلسته الخاصة في وضع "تسجيل الخروج". ليس لديه `onLoad` أيضًا.

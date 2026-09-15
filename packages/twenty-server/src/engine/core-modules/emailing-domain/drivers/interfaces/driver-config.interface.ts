@@ -1,4 +1,4 @@
-import { type EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
+import { type EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 
 export interface BaseDriverConfig {
   driver: EmailingDomainDriver;
@@ -11,4 +11,9 @@ export interface AwsSesDriverConfig extends BaseDriverConfig {
   accessKeyId?: string;
   secretAccessKey?: string;
   sessionToken?: string;
+}
+
+export interface ResendDriverConfig extends BaseDriverConfig {
+  driver: EmailingDomainDriver.RESEND;
+  domainRegion?: string;
 }

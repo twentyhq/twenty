@@ -3,7 +3,7 @@ title: Campos de fórmula
 description: Crea campos de fórmula usando flujos de trabajo hasta que haya soporte nativo disponible.
 ---
 
-Twenty aún no admite campos de fórmula de forma nativa (llegarán en 2026), pero puedes lograr el mismo resultado usando flujos de trabajo. Esta solución alternativa te permite calcular y rellenar automáticamente valores de campos—desde concatenaciones simples hasta lógica empresarial compleja.
+Veinte todavía no soporta campos de fórmula nativos (llegando en 2026), pero puede lograr el mismo resultado usando flujos de trabajo. Esta solución alternativa te permite calcular y rellenar automáticamente valores de campos—desde concatenaciones simples hasta lógica empresarial compleja.
 
 ## Casos de Uso Comunes
 
@@ -16,7 +16,7 @@ Twenty aún no admite campos de fórmula de forma nativa (llegarán en 2026), pe
 | **Puntuación del lead**       | Puntos basados en varios criterios |
 
 <Tip>
-  Para ver un ejemplo completo de seguimiento del tiempo en etapas del pipeline, consulta [Cuánto tiempo permanecen las oportunidades en cada etapa](/l/es/user-guide/views-pipelines/how-tos/track-time-in-stage).
+Para ver un ejemplo completo de seguimiento del tiempo en etapas del pipeline, consulta [Cuánto tiempo permanecen las oportunidades en cada etapa](/l/es/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
 ## Fórmula básica: concatenación
@@ -55,7 +55,7 @@ export const main = async (params) => {
 
 Consulta [Cómo mostrar el importe esperado en el pipeline](/l/es/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) para ver el flujo de trabajo completo.
 
-### Configuración rápida
+### Configuración
 
 1. **Desencadenante**: Se actualiza el registro (Oportunidades, campo Importe o Probabilidad)
 
@@ -105,7 +105,7 @@ export const main = async (params) => {
 3. **Actualizar registro**: Establecer Días hasta el vencimiento en `{{code.daysUntilDue}}`
 
 <Note>
-  Los valores negativos indican tareas vencidas. Puedes usar este campo para filtrar o ordenar tareas por urgencia.
+Los valores negativos indican tareas vencidas. Puedes usar este campo para filtrar o ordenar tareas por urgencia.
 </Note>
 
 ## Fórmula condicional: puntuación del lead

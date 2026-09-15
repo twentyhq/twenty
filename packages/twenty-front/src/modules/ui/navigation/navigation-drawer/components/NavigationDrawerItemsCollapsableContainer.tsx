@@ -1,6 +1,5 @@
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import {
@@ -8,8 +7,26 @@ import {
   motion,
   type TargetAndTransition,
 } from 'framer-motion';
-import { ThemeContext } from 'twenty-ui/theme-constants';
-const StyledAnimationGroupContainerBase = styled.div``;
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const COLLAPSED_GROUP_WIDTH = 24;
+
+const StyledAnimationGroupContainerBase = styled.div<{
+  isCollapsedGroup: boolean;
+}>`
+  background-color: ${({ isCollapsedGroup }) =>
+    isCollapsedGroup
+      ? themeCssVariables.background.transparent.lighter
+      : 'transparent'};
+  border: ${({ isCollapsedGroup }) =>
+    isCollapsedGroup
+      ? `1px solid ${themeCssVariables.background.transparent.lighter}`
+      : 'none'};
+  border-radius: ${({ isCollapsedGroup }) =>
+    isCollapsedGroup ? themeCssVariables.border.radius.md : '0'};
+  transition: background-color
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+`;
 
 const StyledAnimationGroupContainer = motion.create(
   StyledAnimationGroupContainerBase,
@@ -26,29 +43,16 @@ export const NavigationDrawerItemsCollapsableContainer = ({
 }: NavigationDrawerItemsCollapsableContainerProps) => {
   const { theme } = useContext(ThemeContext);
   const isSettingsPage = useIsSettingsPage();
-  const isNavigationDrawerExpanded = useAtomStateValue(
-    isNavigationDrawerExpandedState,
-  );
+  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
   const isExpanded = isNavigationDrawerExpanded || isSettingsPage;
-  let animate: AnimationControls | TargetAndTransition = {
-    width: 'auto',
-    backgroundColor: 'transparent',
-    border: 'none',
-  };
-  if (!isExpanded) {
-    animate = { width: 24 };
-    if (isGroup) {
-      animate = {
-        width: 24,
-        backgroundColor: theme.background.transparent.lighter,
-        border: `1px solid ${theme.background.transparent.lighter}`,
-        borderRadius: theme.border.radius.sm,
-      };
-    }
-  }
+
+  const animate: AnimationControls | TargetAndTransition = isExpanded
+    ? { width: 'auto' }
+    : { width: COLLAPSED_GROUP_WIDTH };
 
   return (
     <StyledAnimationGroupContainer
+      isCollapsedGroup={isGroup && !isExpanded}
       initial={false}
       animate={animate}
       transition={{

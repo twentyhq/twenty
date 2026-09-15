@@ -88,6 +88,7 @@ export const useCreateViewFromCurrentState = () => {
         mainGroupByFieldMetadataId:
           type === ViewType.KANBAN ? mainGroupByFieldMetadataId : null,
         calendarFieldMetadataId,
+        calendarEndFieldMetadataId: null,
         visibility,
       },
       shouldCopyFiltersAndSortsAndAggregate,

@@ -1,0 +1,849 @@
+---
+title: Frontendové komponenty
+description: Vytvářejte komponenty Reactu, které se vykreslují uvnitř uživatelského rozhraní Twenty se sandboxovou izolací.
+icon: window-maximize
+---
+
+Frontendové komponenty jsou React komponenty, které se vykreslují přímo v uživatelském rozhraní Twenty. Běží v **izolovaném Web Workeru** s využitím Remote DOM — váš kód se spouští uvnitř sandboxovaného iframe s nejasným původem (opaque-origin), ale jeho UI se stále vykresluje nativně na stránce, místo aby bylo omezené na tento iframe.
+
+<Warning>
+Komponenty Front jsou stále aktivně vyvíjeny. Váš kód běží nad částečným DOMem, nikoli nad skutečnou stránkou prohlížeče, takže pokročilé způsoby použití mohou selhávat, často bez zjevných chyb. Viz [Aktuální omezení](#current-limitations).
+</Warning>
+
+## Kde lze použít frontendové komponenty
+
+Frontendové komponenty se mohou vykreslovat na třech místech v rámci Twenty:
+
+* **Postranní panel** — Frontendové komponenty, které nejsou headless, se otevírají v pravém postranním panelu. Toto je výchozí chování, když je frontendová komponenta vyvolána z příkazového menu.
+* **Widgety (nástěnky a stránky záznamů)** — front komponenty lze vkládat jako widgety do [rozložení stránky](/l/cs/developers/extend/apps/layout/page-layouts). Při konfiguraci nástěnky nebo rozložení stránky záznamu mohou uživatelé přidat widget frontendové komponenty.
+* **Nastavení aplikace** — Definovaná pomocí [`defineSettingsFrontComponent()`](#custom-settings-component), frontendová komponenta se vykreslí jako sekce na kartě **Settings** (Nastavení) aplikace, místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
+
+Samotná frontendová komponenta není z uživatelského rozhraní dostupná — je potřeba ji zpřístupnit. Tři způsoby, jak to udělat, jsou:
+
+* **Spárujte ji s [položkou příkazové nabídky](/l/cs/developers/extend/apps/layout/command-menu-items)** — zaregistruje ji v příkazové nabídce (Cmd+K) a volitelně také jako připnutou rychlou akci.
+* **Vložte ji jako widget do [rozložení stránky](/l/cs/developers/extend/apps/layout/page-layouts)** — umístí ji na detailní stránku záznamu nebo na nástěnku.
+* **Definujte ji pomocí [`defineSettingsFrontComponent()`](#custom-settings-component)** — vykreslí ji jako sekci na kartě **Settings** (Nastavení) aplikace, místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
+
+## Základní příklad
+
+Nejrychlejší způsob, jak vidět front komponentu v akci, je spárovat ji s [`defineCommandMenuItem`](/l/cs/developers/extend/apps/layout/command-menu-items), aby se objevila jako tlačítko rychlé akce v pravém horním rohu stránky:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+Po synchronizaci pomocí `yarn twenty dev` (nebo po jednorázovém spuštění `yarn twenty apply`) se rychlá akce zobrazí v pravém horním rohu stránky:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Tlačítko rychlé akce v pravém horním rohu" />
+</div>
+
+Kliknutím na něj vykreslíte komponentu přímo ve stránce.
+
+## Konfigurační pole
+
+| Pole                  | Povinné | Popis                                                             |
+| --------------------- | ------- | ----------------------------------------------------------------- |
+| `universalIdentifier` | Ano     | Stabilní jedinečné ID pro tuto komponentu                         |
+| `component`           | Ano     | Funkce komponenty React                                           |
+| `name`                | Ne      | Zobrazovaný název                                                 |
+| `description`         | Ne      | Popis toho, co komponenta dělá                                    |
+| `isHeadless`          | Ne      | Nastavte na `true`, pokud komponenta nemá viditelné UI (viz níže) |
+
+## Umístění frontendové komponenty na stránku
+
+Mimo příkazy můžete frontendovou komponentu vložit přímo na stránku záznamu přidáním jako widget v **rozvržení stránky**. Podrobnosti viz [Rozložení stránek](/l/cs/developers/extend/apps/layout/page-layouts).
+
+## Vlastní komponenta nastavení
+
+Chcete-li nahradit automaticky generované uživatelské rozhraní pro konfiguraci proměnných na kartě **Settings** (Nastavení) vaší aplikace vlastní komponentou, definujte ji pomocí `defineSettingsFrontComponent` místo `defineFrontComponent`. Používá stejná [konfigurační pole](#configuration-fields) (kromě `isHeadless`, který není podporován, protože komponenta nastavení vždy vykresluje viditelné uživatelské rozhraní) a zároveň označuje komponentu jako uživatelské rozhraní nastavení aplikace.
+
+Komponenta se vykreslí jako sekce **uvnitř** karty Settings, nikoli jako náhrada celé karty. Systémem spravované sekce Twenty — automatická aktualizace, App URL a připojení — se vždy zobrazují nad ní a aplikace je nemůže přebít.
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+Na jednu aplikaci je povolena pouze jedna frontová komponenta nastavení; deklarace více než jedné způsobí selhání sestavení. Je-li přítomna, karta **Settings** aplikace vykreslí tuto komponentu místo výchozího uživatelského rozhraní pro konfiguraci proměnných.
+
+## Headless vs. ne-headless
+
+Front-endové komponenty existují ve dvou režimech vykreslování řízených volbou `isHeadless`:
+
+**Ne-headless (výchozí)** — Komponenta vykreslí viditelné uživatelské rozhraní. Po vyvolání z menu příkazů se otevře v postranním panelu. Toto je výchozí chování, když je `isHeadless` `false` nebo když tato volba není uvedena.
+
+**Headless (`isHeadless: true`)** — Komponenta se neviditelně inicializuje na pozadí. Neotevírá postranní panel. Headless komponenty jsou určené pro akce, které provedou logiku a poté se odpojí — například spuštění asynchronního úkolu, navigaci na stránku nebo zobrazení potvrzovacího modálního okna. Přirozeně se hodí ke komponentám SDK Command popsaným níže.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const [recordId] = useSelectedRecordIds();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Protože komponenta vrací `null`, Twenty přeskočí vykreslení kontejneru — v rozvržení se neobjeví žádné prázdné místo. Komponenta má však stále přístup ke všem hookům a API komunikace s hostitelem.
+
+## Komponenty SDK Command
+
+Balíček `twenty-sdk` poskytuje čtyři pomocné komponenty Command navržené pro headless front-endové komponenty. Každá komponenta při připojení provede akci, chyby zpracuje zobrazením oznámení ve snackbaru a po dokončení automaticky odpojí front-endovou komponentu.
+
+Importujte je z `twenty-sdk/front-component`:
+
+* **`Command`** — Spustí asynchronní callback přes prop `execute`.
+* **`CommandLink`** — Naviguje na cestu v aplikaci. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Otevře potvrzovací modální okno. Pokud uživatel potvrdí, provede callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Otevře stránku postranního panelu. Props závisí na `page` — např. `ViewRecord` bere `recordId` + `objectNameSingular` (plus volitelné id `tab` pro otevření záznamu na konkrétní záložce), ostatní stránky berou `pageTitle` + `pageIcon`.
+
+Zde je kompletní příklad headless front-endové komponenty, která pomocí `Command` spouští akci z menu příkazů:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+A příklad s použitím `CommandModal` k vyžádání potvrzení před provedením:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/front-component';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+A zde je příklad použití `CommandOpenSidePanelPage` k otevření aktuálního záznamu v postranním panelu na konkrétní záložce. `tab` je ID záložky rozvržení stránky (výchozí rozvržení používají ID jako `company-tab-emails` nebo `company-tab-timeline`; vlastní rozvržení používají vlastní ID záložky). Pokud ID v rozvržení záznamu neexistuje, místo toho se otevře výchozí záložka:
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
+## Volání logické funkce
+
+Front komponenty běží v prohlížeči v sandboxovaném Web Workeru uvnitř iframe s nejasným původem (opaque-origin), zatímco [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions) běží na serveru. Neexistuje mezi nimi žádné přímé volání v rámci jednoho procesu — místo toho se front komponenta k logické funkci připojuje přes HTTP.
+
+Logická funkce deklarovaná pomocí `httpRouteTriggerSettings` je přes HTTP dostupná na své cestě (route path). `RestApiClient` považuje cesty začínající na `/s/` za aplikační trasy, převede je na URL, ze které jsou vaše funkce poskytovány, a autentizuje je pomocí `TWENTY_APP_ACCESS_TOKEN`.
+
+> **V Twenty Cloud jsou logické funkce spouštěné přes HTTP poskytovány na vyhrazené doméně pro každý workspace** na adrese `https://\<your-workspace-subdomain>.withtwenty.com\<path>`. Pro externí volající zkopírujte přesnou URL z nastavení funkce **HTTP trigger** nebo z karty **Settings** aplikace.
+
+Headless front komponenta může volání spustit při mountu přes komponentu `Command` a poté se automaticky odmountovat:
+
+```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/front-component';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+Cesta předaná `RestApiClient` je `httpRouteTriggerSettings.path` logické funkce s předponou `/s`. Ponechte `isAuthRequired: true`; `TWENTY_APP_ACCESS_TOKEN`, který Twenty vygeneruje pro vaši komponentu, požadavek autentizuje:
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_APP_ACCESS_TOKEN` je vložen automaticky — viz [Proměnné aplikace](#application-variables). Protože tajné proměnné aplikace nejsou nikdy vystaveny front komponentám, ponechte API klíče a další citlivou logiku v logické funkci, ne ve front komponentě.
+</Note>
+
+### Volání Twenty REST API
+
+Pro volání aplikačních HTTP tras nebo čtení a zápis záznamů Twenty z front komponenty použijte `RestApiClient` z `twenty-client-sdk/rest`. Odesílá cesty `/s/...` na základní URL funkcí vašeho workspace a všechny ostatní cesty, včetně `/rest/...`, na `TWENTY_API_URL`.
+
+Vždy jedná jako osoba, která si stránku prohlíží. `runAs: 'application'` je pouze volba funkce logiky: komponenta nikdy neobdrží vlastní token vaší aplikace, takže požadavek na něj zde vyvolá chybu. Práci, která vyžaduje vlastní přístup aplikace, vložte do funkce logiky a místo toho volejte ji.
+
+| Metoda                            | Popis                                                                |
+| --------------------------------- | -------------------------------------------------------------------- |
+| `get(path, options?)`             | Odešle požadavek `GET`                                               |
+| `post(path, body?, options?)`     | Odešle požadavek `POST`                                              |
+| `put(path, body?, options?)`      | Odešle požadavek `PUT`                                               |
+| `patch(path, body?, options?)`    | Odešle požadavek `PATCH`                                             |
+| `delete(path, options?)`          | Odešle požadavek `DELETE`                                            |
+| `request(method, path, options?)` | Obecný požadavek s libovolnou metodou HTTP                           |
+| `resolveUrl(path, options?)`      | Převede cestu na její úplnou URL bez odeslání požadavku (pro odkazy) |
+
+`options` přijímá `headers`, `query` (záznam parametrů dotazovacího řetězce; hodnoty typu nullish jsou vynechány) a `AbortSignal` prostřednictvím `signal`. Objekt `body`, který není typu `FormData`, je automaticky serializován do JSON. Při `401` klient jednou obnoví přístupový token prostřednictvím hostitele a požadavek znovu odešle.
+
+Základní URL a token jsou ve výchozím nastavení odvozeny z prostředí. Podle potřeby předávejte konstruktoru přepsané hodnoty — například v testech:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://myworkspace.twenty.com',
+  token: 'my-token',
+});
+```
+
+Neúspěšné požadavky vyvolají `RestApiClientError`, který zpřístupňuje `status`, `statusText`, `url` a parsované `body`:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
+
+## Přístup k běhovému kontextu
+
+Uvnitř komponenty použijte hooky SDK pro přístup k aktuálnímu uživateli, záznamu a instanci komponenty:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useSelectedRecordIds,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const [recordId] = useSelectedRecordIds();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+Dostupné hooky:
+
+| Hook                                          | Vrací                   | Popis                                                                                |
+| --------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------ |
+| `useUserId()`                                 | `string` nebo `null`    | ID aktuálního uživatele                                                              |
+| `useSelectedRecordIds()`                      | `string[]`              | Všechna vybraná ID záznamů (prázdné pole, pokud není nic vybráno)                    |
+| `useRecordId()`                               | `string` nebo `null`    | **Zastaralé.** Použijte místo toho `useSelectedRecordIds()`                          |
+| `useFrontComponentId()`                       | `string`                | ID této instance komponenty                                                          |
+| `useTimelineActivityId()`                     | `string` nebo `null`    | ID aktuální aktivity časové osy při vykreslování vlastního řádku časové osy          |
+| `useColorScheme()`                            | `'light'` nebo `'dark'` | Aktivní barevné schéma uživatelského rozhraní hostitele (`System` je již vyhodnocen) |
+| `useFrontComponentExecutionContext(selector)` | různé                   | Přístup k úplnému kontextu běhu pomocí selektorové funkce                            |
+
+## Aplikační proměnné
+
+Aplikační proměnné definované v [`defineApplication()`](/l/cs/developers/extend/apps/config/application) s `isSecret: false` jsou k dispozici ve front-endových komponentách prostřednictvím pomocné funkce `getApplicationVariable`:
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+Tajné proměnné (`isSecret: true`) **nejsou** zpřístupněny front-endovým komponentám. Jsou k dispozici pouze v [logických funkcích](/l/cs/developers/extend/apps/logic/logic-functions), které běží na straně serveru. Tím se zabrání odesílání citlivých hodnot, jako jsou API klíče, do prohlížeče.
+</Warning>
+
+`getApplicationVariable` vždy vrací **string** (nebo `undefined`), bez ohledu na deklarovaný `type` proměnné. Řetězec je serializován konzistentně podle typu (logické hodnoty jako `"true"` / `"false"`, čísla jako desetinné řetězce, pole / objekty jako JSON), ve stejném formátu, jaký používá `process.env` v logických funkcích — zpracujte jej sami (`Number(...)`, `JSON.parse(...)`, `=== 'true'`). Viz [Typy proměnných](/l/cs/developers/extend/apps/config/application#variable-types).
+
+Následující systémové proměnné jsou vždy dostupné přes `process.env`:
+
+| Proměnná                  | Popis                                                                                                                                                                           |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Základní URL Twenty core API                                                                                                                                                    |
+| `TWENTY_APP_ACCESS_TOKEN` | Krátkodobý token s rozsahem oprávnění omezeným na roli přihlášené osoby v průniku s rolí vaší aplikace, takže komponenta nikdy nemůže dělat víc než osoba, která si ji prohlíží |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty také vkládá `TWENTY_FUNCTIONS_URL` do front komponent a logických funkcí: základní URL, ze které jsou poskytovány vaše logické funkce spouštěné přes HTTP.
+
+Existuje proto, že tato URL není vždy samotný server Twenty. V Twenty Cloud jsou aplikační trasy poskytovány na vyhrazené doméně pro každý workspace (`https://\<your-workspace-subdomain>.withtwenty.com`, nebo hlavní veřejná doména aplikace, pokud je nakonfigurována), aby odpovědi vytvořené aplikací běžely na odděleném původu, a nikoli na původu aplikace Twenty. Self-hostované a lokální instance poskytují aplikační trasy pod předponou `/s` přímo na serveru a proměnnou nemusí vůbec nastavovat. Protože se základní URL liší podle workspace a instance, váš kód ji nemůže napevno zakódovat — server správnou hodnotu vloží za běhu.
+
+Jen zřídka ji potřebujete číst přímo. Volání svých tras provádějte přes `RestApiClient` s cestou s předponou `/s/` a klient za vás URL vyřeší: odstraní předponu `/s` a zacílí na `TWENTY_FUNCTIONS_URL`, přičemž pokud proměnná není nastavena, použije jako zálohu `\<TWENTY_API_URL>/s`. Použijte `resolveUrl('/s/\<path>')` pro získání absolutní URL bez odeslání požadavku, např. pro odkaz. Proměnnou čtěte přímo pouze při ručním sestavování URL:
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
+
+## API komunikace s hostitelem
+
+Frontendové komponenty mohou pomocí funkcí z `twenty-sdk` vyvolávat navigaci, modály a oznámení:
+
+| Funkce                                             | Popis                                                                                                                                                                              |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Přejít na stránku v aplikaci                                                                                                                                                       |
+| `openSidePanelPage(params)`                        | Otevřít postranní panel                                                                                                                                                            |
+| `closeSidePanel()`                                 | Zavřít postranní panel                                                                                                                                                             |
+| `openCommandConfirmationModal(params)`             | Zobrazit potvrzovací dialog                                                                                                                                                        |
+| `enqueueSnackbar(params)`                          | Zobrazit oznámení typu toast                                                                                                                                                       |
+| `unmountFrontComponent()`                          | Odpojit komponentu                                                                                                                                                                 |
+| `updateProgress(progress)`                         | Aktualizovat indikátor průběhu                                                                                                                                                     |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Nahraje `Blob` do pole FILES; vrátí `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` nebo `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
+
+Zde je příklad, který používá hostitelské API k zobrazení snackbaru a zavření postranního panelu po dokončení akce:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const ArchiveRecord = () => {
+  const [recordId] = useSelectedRecordIds();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### Úložiště
+
+`localStorage` a `sessionStorage` fungují stejně jako na běžné stránce, se standardním synchronním API. Vaše klíče jsou omezené na instalaci vaší aplikace a přihlášeného uživatele: žádná jiná aplikace je nemůže číst a jiný uživatel, který se přihlásí ve stejném prohlížeči, začne s prázdným úložištěm. Hodnoty zapsané do `localStorage` zůstávají v zařízení i po opětovném načtení; `sessionStorage` trvá po dobu relace prohlížeče.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty ukládá hodnoty jménem vaší aplikace, takže zápis se provede lokálně okamžitě a na pozadí se uloží. Operace čtení nikdy nečekají na hostitele. Nic se nesynchronizuje: hodnoty uživatele se s ním nepřenášejí do jiného prohlížeče nebo počítače, takže pro cokoli, co musí přežít změnu zařízení, použijte [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store) logické funkce.
+
+Zápisy mají limity a všechny limity počítají znaky místo bajtů: klíče mohou mít nejvýše 512 znaků, jedna hodnota nejvýše 262 144 znaků a každé úložiště nejvýše 1 048 576 znaků na aplikaci a uživatele. Zápis, který překročí některý limit, vyvolá `QuotaExceededError`, podobně jako rozhraní API prohlížeče.
+
+### Práce s více záznamy
+
+Použijte `useSelectedRecordIds()` pro zpracování více vybraných záznamů. To je užitečné pro hromadné operace:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+});
+```
+
+Zobrazte ji pomocí [položky příkazové nabídky](/l/cs/developers/extend/apps/layout/command-menu-items) omezené na výběry záznamů:
+
+```ts src/command-menu-items/bulk-export.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+  label: 'Bulk Export',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+});
+```
+
+## Veřejné soubory
+
+Frontendové komponenty mohou přistupovat k souborům ze složky aplikace `public/` pomocí `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+Podrobnosti viz [sekci veřejných souborů](/l/cs/developers/extend/apps/config/public-assets).
+
+## Sdílení závislostí mezi front komponentami
+
+Ve výchozím nastavení si každá front komponenta přibalí vlastní kopii knihoven, které importuje, takže aplikace s pěti komponentami dodává React pětkrát. Deklarujte sdílené závislosti v `package.json` vaší aplikace, aby se tyto knihovny sestavily jen jednou a každá komponenta aplikace je načítala z jednoho společného souboru v mezipaměti:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Každá komponenta pak importuje své závislosti úplně stejně jako dříve — ve vašem komponentním kódu se nic nemění:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Několik věcí, které je dobré vědět:
+
+* **Jeden sdílený balík závislostí na aplikaci.** Balík je sestaven z vlastních závislostí vaší aplikace, takže máte plnou kontrolu nad verzemi, které dodáváte.
+* **Uveďte přesné specifikátory, které importujete.** `twenty-ui/input` a `twenty-ui/display` jsou dvě položky; samotný název balíčku nepokrývá jeho podcesty. Uvedení `react` automaticky pokrývá `react/jsx-runtime`.
+* **Sdílejte `react-dom/client` spolu s `react`.** Každá komponenta renderuje přes `createRoot`, takže pokud ho vynecháte, každá komponenta si stále přibalí vlastní React DOM.
+* **Balík je cachovaný.** Je poskytován pod URL s hashovaným obsahem s dlouhodobou neměnnou mezipamětí, takže se stáhne jednou a znovu používá ve všech komponentách aplikace, dokud se některá z jeho závislostí nezmění.
+* **Komponenty, které neimportují žádný ze sdílených balíčků, ho nikdy nestáhnou.**
+
+## Stylování
+
+Frontendové komponenty podporují více přístupů ke stylování. Můžete použít:
+
+* **Inline styly** — `style={{ color: 'red' }}`
+* **Komponenty Twenty UI** — vlastní knihovna komponent Twenty; podívejte se níže na [Používání komponent Twenty UI](#using-twenty-ui-components)
+* **Emotion** — CSS-in-JS s `@emotion/react`
+* **Styled-components** — vzory `styled.div`
+* **Tailwind CSS** — utilitní třídy
+* **Jakákoli CSS-in-JS knihovna** kompatibilní s Reactem
+
+## Používání komponent Twenty UI
+
+Twenty dodává svou knihovnu komponent jako balíček [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1). Frontendové komponenty jej mohou používat pro tlačítka, tagy, stavové štítky, čipy, avatary, ikony, typografii a tokeny motivu, které se automaticky přizpůsobují světlému a tmavému motivu pracovního prostoru.
+
+### Instalace
+
+Přidejte balíček do své aplikace, připnutý k verzi, se kterou je dodána vaše instance Twenty:
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` je zabalen do vaší frontendové komponenty při sestavení, takže stačí, aby byl závislostí vaší aplikace — za běhu není třeba nic konfigurovat.
+
+### Import komponent
+
+Importujte z odpovídající podcesty místo z kořene balíčku, aby se do vašeho bundlu dostaly jen komponenty, které používáte:
+
+| Podcesta                    | Co exportuje                                     |
+| --------------------------- | ------------------------------------------------ |
+| `twenty-ui/input`           | `Button` a formulářové vstupy                    |
+| `twenty-ui/data-display`    | `Tag`, `Status`, `Chip`, `Avatar` a další        |
+| `twenty-ui/feedback`        | `Callout`, `Banner`, `Info` a další              |
+| `twenty-ui/typography`      | `H1Title`, `H2Title`, `H3Title`, `Label` a další |
+| `twenty-ui/icon`            | Komponenty `Icon*` (např. `IconCheck`)           |
+| `twenty-ui/theme-constants` | `ThemeProvider`, `themeCssVariables`             |
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```
+
+### Ikony
+
+Importujte jednotlivé ikony z `twenty-ui/icon`:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+Každá pojmenovaná ikona je odstraňována tree-shakingem, takže import několika málo ikon přidá do vašeho bundlu jen minimum navíc. Vyhněte se `IconsProvider`, `useIcons` a `iconsState` — natáhnou celou sadu ikon Tabler (několik MB).
+
+### Témování a tokeny motivu
+
+Komponenty Twenty UI se automaticky přizpůsobí světlému a tmavému motivu pracovního prostoru — renderer použije na hostiteli aktivní barevné schéma a komponenty podle něj odvodí své barvy.
+
+Chcete-li ve svých vlastních inline stylech používat stejné design tokeny, zavolejte hook `useTheme()`. Vrací tokeny motivu Twenty (odsazení, barvy, poloměry, písma) napojené na aktivní motiv, aniž by bylo potřeba v komponentě nastavovat `ThemeProvider`:
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+Protože `useTheme()` je hook, čtete tokeny uvnitř těla komponenty, takže hodnoty vždy odrážejí aktuální motiv. Stejná mapa tokenů je také exportována jako konstanta `themeCssVariables`, ale ve frontendových komponentách preferujte `useTheme()` — modulová konstanta, která dereferencuje `themeCssVariables`, může být během extrakce manifestu aplikace nedefinovaná.
+
+Chcete-li se explicitně větvit podle aktivního schématu, načtěte jej pomocí `useColorScheme()` z `twenty-sdk/front-component`, která vrací `'light'` nebo `'dark'`.
+
+## Aktuální omezení
+
+Komponenty Front jsou aktivně vyvíjeny. Renderování, stylování, obsluha událostí, měření prvků a úložiště prohlížeče fungují dobře. Cokoli, co sahá *mimo* tyto oblasti (volání metody DOM na refu, sledování změn velikosti prvku, vytváření portálu mimo váš strom) dnes chybí nebo je nekompletní a většinou selhává tiše: bez vyvolání výjimky a bez chyby TypeScriptu, protože kostra je typovaná proti plnému DOMu prohlížeče.
+
+Pokud vás něco z toho blokuje, [vytvořte issue](https://github.com/twentyhq/twenty/issues/new/choose), aby to bylo upřednostněno.
+
+### Rozvržení a měření
+
+Prvky se mohou měřit samy: hostitel zrcadlí geometrii do sandboxu, takže čtení jsou obsloužena lokálně, ale mohou být zastaralá až o jeden snímek, a první čtení nikdy dříve neměřeného prvku vrátí nuly. Po zápisu znovu přečtěte v callbacku `requestAnimationFrame` nebo v efektu.
+
+| API                                                                                      | Co se stane                                                                                                             |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funguje, z pohledu zrcadla; přiřazení `scrollTop` / `scrollLeft` nic neudělá (no-op)                                    |
+| `getClientRects()`, `window.matchMedia()`                                                | Vyvolá výjimku                                                                                                          |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funguje, hlásí **viewport prohlížeče**; vlastní velikost vašeho widgetu je `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Vrací pouze inline styly prvku, nikdy hostem vypočtenou kaskádu                                                         |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (ochrany pomocí `typeof` fungují)                                                                      |
+| `MutationObserver`                                                                       | Funguje, včetně `subtree`, `attributeFilter`, starých hodnot a `takeRecords()`                                          |
+
+Pozicování pomocí `getBoundingClientRect` nyní funguje, ale vše, co sleduje změny velikosti přes `ResizeObserver` (recharts `ResponsiveContainer`, `autoUpdate` z Floating UI), stále nefunguje. Stejně dávejte přednost CSS pro rozvržení: váš stylesheet se dostane ke skutečné stránce, takže flexbox, grid, `aspect-ratio`, `clamp()` a `@container` se chovají normálně, bez zpoždění o snímek.
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout` a `queueMicrotask` fungují bez prefixu `window.`. Pouze `window.requestAnimationFrame(...)` a podobné volání vyvolají výjimku.
+</Note>
+
+### Přístup k DOMu
+
+`ref` vám dává sandboxový prvek, ne `HTMLElement`.
+
+| Co napíšete                                                                                                 | Co se stane                                         | Co použít místo toho                                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Vyvolá výjimku                                      | Řízené komponenty; čtěte hodnoty z `event.target`                                                                                                                     |
+| `element.classList.add(...)`                                                                                | Vyvolá výjimku (`classList` je `undefined`)         | Sestavte si řetězec `className` sami                                                                                                                                  |
+| `document.createTreeWalker()`                                                                               | Vyvolá výjimku                                      | `querySelector()` / `querySelectorAll()` a `getElementById()` fungují; `getElementsByClassName()` také funguje, ale vrací statickou kolekci, ne živý `HTMLCollection` |
+| `document.activeElement`                                                                                    | Vždy `undefined`                                    | Sledujte fokus pomocí `onFocus` / `onBlur`                                                                                                                            |
+| `canvas`                                                                                                    | Nerenderuje nic, žádná chyba                        | SVG, nebo kreslit mimo obrazovku a výsledek zobrazit v prvku `img`                                                                                                    |
+| `createPortal(node, document.body)`                                                                         | Nerenderuje nic, zatímco `isConnected` hlásí úspěch | Překryvné prvky inline pomocí `position: absolute`, nebo knihovně předávejte vlastní kontejnerový prvek                                                               |
+
+Kvůli této mezeře v portálu popovery Radix, Headless UI, MUI a react-select ve výchozím stavu nic nevyrenderují. Většina z nich přijímá prop pro kontejner; nasměrujte ho na prvek, který jste vyrenderovali.
+
+### Události
+
+Události myši, ukazatele, dotyku, přetažení, klávesnice, fokusu, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` a `animationend`/`transitionend` se předávají hostiteli, a navíc několik dalších podle typu prvku: `load`/`error` na `img`, schránka a skládání (composition) na `input`/`textarea`, média na `video`/`audio`, `toggle` na `details`/`dialog`. Cokoli dalšího (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, zachycení ukazatele (pointer capture), `onLoad` na `img`) je bez varování zahazováno.
+
+`document.addEventListener()` a `window.addEventListener()` se zaregistrují bez chyby, ale nikdy se nespustí, což je důvod, proč se přetažení zastaví, jakmile ukazatel opustí prvek, na kterém začalo. Ani `event.preventDefault()` se nepřenáší; odeslání formuláře, `dragover`/`drop` a kliknutí na odkazy jsou už za vás ošetřené.
+
+### Atributy a stylování
+
+Každý prvek předává své vlastní vlastnosti do hostitelského DOM (`href` na `a`, `src`/`alt` na `img`, `value`/`placeholder`/`disabled` na `input` atd.), a navíc má každý prvek společnou sadu: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` a jakýkoli atribut `aria-*` / `data-*` (s pomlčkou; `ariaLabel` je proto ignorována). Cokoli mimo tento rozsah je tiše zahazováno, takže vlastní stav vyjádřete jako `data-*`.
+
+Komponentové CSS, ať už z `import './styles.css'`, CSS-in-JS nebo z prvku `style`, je do `head` hostitelské stránky vkládáno **bez ohraničení (unscoped)**. Třídy se tak střetávají s vlastními třídami Twenty (přidávejte jim předpony a nikdy nepište holé `div { ... }` selektory) a `@media` se vztahuje k oknu prohlížeče, nikoli k vašemu widgetu (použijte `@container` s vlastním `container-type`). Inline propy `style` nejsou ovlivněny.
+
+### Úložiště a síť
+
+`localStorage` a `sessionStorage` poskytuje Twenty, nikoli prohlížeč: komponenta běží ve workeru v neprůhledném původu, takže hostitel ukládá hodnoty jménem vaší aplikace. Jejich rozsah a limity najdete v části [úložiště](#storage). IndexedDB, cookies, Cache API a `BroadcastChannel` jsou nadále nedostupné. Pro uchování stavu mezi zařízeními zavolejte [logickou funkci](/l/cs/developers/extend/apps/logic/logic-functions) a použijte její [úložiště klíč–hodnota](/l/cs/developers/extend/apps/logic/key-value-store).
+
+`fetch` funguje, s výhradami:
+
+* Volání na Twenty API a trasy (routes) vaší aplikace jsou proxyována hostitelem, proto upřednostněte [`RestApiClient`](#calling-the-twenty-rest-api). U proxyovaných volání jsou `AbortSignal` a ostatní volby `RequestInit` zahazovány a jsou podporována pouze těla typu `string` a `URLSearchParams`.
+* Jiné původy opouštějí sandbox s `Origin: null`, takže API třetí strany odpoví jen tehdy, pokud posílá `Access-Control-Allow-Origin: *`. Místo toho jej volejte z logické funkce.
+* `fetch('/rest/people')` se nikdy nespáruje s Twenty API, protože sandbox nemá URL stránky, podle které by vyhodnotil relativní cestu.
+
+### Zachytávání médií
+
+`navigator.mediaDevices.getUserMedia()` a `MediaRecorder` fungují uvnitř frontendových komponent díky sandboxovým polyfillům, takže standardní kód pro nahrávání běží beze změn a `MediaRecorder.isTypeSupported` udává, zda jsou podporovány běžné kombinace kontejneru/kodeku. Detailní objekty omezení `getUserMedia` jsou akceptovány, ale nejsou předávány dál — hostitel zachytává s výchozím nastavením pro požadované druhy — a napříč aplikacemi může být v daný čas aktivní pouze jedno zachytávání. Uložte zaznamenaný `Blob` pomocí hostitelské funkce `uploadFile`.
+
+### Další omezení
+
+* **Obsah souborů.** `input` typu `file` poskytuje vašemu handleru pouze metadata souboru, nikoli samotné bajty, takže `FileReader` není k dispozici. Chcete-li nahrát `Blob`, který váš kód již má k dispozici — např. jeden vytvořený pomocí `MediaRecorder` — použijte hostitelskou funkci `uploadFile`.
+* **Payloady drag-and-drop.** Události tažení se spouštějí, ale `event.dataTransfer` je `undefined`.
+* **Vestavěné moduly Node.** `fs`, `path` a `node:crypto` způsobí chybu při sestavení, takže tuto práci přesuňte do [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions). Web Crypto, `fetch`, `TextEncoder` a `URL` jsou k dispozici.
+* **`iframe`** je vždy znovu zasandboxováno bez `allow-same-origin`, takže vložený obsah spoléhající se na vlastní relaci se vykreslí jako odhlášený. Nemá ani `onLoad`.

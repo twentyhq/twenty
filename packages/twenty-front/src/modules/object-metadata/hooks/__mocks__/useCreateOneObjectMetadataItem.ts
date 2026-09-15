@@ -3,6 +3,7 @@ import {
   FindManyCommandMenuItemsDocument,
   FindManyNavigationMenuItemsDocument,
   FindManyViewsDocument,
+  MetadataWritability,
 } from '~/generated-metadata/graphql';
 
 export const query = CreateOneObjectMetadataItemDocument;
@@ -28,6 +29,7 @@ export const variables = {
 
 export const responseData = {
   id: '',
+  universalIdentifier: '',
   nameSingular: 'viewFilter',
   namePlural: 'viewFilters',
   labelSingular: 'View Filter',
@@ -35,9 +37,15 @@ export const responseData = {
   description: '',
   icon: '',
   color: null,
-  isCustom: false,
+  isRemote: false,
   isActive: true,
+  isSystem: false,
+  isUIEditable: true,
+  isUICreatable: true,
+  writability: MetadataWritability.OPEN,
   isSearchable: false,
+  shortcut: null,
+  duplicateCriteria: null,
   createdAt: '',
   updatedAt: '',
   labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',

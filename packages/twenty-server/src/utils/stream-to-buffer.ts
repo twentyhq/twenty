@@ -1,7 +1,13 @@
 import { type Readable } from 'stream';
 
-export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
+import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
+
+export const streamToBuffer = async (
+  stream: Readable,
+  maxSizeBytes?: number,
+): Promise<Buffer> => {
   const chunks: Buffer[] = [];
+  let totalSize = 0;
 
   return new Promise((resolve, reject) => {
     if (stream.readableEnded) {
@@ -27,6 +33,17 @@ export const streamToBuffer = async (stream: Readable): Promise<Buffer> => {
 
     const onData = (chunk: Buffer) => {
       if (!isResolved) {
+        totalSize += chunk.length;
+
+        if (maxSizeBytes !== undefined && totalSize > maxSizeBytes) {
+          isResolved = true;
+          cleanup();
+          stream.destroy();
+          reject(new StreamSizeExceededError(maxSizeBytes));
+
+          return;
+        }
+
         chunks.push(chunk);
       }
     };

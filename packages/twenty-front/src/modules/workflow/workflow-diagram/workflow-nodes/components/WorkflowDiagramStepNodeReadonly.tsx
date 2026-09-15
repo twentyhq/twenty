@@ -20,11 +20,12 @@ import { WorkflowNodeLabelWithCounterPart } from '@/workflow/workflow-diagram/wo
 import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeRightPart';
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
+import { useWorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useWorkflowNodeLabel';
 import { isNodeTitleHighlighted } from '@/workflow/workflow-diagram/workflow-nodes/utils/isNodeTitleHighlighted';
 import { Position } from '@xyflow/react';
 import { useContext } from 'react';
-import { capitalize, isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { isDefined } from 'twenty-shared/utils';
+import { useIcons } from 'twenty-ui/icon';
 
 export const WorkflowDiagramStepNodeReadonly = ({
   id,
@@ -85,14 +86,17 @@ export const WorkflowDiagramStepNodeReadonly = ({
     actionType: data.nodeType === 'action' ? data.actionType : undefined,
   });
 
+  const nodeLabel = useWorkflowNodeLabel(data);
+
   return (
     <>
       <WorkflowNodeContainer
         data-click-outside-id={WORKFLOW_DIAGRAM_STEP_NODE_BASE_CLICK_OUTSIDE_ID}
         onClick={handleClick}
         selected={selected}
+        targetHandleCount={data.targetHandleIds?.length}
       >
-        <WorkflowDiagramHandleTarget />
+        <WorkflowDiagramHandleTarget targetHandleIds={data.targetHandleIds} />
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
         </WorkflowNodeIconContainer>
@@ -100,7 +104,7 @@ export const WorkflowDiagramStepNodeReadonly = ({
         <WorkflowNodeRightPart>
           <WorkflowNodeLabelWithCounterPart>
             <WorkflowNodeLabel selected={selected}>
-              {capitalize(data.nodeType)}
+              {nodeLabel}
             </WorkflowNodeLabel>
           </WorkflowNodeLabelWithCounterPart>
 

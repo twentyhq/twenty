@@ -10,7 +10,7 @@ import { NUMBER_DATA_MODEL_SELECT_OPTIONS } from '@/settings/data-model/fields/f
 import { Select } from '@/ui/input/components/Select';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { IconDecimal, IconEye } from 'twenty-ui/display';
+import { IconDecimal, IconEye } from 'twenty-ui/icon';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 
 export const settingsDataModelFieldNumberFormSchema = z.object({
@@ -49,6 +49,7 @@ export const SettingsDataModelFieldNumberForm = ({
       render={({ field: { onChange, value } }) => {
         const count = value?.decimals ?? 0;
         const type = value?.type ?? 'number';
+        const example = `${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''}`;
 
         return (
           <>
@@ -83,8 +84,8 @@ export const SettingsDataModelFieldNumberForm = ({
                 Icon={IconDecimal}
                 title={t`Number of decimals`}
                 description={plural(count, {
-                  one: `E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimal`,
-                  other: `E.g. ${(type === 'percentage' ? 99 : 1000).toFixed(count)}${type === 'percentage' ? '%' : ''} for ${count} decimals`,
+                  one: `E.g. ${example} for # decimal`,
+                  other: `E.g. ${example} for # decimals`,
                 })}
                 value={count}
                 onChange={(value) => onChange({ type: type, decimals: value })}

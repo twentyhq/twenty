@@ -1,15 +1,20 @@
-import { type CanActivate } from '@nestjs/common';
+import { type CanActivate, Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { Readable } from 'stream';
+import { pipeline } from 'node:stream/promises';
 
-import { FileFolder } from 'twenty-shared/types';
+import { FileFolder, ServerFileFolder } from 'twenty-shared/types';
+
+jest.mock('node:stream/promises', () => ({
+  pipeline: jest.fn(),
+}));
 
 import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import {
   FileException,
   FileExceptionCode,
@@ -17,8 +22,8 @@ import {
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FileByIdGuard } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 import { FileController } from './file.controller';
 
@@ -27,19 +32,30 @@ const createMockStream = (): Readable => {
 
   stream.push('file content');
   stream.push(null);
-  stream.pipe = jest.fn();
 
   return stream;
 };
 
-const createMockResponse = () => ({
+const createMockResponse = ({
+  headersSent = false,
+}: { headersSent?: boolean } = {}) => ({
   setHeader: jest.fn(),
   redirect: jest.fn(),
+  status: jest.fn(),
+  end: jest.fn(),
+  headersSent,
+  destroy: jest.fn(),
 });
+
+const createMockFileRequest = (range?: string) =>
+  ({ workspaceId: 'workspace-id', headers: { range } }) as any;
+
+const mockPipeline = jest.mocked(pipeline);
 
 describe('FileController', () => {
   let controller: FileController;
   let fileService: FileService;
+  let serverFileStorageService: ServerFileStorageService;
   const mock_FileByIdGuard: CanActivate = { canActivate: jest.fn(() => true) };
   const mock_PublicEndpointGuard: CanActivate = {
     canActivate: jest.fn(() => true),
@@ -56,8 +72,14 @@ describe('FileController', () => {
           provide: FileService,
           useValue: {
             getFileStreamById: jest.fn(),
-            getFileStreamByPath: jest.fn(),
-            getFileResponseById: jest.fn(),
+            getFilePresignedUrlOrStreamByPath: jest.fn(),
+            getFilePresignedUrlOrStreamById: jest.fn(),
+          },
+        },
+        {
+          provide: ServerFileStorageService,
+          useValue: {
+            readServerFile: jest.fn(),
           },
         },
       ],
@@ -74,6 +96,12 @@ describe('FileController', () => {
 
     controller = module.get<FileController>(FileController);
     fileService = module.get<FileService>(FileService);
+    serverFileStorageService = module.get<ServerFileStorageService>(
+      ServerFileStorageService,
+    );
+
+    // Default to a resolved pipeline so happy-path tests don't have to wire it up.
+    mockPipeline.mockResolvedValue(undefined);
   });
 
   it('should be defined', () => {
@@ -82,12 +110,14 @@ describe('FileController', () => {
 
   describe('getFileById', () => {
     it('should 302 redirect when presigned URL is available', async () => {
-      jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({
-        type: 'redirect',
-        presignedUrl: 'https://s3.example.com/file?signed=abc',
-      });
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockResolvedValue({
+          type: 'redirect',
+          presignedUrl: 'https://s3.example.com/file?signed=abc',
+        });
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
+      const mockRequest = createMockFileRequest();
       const mockResponse = createMockResponse() as any;
 
       await controller.getFileById(
@@ -97,10 +127,11 @@ describe('FileController', () => {
         'file-123',
       );
 
-      expect(fileService.getFileResponseById).toHaveBeenCalledWith({
+      expect(fileService.getFilePresignedUrlOrStreamById).toHaveBeenCalledWith({
         fileId: 'file-123',
         workspaceId: 'workspace-id',
         fileFolder: FileFolder.Workflow,
+        rangeHeader: undefined,
       });
       expect(mockResponse.redirect).toHaveBeenCalledWith(
         'https://s3.example.com/file?signed=abc',
@@ -111,13 +142,15 @@ describe('FileController', () => {
     it('should stream with headers when no presigned URL (local driver)', async () => {
       const mockStream = createMockStream();
 
-      jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({
-        type: 'stream',
-        stream: mockStream,
-        mimeType: 'image/png',
-      });
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockResolvedValue({
+          type: 'stream',
+          stream: mockStream,
+          mimeType: 'image/png',
+        });
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
+      const mockRequest = createMockFileRequest();
       const mockResponse = createMockResponse() as any;
 
       await controller.getFileById(
@@ -139,19 +172,97 @@ describe('FileController', () => {
         'Content-Disposition',
         'inline',
       );
-      expect(mockStream.pipe).toHaveBeenCalledWith(mockResponse);
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        'private, max-age=86400, immutable',
+      );
+      expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
+    });
+
+    it('should return the requested byte range with partial content headers', async () => {
+      const mockStream = createMockStream();
+
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockResolvedValue({
+          type: 'stream',
+          stream: mockStream,
+          mimeType: 'video/mp4',
+          contentRange: {
+            startByte: 100,
+            endByte: 199,
+            fileSizeInBytes: 1_000,
+          },
+        });
+
+      const mockRequest = createMockFileRequest('bytes=100-199');
+      const mockResponse = createMockResponse() as any;
+
+      await controller.getFileById(
+        mockResponse,
+        mockRequest,
+        FileFolder.FilesField,
+        'file-123',
+      );
+
+      expect(fileService.getFilePresignedUrlOrStreamById).toHaveBeenCalledWith({
+        fileId: 'file-123',
+        workspaceId: 'workspace-id',
+        fileFolder: FileFolder.FilesField,
+        rangeHeader: 'bytes=100-199',
+      });
+      expect(mockResponse.status).toHaveBeenCalledWith(206);
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Content-Range',
+        'bytes 100-199/1000',
+      );
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Content-Length',
+        '100',
+      );
+      expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
+    });
+
+    it('should propagate range errors unchanged for the exception filter to map', async () => {
+      const rangeError = new FileException(
+        'Requested range not satisfiable',
+        FileExceptionCode.RANGE_NOT_SATISFIABLE,
+        { fileSizeInBytes: 1_000 },
+      );
+
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockRejectedValue(rangeError);
+
+      const mockRequest = createMockFileRequest('bytes=1000-');
+      const mockResponse = createMockResponse() as any;
+
+      mockPipeline.mockClear();
+
+      await expect(
+        controller.getFileById(
+          mockResponse,
+          mockRequest,
+          FileFolder.FilesField,
+          'file-123',
+        ),
+      ).rejects.toBe(rangeError);
+
+      expect(mockPipeline).not.toHaveBeenCalled();
     });
 
     it('should force attachment disposition for non-safe MIME types', async () => {
       const mockStream = createMockStream();
 
-      jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({
-        type: 'stream',
-        stream: mockStream,
-        mimeType: 'text/html',
-      });
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockResolvedValue({
+          type: 'stream',
+          stream: mockStream,
+          mimeType: 'text/html',
+        });
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
+      const mockRequest = createMockFileRequest();
       const mockResponse = createMockResponse() as any;
 
       await controller.getFileById(
@@ -171,17 +282,12 @@ describe('FileController', () => {
       );
     });
 
-    it('should throw FileException with FILE_NOT_FOUND when file is not found', async () => {
+    it('should throw FILE_NOT_FOUND when the service yields null', async () => {
       jest
-        .spyOn(fileService, 'getFileResponseById')
-        .mockRejectedValue(
-          new FileStorageException(
-            'File not found',
-            FileStorageExceptionCode.FILE_NOT_FOUND,
-          ),
-        );
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockResolvedValue(null);
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
+      const mockRequest = createMockFileRequest();
       const mockResponse = createMockResponse() as any;
 
       await expect(
@@ -196,38 +302,247 @@ describe('FileController', () => {
       );
     });
 
-    it('should throw FileException with INTERNAL_SERVER_ERROR for unexpected errors', async () => {
-      jest
-        .spyOn(fileService, 'getFileResponseById')
-        .mockRejectedValue(new Error('Storage unavailable'));
+    it('should throw INTERNAL_SERVER_ERROR without leaking the underlying message, and log the original error', async () => {
+      const loggerSpy = jest
+        .spyOn(Logger.prototype, 'error')
+        .mockImplementation(() => undefined);
+      const underlyingError = new Error(
+        'Storage unavailable: postgres://secret-host:5432',
+      );
 
-      const mockRequest = { workspaceId: 'workspace-id' } as any;
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockRejectedValue(underlyingError);
+
+      const mockRequest = createMockFileRequest();
       const mockResponse = createMockResponse() as any;
+
+      const promise = controller.getFileById(
+        mockResponse,
+        mockRequest,
+        FileFolder.Workflow,
+        'file-456',
+      );
+
+      await expect(promise).rejects.toThrow(
+        new FileException(
+          'Error retrieving file',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        ),
+      );
+      await expect(promise).rejects.not.toThrow(/secret-host/);
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'getFilePresignedUrlOrStreamById failed unexpectedly',
+        { error: underlyingError },
+      );
+    });
+
+    it('should throw INTERNAL_SERVER_ERROR when the stream errors before headers are sent', async () => {
+      const mockStream = createMockStream();
+
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockResolvedValue({
+          type: 'stream',
+          stream: mockStream,
+          mimeType: 'image/png',
+        });
+
+      mockPipeline.mockRejectedValue(new Error('source backend exploded'));
+
+      const mockRequest = createMockFileRequest();
+      const mockResponse = createMockResponse({ headersSent: false }) as any;
 
       await expect(
         controller.getFileById(
           mockResponse,
           mockRequest,
-          FileFolder.Workflow,
-          'file-456',
+          FileFolder.CorePicture,
+          'file-123',
         ),
       ).rejects.toThrow(
         new FileException(
-          'Error retrieving file: Storage unavailable',
+          'Error streaming file from storage',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         ),
       );
+
+      expect(mockResponse.destroy).not.toHaveBeenCalled();
+      expect(mockStream.destroyed).toBe(true);
+    });
+
+    it('should destroy the response without throwing when the stream errors after headers are sent', async () => {
+      const mockStream = createMockStream();
+
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamById')
+        .mockResolvedValue({
+          type: 'stream',
+          stream: mockStream,
+          mimeType: 'image/png',
+        });
+
+      mockPipeline.mockRejectedValue(new Error('socket reset mid-flight'));
+
+      const mockRequest = createMockFileRequest();
+      const mockResponse = createMockResponse({ headersSent: true }) as any;
+
+      // No throw expected — once headers are out, the controller cannot honestly
+      // switch to a 500 response, so it tears the socket down instead.
+      await controller.getFileById(
+        mockResponse,
+        mockRequest,
+        FileFolder.CorePicture,
+        'file-123',
+      );
+
+      expect(mockResponse.destroy).toHaveBeenCalledTimes(1);
+      expect(mockStream.destroyed).toBe(true);
+    });
+  });
+
+  describe('getApplicationRegistrationAsset', () => {
+    const createAssetRequest = (path: string[] = ['images', 'logo.png']) =>
+      ({ params: { path } }) as any;
+
+    it('should stream the file with public cache headers', async () => {
+      const mockStream = createMockStream();
+
+      jest.spyOn(serverFileStorageService, 'readServerFile').mockResolvedValue({
+        stream: mockStream,
+        mimeType: 'image/png',
+      });
+
+      const mockResponse = createMockResponse() as any;
+
+      await controller.getApplicationRegistrationAsset(
+        mockResponse,
+        createAssetRequest(),
+        'registration-id',
+      );
+
+      expect(serverFileStorageService.readServerFile).toHaveBeenCalledWith({
+        fileFolder: ServerFileFolder.ApplicationRegistration,
+        applicationRegistrationId: 'registration-id',
+        resourcePath: 'images/logo.png',
+      });
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Content-Type',
+        'image/png',
+      );
+      expect(mockResponse.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        'public, max-age=3600',
+      );
+      expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
+    });
+
+    it('should throw FILE_NOT_FOUND when the file does not exist', async () => {
+      jest
+        .spyOn(serverFileStorageService, 'readServerFile')
+        .mockRejectedValue(
+          new FileStorageException(
+            'Server file not found',
+            FileStorageExceptionCode.FILE_NOT_FOUND,
+          ),
+        );
+
+      const mockResponse = createMockResponse() as any;
+
+      await expect(
+        controller.getApplicationRegistrationAsset(
+          mockResponse,
+          createAssetRequest(['missing.png']),
+          'registration-id',
+        ),
+      ).rejects.toThrow(
+        new FileException('File not found', FileExceptionCode.FILE_NOT_FOUND),
+      );
+
+      expect(mockPipeline).not.toHaveBeenCalled();
+    });
+
+    it('should throw FILE_NOT_FOUND when the path is rejected by validation', async () => {
+      jest
+        .spyOn(serverFileStorageService, 'readServerFile')
+        .mockRejectedValue(
+          new FileStorageException(
+            'Invalid file path',
+            FileStorageExceptionCode.ACCESS_DENIED,
+          ),
+        );
+
+      const mockResponse = createMockResponse() as any;
+
+      await expect(
+        controller.getApplicationRegistrationAsset(
+          mockResponse,
+          createAssetRequest(['..', 'escape.png']),
+          'registration-id',
+        ),
+      ).rejects.toThrow(
+        new FileException('File not found', FileExceptionCode.FILE_NOT_FOUND),
+      );
+
+      expect(mockPipeline).not.toHaveBeenCalled();
+    });
+
+    it('should throw INTERNAL_SERVER_ERROR when the stream errors before headers are sent', async () => {
+      jest.spyOn(serverFileStorageService, 'readServerFile').mockResolvedValue({
+        stream: createMockStream(),
+        mimeType: 'image/png',
+      });
+
+      mockPipeline.mockRejectedValue(new Error('source backend exploded'));
+
+      const mockResponse = createMockResponse({ headersSent: false }) as any;
+
+      await expect(
+        controller.getApplicationRegistrationAsset(
+          mockResponse,
+          createAssetRequest(),
+          'registration-id',
+        ),
+      ).rejects.toThrow(
+        new FileException(
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        ),
+      );
+
+      expect(mockResponse.destroy).not.toHaveBeenCalled();
+    });
+
+    it('should destroy the response without throwing when the stream errors after headers are sent', async () => {
+      jest.spyOn(serverFileStorageService, 'readServerFile').mockResolvedValue({
+        stream: createMockStream(),
+        mimeType: 'image/png',
+      });
+
+      mockPipeline.mockRejectedValue(new Error('socket reset mid-flight'));
+
+      const mockResponse = createMockResponse({ headersSent: true }) as any;
+
+      await controller.getApplicationRegistrationAsset(
+        mockResponse,
+        createAssetRequest(),
+        'registration-id',
+      );
+
+      expect(mockResponse.destroy).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('getPublicAssets', () => {
-    it('should call fileService.getFileStreamByPath and pipe with headers', async () => {
-      const mockStream = createMockStream();
-
-      jest.spyOn(fileService, 'getFileStreamByPath').mockResolvedValue({
-        stream: mockStream,
-        mimeType: 'image/png',
-      });
+    it('should 302 redirect when presigned URL is available', async () => {
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamByPath')
+        .mockResolvedValue({
+          type: 'redirect',
+          presignedUrl:
+            'https://s3.example.com/public-asset/logo.png?signed=abc',
+        });
 
       const mockRequest = {
         params: { path: ['images', 'logo.png'] },
@@ -242,7 +557,47 @@ describe('FileController', () => {
         'app-id',
       );
 
-      expect(fileService.getFileStreamByPath).toHaveBeenCalledWith({
+      expect(
+        fileService.getFilePresignedUrlOrStreamByPath,
+      ).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        applicationId: 'app-id',
+        fileFolder: FileFolder.PublicAsset,
+        filepath: 'images/logo.png',
+      });
+      expect(mockResponse.redirect).toHaveBeenCalledWith(
+        'https://s3.example.com/public-asset/logo.png?signed=abc',
+      );
+      expect(mockResponse.setHeader).not.toHaveBeenCalled();
+    });
+
+    it('should stream with headers when no presigned URL (local driver)', async () => {
+      const mockStream = createMockStream();
+
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamByPath')
+        .mockResolvedValue({
+          type: 'stream',
+          stream: mockStream,
+          mimeType: 'image/png',
+        });
+
+      const mockRequest = {
+        params: { path: ['images', 'logo.png'] },
+      } as any;
+
+      const mockResponse = createMockResponse() as any;
+
+      await controller.getPublicAssets(
+        mockResponse,
+        mockRequest,
+        'workspace-id',
+        'app-id',
+      );
+
+      expect(
+        fileService.getFilePresignedUrlOrStreamByPath,
+      ).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         applicationId: 'app-id',
         fileFolder: FileFolder.PublicAsset,
@@ -260,16 +615,19 @@ describe('FileController', () => {
         'Content-Disposition',
         'inline',
       );
-      expect(mockStream.pipe).toHaveBeenCalledWith(mockResponse);
+      expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
     });
 
     it('should handle single-segment path', async () => {
       const mockStream = createMockStream();
 
-      jest.spyOn(fileService, 'getFileStreamByPath').mockResolvedValue({
-        stream: mockStream,
-        mimeType: 'image/x-icon',
-      });
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamByPath')
+        .mockResolvedValue({
+          type: 'stream',
+          stream: mockStream,
+          mimeType: 'image/x-icon',
+        });
 
       const mockRequest = {
         params: { path: ['favicon.ico'] },
@@ -284,7 +642,9 @@ describe('FileController', () => {
         'app-id',
       );
 
-      expect(fileService.getFileStreamByPath).toHaveBeenCalledWith({
+      expect(
+        fileService.getFilePresignedUrlOrStreamByPath,
+      ).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         applicationId: 'app-id',
         fileFolder: FileFolder.PublicAsset,
@@ -292,15 +652,10 @@ describe('FileController', () => {
       });
     });
 
-    it('should throw FileException with FILE_NOT_FOUND when asset is not found', async () => {
+    it('should throw FILE_NOT_FOUND when the service yields null', async () => {
       jest
-        .spyOn(fileService, 'getFileStreamByPath')
-        .mockRejectedValue(
-          new FileStorageException(
-            'File not found',
-            FileStorageExceptionCode.FILE_NOT_FOUND,
-          ),
-        );
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamByPath')
+        .mockResolvedValue(null);
 
       const mockRequest = {
         params: { path: ['missing-asset.png'] },
@@ -320,16 +675,63 @@ describe('FileController', () => {
       );
     });
 
-    it('should throw FileException with INTERNAL_SERVER_ERROR for unexpected errors', async () => {
+    it('should throw INTERNAL_SERVER_ERROR without leaking the underlying message, and log the original error', async () => {
+      const loggerSpy = jest
+        .spyOn(Logger.prototype, 'error')
+        .mockImplementation(() => undefined);
+      const underlyingError = new Error(
+        'Connection refused: postgres://secret-host:5432',
+      );
+
       jest
-        .spyOn(fileService, 'getFileStreamByPath')
-        .mockRejectedValue(new Error('Connection refused'));
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamByPath')
+        .mockRejectedValue(underlyingError);
 
       const mockRequest = {
         params: { path: ['broken-asset.png'] },
       } as any;
 
       const mockResponse = createMockResponse() as any;
+
+      const promise = controller.getPublicAssets(
+        mockResponse,
+        mockRequest,
+        'workspace-id',
+        'app-id',
+      );
+
+      await expect(promise).rejects.toThrow(
+        new FileException(
+          'Error retrieving file',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        ),
+      );
+      await expect(promise).rejects.not.toThrow(/secret-host/);
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'getFilePresignedUrlOrStreamByPath failed unexpectedly',
+        { error: underlyingError },
+      );
+    });
+
+    it('should throw INTERNAL_SERVER_ERROR when the stream errors before headers are sent', async () => {
+      const mockStream = createMockStream();
+
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamByPath')
+        .mockResolvedValue({
+          type: 'stream',
+          stream: mockStream,
+          mimeType: 'image/png',
+        });
+
+      mockPipeline.mockRejectedValue(new Error('source backend exploded'));
+
+      const mockRequest = {
+        params: { path: ['mid-stream-error.png'] },
+      } as any;
+
+      const mockResponse = createMockResponse({ headersSent: false }) as any;
 
       await expect(
         controller.getPublicAssets(
@@ -340,10 +742,41 @@ describe('FileController', () => {
         ),
       ).rejects.toThrow(
         new FileException(
-          'Error retrieving file: Connection refused',
+          'Error streaming file from storage',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         ),
       );
+
+      expect(mockResponse.destroy).not.toHaveBeenCalled();
+    });
+
+    it('should destroy the response without throwing when the stream errors after headers are sent', async () => {
+      const mockStream = createMockStream();
+
+      jest
+        .spyOn(fileService, 'getFilePresignedUrlOrStreamByPath')
+        .mockResolvedValue({
+          type: 'stream',
+          stream: mockStream,
+          mimeType: 'image/png',
+        });
+
+      mockPipeline.mockRejectedValue(new Error('socket reset mid-flight'));
+
+      const mockRequest = {
+        params: { path: ['mid-stream-after-headers.png'] },
+      } as any;
+
+      const mockResponse = createMockResponse({ headersSent: true }) as any;
+
+      await controller.getPublicAssets(
+        mockResponse,
+        mockRequest,
+        'workspace-id',
+        'app-id',
+      );
+
+      expect(mockResponse.destroy).toHaveBeenCalledTimes(1);
     });
   });
 });

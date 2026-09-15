@@ -1,0 +1,264 @@
+---
+title: テスト
+description: Vitest のセットアップ、実際の Twenty サーバーに対する統合テスト、型チェック、および GitHub Actions を使った CI。
+icon: flask
+---
+
+SDK は、テストコードからアプリのビルド、デプロイ、インストール、アンインストールを可能にするプログラム用 API を提供します。 [Vitest](https://vitest.dev/) と型付き API クライアントを組み合わせることで、実際の Twenty サーバーに対してエンドツーエンドで動作を検証する統合テストを作成できます。
+
+## npm パッケージの使用
+
+アプリで任意の npm パッケージをインストールして使用できます。 ロジック関数とフロントコンポーネントはどちらも [esbuild](https://esbuild.github.io/) でバンドルされ、依存関係は出力にインライン化されます—実行時に `node_modules` は不要です。
+
+### パッケージのインストール
+
+```bash filename="Terminal"
+yarn add axios
+```
+
+次に、コードでインポートします：
+
+```ts src/logic-functions/fetch-data.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import axios from 'axios';
+
+const handler = async (): Promise<any> => {
+  const { data } = await axios.get('https://api.example.com/data');
+
+  return { data };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-data',
+  description: 'Fetches data from an external API',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+フロントコンポーネントでも同様に機能します：
+
+```tsx src/front-components/chart.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { format } from 'date-fns';
+
+const DateWidget = () => {
+  return <p>Today is {format(new Date(), 'MMMM do, yyyy')}</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'date-widget',
+  component: DateWidget,
+});
+```
+
+### バンドルの仕組み
+
+ビルドステップでは esbuild を使用して、各ロジック関数および各フロントコンポーネントごとに自己完結した単一ファイルを生成します。 インポートされたパッケージは、以下に一覧表示されているものを除き、バンドル内にインライン化されます。
+
+**ロジック関数**は Node.js 環境で実行されます。 Node の組み込みモジュール（`fs`、`path`、`crypto`、`http` など） は利用可能で、インストールは不要です。
+
+**フロントコンポーネント**は Web Worker で実行されます。 Node の組み込みモジュールは利用できません—ブラウザー環境で動作する npm パッケージのみが使用できます。 サンドボックスは *一部のみ* の DOM を実装しているため、パッケージはクリーンにビルドできても実行時に失敗する可能性があります。詳しくは [Current limitations](/l/ja/developers/extend/apps/layout/front-components#current-limitations) を参照してください。
+
+どちらの環境でも、`twenty-client-sdk/core` および `twenty-client-sdk/metadata` が事前提供モジュールとして利用可能です—これらはバンドルされず、実行時にサーバーによって解決されます。
+
+フロントコンポーネントは、[共有依存関係バンドル](/l/ja/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components) を通じて依存関係を共有することもできます。 アプリの package.json の `frontComponentSharedDependencies` フィールドに記載されたパッケージは、1 回だけビルドされて別ファイルにまとめられ、各コンポーネントにインライン化される代わりに実行時にそのファイルから読み込まれます。そのため、共有パッケージのみをインポートするコンポーネントは、それ自身の依存コードをほとんど持ちません。
+
+## セットアップ
+
+スキャフォルドされたアプリにはすでに Vitest が含まれています。 手動で設定する場合は、依存関係をインストールしてください：
+
+```bash filename="Terminal"
+yarn add -D vitest vite-tsconfig-paths
+```
+
+アプリのルートに `vitest.config.ts` を作成します：
+
+```ts vitest.config.ts
+import tsconfigPaths from 'vite-tsconfig-paths';
+import { defineConfig } from 'vitest/config';
+
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
+export default defineConfig({
+  plugins: [
+    tsconfigPaths({
+      projects: ['tsconfig.spec.json'],
+      ignoreConfigErrors: true,
+    }),
+  ],
+  test: {
+    testTimeout: 120_000,
+    hookTimeout: 120_000,
+    fileParallelism: false,
+    include: ['src/**/*.integration-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
+    env: {
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
+    },
+  },
+});
+```
+
+サーバーに到達可能であることを検証し、SDK 用のテスト設定（`~/.twenty/config.test.json`）を書き込み、テストの実行前にアプリを同期するグローバルセットアップファイルを作成します。
+
+```ts src/__tests__/global-setup.ts
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
+
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
+  // Verify the server is running
+  const response = await fetch(`${apiUrl}/healthz`);
+  if (!response.ok) {
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
+  }
+
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
+  fs.writeFileSync(
+    path.join(CONFIG_DIR, 'config.test.json'),
+    JSON.stringify({
+      remotes: { local: { apiUrl, apiKey } },
+      defaultRemote: 'local',
+    }, null, 2),
+  );
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
+```
+
+## プログラム用 SDK API
+
+`twenty-sdk/cli` サブパスは、テストコードから直接呼び出せる関数をエクスポートします：
+
+| 関数             | 説明                                           |
+| -------------- | -------------------------------------------- |
+| `appBuild`     | アプリをビルドし、必要に応じて tarball にパッケージ化              |
+| `appDeploy`    | tarball をサーバーにアップロード                         |
+| `appDevOnce`   | アプリを 1 回ビルドして同期します（`yarn twenty apply` と同じ）。 |
+| `appInstall`   | アクティブなワークスペースにアプリをインストール                     |
+| `appUninstall` | アクティブなワークスペースからアプリをアンインストール                  |
+
+各関数は、`success: boolean` と `data` または `error` のいずれかを含む結果オブジェクトを返します。
+
+## 統合テストの作成
+
+アプリをビルド、デプロイ、インストールし、その後ワークスペースに表示されることを検証する完全な例を次に示します：
+
+```ts src/__tests__/app-install.integration-test.ts
+import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application-config';
+import { appBuild, appDeploy, appInstall, appUninstall } from 'twenty-sdk/cli';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+
+const APP_PATH = process.cwd();
+
+describe('App installation', () => {
+  beforeAll(async () => {
+    const buildResult = await appBuild({
+      appPath: APP_PATH,
+      tarball: true,
+      onProgress: (message: string) => console.log(`[build] ${message}`),
+    });
+
+    if (!buildResult.success) {
+      throw new Error(`Build failed: ${buildResult.error?.message}`);
+    }
+
+    const deployResult = await appDeploy({
+      tarballPath: buildResult.data.tarballPath!,
+      onProgress: (message: string) => console.log(`[deploy] ${message}`),
+    });
+
+    if (!deployResult.success) {
+      throw new Error(`Deploy failed: ${deployResult.error?.message}`);
+    }
+
+    const installResult = await appInstall({ appPath: APP_PATH });
+
+    if (!installResult.success) {
+      throw new Error(`Install failed: ${installResult.error?.message}`);
+    }
+  });
+
+  afterAll(async () => {
+    await appUninstall({ appPath: APP_PATH });
+  });
+
+  it('should find the installed app in the workspace', async () => {
+    const metadataClient = new MetadataApiClient();
+
+    const result = await metadataClient.query({
+      findManyApplications: {
+        id: true,
+        name: true,
+        universalIdentifier: true,
+      },
+    });
+
+    const installedApp = result.findManyApplications.find(
+      (app: { universalIdentifier: string }) =>
+        app.universalIdentifier === APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+
+    expect(installedApp).toBeDefined();
+  });
+});
+```
+
+## テストの実行
+
+ローカルの Twenty サーバーが起動していることを確認し、次を実行します：
+
+```bash filename="Terminal"
+yarn test
+```
+
+また、開発中はウォッチモードでも実行できます：
+
+```bash filename="Terminal"
+yarn test:watch
+```
+
+## 型チェック
+
+テストを実行せずに、アプリの型チェックのみを実行することもできます：
+
+```bash filename="Terminal"
+yarn twenty dev:typecheck
+```
+
+これは、あなたのアプリの `tsconfig.json` に対して `tsc --noEmit` を実行し、型エラーを報告します。 スキャフォルドされたアプリには、テストファイル（`tsconfig.spec.json`）も対象とする `yarn typecheck` スクリプトも同梱されています。
+
+## GitHub Actions による CI
+
+スキャフォルダーは、すぐに使えるワークフローを `.github/workflows/ci.yml` に生成します。 `main` へのすべてのプッシュおよびすべてのプルリクエスト時に、ランナー内で一時的な Twenty サーバーを起動（`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test` アクション経由）し、そのサーバーを指すように `TWENTY_API_URL` / `TWENTY_API_KEY` を設定した上で、`yarn lint`、`yarn typecheck`、`yarn test:unit`、`yarn test` を実行します。 シークレットは一切不要で、ワークフローの先頭にある `TWENTY_VERSION` 環境変数を通じてサーバーバージョンを固定できます。
+
+スキャフォルドされた 3 つのワークフロー（`ci.yml`、`cd.yml` デプロイパイプライン、npm パブリッシング用の `publish.yml`）の詳細な手順については、[Publishing → Automated CI/CD](/l/ja/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) を参照してください。

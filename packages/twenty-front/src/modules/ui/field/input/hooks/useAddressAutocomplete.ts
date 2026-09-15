@@ -2,72 +2,32 @@ import { useCallback, useState } from 'react';
 
 import { SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID } from '@/geo-map/constants/SelectAutocompleteListDropDownId';
 import { useGetPlaceApiData } from '@/geo-map/hooks/useGetPlaceApiData';
-import { type PlaceAutocompleteResult } from '@/geo-map/types/placeApi';
+import { usePlaceAutocomplete } from '@/geo-map/hooks/usePlaceAutocomplete';
 import { type FieldAddressDraftValue } from '@/object-record/record-field/ui/types/FieldInputDraftValue';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDefined } from 'twenty-shared/utils';
-import { useDebouncedCallback } from 'use-debounce';
 
 import { useCountryUtils } from './useCountryUtils';
 
 export const useAddressAutocomplete = (
   onChange?: (updatedValue: FieldAddressDraftValue) => void,
 ) => {
-  const [placeAutocompleteData, setPlaceAutocompleteData] = useState<
-    PlaceAutocompleteResult[] | null
-  >([]);
-  const [tokenForPlaceApi, setTokenForPlaceApi] = useState<string | null>(null);
   const [typeOfAddressForAutocomplete, setTypeOfAddressForAutocomplete] =
     useState<string | null>(null);
 
-  const { getPlaceAutocompleteData, getPlaceDetailsData } =
-    useGetPlaceApiData();
-  const { openDropdown } = useOpenDropdown();
-  const { closeDropdown: closeDropdownHook } = useCloseDropdown();
+  const { getPlaceDetailsData } = useGetPlaceApiData();
   const { findCountryNameByCountryCode } = useCountryUtils();
 
-  const openDropdownOfAutocomplete = useCallback(() => {
-    openDropdown({
-      dropdownComponentInstanceIdFromProps:
-        SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID,
-    });
-  }, [openDropdown]);
+  const {
+    placeAutocompleteData,
+    tokenForPlaceApi,
+    getAutocompletePlaceData,
+    closePlaceAutocomplete,
+    resetPlaceAutocomplete,
+  } = usePlaceAutocomplete(SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID);
 
   const closeDropdownOfAutocomplete = useCallback(() => {
-    closeDropdownHook(SELECT_AUTOCOMPLETE_LIST_DROPDOWN_ID);
-    setPlaceAutocompleteData(null);
+    closePlaceAutocomplete();
     setTypeOfAddressForAutocomplete(null);
-  }, [closeDropdownHook]);
-
-  const getAutocompletePlaceData = useDebouncedCallback(
-    async (
-      address: string,
-      token: string,
-      country?: string,
-      isFieldCity?: boolean,
-    ) => {
-      const placeAutocompleteData = await getPlaceAutocompleteData(
-        address,
-        token,
-        country,
-        isFieldCity,
-      );
-
-      const newData = placeAutocompleteData?.map((data) => ({
-        text: data.text,
-        placeId: data.placeId,
-      }));
-
-      if (isDefined(newData) && newData?.length > 0) {
-        openDropdownOfAutocomplete();
-        setPlaceAutocompleteData(newData);
-      } else {
-        closeDropdownOfAutocomplete();
-      }
-    },
-    300,
-  );
+  }, [closePlaceAutocomplete]);
 
   const autoFillInputsFromPlaceDetails = useCallback(
     async (
@@ -96,8 +56,8 @@ export const useAddressAutocomplete = (
           placeData?.location?.lng ?? internalValue?.addressLng ?? null,
       };
 
-      setTokenForPlaceApi(null);
-      closeDropdownOfAutocomplete();
+      resetPlaceAutocomplete();
+      setTypeOfAddressForAutocomplete(null);
       onChange?.(updatedAddress);
 
       return updatedAddress;
@@ -105,7 +65,7 @@ export const useAddressAutocomplete = (
     [
       getPlaceDetailsData,
       findCountryNameByCountryCode,
-      closeDropdownOfAutocomplete,
+      resetPlaceAutocomplete,
       onChange,
     ],
   );
@@ -114,7 +74,6 @@ export const useAddressAutocomplete = (
     placeAutocompleteData,
     tokenForPlaceApi,
     typeOfAddressForAutocomplete,
-    setTokenForPlaceApi,
     setTypeOfAddressForAutocomplete,
     getAutocompletePlaceData,
     autoFillInputsFromPlaceDetails,

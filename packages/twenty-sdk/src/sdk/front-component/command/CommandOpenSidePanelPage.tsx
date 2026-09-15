@@ -1,27 +1,18 @@
 import {
+  type AppPath,
   openSidePanelPage,
+  type OpenSidePanelPageParams,
   unmountFrontComponent,
   useFrontComponentId,
 } from '@/sdk/front-component';
 import { useEffect, useState } from 'react';
 
-import { type SidePanelPages } from 'twenty-shared/types';
+export type CommandOpenSidePanelPageProps<T extends AppPath = AppPath> =
+  OpenSidePanelPageParams<T>;
 
-export type CommandOpenSidePanelPageProps = {
-  page: SidePanelPages;
-  pageTitle: string;
-  pageIcon: string;
-  onClick?: () => void;
-  shouldResetSearchState?: boolean;
-};
-
-export const CommandOpenSidePanelPage = ({
-  page,
-  pageTitle,
-  pageIcon,
-  onClick,
-  shouldResetSearchState = false,
-}: CommandOpenSidePanelPageProps) => {
+export const CommandOpenSidePanelPage = <T extends AppPath>(
+  props: CommandOpenSidePanelPageProps<T>,
+) => {
   const [hasExecuted, setHasExecuted] = useState(false);
 
   const frontComponentId = useFrontComponentId();
@@ -34,28 +25,13 @@ export const CommandOpenSidePanelPage = ({
     setHasExecuted(true);
 
     const run = async () => {
-      onClick?.();
-
-      await openSidePanelPage({
-        page,
-        pageTitle,
-        pageIcon,
-        shouldResetSearchState,
-      });
+      await openSidePanelPage(props);
 
       await unmountFrontComponent();
     };
 
     run();
-  }, [
-    page,
-    pageTitle,
-    pageIcon,
-    shouldResetSearchState,
-    onClick,
-    hasExecuted,
-    frontComponentId,
-  ]);
+  }, [props, hasExecuted, frontComponentId]);
 
   return null;
 };

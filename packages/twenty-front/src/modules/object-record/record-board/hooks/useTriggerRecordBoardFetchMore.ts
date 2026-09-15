@@ -116,15 +116,15 @@ export const useTriggerRecordBoardFetchMore = () => {
             ...recordGroupOptionsFilter,
           },
         },
-      });
-
-    store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
+      }).catch(() => null);
 
     if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
       cleanStateBeforeExit();
 
       return;
     }
+
+    store.set(recordBoardCurrentGroupByQueryOffsetCallbackState, newOffset);
 
     const queryFieldName =
       getGroupByQueryResultGqlFieldName(objectMetadataItem);

@@ -2,7 +2,7 @@
 # Dependency stages
 # ===========================================================================
 
-FROM node:24-alpine AS front-deps
+FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS front-deps
 
 WORKDIR /app
 
@@ -20,7 +20,7 @@ COPY ./packages/twenty-client-sdk/package.json /app/packages/twenty-client-sdk/
 RUN yarn workspaces focus twenty twenty-front twenty-front-component-renderer twenty-ui twenty-shared twenty-sdk twenty-client-sdk && yarn cache clean && npx nx reset
 
 
-FROM node:24-alpine AS server-deps
+FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS server-deps
 
 WORKDIR /app
 
@@ -84,9 +84,19 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 #   docker build --target twenty-server -f packages/twenty-docker/twenty/Dockerfile .
 # ===========================================================================
 
-FROM node:24-alpine AS twenty-server
+FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS twenty-server
 
-RUN apk add --no-cache curl jq postgresql-client
+# Force the patched Alpine OpenSSL libs to the fixed release (3.5.8-r0 clears
+# CVE-2026-14456/14457/18798/54874/63072/63075/63076). Node bundles its own
+# OpenSSL, but psql/curl link these system libs, so the upgrade hardens
+# runtime TLS and clears the scanner.
+RUN apk add --no-cache \
+    'curl>=8.22.0-r0' \
+    'nghttp2-libs>=1.69.0-r0' \
+    'libcrypto3>=3.5.8-r0' \
+    'libssl3>=3.5.8-r0' \
+    'postgresql18-client>=18.5-r0' \
+    'jq>=1.8.2-r0'
 
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
@@ -94,6 +104,7 @@ WORKDIR /app/packages/twenty-server
 
 ARG APP_VERSION
 ENV APP_VERSION=$APP_VERSION
+ENV NODE_ENV=production
 
 # Workspace root config
 COPY --chown=1000 --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/
@@ -105,6 +116,11 @@ COPY --chown=1000 --from=twenty-server-build /app/node_modules /app/node_modules
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/package.json /app/packages/twenty-server/
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/dist /app/packages/twenty-server/dist
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/patches /app/packages/twenty-server/patches
+# Shell entrypoints referenced by package.json scripts (command:prod:background*)
+COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-server/scripts /app/packages/twenty-server/scripts
+# COPY preserves the committed mode, but the scripts are also invoked directly
+# and not only through yarn, so do not let a dropped exec bit reach the pod
+RUN chmod +x /app/packages/twenty-server/scripts/command-background.sh
 
 # Workspace packages (dist + package.json; node_modules symlinks resolve to these)
 COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-shared/package.json /app/packages/twenty-shared/
@@ -116,6 +132,27 @@ COPY --chown=1000 --from=twenty-server-build /app/packages/twenty-client-sdk/dis
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="Twenty server image (no frontend)."
+
+# Remove unused, unpatchable components the scanner flags (none are executed at
+# runtime, and none can be fixed by upgrading our deps or Node):
+#  - the bundled npm CLI: the app uses yarn via corepack and never invokes npm,
+#    and npm's bundled ip-address has no patched release;
+#  - example/ apps vendored inside dependencies, e.g. passport-microsoft's
+#    example/login ships a package-lock.json for an old Express demo
+#    (body-parser, ejs, express, ...) that is never installed or run.
+#  - the Node dev headers: only node-gyp needs them and native addons are
+#    compiled in the build stages; their vendored openssl/opensslv.h is what
+#    scanners fingerprint whenever OpenSSL patches ahead of Node releases.
+# The pinned node:24.19.0-alpine base carries the July 2026 security fixes
+# (CVE-2026-56846/56848/58043, all fixed in 24.18.1) plus the 24.18.0 fix for
+# the http.Agent keep-alive regression (nodejs/node#64004) that flooded prod
+# with false "Premature close" fetch failures on 24.17.0 (see #22671/#22673).
+# Do not pin below 24.18.0 again.
+# Keep the base current when Node ships 24.x security releases — the scanner
+# flags the statically-linked node binary itself.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx \
+      /usr/local/include/node && \
+    find /app/node_modules -type d -name example -prune -exec rm -rf {} +
 
 RUN mkdir -p /app/.local-storage /app/packages/twenty-server/.local-storage && \
     chown 1000:1000 /app/.local-storage /app/packages/twenty-server/.local-storage
@@ -187,7 +224,7 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
-FROM node:24-alpine AS twenty-app-dev
+FROM node:24.19.0-alpine3.23@sha256:244cc2b53f46f9e876304391d17682b0ddae9ac33491f4857e25e35a36ba7995 AS twenty-app-dev
 
 # s6-overlay
 COPY --from=s6-fetch /tmp/s6-overlay-noarch.tar.xz /tmp/
@@ -196,10 +233,14 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
  && tar -C / -Jxpf /tmp/s6-overlay-arch.tar.xz \
  && rm /tmp/s6-overlay-*.tar.xz
 
+# See twenty-server above: patched Alpine OpenSSL libs (psql/curl/redis link
+# these system libs; Node bundles its own).
 RUN apk add --no-cache \
-    postgresql16 postgresql16-contrib \
+    postgresql18 postgresql18-contrib \
     redis \
-    curl jq su-exec
+    'libcrypto3>=3.5.8-r0' \
+    'libssl3>=3.5.8-r0' \
+    'curl>=8.22.0-r0' 'jq>=1.8.2-r0' su-exec
 
 # Workspace root config
 COPY --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/
@@ -223,8 +264,10 @@ COPY --from=twenty-server-build /app/packages/twenty-client-sdk/dist /app/packag
 # Frontend static build
 COPY --from=twenty-front-build /app/packages/twenty-front/build /app/packages/twenty-server/dist/front
 
-# Source maps are not needed in the dev image (no Sentry)
-RUN find /app/packages/twenty-server/dist -name '*.js.map' -delete
+# Source maps are not needed in the dev image (no Sentry). Node dev headers are
+# dropped for the same scanner-hygiene reasons as in twenty-server above.
+RUN find /app/packages/twenty-server/dist -name '*.js.map' -delete \
+ && rm -rf /usr/local/include/node
 
 # s6 service definitions
 COPY packages/twenty-docker/twenty-app-dev/rootfs/ /

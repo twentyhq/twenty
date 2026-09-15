@@ -1,15 +1,24 @@
 import { type ApiService } from '@/cli/utilities/api/api-service';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import {
   type OrchestratorState,
   type OrchestratorStateBuiltFileInfo,
   type OrchestratorStateStepEvent,
   type OrchestratorStateSyncStatus,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
+import {
+  countDestructiveActions,
+  hasDestructiveActions,
+  NO_DELETE_HINT,
+  shouldShowNoDeleteHint,
+} from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
+import { formatSyncActionsSummary } from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-summary';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
-import { serializeError } from '@/cli/utilities/error/serialize-error';
+import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
 import { type Manifest } from 'twenty-shared/application';
+import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
 
 export type SyncApplicationOrchestratorStepOutput = {
   syncStatus: OrchestratorStateSyncStatus;
@@ -21,22 +30,39 @@ export class SyncApplicationOrchestratorStep {
   private state: OrchestratorState;
   private notify: () => void;
   private verbose: boolean;
+  private force: boolean;
+  private inferDeletionFromMissingEntities: boolean;
+  private interactive: boolean;
+  private onExit?: (params: { code: number; message: string }) => void;
 
   constructor({
     apiService,
     state,
     notify,
     verbose,
+    force,
+    inferDeletionFromMissingEntities,
+    interactive,
+    onExit,
   }: {
     apiService: ApiService;
     state: OrchestratorState;
     notify: () => void;
     verbose?: boolean;
+    force?: boolean;
+    inferDeletionFromMissingEntities?: boolean;
+    interactive?: boolean;
+    onExit?: (params: { code: number; message: string }) => void;
   }) {
     this.apiService = apiService;
     this.state = state;
     this.notify = notify;
     this.verbose = verbose ?? false;
+    this.force = force ?? false;
+    this.inferDeletionFromMissingEntities =
+      inferDeletionFromMissingEntities ?? true;
+    this.interactive = interactive ?? false;
+    this.onExit = onExit;
   }
 
   async execute(input: {
@@ -51,10 +77,13 @@ export class SyncApplicationOrchestratorStep {
 
     const events: OrchestratorStateStepEvent[] = [];
 
-    const manifest = manifestUpdateChecksums({
-      manifest: input.manifest,
-      builtFileInfos: input.builtFileInfos,
-    });
+    const manifest = {
+      ...manifestUpdateChecksums({
+        manifest: input.manifest,
+        builtFileInfos: input.builtFileInfos,
+      }),
+      translations: await compileApplicationTranslations(input.appPath),
+    };
 
     events.push({ message: 'Manifest checksums set', status: 'info' });
 
@@ -64,11 +93,51 @@ export class SyncApplicationOrchestratorStep {
       message: 'Manifest saved to output directory',
       status: 'info',
     });
+
+    if (!this.force) {
+      events.push({ message: 'Computing metadata plan', status: 'info' });
+
+      const planResult = await this.apiService.syncApplication(manifest, {
+        dryRun: true,
+        inferDeletionFromMissingEntities: this.inferDeletionFromMissingEntities,
+      });
+
+      if (!planResult.success) {
+        this.applyFailure(planResult, events);
+
+        return;
+      }
+
+      if (
+        shouldShowNoDeleteHint({
+          actions: planResult.data.actions,
+          inferDeletionFromMissingEntities:
+            this.inferDeletionFromMissingEntities,
+        })
+      ) {
+        events.push({ message: NO_DELETE_HINT, status: 'info' });
+      }
+
+      if (hasDestructiveActions(planResult.data.actions)) {
+        const stopped = await this.gateDestructiveChange(
+          countDestructiveActions(planResult.data.actions),
+          events,
+        );
+
+        if (stopped) {
+          return;
+        }
+      }
+    }
+
     events.push({ message: 'Syncing manifest', status: 'info' });
 
-    const syncResult = await this.apiService.syncApplication(manifest);
+    const syncResult = await this.apiService.syncApplication(manifest, {
+      inferDeletionFromMissingEntities: this.inferDeletionFromMissingEntities,
+    });
 
     if (syncResult.success) {
+      events.push(...formatSyncActionsSummary(syncResult.data.actions));
       events.push({ message: '✓ Synced', status: 'success' });
       step.output = { syncStatus: 'synced', error: null };
       step.status = 'done';
@@ -79,9 +148,60 @@ export class SyncApplicationOrchestratorStep {
       return;
     }
 
+    this.applyFailure(syncResult, events);
+  }
+
+  private async gateDestructiveChange(
+    deleteCount: number,
+    events: OrchestratorStateStepEvent[],
+  ): Promise<boolean> {
+    const step = this.state.steps.syncApplication;
+
+    const stop = (eventMessage: string, exitMessage: string): void => {
+      events.push({ message: eventMessage, status: 'warning' });
+      step.output = { syncStatus: 'idle', error: null };
+      step.status = 'done';
+      this.state.updatePipeline({ status: 'idle', error: null });
+      this.state.applyStepEvents(events);
+      this.onExit?.({ code: 1, message: exitMessage });
+    };
+
+    if (!this.interactive) {
+      stop(
+        `${deleteCount} destructive change(s) require --force`,
+        `Stopping: ${deleteCount} destructive change(s) need confirmation. Re-run with \`yarn twenty dev --force\` to apply deletions.`,
+      );
+
+      return true;
+    }
+
+    this.state.applyStepEvents(events);
+    events.length = 0;
+
+    const approved =
+      await this.state.requestDestructiveConfirmation(deleteCount);
+
+    if (!approved) {
+      stop(
+        `Declined ${deleteCount} destructive change(s)`,
+        `Stopping: declined ${deleteCount} destructive change(s). Re-run with \`yarn twenty dev --force\` to apply deletions or \`yarn twenty plan\` to preview changes.`,
+      );
+
+      return true;
+    }
+
+    return false;
+  }
+
+  private applyFailure(
+    result: { error?: MetadataValidationErrorResponse; message?: string },
+    events: OrchestratorStateStepEvent[],
+  ): void {
+    const step = this.state.steps.syncApplication;
+
     const errorEvents = this.verbose
       ? null
-      : formatManifestValidationErrors(syncResult.error);
+      : formatManifestValidationErrors(result.error);
 
     if (errorEvents) {
       events.push(...errorEvents);
@@ -91,9 +211,15 @@ export class SyncApplicationOrchestratorStep {
       });
     } else {
       events.push({
-        message: `Sync failed with error: ${serializeError(syncResult.error)}`,
+        message: `Sync failed with error: ${result.message ?? 'Sync failed'}`,
         status: 'error',
       });
+    }
+
+    const recoveryHint = getSyncErrorRecoveryHint(result.message);
+
+    if (recoveryHint) {
+      events.push({ message: recoveryHint, status: 'info' });
     }
 
     const summaryMessage = errorEvents ? errorEvents[0].message : 'Sync failed';

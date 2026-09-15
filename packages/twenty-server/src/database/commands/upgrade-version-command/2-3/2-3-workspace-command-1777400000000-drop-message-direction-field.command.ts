@@ -1,6 +1,6 @@
 import { Command } from 'nest-commander';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -19,7 +19,7 @@ const MESSAGE_DIRECTION_FIELD_UNIVERSAL_IDENTIFIER =
   description:
     'Drop the leftover message.direction field metadata and its workspace column',
 })
-export class DropMessageDirectionFieldCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class DropMessageDirectionFieldCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -72,7 +72,7 @@ export class DropMessageDirectionFieldCommand extends ActiveOrSuspendedWorkspace
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {

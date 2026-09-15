@@ -1,138 +1,60 @@
-name: CI Merge Queue
+name: CI - Merge Queue
+
+# Runs when a PR is queued to merge. GitHub builds the merge candidate on top of
+# the current tip of main, so these checks validate against main's real state at
+# merge time rather than the PR's (possibly stale) base. This is what closes the
+# upgrade-command base-drift race: a command generated against an old version,
+# then left behind when main bumps, is caught here even if the PR-level guard
+# passed on a stale base.
 
 on:
   merge_group:
 
-  pull_request:
-    types: [labeled, synchronize, opened, reopened]
-
 permissions:
   contents: read
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+  pull-requests: read
 
 jobs:
-  e2e-test:
-    if: >
-      github.event_name == 'merge_group' ||
-      (github.event_name == 'pull_request' &&
-       contains(github.event.pull_request.labels.*.name, 'run-merge-queue'))
-    runs-on: ubuntu-latest-8-cores
-    timeout-minutes: 30
-    env:
-      NODE_OPTIONS: "--max-old-space-size=10240"
-    services:
-      postgres:
-        image: postgres:18
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 10
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: lts/*
-
-      - name: Install dependencies
-        uses: ./.github/actions/yarn-install
-
-      - name: Restore Nx build cache
-        uses: actions/cache/restore@v4
-        with:
-          key: v4-e2e-build-${{ github.ref_name }}-${{ github.sha }}
-          restore-keys: |
-            v4-e2e-build-${{ github.ref_name }}-
-            v4-e2e-build-main-
-          path: |
-            .nx
-            node_modules/.cache
-            packages/*/node_modules/.cache
-
-      - name: Build twenty-shared
-        run: npx nx build twenty-shared
-
-      - name: Install Playwright Browsers
-        run: npx nx setup twenty-e2e-testing
-
-      - name: Setup environment files
-        run: |
-          cp packages/twenty-front/.env.example packages/twenty-front/.env
-          npx nx reset:env:e2e-testing-server twenty-server
-
-      - name: Build frontend
-        run: NODE_ENV=production npx nx build twenty-front
-
-      - name: Build server
-        run: npx nx build twenty-server
-
-      - name: Save Nx build cache
-        if: always()
-        uses: actions/cache/save@v4
-        with:
-          key: v4-e2e-build-${{ github.ref_name }}-${{ github.sha }}
-          path: |
-            .nx
-            node_modules/.cache
-            packages/*/node_modules/.cache
-
-      - name: Create and setup database
-        run: |
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
-          PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
-          npx nx run twenty-server:database:reset
-
-      - name: Start server
-        run: |
-          npx nx start twenty-server &
-          echo "Waiting for server to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3000/health; do sleep 2; done'
-
-      - name: Start frontend
-        run: |
-          npm_config_yes=true npx serve -s packages/twenty-front/build -l 3001 &
-          echo "Waiting for frontend to be ready..."
-          timeout 60 bash -c 'until curl -s http://localhost:3001; do sleep 2; done'
-
-      - name: Start worker
-        run: |
-          npx nx run twenty-server:worker &
-          echo "Worker started"
-
-      - name: Run Playwright tests
-        run: npx nx test twenty-e2e-testing
-
-      - name: Upload Playwright results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: playwright-results
-          path: |
-            packages/twenty-e2e-testing/run_results/
-            packages/twenty-e2e-testing/test-results/
-          retention-days: 7
-
-  ci-merge-queue-status-check:
-    if: always() && !cancelled()
+  # merge_group carries no PR labels, so resolve them from the queued PR (its
+  # number is in the merge-queue ref) and pass the version-mutation bypass to the
+  # guard as an input, which skips only the version-directory step. The job
+  # always runs and reports a real success/failure, so the required check never
+  # resolves to a skipped state and a label-lookup failure fails closed. The
+  # timestamp / append-only check has no bypass and always runs: violating it
+  # rewinds the upgrade cursor.
+  upgrade-mutation-guard:
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    needs: [e2e-test]
     steps:
-      - name: Fail job if any needs failed
-        if: contains(needs.*.result, 'failure')
-        run: exit 1
+      - name: Checkout merge candidate
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 2
+      - name: Resolve version-mutation bypass label from the queued PR
+        id: labels
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          HEAD_REF: ${{ github.event.merge_group.head_ref }}
+        run: |
+          set -euo pipefail
+          PR_NUMBER=$(echo "$HEAD_REF" | sed -n -E 's|.*/pr-([0-9]+)-[0-9a-f]+$|\1|p')
+
+          skip=false
+          if [ -n "$PR_NUMBER" ]; then
+            LABELS=$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json labels --jq '.labels[].name')
+            echo "Queued PR #$PR_NUMBER labels:"
+            echo "$LABELS"
+
+            if echo "$LABELS" | grep -qxF 'ci:allow-previous-version-upgrade-mutation'; then
+              skip=true
+            fi
+          else
+            echo "Could not parse a PR number from '$HEAD_REF'; enforcing strictly."
+          fi
+
+          echo "skip=$skip" >> "$GITHUB_OUTPUT"
+      - name: Validate upgrade command mutations against main
+        uses: ./.github/actions/upgrade-mutation-guard
+        with:
+          base_sha: ${{ github.event.merge_group.base_sha }}
+          allow_previous_version_mutation: ${{ steps.labels.outputs.skip }}

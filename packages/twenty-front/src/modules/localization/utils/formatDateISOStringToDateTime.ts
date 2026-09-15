@@ -1,6 +1,6 @@
 import { type DateFormat } from '@/localization/constants/DateFormat';
 import { type TimeFormat } from '@/localization/constants/TimeFormat';
-import { isValid } from 'date-fns';
+import { isValid, type Locale } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 
 export const formatDateISOStringToDateTime = ({

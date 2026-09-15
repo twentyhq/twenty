@@ -1,0 +1,61 @@
+---
+title: "튜토리얼: 문서 생성기"
+icon: wand-magic-sparkles
+description: 실제 Twenty 앱을 만들어 CRM 데이터에서 개인 맞춤형 문서를 생성해 보세요.
+---
+
+이 튜토리얼에서는 재사용 가능한 템플릿을 CRM에 이미 있는 데이터를 사용해 개인 맞춤형 문서로 변환하는 앱인 **Document Generator**를 만들어 보겠습니다.
+
+`{{placeholders}}`로 한 번 템플릿을 작성한 다음, 명령 메뉴, AI 에이전트 또는 워크플로에서 한 번의 클릭으로 어떤 사람(Person)이나 회사(Company)에 대해서도 내용이 채워진 문서를 생성할 수 있습니다.
+
+<Frame caption="특정 사람을 위해 생성된 문서가 인쇄 가능한 페이지로 열려 있습니다.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="생성된 영업 제안(Sales proposal) 문서" />
+</Frame>
+
+## 학습하게 될 내용
+
+각 챕터는 하나의 기능을 추가합니다. 마지막에는 SDK의 대부분을 한 번씩 다뤄 보게 됩니다.
+
+| 챕터                                                                                    | 기능                                                      | 참고                                                           |
+| ------------------------------------------------------------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------ |
+| [1. 데이터 모델](/l/ko/developers/extend/apps/tutorials/document-generator/data-model)          | 객체, 필드, 그리고 관계                                          | [데이터](/l/ko/developers/extend/apps/data/overview)                 |
+| [2. 문서 생성](/l/ko/developers/extend/apps/tutorials/document-generator/generating-documents) | Markdown 템플릿을 채우고 다듬어진 PDF를 첨부하는 로직 함수(AI 도구 + 워크플로 작업) | [로직 함수](/l/ko/developers/extend/apps/logic/logic-functions)       |
+| [3. HTTP 경로](/l/ko/developers/extend/apps/tutorials/document-generator/http-routes)        | 경로에서 JSON과 공유 가능한 HTML 페이지 제공                           | [로직 함수](/l/ko/developers/extend/apps/logic/logic-functions)       |
+| [4. UI 빌드](/l/ko/developers/extend/apps/tutorials/document-generator/building-the-ui)      | 뷰, 내비게이션, 명령 메뉴, 그리고 문서를 미리 보고 템플릿을 편집하는 프런트 컴포넌트       | [레이아웃](/l/ko/developers/extend/apps/layout/overview)              |
+| [5. AI 에이전트](/l/ko/developers/extend/apps/tutorials/document-generator/ai-agent)           | 에이전트 + 스킬                                               | [스킬 및 에이전트](/l/ko/developers/extend/apps/logic/skills-and-agents) |
+| [6. 게시하기](/l/ko/developers/extend/apps/tutorials/document-generator/publishing)            | 마켓플레이스에 출시하기                                            | [게시하기](/l/ko/developers/extend/apps/operations/publishing)        |
+
+## 사전 준비
+
+[빠른 시작](/l/ko/developers/extend/apps/getting-started/quick-start)을 이미 완료했다고 가정합니다.
+포트 `2020`에서 실행 중인 로컬 Twenty 서버와, 해당 서버에 인증된 CLI가 있어야 합니다.
+
+아직 아니라면, 지금 스캐폴딩하고 서버를 시작하세요:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest document-generator
+cd document-generator
+yarn twenty dev
+```
+
+<Note>
+완성된 코드를 먼저 보고 싶으신가요? 전체 앱은
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator)에 있습니다.
+아래의 모든 코드 스니펫은 이 앱에서 가져온 것입니다.
+</Note>
+
+## 앱이 어떻게 구성되는지
+
+<Frame>
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="플레이스홀더가 있는 템플릿은 명령 메뉴, AI 에이전트, 워크플로, 또는 공유 가능한 링크에서 트리거되어 PDF가 포함된 다듬어진 문서로 생성됩니다." />
+</Frame>
+
+리치 텍스트 편집기에서 `{{placeholders}}`가 포함된 **템플릿**을 한 번 작성합니다. 템플릿과 CRM 레코드를 선택하면 플레이스홀더가 채워지고, 다듬어진 **문서**(PDF 파일 포함)가 저장됩니다. 나머지 — 명령 메뉴, AI 에이전트, 워크플로 단계, 공유 가능한 링크 — 는 모두 해당 하나의 생성기를 트리거하는 서로 다른 방식일 뿐입니다.
+
+## 이 루프를 계속 유지하세요
+
+튜토리얼 전체 동안 터미널에서 `yarn twenty dev`를 실행 상태로 두세요. `src/` 아래에 파일을 추가하거나 편집할 때마다 몇 초 안에 서버와 다시 동기화되므로, 빌드하면서 각 기능이 UI에 나타나는 과정을 확인할 수 있습니다.
+
+<Card title="빌드 시작 →" icon="database" href="/l/ko/developers/extend/apps/tutorials/document-generator/data-model">
+  챕터 1: 문서와 템플릿 모델링.
+</Card>

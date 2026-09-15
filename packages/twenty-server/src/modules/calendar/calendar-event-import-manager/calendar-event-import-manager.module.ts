@@ -9,9 +9,8 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarTriggerEventListFetchCommand } from 'src/modules/calendar/calendar-event-import-manager/commands/calendar-trigger-event-list-fetch.command';
 import { CalendarEventListFetchCronCommand } from 'src/modules/calendar/calendar-event-import-manager/crons/commands/calendar-event-list-fetch.cron.command';
@@ -29,11 +28,11 @@ import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-i
 import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
 import { CalendarOngoingStaleJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
 import { CalendarRelaunchFailedCalendarChannelJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-relaunch-failed-calendar-channel.job';
-import { CalendarAccountAuthenticationService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-account-authentication.service';
 import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
 import { CalendarGetCalendarEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
+import { CalendarImportEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-import-events.service';
 import { CalendarSaveEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-save-events.service';
 import { CalendarEventParticipantManagerModule } from 'src/modules/calendar/calendar-event-participant-manager/calendar-event-participant-manager.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
@@ -41,10 +40,10 @@ import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/se
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
+import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 
 @Module({
   imports: [
-    ObjectMetadataRepositoryModule.forFeature([BlocklistWorkspaceEntity]),
     CalendarEventParticipantManagerModule,
     TypeOrmModule.forFeature([
       FeatureFlagEntity,
@@ -67,12 +66,14 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     FeatureFlagModule,
   ],
   providers: [
-    CalendarAccountAuthenticationService,
+    BlocklistRepository,
+    provideWorkspaceScopedRepository(CalendarChannelEntity),
     CalendarChannelSyncStatusService,
     CalendarEventsImportService,
     CalendarFetchEventsService,
     CalendarEventImportErrorHandlerService,
     CalendarGetCalendarEventsService,
+    CalendarImportEventsService,
     CalendarSaveEventsService,
     CalendarEventListFetchCronJob,
     CalendarEventListFetchCronCommand,
@@ -91,6 +92,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
   exports: [
     CalendarEventsImportService,
     CalendarFetchEventsService,
+    CalendarSaveEventsService,
     CalendarEventListFetchCronCommand,
     CalendarEventsImportCronCommand,
     CalendarOngoingStaleCronCommand,

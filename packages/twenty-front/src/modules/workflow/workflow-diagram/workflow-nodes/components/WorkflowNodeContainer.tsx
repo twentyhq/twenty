@@ -3,10 +3,13 @@ import { getWorkflowDiagramColors } from '@/workflow/workflow-diagram/utils/getW
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+const TARGET_HANDLE_SPACING = 32;
+
 const StyledNodeContainer = styled.div<{
   runStatus?: WorkflowRunStepStatus;
   isConnectable?: boolean;
   selected: boolean;
+  targetHandleCount?: number;
 }>`
   align-items: center;
   background: ${({ runStatus, selected }) => {
@@ -27,7 +30,8 @@ const StyledNodeContainer = styled.div<{
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   max-width: 240px;
-  min-width: 44px;
+  min-width: ${({ targetHandleCount = 0 }) =>
+    Math.max(44, (targetHandleCount + 1) * TARGET_HANDLE_SPACING)}px;
   padding: ${themeCssVariables.spacing[2]};
 
   position: relative;

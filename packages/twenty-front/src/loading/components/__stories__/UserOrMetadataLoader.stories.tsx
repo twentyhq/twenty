@@ -47,7 +47,6 @@ const userMetadataLoaderMocks = {
           return HttpResponse.json({
             data: {
               objects: {
-                // simulate no metadata items
                 edges: [],
               },
             },
@@ -79,7 +78,7 @@ export type Story = StoryObj<typeof RecordIndexPage>;
 
 export const Default: Story = {
   parameters: userMetadataLoaderMocks,
-  // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
+  // oxlint-disable-next-line typescript/ban-ts-comment
   // @ts-ignore
   decorators: [PageDecorator],
   play: async ({ canvasElement }) => {

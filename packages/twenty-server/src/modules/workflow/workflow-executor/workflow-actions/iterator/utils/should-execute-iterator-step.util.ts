@@ -2,6 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { TERMINAL_STEP_STATUSES } from 'src/modules/workflow/workflow-executor/constants/terminal-step-statuses.constant';
+import { findParentSteps } from 'src/modules/workflow/workflow-executor/utils/find-parent-steps.util';
+import { getEffectiveParentStatus } from 'src/modules/workflow/workflow-executor/utils/get-effective-parent-status.util';
 import { shouldExecuteChildStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-child-step.util';
 import { stepHasBeenStarted } from 'src/modules/workflow/workflow-executor/utils/step-has-been-started.util';
 import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
@@ -19,10 +21,7 @@ export const shouldExecuteIteratorStep = ({
   steps: WorkflowAction[];
   stepInfos: WorkflowRunStepInfos;
 }) => {
-  const stepsTargetingIterator = steps.filter(
-    (parentStep) =>
-      isDefined(parentStep) && parentStep.nextStepIds?.includes(step.id),
-  );
+  const allParentSteps = findParentSteps({ step, steps });
 
   const initialLoopStepIds = step.settings.input.initialLoopStepIds;
 
@@ -34,13 +33,13 @@ export const shouldExecuteIteratorStep = ({
       })
     : [];
 
-  const parentSteps = stepsTargetingIterator.filter(
+  const externalParentSteps = allParentSteps.filter(
     (parentStep) => !stepIdsInLoop.includes(parentStep.id),
   );
 
   const stepsToCheck = stepHasBeenStarted(step.id, stepInfos)
-    ? stepsTargetingIterator
-    : parentSteps;
+    ? allParentSteps
+    : externalParentSteps;
 
   // When iterator has been started and has the continue-on-failure flag,
   // allow re-execution even if all loop-back parents are FAILED_SAFELY/SKIPPED
@@ -56,9 +55,15 @@ export const shouldExecuteIteratorStep = ({
     );
 
     if (hasFailureFromOwnLoop) {
-      const areAllParentsTerminal = stepsToCheck.every((parentStep) =>
-        TERMINAL_STEP_STATUSES.includes(stepInfos[parentStep.id]?.status),
-      );
+      const areAllParentsTerminal = stepsToCheck.every((parentStep) => {
+        const status = getEffectiveParentStatus({
+          parentStep,
+          childStepId: step.id,
+          stepInfos,
+        });
+
+        return isDefined(status) && TERMINAL_STEP_STATUSES.includes(status);
+      });
 
       return areAllParentsTerminal;
     }
@@ -66,6 +71,7 @@ export const shouldExecuteIteratorStep = ({
 
   return shouldExecuteChildStep({
     parentSteps: stepsToCheck,
+    childStepId: step.id,
     stepInfos,
   });
 };

@@ -11,7 +11,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 export type MessagingRelaunchFailedMessageChannelJobData = {
@@ -25,7 +25,7 @@ export type MessagingRelaunchFailedMessageChannelJobData = {
 })
 export class MessagingRelaunchFailedMessageChannelJob {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
@@ -36,32 +36,36 @@ export class MessagingRelaunchFailedMessageChannelJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannel = await this.messageChannelRepository.findOne({
-        where: {
-          id: messageChannelId,
-          workspaceId,
-        },
-      });
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageChannel = await this.messageChannelRepository.findOne({
+          where: {
+            id: messageChannelId,
+            workspaceId,
+          },
+        });
 
-      if (
-        !messageChannel ||
-        messageChannel.syncStage !== MessageChannelSyncStage.FAILED ||
-        messageChannel.syncStatus !== MessageChannelSyncStatus.FAILED_UNKNOWN
-      ) {
-        return;
-      }
+        if (
+          !messageChannel ||
+          messageChannel.syncStage !== MessageChannelSyncStage.FAILED ||
+          messageChannel.syncStatus !== MessageChannelSyncStatus.FAILED_UNKNOWN
+        ) {
+          return;
+        }
 
-      await this.messageChannelRepository.update(
-        { id: messageChannelId, workspaceId },
-        {
-          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          syncStatus: MessageChannelSyncStatus.ACTIVE,
-          throttleFailureCount: 0,
-          throttleRetryAfter: null,
-          syncStageStartedAt: null,
-        },
-      );
-    }, authContext);
+        await this.messageChannelRepository.update(
+          { id: messageChannelId, workspaceId },
+          {
+            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+            syncStatus: MessageChannelSyncStatus.ACTIVE,
+            throttleFailureCount: 0,
+            throttleRetryAfter: null,
+            syncStageStartedAt: null,
+          },
+        );
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

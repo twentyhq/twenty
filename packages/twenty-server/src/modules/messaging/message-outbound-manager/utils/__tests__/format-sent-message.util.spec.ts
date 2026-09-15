@@ -79,6 +79,22 @@ describe('formatSentMessage', () => {
     expect(message.headerMessageId).toBe('<msg-2@mail.example>');
   });
 
+  it('should persist IMAP/SMTP replies under the parent thread external id rather than the immediate parent Message-ID', () => {
+    const message = formatSentMessage(
+      buildInput({
+        sendResult: {
+          headerMessageId: '<reply@mail.example>',
+          messageExternalId: undefined,
+          threadExternalId: undefined,
+        },
+        inReplyTo: '<parent@mail.example>',
+        parentThreadExternalId: '<root@mail.example>',
+      }),
+    );
+
+    expect(message.messageThreadExternalId).toBe('<root@mail.example>');
+  });
+
   it('should copy subject and body verbatim and start with no folder associations', () => {
     const message = formatSentMessage(buildInput());
 

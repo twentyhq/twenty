@@ -19,6 +19,12 @@ export default defineConfig({
     },
   ],
   catalogsMergePath: '<rootDir>/src/locales/generated/{locale}',
+  // Sort catalog entries by message id. These emails use explicit ids
+  // (js-lingui-explicit-id), for which the default order is non-deterministic:
+  // `lingui extract` reorders the .po on every run even with no source change,
+  // so main and the Crowdin sync never agree and every i18n pull re-conflicts.
+  // Sorting by messageId makes extraction idempotent and the order stable.
+  orderBy: 'messageId',
   compileNamespace: 'ts',
   format: formatter({ lineNumbers: false, printLinguiId: true }),
 });

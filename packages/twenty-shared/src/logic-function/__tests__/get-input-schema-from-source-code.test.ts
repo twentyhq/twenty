@@ -18,6 +18,29 @@ describe('getInputSchemaFromSourceCode', () => {
     const result = await getInputSchemaFromSourceCode(fileContent);
     expect(result).toEqual(DEFAULT_TOOL_INPUT_SCHEMA);
   });
+  it('should fall back to empty when the params type cannot be inferred', async () => {
+    const fileContent =
+      'function testFunction(params: ImportedAlias) { return }';
+    const result = await getInputSchemaFromSourceCode(fileContent);
+    expect(result).toEqual(DEFAULT_TOOL_INPUT_SCHEMA);
+  });
+  it('should infer record schemas from TwentyRecord markers', async () => {
+    const fileContent = `
+        function testFunction(params: {
+          companies: TwentyRecord<'company-universal-identifier'>[];
+        }) { return }
+      `;
+    const result = await getInputSchemaFromSourceCode(fileContent);
+    expect(result).toEqual({
+      type: 'object',
+      properties: {
+        companies: {
+          type: 'records',
+          objectUniversalIdentifier: 'company-universal-identifier',
+        },
+      },
+    });
+  });
   it('should return input from source code', async () => {
     const fileContent = `
         function testFunction(

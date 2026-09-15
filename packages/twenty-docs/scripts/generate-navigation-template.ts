@@ -1,23 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 
-type BasePage = string | BaseGroup;
-
-type BaseGroup = {
-  key: string;
-  label: string;
-  pages: BasePage[];
-};
-
-type BaseTab = {
-  key: string;
-  label: string;
-  groups: BaseGroup[];
-};
-
-type BaseStructure = {
-  tabs: BaseTab[];
-};
+import {
+  type BaseGroup,
+  type BaseStructure,
+} from '../navigation/base-structure-types';
 
 type TemplateGroup = {
   label: string;
@@ -46,9 +33,7 @@ const baseStructure: BaseStructure = JSON.parse(
   fs.readFileSync(baseStructurePath, 'utf8'),
 );
 
-const buildGroupMap = (
-  groups: BaseGroup[],
-): Record<string, TemplateGroup> =>
+const buildGroupMap = (groups: BaseGroup[]): Record<string, TemplateGroup> =>
   groups.reduce<Record<string, TemplateGroup>>((acc, group) => {
     const nestedGroups = group.pages.filter(
       (page): page is BaseGroup => typeof page !== 'string',
@@ -78,4 +63,3 @@ const template: TemplateFile = {
 };
 
 fs.writeFileSync(templatePath, `${JSON.stringify(template, null, 2)}\n`);
-

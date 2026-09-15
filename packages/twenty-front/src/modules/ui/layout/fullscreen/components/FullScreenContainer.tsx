@@ -1,3 +1,4 @@
+import { type JSX } from 'react';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
 import {

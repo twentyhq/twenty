@@ -1,17 +1,21 @@
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { UPSERT_VIEW_WIDGET } from '@/page-layout/graphql/mutations/upsertViewWidget';
 import { useHasRecordTableWidgetViewChanges } from '@/page-layout/hooks/useHasRecordTableWidgetViewChanges';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
+import { widgetUsesRecordTableView } from '@/page-layout/utils/widgetUsesRecordTableView';
+import { buildUpsertViewWidgetViewSettingsInput } from '@/page-layout/widgets/record-table/utils/buildUpsertViewWidgetViewSettingsInput';
+import { normalizeRecordTableWidgetViewFields } from '@/page-layout/widgets/record-table/utils/normalizeRecordTableWidgetViewFields';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import {
   type UpsertViewWidgetInput,
   type ViewFragmentFragment,
-  WidgetType,
 } from '~/generated-metadata/graphql';
 
 export const useSaveRecordTableWidgetViews = () => {
@@ -43,9 +47,19 @@ export const useSaveRecordTableWidgetViews = () => {
         }),
       );
 
+      const recordTableWidgetViewPersisted = store.get(
+        recordTableWidgetViewPersistedComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+      );
+
       const draftRecordTableWidgets = draft.tabs
         .flatMap((tab) => tab.widgets)
-        .filter((widget) => widget.type === WidgetType.RECORD_TABLE);
+        .filter(widgetUsesRecordTableView);
+
+      const objectMetadataItems = store.get(objectMetadataItemsSelector.atom);
+
+      let normalizedRecordTableWidgetViewDraft = recordTableWidgetViewDraft;
 
       for (const widget of draftRecordTableWidgets) {
         const viewId = getWidgetConfigurationViewId(widget.configuration);
@@ -60,15 +74,59 @@ export const useSaveRecordTableWidgetViews = () => {
           continue;
         }
 
-        await upsertViewWidgetMutation({
+        // Every view-backed widget gets a draft seeded on entering edit mode;
+        // only the ones the user actually touched need an upsert.
+        if (
+          isDeeplyEqual(
+            recordTableWidgetViewPersisted[widget.id],
+            widgetViewDraft,
+          )
+        ) {
+          continue;
+        }
+
+        const objectMetadataItem = objectMetadataItems.find(
+          (objectMetadataItem) =>
+            objectMetadataItem.id === widgetViewDraft.view.objectMetadataId,
+        );
+
+        const normalizedViewFields = isDefined(objectMetadataItem)
+          ? normalizeRecordTableWidgetViewFields({
+              viewFields: widgetViewDraft.viewFields,
+              labelIdentifierFieldMetadataId:
+                objectMetadataItem.labelIdentifierFieldMetadataId,
+            })
+          : widgetViewDraft.viewFields;
+
+        const normalizedWidgetViewDraft = {
+          ...widgetViewDraft,
+          viewFields: normalizedViewFields,
+        };
+
+        const persistedView = recordTableWidgetViewPersisted[widget.id]?.view;
+
+        const draftViewSettings = buildUpsertViewWidgetViewSettingsInput(
+          widgetViewDraft.view,
+        );
+
+        const hasViewSettingsChanges =
+          !isDefined(persistedView) ||
+          !isDeeplyEqual(
+            buildUpsertViewWidgetViewSettingsInput(persistedView),
+            draftViewSettings,
+          );
+
+        const { data } = await upsertViewWidgetMutation({
           variables: {
             input: {
               widgetId: widget.id,
-              viewFields: widgetViewDraft.viewFields.map((field) => ({
+              ...(hasViewSettingsChanges ? { view: draftViewSettings } : {}),
+              viewFields: normalizedWidgetViewDraft.viewFields.map((field) => ({
                 fieldMetadataId: field.fieldMetadataId,
                 isVisible: field.isVisible,
                 position: field.position,
                 size: field.size,
+                aggregateOperation: field.aggregateOperation ?? null,
               })),
               viewFilters: widgetViewDraft.viewFilters.map((filter) => ({
                 id: filter.id,
@@ -79,6 +137,8 @@ export const useSaveRecordTableWidgetViews = () => {
                 positionInViewFilterGroup:
                   filter.positionInViewFilterGroup ?? undefined,
                 subFieldName: filter.subFieldName ?? undefined,
+                relationTargetFieldMetadataId:
+                  filter.relationTargetFieldMetadataId ?? undefined,
               })),
               viewFilterGroups: widgetViewDraft.viewFilterGroups.map(
                 (group) => ({
@@ -98,13 +158,42 @@ export const useSaveRecordTableWidgetViews = () => {
             },
           },
         });
+
+        // View groups are not part of the upsert input: the server
+        // regenerates them from mainGroupByFieldMetadataId. Store the
+        // server rows instead of the locally generated draft groups so
+        // the persisted snapshot never claims client-side ids were saved.
+        const upsertedViewGroups = data?.upsertViewWidget.viewGroups;
+
+        normalizedRecordTableWidgetViewDraft = {
+          ...normalizedRecordTableWidgetViewDraft,
+          [widget.id]: {
+            ...normalizedWidgetViewDraft,
+            viewGroups: isDefined(upsertedViewGroups)
+              ? upsertedViewGroups.map((viewGroup) => ({
+                  id: viewGroup.id,
+                  viewId: viewGroup.viewId,
+                  fieldValue: viewGroup.fieldValue,
+                  position: viewGroup.position,
+                  isVisible: viewGroup.isVisible,
+                }))
+              : normalizedWidgetViewDraft.viewGroups,
+          },
+        };
       }
+
+      store.set(
+        recordTableWidgetViewDraftComponentState.atomFamily({
+          instanceId: pageLayoutId,
+        }),
+        normalizedRecordTableWidgetViewDraft,
+      );
 
       store.set(
         recordTableWidgetViewPersistedComponentState.atomFamily({
           instanceId: pageLayoutId,
         }),
-        recordTableWidgetViewDraft,
+        normalizedRecordTableWidgetViewDraft,
       );
     },
     [hasRecordTableWidgetViewChanges, store, upsertViewWidgetMutation],

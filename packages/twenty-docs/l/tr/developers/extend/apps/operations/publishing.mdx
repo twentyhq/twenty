@@ -1,6 +1,6 @@
 ---
 title: Yayımlama
-icon: yükle
+icon: upload
 description: Twenty uygulamanızı pazaryerine sunun ya da dahili olarak dağıtın.
 ---
 
@@ -18,10 +18,10 @@ Her iki yol da aynı **build** adımından başlar.
 Uygulamanızı derlemek ve dağıtıma hazır bir `manifest.json` oluşturmak için build komutunu çalıştırın:
 
 ```bash filename="Terminal"
-yarn twenty build
+yarn twenty dev:build
 ```
 
-Bu işlem TypeScript kaynaklarını derler, mantık işlevlerini ve ön uç bileşenlerini transpile eder ve her şeyi `.twenty/output/` konumuna yazar. El ile dağıtım veya deploy komutu için bir `.tgz` paketini de üretmek amacıyla `--tarball` ekleyin.
+Bu işlem TypeScript kaynaklarını derler, mantık işlevlerini ve ön uç bileşenlerini transpile eder ve her şeyi `.twenty/output/` konumuna yazar. El ile dağıtım veya yayımlama komutu için bir `.tgz` paketini de üretmek amacıyla `--tarball` ekleyin.
 
 ## Sunucuya dağıtım (tarball)
 
@@ -34,7 +34,7 @@ Dağıtmadan önce, hedef sunucuyu işaret eden yapılandırılmış bir remote�
 Bir remote ekleyin:
 
 ```bash filename="Terminal"
-yarn twenty remote add --api-url https://your-twenty-server.com --as production
+yarn twenty remote:add --url https://your-twenty-server.com --as production
 ```
 
 ### Dağıtım
@@ -42,18 +42,14 @@ yarn twenty remote add --api-url https://your-twenty-server.com --as production
 Uygulamanızı tek adımda derleyip sunucuya yükleyin:
 
 ```bash filename="Terminal"
-yarn twenty deploy
+yarn twenty app:publish --private
 # To deploy to a specific remote:
-# yarn twenty deploy --remote production
+# yarn twenty app:publish --private --remote production
 ```
 
 ### Dağıtılmış bir uygulamayı paylaşma
 
-<Warning>
-Özel (tarball) uygulamaları çalışma alanları arasında paylaşma bir **Kurumsal** özelliktir. **Dağıtım** sekmesi, çalışma alanınız geçerli bir Kurumsal anahtara sahip olana kadar paylaşım kontrolleri yerine bir yükseltme istemi gösterecektir. Etkinleştirmek için [Ayarlar > Yönetim Paneli > Kurumsal](/settings/admin-panel#enterprise) bölümüne gidin.
-</Warning>
-
-Tarball uygulamaları genel pazar yerinde listelenmez; bu nedenle aynı sunucudaki diğer çalışma alanları gezinerek onları keşfedemez. Çalışma alanınız Kurumsal planda olduğunda, dağıtılmış bir uygulamayı şu şekilde paylaşabilirsiniz:
+Tarball uygulamaları genel pazar yerinde listelenmez; bu nedenle aynı sunucudaki diğer çalışma alanları gezinerek onları keşfedemez. Dağıtılmış bir uygulamayı paylaşmak için:
 
 1. **Ayarlar > Uygulamalar > Kayıtlar** bölümüne gidin ve uygulamanızı açın
 2. **Dağıtım** sekmesinde, **Paylaşım bağlantısını kopyala**’ya tıklayın
@@ -68,8 +64,8 @@ Halihazırda dağıtılmış bir tarball uygulamasını güncellerken, sunucu `p
 Bir güncelleme yayımlamak için:
 
 1. `package.json` içindeki `version` alanını artırın (ör. `1.2.3` → `1.2.4`, `1.3.0` veya `2.0.0`)
-2. `yarn twenty deploy` (veya `yarn twenty deploy --remote production`) komutunu çalıştırın
-3. Uygulamayı kurmuş olan çalışma alanları, ayarlarında mevcut güncellemeyi görecektir
+2. `yarn twenty app:publish --private` (veya `yarn twenty app:publish --private --remote production`) komutunu çalıştırın
+3. Uygulamanın yüklü olduğu ve (uygulamanın Ayarlar sekmesinde) otomatik yükseltmeyi etkinleştirmiş çalışma alanları, arka planda otomatik olarak yükseltilir; diğerleri ise ayarlarında mevcut yükseltmeyi görecektir
 
 <Note>
 Ön sürüm etiketleri beklendiği gibi çalışır: `1.0.0-rc.1` → `1.0.0-rc.2` sürümünü artırmak mümkündür ve `1.0.0` gibi nihai bir sürüm, `1.0.0-rc.5` sürümünden daha yüksek olarak doğru şekilde tanınır. `package.json` içindeki sürümün kendisi geçerli bir semver dizesi olmalıdır.
@@ -112,7 +108,7 @@ Nihai denetim sunucudadır — hem tarball yüklemesinde hem de çalışma alan�
 
 ## Otomatik CI/CD (hazır şablonlu iş akışları)
 
-`create-twenty-app` ile oluşturulan uygulamalar, kutudan çıktığı gibi `.github/workflows/` altında iki GitHub Actions iş akışıyla gelir. Depoyu GitHub’a iter itmez çalışmaya hazırdır — CI için ek bir kurulum gerekmez ve CD yalnızca tek bir gizli anahtar gerektirir.
+`create-twenty-app` ile oluşturulan uygulamalar, kutudan çıktığı gibi `.github/workflows/` altında üç GitHub Actions iş akışıyla gelir. CI herhangi bir kurulum gerektirmez, CD tek bir secret gerektirir ve npm’e yayımlamak tek seferlik bir npm Trusted Publisher kurulumu gerektirir.
 
 ### CI — `ci.yml`
 
@@ -121,7 +117,7 @@ Entegrasyon testlerini `main` dalına yapılan her itmede ve her çekme isteğin
 **Ne yapar:**
 
 1. Uygulamanızın kaynak kodunu alır.
-2. `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` bileşik eylemini kullanarak yalıtılmış bir Twenty test örneği başlatır (CI'daki `yarn twenty server start --test` eşdeğeri).
+2. `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` bileşik eylemini kullanarak yalıtılmış bir Twenty test örneği başlatır (CI'daki `yarn twenty docker:start --test` eşdeğeridir).
 3. Corepack’i etkinleştirir, `.nvmrc` dosyanızdan Node.js'i kurar ve bağımlılıkları `yarn install --immutable` ile yükler.
 4. Oluşturulan örnekten `TWENTY_API_URL` ve `TWENTY_API_KEY` değerlerini aktararak `yarn test`i çalıştırır; böylece testleriniz gerçek bir sunucuyla haberleşebilir.
 
@@ -139,7 +135,7 @@ Gizli anahtar gerekmez — test örneği geçicidir ve yalnızca iş süresi boy
 **Ne yapar:**
 
 1. Etiketli PR'ler için PR'in head commit'ini ya da itilen commit'i alır.
-2. `twentyhq/twenty/.github/actions/deploy-twenty-app@main` çalıştırır — `yarn twenty deploy` komutunun CI eşdeğeridir.
+2. `twentyhq/twenty/.github/actions/deploy-twenty-app@main` çalıştırır — `yarn twenty app:publish --private` komutunun CI eşdeğeridir.
 3. `twentyhq/twenty/.github/actions/install-twenty-app@main` eylemini çalıştırır; böylece yeni dağıtılan sürüm hedef çalışma alanına kurulur.
 
 **Gerekli yapılandırma:**
@@ -157,9 +153,33 @@ Varsayılan `TWENTY_DEPLOY_URL` olan `http://localhost:3000` bir yer tutucudur �
 
 Bir çekme isteğine `deploy` etiketini ekleyin. `cd.yml` içindeki `if:` koruması, ilgili PR için işi PR'in head commit'ini kullanarak çalıştırır; böylece birleştirmeden önce hedef sunucuda değişikliği doğrulayabilirsiniz.
 
+### Yayımla — `publish.yml`
+
+Bir sürüm etiketi (örn. `v1.0.0`) gönderdiğinizde veya Actions sekmesinden iş akışını manuel olarak çalıştırdığınızda, uygulamanızı provenance ile npm’e yayımlar.
+
+**Ne yapar:**
+
+1. Uygulamanızı alır, Node.js’i kurar ve npm’i günceller (güvenilir yayımlama için npm 11.5.1 veya üstü gereklidir).
+2. `yarn twenty app:publish` komutunu çalıştırır; bu komut uygulamayı der ve `.twenty/output`’u npm’e yayımlar. CI ortamında otomatik olarak `--provenance` ve `--access public` ekler; bu nedenle iş akışında hiçbir bayrağa gerek yoktur.
+
+**Tek seferlik kurulum:**
+
+npmjs.com’da paketinizin sayfasını açın > **Settings → Trusted Publisher** bölümüne gidin ve bu depoyu `publish.yml` iş akışıyla kaydedin ([npm trusted publishing belgelerine](https://docs.npmjs.com/trusted-publishers) bakın). Provenance ile yayımlama, paketi hangi GitHub deposunun oluşturduğunu doğrular; ayrıca Twenty pazaryerinde uygulamanızın sahipliğini bu şekilde talep edersiniz.
+
+<Note>
+npm yalnızca **herkese açık** kaynak depolarından gelen provenansı kabul eder. Özel bir depodan yayınlarsanız, npm OIDC provenans paketini `E422 ... Desteklenmeyen GitHub Actions kaynak deposu görünürlüğü: "private"` hatası. Özel bir depodan yayınlamak için, yayın adımının `env` bölümünde `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'` ayarını yaparak provenansı devre dışı bırakın (hazırlanmış `publish.yml` içinde yorum satırı olarak eklenmiş bir ipucu bulunur):
+
+```yaml filename=".github/workflows/publish.yml"
+      - name: Publish to npm
+        env:
+          TWENTY_APP_PUBLISH_DISABLE_PROVENANCE: 'true'
+        run: yarn twenty app:publish
+```
+</Note>
+
 ### Yeniden kullanılabilir eylemleri sabitleme
 
-Her iki iş akışı da `@main` üzerindeki yeniden kullanılabilir eylemlere başvurur; bu nedenle `twentyhq/twenty` deposundaki eylem güncellemeleri otomatik olarak alınır. Deterministik derlemeler istiyorsanız, her `uses:` satırında `@main` ifadesini bir commit SHA'sı veya sürüm etiketiyle değiştirin.
+`ci.yml` ve `cd.yml` iş akışları, `@main` üzerindeki yeniden kullanılabilir eylemlere başvurur; bu nedenle `twentyhq/twenty` deposundaki eylem güncellemeleri otomatik olarak alınır. Deterministik derlemeler istiyorsanız, her `uses:` satırında `@main` ifadesini bir commit SHA'sı veya sürüm etiketiyle değiştirin.
 
 ## npm’ye yayımlama
 
@@ -180,15 +200,15 @@ npm’ye yayımlamak, uygulamanızın Twenty pazaryerinde keşfedilebilir olmas�
 
 ### Pazaryeri meta verileri
 
-`defineApplication()` yapılandırması, uygulamanızın pazar yerinde nasıl görüneceğini kontrol eden isteğe bağlı alanları destekler. `public/` klasöründeki görsellere başvurmak için `logoUrl` ve `screenshots` kullanın:
+`defineApplication()` yapılandırması, uygulamanızın pazar yerinde nasıl görüneceğini kontrol eden isteğe bağlı alanları destekler. `public/` klasöründeki görsellere başvurmak için `logo` ve `galleryImages` kullanın:
 
 ```ts src/application-config.ts
 export default defineApplication({
   universalIdentifier: '...',
   displayName: 'My App',
   description: 'A great app',
-  logoUrl: 'public/logo.png',
-  screenshots: [
+  logo: 'public/logo.png',
+  galleryImages: [
     'public/screenshot-1.png',
     'public/screenshot-2.png',
   ],
@@ -197,24 +217,28 @@ export default defineApplication({
 
 Pazar yeri alanlarının tam listesi için Uygulama Oluşturma sayfasındaki [defineApplication akordeonu](/l/tr/developers/extend/apps/config/application#marketplace-metadata)'na bakın (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl`, vb.).
 
-#### Önerilen ekran görüntüsü boyutları
+#### Önerilen galeri görseli boyutları
 
-Marketplace, `screenshots`'ı sabit `8:5` oranlı bir kapsayıcıda görüntüler (örneğin, `1600×1000 px`).
+Marketplace, `galleryImages`'ı sabit `8:5` oranlı bir kapsayıcıda görüntüler (örneğin, `1600×1000 px`).
 
 <Note>
-Herhangi bir en-boy oranındaki ekran görüntüleri eksiksiz görüntülenir ve asla kırpılmaz, ancak `8:5`'ten belirgin ölçüde daha uzun veya daha dar olanlarda yanlarda boş bantlar görünür.
+Herhangi bir en-boy oranındaki galeri görselleri eksiksiz görüntülenir ve asla kırpılmaz, ancak `8:5`'ten belirgin ölçüde daha uzun veya daha dar olanlarda yanlarda boş bantlar görünür.
 </Note>
+
+#### Görsel boyut sınırı
+
+`logo` ve her bir `galleryImages` dosyasının boyutu **10 MB**'ı aşmamalıdır. Pazar yeri yayınladığınız varlıkları yeniden barındırdığında daha büyük dosyalar atlanır, bu nedenle görüntülenmezler.
 
 ### Yayımla
 
 ```bash filename="Terminal"
-yarn twenty publish
+yarn twenty app:publish
 ```
 
 Belirli bir dist-tag altında yayımlamak için (ör. `beta` veya `next`):
 
 ```bash filename="Terminal"
-yarn twenty publish --tag beta
+yarn twenty app:publish --tag beta
 ```
 
 ### Pazar yerinde keşif nasıl çalışır
@@ -224,12 +248,12 @@ Twenty sunucusu pazar yeri kataloğunu npm kayıt defterinden **her saat** eşit
 Beklemek yerine eşitlemeyi hemen tetikleyebilirsiniz:
 
 ```bash filename="Terminal"
-yarn twenty server catalog-sync
+yarn twenty dev:catalog-sync
 # To target a specific remote:
-# yarn twenty server catalog-sync --remote production
+# yarn twenty dev:catalog-sync --remote production
 ```
 
-Pazar yerinde gösterilen meta veriler, `defineApplication()` yapılandırmanızdan gelir — `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` ve `termsUrl` gibi alanlar.
+Pazaryerinde gösterilen meta veriler, `defineApplication()` yapılandırmanızdan gelir — yukarıdaki [Pazaryeri meta verileri](#marketplace-metadata) bölümüne bakın.
 
 <Note>
 Uygulamanız `defineApplication()` içinde bir `aboutDescription` tanımlamıyorsa, pazaryeri, hakkında sayfasının içeriği olarak paketinizin npm'deki `README.md` dosyasını otomatik olarak kullanır. Bu, hem npm hem de Twenty pazaryeri için tek bir README dosyası kullanabileceğiniz anlamına gelir. Pazaryerinde farklı bir açıklama istiyorsanız, `aboutDescription` değerini açıkça ayarlayın.
@@ -237,37 +261,12 @@ Uygulamanız `defineApplication()` içinde bir `aboutDescription` tanımlamıyor
 
 ### CI üzerinden yayımlama
 
-Her sürümde otomatik olarak yayımlamak için bu GitHub Actions iş akışını kullanın ([OIDC](https://docs.npmjs.com/trusted-publishers) kullanır):
+Yukarıda açıklanan, şablon olarak sağlanan `publish.yml` iş akışı sürüm etiketlerinde provenance ile npm’e otomatik olarak yayımlar. `yarn twenty app:publish`, CI içinde çalıştığında sizin için `--provenance` ve `--access public` eklediği için, iş akışının herhangi bir npm bayrağına ihtiyacı yoktur — yalnızca tek seferlik güvenilir yayımlayıcı kurulumuna ihtiyaç duyar.
 
-```yaml filename=".github/workflows/publish.yml"
-name: Publish
-on:
-  release:
-    types: [published]
-
-permissions:
-  contents: read
-  id-token: write
-
-jobs:
-  publish:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-          registry-url: https://registry.npmjs.org
-      - run: yarn install --immutable
-      - run: npx twenty build
-      - run: npm publish --provenance --access public
-        working-directory: .twenty/output
-```
-
-Diğer CI sistemleri (GitLab CI, CircleCI, vb.) için de aynı üç komut geçerlidir: `yarn install`, `yarn twenty build` ve ardından `.twenty/output` dizininden `npm publish`.
+Diğer CI sistemleri (GitLab CI, CircleCI vb.) için önce `yarn install`, ardından `yarn twenty app:publish` komutunu çalıştırın. Ortam bir OIDC jetonu oluşturabildiğinde provenance üretilir, aksi durumda ise otomatik olarak atlanır.
 
 <Note>
-**npm provenance** isteğe bağlıdır ancak önerilir. `--provenance` ile yayımlamak, npm listenize bir güven rozeti ekler ve kullanıcıların paketin herkese açık bir CI ardışık düzenindeki belirli bir commit’ten oluşturulduğunu doğrulamasını sağlar. Kurulum talimatları için [npm provenance belgelerine](https://docs.npmjs.com/generating-provenance-statements) bakın.
+**npm provenance**, npm listenize bir güven rozeti ekler ve kullanıcıların paketin herkese açık bir CI ardışık düzenindeki belirli bir commit’ten oluşturulduğunu doğrulamasını sağlar. Ayrıca Twenty pazaryerinde uygulamanızın sahipliğini talep etmenizi de sağlar. Ayrıntılar için [npm provenance belgelerine](https://docs.npmjs.com/generating-provenance-statements) bakın.
 </Note>
 
 ## Uygulamaları yükleme
@@ -281,7 +280,7 @@ Twenty içinde **Ayarlar > Uygulamalar** sayfasına gidin; burada hem pazar yeri
 Uygulamaları komut satırından da yükleyebilirsiniz:
 
 ```bash filename="Terminal"
-yarn twenty install
+yarn twenty app:install
 ```
 
 <Note>
@@ -290,5 +289,5 @@ Sunucu, kurulum sırasında semver sürümlemesini zorunlu kılar ve dağıtımd
 * Çalışma alanınızda zaten yüklü olanla aynı sürümün kurulumu, `APP_ALREADY_INSTALLED` hatasıyla reddedilir.
 * Halihazırda yüklü olandan daha düşük bir sürümü kurmak, `CANNOT_DOWNGRADE_APPLICATION` hatasıyla reddedilir.
 
-Daha yeni bir sürümü kurmak için önce onu dağıtın veya yayımlayın, ardından `yarn twenty install` komutunu yeniden çalıştırın.
+Daha yeni bir sürümü kurmak için önce onu dağıtın veya yayımlayın, ardından `yarn twenty app:install` komutunu yeniden çalıştırın.
 </Note>

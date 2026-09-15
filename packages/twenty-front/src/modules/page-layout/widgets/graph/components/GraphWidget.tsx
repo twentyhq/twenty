@@ -1,4 +1,3 @@
-import { PageLayoutWidgetInvalidConfigDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetInvalidConfigDisplay';
 import { GraphWidgetAggregateChartRenderer } from '@/page-layout/widgets/graph/graph-widget-aggregate-chart/components/GraphWidgetAggregateChartRenderer';
 import { GraphWidgetBarChartRenderer } from '@/page-layout/widgets/graph/graph-widget-bar-chart/components/GraphWidgetBarChartRenderer';
 import { GraphWidgetLineChartRenderer } from '@/page-layout/widgets/graph/graph-widget-line-chart/components/GraphWidgetLineChartRenderer';
@@ -23,9 +22,6 @@ export const GraphWidget = () => {
 
     case WidgetConfigurationType.LINE_CHART:
       return <GraphWidgetLineChartRenderer />;
-
-    case WidgetConfigurationType.GAUGE_CHART:
-      return <PageLayoutWidgetInvalidConfigDisplay />;
 
     default:
       return null;

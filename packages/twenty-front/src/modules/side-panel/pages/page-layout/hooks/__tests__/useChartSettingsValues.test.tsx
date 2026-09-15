@@ -11,8 +11,10 @@ import {
   AxisNameDisplay,
   BarChartGroupMode,
   BarChartLayout,
+  ChartNumberFormat,
   FieldMetadataType,
   GraphOrderBy,
+  RelationType,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 import { useChartSettingsValues } from '@/side-panel/pages/page-layout/hooks/useChartSettingsValues';
@@ -355,6 +357,94 @@ describe('useChartSettingsValues', () => {
     });
   });
 
+  describe('Morph relation group-by', () => {
+    // The collapsed morph field's own id is the first target ('field-owner-company');
+    // the chart stores the per-target id of the other target ('field-owner-person'),
+    // which is only reachable via morphRelations[].sourceFieldMetadata.id.
+    const morphObjectMetadataItem: EnrichedObjectMetadataItem = {
+      id: 'obj-morph',
+      nameSingular: 'opportunity',
+      namePlural: 'opportunities',
+      labelSingular: 'Opportunity',
+      labelPlural: 'Opportunities',
+      fields: [
+        {
+          id: 'field-amount',
+          name: 'amount',
+          label: 'Amount',
+          type: FieldMetadataType.NUMBER,
+        },
+        {
+          id: 'field-owner-company',
+          name: 'owner',
+          label: 'Owner',
+          type: FieldMetadataType.MORPH_RELATION,
+          morphRelations: [
+            {
+              type: RelationType.MANY_TO_ONE,
+              sourceFieldMetadata: { id: 'field-owner-company', name: 'owner' },
+              targetObjectMetadata: { nameSingular: 'company' },
+            },
+            {
+              type: RelationType.MANY_TO_ONE,
+              sourceFieldMetadata: { id: 'field-owner-person', name: 'owner' },
+              targetObjectMetadata: { nameSingular: 'person' },
+            },
+          ],
+        },
+      ],
+    } as EnrichedObjectMetadataItem;
+
+    const renderWithMorphObject = (configuration: ChartConfiguration) => {
+      setTestObjectMetadataItemsInMetadataStore(jotaiStore, [
+        morphObjectMetadataItem,
+      ]);
+
+      return renderHook(
+        () =>
+          useChartSettingsValues({
+            objectMetadataId: morphObjectMetadataItem.id,
+            configuration,
+          }),
+        {
+          wrapper: ({ children }) => (
+            <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
+          ),
+        },
+      );
+    };
+
+    it('should resolve label when grouping by the collapsed morph target', () => {
+      const config = buildBarChartConfiguration({
+        aggregateFieldMetadataId: 'field-amount',
+        primaryAxisGroupByFieldMetadataId: 'field-owner-company',
+      });
+
+      const { result } = renderWithMorphObject(config);
+
+      const value = result.current.getChartSettingsValues(
+        CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X,
+      );
+
+      expect(value).toBe('Owner');
+    });
+
+    it('should resolve label when grouping by the non-collapsed morph target', () => {
+      const config = buildBarChartConfiguration({
+        aggregateFieldMetadataId: 'field-amount',
+        primaryAxisGroupByFieldMetadataId: 'field-owner-person',
+      });
+
+      const { result } = renderWithMorphObject(config);
+
+      const value = result.current.getChartSettingsValues(
+        CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X,
+      );
+
+      expect(value).toBe('Owner');
+    });
+  });
+
   describe('No configuration', () => {
     it('should return undefined function when configuration is undefined', () => {
       const { result } = renderUseChartSettingsValues(undefined as any);
@@ -565,7 +655,6 @@ describe('useChartSettingsValues', () => {
       const { result: horizontalResult } =
         renderUseChartSettingsValues(horizontalConfig);
 
-      // Test all setting IDs return IDENTICAL values
       const settingIds = [
         CHART_CONFIGURATION_SETTING_IDS.SOURCE,
         CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_X,
@@ -585,6 +674,34 @@ describe('useChartSettingsValues', () => {
 
         expect(verticalValue).toEqual(horizontalValue);
       });
+    });
+  });
+
+  describe('Number format setting', () => {
+    it('should return the Full label for FORMAT when numberFormat is set on a bar chart', () => {
+      const config = buildBarChartConfiguration({
+        numberFormat: ChartNumberFormat.FULL,
+      });
+
+      const { result } = renderUseChartSettingsValues(config);
+
+      const value = result.current.getChartSettingsValues(
+        CHART_CONFIGURATION_SETTING_IDS.FORMAT,
+      );
+
+      expect(value).toBe('Full');
+    });
+
+    it('should return the default format label for FORMAT when numberFormat is not set', () => {
+      const { result } = renderUseChartSettingsValues(
+        buildBarChartConfiguration({}),
+      );
+
+      const value = result.current.getChartSettingsValues(
+        CHART_CONFIGURATION_SETTING_IDS.FORMAT,
+      );
+
+      expect(value).toBe('Short');
     });
   });
 });

@@ -1,0 +1,2 @@
+export const ADD_CALENDAR_END_FIELD_METADATA_ID_TO_VIEW_UPGRADE_COMMAND_NAME =
+  '2.22.0_AddCalendarEndFieldMetadataIdToViewFastInstanceCommand_1783956795000';

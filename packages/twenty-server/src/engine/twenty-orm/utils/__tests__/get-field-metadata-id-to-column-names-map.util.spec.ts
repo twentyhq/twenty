@@ -1,4 +1,9 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  MetadataReadability,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -17,7 +22,6 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     icon: 'IconTest',
     color: null,
     targetTableName: 'test',
-    isCustom: false,
     isRemote: false,
     isActive: true,
     isSystem: false,
@@ -26,18 +30,26 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     workspaceId: 'test-workspace-id',
     universalIdentifier: 'test-object-id',
     indexMetadataIds: [],
+    searchFieldMetadataIds: [],
+    commandMenuItemIds: [],
     objectPermissionIds: [],
     fieldPermissionIds: [],
     fieldIds,
     viewIds: [],
+    pageLayoutIds: [],
     applicationId: 'test-application-id',
     isLabelSyncedWithName: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     shortcut: null,
     description: null,
-    standardOverrides: null,
-    isUIReadOnly: false,
+    overrides: null,
+    isUIEditable: true,
+    isUICreatable: true,
+    writability: MetadataWritability.OPEN,
+    readability: MetadataReadability.OPEN,
+    readabilityParentFieldUniversalIdentifiers: null,
+    openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
     duplicateCriteria: null,
@@ -46,7 +58,10 @@ describe('getFieldMetadataIdToColumnNamesMap', () => {
     objectPermissionUniversalIdentifiers: [],
     fieldPermissionUniversalIdentifiers: [],
     viewUniversalIdentifiers: [],
+    pageLayoutUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
+    searchFieldMetadataUniversalIdentifiers: [],
+    commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier: null,
     imageIdentifierFieldMetadataUniversalIdentifier: null,
   });

@@ -8,7 +8,7 @@ import { type CompositeFieldMetadataType } from 'src/engine/metadata-modules/fie
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
   type FieldMapsForObject,
@@ -18,7 +18,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 export function formatData<T>(
   data: T,
   flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   fieldMapsForObject?: FieldMapsForObject,
 ): T {
   if (!data) {
@@ -40,7 +40,7 @@ export function formatData<T>(
 
   const { fieldIdByName, fieldIdByJoinColumnName } = fieldMaps;
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const newData: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(data)) {
@@ -73,10 +73,10 @@ export function formatData<T>(
 }
 
 export function formatCompositeField(
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
-  fieldMetadata: FlatFieldMetadata,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  fieldMetadata: OrmFlatFieldMetadata,
+  // oxlint-disable-next-line typescript/no-explicit-any
 ): Record<string, any> {
   const compositeType = compositeTypeDefinitions.get(
     fieldMetadata.type as CompositeFieldMetadataType,
@@ -88,7 +88,7 @@ export function formatCompositeField(
     );
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   const formattedCompositeField: Record<string, any> = {};
 
   for (const property of compositeType.properties) {
@@ -98,7 +98,7 @@ export function formatCompositeField(
     if (value && value[subFieldKey] !== undefined) {
       formattedCompositeField[fullFieldName] = formatFieldMetadataValue(
         value[subFieldKey],
-        property as unknown as FlatFieldMetadata,
+        property as unknown as OrmFlatFieldMetadata,
       );
     }
   }
@@ -107,9 +107,9 @@ export function formatCompositeField(
 }
 
 function formatFieldMetadataValue(
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   value: any,
-  fieldMetadata: FlatFieldMetadata,
+  fieldMetadata: OrmFlatFieldMetadata,
 ) {
   if (
     fieldMetadata.type === FieldMetadataType.RAW_JSON &&

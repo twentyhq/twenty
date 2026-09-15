@@ -1,0 +1,12 @@
+import IconBrandGroqRaw from '@assets/icons/groq.svg?react';
+import { type IconComponentProps } from '@ui/icon/types/IconComponent';
+import { useTheme } from '@ui/theme-constants';
+
+type IconBrandGroqProps = Pick<IconComponentProps, 'size'>;
+
+export const IconBrandGroq = (props: IconBrandGroqProps) => {
+  const theme = useTheme();
+  const size = props.size ?? theme.icon.size.lg;
+
+  return <IconBrandGroqRaw height={size} width={size} />;
+};

@@ -1,4 +1,5 @@
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
 import { availableWorkspacesState } from '@/auth/states/availableWorkspacesState';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -9,9 +10,11 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadedState';
 import { useInitializeFormatPreferences } from '@/localization/hooks/useInitializeFormatPreferences';
 import { getDateFnsLocale } from '@/ui/field/display/utils/getDateFnsLocale';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import {
+  type ColorScheme,
+  type UiScale,
+} from '@/workspace-member/types/WorkspaceMember';
 import { enUS } from 'date-fns/locale';
 import { useStore } from 'jotai';
 import { useCallback, useEffect, useState } from 'react';
@@ -27,8 +30,7 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
 export const UserMetadataProviderInitialEffect = () => {
-  const hasAccessTokenPair = useHasAccessTokenPair();
-  const currentUser = useAtomStateValue(currentUserState);
+  const isLogged = useIsLogged();
   const store = useStore();
   const [isInitialized, setIsInitialized] = useState(false);
 
@@ -65,12 +67,13 @@ export const UserMetadataProviderInitialEffect = () => {
     [store],
   );
 
-  const shouldSkipUserQuery = !hasAccessTokenPair || isDefined(currentUser);
+  const shouldSkipUserQuery = !isLogged;
 
   const { data: userQueryData, loading: userQueryLoading } = useQuery(
     GetCurrentUserDocument,
     {
       skip: shouldSkipUserQuery,
+      fetchPolicy: 'network-only',
     },
   );
 
@@ -79,7 +82,7 @@ export const UserMetadataProviderInitialEffect = () => {
       return;
     }
 
-    if (!hasAccessTokenPair) {
+    if (!isLogged) {
       setIsCurrentUserLoaded(true);
       setIsInitialized(true);
       return;
@@ -114,6 +117,9 @@ export const UserMetadataProviderInitialEffect = () => {
             .objectsPermissions as Array<
             ObjectPermissions & { objectMetadataId: string }
           >) ?? [],
+        isImpersonating:
+          userQueryData.currentUser.currentUserWorkspace.isImpersonating ??
+          false,
       });
     }
 
@@ -130,6 +136,8 @@ export const UserMetadataProviderInitialEffect = () => {
       return {
         ...workspaceMember,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'System',
+        uiScale: (workspaceMember.uiScale as UiScale) ?? 'Default',
+        openRecordIn: toOpenRecordInPreference(workspaceMember.openRecordIn),
         locale:
           (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,
       };
@@ -165,7 +173,7 @@ export const UserMetadataProviderInitialEffect = () => {
     setIsInitialized(true);
   }, [
     isInitialized,
-    hasAccessTokenPair,
+    isLogged,
     userQueryLoading,
     userQueryData?.currentUser,
     setCurrentUser,

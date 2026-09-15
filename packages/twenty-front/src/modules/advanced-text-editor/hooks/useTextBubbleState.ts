@@ -1,21 +1,18 @@
+import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type Editor } from '@tiptap/core';
-import { useEditorState } from '@tiptap/react';
 
 export const useTextBubbleState = (editor: Editor) => {
-  const state = useEditorState({
-    editor,
-    selector: (ctx) => {
-      return {
-        isBold: ctx.editor.isActive('bold'),
-        isItalic: ctx.editor.isActive('italic'),
-        isStrike: ctx.editor.isActive('strike'),
-        isUnderline: ctx.editor.isActive('underline'),
-        isLink: ctx.editor.isActive('link'),
-        linkHref: ctx.editor.getAttributes('link').href || '',
-        isBulletList: ctx.editor.isActive('bulletList'),
-        isOrderedList: ctx.editor.isActive('orderedList'),
-      };
-    },
+  const state = useLiveEditorState(editor, (currentEditor) => {
+    return {
+      isBold: currentEditor.isActive('bold'),
+      isItalic: currentEditor.isActive('italic'),
+      isStrike: currentEditor.isActive('strike'),
+      isUnderline: currentEditor.isActive('underline'),
+      isLink: currentEditor.isActive('link'),
+      linkHref: currentEditor.getAttributes('link').href || '',
+      isBulletList: currentEditor.isActive('bulletList'),
+      isOrderedList: currentEditor.isActive('orderedList'),
+    };
   });
 
   return state;

@@ -1,18 +1,35 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import assert from 'assert';
 
-import { msg } from '@lingui/core/macro';
-import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
-import { PermissionFlagType } from 'twenty-shared/constants';
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, QueryRunner, Repository } from 'typeorm';
+import { isNonEmptyString } from '@sniptt/guards';
 
+import { msg } from '@lingui/core/macro';
+import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
+import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  assertIsDefinedOrThrow,
+  isAutoSelectModelId,
+  isDefined,
+} from 'twenty-shared/utils';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import {
+  DataSource,
+  In,
+  IsNull,
+  LessThan,
+  Not,
+  QueryRunner,
+  Repository,
+} from 'typeorm';
+
+import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
@@ -20,6 +37,11 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custom-domain-manager/services/custom-domain-manager.service';
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
+import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import {
+  EmailingDomainWorkspaceCleanupJob,
+  type EmailingDomainWorkspaceCleanupJobData,
+} from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
@@ -27,16 +49,29 @@ import {
   FileWorkspaceFolderDeletionJob,
   type FileWorkspaceFolderDeletionJobData,
 } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
-import { type ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/activate-workspace-input';
+import { WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION } from 'src/engine/core-modules/workspace/constants/workspace-fields-updatable-before-activation.constant';
+import {
+  WorkspaceDeletionApplicationUninstallJob,
+  type WorkspaceDeletionApplicationUninstallJobData,
+} from 'src/engine/core-modules/workspace/jobs/workspace-deletion-application-uninstall.job';
+import { getWorkspaceApplicationUninstallLockName } from 'src/engine/core-modules/workspace/utils/get-workspace-application-uninstall-lock-name.util';
+import { WORKSPACE_REACTIVATED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-reactivated-event.constant';
+import { WORKSPACE_SOFT_DELETED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-soft-deleted-event.constant';
+import { WORKSPACE_SUSPENDED_EVENT } from 'src/engine/core-modules/workspace/constants/workspace-suspended-event.constant';
+import { type WorkspaceReactivatedEvent } from 'src/engine/core-modules/workspace/types/workspace-reactivated-event.type';
+import { type WorkspaceSoftDeletedEvent } from 'src/engine/core-modules/workspace/types/workspace-soft-deleted-event.type';
+import { type WorkspaceSuspendedEvent } from 'src/engine/core-modules/workspace/types/workspace-suspended-event.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import {
   WorkspaceException,
@@ -44,7 +79,6 @@ import {
   WorkspaceNotFoundDefaultError,
 } from 'src/engine/core-modules/workspace/workspace.exception';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { isModelAllowedByWorkspace } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { ALL_METADATA_NAMES_SORTED_ATOMICALLY } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-names-sorted-atomically.constant';
@@ -57,7 +91,7 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
@@ -70,9 +104,16 @@ import { WorkspaceManagerService } from 'src/engine/workspace-manager/workspace-
 import { DEFAULT_FEATURE_FLAGS } from 'src/engine/workspace-manager/workspace-migration/constant/default-feature-flags';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
+// A workspace stuck in ONGOING_CREATION for longer than this is treated as a
+// crashed activation (the process died before the catch block could reset it to
+// PENDING_CREATION) and may be retried. It is far longer than a real activation
+// takes, so a genuinely in-progress activation is never reclaimed.
+const WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS = 5 * 60 * 1000;
+const WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT = 3;
+
 @Injectable()
 // oxlint-disable-next-line twenty/inject-workspace-repository
-export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
+export class WorkspaceService {
   protected readonly logger = new Logger(WorkspaceService.name);
 
   private readonly WORKSPACE_FIELD_PERMISSIONS: Record<
@@ -87,6 +128,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     eventLogRetentionDays: PermissionFlagType.SECURITY,
     inviteHash: PermissionFlagType.WORKSPACE_MEMBERS,
     isPublicInviteLinkEnabled: PermissionFlagType.SECURITY,
+    workspaceDiscoverability: PermissionFlagType.SECURITY,
     allowImpersonation: PermissionFlagType.SECURITY,
     isGoogleAuthEnabled: PermissionFlagType.SECURITY,
     isMicrosoftAuthEnabled: PermissionFlagType.SECURITY,
@@ -94,16 +136,18 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     editableProfileFields: PermissionFlagType.SECURITY,
     isTwoFactorAuthenticationEnforced: PermissionFlagType.SECURITY,
     defaultRoleId: PermissionFlagType.ROLES,
-    fastModel: PermissionFlagType.WORKSPACE,
-    smartModel: PermissionFlagType.WORKSPACE,
+    aiChatModelTier: PermissionFlagType.AI_SETTINGS,
+    aiAgentModelTier: PermissionFlagType.AI_SETTINGS,
+    isAutoModelSelectionEnabled: PermissionFlagType.AI_SETTINGS,
+    aiModelIdByTier: PermissionFlagType.AI_SETTINGS,
     aiAdditionalInstructions: PermissionFlagType.WORKSPACE,
-    enabledAiModelIds: PermissionFlagType.AI_SETTINGS,
-    useRecommendedModels: PermissionFlagType.AI_SETTINGS,
+    isInternalMessagesImportEnabled: PermissionFlagType.WORKSPACE,
   };
 
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly eventEmitter: EventEmitter2,
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -124,19 +168,74 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly subdomainManagerService: SubdomainManagerService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceSchemaService: WorkspaceSchemaService,
     private readonly customDomainManagerService: CustomDomainManagerService,
     private readonly fileCorePictureService: FileCorePictureService,
     private readonly aiModelRegistryService: AiModelRegistryService,
     @InjectMessageQueue(MessageQueue.deleteCascadeQueue)
-    private readonly messageQueueService: MessageQueueService,
+    private readonly deleteCascadeMessageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.logicFunctionQueue)
+    private readonly logicFunctionMessageQueueService: MessageQueueService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly upgradeMigrationService: UpgradeMigrationService,
     private readonly upgradeSequenceReaderService: UpgradeSequenceReaderService,
-  ) {
-    super(workspaceRepository);
+    private readonly sdkClientGenerationService: SdkClientGenerationService,
+    private readonly postgresAdvisoryLockService: PostgresAdvisoryLockService,
+    private readonly applicationUninstallService: ApplicationUninstallService,
+  ) {}
+
+  // Pins are stored as given, so a stale or mistyped id must be refused here
+  // rather than silently falling back to the tier default at run time. A pin
+  // that is already stored is left alone so the others stay editable.
+  private validateAiModelIdByTier({
+    aiModelIdByTier,
+    storedAiModelIdByTier,
+  }: {
+    aiModelIdByTier: Partial<Record<AiModelTier, string>>;
+    storedAiModelIdByTier: Partial<Record<AiModelTier, string>>;
+  }): void {
+    for (const [tier, modelId] of Object.entries(aiModelIdByTier)) {
+      if (!isAiModelTier(tier)) {
+        throw new WorkspaceException(
+          `Unknown AI model tier "${tier}"`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (!isNonEmptyString(modelId)) {
+        throw new WorkspaceException(
+          `Missing model id for tier "${tier}"`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (isAutoSelectModelId(modelId)) {
+        throw new WorkspaceException(
+          `Tier "${tier}" must be pinned to a concrete model`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (modelId === storedAiModelIdByTier?.[tier]) {
+        continue;
+      }
+
+      if (!this.aiModelRegistryService.isModelAdminAllowed(modelId)) {
+        throw new WorkspaceException(
+          'Selected model has been disabled by the administrator',
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+
+      if (!isDefined(this.aiModelRegistryService.getModelConfig(modelId))) {
+        throw new WorkspaceException(
+          `Model "${modelId}" is not in this instance's catalog`,
+          WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID,
+        );
+      }
+    }
   }
 
   async updateWorkspaceById({
@@ -240,46 +339,11 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       );
     }
 
-    const isChangingModels =
-      isDefined(payload.smartModel) || isDefined(payload.fastModel);
-    const isChangingAvailability =
-      payload.useRecommendedModels !== undefined ||
-      payload.enabledAiModelIds !== undefined;
-
-    if (isChangingModels || isChangingAvailability) {
-      const effectiveWorkspace = {
-        useRecommendedModels:
-          payload.useRecommendedModels ?? workspace.useRecommendedModels,
-        enabledAiModelIds:
-          payload.enabledAiModelIds ?? workspace.enabledAiModelIds,
-      };
-
-      const modelsToValidate = [
-        payload.smartModel ?? workspace.smartModel,
-        payload.fastModel ?? workspace.fastModel,
-      ].filter(isDefined);
-
-      for (const modelId of modelsToValidate) {
-        if (!this.aiModelRegistryService.isModelAdminAllowed(modelId)) {
-          throw new WorkspaceException(
-            'Selected model has been disabled by the administrator',
-            WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
-          );
-        }
-
-        if (
-          !isModelAllowedByWorkspace(
-            modelId,
-            effectiveWorkspace,
-            this.aiModelRegistryService.getRecommendedModelIds(),
-          )
-        ) {
-          throw new WorkspaceException(
-            'Selected model is not available in this workspace',
-            WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED,
-          );
-        }
-      }
+    if (isDefined(payload.aiModelIdByTier)) {
+      this.validateAiModelIdByTier({
+        aiModelIdByTier: payload.aiModelIdByTier,
+        storedAiModelIdByTier: workspace.aiModelIdByTier,
+      });
     }
 
     let updatedWorkspace: WorkspaceEntity;
@@ -288,9 +352,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       updatedWorkspace = await this.workspaceRepository.save({
         ...workspace,
         ...payload,
+        ...(payload.logo === null ? { logoFileId: null } : {}),
       });
     } catch (error) {
-      // revert custom domain registration on error
       if (payload.customDomain && customDomainRegistered) {
         this.dnsManagerService
           .deleteHostnameSilently(payload.customDomain)
@@ -316,57 +380,107 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     return updatedWorkspace;
   }
 
-  async activateWorkspace(
-    user: AuthContextUser,
-    workspace: WorkspaceEntity,
-    data: ActivateWorkspaceInput,
-  ) {
-    if (!data.displayName || !data.displayName.length) {
-      throw new BadRequestException("'displayName' not provided");
+  async activateWorkspace(user: AuthContextUser, workspace: WorkspaceEntity) {
+    // Acquire the activation lock by atomically moving the workspace to
+    // ONGOING_CREATION. First try the normal case (PENDING_CREATION). If nothing
+    // matches, the workspace may be stuck in ONGOING_CREATION from a prior
+    // attempt that was killed before the catch block could reset it — reclaim it,
+    // but only once the lock is stale, so a genuinely concurrent activation is
+    // never interrupted. Postgres row locking serializes concurrent reclaims, and
+    // repository.update bumps updatedAt, so a reclaimed lock is immediately fresh.
+    let activationLockResult = await this.workspaceRepository.update(
+      {
+        id: workspace.id,
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      },
+      { activationStatus: WorkspaceActivationStatus.ONGOING_CREATION },
+    );
+
+    if ((activationLockResult.affected ?? 0) === 0) {
+      activationLockResult = await this.workspaceRepository.update(
+        {
+          id: workspace.id,
+          activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
+          updatedAt: LessThan(
+            new Date(Date.now() - WORKSPACE_ACTIVATION_STALE_LOCK_TIMEOUT_MS),
+          ),
+        },
+        { activationStatus: WorkspaceActivationStatus.ONGOING_CREATION },
+      );
     }
 
-    if (
-      workspace.activationStatus === WorkspaceActivationStatus.ONGOING_CREATION
-    ) {
+    if ((activationLockResult.affected ?? 0) === 0) {
+      // Activation is idempotent for the terminal state: if a prior attempt
+      // already completed (e.g. the client lost the response and retried),
+      // return the active workspace instead of failing. Otherwise another
+      // activation is genuinely in progress and must not be interrupted.
+      const existingWorkspace = await this.workspaceRepository.findOneBy({
+        id: workspace.id,
+      });
+
+      if (
+        existingWorkspace?.activationStatus ===
+          WorkspaceActivationStatus.ACTIVE ||
+        existingWorkspace?.activationStatus ===
+          WorkspaceActivationStatus.CREATED
+      ) {
+        return existingWorkspace;
+      }
+
       throw new Error('Workspace is already being created');
     }
-
-    if (
-      workspace.activationStatus !== WorkspaceActivationStatus.PENDING_CREATION
-    ) {
-      throw new Error('Workspace is not pending creation');
-    }
-
-    await this.workspaceRepository.update(workspace.id, {
-      activationStatus: WorkspaceActivationStatus.ONGOING_CREATION,
-    });
 
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',
       workspace.id,
     );
 
-    await this.workspaceManagerService.init({
-      workspace,
-      userId: user.id,
-    });
+    try {
+      await this.workspaceManagerService.init({
+        workspace,
+        userId: user.id,
+      });
 
-    await this.featureFlagService.enableFeatureFlags(
-      DEFAULT_FEATURE_FLAGS,
-      workspace.id,
-    );
+      await this.featureFlagService.enableFeatureFlags(
+        DEFAULT_FEATURE_FLAGS,
+        workspace.id,
+      );
 
-    await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
+      await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-    await this.prefillCreatedWorkspaceRecords({
-      workspaceId: workspace.id,
-      schemaName: getWorkspaceSchemaName(workspace.id),
-    });
+      await this.prefillCreatedWorkspaceRecords({
+        workspaceId: workspace.id,
+        schemaName: getWorkspaceSchemaName(workspace.id),
+      });
 
-    await this.activateAndInitializeUpgradeState({
-      workspaceId: workspace.id,
-      displayName: data.displayName,
-    });
+      await this.activateAndInitializeUpgradeState({
+        workspaceId: workspace.id,
+      });
+
+      await this.enqueuePreInstalledAppsInstallation(workspace.id);
+    } catch (error) {
+      await this.workspaceRepository.update(workspace.id, {
+        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+      });
+      await this.coreEntityCacheService.invalidate(
+        'workspaceEntity',
+        workspace.id,
+      );
+
+      throw error;
+    }
+
+    try {
+      await this.sdkClientGenerationService.enqueueSdkClientGenerationForWorkspace(
+        workspace.id,
+      );
+    } catch (error) {
+      this.logger.error(
+        `failed to enqueue SDK client generation jobs for workspace ${workspace.id}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
+    }
 
     await this.coreEntityCacheService.invalidate(
       'workspaceEntity',
@@ -379,11 +493,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   }
 
   private async activateAndInitializeUpgradeState({
-    displayName,
     workspaceId,
   }: {
     workspaceId: string;
-    displayName: string;
   }): Promise<void> {
     const lastAttemptedInstanceCommand =
       await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
@@ -396,6 +508,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     const executedByVersion =
       this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
 
+    const hasWorkspaceAnySubscription =
+      await this.billingService.hasWorkspaceAnySubscription(workspaceId);
+
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -403,8 +518,9 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     try {
       await queryRunner.manager.update(WorkspaceEntity, workspaceId, {
-        displayName,
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        activationStatus: hasWorkspaceAnySubscription
+          ? WorkspaceActivationStatus.ACTIVE
+          : WorkspaceActivationStatus.CREATED,
       });
 
       await this.upgradeMigrationService.markAsWorkspaceInitial({
@@ -424,6 +540,62 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     }
   }
 
+  async suspendWorkspace(id: string): Promise<boolean> {
+    const workspaceSuspendedAt = new Date();
+    const { affected } = await this.workspaceRepository.update(
+      {
+        id,
+        activationStatus: Not(WorkspaceActivationStatus.SUSPENDED),
+        deletedAt: IsNull(),
+      },
+      {
+        activationStatus: WorkspaceActivationStatus.SUSPENDED,
+        suspendedAt: workspaceSuspendedAt,
+      },
+    );
+
+    const hasBeenSuspended = isDefined(affected) && affected > 0;
+
+    if (hasBeenSuspended) {
+      this.eventEmitter.emit(WORKSPACE_SUSPENDED_EVENT, {
+        workspaceId: id,
+      } satisfies WorkspaceSuspendedEvent);
+
+      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    }
+
+    return hasBeenSuspended;
+  }
+
+  async reactivateWorkspace(id: string): Promise<boolean> {
+    const { affected } = await this.workspaceRepository.update(
+      {
+        id,
+        activationStatus: In([
+          WorkspaceActivationStatus.SUSPENDED,
+          WorkspaceActivationStatus.CREATED,
+        ]),
+        deletedAt: IsNull(),
+      },
+      {
+        activationStatus: WorkspaceActivationStatus.ACTIVE,
+        suspendedAt: null,
+      },
+    );
+
+    const hasBeenReactivated = isDefined(affected) && affected > 0;
+
+    if (hasBeenReactivated) {
+      this.eventEmitter.emit(WORKSPACE_REACTIVATED_EVENT, {
+        workspaceId: id,
+      } satisfies WorkspaceReactivatedEvent);
+
+      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
+    }
+
+    return hasBeenReactivated;
+  }
+
   async deleteWorkspace(id: string, softDelete = false) {
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
@@ -431,6 +603,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     });
 
     assert(workspace, 'Workspace not found');
+
+    if (!softDelete) {
+      return this.hardDeleteWorkspaceWithApplicationUninstallLock(workspace);
+    }
 
     const userWorkspaces = await this.userWorkspaceRepository.find({
       where: {
@@ -440,64 +616,159 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     });
 
     for (const userWorkspace of userWorkspaces) {
-      await this.handleRemoveWorkspaceMember(
-        id,
-        userWorkspace.userId,
-        softDelete,
-      );
+      await this.handleRemoveWorkspaceMember(id, userWorkspace.userId, true);
     }
     this.logger.log(`workspace ${id} user workspaces deleted`);
 
     this.logger.log(`workspace ${id} cache flushed`);
 
     if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
+      await this.billingSubscriptionService.cancelSubscription(workspace.id);
     }
 
-    if (softDelete) {
-      await this.workspaceRepository.softDelete({ id });
-      await this.coreEntityCacheService.invalidate('workspaceEntity', id);
-
-      this.logger.log(`workspace ${id} soft deleted`);
-
-      return workspace;
-    }
-
-    await this.deleteWorkspaceSyncableMetadataEntities(workspace);
-
-    await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspace.id);
-
-    await this.workspaceCacheStorageService.flush(
-      workspace.id,
-      workspace.metadataVersion,
-    );
-    await this.flatEntityMapsCacheService.flushFlatEntityMaps({
-      workspaceId: workspace.id,
-    });
-
-    await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
-      FileWorkspaceFolderDeletionJob.name,
-      { workspaceId: id },
-    );
-
-    if (workspace.customDomain) {
-      await this.dnsManagerService.deleteHostnameSilently(
-        workspace.customDomain,
-      );
-      this.logger.log(`workspace ${id} custom domain deleted`);
-    }
-
-    await this.workspaceRepository.delete(id);
+    await this.workspaceRepository.softDelete({ id, deletedAt: IsNull() });
     await this.coreEntityCacheService.invalidate('workspaceEntity', id);
 
-    this.logger.log(`workspace ${id} hard deleted`);
+    this.eventEmitter.emit(WORKSPACE_SOFT_DELETED_EVENT, {
+      workspaceId: id,
+    } satisfies WorkspaceSoftDeletedEvent);
+
+    await this.enqueueWorkspaceDeletionApplicationUninstall(id);
+
+    this.logger.log(`workspace ${id} soft deleted`);
 
     return workspace;
+  }
+
+  private async hardDeleteWorkspaceWithApplicationUninstallLock(
+    workspace: WorkspaceEntity,
+  ): Promise<WorkspaceEntity> {
+    const advisoryLockResult =
+      await this.postgresAdvisoryLockService.tryWithLock(
+        getWorkspaceApplicationUninstallLockName(workspace.id),
+        async () => {
+          const userWorkspaces = await this.userWorkspaceRepository.find({
+            where: {
+              workspaceId: workspace.id,
+            },
+            withDeleted: true,
+          });
+
+          for (const userWorkspace of userWorkspaces) {
+            await this.handleRemoveWorkspaceMember(
+              workspace.id,
+              userWorkspace.userId,
+              false,
+            );
+          }
+          this.logger.log(`workspace ${workspace.id} user workspaces deleted`);
+
+          this.logger.log(`workspace ${workspace.id} cache flushed`);
+
+          if (this.billingService.isBillingEnabled()) {
+            await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
+              workspace.id,
+            );
+          }
+
+          await this.runPendingApplicationUninstallHooksBeforeHardDelete(
+            workspace,
+          );
+
+          await this.deleteWorkspaceSyncableMetadataEntities(workspace);
+
+          await this.workspaceSchemaService.deleteWorkspaceDBSchema(
+            workspace.id,
+          );
+
+          await this.workspaceCacheStorageService.flush(workspace.id);
+          await this.flatEntityMapsCacheService.flushFlatEntityMaps({
+            workspaceId: workspace.id,
+          });
+
+          await this.deleteCascadeMessageQueueService.add<FileWorkspaceFolderDeletionJobData>(
+            FileWorkspaceFolderDeletionJob.name,
+            { workspaceId: workspace.id },
+          );
+
+          const emailingDomains = await this.coreDataSource
+            .getRepository(EmailingDomainEntity)
+            .find({ where: { workspaceId: workspace.id } });
+
+          await this.deleteCascadeMessageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
+            EmailingDomainWorkspaceCleanupJob.name,
+            {
+              workspaceId: workspace.id,
+              domains: emailingDomains.map(
+                (emailingDomain) => emailingDomain.domain,
+              ),
+            },
+          );
+
+          if (workspace.customDomain) {
+            await this.dnsManagerService.deleteHostnameSilently(
+              workspace.customDomain,
+            );
+            this.logger.log(`workspace ${workspace.id} custom domain deleted`);
+          }
+
+          await this.workspaceRepository.delete(workspace.id);
+          await this.coreEntityCacheService.invalidate(
+            'workspaceEntity',
+            workspace.id,
+          );
+
+          this.logger.log(`workspace ${workspace.id} hard deleted`);
+
+          return workspace;
+        },
+      );
+
+    if (!advisoryLockResult.acquired) {
+      throw new WorkspaceException(
+        `Cannot hard delete workspace ${workspace.id} while application uninstall is running`,
+        WorkspaceExceptionCode.APPLICATION_UNINSTALL_IN_PROGRESS,
+      );
+    }
+
+    return advisoryLockResult.value;
+  }
+
+  async enqueueWorkspaceDeletionApplicationUninstall(
+    workspaceId: string,
+  ): Promise<void> {
+    await this.logicFunctionMessageQueueService.add<WorkspaceDeletionApplicationUninstallJobData>(
+      WorkspaceDeletionApplicationUninstallJob.name,
+      { workspaceId },
+      {
+        id: `${WorkspaceDeletionApplicationUninstallJob.name}-${workspaceId}`,
+        retryLimit: WORKSPACE_APPLICATION_UNINSTALL_RETRY_LIMIT,
+        backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+      },
+    );
+  }
+
+  private async runPendingApplicationUninstallHooksBeforeHardDelete(
+    workspace: WorkspaceEntity,
+  ): Promise<void> {
+    if (!isDefined(workspace.deletedAt)) {
+      return;
+    }
+
+    await this.applicationUninstallService.runUninstallHooksForWorkspaceDeletionBestEffort(
+      {
+        workspaceId: workspace.id,
+        workspaceDeletedAt: workspace.deletedAt,
+      },
+    );
   }
 
   private async deleteWorkspaceSyncableMetadataEntities(
     workspace: WorkspaceEntity,
   ): Promise<void> {
+    const fieldMetadataIdChunks = await this.getFieldMetadataIdChunks(
+      workspace.id,
+    );
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
@@ -510,6 +781,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           const deletedCount = await this.deleteFieldMetadataInChunks(
             queryRunner,
             workspace.id,
+            fieldMetadataIdChunks,
           );
 
           if (deletedCount > 0) {
@@ -546,12 +818,10 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
   // FieldMetadataEntity has a self-referencing FK (relationTargetFieldMetadataId)
   // Related fields must be deleted together to avoid constraint violations
-  private async deleteFieldMetadataInChunks(
-    queryRunner: QueryRunner,
+  private async getFieldMetadataIdChunks(
     workspaceId: string,
-  ): Promise<number> {
+  ): Promise<string[][]> {
     const CHUNK_SIZE = 50;
-    let totalDeleted = 0;
 
     const { flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -566,7 +836,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     ).filter(isDefined);
 
     if (fields.length === 0) {
-      return 0;
+      return [];
     }
 
     const processedIds = new Set<string>();
@@ -601,7 +871,17 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       chunks.push(currentChunk);
     }
 
-    for (const [index, chunk] of chunks.entries()) {
+    return chunks;
+  }
+
+  private async deleteFieldMetadataInChunks(
+    queryRunner: QueryRunner,
+    workspaceId: string,
+    fieldMetadataIdChunks: string[][],
+  ): Promise<number> {
+    let totalDeleted = 0;
+
+    for (const [index, chunk] of fieldMetadataIdChunks.entries()) {
       const result = await queryRunner.manager
         .createQueryBuilder()
         .delete()
@@ -614,7 +894,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       totalDeleted += deletedInChunk;
 
       this.logger.log(
-        `workspace ${workspaceId}: fieldMetadata chunk ${index + 1}/${chunks.length} - deleted ${deletedInChunk} record(s)`,
+        `workspace ${workspaceId}: fieldMetadata chunk ${index + 1}/${fieldMetadataIdChunks.length} - deleted ${deletedInChunk} record(s)`,
       );
     }
 
@@ -640,6 +920,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     if (isDefined(userWorkspaceOfRemovedWorkspaceMember)) {
       await this.userWorkspaceService.deleteUserWorkspace({
         userWorkspaceId: userWorkspaceOfRemovedWorkspaceMember.id,
+        workspaceId,
         softDelete,
       });
       await this.coreEntityCacheService.invalidate(
@@ -673,12 +954,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     apiKey: ApiKeyEntity | undefined;
     workspaceActivationStatus: WorkspaceActivationStatus;
   }) {
-    if (
-      workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
-    ) {
-      return;
-    }
-
     const systemFields = new Set(['id', 'createdAt', 'updatedAt', 'deletedAt']);
 
     const fieldsBeingUpdated = Object.keys(payload).filter(
@@ -686,6 +961,28 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     );
 
     if (fieldsBeingUpdated.length === 0) {
+      return;
+    }
+
+    if (
+      workspaceActivationStatus === WorkspaceActivationStatus.PENDING_CREATION
+    ) {
+      const fieldsRequiringActivation = fieldsBeingUpdated.filter(
+        (field) => !(field in WORKSPACE_FIELDS_UPDATABLE_BEFORE_ACTIVATION),
+      );
+
+      if (fieldsRequiringActivation.length > 0) {
+        const fieldsList = fieldsRequiringActivation.join(', ');
+
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+          {
+            userFriendlyMessage: msg`These fields cannot be updated before the workspace is activated: ${fieldsList}.`,
+          },
+        );
+      }
+
       return;
     }
 
@@ -821,12 +1118,16 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);
     }
+  }
 
+  private async enqueuePreInstalledAppsInstallation(
+    workspaceId: string,
+  ): Promise<void> {
     try {
-      await this.preInstalledAppsService.installOnWorkspace(workspaceId);
+      await this.preInstalledAppsService.enqueueInstallOnWorkspace(workspaceId);
     } catch (error) {
       this.logger.error(
-        `Non-critical: failed to install pre-installed apps for workspace ${workspaceId}`,
+        `Non-critical: failed to enqueue pre-installed apps installation for workspace ${workspaceId}`,
         error,
       );
       this.exceptionHandlerService.captureExceptions([error as Error]);

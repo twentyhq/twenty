@@ -33,6 +33,8 @@ export enum ErrorCode {
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
   METADATA_VALIDATION_FAILED = 'METADATA_VALIDATION_FAILED',
   APPLICATION_INSTALLATION_FAILED = 'APPLICATION_INSTALLATION_FAILED',
+  RATE_LIMITED = 'RATE_LIMITED',
+  QUOTA_EXHAUSTED = 'QUOTA_EXHAUSTED',
 }
 
 type RestrictedGraphQLErrorExtensions = {
@@ -41,7 +43,7 @@ type RestrictedGraphQLErrorExtensions = {
 };
 
 export class BaseGraphQLError extends GraphQLError {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   public extensions: Record<string, any>;
   override readonly name!: string;
   readonly locations: ReadonlyArray<SourceLocation> | undefined;
@@ -51,12 +53,12 @@ export class BaseGraphQLError extends GraphQLError {
   readonly nodes: ReadonlyArray<ASTNode> | undefined;
   public originalError: Error | undefined;
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   [key: string]: any;
   constructor(
     exceptionOrMessage: string | CustomException,
     code?: string,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     extensions?: Record<string, any>,
   ) {
     if (exceptionOrMessage instanceof CustomException) {
@@ -282,10 +284,8 @@ export const convertGraphQLErrorToBaseGraphQLError = (
         break;
       default:
         if (httpStatus >= 400 && httpStatus < 500) {
-          // Other 4xx errors
           errorCode = ErrorCode.BAD_USER_INPUT;
         } else {
-          // 5xx errors default to internal server error
           errorCode = ErrorCode.INTERNAL_SERVER_ERROR;
         }
     }

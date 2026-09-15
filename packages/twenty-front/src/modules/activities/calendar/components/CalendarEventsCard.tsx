@@ -1,91 +1,34 @@
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { format, getYear } from 'date-fns';
-
-import { CalendarMonthCard } from '@/activities/calendar/components/CalendarMonthCard';
+import { CalendarEventsCardContent } from '@/activities/calendar/components/CalendarEventsCardContent';
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from '@/activities/calendar/constants/Calendar';
-import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { getTimelineCalendarEventsFromCompanyId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromCompanyId';
-import { getTimelineCalendarEventsFromOpportunityId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromOpportunityId';
-import { getTimelineCalendarEventsFromPersonId } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromPersonId';
-import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
-import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { SkeletonLoader } from '@/activities/components/SkeletonLoader';
+import { getTimelineCalendarEventsFromObjectRecord } from '@/activities/calendar/graphql/queries/getTimelineCalendarEventsFromObjectRecord';
 import { useCustomResolver } from '@/activities/hooks/useCustomResolver';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useSubscribeTimelineToParticipantChanges } from '@/activities/hooks/useSubscribeTimelineToParticipantChanges';
+import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
-import { H3Title } from 'twenty-ui/display';
-import {
-  AnimatedPlaceholder,
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-  Section,
-} from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type TimelineCalendarEventsWithTotal } from '~/generated/graphql';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-
-const StyledContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[8]};
-  overflow: scroll;
-  padding: ${themeCssVariables.spacing[6]};
-  width: 100%;
-`;
-
-const StyledYear = styled.span`
-  color: ${themeCssVariables.font.color.light};
-`;
-
-const StyledTitleContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[4]};
-`;
 
 export const CalendarEventsCard = () => {
-  const { t } = useLingui();
   const targetRecord = useTargetRecord();
-  const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
-  const [query, queryName] =
-    targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Person
-      ? [
-          getTimelineCalendarEventsFromPersonId,
-          'getTimelineCalendarEventsFromPersonId',
-        ]
-      : targetRecord.targetObjectNameSingular === CoreObjectNameSingular.Company
-        ? [
-            getTimelineCalendarEventsFromCompanyId,
-            'getTimelineCalendarEventsFromCompanyId',
-          ]
-        : [
-            getTimelineCalendarEventsFromOpportunityId,
-            'getTimelineCalendarEventsFromOpportunityId',
-          ];
-
-  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords } =
+  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords, refetch } =
     useCustomResolver<TimelineCalendarEventsWithTotal>(
-      query,
-      queryName,
+      getTimelineCalendarEventsFromObjectRecord,
+      'getTimelineCalendarEventsFromObjectRecord',
       'timelineCalendarEvents',
       targetRecord,
       TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
     );
 
-  const { timelineCalendarEvents, totalNumberOfCalendarEvents } =
-    data?.[queryName] ?? {};
+  useSubscribeTimelineToParticipantChanges({
+    queryId: `calendar-${targetRecord.id}`,
+    participantObjectNameSingular: 'calendarEventParticipant',
+    relatedPersonIds:
+      data?.getTimelineCalendarEventsFromObjectRecord?.relatedPersonIds ?? [],
+    refetch,
+  });
 
-  const {
-    calendarEventsByDayTime,
-    daysByMonthTime,
-    monthTimes,
-    monthTimesByYear,
-  } = useCalendarEvents(timelineCalendarEvents || []);
+  const { timelineCalendarEvents, totalNumberOfCalendarEvents } =
+    data?.getTimelineCalendarEventsFromObjectRecord ?? {};
 
   const hasMoreCalendarEvents =
     timelineCalendarEvents && totalNumberOfCalendarEvents
@@ -98,69 +41,16 @@ export const CalendarEventsCard = () => {
     }
   };
 
-  const objectName = targetRecord.targetObjectNameSingular;
-
-  if (firstQueryLoading) {
-    return <SkeletonLoader />;
-  }
-
-  if (!firstQueryLoading && !timelineCalendarEvents?.length) {
-    // TODO: change animated placeholder
-    return (
-      <AnimatedPlaceholderEmptyContainer
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-      >
-        <AnimatedPlaceholder type="noMatchRecord" />
-        <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>
-            {t`No Events`}
-          </AnimatedPlaceholderEmptyTitle>
-          <AnimatedPlaceholderEmptySubTitle>
-            {t`No events have been scheduled with this ${objectName} yet.`}
-          </AnimatedPlaceholderEmptySubTitle>
-        </AnimatedPlaceholderEmptyTextContainer>
-      </AnimatedPlaceholderEmptyContainer>
-    );
-  }
-
   return (
-    <CalendarContext.Provider
-      value={{
-        calendarEventsByDayTime,
-      }}
-    >
-      <StyledContainer>
-        {monthTimes.map((monthTime) => {
-          const monthDayTimes = daysByMonthTime[monthTime] || [];
-          const year = getYear(monthTime);
-          const lastMonthTimeOfYear = monthTimesByYear[year]?.[0];
-          const isLastMonthOfYear = lastMonthTimeOfYear === monthTime;
-          const monthLabel = format(monthTime, 'MMMM', {
-            locale: localeCatalog,
-          });
-
-          return (
-            <Section key={monthTime}>
-              <StyledTitleContainer>
-                <H3Title
-                  title={
-                    <>
-                      {monthLabel}
-                      {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
-                    </>
-                  }
-                />
-              </StyledTitleContainer>
-              <CalendarMonthCard dayTimes={monthDayTimes} />
-            </Section>
-          );
-        })}
-        <CustomResolverFetchMoreLoader
-          loading={isFetchingMore || firstQueryLoading}
-          onLastRowVisible={handleLastRowVisible}
-        />
-      </StyledContainer>
-    </CalendarContext.Provider>
+    <>
+      <WidgetHeaderCountEffect count={totalNumberOfCalendarEvents} />
+      <CalendarEventsCardContent
+        firstQueryLoading={firstQueryLoading}
+        isFetchingMore={isFetchingMore}
+        objectName={targetRecord.targetObjectNameSingular}
+        onLastRowVisible={handleLastRowVisible}
+        timelineCalendarEvents={timelineCalendarEvents}
+      />
+    </>
   );
 };

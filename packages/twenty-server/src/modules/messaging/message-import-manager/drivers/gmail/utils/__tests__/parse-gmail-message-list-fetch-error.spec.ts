@@ -1,9 +1,8 @@
-import { GaxiosError } from 'gaxios';
-
 import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { createMockGaxiosError } from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/create-mock-gaxios-error.util';
 import { getGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/mocks/gmail-api-error-mocks';
 import { parseGmailApiError } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-api-error.util';
 
@@ -36,13 +35,13 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 401 Invalid Credentials', () => {
+  it('should handle 401 Invalid Credentials as temporary so the next attempt can refresh the token', () => {
     const error = getGmailApiError({ code: 401 });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception.code).toBe(
-      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
   });
 
@@ -76,13 +75,13 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 403 Domain Policy Error', () => {
+  it('should handle 403 Domain Policy Error as temporary', () => {
     const error = getGmailApiError({ code: 403, reason: 'domainPolicy' });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception.code).toBe(
-      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
   });
 
@@ -96,12 +95,14 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 410 Gone', () => {
+  it('should handle 410 Gone as temporary', () => {
     const error = getGmailApiError({ code: 410 });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
-    expect(exception.code).toBe(MessageImportDriverExceptionCode.UNKNOWN);
+    expect(exception.code).toBe(
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
   });
 
   it('should handle 429 Too Many Requests', () => {
@@ -125,18 +126,12 @@ describe('parseGmailApiError', () => {
   });
 
   it('should handle 500 OAuth internal_failure error', () => {
-    const error = new GaxiosError(
-      'internal_failure',
-      { url: 'https://oauth2.googleapis.com/token' },
-      {
-        status: 500,
-        statusText: 'Internal Server Error',
-        data: { error: 'internal_failure' },
-        headers: {},
-        config: { url: 'https://oauth2.googleapis.com/token' },
-        request: { responseURL: 'https://oauth2.googleapis.com/token' },
-      },
-    );
+    const error = createMockGaxiosError({
+      message: 'internal_failure',
+      status: 500,
+      statusText: 'Internal Server Error',
+      data: { error: 'internal_failure' },
+    });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
@@ -173,13 +168,13 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 401 Invalid Credentials with errorCodeAsString', () => {
+  it('should handle 401 Invalid Credentials with errorCodeAsString as temporary', () => {
     const error = getGmailApiError({ code: 401 });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception.code).toBe(
-      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
   });
 
@@ -213,13 +208,13 @@ describe('parseGmailApiError', () => {
     );
   });
 
-  it('should handle 403 Domain Policy Error with errorCodeAsString', () => {
+  it('should handle 403 Domain Policy Error with errorCodeAsString as temporary', () => {
     const error = getGmailApiError({ code: 403, reason: 'domainPolicy' });
     const exception = parseGmailApiError(error);
 
     expect(exception).toBeInstanceOf(MessageImportDriverException);
     expect(exception.code).toBe(
-      MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
     );
   });
 
@@ -275,5 +270,21 @@ describe('parseGmailApiError', () => {
       fifteenMinutesFromNow.getTime(),
       -3,
     );
+  });
+
+  it('should leave retryAfter undefined on non-rate-limit errors even when the message contains a retry-after timestamp', () => {
+    const fifteenMinutesFromNow = new Date(Date.now() + 15 * 60 * 1000);
+    const error = getGmailApiError({
+      code: 500,
+      reason: 'backendError',
+      message: `Backend Error.  Retry after ${fifteenMinutesFromNow.toISOString()}`,
+    });
+
+    const exception = parseGmailApiError(error);
+
+    expect(exception.code).toBe(
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+    expect(exception.throttleRetryAfter).toBeUndefined();
   });
 });

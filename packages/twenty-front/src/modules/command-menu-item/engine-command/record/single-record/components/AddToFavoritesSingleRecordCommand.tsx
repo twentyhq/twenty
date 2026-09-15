@@ -18,7 +18,7 @@ export const AddToFavoritesSingleRecordCommand = () => {
   }
 
   const { createManyNavigationMenuItems } = useCreateManyNavigationMenuItems();
-  const { navigationMenuItems, currentWorkspaceMemberId } =
+  const { navigationMenuItems, currentUserWorkspaceId } =
     useNavigationMenuItemsData();
 
   const handleExecute = () => {
@@ -41,7 +41,7 @@ export const AddToFavoritesSingleRecordCommand = () => {
         type: NavigationMenuItemType.RECORD,
         targetRecordId: selectedRecord.id,
         targetObjectMetadataId: objectMetadataItem.id,
-        userWorkspaceId: currentWorkspaceMemberId,
+        userWorkspaceId: currentUserWorkspaceId,
         position: maxPosition + 1,
       },
     ]);

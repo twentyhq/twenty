@@ -4,13 +4,12 @@ import { EmailsFieldMenuItem } from '@/object-record/record-field/ui/meta-types/
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
 import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { emailsSchema } from '@/object-record/record-field/ui/types/guards/isFieldEmailsValue';
-import { emailSchema } from '@/object-record/record-field/ui/validation-schemas/emailSchema';
+import { emailsFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/emailsFieldValueSchema';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
-import { isDefined } from 'twenty-shared/utils';
+import { emailSchema, isDefined } from 'twenty-shared/utils';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { MultiItemFieldInput } from './MultiItemFieldInput';
@@ -20,7 +19,7 @@ export const EmailsFieldInput = () => {
   const { copyToClipboard } = useCopyToClipboard();
   const { t } = useLingui();
 
-  const { onEscape, onClickOutside, onEnter } = useContext(
+  const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
     FieldInputEventContext,
   );
 
@@ -41,7 +40,7 @@ export const EmailsFieldInput = () => {
       additionalEmails: nextAdditionalEmails,
     };
 
-    const parseResponse = emailsSchema.safeParse(nextValue);
+    const parseResponse = emailsFieldValueSchema.safeParse(nextValue);
 
     if (parseResponse.success) {
       return parseResponse.data;
@@ -98,6 +97,13 @@ export const EmailsFieldInput = () => {
     onEnter?.({ newValue: parseStringArrayToEmailsValue(updatedEmails) });
   };
 
+  const handleSubmit = (updatedEmails: string[]) => {
+    onSubmit?.({
+      newValue: parseStringArrayToEmailsValue(updatedEmails),
+      skipClose: true,
+    });
+  };
+
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
@@ -107,6 +113,7 @@ export const EmailsFieldInput = () => {
       items={emails}
       onChange={handleChange}
       onEnter={handleEnter}
+      onSubmit={handleSubmit}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
       placeholder={t`Email`}

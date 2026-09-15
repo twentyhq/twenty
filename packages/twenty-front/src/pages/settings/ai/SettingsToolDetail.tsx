@@ -14,11 +14,12 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
-import { H2Title, IconTrash } from 'twenty-ui/display';
+import { IconTrash } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 
@@ -28,6 +29,7 @@ import {
   GetToolIndexDocument,
   GetToolInputSchemaDocument,
 } from '~/generated-metadata/graphql';
+import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
 
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
@@ -86,7 +88,9 @@ export const SettingsToolDetail = () => {
 
   const isReadOnly = !isCustomTool || isManaged;
 
-  const name = isCustomTool ? logicFunction?.name : toolIdentifier;
+  const displayName = isCustomTool
+    ? logicFunction?.name
+    : (systemTool?.label ?? toolIdentifier);
   const description = isCustomTool
     ? logicFunction?.description
     : systemTool?.description;
@@ -121,9 +125,9 @@ export const SettingsToolDetail = () => {
     }
   }, 1_000);
 
-  const handleNameChange = (value: string) => {
-    setEditedName(value);
-    debouncedSaveName(value);
+  const handleNameChange = (newName: string) => {
+    setEditedName(newName);
+    debouncedSaveName(newName);
   };
 
   const debouncedSaveDescription = useDebouncedCallback(
@@ -169,27 +173,34 @@ export const SettingsToolDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={
         isCustomTool ? (
           <SettingsLogicFunctionLabelContainer
-            value={editedName ?? name ?? ''}
+            value={editedName ?? displayName ?? ''}
             onChange={handleNameChange}
           />
         ) : (
-          (name ?? '')
+          (displayName ?? '')
         )
+      }
+      icon={
+        <SettingsToolIcon
+          icon={systemTool?.icon}
+          toolName={isCustomTool ? logicFunction?.name : systemTool?.name}
+          objectName={systemTool?.objectName ?? undefined}
+        />
       }
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`AI`,
           href: getSettingsPath(SettingsPath.AI, undefined, undefined, 'tools'),
         },
-        { children: editedName ?? name ?? '' },
+        { children: editedName ?? displayName ?? '' },
       ]}
     >
       <SettingsPageContainer>
@@ -229,6 +240,7 @@ export const SettingsToolDetail = () => {
                 textAreaId="tool-description-textarea"
                 placeholder={t`Write a description`}
                 minRows={3}
+                maxRows={5}
                 value={editedDescription ?? description ?? ''}
                 onChange={handleDescriptionChange}
                 disabled={isReadOnly}
@@ -262,6 +274,6 @@ export const SettingsToolDetail = () => {
         confirmButtonText={t`Delete`}
         loading={isDeleting}
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

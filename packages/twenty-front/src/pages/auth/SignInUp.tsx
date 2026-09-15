@@ -1,5 +1,6 @@
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { isCreatingWorkspaceState } from '@/auth/states/isCreatingWorkspaceState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -10,13 +11,14 @@ import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
-import { Logo } from '@/auth/components/Logo';
-import { Title } from '@/auth/components/Title';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
-import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
 import { SignInUpGlobalScopeForm } from '@/auth/sign-in-up/components/SignInUpGlobalScopeForm';
+import { SignInUpStandardContent } from '@/auth/sign-in-up/components/SignInUpStandardContent';
 import { SignInUpWorkspaceScopeForm } from '@/auth/sign-in-up/components/SignInUpWorkspaceScopeForm';
-import { SignInUpSSOIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSSOIdentityProviderSelection';
+import { SignInUpSsoIdentityProviderSelection } from '@/auth/sign-in-up/components/internal/SignInUpSsoIdentityProviderSelection';
+import { OnboardingLayout } from '@/onboarding/components/OnboardingLayout';
+import { StyledOnboardingStepPage } from '@/onboarding/components/StyledOnboardingStepPage';
+import { SignInUpWorkspaceCreationForm } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm';
 import { SignInUpWorkspaceScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpWorkspaceScopeFormEffect';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { useGetPublicWorkspaceDataByDomain } from '@/domain-manager/hooks/useGetPublicWorkspaceDataByDomain';
@@ -25,18 +27,17 @@ import { useIsCurrentLocationOnDefaultDomain } from '@/domain-manager/hooks/useI
 import { useMemo } from 'react';
 
 import { SignInUpGlobalScopeFormEffect } from '@/auth/sign-in-up/components/internal/SignInUpGlobalScopeFormEffect';
+import { SignInUpSsoExchangeTokenEffect } from '@/auth/sign-in-up/components/internal/SignInUpSsoExchangeTokenEffect';
 import { SignInUpTwoFactorAuthenticationProvision } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision';
 import { SignInUpTOTPVerification } from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { ModalContent } from 'twenty-ui/layout';
+import { ModalContent } from 'twenty-ui/surfaces';
 import { useLingui } from '@lingui/react/macro';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui/utilities';
-import { type PublicWorkspaceData } from '~/generated-metadata/graphql';
 
 const StyledLoaderContainer = styled.div`
   align-items: center;
@@ -47,44 +48,20 @@ const StyledLoaderContainer = styled.div`
   width: 100%;
 `;
 
-const StandardContent = ({
-  workspacePublicData,
-  signInUpForm,
-  signInUpStep,
-  title,
-  onClickOnLogo,
-}: {
-  workspacePublicData: PublicWorkspaceData | null;
-  signInUpForm: JSX.Element | null;
-  signInUpStep: SignInUpStep;
-  title: string;
-  onClickOnLogo: () => void;
-}) => {
-  return (
-    <ModalContent isVerticallyCentered isHorizontallyCentered>
-      <AnimatedEaseIn>
-        <Logo
-          secondaryLogo={workspacePublicData?.logo}
-          placeholder={workspacePublicData?.displayName}
-          onClick={onClickOnLogo}
-        />
-      </AnimatedEaseIn>
-      <Title animate>{title}</Title>
-      {signInUpForm}
-      {![
-        SignInUpStep.Password,
-        SignInUpStep.TwoFactorAuthenticationProvision,
-        SignInUpStep.TwoFactorAuthenticationVerification,
-        SignInUpStep.WorkspaceSelection,
-      ].includes(signInUpStep) && <FooterNote />}
-    </ModalContent>
-  );
-};
+const StyledBackground = styled.div`
+  background: ${themeCssVariables.background.secondary};
+  display: flex;
+  flex-direction: column;
+  height: calc(100dvh / var(--t-zoom, 1));
+  overflow-y: auto;
+  width: 100%;
+`;
 
 export const SignInUp = () => {
   const { t } = useLingui();
   const setSignInUpStep = useSetAtomState(signInUpStepState);
   const clientConfigApiStatus = useAtomStateValue(clientConfigApiStatusState);
+  const isCreatingWorkspace = useAtomStateValue(isCreatingWorkspaceState);
 
   const { form } = useSignInUpForm();
   const { signInUpStep } = useSignInUp(form);
@@ -99,10 +76,20 @@ export const SignInUp = () => {
   const { workspaceInviteHash, workspace: workspaceFromInviteHash } =
     useWorkspaceFromInviteHash();
 
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const onClickOnLogo = () => {
     setSignInUpStep(SignInUpStep.Init);
+  };
+
+  const onBackFromWorkspaceCreation = () => {
+    if (searchParams.has('action')) {
+      const nextSearchParams = new URLSearchParams(searchParams);
+      nextSearchParams.delete('action');
+      setSearchParams(nextSearchParams, { replace: true });
+    }
+
+    setSignInUpStep(SignInUpStep.WorkspaceSelection);
   };
 
   const isGlobalScope = isDefaultDomain && isMultiWorkspaceEnabled;
@@ -115,6 +102,10 @@ export const SignInUp = () => {
 
     if (signInUpStep === SignInUpStep.WorkspaceSelection) {
       return t`Choose a Workspace`;
+    }
+
+    if (signInUpStep === SignInUpStep.WorkspaceCreation) {
+      return t`Create your workspace`;
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
@@ -154,9 +145,17 @@ export const SignInUp = () => {
       );
     }
 
+    // The workspace creation form is shared by both multi-workspace and
+    // single-workspace self-host, so it must render regardless of domain or
+    // workspace scope.
+    if (signInUpStep === SignInUpStep.WorkspaceCreation) {
+      return <SignInUpWorkspaceCreationForm />;
+    }
+
     if (isDefaultDomain && isMultiWorkspaceEnabled) {
       return (
         <>
+          <SignInUpSsoExchangeTokenEffect />
           <SignInUpGlobalScopeFormEffect />
           <SignInUpGlobalScopeForm />
         </>
@@ -165,9 +164,9 @@ export const SignInUp = () => {
 
     if (
       isOnAWorkspace &&
-      signInUpStep === SignInUpStep.SSOIdentityProviderSelection
+      signInUpStep === SignInUpStep.SsoIdentityProviderSelection
     ) {
-      return <SignInUpSSOIdentityProviderSelection />;
+      return <SignInUpSsoIdentityProviderSelection />;
     }
 
     if (signInUpStep === SignInUpStep.TwoFactorAuthenticationProvision) {
@@ -189,6 +188,7 @@ export const SignInUp = () => {
 
     return (
       <>
+        <SignInUpSsoExchangeTokenEffect />
         <SignInUpGlobalScopeFormEffect />
         <SignInUpGlobalScopeForm />
       </>
@@ -203,21 +203,27 @@ export const SignInUp = () => {
     workspacePublicData,
   ]);
 
-  if (signInUpStep === SignInUpStep.EmailVerification) {
-    return (
-      <ModalContent isVerticallyCentered isHorizontallyCentered>
-        <EmailVerificationSent email={searchParams.get('email')} />
-      </ModalContent>
-    );
-  }
-
-  return (
-    <StandardContent
-      workspacePublicData={workspacePublicData}
-      signInUpForm={signInUpForm}
-      signInUpStep={signInUpStep}
-      title={title}
-      onClickOnLogo={onClickOnLogo}
-    />
+  return signInUpStep === SignInUpStep.WorkspaceCreation ? (
+    <OnboardingLayout
+      onBack={!isCreatingWorkspace ? onBackFromWorkspaceCreation : undefined}
+    >
+      <StyledOnboardingStepPage>{signInUpForm}</StyledOnboardingStepPage>
+    </OnboardingLayout>
+  ) : (
+    <StyledBackground>
+      {signInUpStep === SignInUpStep.EmailVerification ? (
+        <ModalContent isVerticallyCentered isHorizontallyCentered>
+          <EmailVerificationSent email={searchParams.get('email')} />
+        </ModalContent>
+      ) : (
+        <SignInUpStandardContent
+          workspacePublicData={workspacePublicData}
+          signInUpForm={signInUpForm}
+          signInUpStep={signInUpStep}
+          title={title}
+          onClickOnLogo={onClickOnLogo}
+        />
+      )}
+    </StyledBackground>
   );
 };

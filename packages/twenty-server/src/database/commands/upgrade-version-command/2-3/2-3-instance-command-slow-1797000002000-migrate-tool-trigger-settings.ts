@@ -6,9 +6,7 @@ import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // isTool=true previously exposed a function on both surfaces (AI tool and
 // workflow node), so we populate both new triggers when migrating.
 @RegisteredInstanceCommand('2.3.0', 1797000002000, { type: 'slow' })
-export class MigrateToolTriggerSettingsSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class MigrateToolTriggerSettingsSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     const defaultJsonSchema = `'{"type":"object","properties":{}}'::jsonb`;
 

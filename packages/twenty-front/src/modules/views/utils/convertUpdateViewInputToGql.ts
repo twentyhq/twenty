@@ -22,9 +22,6 @@ export const convertUpdateViewInputToGql = (
       anyFieldFilterValue: view.anyFieldFilterValue,
     }),
     ...(isDefined(view.key) && { key: view.key }),
-    ...(isDefined(view.openRecordIn) && {
-      openRecordIn: view.openRecordIn,
-    }),
     ...(isDefined(view.type) && { type: view.type }),
     ...(isDefined(view.calendarLayout) && {
       calendarLayout: view.calendarLayout,
@@ -32,9 +29,15 @@ export const convertUpdateViewInputToGql = (
     ...(isDefined(view.calendarFieldMetadataId) && {
       calendarFieldMetadataId: view.calendarFieldMetadataId,
     }),
+    ...(view.calendarEndFieldMetadataId !== undefined && {
+      calendarEndFieldMetadataId: view.calendarEndFieldMetadataId,
+    }),
     ...(isDefined(view.visibility) && { visibility: view.visibility }),
     ...(isDefined(view.shouldHideEmptyGroups) && {
       shouldHideEmptyGroups: view.shouldHideEmptyGroups,
+    }),
+    ...(view.kanbanColumnWidth !== undefined && {
+      kanbanColumnWidth: view.kanbanColumnWidth,
     }),
     ...(view.mainGroupByFieldMetadataId !== undefined && {
       mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId,

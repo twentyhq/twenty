@@ -1,31 +1,30 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { addMonths, addYears } from 'date-fns';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { type Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
-import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/billing/payment-received';
+import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
+import { PAYMENT_RECEIVED_EVENT } from 'src/engine/core-modules/event-logs/emit/events/workspace-event/billing/payment-received';
 import { getSubscriptionIdFromInvoice } from 'src/engine/core-modules/billing-webhook/utils/get-subscription-id-from-invoice.util';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
-import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
+import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 const SUBSCRIPTION_CYCLE_BILLING_REASON = 'subscription_cycle';
@@ -35,18 +34,19 @@ export class BillingWebhookInvoiceService {
   protected readonly logger = new Logger(BillingWebhookInvoiceService.name);
 
   constructor(
-    @InjectRepository(BillingSubscriptionItemEntity)
-    private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
+    // Stripe webhook: workspace discovered from BillingCustomer by stripeCustomerId.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
-    private readonly meteredCreditService: MeteredCreditService,
+    private readonly billingUsageService: BillingUsageService,
+    private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
-    private readonly featureFlagService: FeatureFlagService,
-    private readonly auditService: AuditService,
+    private readonly eventLogEmitterService: EventLogEmitterService,
   ) {}
 
   async processStripeEvent(
@@ -71,8 +71,7 @@ export class BillingWebhookInvoiceService {
     const {
       billing_reason: billingReason,
       customer,
-      period_start: periodStart,
-      period_end: periodEnd,
+      created: invoiceCreatedAtInSeconds,
     } = data.object;
 
     const stripeSubscriptionId = getSubscriptionIdFromInvoice(data.object);
@@ -85,12 +84,7 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    await this.billingSubscriptionItemRepository.update(
-      { stripeSubscriptionId },
-      { hasReachedCurrentPeriodCap: false },
-    );
-
-    if (!isDefined(stripeCustomerId) || !periodEnd) {
+    if (!isDefined(stripeCustomerId)) {
       return;
     }
 
@@ -103,97 +97,90 @@ export class BillingWebhookInvoiceService {
       return;
     }
 
-    const trialEnd = isDefined(subscription.trialEnd)
-      ? Math.floor(subscription.trialEnd.getTime() / 1000)
-      : undefined;
-
-    const TRIAL_END_TOLERANCE_SECONDS = 60;
-
-    const isFirstPeriodAfterTrial =
-      isDefined(trialEnd) &&
-      isDefined(periodStart) &&
-      Math.abs(periodStart - trialEnd) <= TRIAL_END_TOLERANCE_SECONDS;
-
-    if (periodStart && !isFirstPeriodAfterTrial) {
-      await this.processRollover(
-        subscription,
-        new Date(periodStart * 1000),
-        new Date(periodEnd * 1000),
-      );
-    }
-
-    const isV2 = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_BILLING_V2_ENABLED,
-      subscription.workspaceId,
-    );
-
-    if (!isV2) {
-      // Pass the new period start (which is the invoiced period's end) for alert threshold calculation
-      await this.meteredCreditService.recreateBillingAlertForSubscription(
-        subscription,
-        new Date(periodEnd * 1000),
-      );
-    }
+    await this.processRollover({
+      subscription,
+      // Stripe's own clock, so it can be compared to the subscription's
+      // boundaries without allowing for skew against ours.
+      invoiceCreatedAt: new Date(invoiceCreatedAtInSeconds * 1000),
+    });
   }
 
-  private async processRollover(
-    subscription: BillingSubscriptionEntity,
-    invoicedPeriodStart: Date,
-    invoicedPeriodEnd: Date,
-  ): Promise<void> {
-    const isV2 = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_BILLING_V2_ENABLED,
-      subscription.workspaceId,
-    );
+  private async processRollover({
+    subscription,
+    invoiceCreatedAt,
+  }: {
+    subscription: BillingSubscriptionEntity;
+    invoiceCreatedAt: Date;
+  }): Promise<void> {
+    const workspaceExists = await this.workspaceRepository.exists({
+      where: { id: subscription.workspaceId },
+      withDeleted: true,
+    });
 
-    if (isV2) {
-      const v2Params =
-        await this.meteredCreditService.getResourceCreditRolloverParameters(
-          subscription.id,
-        );
-
-      if (!isDefined(v2Params)) {
-        return;
-      }
-
-      await this.billingCreditRolloverService.processRolloverOnPeriodTransitionV2(
-        {
-          workspaceId: subscription.workspaceId,
-          stripeCustomerId: subscription.stripeCustomerId,
-          tierQuantity: v2Params.tierQuantity,
-          previousPeriodStart: invoicedPeriodStart,
-        },
-      );
-
+    if (!workspaceExists) {
       return;
     }
 
-    const rolloverParams =
-      await this.meteredCreditService.getMeteredRolloverParameters(
+    const params =
+      await this.resourceCreditService.getResourceCreditRolloverParameters(
+        subscription.workspaceId,
         subscription.id,
       );
 
-    if (!isDefined(rolloverParams)) {
+    // Skipping the transition leaves every grant of this workspace to reach its
+    // expiry with nothing carrying the unspent part forward, so it is the one
+    // early return here that costs the workspace credits it was given.
+    if (!isDefined(params)) {
+      this.logger.error(
+        `Skipping credit rollover for workspace ${subscription.workspaceId}: subscription ${subscription.id} carries no priced resource credit item`,
+      );
+
       return;
     }
 
-    // The invoice covers the period that just ended (invoicedPeriodStart to invoicedPeriodEnd)
-    // We need to calculate unused credits from this period and roll them over
-    // Credits should expire at the end of the NEXT period
-    const nextPeriodEnd = this.calculateNextPeriodEnd(
-      invoicedPeriodEnd,
-      subscription.interval,
-    );
+    const boundary = resolveBillingTransitionBoundary({
+      invoiceCreatedAt,
+      subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
+      subscriptionCurrentPeriodEnd: subscription.currentPeriodEnd,
+    });
+
+    // Only needed while subscriptions that predate previousPeriodStart are
+    // still transitioning for the first time.
+    const ledgerPeriodStart =
+      await this.billingCreditGrantService.findPeriodStartBefore({
+        workspaceId: subscription.workspaceId,
+        boundary,
+      });
+
+    const {
+      closingPeriodStart,
+      closingPeriodEnd,
+      nextPeriodStart,
+      isFirstPeriodAfterTrial,
+    } = deriveBillingPeriodTransition({
+      boundary,
+      subscriptionCurrentPeriodStart: subscription.currentPeriodStart,
+      subscriptionInterval: subscription.interval,
+      trialStart: subscription.trialStart,
+      trialEnd: subscription.trialEnd,
+      subscriptionPreviousPeriodStart: subscription.previousPeriodStart,
+      ledgerPeriodStart,
+    });
+
+    // Credits earned during the trial follow the workspace into its first paid
+    // period, so the trial closes like any other period. Its allowance comes
+    // from config rather than the price, which only applies once paid.
+    const closingAllowanceMicro = isFirstPeriodAfterTrial
+      ? this.billingUsageService.getTrialResourceUsageCap(subscription)
+      : params.tierQuantity;
 
     await this.billingCreditRolloverService.processRolloverOnPeriodTransition({
-      stripeCustomerId: subscription.stripeCustomerId,
-      subscriptionId: subscription.id,
-      stripeMeterId: rolloverParams.stripeMeterId,
-      previousPeriodStart: invoicedPeriodStart,
-      previousPeriodEnd: invoicedPeriodEnd,
-      newPeriodEnd: nextPeriodEnd,
-      tierQuantity: rolloverParams.tierQuantity,
-      unitPriceCents: rolloverParams.unitPriceCents,
+      workspaceId: subscription.workspaceId,
+      closingPeriodStart,
+      closingPeriodEnd,
+      closingAllowanceMicro,
+      nextPeriodStart,
+      nextAllowanceMicro: params.tierQuantity,
     });
   }
 
@@ -228,7 +215,7 @@ export class BillingWebhookInvoiceService {
     if (isDefined(billingCustomer)) {
       await this.delaySuspendedWorkspaceCleanup(billingCustomer);
 
-      this.auditService
+      void this.eventLogEmitterService
         .createContext({ workspaceId: billingCustomer.workspaceId })
         .insertWorkspaceEvent(PAYMENT_RECEIVED_EVENT, {
           amountPaid: data.object.amount_paid,
@@ -283,16 +270,5 @@ export class BillingWebhookInvoiceService {
     await this.workspaceRepository.update(workspace.id, {
       suspendedAt: new Date(),
     });
-  }
-
-  private calculateNextPeriodEnd(
-    periodEnd: Date,
-    interval: SubscriptionInterval,
-  ): Date {
-    if (interval === SubscriptionInterval.Year) {
-      return addYears(periodEnd, 1);
-    }
-
-    return addMonths(periodEnd, 1);
   }
 }

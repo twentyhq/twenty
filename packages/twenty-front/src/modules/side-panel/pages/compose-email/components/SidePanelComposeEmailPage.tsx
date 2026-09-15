@@ -5,6 +5,7 @@ import { useEmailComposerState } from '@/activities/emails/hooks/useEmailCompose
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { composeEmailConnectedAccountIdComponentState } from '@/side-panel/pages/compose-email/states/composeEmailConnectedAccountIdComponentState';
+import { composeEmailContextRecordComponentState } from '@/side-panel/pages/compose-email/states/composeEmailContextRecordComponentState';
 import { composeEmailDefaultInReplyToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultInReplyToComponentState';
 import { composeEmailDefaultSubjectComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultSubjectComponentState';
 import { composeEmailDefaultToComponentState } from '@/side-panel/pages/compose-email/states/composeEmailDefaultToComponentState';
@@ -13,9 +14,11 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { IconSend } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { IconPaperclip, IconSend, IconTrash } from 'twenty-ui/icon';
+import { Button, IconButton } from 'twenty-ui/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
+
+import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -43,6 +46,9 @@ export const SidePanelComposeEmailPage = () => {
   const composeEmailDefaultInReplyTo = useAtomComponentStateValue(
     composeEmailDefaultInReplyToComponentState,
   );
+  const composeEmailContextRecord = useAtomComponentStateValue(
+    composeEmailContextRecordComponentState,
+  );
 
   const { goBackFromSidePanel } = useSidePanelHistory();
 
@@ -54,11 +60,17 @@ export const SidePanelComposeEmailPage = () => {
     onSent: goBackFromSidePanel,
   });
 
+  const { openAttachmentPicker, isUploadingAttachments } = useAttachEmailFiles({
+    onFilesAttached: composerState.setFiles,
+  });
+
+  const canSend = composerState.canSend && !isUploadingAttachments;
+
   const handleSendHotkey = useCallback(() => {
-    if (composerState.canSend) {
+    if (canSend) {
       composerState.handleSend();
     }
-  }, [composerState]);
+  }, [canSend, composerState]);
 
   useHotkeysOnFocusedElement({
     keys: ['ctrl+Enter,meta+Enter'],
@@ -74,16 +86,28 @@ export const SidePanelComposeEmailPage = () => {
   return (
     <StyledContainer>
       <StyledContent>
-        <EmailComposerFields composerState={composerState} />
+        <EmailComposerFields
+          composerState={composerState}
+          contextRecord={composeEmailContextRecord}
+        />
       </StyledContent>
       <SidePanelFooter
         actions={[
-          <Button
-            key="cancel"
+          <IconButton
+            key="discard"
             size="small"
-            variant="secondary"
-            title={t`Cancel`}
+            variant="primary"
+            Icon={IconTrash}
+            ariaLabel={t`Discard`}
             onClick={goBackFromSidePanel}
+          />,
+          <IconButton
+            key="attach"
+            size="small"
+            variant="primary"
+            Icon={IconPaperclip}
+            ariaLabel={t`Attach files`}
+            onClick={openAttachmentPicker}
           />,
           <Button
             key="send"
@@ -94,7 +118,7 @@ export const SidePanelComposeEmailPage = () => {
             Icon={IconSend}
             hotkeys={[getOsControlSymbol(), '⏎']}
             onClick={composerState.handleSend}
-            disabled={!composerState.canSend}
+            disabled={!canSend}
           />,
         ]}
       />

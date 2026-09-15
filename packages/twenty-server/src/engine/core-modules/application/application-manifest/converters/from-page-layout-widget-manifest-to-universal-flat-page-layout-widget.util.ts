@@ -1,6 +1,6 @@
-import { type PageLayoutWidgetManifest } from 'twenty-shared/application';
+import { type NormalizedPageLayoutWidgetManifest } from 'twenty-shared/application';
+import { type WidgetType } from 'twenty-shared/types';
 
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 
 export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
@@ -9,7 +9,7 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
   applicationUniversalIdentifier,
   now,
 }: {
-  pageLayoutWidgetManifest: PageLayoutWidgetManifest;
+  pageLayoutWidgetManifest: NormalizedPageLayoutWidgetManifest;
   pageLayoutTabUniversalIdentifier: string;
   applicationUniversalIdentifier: string;
   now: string;
@@ -20,17 +20,12 @@ export const fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget = ({
     pageLayoutTabUniversalIdentifier,
     title: pageLayoutWidgetManifest.title,
     isActive: true,
+    isSystemSideEffect: false,
     type: pageLayoutWidgetManifest.type as WidgetType,
     objectMetadataUniversalIdentifier:
       pageLayoutWidgetManifest.objectUniversalIdentifier ?? null,
     conditionalDisplay: pageLayoutWidgetManifest.conditionalDisplay ?? null,
-    gridPosition: pageLayoutWidgetManifest.gridPosition ?? {
-      row: 0,
-      column: 0,
-      rowSpan: 1,
-      columnSpan: 1,
-    },
-    position: null,
+    position: pageLayoutWidgetManifest.position,
     universalConfiguration:
       pageLayoutWidgetManifest.configuration as UniversalFlatPageLayoutWidget['universalConfiguration'],
     createdAt: now,

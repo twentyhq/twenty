@@ -13,6 +13,7 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
+            isLegacy: null,
             productKey: 'BASE_PRODUCT',
             planKey: 'PRO',
             priceUsageBased: 'LICENSED',
@@ -25,6 +26,7 @@ export const mockBillingPlans = {
               recurringInterval: 'Month',
               priceUsageType: 'LICENSED',
               creditAmount: null,
+              isSellable: true,
             },
             {
               __typename: 'BillingPriceLicensed',
@@ -33,6 +35,7 @@ export const mockBillingPlans = {
               recurringInterval: 'Year',
               priceUsageType: 'LICENSED',
               creditAmount: null,
+              isSellable: true,
             },
           ],
         },
@@ -46,7 +49,8 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
-            productKey: 'WORKFLOW_NODE_EXECUTION',
+            isLegacy: null,
+            productKey: 'RESOURCE_CREDIT',
             planKey: 'PRO',
             priceUsageBased: 'METERED',
           },
@@ -306,6 +310,7 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
+            isLegacy: null,
             productKey: 'BASE_PRODUCT',
             planKey: 'ENTERPRISE',
             priceUsageBased: 'LICENSED',
@@ -318,6 +323,7 @@ export const mockBillingPlans = {
               recurringInterval: 'Month',
               priceUsageType: 'LICENSED',
               creditAmount: null,
+              isSellable: true,
             },
             {
               __typename: 'BillingPriceLicensed',
@@ -326,6 +332,7 @@ export const mockBillingPlans = {
               recurringInterval: 'Year',
               priceUsageType: 'LICENSED',
               creditAmount: null,
+              isSellable: true,
             },
           ],
         },
@@ -339,7 +346,8 @@ export const mockBillingPlans = {
           images: [],
           metadata: {
             __typename: 'BillingProductMetadata',
-            productKey: 'WORKFLOW_NODE_EXECUTION',
+            isLegacy: null,
+            productKey: 'RESOURCE_CREDIT',
             planKey: 'ENTERPRISE',
             priceUsageBased: 'METERED',
           },

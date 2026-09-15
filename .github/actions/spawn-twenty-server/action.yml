@@ -1,0 +1,124 @@
+name: Spawn Twenty Server
+description: >
+  Provisions a running Twenty server and returns its URL + API key, from one of
+  two sources:
+    - dockerhub-latest: the latest published twentycrm/twenty-app-dev image
+      (delegates to spawn-twenty-app-dev-test, port 2021).
+    - local: a server built from the monorepo's current files (port 3000). It
+      brings up its own postgres + redis via docker, so it works inside any job
+      without declaring job-level services.
+  Both sources expose the same server-url / api-key contract so callers never
+  branch on how the server came up.
+
+inputs:
+  source:
+    description: 'Where the server comes from: "dockerhub-latest" or "local".'
+    required: false
+    default: 'local'
+  twenty-version:
+    description: 'Docker Hub image tag, only used when source is "dockerhub-latest".'
+    required: false
+    default: 'latest'
+  server-build-cache-key:
+    description: 'Cache key used to speed up the local server build (nx cache).'
+    required: false
+    default: 'server-build'
+
+outputs:
+  server-url:
+    description: 'URL where the Twenty server can be reached'
+    value: ${{ steps.resolve.outputs.server-url }}
+  api-key:
+    description: 'API key (or access token) for the seeded workspace'
+    value: ${{ steps.resolve.outputs.api-key }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Spawn from Docker Hub image
+      id: dockerhub
+      if: inputs.source == 'dockerhub-latest'
+      uses: ./.github/actions/spawn-twenty-app-dev-test
+      with:
+        twenty-version: ${{ inputs.twenty-version }}
+
+    - name: Start postgres and redis
+      if: inputs.source == 'local'
+      shell: bash
+      run: |
+        docker run -d --name twenty-postgres \
+          -e POSTGRES_USER=postgres \
+          -e POSTGRES_PASSWORD=postgres \
+          -p 5432:5432 \
+          postgres:18
+        docker run -d --name twenty-redis -p 6379:6379 redis
+
+        echo "Waiting for postgres…"
+        for i in {1..30}; do
+          if PGPASSWORD=postgres pg_isready -h localhost -p 5432 -U postgres > /dev/null 2>&1; then
+            echo "Postgres ready"
+            break
+          fi
+          sleep 2
+          if [ "$i" -eq 30 ]; then
+            echo "::error::Postgres did not become ready in time"
+            docker logs twenty-postgres 2>&1 | tail -40
+            exit 1
+          fi
+        done
+
+    - name: Install dependencies
+      if: inputs.source == 'local'
+      uses: ./.github/actions/yarn-install
+
+    - name: Restore server build cache
+      if: inputs.source == 'local'
+      uses: ./.github/actions/restore-cache
+      with:
+        key: ${{ inputs.server-build-cache-key }}
+
+    - name: Build server from monorepo
+      if: inputs.source == 'local'
+      shell: bash
+      run: |
+        npx nx build twenty-shared
+        npx nx build twenty-server
+
+    - name: Write server env and create databases
+      if: inputs.source == 'local'
+      shell: bash
+      run: |
+        npx nx reset:env:e2e-testing-server twenty-server
+        PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "default";'
+        PGPASSWORD=postgres psql -h localhost -p 5432 -U postgres -d postgres -c 'CREATE DATABASE "test";'
+        npx nx run twenty-server:database:reset
+
+    - name: Start server
+      if: inputs.source == 'local'
+      shell: bash
+      run: nohup npx nx start:ci twenty-server &
+
+    - name: Wait for server to be ready
+      if: inputs.source == 'local'
+      shell: bash
+      run: npx wait-on http://localhost:3000/healthz --timeout 180000 --interval 1000
+
+    - name: Resolve server url and api key
+      id: resolve
+      shell: bash
+      env:
+        SOURCE: ${{ inputs.source }}
+        DOCKERHUB_URL: ${{ steps.dockerhub.outputs.server-url }}
+        DOCKERHUB_KEY: ${{ steps.dockerhub.outputs.api-key }}
+        LOCAL_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ1c2VySWQiOiIyMDIwMjAyMC1lNmI1LTQ2ODAtOGEzMi1iODIwOTczNzE1NmIiLCJ3b3Jrc3BhY2VJZCI6IjIwMjAyMDIwLTFjMjUtNGQwMi1iZjI1LTZhZWNjZjdlYTQxOSIsIndvcmtzcGFjZU1lbWJlcklkIjoiMjAyMDIwMjAtNDYzZi00MzViLTgyOGMtMTA3ZTAwN2EyNzExIiwidXNlcldvcmtzcGFjZUlkIjoiMjAyMDIwMjAtMWU3Yy00M2Q5LWE1ZGItNjg1YjUwNjlkODE2IiwidHlwZSI6IkFDQ0VTUyIsImF1dGhQcm92aWRlciI6InBhc3N3b3JkIiwiaWF0IjoxNzUxMjgxNzA0LCJleHAiOjIwNjY4NTc3MDR9.HMGqCsVlOAPVUBhKSGlD1X86VoHKt4LIUtET3CGIdik
+      run: |
+        if [ "$SOURCE" = "dockerhub-latest" ]; then
+          echo "server-url=$DOCKERHUB_URL" >> "$GITHUB_OUTPUT"
+          echo "api-key=$DOCKERHUB_KEY" >> "$GITHUB_OUTPUT"
+        elif [ "$SOURCE" = "local" ]; then
+          echo "server-url=http://localhost:3000" >> "$GITHUB_OUTPUT"
+          echo "api-key=$LOCAL_KEY" >> "$GITHUB_OUTPUT"
+        else
+          echo "::error::Unknown source '$SOURCE' (expected 'dockerhub-latest' or 'local')"
+          exit 1
+        fi

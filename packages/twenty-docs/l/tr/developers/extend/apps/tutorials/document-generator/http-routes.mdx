@@ -1,0 +1,138 @@
+---
+title: 3. HTTP rotaları
+icon: globe
+description: İşlevi HTTP üzerinden tetikleyin ve belgeleri web sayfaları olarak oluşturun.
+---
+
+Aynı işleyici HTTP isteklerine de yanıt verebilir. İki rota ekleyeceğiz:
+
+* belge oluşturmak için arayüzün çağırdığı bir **POST** uç noktası ve
+* belgeyi yazdırılabilir bir web sayfası olarak oluşturan herkese açık bir **GET** uç noktası.
+
+Her ikisi de `httpRouteTriggerSettings` kullanır. Uygulama rotalarına `/s/` yolu ile erişilir; yerel
+ve kendi sunucunuzda barındırılan örneklerde, bu yol Twenty sunucunuz
+tarafından sunulur (örneğin `http://localhost:2020/s/documents/generate`). Twenty Cloud'da, `RestApiClient`
+bu yolu çalışma alanının functions alan adı üzerinden çözümler.
+
+## POST rotası — istek üzerine oluşturma
+
+Bu, `generateDocumentHandler`’ı yeniden kullanır, bu nedenle tekrarlanacak bir mantık yoktur — yalnızca istek gövdesini okuyan ince bir adaptör vardır.
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+Paylaşılan işleyici, hata durumunda önerilen bir `status` döndürür; böylece rota uygun bir `4xx`/`5xx` koduyla yanıt verebilir. `isAuthRequired: true`, çağıranın geçerli bir belirteç sunması gerektiği anlamına gelir — bir sonraki bölümdeki ön uç bileşeni, kullanıcının erişim belirtecini otomatik olarak iletir.
+
+## GET rotası — web sayfası olarak oluşturma
+
+JSON yerine HTML döndürmek için gövdeyi `Content-Type` başlığıyla birlikte bir `Response` içine alın. Bu rota herkese açıktır (`isAuthRequired: false`), böylece oluşturulan bir belge bağlantı olarak paylaşılabilir.
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`documentHtmlPage`, Markdown gövdesini HTML’ye dönüştürür ([marked](https://marked.js.org/) ile, temizlenmiş) ve onu yalnızca şablon içeriğini gösteren, temiz, yazdırılabilir bir sayfaya yerleştirir — PDF ve uygulama içi önizleme ile aynı görünüme sahiptir.
+[Yardımcıyı inceleyin](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
+
+## Deneyin
+
+Çalışma alanınızda bir şablon ve bir Kişi ile rotayı çağırın (**Ayarlar → API'ler ve Web kancaları** bölümünden bir belirteç alın):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+Döndürülen belgeyi tarayıcınızda açın:
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="Herkese açık GET rotası, belgeyi yazdırılabilir bir sayfa olarak oluşturur.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Oluşturulan bir belgenin web sayfası" />
+</Frame>
+
+<Tip>
+Ayrıca test ederken bir işlevin günlüklerini `yarn twenty dev:function:logs` ile gerçek zamanlı izleyebilir veya `yarn twenty dev:function:exec` ile doğrudan çağırabilirsiniz.
+</Tip>
+
+**Bu adımdan sonra:** uygulama HTTP üzerinden belgeler oluşturabilir ve bunları web sayfaları olarak sunabilir. Şimdi bunu `curl` olmadan kullanılabilir hale getirelim.
+
+<Card title="Sıradaki: arayüzü oluşturma →" icon="table-columns" href="/l/tr/developers/extend/apps/tutorials/document-generator/building-the-ui">
+  Görünümler, gezinme, bir komut ve bir ön uç bileşeni.
+</Card>

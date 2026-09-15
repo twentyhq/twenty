@@ -1,9 +1,9 @@
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
+import { flattenNavigationMenuItemsWithFolderChildren } from '@/navigation-menu-item/common/utils/flattenNavigationMenuItemsWithFolderChildren';
 import { getWorkspaceSidebarOrphanItemsInDisplayOrder } from '@/navigation-menu-item/display/utils/getWorkspaceSidebarOrphanItemsInDisplayOrder';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -27,15 +27,8 @@ export const useNavigationMenuItemSectionItems = (): NavigationMenuItem[] => {
     isLayoutCustomizationModeEnabledState,
   );
   const views = useAtomStateValue(viewsSelector);
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const objectMetadataItems = useNavigationObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-
-  const folderChildrenById = new Map(
-    workspaceNavigationMenuItemsByFolder.map((folder) => [
-      folder.id,
-      folder.navigationMenuItems,
-    ]),
-  );
 
   const flatItems = getWorkspaceSidebarOrphanItemsInDisplayOrder({
     workspaceNavigationMenuItems,
@@ -46,9 +39,8 @@ export const useNavigationMenuItemSectionItems = (): NavigationMenuItem[] => {
     includeInaccessibleObjectBackedItems: isLayoutCustomizationModeEnabled,
   });
 
-  return flatItems.flatMap((item) =>
-    item.type === NavigationMenuItemType.FOLDER
-      ? [item, ...(folderChildrenById.get(item.id) ?? [])]
-      : [item],
+  return flattenNavigationMenuItemsWithFolderChildren(
+    flatItems,
+    workspaceNavigationMenuItemsByFolder,
   );
 };

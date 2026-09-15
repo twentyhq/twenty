@@ -1,0 +1,113 @@
+---
+title: Vistas
+description: Incluye vistas guardadas preconfiguradas — orden de columnas, filtros y grupos — para los objetos de tu aplicación.
+icon: list
+---
+
+Una **vista** es una configuración guardada de cómo se muestran los registros de un objeto: qué campos aparecen, su orden, si son visibles y qué filtros o grupos se aplican. Usa `defineView()` para incluir vistas preconfiguradas con tu aplicación.
+
+Cada objeto obtiene automáticamente su vista principal de lista (la tabla "All ..." que abre un elemento de navegación `OBJECT`) aprovisionada por el servidor, incluidos los objetos que crea tu aplicación, con una columna por cada campo que declara tu aplicación. Las vistas que defines con `defineView()` son siempre vistas **adicionales** sobre esa vista predeterminada.
+
+```ts src/views/example-view.ts
+import { defineView } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Puntos clave
+
+* `objectUniversalIdentifier` especifica a qué objeto se aplica esta vista. Puede ser un objeto personalizado que hayas definido o un objeto estándar de Twenty.
+* La vista principal de lista del objeto pertenece al servidor: `key` está en desuso y se ignora, por lo que una vista de manifiesto nunca puede reclamarla. Incluye un elemento de navegación `VIEW` si quieres que tu vista esté a un clic de distancia en la barra lateral.
+* `fields` controla qué columnas aparecen y en qué orden. Cada campo referencia un `fieldMetadataUniversalIdentifier`. Para hacer referencia a un campo del sistema creado automáticamente, como `createdAt`, consulta [Referencia a metadatos del sistema](/l/es/developers/extend/apps/data/system-fields).
+* También puedes definir `filters`, `filterGroups`, `sorts`, `groups` y `fieldGroups` para configuraciones avanzadas.
+* `position` controla el orden cuando existen múltiples vistas para el mismo objeto.
+
+## Propiedades opcionales
+
+| Propiedad                                                                                                   | Valores                                                                                    | Descripción                                                                                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (predeterminado), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR` | Cómo se presentan los registros. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, `LIST_WIDGET` y `CALENDAR_WIDGET` también existen, pero son usados internamente por los widgets de diseño de página).                  |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (predeterminado), `ViewVisibility.UNLISTED`                     | Si la vista se muestra para todo el espacio de trabajo o se oculta en los selectores.                                                                                                                                      |
+| `openRecordIn`                                                                                              | obsoleto                                                                                   | Ya no se lee: dónde se abren los registros ahora es una propiedad del [objeto](/l/es/developers/extend/apps/data/objects) (`openRecordIn` en `defineObject()`), y si no se define, se recurre a la preferencia de cada miembro. |
+| `criterios de ordenación`                                                                                   | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`         | Orden de clasificación predeterminado.                                                                                                                                                                                     |
+| `isCompact`                                                                                                 | `boolean`                                                                                  | Visualización compacta de filas.                                                                                                                                                                                           |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                          | Agrupar registros (por ejemplo, columnas de kanban) por un campo.                                                                                                                                                          |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                                    | Agregados y tamaño de columnas kanban.                                                                                                                                                                                     |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                                | Vistas de calendario: diseño, el campo de fecha que posiciona los registros y un campo de fecha de finalización opcional.                                                                                                  |
+
+Todos los enums anteriores se exportan desde `twenty-sdk/define`.
+
+## Filtros
+
+Una vista puede incluir filtros preaplicados. Cada filtro tiene tres coordenadas: el **campo** que se está filtrando, el **operando** (cómo comparar) y el **valor** (contra qué comparar). Las tres deben alinearse: usar un operando que no aplique a un tipo de campo será rechazado en el momento de la sincronización.
+
+```ts
+import { ViewFilterOperand } from 'twenty-sdk/define';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### Operandos admitidos por tipo de campo
+
+| Tipo de campo                                                                                      | Operandos admitidos                                                                                                |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> Los tipos de campo con nombres similares pueden usar operandos completamente diferentes; `SELECT` y `MULTI_SELECT` son un caso común.
+
+### Forma del valor por operando
+
+El campo `value` siempre es un valor serializable en JSON, pero su forma esperada depende del operando:
+
+| Familia de operandos                                   | Forma del valor                       | Ejemplo                  |
+| ------------------------------------------------------ | ------------------------------------- | ------------------------ |
+| `IS`, `IS_NOT` en `SELECT`                             | array de claves de opciones (cadenas) | `['ACTIVE', 'PENDING']`  |
+| `CONTAINS`, `DOES_NOT_CONTAIN` en `MULTI_SELECT`       | array de claves de opciones (cadenas) | `['TAG_A']`              |
+| `IS`, `IS_NOT` en `RELATION`                           | array de IDs de registros (uuids)     | `['c5a1...']`            |
+| `CONTAINS`, `DOES_NOT_CONTAIN` en campos de tipo texto | cadena                                | `'acme'`                 |
+| `IS`, `IS_NOT` en `NUMBER`                             | cadena (el valor)                     | `'5'`                    |
+| `IS` en `RATING` / `UUID`                              | cadena (el valor)                     | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`          | cadena (el límite)                    | `'10'`                   |
+| `IS`, `IS_BEFORE`, `IS_AFTER` en `DATE` / `DATE_TIME`  | cadena ISO 8601                       | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                             | cadena vacía                          | `''`                     |
+| `IS` en `BOOLEAN`                                      | `'true'` o `'false'`                  | `'true'`                 |
+
+## Cómo aparecen las vistas en la interfaz de usuario
+
+Una vista por sí sola no es accesible desde la barra lateral. Para que aparezca allí, vincúlala con un [elemento del menú de navegación](/l/es/developers/extend/apps/layout/navigation-menu-items) de tipo `VIEW` que apunte al `universalIdentifier` de la vista. Ese es el patrón canónico: cada objeto personalizado obtiene una vista de índice predeterminada autogenerada al crearse, por lo que solo necesitas incluir la entrada de la barra lateral que la abre.

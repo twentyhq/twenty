@@ -6,7 +6,7 @@ export type IsObjectReadOnlyParams = {
   objectPermissions: ObjectPermission;
   objectMetadataItem: Pick<
     EnrichedObjectMetadataItem,
-    'isUIReadOnly' | 'isRemote'
+    'isUIEditable' | 'isRemote' | 'writability'
   >;
   isRecordDeleted: boolean;
 };

@@ -1,10 +1,10 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FILTER_FIELD_LIST_ID } from '@/object-record/object-filter-dropdown/constants/FilterFieldListId';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 
 export type ObjectFilterDropdownFilterSelectMenuItemProps = {
@@ -16,7 +16,7 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
   fieldMetadataItemToSelect,
   onClick,
 }: ObjectFilterDropdownFilterSelectMenuItemProps) => {
-  const { resetSelectedItem } = useSelectableList(FILTER_FIELD_LIST_ID);
+  const { resetSelectedItem } = useSelectableList();
 
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
@@ -27,9 +27,9 @@ export const ObjectFilterDropdownFilterSelectMenuItem = ({
 
   const Icon = getIcon(fieldMetadataItemToSelect.icon);
 
-  const shouldShowSubMenu = isCompositeFieldType(
-    fieldMetadataItemToSelect.type,
-  );
+  const shouldShowSubMenu =
+    isCompositeFieldType(fieldMetadataItemToSelect.type) ||
+    isManyToOneRelationField(fieldMetadataItemToSelect);
 
   const handleClick = () => {
     resetSelectedItem();

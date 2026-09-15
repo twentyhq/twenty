@@ -1,0 +1,135 @@
+---
+title: 3. HTTP 경로
+icon: globe
+description: HTTP를 통해 함수를 트리거하고 문서를 웹 페이지로 렌더링합니다.
+---
+
+같은 핸들러가 HTTP 요청에도 응답할 수 있습니다. 두 개의 경로를 추가하겠습니다:
+
+* UI가 문서를 생성하기 위해 호출하는 **POST** 엔드포인트, 그리고
+* 문서를 인쇄 가능한 웹 페이지로 렌더링하는 공개 **GET** 엔드포인트입니다.
+
+둘 다 `httpRouteTriggerSettings`를 사용합니다. 앱 라우트는 `/s/` 경로로 접근합니다. 로컬 및 셀프 호스팅 인스턴스에서는 해당 경로가 Twenty 서버에서 제공됩니다(예: `http://localhost:2020/s/documents/generate`). Twenty Cloud에서는 `RestApiClient`가 워크스페이스의 functions 도메인을 통해 경로를 해석합니다.
+
+## POST 경로 — 온디맨드로 생성하기
+
+이는 `generateDocumentHandler`를 재사용하므로 반복해야 할 로직은 없고, 요청 본문을 읽는 간단한 어댑터만 있으면 됩니다.
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+공유 핸들러는 실패 시 제안된 `status`를 반환하므로, 경로가 적절한 `4xx`/`5xx` 코드로 응답할 수 있습니다. `isAuthRequired: true`는 호출자가 유효한 토큰을 제공해야 함을 의미합니다. 다음 장의 프런트 컴포넌트가 사용자의 액세스 토큰을 자동으로 전달합니다.
+
+## GET 경로 — 웹 페이지로 렌더링하기
+
+JSON 대신 HTML을 반환하려면, 본문을 `Content-Type` 헤더가 있는 `Response`로 감싸면 됩니다. 이 경로는 공개(`isAuthRequired: false`)되어 있으므로 생성된 문서를 링크로 공유할 수 있습니다.
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`documentHtmlPage`는 Markdown 본문을 HTML로 렌더링하고([marked](https://marked.js.org/)로, sanitization 적용), 템플릿 콘텐츠만 표시되는 깔끔하고 인쇄 가능한 페이지에 이를 삽입합니다. 이는 PDF와 앱 내 미리보기와 동일한 모습입니다.
+[헬퍼를 확인하세요](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
+
+## 사용해 보기
+
+워크스페이스에 템플릿과 Person이 준비되면, 경로를 호출하세요(**Settings → APIs & Webhooks**에서 토큰을 가져오세요):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+반환된 문서를 브라우저에서 여세요:
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="공개 GET 경로는 문서를 인쇄 가능한 페이지로 렌더링합니다.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="렌더링된 문서 웹 페이지" />
+</Frame>
+
+<Tip>
+테스트하는 동안 `yarn twenty dev:function:logs`로 함수의 로그를 스트리밍하거나, `yarn twenty dev:function:exec`로 직접 호출할 수도 있습니다.
+</Tip>
+
+**이 단계를 마치면:** 앱은 HTTP를 통해 문서를 생성하고 이를 웹 페이지로 제공할 수 있습니다. 이제 `curl` 없이도 사용할 수 있도록 만들어 봅시다.
+
+<Card title="다음: UI 구성하기 →" icon="table-columns" href="/l/ko/developers/extend/apps/tutorials/document-generator/building-the-ui">
+  뷰, 내비게이션, 커맨드, 그리고 프런트 컴포넌트.
+</Card>

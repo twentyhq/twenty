@@ -17,6 +17,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     axisNameDisplay
     displayDataLabel
     displayLegend
+    numberFormat
     rangeMin
     rangeMax
     color
@@ -46,6 +47,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     axisNameDisplay
     displayDataLabel
     displayLegend
+    numberFormat
     rangeMin
     rangeMax
     color
@@ -68,6 +70,7 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     displayDataLabel
     showCenterMetric
     displayLegend
+    numberFormat
     color
     description
     filter
@@ -80,22 +83,11 @@ export const WIDGET_CONFIGURATION_GQL_FIELDS = `
     aggregateOperation
     label
     displayDataLabel
-    format
+    numberFormat
     description
     filter
     prefix
     suffix
-    timezone
-    firstDayOfTheWeek
-  }
-  ... on GaugeChartConfiguration {
-    configurationType
-    aggregateFieldMetadataId
-    aggregateOperation
-    displayDataLabel
-    color
-    description
-    filter
     timezone
     firstDayOfTheWeek
   }

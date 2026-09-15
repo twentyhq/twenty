@@ -16,10 +16,10 @@ type ExtractPropertyToCompare<
 
 export type MetadataUniversalFlatEntityPropertiesToCompare<
   T extends AllMetadataName,
-  MetadataConfig = (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
-  TComparedKeys extends
-    keyof MetadataConfig = MetadataEntityComparablePropertyName<T> &
-    keyof MetadataConfig,
+  MetadataConfig =
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
+  TComparedKeys extends keyof MetadataConfig =
+    MetadataEntityComparablePropertyName<T> & keyof MetadataConfig,
 > = {
   [P in TComparedKeys]: ExtractPropertyToCompare<MetadataConfig, P>;
 }[TComparedKeys] &
@@ -36,10 +36,15 @@ type Assertions = [
       | 'description'
       | 'isActive'
       | 'defaultValue'
-      | 'standardOverrides'
+      | 'overrides'
       | 'options'
       | 'isUnique'
+      | 'isSearchable'
+      | 'isAuditLogged'
       | 'isLabelSyncedWithName'
+      | 'isUIEditable'
+      | 'writability'
+      | 'isNullable'
       | 'universalSettings'
     >
   >,
@@ -52,18 +57,21 @@ type Assertions = [
       | 'deletedAt'
       | 'type'
       | 'position'
-      | 'key'
       | 'isCompact'
       | 'openRecordIn'
       | 'kanbanAggregateOperation'
       | 'kanbanAggregateOperationFieldMetadataUniversalIdentifier'
       | 'calendarLayout'
       | 'calendarFieldMetadataUniversalIdentifier'
+      | 'calendarEndFieldMetadataUniversalIdentifier'
       | 'mainGroupByFieldMetadataUniversalIdentifier'
       | 'shouldHideEmptyGroups'
+      | 'kanbanColumnWidth'
       | 'anyFieldFilterValue'
       | 'visibility'
       | 'createdByUserWorkspaceId'
+      | 'isActive'
+      | 'universalOverrides'
     >
   >,
 ];

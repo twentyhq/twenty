@@ -1,21 +1,25 @@
+import { type I18n } from '@lingui/core';
 import { Injectable } from '@nestjs/common';
 
-import {
-  type ObjectsPermissions,
-  type ObjectsPermissionsByRoleId,
-} from 'twenty-shared/types';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
-import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
+import { getCrudToolLabels } from 'src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util';
+import { resolveEffectiveFieldDescription } from 'src/engine/core-modules/tool-provider/utils/resolve-effective-field-description.util';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
+import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
+import { generateBulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
@@ -23,14 +27,19 @@ import {
   generateGroupByToolInputSchema,
   hasGroupByToolInputSchema,
 } from 'src/engine/core-modules/record-crud/zod-schemas/group-by-tool.zod-schema';
-import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
+import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
+import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
+import { getRoleIdsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-ids-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ToolCategory } from 'twenty-shared/ai';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
@@ -39,6 +48,8 @@ export class DatabaseToolProvider implements ToolProvider {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   async isAvailable(_context: ToolProviderContext): Promise<boolean> {
@@ -64,20 +75,50 @@ export class DatabaseToolProvider implements ToolProvider {
     options?: GenerateDescriptorOptions,
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
+    const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions } =
+    const { rolesPermissions, flatObjectPermissionMaps } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
         'rolesPermissions',
+        'flatObjectPermissionMaps',
       ]);
 
-    const objectPermissions = this.getObjectPermissions(
+    const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
       rolesPermissions,
-      context.rolePermissionConfig,
-    );
+      rolePermissionConfig: context.rolePermissionConfig,
+    });
 
-    if (!objectPermissions) {
+    if (Object.keys(objectPermissions).length === 0) {
       return descriptors;
+    }
+
+    const requireExplicitObjectGrants =
+      context.requireExplicitObjectGrants === true;
+
+    const roleId = getRoleIdsFromRolePermissionConfig(
+      context.rolePermissionConfig,
+    )[0];
+
+    const explicitPermissionByObjectId = new Map<
+      string,
+      FlatObjectPermission
+    >();
+
+    if (requireExplicitObjectGrants) {
+      for (const flatObjectPermission of Object.values(
+        flatObjectPermissionMaps.byUniversalIdentifier,
+      )) {
+        if (
+          isDefined(flatObjectPermission) &&
+          flatObjectPermission.roleId === roleId
+        ) {
+          explicitPermissionByObjectId.set(
+            flatObjectPermission.objectMetadataId,
+            flatObjectPermission,
+          );
+        }
+      }
     }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -88,61 +129,105 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    const allFlatObjects = Object.values(
+    const allFlatObjects = getDatabaseCrudToolFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((obj) => obj.isActive);
+    );
+
+    const i18nInstance = this.i18nService.getI18nInstance(
+      context.locale ?? SOURCE_LOCALE,
+    );
+
+    const resolveFields = includeSchemas
+      ? await this.buildFieldsResolver({
+          context,
+          flatFieldMetadataMaps,
+          i18nInstance,
+        })
+      : () => [];
 
     for (const flatObject of allFlatObjects) {
-      if (isWorkflowRelatedObject(flatObject)) {
-        continue;
-      }
-
       const permission = objectPermissions[flatObject.id];
+      const explicitPermission = explicitPermissionByObjectId.get(
+        flatObject.id,
+      );
 
-      if (!permission) {
+      if (
+        !permission ||
+        (requireExplicitObjectGrants && !isDefined(explicitPermission))
+      ) {
         continue;
       }
 
-      const objectMetadata = {
-        ...flatObject,
-        fields: getFlatFieldsFromFlatObjectMetadata(
-          flatObject,
-          flatFieldMetadataMaps,
-        ),
-      };
+      const canReadRecords = requireExplicitObjectGrants
+        ? explicitPermission?.canReadObjectRecords === true
+        : permission.canReadObjectRecords;
+      const canUpdateRecords = requireExplicitObjectGrants
+        ? explicitPermission?.canUpdateObjectRecords === true
+        : permission.canUpdateObjectRecords;
+      const canSoftDeleteRecords = requireExplicitObjectGrants
+        ? explicitPermission?.canSoftDeleteObjectRecords === true
+        : permission.canSoftDeleteObjectRecords;
+
+      const snakePlural = camelToSnakeCase(flatObject.namePlural);
+      const snakeSingular = camelToSnakeCase(flatObject.nameSingular);
+
+      if (
+        isDefined(toolNames) &&
+        !this.hasMatchingTool(toolNames, snakeSingular, snakePlural)
+      ) {
+        continue;
+      }
+
+      const fields = resolveFields(flatObject);
+
+      const objectMetadata = { ...flatObject, fields };
 
       const restrictedFields = permission.restrictedFields;
-      const snakePlural = camelToSnakeCase(objectMetadata.namePlural);
-      const snakeSingular = camelToSnakeCase(objectMetadata.nameSingular);
+      const canBeManagedByAutomation = canObjectBeManagedByAutomation({
+        nameSingular: objectMetadata.nameSingular,
+      });
 
-      if (permission.canReadObjectRecords) {
+      const shouldIncludeSchema = (name: string) =>
+        includeSchemas && (!toolNames || toolNames.has(name));
+
+      if (canReadRecords) {
         descriptors.push({
-          name: `find_${snakePlural}`,
-          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. To find by ID, use filter: { id: { eq: "record-id" } }. Returns an array of matching records with their full data.`,
+          name: `find_many_${snakePlural}`,
+          ...getCrudToolLabels(
+            'find_many',
+            flatObject.labelPlural,
+            this.i18nService,
+            context.locale,
+          ),
+          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data, plus a "count" of total matches and a "hasNextPage" flag. When "hasNextPage" is true, more records match than were returned: continue with a higher offset (or increase the limit) before concluding a record is absent or answering count/enumeration questions.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+          ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
+            inputSchema: toToolJsonSchema(
               generateFindToolInputSchema(objectMetadata, restrictedFields),
             ),
           }),
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'find',
+            operation: 'find_many',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'find',
+          operation: 'find_many',
         });
 
         descriptors.push({
           name: `find_one_${snakeSingular}`,
-          description: `Retrieve a single ${objectMetadata.labelSingular} record by its unique ID. Use this when you know the exact record ID and need the complete record data. Returns the full record or an error if not found.`,
+          ...getCrudToolLabels(
+            'find_one',
+            flatObject.labelSingular,
+            this.i18nService,
+            context.locale,
+          ),
+          description: `Retrieve a single ${objectMetadata.labelSingular} by ID.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(FindOneToolInputSchema),
+          ...(shouldIncludeSchema(`find_one_${snakeSingular}`) && {
+            inputSchema: toToolJsonSchema(FindOneToolInputSchema),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -154,21 +239,31 @@ export class DatabaseToolProvider implements ToolProvider {
           operation: 'find_one',
         });
 
-        const groupBySchema = includeSchemas
+        const groupByName = `group_by_${snakePlural}`;
+        const shouldGenerateGroupBy = shouldIncludeSchema(groupByName);
+        const groupBySchema = shouldGenerateGroupBy
           ? generateGroupByToolInputSchema(objectMetadata, restrictedFields)
           : null;
+
         const hasGroupBySchema =
+          !includeSchemas ||
           groupBySchema !== null ||
           hasGroupByToolInputSchema(objectMetadata, restrictedFields);
 
         if (hasGroupBySchema) {
           descriptors.push({
-            name: `group_by_${snakePlural}`,
+            name: groupByName,
+            ...getCrudToolLabels(
+              'group_by',
+              flatObject.labelPlural,
+              this.i18nService,
+              context.locale,
+            ),
             description: `Group ${objectMetadata.labelPlural} records by one or two fields and compute an aggregate (COUNT, SUM, AVG, MIN, MAX, etc.). Use for questions like "how many deals per stage?" or "total revenue by company". Returns groups with dimension values and aggregate results, ordered by the aggregate value.`,
             category: ToolCategory.DATABASE_CRUD,
-            ...(includeSchemas &&
+            ...(shouldGenerateGroupBy &&
               groupBySchema && {
-                inputSchema: z.toJSONSchema(groupBySchema),
+                inputSchema: toToolJsonSchema(groupBySchema),
               }),
             executionRef: {
               kind: 'database_crud',
@@ -182,32 +277,44 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (permission.canUpdateObjectRecords) {
+      if (canUpdateRecords && canBeManagedByAutomation) {
         descriptors.push({
-          name: `create_${snakeSingular}`,
+          name: `create_one_${snakeSingular}`,
+          ...getCrudToolLabels(
+            'create_one',
+            flatObject.labelSingular,
+            this.i18nService,
+            context.locale,
+          ),
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+          ...(shouldIncludeSchema(`create_one_${snakeSingular}`) && {
+            inputSchema: toToolJsonSchema(
               generateCreateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'create',
+            operation: 'create_one',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'create',
+          operation: 'create_one',
         });
 
         descriptors.push({
           name: `create_many_${snakePlural}`,
+          ...getCrudToolLabels(
+            'create_many',
+            flatObject.labelPlural,
+            this.i18nService,
+            context.locale,
+          ),
           description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+          ...(shouldIncludeSchema(`create_many_${snakePlural}`) && {
+            inputSchema: toToolJsonSchema(
               generateCreateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
@@ -225,30 +332,42 @@ export class DatabaseToolProvider implements ToolProvider {
         });
 
         descriptors.push({
-          name: `update_${snakeSingular}`,
+          name: `update_one_${snakeSingular}`,
+          ...getCrudToolLabels(
+            'update_one',
+            flatObject.labelSingular,
+            this.i18nService,
+            context.locale,
+          ),
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+          ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
+            inputSchema: toToolJsonSchema(
               generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'update',
+            operation: 'update_one',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'update',
+          operation: 'update_one',
         });
 
         descriptors.push({
           name: `update_many_${snakePlural}`,
-          description: `Update multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. All matching records will receive the same field values. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first. Returns the updated records.`,
+          ...getCrudToolLabels(
+            'update_many',
+            flatObject.labelPlural,
+            this.i18nService,
+            context.locale,
+          ),
+          description: `Apply the SAME field values to all ${objectMetadata.labelPlural} records matching a filter. Use when every matched record gets identical changes (e.g. bulk status change). For records that each have different data to update, use upsert_many_${snakePlural} instead. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+          ...(shouldIncludeSchema(`update_many_${snakePlural}`) && {
+            inputSchema: toToolJsonSchema(
               generateUpdateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
@@ -264,24 +383,86 @@ export class DatabaseToolProvider implements ToolProvider {
           icon: flatObject.icon ?? undefined,
           operation: 'update_many',
         });
-      }
 
-      if (permission.canSoftDeleteObjectRecords) {
         descriptors.push({
-          name: `delete_${snakeSingular}`,
-          description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
+          name: `upsert_many_${snakePlural}`,
+          ...getCrudToolLabels(
+            'upsert_many',
+            flatObject.labelPlural,
+            this.i18nService,
+            context.locale,
+          ),
+          description: `Insert or update multiple ${objectMetadata.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(DeleteToolInputSchema),
+          ...(shouldIncludeSchema(`upsert_many_${snakePlural}`) && {
+            inputSchema: toToolJsonSchema(
+              generateCreateManyRecordInputSchema(
+                objectMetadata,
+                restrictedFields,
+              ),
+            ),
           }),
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'delete',
+            operation: 'upsert_many',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'delete',
+          operation: 'upsert_many',
+        });
+      }
+
+      if (canSoftDeleteRecords) {
+        descriptors.push({
+          name: `delete_one_${snakeSingular}`,
+          ...getCrudToolLabels(
+            'delete_one',
+            flatObject.labelSingular,
+            this.i18nService,
+            context.locale,
+          ),
+          description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
+          category: ToolCategory.DATABASE_CRUD,
+          ...(includeSchemas && {
+            inputSchema: toToolJsonSchema(DeleteToolInputSchema),
+          }),
+          executionRef: {
+            kind: 'database_crud',
+            objectNameSingular: objectMetadata.nameSingular,
+            operation: 'delete_one',
+          },
+          objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
+          operation: 'delete_one',
+        });
+
+        descriptors.push({
+          name: `delete_many_${snakePlural}`,
+          ...getCrudToolLabels(
+            'delete_many',
+            flatObject.labelPlural,
+            this.i18nService,
+            context.locale,
+          ),
+          description: `Soft-delete multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. Deleted records are hidden from normal queries and the operation is reversible. WARNING: Use specific filters to avoid unintended mass deletions.`,
+          category: ToolCategory.DATABASE_CRUD,
+          ...(includeSchemas && {
+            inputSchema: toToolJsonSchema(
+              generateBulkDeleteToolInputSchema(
+                objectMetadata,
+                restrictedFields,
+              ),
+            ),
+          }),
+          executionRef: {
+            kind: 'database_crud',
+            objectNameSingular: objectMetadata.nameSingular,
+            operation: 'delete_many',
+          },
+          objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
+          operation: 'delete_many',
         });
       }
     }
@@ -289,30 +470,55 @@ export class DatabaseToolProvider implements ToolProvider {
     return descriptors;
   }
 
-  private getObjectPermissions(
-    rolesPermissions: ObjectsPermissionsByRoleId,
-    rolePermissionConfig: ToolProviderContext['rolePermissionConfig'],
-  ): ObjectsPermissions | null {
-    if ('intersectionOf' in rolePermissionConfig) {
-      const allRolePermissions = rolePermissionConfig.intersectionOf.map(
-        (roleId: string) => rolesPermissions[roleId],
+  private async buildFieldsResolver({
+    context,
+    flatFieldMetadataMaps,
+    i18nInstance,
+  }: {
+    context: ToolProviderContext;
+    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    i18nInstance: I18n;
+  }): Promise<(flatObject: FlatObjectMetadata) => FlatFieldMetadata[]> {
+    const { workspaceCustomApplicationUniversalIdentifier } =
+      await this.applicationTranslationCatalogService.getApplicationAuthorIdentifiers(
+        {
+          workspaceId: context.workspaceId,
+          workspaceCustomApplicationId:
+            context.authContext?.workspace.workspaceCustomApplicationId,
+        },
       );
 
-      return allRolePermissions.length === 1
-        ? allRolePermissions[0]
-        : computePermissionIntersection(allRolePermissions);
-    }
+    return (flatObject) =>
+      getFlatFieldsFromFlatObjectMetadata(
+        flatObject,
+        flatFieldMetadataMaps,
+      ).map((flatFieldMetadata) => ({
+        ...flatFieldMetadata,
+        description: resolveEffectiveFieldDescription({
+          flatFieldMetadata,
+          locale: context.locale,
+          i18nInstance,
+          workspaceCustomApplicationUniversalIdentifier,
+        }),
+      }));
+  }
 
-    if ('unionOf' in rolePermissionConfig) {
-      if (rolePermissionConfig.unionOf.length === 1) {
-        return rolesPermissions[rolePermissionConfig.unionOf[0]];
-      }
-
-      throw new Error(
-        'Union permission logic for multiple roles not yet implemented',
-      );
-    }
-
-    return null;
+  private hasMatchingTool(
+    toolNames: Set<string>,
+    snakeSingular: string,
+    snakePlural: string,
+  ): boolean {
+    return (
+      toolNames.has(`find_many_${snakePlural}`) ||
+      toolNames.has(`find_one_${snakeSingular}`) ||
+      toolNames.has(`group_by_${snakePlural}`) ||
+      toolNames.has(`create_one_${snakeSingular}`) ||
+      toolNames.has(`create_many_${snakePlural}`) ||
+      toolNames.has(`update_one_${snakeSingular}`) ||
+      toolNames.has(`update_many_${snakePlural}`) ||
+      toolNames.has(`delete_one_${snakeSingular}`) ||
+      toolNames.has(`delete_many_${snakePlural}`) ||
+      toolNames.has(`upsert_many_${snakePlural}`)
+    );
   }
 }

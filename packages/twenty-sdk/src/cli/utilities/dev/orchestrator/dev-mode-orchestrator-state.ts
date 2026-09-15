@@ -11,6 +11,7 @@ import { type FileFolder } from 'twenty-shared/types';
 export type OrchestratorStateStepEvent = {
   message: string;
   status: 'info' | 'success' | 'error' | 'warning';
+  spacingBefore?: boolean;
 };
 
 export type OrchestratorStateEvent = OrchestratorStateStepEvent & {
@@ -74,10 +75,13 @@ const ENTITY_TYPE_TO_SYNCABLE: Record<string, SyncableEntity | undefined> = {
   skills: SyncableEntity.Skill,
   connectionProviders: SyncableEntity.ConnectionProvider,
   views: SyncableEntity.View,
+  viewFields: SyncableEntity.ViewField,
   navigationMenuItems: SyncableEntity.NavigationMenuItem,
   pageLayouts: SyncableEntity.PageLayout,
   pageLayoutTabs: SyncableEntity.PageLayoutTab,
+  pageLayoutWidgets: SyncableEntity.PageLayoutWidget,
   commandMenuItems: SyncableEntity.CommandMenuItem,
+  timelineActivityTypes: SyncableEntity.TimelineActivityType,
 };
 
 const MAX_EVENT_COUNT = 200;
@@ -120,14 +124,17 @@ export class OrchestratorState {
   entities: Map<string, OrchestratorStateEntityInfo>;
   events: OrchestratorStateEvent[];
 
+  pendingConfirmation: { deleteCount: number } | null;
+
+  private confirmationResolver: ((approved: boolean) => void) | null = null;
   private eventIdCounter = 0;
   onChange?: () => void;
 
-  constructor(options: { appPath: string; frontendUrl?: string }) {
+  constructor(options: { appPath: string }) {
     this.appPath = options.appPath;
-    this.frontendUrl = options.frontendUrl;
 
     this.previousObjectsFieldsFingerprint = null;
+    this.pendingConfirmation = null;
 
     this.steps = {
       checkServer: {
@@ -188,6 +195,24 @@ export class OrchestratorState {
 
   notify(): void {
     this.onChange?.();
+  }
+
+  requestDestructiveConfirmation(deleteCount: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.pendingConfirmation = { deleteCount };
+      this.confirmationResolver = resolve;
+      this.notify();
+    });
+  }
+
+  resolveDestructiveConfirmation(approved: boolean): void {
+    const resolver = this.confirmationResolver;
+
+    this.pendingConfirmation = null;
+    this.confirmationResolver = null;
+    this.notify();
+
+    resolver?.(approved);
   }
 
   updatePipeline(update: Partial<OrchestratorStatePipeline>): void {

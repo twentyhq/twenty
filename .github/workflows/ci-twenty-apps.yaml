@@ -1,0 +1,115 @@
+name: CI Twenty Apps
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+    inputs:
+      application:
+        description: 'App folder name to test (e.g. "twenty-linear"). Leave empty to test all apps.'
+        required: false
+        default: ''
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  discover:
+    if: github.event_name != 'merge_group'
+    uses: ./.github/workflows/discover-apps.yaml
+    with:
+      scope: internal-and-public
+      changed-only: true
+      application: ${{ inputs.application }}
+
+  ci:
+    needs: discover
+    if: needs.discover.outputs.has_apps == 'true'
+    name: ${{ matrix.app.name }}
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.app.path }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version-file: '.nvmrc'
+          cache: yarn
+          cache-dependency-path: ${{ matrix.app.path }}/yarn.lock
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Lint
+        run: yarn lint
+
+      - name: Typecheck
+        if: matrix.app.hasTypecheck
+        run: yarn typecheck
+
+      - name: Unit tests
+        if: matrix.app.hasUnit
+        run: yarn test:unit
+
+  integration:
+    needs: discover
+    if: needs.discover.outputs.has_apps == 'true'
+    name: ${{ matrix.app.name }} (${{ matrix.server-source }})
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(needs.discover.outputs.matrix) }}
+        server-source: [dockerhub-latest, local]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+
+      - name: Spawn Twenty server
+        id: twenty
+        if: matrix.app.hasIntegration
+        uses: ./.github/actions/spawn-twenty-server
+        with:
+          source: ${{ matrix.server-source }}
+
+      - name: Test app against server
+        if: matrix.app.hasIntegration
+        uses: ./.github/actions/test-twenty-app
+        with:
+          api-url: ${{ steps.twenty.outputs.server-url }}
+          api-key: ${{ steps.twenty.outputs.api-key }}
+          app-path: ${{ matrix.app.path }}
+          mode: ${{ matrix.server-source == 'local' && 'installation-and-integration-test' || 'integration-test-only' }}
+
+  ci-twenty-apps-status-check:
+    if: always() && !cancelled()
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    needs: [discover, ci, integration]
+    steps:
+      - name: Fail job if any needs failed
+        if: contains(needs.*.result, 'failure')
+        run: exit 1

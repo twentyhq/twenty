@@ -1,8 +1,12 @@
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { WorkflowFieldsMultiSelect } from '@/workflow/components/WorkflowEditUpdateEventFieldsMultiSelect';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+} from '~/generated-metadata/graphql';
 
 const meta: Meta<typeof WorkflowFieldsMultiSelect> = {
   title: 'Modules/Workflow/WorkflowFieldsMultiSelect',
@@ -23,10 +27,9 @@ const fields = [
     label: 'Name',
     type: FieldMetadataType.TEXT,
     description: 'Company name',
-    isCustom: false,
     isActive: true,
     isSystem: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isNullable: false,
     createdAt: '',
     updatedAt: '',
@@ -38,10 +41,9 @@ const fields = [
     label: 'Domain Name',
     type: FieldMetadataType.TEXT,
     description: 'Company domain name',
-    isCustom: false,
     isActive: true,
     isSystem: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isNullable: true,
     createdAt: '',
     updatedAt: '',
@@ -53,10 +55,9 @@ const fields = [
     label: 'Employees',
     type: FieldMetadataType.NUMBER,
     description: 'Number of employees',
-    isCustom: false,
     isActive: true,
     isSystem: false,
-    isUIReadOnly: false,
+    isUIEditable: true,
     isNullable: true,
     createdAt: '',
     updatedAt: '',
@@ -73,8 +74,10 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   description: 'A company',
   icon: 'IconBuilding',
   isSystem: false,
-  isUIReadOnly: false,
-  isCustom: false,
+  isUIEditable: true,
+  isUICreatable: true,
+  writability: MetadataWritability.OPEN,
+  openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   isActive: true,
   createdAt: '',
   updatedAt: '',
@@ -83,6 +86,7 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   isSearchable: true,
   labelIdentifierFieldMetadataId: '1',
   indexMetadatas: [],
+  searchFieldMetadatas: [],
   fields: fields,
   readableFields: fields,
   updatableFields: fields,

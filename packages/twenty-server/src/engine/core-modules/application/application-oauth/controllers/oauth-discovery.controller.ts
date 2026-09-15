@@ -1,6 +1,7 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 
 import { type Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -9,9 +10,10 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
+import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
-@Controller('.well-known')
+@Controller(ApiPath.WellKnown)
 export class OAuthDiscoveryController {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
@@ -22,7 +24,7 @@ export class OAuthDiscoveryController {
   @Get('oauth-authorization-server')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   async getAuthorizationServerMetadata(@Req() request: Request) {
-    const issuer = this.getRequestBaseUrl(request);
+    const issuer = getRequestBaseUrl(request);
     // /authorize is served by the frontend; SERVER_URL (API-only) has no such
     // route, so we route the client to the default frontend base URL in that
     // case. All other hosts (app.twenty.com, workspace subdomains, custom
@@ -31,18 +33,23 @@ export class OAuthDiscoveryController {
       ? cleanServerUrl(this.domainServerConfigService.getBaseUrl().toString())
       : issuer;
 
+    const authorizationEndpoint =
+      authorizeBase === issuer
+        ? `${issuer}/authorize`
+        : `${authorizeBase}/authorize?iss=${encodeURIComponent(issuer)}`;
+
     const cliRegistration =
-      await this.applicationRegistrationService.findOneByUniversalIdentifier(
+      await this.applicationRegistrationService.findOneByUniversalIdentifierGlobal(
         TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
       );
 
     return {
       issuer,
-      authorization_endpoint: `${authorizeBase}/authorize`,
-      token_endpoint: `${issuer}/oauth/token`,
-      registration_endpoint: `${issuer}/oauth/register`,
-      revocation_endpoint: `${issuer}/oauth/revoke`,
-      introspection_endpoint: `${issuer}/oauth/introspect`,
+      authorization_endpoint: authorizationEndpoint,
+      token_endpoint: `${issuer}/${ApiPath.OAuth}/token`,
+      registration_endpoint: `${issuer}/${ApiPath.OAuth}/register`,
+      revocation_endpoint: `${issuer}/${ApiPath.OAuth}/revoke`,
+      introspection_endpoint: `${issuer}/${ApiPath.OAuth}/introspect`,
       scopes_supported: ALL_OAUTH_SCOPES,
       response_types_supported: ['code'],
       response_modes_supported: ['query'],
@@ -73,7 +80,7 @@ export class OAuthDiscoveryController {
   @Get('oauth-protected-resource')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   getProtectedResourceMetadataRoot(@Req() request: Request) {
-    const base = this.getRequestBaseUrl(request);
+    const base = getRequestBaseUrl(request);
 
     return this.buildProtectedResourceMetadata(base, base);
   }
@@ -81,7 +88,7 @@ export class OAuthDiscoveryController {
   @Get('oauth-protected-resource/mcp')
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   getProtectedResourceMetadataMcp(@Req() request: Request) {
-    const base = this.getRequestBaseUrl(request);
+    const base = getRequestBaseUrl(request);
 
     return this.buildProtectedResourceMetadata(base, `${base}/mcp`);
   }
@@ -93,10 +100,6 @@ export class OAuthDiscoveryController {
       scopes_supported: ALL_OAUTH_SCOPES,
       bearer_methods_supported: ['header'],
     };
-  }
-
-  private getRequestBaseUrl(request: Request): string {
-    return `${request.protocol}://${request.get('host')}`;
   }
 
   private isApiHost(request: Request): boolean {

@@ -8,11 +8,12 @@ import { t } from '@lingui/core/macro';
 import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
+import { Avatar } from 'twenty-ui/data-display';
+import { Card } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type MarketplaceApp } from '~/generated-metadata/graphql';
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SettingsAvailableApplicationCardProps = {
   application: MarketplaceApp;
@@ -60,11 +61,11 @@ export const SettingsAvailableApplicationCard = ({
         <Card rounded fullWidth>
           <StyledSettingsCardContent alignItems="flex-start" fullHeight>
             <Avatar
-              avatarUrl={application.logo || null}
-              placeholder={application.name}
-              placeholderColorSeed={application.name}
+              src={getAbsoluteImageUrl(application.logoUrl || null)}
+              name={application.name}
+              colorSeed={application.name}
               size="lg"
-              type="squared"
+              shape="square"
             />
             <div>
               <StyledSettingsCardTitle>

@@ -1,0 +1,37 @@
+import { appInstall } from '@/cli/operations/install';
+import { ConfigService } from '@/cli/utilities/config/config-service';
+import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
+import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
+import { checkServerVersionCompatibility } from '@/cli/utilities/version/check-server-version-compatibility';
+import chalk from 'chalk';
+
+export type AppInstallCommandOptions = {
+  appPath?: string;
+  remote?: string;
+};
+
+export class AppInstallCommand {
+  async execute(options: AppInstallCommandOptions): Promise<void> {
+    const appPath = options.appPath ?? CURRENT_EXECUTION_DIRECTORY;
+
+    await checkSdkVersionCompatibility(appPath);
+    await checkServerVersionCompatibility();
+
+    const remoteName = options.remote ?? ConfigService.getActiveRemote();
+
+    console.log(chalk.blue(`Installing application on ${remoteName}...`));
+    console.log(chalk.gray(`App path: ${appPath}\n`));
+
+    const result = await appInstall({
+      appPath,
+      remote: options.remote,
+    });
+
+    if (!result.success) {
+      console.error(chalk.red(result.error.message));
+      process.exit(1);
+    }
+
+    console.log(chalk.green('✓ Application installed'));
+  }
+}

@@ -20,8 +20,8 @@ export const ApplicationDisplay = ({
     <StyledAppChip
       size="md"
       applicationId={application?.id}
+      logoUrl={application?.logoUrl}
       fallbackApplicationData={{
-        logo: application?.logo,
         name: application?.name,
       }}
     />

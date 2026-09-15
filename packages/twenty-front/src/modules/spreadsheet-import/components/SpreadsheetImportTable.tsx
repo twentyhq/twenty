@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
-// @ts-expect-error  // Todo: remove usage of react-data-grid
-import DataGrid, { type DataGridProps } from 'react-data-grid';
+import { type Key, useContext } from 'react';
+import { type SpreadsheetImportTableProps } from '@/spreadsheet-import/types/SpreadsheetImportTableProps';
+import { DataGrid } from 'react-data-grid';
+import 'react-data-grid/lib/styles.css';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -24,6 +25,8 @@ const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   --rdg-warning-cell-background-color: ${themeCssVariables.color.orange};
   --row-selected-hover-background-color: ${themeCssVariables.background
     .secondary};
+  flex: 1;
+  min-height: 0;
 
   > * {
     border: none;
@@ -103,59 +106,41 @@ const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   }
 `;
 
-type SpreadsheetImportTableProps<Data> = Pick<
-  DataGridProps<Data>,
-  | 'selectedRows'
-  | 'onSelectedRowsChange'
-  | 'columns'
-  | 'headerRowHeight'
-  | 'rowKeyGetter'
-  | 'rows'
-> &
-  Partial<
-    Pick<DataGridProps<Data>, 'onRowClick' | 'components' | 'onRowsChange'>
-  > & {
-    className?: string;
-    rowHeight?: number;
-    hiddenHeader?: boolean;
-  };
-
-export const SpreadsheetImportTable = <Data,>({
+export const SpreadsheetImportTable = <TData, TRowKey extends Key = Key>({
   className,
   columns,
-  components,
   headerRowHeight,
-  rowKeyGetter,
   rows,
+  rowKeyGetter,
+  renderers,
   onRowsChange,
-  onRowClick,
-  onSelectedRowsChange,
+  onCellClick,
+  onSelectedCellChange,
   selectedRows,
-}: SpreadsheetImportTableProps<Data>) => {
+  onSelectedRowsChange,
+}: SpreadsheetImportTableProps<TData, TRowKey>) => {
   const { colorScheme } = useContext(ThemeContext);
-
   const { rtl } = useSpreadsheetImportInternal();
   const themeClassName = colorScheme === 'dark' ? 'rdg-dark' : 'rdg-light';
 
-  if (!rows?.length || !columns?.length) return null;
+  if (!rows.length || !columns.length) return null;
 
   return (
-    <StyledDataGridContainer headerRowHeight={headerRowHeight}>
+    <StyledDataGridContainer headerRowHeight={headerRowHeight ?? undefined}>
       <DataGrid
         direction={rtl ? 'rtl' : 'ltr'}
         rowHeight={40}
-        {...{
-          className: `${className || ''} ${themeClassName}`,
-          columns,
-          headerRowHeight,
-          rowKeyGetter,
-          onRowsChange,
-          rows,
-          components,
-          onRowClick,
-          onSelectedRowsChange,
-          selectedRows,
-        }}
+        className={`${className || ''} ${themeClassName}`}
+        headerRowHeight={headerRowHeight}
+        columns={columns}
+        rows={rows}
+        rowKeyGetter={rowKeyGetter}
+        renderers={renderers}
+        onRowsChange={onRowsChange}
+        onCellClick={onCellClick}
+        onSelectedCellChange={onSelectedCellChange}
+        selectedRows={selectedRows}
+        onSelectedRowsChange={onSelectedRowsChange}
       />
     </StyledDataGridContainer>
   );

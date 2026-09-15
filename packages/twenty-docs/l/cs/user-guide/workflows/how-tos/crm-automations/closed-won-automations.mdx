@@ -82,19 +82,19 @@ Vytvořte pracovní postup, který automaticky zajistí všechny činnosti po v�
 **Příklad textu e-mailu**:
 
 ```
-Ahoj týme CS,
+Hi CS Team,
 
-Máme nového zákazníka!
+We have a new customer!
 
-Společnost: {{trigger.object.company.name}}
-Obchod: {{trigger.object.name}}
-Hodnota: {{trigger.object.amount}}
-Obchodní zástupce: {{trigger.object.owner.name}}
-Datum uzavření: {{trigger.object.closedAt}}
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
 
-Onboardingový úkol byl automaticky vytvořen.
+An onboarding task has been created automatically.
 
-Dejme jim skvělý start!
+Let's give them a great start!
 ```
 
 ### Krok 7: Potvrďte obchodnímu zástupci
@@ -157,7 +157,7 @@ Použijte **Iterator** k vytvoření každého úkolu z pole.
 
 * Vytvořte zákazníka ve fakturačním systému pomocí **HTTP Request**
 
-### Podmíněné akce
+### Podmíněná opatření
 
 Použijte akce **Filtr** k:
 
@@ -165,7 +165,7 @@ Použijte akce **Filtr** k:
 * Různé přiřazené osoby podle regionu
 * Přeskočit upozornění u malých obchodů
 
-### Zahrnout podrobnosti obchodu
+### Zahrnout detaily Deal
 
 Použijte akci **Code** k formátování:
 

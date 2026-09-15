@@ -13,20 +13,16 @@ import { useUpdatePageLayoutWithTabsAndWidgets } from '@/page-layout/hooks/useUp
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
-import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convertPageLayoutDraftToUpdateInput';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
-import { isDefaultPageLayoutId } from '@/page-layout/utils/isDefaultPageLayoutId';
-import { reInjectDynamicRelationWidgetsFromDraft } from '@/page-layout/utils/reInjectDynamicRelationWidgetsFromDraft';
+import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useFeatureFlagsMap } from '@/workspace/hooks/useFeatureFlagsMap';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
@@ -47,10 +43,6 @@ export const useSaveLayoutCustomization = () => {
     useCreatePendingRecordTableWidgetViews();
   const { exitLayoutCustomizationMode } = useExitLayoutCustomizationMode();
   const { savePageLayoutWidgetsData } = useSavePageLayoutWidgetsData();
-
-  const featureFlags = useFeatureFlagsMap();
-  const isRecordPageLayoutEditingEnabled =
-    featureFlags[FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED];
 
   const save = useCallback(async () => {
     setIsSaving(true);
@@ -80,10 +72,6 @@ export const useSaveLayoutCustomization = () => {
       let hasAnyFailure = false;
 
       for (const pageLayoutId of activePageLayoutIds) {
-        if (isDefaultPageLayoutId(pageLayoutId)) {
-          continue;
-        }
-
         const draft = store.get(
           pageLayoutDraftComponentState.atomFamily({
             instanceId: pageLayoutId,
@@ -100,29 +88,16 @@ export const useSaveLayoutCustomization = () => {
           continue;
         }
 
-        const persistedAsDraft: DraftPageLayout = {
-          id: persisted.id,
-          name: persisted.name,
-          type: persisted.type,
-          objectMetadataId: persisted.objectMetadataId,
-          tabs: persisted.tabs,
-          defaultTabToFocusOnMobileAndSidePanelId:
-            persisted.defaultTabToFocusOnMobileAndSidePanelId,
-        };
-
         const isPageLayoutStructureDirty = !isDeeplyEqual(
           draft,
-          persistedAsDraft,
+          toDraftPageLayout(persisted),
         );
 
         await createPendingFieldsWidgetViews(pageLayoutId);
         await createPendingRecordTableWidgetViews(pageLayoutId);
 
         if (isPageLayoutStructureDirty) {
-          const updateInput = convertPageLayoutDraftToUpdateInput(draft, {
-            shouldFilterDynamicRelationWidgets:
-              !isRecordPageLayoutEditingEnabled,
-          });
+          const updateInput = convertPageLayoutDraftToUpdateInput(draft);
           const result = await updatePageLayoutWithTabsAndWidgets(
             pageLayoutId,
             updateInput,
@@ -136,26 +111,17 @@ export const useSaveLayoutCustomization = () => {
               const persistedLayout: PageLayout =
                 transformPageLayout(updatedPageLayout);
 
-              const pageLayoutToPersist =
-                !isRecordPageLayoutEditingEnabled &&
-                persistedLayout.type === PageLayoutType.RECORD_PAGE
-                  ? reInjectDynamicRelationWidgetsFromDraft(
-                      persistedLayout,
-                      draft,
-                    )
-                  : persistedLayout;
-
               store.set(
                 pageLayoutPersistedComponentState.atomFamily({
                   instanceId: pageLayoutId,
                 }),
-                pageLayoutToPersist,
+                persistedLayout,
               );
               store.set(
                 pageLayoutCurrentLayoutsComponentState.atomFamily({
                   instanceId: pageLayoutId,
                 }),
-                convertPageLayoutToTabLayouts(pageLayoutToPersist),
+                convertPageLayoutToTabLayouts(persistedLayout),
               );
             }
           } else {
@@ -194,7 +160,6 @@ export const useSaveLayoutCustomization = () => {
     savePageLayoutWidgetsData,
     exitLayoutCustomizationMode,
     enqueueErrorSnackBar,
-    isRecordPageLayoutEditingEnabled,
     store,
     t,
   ]);

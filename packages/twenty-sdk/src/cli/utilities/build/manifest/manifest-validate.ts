@@ -1,35 +1,49 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { validate as uuidValidate, version as uuidVersion } from 'uuid';
 
-import { type FieldManifest, type Manifest } from 'twenty-shared/application';
-import { FieldMetadataType, RelationType } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
-
-const MIN_UUID_VERSION = 4;
-
-const RELATION_FIELD_TYPES: string[] = [
-  FieldMetadataType.RELATION,
-  FieldMetadataType.MORPH_RELATION,
-];
+import {
+  type Manifest,
+  type PageLayoutManifest,
+  type PageLayoutTabManifest,
+  type PageLayoutWidgetManifest,
+  normalizePageLayoutTabManifest,
+} from 'twenty-shared/application';
+import {
+  GRAPH_WIDGET_CONFIGURATION_TYPES,
+  type GraphWidgetConfigurationType,
+  type PageLayoutWidgetUniversalConfiguration,
+  RelationType,
+} from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  getDuplicateValues,
+  type ManifestField,
+  MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION,
+  isRelationFieldManifest,
+} from '@/cli/utilities/build/manifest/utils/manifest-validation-helpers';
+import { getPageLayoutDeprecationWarnings } from '@/cli/utilities/build/manifest/utils/get-page-layout-deprecation-warnings';
+import { validateTimelineActivityTypes } from '@/cli/utilities/build/manifest/utils/validate-timeline-activity-types';
 
 const VALID_RELATION_TYPES: string[] = [
   RelationType.MANY_TO_ONE,
   RelationType.ONE_TO_MANY,
 ];
 
-const extractDuplicates = (values: string[]): string[] => {
-  const seen = new Set<string>();
-  const duplicates = new Set<string>();
+const RAW_AGGREGATE_FIELD_METADATA_ID_KEY = 'aggregateFieldMetadataId';
 
-  for (const value of values) {
-    if (seen.has(value)) {
-      duplicates.add(value);
-    } else {
-      seen.add(value);
-    }
-  }
+type GraphPageLayoutWidgetUniversalConfiguration = Extract<
+  PageLayoutWidgetUniversalConfiguration,
+  { configurationType: GraphWidgetConfigurationType }
+>;
 
-  return Array.from(duplicates);
-};
+const isGraphWidgetConfiguration = (
+  configuration: PageLayoutWidgetUniversalConfiguration | null | undefined,
+): configuration is GraphPageLayoutWidgetUniversalConfiguration =>
+  isDefined(configuration) &&
+  GRAPH_WIDGET_CONFIGURATION_TYPES.some(
+    (configurationType) =>
+      configurationType === configuration.configurationType,
+  );
 
 const findUniversalIdentifiers = (obj: object): string[] => {
   const universalIdentifiers: string[] = [];
@@ -45,7 +59,11 @@ const findUniversalIdentifiers = (obj: object): string[] => {
 
     if (
       key === 'postInstallLogicFunction' ||
-      key === 'preInstallLogicFunction'
+      key === 'preInstallLogicFunction' ||
+      key === 'uninstallLogicFunction' ||
+      key === 'onConnectLogicFunction' ||
+      key === 'onDisconnectLogicFunction' ||
+      key === 'settingsFrontComponent'
     ) {
       continue;
     }
@@ -58,20 +76,15 @@ const findUniversalIdentifiers = (obj: object): string[] => {
   return universalIdentifiers;
 };
 
-const validateRelationFields = (
-  fields: Pick<FieldManifest, 'type' | 'name' | 'universalSettings'>[],
-): string[] => {
+const validateRelationFields = (fields: ManifestField[]): string[] => {
   const errors: string[] = [];
 
   for (const field of fields) {
-    if (!RELATION_FIELD_TYPES.includes(field.type)) {
+    if (!isRelationFieldManifest(field)) {
       continue;
     }
 
-    const settings = field.universalSettings as
-      | { relationType?: string; joinColumnName?: string | null }
-      | null
-      | undefined;
+    const settings = field.universalSettings;
 
     if (!settings?.relationType) {
       errors.push(
@@ -103,6 +116,102 @@ const validateRelationFields = (
   return errors;
 };
 
+const collectPageLayoutWidgets = (
+  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs' | 'pageLayoutWidgets'>,
+): PageLayoutWidgetManifest[] => {
+  const widgetsFromPageLayouts = manifest.pageLayouts.flatMap(
+    (pageLayout) => pageLayout.tabs?.flatMap((tab) => tab.widgets ?? []) ?? [],
+  );
+
+  const widgetsFromStandaloneTabs = manifest.pageLayoutTabs.flatMap(
+    (tab) => tab.widgets ?? [],
+  );
+
+  return [
+    ...widgetsFromPageLayouts,
+    ...widgetsFromStandaloneTabs,
+    ...(manifest.pageLayoutWidgets ?? []),
+  ];
+};
+
+const validateGraphWidgets = (
+  widgets: PageLayoutWidgetManifest[],
+): string[] => {
+  const errors: string[] = [];
+
+  for (const widget of widgets) {
+    const configuration = widget.configuration;
+
+    if (!isGraphWidgetConfiguration(configuration)) {
+      continue;
+    }
+
+    if (
+      !isNonEmptyString(configuration.aggregateFieldMetadataUniversalIdentifier)
+    ) {
+      const usedRawKey = RAW_AGGREGATE_FIELD_METADATA_ID_KEY in configuration;
+
+      const hint = usedRawKey
+        ? ` Reference the aggregate field with "aggregateFieldMetadataUniversalIdentifier" (not "${RAW_AGGREGATE_FIELD_METADATA_ID_KEY}").`
+        : '';
+
+      errors.push(
+        `Graph widget "${widget.title}" is missing aggregateFieldMetadataUniversalIdentifier.${hint}`,
+      );
+    }
+  }
+
+  return errors;
+};
+
+const validatePageLayoutTab = ({
+  pageLayoutTab,
+  pageLayoutType,
+}: {
+  pageLayoutTab: PageLayoutTabManifest;
+  pageLayoutType: PageLayoutManifest['type'] | undefined;
+}): string[] => {
+  const result = normalizePageLayoutTabManifest({
+    pageLayoutTabManifest: pageLayoutTab,
+    pageLayoutType,
+  });
+
+  return result.status === 'fail' ? result.errors : [];
+};
+
+const validatePageLayoutTabs = (
+  manifest: Pick<Manifest, 'pageLayouts' | 'pageLayoutTabs'>,
+): string[] => {
+  const pageLayoutTypeByUniversalIdentifier = new Map(
+    manifest.pageLayouts.map((pageLayout) => [
+      pageLayout.universalIdentifier,
+      pageLayout.type,
+    ]),
+  );
+
+  const nestedTabErrors = manifest.pageLayouts.flatMap((pageLayout) =>
+    (pageLayout.tabs ?? []).flatMap((pageLayoutTab) =>
+      validatePageLayoutTab({
+        pageLayoutTab,
+        pageLayoutType: pageLayout.type,
+      }),
+    ),
+  );
+
+  const standaloneTabErrors = manifest.pageLayoutTabs.flatMap((pageLayoutTab) =>
+    validatePageLayoutTab({
+      pageLayoutTab,
+      pageLayoutType: isDefined(pageLayoutTab.pageLayoutUniversalIdentifier)
+        ? pageLayoutTypeByUniversalIdentifier.get(
+            pageLayoutTab.pageLayoutUniversalIdentifier,
+          )
+        : undefined,
+    }),
+  );
+
+  return [...nestedTabErrors, ...standaloneTabErrors];
+};
+
 const invalidUniversalIdentifierVersions = (
   identifiers: string[],
 ): string[] => {
@@ -122,10 +231,10 @@ const invalidUniversalIdentifierVersions = (
 
     const version = uuidVersion(identifier);
 
-    if (version < MIN_UUID_VERSION) {
+    if (version < MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION) {
       errors.push(
         `Universal identifier "${identifier}" is UUID version ${version}. ` +
-          `Only UUID version ${MIN_UUID_VERSION} or higher is allowed.`,
+          `Only UUID version ${MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION} or higher is allowed.`,
       );
     }
   }
@@ -135,11 +244,11 @@ const invalidUniversalIdentifierVersions = (
 
 export const manifestValidate = (manifest: Manifest) => {
   const errors: string[] = [];
-  const warnings: string[] = [];
+  const warnings = getPageLayoutDeprecationWarnings(manifest);
 
   const universalIdentifiers = findUniversalIdentifiers(manifest);
 
-  const duplicates = extractDuplicates(universalIdentifiers);
+  const duplicates = getDuplicateValues(universalIdentifiers);
 
   if (duplicates.length > 0) {
     errors.push(`Duplicate universal identifiers: ${duplicates.join(', ')}`);
@@ -150,31 +259,22 @@ export const manifestValidate = (manifest: Manifest) => {
 
   if (invalidUniversalIdentifiers.length > 0) {
     errors.push(
-      `Duplicate universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
+      `Invalid universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
     );
   }
 
-  if (!isNonEmptyArray(manifest.objects)) {
-    warnings.push('No object defined');
-  }
-
-  if (!isNonEmptyArray(manifest.logicFunctions)) {
-    warnings.push('No logic function defined');
-  }
-
-  if (!isNonEmptyArray(manifest.frontComponents)) {
-    warnings.push('No front component defined');
-  }
-
-  const allFields: Pick<
-    FieldManifest,
-    'type' | 'name' | 'universalSettings'
-  >[] = [
+  const allFields: ManifestField[] = [
     ...manifest.fields,
     ...manifest.objects.flatMap((object) => object.fields),
   ];
 
   errors.push(...validateRelationFields(allFields));
+
+  errors.push(...validatePageLayoutTabs(manifest));
+
+  errors.push(...validateGraphWidgets(collectPageLayoutWidgets(manifest)));
+
+  errors.push(...validateTimelineActivityTypes(manifest));
 
   return { errors, warnings, isValid: errors.length === 0 };
 };

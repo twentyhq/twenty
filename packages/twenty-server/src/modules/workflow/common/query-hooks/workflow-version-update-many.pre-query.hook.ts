@@ -9,9 +9,7 @@ import {
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @WorkspaceQueryHook(`workflowVersion.updateMany`)
-export class WorkflowVersionUpdateManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowVersionUpdateManyPreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(): Promise<
     UpdateManyResolverArgs<WorkflowVersionWorkspaceEntity>
   > {

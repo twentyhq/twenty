@@ -5,6 +5,7 @@ import {
   type ReplyContext,
   type ReplyContextReady,
 } from '@/activities/emails/types/ReplyContext';
+import { getReplyToRecipients } from '@/activities/emails/utils/getReplyToRecipients';
 import { isDefined } from 'twenty-shared/utils';
 
 export type { ReplyContext, ReplyContextReady };
@@ -15,6 +16,7 @@ export const useReplyContext = (
   const {
     messages,
     connectedAccountId,
+    connectedAccountHandle,
     connectedAccountProvider,
     messageChannelLoading,
     threadLoading,
@@ -32,30 +34,46 @@ export const useReplyContext = (
       return null;
     }
 
-    const lastMessage = messages[messages.length - 1];
+    const sentMessages = messages.filter((message) => !message.isDraft);
+    const lastSentMessage = sentMessages[sentMessages.length - 1];
 
-    if (!isDefined(lastMessage)) {
-      return null;
+    if (!isDefined(lastSentMessage)) {
+      if (messages.length === 0) {
+        return null;
+      }
+
+      return {
+        loading: false,
+        to: '',
+        subject: '',
+        inReplyTo: '',
+        connectedAccountId,
+        connectedAccountProvider,
+      };
     }
 
-    const senderHandle = lastMessage.sender?.handle ?? '';
+    const replyTo = getReplyToRecipients({
+      message: lastSentMessage,
+      connectedAccountHandle,
+    });
 
-    const rawSubject = lastMessage.subject ?? '';
+    const rawSubject = lastSentMessage.subject ?? '';
     const subject = rawSubject.startsWith('Re: ')
       ? rawSubject
       : `Re: ${rawSubject}`;
 
     return {
       loading: false,
-      to: senderHandle,
+      to: replyTo,
       subject,
-      inReplyTo: lastMessage.headerMessageId ?? '',
+      inReplyTo: lastSentMessage.headerMessageId ?? '',
       connectedAccountId,
       connectedAccountProvider,
     };
   }, [
     messages,
     connectedAccountId,
+    connectedAccountHandle,
     connectedAccountProvider,
     messageChannelLoading,
     threadLoading,

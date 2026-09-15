@@ -1,4 +1,5 @@
 import { defineLogicFunction } from '@/sdk/define';
+import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 
 const mockHandler = async () => ({ success: true });
 
@@ -50,6 +51,23 @@ describe('defineLogicFunction', () => {
     const result = defineLogicFunction(config as any);
 
     expect(result.config.databaseEventTriggerSettings?.eventName).toBeDefined();
+  });
+
+  it('should accept databaseEventTriggerSettings with batchMode enabled', () => {
+    const config: LogicFunctionConfig = {
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'On Contact Created',
+      handler: mockHandler,
+      databaseEventTriggerSettings: {
+        eventName: 'contact.created',
+        batchMode: true,
+      },
+    };
+
+    const result = defineLogicFunction(config);
+
+    expect(result.errors).toEqual([]);
+    expect(result.config.databaseEventTriggerSettings?.batchMode).toBe(true);
   });
 
   it('should pass through optional fields', () => {
@@ -197,5 +215,79 @@ describe('defineLogicFunction', () => {
     expect(result.errors).toContain(
       'Database event trigger must have an eventName',
     );
+  });
+
+  it('accepts a serverRouteTriggerSettings resolver returning { workspaceId, targetLogicFunctionUniversalIdentifier }', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Resolve workspace from request',
+      serverRouteTriggerSettings: { forwardedRequestHeaders: ['x-tenant'] },
+      handler: async () => ({
+        workspaceId: 'ws-1',
+        targetLogicFunctionUniversalIdentifier: 'target-uid',
+      }),
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.config.serverRouteTriggerSettings).toBeDefined();
+  });
+
+  it('accepts a serverRouteTriggerSettings resolver declaring GET and POST', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Answer the provider verification challenge',
+      serverRouteTriggerSettings: { httpMethods: ['GET', 'POST'] },
+      handler: async () => ({
+        workspaceId: 'ws-1',
+        targetLogicFunctionUniversalIdentifier: 'target-uid',
+      }),
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('rejects a serverRouteTriggerSettings resolver declaring a method the server route does not serve', () => {
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Unroutable method',
+      serverRouteTriggerSettings: { httpMethods: ['PUT'] },
+      handler: async () => ({
+        workspaceId: 'ws-1',
+        targetLogicFunctionUniversalIdentifier: 'target-uid',
+      }),
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Server route trigger only supports the GET and POST http methods',
+    );
+  });
+
+  it('compile-time rejects a serverRouteTriggerSettings resolver returning the wrong shape', () => {
+    // @ts-expect-error — handler must return { workspaceId: string;
+    // targetLogicFunctionUniversalIdentifier: string } when
+    // `serverRouteTriggerSettings` is set.
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Bad resolver',
+      serverRouteTriggerSettings: { forwardedRequestHeaders: [] },
+      handler: async () => ({ notAWorkspaceId: 'oops' }),
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('compile-time rejects a serverRouteTriggerSettings resolver returning only workspaceId', () => {
+    // @ts-expect-error — handler must also return
+    // `targetLogicFunctionUniversalIdentifier`.
+    const result = defineLogicFunction({
+      universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+      name: 'Resolver missing target',
+      serverRouteTriggerSettings: { forwardedRequestHeaders: [] },
+      handler: async () => ({ workspaceId: 'ws-1' }),
+    });
+
+    expect(result.success).toBe(true);
   });
 });

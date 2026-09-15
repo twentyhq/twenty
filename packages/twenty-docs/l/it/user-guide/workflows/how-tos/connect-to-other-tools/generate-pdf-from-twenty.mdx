@@ -17,7 +17,7 @@ Questo flusso di lavoro usa un **Attivatore manuale** così gli utenti possono g
 
 Prima di configurare il flusso di lavoro:
 
-1. **Crea una chiave API**: vai su **Impostazioni → API** e crea una nuova chiave API. Ti servirà questo token per la funzione logica.
+1. **Crea una chiave API**: vai su **Impostazioni → API** e crea una nuova chiave API. Avrai bisogno di questo token per la Funzione Logica.
 2. **Configura un servizio di generazione PDF** (opzionale): se vuoi generare dinamicamente PDF (ad es. preventivi), usa un servizio come Carbone, PDFMonkey o DocuSeal per creare il PDF e ottenere un URL di download.
 
 ## Configurazione passo-passo
@@ -29,12 +29,12 @@ Prima di configurare il flusso di lavoro:
 3. Scegli l'oggetto a cui vuoi allegare i PDF (ad es. **Company** o **Opportunity**)
 
 <Tip>
-Con un **Attivatore manuale**, gli utenti possono eseguire questo flusso di lavoro utilizzando un pulsante che appare in alto a destra una volta selezionato un record, per generare e allegare un PDF.
+Con un Trigger manuale, gli utenti possono eseguire questo flusso di lavoro utilizzando un pulsante che appare in alto a destra una volta selezionato un record: questo esegue il flusso di lavoro per generare e allegare un PDF.
 </Tip>
 
 ### Passaggio 2: aggiungi una Funzione logica
 
-1. Aggiungi un'azione **Code** (funzione logica)
+1. Aggiungi un'azione **Codice** (Funzione logica)
 2. Crea una nuova funzione con il codice seguente
 3. Configura i parametri di input
 
@@ -237,7 +237,7 @@ Per creare preventivi o fatture dinamici:
 | 1         | Attivatore manuale (Company) | L'utente avvia l'operazione su un record                 |
 | 2         | Cerca record                 | Ottieni i dettagli di Opportunity o delle righe articolo |
 | 3         | Richiesta HTTP               | Chiama l'API di generazione PDF con i dati del record    |
-| 4         | Funzione serverless          | Scarica e allega il PDF generato                         |
+| 4         | Funzione logica              | Scarica e allega il PDF generato                         |
 
 ### Servizi di generazione PDF più diffusi
 
@@ -246,7 +246,7 @@ Per creare preventivi o fatture dinamici:
 * **DocuSeal** - Piattaforma di automazione dei documenti
 * **Documint** - Generazione di documenti API-first
 
-Ogni servizio fornisce un'API che restituisce un URL PDF, che puoi quindi passare alla funzione logica.
+Ogni servizio fornisce un'API che restituisce un URL PDF, che puoi poi passare alla Funzione Logica.
 
 ## Risoluzione dei problemi
 

@@ -7,10 +7,13 @@ import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type WorkflowVariableStepSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconVariablePlus } from 'twenty-ui/display';
+import { IconVariablePlus } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownVariableButtonContainer = styled.div<{
@@ -36,6 +39,7 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect,
   shouldDisplayRecordFields,
   shouldDisplayRecordObjects,
+  objectNameSingularsToSelect,
 }: {
   clickableComponent?: React.ReactNode;
   disabled?: boolean;
@@ -44,6 +48,7 @@ export const WorkflowVariablesDropdown = ({
   onVariableSelect: (variableName: string) => void;
   shouldDisplayRecordFields: boolean;
   shouldDisplayRecordObjects: boolean;
+  objectNameSingularsToSelect?: string[];
 }) => {
   const { theme } = useContext(ThemeContext);
   const dropdownId = `${SEARCH_VARIABLES_DROPDOWN_ID}-${instanceId}`;
@@ -64,8 +69,13 @@ export const WorkflowVariablesDropdown = ({
   const [selectedStep, setSelectedStep] = useState<
     StepOutputSchemaV2 | undefined
   >(initialStep);
+  const [selectedPath, setSelectedPath] = useState<string[]>([]);
 
-  const handleStepSelect = (stepId: string) => {
+  const handleStepSelect = ({
+    stepId,
+    path = [],
+  }: WorkflowVariableStepSelection) => {
+    setSelectedPath(path);
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),
     );
@@ -74,6 +84,7 @@ export const WorkflowVariablesDropdown = ({
   const handleSubItemSelect = (subItem: string) => {
     onVariableSelect(subItem);
     setSelectedStep(initialStep);
+    setSelectedPath([]);
     closeDropdown(dropdownId);
   };
 
@@ -83,12 +94,25 @@ export const WorkflowVariablesDropdown = ({
 
   if (disabled === true || noAvailableVariables) {
     return (
-      <StyledDropdownVariableButtonContainer disabled={true}>
-        <IconVariablePlus
-          size={theme.icon.size.md}
-          color={theme.font.color.light}
+      <>
+        <StyledDropdownVariableButtonContainer
+          disabled={true}
+          data-variable-picker-disabled-anchor={dropdownId}
+        >
+          <IconVariablePlus
+            size={theme.icon.size.md}
+            color={theme.font.color.light}
+          />
+        </StyledDropdownVariableButtonContainer>
+        <AppTooltip
+          anchorSelect={`[data-variable-picker-disabled-anchor="${dropdownId}"]`}
+          title={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
+          place={TooltipPosition.Top}
+          delay={TooltipDelay.mediumDelay}
+          offset={5}
+          noArrow
         />
-      </StyledDropdownVariableButtonContainer>
+      </>
     );
   }
 
@@ -109,13 +133,20 @@ export const WorkflowVariablesDropdown = ({
             dropdownId={dropdownId}
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
+            onVariableSelect={({ rawVariableName }) =>
+              handleSubItemSelect(rawVariableName)
+            }
+            shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+            objectNameSingularsToSelect={objectNameSingularsToSelect}
           />
         ) : (
           <WorkflowVariablesDropdownStepItems
             step={selectedStep}
+            initialPath={selectedPath}
             onSelect={handleSubItemSelect}
             onBack={handleBack}
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+            objectNameSingularsToSelect={objectNameSingularsToSelect}
           />
         )
       }

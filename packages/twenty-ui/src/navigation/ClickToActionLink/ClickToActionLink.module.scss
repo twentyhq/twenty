@@ -1,0 +1,16 @@
+.root {
+  align-items: center;
+  color: var(--t-font-color-light);
+  display: flex;
+  font-size: var(--t-font-size-sm);
+  font-weight: var(--t-font-weight-medium);
+  gap: var(--t-spacing-1);
+  padding: 0 var(--t-spacing-1);
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:hover {
+    color: var(--t-font-color-tertiary);
+    cursor: pointer;
+  }
+}

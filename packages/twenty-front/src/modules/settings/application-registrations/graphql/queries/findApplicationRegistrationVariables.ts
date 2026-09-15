@@ -9,10 +9,14 @@ export const FIND_APPLICATION_REGISTRATION_VARIABLES = gql`
     ) {
       id
       key
+      value
       description
       isSecret
       isRequired
+      isDeprecated
       isFilled
+      type
+      options
       createdAt
       updatedAt
     }

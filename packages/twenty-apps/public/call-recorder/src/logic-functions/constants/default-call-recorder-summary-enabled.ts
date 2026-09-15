@@ -1,0 +1,1 @@
+export const DEFAULT_CALL_RECORDER_SUMMARY_ENABLED = true;

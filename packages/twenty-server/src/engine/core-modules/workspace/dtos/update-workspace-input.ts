@@ -1,10 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
 
+import GraphQLJSON from 'graphql-type-json';
+import { type AiModelTier } from 'twenty-shared/ai';
+
 import {
   IsArray,
   IsBoolean,
+  IsEnum,
   IsInt,
   IsOptional,
+  IsObject,
   IsString,
   IsUUID,
   Matches,
@@ -13,6 +18,8 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
+import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 
 @InputType()
 export class UpdateWorkspaceInput {
@@ -48,6 +55,11 @@ export class UpdateWorkspaceInput {
   @IsBoolean()
   @IsOptional()
   isPublicInviteLinkEnabled?: boolean;
+
+  @Field(() => WorkspaceDiscoverability, { nullable: true })
+  @IsEnum(WorkspaceDiscoverability)
+  @IsOptional()
+  workspaceDiscoverability?: WorkspaceDiscoverability;
 
   @Field({ nullable: true })
   @IsBoolean()
@@ -107,15 +119,25 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   eventLogRetentionDays?: number;
 
-  @Field({ nullable: true })
-  @IsString()
+  @Field(() => AiModelTierEnum, { nullable: true })
+  @IsEnum(AiModelTierEnum)
   @IsOptional()
-  fastModel?: string;
+  aiChatModelTier?: AiModelTier;
+
+  @Field(() => AiModelTierEnum, { nullable: true })
+  @IsEnum(AiModelTierEnum)
+  @IsOptional()
+  aiAgentModelTier?: AiModelTier;
 
   @Field({ nullable: true })
-  @IsString()
+  @IsBoolean()
   @IsOptional()
-  smartModel?: string;
+  isAutoModelSelectionEnabled?: boolean;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsObject()
+  @IsOptional()
+  aiModelIdByTier?: Partial<Record<AiModelTier, string>>;
 
   @Field({ nullable: true })
   @IsString()
@@ -128,14 +150,8 @@ export class UpdateWorkspaceInput {
   @IsOptional()
   editableProfileFields?: string[];
 
-  @Field(() => [String], { nullable: true })
-  @IsArray()
-  @IsString({ each: true })
-  @IsOptional()
-  enabledAiModelIds?: string[];
-
   @Field({ nullable: true })
   @IsBoolean()
   @IsOptional()
-  useRecommendedModels?: boolean;
+  isInternalMessagesImportEnabled?: boolean;
 }

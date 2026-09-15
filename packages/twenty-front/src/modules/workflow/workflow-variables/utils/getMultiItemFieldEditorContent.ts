@@ -1,4 +1,4 @@
-import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
+import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import type { JSONContent } from '@tiptap/react';
 
 export const getMultiItemFieldEditorContent = (

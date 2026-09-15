@@ -1,0 +1,137 @@
+---
+title: 6. Publishing
+icon: "rocket"
+description: Add marketplace metadata and publish your app.
+---
+
+Your app works. The last step is to describe it for the marketplace and publish.
+
+## Add marketplace metadata
+
+The [application config](/developers/extend/apps/config/application) carries the
+identity that shows up in the marketplace: author, category, logo, and support
+links. Put a logo in `public/` and reference it with `logo`.
+
+```ts filename="src/application-config.ts"
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  displayName: 'Document Generator',
+  description:
+    'Create reusable document templates and generate personalized documents from your CRM records.',
+  logo: 'public/document-generator.svg',
+  author: 'Twenty',
+  category: 'Productivity',
+  websiteUrl: 'https://docs.twenty.com/developers/extend/apps',
+  termsUrl: 'https://www.twenty.com/terms',
+  emailSupport: 'contact@twenty.com',
+  issueReportUrl: 'https://github.com/twentyhq/twenty/issues',
+});
+```
+
+<Tip>
+The default role is declared with `defineApplicationRole()` in its own file — you
+don't pass `defaultRoleUniversalIdentifier` here anymore.
+</Tip>
+
+Also add the `twenty-app` keyword to `package.json` so the app is discoverable:
+
+```json filename="package.json"
+{ "keywords": ["twenty-app"] }
+```
+
+## Add gallery screenshots
+
+A marketplace listing sells itself with screenshots. Drop a few PNGs in
+`public/gallery/` and reference them with `galleryImages` — they render as a
+gallery on the listing page, in array order.
+
+```ts filename="src/application-config.ts"
+export default defineApplication({
+  // ...identity from above
+  galleryImages: [
+    'public/gallery/01-generated-document.png',
+    'public/gallery/02-command-menu.png',
+    'public/gallery/03-template-editor.png',
+    'public/gallery/04-documents.png',
+  ],
+});
+```
+
+<Tip>
+Lead with the payoff: make the first screenshot the finished result (a generated
+document), then show how it's triggered and authored. Use crisp, high-resolution
+captures — they're the first thing a user sees.
+</Tip>
+
+Give `README.md` the same treatment — it's the front page on npm and GitHub.
+Open with the value proposition and a screenshot, list the headline features,
+then keep the build details below the fold.
+
+## Check before you ship
+
+Run the same gates CI does:
+
+```bash filename="Terminal"
+yarn lint          # oxlint
+yarn typecheck     # tsgo
+yarn test:unit     # unit tests
+yarn twenty plan   # preview the metadata diff
+```
+
+The plan prints exactly what would change on the server without applying it —
+a good final sanity check. See
+[Testing](/developers/extend/apps/operations/testing) and
+[Syncing & recovery](/developers/extend/apps/operations/sync-and-recovery).
+
+## Publish
+
+```bash filename="Terminal"
+# Public app → npm (default)
+yarn twenty app:publish
+
+# Or deploy privately to a specific server's registry
+yarn twenty app:publish --private -r <remote>
+```
+
+`app:publish` builds and publishes to npm by default; `--private` uploads a
+tarball to a Twenty server's private registry instead. To surface a published app
+in an instance's marketplace, trigger a catalog sync:
+
+```bash filename="Terminal"
+yarn twenty dev:catalog-sync -r <remote>
+```
+
+Full details and the release checklist:
+[Publishing](/developers/extend/apps/operations/publishing).
+
+## You built an app 🎉
+
+In six chapters you used most of the SDK surface:
+
+- **Objects, fields, and a relation** to model the data
+- A **logic function** exposed as an **AI tool**, a **workflow action**, and **HTTP routes**
+- **Views, navigation, a command, and a front component** for the UI
+- An **agent + skill** for natural-language generation
+- **Marketplace metadata** and the publish flow
+
+The finished app is at
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+
+## Where to go next
+
+<CardGroup cols={2}>
+  <Card title="Data reference" icon="database" href="/developers/extend/apps/data/overview">
+    Every field type, relation, and index option.
+  </Card>
+  <Card title="Logic reference" icon="bolt" href="/developers/extend/apps/logic/overview">
+    Cron and database-event triggers, the key-value store, OAuth connections.
+  </Card>
+  <Card title="Layout reference" icon="table-columns" href="/developers/extend/apps/layout/overview">
+    Page layouts, dashboard widgets, and more UI surfaces.
+  </Card>
+  <Card title="Operations" icon="rocket" href="/developers/extend/apps/operations/overview">
+    CLI, testing, remotes, and CI.
+  </Card>
+</CardGroup>

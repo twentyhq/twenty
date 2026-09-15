@@ -1,12 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
+import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
+import { ImpersonationAuthorizationModule } from 'src/engine/core-modules/impersonation/impersonation-authorization.module';
 import { ImpersonationResolver } from 'src/engine/core-modules/impersonation/impersonation.resolver';
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -17,11 +19,12 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
 @Module({
   imports: [
     AuthModule,
+    ImpersonationAuthorizationModule,
     UserWorkspaceModule,
     PermissionsModule,
     RoleModule,
     UserRoleModule,
-    AuditModule,
+    EventLogEmitterModule,
     TypeOrmModule.forFeature([
       UserWorkspaceEntity,
       WorkspaceEntity,
@@ -29,6 +32,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     ]),
     WorkspaceDomainsModule,
     PermissionsModule,
+    UserSessionModule,
   ],
   providers: [ImpersonationService, ImpersonationResolver],
   exports: [ImpersonationService],

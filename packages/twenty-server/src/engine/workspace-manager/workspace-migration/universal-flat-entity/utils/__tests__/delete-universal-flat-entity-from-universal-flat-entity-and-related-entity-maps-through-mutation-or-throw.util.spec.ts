@@ -33,18 +33,17 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       icon: 'icon',
       isActive: true,
       isAuditLogged: true,
-      isCustom: true,
       isLabelSyncedWithName: false,
       isRemote: false,
       isSearchable: true,
       isSystem: false,
-      isUIReadOnly: false,
+      isUIEditable: true,
       labelPlural: 'default flat object metadata label plural',
       labelSingular: 'default flat object metadata label singular',
       namePlural: 'defaultflatObjectMetadataNamePlural',
       nameSingular: 'defaultflatObjectMetadataNameSingular',
       shortcut: 'shortcut',
-      standardOverrides: null,
+      overrides: null,
       targetTableName: '',
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
@@ -64,6 +63,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       viewFieldUniversalIdentifiers: [],
       viewFilterUniversalIdentifiers: [],
       calendarViewUniversalIdentifiers: [viewUniversalIdentifier],
+      calendarEndViewUniversalIdentifiers: [viewUniversalIdentifier],
       mainGroupByFieldMetadataViewUniversalIdentifiers: [],
       kanbanAggregateOperationViewUniversalIdentifiers: [],
       createdAt: '2024-01-01T00:00:00.000Z',
@@ -76,15 +76,14 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       description: 'default flat field metadata description',
       icon: 'icon',
       isActive: true,
-      isCustom: true,
       name: 'flatFieldMetadataName',
       label: 'flat field metadata label',
       isNullable: true,
       isUnique: false,
-      isUIReadOnly: false,
+      isUIEditable: true,
       isLabelSyncedWithName: false,
       isSystem: false,
-      standardOverrides: null,
+      overrides: null,
       relationTargetObjectMetadataUniversalIdentifier: null,
       relationTargetFieldMetadataUniversalIdentifier: null,
     };
@@ -97,6 +96,8 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
       viewGroupUniversalIdentifiers: [],
       applicationUniversalIdentifier,
       calendarFieldMetadataUniversalIdentifier:
+        fieldMetadataUniversalIdentifier,
+      calendarEndFieldMetadataUniversalIdentifier:
         fieldMetadataUniversalIdentifier,
       createdAt: '2024-01-01T00:00:00.000Z',
       updatedAt: '2024-01-01T00:00:00.000Z',
@@ -187,6 +188,7 @@ describe('deleteUniversalFlatEntityFromUniversalFlatEntityAndRelatedEntityMapsTh
 
     expect(updatedFieldMetadata).toMatchObject({
       calendarViewUniversalIdentifiers: [],
+      calendarEndViewUniversalIdentifiers: [],
     });
   });
 });

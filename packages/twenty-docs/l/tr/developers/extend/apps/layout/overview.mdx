@@ -45,12 +45,15 @@ Bir Twenty uygulamasının **düzen katmanı**, kullanıcının gördüğü her 
 
 ## Uygulamanın göründüğü yerler
 
-| Görünüm alanı                               | Neyi kontrol eder                                                                                 | Varlık                                    |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| **Kenar çubuğu**                            | Kaydedilmiş bir görünüme veya harici bir URL'ye bağlanan özel bir giriş                           | `defineNavigationMenuItem`                |
-| **Kayıt listesi**                           | Bir nesne için kaydedilmiş yapılandırma — görünür sütunlar, sıralama, filtreler, gruplar          | `defineView`                              |
-| **Kayıt detay sayfası**                     | Bir kayıt sayfasındaki sekmeler ve bileşenler (kendi nesnenize ait veya standart bir nesneye ait) | `definePageLayout`, `definePageLayoutTab` |
-| **Yukarıdakilerin herhangi birinin içinde** | Özel bir React bileşeni — butonlar, formlar, panolar, entegrasyonlar                              | `defineFrontComponent`                    |
-| **Komut menüsü (Cmd+K)**                    | Sabitlenmiş bir hızlı eylem veya gizli komut                                                      | `defineCommandMenuItem`                   |
+| Görünüm alanı                               | Neyi kontrol eder                                                                                  | Varlık                                    |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Kenar çubuğu**                            | Kaydedilmiş bir görünüme veya harici bir URL'ye bağlanan özel bir giriş                            | `defineNavigationMenuItem`                |
+| **Kayıt listesi**                           | Bir nesne için kaydedilmiş yapılandırma — görünür sütunlar, sıralama, filtreler, gruplar           | `defineView`                              |
+| **Kayıt detay sayfası**                     | Bir kayıt sayfasındaki sekmeler ve bileşenler (kendi nesnenize ait veya standart bir nesneye ait)  | `definePageLayout`, `definePageLayoutTab` |
+| **Yukarıdakilerin herhangi birinin içinde** | Özel bir React bileşeni — butonlar, formlar, panolar, entegrasyonlar                               | `defineFrontComponent`                    |
+| **Uygulama ayarları**                       | Varsayılan değişkenler arayüzü yerine, uygulamanın Ayarlar sekmesinde özel bir yapılandırma bölümü | `defineSettingsFrontComponent`            |
+| **Komut menüsü (Cmd+K)**                    | Sabitlenmiş bir hızlı eylem veya gizli komut                                                       | `defineCommandMenuItem`                   |
 
 Ön uç bileşenleri, Remote DOM kullanan yalıtılmış bir Web Worker içinde çalışır — sayfada *yerel* olarak oluşturulurlar (bir iframe içinde değil), ancak ana makine sayfasına veya DOM'a doğrudan erişemezler. Twenty ile iletişim, mesaj iletimi yapan bir ana makine API'si aracılığıyla gerçekleşir.
+
+Hâlâ etkin geliştirme aşamasındalar: sandbox kısmi bir DOM uygular, bu nedenle gelişmiş kullanımlar başarısız olabilir. [Mevcut sınırlamalara](/l/tr/developers/extend/apps/layout/front-components#current-limitations) bakın.

@@ -20,8 +20,6 @@ Per eseguire una sola diramazione in base a condizioni specifiche, **aggiungi un
 3. Imposta le condizioni su ciascun Filtro per determinare quando quella diramazione deve continuare
 4. Procederanno solo le diramazioni per cui le condizioni del Filtro sono soddisfatte
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
-
 ### Come funzionano i filtri
 
 * Se la condizione del Filtro è **soddisfatta**: la diramazione continua l'esecuzione
@@ -65,16 +63,16 @@ Dopo che le diramazioni parallele hanno completato il loro lavoro, puoi riunirle
 ```
 Trigger
    │
-   ├── Diramazione A: Aggiorna il record cliente
+   ├── Branch A: Update Customer Record
    │
-   └── Diramazione B: Crea ticket di assistenza
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Passaggio riunito: Invia email di conferma
+   Merged Step: Send Confirmation Email
 ```
 
-L'email di conferma viene inviata solo dopo che sia l'aggiornamento del cliente sia la creazione del ticket sono stati completati.
+L'email di conferma viene inviata solo dopo che sia l'aggiornamento del cliente che la creazione del ticket sono stati effettuati.
 
 ## Migliori Pratiche
 

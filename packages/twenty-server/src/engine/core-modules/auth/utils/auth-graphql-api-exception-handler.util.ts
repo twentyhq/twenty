@@ -45,6 +45,7 @@ export const authGraphqlApiExceptionHandler = (exception: AuthException) => {
     case AuthExceptionCode.TWO_FACTOR_AUTHENTICATION_VERIFICATION_REQUIRED:
       throw new ForbiddenError(exception.message, {
         subCode: exception.code,
+        userFriendlyMessage: exception.userFriendlyMessage,
       });
     case AuthExceptionCode.UNAUTHENTICATED:
     case AuthExceptionCode.APPLICATION_REFRESH_TOKEN_INVALID_OR_EXPIRED:

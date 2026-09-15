@@ -16,7 +16,7 @@ import { mockedUserData } from '~/testing/mock-data/users';
 
 import { GET_PUBLIC_WORKSPACE_DATA_BY_DOMAIN } from '@/auth/graphql/queries/getPublicWorkspaceDataByDomain';
 import { BILLING_PORTAL_SESSION } from '@/settings/billing/graphql/queries/billingPortalSession';
-import { GET_METERED_PRODUCTS_USAGE } from '@/settings/billing/graphql/queries/getMeteredProductsUsage';
+import { GET_RESOURCE_CREDIT_USAGE } from '@/settings/billing/graphql/queries/getResourceCreditUsage';
 import { LIST_PLANS } from '@/settings/billing/graphql/queries/listPlans';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { mockBillingPlans } from '~/testing/mock-data/billing-plans';
@@ -24,9 +24,10 @@ import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/compani
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/metadata/objects/mock-objects-metadata';
 import { mockedRoles } from '~/testing/mock-data/generated/metadata/roles/mock-roles-data';
-import { mockedBackendCommandMenuItems } from '~/testing/mock-data/command-menu-items';
+import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';
 
 import { type Task } from '@/activities/types/Task';
+import { getJunctionRecordsFromRecord } from '@/object-record/record-field/ui/utils/junction/getJunctionRecordsFromRecord';
 import { FIND_MINIMAL_METADATA } from '@/metadata-store/graphql/queries/findMinimalMetadata';
 import {
   getConnectionTypename,
@@ -209,6 +210,11 @@ export const graphqlMocks = {
         data: { getPageLayouts: [] },
       });
     }),
+    metadataGraphql.query('FindAllRecordFormPageLayouts', () => {
+      return HttpResponse.json({
+        data: { getPageLayouts: [] },
+      });
+    }),
     metadataGraphql.query('FindManyLogicFunctions', () => {
       return HttpResponse.json({
         data: { findManyLogicFunctions: [] },
@@ -221,7 +227,7 @@ export const graphqlMocks = {
     }),
     metadataGraphql.query('FindManyCommandMenuItems', () => {
       return HttpResponse.json({
-        data: { commandMenuItems: mockedBackendCommandMenuItems },
+        data: { commandMenuItems: mockedCommandMenuItems },
       });
     }),
     graphql.query('SearchPeople', () => {
@@ -446,16 +452,16 @@ export const graphqlMocks = {
       });
     }),
     graphql.query('FindManyTaskTargets', () => {
-      const taskTargetNodes = flatTaskRecords.flatMap(
-        (task) => task.taskTargets ?? [],
+      const taskTargetNodes = flatTaskRecords.flatMap((task) =>
+        getJunctionRecordsFromRecord({
+          record: task,
+          junctionFieldName: 'taskTargets',
+        }),
       );
 
       return HttpResponse.json({
         data: {
-          taskTargets: wrapRecordsAsConnection(
-            'taskTarget',
-            taskTargetNodes as Record<string, unknown>[],
-          ),
+          taskTargets: wrapRecordsAsConnection('taskTarget', taskTargetNodes),
         },
       });
     }),
@@ -530,26 +536,17 @@ export const graphqlMocks = {
         data: mockBillingPlans,
       });
     }),
-    graphql.query(getOperationName(GET_METERED_PRODUCTS_USAGE) ?? '', () => {
+    graphql.query(getOperationName(GET_RESOURCE_CREDIT_USAGE) ?? '', () => {
       return HttpResponse.json({
         data: {
-          getMeteredProductsUsage: [
+          getResourceCreditUsage: [
             {
-              __typename: 'BillingMeteredProductUsage',
-              productKey: 'WORKFLOW_NODE_EXECUTION',
+              __typename: 'BillingResourceCreditUsage',
+              productKey: 'RESOURCE_CREDIT',
               usedCredits: 1000,
               grantedCredits: 500000,
               rolloverCredits: 0,
               totalGrantedCredits: 500000,
-              unitPriceCents: 1,
-            },
-            {
-              __typename: 'BillingMeteredProductUsage',
-              productKey: 'RESOURCE_CREDIT',
-              usedCredits: 0,
-              grantedCredits: 10000,
-              rolloverCredits: 0,
-              totalGrantedCredits: 10000,
               unitPriceCents: 1,
             },
           ],

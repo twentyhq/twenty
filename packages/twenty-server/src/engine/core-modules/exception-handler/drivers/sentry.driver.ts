@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/node';
+import { isObject } from '@sniptt/guards';
 import {
   getGenericOperationName,
   getHumanReadableNameFromCode,
@@ -12,11 +13,9 @@ import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/ex
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ExceptionHandlerSentryDriver
-  implements ExceptionHandlerDriverInterface
-{
+export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
   captureExceptions(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ) {
@@ -50,7 +49,9 @@ export class ExceptionHandlerSentryDriver
       }
 
       for (const exception of exceptions) {
-        const errorPath = (exception.path ?? [])
+        const isObjectException = isObject(exception);
+
+        const errorPath = (isObjectException ? (exception.path ?? []) : [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
 
@@ -62,13 +63,13 @@ export class ExceptionHandlerSentryDriver
           });
         }
 
-        if ('context' in exception && exception.context) {
+        if (isObjectException && 'context' in exception && exception.context) {
           Object.entries(exception.context).forEach(([key, value]) => {
             scope.setExtra(key, value);
           });
         }
 
-        if ('cause' in exception && exception.cause) {
+        if (isObjectException && 'cause' in exception && exception.cause) {
           scope.setContext('cause', {
             name: exception.cause.name,
             message: exception.cause.message,

@@ -10,15 +10,27 @@
 export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
 export { AggregateOperations } from './AggregateOperations';
+export type { AllowedFullNameSortSubField } from './AllowedFullNameSortSubField';
+export { ApiPath } from './ApiPath';
 export { AppBasePath } from './AppBasePath';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
+export type { AssertUnreachable } from './AssertUnreachable.type';
+export { BlocklistScope } from './BlocklistScope';
 export { CalendarChannelContactAutoCreationPolicy } from './CalendarChannelContactAutoCreationPolicy';
 export { CalendarChannelSyncStage } from './CalendarChannelSyncStage';
 export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
 export { CalendarChannelVisibility } from './CalendarChannelVisibility';
+export type {
+  CallRecordingTranscriptStatusMarker,
+  CallRecordingParsedTranscriptWord,
+  CallRecordingParsedTranscriptEntry,
+} from './CallRecordingTranscript';
+export type { CommandMenuConfirmationModalResult } from './CommandMenuConfirmationModalResult';
+export type { CommandMenuConfirmationModalResultBrowserEventDetail } from './CommandMenuConfirmationModalResultBrowserEventDetail';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
+export { CommandMenuItemAvailabilityType } from './CommandMenuItemAvailabilityType';
 export { CommandMenuItemViewType } from './CommandMenuItemViewType';
 export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {
@@ -57,11 +69,15 @@ export {
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
+export type { ConnectedAccountEmailFields } from './ConnectedAccountEmailFields';
 export { ConnectedAccountProvider } from './ConnectedAccountProvider';
 export { ContextStorePageType } from './ContextStorePageType';
 export { CoreObjectNameSingular } from './CoreObjectNameSingular';
 export { CrudOperationType } from './CrudOperationType';
 export type { EmailAttachment } from './EmailAttachment';
+export type { EmailConnectionParameters } from './EmailConnectionParameters';
+export { EmailOperation } from './EmailOperation';
+export type { EmptyObject } from './EmptyObject.type';
 export type {
   SnackBarVariant,
   EnqueueSnackbarParams,
@@ -90,11 +106,14 @@ export type {
   FieldMetadataDefaultValueForAnyType,
   FieldMetadataDefaultValue,
 } from './FieldMetadataDefaultValue';
-export { fieldMetadataDefaultValueFunctionName } from './FieldMetadataDefaultValue';
+export {
+  fieldMetadataDefaultValueFunctionName,
+  FIELD_METADATA_TYPES_WITHOUT_DEFAULT_VALUE,
+  isFieldMetadataTypeWithDefaultValue,
+} from './FieldMetadataDefaultValue';
 export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
 export type {
-  TagColor,
   FieldMetadataOptionForAnyType,
   FieldMetadataOptions,
 } from './FieldMetadataOptions';
@@ -104,11 +123,17 @@ export {
 } from './FieldMetadataOptions';
 export type {
   FieldNumberVariant,
+  FieldCurrencyFormat,
+  FieldLinksVariant,
   FieldMetadataSettingsMapping,
   AllFieldMetadataSettings,
   FieldMetadataSettings,
 } from './FieldMetadataSettings';
-export { NumberDataType, DateDisplayFormat } from './FieldMetadataSettings';
+export {
+  NumberDataType,
+  DateDisplayFormat,
+  FIELD_LINKS_VARIANTS,
+} from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldMetadataUniversalSettings } from './FieldMetadataUniversalSettings';
 export type { FieldRatingValue } from './FieldRatingValue';
@@ -125,6 +150,7 @@ export type { FormatRecordSerializedRelationProperties } from './FormatRecordSer
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
 export type { IndexOf } from './IndexOf.type';
+export { IndexType } from './IndexType';
 export type { IsEmptyObject } from './IsEmptyObject.type';
 export type { IsEmptyRecord } from './IsEmptyRecord.type';
 export type { IsExactly } from './IsExactly';
@@ -132,6 +158,12 @@ export type { IsGreaterOrEqual } from './IsGreaterOrEqual.type';
 export type { IsNever } from './IsNever.type';
 export type { IsSerializedRelation } from './IsSerializedRelation.type';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
+export type { LogicFunctionHttpResponse } from './LogicFunctionResponse';
+export {
+  LOGIC_FUNCTION_HTTP_RESPONSE_MARKER,
+  isLogicFunctionHttpResponse,
+} from './LogicFunctionResponse';
+export { MessageCampaignStatus } from './MessageCampaignStatus';
 export { MessageChannelContactAutoCreationPolicy } from './MessageChannelContactAutoCreationPolicy';
 export { MessageChannelPendingGroupEmailsAction } from './MessageChannelPendingGroupEmailsAction';
 export { MessageChannelSyncStage } from './MessageChannelSyncStage';
@@ -142,12 +174,15 @@ export { MessageFolderImportPolicy } from './MessageFolderImportPolicy';
 export { MessageFolderPendingSyncAction } from './MessageFolderPendingSyncAction';
 export { MessageParticipantRole } from './MessageParticipantRole';
 export type { MetadataGqlOperationSignature } from './MetadataGqlOperationSignature';
+export { MetadataReadability } from './MetadataReadability';
+export { MetadataWritability } from './MetadataWritability';
 export type { ModifiedProperties } from './ModifiedProperties';
 export type { NavigateOptions } from './NavigateOptions';
 export { NavigationMenuItemType } from './NavigationMenuItemType';
 export type { NonNullableRequired } from './NonNullableRequired';
 export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
+export { ObjectOpenRecordIn } from './ObjectOpenRecordIn';
 export type { ObjectPermissions } from './ObjectPermissions';
 export type { ObjectRecord } from './ObjectRecord';
 export type {
@@ -162,6 +197,7 @@ export { OrderByDirection } from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
+export { OpenRecordIn } from './OpenRecordIn';
 export type { OrderBy } from './OrderBy';
 export type {
   ChartRecordFilter,
@@ -169,16 +205,18 @@ export type {
   ChartFilter,
   UniversalChartFilter,
 } from './page-layout/chart-filter.type';
+export type { GraphWidgetConfigurationType } from './page-layout/graph-widget-configuration-type';
+export { GRAPH_WIDGET_CONFIGURATION_TYPES } from './page-layout/graph-widget-configuration-type';
 export type { GridPosition } from './page-layout/grid-position.type';
 export type {
   AggregateChartConfiguration,
-  GaugeChartConfiguration,
   PieChartConfiguration,
   BarChartConfiguration,
   LineChartConfiguration,
   ViewConfiguration,
   RecordTableConfiguration,
   FieldConfiguration,
+  FormFieldConfiguration,
   FieldsConfiguration,
   FieldRichTextConfiguration,
   StandaloneRichTextConfiguration,
@@ -190,6 +228,10 @@ export type {
   FilesConfiguration,
   EmailsConfiguration,
   EmailThreadConfiguration,
+  MessageCampaignBodyConfiguration,
+  MessageCampaignDetailsConfiguration,
+  CallRecordingSummaryConfiguration,
+  CallRecordingTranscriptConfiguration,
   CalendarConfiguration,
   WorkflowConfiguration,
   WorkflowVersionConfiguration,
@@ -204,8 +246,11 @@ export type {
 } from './page-layout/page-layout-widget-position.type';
 export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
+export { PageLayoutType } from './page-layout/PageLayoutType';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
+export { PageLayoutWidgetVerticalListHeightBehavior } from './page-layout/PageLayoutWidgetVerticalListHeightBehavior';
 export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config.type';
+export { WidgetType } from './page-layout/WidgetType';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';
@@ -224,7 +269,7 @@ export type {
   DateFilter,
   DateTimeFilter,
   CurrencyFilter,
-  URLFilter,
+  UrlFilter,
   FullNameFilter,
   AddressFilter,
   LinksFilter,
@@ -250,6 +295,9 @@ export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlR
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
 export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';
+export { RecordShareAccessLevel } from './RecordShareAccessLevel';
+export { RecordSharePrincipalType } from './RecordSharePrincipalType';
+export { RecordShareRowCause } from './RecordShareRowCause';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
 export { RelationOnDeleteAction } from './RelationOnDeleteAction.type';
@@ -268,6 +316,7 @@ export type {
 } from './RowLevelPermissionPredicateValue';
 export type { SerializedRelation } from './SerializedRelation.type';
 export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
+export { ServerFileFolder } from './ServerFileFolder';
 export { SettingsPath } from './SettingsPath';
 export { SidePanelPages } from './SidePanelPages';
 export type { Sources } from './SourcesType';
@@ -277,6 +326,7 @@ export type {
   StepFilterWithPotentiallyDeprecatedOperand,
 } from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
+export type { TagColor } from './TagColor';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
@@ -289,3 +339,5 @@ export { ViewOpenRecordIn } from './ViewOpenRecordIn';
 export { ViewSortDirection } from './ViewSortDirection';
 export { ViewType } from './ViewType';
 export { ViewVisibility } from './ViewVisibility';
+export { WebhookSubscriptionChannelType } from './WebhookSubscriptionChannelType';
+export { WebhookSubscriptionStatus } from './WebhookSubscriptionStatus';

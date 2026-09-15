@@ -48,7 +48,6 @@ const runYarnInstall = async (nodejsDir) => {
     throw new Error(`yarn install failed: ${details || error?.message}`);
   }
 
-  // Remove everything except node_modules
   const entries = await fs.readdir(nodejsDir);
 
   await Promise.all(
@@ -72,7 +71,7 @@ const createZip = async (buildDir, zipPath) => {
   const p = pipeline(archive, output);
 
   archive.directory(buildDir, false);
-  archive.finalize();
+  void archive.finalize();
 
   return p;
 };

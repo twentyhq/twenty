@@ -13,16 +13,24 @@
 export type {
   LogicFunctionConfig,
   LogicFunctionHandler,
+  ServerRouteResolverResult,
 } from '@/sdk/define/logic-functions/logic-function-config';
+export type { ServerRouteDispatchResult } from 'twenty-shared/application';
 
 export type {
   InstallHandler,
   InstallPayload,
 } from '@/sdk/define/logic-functions/install-payload-type';
 
+export type {
+  UninstallHandler,
+  UninstallPayload,
+} from '@/sdk/define/logic-functions/uninstall-payload-type';
+
 export type { CronPayload } from '@/sdk/define/logic-functions/triggers/cron-payload-type';
 
 export type {
+  DatabaseEventBatchPayload,
   DatabaseEventPayload,
   ObjectRecordBaseEvent,
   ObjectRecordCreateEvent,
@@ -36,11 +44,46 @@ export type {
 
 export type { RoutePayload } from '@/sdk/define/logic-functions/triggers/route-payload-type';
 
-export type { InputJsonSchema } from 'twenty-shared/logic-function';
+export {
+  jsonSchemaToInputSchema,
+  RetryableLogicFunctionError,
+  type InputJsonSchema,
+  type LogicFunctionExecutionContext,
+} from 'twenty-shared/logic-function';
 
 export { getConnection } from '@/sdk/logic-function/connections/get-connection';
 export { listConnections } from '@/sdk/logic-function/connections/list-connections';
 export type { ListConnectionsFilter } from '@/sdk/logic-function/connections/list-connections';
 export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-connection-for-request';
+export { reportConnectionAuthFailure } from '@/sdk/logic-function/connections/report-connection-auth-failure';
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+
+export { runAgent } from '@/sdk/logic-function/agents/run-agent';
+export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
+
+export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
+export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';
+export { getJobs } from '@/sdk/logic-function/jobs/get-jobs';
+export type {
+  EnqueueJobInput,
+  EnqueueJobItem,
+  EnqueueJobOptions,
+  EnqueueJobResult,
+  EnqueueJobsInput,
+  EnqueueJobsResult,
+  JobStatusResult,
+  JobStatusState,
+} from 'twenty-shared/application';
+
+export { createTimelineActivity } from '@/sdk/logic-function/timeline/create-timeline-activity';
+export type {
+  CreatedTimelineActivity,
+  CreateTimelineActivityInput,
+} from '@/sdk/logic-function/timeline/create-timeline-activity';
+
+export { kv } from '@/sdk/logic-function/key-value/kv';
+export type { AppKeyValue, AppKeyValueScope } from 'twenty-shared/application';
+
+export { Response } from '@/sdk/logic-function/response';
+export type { ResponseInit } from '@/sdk/logic-function/response';

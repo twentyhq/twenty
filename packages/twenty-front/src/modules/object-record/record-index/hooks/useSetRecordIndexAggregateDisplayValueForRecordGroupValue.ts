@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
 import { recordIndexAggregateDisplayValueForGroupValueComponentFamilyState } from '@/object-record/record-index/states/recordIndexAggregateDisplayValueForGroupValueComponentFamilyState';
@@ -13,6 +14,7 @@ import { dateLocaleState } from '~/localization/states/dateLocaleState';
 export const useSetRecordIndexAggregateDisplayValueForRecordGroupValue = () => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
+  const { numberFormat } = useNumberFormat();
 
   const recordIndexAggregateValueByGroupValueCallbackState =
     useAtomComponentFamilyStateCallbackState(
@@ -38,6 +40,7 @@ export const useSetRecordIndexAggregateDisplayValueForRecordGroupValue = () => {
           timeFormat,
           timeZone,
           localeCatalog: dateLocale.localeCatalog,
+          numberFormat,
         });
 
       store.set(
@@ -54,6 +57,7 @@ export const useSetRecordIndexAggregateDisplayValueForRecordGroupValue = () => {
       store,
       timeFormat,
       timeZone,
+      numberFormat,
     ],
   );
 

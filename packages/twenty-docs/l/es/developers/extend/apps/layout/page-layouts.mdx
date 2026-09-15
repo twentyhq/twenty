@@ -1,0 +1,158 @@
+---
+title: Diseños de Página
+description: Personaliza las páginas de detalle de los registros — pestañas, widgets y dónde se renderizan los componentes de frontend — usando `definePageLayout` y `definePageLayoutTab`.
+icon: table-columns
+---
+
+Un **page layout** controla cómo se organiza la página de detalle de un registro: qué pestañas aparecen y qué widgets contienen. Usa `definePageLayout()` para declarar un layout para un objeto que posees, o `definePageLayoutTab()` para agregar una sola pestaña a un layout que ya existe (tuyo o uno estándar de Twenty).
+
+| Caso de uso                                                                | Entidad               |
+| -------------------------------------------------------------------------- | --------------------- |
+| Define todo el layout para una página de registro en un objeto que posees  | `definePageLayout`    |
+| Agrega una pestaña a un layout existente (tu propio objeto o uno estándar) | `definePageLayoutTab` |
+
+## definePageLayout
+
+Usa esto cuando eres propietario de toda la página de detalle; normalmente para un objeto personalizado que definiste tú mismo.
+
+```ts src/page-layouts/example-record-page-layout.ts
+import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayout({
+  universalIdentifier: '203aeb94-6701-46d6-9af1-be2bbcc9e134',
+  name: 'Example Record Page',
+  type: 'RECORD_PAGE',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  tabs: [
+    {
+      universalIdentifier: '6ed26b60-a51d-4ad7-86dd-1c04c7f3cac5',
+      title: 'Hello World',
+      position: 50,
+      icon: 'IconWorld',
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+      widgets: [
+        {
+          universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
+          title: 'Hello World',
+          type: 'FRONT_COMPONENT',
+          configuration: {
+            configurationType: 'FRONT_COMPONENT',
+            frontComponentUniversalIdentifier:
+              HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          },
+        },
+      ],
+    },
+  ],
+});
+```
+
+### Puntos clave
+
+* `type` es uno de `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` o `'STANDALONE_PAGE'`. Use `'RECORD_PAGE'` para personalizar la vista de detalles de un objeto específico.
+* `objectUniversalIdentifier` especifica a qué objeto se aplica este diseño.
+* Cada `tab` define una sección de la página con un `title`, `position` y `layoutMode`: `VERTICAL_LIST` para páginas de registros y páginas independientes, `GRID` para paneles y `CANVAS` para un único widget que debe ocupar el área de visualización de la pestaña. Una pestaña `VERTICAL_LIST` apila los widgets verticalmente. Los widgets integrados que gestionan su propio desplazamiento, como las líneas de tiempo, los archivos, las notas, las tareas y los flujos de trabajo, ocupan un área de visualización; los campos, los componentes front, los gráficos y otros widgets de ajuste al contenido se representan a la altura de su contenido o a la altura configurada. Una pestaña `GRID` siempre distribuye sus widgets como tarjetas en una cuadrícula de 12 columnas. Un widget `CANVAS` no tiene una posición explícita; si una pestaña de lienzo contiene varios widgets, se representan a la altura de su contenido en lugar de llenar la ventana gráfica.
+* Establece `layoutMode` explícitamente. Omitirlo te da `VERTICAL_LIST` en una `STANDALONE_PAGE` y `GRID` en todos los demás casos, lo cual rara vez es lo que quieres en una página de registro.
+* Cada `widget` dentro de una pestaña puede renderizar un [componente de frontend](/l/es/developers/extend/apps/layout/front-components), una lista de relaciones u otros tipos de widget integrados.
+* Un widget `FRONT_COMPONENT` puede establecer `headerCommandMenuItemUniversalIdentifiers` en una matriz ordenada de identificadores universales de elementos de menú de comandos de la misma aplicación. Estas acciones aparecen como botones de icono en el encabezado de la tarjeta del widget y conservan sus comprobaciones de disponibilidad y permisos a nivel de comando. Los identificadores deben ser únicos y deben resolverse cuando se instala la aplicación.
+* `position` en las pestañas controla su orden. Usa valores más altos (p. ej., 50) para colocar pestañas personalizadas después de las integradas.
+
+### Widgets de campos
+
+Un widget `FIELD` representa un campo del registro. Para los campos de relación, también puede incrustar una lista de registros relacionados:
+
+```ts
+{
+  universalIdentifier: 'c1c2c3c4-c5c6-4000-8000-000000000003',
+  title: 'People → Opportunities',
+  type: 'FIELD',
+  configuration: {
+    configurationType: 'FIELD',
+    fieldMetadataId: PEOPLE_FIELD_UNIVERSAL_IDENTIFIER,
+    fieldDisplayMode: 'TABLE',
+    nestedRelationFieldMetadataId: OPPORTUNITIES_FIELD_UNIVERSAL_IDENTIFIER,
+  },
+}
+```
+
+* `fieldMetadataId` toma el identificador universal de un campo en el objeto del layout.
+* `fieldDisplayMode` es uno de `'FIELD'`, `'CARD'`, `'EDITOR'`, `'VIEW'` o `'TABLE'`. `TABLE` incrusta una vista que lista los registros de un campo de relación de uno a muchos.
+* `nestedRelationFieldMetadataId` es opcional y toma el identificador universal de un campo de relación de uno a muchos en el objeto de destino de la relación, para enumerar registros a dos saltos de relación (por ejemplo, una página de Company que enumera las oportunidades de las personas de la compañía, o una página de Person que enumera las oportunidades de la compañía de la persona). El primer salto puede ser un campo de relación de uno a muchos o de muchos a uno, el segundo debe ser de uno a muchos (las relaciones de unión no son compatibles) y requiere `fieldDisplayMode: 'TABLE'` — combinarlo con cualquier otro modo de visualización es un error de validación, ya que un widget anidado siempre se representa como una vista incrustada.
+
+## definePageLayoutTab
+
+Usa esto cuando solo quieras **agregar** una pestaña a un layout existente; por ejemplo, una pestaña de analíticas en la página estándar de Company o una pestaña de resumen de IA añadida al layout de tu propio objeto.
+
+```ts src/page-layouts/example-extra-tab.ts
+import {
+  definePageLayoutTab,
+  PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayoutTab({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
+  pageLayoutUniversalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
+  title: 'Hello World',
+  position: 1000,
+  icon: 'IconWorld',
+  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+  widgets: [
+    {
+      universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000002',
+      title: 'Hello World',
+      type: 'FRONT_COMPONENT',
+      configuration: {
+        configurationType: 'FRONT_COMPONENT',
+        frontComponentUniversalIdentifier:
+          HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+      },
+    },
+  ],
+});
+```
+
+### Puntos clave
+
+* `pageLayoutUniversalIdentifier` es **obligatorio** y debe apuntar a un page layout que ya exista en el momento de la instalación, ya sea un layout estándar de Twenty o uno definido por tu propia app. Las referencias entre apps a layouts que pertenecen a otra app instalada no son compatibles hoy en día. Cuando falta el layout padre, la instalación falla con un error de validación claro.
+
+* Para los diseños estándar de Twenty, importa los identificadores desde `twenty-sdk/define`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.universalIdentifier
+  // …
+  ```
+
+  Cada entrada de diseño también expone sus `tabs` y sus `widgets`, para que puedas hacer referencia a cualquier nivel:
+
+  ```ts
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
+  ```
+
+  También hay disponible un alias corto `STANDARD_PAGE_LAYOUT`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+  STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier;
+  ```
+
+* `widgets` están limitados solo a esta pestaña: hacen referencia a [componentes de frontend](/l/es/developers/extend/apps/layout/front-components), vistas, etc., exactamente igual que los widgets definidos en línea en `definePageLayout`.
+
+* `position` controla el orden con respecto a las pestañas existentes en el diseño de página de destino. Elige un valor que sitúe tu pestaña donde la quieras, en relación con las pestañas integradas.
+
+* Usa esto en lugar de `definePageLayout` cuando solo quieras agregar a un layout existente. Usa `definePageLayout` cuando eres propietario de todo el layout.

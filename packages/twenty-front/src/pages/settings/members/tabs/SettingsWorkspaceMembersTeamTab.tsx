@@ -20,16 +20,15 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/data-display';
 import {
-  AppTooltip,
-  Avatar,
-  H2Title,
   IconArrowUpRight,
   IconChevronRight,
-  IconHierarchy2,
+  IconHierarchy,
   IconListDetails,
-  TooltipDelay,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItem } from 'twenty-ui/navigation';
@@ -39,6 +38,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledTableContainer = styled.div<{ hasMoreRows?: boolean }>`
@@ -201,7 +201,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                   }}
                 />
                 <MenuItem
-                  LeftIcon={IconHierarchy2}
+                  LeftIcon={IconHierarchy}
                   text={t`See data model settings`}
                   onClick={() => {
                     navigateSettings(SettingsPath.ObjectDetail, {
@@ -249,10 +249,10 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                   <TableCell>
                     <StyledIconWrapper>
                       <Avatar
-                        avatarUrl={workspaceMember.avatarUrl}
-                        placeholderColorSeed={workspaceMember.id}
-                        placeholder={workspaceMember.name.firstName ?? ''}
-                        type="rounded"
+                        src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                        colorSeed={workspaceMember.id}
+                        name={workspaceMember.name.firstName ?? ''}
+                        shape="circle"
                         size="sm"
                       />
                     </StyledIconWrapper>
@@ -265,7 +265,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                     </StyledTextContainerWithEllipsis>
                     <AppTooltip
                       anchorSelect={`#hover-text-${workspaceMember.id}`}
-                      content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                      title={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
                       noArrow
                       place="top"
                       positionStrategy="fixed"

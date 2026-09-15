@@ -1,24 +1,38 @@
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { RecordTableWidgetSetReadOnlyColumnHeadersEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetSetReadOnlyColumnHeadersEffect';
+import { RecordTableWidgetStatesEffect } from '@/object-record/record-table-widget/components/RecordTableWidgetStatesEffect';
+import { RecordTableWidgetContext } from '@/object-record/record-table-widget/contexts/RecordTableWidgetContext';
 import { RecordTableWithWrappers } from '@/object-record/record-table/components/RecordTableWithWrappers';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useContext } from 'react';
 
 const StyledTableContainer = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  min-height: 0;
   overflow: hidden;
 `;
 
-export const RecordTableWidget = () => {
+type RecordTableWidgetProps = {
+  isUIEditable?: boolean;
+  isEmptyStateHidden?: boolean;
+};
+
+export const RecordTableWidget = ({
+  isUIEditable = false,
+  isEmptyStateHidden = false,
+}: RecordTableWidgetProps) => {
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
+  const recordTableWidgetContext = useContext(RecordTableWidgetContext);
 
   return (
     <>
-      <RecordTableWidgetSetReadOnlyColumnHeadersEffect
+      <RecordTableWidgetStatesEffect
         recordTableId={recordIndexId}
+        isUIEditable={isUIEditable}
+        isPageLayoutInEditMode={
+          recordTableWidgetContext?.isPageLayoutInEditMode
+        }
+        isEmptyStateHidden={isEmptyStateHidden}
       />
       <RecordIndexTableContainerEffect />
       <StyledTableContainer>

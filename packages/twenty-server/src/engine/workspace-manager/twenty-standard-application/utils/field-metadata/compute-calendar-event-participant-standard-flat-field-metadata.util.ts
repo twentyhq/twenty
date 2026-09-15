@@ -14,9 +14,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_CALENDAR_EVENT_PARTICIPANT } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
-
 export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
   now,
   objectName,
@@ -37,12 +34,14 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Id`),
-      description: i18nLabel(msg`Id`),
+      label: i18nLabel(msg({ message: `ID`, context: 'fieldMetadata.label' })),
+      description: i18nLabel(
+        msg({ message: `ID`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -56,12 +55,16 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Creation date`),
-      description: i18nLabel(msg`Creation date`),
+      label: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
@@ -76,12 +79,19 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Last update`),
-      description: i18nLabel(msg`Last time the record was changed`),
+      label: i18nLabel(
+        msg({ message: `Last update`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Last time the record was changed`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
@@ -96,12 +106,19 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Deleted at`),
-      description: i18nLabel(msg`Date when the record was deleted`),
+      label: i18nLabel(
+        msg({ message: `Deleted at`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Date when the record was deleted`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: { displayFormat: DateDisplayFormat.RELATIVE },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -115,11 +132,18 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Created by`),
-      description: i18nLabel(msg`The creator of the record`),
+      label: i18nLabel(
+        msg({ message: `Created by`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The creator of the record`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -138,13 +162,18 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Updated by`),
+      label: i18nLabel(
+        msg({ message: `Updated by`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`The workspace member who last updated the record`,
+        msg({
+          message: `The workspace member who last updated the record`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -163,8 +192,15 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`Calendar event participant record position`),
+      label: i18nLabel(
+        msg({ message: `Position`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Calendar event participant record position`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -181,17 +217,18 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: i18nLabel(msg`Search vector`),
-      description: i18nLabel(msg`Field used for full-text search`),
+      label: i18nLabel(
+        msg({ message: `Search vector`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Field used for full-text search`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_CALENDAR_EVENT_PARTICIPANT,
-        ),
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -204,11 +241,15 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'handle',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Handle`),
-      description: i18nLabel(msg`Handle`),
+      label: i18nLabel(
+        msg({ message: `Handle`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Handle`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconMail',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -221,11 +262,15 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'displayName',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Display Name`),
-      description: i18nLabel(msg`Display Name`),
+      label: i18nLabel(
+        msg({ message: `Display Name`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Display Name`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconUser',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -238,11 +283,15 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'isOrganizer',
       type: FieldMetadataType.BOOLEAN,
-      label: i18nLabel(msg`Is Organizer`),
-      description: i18nLabel(msg`Is Organizer`),
+      label: i18nLabel(
+        msg({ message: `Is Organizer`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Is Organizer`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconUser',
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: false,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -256,38 +305,53 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'responseStatus',
       type: FieldMetadataType.SELECT,
-      label: i18nLabel(msg`Response Status`),
-      description: i18nLabel(msg`Response Status`),
+      label: i18nLabel(
+        msg({ message: `Response Status`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Response Status`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: "'NEEDS_ACTION'",
       options: [
         {
           id: '20202020-71eb-4724-9947-8aca3bb51140',
           value: 'NEEDS_ACTION',
-          label: i18nLabel(msg`Needs Action`),
+          label: i18nLabel(
+            msg({ message: `Needs Action`, context: 'fieldMetadata.label' }),
+          ),
           position: 0,
           color: 'orange',
         },
         {
           id: '20202020-7a3c-45e8-8bbb-f909a4b821a4',
           value: 'DECLINED',
-          label: i18nLabel(msg`Declined`),
+          label: i18nLabel(
+            msg({ message: `Declined`, context: 'fieldMetadata.label' }),
+          ),
           position: 1,
           color: 'red',
         },
         {
           id: '20202020-aec0-4845-8ca5-a3c17f635329',
           value: 'TENTATIVE',
-          label: i18nLabel(msg`Tentative`),
+          label: i18nLabel(
+            msg({ message: `Tentative`, context: 'fieldMetadata.label' }),
+          ),
           position: 2,
           color: 'yellow',
         },
         {
           id: '20202020-ffbe-4c58-a05b-b00f7fa86c74',
           value: 'ACCEPTED',
-          label: i18nLabel(msg`Accepted`),
+          label: i18nLabel(
+            msg({ message: `Accepted`, context: 'fieldMetadata.label' }),
+          ),
           position: 3,
           color: 'green',
         },
@@ -305,11 +369,15 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'calendarEvent',
-      label: i18nLabel(msg`Event ID`),
-      description: i18nLabel(msg`Event ID`),
+      label: i18nLabel(
+        msg({ message: `Event ID`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Event ID`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconCalendar',
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'calendarEvent',
       targetFieldName: 'calendarEventParticipants',
       settings: {
@@ -330,11 +398,15 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'person',
-      label: i18nLabel(msg`Person`),
-      description: i18nLabel(msg`Person`),
+      label: i18nLabel(
+        msg({ message: `Person`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Person`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconUser',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'person',
       targetFieldName: 'calendarEventParticipants',
       settings: {
@@ -355,11 +427,18 @@ export const buildCalendarEventParticipantStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'workspaceMember',
-      label: i18nLabel(msg`Workspace Member`),
-      description: i18nLabel(msg`Workspace Member`),
+      label: i18nLabel(
+        msg({ message: `Workspace Member`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Workspace Member`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       targetObjectName: 'workspaceMember',
       targetFieldName: 'calendarEventParticipants',
       settings: {

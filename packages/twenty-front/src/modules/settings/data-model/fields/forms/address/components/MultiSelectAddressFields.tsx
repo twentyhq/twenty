@@ -11,7 +11,7 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { t } from '@lingui/core/macro';
 import { type MouseEvent, useMemo, useState } from 'react';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/input';
 import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
 

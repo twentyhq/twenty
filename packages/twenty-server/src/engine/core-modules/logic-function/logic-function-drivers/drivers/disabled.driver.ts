@@ -14,6 +14,10 @@ export class DisabledDriver implements LogicFunctionDriver {
     // No-op when disabled
   }
 
+  async deleteApplicationResources(): Promise<void> {
+    // No-op when disabled
+  }
+
   async execute(): Promise<LogicFunctionExecuteResult> {
     throw new LogicFunctionException(
       'Logic function execution is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',
@@ -26,5 +30,16 @@ export class DisabledDriver implements LogicFunctionDriver {
       'Logic function transpilation is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',
       LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
     );
+  }
+
+  async installPrebuiltBundle(): Promise<void> {
+    throw new LogicFunctionException(
+      'Logic function prebuilt install is disabled. Set LOGIC_FUNCTION_TYPE to LOCAL or LAMBDA to enable.',
+      LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED,
+    );
+  }
+
+  async getInstalledBundleChecksum(): Promise<string | null> {
+    return null;
   }
 }

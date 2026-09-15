@@ -1,0 +1,47 @@
+---
+title: Modelo de datos
+description: Comprende cómo Twenty estructura tus datos con objetos, campos y relaciones.
+icon: database
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Todo en Twenty se basa en **objetos** y **campos**, los componentes básicos de tu modelo de datos.
+
+## Objetos
+
+Los objetos son las tablas que contienen tus datos. Twenty incluye objetos estándar de forma predeterminada:
+
+* **Empresas** — Organizaciones con las que haces negocios
+* **Personas** — Contactos individuales
+* **Oportunidades** — Acuerdos en tu flujo de ventas
+* **Tareas** — Acciones para tu equipo
+* **Notas** — Texto de formato libre vinculado a registros
+
+También puedes crear **objetos personalizados** para todo lo que tu negocio necesite: proyectos, tickets de soporte, productos, contratos o cualquier otra cosa.
+
+## Campos
+
+Los campos son las propiedades de cada objeto. Twenty admite una amplia variedad de tipos de campo:
+
+| Categoría     | Tipos                                                                                                       |
+| ------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Básico**    | Texto, Número, Booleano, Fecha, Moneda, Valoración, Selección                                               |
+| **Compuesto** | Dirección (calle, ciudad, estado, código postal), Nombre completo, Enlaces, Teléfonos, Correos electrónicos |
+| **Especial**  | Relación, Archivo adjunto, JSON, Autor (quién creó/modificó)                                                |
+
+Cada objeto también obtiene campos de sistema automáticos: `id`, `createdAt`, `updatedAt`, `createdBy` y `position`.
+
+## Relaciones
+
+Los objetos se conectan entre sí mediante relaciones. Una empresa tiene muchas personas; una oportunidad pertenece a una empresa, y así sucesivamente. Puedes crear relaciones personalizadas entre cualquier objeto, incluidas relaciones de muchos a muchos.
+
+## Por qué esto es tan potente
+
+A diferencia de los CRM tradicionales, donde estás limitado a campos predefinidos en objetos predefinidos, Twenty te permite modelar tus datos exactamente de la misma manera en que funciona tu negocio. Los objetos personalizados reciben el mismo tratamiento de primera clase que los incorporados, incluidos los endpoints de API, las vistas, los permisos y los disparadores de flujos de trabajo.
+
+<Card title="Análisis en profundidad del modelo de datos" icon="arrow-right" href="/l/es/user-guide/data-model/overview">
+  Referencia completa sobre objetos, campos, relaciones y cómo configurarlos.
+</Card>
+
+<VimeoEmbed videoId="1185511827" title="Modelo de datos" />

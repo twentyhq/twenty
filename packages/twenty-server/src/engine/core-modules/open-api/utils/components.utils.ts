@@ -1,7 +1,12 @@
 import { type OpenAPIV3_1 } from 'openapi-types';
 import {
+  DEFAULT_SELECT_OPTION_COLOR,
+  TAG_COLORS,
+} from 'twenty-shared/constants';
+import {
   type FieldMetadataDefaultValue,
   FieldMetadataType,
+  PageLayoutWidgetVerticalListHeightBehavior,
 } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
@@ -47,7 +52,6 @@ const getSchemaComponentsExample = (
   flatFieldMetadatas: FlatFieldMetadata[],
 ): OpenApiExample => {
   return flatFieldMetadatas.reduce((node, field) => {
-    // If field is required
     if (!field.isNullable && field.defaultValue === null) {
       return {
         ...node,
@@ -202,7 +206,6 @@ const computeSchemaComponent = ({
 
   const withRequiredFields = !forResponse && !forUpdate;
 
-  // Create a temporary object that looks like ObjectMetadataEntity for the converter
   const tempItem = {
     ...item,
     fields: flatFieldMetadatas,
@@ -292,9 +295,10 @@ export const computeSchemaComponents = (
   );
 };
 
-export const computeParameterComponents = (
-  fromMetadata = false,
-): Record<string, OpenAPIV3_1.ParameterObject> => {
+export const computeParameterComponents = (): Record<
+  string,
+  OpenAPIV3_1.ParameterObject
+> => {
   return {
     idPath: computeIdPathParameter(),
     startingAfter: computeStartingAfterParameters(),
@@ -304,7 +308,7 @@ export const computeParameterComponents = (
     upsert: computeUpsertParameters(),
     softDelete: computeSoftDeleteParameters(),
     orderBy: computeOrderByParameters(),
-    limit: computeLimitParameters(fromMetadata),
+    limit: computeLimitParameters(),
     groupBy: computeGroupByParameters(),
     viewId: computeViewIdParameters(),
     aggregate: computeAggregateParameters(),
@@ -366,19 +370,9 @@ export const computeMetadataSchemaComponents = (
               createdAt: { type: 'string', format: 'date-time' },
               updatedAt: { type: 'string', format: 'date-time' },
               fields: {
-                type: 'object',
-                properties: {
-                  edges: {
-                    type: 'object',
-                    properties: {
-                      node: {
-                        type: 'array',
-                        items: {
-                          $ref: '#/components/schemas/FieldForResponse',
-                        },
-                      },
-                    },
-                  },
+                type: 'array',
+                items: {
+                  $ref: '#/components/schemas/FieldForResponse',
                 },
               },
             },
@@ -426,7 +420,11 @@ export const computeMetadataSchemaComponents = (
                 items: {
                   type: 'object',
                   properties: {
-                    color: { type: 'string' },
+                    color: {
+                      type: 'string',
+                      enum: [...TAG_COLORS],
+                      default: DEFAULT_SELECT_OPTION_COLOR,
+                    },
                     label: { type: 'string' },
                     value: {
                       type: 'string',
@@ -1227,7 +1225,8 @@ export const computeMetadataSchemaComponents = (
         case 'pageLayoutWidget': {
           schemas['GridPosition'] = {
             type: 'object',
-            description: 'Grid position for widget placement',
+            description: 'Legacy grid position for widget placement',
+            deprecated: true,
             properties: {
               row: { type: 'number', minimum: 0 },
               column: { type: 'number', minimum: 0 },
@@ -1235,6 +1234,50 @@ export const computeMetadataSchemaComponents = (
               columnSpan: { type: 'number', minimum: 1 },
             },
             required: ['row', 'column', 'rowSpan', 'columnSpan'],
+          };
+
+          schemas['PageLayoutWidgetPosition'] = {
+            oneOf: [
+              {
+                type: 'object',
+                properties: {
+                  layoutMode: { type: 'string', enum: ['GRID'] },
+                  row: { type: 'integer', minimum: 0 },
+                  column: { type: 'integer', minimum: 0 },
+                  rowSpan: { type: 'integer', minimum: 1 },
+                  columnSpan: { type: 'integer', minimum: 1 },
+                },
+                required: [
+                  'layoutMode',
+                  'row',
+                  'column',
+                  'rowSpan',
+                  'columnSpan',
+                ],
+              },
+              {
+                type: 'object',
+                properties: {
+                  layoutMode: { type: 'string', enum: ['VERTICAL_LIST'] },
+                  index: { type: 'integer', minimum: 0 },
+                  heightBehavior: {
+                    type: 'string',
+                    enum: [
+                      PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT,
+                      PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+                    ],
+                  },
+                },
+                required: ['layoutMode', 'index'],
+              },
+              {
+                type: 'object',
+                properties: {
+                  layoutMode: { type: 'string', enum: ['CANVAS'] },
+                },
+                required: ['layoutMode'],
+              },
+            ],
           };
 
           schemas[`${capitalize(item.nameSingular)}`] = {
@@ -1260,15 +1303,15 @@ export const computeMetadataSchemaComponents = (
                 default: 'VIEW',
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',
                 description: 'Widget-specific configuration',
               },
             },
-            required: ['pageLayoutTabId', 'title', 'gridPosition'],
+            required: ['pageLayoutTabId', 'title'],
           };
           schemas[`${capitalize(item.namePlural)}`] = {
             type: 'array',
@@ -1287,8 +1330,8 @@ export const computeMetadataSchemaComponents = (
                 enum: ['VIEW', 'IFRAME', 'FIELDS', 'GRAPH'],
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
-              gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',
@@ -1309,7 +1352,14 @@ export const computeMetadataSchemaComponents = (
               },
               objectMetadataId: { type: 'string', format: 'uuid' },
               gridPosition: {
-                $ref: '#/components/schemas/GridPosition',
+                oneOf: [
+                  { $ref: '#/components/schemas/GridPosition' },
+                  { type: 'null' },
+                ],
+                deprecated: true,
+              },
+              position: {
+                $ref: '#/components/schemas/PageLayoutWidgetPosition',
               },
               configuration: {
                 type: 'object',

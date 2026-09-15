@@ -6,7 +6,7 @@ import { useRemoveStepFilterGroup } from '@/workflow/workflow-steps/filters/hook
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { IconDotsVertical, IconTrash } from 'twenty-ui/display';
+import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/input';
 import { MenuItem } from 'twenty-ui/navigation';
 

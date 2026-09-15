@@ -1,20 +1,22 @@
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import {
   BillingPlanKey,
-  FeatureFlagKey,
   SubscriptionInterval,
   SubscriptionStatus,
 } from '~/generated-metadata/graphql';
-import { assertIsDefinedOrThrow, capitalize } from 'twenty-shared/utils';
+import {
+  assertIsDefinedOrThrow,
+  capitalize,
+  isDefined,
+} from 'twenty-shared/utils';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { beautifyExactDate } from '~/utils/date-utils';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
-import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 
 export const useBillingWording = () => {
   const { t } = useLingui();
@@ -28,12 +30,9 @@ export const useBillingWording = () => {
 
   assertIsDefinedOrThrow(currentBillingSubscription);
 
-  const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
-
   const { formatPrices } = useFormatPrices();
 
   const { currentPlan } = useCurrentPlan();
-  const { currentMeteredBillingPrice } = useCurrentMetered();
 
   const subscriptionStatus = useSubscriptionStatus();
 
@@ -66,22 +65,24 @@ export const useBillingWording = () => {
     return capitalize(getIntervalLabel(isMonthlyPlan, true));
   };
 
-  const yearlyPrice =
-    formatPrices[
-      currentBillingSubscription.metadata['plan'] as BillingPlanKey
-    ]?.[SubscriptionInterval.Year];
+  const currentPlanKey = getSubscriptionPlanKey(currentBillingSubscription);
 
-  const monthlyPrice =
-    formatPrices[
-      currentBillingSubscription.metadata['plan'] as BillingPlanKey
-    ]?.[SubscriptionInterval.Month];
+  const yearlyPrice = isDefined(currentPlanKey)
+    ? formatPrices[currentPlanKey]?.[SubscriptionInterval.Year]
+    : undefined;
+
+  const monthlyPrice = isDefined(currentPlanKey)
+    ? formatPrices[currentPlanKey]?.[SubscriptionInterval.Month]
+    : undefined;
+
+  const getYearlyDiscountPercent = () =>
+    isDefined(monthlyPrice) && isDefined(yearlyPrice) && monthlyPrice > 0
+      ? Math.round((1 - yearlyPrice / monthlyPrice) * 100)
+      : 0;
 
   const getCurrentIntervalLabel = () =>
     getIntervalLabelAsAdjectiveCapitalize(
-      isV2
-        ? currentBillingSubscription.interval === SubscriptionInterval.Month
-        : currentMeteredBillingPrice?.recurringInterval ===
-            SubscriptionInterval.Month,
+      currentBillingSubscription.interval === SubscriptionInterval.Month,
     );
 
   const enterprisePrice =
@@ -100,27 +101,40 @@ export const useBillingWording = () => {
 
   const confirmationModalSwitchToYearlyMessage = () => {
     if (subscriptionStatus === SubscriptionStatus.Trialing) {
-      return t`Your trial period will end, and you will be charged $${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied.`;
+      return t`Your billing interval will switch to yearly immediately and your trial will continue. When it ends, you will be charged $${yearlyPrice} per user per year billed annually.`;
     }
+
     return t`You will be charged $${yearlyPrice} per user per year billed annually. A prorata with your current subscription will be applied.`;
   };
 
   const confirmationModalSwitchToMonthlyMessage = () => {
+    if (subscriptionStatus === SubscriptionStatus.Trialing) {
+      return t`Your billing interval will switch to monthly immediately and your trial will continue. When it ends, you will be charged $${monthlyPrice} per user per month billed monthly.`;
+    }
+
     const beautifiedRenewDate = getBeautifiedRenewDate();
     return t`You will be charged $${monthlyPrice} per user per month billed monthly. The change will be applied the ${beautifiedRenewDate}.`;
   };
 
   const confirmationModalSwitchToOrganizationMessage = () => {
-    const prefix =
-      subscriptionStatus === SubscriptionStatus.Trialing
-        ? t`Your trial period will end, and `
-        : '';
+    if (subscriptionStatus === SubscriptionStatus.Trialing) {
+      const suffix = isYearlyPlan ? t` billed annually` : '';
+
+      return t`Your plan will switch to Organization immediately and your trial will continue. When it ends, you will be charged $${enterprisePrice} per user per month${suffix}.`;
+    }
+
     const body = t`you will be charged $${enterprisePrice} per user per month`;
     const suffix = isYearlyPlan ? t` billed annually` : '';
-    return capitalize(`${prefix}${body}${suffix}.`);
+    return capitalize(`${body}${suffix}.`);
   };
 
   const confirmationModalSwitchToProMessage = () => {
+    if (subscriptionStatus === SubscriptionStatus.Trialing) {
+      const suffix = isYearlyPlan ? t` billed annually` : '';
+
+      return t`Your plan will switch to Pro immediately and your trial will continue. When it ends, you will be charged $${proPrice} per user per month${suffix}.`;
+    }
+
     const beautifiedRenewDate = getBeautifiedRenewDate();
     const suffix1 = isYearlyPlan ? t` billed annually` : '';
     const suffix2 = t`. The change will be applied the ${beautifiedRenewDate}.`;
@@ -147,6 +161,7 @@ export const useBillingWording = () => {
     getBeautifiedRenewDate,
     getIntervalLabel,
     getIntervalLabelAsAdjectiveCapitalize,
+    getYearlyDiscountPercent,
     confirmationModalSwitchToYearlyMessage,
     confirmationModalSwitchToMonthlyMessage,
     confirmationModalSwitchToOrganizationMessage,

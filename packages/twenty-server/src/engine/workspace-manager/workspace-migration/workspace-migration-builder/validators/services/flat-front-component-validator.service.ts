@@ -3,8 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FrontComponentExceptionCode } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -34,6 +36,36 @@ export class FlatFrontComponentValidatorService {
         message: t`Front component name is required`,
         userFriendlyMessage: msg`Front component name is required`,
       });
+    }
+
+    if (isDefined(flatFrontComponent.builtComponentPath)) {
+      const builtPathResult = validateFilePath({
+        resourcePath: flatFrontComponent.builtComponentPath,
+        fileFolder: FileFolder.BuiltFrontComponent,
+      });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: builtPathResult.error,
+          userFriendlyMessage: msg`Built component path is invalid`,
+        });
+      }
+    }
+
+    if (isDefined(flatFrontComponent.sourceComponentPath)) {
+      const sourcePathResult = validateFilePath({
+        resourcePath: flatFrontComponent.sourceComponentPath,
+        fileFolder: FileFolder.Source,
+      });
+
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: sourcePathResult.error,
+          userFriendlyMessage: msg`Source component path is invalid`,
+        });
+      }
     }
 
     return validationResult;
@@ -76,6 +108,7 @@ export class FlatFrontComponentValidatorService {
 
   public validateFlatFrontComponentUpdate({
     universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
     },
@@ -103,6 +136,36 @@ export class FlatFrontComponentValidatorService {
       });
 
       return validationResult;
+    }
+
+    if (isDefined(flatEntityUpdate.builtComponentPath)) {
+      const builtPathResult = validateFilePath({
+        resourcePath: flatEntityUpdate.builtComponentPath,
+        fileFolder: FileFolder.BuiltFrontComponent,
+      });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: builtPathResult.error,
+          userFriendlyMessage: msg`Built component path is invalid`,
+        });
+      }
+    }
+
+    if (isDefined(flatEntityUpdate.sourceComponentPath)) {
+      const sourcePathResult = validateFilePath({
+        resourcePath: flatEntityUpdate.sourceComponentPath,
+        fileFolder: FileFolder.Source,
+      });
+
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: sourcePathResult.error,
+          userFriendlyMessage: msg`Source component path is invalid`,
+        });
+      }
     }
 
     return validationResult;

@@ -13,7 +13,7 @@ Le système d'autorisations de Twenty vous permet de contrôler l'accès à troi
 
 Pour créer un nouveau rôle :
 
-1. Allez dans **Paramètres → Rôles**
+1. Allez dans **Paramètres → Membres → Rôles**
 2. Sous **Tous les rôles**, cliquez sur **+ Créer un rôle**
 3. Entrez un nom de rôle
 4. Dans l'onglet **Autorisations** par défaut, [configurez les autorisations](#customize-permissions)
@@ -23,26 +23,26 @@ Pour créer un nouveau rôle :
 
 Pour supprimer un rôle :
 
-1. Allez dans **Paramètres → Rôles**
+1. Allez dans **Paramètres → Membres → Rôles**
 2. Cliquez sur le rôle que vous souhaitez supprimer
 3. Ouvrez l'onglet **Paramètres**, puis cliquez sur **Supprimer le rôle**
 4. Cliquez sur **Confirmer** dans la fenêtre modale
 
 <Note>
-  Si un rôle est supprimé, tout membre de l'espace de travail qui lui est attribué sera automatiquement réattribué au rôle par défaut. Tous sauf le rôle **Admin** peuvent être supprimés. Il doit toujours y avoir au moins un membre assigné au rôle **Admin**.
+Si un rôle est supprimé, tout membre de l'espace de travail qui lui est attribué sera automatiquement réattribué au rôle par défaut. Tous les rôles sauf le rôle **Admin** peuvent être supprimés. Il doit toujours y avoir au moins un membre assigné au rôle **Admin**.
 </Note>
 
 ## Attribuer des Rôles aux Membres
 
 ### Voir les Attributions Actuelles
 
-* Allez dans **Paramètres → Rôles**
+* Allez dans **Paramètres → Membres → Rôles**
 * Voir tous les rôles et combien de membres sont assignés à chacun
 * Voir quels membres ont quels rôles
 
 ### Attribuer un Rôle à un Membre
 
-1. Allez dans **Paramètres → Rôles**
+1. Allez dans **Paramètres → Membres → Rôles**
 2. Cliquez sur le rôle que vous souhaitez attribuer
 3. Ouvrez l'onglet **Attribution**
 4. Cliquez sur **+ Attribuer à un membre**
@@ -51,18 +51,18 @@ Pour supprimer un rôle :
 
 ### Définir le Rôle par Défaut
 
-1. Allez dans **Paramètres → Rôles**
+1. Allez dans **Paramètres → Membres → Rôles**
 2. Dans la section **Options**, trouvez **Rôle par Défaut**
 3. Sélectionnez le rôle que les nouveaux membres devraient automatiquement recevoir
 4. Les nouveaux membres de l'espace de travail seront assignés à ce rôle lorsqu'ils rejoindront
 
 <Note>
-  Vous ne pouvez attribuer des rôles qu'aux membres existants de l'espace de travail. Pour inviter de nouveaux membres, utilisez [Gestion des Membres](/l/fr/user-guide/settings/capabilities/member-management).
+Vous ne pouvez attribuer des rôles qu'aux membres existants de l'espace de travail. Pour inviter de nouveaux membres, utilisez [Gestion des Membres](/l/fr/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Personnaliser les Autorisations
 
-Les autorisations déterminent ce que chaque rôle peut accéder ou modifier dans votre espace de travail, y compris les enregistrements d'objets de l'espace de travail, les paramètres et les actions.
+Les permissions déterminent ce que chaque rôle peut accéder ou modifier dans votre espace de travail, y compris les objets, les enregistrements, les paramètres et les actions.
 
 ### Autorisations des objets
 
@@ -82,7 +82,7 @@ Commencez par configurer les autorisations de base qui s'appliquent par défaut 
 Sélectionnez ou désélectionnez selon le comportement par défaut souhaité pour ce rôle.
 
 <Note>
-  **Exemple — rôle de stagiaire** : Un stagiaire doit pouvoir voir tous les objets mais ne pas les modifier par défaut. Activez "Voir les enregistrements sur tous les objets" mais laissez "Modifier les enregistrements sur tous les objets" décoché.
+**Exemple — rôle de stagiaire** : Un stagiaire doit pouvoir voir tous les objets mais ne pas les modifier par défaut. Activez "Voir les enregistrements sur tous les objets" mais laissez "Modifier les enregistrements sur tous les objets" décoché.
 </Note>
 
 #### Ajouter des exceptions au niveau de l'objet
@@ -97,6 +97,22 @@ Cliquez sur **+ Ajouter une règle** et sélectionnez un objet pour créer une e
 | ---------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | Opportunités → désactiver "Voir les enregistrements" | Le stagiaire ne peut pas du tout voir l'objet Opportunités                            |
 | Personnes → activer "Modifier les enregistrements"   | Le stagiaire peut modifier les enregistrements Personnes (mais pas les autres objets) |
+
+### Autorisations au niveau des lignes
+
+<Note>
+Les autorisations au niveau des lignes sont une **fonctionnalité Premium** disponible avec l’offre **Organization** (Cloud et Self-Hosted).
+</Note>
+
+Les autorisations au niveau des lignes vous permettent de restreindre les enregistrements individuels qu’un rôle peut voir ou modifier, en fonction de critères dynamiques. Contrairement aux autorisations sur les objets (qui s’appliquent à un type d’objet entier), les autorisations au niveau des lignes évaluent chaque enregistrement indépendamment.
+
+**Exemples de cas d’utilisation :**
+
+* Les représentants commerciaux ne peuvent voir que leurs propres opportunités
+* Les responsables peuvent voir tous les enregistrements de leur région
+* Les agents du support ne peuvent consulter que les tickets qui leur sont attribués
+
+Pour configurer les autorisations au niveau des lignes, ouvrez un rôle, allez à l’onglet **Objects**, puis utilisez la section **Row-Level** pour définir des conditions de filtrage pour un objet spécifique.
 
 ### Autorisations des champs
 
@@ -145,7 +161,7 @@ Contrôlez l'accès aux paramètres de l'espace de travail de deux manières :
 * Ou activez des autorisations spécifiques (par exemple, génération de clé API, préférences de l'espace de travail, attribution de rôles, configuration du modèle de données, paramètres de sécurité et gestion des workflows)
 
 <Note>
-  **Limitation actuelle** : L'accès à la gestion des workflows est actuellement requis pour déclencher manuellement des workflows. Ce comportement pourrait changer dans de prochaines versions.
+**Limitation actuelle** : L'accès à la gestion des workflows est actuellement requis pour déclencher manuellement des workflows. Ce comportement pourrait changer dans de prochaines versions.
 </Note>
 
 ### Autorisations des Actions de l'Espace de Travail
@@ -155,7 +171,7 @@ Contrôlez l'accès aux actions générales de l'espace de travail :
 * Activez **Accès Complet à l'Application** pour accorder toutes les autorisations
 * Ou activez des actions individuelles telles que **Envoyer un Email**, **Importer CSV** et **Exporter CSV**
 
-## Attribution de rôles aux clés API et aux agents IA
+## Assigner des rôles aux clés API et aux agents AI
 
 Au-delà des membres de l'espace de travail, des rôles peuvent également être attribués aux **clés API** et aux **agents IA**. C'est particulièrement utile pour les équipes qui veulent contrôler précisément "qui" peut faire quoi dans leur espace de travail — y compris les processus automatisés et les intégrations.
 
@@ -168,7 +184,7 @@ Au-delà des membres de l'espace de travail, des rôles peuvent également être
 
 ### Attribuer un rôle à une clé API
 
-1. Allez dans **Paramètres → Rôles**
+1. Allez dans **Paramètres → Membres → Rôles**
 2. Cliquez sur le rôle que vous souhaitez attribuer
 3. Ouvrez l'onglet **Attribution**
 4. Sous **Clés API**, cliquez sur **+ Attribuer à une clé API**
@@ -178,12 +194,12 @@ Au-delà des membres de l'espace de travail, des rôles peuvent également être
 La clé API héritera désormais de toutes les autorisations définies par ce rôle. Toute requête API effectuée avec cette clé sera restreinte en conséquence.
 
 <Note>
-  Les clés API sans rôle attribué utilisent les autorisations par défaut. Pour une sécurité renforcée, attribuez toujours un rôle spécifique aux clés API de production.
+Les clés API sans rôle attribué utilisent les autorisations par défaut. Pour une sécurité renforcée, attribuez toujours un rôle spécifique aux clés API de production.
 </Note>
 
 ### Attribuer un rôle à un agent IA
 
-1. Allez dans **Paramètres → Rôles**
+1. Allez dans **Paramètres → Membres → Rôles**
 2. Cliquez sur le rôle que vous souhaitez attribuer
 3. Ouvrez l'onglet **Attribution**
 4. Sous **Agents IA**, cliquez sur **+ Attribuer à un agent IA**
@@ -193,5 +209,5 @@ La clé API héritera désormais de toutes les autorisations définies par ce r�
 L'agent IA ne pourra accéder aux données et effectuer des actions que celles autorisées par le rôle qui lui est attribué.
 
 <Note>
-  Pour les agents IA exécutés au sein de workflows, cela garantit que l'agent ne peut ni accéder ni modifier des données en dehors de sa portée prévue — même si le workflow dispose d'autorisations plus larges.
+Pour les agents IA exécutés au sein de workflows, cela garantit que l'agent ne peut ni accéder ni modifier des données en dehors de sa portée prévue — même si le workflow dispose d'autorisations plus larges.
 </Note>

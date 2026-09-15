@@ -1,0 +1,128 @@
+---
+title: Çeviriler
+description: Uygulamanızı birden çok dilde yayınlayın — manifest etiketlerini ve kullanıcı arayüzü (UI) dizelerini tek bir yerel ayar kataloğu üzerinden çevirin.
+icon: language
+---
+
+Twenty uygulamaları **İngilizce** olarak oluşturulur: kaynak ve manifestinizdeki dizeler İngilizce kaynak metindir, `en` çevirdiğiniz kaynak yerel ayarıdır ve çevrilmeden bırakılan herhangi bir yerel ayar buna geri döner.
+
+Uygulamanızda iki tür çevrilebilir metin vardır ve her ikisi de aynı `locales/` kataloğundan geçer:
+
+* **Manifest etiketleri** — nesne ve alan adları, görünüm başlıkları, menü öğeleri ve uygulamanızın üst verilerinde (metadata) tanımlanan diğer dizeler.
+* **Ön bileşen dizeleri** — React ön bileşenlerinizin render ettiği UI metni.
+
+Çevrilebilir dizeleri işaretlersiniz, bunları yerel başına kataloglara çıkarırsınız,
+bu katalogları çevirirsiniz ve build, geçerli kullanıcı için
+herhangi bir ek bağlantıya gerek kalmadan doğru dili sunar.
+
+## Ön bileşen dizelerini işaretleme
+
+Çeviri yardımcılarını `twenty-sdk/front-component` içinden içe aktarın:
+
+```tsx
+import { Trans, t, msg, useTranslate } from 'twenty-sdk/front-component';
+
+const STATUSES = [
+  { id: 'draft', label: msg('Draft') },
+  { id: 'sent', label: msg('Sent') },
+];
+
+const Card = ({ count, name }: { count: number; name: string }) => {
+  const { t } = useTranslate();
+
+  return (
+    <section>
+      {/* Static text — reactive to the user's locale */}
+      <Trans>Loading postcard…</Trans>
+
+      {/* Disambiguate identical sources with a context */}
+      <Trans context="card-title">Untitled</Trans>
+
+      {/* Interpolation: pass values explicitly */}
+      <p>{t('Hi {name}', { name })}</p>
+      <p>{t('Saved {count} cards', { count })}</p>
+
+      {/* Resolve a lazily-declared descriptor */}
+      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+    </section>
+  );
+};
+```
+
+### Ne zaman hangisi kullanılmalı
+
+* **`Trans`** — JSX içindeki statik metin. Değişkelerin yerleştirilmesi için `message` ve `values` prop'larını kullanın (`Trans message="Hi {name}" values={{ name }}`);
+  çocukların içine doğrudan yerleştirme statik olarak çıkarılamaz.
+* **`useTranslate().t`** — bir bileşen içindeki dinamik dizeler. Kullanıcı dili değiştirdiğinde
+  yeniden render edilir. Render içinde bunu tercih edin.
+* **`t(...)`** (doğrudan içe aktarılır) — bileşen render'ının içinde olmasına gerek olmadan,
+  event handler'lar, yardımcı fonksiyonlar ve modül kapsamı dahil **her yerde** kullanılabilen erken çeviri.
+* **`msg(...)`** — veri olarak (sabitler, yapılandırma) bildirilen dizeler için ertelenmiş bir tanımlayıcı. Bunu daha sonra `t(descriptor)` ile çözün.
+
+### Bağlam
+
+Aynı kaynak dize farklı şekilde çevrildiğinde bunları ayırt etmek için `context` geçirin:
+
+```tsx
+t({ message: 'Open', context: 'door' });
+t({ message: 'Open', context: 'window' });
+<Trans context="card-title">Untitled</Trans>
+```
+
+Bağlamsal dizeler, yerel ayar kataloglarında bağlamlarına göre anahtarlanmış bir grup olarak görünür: `"\<context>": { "\<message>": "\<translation>" }`. Manifest etiketleri, tasarım gereği bağlamsaldır — her biri, oynadığı meta veri rolünü taşır (`objectMetadata.labelSingular`, `fieldMetadata.label`, `view.name`, …); dolayısıyla aynı kelime, bir nesne adı olarak ve bir görünüm adı olarak farklı şekilde çevrilebilir.
+
+## Çıkarma ve çeviri
+
+extract komutunu uygulama dizininizden çalıştırın:
+
+```bash
+twenty dev:translations-extract                  # collect strings into locales/en.json
+twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+```
+
+Çıkarma işlemi, manifest etiketlerinizi ve ön bileşen kaynaklarınızdan gelen `t()`/`msg()`/`Trans`
+dizelerini, kaynak dizeyi anahtar olarak kullanarak `locales/\<locale>.json` içine toplar. Çevirileri doldurun:
+
+```json
+// locales/fr-FR.json
+{
+  "Loading postcard…": "Chargement de la carte…",
+  "Hi {name}": "Bonjour {name}",
+  "Saved {count} cards": "{count} cartes enregistrées",
+  "door": {
+    "Open": "Ouvrir"
+  },
+  "objectMetadata.labelSingular": {
+    "Postcard": "Carte postale"
+  }
+}
+```
+
+Bağlamdan bağımsız dizeler düz girdilerdir; bağlamsal dizeler — her bir manifest etiketi de dahil olmak üzere — bağlam anahtarlarının altında iç içe yerleştirilir.
+
+`{name}` gibi yer tutucular çalışma zamanında değiştirilir — bunları çeviride koruyun. Boş bırakılan herhangi bir dize, kaynak metne geri döner.
+
+## Nasıl çalışır
+
+`twenty dev:build`, katalogları derler ve geçerli kullanıcı için doğru dili sunar:
+manifest etiketleri sunucu tarafında çözülür ve ön bileşen
+katalogları her bileşen paketine gömülür. Çalışma zamanında bir bileşen, yereli yürütme bağlamından (ana makinenin geçerli dili) okur
+ve her dizeyi kataloğuna göre çözer; bir çeviri eksik olduğunda
+kaynak metne geri döner. Ana makinede dilin değiştirilmesi, `Trans` ve
+`useTranslate().t` dizelerini canlı olarak yeniden render eder.
+
+Manifest etiketleri, her senkronizasyonda — `twenty dev:build`, `twenty apply`
+ve sürekli `twenty dev` izleme işlemi de dahil olmak üzere — derlenir; bu nedenle bir yerel ayar dosyasını düzenleyip
+senkronize etmek, yeni metni görmek için yeterlidir. Ön uç bileşen katalogları, derleme sırasında
+her bileşen paketine dahil edilir; dolayısıyla bunlardan birini değiştirmek yine de
+`twenty dev:build`'in yeniden çalıştırılması (ve yeniden dağıtım) anlamına gelir.
+
+`Trans` metin alt öğeleri birden fazla satıra yayılabilir — boşluklar, JSX'in boşlukları daraltma biçimiyle aynı şekilde daraltılır; bu nedenle her ikisi de `Welcome back` anahtarına dönüştürülür:
+
+```tsx
+<Trans>Welcome back</Trans>
+<Trans>
+  Welcome
+  back
+</Trans>
+```

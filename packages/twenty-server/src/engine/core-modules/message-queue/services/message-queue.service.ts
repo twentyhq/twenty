@@ -4,7 +4,12 @@ import {
   type QueueCronJobOptions,
   type QueueJobOptions,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
-import { MessageQueueDriver } from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
+import {
+  type InFlightQueueJob,
+  MessageQueueDriver,
+  type QueueJobDetails,
+  type QueueJobToAdd,
+} from 'src/engine/core-modules/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   type MessageQueueJobData,
   type MessageQueueJob,
@@ -31,8 +36,36 @@ export class MessageQueueService {
     jobName: string,
     data: T,
     options?: QueueJobOptions,
-  ): Promise<void> {
+  ): Promise<string | undefined> {
     return this.driver.add(this.queueName, jobName, data, options);
+  }
+
+  bulkAdd<T extends MessageQueueJobData>(
+    jobName: string,
+    jobs: QueueJobToAdd<T>[],
+    options?: QueueJobOptions,
+  ): Promise<string[]> {
+    return this.driver.bulkAdd(this.queueName, jobName, jobs, options);
+  }
+
+  getJobs<T extends MessageQueueJobData>(
+    jobIds: string[],
+  ): Promise<Partial<Record<string, QueueJobDetails<T>>>> {
+    if (typeof this.driver.getJobs !== 'function') {
+      return Promise.resolve({});
+    }
+
+    return this.driver.getJobs(this.queueName, jobIds);
+  }
+
+  getInFlightJobs<T extends MessageQueueJobData>(): Promise<
+    InFlightQueueJob<T>[]
+  > {
+    if (typeof this.driver.getInFlightJobs !== 'function') {
+      return Promise.resolve([]);
+    }
+
+    return this.driver.getInFlightJobs(this.queueName);
   }
 
   addCron<T extends MessageQueueJobData | undefined>({
@@ -72,7 +105,7 @@ export class MessageQueueService {
   work<T extends MessageQueueJobData>(
     handler: (job: MessageQueueJob<T>) => Promise<void> | void,
     options?: MessageQueueWorkerOptions,
-  ) {
-    return this.driver.work(this.queueName, handler, options);
+  ): void {
+    this.driver.work(this.queueName, handler, options);
   }
 }

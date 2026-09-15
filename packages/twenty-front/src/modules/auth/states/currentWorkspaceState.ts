@@ -16,9 +16,11 @@ export type CurrentWorkspace = Pick<
   | 'activationStatus'
   | 'billingSubscriptions'
   | 'billingEntitlements'
+  | 'billingCustomer'
   | 'currentBillingSubscription'
   | 'workspaceMembersCount'
   | 'isPublicInviteLinkEnabled'
+  | 'workspaceDiscoverability'
   | 'isGoogleAuthEnabled'
   | 'isGoogleAuthBypassEnabled'
   | 'isMicrosoftAuthEnabled'
@@ -26,32 +28,33 @@ export type CurrentWorkspace = Pick<
   | 'isPasswordAuthEnabled'
   | 'isPasswordAuthBypassEnabled'
   | 'isCustomDomainEnabled'
-  | 'hasValidEnterpriseKey'
   | 'hasValidSignedEnterpriseKey'
   | 'hasValidEnterpriseValidityToken'
   | 'subdomain'
   | 'customDomain'
   | 'workspaceUrls'
-  | 'metadataVersion'
   | 'isTwoFactorAuthenticationEnforced'
   | 'trashRetentionDays'
   | 'eventLogRetentionDays'
-  | 'fastModel'
-  | 'smartModel'
+  | 'aiChatModelTier'
+  | 'aiAgentModelTier'
+  | 'isAutoModelSelectionEnabled'
+  | 'aiModelIdByTier'
   | 'aiAdditionalInstructions'
   | 'editableProfileFields'
-  | 'enabledAiModelIds'
-  | 'useRecommendedModels'
+  | 'isInternalMessagesImportEnabled'
 > & {
   defaultRole?: Omit<Role, 'workspaceMembers' | 'agents' | 'apiKeys'> | null;
   workspaceCustomApplication: Pick<Application, 'id'> | null;
   installedApplications: Pick<
     Application,
-    'id' | 'name' | 'universalIdentifier' | 'logo'
+    'id' | 'name' | 'universalIdentifier' | 'logoUrl'
   >[];
 };
 
 export const currentWorkspaceState = createAtomState<CurrentWorkspace | null>({
   key: 'currentWorkspaceState',
   defaultValue: null,
+  useLocalStorage: true,
+  localStorageOptions: { getOnInit: true },
 });

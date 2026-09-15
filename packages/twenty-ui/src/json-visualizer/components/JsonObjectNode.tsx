@@ -1,4 +1,4 @@
-import { IconCube } from '@ui/display';
+import { IconCube } from '@ui/icon';
 import { JsonNestedNode } from '@ui/json-visualizer/components/JsonNestedNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { type JsonNodeHighlighting } from '@ui/json-visualizer/types/JsonNodeHighlighting';

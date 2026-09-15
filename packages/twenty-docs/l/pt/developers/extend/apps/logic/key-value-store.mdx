@@ -1,0 +1,110 @@
+---
+title: Armazenamento de chave-valor
+description: Persista resultados intermediários, armazene em cache dados e compartilhe estado entre execuções de funções lógicas com o armazenamento interno de chave-valor do aplicativo.
+icon: database
+---
+
+Funções de lógica são executadas de forma isolada em processos Node.js de curta duração — assim que uma execução termina, nada que foi mantido na memória sobrevive. Quando você precisa **lembrar de algo entre execuções** (armazenar em cache uma resposta cara de uma API, guardar um cursor para sincronizações incrementais, aplicar debounce ao trabalho ou passar estado de uma função para outra), persista isso no armazenamento interno de chave-valor.
+
+Cada aplicativo recebe seu próprio namespace isolado: os registros são indexados pelo app autenticado, então suas chaves nunca podem colidir com — nem ser lidas por — outro aplicativo.
+
+```text
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
+```
+
+## Obter, definir, excluir
+
+Importe `kv` de `twenty-sdk/logic-function`. Os valores podem ser quaisquer valores serializáveis em JSON.
+
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
+
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
+
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Escopos
+
+Cada registro tem um escopo, passado como uma opção em cada chamada. O padrão é `WORKSPACE`.
+
+* **`WORKSPACE`** (padrão) — o registro é privado para a instalação atual do seu app no workspace. Cada workspace que instala o app recebe seu próprio conjunto independente de chaves. É isso que você quer para caches, cursores e estado por workspace.
+* **`SERVER`** — o registro é compartilhado entre **todas as instalações** do seu app no servidor. Registros de servidor se comportam como **claims**: o valor armazenado é sempre o workspaceId que reivindicou a chave (omita `value` em `set` para reivindicar a chave para o workspace atual), e somente esse workspace pode sobrescrevê-la ou excluí-la. Qualquer instalação pode ler o registro.
+
+Claims de servidor existem para roteamento entre workspaces. Um [server-route resolver](/l/pt/developers/extend/apps/logic/logic-functions#server-route-trigger) é executado no workspace proprietário do registro do aplicativo, mas um webhook de entrada normalmente só carrega um id de conta externa — não um workspaceId do Twenty. Faça com que cada workspace reivindique seu id externo no momento da conexão e, em seguida, resolva-o na rota:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
+});
+```
+
+Como uma chave de servidor só pode ser reivindicada para o próprio workspace de quem chama e nunca sobrescrita por outro, um workspace não pode sequestrar um mapeamento que pertence a outra pessoa. `kv.set` lança uma exceção quando a chave já foi reivindicada por outro workspace.
+
+## Use-o: armazenar em cache uma chamada cara
+
+Um uso típico é armazenar em cache uma resposta lenta ou com limite de taxa de terceiros, para que execuções repetidas a reutilizem em vez de pagar o custo todas as vezes.
+
+```ts src/logic-functions/getExchangeRate.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+type CachedRate = { rate: number; fetchedAt: number };
+
+const handler = async (params: { from: string; to: string }) => {
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
+
+  if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
+    return { rate: cached.rate, cached: true };
+  }
+
+  const response = await fetch(
+    `https://api.example.com/rate?from=${params.from}&to=${params.to}`,
+  );
+  const { rate } = (await response.json()) as { rate: number };
+
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
+
+  return { rate, cached: false };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'd9b2f4e6-1c83-4a07-9e52-6b1d3c8a0f47',
+  name: 'get-exchange-rate',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+## Padrões e dicas
+
+* **Namespacing.** Prefixe chaves para manter diferentes responsabilidades separadas — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Expiração (TTL).** O armazenamento não possui expiração integrada. Armazene um carimbo de data/hora dentro do valor (como no exemplo de cache) e verifique-o na leitura, ou limpe chaves obsoletas a partir de uma [função acionada por cron](/l/pt/developers/extend/apps/logic/logic-functions).
+* **O que armazenar.** Qualquer valor serializável em JSON — números, strings, arrays, objetos. Mantenha as entradas pequenas; isto é para coordenação e cache, não para blobs grandes ou arquivos. Para arquivos, use um campo `FILES` e [`uploadFile`](/l/pt/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Visibilidade.** Os registros ficam no banco de dados da instância, não como registros de workspace — eles nunca aparecem na interface do workspace, não fazem parte do modelo de dados do seu app e não precisam de permissões de função ou de objeto.
+
+## Alternativa: um objeto de armazenamento consultável
+
+O armazenamento interno é deliberadamente opaco: as entradas não são registros, então você não pode navegá-las na interface, relacioná-las a outros objetos ou filtrá-las com consultas de registros. Quando você precisar de qualquer uma dessas coisas — por exemplo, um log de sincronização visível ou estado por registro —, em vez disso defina um pequeno **objeto técnico** com um campo `key` exclusivo e um campo `value` `RAW_JSON`, e faça consultas por meio do [cliente de API tipado](/l/pt/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk). Veja [Objects](/l/pt/developers/extend/apps/data/objects) para a referência de `defineObject` e [Data → Unique indexes](/l/pt/developers/extend/apps/data/overview#unique-indexes) para impor exclusividade de chaves.
+
+* **Definindo o escopo para um registro.** Adicione uma [relation](/l/pt/developers/extend/apps/data/relations) do objeto de armazenamento para o objeto de destino em vez de codificar o id na chave.
+* **Visibilidade e permissões.** As linhas vivem no banco de dados do workspace como qualquer outro registro, portanto podem ser consultadas pela API e respeitam a [role](/l/pt/developers/extend/apps/config/roles) do seu app. Para manter o armazenamento fora da interface principal, deixe-o de fora do seu [menu de navegação](/l/pt/developers/extend/apps/layout/navigation-menu-items).
+
+<Note>
+Ao contrário do armazenamento interno, um objeto personalizado está sempre com escopo para um único workspace — ele não consegue compartilhar registros entre instalações como as chaves `SERVER` fazem.
+</Note>

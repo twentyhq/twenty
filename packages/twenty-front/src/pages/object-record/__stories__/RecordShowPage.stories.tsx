@@ -64,22 +64,8 @@ export type Story = StoryObj<typeof RecordShowPage>;
 
 // TEMP_DISABLED_TEST: Temporarily commented out due to test failure
 // export const Default: Story = {
-//   // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
+//   // oxlint-disable-next-line typescript/ban-ts-comment
 //   // @ts-ignore
 //   decorators: [PageDecorator, ContextStoreDecorator],
 //   play: async ({ canvasElement }) => {
 //     const canvas = within(canvasElement);
-
-//     // await canvas.findAllByText(peopleMock[0].name.firstName);
-//     expect(
-//       await canvas.findByText('Twenty', undefined, {
-//         timeout: 5000,
-//       }),
-//     ).toBeInTheDocument();
-//     expect(
-//       await canvas.findByText('No activity yet', undefined, {
-//         timeout: 5000,
-//       }),
-//     ).toBeInTheDocument();
-//   },
-// };

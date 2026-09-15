@@ -8,7 +8,9 @@ const StyledDropdownMenuSkeletonContainer = styled.div`
   --horizontal-padding: ${themeCssVariables.spacing[1]};
   --vertical-padding: ${themeCssVariables.spacing[2]};
 
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: calc(
+    ${themeCssVariables.border.radius.md} - ${themeCssVariables.spacing[1]}
+  );
   box-sizing: border-box;
   flex-shrink: 0;
 

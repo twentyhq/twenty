@@ -19,7 +19,7 @@ export class NoImpersonationGuard implements CanActivate {
 
     const isCurrentlyImpersonating = Boolean(
       request?.impersonationContext?.impersonatorUserWorkspaceId &&
-        request?.impersonationContext?.impersonatedUserWorkspaceId,
+      request?.impersonationContext?.impersonatedUserWorkspaceId,
     );
 
     if (isCurrentlyImpersonating) {

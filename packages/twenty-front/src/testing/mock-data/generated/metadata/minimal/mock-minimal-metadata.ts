@@ -15,7 +15,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Blocklist",
       "labelPlural": "Blocklists",
       "icon": "IconForbid2",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -27,7 +26,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Note",
       "labelPlural": "Notes",
       "icon": "IconNotes",
-      "isCustom": false,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -39,7 +37,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Task",
       "labelPlural": "Tasks",
       "icon": "IconCheckbox",
-      "isCustom": false,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -51,7 +48,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Workflow Automated Trigger",
       "labelPlural": "Workflow Automated Triggers",
       "icon": "IconSettingsAutomation",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -63,7 +59,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Workspace Member",
       "labelPlural": "Workspace Members",
       "icon": "IconUserCircle",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -75,7 +70,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Dashboard",
       "labelPlural": "Dashboards",
       "icon": "IconLayoutDashboard",
-      "isCustom": false,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -87,7 +81,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Message",
       "labelPlural": "Messages",
       "icon": "IconMessage",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -99,19 +92,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Calendar Channel Event Association",
       "labelPlural": "Calendar Channel Event Associations",
       "icon": "IconCalendar",
-      "isCustom": false,
-      "isActive": true,
-      "isSystem": true,
-      "isRemote": false
-    },
-    {
-      "id": "06ac365e-28d1-4966-8b15-30f268468a19",
-      "nameSingular": "messageFolder",
-      "namePlural": "messageFolders",
-      "labelSingular": "Message Folder",
-      "labelPlural": "Message Folders",
-      "icon": "IconFolder",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -123,7 +103,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Workflow Run",
       "labelPlural": "Workflow Runs",
       "icon": "IconHistoryToggle",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -135,7 +114,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Task Target",
       "labelPlural": "Task Targets",
       "icon": "IconCheckbox",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -147,7 +125,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Workflow",
       "labelPlural": "Workflows",
       "icon": "IconSettingsAutomation",
-      "isCustom": false,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -159,7 +136,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Timeline Activity",
       "labelPlural": "Timeline Activities",
       "icon": "IconTimelineEvent",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -171,7 +147,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Message Thread",
       "labelPlural": "Message Threads",
       "icon": "IconMessage",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -183,7 +158,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Calendar event",
       "labelPlural": "Calendar events",
       "icon": "IconCalendar",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -195,21 +169,8 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Opportunity",
       "labelPlural": "Opportunities",
       "icon": "IconTargetArrow",
-      "isCustom": false,
       "isActive": true,
       "isSystem": false,
-      "isRemote": false
-    },
-    {
-      "id": "adbffcd0-bb69-408a-bbd1-1ee7264689d5",
-      "nameSingular": "connectedAccount",
-      "namePlural": "connectedAccounts",
-      "labelSingular": "Connected Account",
-      "labelPlural": "Connected Accounts",
-      "icon": "IconAt",
-      "isCustom": false,
-      "isActive": true,
-      "isSystem": true,
       "isRemote": false
     },
     {
@@ -219,7 +180,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Message Channel Message Association Message Folder",
       "labelPlural": "Message Channel Message Association Message Folders",
       "icon": "IconFolder",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -231,7 +191,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Calendar event participant",
       "labelPlural": "Calendar event participants",
       "icon": "IconCalendar",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -243,7 +202,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Message Participant",
       "labelPlural": "Message Participants",
       "icon": "IconUserCircle",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -255,7 +213,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Message Channel Message Association",
       "labelPlural": "Message Channel Message Associations",
       "icon": "IconMessage",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -267,7 +224,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Company",
       "labelPlural": "Companies",
       "icon": "IconBuildingSkyscraper",
-      "isCustom": false,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -279,7 +235,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Attachment",
       "labelPlural": "Attachments",
       "icon": "IconFileImport",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -291,7 +246,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Workflow Version",
       "labelPlural": "Workflow Versions",
       "icon": "IconVersions",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -303,33 +257,8 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Person",
       "labelPlural": "People",
       "icon": "IconUser",
-      "isCustom": false,
       "isActive": true,
       "isSystem": false,
-      "isRemote": false
-    },
-    {
-      "id": "ce1549f6-1cb8-4f47-ba55-16d5a399a235",
-      "nameSingular": "calendarChannel",
-      "namePlural": "calendarChannels",
-      "labelSingular": "Calendar Channel",
-      "labelPlural": "Calendar Channels",
-      "icon": "IconCalendar",
-      "isCustom": false,
-      "isActive": true,
-      "isSystem": true,
-      "isRemote": false
-    },
-    {
-      "id": "c48ce4de-a73c-4b94-ba79-123559a8b299",
-      "nameSingular": "messageChannel",
-      "namePlural": "messageChannels",
-      "labelSingular": "Message Channel",
-      "labelPlural": "Message Channels",
-      "icon": "IconMessage",
-      "isCustom": false,
-      "isActive": true,
-      "isSystem": true,
       "isRemote": false
     },
     {
@@ -339,7 +268,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Note Target",
       "labelPlural": "Note Targets",
       "icon": "IconCheckbox",
-      "isCustom": false,
       "isActive": true,
       "isSystem": true,
       "isRemote": false
@@ -351,7 +279,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Pet",
       "labelPlural": "Pets",
       "icon": "IconCat",
-      "isCustom": true,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -363,7 +290,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Rocket",
       "labelPlural": "Rockets",
       "icon": "IconRocket",
-      "isCustom": true,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -375,7 +301,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Pet Care Agreement",
       "labelPlural": "Pet Care Agreements",
       "icon": "IconPaw",
-      "isCustom": true,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -387,7 +312,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Employment History",
       "labelPlural": "Employment Histories",
       "icon": "IconBriefcase",
-      "isCustom": true,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -399,7 +323,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "labelSingular": "Survey result",
       "labelPlural": "Survey results",
       "icon": "IconRulerMeasure",
-      "isCustom": true,
       "isActive": true,
       "isSystem": false,
       "isRemote": false
@@ -539,12 +462,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "objectMetadataId": "057951b6-46e0-4ae9-956a-b3b72f2cf800"
     },
     {
-      "id": "0641fc4f-b4ba-4074-a6e2-2d8d7826064e",
-      "type": "TABLE",
-      "key": "INDEX",
-      "objectMetadataId": "ce1549f6-1cb8-4f47-ba55-16d5a399a235"
-    },
-    {
       "id": "cccea524-558f-49c0-8657-c07bc3610c23",
       "type": "TABLE",
       "key": "INDEX",
@@ -575,12 +492,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "objectMetadataId": "4397cb61-4bcc-49f8-b024-739b74ed9928"
     },
     {
-      "id": "e7ac6796-abf6-4a97-a758-91fa3518cf4c",
-      "type": "TABLE",
-      "key": "INDEX",
-      "objectMetadataId": "06ac365e-28d1-4966-8b15-30f268468a19"
-    },
-    {
       "id": "a144d5ab-3195-4409-95f5-5aee8c0d3bbe",
       "type": "TABLE",
       "key": "INDEX",
@@ -597,12 +508,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "type": "TABLE",
       "key": "INDEX",
       "objectMetadataId": "7db07e5a-4476-4a4f-ba75-6de6597689aa"
-    },
-    {
-      "id": "022dba8d-2c8e-40e7-b767-0234e71ad705",
-      "type": "TABLE",
-      "key": "INDEX",
-      "objectMetadataId": "c48ce4de-a73c-4b94-ba79-123559a8b299"
     },
     {
       "id": "b2e63752-f7e4-4d38-ae6e-063e6766a02d",

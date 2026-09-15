@@ -20,8 +20,6 @@ Pentru a executa doar o singură ramură pe baza unor condiții specifice, **ad�
 3. Setați condiții în fiecare nod Filter pentru a determina când ar trebui să continue acea ramură
 4. Vor continua doar ramurile pentru care condițiile din Filter sunt îndeplinite
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
-
 ### Cum funcționează nodurile Filter
 
 * Dacă condiția din Filter este **îndeplinită**: Ramura își continuă execuția
@@ -63,18 +61,18 @@ După ce ramurile paralele își finalizează activitatea, le puteți îmbina la
 ### Exemplu: Procesare, apoi notificare
 
 ```
-Declanșator
+Trigger
    │
-   ├── Ramura A: Actualizați înregistrarea clientului
+   ├── Branch A: Update Customer Record
    │
-   └── Ramura B: Creați tichet de suport
+   └── Branch B: Create Support Ticket
 
        ↘  ↙
 
-   Pas îmbinat: Trimiteți e-mail de confirmare
+   Merged Step: Send Confirmation Email
 ```
 
-E-mailul de confirmare se trimite doar după ce atât actualizarea clientului, cât și crearea tichetului sunt finalizate.
+E-mailul de confirmare este trimis numai după ce atât actualizarea clientului, cât și crearea tichetelor au fost făcute.
 
 ## Cele mai bune practici
 

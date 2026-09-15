@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { forwardRef } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuSeparator = styled.div`
@@ -7,4 +8,8 @@ const StyledDropdownMenuSeparator = styled.div`
   width: 100%;
 `;
 
-export const DropdownMenuSeparator = StyledDropdownMenuSeparator;
+export const DropdownMenuSeparator = forwardRef<HTMLDivElement>((_, ref) => {
+  return <StyledDropdownMenuSeparator ref={ref} data-dropdown-menu-separator />;
+});
+
+DropdownMenuSeparator.displayName = 'DropdownMenuSeparator';

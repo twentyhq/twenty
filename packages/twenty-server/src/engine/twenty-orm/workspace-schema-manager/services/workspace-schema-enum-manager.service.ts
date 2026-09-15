@@ -12,6 +12,19 @@ import {
   escapeLiteral,
 } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
+const POSTGRES_MAX_IDENTIFIER_LENGTH = 63;
+
+const buildTemporaryIdentifier = (baseName: string, suffix: string): string => {
+  const maxBaseLength = POSTGRES_MAX_IDENTIFIER_LENGTH - suffix.length;
+
+  const truncatedBase =
+    baseName.length <= maxBaseLength
+      ? baseName
+      : baseName.slice(0, maxBaseLength);
+
+  return `${truncatedBase}${suffix}`;
+};
+
 export class WorkspaceSchemaEnumManagerService {
   async createEnum({
     queryRunner,
@@ -96,6 +109,22 @@ export class WorkspaceSchemaEnumManagerService {
     await queryRunner.query(sql);
   }
 
+  async upsertEnumValue({
+    queryRunner,
+    schemaName,
+    enumName,
+    value,
+  }: {
+    queryRunner: QueryRunner;
+    schemaName: string;
+    enumName: string;
+    value: string;
+  }): Promise<void> {
+    const sql = `ALTER TYPE ${escapeIdentifier(schemaName)}.${escapeIdentifier(enumName)} ADD VALUE IF NOT EXISTS ${escapeLiteral(value)}`;
+
+    await queryRunner.query(sql);
+  }
+
   async renameEnumValue({
     queryRunner,
     schemaName,
@@ -150,7 +179,7 @@ export class WorkspaceSchemaEnumManagerService {
         columnName,
       });
 
-      const oldEnumName = `${enumName}_old`;
+      const oldEnumName = buildTemporaryIdentifier(enumName, '_old');
 
       await this.renameEnum({
         queryRunner,
@@ -166,7 +195,7 @@ export class WorkspaceSchemaEnumManagerService {
         values: enumValues,
       });
 
-      const oldColumnName = `${columnName}_old`;
+      const oldColumnName = buildTemporaryIdentifier(columnName, '_old');
 
       await this.renameColumn({
         queryRunner,

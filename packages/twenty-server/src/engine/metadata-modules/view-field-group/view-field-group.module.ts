@@ -9,11 +9,14 @@ import { ViewFieldGroupResolver } from 'src/engine/metadata-modules/view-field-g
 import { FieldsWidgetUpsertService } from 'src/engine/metadata-modules/view-field-group/services/fields-widget-upsert.service';
 import { ViewFieldGroupService } from 'src/engine/metadata-modules/view-field-group/services/view-field-group.service';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules/application-translation-catalog/application-translation-catalog.module';
 
 @Module({
   imports: [
+    ApplicationTranslationCatalogModule,
     TypeOrmModule.forFeature([ViewFieldGroupEntity, ViewEntity]),
     WorkspaceCacheStorageModule,
     ApplicationModule,
@@ -25,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     ViewFieldGroupResolver,
     ViewFieldGroupService,
     FieldsWidgetUpsertService,
+    provideWorkspaceScopedRepository(ViewEntity),
   ],
   exports: [ViewFieldGroupService],
 })

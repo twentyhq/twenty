@@ -7,7 +7,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
-import { viewTypeIconMapping } from '@/views/types/ViewType';
+import { viewTypeIconKeyMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
@@ -43,10 +43,9 @@ export const ViewPickerContentEffect = () => {
     setViewPickerMainGroupByFieldMetadataId,
   ] = useAtomComponentState(viewPickerMainGroupByFieldMetadataIdComponentState);
 
-  const [
-    viewPickerCalendarFieldMetadataId,
-    setViewPickerCalendarFieldMetadataId,
-  ] = useAtomComponentState(viewPickerCalendarFieldMetadataIdComponentState);
+  const setViewPickerCalendarFieldMetadataId = useSetAtomComponentState(
+    viewPickerCalendarFieldMetadataIdComponentState,
+  );
 
   const [viewPickerType, setViewPickerType] = useAtomComponentState(
     viewPickerTypeComponentState,
@@ -85,8 +84,7 @@ export const ViewPickerContentEffect = () => {
       !viewPickerIsPersisting &&
       !viewPickerIsDirty
     ) {
-      const defaultIcon =
-        viewTypeIconMapping(viewPickerType).displayName ?? 'IconTable';
+      const defaultIcon = viewTypeIconKeyMapping(viewPickerType);
 
       if (viewPickerMode === 'create-empty') {
         setViewPickerSelectedIcon(defaultIcon);
@@ -98,18 +96,31 @@ export const ViewPickerContentEffect = () => {
       );
       setViewPickerInputName(referenceView.name);
       setViewPickerType(referenceView.type);
+
+      const calendarFieldMetadataId =
+        isDefined(referenceView.calendarFieldMetadataId) &&
+        availableFieldsForCalendar.some(
+          (fieldMetadataItem) =>
+            fieldMetadataItem.id === referenceView.calendarFieldMetadataId,
+        )
+          ? referenceView.calendarFieldMetadataId
+          : (availableFieldsForCalendar[0]?.id ?? '');
+
+      setViewPickerCalendarFieldMetadataId(calendarFieldMetadataId);
     }
   }, [
     referenceView,
     setViewPickerInputName,
     setViewPickerSelectedIcon,
     setViewPickerType,
+    setViewPickerCalendarFieldMetadataId,
     setViewPickerVisibility,
     viewPickerIsPersisting,
     viewPickerIsDirty,
     viewPickerMode,
     viewPickerType,
     hasViewPermission,
+    availableFieldsForCalendar,
   ]);
 
   useEffect(() => {
@@ -125,26 +136,11 @@ export const ViewPickerContentEffect = () => {
           : availableFieldsForGrouping[0].id,
       );
     }
-    if (
-      isDefined(referenceView) &&
-      availableFieldsForCalendar.length > 0 &&
-      viewPickerCalendarFieldMetadataId === ''
-    ) {
-      setViewPickerCalendarFieldMetadataId(
-        isDefined(referenceView.calendarFieldMetadataId) &&
-          referenceView.calendarFieldMetadataId !== ''
-          ? referenceView.calendarFieldMetadataId
-          : availableFieldsForCalendar[0].id,
-      );
-    }
   }, [
     referenceView,
     availableFieldsForGrouping,
     viewPickerMainGroupByFieldMetadataId,
     setViewPickerMainGroupByFieldMetadataId,
-    availableFieldsForCalendar,
-    viewPickerCalendarFieldMetadataId,
-    setViewPickerCalendarFieldMetadataId,
   ]);
 
   return <></>;

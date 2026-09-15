@@ -14,9 +14,9 @@ import { InvalidMetadataException } from 'src/engine/metadata-modules/utils/exce
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { workspaceMigrationBuilderGraphqlApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/workspace-migration-builder-graphql-api-exception-handler.util';
 
-export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
+export const fieldMetadataGraphqlApiExceptionHandler = (error: unknown) => {
   if (error instanceof WorkspaceMigrationBuilderException) {
-    workspaceMigrationBuilderGraphqlApiExceptionHandler(error);
+    return workspaceMigrationBuilderGraphqlApiExceptionHandler(error);
   }
 
   if (error instanceof InvalidMetadataException) {

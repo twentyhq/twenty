@@ -1,5 +1,5 @@
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
-import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
 import { SidePanelNewSidebarItemViewSystemSubView } from '@/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewSystemSubView';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/side-panel/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/side-panel/utils/isViewDisplayableInNavigationMenu';
@@ -19,19 +19,19 @@ export const SidePanelNewSidebarItemViewSystemPickerSubPage = () => {
     selectedObjectMetadataIdForViewFlowState,
   );
 
-  const { currentDraft } = useDraftNavigationMenuItems();
+  const { currentItems } = useNavigationMenuItemEditController();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const { views, objectMetadataIdsWithIndexView, viewIdsInWorkspace } =
-    useNavigationMenuObjectMetadataFromDraft(currentDraft);
+  const { views, objectMetadataIdsWithIndexView, viewIdsAlreadyAdded } =
+    useNavigationMenuObjectMetadataForSection(currentItems);
 
   const objectMetadataIdsWithDisplayableViews = new Set(
     views
       .filter(
         (view) =>
           isViewDisplayableInNavigationMenu(view) &&
-          !viewIdsInWorkspace.has(view.id),
+          !viewIdsAlreadyAdded.has(view.id),
       )
       .map((view) => view.objectMetadataId),
   );

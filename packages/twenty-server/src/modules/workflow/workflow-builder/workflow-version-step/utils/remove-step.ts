@@ -3,13 +3,13 @@ import {
   IF_ELSE_BRANCH_POSITION_OFFSETS,
   TRIGGER_STEP_ID,
   type StepIfElseBranch,
+  WorkflowActionType,
 } from 'twenty-shared/workflow';
 import { v4 } from 'uuid';
 
 import { isWorkflowEmptyAction } from 'src/modules/workflow/workflow-executor/workflow-actions/empty/guards/is-workflow-empty-action.guard';
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import {
-  WorkflowActionType,
   type WorkflowAction,
   type WorkflowIteratorAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
@@ -29,11 +29,7 @@ const computeUpdatedNextStepIds = ({
     : [];
 
   return [
-    ...new Set([
-      ...filteredNextStepIds,
-      // We automatically link parent and child steps together
-      ...(stepToDeleteChildrenIds || []),
-    ]),
+    ...new Set([...filteredNextStepIds, ...(stepToDeleteChildrenIds || [])]),
   ];
 };
 
@@ -75,7 +71,7 @@ const createReplacementEmptyNode = ({
       outputSchema: {},
       errorHandlingOptions: {
         continueOnFailure: { value: false },
-        retryOnFailure: { value: false },
+        retryOnFailure: { value: 0 },
       },
       input: {},
     },
@@ -172,6 +168,7 @@ const updateIfElseStepOnDeletion = ({
 
   return {
     ...step,
+    nextStepIds: [],
     settings: {
       ...step.settings,
       input: {

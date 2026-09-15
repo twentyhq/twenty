@@ -2,6 +2,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { TERMINAL_STEP_STATUSES } from 'src/modules/workflow/workflow-executor/constants/terminal-step-statuses.constant';
+import { findParentSteps } from 'src/modules/workflow/workflow-executor/utils/find-parent-steps.util';
+import { getEffectiveParentStatus } from 'src/modules/workflow/workflow-executor/utils/get-effective-parent-status.util';
 import { stepHasBeenStarted } from 'src/modules/workflow/workflow-executor/utils/step-has-been-started.util';
 import { getAllStepIdsInLoop } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/utils/get-all-step-ids-in-loop.util';
 import {
@@ -18,10 +20,7 @@ export const shouldFailSafelyIteratorStep = ({
   steps: WorkflowAction[];
   stepInfos: WorkflowRunStepInfos;
 }): boolean => {
-  const stepsTargetingIterator = steps.filter(
-    (parentStep) =>
-      isDefined(parentStep) && parentStep.nextStepIds?.includes(step.id),
-  );
+  const allParentSteps = findParentSteps({ step, steps });
 
   const initialLoopStepIds = step.settings.input.initialLoopStepIds;
 
@@ -33,7 +32,7 @@ export const shouldFailSafelyIteratorStep = ({
       })
     : [];
 
-  const externalParentSteps = stepsTargetingIterator.filter(
+  const externalParentSteps = allParentSteps.filter(
     (parentStep) => !stepIdsInLoop.includes(parentStep.id),
   );
 
@@ -42,30 +41,35 @@ export const shouldFailSafelyIteratorStep = ({
       return false;
     }
 
-    const areAllExternalParentsTerminal = externalParentSteps.every(
-      (parentStep) =>
-        TERMINAL_STEP_STATUSES.includes(stepInfos[parentStep.id]?.status),
+    const externalParentStatuses = externalParentSteps.map((parentStep) =>
+      getEffectiveParentStatus({ parentStep, childStepId: step.id, stepInfos }),
     );
 
-    const hasFailedSafelyExternalParent = externalParentSteps.some(
-      (parentStep) =>
-        stepInfos[parentStep.id]?.status === StepStatus.FAILED_SAFELY,
+    const areAllExternalParentsTerminal = externalParentStatuses.every(
+      (status) => isDefined(status) && TERMINAL_STEP_STATUSES.includes(status),
+    );
+
+    const hasFailedSafelyExternalParent = externalParentStatuses.some(
+      (status) => status === StepStatus.FAILED_SAFELY,
     );
 
     return areAllExternalParentsTerminal && hasFailedSafelyExternalParent;
   }
 
-  const areAllParentsTerminal = stepsTargetingIterator.every((parentStep) =>
-    TERMINAL_STEP_STATUSES.includes(stepInfos[parentStep.id]?.status),
+  const allParentStatuses = allParentSteps.map((parentStep) =>
+    getEffectiveParentStatus({ parentStep, childStepId: step.id, stepInfos }),
+  );
+
+  const areAllParentsTerminal = allParentStatuses.every(
+    (status) => isDefined(status) && TERMINAL_STEP_STATUSES.includes(status),
   );
 
   if (!areAllParentsTerminal) {
     return false;
   }
 
-  const hasFailedSafelyParent = stepsTargetingIterator.some(
-    (parentStep) =>
-      stepInfos[parentStep.id]?.status === StepStatus.FAILED_SAFELY,
+  const hasFailedSafelyParent = allParentStatuses.some(
+    (status) => status === StepStatus.FAILED_SAFELY,
   );
 
   if (!hasFailedSafelyParent) {

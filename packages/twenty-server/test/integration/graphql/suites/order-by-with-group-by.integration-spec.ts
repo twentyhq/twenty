@@ -25,7 +25,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Cuzco' },
           employees: 20,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -38,7 +38,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Anvers' },
           employees: 19,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -52,7 +52,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Cuzco' },
           employees: 19,
-          annualRecurringRevenue: { amountMicros: 105 },
+          annualRevenue: { amountMicros: 105 },
         },
       }),
     );
@@ -65,7 +65,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-03-03T09:30:00.000Z', // Monday
           address: { addressCity: 'Dallas' },
           employees: 2,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -78,7 +78,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-01-02T12:00:00.000Z', // Thursday
           address: { addressCity: 'Paris' },
           employees: 10,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -91,7 +91,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-01-08T08:00:00.000Z', // Wednesday
           address: { addressCity: 'Barcelona' },
           employees: 5,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -104,7 +104,7 @@ describe('group-by resolvers - order by', () => {
           createdAt: '2025-01-08T08:00:00.000Z', // Wednesday
           address: { addressCity: 'Barcelona' },
           employees: 1,
-          annualRecurringRevenue: { amountMicros: 100 },
+          annualRevenue: { amountMicros: 100 },
         },
       }),
     );
@@ -154,7 +154,7 @@ describe('group-by resolvers - order by', () => {
         { address: { addressCity: true } },
         { createdAt: { granularity: 'DAY_OF_THE_WEEK' } },
         {
-          annualRecurringRevenue: {
+          annualRevenue: {
             amountMicros: true,
           },
         },
@@ -195,58 +195,56 @@ describe('group-by resolvers - order by', () => {
       expect(groups).toBeDefined();
       expect(Array.isArray(groups)).toBe(true);
 
-      // Extract group info for easier assertions
       const groupInfos = groups.map((g: any) => ({
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
-        annualRecurringRevenue: g.groupByDimensionValues?.[2],
+        annualRevenue: g.groupByDimensionValues?.[2],
         avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
 
-      // Order by dayOfWeek (chronological) then avgEmployees then city
       expect(groupInfos).toEqual([
         {
           city: 'Dallas',
           dayOfWeek: 'Monday',
           avgEmployees: 2,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Anvers',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '105',
+          annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 20,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
           avgEmployees: 10,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
       ]);
     });
@@ -279,54 +277,53 @@ describe('group-by resolvers - order by', () => {
       const groupInfos = groups.map((g: any) => ({
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
-        annualRecurringRevenue: g.groupByDimensionValues?.[2],
+        annualRevenue: g.groupByDimensionValues?.[2],
         avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
 
-      // Order by dayOfWeek (chronological) then addressCity then avgEmployees
       expect(groupInfos).toEqual([
         {
           city: 'Anvers',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '105',
+          annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 20,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Dallas',
           dayOfWeek: 'Monday',
           avgEmployees: 2,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
           avgEmployees: 10,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
       ]);
     });
@@ -359,7 +356,7 @@ describe('group-by resolvers - order by', () => {
       const groupInfos = groups.map((g: any) => ({
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
-        annualRecurringRevenue: g.groupByDimensionValues?.[2],
+        annualRevenue: g.groupByDimensionValues?.[2],
         avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
@@ -370,42 +367,42 @@ describe('group-by resolvers - order by', () => {
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '105',
+          annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 20,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Dallas',
           dayOfWeek: 'Monday',
           avgEmployees: 2,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
           avgEmployees: 10,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
       ]);
     });
@@ -438,7 +435,7 @@ describe('group-by resolvers - order by', () => {
       const groupInfos = groups.map((g: any) => ({
         city: g.groupByDimensionValues?.[0],
         dayOfWeek: g.groupByDimensionValues?.[1],
-        annualRecurringRevenue: g.groupByDimensionValues?.[2],
+        annualRevenue: g.groupByDimensionValues?.[2],
         avgEmployees: g.avgEmployees,
         totalCount: g.totalCount,
       }));
@@ -449,42 +446,42 @@ describe('group-by resolvers - order by', () => {
           dayOfWeek: 'Monday',
           avgEmployees: 2,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Barcelona',
           dayOfWeek: 'Wednesday',
           avgEmployees: 3,
           totalCount: 2,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Paris',
           dayOfWeek: 'Thursday',
           avgEmployees: 10,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Anvers',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 19,
           totalCount: 1,
-          annualRecurringRevenue: '105',
+          annualRevenue: '105',
         },
         {
           city: 'Cuzco',
           dayOfWeek: 'Monday',
           avgEmployees: 20,
           totalCount: 1,
-          annualRecurringRevenue: '100',
+          annualRevenue: '100',
         },
       ]);
     });
@@ -668,7 +665,7 @@ describe('group-by resolvers - order by', () => {
           {
             aggregate: {
               avgEmployees: 'AscNullsFirst',
-              avgAnnualRecurringRevenueAmountMicros: 'AscNullsFirst',
+              avgAnnualRevenueAmountMicros: 'AscNullsFirst',
             },
           },
         ]),
@@ -695,6 +692,197 @@ describe('group-by resolvers - order by', () => {
       expect(response.body.errors.length).toBe(1);
       expect(response.body.errors[0].message).toBe(
         'Please provide orderBy field criteria one by one in orderBy array',
+      );
+    });
+  });
+
+  describe('relation field ordering under target id group by', () => {
+    const aardvarkCompanyId = 'ffffffff-ffff-4fff-8fff-ffffffffffff';
+    const mangoCompanyId = '99999999-9999-4999-8999-999999999999';
+    const zebraCompanyId = '00000000-0000-4000-8000-000000000001';
+    const alicePersonId = 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee';
+    const bobPersonId = '11111111-1111-4111-8111-111111111111';
+    const carolPersonId = '22222222-2222-4222-8222-222222222222';
+    const personWithoutCompanyId = '33333333-3333-4333-8333-333333333333';
+    const aliceOpportunityId = randomUUID();
+    const bobOpportunityId = randomUUID();
+
+    beforeAll(async () => {
+      const companies = [
+        { id: aardvarkCompanyId, name: 'Aardvark' },
+        { id: mangoCompanyId, name: 'Mango' },
+        { id: zebraCompanyId, name: 'Zebra' },
+      ];
+
+      for (const company of companies) {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: COMPANY_GQL_FIELDS,
+            data: company,
+          }),
+        );
+      }
+
+      const people = [
+        {
+          id: alicePersonId,
+          name: { firstName: 'Alice', lastName: 'Brown' },
+          companyId: aardvarkCompanyId,
+        },
+        {
+          id: bobPersonId,
+          name: { firstName: 'Bob', lastName: 'Johnson' },
+          companyId: mangoCompanyId,
+        },
+        {
+          id: carolPersonId,
+          name: { firstName: 'Carol', lastName: 'Smith' },
+          companyId: zebraCompanyId,
+        },
+        {
+          id: personWithoutCompanyId,
+          name: { firstName: 'Dave', lastName: 'Miller' },
+        },
+      ];
+
+      for (const person of people) {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            data: person,
+          }),
+        );
+      }
+
+      const opportunities = [
+        { id: aliceOpportunityId, pointOfContactId: alicePersonId },
+        { id: bobOpportunityId, pointOfContactId: bobPersonId },
+      ];
+
+      for (const opportunity of opportunities) {
+        await makeGraphqlAPIRequest(
+          createOneOperationFactory({
+            objectMetadataSingularName: 'opportunity',
+            gqlFields: 'id',
+            data: opportunity,
+          }),
+        );
+      }
+    });
+
+    afterAll(async () => {
+      for (const id of [aliceOpportunityId, bobOpportunityId]) {
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'opportunity',
+            gqlFields: 'id',
+            recordId: id,
+          }),
+        );
+      }
+
+      for (const id of [
+        alicePersonId,
+        bobPersonId,
+        carolPersonId,
+        personWithoutCompanyId,
+      ]) {
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            recordId: id,
+          }),
+        );
+      }
+
+      for (const id of [aardvarkCompanyId, mangoCompanyId, zebraCompanyId]) {
+        await makeGraphqlAPIRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'company',
+            gqlFields: 'id',
+            recordId: id,
+          }),
+        );
+      }
+    });
+
+    it('should order groups by the related record TEXT label, not its id', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ companyId: true }],
+          filter: {
+            id: {
+              in: [
+                alicePersonId,
+                bobPersonId,
+                carolPersonId,
+                personWithoutCompanyId,
+              ],
+            },
+          },
+          orderBy: [
+            { company: { name: 'AscNullsLast' } },
+            { company: { id: 'AscNullsLast' } },
+          ],
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const groups = response.body.data.peopleGroupBy;
+
+      expect(
+        groups.map((group: any) => group.groupByDimensionValues[0]),
+      ).toEqual([aardvarkCompanyId, mangoCompanyId, zebraCompanyId, null]);
+    });
+
+    it('should order groups by the related record FULL_NAME label subfields', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'opportunity',
+          objectMetadataPluralName: 'opportunities',
+          groupBy: [{ pointOfContactId: true }],
+          filter: {
+            id: {
+              in: [aliceOpportunityId, bobOpportunityId],
+            },
+          },
+          orderBy: [
+            { pointOfContact: { name: { firstName: 'AscNullsLast' } } },
+            { pointOfContact: { name: { lastName: 'AscNullsLast' } } },
+            { pointOfContact: { id: 'AscNullsLast' } },
+          ],
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      const groups = response.body.data.opportunitiesGroupBy;
+
+      expect(
+        groups.map((group: any) => group.groupByDimensionValues[0]),
+      ).toEqual([alicePersonId, bobPersonId]);
+    });
+
+    it('should fail when ordering by a relation absent from groupBy', async () => {
+      const response = await makeGraphqlAPIRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ jobTitle: true }],
+          orderBy: [{ company: { name: 'AscNullsLast' } }],
+        }),
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors.length).toBe(1);
+      expect(response.body.errors[0].message).toBe(
+        'Cannot order by a relation field that is not in groupBy criteria: company.name',
       );
     });
   });

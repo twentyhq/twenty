@@ -1,0 +1,239 @@
+---
+title: 2. Generando documentos
+icon: bolt
+description: Una función lógica, expuesta como una herramienta de IA y una acción de flujo de trabajo.
+---
+
+Ahora el núcleo: una [función lógica](/l/es/developers/extend/apps/logic/logic-functions)
+que carga una plantilla y un registro, rellena los marcadores de posición y guarda un nuevo documento
+.
+
+Escribiremos la lógica de negocio una sola vez como un **handler**, y luego la expondremos mediante
+diversos desencadenadores. Este capítulo conecta dos de ellos: una **herramienta de IA** y una
+**acción de flujo de trabajo**.
+
+## El ayudante de renderizado
+
+Mantenga la lógica pura en su propio archivo para que sea fácil de unir-test. Esto arrastra un registro
+en `{{dot.path}}` tokens y los sustituye.
+
+```ts filename="src/logic-functions/utils/render-template.ts"
+const PLACEHOLDER_PATTERN = /\{\{\s*([\w.]+)\s*\}\}/g;
+
+export const renderTemplate = (body: string, values: Record<string, string>) => {
+  const missingTokens = new Set<string>();
+  const content = body.replace(PLACEHOLDER_PATTERN, (_m, token: string) => {
+    const value = values[token];
+    if (value === undefined || value === '') { missingTokens.add(token); return ''; }
+    return value;
+  });
+  return { content, missingTokens: [...missingTokens] };
+};
+```
+
+<Tip>
+Debido a que este archivo no tiene efectos secundarios, puedes cubrirlo con pruebas unitarias rápidas
+(`yarn test:unit`). Ver [Testing](/l/es/developers/extend/apps/operations/testing).
+</Tip>
+
+## El manejador
+
+El manejador utiliza el [`CoreApiClient`](/l/es/developers/extend/apps/logic/logic-functions)
+generado para leer y escribir datos CRM. Carga la plantilla, carga el registro de destino, rellena
+el cuerpo y crea un `document`.
+
+```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { loadRecordValues } from 'src/logic-functions/utils/load-record-values';
+import { renderTemplate } from 'src/logic-functions/utils/render-template';
+
+export const generateDocumentHandler = async (
+  input: { templateId: string; recordId: string },
+) => {
+  const client = new CoreApiClient();
+
+  // Use a filtered list query, not the singular lookup: the singular query
+  // throws when nothing matches, which would become a 500 instead of a 404.
+  const { documentTemplates } = await client.query({
+    documentTemplates: {
+      __args: { filter: { id: { eq: input.templateId } }, first: 1 },
+      edges: { node: { id: true, name: true, body: true, target: true } },
+    },
+  });
+  const documentTemplate = documentTemplates?.edges?.[0]?.node;
+  if (!documentTemplate?.id) return { success: false, status: 404, message: 'Template not found.' };
+
+  const record = await loadRecordValues(client, documentTemplate.target, input.recordId);
+  if (!record.found) return { success: false, status: 404, message: 'Record not found.' };
+
+  const { content, missingTokens } = renderTemplate(documentTemplate.body ?? '', record.values);
+
+  const { createDocument } = await client.mutation({
+    createDocument: {
+      __args: { data: {
+        name: `${documentTemplate.name} — ${record.displayName}`,
+        content, status: 'GENERATED', templateId: documentTemplate.id,
+      } },
+      id: true, name: true,
+    },
+  });
+
+  return { success: true, documentId: createDocument.id, content, missingTokens };
+};
+```
+
+`loadRecordValues` ejecuta una consulta diferente para una Persona vs. una Empresa y aplana
+el resultado — vea
+[`load-record-values.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/load-record-values.ts).
+
+## Exponerlo como una herramienta y una acción de flujo de trabajo
+
+Un solo `defineLogicFunction` puede llevar varios disparadores. Aquí, `toolTriggerSettings`
+hace que sea llamable por agentes IA, y `workflowActionTriggerSettings` lo convierte en un paso
+en el constructor de flujo de trabajo visual. Ambos describen su entrada con un esquema JSON.
+
+```ts filename="src/logic-functions/generate-document.ts"
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema } from 'twenty-sdk/logic-function';
+import { GENERATE_DOCUMENT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+import { generateDocumentInputSchema } from 'src/logic-functions/schemas/generate-document-input.schema';
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document',
+  description: 'Generate a document from a template and a CRM record.',
+  timeoutSeconds: 30,
+  toolTriggerSettings: {
+    inputSchema: generateDocumentInputSchema,
+  },
+  workflowActionTriggerSettings: {
+    label: 'Generate Document',
+    icon: 'IconFileText',
+    inputSchema: jsonSchemaToInputSchema(generateDocumentInputSchema),
+    outputSchema: [{ type: 'object', properties: {
+      success: { type: 'boolean' }, documentId: { type: 'string' },
+    } }],
+  },
+  handler: generateDocumentHandler,
+});
+```
+
+El esquema de entrada es un esquema JSON simple que describe `templateId` y `recordId` —
+see [`generate-document-input.schema.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/schemas/generate-document-input.schema.ts).
+
+## Conceder acceso
+
+Funciones lógicas ejecutadas como el rol de la aplicación. Necesita leer plantillas y registrar
+y crear documentos, así que permita eso en `src/roles/default-role.ts`:
+
+```ts
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Document Generator default role',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: true,
+  canAccessAllTools: true,
+  canBeAssignedToAgents: true,
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
+});
+```
+
+`UPLOAD_FILE` permite a la función cargar el PDF generado en la siguiente sección.
+Ver [Roles](/l/es/developers/extend/apps/config/roles) para obtener permisos más finos.
+
+## Adjuntar un archivo PDF real
+
+Un campo de texto renderizado es útil, pero los usuarios quieren un documento real. Vamos a generar un
+**PDF** y almacenarlo en el registro como un archivo descargable.
+
+Primero, da al objeto `document` un campo `ARCHIVOS` para mantener el PDF. Las aplicaciones suben
+a sus campos de archivos **propios**, así que este campo es qué rutas cargar:
+
+```ts filename="src/objects/document.object.ts"
+{
+  universalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.FILES,
+  name: 'file',
+  label: 'File',
+  icon: 'IconFileTypePdf',
+  universalSettings: { maxNumberOfValues: 1 },
+}
+```
+
+Ahora renderice ese PDF. Una aplicación es un proyecto de nodo real, así que puedes añadir cualquier paquete npm
+que necesites e importarlo como en cualquier otro lugar. Utilizamos **[pdf-lib](https://pdf-lib.js.org/)**
+para dibujar el PDF y **[marked](https://marked.js.org/)** para analizar el cuerpo de Markdown
+— el CLI los instala en el tiempo de ejecución de la función para ti:
+
+```bash filename="Terminal"
+yarn add pdf-lib marked
+```
+
+El ayudante completo es
+[`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
+Analiza el Markdown en tokens con `marked.lexer`, y luego los dispone con
+pdf-lib: encabezados reales, texto en **negrita**/*cursiva*, listas con viñetas y numeradas,
+citas en bloque y líneas de separación: una representación A4 pulida y de varias páginas de la propia plantilla,
+en lugar de un bloque de texto.
+
+<Frame caption="El PDF generado: tipografía real y formato Markdown, renderizando el cuerpo de la plantilla.">
+  <img src="/images/docs/desarrolladores/extends/apps/document-generator/07b-generated-pdf.png" alt="Un PDF pulido y generado por marcadores" />
+</Frame>
+
+<Note>
+Las fuentes incorporadas de pdf-lib's usan la codificación WinAnsi, por lo que los acentos de WesternEuropean renderizan
+fuera de la caja el ayudante mapea comillas inteligentes y guiones y deja caer caracteres que
+no puede codificar. Renderizar escrituras no latinas (chino, árabe, cirílico) implicaría
+incrustar una fuente Unicode.
+</Note>
+
+A continuación, suba y almacene la referencia en el registro. `uploadFile` rutas bytes
+a tu campo de archivos propiedad de la aplicación; el `id` devuelto es lo que guardas:
+
+```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { generateDocumentPdf } from 'src/logic-functions/utils/generate-document-pdf';
+
+const documentName = `${documentTemplate.name} — ${record.displayName}`;
+const bytes = await generateDocumentPdf(documentName, content);
+const fileName = 'proposal.pdf';
+
+const uploaded = await new MetadataApiClient().uploadFile(
+  Buffer.from(bytes),
+  fileName,
+  'application/pdf',
+  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+);
+
+await client.mutation({
+  updateDocument: {
+    __args: {
+      id: documentId,
+      data: { file: [{ fileId: uploaded.id, label: fileName }] },
+    },
+    id: true,
+  },
+});
+```
+
+El documento generado ahora contiene un PDF descargable:
+
+<Frame caption="El PDF generado, almacenado en el campo Archivo del documento.">
+  <img src="/images/docs/desarrolladores/extends/apps/document-generator/08-document-with-pdf.png" alt="Un registro de documento con un archivo PDF generado" />
+</Frame>
+
+<Note>
+`uploadFile` solo se dirige a campos de archivos **propiedad de la app** (por lo que las cargas siempre requieren una
+app que sea propietaria del campo, además del indicador de rol `UPLOAD_FILE`). Por eso el PDF
+aterriza en el propio campo `file` del registro — el mismo patrón que el
+[call-recorder app](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/call-recorder)
+usa para grabaciones.
+</Note>
+
+**Después de este paso:** cada documento generado tiene un PDF real y descargable. Pero
+nada puede *llamar* al generador de la interfaz de usuario aún — para eso necesitamos una ruta HTTP.
+
+<Card title="Siguiente: rutas HTTP →" icon="globo" href="/Developopers/extend/apps/tutorials/document-generator/http-routes">
+  Servir la función sobre HTTP y representar documentos como páginas web.
+</Card>

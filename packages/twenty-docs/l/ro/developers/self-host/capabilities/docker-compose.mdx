@@ -51,7 +51,7 @@ Urmați acești pași pentru o configurare manuală.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Generați Tokenuri Secrete**
+2. **Generează o cheie de criptare**
 
    Rulați următoarea comandă pentru a genera un șir unic aleatoriu:
 
@@ -59,15 +59,17 @@ Urmați acești pași pentru o configurare manuală.
    openssl rand -base64 32
    ```
 
-   **Important:** Păstrați această valoare secretă / nu o împărtășiți.
+   **Important:** Păstrați această valoare secretă / nu o împărtășiți. Pierderea `ENCRYPTION_KEY` înseamnă pierderea accesului la toate secretele stocate în baza de date (tokenuri OAuth, variabile de aplicație, secrete TOTP etc.).
 
 3. **Actualizați `.env`**
 
    Înlocuiți valoarea substituentului în fișierul dvs. .env cu tokenul generat:
 
    ```ini
-   APP_SECRET=first_random_string
+   ENCRYPTION_KEY=random_string
    ```
+
+   Vezi [ghidul pentru rotația cheii](/l/ro/developers/self-host/capabilities/key-rotation) pentru instrucțiuni despre cum să o rotești fără întreruperi.
 
 4. **Setați Parola pentru Postgres**
 
@@ -107,7 +109,7 @@ curl http://localhost:3000
 
 ### Expuneți Twenty pentru Acces Extern
 
-Implicit, Twenty rulează pe `localhost` la portul `3000`. Pentru a-l accesa printr-un domeniu extern sau adresă IP, trebuie să configurați `SERVER_URL` în fișierul dvs. `.env`.
+Implicit, Twenty rulează pe `localhost` la portul `3000`. Interfața de utilizator accesează API-ul folosind originea proprie a browserului, astfel încât se poate încărca de pe orice nume de gazdă care ajunge la container — totuși setează `SERVER_URL` la URL-ul tău public: serverul îl folosește pentru linkuri generate (e-mailuri, callback-uri OAuth) și pentru a detecta utilizarea HTTPS, necesară pentru cookie-uri securizate.
 
 #### Înțelegerea `SERVER_URL`
 
@@ -227,7 +229,7 @@ Adăugați în crontab-ul dvs. (`crontab -e`):
 1. Opriți aplicația:
 
 ```bash
-docker compose stop twenty-server twenty-front
+docker compose stop server worker
 ```
 
 2. Restaurați baza de date:
@@ -252,3 +254,9 @@ docker compose up -d
 ## Depanare
 
 Dacă întâmpinați vreo problemă, verificați [Depanare](/l/ro/developers/self-host/capabilities/troubleshooting) pentru soluții.
+
+## Găzduire gestionată
+
+<Tip>
+  Preferiți să nu rulați și să nu întrețineți Twenty chiar dumneavoastră? [Găsiți un partener Twenty certificat pentru găzduire](https://twenty.com/partners/list?categories=HOSTING\&ref=docs-docker-compose) care să vă implementeze, găzduiască și gestioneze instanța de la un capăt la altul. *(Sau contactați echipa noastră: [contact@twenty.com](mailto:contact@twenty.com).)*
+</Tip>

@@ -1,6 +1,6 @@
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import {
   type WorkflowAction,
-  WorkflowActionType,
   type WorkflowIfElseAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 

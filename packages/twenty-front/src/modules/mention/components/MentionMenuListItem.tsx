@@ -1,8 +1,10 @@
 import { type MouseEvent } from 'react';
 
-import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
-import { Avatar } from 'twenty-ui/display';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
+import { Avatar } from 'twenty-ui/data-display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type MentionMenuListItemProps = {
   recordId: string;
@@ -23,6 +25,12 @@ export const MentionMenuListItem = ({
   isSelected,
   onClick,
 }: MentionMenuListItemProps) => {
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const objectMetadataItem = objectMetadataItems.find(
+    (item) => item.nameSingular === objectNameSingular,
+  );
+
   const handleClick = (event?: MouseEvent) => {
     event?.preventDefault();
     event?.stopPropagation();
@@ -38,10 +46,10 @@ export const MentionMenuListItem = ({
       contextualTextPosition="left"
       LeftIcon={() => (
         <Avatar
-          placeholder={label}
-          placeholderColorSeed={recordId}
-          avatarUrl={imageUrl}
-          type={getAvatarType(objectNameSingular) ?? 'rounded'}
+          name={label}
+          colorSeed={recordId}
+          src={getAbsoluteImageUrl(imageUrl)}
+          shape={getAvatarShape(objectMetadataItem)}
           size="sm"
         />
       )}

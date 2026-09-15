@@ -49,7 +49,7 @@
         "outDir": "dist/assets"
       },
       {
-        "include": "database/clickHouse/migrations/*.sql",
+        "include": "database/clickhouse/migrations/*.sql",
         "outDir": "dist"
       },
       {
@@ -58,6 +58,10 @@
       },
       {
         "include": "engine/metadata-modules/ai/ai-models/ai-providers.json",
+        "outDir": "dist"
+      },
+      {
+        "include": "engine/core-modules/dpa/constants/subprocessors.json",
         "outDir": "dist"
       }
     ]

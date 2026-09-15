@@ -2,7 +2,9 @@ import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable, CustomError } from 'twenty-shared/utils';
 
+import { type FlatEntityMapsExceptionContext } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { type AllUniversalWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-action-common';
+import { formatWorkspaceMigrationRunnerExecutionErrors } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/format-workspace-migration-runner-execution-errors.util';
 
 export const WorkspaceMigrationRunnerExceptionCode = {
   INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
@@ -34,6 +36,25 @@ export type WorkspaceMigrationRunnerExecutionErrors = {
   actionTranspilation?: Error;
 };
 
+const getActionUniversalIdentifierOrThrow = (
+  action: AllUniversalWorkspaceMigrationAction,
+): string => {
+  if (action.type === 'create') {
+    const universalIdentifier = action.flatEntity?.universalIdentifier;
+
+    if (!universalIdentifier) {
+      throw new WorkspaceMigrationRunnerException({
+        message: `Missing universalIdentifier on create action for '${action.metadataName}'`,
+        code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
+      });
+    }
+
+    return universalIdentifier;
+  }
+
+  return action.universalIdentifier;
+};
+
 const {
   // oxlint-disable-next-line unused-imports/no-unused-vars
   EXECUTION_FAILED: WorkspaceMigrationRunnerExceptionExecutionFailedCode,
@@ -46,6 +67,7 @@ type WorkspaceMigrationRunnerExceptionConstructorArgs =
       message: string;
       code: (typeof WorkspaceMigrationRunnerExceptionCodeOtherCode)[keyof typeof WorkspaceMigrationRunnerExceptionCodeOtherCode];
       userFriendlyMessage?: MessageDescriptor;
+      context?: FlatEntityMapsExceptionContext;
     }
   | {
       action: AllUniversalWorkspaceMigrationAction;
@@ -59,11 +81,22 @@ export class WorkspaceMigrationRunnerException extends CustomError {
   userFriendlyMessage: MessageDescriptor;
   action?: AllUniversalWorkspaceMigrationAction;
   errors?: WorkspaceMigrationRunnerExecutionErrors;
+  context?: FlatEntityMapsExceptionContext;
 
   constructor(args: WorkspaceMigrationRunnerExceptionConstructorArgs) {
     if (args.code === WorkspaceMigrationRunnerExceptionCode.EXECUTION_FAILED) {
+      const universalIdentifier = getActionUniversalIdentifierOrThrow(
+        args.action,
+      );
+      const identifierClause = ` (universalIdentifier: ${universalIdentifier})`;
+      const executionErrorsSummary =
+        formatWorkspaceMigrationRunnerExecutionErrors(args.errors);
+      const causeClause = executionErrorsSummary
+        ? `: ${executionErrorsSummary}`
+        : '';
+
       super(
-        `Migration action '${args.action.type}' for '${args.action.metadataName}' failed`,
+        `Migration action '${args.action.type}' for '${args.action.metadataName}'${identifierClause} failed${causeClause}`,
       );
 
       this.code = args.code;
@@ -73,6 +106,7 @@ export class WorkspaceMigrationRunnerException extends CustomError {
       super(args.message);
 
       this.code = args.code;
+      this.context = args.context;
     }
 
     this.userFriendlyMessage =

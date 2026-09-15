@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import {
@@ -16,9 +17,12 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { CreateEmailGroupChannelOutput } from 'src/engine/metadata-modules/message-channel/dtos/create-email-group-channel.output';
 import { MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -26,8 +30,11 @@ import {
   MessageChannelException,
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import { type MessageChannelDeletedEvent } from 'src/engine/metadata-modules/message-channel/types/message-channel-deleted.type';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { INBOUND_EMAIL_LOCAL_PART_PREFIX } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-prefix.constant';
 import { INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/constants/inbound-email-local-part-random-bytes.constant';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 
 @Injectable()
 export class MessageChannelMetadataService {
@@ -36,6 +43,8 @@ export class MessageChannelMetadataService {
     private readonly repository: Repository<MessageChannelEntity>,
     private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
     private readonly twentyConfigService: TwentyConfigService,
+    private readonly emailingDomainService: EmailingDomainService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async findAll(workspaceId: string): Promise<MessageChannelDTO[]> {
@@ -55,8 +64,15 @@ export class MessageChannelMetadataService {
         workspaceId,
       });
 
+    const sharedAccountIds =
+      await this.connectedAccountMetadataService.getWorkspaceSharedConnectedAccountIds(
+        { workspaceId },
+      );
+
     return this.findByConnectedAccountIds({
-      connectedAccountIds: userAccountIds,
+      connectedAccountIds: [
+        ...new Set([...userAccountIds, ...sharedAccountIds]),
+      ],
       workspaceId,
     });
   }
@@ -70,7 +86,7 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelDTO[]> {
-    await this.connectedAccountMetadataService.verifyOwnership({
+    await this.connectedAccountMetadataService.verifyUsableByCaller({
       id: connectedAccountId,
       userWorkspaceId,
       workspaceId,
@@ -117,7 +133,7 @@ export class MessageChannelMetadataService {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
-  async verifyOwnership({
+  async verifyUsableByCaller({
     id,
     userWorkspaceId,
     workspaceId,
@@ -126,27 +142,76 @@ export class MessageChannelMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<MessageChannelEntity> {
-    const messageChannel = await this.repository.findOne({
-      where: { id, workspaceId },
+    const messageChannel = await this.findByIdOrThrow({ id, workspaceId });
+
+    await this.connectedAccountMetadataService.verifyUsableByCaller({
+      id: messageChannel.connectedAccountId,
+      userWorkspaceId,
+      workspaceId,
     });
 
-    if (!messageChannel) {
+    return messageChannel;
+  }
+
+  async verifyAdministrableByCaller({
+    id,
+    userWorkspaceId,
+    workspaceId,
+    applicationId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+    applicationId?: string;
+  }): Promise<MessageChannelEntity> {
+    const messageChannel = await this.findByIdOrThrow({ id, workspaceId });
+
+    const connectedAccount =
+      await this.connectedAccountMetadataService.findById({
+        id: messageChannel.connectedAccountId,
+        workspaceId,
+      });
+
+    if (!isDefined(connectedAccount)) {
       throw new MessageChannelException(
-        `Message channel ${id} not found`,
+        `Connected account ${messageChannel.connectedAccountId} of message channel ${id} not found`,
         MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
       );
     }
 
-    const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
+    const isAdministrableByCaller =
+      await this.connectedAccountMetadataService.isAdministrableByCaller({
+        connectedAccount,
         userWorkspaceId,
         workspaceId,
+        applicationId,
       });
 
-    if (!userAccountIds.includes(messageChannel.connectedAccountId)) {
+    if (!isAdministrableByCaller) {
       throw new MessageChannelException(
-        `Message channel ${id} does not belong to user workspace ${userWorkspaceId}`,
+        `Message channel ${id} cannot be administered by user workspace ${userWorkspaceId}`,
         MessageChannelExceptionCode.MESSAGE_CHANNEL_OWNERSHIP_VIOLATION,
+      );
+    }
+
+    return messageChannel;
+  }
+
+  private async findByIdOrThrow({
+    id,
+    workspaceId,
+  }: {
+    id: string;
+    workspaceId: string;
+  }): Promise<MessageChannelEntity> {
+    const messageChannel = await this.repository.findOne({
+      where: { id, workspaceId },
+    });
+
+    if (!isDefined(messageChannel)) {
+      throw new MessageChannelException(
+        `Message channel ${id} not found`,
+        MessageChannelExceptionCode.MESSAGE_CHANNEL_NOT_FOUND,
       );
     }
 
@@ -187,25 +252,47 @@ export class MessageChannelMetadataService {
 
   async createEmailGroupChannel({
     handle,
+    displayName,
     userWorkspaceId,
     workspaceId,
   }: {
     handle: string;
+    displayName?: string;
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<CreateEmailGroupChannelOutput> {
     const inboundEmailDomain = this.twentyConfigService.get(
       'INBOUND_EMAIL_DOMAIN',
     );
-    const storageType = this.twentyConfigService.get('STORAGE_TYPE');
+    const emailingDomainDriver = this.twentyConfigService.get(
+      'EMAILING_DOMAIN_DRIVER',
+    );
+    const isEmailingDomainInDemoMode =
+      emailingDomainDriver === EmailingDomainDriver.LOG;
+
+    const isInboundMessageStoreConfigured =
+      emailingDomainDriver === EmailingDomainDriver.RESEND
+        ? isNonEmptyString(this.twentyConfigService.get('RESEND_API_KEY'))
+        : this.twentyConfigService.get('STORAGE_TYPE') ===
+          StorageDriverType.S_3;
 
     if (
-      !isNonEmptyString(inboundEmailDomain) ||
-      storageType !== StorageDriverType.S_3
+      !isEmailingDomainInDemoMode &&
+      (!isNonEmptyString(inboundEmailDomain) ||
+        !isInboundMessageStoreConfigured)
     ) {
       throw new MessageChannelException(
-        'Email group is not configured: INBOUND_EMAIL_DOMAIN must be set and STORAGE_TYPE must be S3',
+        'Email handles are not configured: INBOUND_EMAIL_DOMAIN must be set, plus S3 storage for the AWS_SES driver or RESEND_API_KEY for the RESEND driver',
         MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED,
+      );
+    }
+
+    const sendDomain = getDomainFromEmail(handle)?.toLowerCase();
+
+    if (isNonEmptyString(sendDomain)) {
+      await this.emailingDomainService.ensureEmailingDomain(
+        sendDomain,
+        workspaceId,
       );
     }
 
@@ -213,7 +300,11 @@ export class MessageChannelMetadataService {
       INBOUND_EMAIL_LOCAL_PART_PREFIX +
       randomBytes(INBOUND_EMAIL_LOCAL_PART_RANDOM_BYTES).toString('hex');
 
-    const forwardingAddress = `${localPart}@${inboundEmailDomain}`;
+    const forwardingDomain = isNonEmptyString(inboundEmailDomain)
+      ? inboundEmailDomain
+      : 'demo.invalid';
+
+    const forwardingAddress = `${localPart}@${forwardingDomain}`;
 
     const connectedAccount = await this.connectedAccountMetadataService.create({
       workspaceId,
@@ -222,11 +313,17 @@ export class MessageChannelMetadataService {
       userWorkspaceId,
       accessToken: null,
       refreshToken: null,
+      visibility: 'workspace',
     });
+
+    const trimmedDisplayName = displayName?.trim();
 
     const messageChannel = await this.create({
       workspaceId,
       handle: forwardingAddress,
+      displayName: isNonEmptyString(trimmedDisplayName)
+        ? trimmedDisplayName
+        : null,
       connectedAccountId: connectedAccount.id,
       type: MessageChannelType.EMAIL_GROUP,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -244,6 +341,36 @@ export class MessageChannelMetadataService {
     return { messageChannel, forwardingAddress };
   }
 
+  async getOrCreateEmailGroupChannel({
+    fromAddress,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    fromAddress: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO> {
+    const existingChannel = await this.repository.findOne({
+      where: {
+        workspaceId,
+        type: MessageChannelType.EMAIL_GROUP,
+        connectedAccount: { handle: fromAddress },
+      },
+    });
+
+    if (existingChannel) {
+      return existingChannel;
+    }
+
+    const { messageChannel } = await this.createEmailGroupChannel({
+      handle: fromAddress,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    return messageChannel;
+  }
+
   async delete({
     id,
     workspaceId,
@@ -257,6 +384,120 @@ export class MessageChannelMetadataService {
 
     await this.repository.delete({ id, workspaceId });
 
+    this.workspaceEventEmitter.emitCustomBatchEvent<MessageChannelDeletedEvent>(
+      MESSAGE_CHANNEL_DELETED_EVENT,
+      [{ messageChannelId: id }],
+      workspaceId,
+    );
+
     return messageChannel;
+  }
+
+  async updateEmailGroupChannel({
+    id,
+    displayName,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    displayName?: string | null;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO> {
+    const messageChannel = await this.verifyAdministrableByCaller({
+      id,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
+      throw new MessageChannelException(
+        `Message channel ${id} is not an email group`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    // An omitted displayName leaves the current one untouched; an explicit null clears it
+    if (displayName === undefined) {
+      return messageChannel;
+    }
+
+    const trimmedDisplayName = displayName?.trim();
+
+    return this.update({
+      id,
+      workspaceId,
+      data: {
+        displayName: isNonEmptyString(trimmedDisplayName)
+          ? trimmedDisplayName
+          : null,
+      },
+    });
+  }
+
+  async deleteEmailGroupChannel({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<MessageChannelDTO> {
+    const messageChannel = await this.verifyAdministrableByCaller({
+      id,
+      userWorkspaceId,
+      workspaceId,
+    });
+
+    if (messageChannel.type !== MessageChannelType.EMAIL_GROUP) {
+      throw new MessageChannelException(
+        `Message channel ${id} is not an email group`,
+        MessageChannelExceptionCode.INVALID_MESSAGE_CHANNEL_INPUT,
+      );
+    }
+
+    const connectedAccount =
+      await this.connectedAccountMetadataService.findById({
+        id: messageChannel.connectedAccountId,
+        workspaceId,
+      });
+    const sendDomain = getDomainFromEmail(
+      connectedAccount?.handle ?? '',
+    )?.toLowerCase();
+
+    await this.connectedAccountMetadataService.delete({
+      id: messageChannel.connectedAccountId,
+      workspaceId,
+    });
+
+    if (
+      isNonEmptyString(sendDomain) &&
+      !(await this.hasEmailGroupChannelForDomain(workspaceId, sendDomain))
+    ) {
+      await this.emailingDomainService.deleteEmailingDomainByDomainIfExists(
+        workspaceId,
+        sendDomain,
+      );
+    }
+
+    return messageChannel;
+  }
+
+  private async hasEmailGroupChannelForDomain(
+    workspaceId: string,
+    domain: string,
+  ): Promise<boolean> {
+    const emailGroupChannels = await this.repository.find({
+      where: { workspaceId, type: MessageChannelType.EMAIL_GROUP },
+      relations: { connectedAccount: true },
+    });
+
+    return emailGroupChannels.some(
+      (channel) =>
+        isDefined(channel.connectedAccount) &&
+        getDomainFromEmail(channel.connectedAccount.handle)?.toLowerCase() ===
+          domain,
+    );
   }
 }

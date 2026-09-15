@@ -14,7 +14,7 @@ import { ViewFieldsHiddenDropdownSection } from '@/views/components/ViewFieldsHi
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSettings } from 'twenty-ui/display';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
 import { MenuItem, UndecoratedLink } from 'twenty-ui/navigation';
 
 export const ObjectOptionsDropdownHiddenFieldsContent = () => {

@@ -1,4 +1,3 @@
-import { AuthModal } from '@/auth/components/AuthModal';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { AppFullScreenErrorFallback } from '@/error-handler/components/AppFullScreenErrorFallback';
 import { AppPageErrorFallback } from '@/error-handler/components/AppPageErrorFallback';
@@ -9,65 +8,73 @@ import { LayoutCustomizationBar } from '@/layout-customization/components/Layout
 import { AppNavigationDrawer } from '@/navigation/components/AppNavigationDrawer';
 import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar';
 import { PageDragDropProvider } from '@/navigation-menu-item/display/dnd/providers/PageDragDropProvider';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
-import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
-import { BackgroundMockNavigationDrawer } from '@/sign-in-background-mock/components/BackgroundMockNavigationDrawer';
-import { Suspense, lazy, useContext } from 'react';
-
-const BackgroundMockPage = lazy(() =>
-  import('@/sign-in-background-mock/components/BackgroundMockPage').then(
-    (module) => ({ default: module.BackgroundMockPage }),
-  ),
-);
 import { useShowFullscreen } from '@/ui/layout/fullscreen/hooks/useShowFullscreen';
-import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
-import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/layout/resizable-panel/constants/NavigationDrawerConstraints';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
-import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { Outlet } from 'react-router-dom';
-import { useScreenSize } from 'twenty-ui/utilities';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledLayout = styled.div`
-  background: ${themeCssVariables.background.noisy};
+  background: ${themeCssVariables.grayScale.gray3};
   display: flex;
   flex-direction: column;
-  height: 100dvh;
+  height: calc(100dvh / var(--t-zoom, 1));
+  overflow: hidden;
   position: relative;
   scrollbar-color: ${themeCssVariables.border.color.medium} transparent;
   scrollbar-width: 4px;
   width: 100%;
 
   *::-webkit-scrollbar-thumb {
-    border-radius: ${themeCssVariables.border.radius.sm};
+    border-radius: ${themeCssVariables.border.radius.md};
+  }
+
+  @media print {
+    background: ${themeCssVariables.background.primary};
+    height: auto;
+    min-height: 100%;
+    overflow: visible;
   }
 `;
 
-const StyledPageContainerBase = styled.div`
+const StyledPageContainer = styled.div`
   display: flex;
   flex: 1 1 auto;
   flex-direction: row;
   min-height: 0;
+  min-width: 0;
+
+  @media print {
+    display: block;
+    min-height: auto;
+    min-width: auto;
+    overflow: visible;
+  }
 `;
-const StyledPageContainer = motion.create(StyledPageContainerBase);
 
 const StyledNavigationDrawerWrapper = styled.div`
   flex-shrink: 0;
+
+  @media print {
+    display: none;
+  }
 `;
 
 const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
+  min-width: 0;
   overflow: hidden;
+
+  @media print {
+    display: block;
+    min-width: auto;
+    overflow: visible;
+  }
 `;
 
 export const DefaultLayout = () => {
   const isMobile = useIsMobile();
-  const isSettingsPage = useIsSettingsPage();
-  const windowsWidth = useScreenSize().width;
-  const showAuthModal = useShowAuthModal();
   const useShowFullScreen = useShowFullscreen();
-  const { theme } = useContext(ThemeContext);
 
   return (
     <>
@@ -76,57 +83,22 @@ export const DefaultLayout = () => {
           <AppErrorBoundary FallbackComponent={AppFullScreenErrorFallback}>
             <InformationBannerIsImpersonating />
             <LayoutCustomizationBar />
-            <StyledPageContainer
-              animate={{
-                marginLeft:
-                  isSettingsPage && !isMobile && !useShowFullScreen
-                    ? (windowsWidth -
-                        (OBJECT_SETTINGS_WIDTH +
-                          NAVIGATION_DRAWER_CONSTRAINTS.default +
-                          76)) /
-                      2
-                    : 0,
-              }}
-              transition={{
-                duration: theme.animation.duration.normal,
-              }}
-            >
+            <StyledPageContainer>
               <PageDragDropProvider>
-                {!showAuthModal && <KeyboardShortcutMenu />}
-                {showAuthModal ? (
-                  <StyledNavigationDrawerWrapper>
-                    <BackgroundMockNavigationDrawer />
-                  </StyledNavigationDrawerWrapper>
-                ) : useShowFullScreen ? null : (
+                <KeyboardShortcutMenu />
+                {useShowFullScreen ? null : (
                   <StyledNavigationDrawerWrapper>
                     <AppNavigationDrawer />
                   </StyledNavigationDrawerWrapper>
                 )}
-                {showAuthModal ? (
-                  <>
-                    <StyledMainContainer>
-                      <Suspense fallback={null}>
-                        <BackgroundMockPage />
-                      </Suspense>
-                    </StyledMainContainer>
-                    <AnimatePresence mode="wait">
-                      <LayoutGroup>
-                        <AuthModal>
-                          <Outlet />
-                        </AuthModal>
-                      </LayoutGroup>
-                    </AnimatePresence>
-                  </>
-                ) : (
-                  <StyledMainContainer>
-                    <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
-                      <Outlet />
-                    </AppErrorBoundary>
-                  </StyledMainContainer>
-                )}
+                <StyledMainContainer>
+                  <AppErrorBoundary FallbackComponent={AppPageErrorFallback}>
+                    <Outlet />
+                  </AppErrorBoundary>
+                </StyledMainContainer>
               </PageDragDropProvider>
             </StyledPageContainer>
-            {isMobile && !showAuthModal && <MobileNavigationBar />}
+            {isMobile && <MobileNavigationBar />}
           </AppErrorBoundary>
         </StyledLayout>
       </FileUploadProvider>

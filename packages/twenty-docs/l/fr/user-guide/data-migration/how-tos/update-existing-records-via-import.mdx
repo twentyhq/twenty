@@ -25,11 +25,11 @@ Lorsque vous importez un fichier contenant un **identifiant unique** qui corresp
 | Est absent de votre fichier             | **Créer** un nouvel enregistrement (avec un identifiant généré automatiquement) |
 
 <Warning>
-  **Les champs à sélection multiple sont écrasés, pas fusionnés.**
+**Les champs à sélection multiple sont écrasés, pas fusionnés.**
 
-  Si un enregistrement a `Option A` et `Option B` sélectionnées et que vous importez `["Option C"]`, l'enregistrement n'aura plus que `Option C` après l'importation. L'importation remplace toutes les sélections précédentes — elle ne les complète pas.
+Si un enregistrement a `Option A` et `Option B` sélectionnées et que vous importez `["Option C"]`, l'enregistrement n'aura plus que `Option C` après l'importation. L'importation remplace toutes les sélections précédentes — elle ne les complète pas.
 
-  Pour conserver les valeurs existantes, incluez-les toutes dans votre importation : `["Option A","Option B","Option C"]`
+Pour conserver les valeurs existantes, incluez-les toutes dans votre importation : `["Option A","Option B","Option C"]`
 </Warning>
 
 ## Étape 1 : Exporter vos données actuelles
@@ -80,9 +80,9 @@ id,email,firstName,lastName,jobTitle
 ```
 
 <Warning>
-  **Ne modifiez pas les valeurs des identifiants uniques.**
+**Ne modifiez pas les valeurs des identifiants uniques.**
 
-  Si vous remplacez `john@acme.com` par `john.smith@acme.com`, Twenty créera un nouvel enregistrement au lieu de mettre à jour l'existant.
+Si vous remplacez `john@acme.com` par `john.smith@acme.com`, Twenty créera un nouvel enregistrement au lieu de mettre à jour l'existant.
 </Warning>
 
 ## Étape 3 : Importer le fichier mis à jour

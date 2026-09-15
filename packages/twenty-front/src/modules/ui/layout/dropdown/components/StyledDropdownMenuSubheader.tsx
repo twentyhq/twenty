@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { Label } from 'twenty-ui/display';
+import { Label } from 'twenty-ui/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownMenuSubheaderContainer = styled.div`

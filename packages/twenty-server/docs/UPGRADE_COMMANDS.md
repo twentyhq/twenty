@@ -106,6 +106,24 @@ export class BackfillStandardSkillsCommand
 
 The base class `ActiveOrSuspendedWorkspaceCommandRunner` handles workspace iteration and provides `--dry-run`, `--verbose`, and workspace filter options automatically.
 
+### Applying a migration matrix: side-effect vs legacy path
+
+Commands that build a metadata migration go through `WorkspaceMigrationValidateBuildAndRunService`. Two entry points exist:
+
+- `validateBuildAndRunWorkspaceMigration` (default): runs the operation matrix through the metadata side-effect engine (`expandWithSideEffects`) before building. The engine injects and cascades engine-owned companions (system fields and relations, the `searchVector` field and its GIN index, `searchFieldMetadata` rows, unique backing indexes). This is what the live API and application manifests rely on, so new commands should use it.
+- `validateBuildAndRunLegacyWorkspaceMigration`: skips side-effect expansion and applies the matrix literally, exactly as it was authored.
+
+The side-effect engine landed in v2.19. Commands authored before then declared their companions explicitly and were never designed to flow through the engine. Running them through it retroactively changes their behavior: it can hard-fail on reserved-identifier collisions (`RESERVED_SYSTEM_UNIVERSAL_IDENTIFIER`) and silently create rows the command never intended (for example, the deterministic `searchFieldMetadata` rows that the standalone `upgrade:2-16:backfill-search-field-metadata` backfill then re-inserts, hitting `IDX_SEARCH_FIELD_METADATA_OBJECT_FIELD_UNIQUE`).
+
+Rule of thumb:
+
+- Target version **< 2.19** → use the **legacy** method.
+- Target version **>= 2.19** → use the default side-effect method.
+
+All pre-2.19 commands follow this rule, including `upgrade:2-10:sync-call-recording-standard-objects`: it builds its create-set from the static twenty-standard definition (which declares all of `callRecording`'s fields, including the `searchVector` system field) and runs it through the legacy path so nothing is injected on top. Its matrix contains no `searchFieldMetadata` operations; the deterministic rows are created later in the same upgrade pipeline by `upgrade:2-16:backfill-search-field-metadata`, which derives them from the standard definition.
+
+Known gap: the static definition does not yet declare `callRecording`'s `searchVector` GIN index (every other searchable standard object declares its GIN index statically), so workspaces upgrading through 2-10 on the legacy path create the `searchVector` column unindexed. The static declaration plus a backfill for already-upgraded workspaces land in a follow-up (twentyhq/core-team-issues#2672), which must ship in the same release as this legacy path.
+
 ## Execution Order
 
 Within a given version of Twenty, the upgrade pipeline runs commands in this order, sorted by timestamp within each group:
@@ -115,3 +133,67 @@ Within a given version of Twenty, the upgrade pipeline runs commands in this ord
 3. **Workspace commands**
 
 Workspace commands are executed sequentially across all active/suspended workspaces.
+
+## Interrupting a run (Ctrl+C, SIGTERM)
+
+Ctrl+C during an `upgrade` stops it gracefully: the workspace being processed finishes its commands, then the run stops instead of starting the next one. Ctrl+C again forces an immediate exit, leaving the command in progress unfinished.
+
+Rerun the command to resume. Nothing is rolled back, and the run picks up from the last command recorded in `upgradeMigration`.
+
+Expect the first Ctrl+C to look like it did nothing while a long step is running: it takes effect once the step ends.
+
+### Running detached
+
+A foreground command dies with the shell that started it, so a dropped `kubectl exec` tunnel, a closed laptop or an expired VPN kills the run. `scripts/command-background.sh` wraps any nest command in its own session with no controlling terminal and streams the output from a log file instead. Use it for long runs (typically `upgrade`) over `kubectl exec` or SSH; foreground is still right locally and in CI.
+
+```bash
+yarn command:prod:background <command> [args]   # start detached, then stream the log
+yarn command:prod:background:logs               # re-attach from another shell
+yarn command:prod:background:stop               # graceful stop; --now immediate, --force SIGKILL
+```
+
+`<command> [args]` is forwarded verbatim to `node dist/command/command`, so `yarn command:prod:background upgrade -w <id>` is the detached form of `yarn command:prod upgrade -w <id>`. For `upgrade` the accepted args are `-d/--dry-run`, `-v/--verbose`, `-w/--workspace-id <id>` (repeatable), `--start-from-workspace-id <id>`, `--workspace-count-limit <n>`. The two workspace selectors are mutually exclusive. `--include-slow` is not among them, it belongs to `run-instance-commands`.
+
+Ctrl+C detaches the stream only, and `logs` takes any number of concurrent readers. `logs` reports whether a run is alive before streaming, and on a finished one prints the verdict and the log tail rather than following a log that will never grow again: a segment can run for minutes without printing, so a silent log alone cannot tell a slow step from a dead process.
+
+`stop` has three tiers, three explicit invocations with no timed escalation between them, since a segment can take many minutes and a timer would defeat the graceful path. Each prints the log tail after signalling. Only the node process is signalled, never the process group, which would also kill the wrapper that records the exit code. Graceful handling belongs to the command, not the wrapper: `upgrade` traps `SIGTERM` and stops at its next boundary, but a command without a handler dies immediately with the same exit `143`.
+
+| Invocation | Signal | Effect |
+| --- | --- | --- |
+| `stop` | one `SIGTERM` | stops at the next boundary, exit `143` |
+| `stop --now` | two spaced `SIGTERM`s | immediate exit, step in progress left unfinished |
+| `stop --force` | `SIGKILL` | no boundary, a multi-transaction command may leave partial work |
+
+The wrapper outlives node and appends an `EXIT=<code>` line, which is what `logs` translates:
+
+| Log | Meaning |
+| --- | --- |
+| `EXIT=0` | completed |
+| `EXIT=130` / `EXIT=143` | graceful stop on `SIGINT` / `SIGTERM` |
+| `EXIT=137` | `SIGKILL`ed, from `stop --force` or an OOM kill |
+| any other `EXIT=` | failed |
+| no `EXIT=` line | killed without a graceful stop, wrapper included (pod replaced, host lost) |
+
+A graceful stop is always safe to rerun: nothing is rolled back and the run resumes from the last command recorded in `upgradeMigration`, each workspace either fully done with its segment or untouched. Rerunning after a forced kill relies on commands being idempotent.
+
+Limits of this mode:
+
+- Ctrl+C cannot reach a detached run, so `stop` is the only graceful entry point and `130` only ever appears on foreground runs.
+- Log and PID files live in `/tmp` in the container (`TWENTY_COMMAND_LOG_FILE`, `TWENTY_COMMAND_PID_FILE`) and are lost with the pod. There is a single PID and log file, so the wrapper runs one background command at a time per machine, enforced by a `flock` on `<pid file>.lock` held for the lifetime of the run.
+- The start refusal only sees this container. Nothing in `upgrade` prevents two concurrent sequences either: `upgradeMigration` has no in-progress state and the sequence runner takes no advisory lock. One upgrade at a time is an operational rule, not an enforced one.
+- Needs `setsid`, present in the runtime image and on Linux, absent on macOS where `start` refuses and points at the foreground command.
+- `terminationGracePeriodSeconds` does not apply. PID 1 in the command-runner pod is `tail -f /dev/null`, so on pod deletion the detached process is torn down without ever receiving `SIGTERM`.
+
+## Shipping a command for a future version (deferred drops)
+
+You can write a command for a version listed in `TWENTY_NEXT_VERSIONS` — typically the second half of a zero-downtime migration, e.g. dropping a column one release after its replacement ships. Pass the target version to the generator:
+
+```bash
+npx nx run twenty-server:database:migrate:generate --name <name> --type fast --version 2.20.0
+```
+
+It registers and boots (versions are validated against `TWENTY_ALL_VERSIONS`) but stays **dormant** — the sequence only runs `TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS` (previous + current). It activates automatically when `nx version:bump` promotes the version to current.
+
+**Caveat:** `@WasRemovedInUpgrade` / `@WasIntroducedInUpgrade` are validated against the active sequence, so a decorator pointing at a still-dormant next-version command fails boot with `unknown-step-name`. For a deferred drop, keep the entity's `WasRemovedInUpgrade<T>` type wrapper now and add the decorator only once the version is current.
+
+See the CI workflows for how upgrade commands are exercised in continuous integration.

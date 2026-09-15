@@ -9,6 +9,7 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
     interval
     metadata
     currentPeriodEnd
+    cancelAt
     phases {
       ...BillingSubscriptionSchedulePhaseFragment
     }
@@ -17,6 +18,8 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
       hasReachedCurrentPeriodCap
       quantity
       stripePriceId
+      unitAmount
+      creditAmount
       billingProduct {
         name
         description
@@ -25,6 +28,7 @@ export const CURRENT_BILLING_SUBSCRIPTION_FRAGMENT = gql`
           productKey
           planKey
           priceUsageBased
+          isLegacy
         }
       }
     }

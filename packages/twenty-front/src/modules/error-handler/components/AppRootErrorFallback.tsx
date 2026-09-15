@@ -2,7 +2,7 @@ import { type AppErrorDisplayProps } from '@/error-handler/types/AppErrorDisplay
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { IconReload } from 'twenty-ui/display';
+import { IconReload } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppRootErrorFallbackProps = AppErrorDisplayProps;
@@ -11,15 +11,15 @@ const StyledContainer = styled.div`
   background: ${themeCssVariables.background.noisy};
   box-sizing: border-box;
   display: flex;
-  height: 100vh;
+  height: calc(100vh / var(--t-zoom, 1));
   padding: 12px;
-  width: 100vw;
+  width: calc(100vw / var(--t-zoom, 1));
 `;
 
 const StyledPanel = styled.div`
   background: ${themeCssVariables.grayScale.gray1};
   border: 1px solid ${themeCssVariables.grayScale.gray5};
-  border-radius: 8px;
+  border-radius: ${themeCssVariables.border.radius.md};
   height: 100%;
   overflow-x: auto;
   overflow-y: hidden;
@@ -85,7 +85,7 @@ const StyledButton = styled.button`
   align-items: center;
   background: ${themeCssVariables.grayScale.gray1};
   border: 1px solid ${themeCssVariables.grayScale.gray5};
-  border-radius: 8px;
+  border-radius: ${themeCssVariables.border.radius.md};
   color: ${themeCssVariables.grayScale.gray12};
   cursor: pointer;
   display: flex;

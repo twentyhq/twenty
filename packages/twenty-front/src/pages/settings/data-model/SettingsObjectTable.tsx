@@ -1,12 +1,15 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { useCombinedGetTotalCount } from '@/object-record/multiple-objects/hooks/useCombinedGetTotalCount';
+import { StyledSettingsDataModelTableBodyContainer } from '@/settings/data-model/components/SettingsDataModelTableBodyContainer';
 import { SettingsObjectMetadataItemTableRow } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRow';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TableBody } from '@/ui/layout/table/components/TableBody';
 import {
   SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH,
@@ -27,14 +30,15 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/display';
+import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
 import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -69,13 +73,16 @@ export const SettingsObjectTable = ({
 }) => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const navigate = useNavigateSettings();
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showDeactivated, setShowDeactivated] = useState(true);
-  const [showSystemObjects, setShowSystemObjects] = useState(false);
+  const [showSystemObjects, setShowSystemObjects] = useState(true);
+  const shouldShowSystemObjects = isAdvancedModeEnabled && showSystemObjects;
 
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
 
@@ -138,13 +145,18 @@ export const SettingsObjectTable = ({
         }
 
         const isSystem = item.objectMetadataItem.isSystem;
-        if (isSystem && !showSystemObjects) {
+        if (isSystem && !shouldShowSystemObjects) {
           return false;
         }
 
         return true;
       }),
-    [sortedObjectSettingsItems, searchTerm, showDeactivated, showSystemObjects],
+    [
+      sortedObjectSettingsItems,
+      searchTerm,
+      showDeactivated,
+      shouldShowSystemObjects,
+    ],
   );
 
   return (
@@ -164,24 +176,24 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItemToggle
+                      <MenuItemSwitch
                         LeftIcon={IconArchive}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           setShowDeactivated(!showDeactivated)
                         }
-                        toggled={showDeactivated}
+                        checked={showDeactivated}
                         text={t`Deactivated`}
-                        toggleSize="small"
+                        size="sm"
                       />
                       {isAdvancedModeEnabled && (
-                        <MenuItemToggle
+                        <MenuItemSwitch
                           LeftIcon={IconSettings}
-                          onToggleChange={() =>
+                          onCheckedChange={() =>
                             setShowSystemObjects(!showSystemObjects)
                           }
-                          toggled={showSystemObjects}
+                          checked={showSystemObjects}
                           text={t`System objects`}
-                          toggleSize="small"
+                          size="sm"
                         />
                       )}
                     </DropdownMenuItemsContainer>
@@ -232,56 +244,70 @@ export const SettingsObjectTable = ({
               )}
               <TableHeader></TableHeader>
             </TableRow>
-            {filteredObjectSettingsItems.map((objectSettingsItem) => {
-              const isActive = objectSettingsItem.objectMetadataItem.isActive;
+            <StyledSettingsDataModelTableBodyContainer>
+              <TableBody>
+                {filteredObjectSettingsItems.map((objectSettingsItem) => {
+                  const isActive =
+                    objectSettingsItem.objectMetadataItem.isActive;
 
-              return (
-                <SettingsObjectMetadataItemTableRow
-                  key={objectSettingsItem.objectMetadataItem.namePlural}
-                  objectMetadataItem={objectSettingsItem.objectMetadataItem}
-                  totalObjectCount={objectSettingsItem.totalObjectCount}
-                  action={
-                    isActive ? (
-                      <StyledIconChevronRightContainer>
-                        <IconChevronRight
-                          size={theme.icon.size.md}
-                          stroke={theme.icon.stroke.sm}
-                        />
-                      </StyledIconChevronRightContainer>
-                    ) : isDDLLocked ? null : (
-                      <SettingsObjectInactiveMenuDropDown
-                        isCustomObject={
-                          objectSettingsItem.objectMetadataItem.isCustom
-                        }
-                        objectMetadataItemNamePlural={
-                          objectSettingsItem.objectMetadataItem.namePlural
-                        }
-                        onActivate={() =>
-                          updateOneObjectMetadataItem({
-                            idToUpdate:
-                              objectSettingsItem.objectMetadataItem.id,
-                            updatePayload: { isActive: true },
-                          })
-                        }
-                        onDelete={() =>
-                          deleteOneObjectMetadataItem(
-                            objectSettingsItem.objectMetadataItem.id,
-                          )
-                        }
-                      />
-                    )
-                  }
-                  link={
-                    isActive
-                      ? getSettingsPath(SettingsPath.ObjectDetail, {
-                          objectNamePlural:
-                            objectSettingsItem.objectMetadataItem.namePlural,
-                        })
-                      : undefined
-                  }
-                />
-              );
-            })}
+                  return (
+                    <SettingsObjectMetadataItemTableRow
+                      key={objectSettingsItem.objectMetadataItem.namePlural}
+                      objectMetadataItem={objectSettingsItem.objectMetadataItem}
+                      totalObjectCount={objectSettingsItem.totalObjectCount}
+                      action={
+                        isActive ? (
+                          <StyledIconChevronRightContainer>
+                            <IconChevronRight
+                              size={theme.icon.size.md}
+                              stroke={theme.icon.stroke.sm}
+                            />
+                          </StyledIconChevronRightContainer>
+                        ) : (
+                          <SettingsObjectInactiveMenuDropDown
+                            isCustomObject={getIsMetadataItemCustom(
+                              objectSettingsItem.objectMetadataItem,
+                            )}
+                            isReadOnly={isDDLLocked}
+                            objectMetadataItemNamePlural={
+                              objectSettingsItem.objectMetadataItem.namePlural
+                            }
+                            onEdit={() =>
+                              navigate(SettingsPath.ObjectDetail, {
+                                objectNamePlural:
+                                  objectSettingsItem.objectMetadataItem
+                                    .namePlural,
+                              })
+                            }
+                            onActivate={() =>
+                              updateOneObjectMetadataItem({
+                                idToUpdate:
+                                  objectSettingsItem.objectMetadataItem.id,
+                                updatePayload: { isActive: true },
+                              })
+                            }
+                            onDelete={() =>
+                              deleteOneObjectMetadataItem(
+                                objectSettingsItem.objectMetadataItem.id,
+                              )
+                            }
+                          />
+                        )
+                      }
+                      link={
+                        isActive
+                          ? getSettingsPath(SettingsPath.ObjectDetail, {
+                              objectNamePlural:
+                                objectSettingsItem.objectMetadataItem
+                                  .namePlural,
+                            })
+                          : undefined
+                      }
+                    />
+                  );
+                })}
+              </TableBody>
+            </StyledSettingsDataModelTableBodyContainer>
           </Table>
         </StyledScrollableContent>
       </StyledScrollWrapper>

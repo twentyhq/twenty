@@ -1,24 +1,45 @@
-import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '@/ui/utilities/scroll/hooks/useScrollRestoration';
 import { styled } from '@linaria/react';
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+const SETTINGS_CONTENT_MAX_WIDTH = 760;
+const SETTINGS_PATHS_BY_LENGTH = Object.values(SettingsPath).sort(
+  (a, b) => b.length - a.length,
+);
+
+const getMatchingSettingsPath = (pathname: string) =>
+  SETTINGS_PATHS_BY_LENGTH.find((path) => {
+    const settingsPath = getSettingsPath(path);
+    const match = matchPath(settingsPath, pathname);
+
+    return isDefined(match);
+  });
+
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
   isMobile?: boolean;
+  isInSidePanel?: boolean;
+  overflow?: 'auto' | 'visible';
 }>`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[8]};
-  overflow: auto;
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]}
-    ${themeCssVariables.spacing[8]};
+  margin: 0 auto;
+  max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
+  overflow: ${({ overflow = 'auto' }) => overflow};
+  padding: ${({ isInSidePanel }) =>
+    isInSidePanel
+      ? `${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[8]}`
+      : `${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]} ${themeCssVariables.spacing[8]}`};
   padding-bottom: ${themeCssVariables.spacing[20]};
   width: ${({ width, isMobile }) => {
     if (isDefined(width)) {
@@ -27,36 +48,35 @@ const StyledSettingsPageContainer = styled.div<{
     if (isMobile) {
       return 'unset';
     }
-    return OBJECT_SETTINGS_WIDTH + 'px';
+    return '100%';
   }};
 `;
 
 export const SettingsPageContainer = ({
   children,
+  overflow = 'auto',
 }: {
   children: ReactNode;
+  overflow?: 'auto' | 'visible';
 }) => {
   const isMobile = useIsMobile();
+  const workspaceSurface = useWorkspaceSurface();
   const location = useLocation();
-  const settingsPath = useMemo(() => {
-    const sortedPaths = Object.values(SettingsPath).sort(
-      (a, b) => b.length - a.length,
-    );
+  const settingsPath = getMatchingSettingsPath(location.pathname);
 
-    return sortedPaths.find((path) => {
-      const settingsPath = getSettingsPath(path);
-      const match = matchPath(settingsPath, location.pathname);
-      return isDefined(match);
-    });
-  }, [location.pathname]);
-
-  const componentInstanceId = `scroll-wrapper-settings-page-container-${settingsPath}`;
+  const componentInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    `scroll-wrapper-settings-page-container-${settingsPath}`,
+  );
 
   useScrollRestoration(componentInstanceId);
 
   return (
     <ScrollWrapper componentInstanceId={componentInstanceId}>
-      <StyledSettingsPageContainer isMobile={isMobile}>
+      <StyledSettingsPageContainer
+        isMobile={isMobile}
+        isInSidePanel={workspaceSurface.type === 'side-panel'}
+        overflow={overflow}
+      >
         {children}
       </StyledSettingsPageContainer>
     </ScrollWrapper>

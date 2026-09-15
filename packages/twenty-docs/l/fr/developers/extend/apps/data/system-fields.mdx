@@ -1,0 +1,210 @@
+---
+title: Ciblage des métadonnées système
+description: Résolvez les identifiants universels déterministes des métadonnées Twenty provisionnées automatiquement sur chaque objet, afin que votre application puisse s’y référer sans les coder en dur.
+icon: gears
+---
+
+Chaque objet dans Twenty est fourni avec des **métadonnées système** que vous ne déclarez jamais vous‑même, comme un ensemble de champs et une vue principale en liste avec ses colonnes. Le serveur crée l’ensemble de ces éléments lorsque l’objet est provisionné, et cet ensemble s’agrandit au fur et à mesure que Twenty évolue.
+
+Comme vous ne les déclarez pas, il n’existe pas de constante `universalIdentifier` que vous puissiez importer. À la place, le serveur **dérive** chaque identifiant de manière déterministe, et `twenty-sdk` expose la même dérivation afin que votre manifeste puisse résoudre la valeur exacte utilisée par le serveur.
+
+## Champs système
+
+Les champs scalaires présents sur chaque objet, que vous ne déclarez jamais avec [`defineField()`](/l/fr/developers/extend/apps/data/extending-objects) :
+
+`id`, `createdAt`, `updatedAt`, `deletedAt`, `createdBy`, `updatedBy`, `position`, `searchVector`
+
+Alors, comment référencer `createdAt` en tant que colonne dans une [vue](/l/fr/developers/extend/apps/layout/views) ?
+
+### Le problème
+
+Depuis Twenty 2.19, l'identifiant universel d'un champ système est **dérivé de manière déterministe** par le serveur à partir de trois entrées : l'identifiant universel de l'application, l'identifiant universel de l'objet et le nom du champ. Inventer un id et le coder en dur ne fonctionnera pas : il ne correspond à rien sur le serveur, et la synchronisation rejette la référence orpheline :
+
+```
+Dev sync failed: viewField: INVALID_VIEW_DATA: Field metadata not found
+```
+
+### La solution
+
+<Note>
+  `getFieldUniversalIdentifier` est disponible à partir de `twenty-sdk` 2.21.
+</Note>
+
+Utilisez `getFieldUniversalIdentifier` pour résoudre exactement la même valeur que celle utilisée par le serveur. Elle prend les trois entrées et renvoie l'identifiant universel du champ :
+
+```ts
+import { getFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const createdAtFieldId = getFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  name: 'createdAt',
+});
+```
+
+* `applicationUniversalIdentifier` est l'identifiant de votre application, celui que vous transmettez à [`defineApplication()`](/l/fr/developers/extend/apps/config/application).
+* `objectUniversalIdentifier` est l'identifiant de l'objet auquel le champ appartient.
+* `name` est le nom du champ système, l'une des valeurs listées ci-dessus.
+
+### Exemple : une colonne createdAt dans une vue
+
+Le cas typique consiste à ajouter une colonne `createdAt` à une vue de l'un de vos objets personnalisés. Résolvez l'id du champ et référencez-le comme n'importe quel autre `fieldMetadataUniversalIdentifier` :
+
+```ts src/views/example-view.ts
+import {
+  defineView,
+  getFieldUniversalIdentifier,
+} from 'twenty-sdk/define';
+
+const APPLICATION_UNIVERSAL_IDENTIFIER =
+  '0b04e15c-27b2-4741-9046-b32e07469072';
+const MY_OBJECT_UNIVERSAL_IDENTIFIER =
+  'c782b61c-70fd-4c88-9cd6-4e61ab8d7591';
+
+export default defineView({
+  universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
+  name: 'All records',
+  objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: '75a90bc4-d901-4df4-85e0-af29db5e0104',
+      fieldMetadataUniversalIdentifier: getFieldUniversalIdentifier({
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
+        name: 'createdAt',
+      }),
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+Le même id résolu fonctionne partout où un `fieldMetadataUniversalIdentifier` est attendu : champs de vue, filtres, tris, regroupements et widgets de mise en page.
+
+<Note>
+  Résolvez l'id, ne le codez pas en dur. Parce que le serveur dérive la valeur à partir de
+  l'id de l'application, de l'id de l'objet et du nom du champ, appeler
+  `getFieldUniversalIdentifier` garde votre référence correcte même si ces
+  entrées changent, et évite les divergences si la dérivation évolue un jour.
+</Note>
+
+### Champs de relation système
+
+<Note>
+  `getSystemRelationFieldUniversalIdentifier` est disponible dans `twenty-sdk`
+  à partir de la version 2.23 et nécessite un serveur Twenty en version 2.23 ou ultérieure.
+</Note>
+
+Outre les champs système scalaires ci-dessus, le serveur met également à disposition quatre **champs de relation système** sur chaque objet : `timelineActivities`, `attachments`, `noteTargets` et `taskTargets`, chacun pointant vers l’objet de relation standard correspondant.
+
+Ainsi, ces champs ne sont pas résolus avec `getFieldUniversalIdentifier` : leur identifiant est dérivé **indépendamment du nom**, à partir de l’objet qui héberge le champ et de l’objet vers lequel le champ pointe. De cette façon, renommer un objet ne modifie jamais les identifiants de ses champs de relation.
+
+Utilisez `getSystemRelationFieldUniversalIdentifier` pour les résoudre :
+
+```ts
+import {
+  getSystemRelationFieldUniversalIdentifier,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+
+// rocket.attachments — the relation field hosted on your custom object
+const rocketAttachmentsFieldId = getSystemRelationFieldUniversalIdentifier({
+  applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+});
+```
+
+* `objectUniversalIdentifier` est l’objet qui **héberge** le champ.
+* `relationTargetObjectUniversalIdentifier` est l’objet vers lequel le champ **pointe**.
+
+La direction est encodée par l’ordre des arguments. Pour résoudre le côté inverse (par exemple `attachment.targetRocket`, le champ morph que le serveur crée sur l’objet de relation standard), inversez les deux :
+
+```ts
+// attachment.targetRocket — the reverse morph field on Attachment
+const attachmentTargetRocketFieldId =
+  getSystemRelationFieldUniversalIdentifier({
+    applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment.universalIdentifier,
+    relationTargetObjectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  });
+```
+
+Comme pour les champs système scalaires, l’id résolu fonctionne partout où un `fieldMetadataUniversalIdentifier` est attendu.
+
+## Vues système
+
+<Note>
+  `getSystemViewUniversalIdentifier` et `getSystemViewFieldUniversalIdentifier`
+  sont disponibles dans `twenty-sdk` à partir de la version 2.26 et nécessitent
+  un serveur Twenty en version 2.26 ou ultérieure.
+</Note>
+
+Le serveur provisionne également une **vue système** sur chaque objet : la vue principale en liste (`All {objectLabelPlural}`, indexée sur `ViewKey.INDEX` (dérivée de `SYSTEM_VIEW_KEYS.INDEX`)), avec une colonne par champ affichable. Comme pour les champs de relation système, leurs identifiants sont dérivés **sans nom**, de sorte que renommer un objet ou un champ ne les modifie jamais.
+
+Utilisez `getSystemViewUniversalIdentifier` pour la résoudre :
+
+```ts
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
+
+const rocketIndexViewId = getSystemViewUniversalIdentifier({
+  objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
+});
+```
+
+* `objectMetadataApplicationUniversalIdentifier` correspond à l’application propriétaire de l’**objet**, ce qui sert d’espace de noms pour la vue.
+* `objectUniversalIdentifier` est l’objet que la vue répertorie.
+* `viewKey` est le discriminateur de vue système : `SYSTEM_VIEW_KEYS.INDEX` pour la vue principale en liste, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` pour la vue du widget de champs de la page d’enregistrement. Il sert de clé pour la dérivation ; seul `INDEX` est également stocké sur la ligne de la vue.
+
+L’identifiant résolu fonctionne partout où un `viewUniversalIdentifier` est attendu, par exemple pour une entrée de barre latérale [`NavigationMenuItemType.VIEW`](/l/fr/developers/extend/apps/layout/navigation-menu-items). Pour simplement ouvrir la liste principale d’un objet, privilégiez `NavigationMenuItemType.OBJECT` avec `targetObjectUniversalIdentifier` : cela ne nécessite aucune dérivation.
+
+`getSystemViewFieldUniversalIdentifier` résout une seule **colonne** sur une vue système, à partir de la vue et du champ qu’elle affiche :
+
+```ts
+import { getSystemViewFieldUniversalIdentifier } from 'twenty-sdk/define';
+
+const rocketNameColumnId = getSystemViewFieldUniversalIdentifier({
+  fieldMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+  viewUniversalIdentifier: rocketIndexViewId,
+  fieldMetadataUniversalIdentifier: ROCKET_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+});
+```
+
+Notez le premier argument : une colonne est placée dans l’espace de noms de l’application propriétaire du **champ qu’elle affiche**, et non de celle propriétaire de la vue. Un champ que votre application ajoute à un objet standard obtient sa colonne dérivée sous votre application, sur une vue appartenant à Twenty.
+
+<Warning>
+  Les vues système et leurs colonnes sont **la propriété du serveur** : résolvez leurs identifiants pour les référencer, jamais pour les déclarer. `key` sur
+  [`defineView()`](/l/fr/developers/extend/apps/layout/views) est obsolète et ignoré, de sorte qu’une vue de manifeste ne peut jamais revendiquer la clé `INDEX`, et le serveur provisionne déjà une colonne pour chaque champ que vous ajoutez, de sorte que déclarer votre propre
+  `defineViewField()` pour ce même champ sur une vue système entre en conflit avec celle‑ci.
+</Warning>
+
+## Objets standard de Twenty
+
+Pour un objet Twenty **standard** (Person, Company, Opportunity, …), vous n’avez rien à dériver : les identifiants sont des constantes pré‑calculées que vous pouvez importer directement, à la fois pour les champs et pour les vues.
+
+```ts
+import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.createdAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.fields.updatedAt.universalIdentifier
+// STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.views.allPeople.universalIdentifier
+```
+
+Utilisez les fonctions utilitaires ci‑dessus lorsque l’objet est l’un de ceux que **votre application** définit avec [`defineObject()`](/l/fr/developers/extend/apps/data/objects), et pour lesquels il n’existe pas une telle constante.
+
+<Note>
+  `name` est un champ **par défaut**, pas un champ système. Il conserve son propre identifiant universel codé en dur et n'est pas résolu via
+  `getFieldUniversalIdentifier`. Sur les objets que vous définissez, référencez le champ
+  `name` avec l'identifiant que vous lui avez donné dans `defineObject()`.
+</Note>

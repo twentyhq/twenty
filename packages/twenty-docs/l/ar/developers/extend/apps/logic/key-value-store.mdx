@@ -1,0 +1,110 @@
+---
+title: مخزن المفاتيح-القيم
+description: احتفظ بالنتائج الوسيطة، وخزّن البيانات مؤقتًا، وشارك الحالة عبر تشغيلات دوال المنطق باستخدام مخزن مفاتيح-قيم مدمج على مستوى التطبيق.
+icon: database
+---
+
+تعمل دوال المنطق داخل عمليات Node.js معزولة وقصيرة العمر — بمجرد انتهاء التشغيل، لا يظل أي شيء محفوظًا في الذاكرة. عندما تحتاج إلى تذكّر شيءٍ ما بين عمليات التشغيل (تخزين مؤقت لاستجابة واجهة برمجة تطبيقات مكلفة، أو تخزين مؤشر لمزامنات تزايدية، أو تقليل تكرار العمل، أو تمرير الحالة من دالة إلى أخرى)، احتفظ به في مخزن مفاتيح-قيم مدمج.
+
+يحصل كل تطبيق على مساحة أسماء معزولة خاصة به: تتم فهرسة الإدخالات بحسب التطبيق المصادق عليه، لذا لا يمكن أن تتصادم مفاتيحك مع مفاتيح تطبيق آخر — ولا يمكن لتطبيق آخر قراءتها.
+
+```text
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
+```
+
+## جلب، تعيين، حذف
+
+استورد `kv` من `twenty-sdk/logic-function`. يمكن أن تكون القيم أي حمولة قابلة للتسلسل إلى JSON.
+
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
+
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
+
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## النطاقات
+
+لكل إدخال نطاق (scope)، يتم تمريره كخيار في كل استدعاء. القيمة الافتراضية هي `WORKSPACE`.
+
+* **`WORKSPACE`** (الافتراضي) — يكون الإدخال خاصًا بتثبيت مساحة العمل الحالية لتطبيقك. كل مساحة عمل تقوم بتثبيت التطبيق تحصل على مجموعة مستقلة خاصة بها من المفاتيح. هذا هو الخيار المناسب لبيانات التخزين المؤقت، والمؤشرات (cursors)، والحالة الخاصة بكل مساحة عمل.
+* **`SERVER`** — تتم مشاركة الإدخال عبر **كل عملية تثبيت** لتطبيقك على الخادم. تتصرف إدخالات الخادم مثل **مطالبات (claims)**: تكون القيمة المخزّنة دائمًا هي workspaceId لمساحة العمل التي طالبت بالمفتاح (احذف `value` في `set` للمطالبة بالمفتاح لصالح مساحة العمل الحالية)، ولا يمكن سوى لتلك المساحة أن تعيد الكتابة فوقه أو تحذفه. يمكن لأي تثبيت قراءة الإدخال.
+
+توجد مطالبات الخادم من أجل التوجيه عبر مساحات العمل (cross-workspace routing). يعمل [محلّل مسار الخادم](/l/ar/developers/extend/apps/logic/logic-functions#server-route-trigger) في مساحة عمل مالك تسجيل التطبيق، ولكن عادةً لا يحمل خطاف الويب الوارد سوى معرّف حساب خارجي — وليس معرّف مساحة العمل في Twenty. اجعل كل مساحة عمل تطالب بالمعرّف الخارجي الخاص بها في وقت الاتصال، ثم قم بحلّه في المسار (route):
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
+});
+```
+
+نظرًا إلى أنّه لا يمكن المطالبة بمفتاح خادم إلا لصالح مساحة عمل المتصل نفسه ولا يمكن أبدًا الكتابة فوقه من قِبَل مساحة أخرى، فلن تتمكّن أي مساحة عمل من اختطاف تعيين (mapping) يخص مساحة عمل أخرى. يصدر `kv.set` استثناءً (throws) عندما يكون المفتاح مُطالَبًا به مسبقًا من قِبَل مساحة عمل أخرى.
+
+## استخدمه: خزّن استدعاء مكلفًا في الذاكرة المؤقتة
+
+استخدام شائع هو التخزين المؤقت لاستجابة جهة خارجية بطيئة أو مقيدة بمعدل معيّن حتى تعيد عمليات التشغيل المتكررة استخدامها بدلًا من دفع التكلفة في كل مرة.
+
+```ts src/logic-functions/getExchangeRate.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+type CachedRate = { rate: number; fetchedAt: number };
+
+const handler = async (params: { from: string; to: string }) => {
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
+
+  if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
+    return { rate: cached.rate, cached: true };
+  }
+
+  const response = await fetch(
+    `https://api.example.com/rate?from=${params.from}&to=${params.to}`,
+  );
+  const { rate } = (await response.json()) as { rate: number };
+
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
+
+  return { rate, cached: false };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'd9b2f4e6-1c83-4a07-9e52-6b1d3c8a0f47',
+  name: 'get-exchange-rate',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+## أنماط ونصائح
+
+* **مساحات الأسماء.** أضف بادئة إلى المفاتيح للحفاظ على فصل الاهتمامات المختلفة — `sync-cursor:linear` و `cache:exchange-rate:USD:EUR` و `lock:nightly-report`.
+* **انتهاء الصلاحية (TTL).** لا يحتوي المخزن على آلية انتهاء صلاحية مدمجة. قم بتخزين طابع زمني داخل القيمة (كما في مثال التخزين المؤقت) وتحقق منه عند القراءة، أو امسح دوريًا المفاتيح القديمة من خلال [دالة يتم تشغيلها بواسطة cron](/l/ar/developers/extend/apps/logic/logic-functions).
+* **ما الذي يتم تخزينه.** أي قيمة قابلة للتسلسل إلى JSON — أرقام، سلاسل نصية، مصفوفات، كائنات. حافظ على صِغر الإدخالات؛ فهذا مخصّص للتنسيق والتخزين المؤقت، وليس للملفات الكبيرة أو الكتل الثنائية الضخمة. بالنسبة للملفات، استخدم حقل `FILES` ودالة [`uploadFile`](/l/ar/developers/extend/apps/logic/logic-functions#uploading-files).
+* **إمكانية الرؤية.** تعيش الإدخالات في قاعدة بيانات المثيل (instance)، وليس كسجلات مساحة عمل — فهي لا تظهر مطلقًا في واجهة مستخدم مساحة العمل، وليست جزءًا من نموذج بيانات تطبيقك، ولا تحتاج إلى أذونات أدوار أو كائنات.
+
+## بديل: كائن مخزن قابل للاستعلام
+
+المخزن المدمج غامض عمدًا: الإدخالات ليست سجلات، لذلك لا يمكنك استعراضها في واجهة المستخدم، أو ربطها بكائنات أخرى، أو تصفيتها باستعلامات السجلات. عندما تحتاج إلى أيٍّ من ذلك — مثل سجل مزامنة مرئي، أو حالة لكل سجل — عرِّف بدلًا من ذلك كائنًا تقنيًا صغيرًا يحتوي على حقل `key` فريد وحقل `value` من نوع `RAW_JSON`، واستعلم عنه عبر عميل واجهة برمجة التطبيقات محدد الأنواع (typed API client). اطلع على [Objects](/l/ar/developers/extend/apps/data/objects) للرجوع إلى `defineObject` وعلى [Data → Unique indexes](/l/ar/developers/extend/apps/data/overview#unique-indexes) لفرض تفرّد المفاتيح.
+
+* **تحديد النطاق إلى سجل.** أضف [علاقة](/l/ar/developers/extend/apps/data/relations) من كائن المخزن إلى الكائن المستهدف بدلًا من ترميز المعرّف داخل المفتاح.
+* **الرؤية والصلاحيات.** تعيش الصفوف في قاعدة بيانات مساحة العمل مثل أي سجل آخر، لذا يمكن الاستعلام عنها عبر واجهة برمجة التطبيقات وتلتزم [بدور](/l/ar/developers/extend/apps/config/roles) التطبيق لديك. لإبقاء المخزن خارج واجهة المستخدم الرئيسية، اتركه خارج [قائمة التنقل](/l/ar/developers/extend/apps/layout/navigation-menu-items).
+
+<Note>
+على عكس المخزن المدمج، يكون الكائن المخصص محدَّد النطاق دائمًا بمساحة عمل واحدة — لا يمكنه مشاركة الإدخالات عبر التثبيتات بالطريقة التي تفعلها مفاتيح `SERVER`.
+</Note>

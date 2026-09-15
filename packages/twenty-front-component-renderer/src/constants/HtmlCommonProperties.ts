@@ -1,4 +1,4 @@
-import { type PropertySchema } from './PropertySchema';
+import { type PropertySchema } from '@/types/PropertySchema';
 
 export const HTML_COMMON_PROPERTIES: Record<string, PropertySchema> = {
   id: { type: 'string', optional: true },
@@ -10,4 +10,5 @@ export const HTML_COMMON_PROPERTIES: Record<string, PropertySchema> = {
   'aria-label': { type: 'string', optional: true },
   'aria-hidden': { type: 'boolean', optional: true },
   'data-testid': { type: 'string', optional: true },
+  draggable: { type: 'string', optional: true },
 };

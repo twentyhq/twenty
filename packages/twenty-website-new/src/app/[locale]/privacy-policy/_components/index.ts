@@ -1,1 +1,0 @@
-export { PrivacyPolicyDocument } from './PrivacyPolicyDocument';

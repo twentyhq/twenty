@@ -1,4 +1,4 @@
-import { RecordShowEffect } from '@/object-record/record-show/components/RecordShowEffect';
+import { RecordShowResourceLoader } from '@/object-record/record-show/components/RecordShowResourceLoader';
 import { PageLayoutSingleTabRenderer } from '@/page-layout/components/PageLayoutSingleTabRenderer';
 import { usePageLayoutIdForRecord } from '@/page-layout/hooks/usePageLayoutIdForRecord';
 import { LayoutRenderingProvider } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -27,10 +27,9 @@ export const MergeRecordTab = ({
           targetObjectNameSingular: objectNameSingular,
         },
         layoutType: PageLayoutType.RECORD_PAGE,
-        isInSidePanel: true,
       }}
     >
-      <RecordShowEffect
+      <RecordShowResourceLoader
         objectNameSingular={objectNameSingular}
         recordId={recordId}
       />

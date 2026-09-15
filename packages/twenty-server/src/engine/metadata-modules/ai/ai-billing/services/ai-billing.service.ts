@@ -1,21 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { type LanguageModelUsage } from 'ai';
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 
-import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { type QuotaCost } from 'src/engine/core-modules/usage-limit/types/quota-cost.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
-import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
+import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { computeCostBreakdown } from 'src/engine/metadata-modules/ai/ai-billing/utils/compute-cost-breakdown.util';
-import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
+import { convertDollarsToCreditsMicro } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-credits-micro.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export type BillingUsageInput = {
   usage: LanguageModelUsage;
@@ -27,12 +25,47 @@ export class AiBillingService {
   private readonly logger = new Logger(AiBillingService.name);
 
   constructor(
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
+    private readonly usageRecorderService: UsageRecorderService,
     private readonly aiModelRegistryService: AiModelRegistryService,
-    private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
+
+  async assertAiExecutionAllowed({
+    workspaceId,
+    operationType,
+    spenders,
+  }: {
+    workspaceId: string;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): Promise<void> {
+    await this.billingUsageService.assertUsageAllowed({
+      workspaceId,
+      resourceType: UsageResourceType.AI,
+      operationType,
+      spenders,
+    });
+  }
+
+  private async consumeQuota({
+    workspaceId,
+    operationType,
+    spenders,
+    cost,
+  }: {
+    workspaceId: string;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+    cost: QuotaCost;
+  }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
+    return this.billingUsageService.consumeUsageQuota({
+      workspaceId,
+      resourceType: UsageResourceType.AI,
+      operationType,
+      spenders,
+      cost,
+    });
+  }
 
   calculateCost(modelId: ModelId, billingInput: BillingUsageInput): number {
     const model = this.aiModelRegistryService.getEffectiveModelConfig(modelId);
@@ -67,14 +100,18 @@ export class AiBillingService {
     userWorkspaceId?: string | null,
   ): Promise<void> {
     const costInDollars = this.calculateCost(modelId, billingInput);
-    const creditsUsedMicro = Math.round(
-      convertDollarsToBillingCredits(costInDollars),
-    );
+    const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
     const totalTokens =
       (billingInput.usage.inputTokens ?? 0) +
-      (billingInput.usage.outputTokens ?? 0) +
-      (billingInput.cacheCreationTokens ?? 0);
+      (billingInput.usage.outputTokens ?? 0);
+
+    await this.consumeQuota({
+      workspaceId,
+      operationType,
+      spenders: { userWorkspaceId, agentId },
+      cost: { creditsUsedMicro, quantity: totalTokens },
+    });
 
     await this.emitAiTokenUsageEvent(
       workspaceId,
@@ -85,6 +122,34 @@ export class AiBillingService {
       agentId,
       userWorkspaceId,
     );
+  }
+
+  async decrementAndCheckAvailableCredits({
+    modelId,
+    billingInput,
+    workspaceId,
+    operationType,
+    spenders,
+  }: {
+    modelId: ModelId;
+    billingInput: BillingUsageInput;
+    workspaceId: string;
+    operationType: UsageOperationType;
+    spenders: UsageSpenders;
+  }): Promise<{ hasNoMoreAvailableCredits: boolean }> {
+    const costInDollars = this.calculateCost(modelId, billingInput);
+    const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
+
+    const totalTokens =
+      (billingInput.usage.inputTokens ?? 0) +
+      (billingInput.usage.outputTokens ?? 0);
+
+    return this.consumeQuota({
+      workspaceId,
+      operationType,
+      spenders,
+      cost: { creditsUsedMicro, quantity: totalTokens },
+    });
   }
 
   async billNativeWebSearchUsage(
@@ -98,49 +163,32 @@ export class AiBillingService {
 
     const costInDollars =
       nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
-    const creditsUsedMicro = Math.round(
-      convertDollarsToBillingCredits(costInDollars),
-    );
+    const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
 
     this.logger.log(
       `Native web search billing: ${nativeWebSearchCallCount} calls, $${costInDollars.toFixed(4)}`,
     );
 
-    let periodStart: Date | undefined;
-
-    if (this.billingService.isBillingEnabled()) {
-      const {
-        billingSubscription: { currentPeriodStart },
-      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
-      ]);
-
-      periodStart = currentPeriodStart;
-
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
-    }
-
-    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
-      USAGE_RECORDED,
-      [
-        {
-          resourceType: UsageResourceType.AI,
-          operationType: UsageOperationType.WEB_SEARCH,
-          creditsUsedMicro,
-          quantity: nativeWebSearchCallCount,
-          unit: UsageUnit.INVOCATION,
-          userWorkspaceId: userWorkspaceId || null,
-          periodStart,
-        },
-      ],
+    await this.consumeQuota({
       workspaceId,
-    );
+      operationType: UsageOperationType.WEB_SEARCH,
+      spenders: { userWorkspaceId },
+      cost: { creditsUsedMicro, quantity: nativeWebSearchCallCount },
+    });
+
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.WEB_SEARCH,
+        creditsUsedMicro,
+        quantity: nativeWebSearchCallCount,
+        unit: UsageUnit.INVOCATION,
+        spenders: { userWorkspaceId },
+      },
+    ]);
   }
 
-  private async emitAiTokenUsageEvent(
+  async emitAiTokenUsageEvent(
     workspaceId: string,
     creditsUsedMicro: number,
     totalTokens: number,
@@ -149,39 +197,17 @@ export class AiBillingService {
     agentId?: string | null,
     userWorkspaceId?: string | null,
   ): Promise<void> {
-    let periodStart: Date | undefined;
-
-    if (this.billingService.isBillingEnabled()) {
-      const {
-        billingSubscription: { currentPeriodStart },
-      } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingSubscription',
-      ]);
-
-      periodStart = currentPeriodStart;
-
-      await this.billingUsageService.decrementAvailableCredits({
-        workspaceId,
-        usedCredits: creditsUsedMicro,
-      });
-    }
-
-    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
-      USAGE_RECORDED,
-      [
-        {
-          resourceType: UsageResourceType.AI,
-          operationType,
-          creditsUsedMicro,
-          quantity: totalTokens,
-          unit: UsageUnit.TOKEN,
-          resourceId: agentId || null,
-          resourceContext: modelId,
-          userWorkspaceId: userWorkspaceId || null,
-          periodStart,
-        },
-      ],
-      workspaceId,
-    );
+    await this.usageRecorderService.record(workspaceId, [
+      {
+        resourceType: UsageResourceType.AI,
+        operationType,
+        creditsUsedMicro,
+        quantity: totalTokens,
+        unit: UsageUnit.TOKEN,
+        resourceId: agentId || null,
+        resourceContext: modelId,
+        spenders: { userWorkspaceId, agentId },
+      },
+    ]);
   }
 }

@@ -1,9 +1,13 @@
 import {
   FieldMetadataType,
+  RelationType,
   ViewFilterOperand as RecordFilterOperand,
 } from '@/types';
 import { type RecordFilter } from '@/utils';
-import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import {
+  type FieldShared,
+  turnRecordFilterIntoRecordGqlOperationFilter,
+} from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 
 const fields = [
   { id: 'f-text', name: 'name', type: FieldMetadataType.TEXT, label: 'Name' },
@@ -48,6 +52,36 @@ const fields = [
     name: 'company',
     type: FieldMetadataType.RELATION,
     label: 'Company',
+  },
+  {
+    id: 'f-relation-account-owner',
+    name: 'accountOwner',
+    type: FieldMetadataType.RELATION,
+    label: 'Account Owner',
+  },
+  {
+    id: 'f-morph-relation',
+    name: 'target',
+    type: FieldMetadataType.MORPH_RELATION,
+    label: 'Target',
+    morphRelations: [
+      {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          id: 'o-person',
+          nameSingular: 'person',
+          namePlural: 'people',
+        },
+      },
+      {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          id: 'o-company',
+          nameSingular: 'company',
+          namePlural: 'companies',
+        },
+      },
+    ],
   },
   {
     id: 'f-bool',
@@ -131,6 +165,8 @@ const fields = [
 
 const filterValueDependencies = { timeZone: 'UTC' };
 
+const fieldMetadataItemById = new Map(fields.map((field) => [field.id, field]));
+
 const makeFilter = (
   fieldMetadataId: string,
   operand: RecordFilterOperand,
@@ -156,7 +192,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         RecordFilterOperand.CONTAINS,
         'x',
       ),
-      fieldMetadataItems: fields,
+      fieldMetadataItemById,
     });
 
     expect(result).toBeUndefined();
@@ -166,7 +202,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
     const result = turnRecordFilterIntoRecordGqlOperationFilter({
       filterValueDependencies,
       recordFilter: makeFilter('f-text', RecordFilterOperand.CONTAINS, ''),
-      fieldMetadataItems: fields,
+      fieldMetadataItemById,
     });
 
     expect(result).toBeUndefined();
@@ -181,7 +217,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.CONTAINS,
           'test',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ name: { ilike: '%test%' } });
@@ -195,7 +231,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.DOES_NOT_CONTAIN,
           'test',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ not: { name: { ilike: '%test%' } } });
@@ -207,7 +243,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
         recordFilter: makeFilter('f-number', RecordFilterOperand.IS, '42'),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ amount: { eq: 42 } });
@@ -217,7 +253,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
         recordFilter: makeFilter('f-number', RecordFilterOperand.IS_NOT, '42'),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ not: { amount: { eq: 42 } } });
@@ -231,7 +267,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.GREATER_THAN_OR_EQUAL,
           '10',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ amount: { gte: 10 } });
@@ -245,7 +281,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.LESS_THAN_OR_EQUAL,
           '100',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ amount: { lte: 100 } });
@@ -261,7 +297,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_AFTER,
           '2024-03-15',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ createdAt: { gte: '2024-03-15' } });
@@ -275,7 +311,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_BEFORE,
           '2024-03-15',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ createdAt: { lt: '2024-03-15' } });
@@ -289,7 +325,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS,
           '2024-03-15',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ createdAt: { eq: '2024-03-15' } });
@@ -299,7 +335,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
         recordFilter: makeFilter('f-date', RecordFilterOperand.IS_IN_PAST, ''),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('createdAt.lt');
@@ -313,7 +349,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_IN_FUTURE,
           '',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('createdAt.gte');
@@ -323,7 +359,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
         recordFilter: makeFilter('f-date', RecordFilterOperand.IS_TODAY, ''),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('createdAt.eq');
@@ -337,7 +373,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_RELATIVE,
           'PAST_7_DAY',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('and');
@@ -353,7 +389,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_AFTER,
           '2024-03-15T10:00:00Z',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('updatedAt.gte');
@@ -367,7 +403,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_BEFORE,
           '2024-03-15T10:00:00Z',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('updatedAt.lt');
@@ -381,7 +417,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS,
           '2024-03-15T10:00:00Z',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('and');
@@ -395,7 +431,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_IN_PAST,
           '',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('updatedAt.lt');
@@ -409,7 +445,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_IN_FUTURE,
           '',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('updatedAt.gt');
@@ -423,7 +459,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_TODAY,
           '',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('and');
@@ -437,7 +473,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_RELATIVE,
           `PAST_7_DAY;;UTC;;`,
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('and');
@@ -449,7 +485,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
         recordFilter: makeFilter('f-rating', RecordFilterOperand.IS, '3'),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('rating.eq');
@@ -463,7 +499,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.GREATER_THAN_OR_EQUAL,
           '3',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('rating.in');
@@ -477,10 +513,22 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.LESS_THAN_OR_EQUAL,
           '3',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('rating.in');
+    });
+
+    it('should handle IS_NOT operand as wrapped eq', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter('f-rating', RecordFilterOperand.IS_NOT, '3'),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        not: { rating: { eq: 'RATING_3' } },
+      });
     });
   });
 
@@ -489,7 +537,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
         recordFilter: makeFilter('f-bool', RecordFilterOperand.IS, 'true'),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ isActive: { eq: true } });
@@ -499,7 +547,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
         recordFilter: makeFilter('f-bool', RecordFilterOperand.IS, 'false'),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ isActive: { eq: false } });
@@ -515,7 +563,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS,
           '["ACTIVE","PENDING"]',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('status.in');
@@ -529,7 +577,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_NOT,
           '["ACTIVE"]',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('not');
@@ -545,7 +593,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.CONTAINS,
           '["TAG1","TAG2"]',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('tags.containsAny');
@@ -559,7 +607,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.DOES_NOT_CONTAIN,
           '["TAG1"]',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('or');
@@ -575,7 +623,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS,
           '["550e8400-e29b-41d4-a716-446655440000"]',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('companyId.in');
@@ -589,10 +637,71 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS_NOT,
           '["550e8400-e29b-41d4-a716-446655440000"]',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('or');
+    });
+
+    it('should resolve programmatic current-record morph relation-table filters to the matching join column', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies: {
+          ...filterValueDependencies,
+          currentRecord: {
+            id: '11111111-1111-4111-8111-111111111111',
+            objectMetadataNameSingular: 'person',
+          },
+        },
+        recordFilter: makeFilter(
+          'f-morph-relation',
+          RecordFilterOperand.IS,
+          JSON.stringify({
+            selectedRecordIds: [],
+            isCurrentRecordSelected: true,
+          }),
+          'RELATION',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        targetPersonId: { in: ['11111111-1111-4111-8111-111111111111'] },
+      });
+    });
+
+    it('should omit programmatic current-record morph filters when morph relation metadata is missing', () => {
+      const fieldMetadataItemByIdWithoutMorphRelations = new Map(
+        fieldMetadataItemById,
+      );
+
+      fieldMetadataItemByIdWithoutMorphRelations.set('f-morph-relation', {
+        id: 'f-morph-relation',
+        name: 'target',
+        type: FieldMetadataType.MORPH_RELATION,
+        label: 'Target',
+      });
+
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies: {
+          ...filterValueDependencies,
+          currentRecord: {
+            id: '11111111-1111-4111-8111-111111111111',
+            objectMetadataNameSingular: 'person',
+          },
+        },
+        recordFilter: makeFilter(
+          'f-morph-relation',
+          RecordFilterOperand.IS,
+          JSON.stringify({
+            selectedRecordIds: [],
+            isCurrentRecordSelected: true,
+          }),
+          'RELATION',
+        ),
+        fieldMetadataItemById: fieldMetadataItemByIdWithoutMorphRelations,
+      });
+
+      expect(result).toBeUndefined();
     });
   });
 
@@ -605,7 +714,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.CONTAINS,
           'test',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ metadata: { like: '%test%' } });
@@ -619,7 +728,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.DOES_NOT_CONTAIN,
           'test',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ not: { metadata: { like: '%test%' } } });
@@ -635,7 +744,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.CONTAINS,
           'doc',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ attachments: { like: '%doc%' } });
@@ -651,7 +760,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.VECTOR_SEARCH,
           'hello world',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({ search: { search: 'hello world' } });
@@ -669,7 +778,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           'CURRENCY',
           'amountMicros',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('revenue');
@@ -685,7 +794,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.CONTAINS,
           'John',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('or');
@@ -701,7 +810,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.CONTAINS,
           'Paris',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('or');
@@ -717,7 +826,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.CONTAINS,
           'api',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({
@@ -744,7 +853,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.CONTAINS,
           'xyz123',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({
@@ -769,7 +878,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.DOES_NOT_CONTAIN,
           'api',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({
@@ -800,7 +909,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.DOES_NOT_CONTAIN,
           'xyz123',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toEqual({
@@ -831,7 +940,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           'PHONES',
           'primaryPhoneNumber',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toBeDefined();
@@ -849,7 +958,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           'EMAILS',
           'primaryEmail',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toBeDefined();
@@ -867,7 +976,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           'LINKS',
           'primaryLinkUrl',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toBeDefined();
@@ -883,7 +992,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.CONTAINS,
           '["item1"]',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toBeDefined();
@@ -897,7 +1006,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.DOES_NOT_CONTAIN,
           '["item1"]',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('not');
@@ -913,10 +1022,290 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
           RecordFilterOperand.IS,
           '["550e8400-e29b-41d4-a716-446655440000"]',
         ),
-        fieldMetadataItems: fields,
+        fieldMetadataItemById,
       });
 
       expect(result).toHaveProperty('recordId.in');
     });
+
+    it('should handle IS_NOT operand as wrapped in', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-uuid',
+          RecordFilterOperand.IS_NOT,
+          '["550e8400-e29b-41d4-a716-446655440000"]',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        not: {
+          recordId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+        },
+      });
+    });
+  });
+
+  describe('relation traversal', () => {
+    // The dispatcher should wrap the inner filter under the relation source
+    // field's GraphQL key and build it against the target field's type
+    // (not the relation FK's type).
+    it('should nest filter under source field name when target field is set', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter('f-relation', RecordFilterOperand.CONTAINS, 'Acme'),
+          relationTargetFieldMetadataId: 'f-text',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ company: { name: { ilike: '%Acme%' } } });
+    });
+
+    // If the target field is no longer resolvable (e.g. it was
+    // deleted from the workspace), dropping the filter is the safe path —
+    // the alternative would silently interpret the text value as a UUID
+    // list against the relation FK.
+    it('should return undefined when target field is not found', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter('f-relation', RecordFilterOperand.CONTAINS, 'Acme'),
+          relationTargetFieldMetadataId: 'nonexistent-target',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toBeUndefined();
+    });
+
+    // Emptiness operands must check the target column on the related
+    // object rather than the FK column on the source record.
+    it('should apply IS_EMPTY against the target field, not the relation FK', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter('f-relation', RecordFilterOperand.IS_EMPTY, ''),
+          relationTargetFieldMetadataId: 'f-text',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      // Without traversal, the RELATION case would have produced a filter
+      // on `companyId`; here we expect the emptiness check to fall on
+      // `company.name` instead.
+      expect(result).toEqual({
+        company: { or: [{ name: { ilike: '' } }, { name: { is: 'NULL' } }] },
+      });
+    });
+
+    // The target field's per-type switch must run, so number/select/etc.
+    // targets behave like a direct filter on that field — verified here
+    // with a SELECT target.
+    it('should dispatch to target type switch (SELECT target)', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter('f-relation', RecordFilterOperand.IS, '["ACTIVE"]'),
+          relationTargetFieldMetadataId: 'f-select',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ company: { status: { in: ['ACTIVE'] } } });
+    });
+
+    // Without a relationTargetFieldMetadataId the dispatcher must fall
+    // through to the direct builder — preserving the filter-by-record-id
+    // behaviour on the relation FK.
+    it('should keep relation filter-by-id behaviour when no target field is set', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-relation',
+          RecordFilterOperand.IS,
+          '["550e8400-e29b-41d4-a716-446655440000"]',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toHaveProperty('companyId.in');
+    });
+
+    // A relation leaf compiles to a single-hop FK compare on the joined table
+    // (company.accountOwnerId), not a second-hop `company.accountOwner.<field>`.
+    it('should resolve a relation target field to its foreign key', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter(
+            'f-relation',
+            RecordFilterOperand.IS,
+            '["550e8400-e29b-41d4-a716-446655440000"]',
+            'RELATION',
+          ),
+          relationTargetFieldMetadataId: 'f-relation-account-owner',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        company: {
+          accountOwnerId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+        },
+      });
+    });
+
+    // "= me" (the current workspace member) resolves into that same FK compare.
+    it('should resolve a relation target field set to the current workspace member', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies: {
+          ...filterValueDependencies,
+          currentWorkspaceMemberId: '11111111-1111-4111-8111-111111111111',
+        },
+        recordFilter: {
+          ...makeFilter(
+            'f-relation',
+            RecordFilterOperand.IS,
+            JSON.stringify({
+              isCurrentWorkspaceMemberSelected: true,
+              selectedRecordIds: [],
+            }),
+            'RELATION',
+          ),
+          relationTargetFieldMetadataId: 'f-relation-account-owner',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        company: {
+          accountOwnerId: { in: ['11111111-1111-4111-8111-111111111111'] },
+        },
+      });
+    });
+  });
+});
+
+describe('turnRecordFilterIntoRecordGqlOperationFilter - traversed morph relations', () => {
+  const CURRENT_CLIENT_ID = '11111111-1111-4111-8111-111111111111';
+
+  const morphFrom = {
+    id: 'f-from-morph',
+    name: 'from',
+    type: FieldMetadataType.MORPH_RELATION,
+    label: 'From',
+    relation: { sourceObjectMetadata: { id: 'o-transaction' } },
+    morphRelations: [
+      {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          id: 'o-wallet',
+          nameSingular: 'wallet',
+          namePlural: 'wallets',
+        },
+      },
+      {
+        type: RelationType.MANY_TO_ONE,
+        targetObjectMetadata: {
+          id: 'o-trading-account',
+          nameSingular: 'tradingAccount',
+          namePlural: 'tradingAccounts',
+        },
+      },
+    ],
+  };
+
+  const plainFrom = {
+    id: 'f-from-plain',
+    name: 'from',
+    type: FieldMetadataType.RELATION,
+    label: 'From',
+    relation: { sourceObjectMetadata: { id: 'o-transaction' } },
+  };
+
+  const tradingAccountClient = {
+    id: 'f-trading-account-client',
+    name: 'client',
+    type: FieldMetadataType.RELATION,
+    label: 'Client',
+    relation: { sourceObjectMetadata: { id: 'o-trading-account' } },
+  };
+
+  const traversedFieldMetadataItemById = new Map<string, FieldShared>([
+    [morphFrom.id, morphFrom],
+    [plainFrom.id, plainFrom],
+    [tradingAccountClient.id, tradingAccountClient],
+  ]);
+
+  const makeTraversedFilter = (fieldMetadataId: string) =>
+    ({
+      id: 'test-filter',
+      fieldMetadataId,
+      value: JSON.stringify({
+        selectedRecordIds: [],
+        isCurrentRecordSelected: true,
+      }),
+      type: 'RELATION',
+      operand: RecordFilterOperand.IS,
+      relationTargetFieldMetadataId: tradingAccountClient.id,
+    }) as RecordFilter;
+
+  const clientPageDependencies = {
+    timeZone: 'UTC',
+    currentRecord: {
+      id: CURRENT_CLIENT_ID,
+      objectMetadataNameSingular: 'client',
+    },
+  };
+
+  it('should scope a traversed filter through a plain relation', () => {
+    const result = turnRecordFilterIntoRecordGqlOperationFilter({
+      filterValueDependencies: clientPageDependencies,
+      recordFilter: makeTraversedFilter(plainFrom.id),
+      fieldMetadataItemById: traversedFieldMetadataItemById,
+    });
+
+    expect(result).toEqual({
+      from: { clientId: { in: [CURRENT_CLIENT_ID] } },
+    });
+  });
+
+  it('should scope a traversed filter through the morph branch the traversal continues from', () => {
+    const result = turnRecordFilterIntoRecordGqlOperationFilter({
+      filterValueDependencies: clientPageDependencies,
+      recordFilter: makeTraversedFilter(morphFrom.id),
+      fieldMetadataItemById: traversedFieldMetadataItemById,
+    });
+
+    expect(result).toEqual({
+      fromTradingAccount: { clientId: { in: [CURRENT_CLIENT_ID] } },
+    });
+  });
+
+  it('should throw when no morph branch targets the traversed object', () => {
+    const unrelatedTargetField = {
+      id: 'f-unrelated',
+      name: 'owner',
+      type: FieldMetadataType.RELATION,
+      label: 'Owner',
+      relation: { sourceObjectMetadata: { id: 'o-invoice' } },
+    };
+
+    expect(() =>
+      turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies: clientPageDependencies,
+        recordFilter: {
+          ...makeTraversedFilter(morphFrom.id),
+          relationTargetFieldMetadataId: unrelatedTargetField.id,
+        } as RecordFilter,
+        fieldMetadataItemById: new Map<string, FieldShared>([
+          ...traversedFieldMetadataItemById,
+          [unrelatedTargetField.id, unrelatedTargetField],
+        ]),
+      }),
+    ).toThrow('No morph relation on field from targets the traversed object');
   });
 });

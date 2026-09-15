@@ -60,7 +60,7 @@ Um ein benutzerdefiniertes Feld zu einem Objekt hinzuzufügen, folgen Sie diesen
 
 1. Gehen Sie zu `Einstellungen` in der linken Seitenleiste.
 2. Gehen Sie zu `Datenmodell`, und wählen Sie das Objekt, das Sie anpassen möchten.
-3. Fahren Sie fort, indem Sie auf `Feld hinzufügen` klicken.
+3. Fahren Sie fort, indem Sie auf `+ Neues Feld` klicken.
 4. Wählen Sie einen Feldnamen und -typ, der Ihren Anforderungen entspricht. Erwägen Sie, eine Feldbeschreibung hinzuzufügen, um ein besseres Verständnis zu erzielen.
 
 Ihr neu erstelltes Feld ist jetzt in den Feldern der Applikation verfügbar. Um es in einer bestimmten Ansicht anzuzeigen, klicken Sie auf das Optionsmenü und wählen Sie dann `Felder`.
@@ -78,9 +78,7 @@ Sie können ein Feld deaktivieren, um es in der App zu verbergen, ohne Ihre Date
 So können Sie es tun:
 
 1. Suchen Sie das Feld, das Sie in Ihren Objekteinstellungen deaktivieren möchten.
-
 2. Klicken Sie auf die drei Punkte `⋮` neben dem Feld, um das Menü zu öffnen.
-
 3. Wählen Sie `Deaktivieren` im Dropdown-Menü aus.
 
 <img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
@@ -88,9 +86,7 @@ So können Sie es tun:
 Was passiert, wenn Sie ein Feld deaktivieren?
 
 1. **In der App:** Das Feld verschwindet und Sie können ihm keine neuen Werte hinzufügen.
-
 2. **Bestehende Beziehungen:** Wenn es ein Relationsfeld ist, bleiben bestehende Verbindungen bestehen, aber Sie können keine neuen anlegen.
-
 3. **API-Zugriff:** Sie können weiterhin über die API auf das Feld und seine Daten zugreifen.
 
 Sie können Standard- und benutzerdefinierte Felder reaktivieren oder sie dauerhaft löschen.
@@ -101,11 +97,15 @@ Machen Sie ein Feld einzigartig, um sicherzustellen, dass sich keine verschieden
 
 Wenn beim Einstellen der Einzigartigkeit ein Fehler auftritt, überprüfen Sie auf doppelte Werte in Ihren Daten (einschließlich gelöschter Datensätze).
 
+## Indizes (Erweitert)
+
+Datenbankindizes werden automatisch verwaltet – eigene hinzuzufügen ist selten erforderlich und kann leicht schiefgehen. Wenn der Erweiterte Modus aktiviert ist, hat jedes Objekt unter `Einstellungen → Datenmodell → <object>` einen Abschnitt **Indizes** für die Fälle, in denen du weißt, dass du einen brauchst.
+
 ## Beste Praktiken zur Feldkonfiguration
 
 ### Benennungskonventionen und Einschränkungen
 
-* **Singular und Pluralnamen müssen unterschiedlich sein**: Unser GraphQL API benötigt unterschiedliche Namen für Mutationen
+* **Singular- und Pluralnamen müssen unterschiedlich sein**: Unsere GraphQL API benötigt unterschiedliche Namen für Mutationen
 * **Geschützte Feldnamen**: Einige Namen sind für die Systemnutzung reserviert (z. B. `Type`, `Application`)
 
 ### Währungs- und Telefonfelder

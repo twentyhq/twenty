@@ -1,8 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
-import { IconCube, TintedIconTile } from 'twenty-ui/display';
-import { MenuItemSelectAvatar, MenuItemToggle } from 'twenty-ui/navigation';
+import { TintedIconTile } from 'twenty-ui/data-display';
+import { IconCube } from 'twenty-ui/icon';
+import { MenuItemSelectAvatar, MenuItemSwitch } from 'twenty-ui/navigation';
 
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useReadableObjectMetadataItems } from '@/object-metadata/hooks/useReadableObjectMetadataItems';
@@ -126,14 +127,14 @@ export const SidePanelObjectFilterDropdownContent = ({
       </SelectableList>
       <DropdownMenuSeparator />
       <DropdownMenuItemsContainer>
-        <MenuItemToggle
+        <MenuItemSwitch
           LeftIcon={IconCube}
-          onToggleChange={() =>
+          onCheckedChange={() =>
             setSidePanelShowHiddenObjects(!sidePanelShowHiddenObjects)
           }
-          toggled={sidePanelShowHiddenObjects}
+          checked={sidePanelShowHiddenObjects}
           text={t`Show hidden objects`}
-          toggleSize="small"
+          size="sm"
         />
       </DropdownMenuItemsContainer>
     </DropdownContent>

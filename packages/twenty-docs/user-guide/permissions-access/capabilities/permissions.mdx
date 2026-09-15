@@ -3,7 +3,6 @@ title: Permissions
 description: Control access to objects, fields, and settings with role-based permissions.
 ---
 
-
 Twenty's permission system allows you to control access to three main areas:
 - **Objects and Fields**: Control who can view, edit, or delete records and individual fields
 - **Settings**: Manage access to workspace configuration and administrative functions
@@ -29,7 +28,7 @@ To delete a role:
 4. Click **Confirm** in the modal
 
 <Note>
-If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All roles except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
 </Note>
 
 ## Assign Roles to Members
@@ -59,7 +58,7 @@ You can only assign roles to existing workspace members. To invite new members, 
 
 ## Customize Permissions
 
-Permissions determine what each role can access or modify within your workspace, including workspace objects records, settings, and actions.
+Permissions determine what each role can access or modify within your workspace, including workspace objects, records, settings, and actions.
 
 ### Object Permissions
 
@@ -94,6 +93,21 @@ Click **+ Add rule** and select an object to create an exception.
 |------|--------|
 | Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all |
 | People → enable "Edit Records" | Intern can edit People records (but not other objects) |
+
+### Row-Level Permissions
+
+<Note>
+Row-level permissions are a **Premium feature** available on the **Organization** plan (Cloud and Self-Hosted).
+</Note>
+
+Row-level permissions let you restrict which individual records a role can see or edit, based on dynamic criteria. Unlike object permissions (which apply to an entire object type), row-level permissions evaluate each record independently.
+
+**Example use cases:**
+- Sales reps can only see their own opportunities
+- Managers can see all records in their region
+- Support agents can only view tickets assigned to them
+
+To configure row-level permissions, open a role, navigate to the **Objects** tab, and use the **Row-Level** section to define filter conditions for a specific object.
 
 ### Field Permissions
 
@@ -151,7 +165,7 @@ Control access to general workspace actions:
 - Toggle **Application All Access** to grant full permissions
 - Or enable individual actions such as **Send Email**, **Import CSV**, and **Export CSV**
 
-## Assigning Roles to API Keys and AI Agents
+## Assign Roles to API Keys and AI Agents
 
 Beyond workspace members, roles can also be assigned to **API Keys** and **AI Agents**. This is particularly helpful for teams who want to control exactly "who" can do what in their workspace—including automated processes and integrations.
 

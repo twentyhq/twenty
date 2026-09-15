@@ -5,13 +5,13 @@ import { act, renderHook } from '@testing-library/react';
 import { useAddressAutocomplete } from '@/ui/field/input/hooks/useAddressAutocomplete';
 import { useCountryUtils } from '@/ui/field/input/hooks/useCountryUtils';
 
-// Mock dependencies
 jest.mock('@/geo-map/hooks/useGetPlaceApiData');
 jest.mock('../useCountryUtils');
 jest.mock('@/ui/layout/dropdown/hooks/useOpenDropdown');
 jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown');
 jest.mock('use-debounce', () => ({
-  useDebouncedCallback: (fn: (...args: any[]) => any) => fn,
+  useDebouncedCallback: (fn: (...args: any[]) => any) =>
+    Object.assign(fn, { cancel: () => undefined }),
 }));
 
 const mockGetPlaceAutocompleteData = jest.fn();
@@ -59,7 +59,7 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('123 Main', 'token123');
+      await result.current.getAutocompletePlaceData({ address: '123 Main' });
     });
 
     expect(mockOpenDropdown).toHaveBeenCalled();
@@ -75,7 +75,9 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('nonexistent', 'token123');
+      await result.current.getAutocompletePlaceData({
+        address: 'nonexistent',
+      });
     });
 
     expect(mockCloseDropdown).toHaveBeenCalled();
@@ -87,7 +89,7 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData('test', 'token123');
+      await result.current.getAutocompletePlaceData({ address: 'test' });
     });
 
     expect(mockCloseDropdown).toHaveBeenCalled();
@@ -246,15 +248,19 @@ describe('useAddressAutocomplete', () => {
   it('should set token to null after autofilling', async () => {
     const mockOnChange = jest.fn();
     mockGetPlaceDetailsData.mockResolvedValue({});
+    mockGetPlaceAutocompleteData.mockResolvedValue([
+      { text: '123 Main St', placeId: 'place123' },
+    ]);
 
     const { result } = renderHook(() => useAddressAutocomplete(mockOnChange));
 
-    // Set initial token
-    act(() => {
-      result.current.setTokenForPlaceApi('initial-token');
+    await act(async () => {
+      await result.current.getAutocompletePlaceData({
+        address: '123 Main St',
+      });
     });
 
-    expect(result.current.tokenForPlaceApi).toBe('initial-token');
+    expect(result.current.tokenForPlaceApi).not.toBeNull();
 
     await act(async () => {
       await result.current.autoFillInputsFromPlaceDetails(
@@ -264,6 +270,26 @@ describe('useAddressAutocomplete', () => {
     });
 
     expect(result.current.tokenForPlaceApi).toBeNull();
+  });
+
+  it('reuses the session token before state has rerendered', async () => {
+    mockGetPlaceAutocompleteData.mockResolvedValue([
+      { text: '123 Main St', placeId: 'place123' },
+    ]);
+
+    const { result } = renderHook(() => useAddressAutocomplete());
+
+    await act(async () => {
+      await Promise.all([
+        result.current.getAutocompletePlaceData({ address: '123 Main' }),
+        result.current.getAutocompletePlaceData({ address: '123 Main St' }),
+      ]);
+    });
+
+    const firstToken = mockGetPlaceAutocompleteData.mock.calls[0][1];
+    const secondToken = mockGetPlaceAutocompleteData.mock.calls[1][1];
+
+    expect(firstToken).toBe(secondToken);
   });
 
   it('should handle country code conversion correctly', async () => {
@@ -301,17 +327,16 @@ describe('useAddressAutocomplete', () => {
     const { result } = renderHook(() => useAddressAutocomplete());
 
     await act(async () => {
-      await result.current.getAutocompletePlaceData(
-        'Boston',
-        'token123',
-        'US',
-        true,
-      );
+      await result.current.getAutocompletePlaceData({
+        address: 'Boston',
+        country: 'US',
+        isFieldCity: true,
+      });
     });
 
     expect(mockGetPlaceAutocompleteData).toHaveBeenCalledWith(
       'Boston',
-      'token123',
+      expect.any(String),
       'US',
       true,
     );

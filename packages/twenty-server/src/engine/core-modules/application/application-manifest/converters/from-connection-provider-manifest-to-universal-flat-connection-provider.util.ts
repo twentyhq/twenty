@@ -41,8 +41,15 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       applicationUniversalIdentifier,
       name: connectionProviderManifest.name,
       displayName: connectionProviderManifest.displayName,
+      logo: connectionProviderManifest.logo ?? null,
       type: connectionProviderManifest.type,
       oauthConfig,
+      onConnectLogicFunctionUniversalIdentifier:
+        connectionProviderManifest.onConnectLogicFunction
+          ?.universalIdentifier ?? null,
+      onDisconnectLogicFunctionUniversalIdentifier:
+        connectionProviderManifest.onDisconnectLogicFunction
+          ?.universalIdentifier ?? null,
       createdAt: now,
       updatedAt: now,
     };

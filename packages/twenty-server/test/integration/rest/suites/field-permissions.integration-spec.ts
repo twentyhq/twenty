@@ -10,14 +10,14 @@ import { generateRecordName } from 'test/integration/utils/generate-record-name'
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 
 describe('Restricted fields', () => {
-  let personCity: string;
+  let personJobTitle: string;
   let memberRoleId: string;
   let personObjectId: string;
   let emailsFieldId: string;
   let phonesFieldId: string;
 
   beforeAll(async () => {
-    personCity = generateRecordName(TEST_PERSON_1_ID);
+    personJobTitle = generateRecordName(TEST_PERSON_1_ID);
 
     await makeRestAPIRequest({
       method: 'post',
@@ -35,7 +35,7 @@ describe('Restricted fields', () => {
       path: '/people',
       body: {
         id: TEST_PERSON_1_ID,
-        city: personCity,
+        jobTitle: personJobTitle,
         emails: {
           primaryEmail: 'test@test.com',
         },
@@ -47,7 +47,6 @@ describe('Restricted fields', () => {
       },
     });
 
-    // Get object metadata IDs for Person and Company
     const getObjectMetadataOperation = {
       query: gql`
         query {
@@ -72,7 +71,6 @@ describe('Restricted fields', () => {
       (obj: any) => obj.node.nameSingular === 'person',
     )?.node.id;
 
-    // Get field metadata ID for email field
     const getFieldMetadataOperation = {
       query: gql`
         query {
@@ -108,7 +106,6 @@ describe('Restricted fields', () => {
         field.node.object.nameSingular === 'person',
     ).node.id;
 
-    // Get member role ID
     const getRolesOperation = {
       query: gql`
         query {
@@ -126,7 +123,6 @@ describe('Restricted fields', () => {
       (role: any) => role.label === 'Member',
     )?.id;
 
-    // Create field permission restricting read access to email field
     await upsertFieldPermissions({
       roleId: memberRoleId,
       fieldPermissions: [
@@ -158,7 +154,6 @@ describe('Restricted fields', () => {
 
   describe('updateOne', () => {
     it('should hide fields in the response when user has restricted read permissions', async () => {
-      // Create field permission restricting update access to phones field
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -190,7 +185,6 @@ describe('Restricted fields', () => {
         });
     });
     it('should block update when user tries to update non-updatable field', async () => {
-      // Create field permission restricting update access to phones field
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -224,7 +218,6 @@ describe('Restricted fields', () => {
     });
 
     it('should allow update when user has no restricted update permissions', async () => {
-      // Remove field permission restrictions
       await upsertFieldPermissions({
         roleId: memberRoleId,
         fieldPermissions: [
@@ -242,14 +235,14 @@ describe('Restricted fields', () => {
         path: `/people/${TEST_PERSON_1_ID}`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         body: {
-          city: 'Updated City',
+          jobTitle: 'Updated City',
         },
       })
         .expect(200)
         .expect((res) => {
           const updatedPerson = res.body.data.updatePerson;
 
-          expect(updatedPerson.city).toBe('Updated City');
+          expect(updatedPerson.jobTitle).toBe('Updated City');
         });
     });
   });
@@ -369,14 +362,14 @@ describe('Restricted fields', () => {
         path: `/people`,
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         body: {
-          city: 'New City',
+          jobTitle: 'New City',
         },
       })
         .expect(201)
         .expect((res) => {
           const createdPerson = res.body.data.createPerson;
 
-          expect(createdPerson.city).toBe('New City');
+          expect(createdPerson.jobTitle).toBe('New City');
           expect(createdPerson.emails).toBeUndefined();
         });
     });
@@ -502,10 +495,10 @@ describe('Restricted fields', () => {
         bearer: APPLE_JONY_MEMBER_ACCESS_TOKEN,
         body: [
           {
-            city: 'Batch City 1',
+            jobTitle: 'Batch City 1',
           },
           {
-            city: 'Batch City 2',
+            jobTitle: 'Batch City 2',
           },
         ],
       })
@@ -514,9 +507,9 @@ describe('Restricted fields', () => {
           const createdPeople = res.body.data.createPeople;
 
           expect(createdPeople).toHaveLength(2);
-          expect(createdPeople[0].city).toBe('Batch City 1');
+          expect(createdPeople[0].jobTitle).toBe('Batch City 1');
           expect(createdPeople[0].emails).toBeUndefined();
-          expect(createdPeople[1].city).toBe('Batch City 2');
+          expect(createdPeople[1].jobTitle).toBe('Batch City 2');
           expect(createdPeople[1].emails).toBeUndefined();
         });
     });

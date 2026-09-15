@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
 import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
 import {
@@ -22,23 +22,24 @@ export class UpsertRecordService {
   ) {}
 
   async execute(params: UpsertRecordParams): Promise<ToolOutput> {
-    const { objectName, objectRecord, authContext } = params;
+    const { objectName, objectRecord, authContext, rolePermissionConfig } =
+      params;
 
     try {
       const { queryRunnerContext, selectedFields, flatObjectMetadata } =
         await this.commonApiContextBuilder.build({
           authContext,
           objectName,
+          rolePermissionConfig,
         });
 
       if (
-        !canObjectBeManagedByWorkflow({
+        !canObjectBeManagedByAutomation({
           nameSingular: flatObjectMetadata.nameSingular,
-          isSystem: flatObjectMetadata.isSystem,
         })
       ) {
         throw new RecordCrudException(
-          'Failed to update: Object cannot be updated by workflow',
+          'Failed to upsert: Object cannot be upserted by automation',
           RecordCrudExceptionCode.INVALID_REQUEST,
         );
       }

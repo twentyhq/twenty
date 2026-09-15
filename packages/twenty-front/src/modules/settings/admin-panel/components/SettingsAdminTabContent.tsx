@@ -3,11 +3,8 @@ import { SettingsAdminApps } from '@/settings/admin-panel/apps/components/Settin
 import { SettingsAdminGeneral } from '@/settings/admin-panel/components/SettingsAdminGeneral';
 import { SettingsAdminConfigVariables } from '@/settings/admin-panel/config-variables/components/SettingsAdminConfigVariables';
 import { SETTINGS_ADMIN_TABS } from '@/settings/admin-panel/constants/SettingsAdminTabs';
-import { SETTINGS_ADMIN_TABS_ID } from '@/settings/admin-panel/constants/SettingsAdminTabsId';
 import { SettingsAdminHealthStatus } from '@/settings/admin-panel/health-status/components/SettingsAdminHealthStatus';
-import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { lazy, Suspense } from 'react';
 
 const SettingsEnterprise = lazy(() =>
@@ -15,12 +12,11 @@ const SettingsEnterprise = lazy(() =>
     default: module.SettingsEnterprise,
   })),
 );
-export const SettingsAdminTabContent = () => {
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    SETTINGS_ADMIN_TABS_ID,
-  );
-
+export const SettingsAdminTabContent = ({
+  activeTabId,
+}: {
+  activeTabId: string | null;
+}) => {
   switch (activeTabId) {
     case SETTINGS_ADMIN_TABS.GENERAL:
       return <SettingsAdminGeneral />;
@@ -34,7 +30,7 @@ export const SettingsAdminTabContent = () => {
       return <SettingsAdminHealthStatus />;
     case SETTINGS_ADMIN_TABS.ENTERPRISE:
       return (
-        <Suspense fallback={<SettingsSkeletonLoader />}>
+        <Suspense fallback={<SettingsSectionSkeletonLoader />}>
           <SettingsEnterprise isAdminPanelTab />
         </Suspense>
       );

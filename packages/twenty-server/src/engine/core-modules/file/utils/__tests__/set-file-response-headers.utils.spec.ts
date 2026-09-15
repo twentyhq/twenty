@@ -1,3 +1,5 @@
+import { FileFolder } from 'twenty-shared/types';
+
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 
@@ -69,6 +71,70 @@ describe('setFileResponseHeaders', () => {
       expect(res.setHeader).toHaveBeenCalledWith(
         'Content-Disposition',
         'attachment',
+      );
+    },
+  );
+
+  it('should not set Cache-Control when no fileFolder is provided', () => {
+    const res = createMockResponse();
+
+    setFileResponseHeaders(res as any, 'image/png');
+
+    expect(res.setHeader).not.toHaveBeenCalledWith(
+      'Cache-Control',
+      expect.anything(),
+    );
+  });
+
+  it.each([
+    FileFolder.CorePicture,
+    FileFolder.FilesField,
+    FileFolder.Workflow,
+    FileFolder.AgentChat,
+    FileFolder.EmailAttachment,
+    FileFolder.Dpa,
+    FileFolder.BuiltFrontComponent,
+  ])(
+    'should set an immutable Cache-Control for immutable folder %s',
+    (fileFolder) => {
+      const res = createMockResponse();
+
+      setFileResponseHeaders(res as any, 'image/png', fileFolder);
+
+      expect(res.setHeader).toHaveBeenCalledWith(
+        'Cache-Control',
+        'private, max-age=86400, immutable',
+      );
+    },
+  );
+
+  it('should set a bounded public Cache-Control for the PublicAsset folder', () => {
+    const res = createMockResponse();
+
+    setFileResponseHeaders(res as any, 'image/png', FileFolder.PublicAsset);
+
+    expect(res.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      'public, max-age=3600',
+    );
+  });
+
+  it.each([
+    FileFolder.AppTarball,
+    FileFolder.Source,
+    FileFolder.BuiltLogicFunction,
+    FileFolder.Dependencies,
+    FileFolder.GeneratedSdkClient,
+  ])(
+    'should not set Cache-Control for non-cacheable folder %s',
+    (fileFolder) => {
+      const res = createMockResponse();
+
+      setFileResponseHeaders(res as any, 'image/png', fileFolder);
+
+      expect(res.setHeader).not.toHaveBeenCalledWith(
+        'Cache-Control',
+        expect.anything(),
       );
     },
   );

@@ -10,9 +10,10 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRolesIsLoadingState } from '@/settings/roles/states/settingsRolesIsLoadingState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -22,7 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/display';
+import { IconLock, IconSettings, IconUserPlus } from 'twenty-ui/icon';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
@@ -34,9 +35,13 @@ type SettingsRoleProps = {
 };
 
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
+  const tabsComponentInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
+  );
+
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
+    tabsComponentInstanceId,
   );
 
   const navigateSettings = useNavigateSettings();
@@ -79,7 +84,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS,
       title: t`Permissions`,
-      Icon: IconLockOpen,
+      Icon: IconLock,
     },
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
@@ -134,12 +139,19 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={<SettingsRoleLabelContainer roleId={roleId} />}
+      pageTitle={settingsDraftRole.label}
+      secondaryBar={
+        <SettingsTabBar
+          tabs={tabs}
+          componentInstanceId={tabsComponentInstanceId}
+        />
+      }
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`Members`,
@@ -165,13 +177,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
       }
     >
       <SettingsPageContainer>
-        <TabList
-          tabs={tabs}
-          className="tab-list"
-          componentInstanceId={
-            SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId
-          }
-        />
         {activeTabId === SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT && (
           <SettingsRoleAssignment roleId={roleId} isCreateMode={isCreateMode} />
         )}
@@ -189,6 +194,6 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
           />
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

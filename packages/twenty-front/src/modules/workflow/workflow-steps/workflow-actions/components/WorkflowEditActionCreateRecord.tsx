@@ -3,33 +3,30 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
-import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
+import { isFieldRelationManyToOne } from '@/object-record/record-field/ui/types/guards/isFieldRelationManyToOne';
 import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
 import { type WorkflowCreateRecordAction } from '@/workflow/types/Workflow';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
+import {
+  buildUpdatedRecordActionFormData,
+  type RecordActionFormData,
+  type RelationManyToOneField,
+} from '@/workflow/workflow-steps/workflow-actions/utils/buildUpdatedRecordActionFormData';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
-import { HorizontalSeparator } from 'twenty-ui/display';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
+import { HorizontalSeparator } from 'twenty-ui/layout';
 import { type SelectOption } from 'twenty-ui/input';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
-import { RelationType } from '~/generated-metadata/graphql';
 
-type RelationManyToOneField = {
-  id: string;
-};
-
-type CreateRecordFormData = {
-  objectName: string;
-  [field: string]: RelationManyToOneField | JsonValue;
-};
+type CreateRecordFormData = RecordActionFormData;
 
 type WorkflowEditActionCreateRecordProps = {
   action: WorkflowCreateRecordAction;
@@ -74,9 +71,8 @@ export const WorkflowEditActionCreateRecord = ({
   const availableMetadata: Array<SelectOption<string>> =
     activeNonSystemObjectMetadataItems
       .filter((objectMetadataItem) =>
-        canObjectBeManagedByWorkflow({
+        canObjectBeManagedByAutomation({
           nameSingular: objectMetadataItem.nameSingular,
-          isSystem: objectMetadataItem.isSystem,
         }),
       )
       .map((item) => ({
@@ -147,20 +143,21 @@ export const WorkflowEditActionCreateRecord = ({
       return;
     }
 
-    const isFieldRelationManyToOne =
-      isFieldRelation(fieldDefinition) &&
-      fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
+    const newFormData = buildUpdatedRecordActionFormData({
+      formData,
+      fieldName,
+      fieldDefinition,
+      updatedValue,
+    });
 
-    const fieldValue = isFieldRelationManyToOne
-      ? {
-          id: updatedValue,
-        }
-      : updatedValue;
+    setFormData(newFormData);
 
-    const newFormData: CreateRecordFormData = {
-      ...formData,
-      [fieldName]: fieldValue,
-    };
+    saveAction(newFormData);
+  };
+
+  const handleFieldClear = (fieldName: keyof CreateRecordFormData) => {
+    const newFormData: CreateRecordFormData = { ...formData };
+    delete newFormData[fieldName];
 
     setFormData(newFormData);
 
@@ -223,11 +220,7 @@ export const WorkflowEditActionCreateRecord = ({
         <HorizontalSeparator noMargin />
 
         {inlineFieldDefinitions?.map((fieldDefinition) => {
-          const isFieldRelationManyToOne =
-            isFieldRelation(fieldDefinition) &&
-            fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE;
-
-          const currentValue = isFieldRelationManyToOne
+          const currentValue = isFieldRelationManyToOne(fieldDefinition)
             ? (
                 formData[
                   fieldDefinition.metadata.fieldName
@@ -242,6 +235,9 @@ export const WorkflowEditActionCreateRecord = ({
               field={fieldDefinition}
               onChange={(value) => {
                 handleFieldChange(fieldDefinition.metadata.fieldName, value);
+              }}
+              onClear={() => {
+                handleFieldClear(fieldDefinition.metadata.fieldName);
               }}
               VariablePicker={WorkflowVariablePicker}
               readonly={isFormDisabled}

@@ -1,4 +1,5 @@
 import {
+  MetadataWritability,
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
   type FieldMetadataDefaultValue,
@@ -7,7 +8,12 @@ import {
 } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
+import { SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/search-fields-by-standard-object-name.constant';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { isAuditLoggableFieldType } from 'src/engine/metadata-modules/field-metadata/utils/is-audit-loggable-field-type.util';
+import { PARTIAL_SYSTEM_FLAT_FIELD_METADATAS } from 'src/engine/metadata-modules/object-metadata/constants/partial-system-flat-field-metadatas.constant';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
@@ -28,7 +34,7 @@ export type CreateStandardFieldArgs<
     isSystem?: boolean;
     isNullable?: boolean;
     isUnique?: boolean;
-    isUIReadOnly?: boolean;
+    isUIEditable?: boolean;
     defaultValue?: FieldMetadataDefaultValue<T>;
     settings?: FieldMetadataSettings<T>;
     options?:
@@ -53,7 +59,7 @@ export const createStandardFieldFlatMetadata = <
     isSystem = false,
     isNullable = true,
     isUnique = false,
-    isUIReadOnly = false,
+    isUIEditable = true,
     defaultValue,
     settings,
     options: fieldOptions = null,
@@ -67,6 +73,8 @@ export const createStandardFieldFlatMetadata = <
   const fieldIds = standardObjectMetadataRelatedEntityIds[objectName].fields;
 
   const name = fieldName.toString();
+  const searchFields: ReadonlyArray<{ name: string }> =
+    SEARCH_FIELDS_BY_STANDARD_OBJECT_NAME[objectName];
 
   return {
     id: fieldIds[fieldName].id,
@@ -79,14 +87,22 @@ export const createStandardFieldFlatMetadata = <
     label,
     description,
     icon,
-    isCustom: false,
     isActive: true,
     isSystem,
+    isSystemSideEffect: name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS,
     isNullable,
     isUnique,
-    isUIReadOnly,
+    isSearchable: searchFields.some((searchField) => searchField.name === name),
+    isAuditLogged: isAuditLoggableFieldType(type),
+    isUIEditable,
+    writability:
+      name in PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
+        ? PARTIAL_SYSTEM_FLAT_FIELD_METADATAS[
+            name as keyof typeof PARTIAL_SYSTEM_FLAT_FIELD_METADATAS
+          ].writability
+        : MetadataWritability.OPEN,
     isLabelSyncedWithName: false,
-    standardOverrides: null,
+    overrides: null,
     defaultValue: defaultValue ?? null,
     settings: settings ?? null,
     options: fieldOptions ?? null,
@@ -98,10 +114,12 @@ export const createStandardFieldFlatMetadata = <
     fieldPermissionIds: [],
     kanbanAggregateOperationViewIds: [],
     calendarViewIds: [],
+    calendarEndViewIds: [],
     mainGroupByFieldMetadataViewIds: [],
     createdAt: now,
     updatedAt: now,
-    applicationUniversalIdentifier: twentyStandardApplicationId,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectMetadataUniversalIdentifier:
       STANDARD_OBJECTS[objectName].universalIdentifier,
     relationTargetObjectMetadataUniversalIdentifier: null,
@@ -111,9 +129,12 @@ export const createStandardFieldFlatMetadata = <
     fieldPermissionUniversalIdentifiers: [],
     kanbanAggregateOperationViewUniversalIdentifiers: [],
     calendarViewUniversalIdentifiers: [],
+    calendarEndViewUniversalIdentifiers: [],
     mainGroupByFieldMetadataViewUniversalIdentifiers: [],
     viewSortIds: [],
     viewSortUniversalIdentifiers: [],
+    searchFieldMetadataIds: [],
+    searchFieldMetadataUniversalIdentifiers: [],
     universalSettings: settings ?? null,
   };
 };

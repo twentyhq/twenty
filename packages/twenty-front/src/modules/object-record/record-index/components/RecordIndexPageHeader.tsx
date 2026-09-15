@@ -1,13 +1,15 @@
 import { RecordIndexCommandMenu } from '@/command-menu-item/components/RecordIndexCommandMenu';
-import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { PageHeader } from '@/ui/layout/page/components/PageHeader';
+import { SidePanelPageTitleSyncEffect } from '@/side-panel/components/SidePanelPageTitleSyncEffect';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -32,12 +34,16 @@ const StyledSelectedRecordsCount = styled.div`
 `;
 
 export const RecordIndexPageHeader = () => {
+  const workspaceSurface = useWorkspaceSurface();
+
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
 
   const contextStoreNumberOfSelectedRecords = useAtomComponentStateValue(
     contextStoreNumberOfSelectedRecordsComponentState,
   );
+
+  const { formatNumber } = useNumberFormat();
 
   const { objectNamePlural } = useRecordIndexContextOrThrow();
 
@@ -52,7 +58,7 @@ export const RecordIndexPageHeader = () => {
         <StyledTitle>{label}</StyledTitle>
         <>{'->'}</>
         <StyledSelectedRecordsCount>
-          {t`${contextStoreNumberOfSelectedRecords} selected`}
+          {t`${formatNumber(contextStoreNumberOfSelectedRecords)} selected`}
         </StyledSelectedRecordsCount>
       </StyledTitleWithSelectedRecords>
     ) : (
@@ -61,25 +67,29 @@ export const RecordIndexPageHeader = () => {
 
   const contextStoreCurrentViewId = useAtomComponentStateValue(
     contextStoreCurrentViewIdComponentState,
-    MAIN_CONTEXT_STORE_INSTANCE_ID,
   );
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
 
   return (
-    <PageHeader
-      title={pageHeaderTitle}
-      Icon={() => (
-        <RecordIndexPageHeaderIcon objectMetadataItem={objectMetadataItem} />
-      )}
-    >
-      {isDefined(contextStoreCurrentViewId) && (
-        <>
-          <RecordIndexCommandMenu />
-          {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
-        </>
-      )}
-    </PageHeader>
+    <>
+      <SidePanelPageTitleSyncEffect pageTitle={label} />
+      <PageCardHeader
+        icon={
+          <RecordIndexPageHeaderIcon objectMetadataItem={objectMetadataItem} />
+        }
+        title={pageHeaderTitle}
+        actionButton={
+          isDefined(contextStoreCurrentViewId) ? (
+            <>
+              <RecordIndexCommandMenu />
+              {!isLayoutCustomizationModeEnabled &&
+                workspaceSurface.type === 'main' && <SidePanelToggleButton />}
+            </>
+          ) : undefined
+        }
+      />
+    </>
   );
 };

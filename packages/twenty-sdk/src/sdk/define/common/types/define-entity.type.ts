@@ -1,13 +1,16 @@
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+import { type PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
+import { type UninstallLogicFunctionConfig } from '@/sdk/define/logic-functions/uninstall-logic-function-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import {
   type AgentManifest,
@@ -15,6 +18,8 @@ import {
   type FieldManifest,
   type NavigationMenuItemManifest,
   type SkillManifest,
+  type StandalonePageLayoutWidgetManifest,
+  type StandaloneViewFieldManifest,
 } from 'twenty-shared/application';
 
 export type ValidationResult<T> = {
@@ -29,17 +34,22 @@ export type DefinableEntity =
   | ObjectConfig
   | FieldManifest
   | FrontComponentConfig
+  | IndexConfig
   | LogicFunctionConfig
   | PostInstallLogicFunctionConfig
   | PreInstallLogicFunctionConfig
+  | UninstallLogicFunctionConfig
   | AgentManifest
   | ConnectionProviderManifest
   | RoleConfig
   | SkillManifest
   | ViewConfig
+  | StandaloneViewFieldManifest
   | NavigationMenuItemManifest
   | PageLayoutConfig
   | PageLayoutTabConfig
+  | StandalonePageLayoutWidgetManifest
+  | PermissionFlagConfig
   | CommandMenuItemConfig;
 
 export type DefineEntity<T extends DefinableEntity = DefinableEntity> = (

@@ -1,4 +1,4 @@
-import { defineRole } from '@/sdk/define';
+import { SystemPermissionFlag, defineRole } from '@/sdk/define';
 
 describe('defineRole', () => {
   const validConfig = {
@@ -32,16 +32,19 @@ describe('defineRole', () => {
     expect(result.config?.canReadAllObjectRecords).toBe(true);
   });
 
-  it('should accept permissionFlags', () => {
+  it('should accept permissionFlagUniversalIdentifiers', () => {
     const config = {
       ...validConfig,
-      permissionFlags: ['UPLOAD_FILE', 'DOWNLOAD_FILE'],
+      permissionFlagUniversalIdentifiers: [
+        SystemPermissionFlag.UPLOAD_FILE,
+        SystemPermissionFlag.DOWNLOAD_FILE,
+      ],
     };
 
-    const result = defineRole(config as any);
+    const result = defineRole(config);
 
     expect(result.success).toBe(true);
-    expect(result.config?.permissionFlags).toHaveLength(2);
+    expect(result.config?.permissionFlagUniversalIdentifiers).toHaveLength(2);
   });
 
   it('should return error when universalIdentifier is missing', () => {
@@ -119,6 +122,229 @@ describe('defineRole', () => {
     expect(result.success).toBe(false);
     expect(result.errors).toContain(
       'Field permission must have a fieldUniversalIdentifier',
+    );
+  });
+
+  it('should accept row level permission predicates', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicates: [
+        {
+          universalIdentifier: '22222222-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          fieldUniversalIdentifier: 'dd14cab4-0829-4475-a794-d0d4959161e6',
+          operand: 'IS',
+          workspaceMemberFieldUniversalIdentifier:
+            'b1c2d3e4-0829-4475-a794-d0d4959161e6',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should return error when predicate has no universalIdentifier', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicates: [
+        {
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          fieldUniversalIdentifier: 'dd14cab4-0829-4475-a794-d0d4959161e6',
+          operand: 'IS',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Row level permission predicate must have a universalIdentifier',
+    );
+  });
+
+  it('should return error when two predicates share a universalIdentifier', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicates: [
+        {
+          universalIdentifier: '22222222-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          fieldUniversalIdentifier: 'dd14cab4-0829-4475-a794-d0d4959161e6',
+          operand: 'IS',
+        },
+        {
+          universalIdentifier: '22222222-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          fieldUniversalIdentifier: 'dd14cab4-0829-4475-a794-d0d4959161e6',
+          operand: 'IS_NOT',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Duplicate row level permission predicate universalIdentifier "22222222-0000-4000-8000-000000000000"',
+    );
+  });
+
+  it('should return error when predicate has no objectUniversalIdentifier', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicates: [
+        {
+          universalIdentifier: '22222222-0000-4000-8000-000000000000',
+          fieldUniversalIdentifier: 'dd14cab4-0829-4475-a794-d0d4959161e6',
+          operand: 'IS',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Row level permission predicate must have an objectUniversalIdentifier',
+    );
+  });
+
+  it('should return error when predicate has no fieldUniversalIdentifier', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicates: [
+        {
+          universalIdentifier: '22222222-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          operand: 'IS',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Row level permission predicate must have a fieldUniversalIdentifier',
+    );
+  });
+
+  it('should return error when predicate has no operand', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicates: [
+        {
+          universalIdentifier: '22222222-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          fieldUniversalIdentifier: 'dd14cab4-0829-4475-a794-d0d4959161e6',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Row level permission predicate must have an operand',
+    );
+  });
+
+  it('should return error when predicate references an unknown predicate group', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicates: [
+        {
+          universalIdentifier: '22222222-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          fieldUniversalIdentifier: 'dd14cab4-0829-4475-a794-d0d4959161e6',
+          operand: 'IS',
+          predicateGroupUniversalIdentifier:
+            '00000000-0000-4000-8000-000000000000',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Row level permission predicate references unknown predicate group "00000000-0000-4000-8000-000000000000"',
+    );
+  });
+
+  it('should accept a predicate referencing a declared predicate group', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicateGroups: [
+        {
+          universalIdentifier: '11111111-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          logicalOperator: 'OR',
+        },
+      ],
+      rowLevelPermissionPredicates: [
+        {
+          universalIdentifier: '22222222-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          fieldUniversalIdentifier: 'dd14cab4-0829-4475-a794-d0d4959161e6',
+          operand: 'IS',
+          predicateGroupUniversalIdentifier:
+            '11111111-0000-4000-8000-000000000000',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+  });
+
+  it('should return error when predicate group has no logicalOperator', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicateGroups: [
+        {
+          universalIdentifier: '11111111-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Row level permission predicate group must have a logicalOperator',
+    );
+  });
+
+  it('should return error when two predicate groups share a universalIdentifier', () => {
+    const config = {
+      ...validConfig,
+      rowLevelPermissionPredicateGroups: [
+        {
+          universalIdentifier: '11111111-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          logicalOperator: 'AND',
+        },
+        {
+          universalIdentifier: '11111111-0000-4000-8000-000000000000',
+          objectUniversalIdentifier: '38339ab2-f00b-416c-8ee0-806b48caca18',
+          logicalOperator: 'OR',
+        },
+      ],
+    };
+
+    const result = defineRole(config as any);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Duplicate row level permission predicate group universalIdentifier "11111111-0000-4000-8000-000000000000"',
     );
   });
 });

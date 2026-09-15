@@ -103,8 +103,6 @@ Le champ Adresse est un **champ imbriqué** avec plusieurs colonnes (certaines p
 Utilisez un format cohérent dans tout votre fichier:
 
 * `YYYY-MM-DD` (recommandé): `2024-03-15`
-* `MM/DD/YYYY`: `03/15/2024`
-* `DD/MM/YYYY`: `15/03/2024`
 * ISO 8601: `2024-03-15T10:30:00Z`
 
 ### Champs numériques
@@ -210,15 +208,14 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 * Pour les membres de l’espace de travail, utilisez leur **adresse e-mail** (et non le nom)
 
 <Warning>
-  **L’ordre d’importation est important !**
+**L’ordre d’importation est important !**
 
-  Importez le côté « un » avant le côté « plusieurs »:
+Importez le côté « un » avant le côté « plusieurs »:
+1. **Entreprises** d’abord
+2. **Personnes** ensuite (avec référence à l’entreprise)
+3. **Opportunités** en troisième
 
-  1. **Entreprises** d’abord
-  2. **Personnes** ensuite (avec référence à l’entreprise)
-  3. **Opportunités** en troisième
-
-  L’enregistrement parent doit exister avant que vous puissiez y faire référence.
+L’enregistrement parent doit exister avant que vous puissiez y faire référence.
 </Warning>
 
 Consultez [Comment importer des relations](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) pour des instructions détaillées.

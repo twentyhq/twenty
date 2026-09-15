@@ -3,6 +3,7 @@ import {
   type OrchestratorStateSyncStatus,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { DevUiApplicationPanel } from '@/cli/utilities/dev/ui/components/dev-ui-application-panel';
+import { DevUiConfirm } from '@/cli/utilities/dev/ui/components/dev-ui-confirm';
 import { DevUiEntityLegend } from '@/cli/utilities/dev/ui/components/dev-ui-entity-section';
 import { DevUiEventItem } from '@/cli/utilities/dev/ui/components/dev-ui-event-log';
 import { InkProvider, useInk } from '@/cli/utilities/dev/ui/dev-ui-ink-context';
@@ -18,8 +19,10 @@ const SETTLE_DELAY_MS = 80;
 
 const DevUI = ({
   uiStateManager,
+  verbose,
 }: {
   uiStateManager: DevUiStateManager;
+  verbose: boolean;
 }): React.ReactElement => {
   const { Box, Static } = useInk();
 
@@ -85,24 +88,26 @@ const DevUI = ({
       </Static>
 
       <Box marginTop={1} flexDirection="column">
-        <DevUiApplicationPanel state={state} />
-        <DevUiEntityLegend />
+        <DevUiApplicationPanel state={state} verbose={verbose} />
+        {verbose && <DevUiEntityLegend />}
       </Box>
+
+      {state.pendingConfirmation && <DevUiConfirm state={state} />}
     </>
   );
 };
 
 export const renderDevUI = async (
   uiStateManager: DevUiStateManager,
+  verbose = false,
 ): Promise<{ unmount: () => void }> => {
   const ink = await import('ink');
-  const { render, Box, Text, Static } = ink;
+  const { render, Box, Text, Static, useInput } = ink;
 
   const { unmount } = render(
-    <InkProvider value={{ Box, Text, Static }}>
-      <DevUI uiStateManager={uiStateManager} />
+    <InkProvider value={{ Box, Text, Static, useInput }}>
+      <DevUI uiStateManager={uiStateManager} verbose={verbose} />
     </InkProvider>,
-    { incrementalRendering: true },
   );
 
   return { unmount };

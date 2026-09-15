@@ -1,4 +1,4 @@
-import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 
 import { useReorderVisibleRecordFields } from '@/object-record/record-field/hooks/useReorderVisibleRecordFields';
 
@@ -12,8 +12,8 @@ export const useProcessOptionDropdownDragEnd = (recordTableId: string) => {
 
   const { saveViewFields } = useSaveCurrentViewFields();
 
-  const processOptionDropdownDragEnd: OnDragEndResponder = useCallback(
-    async (result) => {
+  const processOptionDropdownDragEnd = useCallback(
+    async (result: DraggableListDropResult) => {
       if (
         !result.destination ||
         result.destination.index === 1 ||

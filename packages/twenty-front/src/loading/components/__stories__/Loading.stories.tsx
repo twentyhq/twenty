@@ -30,7 +30,7 @@ export default meta;
 export type Story = StoryObj<typeof RecordIndexPage>;
 
 export const Default: Story = {
-  // oxlint-disable-next-line @typescripttypescript/ban-ts-comment
+  // oxlint-disable-next-line typescript/ban-ts-comment
   // @ts-ignore
   decorators: [LoadingDecorator, PageDecorator],
   play: async ({ canvasElement }) => {

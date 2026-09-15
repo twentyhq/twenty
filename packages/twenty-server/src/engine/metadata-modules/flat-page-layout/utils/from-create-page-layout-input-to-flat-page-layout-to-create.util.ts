@@ -6,7 +6,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-modules/flat-entity/utils/resolve-entity-relation-universal-identifiers.util';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type CreatePageLayoutInput } from 'src/engine/metadata-modules/page-layout/dtos/inputs/create-page-layout.input';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 
 export type FromCreatePageLayoutInputToFlatPageLayoutToCreateArgs = {
   createPageLayoutInput: CreatePageLayoutInput;
@@ -44,6 +44,8 @@ export const fromCreatePageLayoutInputToFlatPageLayoutToCreate = ({
     type: createPageLayoutInput.type ?? PageLayoutType.RECORD_PAGE,
     objectMetadataId: createPageLayoutInput.objectMetadataId ?? null,
     objectMetadataUniversalIdentifier,
+    isSystemSideEffect: false,
+    isFirstTabPinned: true,
     workspaceId,
     createdAt,
     updatedAt: createdAt,

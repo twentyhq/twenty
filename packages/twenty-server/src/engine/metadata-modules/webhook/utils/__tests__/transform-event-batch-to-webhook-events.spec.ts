@@ -1,9 +1,19 @@
+import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import {
+  MetadataReadability,
+  RecordShareAccessLevel,
+  RecordSharePrincipalType,
+  RecordShareRowCause,
+} from 'twenty-shared/types';
+
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import type { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
+import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 
 const mockObjectMetadata: FlatObjectMetadata = {
   id: 'id',
@@ -12,7 +22,6 @@ const mockObjectMetadata: FlatObjectMetadata = {
   workspaceId: 'workspaceId',
   labelSingular: 'Label Singular',
   labelPlural: 'Label Plural',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: false,
@@ -245,5 +254,125 @@ describe('transformEventBatchToWebhookEvents', () => {
     });
 
     expect(resultWithoutEventDate).toEqual(expectedResultWithoutEventDate);
+  });
+
+  it('should only keep events of a private object for records shared with everyone', () => {
+    const workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent> = {
+      workspaceId: 'workspaceId',
+      objectMetadata: {
+        ...mockObjectMetadata,
+        readability: MetadataReadability.PRIVATE,
+      },
+      name: 'objectNameSingular.created',
+      events: [
+        {
+          recordId: 'recordId-1',
+          properties: {
+            after: { id: 'recordId-1', nameSingular: 'nameSingular-1' },
+          },
+        },
+        {
+          recordId: 'recordId-2',
+          properties: {
+            after: { id: 'recordId-2', nameSingular: 'nameSingular-2' },
+          },
+        },
+      ],
+    };
+
+    const webhooks = [
+      {
+        id: 'webhook-id',
+        targetUrl: 'targetUrl',
+        secret: 'secret',
+      },
+    ] as WebhookEntity[];
+
+    const recordShares = [
+      {
+        id: 'record-share-1',
+        recordId: 'recordId-1',
+        objectMetadataId: mockObjectMetadata.id,
+        principalId: EVERYONE_PRINCIPAL_ID,
+        principalType: RecordSharePrincipalType.EVERYONE,
+        accessLevel: RecordShareAccessLevel.READ,
+        rowCause: RecordShareRowCause.MANUAL,
+        sourceId: 'source-1',
+      },
+      {
+        id: 'record-share-2',
+        recordId: 'recordId-2',
+        objectMetadataId: mockObjectMetadata.id,
+        principalId: 'workspace-member-id',
+        principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
+        accessLevel: RecordShareAccessLevel.FULL,
+        rowCause: RecordShareRowCause.MANUAL,
+        sourceId: 'source-1',
+      },
+    ] as RecordShare[];
+
+    const result = transformEventBatchToWebhookEvents({
+      workspaceEventBatch,
+      webhooks,
+      recordShareGate: {
+        recordSharesByRecordId: indexRecordSharesByRecordId(recordShares),
+        principalIds: [EVERYONE_PRINCIPAL_ID],
+      },
+    });
+
+    expect(result).toHaveLength(1);
+    expect(result[0].record).toEqual({
+      id: 'recordId-1',
+      nameSingular: 'nameSingular-1',
+    });
+  });
+
+  it('should include position-only update events', () => {
+    const workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent> = {
+      workspaceId: 'workspaceId',
+      objectMetadata: mockObjectMetadata,
+      name: 'objectNameSingular.updated',
+      events: [
+        {
+          recordId: 'recordId-1',
+          properties: {
+            after: { id: 'id-1', nameSingular: 'nameSingular-1' },
+            updatedFields: ['position'],
+          },
+        },
+        {
+          recordId: 'recordId-2',
+          properties: {
+            after: { id: 'id-2', nameSingular: 'nameSingular-2' },
+            updatedFields: ['nameSingular', 'position'],
+          },
+        },
+      ],
+    };
+
+    const webhooks = [
+      {
+        id: 'webhook-id',
+        targetUrl: 'targetUrl',
+        secret: 'secret',
+      },
+    ] as WebhookEntity[];
+
+    const result = transformEventBatchToWebhookEvents({
+      workspaceEventBatch,
+      webhooks,
+    });
+
+    expect(result).toHaveLength(2);
+    expect(result[0].record).toEqual({
+      id: 'id-1',
+      nameSingular: 'nameSingular-1',
+    });
+    expect(result[0].updatedFields).toEqual(['position']);
+    expect(result[1].record).toEqual({
+      id: 'id-2',
+      nameSingular: 'nameSingular-2',
+    });
+    expect(result[1].updatedFields).toEqual(['nameSingular', 'position']);
   });
 });

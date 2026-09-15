@@ -17,7 +17,7 @@ Dieser Workflow verwendet einen **Manuellen Auslöser**, damit Benutzer bei Beda
 
 Bevor Sie den Workflow einrichten:
 
-1. **API-Schlüssel erstellen**: Gehen Sie zu **Einstellungen → APIs** und erstellen Sie einen neuen API-Schlüssel. Sie benötigen dieses Token für die Logikfunktion.
+1. **API-Schlüssel erstellen**: Gehen Sie zu **Einstellungen → APIs** und erstellen Sie einen neuen API-Schlüssel. Sie benötigen dieses Token für die Logic Funktion.
 2. **Richten Sie einen PDF-Generierungsdienst ein** (optional): Wenn Sie PDFs dynamisch generieren möchten (z. B. Angebote), verwenden Sie einen Dienst wie Carbone, PDFMonkey oder DocuSeal, um das PDF zu erstellen und eine Download-URL zu erhalten.
 
 ## Schritt-für-Schritt-Einrichtung
@@ -29,12 +29,12 @@ Bevor Sie den Workflow einrichten:
 3. Wählen Sie das Objekt aus, dem Sie PDFs anhängen möchten (z. B. **Company** oder **Opportunity**)
 
 <Tip>
-Mit einem manuellen Auslöser können Benutzer diesen Workflow über eine Schaltfläche ausführen, die oben rechts erscheint, sobald ein Datensatz ausgewählt ist, um ein PDF zu generieren und anzuhängen.
+Mit einem manuellen Trigger Benutzer können diesen Workflow mit einem Button ausführen, der rechts oben erscheint, sobald ein Datensatz ausgewählt ist — dies führt den Workflow aus, um eine PDF zu generieren und anzuhängen.
 </Tip>
 
 ### Schritt 2: Logikfunktion hinzufügen
 
-1. Fügen Sie eine **Code**-Aktion (Logikfunktion) hinzu
+1. Füge eine **Code** Aktion (Logikfunktion) hinzu
 2. Erstellen Sie eine neue Funktion mit dem folgenden Code
 3. Konfigurieren Sie die Eingabeparameter
 
@@ -237,7 +237,7 @@ Zum Erstellen dynamischer Angebote oder Rechnungen:
 | 1       | Manueller Auslöser (Company) | Benutzer initiiert am Datensatz                  |
 | 2       | Datensatz suchen             | Opportunity- oder Positionsdetails abrufen       |
 | 3       | HTTP-Anfrage                 | PDF-Generierungs-API mit Datensatzdaten aufrufen |
-| 4       | Serverlose Funktion          | Das generierte PDF herunterladen und anhängen    |
+| 4       | Logikfunktion                | Das generierte PDF herunterladen und anhängen    |
 
 ### Beliebte PDF-Generierungsdienste
 
@@ -246,7 +246,7 @@ Zum Erstellen dynamischer Angebote oder Rechnungen:
 * **DocuSeal** – Plattform für Dokumentenautomatisierung
 * **Documint** – API-first-Dokumentenerstellung
 
-Jeder Dienst stellt eine API bereit, die eine PDF-URL zurückgibt, die Sie anschließend an die Logikfunktion übergeben können.
+Jeder Dienst stellt eine API zur Verfügung, die eine PDF-URL zurückgibt, die Sie dann an die Logic Funktion übergeben können.
 
 ## Fehlerbehebung
 

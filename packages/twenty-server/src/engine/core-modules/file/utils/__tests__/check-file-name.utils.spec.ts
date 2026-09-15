@@ -4,10 +4,10 @@ import { checkFilename } from 'src/engine/core-modules/file/utils/check-file-nam
 
 describe('checkFilename', () => {
   it('should return sanitized filename', () => {
-    const filename = `${FileFolder.Attachment}\0.png`;
+    const filename = `${FileFolder.FilesField}\0.png`;
     const sanitizedFilename = checkFilename(filename);
 
-    expect(sanitizedFilename).toBe(`${FileFolder.Attachment}.png`);
+    expect(sanitizedFilename).toBe(`${FileFolder.FilesField}.png`);
   });
 
   it('should throw an error for invalid filename', () => {

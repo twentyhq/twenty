@@ -4,6 +4,16 @@ import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/
 
 export const COMPANY_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] = [
   {
+    type: FieldMetadataType.NUMBER,
+    name: 'employees',
+    label: 'Employees',
+    description: 'Number of employees in the company',
+    icon: 'IconUsers',
+    isActive: true,
+    isNullable: true,
+    isUnique: false,
+  },
+  {
     type: FieldMetadataType.TEXT,
     name: 'tagline',
     label: 'Tagline',

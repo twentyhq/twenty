@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import {
-  type FieldMetadataComplexOption,
-  type FieldMetadataDefaultOption,
-} from 'twenty-shared/types';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import {
   computeRecordGqlOperationFilter,
   isDefined,
+  isEmptyObject,
+  isNonEmptyArray,
   isRecordFilterValueValid,
   resolveInput,
 } from 'twenty-shared/utils';
@@ -14,7 +13,6 @@ import {
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
-import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import {
   WorkflowStepExecutorException,
@@ -26,6 +24,9 @@ import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executo
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFindRecordsAction } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/guards/is-workflow-find-records-action.guard';
 import { type WorkflowFindRecordsActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
+import { resolveLimitInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-limit-input.util';
+import { resolveOffsetInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-offset-input.util';
+import { resolveRecordFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/utils/resolve-record-filters.util';
 
 @Injectable()
 export class FindRecordsWorkflowAction implements WorkflowAction {
@@ -53,6 +54,11 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       );
     }
 
+    const recordFilters = resolveRecordFilters({
+      unresolvedRecordFilters: step.settings.input.filter?.recordFilters,
+      context,
+    });
+
     const workflowActionInput = resolveInput(
       step.settings.input,
       context,
@@ -63,40 +69,14 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { flatObjectMetadata, flatFieldMetadataMaps } =
+    const { flatFieldMetadataMaps } =
       await this.workflowCommonWorkspaceService.getObjectMetadataInfo(
         workflowActionInput.objectName,
         workspaceId,
       );
 
-    const fields = flatObjectMetadata.fieldIds
-      .map((fieldId) => {
-        const field = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: fieldId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        if (!field) {
-          return null;
-        }
-
-        return {
-          id: field.id,
-          name: field.name,
-          type: field.type,
-          label: field.label,
-          // Note: force cast is required until we deprecate the CreateFieldInput and UpdateFieldInput
-          // type derivation from the FieldMetadataDto
-          options: field.options as
-            | (FieldMetadataDefaultOption & { id: string })[]
-            | (FieldMetadataComplexOption & { id: string })[]
-            | null,
-        };
-      })
-      .filter(isDefined);
-
-    if (workflowActionInput.filter?.recordFilters) {
-      for (const filter of workflowActionInput.filter.recordFilters) {
+    if (recordFilters) {
+      for (const filter of recordFilters) {
         if (!isRecordFilterValueValid(filter)) {
           throw new WorkflowStepExecutorException(
             `Filter condition has an empty value after variable resolution. This likely means a workflow variable could not be resolved. Filter field: ${filter.fieldMetadataId}, operand: ${filter.operand}`,
@@ -106,26 +86,45 @@ export class FindRecordsWorkflowAction implements WorkflowAction {
       }
     }
 
-    const gqlOperationFilter =
-      workflowActionInput.filter?.recordFilters &&
-      workflowActionInput.filter?.recordFilterGroups
+    let gqlOperationFilter: RecordGqlOperationFilter;
+
+    try {
+      gqlOperationFilter = isDefined(recordFilters)
         ? computeRecordGqlOperationFilter({
-            fields,
-            recordFilters: workflowActionInput.filter.recordFilters,
-            recordFilterGroups: workflowActionInput.filter.recordFilterGroups,
+            fieldMetadataItems: Object.values(
+              flatFieldMetadataMaps.byUniversalIdentifier,
+            ).filter(isDefined),
+            recordFilters,
+            recordFilterGroups:
+              workflowActionInput.filter?.recordFilterGroups ?? [],
             filterValueDependencies: {
               timeZone: 'UTC',
             },
           })
         : {};
+    } catch (error) {
+      throw new WorkflowStepExecutorException(
+        `Filter could not be computed: ${error.message}`,
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
+
+    if (isNonEmptyArray(recordFilters) && isEmptyObject(gqlOperationFilter)) {
+      throw new WorkflowStepExecutorException(
+        'Filter could not be resolved to a valid query. Check that filtered fields exist and that grouped filters include their recordFilterGroups.',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     const toolOutput = await this.findRecordsService.execute({
       objectName: workflowActionInput.objectName,
       filter: gqlOperationFilter,
       orderBy: workflowActionInput.orderBy?.gqlOperationOrderBy,
-      limit: workflowActionInput.limit,
+      limit: resolveLimitInput(workflowActionInput.limit),
+      offset: resolveOffsetInput(workflowActionInput.offset),
       authContext: executionContext.authContext,
       rolePermissionConfig: executionContext.rolePermissionConfig,
+      shouldBuildEffectiveSelectFields: false,
     });
 
     if (!toolOutput.success) {

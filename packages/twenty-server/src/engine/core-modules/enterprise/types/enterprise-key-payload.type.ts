@@ -1,3 +1,5 @@
+import { type EnterpriseInstanceType } from 'twenty-shared/constants';
+
 export type EnterpriseKeyPayload = {
   sub: string;
   licensee: string;
@@ -16,4 +18,18 @@ export type EnterpriseLicenseInfo = {
   licensee: string | null;
   expiresAt: Date | null;
   subscriptionId: string | null;
+};
+
+export type EnterpriseInstanceMetadata = {
+  serverId: string | null;
+  instanceType: EnterpriseInstanceType;
+  serverUrl: string | null;
+  appVersion: string | null;
+  nodeEnv: string | null;
+  telemetryEnabled: boolean | null;
+  workspaceCount: number | null;
+  activeUserWorkspaceCount: number | null;
+  distinctUserCount: number | null;
+  adminContactEmail: string | null;
+  sentAt: string;
 };

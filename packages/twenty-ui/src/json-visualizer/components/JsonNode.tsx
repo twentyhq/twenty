@@ -9,13 +9,13 @@ import {
   IconCircleOff,
   IconNumber9,
   IconTypography,
-} from '@ui/display';
+} from '@ui/icon';
 import { JsonArrayNode } from '@ui/json-visualizer/components/JsonArrayNode';
 import { JsonObjectNode } from '@ui/json-visualizer/components/JsonObjectNode';
 import { JsonValueNode } from '@ui/json-visualizer/components/JsonValueNode';
 import { useJsonTreeContextOrThrow } from '@ui/json-visualizer/hooks/useJsonTreeContextOrThrow';
 import { isArray } from '@ui/json-visualizer/utils/isArray';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import { type JsonValue } from 'type-fest';
 
 export const JsonNode = ({

@@ -1,0 +1,239 @@
+---
+title: 2. Generování dokumentů
+icon: bolt
+description: Jedna logická funkce, zobrazená jako nástroj AI a akce pracovního postupu.
+---
+
+Nyní jádro: [logická funkce](/l/cs/developers/extend/apps/logic/logic-functions)
+, která načte šablonu a záznam, vyplní zástupné symboly a uloží nový
+dokument.
+
+Obchodní logiku napíšeme jednou jako **handler**, pak ji vystavíme pomocí
+několika spouštěčů. Tato kapitola vrací dva z nich – **nástroj AI** a
+**akce pracovního postupu**.
+
+## Pomocník pro vykreslování
+
+Uchovávejte čistou logiku ve svém vlastním souboru, takže je snadné testovat jednotku. Toto zarovná záznam
+do `{{dot.path}}` tokenů a nahradí je.
+
+```ts filename="src/logic-functions/utils/render-template.ts"
+const PLACEHOLDER_PATTERN = /\{\{\s*([\w.]+)\s*\}\}/g;
+
+export const renderTemplate = (body: string, values: Record<string, string>) => {
+  const missingTokens = new Set<string>();
+  const content = body.replace(PLACEHOLDER_PATTERN, (_m, token: string) => {
+    const value = values[token];
+    if (value === undefined || value === '') { missingTokens.add(token); return ''; }
+    return value;
+  });
+  return { content, missingTokens: [...missingTokens] };
+};
+```
+
+<Tip>
+Protože tento soubor nemá žádné vedlejší účinky, můžete jej zakrýt rychlými jednotkovými testy
+(`yarn test:unit`). Viz [Testing](/l/cs/developers/extend/apps/operations/testing).
+</Tip>
+
+## Řidič
+
+Pracovník používá vygenerovaná [`CoreApiClient`](/l/cs/developers/extend/apps/logic/logic-functions)
+pro čtení a zápis dat CRM. Načte šablonu, načte cílový záznam, vyplní
+tělo a vytvoří `dokument`.
+
+```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { loadRecordValues } from 'src/logic-functions/utils/load-record-values';
+import { renderTemplate } from 'src/logic-functions/utils/render-template';
+
+export const generateDocumentHandler = async (
+  input: { templateId: string; recordId: string },
+) => {
+  const client = new CoreApiClient();
+
+  // Use a filtered list query, not the singular lookup: the singular query
+  // throws when nothing matches, which would become a 500 instead of a 404.
+  const { documentTemplates } = await client.query({
+    documentTemplates: {
+      __args: { filter: { id: { eq: input.templateId } }, first: 1 },
+      edges: { node: { id: true, name: true, body: true, target: true } },
+    },
+  });
+  const documentTemplate = documentTemplates?.edges?.[0]?.node;
+  if (!documentTemplate?.id) return { success: false, status: 404, message: 'Template not found.' };
+
+  const record = await loadRecordValues(client, documentTemplate.target, input.recordId);
+  if (!record.found) return { success: false, status: 404, message: 'Record not found.' };
+
+  const { content, missingTokens } = renderTemplate(documentTemplate.body ?? '', record.values);
+
+  const { createDocument } = await client.mutation({
+    createDocument: {
+      __args: { data: {
+        name: `${documentTemplate.name} — ${record.displayName}`,
+        content, status: 'GENERATED', templateId: documentTemplate.id,
+      } },
+      id: true, name: true,
+    },
+  });
+
+  return { success: true, documentId: createDocument.id, content, missingTokens };
+};
+```
+
+`loadRecordValues` spouští jiný dotaz na Osobu vs. společnost a flattens
+výsledek — viz
+[`load-record-values.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/load-record-values.ts).
+
+## Vystavit ji jako nástroj a akce pracovního postupu
+
+Jediný `defineLogicFunction` může obsahovat několik spouštěčů. Zde `toolTriggerSettings`
+dělá volatelné AI agenty a `workflowActionTriggerSettings` jej promění v
+krok na vizuálním workflow. Obě popisují svůj vstup se schématem JSON.
+
+```ts filename="src/logic-functions/generate-document.ts"
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema } from 'twenty-sdk/logic-function';
+import { GENERATE_DOCUMENT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+import { generateDocumentInputSchema } from 'src/logic-functions/schemas/generate-document-input.schema';
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document',
+  description: 'Generate a document from a template and a CRM record.',
+  timeoutSeconds: 30,
+  toolTriggerSettings: {
+    inputSchema: generateDocumentInputSchema,
+  },
+  workflowActionTriggerSettings: {
+    label: 'Generate Document',
+    icon: 'IconFileText',
+    inputSchema: jsonSchemaToInputSchema(generateDocumentInputSchema),
+    outputSchema: [{ type: 'object', properties: {
+      success: { type: 'boolean' }, documentId: { type: 'string' },
+    } }],
+  },
+  handler: generateDocumentHandler,
+});
+```
+
+Schéma vstupů je schéma prostého JSON popisující `templateId` a `recordId` —
+viz [`generate-document-input.schema.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/schemas/generate-document-input.schema.ts).
+
+## Povolit přístup
+
+Logické funkce běží jako role aplikace. Potřebuje přečíst šablony a záznamy
+a vytvořit dokumenty, aby v `src/roles/default-role.ts`:
+
+```ts
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Document Generator default role',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: true,
+  canAccessAllTools: true,
+  canBeAssignedToAgents: true,
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
+});
+```
+
+`UPLOAD_FILE` umožňuje funkci nahrát vygenerovaný PDF v další sekci.
+Pro jemnozrnná oprávnění viz [Roles](/l/cs/developers/extend/apps/config/roles).
+
+## Připojit skutečný soubor PDF
+
+Vykreslené textové pole je užitečné, ale uživatelé chtějí skutečný dokument. Vygenerujme
+**PDF** a uložme jej do záznamu jako soubor ke stažení.
+
+Nejprve zadejte objekt `document` pole `FILES` pro držení PDF. Aplikace nahrávají
+do svých **vlastních** polí souborů, takže toto pole slouží jako trasa nahrávání:
+
+```ts filename="src/objects/document.object.ts"
+{
+  universalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.FILES,
+  name: 'file',
+  label: 'File',
+  icon: 'IconFileTypePdf',
+  universalSettings: { maxNumberOfValues: 1 },
+}
+```
+
+Nyní vytvořte tento PDF. Aplikace je skutečný projekt uzlu, takže můžete přidat libovolný balíček npm
+, který potřebujete a importovat jako kdekoli jinde. Používáme **[pdf-lib](https://pdf-lib.js.org/)**
+k nakreslení PDF a **[marked](https://marked.js.org/)** k rozepsání těla Markdown
+– CLI je nainstaluje do běhu funkce pro vás:
+
+```bash filename="Terminal"
+yarn add pdf-lib marked
+```
+
+Úplný pomocník je
+[`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
+Parazuje Markdown do tokenů s `označeným. exer`, pak je stanoví s
+pdf-lib: skutečné nadpisy, **tučné**/*italic* běhy, odrážky a číslované seznamy,
+blokuje kotace a pravidla – leštěné, vícestránkové A4 vykreslování šablony
+samotné, nikoli zeď textu.
+
+<Frame caption="Vygenerovaný PDF: skutečné typografie a Markdown formátování, vykreslování těla šablony.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07b-generated-pdf.png" alt="Leštěný, tržně generovaný PDF" />
+</Frame>
+
+<Note>
+Vestavěné fonty ve formátu pdf-lib, používají WinAnsi kódování, takže západoevropské akcenty vyřadí
+z krabice; pomocník mapy chytrých uvozovek a pomlček a kapne znaky, které nemůže kódovat
+. Vykreslování nelatinských skriptů (čínské, arabské, cyrilice) by znamenalo, že by
+vložil písmo Unicode.
+</Note>
+
+Pak ho nahrajte a uložte odkaz do záznamu. `uploadFile` routy bytů
+do vašeho pole souborů vlastněných aplikací; vrácený `id` je to, co uložíte:
+
+```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { generateDocumentPdf } from 'src/logic-functions/utils/generate-document-pdf';
+
+const documentName = `${documentTemplate.name} — ${record.displayName}`;
+const bytes = await generateDocumentPdf(documentName, content);
+const fileName = 'proposal.pdf';
+
+const uploaded = await new MetadataApiClient().uploadFile(
+  Buffer.from(bytes),
+  fileName,
+  'application/pdf',
+  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+);
+
+await client.mutation({
+  updateDocument: {
+    __args: {
+      id: documentId,
+      data: { file: [{ fileId: uploaded.id, label: fileName }] },
+    },
+    id: true,
+  },
+});
+```
+
+Vygenerovaný dokument má nyní stažitelný PDF:
+
+<Frame caption="Vygenerovaný PDF uložený v poli Soubor dokumentu.">
+  <img src="/images/docs/developers/extends/apps/document-generator/08-document-with-pdf.png" alt="Záznam dokladu s vygenerovaným souborem PDF" />
+</Frame>
+
+<Note>
+`uploadFile` se zaměřuje pouze na **soubory vlastněné aplikací** (takže nahrávání vždy vyžaduje aplikaci
+, která toto pole vlastní, plus proměnnou role `UPLOAD_FILE`). To je důvod, proč PDF
+přistane na vlastním `file` pole záznamu — stejný vzor
+[call-recorder app](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/call-recorder)
+používá pro nahrávání.
+</Note>
+
+**Po tomto kroku:** každý vygenerovaný dokument má skutečný, stahovatelný PDF. Ale
+nemůže *volat* generátor z uživatelského rozhraní - pro to potřebujeme HTTP trasu.
+
+<Card title="Další: HTTP trasy →" icon="zeměkoule" href="/l/cs/developers/extend/apps/tutorials/document-generator/http-routes">
+  Zapněte funkci přes HTTP a vykreslete dokumenty jako webové stránky.
+</Card>

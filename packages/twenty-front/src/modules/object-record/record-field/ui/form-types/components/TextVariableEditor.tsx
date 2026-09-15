@@ -1,4 +1,4 @@
-import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/object-record/record-field/ui/form-types/constants/FormFieldPlaceholderStyles';
+import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPlaceholderStyles';
 import { styled } from '@linaria/react';
 import { EditorContent, type Editor } from '@tiptap/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -52,14 +52,14 @@ const StyledEditor = styled.div<{
 
     .variable-tag {
       background-color: ${themeCssVariables.color.blue3};
-      border-radius: ${themeCssVariables.border.radius.sm};
+      border-radius: ${themeCssVariables.border.radius.md};
       color: ${themeCssVariables.color.blue};
       padding: ${themeCssVariables.spacing[1]};
     }
 
     .text-tag {
       background-color: ${themeCssVariables.color.blue3};
-      border-radius: ${themeCssVariables.border.radius.sm};
+      border-radius: ${themeCssVariables.border.radius.md};
       color: ${themeCssVariables.color.blue};
       padding: ${themeCssVariables.spacing[1]};
     }

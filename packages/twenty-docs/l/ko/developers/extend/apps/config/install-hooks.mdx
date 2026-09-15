@@ -1,0 +1,188 @@
+---
+title: 설치 훅
+description: 설치, 업그레이드 또는 제거 라이프사이클 동안 로직을 실행하여 데이터를 시드하고, 레코드를 백업하고, 업그레이드를 검증하고, 외부 리소스를 정리합니다.
+icon: wrench
+---
+
+설치 훅은 설치, 업그레이드 또는 제거 라이프사이클 동안 실행되는 특수한 로직 함수입니다. 이들은 일반 [로직 함수](/l/ko/developers/extend/apps/logic/logic-functions)와 동일한 핸들러 런타임을 공유하지만, 자체 define 함수로 선언되며 일반 트리거 모델(HTTP, cron, 데이터베이스 이벤트) 외부에서 동작합니다. 설치 훅은 `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — 새로 설치하는 경우 `previousVersion`은 `undefined`임)을 받고, 제거 훅은 제거되는 버전을 나타내는 `UninstallPayload` (`{ version?: string }`)을 받습니다.
+
+각 앱은 각 훅(pre-install, post-install, uninstall)을 **최대 하나씩만** 정의할 수 있습니다. 어떤 종류든 둘 이상 감지되면 매니페스트 빌드에서 오류가 발생합니다.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## 한눈에 보기
+
+|         | `definePreInstallLogicFunction`                   | `definePostInstallLogicFunction`                                               |
+| ------- | ------------------------------------------------- | ------------------------------------------------------------------------------ |
+| 실행      | 메타데이터 마이그레이션 이전 — **이전** 스키마와 데이터는 그대로 유지됨        | 마이그레이션 및 SDK 생성 이후 — **새로운** 스키마가 적용됨                                          |
+| 실행      | 항상 동기식; 설치를 차단함                                   | 기본적으로 비동기(대기열에 등록, 최대 3회 재시도); `shouldRunSynchronously: true`로 동기 실행을 선택할 수 있음 |
+| 실패 시    | 스키마 변경 이전에 설치가 **중단**됨                            | 비동기: 최대 3회까지 재시도됩니다. 동기: 호출자는 `POST_INSTALL_ERROR`를 받음(스키마 변경은 **롤백되지 않습니다**)  |
+| 일반적인 사용 | 마이그레이션으로 손실될 데이터를 백업하거나 수정함; 예외를 던져 위험한 업그레이드를 거부 | 기본 데이터 시딩, 워크스페이스 구성, 외부 리소스 등록                                                |
+
+**기본 원칙:** 기본적으로 post-install을 사용하세요. 마이그레이션 자체가 파괴적이며 이전 상태가 사라지기 전에 이를 가로채야 할 때에만 pre-install을 사용하세요.
+
+| 원하는 작업...                        | 사용                                                  |
+| -------------------------------- | --------------------------------------------------- |
+| 데이터 시딩, 워크스페이스 구성, 외부 리소스 등록     | `post-install`                                      |
+| 설치 응답을 차단해서는 안 되는 장시간 작업         | `post-install` (기본 비동기 모드, 워커 재시도 포함)               |
+| 설치 호출이 반환된 직후 호출자가 즉시 의존하는 빠른 설정 | `shouldRunSynchronously: true`를 사용하는 `post-install` |
+| 곧 진행될 마이그레이션으로 손실될 데이터를 읽거나 백업   | `pre-install`                                       |
+| 기존 데이터를 손상시킬 업그레이드를 거부           | `pre-install` (핸들러에서 예외를 던짐)                        |
+| 모든 업그레이드 시 상태 조정 수행              | `shouldRunOnVersionUpgrade: true`가 설정된 어느 훅이든 사용    |
+
+## 두 훅에 공통으로 적용되는 동작
+
+* 구성은 트리거 설정을 제외한 `defineLogicFunction` 구성에 `shouldRunOnVersionUpgrade`가 추가된 형태입니다.
+* **실행 시점**: 기본적으로 신규 설치에서만 실행됩니다. 업그레이드 시에도 실행하려면 `shouldRunOnVersionUpgrade: true`를 설정합니다. 업그레이드 경로에 따라 분기하기 위해 `previousVersion` / `newVersion`을 사용합니다.
+* **멱등성이 중요합니다**: 비동기 post-install은 재시도될 수 있고, `shouldRunOnVersionUpgrade`가 켜져 있으면 두 훅 모두 업그레이드 시 다시 실행됩니다.
+* 일반적인 로직 함수 환경(`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`)이 주입되므로, 앱의 토큰으로 Twenty API를 호출할 수 있습니다.
+* 훅은 빌드 시 애플리케이션 매니페스트에 자동으로 연결됩니다(`preInstallLogicFunction` / `postInstallLogicFunction`) — [`defineApplication()`](/l/ko/developers/extend/apps/config/application)에서 참조할 것은 없습니다.
+* 기본 `timeoutSeconds`는 데이터 시딩과 같은 더 긴 설정 작업을 허용하기 위해 300으로 설정되어 있습니다.
+* **dev 모드에서는 실행되지 않음**: `yarn twenty dev`는 설치 플로우를 건너뛰고 파일을 직접 동기화하므로, 해당 환경에서는 훅이 전혀 실행되지 않습니다. 대신 수동으로 트리거하세요:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
+```
+
+<AccordionGroup>
+<Accordion title="definePostInstallLogicFunction" description="워크스페이스 메타데이터 마이그레이션이 적용된 후에 실행됩니다.">
+
+앱 설치가 완료된 후 한 번 실행됩니다: 메타데이터 동기화 완료, SDK 클라이언트 생성, 새로운 스키마 쿼리 가능 상태. 예시 — 신규 설치에서 기본 레코드를 시딩하기:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = new CoreApiClient();
+  await client.mutation({
+    createPostCard: {
+      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
+      id: true,
+    },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+`shouldRunSynchronously` 플래그가 실행 모델을 제어합니다:
+
+* `false` *(기본값)* — 메시지 큐에 등록되고(`retryLimit: 3`), 워커에 의해 실행됩니다. 작업이 큐에 등록되면 설치 응답이 즉시 반환됩니다. **장시간 작업에 사용** — 대용량 데이터셋 시딩, 지연이 긴 서드파티 API 호출 등.
+* `true` — 설치 플로우 중에 인라인으로 실행됩니다. 설치 요청은 핸들러가 종료될 때까지 블로킹되며, 예외가 발생하면 호출자에게 `POST_INSTALL_ERROR`로 전달됩니다(재시도 없음). **빠르고, 응답 전에 반드시 완료되어야 하는 작업에 사용하세요.** 이 시점에는 이미 마이그레이션이 적용되었으므로, 실패하더라도 스키마 변경은 롤백되지 않고 오류만 노출됩니다.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="워크스페이스 메타데이터 마이그레이션이 적용되기 전에 실행됩니다.">
+
+메타데이터 마이그레이션 이전, **이전** 스키마를 대상으로 실행됩니다 — 마이그레이션으로 손실될 데이터를 백업하거나, 위험한 업그레이드를 거부하기에 적절한 위치입니다. 실행에 앞서, 서버는 순수 추가식의 "간소화된 동기화"를 수행하여 새 버전의 pre-install 함수만 등록하고, 나머지 — 이전 버전의 오브젝트, 필드, 데이터 — 는 핸들러가 실행될 때까지 변경하지 않습니다.
+
+pre-install은 항상 **동기식**이며 설치를 차단합니다. 핸들러에서 예외를 던지면, 어떤 스키마 변경도 적용되기 전에 설치가 중단되며 — 워크스페이스는 일관된 상태로 이전 버전에 머무릅니다. 이는 의도된 동작입니다: pre-install은 위험한 업그레이드를 거부할 수 있는 마지막 기회입니다.
+
+예시 — 마이그레이션이 기존 필드를 삭제하기 전에 해당 필드 값을 복사하기:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = new CoreApiClient();
+  const { postCards } = await client.query({
+    postCards: {
+      __args: { filter: { notes: { isNot: null } } },
+      edges: { node: { id: true, notes: true } },
+    },
+  });
+
+  // Copy legacy `notes` into `description` before the migration drops the
+  // column. If this fails, the upgrade aborts and the workspace stays on v1.
+  for (const { node } of postCards.edges) {
+    await client.mutation({
+      updatePostCard: {
+        __args: { id: node.id, data: { description: node.notes } },
+        id: true,
+      },
+    });
+  }
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+</Accordion>
+</AccordionGroup>
+
+## 제거 훅
+
+`defineUninstallLogicFunction`은 사용자가 앱을 제거할 때 실행되는 훅을 선언합니다. 이 훅은 앱의 메타데이터, 데이터, 코드가 제거되기 **이전**에 실행됩니다. 삭제 마이그레이션이 실행된 후에는 더 이상 실행할 것이 남지 않으므로, 핸들러는 여전히 앱의 오브젝트와 레코드를 쿼리할 수 있습니다. 이를 외부 리소스 정리에 사용하십시오. 예를 들어 API 리소스 프로비저닝 해제, 남은 봇 삭제, 웹훅 해지에 사용할 수 있습니다.
+
+노트:
+
+* 이 훅은 최대한 시도(best-effort) 방식으로 동작합니다. 동기적으로 실행되지만, 실패해도 로그에만 기록되고 **제거를 차단하지 않습니다**. 정리 작업 때문에 앱을 제거할 수 없게 만들어서는 안 됩니다.
+* 이 훅은 제거되는 버전을 나타내는 `UninstallPayload` (`{ version?: string }`)을 받습니다.
+* 새 설치가 실패하여 롤백될 때는 이 훅이 **실행되지 않습니다**. 앱 설치가 끝까지 완료되지 않았기 때문입니다.
+* 앱이 제거된 후에는 이 훅을 실행할 수 없으므로, 앱 데이터(예: 레코드에 저장된 봇 ID)에 의존하는 외부 정리 작업은 외부 예약 작업이 아니라 여기에서 수행해야 합니다.
+* 설치 훅과 마찬가지로, 이 훅은 **개발 모드에서는 실행되지 않습니다**. 대신 수동으로 트리거해야 합니다:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

@@ -23,31 +23,31 @@ export const CleanSuspendedWorkspaceEmail = ({
 
   return (
     <BaseEmail width={333} locale={locale}>
-      <Title value={i18n._('Deleted Workspace')} />
+      <Title value={i18n._('Your workspace has been deleted')} />
       <MainText>
         {userName?.length > 1 ? (
-          <Trans id="Dear {userName}," values={{ userName }} />
+          <Trans id="Hi {userName}," values={{ userName }} />
         ) : (
           <Trans id="Hello," />
         )}
         <br />
         <br />
         <Trans
-          id="Your workspace <0>{workspaceDisplayName}</0> has been deleted as your subscription expired {daysSinceInactive} days ago."
+          id="Your workspace <0>{workspaceDisplayName}</0> has now been permanently deleted — it was paused {daysSinceInactive} days ago and wasn't reactivated in time."
           values={{ workspaceDisplayName, daysSinceInactive }}
           components={{ 0: <b /> }}
         />
         <br />
         <br />
-        <Trans id="All data in this workspace has been permanently deleted." />
+        <Trans id="Its data has been removed and can no longer be recovered." />
         <br />
         <br />
-        <Trans id="If you wish to use Twenty again, you can create a new workspace." />
+        <Trans id="If you'd ever like to give Twenty another try, you can start a fresh workspace in minutes — we'd love to have you back." />
       </MainText>
       <br />
       <CallToAction
         href="https://app.twenty.com/"
-        value={i18n._('Create a new workspace')}
+        value={i18n._('Start a new workspace')}
       />
       <br />
       <br />

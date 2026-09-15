@@ -1,0 +1,55 @@
+---
+title: API
+icon: plug
+description: 워크스페이스 스키마에서 생성된 REST 및 GraphQL API.
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## 테넌트별 스키마 API
+
+Twenty에는 정적 API 참조 문서가 없습니다. 각 워크스페이스는 고유한 스키마를 가집니다 — 사용자 지정 객체(예: `Invoice`)를 추가하면, `Company` 또는 `Person`과 같은 기본 제공 객체와 동일한 REST 및 GraphQL 엔드포인트가 즉시 생성됩니다. API는 스키마에서 생성되므로 엔드포인트에서 객체와 필드 이름을 직접 사용합니다 — 의미를 알 수 없는 ID는 없습니다.
+
+워크스페이스별 API 문서는 API 키 생성 후 **설정 → API 및 웹훅**에서 확인할 수 있습니다. 데이터에 대해 실제 호출을 실행할 수 있는 대화형 플레이그라운드가 포함되어 있습니다.
+
+## 두 가지 API
+
+**핵심 API** — `/rest/` 및 `/graphql/`
+
+레코드에 대한 CRUD: People, Companies, Opportunities, 사용자 지정 객체. 쿼리, 필터링, 관계 탐색.
+
+**메타데이터 API** — `/rest/metadata/` 및 `/metadata/`
+
+스키마 관리: 객체, 필드, 관계 생성/수정/삭제. 이것이 데이터 모델을 프로그래밍 방식으로 변경하는 방법입니다.
+
+둘 다 REST와 GraphQL로 사용할 수 있습니다. GraphQL은 배치 업서트와 단일 쿼리에서 관계를 탐색하는 기능을 제공합니다. 어떤 방식을 사용하든 동일한 기본 데이터입니다.
+
+## 기본 URL
+
+| 환경     | 기본 URL                    |
+| ------ | ------------------------- |
+| 클라우드   | `https://api.twenty.com/` |
+| 셀프 호스팅 | `https://{your-domain}/`  |
+
+## 인증
+
+```
+Authorization: Bearer YOUR_API_KEY
+```
+
+**Settings → API & Webhooks → + Create key**에서 API 키를 생성하세요. 즉시 복사하세요 — 한 번만 표시됩니다. 키는 **Settings → Members → Roles → Assignment tab**에서 특정 역할에 범위를 지정하여 액세스 가능한 범위를 제한할 수 있습니다.
+
+<VimeoEmbed videoId="928786722" title="API 키 생성" />
+
+사용자 대신 동작하는 외부 앱을 위한 OAuth 기반 액세스에 대해서는 [OAuth](/l/ko/developers/extend/oauth)를 참고하세요.
+
+## 배치 작업
+
+REST와 GraphQL 모두 요청당 최대 60개의 레코드에 대한 배치 처리를 지원합니다 — 생성, 업데이트 또는 삭제. GraphQL은 `CreateCompanies`와 같은 복수형 이름을 사용하여 배치 업서트(한 번의 호출로 생성 또는 업데이트)도 지원합니다.
+
+## 속도 제한
+
+| 제한    | 값            |
+| ----- | ------------ |
+| 요청    | 분당 100회 호출   |
+| 배치 크기 | 호출당 60개의 레코드 |

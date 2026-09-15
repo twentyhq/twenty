@@ -6,13 +6,6 @@ import {
 } from '@nestjs/graphql';
 
 import {
-  Authorize,
-  CursorConnection,
-  FilterableField,
-  IDField,
-  QueryOptions,
-} from '@ptc-org/nestjs-query-graphql';
-import {
   IsBoolean,
   IsDate,
   IsEnum,
@@ -24,9 +17,7 @@ import {
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
-import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
-import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
+import { IndexType } from 'twenty-shared/types';
 
 registerEnumType(IndexType, {
   name: 'IndexType',
@@ -34,23 +25,10 @@ registerEnumType(IndexType, {
 });
 
 @ObjectType('Index')
-@Authorize({
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.workspace?.id },
-  }),
-})
-@QueryOptions({
-  defaultResultSize: 10,
-  disableSort: true,
-  maxResultsSize: 1000,
-})
-@CursorConnection('objectMetadata', () => ObjectMetadataDTO)
-@CursorConnection('indexFieldMetadatas', () => IndexFieldMetadataDTO)
 export class IndexMetadataDTO {
   @IsUUID()
   @IsNotEmpty()
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @IsString()
@@ -61,7 +39,7 @@ export class IndexMetadataDTO {
 
   @IsBoolean()
   @IsOptional()
-  @FilterableField({ nullable: true })
+  @Field({ nullable: true })
   isCustom?: boolean;
 
   @IsBoolean()

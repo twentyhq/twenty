@@ -2,10 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
-import { render } from '@react-email/render';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
-import { SendEmailVerificationLinkEmail } from 'twenty-emails';
+import { SendEmailVerificationLinkEmail, renderEmail } from 'twenty-emails';
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { AppPath } from 'twenty-shared/types';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
@@ -94,8 +93,9 @@ export class EmailVerificationService {
 
     const emailTemplate = SendEmailVerificationLinkEmail(emailData);
 
-    const html = await render(emailTemplate);
-    const text = await render(emailTemplate, {
+    const html = await renderEmail(emailTemplate);
+
+    const text = await renderEmail(emailTemplate, {
       plainText: true,
     });
 

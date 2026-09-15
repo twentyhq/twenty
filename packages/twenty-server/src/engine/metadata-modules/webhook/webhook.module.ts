@@ -1,15 +1,12 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatWebhookModule } from 'src/engine/metadata-modules/flat-webhook/flat-webhook.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WebhookController } from 'src/engine/metadata-modules/webhook/controllers/webhook.controller';
-import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
 import { WebhookGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/webhook/interceptors/webhook-graphql-api-exception.interceptor';
+import { WebhookToolWorkspaceService } from 'src/engine/metadata-modules/webhook/tools/services/webhook-tool.workspace-service';
 import { WebhookResolver } from 'src/engine/metadata-modules/webhook/webhook.resolver';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
@@ -18,7 +15,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ApplicationEntity, WebhookEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     WorkspaceCacheStorageModule,
@@ -33,7 +29,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WebhookResolver,
     WebhookGraphqlApiExceptionInterceptor,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
+    WebhookToolWorkspaceService,
   ],
-  exports: [WebhookService],
+  exports: [WebhookService, WebhookToolWorkspaceService],
 })
 export class WebhookModule {}

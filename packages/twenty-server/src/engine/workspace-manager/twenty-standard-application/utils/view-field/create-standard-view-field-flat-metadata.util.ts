@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { type AggregateOperations } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
-import { type AggregateOperations } from 'twenty-shared/types';
 
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
@@ -51,6 +51,7 @@ export const createStandardViewFieldFlatMetadata = <
     viewFieldGroupName = null,
   },
   standardObjectMetadataRelatedEntityIds,
+  dependencyFlatEntityMaps,
   twentyStandardApplicationId,
   now,
 }: CreateStandardViewFieldArgs<O, V>): FlatViewField => {
@@ -76,6 +77,17 @@ export const createStandardViewFieldFlatMetadata = <
   if (!isDefined(viewFieldDefinition)) {
     throw new Error(
       `Invalid configuration ${objectName} ${viewName.toString()} ${viewFieldName}`,
+    );
+  }
+
+  const parentView =
+    dependencyFlatEntityMaps.flatViewMaps.byUniversalIdentifier[
+      viewDefinition.universalIdentifier
+    ];
+
+  if (!isDefined(parentView)) {
+    throw new Error(
+      `Missing parent view ${objectName} ${viewName.toString()} for view field ${viewFieldName}`,
     );
   }
 
@@ -121,6 +133,7 @@ export const createStandardViewFieldFlatMetadata = <
     size,
     aggregateOperation,
     isActive: true,
+    isSystemSideEffect: parentView.isSystemSideEffect,
     overrides: null,
     universalOverrides: null,
     createdAt: now,

@@ -12,7 +12,7 @@ import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDrop
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import 'react-phone-number-input/style.css';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconWorld } from 'twenty-ui/display';
+import { IconChevronDown, IconWorld } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type StyledDropdownButtonProps = {

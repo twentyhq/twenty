@@ -5,7 +5,7 @@ import {
 } from './KeyboardShortcutMenuStyles';
 import { t } from '@lingui/core/macro';
 import { IconButton } from 'twenty-ui/input';
-import { IconX } from 'twenty-ui/display';
+import { IconX } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 
 type KeyboardMenuDialogProps = {

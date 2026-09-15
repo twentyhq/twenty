@@ -2,9 +2,13 @@ import { Global, Module } from '@nestjs/common';
 
 import { RecordPositionModule } from 'src/engine/core-modules/record-position/record-position.module';
 import { WORKFLOW_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/workflow-tool-service.token';
+import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
+import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
+import { WorkflowValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-validation.module';
 import { WorkflowVersionEdgeModule } from 'src/modules/workflow/workflow-builder/workflow-version-edge/workflow-version-edge.module';
 import { WorkflowVersionStepModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step.module';
 import { WorkflowVersionModule } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.module';
@@ -21,10 +25,14 @@ import { WorkflowToolWorkspaceService } from './services/workflow-tool.workspace
     WorkflowVersionEdgeModule,
     WorkflowVersionModule,
     WorkflowTriggerModule,
+    WorkflowCommonModule,
     WorkflowSchemaModule,
+    WorkflowValidationModule,
     RecordPositionModule,
     LogicFunctionModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
+    AiAgentModule,
+    WorkflowVersionCoreModule,
   ],
   providers: [
     WorkflowToolWorkspaceService,

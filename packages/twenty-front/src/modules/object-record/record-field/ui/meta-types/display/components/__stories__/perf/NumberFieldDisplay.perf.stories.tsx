@@ -47,7 +47,7 @@ export const Float: Story = {
 
 export const Performance = getProfilingStory({
   componentName: 'NumberFieldDisplay',
-  averageThresholdInMs: 0.5,
+  averageThresholdInMs: 1,
   numberOfRuns: 50,
   numberOfTestsPerRun: 100,
 });

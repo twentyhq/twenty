@@ -1,25 +1,21 @@
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { type ToolUIPart } from 'ai';
+import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  IconCpu,
-  OverflowingTextWithTooltip,
-  ThinkingOrbitLoaderIcon,
-  TooltipDelay,
-} from 'twenty-ui/display';
+import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { JsonTree } from 'twenty-ui/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
+import { AiChatThinkingRow } from '@/ai/components/AiChatThinkingRow';
+import { ShimmeringText } from '@/ai/components/ShimmeringText';
+import { useToolDisplayContext } from '@/ai/hooks/useToolDisplayContext';
 import { getToolIcon } from '@/ai/utils/getToolIcon';
-import {
-  getToolDisplayMessage,
-  resolveToolInput,
-} from '@/ai/utils/getToolDisplayMessage';
+import { getToolDisplayMessage } from '@/ai/utils/tool-display/get-tool-display-message';
+import { unwrapToolInput } from '@/ai/utils/tool-display/unwrap-tool-input.util';
 import { getActiveReasoningContent } from '@/ai/utils/getActiveReasoningContent';
 import { getLastReasoningContent } from '@/ai/utils/getLastReasoningContent';
 import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
@@ -139,11 +135,6 @@ const StyledReasoningText = styled.p`
   white-space: pre-wrap;
 `;
 
-const StyledOrbitLoaderIconContainer = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-`;
-
 const StyledIconContainer = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.light};
@@ -205,6 +196,12 @@ const StyledToolRowButton = styled.button<{ isExpandable: boolean }>`
   }
 `;
 
+const StyledShimmeringLabel = styled(ShimmeringText)`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const StyledToolDetailsContainer = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.light};
@@ -258,19 +255,26 @@ const ThinkingToolStepRow = ({
   rowIndex,
 }: {
   isActive: boolean;
-  part: ToolUIPart;
+  part: ToolUIPart | DynamicToolUIPart;
   rowIndex: number;
 }) => {
   const { copyToClipboard } = useCopyToClipboard();
   const [isExpanded, setIsExpanded] = useState(false);
-  const rawToolName = part.type.split('-')[1];
-  const { resolvedInput: toolInput, resolvedToolName } = resolveToolInput(
-    part.input,
-    rawToolName,
-  );
+  const rawToolName = getToolName(part);
+  const { toolInput, toolName } = unwrapToolInput({
+    input: part.input,
+    toolName: rawToolName,
+  });
 
-  const ToolIcon = getToolIcon(resolvedToolName);
-  const label = getToolDisplayMessage(part.input, rawToolName, !isActive);
+  const displayContext = useToolDisplayContext();
+  const ToolIcon = getToolIcon(toolName);
+  const displayMessage = getToolDisplayMessage({
+    input: part.input,
+    toolName: rawToolName,
+    isFinished: !isActive,
+    displayContext,
+    output: part.output,
+  });
   const hasError = isDefined(part.errorText);
   const isExpandable = isDefined(part.output) || hasError;
 
@@ -312,10 +316,14 @@ const ThinkingToolStepRow = ({
         </StyledIconContainer>
         <StyledRowLabelContainer>
           <StyledToolRowLabel>
-            <OverflowingTextWithTooltip
-              text={label}
-              tooltipDelay={TooltipDelay.shortDelay}
-            />
+            {isActive ? (
+              <StyledShimmeringLabel>{displayMessage}</StyledShimmeringLabel>
+            ) : (
+              <OverflowingTextWithTooltip
+                text={displayMessage}
+                tooltipDelay={TooltipDelay.shortDelay}
+              />
+            )}
           </StyledToolRowLabel>
           {isExpandable && (
             <StyledChevronContainer isExpanded={isExpanded}>
@@ -385,19 +393,17 @@ const ThinkingStepRow = ({
     );
   }
 
+  if (isActive) {
+    return <AiChatThinkingRow />;
+  }
+
   return (
     <StyledRow>
       <StyledIconContainer>
-        {isActive ? (
-          <StyledOrbitLoaderIconContainer>
-            <ThinkingOrbitLoaderIcon />
-          </StyledOrbitLoaderIconContainer>
-        ) : (
-          <IconCpu size={14} />
-        )}
+        <IconCpu size={14} />
       </StyledIconContainer>
       <StyledRowLabelContainer>
-        <StyledRowLabel>{isActive ? t`Thinking` : t`Thought`}</StyledRowLabel>
+        <StyledRowLabel>{t`Thought`}</StyledRowLabel>
       </StyledRowLabelContainer>
     </StyledRow>
   );
@@ -407,30 +413,32 @@ export const ThinkingStepsDisplay = ({
   parts,
   isLastMessageStreaming,
   hasAssistantTextResponseStarted,
+  isTrailingWhileStreaming = false,
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
   hasAssistantTextResponseStarted: boolean;
+  isTrailingWhileStreaming?: boolean;
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const stepCount = parts.length;
-  const isThinking = parts.some((part) =>
+  const hasActiveStep = parts.some((part) =>
     isThinkingStepPartActive(part, isLastMessageStreaming),
   );
 
   const activeReasoningContent = getActiveReasoningContent(parts);
   const finalReasoningContent = getLastReasoningContent(parts);
-  const reasoningContent = isThinking
+  const reasoningContent = hasActiveStep
     ? activeReasoningContent
     : finalReasoningContent;
   const shouldDisplayReasoningContent = reasoningContent?.trim().length;
   const shouldKeepExpandedBeforeAnswer = !hasAssistantTextResponseStarted;
   const shouldShowSummaryButton =
-    !isThinking && !shouldKeepExpandedBeforeAnswer;
+    !hasActiveStep && !shouldKeepExpandedBeforeAnswer;
 
   const shouldRenderRows =
-    isThinking || isExpanded || shouldKeepExpandedBeforeAnswer;
+    hasActiveStep || isExpanded || shouldKeepExpandedBeforeAnswer;
 
   return (
     <StyledContainer>
@@ -466,6 +474,9 @@ export const ThinkingStepsDisplay = ({
                 )}
               />
             ))}
+            {isTrailingWhileStreaming && !hasActiveStep && (
+              <AiChatThinkingRow />
+            )}
           </StyledRowsContainer>
           {!!shouldDisplayReasoningContent && (
             <StyledReasoningContainer>

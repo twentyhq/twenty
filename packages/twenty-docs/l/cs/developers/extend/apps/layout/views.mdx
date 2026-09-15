@@ -1,0 +1,113 @@
+---
+title: Zobrazení
+description: Dodávejte předem nakonfigurovaná uložená zobrazení – pořadí sloupců, filtry, seskupení – pro objekty ve své aplikaci.
+icon: list
+---
+
+**Zobrazení** je uložená konfigurace toho, jak se zobrazují záznamy objektu: která pole se zobrazují, v jakém pořadí, zda jsou viditelná a jaké filtry nebo seskupení jsou použity. Pomocí `defineView()` můžete k aplikaci přidat předkonfigurovaná zobrazení.
+
+Každý objekt automaticky získá své hlavní zobrazení seznamu (tabulku „All ...“, kterou otevírá navigační položka `OBJECT`), poskytované serverem – včetně objektů, které vaše aplikace vytváří, s jedním sloupcem pro každé pole, které vaše aplikace deklaruje. Zobrazení, která definujete pomocí `defineView()`, jsou vždy **dodatečná** zobrazení nad rámec tohoto výchozího.
+
+```ts src/views/example-view.ts
+import { defineView } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Hlavní body
+
+* `objectUniversalIdentifier` určuje, na který objekt se toto zobrazení vztahuje. Může to být vlastní objekt, který jste definovali, nebo standardní objekt Twenty.
+* Hlavní zobrazení seznamu objektu je vlastněné serverem: `key` je zastaralý a ignorován, takže si je zobrazení definované v manifestu nikdy nemůže nárokovat. Dodejte navigační položku `VIEW`, pokud chcete mít své zobrazení na jedno kliknutí v postranním panelu.
+* `fields` určuje, které sloupce se zobrazí a v jakém pořadí. Každé pole odkazuje na `fieldMetadataUniversalIdentifier`. Chcete-li odkazovat na automaticky vytvořené systémové pole, například `createdAt`, podívejte se na [Cílení na systémová metadata](/l/cs/developers/extend/apps/data/system-fields).
+* Pro pokročilé konfigurace můžete také deklarovat `filters`, `filterGroups`, `sorts`, `groups` a `fieldGroups`.
+* `position` určuje pořadí, pokud pro stejný objekt existuje více zobrazení.
+
+## Volitelné vlastnosti
+
+| Vlastnost                                                                                                   | Hodnoty                                                                             | Popis                                                                                                                                                                                                                                           |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type`                                                                                                      | `ViewType.TABLE` (výchozí), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR` | Jak jsou záznamy uspořádány. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, `LIST_WIDGET` a `CALENDAR_WIDGET` také existují, ale jsou používány interně widgety rozvržení stránky.)                                                         |
+| `visibility`                                                                                                | `ViewVisibility.WORKSPACE` (výchozí), `ViewVisibility.UNLISTED`                     | Zda je zobrazení viditelné v celém pracovním prostoru, nebo není dostupné ve výběrových prvcích.                                                                                                                                                |
+| `openRecordIn`                                                                                              | zastaralé                                                                           | Již se nečte: místo toho je nyní umístění, kde se záznamy otevírají, vlastností [objektu](/l/cs/developers/extend/apps/data/objects) (`openRecordIn` v `defineObject()`), přičemž se v případě potřeby použije individuální předvolba každého člena. |
+| `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`  | Výchozí pořadí řazení.                                                                                                                                                                                                                          |
+| `isCompact`                                                                                                 | `boolean`                                                                           | Kompaktní zobrazení řádků.                                                                                                                                                                                                                      |
+| `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                   | Seskupení záznamů (např. sloupce kanbanu) podle pole.                                                                                                                                                                                           |
+| `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                             | Agregace a velikost sloupců v kanbanu.                                                                                                                                                                                                          |
+| `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                         | Zobrazení kalendáře: rozvržení, datumové pole, které určuje umístění záznamů, a volitelné pole koncového data.                                                                                                                                  |
+
+Všechny výše uvedené výčtové typy jsou exportovány z `twenty-sdk/define`.
+
+## Filtry
+
+Zobrazení může být dodáno s předem aplikovanými filtry. Každý filtr má tři souřadnice: **pole**, které se filtruje, **operand** (jak porovnávat) a **hodnotu** (proti čemu porovnávat). Všechny tři musí být v souladu — použití operandu, který se nehodí k typu pole, bude při synchronizaci odmítnuto.
+
+```ts
+import { ViewFilterOperand } from 'twenty-sdk/define';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### Podporované operandy podle typu pole
+
+| Typ pole                                                                                           | Podporované operandy                                                                                               |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> Typy polí s podobnými názvy mohou používat zcela odlišné operandy — běžným případem jsou `SELECT` a `MULTI_SELECT`.
+
+### Tvar hodnoty podle operandu
+
+Pole `value` je vždy hodnota serializovatelná do JSON, ale její očekávaný tvar závisí na operandu:
+
+| Skupina operandů                                                      | Tvar hodnoty                  | Příklad                  |
+| --------------------------------------------------------------------- | ----------------------------- | ------------------------ |
+| `IS`, `IS_NOT` na `SELECT`                                            | pole klíčů možností (řetězce) | `['ACTIVE', 'PENDING']`  |
+| `CONTAINS`, `DOES_NOT_CONTAIN` na `MULTI_SELECT`                      | pole klíčů možností (řetězce) | `['TAG_A']`              |
+| `IS`, `IS_NOT` na `RELATION`                                          | pole ID záznamů (uuid)        | `['c5a1...']`            |
+| `CONTAINS`, `DOES_NOT_CONTAIN` na textových polích a podobných typech | textový řetězec               | `'acme'`                 |
+| `IS`, `IS_NOT` na `NUMBER`                                            | řetězec (hodnota)             | `'5'`                    |
+| `IS` na `RATING` / `UUID`                                             | řetězec (hodnota)             | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`                         | řetězec (mezní hodnota)       | `'10'`                   |
+| `IS`, `IS_BEFORE`, `IS_AFTER` na `DATE` / `DATE_TIME`                 | řetězec ve formátu ISO 8601   | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                                            | prázdný řetězec               | `''`                     |
+| `IS` na `BOOLEAN`                                                     | `'true'` nebo `'false'`       | `'true'`                 |
+
+## Jak se zobrazení objevují v uživatelském rozhraní
+
+Samotné zobrazení není z postranního panelu dostupné. Aby se tam zobrazilo, spárujte ho s [položkou navigačního menu](/l/cs/developers/extend/apps/layout/navigation-menu-items) typu `VIEW`, která odkazuje na `universalIdentifier` daného zobrazení. To je kanonický vzor: každý vlastní objekt získá při vytvoření výchozí indexové zobrazení automaticky vygenerované, takže stačí pouze dodat položku v postranním panelu, která jej otevře.

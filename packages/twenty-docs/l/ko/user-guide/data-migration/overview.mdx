@@ -5,7 +5,6 @@ description: CSV 파일 또는 API를 통해 CRM 데이터를 가져오고 내�
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-
 ## 가져오기 방법
 
 Twenty는 데이터를 가져오는 두 가지 주요 방법을 지원합니다:
@@ -40,16 +39,15 @@ CSV 가져오기 기능을 사용하여 객체 간의 관계를 가져올 수 �
 <Note>**삭제된 레코드도 고유성에 포함됩니다.** 소프트 삭제된 레코드(Command Menu → See deleted records에서 표시됨) 역시 고유성 검사에 포함됩니다. 삭제된 레코드와 동일한 고유 값을 가진 레코드를 가져오면, 해당 삭제된 레코드가 복원됩니다.</Note>
 
 <Warning>
-  **가져오기 순서가 중요합니다!**
+**가져오기 순서가 중요합니다!**
 
-  연관된 객체를 가져올 때 파일을 다음 순서로 업로드하세요:
+연관된 객체를 가져올 때 파일을 다음 순서로 업로드하세요:
+1. **Companies** 먼저(일대다 관계의 '1' 측)
+2. **사람** 두 번째(companyId를 통해 회사에 연결됨)
+3. **기회** 세 번째(회사/사람에 연결됨)
+4. 관계가 있는 **사용자 지정 객체**는 마지막
 
-  1. **Companies** 먼저(일대다 관계의 '1' 측)
-  2. **People** 두 번째(companyId를 통해 회사에 연결)
-  3. **Opportunities** 세 번째(회사/People에 연결)
-  4. 관계가 있는 **사용자 지정 객체**는 마지막
-
-  왜 그런가요? 일대다 관계의 '1' 측은 참조하기 전에 먼저 존재해야 합니다. 예를 들어, 해당 회사의 ID로 Person을 가져오기 전에 Company 레코드가 먼저 존재해야 합니다.
+왜 그런가요? 일대다 관계의 '1' 측은 참조하기 전에 먼저 존재해야 합니다. 예를 들어, 해당 회사의 ID로 Person을 가져오기 전에 Company 레코드가 먼저 존재해야 합니다.
 </Warning>
 
 단계별 진행 방법은 [이 문서](/l/ko/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)를 참고하세요.

@@ -1,0 +1,26 @@
+.button {
+  align-items: center;
+  border: none;
+  background-color: transparent;
+  // Concentric with the IconButtonGroup sm container: its radius minus the
+  // 2px padding and 1px border.
+  border-radius: calc(var(--t-border-radius-sm) - 3px);
+  color: var(--t-font-color-tertiary);
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+  height: 20px;
+  justify-content: center;
+  padding: 0;
+  white-space: nowrap;
+  min-width: 20px;
+  transition: background-color 0.1s ease;
+
+  &:hover {
+    background-color: var(--t-background-transparent-light);
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+  }
+}

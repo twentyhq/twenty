@@ -3,7 +3,7 @@ import {
   type RecordGqlOperationSignature,
 } from 'twenty-shared/types';
 
-import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
 
 export type RecordOrMetadataGqlOperationSignature =
   | RecordGqlOperationSignature

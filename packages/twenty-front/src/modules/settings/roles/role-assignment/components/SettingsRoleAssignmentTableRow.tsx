@@ -6,15 +6,13 @@ import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  Avatar,
-  IconKey,
-  OverflowingTextWithTooltip,
-  useIcons,
-} from 'twenty-ui/display';
+import { Avatar } from 'twenty-ui/data-display';
+import { IconKey, useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 
@@ -66,20 +64,22 @@ export const SettingsRoleAssignmentTableRow = ({
         );
         return (
           <Avatar
-            avatarUrl={enrichedWorkspaceMember?.avatarUrl}
-            placeholderColorSeed={enrichedWorkspaceMember?.id}
-            placeholder={enrichedWorkspaceMember?.name.firstName ?? ''}
-            type="rounded"
+            src={getAbsoluteImageUrl(enrichedWorkspaceMember?.avatarUrl)}
+            colorSeed={enrichedWorkspaceMember?.id}
+            name={enrichedWorkspaceMember?.name.firstName ?? ''}
+            shape="circle"
             size="md"
           />
         );
       }
       case 'agent': {
-        const Icon = getIcon(roleTarget.data.icon || 'IconRobot');
-        return <Icon size={theme.icon.size.md} />;
+        const Icon = getIcon(roleTarget.data.icon || 'IconLego');
+        return <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />;
       }
       case 'apiKey': {
-        return <IconKey size={theme.icon.size.md} />;
+        return (
+          <IconKey size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        );
       }
     }
   };

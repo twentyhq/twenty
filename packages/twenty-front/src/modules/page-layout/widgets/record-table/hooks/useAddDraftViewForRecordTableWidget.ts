@@ -1,26 +1,29 @@
-import { type FlatView } from '@/metadata-store/types/FlatView';
-import { type FlatViewField } from '@/metadata-store/types/FlatViewField';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
+import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
-import { filterFieldsForRecordTableViewCreation } from '@/page-layout/widgets/record-table/utils/filterFieldsForRecordTableViewCreation';
-import { sortFieldsByRelevanceForRecordTableWidget } from '@/page-layout/widgets/record-table/utils/sortFieldsByRelevanceForRecordTableWidget';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { buildRecordTableWidgetViewSnapshot } from '@/page-layout/widgets/record-table/utils/buildRecordTableWidgetViewSnapshot';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { v4 } from 'uuid';
 import {
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
+  type RecordTableConfiguration,
   WidgetConfigurationType,
 } from '~/generated-metadata/graphql';
 
-const DEFAULT_VIEW_FIELD_SIZE = 180;
-const INITIAL_VISIBLE_FIELDS_COUNT_IN_WIDGET = 6;
+const isRecordTableConfiguration = (
+  configuration: PageLayoutWidget['configuration'] | undefined,
+): configuration is RecordTableConfiguration =>
+  configuration?.configurationType === WidgetConfigurationType.RECORD_TABLE;
 
 export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget(pageLayoutId);
+
+  const pageLayoutDraftState = useAtomComponentStateCallbackState(
+    pageLayoutDraftComponentState,
+    pageLayoutId,
+  );
 
   const recordTableWidgetViewDraftState = useAtomComponentStateCallbackState(
     recordTableWidgetViewDraftComponentState,
@@ -31,64 +34,41 @@ export const useAddDraftViewForRecordTableWidget = (pageLayoutId: string) => {
 
   const addDraftViewForRecordTableWidget = useCallback(
     (widgetId: string, objectMetadataItem: EnrichedObjectMetadataItem) => {
-      const newViewId = v4();
-
-      const flatView: FlatView = {
-        id: newViewId,
-        name: `${objectMetadataItem.labelPlural} Table`,
-        icon: objectMetadataItem.icon ?? 'IconTable',
-        objectMetadataId: objectMetadataItem.id,
-        type: ViewType.TABLE_WIDGET,
-        isCompact: false,
-        position: 0,
-        openRecordIn: ViewOpenRecordIn.RECORD_PAGE,
-        visibility: ViewVisibility.UNLISTED,
-        shouldHideEmptyGroups: false,
-      };
-
-      const eligibleFields = objectMetadataItem.fields.filter(
-        filterFieldsForRecordTableViewCreation,
-      );
-
-      const sortedFields = eligibleFields.toSorted(
-        sortFieldsByRelevanceForRecordTableWidget(
-          objectMetadataItem.labelIdentifierFieldMetadataId,
-        ),
-      );
-
-      const flatViewFields: FlatViewField[] = sortedFields.map(
-        (field, index) => ({
-          id: v4(),
-          viewId: newViewId,
-          fieldMetadataId: field.id,
-          position: index,
-          size: DEFAULT_VIEW_FIELD_SIZE,
-          isVisible: index < INITIAL_VISIBLE_FIELDS_COUNT_IN_WIDGET,
-          isActive: true,
-        }),
-      );
+      const snapshot = buildRecordTableWidgetViewSnapshot(objectMetadataItem);
 
       store.set(recordTableWidgetViewDraftState, (prev) => ({
         ...prev,
-        [widgetId]: {
-          view: flatView,
-          viewFields: flatViewFields,
-          viewFilters: [],
-          viewFilterGroups: [],
-          viewSorts: [],
-        },
+        [widgetId]: snapshot,
       }));
 
       requestAnimationFrame(() => {
+        const latestWidgetConfiguration = store
+          .get(pageLayoutDraftState)
+          .tabs.flatMap((tab) => tab.widgets)
+          .find((widget) => widget.id === widgetId)?.configuration;
+
+        const recordTableConfigurationToPreserve = isRecordTableConfiguration(
+          latestWidgetConfiguration,
+        )
+          ? latestWidgetConfiguration
+          : {
+              configurationType: WidgetConfigurationType.RECORD_TABLE,
+            };
+
         updatePageLayoutWidget(widgetId, {
           configuration: {
-            configurationType: WidgetConfigurationType.RECORD_TABLE,
-            viewId: newViewId,
+            ...recordTableConfigurationToPreserve,
+            viewId: snapshot.view.id,
           },
         });
       });
     },
-    [store, recordTableWidgetViewDraftState, updatePageLayoutWidget],
+    [
+      store,
+      pageLayoutDraftState,
+      recordTableWidgetViewDraftState,
+      updatePageLayoutWidget,
+    ],
   );
 
   return { addDraftViewForRecordTableWidget };

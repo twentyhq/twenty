@@ -1,68 +1,105 @@
-import { Draggable } from '@hello-pangea/dnd';
-
+import { PageLayoutTabWidgetDropTarget } from '@/page-layout/components/dnd/PageLayoutTabWidgetDropTarget';
+import { PAGE_LAYOUT_TAB_DND_TYPE } from '@/page-layout/constants/PageLayoutTabDndType';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { type PageLayoutTabDragData } from '@/page-layout/types/PageLayoutTabDragData';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
+import { DragDropItemSortableCell } from '@/ui/utilities/drag-and-drop/components/DragDropItemSortableCell';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
 import { StyledTabContainer, TabContent } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 type PageLayoutTabListReorderableTabProps = {
   tab: SingleTabProps;
   index: number;
+  group: string;
+  nextTabId: string | null;
   isActive: boolean;
   disabled?: boolean;
+  widgetDropTargetWidgets?: PageLayoutWidget[];
   onSelect: () => void;
 };
 
-const StyledTabContentWrapper = styled.div<{ isBeingEdited: boolean }>`
-  outline: ${({ isBeingEdited }) =>
-    isBeingEdited ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
+const StyledTabContentWrapper = styled.div<{ isHighlighted: boolean }>`
+  border-radius: ${themeCssVariables.border.radius.sm};
+  outline: ${({ isHighlighted }) =>
+    isHighlighted ? `1px solid ${themeCssVariables.color.blue}` : 'none'};
   outline-offset: -1px;
 `;
 
 export const PageLayoutTabListReorderableTab = ({
   tab,
   index,
+  group,
+  nextTabId,
   isActive,
   disabled,
+  widgetDropTargetWidgets,
   onSelect,
 }: PageLayoutTabListReorderableTabProps) => {
+  const { layoutType } = useLayoutRenderingContext();
   const pageLayoutTabSettingsOpenTabId = useAtomComponentStateValue(
     pageLayoutTabSettingsOpenTabIdComponentState,
   );
 
-  const isSettingsOpenForThisTab = pageLayoutTabSettingsOpenTabId === tab.id;
+  const isHighlighted =
+    layoutType === PageLayoutType.RECORD_PAGE
+      ? isActive
+      : pageLayoutTabSettingsOpenTabId === tab.id;
+
+  const tabDragData: PageLayoutTabDragData = {
+    type: 'tab',
+    tabId: tab.id,
+    nextTabId,
+  };
+
+  const draggableTab = (
+    <DragDropItemSortableCell
+      id={tab.id}
+      index={index}
+      group={group}
+      data={tabDragData}
+      type={PAGE_LAYOUT_TAB_DND_TYPE}
+      accept={PAGE_LAYOUT_TAB_DND_TYPE}
+      disabled={disabled}
+      fill
+      hasTransition={false}
+      orientation="vertical"
+    >
+      <StyledTabContainer
+        onClick={onSelect}
+        active={isActive}
+        disabled={disabled}
+      >
+        <StyledTabContentWrapper isHighlighted={isHighlighted}>
+          <TabContent
+            id={tab.id}
+            active={isActive}
+            disabled={disabled}
+            LeftIcon={tab.Icon}
+            title={tab.title}
+            logo={tab.logo}
+            pill={tab.pill}
+          />
+        </StyledTabContentWrapper>
+      </StyledTabContainer>
+    </DragDropItemSortableCell>
+  );
+
+  if (!isDefined(widgetDropTargetWidgets)) {
+    return draggableTab;
+  }
+
   return (
-    <Draggable draggableId={tab.id} index={index} isDragDisabled={disabled}>
-      {(draggableProvided, draggableSnapshot) => (
-        <StyledTabContainer
-          ref={draggableProvided.innerRef}
-          // oxlint-disable-next-line react/jsx-props-no-spreading
-          {...draggableProvided.draggableProps}
-          // oxlint-disable-next-line react/jsx-props-no-spreading
-          {...draggableProvided.dragHandleProps}
-          onClick={draggableSnapshot.isDragging ? undefined : onSelect}
-          active={isActive}
-          disabled={disabled}
-          style={{
-            ...draggableProvided.draggableProps.style,
-            cursor: draggableSnapshot.isDragging ? 'grabbing' : 'pointer',
-          }}
-        >
-          <StyledTabContentWrapper isBeingEdited={isSettingsOpenForThisTab}>
-            <TabContent
-              id={tab.id}
-              active={isActive}
-              disabled={disabled}
-              LeftIcon={tab.Icon}
-              title={tab.title}
-              logo={tab.logo}
-              pill={tab.pill}
-            />
-          </StyledTabContentWrapper>
-        </StyledTabContainer>
-      )}
-    </Draggable>
+    <PageLayoutTabWidgetDropTarget
+      tabId={tab.id}
+      destinationWidgets={widgetDropTargetWidgets}
+    >
+      {draggableTab}
+    </PageLayoutTabWidgetDropTarget>
   );
 };

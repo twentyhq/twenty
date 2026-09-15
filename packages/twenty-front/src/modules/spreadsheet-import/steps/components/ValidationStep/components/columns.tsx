@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-// @ts-expect-error // Todo: remove usage of react-data-grid
 import { type Column, useRowSelection } from 'react-data-grid';
 import { createPortal } from 'react-dom';
 
@@ -13,8 +12,8 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
 import camelCase from 'lodash.camelcase';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/display';
-import { Checkbox, CheckboxVariant, Toggle } from 'twenty-ui/input';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Checkbox, Switch } from 'twenty-ui/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
 
 const StyledHeaderContainer = styled.div`
@@ -42,10 +41,14 @@ const StyledCheckboxContainer = styled.div`
   width: 100%;
 `;
 
-const StyledToggleContainer = styled.div`
+const StyledSwitchContainer = styled.div`
   align-items: center;
   display: flex;
   height: 100%;
+`;
+
+const StyledSwitch = styled(Switch)`
+  align-self: center;
 `;
 
 const StyledInputContainer = styled.div`
@@ -57,10 +60,12 @@ const StyledInputContainer = styled.div`
 `;
 
 const StyledDefaultContainer = styled.div`
+  align-content: center;
   min-height: 100%;
   min-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledSelectReadonlyValueContianer = styled.div`
@@ -85,21 +90,23 @@ export const generateColumns = (
     resizable: false,
     sortable: false,
     frozen: true,
-    formatter: (props: any) => {
+    renderCell: (props: any) => {
       // oxlint-disable-next-line  react-hooks/rules-of-hooks
-      const [isRowSelected, onRowSelectionChange] = useRowSelection();
+      const { isRowSelected, onRowSelectionChange } = useRowSelection();
 
       return (
         <StyledCheckboxContainer>
           <Checkbox
             aria-label={t`Select`}
             checked={isRowSelected}
-            variant={CheckboxVariant.Tertiary}
-            onChange={(event) => {
+            variant={'soft'}
+            onCheckedChange={(isChecked, eventDetails) => {
               onRowSelectionChange({
                 row: props.row,
-                checked: event.target.checked,
-                isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
+                checked: isChecked,
+                isShiftClick:
+                  'shiftKey' in eventDetails.event &&
+                  eventDetails.event.shiftKey === true,
               });
             }}
           />
@@ -115,7 +122,7 @@ export const generateColumns = (
       name: column.label,
       minWidth: 150,
       resizable: true,
-      headerRenderer: () => (
+      renderHeaderCell: () => (
         <StyledHeaderContainer>
           <StyledHeaderLabel id={formatSafeId(column.key)}>
             {column.label}
@@ -126,7 +133,7 @@ export const generateColumns = (
                 <AppTooltip
                   anchorSelect={`#${formatSafeId(column.key)}`}
                   place="top"
-                  content={column.description}
+                  title={column.description}
                 />,
                 document.body,
               )}
@@ -135,7 +142,7 @@ export const generateColumns = (
       ),
       editable: column.fieldType.type !== 'checkbox',
       // Todo: remove usage of react-data-grid
-      editor: ({ row, onRowChange, onClose }: any) => {
+      renderEditCell: ({ row, onRowChange, onClose }: any) => {
         const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
@@ -165,11 +172,8 @@ export const generateColumns = (
 
         return <StyledInputContainer>{component}</StyledInputContainer>;
       },
-      editorOptions: {
-        editOnClick: true,
-      },
       // Todo: remove usage of react-data-grid
-      formatter: ({ row, onRowChange }: { row: any; onRowChange: any }) => {
+      renderCell: ({ row, onRowChange }: { row: any; onRowChange: any }) => {
         const columnKey = column.key as keyof (ImportedStructuredRow &
           ImportedStructuredRowMetadata);
         let component;
@@ -177,22 +181,23 @@ export const generateColumns = (
         switch (column.fieldType.type) {
           case 'checkbox':
             component = (
-              <StyledToggleContainer
+              <StyledSwitchContainer
                 id={formatSafeId(`${columnKey}-${row.__index}`)}
                 onClick={(event) => {
                   event.stopPropagation();
                 }}
               >
-                <Toggle
-                  value={row[columnKey] as boolean}
-                  onChange={() => {
+                <StyledSwitch
+                  aria-label={column.label}
+                  checked={row[columnKey] as boolean}
+                  onCheckedChange={() => {
                     onRowChange({
                       ...row,
                       [columnKey]: !row[columnKey],
                     });
                   }}
                 />
-              </StyledToggleContainer>
+              </StyledSwitchContainer>
             );
             break;
           case 'select':
@@ -224,7 +229,7 @@ export const generateColumns = (
                 <AppTooltip
                   anchorSelect={`#${formatSafeId(`${columnKey}-${row.__index}`)}`}
                   place="top"
-                  content={row.__errors?.[columnKey]?.message}
+                  title={row.__errors?.[columnKey]?.message}
                   delay={TooltipDelay.shortDelay}
                 />,
                 document.body,

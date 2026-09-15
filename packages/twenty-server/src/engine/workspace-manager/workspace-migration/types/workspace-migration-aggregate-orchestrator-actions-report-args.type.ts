@@ -4,4 +4,5 @@ import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manag
 export type AggregateOrchestratorActionsReportArgs = {
   orchestratorActionsReport: OrchestratorActionsReport;
   flatFieldMetadataMaps?: MetadataUniversalFlatEntityMaps<'fieldMetadata'>;
+  searchVectorUniversalIdentifiersToRebuild?: Set<string>;
 };

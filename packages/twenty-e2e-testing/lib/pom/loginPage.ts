@@ -16,6 +16,9 @@ export class LoginPage {
   private readonly uploadImageButton: Locator;
   private readonly deleteImageButton: Locator;
   private readonly workspaceNameField: Locator;
+  private readonly subdomainField: Locator;
+  private readonly createWorkspaceButton: Locator;
+  private readonly skipOnboardingStepButton: Locator;
   private readonly firstNameField: Locator;
   private readonly lastNameField: Locator;
   private readonly syncEverythingWithGoogleRadio: Locator;
@@ -54,9 +57,17 @@ export class LoginPage {
     this.previewImageButton = page.locator('.css-1qzw107'); // TODO: fix
     this.uploadImageButton = page.getByRole('button', { name: 'Upload' });
     this.deleteImageButton = page.getByRole('button', { name: 'Remove' });
-    this.workspaceNameField = page.getByPlaceholder('Apple');
-    this.firstNameField = page.getByPlaceholder('Tim');
-    this.lastNameField = page.getByPlaceholder('Cook');
+    this.workspaceNameField = page.getByLabel('Name', { exact: true });
+    this.subdomainField = page.getByLabel('Subdomain', { exact: true });
+    this.createWorkspaceButton = page.getByRole('button', {
+      name: 'Create workspace',
+    });
+    this.skipOnboardingStepButton = page.getByRole('button', {
+      name: 'Skip',
+      exact: true,
+    });
+    this.firstNameField = page.getByLabel('First Name', { exact: true });
+    this.lastNameField = page.getByLabel('Last name', { exact: true });
     this.syncEverythingWithGoogleRadio = page.locator(
       'input[value="SHARE_EVERYTHING"]',
     );
@@ -143,6 +154,18 @@ export class LoginPage {
 
   async typeWorkspaceName(workspaceName: string) {
     await this.workspaceNameField.fill(workspaceName);
+  }
+
+  async typeSubdomain(subdomain: string) {
+    await this.subdomainField.fill(subdomain);
+  }
+
+  async clickCreateWorkspaceButton() {
+    await this.createWorkspaceButton.click();
+  }
+
+  async clickSkipOnboardingStep() {
+    await this.skipOnboardingStepButton.click();
   }
 
   async typeFirstName(firstName: string) {

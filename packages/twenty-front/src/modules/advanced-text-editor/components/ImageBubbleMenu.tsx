@@ -1,27 +1,24 @@
 import { BubbleMenuIconButton } from '@/advanced-text-editor/components/BubbleMenuIconButton';
-import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/TextBubbleMenu';
+import { StyledBubbleMenuContainer } from '@/advanced-text-editor/components/StyledBubbleMenuContainer';
+import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type Editor } from '@tiptap/core';
-import { useEditorState } from '@tiptap/react';
 import { BubbleMenu } from '@tiptap/react/menus';
 import {
   IconAlignCenter,
   IconAlignLeft,
   IconAlignRight,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 
 type ImageBubbleMenuProps = {
   editor: Editor;
 };
 
 export const ImageBubbleMenu = ({ editor }: ImageBubbleMenuProps) => {
-  const state = useEditorState({
-    editor,
-    selector: (ctx) => {
-      return {
-        align: ctx.editor.getAttributes('image').align || 'left',
-      };
-    },
+  const state = useLiveEditorState(editor, (currentEditor) => {
+    return {
+      align: currentEditor.getAttributes('image').align || 'left',
+    };
   });
 
   const handleDelete = () => {

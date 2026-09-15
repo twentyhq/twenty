@@ -5,9 +5,15 @@ export const VERIFY_EMAILING_DOMAIN = gql`
     verifyEmailingDomain(id: $id) {
       id
       domain
-      driver
       status
       verifiedAt
+      verificationRecords {
+        type
+        key
+        value
+        priority
+        status
+      }
       createdAt
       updatedAt
     }

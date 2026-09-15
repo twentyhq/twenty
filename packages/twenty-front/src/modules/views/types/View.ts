@@ -8,7 +8,6 @@ import { type ViewKey } from '@/views/types/ViewKey';
 import { type ViewType } from '@/views/types/ViewType';
 import {
   type ViewCalendarLayout,
-  type ViewOpenRecordIn,
   type ViewVisibility,
 } from '~/generated-metadata/graphql';
 import { type ViewSort } from '@/views/types/ViewSort';
@@ -30,12 +29,14 @@ export type View = {
   kanbanAggregateOperationFieldMetadataId?: string | null;
   mainGroupByFieldMetadataId?: string | null;
   shouldHideEmptyGroups: boolean;
+  kanbanColumnWidth?: number | null;
   calendarFieldMetadataId?: string | null;
+  calendarEndFieldMetadataId?: string | null;
   calendarLayout?: ViewCalendarLayout | null;
   position: number;
   icon: string;
-  openRecordIn: ViewOpenRecordIn;
   anyFieldFilterValue?: string | null;
   visibility: ViewVisibility;
   createdByUserWorkspaceId?: string | null;
+  isActive: boolean;
 };

@@ -2,8 +2,8 @@ import { isDefined } from 'class-validator';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type AggregateOperations,
-  type ViewType,
-  type ViewKey,
+  ViewType,
+  ViewKey,
   ViewOpenRecordIn,
   ViewVisibility,
 } from 'twenty-shared/types';
@@ -29,6 +29,7 @@ export type CreateStandardViewOptions<O extends AllStandardObjectName> = {
   kanbanAggregateOperationFieldName?: AllStandardObjectFieldName<O>;
   mainGroupByFieldName?: AllStandardObjectFieldName<O>;
   calendarFieldName?: AllStandardObjectFieldName<O>;
+  calendarEndFieldName?: AllStandardObjectFieldName<O>;
 };
 
 export type CreateStandardViewArgs<
@@ -57,6 +58,7 @@ export const createStandardViewFlatMetadata = <
     kanbanAggregateOperationFieldName,
     mainGroupByFieldName,
     calendarFieldName,
+    calendarEndFieldName,
   },
   standardObjectMetadataRelatedEntityIds,
   twentyStandardApplicationId,
@@ -95,6 +97,12 @@ export const createStandardViewFlatMetadata = <
       ].id
     : null;
 
+  const calendarEndFieldMetadataId = calendarEndFieldName
+    ? standardObjectMetadataRelatedEntityIds[objectName].fields[
+        calendarEndFieldName
+      ].id
+    : null;
+
   const kanbanAggregateOperationFieldMetadataUniversalIdentifier =
     kanbanAggregateOperationFieldName
       ? // @ts-expect-error ignore
@@ -113,8 +121,15 @@ export const createStandardViewFlatMetadata = <
       STANDARD_OBJECTS[objectName].fields[calendarFieldName].universalIdentifier
     : null;
 
+  const calendarEndFieldMetadataUniversalIdentifier = calendarEndFieldName
+    ? // @ts-expect-error ignore
+      STANDARD_OBJECTS[objectName].fields[calendarEndFieldName]
+        .universalIdentifier
+    : null;
+
   return {
     calendarFieldMetadataUniversalIdentifier,
+    calendarEndFieldMetadataUniversalIdentifier,
     kanbanAggregateOperationFieldMetadataUniversalIdentifier,
     mainGroupByFieldMetadataUniversalIdentifier,
     objectMetadataUniversalIdentifier,
@@ -137,11 +152,18 @@ export const createStandardViewFlatMetadata = <
     kanbanAggregateOperationFieldMetadataId,
     mainGroupByFieldMetadataId,
     shouldHideEmptyGroups: false,
+    kanbanColumnWidth: null,
     calendarLayout: null,
     calendarFieldMetadataId,
+    calendarEndFieldMetadataId,
     anyFieldFilterValue: null,
     visibility: ViewVisibility.WORKSPACE,
     createdByUserWorkspaceId: null,
+    isActive: true,
+    isSystemSideEffect:
+      key === ViewKey.INDEX || type === ViewType.FIELDS_WIDGET,
+    overrides: null,
+    universalOverrides: null,
     viewFieldIds: [],
     viewFieldUniversalIdentifiers: [],
     viewFieldGroupIds: [],

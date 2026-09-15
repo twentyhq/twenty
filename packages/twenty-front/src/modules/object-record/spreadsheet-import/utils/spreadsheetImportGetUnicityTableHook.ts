@@ -1,3 +1,4 @@
+import { getLinksVariant } from '@/object-record/spreadsheet-import/utils/getLinksVariant';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
@@ -9,16 +10,17 @@ import {
   type SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type FieldLinksVariant, FieldMetadataType } from 'twenty-shared/types';
 import {
   getUniqueConstraintsFields,
   isDefined,
-  normalizeUrlOrigin,
+  getLinkUrlNormalizer,
 } from 'twenty-shared/utils';
 
 type Column = {
   columnName: string;
   fieldType: FieldMetadataType;
+  linksVariant?: FieldLinksVariant;
 };
 
 export const spreadsheetImportGetUnicityTableHook = (
@@ -43,10 +45,17 @@ export const spreadsheetImportGetUnicityTableHook = (
           return uniqueSubFields.map((subField) => ({
             columnName: getCompositeSubFieldKey(field, subField.subFieldName),
             fieldType: field.type,
+            linksVariant: getLinksVariant(field),
           }));
         }
 
-        return [{ columnName: field.name, fieldType: field.type }];
+        return [
+          {
+            columnName: field.name,
+            fieldType: field.type,
+            linksVariant: undefined,
+          },
+        ];
       }),
     );
   const tableHook: SpreadsheetImportTableHook = (table, addError) => {
@@ -95,7 +104,7 @@ const getUniqueValues = (
   uniqueConstraint: Column[],
 ) => {
   return uniqueConstraint
-    .map(({ columnName, fieldType }) => {
+    .map(({ columnName, fieldType, linksVariant }) => {
       // need to ensure the primary link url is processed before import as on server side
       if (
         fieldType === FieldMetadataType.LINKS &&
@@ -104,7 +113,9 @@ const getUniqueValues = (
             .primaryLinkUrl,
         )
       ) {
-        return normalizeUrlOrigin(row?.[columnName]?.toString().trim() || '');
+        const rawPrimaryLinkUrl = row?.[columnName]?.toString().trim() || '';
+
+        return getLinkUrlNormalizer(linksVariant)(rawPrimaryLinkUrl);
       }
 
       return row?.[columnName]?.toString().trim().toLowerCase();

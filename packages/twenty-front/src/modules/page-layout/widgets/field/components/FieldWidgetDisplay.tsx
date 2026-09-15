@@ -89,17 +89,12 @@ export const FieldWidgetDisplay = ({
                 isDisplayModeFixHeight: false,
                 isRecordFieldReadOnly: isRecordFieldReadOnly({
                   isRecordReadOnly,
-                  isSystemObject: objectMetadataItem.isSystem,
                   objectPermissions:
                     getObjectPermissionsFromMapByObjectMetadataId({
                       objectPermissionsByObjectMetadataId,
                       objectMetadataId: objectMetadataItem.id,
                     }),
-                  fieldMetadataItem: {
-                    id: fieldMetadataItem.id,
-                    isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
-                    isCustom: fieldMetadataItem.isCustom ?? false,
-                  },
+                  fieldMetadataItem,
                   fieldDefinition,
                   objectPermissionsByObjectMetadataId,
                 }),

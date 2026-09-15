@@ -1,10 +1,11 @@
 import { forwardRef } from 'react';
-import { AvatarOrIcon } from 'twenty-ui/components';
+import { AvatarOrIcon } from 'twenty-ui/data-display';
 import { MenuItemSuggestion } from 'twenty-ui/navigation';
 
 import type { MentionSearchResult } from '@/mention/types/MentionSearchResult';
 import type { MentionSuggestionMenuProps } from '@/mention/types/MentionSuggestionMenuProps';
 import { SuggestionMenu } from '@/ui/suggestion/components/SuggestionMenu';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const getItemKey = (item: MentionSearchResult) =>
   `${item.objectNameSingular}-${item.recordId}`;
@@ -17,10 +18,10 @@ const renderItem = (
   <MenuItemSuggestion
     LeftIcon={() => (
       <AvatarOrIcon
-        placeholder={item.label}
-        placeholderColorSeed={item.recordId}
-        avatarType="rounded"
-        avatarUrl={item.imageUrl}
+        name={item.label}
+        colorSeed={item.recordId}
+        shape="circle"
+        src={getAbsoluteImageUrl(item.imageUrl)}
       />
     )}
     text={item.label}

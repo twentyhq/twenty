@@ -26,7 +26,7 @@ const colors = {
   blue40: '#5e90f2',
 };
 
-export const emailTheme = {
+export const canvasTheme = {
   font: {
     colors: {
       highlighted: grayScale.gray60,

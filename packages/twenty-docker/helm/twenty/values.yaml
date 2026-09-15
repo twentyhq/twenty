@@ -98,6 +98,38 @@ server:
 
   extraVolumeMounts: []
 
+  # Pod scheduling and DNS
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  dnsPolicy: ~
+  dnsConfig: {}
+
+  # Health probes for the server container. Set any probe to null to disable it.
+  # startupProbe gates the slow initial boot (up to periodSeconds x failureThreshold),
+  # so liveness/readiness intentionally carry no initialDelaySeconds.
+  startupProbe:
+    httpGet:
+      path: /healthz
+      port: http-tcp
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 30
+  livenessProbe:
+    httpGet:
+      path: /healthz
+      port: http-tcp
+    periodSeconds: 30
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    httpGet:
+      path: /healthz
+      port: http-tcp
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+
 # Worker deployment
 worker:
   enabled: true
@@ -114,6 +146,13 @@ worker:
       memory: 2048Mi
 
   extraEnv: []
+
+  # Pod scheduling and DNS
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  dnsPolicy: ~
+  dnsConfig: {}
 
 # PostgreSQL
 db:

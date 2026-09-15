@@ -14,6 +14,9 @@ export class SendEmailInput {
   @Field(() => String)
   connectedAccountId: string;
 
+  @Field(() => String, { nullable: true })
+  fromHandle?: string;
+
   @Field(() => String)
   to: string;
 
@@ -31,6 +34,9 @@ export class SendEmailInput {
 
   @Field(() => String, { nullable: true })
   inReplyTo?: string;
+
+  @Field(() => String, { nullable: true })
+  draftMessageId?: string;
 
   @Field(() => [SendEmailAttachmentInput], { nullable: true })
   files?: SendEmailAttachmentInput[];

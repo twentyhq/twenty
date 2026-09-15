@@ -1,8 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
-
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { ApplicationVariableEntityResolver } from 'src/engine/core-modules/application/application-variable/application-variable.resolver';
@@ -15,7 +13,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([ApplicationVariableEntity]),
     TypeOrmModule.forFeature([ApplicationVariableEntity, ApplicationEntity]),
     PermissionsModule,
     WorkspaceCacheModule,

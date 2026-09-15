@@ -1,1 +1,0 @@
-export { Demo } from './components';

@@ -1,0 +1,110 @@
+---
+title: Almacén de clave-valor
+description: Conserva resultados intermedios, almacena en caché datos y comparte estado entre ejecuciones de funciones lógicas con el almacén de clave-valor integrado de la aplicación.
+icon: database
+---
+
+Las funciones de lógica se ejecutan aisladas en procesos de Node.js de corta duración; una vez que una ejecución finaliza, nada de lo que se mantuvo en memoria sobrevive. Cuando necesitas **recordar algo entre ejecuciones** (almacenar en caché una respuesta de API costosa, guardar un cursor para sincronizaciones incrementales, aplicar *debounce* al trabajo o traspasar estado de una función a otra), persiste esos datos en el almacén de clave-valor integrado.
+
+Cada aplicación obtiene su propio espacio de nombres aislado: las entradas se asocian con la aplicación autenticada, por lo que tus claves nunca pueden entrar en conflicto con — ni ser leídas por — otra aplicación.
+
+```text
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
+```
+
+## Obtener, establecer, eliminar
+
+Importa `kv` desde `twenty-sdk/logic-function`. Los valores pueden ser cualquier carga útil serializable en JSON.
+
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
+
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
+
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Ámbitos
+
+Cada entrada tiene un ámbito (*scope*), que se pasa como una opción en cada llamada. El valor predeterminado es `WORKSPACE`.
+
+* **`WORKSPACE`** (predeterminado): la entrada es privada para la instalación actual de tu aplicación en el espacio de trabajo. Cada espacio de trabajo que instala la aplicación obtiene su propio conjunto independiente de claves. Esto es lo que quieres para cachés, cursores y estado por espacio de trabajo.
+* **`SERVER`**: la entrada se comparte entre **todas las instalaciones** de tu aplicación en el servidor. Las entradas de servidor se comportan como reclamaciones: el valor almacenado es siempre el workspaceId que reclamó la clave (omite `value` en `set` para reclamar la clave para el espacio de trabajo actual), y solo ese espacio de trabajo puede sobrescribirla o eliminarla. Cualquier instalación puede leer la entrada.
+
+Las reclamaciones de servidor existen para el enrutamiento entre espacios de trabajo. Un [server-route resolver](/l/es/developers/extend/apps/logic/logic-functions#server-route-trigger) se ejecuta en el espacio de trabajo propietario del registro de la aplicación, pero un webhook entrante normalmente solo lleva un id de cuenta externa, no un Twenty workspaceId. Haz que cada espacio de trabajo reclame su id externo en el momento de la conexión y luego resuélvelo en la ruta:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
+});
+```
+
+Como una clave de servidor solo puede ser reclamada para el propio espacio de trabajo de quien la llama y nunca puede ser sobrescrita por otro, un espacio de trabajo no puede secuestrar un mapeo que pertenezca a otra persona. `kv.set` produce una excepción cuando la clave ya ha sido reclamada por otro espacio de trabajo.
+
+## Úsalo: almacena en caché una llamada costosa
+
+Un uso típico es almacenar en caché una respuesta lenta o limitada por *rate limiting* de un tercero para que ejecuciones repetidas la reutilicen en lugar de pagar el coste cada vez.
+
+```ts src/logic-functions/getExchangeRate.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+type CachedRate = { rate: number; fetchedAt: number };
+
+const handler = async (params: { from: string; to: string }) => {
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
+
+  if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
+    return { rate: cached.rate, cached: true };
+  }
+
+  const response = await fetch(
+    `https://api.example.com/rate?from=${params.from}&to=${params.to}`,
+  );
+  const { rate } = (await response.json()) as { rate: number };
+
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
+
+  return { rate, cached: false };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'd9b2f4e6-1c83-4a07-9e52-6b1d3c8a0f47',
+  name: 'get-exchange-rate',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+## Patrones y consejos
+
+* **Espacios de nombres.** Añade un prefijo a las claves para mantener separadas las distintas responsabilidades: `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Caducidad (TTL).** El almacén no tiene caducidad integrada. Almacena una marca de tiempo dentro del valor (como en el ejemplo de caché) y revísala al leer, o borra las claves obsoletas desde una [función activada por cron](/l/es/developers/extend/apps/logic/logic-functions).
+* **Qué almacenar.** Cualquier valor serializable en JSON: números, cadenas, arreglos, objetos. Mantén las entradas pequeñas; esto es para coordinación y almacenamiento en caché, no para *blobs* grandes o archivos. Para archivos, utiliza un campo `FILES` y [`uploadFile`](/l/es/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Visibilidad.** Las entradas residen en la base de datos de la instancia, no como registros del espacio de trabajo: nunca aparecen en la interfaz de usuario del espacio de trabajo, no forman parte del modelo de datos de tu aplicación y no necesitan permisos de rol ni de objeto.
+
+## Alternativa: un objeto de almacenamiento consultable
+
+El almacén integrado es deliberadamente opaco: las entradas no son registros, por lo que no puedes explorarlas en la interfaz de usuario, relacionarlas con otros objetos ni filtrarlas con consultas de registros. Cuando necesites algo de eso — por ejemplo, un registro de sincronización visible o estado por registro — define en su lugar un pequeño **objeto técnico** con un campo `key` único y un campo `value` de tipo `RAW_JSON`, y consúltalo mediante el [cliente de API tipado](/l/es/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk). Consulta [Objects](/l/es/developers/extend/apps/data/objects) para la referencia de `defineObject` y [Data → Unique indexes](/l/es/developers/extend/apps/data/overview#unique-indexes) para aplicar la unicidad de la clave.
+
+* **Limitando el ámbito a un registro.** Añade una [relación](/l/es/developers/extend/apps/data/relations) desde el objeto de almacenamiento al objeto de destino en lugar de codificar el id en la clave.
+* **Visibilidad y permisos.** Las filas residen en la base de datos del espacio de trabajo como cualquier otro registro, por lo que se pueden consultar a través de la API y respetan el [rol](/l/es/developers/extend/apps/config/roles) de tu aplicación. Para mantener el almacén fuera de la interfaz principal, déjalo fuera de tu [menú de navegación](/l/es/developers/extend/apps/layout/navigation-menu-items).
+
+<Note>
+A diferencia del almacén integrado, un objeto personalizado siempre está limitado a un solo espacio de trabajo: no puede compartir entradas entre instalaciones como lo hacen las claves `SERVER`.
+</Note>

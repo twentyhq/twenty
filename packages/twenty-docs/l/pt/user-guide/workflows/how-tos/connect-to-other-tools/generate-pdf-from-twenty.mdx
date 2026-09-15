@@ -17,7 +17,7 @@ Este fluxo de trabalho utiliza um **Gatilho Manual** para que os utilizadores po
 
 Antes de configurar o fluxo de trabalho:
 
-1. **Crie uma Chave de API**: Vá a **Definições → APIs** e crie uma nova chave de API. Vai precisar deste token para a função lógica.
+1. **Crie uma Chave de API**: Vá a **Definições → APIs** e crie uma nova chave de API. Você precisará deste token para a função lógica.
 2. **Configure um serviço de geração de PDF** (opcional): Se quiser gerar PDFs dinamicamente (por exemplo, orçamentos), utilize um serviço como o Carbone, o PDFMonkey ou o DocuSeal para criar o PDF e obter um URL de transferência.
 
 ## Configuração passo a passo
@@ -29,12 +29,12 @@ Antes de configurar o fluxo de trabalho:
 3. Escolha o objeto ao qual pretende anexar PDFs (por exemplo, **Empresa** ou **Oportunidade**)
 
 <Tip>
-Com um Gatilho Manual, os utilizadores podem executar este fluxo de trabalho utilizando um botão que aparece no canto superior direito quando um registo é selecionado, para gerar e anexar um PDF.
+Com um disparador Manual usuários podem executar este fluxo de trabalho usando um botão que aparece no topo direito, depois que um registro é selecionado — isso executa o fluxo de trabalho para gerar e anexar um PDF.
 </Tip>
 
 ### Passo 2: Adicionar uma Função lógica
 
-1. Adicionar uma ação **Code** (função lógica)
+1. Adicionar uma ação **Código** (função lógica)
 2. Crie uma nova função com o código abaixo
 3. Configure os parâmetros de entrada
 
@@ -237,7 +237,7 @@ Para criar orçamentos ou faturas dinâmicos:
 | 1     | Gatilho Manual (Empresa) | O utilizador inicia num registo                        |
 | 2     | Pesquisar Registo        | Obter detalhes da Oportunidade ou dos itens de linha   |
 | 3     | Requisição HTTP          | Chamar a API de geração de PDF com os dados do registo |
-| 4     | Função serverless        | Transferir e anexar o PDF gerado                       |
+| 4     | Função lógica            | Transferir e anexar o PDF gerado                       |
 
 ### Serviços Populares de Geração de PDF
 
@@ -246,7 +246,7 @@ Para criar orçamentos ou faturas dinâmicos:
 * **DocuSeal** - Plataforma de automatização de documentos
 * **Documint** - Geração de documentos orientada a API
 
-Cada serviço fornece uma API que devolve um URL de PDF, que pode depois passar para a função lógica.
+Cada serviço fornece uma API que retorna uma URL em PDF, que você pode passar para a função lógica.
 
 ## Resolução de Problemas
 

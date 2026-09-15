@@ -1,6 +1,6 @@
 ---
 title: 设置
-icon: 齿轮
+icon: gear
 ---
 
 # 配置管理
@@ -43,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 
 <Warning>
 每个变量都在您的管理面板的**设置 → 管理员面板 → 配置变量**中记录了说明。
-某些基础设施设置如数据库连接 (`PG_DATABASE_URL`)、服务器 URL (`SERVER_URL`) 和应用程序密钥 (`APP_SECRET`) 只能通过 `.env` 文件配置。
+某些基础设施设置如数据库连接 (`PG_DATABASE_URL`)、服务器 URL (`SERVER_URL`) 和密钥（`ENCRYPTION_KEY`、`FALLBACK_ENCRYPTION_KEY`）只能通过 `.env` 文件配置。
 
 [完整技术参考→](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## 加密密钥
+
+Twenty 使用两个仅通过环境变量配置的加密密钥：
+
+| 变量                        | 目的                                                           | 必填                                    |
+| ------------------------- | ------------------------------------------------------------ | ------------------------------------- |
+| `ENCRYPTION_KEY`          | 用于对静态存储的机密信息（OAuth 令牌、应用程序变量、签名密钥的私钥、TOTP 密钥、敏感配置值）进行加密的主密钥。 | 新安装必须设置（旧安装可能依赖于 `APP_SECRET` —— 见下文） |
+| `FALLBACK_ENCRYPTION_KEY` | 仅用于验证的密钥。 在轮换期间，将其设置为*先前的* `ENCRYPTION_KEY`，以便现有行仍可解密。       | 仅在轮换期间                                |
+
+为保持向后兼容性，如果未设置 `ENCRYPTION_KEY`，Twenty 将回退为使用 `APP_SECRET` 进行静态数据加密——与旧部署的旧版行为一致。 新的安装应始终设置专用的 `ENCRYPTION_KEY`。
+
+使用 `openssl rand -base64 32` 生成值，并将其安全存储（如密钥管理器、加密配置等）。 丢失 `ENCRYPTION_KEY` 意味着将失去对数据库中存储的所有机密的访问权限。
+
+要在不停机的情况下轮换 `ENCRYPTION_KEY`，请参阅[密钥轮换指南](/l/zh/developers/self-host/capabilities/key-rotation)。
 
 ## 2. 仅限环境配置
 
@@ -189,7 +204,13 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 * Microsoft Graph: profile
 * Microsoft Graph: offline_access
 
-注意：“Mail.ReadWrite”和“Mail.Send”仅在你想使用我们的工作流程操作发送电子邮件时是强制性的。 如果你只想接收邮件，你可以使用“Mail.Read”。
+<Note>
+“Mail.ReadWrite”和“Mail.Send”仅在你想使用我们的工作流程操作发送电子邮件时是必需的。 如果你只想接收邮件，你可以使用“Mail.Read”。
+</Note>
+
+<Note>
+如果你想使用我们的工作流操作创建日历事件，则必须使用 "Calendars.ReadWrite"。 如果你只想同步日历事件，请使用 "Calendars.Read"。
+</Note>
 
 ### 授权重定向 URI
 
@@ -256,9 +277,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
 2. 找到 **电子邮件** 部分
 3. 配置你的 SMTP 设置：
 
-<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   你需要提供一个 [应用密码](https://support.google.com/accounts/answer/185833)。
   * EMAIL_DRIVER=smtp
@@ -267,9 +288,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=gmail_email_address
   * EMAIL_SMTP_PASSWORD='gmail_app_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="Office365">
 
   请记住，如果您启用了双重身份验证，您需要提供一个 [应用密码](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9)。
   * EMAIL_DRIVER=smtp
@@ -278,9 +299,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   * EMAIL_SMTP_USER=office365_email_address
   * EMAIL_SMTP_PASSWORD='office365_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev** 是一个用于开发和测试的假 SMTP 电子邮件服务器。
   * 运行 smtp4dev 镜像： `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -290,9 +311,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_HOST=localhost
     * EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **仅限环境模式：** 如果你设置 `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`，请将这些变量添加到 `.env` 文件中。
@@ -365,3 +386,23 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 当使用 `LOGIC_FUNCTION_TYPE=DISABLED` 或 `CODE_INTERPRETER_TYPE=DISABLED` 时，任何执行尝试都会返回错误。 如果你想在不启用这些功能的情况下运行 Twenty，这将很有用。
 </Note>
+
+## API 和前端位于不同主机上
+
+仅当你不让后端来提供前端资源时，此项才相关。 同源部署在这里无需任何设置。
+
+声明每一个与 API 通信的浏览器来源（origin），使用逗号分隔。 `SERVER_URL`
+和 `FRONTEND_URL` 已被信任。 当浏览器从未声明的来源调用它时，服务器会记录一条警告日志。
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+前端会在每个请求中发送凭据，而浏览器会拒绝来自未声明源的携带凭据的响应，因此在你完成此设置之前，应用将无法加载。
+</Warning>
+
+如果这两个主机位于不同的可注册域（不仅仅是不同的子域），还需要设置 `AUTH_COOKIE_SAME_SITE=none`，并且这要求使用 HTTPS。
+
+在启用多工作区功能时，不要在此列出每个工作区的子域名。
+相反，请在每个工作区主机名上将 API 路径（`/graphql`、`/metadata`、`/rest`、`/auth/`、`/client-config`、`/file`）路由到后端，这样每个工作区都保持同源 —— 这正是 Twenty Cloud 的运行方式。

@@ -1,5 +1,5 @@
-import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilityIcon } from '@/settings/accounts/components/SettingsAccountsVisibilityIcon';
+import { SettingsRadioSettingsCard } from '@/settings/components/SettingsRadioSettingsCard';
 import { msg } from '@lingui/core/macro';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
@@ -51,7 +51,7 @@ export const SettingsAccountsMessageVisibilityCard = ({
   onChange,
   value = MessageChannelVisibility.SHARE_EVERYTHING,
 }: SettingsAccountsMessageVisibilityCardProps) => (
-  <SettingsAccountsRadioSettingsCard
+  <SettingsRadioSettingsCard
     name="message-visibility"
     options={inboxSettingsVisibilityOptions}
     value={value}

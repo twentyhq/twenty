@@ -3,8 +3,9 @@ import {
   type IdentifierChipGeneratorPerObject,
 } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
+import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { getAvatarUrl } from '@/object-metadata/utils/getAvatarUrl';
+import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
@@ -72,13 +73,9 @@ export const getRecordChipGenerators = (
             getLabelIdentifierFieldMetadataItem(objectMetadataItemToUse);
 
           const imageIdentifierFieldMetadataToUse =
-            objectMetadataItemToUse.fields.find(
-              (field) =>
-                field.id ===
-                objectMetadataItemToUse.imageIdentifierFieldMetadataId,
-            );
+            getImageIdentifierFieldMetadataItem(objectMetadataItemToUse);
 
-          const avatarType = getAvatarType(objectNameSingularToFind);
+          const avatarShape = getAvatarShape(objectMetadataItemToUse);
 
           return [
             fieldMetadataItem.name,
@@ -95,7 +92,7 @@ export const getRecordChipGenerators = (
                   imageIdentifierFieldMetadataToUse,
                   allowRequestsToTwentyIcons,
                 ),
-                avatarType,
+                avatarShape,
                 isLabelIdentifier,
                 objectNameSingular: objectNameSingularToFind,
               }) satisfies RecordChipData,

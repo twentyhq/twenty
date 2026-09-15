@@ -36,9 +36,7 @@
         {
           "key": "userGuideOverview",
           "label": "Overview",
-          "pages": [
-            "user-guide/introduction"
-          ]
+          "pages": ["user-guide/introduction"]
         },
         {
           "key": "dataModel",
@@ -123,6 +121,9 @@
               "label": "How-Tos",
               "pages": [
                 "user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
+                "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365",
+                "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace",
+                "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider",
                 "user-guide/calendar-emails/how-tos/limit-emails-imported",
                 "user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects",
                 "user-guide/calendar-emails/how-tos/can-i-send-emails-from-twenty",
@@ -220,9 +221,7 @@
             {
               "key": "aiHowTos",
               "label": "How-Tos",
-              "pages": [
-                "user-guide/ai/how-tos/ai-faq"
-              ]
+              "pages": ["user-guide/ai/how-tos/ai-faq"]
             }
           ]
         },
@@ -309,9 +308,7 @@
             {
               "key": "permissionsAccessHowTos",
               "label": "How-Tos",
-              "pages": [
-                "user-guide/permissions-access/how-tos/permissions-faq"
-              ]
+              "pages": ["user-guide/permissions-access/how-tos/permissions-faq"]
             }
           ]
         },
@@ -332,9 +329,7 @@
             {
               "key": "billingHowTos",
               "label": "How-Tos",
-              "pages": [
-                "user-guide/billing/how-tos/billing-faq"
-              ]
+              "pages": ["user-guide/billing/how-tos/billing-faq"]
             }
           ]
         },
@@ -353,15 +348,26 @@
                 "user-guide/settings/capabilities/profile-settings",
                 "user-guide/settings/capabilities/experience-settings",
                 "user-guide/settings/capabilities/domains-settings",
-                "user-guide/settings/capabilities/updates-settings"
+                "user-guide/settings/capabilities/community-settings"
               ]
             },
             {
               "key": "settingsHowTos",
               "label": "How-Tos",
-              "pages": [
-                "user-guide/settings/how-tos/settings-faq"
-              ]
+              "pages": ["user-guide/settings/how-tos/settings-faq"]
+            }
+          ]
+        },
+        {
+          "key": "legal",
+          "label": "Legal",
+          "icon": "book",
+          "pages": [
+            "user-guide/legal/overview",
+            {
+              "key": "legalHowTos",
+              "label": "How-Tos",
+              "pages": ["user-guide/legal/how-tos/legal-faq"]
             }
           ]
         }
@@ -374,9 +380,7 @@
         {
           "key": "developersOverview",
           "label": "Overview",
-          "pages": [
-            "developers/introduction"
-          ]
+          "pages": ["developers/introduction"]
         },
         {
           "key": "apps",
@@ -392,6 +396,19 @@
                 "developers/extend/apps/getting-started/local-server",
                 "developers/extend/apps/getting-started/scaffolding",
                 "developers/extend/apps/getting-started/troubleshooting"
+              ]
+            },
+            {
+              "key": "appsTutorial",
+              "label": "Tutorial",
+              "pages": [
+                "developers/extend/apps/tutorials/document-generator/overview",
+                "developers/extend/apps/tutorials/document-generator/data-model",
+                "developers/extend/apps/tutorials/document-generator/generating-documents",
+                "developers/extend/apps/tutorials/document-generator/http-routes",
+                "developers/extend/apps/tutorials/document-generator/building-the-ui",
+                "developers/extend/apps/tutorials/document-generator/ai-agent",
+                "developers/extend/apps/tutorials/document-generator/publishing"
               ]
             },
             {
@@ -412,7 +429,9 @@
                 "developers/extend/apps/data/overview",
                 "developers/extend/apps/data/objects",
                 "developers/extend/apps/data/extending-objects",
-                "developers/extend/apps/data/relations"
+                "developers/extend/apps/data/system-fields",
+                "developers/extend/apps/data/relations",
+                "developers/extend/apps/data/timeline-activity-types"
               ]
             },
             {
@@ -421,8 +440,11 @@
               "pages": [
                 "developers/extend/apps/logic/overview",
                 "developers/extend/apps/logic/logic-functions",
+                "developers/extend/apps/logic/key-value-store",
+                "developers/extend/apps/logic/background-jobs",
                 "developers/extend/apps/logic/skills-and-agents",
-                "developers/extend/apps/logic/connections"
+                "developers/extend/apps/logic/connections",
+                "developers/extend/apps/logic/credits"
               ]
             },
             {
@@ -443,7 +465,9 @@
               "pages": [
                 "developers/extend/apps/operations/overview",
                 "developers/extend/apps/operations/cli",
+                "developers/extend/apps/operations/sync-and-recovery",
                 "developers/extend/apps/operations/testing",
+                "developers/extend/apps/operations/translations",
                 "developers/extend/apps/operations/publishing"
               ]
             }
@@ -465,7 +489,6 @@
             "developers/self-host/capabilities/docker-compose",
             "developers/self-host/capabilities/setup",
             "developers/self-host/capabilities/upgrade-guide",
-            "developers/self-host/capabilities/cloud-providers",
             "developers/self-host/capabilities/troubleshooting"
           ]
         },
@@ -476,6 +499,71 @@
             "developers/contribute/capabilities/local-setup",
             "developers/contribute/commands",
             "developers/contribute/style-guide"
+          ]
+        },
+        {
+          "key": "uiLibrary",
+          "label": "UI Library",
+          "pages": [
+            {
+              "key": "uiGuides",
+              "label": "Guides",
+              "pages": [
+                "ui/getting-started",
+                "ui/theming",
+                "ui/tokens",
+                "ui/dark-mode",
+                "ui/ssr",
+                "ui/accessibility"
+              ]
+            },
+            {
+              "key": "uiForms",
+              "label": "Forms",
+              "pages": [
+                "ui/components/input/field",
+                "ui/components/input/input",
+                "ui/components/input/input-group",
+                "ui/components/input/textarea",
+                "ui/components/input/checkbox",
+                "ui/components/input/radio",
+                "ui/components/input/radio-group",
+                "ui/components/input/select",
+                "ui/components/input/slider",
+                "ui/components/input/switch"
+              ]
+            },
+            {
+              "key": "uiNavigation",
+              "label": "Navigation",
+              "pages": [
+                "ui/components/navigation/list-item",
+                "ui/components/navigation/tabs"
+              ]
+            },
+            {
+              "key": "uiSurfaces",
+              "label": "Surfaces",
+              "pages": [
+                "ui/components/surfaces/alert-dialog",
+                "ui/components/surfaces/menu",
+                "ui/components/surfaces/popover"
+              ]
+            },
+            {
+              "key": "uiFeedback",
+              "label": "Feedback",
+              "pages": [
+                "ui/components/feedback/toast"
+              ]
+            },
+            {
+              "key": "uiTypography",
+              "label": "Typography",
+              "pages": [
+                "ui/components/typography/text"
+              ]
+            }
           ]
         }
       ]

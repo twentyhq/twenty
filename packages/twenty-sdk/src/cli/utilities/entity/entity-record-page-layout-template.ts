@@ -9,12 +9,12 @@ export const getRecordPageLayoutBaseFile = ({
   objectUniversalIdentifier: string;
   fieldsWidgetViewUniversalIdentifier: string;
 }) => {
-  return `import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+  return `import { definePageLayout, PageLayoutTabLayoutMode, PageLayoutType } from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: '${uuidv4()}',
   name: 'Default ${objectLabelSingular} Layout',
-  type: 'RECORD_PAGE',
+  type: PageLayoutType.RECORD_PAGE,
   objectUniversalIdentifier: '${objectUniversalIdentifier}',
   tabs: [
     {
@@ -40,7 +40,7 @@ export default definePageLayout({
       title: 'Timeline',
       position: 20,
       icon: 'IconTimelineEvent',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: '${uuidv4()}',

@@ -1,13 +1,10 @@
 import { type Equal, type Expect } from 'twenty-shared/testing';
+import { type EmptyObject } from 'twenty-shared/types';
 
 import { type ExtractJsonbProperties } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/extract-jsonb-properties.type';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
-// oxlint-disable-next-line @typescripttypescript/no-empty-object-type
-type EmptyObject = {};
-
 type TestedRecord = {
-  // Non-JsonbProperty fields
   plainString: string;
   plainNumber: number;
   plainObject: EmptyObject;
@@ -19,7 +16,6 @@ type TestedRecord = {
   jsonbNumber: JsonbProperty<number>;
   jsonbull: JsonbProperty<null>;
 
-  // JsonbProperty fields - should be extracted
   jsonbPlainObject: JsonbProperty<EmptyObject>;
   jsonbPlainArray: JsonbProperty<string[]>;
   jsonbPlainObjectNullable: JsonbProperty<EmptyObject | null>;
@@ -63,9 +59,7 @@ type Assertions = [
     >
   >,
 
-  // Empty object returns never
   Expect<Equal<ExtractJsonbProperties<EmptyObject>, never>>,
 
-  // Object with no JsonbProperty fields returns never
   Expect<Equal<ExtractJsonbProperties<{ a: string; b: number }>, never>>,
 ];

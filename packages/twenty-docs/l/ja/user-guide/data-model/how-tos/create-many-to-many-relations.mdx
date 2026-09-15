@@ -6,11 +6,11 @@ description: ジャンクションオブジェクトを使うことで、両側�
 多対多リレーションでは、両側で複数のレコードを相互に接続できます。 例えば、多数の連絡先が多数のプロジェクトで作業でき、各プロジェクトには多数の連絡先が紐づきます。
 
 <Warning>
-  **ラボ機能**: ジャンクションリレーションは現在 Lab にあります。 このガイドに進む前に、**Settings → Updates → Lab** で有効にしてください。
+**ベータ機能**: ジャンクションリレーションは現在ベータ版です。 このガイドに進む前に、**Settings → Community → Features** で有効にしてください。
 </Warning>
 
 <Note>
-  この機能を使うには **詳細モード** も有効にする必要があります（Settings の右下にあるトグルで切り替え）。
+この機能を使うには **Advanced mode** も有効にする必要があります（Settings の左下にあるトグルで切り替え）。
 </Note>
 
 ## 多対多を使うタイミング
@@ -40,8 +40,8 @@ People ←→ Project Assignments ←→ Projects
 
 ## 前提条件
 
-1. **Lab で Junction Relations を有効化**: **Settings → Updates → Lab** に移動し、**Junction Relations** を有効にします
-2. **詳細モードを有効化**: 設定サイドバーの右下にある **Advanced mode** のトグルをオンにします
+1. **ベータ機能で Junction Relations を有効化**: **Settings → Community → Features** に移動し、**Junction Relations** を有効にします
+2. **Advanced mode を有効化**: 設定サイドバーの左下にある **Advanced mode** のトグルをオンにします
 3. データモデルを計画する:
    * どの 2 つのオブジェクトを接続しますか？
    * ジャンクションオブジェクトの名称は何にしますか？
@@ -51,40 +51,47 @@ People ←→ Project Assignments ←→ Projects
 まず、接続を保持する中間オブジェクトを作成します。
 
 1. **設定 → データモデル** に移動します
-2. **+ New object** をクリック
+2. **+ オブジェクトを追加**をクリックします
 3. わかりやすい名前を付けます（例: "Project Assignment"、"Team Member"、"Product Order"）
-4. **保存**をクリック
+4. "Name フィールドの作成をスキップ" をオンに切り替えます
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="新規ピボットオブジェクト" />
+
+5. **保存**をクリック
 
 <Tip>
-  **命名規則**: "Project Assignment" や "Team Membership" のように、関係を表す名前を使用してください。 これにより、データモデルが理解しやすくなります。
+**命名規則**: "Project Assignment" や "Team Membership" のように、関係を表す名前を使用してください。 これにより、データモデルが理解しやすくなります。
 </Tip>
 
-## ステップ 2: ジャンクションオブジェクトからリレーションを作成する
+## 手順 2: オブジェクトとジャンクションの間にリレーションを作成する
 
-ジャンクションオブジェクトから、接続したい両方のオブジェクトへのリレーションフィールドを追加します。
+2 つのオブジェクトそれぞれに、ジャンクションオブジェクトへのリレーションフィールドを追加します。
 
-### 最初のリレーション（ジャンクション → オブジェクト A）
+### 最初のリレーション（オブジェクト A → ジャンクション）
 
-1. **Settings → Data Model** でジャンクションオブジェクトを選択します
-2. **+ Add Field** をクリック
-3. フィールドタイプとして **Relation** を選択します
-4. 最初のオブジェクトを選択します（例: "People"）
-5. リレーションタイプを **Many-to-One** に設定します（多数の割り当てが 1 人の連絡先にリンクできます）
-6. フィールドに名前を付けます:
-   * ジャンクション側のフィールド: 例: "Person"
-   * People 側のフィールド: 例: "Project Assignments"
-7. **保存**をクリック
-
-### 2 番目のリレーション（ジャンクション → オブジェクト B）
-
-1. 引き続きジャンクションオブジェクトで、**+ Add Field** をクリックします
-2. フィールドタイプとして **Relation** を選択します
-3. 2 番目のオブジェクトを選択します（例: "Projects"）
-4. リレーションタイプを **Many-to-One** に設定します
+1. **Settings → Data Model** で最初のオブジェクトを選択します
+2. **+ Add Relation** をクリック
+3. ジャンクションオブジェクトを選択します（例: "Project Assignments"）
+4. リレーションタイプを **One-To-Many** に設定します（1 人の連絡先は複数の割り当てにリンクできます）
 5. フィールドに名前を付けます:
+   * People 側のフィールド: 例: "Project Assignments"
+   * ジャンクション側のフィールド: 例: "Person"
+6. **保存**をクリック
+
+### 2 番目のリレーション（オブジェクト B → ジャンクション）
+
+1. **Settings → Data Model** で 2 番目のオブジェクトを選択します
+2. **+ Add Relation** をクリック
+3. ジャンクションオブジェクトを選択します（例: "Project Assignments"）
+4. リレーションタイプを **1対多** に設定します（1 つのプロジェクトは複数の割り当てにリンクできます）
+5. **"これはジャンクションオブジェクトへのリレーションです"** を有効にします
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+
+6. フィールドに名前を付けます:
    * ジャンクション側のフィールド: 例: "Project"
    * Projects 側のフィールド: 例: "Team Members"
-6. **保存**をクリック
+7. **保存**をクリック
 
 ## ステップ 3: ジャンクションリレーションの表示を設定する
 
@@ -97,18 +104,6 @@ People ←→ Project Assignments ←→ Projects
 5. **"これはジャンクションオブジェクトへのリレーションです"** を有効にします
 6. **Target relation** を選択します（例: "Project" — 反対側を指すジャンクション上のフィールド）
 7. **保存**をクリック
-
-{/* TODO: Add image
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
-*/}
-
-もう一方のオブジェクトでも同様に行います:
-
-1. Data Model で "Projects" を選択します
-2. "Team Members" のリレーションフィールドを編集します
-3. ジャンクションのトグルを有効にします
-4. 対象リレーションとして "Person" を選択します
-5. 保存
 
 ## 結果
 
@@ -130,15 +125,15 @@ People ←→ Project Assignments ←→ Projects
 
 ### リレーションを追加する
 
-1. **Project Assignment → People**
-   * タイプ: 多対1
-   * Assignment 側のフィールド: "Person"
+1. **People → Project Assignment**
+   * タイプ: 1対多
    * People 側のフィールド: "Project Assignments"
+   * Assignment 側のフィールド: "Person"
 
-2. **Project Assignment → Projects**
-   * タイプ: 多対1
-   * Assignment 側のフィールド: "Project"
+2. **Projects → Project Assignment**
+   * タイプ: 1対多
    * Projects 側のフィールド: "Team Members"
+   * Assignment 側のフィールド: "Project"
 
 ### ジャンクションの表示を設定する
 
@@ -163,7 +158,7 @@ People ←→ Project Assignments ←→ Projects
 ジャンクションオブジェクトは実体のあるオブジェクトなので、関係に関する情報を保存するためのカスタムフィールドを追加できます。
 
 * **役割**: "Developer"、"Designer"、"Manager"
-* **開始日**: プロジェクトに参加した日
+* **開始日**: プロジェクトに参加した人
 * **割り当て時間**: 当該プロジェクトの週あたりの時間
 
 このデータにアクセスするには、ジャンクションオブジェクトに直接移動するか、API 経由でクエリします。

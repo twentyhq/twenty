@@ -1,19 +1,50 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource } from 'typeorm';
 
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type ObjectRecordCountDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-record-count.dto';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 @Injectable()
 export class ObjectRecordCountService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
+
+  // reltuples is the planner's row estimate, refreshed by autovacuum's
+  // ANALYZE; never-analyzed tables report -1, clamped to 0 here
+  async getApproximateRecordCountByTableName(
+    workspaceId: string,
+  ): Promise<Map<string, number>> {
+    const schemaName = getWorkspaceSchemaName(workspaceId);
+
+    const rows: { relname: string; approximate_count: number }[] =
+      await this.coreDataSource.query(
+        `SELECT relname, reltuples::bigint AS approximate_count
+         FROM pg_class c
+         JOIN pg_namespace n ON c.relnamespace = n.oid
+         WHERE n.nspname = $1
+         AND c.relkind = 'r'`,
+        [schemaName],
+      );
+
+    const countByTableName = new Map<string, number>();
+
+    for (const row of rows) {
+      countByTableName.set(
+        row.relname,
+        Math.max(0, Number(row.approximate_count)),
+      );
+    }
+
+    return countByTableName;
+  }
 
   async getRecordCounts(workspaceId: string): Promise<ObjectRecordCountDTO[]> {
     const { flatObjectMetadataMaps } =
@@ -28,41 +59,13 @@ export class ObjectRecordCountService {
       flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
 
-    const schemaName = getWorkspaceSchemaName(workspaceId);
-
-    const dataSource =
-      await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
-    const rows: { relname: string; approximate_count: number }[] =
-      await dataSource.query(
-        `SELECT relname, reltuples::bigint AS approximate_count
-         FROM pg_class c
-         JOIN pg_namespace n ON c.relnamespace = n.oid
-         WHERE n.nspname = $1
-         AND c.relkind = 'r'`,
-        [schemaName],
-        undefined,
-        { shouldBypassPermissionChecks: true },
-      );
-
-    const countByTableName = new Map<string, number>();
-
-    for (const row of rows) {
-      countByTableName.set(
-        row.relname,
-        Math.max(0, Number(row.approximate_count)),
-      );
-    }
+    const countByTableName =
+      await this.getApproximateRecordCountByTableName(workspaceId);
 
     return flatObjectMetadatas.map((flatObjectMetadata) => ({
       objectNamePlural: flatObjectMetadata.namePlural,
       totalCount:
-        countByTableName.get(
-          computeTableName(
-            flatObjectMetadata.nameSingular,
-            flatObjectMetadata.isCustom,
-          ),
-        ) ?? 0,
+        countByTableName.get(computeObjectTargetTable(flatObjectMetadata)) ?? 0,
     }));
   }
 }

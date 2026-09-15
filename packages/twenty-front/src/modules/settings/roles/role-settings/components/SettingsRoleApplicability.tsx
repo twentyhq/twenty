@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
-import { H2Title, IconKey, IconRobot, IconUsers } from 'twenty-ui/display';
+import { IconKey, IconLego, IconUsers } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Checkbox } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { useContext } from 'react';
@@ -59,7 +60,7 @@ export const SettingsRoleApplicability = ({
     {
       key: 'canBeAssignedToAgents' as const,
       label: t`Assignable to Agents`,
-      Icon: IconRobot,
+      Icon: IconLego,
     },
     {
       key: 'canBeAssignedToApiKeys' as const,
@@ -88,12 +89,13 @@ export const SettingsRoleApplicability = ({
               <span>{option.label}</span>
             </StyledCheckboxLabel>
             <Checkbox
+              aria-label={option.label}
               checked={values[option.key]}
-              onChange={(event) => {
-                event.stopPropagation();
-                onApplicabilityChange(option.key, event.target.checked);
+              onCheckedChange={(isChecked) => {
+                onApplicabilityChange(option.key, isChecked);
               }}
               disabled={!isEditable}
+              onClick={(event) => event.stopPropagation()}
             />
           </StyledCheckboxContainer>
         ))}

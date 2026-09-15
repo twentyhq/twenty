@@ -5,7 +5,6 @@ import {
   addMonths,
   addSeconds,
   addWeeks,
-  addYears,
   subDays,
   subHours,
   subMinutes,
@@ -22,8 +21,6 @@ import {
   parseAndEvaluateRelativeDateFilter,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/parse-and-evaluate-relative-date-filter.util';
 
-// TODO: this test should be in twenty-shared, and the logic that is duplicated both front end and back end,
-//  should be merged and properly refactored with Temporal to unify and simplify this bug-prone zone of the codebase.
 describe('Relative Date Filter Utils', () => {
   const now = new Date('2024-01-15T12:00:00Z'); // Monday, January 15, 2024 at noon
 
@@ -119,7 +116,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'SECOND',
         };
 
-        // Dates within the next 3 seconds should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addSeconds(now, 1),
@@ -139,7 +135,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addSeconds(now, 4),
@@ -161,7 +156,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'MINUTE',
         };
 
-        // Dates within the next 3 minutes should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addMinutes(now, 1),
@@ -181,7 +175,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addMinutes(now, 4),
@@ -197,14 +190,12 @@ describe('Relative Date Filter Utils', () => {
       });
 
       it('should return true for dates within the next N hours', () => {
-        ///
         const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'NEXT',
           amount: 3,
           unit: 'HOUR',
         };
 
-        // Dates within the next 3 hours should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addHours(now, 1),
@@ -224,7 +215,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addHours(now, 4),
@@ -246,7 +236,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'DAY',
         };
 
-        // Dates within the next 3 days should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addDays(now, 1),
@@ -266,7 +255,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addDays(now, 4),
@@ -288,7 +276,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'WEEK',
         };
 
-        // Dates within the next 2 weeks should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addWeeks(now, 1),
@@ -302,7 +289,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addWeeks(now, 3),
@@ -315,6 +301,13 @@ describe('Relative Date Filter Utils', () => {
             relativeDateFilterValue,
           }),
         ).toBe(false);
+
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2024-01-16T12:00:00Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
       });
 
       it('should return true for dates within the next N months', () => {
@@ -324,7 +317,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'MONTH',
         };
 
-        // Dates within the next 2 months should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addMonths(now, 1),
@@ -338,7 +330,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: addMonths(now, 3),
@@ -351,39 +342,51 @@ describe('Relative Date Filter Utils', () => {
             relativeDateFilterValue,
           }),
         ).toBe(false);
+
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2024-01-20T12:00:00Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
       });
 
-      it('should return true for dates within the next N years', () => {
+      it('should match the next calendar year, not a rolling 12 months', () => {
         const relativeDateFilterValue: RelativeDateFilter = {
           direction: 'NEXT',
           amount: 1,
           unit: 'YEAR',
         };
 
-        // Dates within the next year should match
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: addMonths(now, 6),
+            dateToCheck: new Date('2025-01-01T00:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(true);
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: addMonths(now, 11),
+            dateToCheck: new Date('2025-06-15T12:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: addYears(now, 2),
+            dateToCheck: new Date('2024-07-15T12:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(false);
         expect(
           evaluateRelativeDateFilter({
-            dateToCheck: subDays(now, 1),
+            dateToCheck: new Date('2024-12-31T23:59:59Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
+
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2026-01-01T00:00:00Z'),
             relativeDateFilterValue,
           }),
         ).toBe(false);
@@ -412,7 +415,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'SECOND',
         };
 
-        // Dates within the past 3 seconds should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subSeconds(now, 1),
@@ -432,7 +434,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subSeconds(now, 4),
@@ -454,7 +455,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'MINUTE',
         };
 
-        // Dates within the past 3 minutes should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subMinutes(now, 1),
@@ -474,7 +474,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subMinutes(now, 4),
@@ -496,7 +495,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'HOUR',
         };
 
-        // Dates within the past 3 hours should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subHours(now, 1),
@@ -516,7 +514,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subHours(now, 4),
@@ -538,7 +535,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'DAY',
         };
 
-        // Dates within the past 3 days should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subDays(now, 1),
@@ -558,7 +554,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subDays(now, 4),
@@ -580,7 +575,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'WEEK',
         };
 
-        // Dates within the past 2 weeks should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subWeeks(now, 1),
@@ -594,7 +588,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subWeeks(now, 3),
@@ -607,6 +600,13 @@ describe('Relative Date Filter Utils', () => {
             relativeDateFilterValue,
           }),
         ).toBe(false);
+
+        expect(
+          evaluateRelativeDateFilter({
+            dateToCheck: new Date('2024-01-15T06:00:00Z'),
+            relativeDateFilterValue,
+          }),
+        ).toBe(false);
       });
 
       it('should return true for dates within the past N months', () => {
@@ -616,7 +616,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'MONTH',
         };
 
-        // Dates within the past 2 months should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subMonths(now, 1),
@@ -630,7 +629,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subMonths(now, 3),
@@ -652,7 +650,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'YEAR',
         };
 
-        // Dates within the past year should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subMonths(now, 6),
@@ -666,7 +663,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Dates outside the range should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subYears(now, 2),
@@ -703,7 +699,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'SECOND',
         };
 
-        // Same second should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: now,
@@ -711,7 +706,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Different seconds should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-01-15T08:00:00Z'),
@@ -732,7 +726,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'MINUTE',
         };
 
-        // Same minute should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: now,
@@ -740,7 +733,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Different minutes should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-01-15T08:00:00Z'),
@@ -761,7 +753,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'HOUR',
         };
 
-        // Same hour should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: now,
@@ -769,7 +760,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Different hours should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-01-15T08:00:00Z'),
@@ -790,7 +780,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'DAY',
         };
 
-        // Same day should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: now,
@@ -805,7 +794,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Different days should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: subDays(now, 1),
@@ -842,7 +830,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Different weeks should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2024-01-13T12:00:00Z'),
@@ -863,7 +850,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'MONTH',
         };
 
-        // Same month should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: now,
@@ -883,7 +869,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Different months should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2023-12-31T12:00:00Z'),
@@ -904,7 +889,6 @@ describe('Relative Date Filter Utils', () => {
           unit: 'YEAR',
         };
 
-        // Same year should match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: now,
@@ -924,7 +908,6 @@ describe('Relative Date Filter Utils', () => {
           }),
         ).toBe(true);
 
-        // Different years should not match
         expect(
           evaluateRelativeDateFilter({
             dateToCheck: new Date('2023-12-31T12:00:00Z'),

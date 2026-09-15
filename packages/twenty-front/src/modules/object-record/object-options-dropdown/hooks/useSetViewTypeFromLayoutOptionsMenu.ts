@@ -1,14 +1,14 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { useContextStoreInstanceId } from '@/context-store/hooks/useContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { type GraphQLView } from '@/views/types/GraphQLView';
-import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
+import { ViewType, viewTypeIconKeyMapping } from '@/views/types/ViewType';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
 import { useStore } from 'jotai';
@@ -18,7 +18,9 @@ import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 export const useSetViewTypeFromLayoutOptionsMenu = () => {
   const { updateCurrentView } = useUpdateCurrentView();
-  const setRecordIndexViewType = useSetAtomState(recordIndexViewTypeState);
+  const setRecordIndexViewType = useSetAtomComponentState(
+    recordIndexViewTypeState,
+  );
   const { availableFieldsForGrouping } =
     useGetAvailableFieldsToGroupRecordsBy();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
@@ -27,13 +29,15 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
 
   const { availableFieldsForCalendar } = useGetAvailableFieldsForCalendar();
 
+  const contextStoreInstanceId = useContextStoreInstanceId();
+
   const store = useStore();
 
   const setAndPersistViewType = useCallback(
     async (viewType: ViewType) => {
       const currentViewId = store.get(
         contextStoreCurrentViewIdComponentState.atomFamily({
-          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+          instanceId: contextStoreInstanceId,
         }),
       );
 
@@ -65,18 +69,17 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
             mainGroupByFieldMetadataId;
 
           if (shouldChangeIcon(currentView.icon, currentView.type)) {
-            updateCurrentViewParams.icon =
-              viewTypeIconMapping(viewType).displayName;
+            updateCurrentViewParams.icon = viewTypeIconKeyMapping(viewType);
           }
 
           setRecordIndexViewType(viewType);
           await updateCurrentView(updateCurrentViewParams);
           return;
         }
-        case ViewType.TABLE: {
+        case ViewType.TABLE:
+        case ViewType.LIST: {
           if (shouldChangeIcon(currentView.icon, currentView.type)) {
-            updateCurrentViewParams.icon =
-              viewTypeIconMapping(viewType).displayName;
+            updateCurrentViewParams.icon = viewTypeIconKeyMapping(viewType);
           }
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           await updateCurrentView(updateCurrentViewParams);
@@ -97,22 +100,26 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
               ...currentView,
               type: viewType,
               calendarFieldMetadataId,
+              calendarEndFieldMetadataId: null,
               calendarLayout: ViewCalendarLayout.MONTH,
             },
             objectMetadataItem,
           );
 
           if (shouldChangeIcon(currentView.icon, currentView.type)) {
-            updateCurrentViewParams.icon =
-              viewTypeIconMapping(viewType).displayName;
+            updateCurrentViewParams.icon = viewTypeIconKeyMapping(viewType);
           }
           updateCurrentViewParams.calendarLayout = ViewCalendarLayout.MONTH;
           updateCurrentViewParams.calendarFieldMetadataId =
             calendarFieldMetadataId;
+          updateCurrentViewParams.calendarEndFieldMetadataId = null;
           updateCurrentViewParams.mainGroupByFieldMetadataId = null;
           return await updateCurrentView(updateCurrentViewParams);
         }
         case ViewType.TABLE_WIDGET:
+        case ViewType.KANBAN_WIDGET:
+        case ViewType.LIST_WIDGET:
+        case ViewType.CALENDAR_WIDGET:
         case ViewType.FIELDS_WIDGET: {
           return;
         }
@@ -129,6 +136,7 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
       availableFieldsForCalendar,
       loadRecordIndexStates,
       objectMetadataItem,
+      contextStoreInstanceId,
     ],
   );
 
@@ -138,19 +146,25 @@ export const useSetViewTypeFromLayoutOptionsMenu = () => {
   ): boolean => {
     if (
       oldViewType === ViewType.KANBAN &&
-      oldIcon === viewTypeIconMapping(ViewType.KANBAN).displayName
+      oldIcon === viewTypeIconKeyMapping(ViewType.KANBAN)
     ) {
       return true;
     }
     if (
       oldViewType === ViewType.TABLE &&
-      oldIcon === viewTypeIconMapping(ViewType.TABLE).displayName
+      oldIcon === viewTypeIconKeyMapping(ViewType.TABLE)
     ) {
       return true;
     }
     if (
       oldViewType === ViewType.CALENDAR &&
-      oldIcon === viewTypeIconMapping(ViewType.CALENDAR).displayName
+      oldIcon === viewTypeIconKeyMapping(ViewType.CALENDAR)
+    ) {
+      return true;
+    }
+    if (
+      oldViewType === ViewType.LIST &&
+      oldIcon === viewTypeIconKeyMapping(ViewType.LIST)
     ) {
       return true;
     }

@@ -6,11 +6,11 @@ description: Propojte záznamy, kde lze mnoho položek na obou stranách vzájem
 Vztahy mnoho-na-mnoho vám umožňují propojit více záznamů na obou stranách. Například: mnoho lidí může pracovat na mnoha projektech a každý projekt může mít mnoho lidí.
 
 <Warning>
-**Lab Feature**: Vztahy přes spojovací objekt jsou momentálně v Lab. Povolte je v **Settings → Updates → Lab** předtím, než budete pokračovat podle tohoto návodu.
+**Beta Feature**: Vztahy přes spojovací objekt jsou momentálně v beta verzi. Povolte je v **Settings → Community → Features** předtím, než budete pokračovat podle tohoto návodu.
 </Warning>
 
 <Note>
-Tato funkce také vyžaduje, aby byl povolen **Advanced mode** (přepínač je vpravo dole v Settings).
+Tato funkce také vyžaduje, aby byl povolen **Advanced mode** (přepínač je vlevo dole v Settings).
 </Note>
 
 ## Kdy použít mnoho-na-mnoho
@@ -40,8 +40,8 @@ Když povolíte přepínač pro vztah přes spojovací objekt, Twenty zobrazí p
 
 ## Předpoklady
 
-1. **Povolte Junction Relations v Lab**: Přejděte do **Settings → Updates → Lab** a povolte **Junction Relations**
-2. **Povolte Advanced mode**: Zapněte **Advanced mode** vpravo dole na postranním panelu Settings
+1. **Povolte Junction Relations v Beta Features**: Přejděte do **Settings → Community → Features** a povolte **Junction Relations**
+2. **Povolte Advanced mode**: Zapněte **Advanced mode** vlevo dole na postranním panelu Settings
 3. Naplánujte svůj datový model:
    * Které dva objekty propojujete?
    * Jak by se měl jmenovat spojovací objekt?
@@ -51,7 +51,7 @@ Když povolíte přepínač pro vztah přes spojovací objekt, Twenty zobrazí p
 Nejprve vytvořte mezilehlý objekt, který bude uchovávat propojení.
 
 1. Přejděte do **Nastavení → Datový model**
-2. Klikněte na **+ New object**
+2. Klikněte na **+ Přidat objekt**
 3. Pojmenujte jej výstižně (např. "Project Assignment", "Team Member", "Product Order")
 4. Přepněte "Přeskočit vytvoření pole Název" na zapnuto
 
@@ -158,7 +158,7 @@ Zde je kompletní postup:
 Protože spojovací objekt je skutečný objekt, můžete přidat vlastní pole k ukládání informací o vztahu:
 
 * **Role**: "Developer", "Designer", "Manager"
-* **Start Date**: Kdy se k projektu připojili
+* **Datum zahájení**: Když se osoba připojila k projektu
 * **Hours Allocated**: Týdenní počet hodin na tomto projektu
 
 Pro přístup k těmto datům přejděte přímo na spojovací objekt nebo jej dotazujte přes API.

@@ -7,7 +7,7 @@ import { workflowDiagramRightClickMenuPositionState } from '@/workflow/workflow-
 export const WorkflowDiagramRightClickCommandMenuClickOutsideEffect = ({
   rightClickCommandMenuRef,
 }: {
-  rightClickCommandMenuRef: React.RefObject<HTMLDivElement>;
+  rightClickCommandMenuRef: React.RefObject<HTMLDivElement | null>;
 }) => {
   const setWorkflowDiagramRightClickMenuPosition = useSetAtomComponentState(
     workflowDiagramRightClickMenuPositionState,

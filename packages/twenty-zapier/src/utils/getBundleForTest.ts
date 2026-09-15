@@ -23,6 +23,8 @@ export const getBundleForTest = (inputData?: InputData): Bundle => {
       isTestingAuth: false,
       limit: 1,
       page: 1,
+      timezone: null,
+      inputFields: {},
     },
   };
 };

@@ -2,8 +2,9 @@ import {
   type WorkflowDiagram,
   type WorkflowDiagramNode,
 } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
+import { isDefined } from 'twenty-shared/utils';
 
-const nodePropertiesToPreserve: Array<keyof WorkflowDiagramNode> = [
+const BASE_PROPERTIES_TO_PRESERVE: Array<keyof WorkflowDiagramNode> = [
   'selected',
   'measured',
 ];
@@ -11,22 +12,32 @@ const nodePropertiesToPreserve: Array<keyof WorkflowDiagramNode> = [
 export const mergeWorkflowDiagrams = (
   previousDiagram: WorkflowDiagram,
   nextDiagram: WorkflowDiagram,
+  options?: { preservePositions?: boolean },
 ): WorkflowDiagram => {
+  const propertiesToPreserve = options?.preservePositions
+    ? [...BASE_PROPERTIES_TO_PRESERVE, 'position' as const]
+    : BASE_PROPERTIES_TO_PRESERVE;
+
   const lastNodes = nextDiagram.nodes.map((nextNode) => {
     const previousNode = previousDiagram.nodes.find(
       (previousNode) => previousNode.id === nextNode.id,
     );
 
-    const nodeWithPreservedProperties = nodePropertiesToPreserve.reduce(
-      (nodeToSet, propertyToPreserve) => {
-        return Object.assign(nodeToSet, {
-          [propertyToPreserve]: previousNode?.[propertyToPreserve],
-        });
-      },
-      {} as Partial<WorkflowDiagramNode>,
-    );
+    if (!isDefined(previousNode)) {
+      return nextNode;
+    }
 
-    return Object.assign(nodeWithPreservedProperties, nextNode);
+    const preservedProperties: Partial<WorkflowDiagramNode> = {};
+
+    for (const property of propertiesToPreserve) {
+      if (isDefined(previousNode[property])) {
+        Object.assign(preservedProperties, {
+          [property]: previousNode[property],
+        });
+      }
+    }
+
+    return { ...nextNode, ...preservedProperties };
   });
 
   return {

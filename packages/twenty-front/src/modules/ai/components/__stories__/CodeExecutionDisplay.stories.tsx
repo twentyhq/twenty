@@ -3,6 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
+import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 const samplePythonCode = `import pandas as pd
@@ -32,6 +33,7 @@ const meta: Meta<typeof CodeExecutionDisplay> = {
   component: CodeExecutionDisplay,
   decorators: [SnackBarDecorator, ComponentDecorator],
   parameters: {
+    argos: ARGOS_CAPTURE_DISABLED,
     container: { width: 600 },
   },
   args: {
@@ -72,7 +74,6 @@ export const Success: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     expect(await canvas.findByText('Completed')).toBeVisible();
-    // Output content is inside a scrollable container
     expect(await canvas.findByText(/Total Revenue/)).toBeInTheDocument();
   },
 };
@@ -176,11 +177,9 @@ export const CodeSectionExpanded: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Click to expand the code section
     const codeHeader = await canvas.findByText('Code');
     await userEvent.click(codeHeader);
 
-    // The code editor should now be visible
     expect(await canvas.findByText('Completed')).toBeVisible();
   },
 };

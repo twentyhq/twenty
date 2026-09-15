@@ -159,7 +159,7 @@ describe('computeStepOutputSchema', () => {
       expect(result).toEqual({});
     });
 
-    it('should return empty object for GLOBAL availability', () => {
+    it('should expose only metadata for GLOBAL availability', () => {
       const result = computeStepOutputSchema({
         step: {
           type: 'MANUAL',
@@ -168,10 +168,22 @@ describe('computeStepOutputSchema', () => {
         objectMetadataItems: [mockCompanyObjectMetadataItem],
       });
 
-      expect(result).toEqual({});
+      expect(result).not.toHaveProperty('payload');
+      expect((result as any).metadata).toMatchObject({
+        isLeaf: false,
+        type: 'object',
+        label: 'Metadata',
+        value: {
+          workspaceMemberId: {
+            isLeaf: true,
+            type: 'string',
+            label: 'Workspace Member Id',
+          },
+        },
+      });
     });
 
-    it('should return record output schema for SINGLE_RECORD availability', () => {
+    it('should nest the record under payload and expose metadata for SINGLE_RECORD availability', () => {
       const result = computeStepOutputSchema({
         step: {
           type: 'MANUAL',
@@ -185,11 +197,19 @@ describe('computeStepOutputSchema', () => {
         objectMetadataItems: [mockCompanyObjectMetadataItem],
       });
 
-      expect(result).toHaveProperty('_outputSchemaType', 'RECORD');
-      expect(result).toHaveProperty('object');
+      expect((result as any).payload).toMatchObject({
+        isLeaf: false,
+        label: 'Record',
+      });
+      expect((result as any).payload.value).toHaveProperty(
+        '_outputSchemaType',
+        'RECORD',
+      );
+      expect((result as any).payload.value).toHaveProperty('object');
+      expect(result).toHaveProperty('metadata');
     });
 
-    it('should return array indicator for BULK_RECORDS availability', () => {
+    it('should nest the array indicator under payload and expose metadata for BULK_RECORDS availability', () => {
       const result = computeStepOutputSchema({
         step: {
           type: 'MANUAL',
@@ -203,12 +223,17 @@ describe('computeStepOutputSchema', () => {
         objectMetadataItems: [mockCompanyObjectMetadataItem],
       });
 
-      expect(result).toHaveProperty('companies');
-      expect((result as any).companies).toMatchObject({
+      expect((result as any).payload).toMatchObject({
+        isLeaf: false,
+        label: 'Records',
+      });
+      expect((result as any).payload.value).toHaveProperty('companies');
+      expect((result as any).payload.value.companies).toMatchObject({
         isLeaf: true,
         label: 'Companies',
         type: 'array',
       });
+      expect(result).toHaveProperty('metadata');
     });
 
     it('should return empty object when object metadata is not found for SINGLE_RECORD', () => {
@@ -400,9 +425,45 @@ describe('computeStepOutputSchema', () => {
   });
 
   describe('SEND_EMAIL step', () => {
-    it('should return success boolean schema', () => {
+    it('should return success and sent message identifier schema', () => {
       const result = computeStepOutputSchema({
         step: { type: 'SEND_EMAIL', settings: {} } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(result).toEqual({
+        success: {
+          isLeaf: true,
+          type: FieldMetadataType.BOOLEAN,
+          label: 'Success',
+          value: true,
+        },
+        headerMessageId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Message-ID header',
+          value: '',
+        },
+        messageId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Message record ID',
+          value: '',
+        },
+        messageThreadId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Message thread ID',
+          value: '',
+        },
+      });
+    });
+  });
+
+  describe('DRAFT_EMAIL step', () => {
+    it('should return success boolean schema', () => {
+      const result = computeStepOutputSchema({
+        step: { type: 'DRAFT_EMAIL', settings: {} } as any,
         objectMetadataItems: [],
       });
 

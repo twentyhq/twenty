@@ -9,9 +9,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook(`workflowVersion.deleteOne`)
-export class WorkflowVersionDeleteOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowVersionDeleteOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
   ) {}

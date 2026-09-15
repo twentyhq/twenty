@@ -10,18 +10,25 @@ import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
 } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.exception';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
+import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { ApprovedAccessDomainService } from './approved-access-domain.service';
 
-// To avoid dynamic import issues in Jest
-jest.mock('@react-email/render', () => ({
-  render: jest.fn().mockImplementation(async (template, options) => {
+// render() resolves through a streaming scheduler that never advances under the
+// globally enabled fake timers; the real render path is covered by
+// email-templates-rendering.spec.ts.
+jest.mock('twenty-emails', () => ({
+  ...jest.requireActual('twenty-emails'),
+  renderEmail: jest.fn().mockImplementation(async (_template, options) => {
     if (options?.plainText) {
       return 'Plain Text Email';
     }
@@ -32,22 +39,34 @@ jest.mock('@react-email/render', () => ({
 
 describe('ApprovedAccessDomainService', () => {
   let service: ApprovedAccessDomainService;
-  let approvedAccessDomainRepository: Repository<ApprovedAccessDomainEntity>;
+  let approvedAccessDomainRepository: WorkspaceScopedRepository<ApprovedAccessDomainEntity>;
+  let approvedAccessDomainRepositoryUnscoped: Repository<ApprovedAccessDomainEntity>;
   let emailService: EmailService;
   let twentyConfigService: TwentyConfigService;
   let workspaceDomainsService: WorkspaceDomainsService;
+  let jwtWrapperService: jest.Mocked<JwtWrapperService>;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ApprovedAccessDomainService,
         {
-          provide: getRepositoryToken(ApprovedAccessDomainEntity),
+          provide: getWorkspaceScopedRepositoryToken(
+            ApprovedAccessDomainEntity,
+          ),
           useValue: {
             delete: jest.fn(),
+            findOne: jest.fn(),
+            find: jest.fn(),
+            update: jest.fn(),
+            insertAndReturnOne: jest.fn(),
+          },
+        },
+        {
+          provide: getRepositoryToken(ApprovedAccessDomainEntity),
+          useValue: {
             findOneBy: jest.fn(),
             find: jest.fn(),
-            save: jest.fn(),
           },
         },
         {
@@ -76,6 +95,13 @@ describe('ApprovedAccessDomainService', () => {
               .mockReturnValue('https://signed-url.com/logo.png'),
           },
         },
+        {
+          provide: JwtWrapperService,
+          useValue: {
+            signAsyncOrThrow: jest.fn(),
+            verifyJwtToken: jest.fn(),
+          },
+        },
       ],
     }).compile();
 
@@ -83,6 +109,9 @@ describe('ApprovedAccessDomainService', () => {
       ApprovedAccessDomainService,
     );
     approvedAccessDomainRepository = module.get(
+      getWorkspaceScopedRepositoryToken(ApprovedAccessDomainEntity),
+    );
+    approvedAccessDomainRepositoryUnscoped = module.get(
       getRepositoryToken(ApprovedAccessDomainEntity),
     );
     emailService = module.get<EmailService>(EmailService);
@@ -90,6 +119,9 @@ describe('ApprovedAccessDomainService', () => {
     workspaceDomainsService = module.get<WorkspaceDomainsService>(
       WorkspaceDomainsService,
     );
+    jwtWrapperService = module.get(
+      JwtWrapperService,
+    ) as unknown as jest.Mocked<JwtWrapperService>;
   });
 
   describe('createApprovedAccessDomain', () => {
@@ -111,7 +143,7 @@ describe('ApprovedAccessDomainService', () => {
       };
 
       jest
-        .spyOn(approvedAccessDomainRepository, 'save')
+        .spyOn(approvedAccessDomainRepository, 'insertAndReturnOne')
         .mockResolvedValue(
           expectedApprovedAccessDomain as unknown as ApprovedAccessDomainEntity,
         );
@@ -127,11 +159,11 @@ describe('ApprovedAccessDomainService', () => {
         'validator@custom-domain.com',
       );
 
-      expect(approvedAccessDomainRepository.save).toHaveBeenCalledWith(
-        expect.objectContaining({
-          workspaceId: 'workspace-id',
-          domain,
-        }),
+      expect(
+        approvedAccessDomainRepository.insertAndReturnOne,
+      ).toHaveBeenCalledWith(
+        'workspace-id',
+        expect.objectContaining({ domain }),
       );
       expect(result).toEqual(expectedApprovedAccessDomain);
     });
@@ -151,7 +183,9 @@ describe('ApprovedAccessDomainService', () => {
           ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN,
         ),
       );
-      expect(approvedAccessDomainRepository.save).not.toHaveBeenCalled();
+      expect(
+        approvedAccessDomainRepository.insertAndReturnOne,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -167,7 +201,7 @@ describe('ApprovedAccessDomainService', () => {
       } as ApprovedAccessDomainEntity;
 
       jest
-        .spyOn(approvedAccessDomainRepository, 'findOneBy')
+        .spyOn(approvedAccessDomainRepository, 'findOne')
         .mockResolvedValue(approvedAccessDomainEntity);
       jest
         .spyOn(approvedAccessDomainRepository, 'delete')
@@ -178,13 +212,14 @@ describe('ApprovedAccessDomainService', () => {
         approvedAccessDomainId,
       );
 
-      expect(approvedAccessDomainRepository.findOneBy).toHaveBeenCalledWith({
-        id: approvedAccessDomainId,
-        workspaceId: workspace.id,
-      });
-      expect(approvedAccessDomainRepository.delete).toHaveBeenCalledWith({
-        id: approvedAccessDomainEntity.id,
-      });
+      expect(approvedAccessDomainRepository.findOne).toHaveBeenCalledWith(
+        workspace.id,
+        { where: { id: approvedAccessDomainId } },
+      );
+      expect(approvedAccessDomainRepository.delete).toHaveBeenCalledWith(
+        workspace.id,
+        { id: approvedAccessDomainEntity.id },
+      );
     });
 
     it('should throw an error if the approved access domain does not exist', async () => {
@@ -194,17 +229,17 @@ describe('ApprovedAccessDomainService', () => {
       const approvedAccessDomainId = 'approved-access-domain-id';
 
       jest
-        .spyOn(approvedAccessDomainRepository, 'findOneBy')
+        .spyOn(approvedAccessDomainRepository, 'findOne')
         .mockResolvedValue(null);
 
       await expect(
         service.deleteApprovedAccessDomain(workspace, approvedAccessDomainId),
       ).rejects.toThrow();
 
-      expect(approvedAccessDomainRepository.findOneBy).toHaveBeenCalledWith({
-        id: approvedAccessDomainId,
-        workspaceId: workspace.id,
-      });
+      expect(approvedAccessDomainRepository.findOne).toHaveBeenCalledWith(
+        workspace.id,
+        { where: { id: approvedAccessDomainId } },
+      );
       expect(approvedAccessDomainRepository.delete).not.toHaveBeenCalled();
     });
   });
@@ -220,10 +255,6 @@ describe('ApprovedAccessDomainService', () => {
         id: approvedAccessDomainId,
         isValidated: true,
       } as ApprovedAccessDomainEntity;
-
-      jest
-        .spyOn(approvedAccessDomainRepository, 'findOneBy')
-        .mockResolvedValue(approvedAccessDomain);
 
       await expect(
         service.sendApprovedAccessDomainValidationEmail(
@@ -251,10 +282,6 @@ describe('ApprovedAccessDomainService', () => {
         domain: 'example.com',
       } as ApprovedAccessDomainEntity;
 
-      jest
-        .spyOn(approvedAccessDomainRepository, 'findOneBy')
-        .mockResolvedValue(approvedAccessDomain);
-
       await expect(
         service.sendApprovedAccessDomainValidationEmail(
           sender,
@@ -277,18 +304,16 @@ describe('ApprovedAccessDomainService', () => {
         locale: 'en',
       } as WorkspaceMemberWorkspaceEntity;
       const workspace = {
+        id: 'workspace-id',
         displayName: 'Test Workspace',
         logo: '/logo.png',
       } as WorkspaceEntity;
       const email = 'validator@custom-domain.com';
       const approvedAccessDomain = {
+        id: 'approved-access-domain-id',
         isValidated: false,
         domain: 'custom-domain.com',
       } as ApprovedAccessDomainEntity;
-
-      jest
-        .spyOn(approvedAccessDomainRepository, 'findOneBy')
-        .mockResolvedValue(approvedAccessDomain);
 
       jest
         .spyOn(workspaceDomainsService, 'buildWorkspaceURL')
@@ -301,6 +326,8 @@ describe('ApprovedAccessDomainService', () => {
           if (key === 'SERVER_URL') return 'https://api.example.com';
         });
 
+      jwtWrapperService.signAsyncOrThrow.mockResolvedValue('signed.jwt.token');
+
       await service.sendApprovedAccessDomainValidationEmail(
         sender,
         email,
@@ -308,10 +335,24 @@ describe('ApprovedAccessDomainService', () => {
         approvedAccessDomain,
       );
 
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
+        {
+          sub: approvedAccessDomain.id,
+          type: JwtTokenTypeEnum.APPROVED_ACCESS_DOMAIN,
+          workspaceId: workspace.id,
+          approvedAccessDomainId: approvedAccessDomain.id,
+          domain: approvedAccessDomain.domain,
+        },
+        { expiresIn: '7d' },
+      );
       expect(workspaceDomainsService.buildWorkspaceURL).toHaveBeenCalledWith({
         workspace: workspace,
         pathname: getSettingsPath(SettingsPath.WorkspaceMembersPage),
-        searchParams: { validationToken: expect.any(String) },
+        searchParams: {
+          wtdId: approvedAccessDomain.id,
+          validationToken: 'signed.jwt.token',
+        },
+        hash: 'invite',
       });
 
       expect(emailService.send).toHaveBeenCalledWith({
@@ -325,77 +366,155 @@ describe('ApprovedAccessDomainService', () => {
   });
 
   describe('validateApprovedAccessDomain', () => {
+    const approvedAccessDomainId = 'domain-id';
+    const workspaceId = 'workspace-id';
+    const domain = 'example.com';
+    const encodeSegment = (value: object) =>
+      Buffer.from(JSON.stringify(value)).toString('base64url');
+    const buildToken = (header: object) =>
+      `${encodeSegment(header)}.${encodeSegment({})}.signature`;
+    const validationToken = buildToken({ alg: 'ES256', kid: 'test-kid' });
+    const buildPayload = (overrides: Record<string, unknown> = {}) => ({
+      sub: approvedAccessDomainId,
+      type: JwtTokenTypeEnum.APPROVED_ACCESS_DOMAIN,
+      workspaceId,
+      approvedAccessDomainId,
+      domain,
+      ...overrides,
+    });
+
     it('should validate the approved access domain successfully with a correct token', async () => {
-      const approvedAccessDomainId = 'domain-id';
-      const validationToken = 'valid-token';
       const approvedAccessDomain = {
         id: approvedAccessDomainId,
-        domain: 'example.com',
+        workspaceId,
+        domain,
         isValidated: false,
       } as ApprovedAccessDomainEntity;
 
+      jwtWrapperService.verifyJwtToken.mockResolvedValue(buildPayload());
       jest
-        .spyOn(approvedAccessDomainRepository, 'findOneBy')
+        .spyOn(approvedAccessDomainRepositoryUnscoped, 'findOneBy')
         .mockResolvedValue(approvedAccessDomain);
-      jest
-        .spyOn(service as any, 'generateUniqueHash')
-        .mockReturnValue(validationToken);
-      const saveSpy = jest.spyOn(approvedAccessDomainRepository, 'save');
+      const updateSpy = jest.spyOn(approvedAccessDomainRepository, 'update');
 
       await service.validateApprovedAccessDomain({
         validationToken,
-        approvedAccessDomainId: approvedAccessDomainId,
+        approvedAccessDomainId,
       });
 
-      expect(approvedAccessDomainRepository.findOneBy).toHaveBeenCalledWith({
-        id: approvedAccessDomainId,
-      });
-      expect(saveSpy).toHaveBeenCalledWith(
-        expect.objectContaining({ isValidated: true }),
+      expect(jwtWrapperService.verifyJwtToken).toHaveBeenCalledWith(
+        validationToken,
+      );
+      expect(
+        approvedAccessDomainRepositoryUnscoped.findOneBy,
+      ).toHaveBeenCalledWith({ id: approvedAccessDomainId });
+      expect(updateSpy).toHaveBeenCalledWith(
+        workspaceId,
+        { id: approvedAccessDomainId },
+        { isValidated: true },
       );
     });
 
-    it('should throw an error if the approved access domain does not exist', async () => {
-      const approvedAccessDomainId = 'invalid-domain-id';
-      const validationToken = 'valid-token';
-
-      jest
-        .spyOn(approvedAccessDomainRepository, 'findOneBy')
-        .mockResolvedValue(null);
+    it('should reject any token whose header is not asymmetric (no kid / wrong alg) before calling verify', async () => {
+      const legacyHs256Token = buildToken({ alg: 'HS256' });
 
       await expect(
         service.validateApprovedAccessDomain({
-          validationToken,
-          approvedAccessDomainId: approvedAccessDomainId,
+          validationToken: legacyHs256Token,
+          approvedAccessDomainId,
         }),
       ).rejects.toThrowError(
         new ApprovedAccessDomainException(
-          'Approved access domain not found',
-          ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_NOT_FOUND,
+          'Invalid approved access domain validation token',
+          ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
         ),
       );
+      expect(jwtWrapperService.verifyJwtToken).not.toHaveBeenCalled();
+      expect(
+        approvedAccessDomainRepositoryUnscoped.findOneBy,
+      ).not.toHaveBeenCalled();
     });
 
-    it('should throw an error if the validation token is invalid', async () => {
-      const approvedAccessDomainId = 'domain-id';
-      const validationToken = 'invalid-token';
-      const approvedAccessDomain = {
-        id: approvedAccessDomainId,
-        domain: 'example.com',
-        isValidated: false,
-      } as ApprovedAccessDomainEntity;
-
-      jest
-        .spyOn(approvedAccessDomainRepository, 'findOneBy')
-        .mockResolvedValue(approvedAccessDomain);
-      jest
-        .spyOn(service as any, 'generateUniqueHash')
-        .mockReturnValue('valid-token');
+    it('should reject when the JWT verification fails (bad signature or expired)', async () => {
+      jwtWrapperService.verifyJwtToken.mockRejectedValue(
+        new Error('jwt expired'),
+      );
 
       await expect(
         service.validateApprovedAccessDomain({
           validationToken,
-          approvedAccessDomainId: approvedAccessDomainId,
+          approvedAccessDomainId,
+        }),
+      ).rejects.toThrowError(
+        new ApprovedAccessDomainException(
+          'Invalid approved access domain validation token',
+          ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+        ),
+      );
+      expect(
+        approvedAccessDomainRepositoryUnscoped.findOneBy,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should reject a JWT minted with a different token type', async () => {
+      jwtWrapperService.verifyJwtToken.mockResolvedValue(
+        buildPayload({ type: JwtTokenTypeEnum.ACCESS }),
+      );
+
+      await expect(
+        service.validateApprovedAccessDomain({
+          validationToken,
+          approvedAccessDomainId,
+        }),
+      ).rejects.toThrowError(
+        new ApprovedAccessDomainException(
+          'Invalid approved access domain validation token',
+          ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+        ),
+      );
+      expect(
+        approvedAccessDomainRepositoryUnscoped.findOneBy,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should reject when the JWT approvedAccessDomainId does not match the input id', async () => {
+      jwtWrapperService.verifyJwtToken.mockResolvedValue(
+        buildPayload({ approvedAccessDomainId: 'other-domain-id' }),
+      );
+
+      await expect(
+        service.validateApprovedAccessDomain({
+          validationToken,
+          approvedAccessDomainId,
+        }),
+      ).rejects.toThrowError(
+        new ApprovedAccessDomainException(
+          'Invalid approved access domain validation token',
+          ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+        ),
+      );
+      expect(
+        approvedAccessDomainRepositoryUnscoped.findOneBy,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should reject when the JWT-claimed domain does not match the stored row', async () => {
+      jwtWrapperService.verifyJwtToken.mockResolvedValue(
+        buildPayload({ domain: 'attacker.com' }),
+      );
+      jest
+        .spyOn(approvedAccessDomainRepositoryUnscoped, 'findOneBy')
+        .mockResolvedValue({
+          id: approvedAccessDomainId,
+          workspaceId,
+          domain,
+          isValidated: false,
+        } as ApprovedAccessDomainEntity);
+
+      await expect(
+        service.validateApprovedAccessDomain({
+          validationToken,
+          approvedAccessDomainId,
         }),
       ).rejects.toThrowError(
         new ApprovedAccessDomainException(
@@ -405,23 +524,66 @@ describe('ApprovedAccessDomainService', () => {
       );
     });
 
-    it('should throw an error if the approved access domain is already validated', async () => {
-      const approvedAccessDomainId = 'domain-id';
-      const validationToken = 'valid-token';
-      const approvedAccessDomain = {
-        id: approvedAccessDomainId,
-        domain: 'example.com',
-        isValidated: true,
-      } as ApprovedAccessDomainEntity;
-
+    it('should reject when the JWT-claimed workspaceId does not match the stored row', async () => {
+      jwtWrapperService.verifyJwtToken.mockResolvedValue(
+        buildPayload({ workspaceId: 'other-workspace-id' }),
+      );
       jest
-        .spyOn(approvedAccessDomainRepository, 'findOneBy')
-        .mockResolvedValue(approvedAccessDomain);
+        .spyOn(approvedAccessDomainRepositoryUnscoped, 'findOneBy')
+        .mockResolvedValue({
+          id: approvedAccessDomainId,
+          workspaceId,
+          domain,
+          isValidated: false,
+        } as ApprovedAccessDomainEntity);
 
       await expect(
         service.validateApprovedAccessDomain({
           validationToken,
-          approvedAccessDomainId: approvedAccessDomainId,
+          approvedAccessDomainId,
+        }),
+      ).rejects.toThrowError(
+        new ApprovedAccessDomainException(
+          'Invalid approved access domain validation token',
+          ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_VALIDATION_TOKEN_INVALID,
+        ),
+      );
+    });
+
+    it('should throw an error if the approved access domain does not exist', async () => {
+      jwtWrapperService.verifyJwtToken.mockResolvedValue(buildPayload());
+      jest
+        .spyOn(approvedAccessDomainRepositoryUnscoped, 'findOneBy')
+        .mockResolvedValue(null);
+
+      await expect(
+        service.validateApprovedAccessDomain({
+          validationToken,
+          approvedAccessDomainId,
+        }),
+      ).rejects.toThrowError(
+        new ApprovedAccessDomainException(
+          'Approved access domain not found',
+          ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_NOT_FOUND,
+        ),
+      );
+    });
+
+    it('should throw an error if the approved access domain is already validated', async () => {
+      jwtWrapperService.verifyJwtToken.mockResolvedValue(buildPayload());
+      jest
+        .spyOn(approvedAccessDomainRepositoryUnscoped, 'findOneBy')
+        .mockResolvedValue({
+          id: approvedAccessDomainId,
+          workspaceId,
+          domain,
+          isValidated: true,
+        } as ApprovedAccessDomainEntity);
+
+      await expect(
+        service.validateApprovedAccessDomain({
+          validationToken,
+          approvedAccessDomainId,
         }),
       ).rejects.toThrowError(
         new ApprovedAccessDomainException(

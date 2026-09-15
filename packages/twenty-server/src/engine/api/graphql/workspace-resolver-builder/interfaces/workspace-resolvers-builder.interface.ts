@@ -10,10 +10,11 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
 import { RESOLVER_METHOD_NAMES } from 'src/engine/api/graphql/workspace-resolver-builder/constants/resolver-method-names';
 import { type workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/factories/factories';
 
-// oxlint-disable-next-line @typescripttypescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type Resolver<Args = any> = GraphQLFieldResolver<any, any, Args>;
 
 // Use RESOLVER_METHOD_NAMES as the single source of truth for operation names
@@ -49,6 +50,7 @@ export interface CreateOneResolverArgs<
 > {
   data: Data;
   upsert?: boolean;
+  shareWith?: ShareWithInput[];
 }
 
 export interface CreateManyResolverArgs<
@@ -56,6 +58,7 @@ export interface CreateManyResolverArgs<
 > {
   data: Data[];
   upsert?: boolean;
+  shareWith?: ShareWithInput[];
 }
 
 export interface GroupByResolverArgs<Filter = ObjectRecordFilter> {
@@ -77,7 +80,7 @@ export interface UpdateOneResolverArgs<
 
 export interface UpdateManyResolverArgs<
   Data extends Partial<ObjectRecord> = Partial<ObjectRecord>,
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   Filter = any,
 > {
   filter: Filter;
@@ -88,7 +91,7 @@ export interface DeleteOneResolverArgs {
   id: string;
 }
 
-// oxlint-disable-next-line @typescripttypescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export interface DeleteManyResolverArgs<Filter = any> {
   filter: Filter;
 }
@@ -97,7 +100,7 @@ export interface RestoreOneResolverArgs {
   id: string;
 }
 
-// oxlint-disable-next-line @typescripttypescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export interface RestoreManyResolverArgs<Filter = any> {
   filter: Filter;
 }
@@ -112,7 +115,7 @@ export interface DestroyOneResolverArgs {
   id: string;
 }
 
-// oxlint-disable-next-line @typescripttypescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export interface DestroyManyResolverArgs<Filter = any> {
   filter: Filter;
 }

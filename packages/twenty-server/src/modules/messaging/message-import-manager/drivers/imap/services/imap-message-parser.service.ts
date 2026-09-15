@@ -6,6 +6,8 @@ import PostalMime, { type Email as ParsedEmail } from 'postal-mime';
 export type MessageParseResult = {
   uid: number;
   parsed: ParsedEmail | null;
+  flags?: Set<string>;
+  internalDate?: Date | string;
   error?: Error;
 };
 
@@ -40,7 +42,7 @@ export class ImapMessageParserService {
 
       const messages = await client.fetchAll(
         uidSet,
-        { uid: true, source: true },
+        { uid: true, source: true, flags: true, internalDate: true },
         { uid: true },
       );
 
@@ -80,22 +82,28 @@ export class ImapMessageParserService {
   private async parseMessage(
     message: FetchMessageObject,
   ): Promise<MessageParseResult> {
-    const { uid, source } = message;
+    const { uid, source, flags, internalDate } = message;
 
     if (!source) {
       this.logger.debug(`No source content for message UID ${uid}`);
 
-      return { uid, parsed: null };
+      return { uid, parsed: null, flags, internalDate };
     }
 
     try {
       const parsed = await PostalMime.parse(source);
 
-      return { uid, parsed };
+      return { uid, parsed, flags, internalDate };
     } catch (error) {
       this.logger.error(`Failed to parse message UID ${uid}: ${error.message}`);
 
-      return { uid, parsed: null, error: error as Error };
+      return {
+        uid,
+        parsed: null,
+        flags,
+        internalDate,
+        error: error as Error,
+      };
     }
   }
 

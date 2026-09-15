@@ -2,7 +2,6 @@ import { OBJECT_METADATA_LABEL_FAILING_TEST_CASES } from 'test/integration/metad
 import { OBJECT_METADATA_NAMES_FAILING_TEST_CASES } from 'test/integration/metadata/suites/object-metadata/common/object-metadata-names-failing-tests-cases';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { getMockCreateObjectInput } from 'test/integration/metadata/suites/object-metadata/utils/generate-mock-create-object-metadata-input';
-import { extractRecordIdsAndDatesAsExpectAny } from 'test/utils/extract-record-ids-and-dates-as-expect-any';
 import { eachTestingContextFilter } from 'twenty-shared/testing';
 
 const allTestsUseCases = [
@@ -13,15 +12,33 @@ const allTestsUseCases = [
 describe('Object metadata creation should fail v2', () => {
   it.each(eachTestingContextFilter(allTestsUseCases))(
     '$title',
-    async ({ context }) => {
+    async ({ context: { input, expected } }) => {
       const { errors } = await createOneObjectMetadata({
-        input: getMockCreateObjectInput(context),
+        input: getMockCreateObjectInput(input),
         expectToFail: true,
       });
 
       expect(errors.length).toBe(1);
-      expect(errors[0]).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny(errors[0]),
+
+      const [error] = errors;
+
+      expect(error.extensions.code).toBe(expected.errorCode);
+
+      if (expected.errorCode === 'BAD_USER_INPUT') {
+        expect(error.message).toContain(expected.messageContains);
+
+        return;
+      }
+
+      const objectMetadataFailures = error.extensions.errors.objectMetadata;
+
+      expect(objectMetadataFailures).toHaveLength(1);
+      expect(objectMetadataFailures[0].errors).toEqual(
+        expect.arrayContaining(
+          expected.objectValidationMessages.map((message) =>
+            expect.objectContaining({ message }),
+          ),
+        ),
       );
     },
   );

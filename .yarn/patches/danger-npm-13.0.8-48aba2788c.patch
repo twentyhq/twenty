@@ -1,0 +1,17 @@
+diff --git a/distribution/api/fetch.js b/distribution/api/fetch.js
+index 2814d327173abcaf0ee4e162716806c1e2840956..3d1bc2ace274966ac23f865554f0cb027e10930e 100644
+--- a/distribution/api/fetch.js
++++ b/distribution/api/fetch.js
+@@ -168,6 +168,12 @@ function api(url, init, suppressErrorReporting, processEnv) {
+         var secure = url.toString().startsWith("https");
+         init.agent = secure ? new https_proxy_agent_1.HttpsProxyAgent(proxy) : new http_proxy_agent_1.HttpProxyAgent(proxy);
+     }
++    // Decline gzip so node-fetch@2 doesn't false-positive ERR_STREAM_PREMATURE_CLOSE
++    // on Node 24.17.0+ (keep-alive idle-socket 'data' listener misread as unclean close).
++    // Backport of danger/danger-js#1516 — drop this patch once it ships in a release.
++    if (init.compress === undefined) {
++        init.compress = false;
++    }
+     return retryableFetch(url, init).then(function (response) { return __awaiter(_this, void 0, void 0, function () {
+         var clonedResponse, responseBody, responseJSON, e_1;
+         return __generator(this, function (_a) {

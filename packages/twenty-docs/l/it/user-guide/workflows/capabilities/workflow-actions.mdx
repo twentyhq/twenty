@@ -19,7 +19,7 @@ Le azioni definiscono cosa accade dopo l'attivazione di un trigger. Puoi concate
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Crea un Record
+### Crea Record
 
 Aggiunge un nuovo record a un oggetto selezionato.
 
@@ -112,15 +112,15 @@ Crea un nuovo record o aggiorna uno esistente in base ai criteri di corrisponden
 
 **Configurazione**:
 
-* Seleziona l'array di record da un passaggio precedente (ad es., risultati da Search Records, da un trigger Manual con disponibilità Bulk, da un nodo di codice)
+* Selezionare l'array di record da un passo precedente (ad esempio, risultati da record di ricerca, da un trigger manuale con disponibilità di massa, da un nodo Codice). Quando un passaggio di tipo Code o Logic Function restituisce un array di primo livello, seleziona l'opzione **Whole list** per eseguire il loop su tutto l'output.
 * Definisci le azioni da eseguire su ciascun record nel ciclo.
 
 <Note>
-- Puoi aggiungere diverse azioni all'interno di un iteratore.
-- Quando utilizzi diramazioni all'interno di un iteratore, assicurati che l'ultimo passaggio di ciascuna diramazione si ricolleghi all'iteratore per chiudere il ciclo.
+- È possibile aggiungere diverse azioni all'interno di un Iterator.
+- Quando si utilizzano rami all'interno di un Iterator, assicurarsi che l'ultimo passo di ogni ramo si connetta all'Iteratore per chiudere il ciclo.
 </Note>
 
-* Accedi ai campi di `Current Item`: per utilizzare i campi del record attualmente in elaborazione, fai clic sul passaggio **Iterator**, quindi seleziona **Current item**. Verrà visualizzato l'elenco dei campi disponibili di quel record e potrai selezionarli per l'uso nelle azioni successive.
+* Accedi ai campi di `Current Item`: per utilizzare i campi del record attualmente in elaborazione, fai clic sul passaggio **Iterator**, quindi seleziona **Current item**. Verrà visualizzato l'elenco dei campi disponibili di quel record e potrai selezionarli per l'uso nelle azioni successive. Puoi anche selezionare **Use the whole item** per passare l'intero elemento corrente a un passaggio a valle.
 
 <VimeoEmbed videoId="1146577247" title="Dimostrazione video" />
 
@@ -181,7 +181,7 @@ La data programmata non può essere nel passato. Se viene utilizzato un campo da
 ### Invia email
 
 Invia un'email dal tuo flusso di lavoro. Ottimo per email di gruppo basate su modelli. Le email avranno l'aspetto di quelle inviate dalla tua casella di posta.
-Non adatto a newsletter (che richiedono una formattazione più ricca) o a sequenze di email automatizzate.
+Non è adatto per le newsletter (che richiedono una formattazione più ricca) o le sequenze automatiche di posta elettronica.
 
 **Prerequisiti**: Aggiungi un account email in Impostazioni → Account
 
@@ -202,7 +202,7 @@ Al momento è possibile un solo destinatario.
 </Note>
 
 * Imposta l'oggetto della email.
-* Componi il corpo del messaggio. Puoi formattare i link, creare elenchi numerati, elenchi puntati, aggiungere allegati.
+* Componi il corpo del messaggio. È possibile formattare i collegamenti, creare liste numerate, elenchi punti puntati e aggiungere allegati.
 
 <Note>
 Al momento non è possibile aggiungere firme HTML.
@@ -213,24 +213,24 @@ Al momento non è possibile aggiungere firme HTML.
 Visualizza un modulo durante l'esecuzione del flusso di lavoro per raccogliere l'input dell'utente. Le risposte possono quindi essere utilizzate nei passaggi successivi per creare record, inviare email o eseguire qualsiasi altra azione basata sull'input.
 
 <Warning>
-**I moduli sono progettati solo per i trigger manuali**. Per i flussi di lavoro con altri trigger (Record Creato, Aggiornato, ecc.), i moduli sono accessibili solo tramite l'interfaccia di esecuzione del flusso di lavoro, il che non è l'esperienza utente prevista. Un centro notifiche sarà rilasciato nel 2026 per supportare correttamente i moduli nei flussi di lavoro automatizzati.
+**I moduli sono progettati solo per i trigger manuali**. Per i flussi di lavoro con altri trigger (Record Creato, Aggiornato, ecc.), i moduli sono accessibili solo tramite l'interfaccia di esecuzione del flusso di lavoro, il che non è l'esperienza utente prevista. Un centro di notifica sarà rilasciato nel 2026 per supportare adeguatamente i moduli nei flussi di lavoro automatizzati.
 </Warning>
 
 **Configurazione**:
 
 * Configura i campi che verranno chiesti agli utenti di compilare. Per ogni campo, scegli
-  * un tipo tra testo, numero, data, un determinato record, un campo di selezione. I campi di selezione di tutti gli oggetti sono disponibili.
+  * un tipo tra testo, numero, data, un determinato record, un campo di selezione. I campi di tutti gli oggetti sono disponibili per la selezione.
   * un'etichetta
   * un valore predefinito sotto `Placeholder` (opzionale)
 * Modifica il titolo del modulo
 
 **Output**: Le risposte ai moduli sono disponibili per l'uso in passaggi successivi.
 
-**Esempio**: Il flusso di lavoro "Quick Lead" è disponibile per impostazione predefinita in tutti gli spazi di lavoro, disponibile ovunque nel Menu Comandi `Cmd + K`.
+**Esempio**: Il flusso di lavoro "Quick Lead" è disponibile per impostazione predefinita in tutti gli spazi di lavoro, disponibile ovunque nel menu dei comandi `Cmd+K`.
 
 **Come compilare il modulo**:
 
-* Attiva il tuo flusso di lavoro manuale dal menu comandi `Cmd K`
+* Attiva il tuo flusso di lavoro manuale dal menu dei comandi `Cmd+K`
 * Compila il modulo visualizzato nel pannello laterale e fai clic su `Submit`.
 
 <Note>
@@ -245,9 +245,11 @@ I campi non possono essere resi obbligatori.
 
 Esegue JavaScript personalizzato all'interno del tuo workflow.
 
+In background, ogni azione Code è supportata dalla propria **logic function**, una funzione TypeScript lato server che viene eseguita sulla piattaforma Twenty. Quando aggiungi un'azione Code, Twenty crea una logic function dedicata per quel passaggio e ne espone l'editor inline, in modo che il codice che scrivi rimanga all'interno del flusso di lavoro.
+
 **Configurazione**:
 
-* Accedi alle variabili dai passaggi precedenti. Puoi modificare dinamicamente i nomi delle variabili.
+* Accedi alle variabili dai passaggi precedenti. È possibile modificare i nomi delle variabili dinamicamente.
 
 <VimeoEmbed videoId="1147281795" title="Dimostrazione video" />
 
@@ -265,6 +267,25 @@ Se devi utilizzare chiavi API esterne nel tuo codice, devi inserirle direttament
 
 <Tip>
 Fai clic sull'icona quadrata in alto a destra dell'editor di codice per visualizzarlo a schermo intero — utile poiché la larghezza predefinita dell'editor è limitata.
+</Tip>
+
+#### Riutilizzare una logic function tra i flussi di lavoro
+
+L'azione Code inline è ideale per la logica "usa e getta", ma il codice che contiene appartiene a quel singolo passaggio. Quando vuoi condividere la stessa logica tra vari flussi di lavoro o mantenerla come sorgente versionata in un'app, definisci una **reusable logic function** al posto di copiare e incollare il codice in ogni azione Code.
+
+Una logic function è definita una volta in un'app (usando l'SDK `defineLogicFunction`) ed esposta al generatore di flussi di lavoro aggiungendo `workflowActionTriggerSettings`. Una volta installata l'app, quella funzione compare come azione autonoma nel generatore di flussi di lavoro, insieme alle azioni integrate. Selezionandola, vengono mostrati i campi di input che hai dichiarato (con i selettori di variabili, proprio come per le altre azioni) e viene eseguito il tuo codice condiviso, senza bisogno di JavaScript inline.
+
+|                            | Code action                                                       | Reusable logic function                                                          |
+| -------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **Dove risiede il codice** | Editor inline, legato a un singolo passaggio del flusso di lavoro | Definita in un'app, sottoposta a versionamento nel controllo del codice sorgente |
+| **Riutilizzo**             | Copiata e incollata per ogni passaggio                            | Aggiunta come azione in qualsiasi flusso di lavoro                               |
+| **Input**                  | Variabili collegate nell'editor                                   | Campi generati dallo schema di input dichiarato                                  |
+| **Ideale per**             | Logica rapida e specifica del flusso di lavoro                    | Logica condivisa usata in più flussi di lavoro                                   |
+
+Entrambe vengono eseguite sullo stesso runtime di logic function, quindi un'azione Code che hai prototipato inline può in seguito essere trasformata in una reusable logic function con modifiche minime.
+
+<Tip>
+Per le informazioni di riferimento destinate agli sviluppatori sulla definizione delle logic function e sulla loro esposizione al generatore di workflow, vedi [Logic Functions](/l/it/developers/extend/apps/logic/logic-functions), in particolare la sezione **Exposing a function as an AI tool or workflow action** e `workflowActionTriggerSettings`.
 </Tip>
 
 ### Richiesta HTTP
@@ -307,5 +328,5 @@ Le azioni dell'agente AI consumano crediti del flusso di lavoro in base al model
 </Note>
 
 <Note>
-Gli agenti AI rispettano le autorizzazioni basate sui ruoli. Puoi assegnare ruoli specifici agli agenti in **Impostazioni → Ruoli** per controllare a quali dati possono accedere. Vedi [Autorizzazioni](/l/it/user-guide/permissions-access/capabilities/permissions) per i dettagli.
+Gli agenti AI rispettano le autorizzazioni basate sui ruoli. Puoi assegnare ruoli specifici agli agenti in **Impostazioni → Membri → Ruoli** per controllare a quali dati possono accedere. Vedi [Autorizzazioni](/l/it/user-guide/permissions-access/capabilities/permissions) per i dettagli.
 </Note>

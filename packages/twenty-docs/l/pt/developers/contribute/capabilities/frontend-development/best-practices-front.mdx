@@ -1,6 +1,6 @@
 ---
 title: Melhores Práticas
-icon: estrela
+icon: star
 ---
 
 Este documento descreve as melhores práticas que você deve seguir ao trabalhar no frontend.
@@ -62,29 +62,29 @@ Lembre-se de que você pode **sempre** evitar re-renderizações entendendo sua 
 
 Evitar re-renderizações em novos recursos agora é fácil eliminando-as no nível raiz.
 
-The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+O componente sidecar `PageChangeEffect` contém apenas um `useEffect` que contém toda a lógica para executar em uma mudança de página.
 
 Assim você sabe que há apenas um lugar que pode disparar uma re-renderização.
 
-### Always think twice before adding `useEffect` in your codebase
+### Sempre pense duas vezes antes de adicionar `useEffect` em sua base de código
 
-Re-renders are often caused by unnecessary `useEffect`.
+As renderizações são frequentemente causadas por `useEffect` desnecessários.
 
-You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+Você deve pensar se precisa de `useEffect`, ou se você pode mover a lógica em uma função de manipulador de eventos.
 
-You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+Você vai achar geralmente fácil mover a lógica na função `handleClick` ou `handleChange`.
 
 Você também pode encontrá-las em bibliotecas como Apollo: `onCompleted`, `onError`, etc.
 
-### Use a sibling component to extract `useEffect` or data fetching logic
+### Use um componente irmão para extrair `useEffect` ou lógica de busca de dados
 
-If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+Se você acha que precisa adicionar um `useEffect` no seu componente raiz, considere extraí-lo em um componente sidecar.
 
 Você pode aplicar o mesmo para lógica de busca de dados, com hooks do Apollo.
 
 ```tsx
-// ❌ Ruim, causará re-renderizações mesmo se os dados não estiverem mudando,
-//    porque o useEffect precisa ser reavaliado
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -104,8 +104,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Bom, não causará re-renderizações se os dados não estiverem mudando,
-//   porque o useEffect é reavaliado em outro componente irmão
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 

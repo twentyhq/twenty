@@ -35,10 +35,12 @@ export default defineNavigationMenuItem({
 
 * `position` controlează ordonarea în bara laterală.
 
+* Enumul conține și `NavigationMenuItemType.RECORD`, utilizat intern pentru marcajele de favorite ale utilizatorului pentru înregistrări — nu poate fi folosit dintr-un manifest de aplicație (nu există niciun câmp pentru a face referire la o înregistrare).
+
 * `icon` și `color` sunt opționale și personalizează aspectul intrării.
 
 * `folderUniversalIdentifier` este de asemenea disponibil pe orice element pentru a-l îmbrica într-un părinte de tip `FOLDER`.
 
 <Note>
-**Capcană frecventă:** crearea unui obiect fără o vizualizare asociată + element de meniu de navigare face ca acel obiect să fie invizibil pentru utilizatori. Dacă nu este un obiect tehnic/intern, fiecare obiect personalizat ar trebui să aibă o vizualizare implicită *și* o intrare în bara laterală care să indice către aceasta.
+**Capcană frecventă:** crearea unui obiect fără un element de meniu de navigare asociat face ca acel obiect să fie inaccesibil din bara laterală. Dacă nu este un obiect tehnic/intern, fiecare obiect personalizat ar trebui să aibă o intrare în bara laterală care să indice către acesta.
 </Note>

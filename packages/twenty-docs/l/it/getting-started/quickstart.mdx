@@ -1,0 +1,73 @@
+---
+title: Guida rapida
+description: Metti Twenty in funzione in meno di 5 minuti — sul cloud o in modalità self-hosted.
+icon: play
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Registrati
+
+<Steps>
+  <Step title="Crea il tuo account">
+    Vai su [app.twenty.com](https://app.twenty.com) e registrati con Google, Microsoft o email.
+  </Step>
+  <Step title="Scegli la tua prova">
+    Scegli **30 giorni** (con carta) o **7 giorni** (senza carta). Entrambe includono accesso completo — contatti illimitati, integrazione email, oggetti personalizzati, API. Puoi cambiare piano o intervallo di fatturazione in qualsiasi momento.
+  </Step>
+  <Step title="Crea il tuo spazio di lavoro">
+    Dopo la conferma del pagamento tramite Stripe, imposterai il nome del tuo spazio di lavoro e il profilo utente. Puoi annullare in qualsiasi momento.
+  </Step>
+</Steps>
+
+<VimeoEmbed videoId="1185227242" title="Creare uno spazio di lavoro" />
+
+## Configura il tuo spazio di lavoro
+
+Una volta dentro, tre passaggi per rendere Twenty tuo:
+
+### 1. Collega la tua casella di posta
+
+Vai a **Impostazioni → Account** e collega il tuo account Google o Microsoft. Twenty importerà le tue email e gli eventi del calendario e creerà automaticamente contatti dalle interazioni. Stai usando un altro provider? Puoi aggiungere caselle di posta tramite SMTP o calendari tramite CalDAV dalla stessa pagina.
+
+<Note>Inizia da qui — collegare una casella di posta offre al tuo team un valore immediato con dati reali prima che tu personalizzi qualsiasi altra cosa.</Note>
+
+<VimeoEmbed videoId="1185416821" title="Collega la tua casella di posta" />
+
+### 2. Definisci il tuo modello di dati
+
+Vai a **Settings → Data Model** per creare oggetti e campi personalizzati. Alcune cose da sapere:
+
+* Gli oggetti e i campi personalizzati sono **illimitati in tutti i piani** — nessun upsell.
+* **Persone, Aziende e Opportunità** sono gli oggetti che mostrano email e riunioni sincronizzate. Usali come base e aggiungi campi per categorizzare (ad esempio, un campo `Person Type`) invece di creare oggetti separati che non avranno la cronologia delle email.
+* Due Persone non possono avere la stessa email. Due Aziende non possono avere lo stesso dominio.
+* Puoi disattivare i campi/oggetti standard di cui non hai bisogno e nascondere i campi dalle viste senza eliminarli.
+
+[Riferimento al modello di dati →](/l/it/user-guide/data-model/overview)
+
+<VimeoEmbed videoId="1185416793" title="Definisci il tuo modello di dati" />
+
+### 3. Importa i tuoi dati
+
+Usa il menu Comando (`Cmd+K` / `Ctrl+K`) per importare Persone, Aziende, Opportunità o qualsiasi oggetto personalizzato tramite CSV. Scarica prima il file di esempio per vedere il formato previsto. Limita i file a 10.000 record e rimuovi i duplicati di email/domini prima di importarli.
+
+[Guida alla migrazione dei dati →](/l/it/user-guide/data-migration/overview)
+
+<VimeoEmbed videoId="1185416775" title="Importa i tuoi dati" />
+
+## Prossimi passaggi
+
+<CardGroup cols={2}>
+  <Card title="Scopri il layout" icon="table-columns" href="/l/it/getting-started/core-concepts/layout">
+    Navigazione, viste, menu comandi, pannello laterale.
+  </Card>
+  <Card title="Crea workflow" icon="bolt" href="/l/it/user-guide/workflows/overview">
+    Automatizza i tuoi processi aziendali.
+  </Card>
+  <Card title="Crea viste" icon="table" href="/l/it/user-guide/layout/overview">
+    Tabella, kanban, calendario — filtra e ordina i tuoi dati.
+  </Card>
+  <Card title="Esplora le API" icon="plug" href="/l/it/developers/extend/api">
+    Schema-per-tenant REST e GraphQL.
+  </Card>
+</CardGroup>

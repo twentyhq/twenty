@@ -1,7 +1,12 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { type Application } from 'cloudflare/resources/zero-trust/access/applications/applications';
+import GraphQLJSON from 'graphql-type-json';
+import {
+  DEFAULT_AI_AGENT_MODEL_TIER,
+  DEFAULT_AI_CHAT_MODEL_TIER,
+  type AiModelTier,
+} from 'twenty-shared/ai';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   Check,
@@ -19,6 +24,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-workspace-discoverability-to-workspace-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -29,12 +35,13 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
-import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -49,24 +56,26 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
-
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
+});
+
+registerEnumType(WorkspaceDiscoverability, {
+  name: 'WorkspaceDiscoverability',
 });
 
 @Check(
   'onboarded_workspace_requires_default_role',
   `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR "defaultRoleId" IS NOT NULL`,
 )
+@Check(
+  'workspace_requires_database_schema',
+  `"activationStatus" IN ('PENDING_CREATION', 'ONGOING_CREATION') OR ("databaseSchema" IS NOT NULL AND "databaseSchema" <> '')`,
+)
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
 export class WorkspaceEntity {
-  // Fields
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -114,6 +123,19 @@ export class WorkspaceEntity {
   @Column({ default: true })
   isPublicInviteLinkEnabled: boolean;
 
+  @Field(() => WorkspaceDiscoverability)
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'enum',
+    enumName: 'workspace_discoverability_enum',
+    enum: WorkspaceDiscoverability,
+    default: WorkspaceDiscoverability.PUBLIC,
+  })
+  workspaceDiscoverability: WorkspaceDiscoverability;
+
   @Field()
   @Column({ type: 'integer', default: 14 })
   trashRetentionDays: number;
@@ -122,7 +144,6 @@ export class WorkspaceEntity {
   @Column({ type: 'integer', default: 90 })
   eventLogRetentionDays: number;
 
-  // Relations
   @OneToMany(() => AppTokenEntity, (appToken) => appToken.workspace, {
     cascade: true,
   })
@@ -181,16 +202,10 @@ export class WorkspaceEntity {
   suspendedAt: Date | null;
 
   @OneToMany(
-    () => PostgresCredentialsEntity,
-    (postgresCredentials) => postgresCredentials.workspace,
+    () => WorkspaceSsoIdentityProviderEntity,
+    (workspaceSsoIdentityProviders) => workspaceSsoIdentityProviders.workspace,
   )
-  allPostgresCredentials: Relation<PostgresCredentialsEntity[]>;
-
-  @OneToMany(
-    () => WorkspaceSSOIdentityProviderEntity,
-    (workspaceSSOIdentityProviders) => workspaceSSOIdentityProviders.workspace,
-  )
-  workspaceSSOIdentityProviders: Relation<WorkspaceSSOIdentityProviderEntity[]>;
+  workspaceSsoIdentityProviders: Relation<WorkspaceSsoIdentityProviderEntity[]>;
 
   @OneToMany(() => AgentEntity, (agent) => agent.workspace, {
     onDelete: 'CASCADE',
@@ -230,7 +245,10 @@ export class WorkspaceEntity {
   @OneToMany(() => ViewSortEntity, (viewSort) => viewSort.workspace)
   viewSorts: Relation<ViewSortEntity[]>;
 
-  @Field()
+  @Field({
+    deprecationReason:
+      'No longer used for metadata cache invalidation, will be removed',
+  })
   @Column({ default: 1 })
   metadataVersion: number;
 
@@ -278,6 +296,10 @@ export class WorkspaceEntity {
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 
+  @Field()
+  @Column({ default: false })
+  isInternalMessagesImportEnabled: boolean;
+
   @Field(() => [String], { nullable: true })
   @Column({
     type: 'varchar',
@@ -294,48 +316,38 @@ export class WorkspaceEntity {
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
 
-  @Field(() => String, { nullable: false })
+  @Field(() => AiModelTierEnum, { nullable: false })
   @Column({
     type: 'varchar',
     nullable: false,
-    default: AUTO_SELECT_FAST_MODEL_ID,
+    default: DEFAULT_AI_CHAT_MODEL_TIER,
   })
-  fastModel: ModelId;
+  aiChatModelTier: AiModelTier;
 
-  @Field(() => String, { nullable: false })
+  @Field(() => AiModelTierEnum, { nullable: false })
   @Column({
     type: 'varchar',
     nullable: false,
-    default: AUTO_SELECT_SMART_MODEL_ID,
+    default: DEFAULT_AI_AGENT_MODEL_TIER,
   })
-  smartModel: ModelId;
+  aiAgentModelTier: AiModelTier;
+
+  @Field(() => Boolean, { nullable: false })
+  @Column({ type: 'boolean', nullable: false, default: true })
+  isAutoModelSelectionEnabled: boolean;
+
+  // Only read while isAutoModelSelectionEnabled is false; kept when the toggle
+  // goes back on so switching off again restores the previous pins.
+  @Field(() => GraphQLJSON, { nullable: false })
+  @Column({ type: 'jsonb', nullable: false, default: {} })
+  aiModelIdByTier: Partial<Record<AiModelTier, string>>;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
   aiAdditionalInstructions: string | null;
 
-  @Field(() => [String], { nullable: true })
-  @Column({
-    type: 'varchar',
-    array: true,
-    nullable: false,
-    default: '{}',
-  })
-  enabledAiModelIds: string[];
-
-  @Field(() => Boolean, { nullable: false })
-  @Column({ type: 'boolean', nullable: false, default: true })
-  useRecommendedModels: boolean;
-
   @Column({ nullable: false, type: 'uuid' })
   workspaceCustomApplicationId: string;
-
-  // TODO: delete
-  // This is deprecated
-  // If we are in December 2025 you can remove this column from DB
-  @Field(() => String, { nullable: false })
-  @Column({ type: 'varchar', nullable: false, default: 'auto' })
-  routerModel: ModelId;
 
   @Field(() => ApplicationDTO, { nullable: true })
   @ManyToOne(() => ApplicationEntity, {

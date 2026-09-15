@@ -1,0 +1,67 @@
+---
+title: "Tutorial: Document Generator"
+icon: wand-magic-sparkles
+description: Crea una aplicación real de Twenty que genere documentos personalizados a partir de los datos de tu CRM.
+---
+
+En este tutorial crearás **Document Generator**, una aplicación que convierte plantillas reutilizables en documentos personalizados usando los datos que ya tienes en tu CRM.
+
+Escribe una plantilla una vez con `{{placeholders}}`, luego genera un documento completado para cualquier Persona o Empresa con un solo clic, desde el menú de comandos, desde un agente de IA o desde un flujo de trabajo.
+
+<Frame caption="Una plantilla, generada para una persona específica, abierta como una página imprimible.">
+  <img src="/images/docs/desarrolladores/extends/apps/document-generator/07-rendered-document.png" alt="Un documento generado de propuesta de ventas" />
+</Frame>
+
+## Lo que aprenderás
+
+Cada capítulo añade una capacidad. Al final habrás tocado la mayoría del SDK.
+
+| Capítulo                                                                                                    | Capacidad                                                                                                                       | Referencia                                                               |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| [1. Modelo de datos](/l/es/developers/extend/apps/tutorials/document-generator/data-model)                       | Objetos, campos y una relación                                                                                                  | [Data](/l/es/developers/extend/apps/data/overview)                            |
+| [2. Generando documentos](/l/es/developers/extend/apps/tutorials/document-generator/generating-documents)        | Una función lógica (herramienta (AI + acción de flujo de trabajo) que rellena una plantilla de Markdown y adjunta un PDF pulido | [Funciones lógicas](/l/es/developers/extend/apps/logic/logic-functions)       |
+| [3. Rutas HTTP](/l/es/developers/extend/apps/tutorials/document-generator/http-routes)                           | Ejecutando JSON y una página HTML compartible desde rutas                                                                       | [Funciones lógicas](/l/es/developers/extend/apps/logic/logic-functions)       |
+| [4. Construir la interfaz de usuario](/l/es/developers/extend/apps/tutorials/document-generator/building-the-ui) | Vistas, navegación, menú de comandos y componentes frontales que previsualizan un documento y editan una plantilla              | [Diseño](/l/es/developers/extend/apps/layout/overview)                        |
+| [5. An AI agent](/l/es/developers/extend/apps/tutorials/document-generator/ai-agent)                             | Agente + habilidad                                                                                                              | [Habilidades y agentes](/l/es/developers/extend/apps/logic/skills-and-agents) |
+| [6. Publicación](/l/es/developers/extend/apps/tutorials/document-generator/publishing)                           | Envíalo al mercado                                                                                                              | [Publicación](/l/es/developers/extend/apps/operations/publishing)             |
+
+## Prerrequisitos
+
+Deberías haber terminado el [Inicio rápido](/l/es/developers/extend/apps/getting-started/quick-start):
+un servidor Veinte local corriendo en el puerto `2020` y el CLI autenticado en él.
+
+Si no, andamio e inicia uno ahora:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest document-generator
+cd document-generator
+yarn twenty dev
+```
+
+<Note>
+¿Prefieres leer el código terminado? La aplicación completa vive en
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+Cada fragmento de abajo es copiado de él.
+</Note>
+
+## Cómo encaja la aplicación
+
+<Frame>
+  <img src="/images/docs/desarrolladores/extends/apps/document-generator/how-it-fits.svg" alt="Una plantilla con marcadores de posición se genera en un documento pulido con un PDF, activado desde el menú de comandos, un agente IA, un flujo de trabajo o un enlace compartible" />
+</Frame>
+
+Escribes una **plantilla** una vez en un editor de texto rich, con `{{placeholders}}`. Al elegir una plantilla
+y un registro CRM rellenan los marcadores de posición y almacenan un **documento** pulido
+(con un archivo PDF). Todo lo demás — el menú de comandos, el agente IA,
+el paso del flujo de trabajo, el enlace compartible — es sólo una manera diferente de activar que
+un generador.
+
+## Mantener este ciclo en ejecución
+
+Deja `yarn twenty dev` corriendo en un terminal para el tutorial completo. Cada vez que
+agregas o editas un archivo en `src/`, se vuelve a sincronizar con tu servidor en unos
+segundos, para que puedas ver cómo cada capacidad aparece en la interfaz de usuario a medida que la construyes.
+
+<Card title="Comenzar construcción →" icon="database" href="/Developopers/extend/apps/tutorials/document-generator/data-model">
+  Capítulo 1: documentos de modelo y plantillas.
+</Card>

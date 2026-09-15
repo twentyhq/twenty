@@ -21,7 +21,6 @@ const GetViewFieldsInputSchema = z.object({
 const CreateViewFieldInputSchema = z.object({
   viewId: z.string().uuid().describe('The ID of the view to add the field to.'),
   fieldMetadataId: z
-    .string()
     .uuid()
     .describe(
       'The ID of the field metadata to add. Use get_field_metadata to find available fields.',

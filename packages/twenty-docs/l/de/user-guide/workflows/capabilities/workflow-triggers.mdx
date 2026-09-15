@@ -26,8 +26,8 @@ Startet den Workflow, wenn ein neuer Datensatz in einem ausgewählten Objekt (Pe
 **Konfiguration**: Wählen Sie den Objekttyp aus, der auf neue Datensätze überwacht werden soll.
 
 <Note>
-* Dieser Auslöser eignet sich hervorragend für Datensätze, die durch CSV-, Postfach- und Kalender-Synchronisierung oder per API erstellt wurden.
-* **Für manuell erstellte Datensätze nicht empfohlen**: Mit diesem Auslöser starten Workflows, sobald der Datensatz erstellt wird. Da Twenty UI ein automatisches Speichern in Echtzeit bietet (es gibt keinen Bearbeitungsmodus und anschließend eine Validierung zum Speichern von Datensätzen), wird der Workflow ausgelöst, bevor der Benutzer alle Felder eingibt.
+* Dieser Trigger eignet sich hervorragend für Datensätze, die von CSV, Postfach- und Kalendersynchronisation oder API erstellt wurden.
+* **Für manuell erstellte Datensätze nicht empfohlen**: Mit diesem Auslöser starten Workflows, sobald der Datensatz erstellt wird. Da Zwanzig UI automatisch spart (es gibt keinen Bearbeitungsmodus und dann eine Validierung, um Datensätze zu speichern) wird der Workflow ausgelöst, bevor der Benutzer alle Felder eingibt.
   Um diesen Workflow bei manuell erstellten Datensätzen auszulösen, wird empfohlen, stattdessen den Auslöser `Record is created or updated` zu verwenden.
 </Note>
 
@@ -69,15 +69,17 @@ Startet den Workflow, wenn er durch eine Benutzeraktion ausgelöst wird. Dieser 
 
 **Verfügbarkeitskonfiguration**: Wählen Sie aus, wie der Workflow die Datensatzauswahl handhaben soll:
 
-* **Global**: Für das Auslösen dieses Workflows ist kein Datensatz erforderlich. Der Workflow wird überall (von jedem Objekt aus) über das Befehlsmenü `Cmd + K` ausgelöst und verwendet keine Datensätze als Eingabe.
+* **Global**: Für das Auslösen dieses Workflows ist kein Datensatz erforderlich. Der Workflow wird aus dem Befehlsmenü `Cmd+K` irgendwo (von jedem Objekt) ausgelöst und verwendet keine Eintragung(en) als Eingabe.
 
-* **Einzeln**: Die ausgewählten Datensätze werden an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert. Es können mehrere Datensätze ausgewählt werden, bevor der Workflow ausgelöst wird. Der Workflow wird von Anfang bis Ende so oft ausgeführt, wie Datensätze ausgewählt sind.
+Für die **Single** und **Bulk** Verfügbarkeit werden die ausgewählten Datensätze(n) an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert und mehrere Datensätze können ausgewählt werden, bevor der Workflow ausgelöst wird.
+
+* **Single**: Der Workflow läuft von Anfang bis Ende so oft wie die Datensätze ausgewählt sind.
 
   <Note>
     **Soft-Limit: 100 Ausführungen/Minute**. Darüber hinaus verbleiben Workflows im Status "Nicht gestartet" und werden schrittweise verarbeitet—entweder durch einen Hintergrundauftrag oder wenn ein anderer Workflow in die Warteschlange gelangt. Das bedeutet, Sie können mit einem einzelnen Auslöser mehr als 100 Datensätze auswählen; die Ausführung wird dann lediglich langsamer.
   </Note>
 
-* **Bulk**: Die ausgewählten Datensätze werden an Ihren Workflow übergeben. Dies ist für ein bestimmtes Objekt konfiguriert. Es können mehrere Datensätze ausgewählt werden, bevor der Workflow ausgelöst wird. Der Workflow wird einmal ausgeführt, wobei die gesamte Liste der Datensätze als Eingabe verwendet wird. Das bedeutet, dass der Workflow eine [Iterator-Aktion](/l/de/user-guide/workflows/capabilities/workflow-actions#iterator) enthalten muss.
+* **Bulk**: Der Workflow wird einmal ausgeführt und stellt die gesamte Liste der Datensätze als Eingabe zur Verfügung. Das bedeutet, dass der Workflow eine [Iterator-Aktion](/l/de/user-guide/workflows/capabilities/workflow-actions#iterator) enthalten muss.
 
 <Note>
 Dies ist fortgeschrittener und am besten für Personen geeignet, die die Anzahl der Workflow-Ausführungen optimieren möchten.

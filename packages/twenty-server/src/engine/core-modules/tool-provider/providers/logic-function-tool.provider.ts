@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
+import {
+  buildToolInputJsonSchema,
+  DEFAULT_TOOL_INPUT_SCHEMA,
+} from 'twenty-shared/logic-function';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -46,13 +49,17 @@ export class LogicFunctionToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
 
-    const { flatLogicFunctionMaps } =
+    const { flatLogicFunctionMaps, flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId: context.workspaceId,
-          flatMapsKeys: ['flatLogicFunctionMaps'],
+          flatMapsKeys: ['flatLogicFunctionMaps', 'flatObjectMetadataMaps'],
         },
       );
+
+    const resolveObjectLabel = (objectUniversalIdentifier: string) =>
+      flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]
+        ?.labelSingular;
 
     const logicFunctionsWithSchema = Object.values(
       flatLogicFunctionMaps.byUniversalIdentifier,
@@ -70,6 +77,7 @@ export class LogicFunctionToolProvider implements ToolProvider {
 
       const base: ToolIndexEntry = {
         name: toolName,
+        label: logicFunction.name,
         description:
           logicFunction.description ||
           `Execute the ${logicFunction.name} logic function`,
@@ -83,9 +91,12 @@ export class LogicFunctionToolProvider implements ToolProvider {
       if (includeSchemas) {
         descriptors.push({
           ...base,
-          inputSchema:
-            (logicFunction.toolTriggerSettings?.inputSchema as object) ??
-            DEFAULT_TOOL_INPUT_SCHEMA,
+          inputSchema: isDefined(logicFunction.toolTriggerSettings?.inputSchema)
+            ? (buildToolInputJsonSchema(
+                logicFunction.toolTriggerSettings.inputSchema,
+                resolveObjectLabel,
+              ) as object)
+            : DEFAULT_TOOL_INPUT_SCHEMA,
         });
       } else {
         descriptors.push(base);

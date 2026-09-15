@@ -6,27 +6,32 @@ import {
   HttpStatus,
   Post,
   Req,
+  UseFilters,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
 
 import { Request } from 'express';
+import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AppConnectionDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/app-connection.dto';
 import { GetAppConnectionDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/get-app-connection.dto';
 import { ListAppConnectionsDto } from 'src/engine/core-modules/application/connection-provider/connections/dtos/list-app-connections.dto';
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
+import { ConnectionProviderRestApiExceptionFilter } from 'src/engine/core-modules/application/connection-provider/filters/connection-provider-rest-api-exception.filter';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
-// On-demand connection lookup for app logic functions. Authenticated via the
-// application access token (already injected into the function runtime as
-// TWENTY_APP_ACCESS_TOKEN). Apps can only list their own connections.
-@Controller('apps/connections')
+/** @deprecated Superseded by the `appConnections` / `appConnection` GraphQL
+ * queries on the metadata schema (ApplicationConnectionsResolver). The SDK
+ * helpers (`listConnections`, `getConnection`) now call GraphQL. Kept for
+ * backward compatibility with already-deployed app runtimes. */
+@Controller(`${ApiPath.Apps}/connections`)
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard, NoPermissionGuard)
+@UseFilters(ConnectionProviderRestApiExceptionFilter)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 export class ApplicationConnectionsController {
   constructor(

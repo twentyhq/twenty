@@ -9,12 +9,12 @@ import { ChartIcon } from '/snippets/chart-icon.mdx';
 
 Twentyは、CRMデータを可視化するためのさまざまなウィジェットタイプを提供します。
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />Bar Charts</span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-bar-popular" />棒グラフ</span>
 
 データを横棒または縦棒で表示します。
 
 <Frame>
-  <img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="Bar chart" />
+<img src="/images/user-guide/dashboard/dashboard-widget-bar-chart.png" alt="棒グラフ" />
 </Frame>
 
 **最適な用途:**
@@ -30,15 +30,15 @@ Twentyは、CRMデータを可視化するためのさまざまなウィジェ�
 * 月別のコンタクト追加数
 
 <Note>
-  **Display limits**: Bar charts can show a maximum of 100 bars, and 50 groups per bar when using Group By. 警告 "Undisplayed data: max X bars per chart" が表示された場合は、フィルターを追加してデータを絞り込むか、グルーピングを変更します（例: 日単位ではなく週単位でグループ化）。
+**制限を表示**: 棒グラフは、Group Byを使用する場合、最大100小節、および1小節あたり50グループを表示できます。 警告 "Undisplayed data: max X bars per chart" が表示された場合は、フィルターを追加してデータを絞り込むか、グルーピングを変更します（例: 日単位ではなく週単位でグループ化）。
 </Note>
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />Pie Charts</span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-pie" />円グラフ</span>
 
 全体に占める割合を表示します。
 
 <Frame>
-  <img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="Pie chart" />
+<img src="/images/user-guide/dashboard/dashboard-widget-pie-chart.png" alt="円グラフ" />
 </Frame>
 
 **最適な用途:**
@@ -53,12 +53,12 @@ Twentyは、CRMデータを可視化するためのさまざまなウィジェ�
 * 業種別のコンタクト内訳
 * 担当者別のパイプライン構成
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />Line Charts</span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="chart-line" />折れ線グラフ</span>
 
 時間の経過に伴う傾向を表示します。
 
 <Frame>
-  <img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="Line chart" />
+<img src="/images/user-guide/dashboard/dashboard-widget-line-chart.png" alt="折れ線グラフ" />
 </Frame>
 
 **最適な用途:**
@@ -73,12 +73,12 @@ Twentyは、CRMデータを可視化するためのさまざまなウィジェ�
 * 四半期ごとの売上成長
 * 活動量の推移
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />Aggregate Charts</span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="sum" />グラフ</span>
 
 重要な単一値を目立つ形で表示します。
 
 <Frame>
-  <img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="Aggregate chart" />
+<img src="/images/user-guide/dashboard/dashboard-widget-aggregate-chart.png" alt="集計グラフ" />
 </Frame>
 
 **最適な用途:**
@@ -98,12 +98,32 @@ Twentyは、CRMデータを可視化するためのさまざまなウィジェ�
 * **比率**: Select フィールドで、値同士の比率を計算します。 **Data on display** → フィールドを選択 → **Ratio** オプションを有効にします。
 * **Prefix & Suffix**: 可読性を高めるために、数値の前後にカスタムテキストを追加します（例: "$" のプレフィックスや "%" のサフィックス）。
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrame</span>
 
 外部ツールやコンテンツをダッシュボードに直接埋め込みます。
 
 <Frame>
-  <img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
+<img src="/images/user-guide/dashboard/dashboard-widget-table.png" alt="表グラフ" />
+</Frame>
+
+**最適な用途:**
+
+* 個別アイテムの検索
+* 正確な値の確認
+* 監査または参照
+
+**使用例:**
+
+* 今月クロージング予定の案件
+* 今週の新規リード
+* 期限超過の請求書
+
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="table" />テーブル</span>
+
+フィルタ済みのレコードをダッシュボード上で直接確認できます。
+
+<Frame>
+<img src="/images/user-guide/dashboard/dashboard-widget-iframe.png" alt="iFrame" />
 </Frame>
 
 **最適な用途:**
@@ -118,28 +138,28 @@ Twentyは、CRMデータを可視化するためのさまざまなウィジェ�
 * ダイヤラーの指標
 * セールスシーケンスツールのライブコンテンツ
 
-### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />Rich Text</span>
+### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="align-box-left-top" />リッチテキスト</span>
 
-Add formatted text and content directly to your dashboard.
+書式設定されたテキストとコンテンツをダッシュボードに直接追加します。
 
 <Frame>
-  <img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="Rich text" />
+<img src="/images/user-guide/dashboard/dashboard-widget-rich-text.png" alt="リッチテキスト" />
 </Frame>
 
 **最適な用途:**
 
-* Adding context or instructions
-* Dashboard descriptions
-* Notes and annotations
+* 説明または説明を追加する
+* ダッシュボードの説明
+* メモと注釈
 
-**Features:**
+**機能:**
 
-* Rich text formatting (bold, italic, lists, etc.)
-* Image and file uploads
-* Markdown-style editing
+* リッチテキストの書式設定（太字、斜体、リストなど）
+* 画像とファイルのアップロード
+* Markdown スタイルの編集
 
 <Note>
-  **近日提供予定**: ゲージチャートとテーブルはまだ利用できませんが、ロードマップに含まれています。
+**近日提供予定**: ゲージチャートはまだ利用できませんが、ロードマップに含まれています。
 </Note>
 
 ### ウィジェットの複製

@@ -26,7 +26,7 @@ export const getLineChartTooltipData = ({
   isStacked = false,
 }: GetLineChartTooltipDataParameters): LineChartTooltipData => {
   const enrichedSeriesMap = new Map(
-    enrichedSeries.map((series) => [series.id, series]),
+    enrichedSeries.map((series) => [series.key, series]),
   );
 
   if (!isDefined(slice.points) || slice.points.length === 0) {
@@ -37,7 +37,7 @@ export const getLineChartTooltipData = ({
   }
 
   const seriesIndexMap = new Map(
-    enrichedSeries.map((series, index) => [series.id, index]),
+    enrichedSeries.map((series, index) => [series.key, index]),
   );
 
   const getPointValue = (point: (typeof slice.points)[number]) =>
@@ -65,7 +65,7 @@ export const getLineChartTooltipData = ({
 
       const value = getPointValue(point);
       return {
-        key: enrichedSeriesItem.id,
+        key: enrichedSeriesItem.key,
         label: enrichedSeriesItem.label,
         formattedValue: formatGraphValue(value, formatOptions),
         value,

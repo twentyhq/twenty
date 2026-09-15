@@ -7,10 +7,9 @@ import {
 
 import { v4 } from 'uuid';
 
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { type MorphOrRelationFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/types/morph-or-relation-field-metadata-type.type';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { getDefaultFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/get-default-flat-field-metadata-from-create-field-input.util';
@@ -59,9 +58,12 @@ type GenerateMorphOrRelationFlatFieldMetadataPairArgs = {
       Pick<CreateFieldInput, 'relationCreationPayload' | 'type' | 'name'>
     > & { type: MorphOrRelationFieldMetadataType };
   morphId?: string | null;
-  flatApplication: FlatApplication;
+  applicationUniversalIdentifier: string;
   targetFieldName?: string;
   junctionTargetFlatFieldMetadata?: FlatFieldMetadata;
+  sourceFieldUniversalIdentifier?: string;
+  targetFieldUniversalIdentifier?: string;
+  isSystemSideEffect?: boolean;
 };
 
 export type SourceTargetMorphOrRelationFlatFieldAndFlatIndex = {
@@ -74,11 +76,14 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
   sourceFlatObjectMetadata,
   targetFlatObjectMetadata,
   targetFlatFieldMetadataType,
-  flatApplication,
+  applicationUniversalIdentifier,
   sourceFlatObjectMetadataJoinColumnName,
   morphId = null,
   targetFieldName,
   junctionTargetFlatFieldMetadata,
+  sourceFieldUniversalIdentifier: providedSourceFieldUniversalIdentifier,
+  targetFieldUniversalIdentifier: providedTargetFieldUniversalIdentifier,
+  isSystemSideEffect = false,
 }: GenerateMorphOrRelationFlatFieldMetadataPairArgs): SourceTargetMorphOrRelationFlatFieldAndFlatIndex => {
   const sourceFlatFieldMetadataType = createFieldInput.type;
 
@@ -91,8 +96,10 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
       junctionTargetFieldUniversalIdentifier:
         junctionTargetFlatFieldMetadata?.universalIdentifier,
     });
-  const sourceFieldUniversalIdentifier = v4();
-  const targetFieldUniversalIdentifier = v4();
+  const sourceFieldUniversalIdentifier =
+    providedSourceFieldUniversalIdentifier ?? v4();
+  const targetFieldUniversalIdentifier =
+    providedTargetFieldUniversalIdentifier ?? v4();
 
   const defaultDescriptionFromField =
     buildDescriptionForRelationFieldMetadataOnFromField({
@@ -113,9 +120,10 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
             createFieldInput.universalIdentifier ??
             sourceFieldUniversalIdentifier,
         },
-        flatApplication,
+        applicationUniversalIdentifier,
         objectMetadataUniversalIdentifier:
           sourceFlatObjectMetadata.universalIdentifier,
+        isSystemSideEffect,
       }),
       morphId:
         sourceFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION
@@ -169,9 +177,10 @@ export const generateMorphOrRelationFlatFieldMetadataPair = ({
         ...targetCreateFieldInput,
         universalIdentifier: targetFieldUniversalIdentifier,
       },
-      flatApplication,
+      applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier:
         targetFlatObjectMetadata.universalIdentifier,
+      isSystemSideEffect,
     }),
     morphId:
       targetFlatFieldMetadataType === FieldMetadataType.MORPH_RELATION

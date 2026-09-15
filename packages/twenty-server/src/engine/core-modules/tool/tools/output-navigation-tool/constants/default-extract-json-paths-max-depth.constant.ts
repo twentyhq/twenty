@@ -1,0 +1,1 @@
+export const DEFAULT_EXTRACT_JSON_PATHS_MAX_DEPTH = 5;

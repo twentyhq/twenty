@@ -1,0 +1,66 @@
+---
+title: "Tutoriál: Generátor dokumentů"
+icon: wand-magic-sparkles
+description: Vytvořte skutečnou aplikaci Twenty, která generuje personalizované dokumenty z vašich CRM dat.
+---
+
+V tomto tutoriálu vytvoříte **Generátor dokumentů** — aplikaci, která převádí znovupoužitelné šablony na personalizované dokumenty pomocí dat, která už máte ve svém CRM.
+
+Napište šablonu jednou pomocí `{{placeholders}}` a poté vygenerujte vyplněný dokument pro libovolnou osobu nebo společnost jedním kliknutím — z příkazové nabídky, od AI agenta nebo z workflow.
+
+<Frame caption="Jeden šablonový dokument, vygenerovaný pro konkrétní osobu, otevřený jako stránka připravená k tisku.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Vygenerovaný dokument obchodní nabídky" />
+</Frame>
+
+## Co se naučíte
+
+Každá kapitola přidá jednu schopnost. Na konci se seznámíte s většinou SDK.
+
+| Kapitola                                                                                                    | Schopnost                                                                                                            | Referenční dokumentace                                                 |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [1. Datový model](/l/cs/developers/extend/apps/tutorials/document-generator/data-model)                          | Objekty, pole a relace                                                                                               | [Data](/l/cs/developers/extend/apps/data/overview)                          |
+| [2. Generování dokumentů](/l/cs/developers/extend/apps/tutorials/document-generator/generating-documents)        | Logická funkce (nástroj AI + akce workflow), která vyplní šablonu v Markdownu a připojí vyladěné PDF                 | [Logické funkce](/l/cs/developers/extend/apps/logic/logic-functions)        |
+| [3. HTTP trasy](/l/cs/developers/extend/apps/tutorials/document-generator/http-routes)                           | Poskytování JSONu a sdílitelné HTML stránky z tras                                                                   | [Logické funkce](/l/cs/developers/extend/apps/logic/logic-functions)        |
+| [4. Vytváření uživatelského rozhraní](/l/cs/developers/extend/apps/tutorials/document-generator/building-the-ui) | Zobrazení, navigace, příkazová nabídka a frontendové komponenty, které zobrazují náhled dokumentu a upravují šablonu | [Rozvržení](/l/cs/developers/extend/apps/layout/overview)                   |
+| [5. Agent AI](/l/cs/developers/extend/apps/tutorials/document-generator/ai-agent)                                | Agent + dovednost                                                                                                    | [Dovednosti a agenti](/l/cs/developers/extend/apps/logic/skills-and-agents) |
+| [6. Publikování](/l/cs/developers/extend/apps/tutorials/document-generator/publishing)                           | Publikujte ji na marketplace                                                                                         | [Publikování](/l/cs/developers/extend/apps/operations/publishing)           |
+
+## Předpoklady
+
+Měli byste mít hotový [rychlý start](/l/cs/developers/extend/apps/getting-started/quick-start):
+lokální server Twenty běžící na portu `2020` a CLI k němu přihlášené.
+
+Pokud ne, nyní si jeden vytvořte a spusťte:
+
+```bash filename="Terminal"
+npx create-twenty-app@latest document-generator
+cd document-generator
+yarn twenty dev
+```
+
+<Note>
+Raději byste si přečetli hotový kód? Celá aplikace je v
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+Každý úryvek níže je z ní zkopírovaný.
+</Note>
+
+## Jak do sebe aplikace zapadá
+
+<Frame>
+  <img src="/images/docs/developers/extends/apps/document-generator/how-it-fits.svg" alt="Šablona se zástupnými symboly se převede na vyladěný dokument s PDF souborem; generování lze spustit z příkazové nabídky, agenta AI, workflow nebo pomocí sdílitelného odkazu" />
+</Frame>
+
+**Šablonu** napíšete jednou v rich-text editoru pomocí `{{placeholders}}`. Výběr
+šablony a CRM záznamu vyplní zástupné symboly a uloží vyladěný
+**dokument** (s PDF souborem). Všechno ostatní — příkazová nabídka, agent AI,
+krok workflow, sdílený odkaz — je jen jiný způsob, jak spustit ten
+jeden generátor.
+
+## Udržujte tento cyklus v chodu
+
+Nechte `yarn twenty dev` běžet v terminálu po celý tutoriál. Pokaždé, když
+přidáte nebo upravíte soubor pod `src/`, během několika sekund se znovu synchronizuje s vaším serverem, takže můžete sledovat, jak se každá schopnost objevuje v uživatelském rozhraní, jak ji vytváříte.
+
+<Card title="Začněte vytvářet →" icon="database" href="/l/cs/developers/extend/apps/tutorials/document-generator/data-model">
+  Kapitola 1: modelujte dokumenty a šablony.
+</Card>

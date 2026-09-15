@@ -1,0 +1,18 @@
+.iconSwapContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.defaultIcon {
+  display: flex;
+  transition: opacity duration(instant) ease;
+}
+
+.hoverIcon {
+  position: absolute;
+  display: flex;
+  opacity: 0;
+  transition: opacity duration(instant) ease;
+}

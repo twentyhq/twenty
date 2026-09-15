@@ -1,7 +1,7 @@
 ---
 title: Obiecte
 description: Declarați noi tipuri de înregistrări — tabele personalizate cu propriile câmpuri — folosind defineObject.
-icon: tabel
+icon: table
 ---
 
 **Obiectele** personalizate sunt tipuri noi de înregistrări pe care aplicația dvs. le adaugă într-un spațiu de lucru — carte poștală, factură, abonament, orice este specific domeniului dvs. Fiecare obiect își declară propria schemă (câmpuri, relații, valori implicite) și un identificator universal stabil, care este păstrat între sincronizări și implementări.
@@ -79,15 +79,65 @@ export default defineObject({
 * `universalIdentifier` trebuie să fie unic și stabil între implementări.
 * Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
 * Tabloul `fields` este opțional — puteți defini obiecte fără câmpuri personalizate.
+* `openRecordIn` stabilește unde se deschid înregistrările acestui obiect când se face clic pe ele: `ObjectOpenRecordIn.USER_CHOICE` (valoarea implicită, care respectă preferința fiecărui membru al spațiului de lucru din Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` sau `ObjectOpenRecordIn.RECORD_PAGE`. Fixează-l la `RECORD_PAGE` pentru înregistrările care au nevoie de o pagină completă pentru a fi utilizabile, așa cum este cazul fluxurilor de lucru și al dashboard-urilor, sau la `SIDE_PANEL` pentru înregistrările care au sens doar ca un panou rapid, așa cum este cazul evenimentelor din calendar.
+* `writability` controlează cine poate scrie înregistrări ale obiectului, înainte ca permisiunile pe roluri să se aplice: `MetadataWritability.OPEN` (valoarea implicită — rolurile din spațiul de lucru decid), `MetadataWritability.APPLICATION` (numai funcțiile de logică ale aplicației tale pot crea, actualiza sau șterge înregistrări; folosește acest lucru pentru obiecte de tip configurație ale căror înregistrări determină comportamentul, astfel încât membrii spațiului de lucru cu acces extins la înregistrări să nu le poată edita prin API) sau `MetadataWritability.SYSTEM` (rezervat pentru date administrate de platformă). Operațiunile de citire nu sunt afectate — acest lucru este impus la nivel de server, spre deosebire de `isUIEditable`, care doar ascunde elementele din interfața cu utilizatorul. Se aplică și la nivel de câmp, unde poate fi doar mai restrictivă decât la nivelul obiectului.
 * Câmpurile inline definite aici **nu** au nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte. Folosiți [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects) pentru a adăuga câmpuri la obiecte care nu vă aparțin.
-* Puteți genera obiecte noi cu `yarn twenty add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/l/ro/developers/extend/apps/getting-started/scaffolding).
+* Puteți genera obiecte noi cu `yarn twenty dev:add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/l/ro/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
 **Câmpurile de bază sunt adăugate automat.** Când definiți un obiect personalizat, Twenty creează pentru dvs. câmpuri standard precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`. Nu trebuie să le declarați în tabloul `fields` — doar câmpurile dvs. personalizate. Puteți suprascrie un câmp implicit declarând unul cu același nume, dar acest lucru este rareori o idee bună.
 </Note>
 
+## Tipuri de câmpuri
+
+Setul complet de valori `FieldType`, exportate din `twenty-sdk/define`:
+
+| Categorie                 | Tipuri                                                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Text                      | `TEXT`, `RICH_TEXT`, `ARRAY` (de șiruri), `RAW_JSON`                                                                            |
+| Numerice                  | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precizie arbitrară), `RATING`, `POSITION` |
+| Date calendaristice       | `DATE`, `DATE_TIME`                                                                                                             |
+| Alegere                   | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                             |
+| Compuse                   | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                               |
+| Identificatori și relații | `UUID`, `RELATION`, `MORPH_RELATION` (vezi [Relații](/l/ro/developers/extend/apps/data/relations))                                   |
+| Sistem                    | `TS_VECTOR` (vector de căutare full-text, gestionat de server)                                                                  |
+
+Tipurile compuse stochează mai multe sub‑câmpuri (de ex. `FULL_NAME` = prenume + nume de familie; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` și `MULTI_SELECT` necesită un tablou `options`, ca în exemplul de mai sus.
+
+## Valori implicite
+
+Valorile implicite de tip șir literal trebuie să fie încadrate în ghilimele simple **în interiorul** șirului — `defaultValue: "'Draft'"`, nu `defaultValue: "Draft"`. De aceea câmpul `status` de mai sus folosește `` `'${PostCardStatus.DRAFT}'` ``.
+
+Șirurile fără ghilimele sunt rezervate pentru valorile implicite calculate, evaluate atunci când este creată o înregistrare:
+
+* `'uuid'` — generează un UUID (pentru câmpurile `UUID`)
+* `'now'` — marcajul temporal curent (pentru câmpurile `DATE_TIME`)
+
+Aceeași convenție se aplică și subcâmpurilor de tip șir de caractere ale valorilor implicite compuse (de ex. `{ source: "'MANUAL'" }` pe un câmp `ACTOR`) și valorilor `SELECT`/`MULTI_SELECT`. O valoare implicită literală de tip șir de caractere lăsată neîncadrată în ghilimele generează un avertisment atunci când aplicația este construită.
+
+## Acceptarea valorii NULL
+
+`isNullable` controlează dacă un câmp acceptă `NULL`. Valoarea sa implicită este `true` — omiteți-l pentru câmpurile opționale. Setați `isNullable: false` pentru a face un câmp obligatoriu la nivel de bază de date.
+
+Modificările aduse proprietății `isNullable` sunt aplicate la fiecare sincronizare, inclusiv la sincronizările care actualizează un câmp existent — astfel încât puteți schimba nullabilitatea unui câmp editând manifestul și resincronizând.
+
+<Note>
+**Transformarea unui câmp existent în non-nullable necesită o valoare implicită.** Atunci când modificați un câmp la `isNullable: false`, trebuie să furnizați și un `defaultValue` nenul. Valoarea implicită completează retroactiv orice rânduri `NULL` existente înainte ca restricția `NOT NULL` să fie aplicată; fără aceasta, sincronizarea eșuează cu mesajul `Default value cannot be null for non-nullable fields`. Câmpurile de relație și câmpurile `TS_VECTOR` sunt întotdeauna nullable, astfel încât `isNullable` nu are niciun efect asupra lor.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
 ## Ce urmează
 
 * **Conectați acest obiect la altele** — consultați [Relații](/l/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.
 * **Adăugați câmpuri la obiecte din alte aplicații** — consultați [Extinderea obiectelor](/l/ro/developers/extend/apps/data/extending-objects) pentru `defineField()`.
-* **Afișați acest obiect în interfața utilizatorului** — consultați [Vizualizări](/l/ro/developers/extend/apps/layout/views) și [Elemente de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) pentru a-l plasa în bara laterală.
+* **Afișează acest obiect în interfața de utilizator** — consultă [Elemente de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) pentru a adăuga un element în bara laterală; consultă [Vizualizări](/l/ro/developers/extend/apps/layout/views) pentru a adăuga configurații personalizate de listă.

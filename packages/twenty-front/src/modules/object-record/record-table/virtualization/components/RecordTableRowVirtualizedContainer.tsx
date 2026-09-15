@@ -51,6 +51,7 @@ export const RecordTableRowVirtualizedContainer = ({
     <StyledVirtualizedRowContainer
       id={`row-virtual-index-${virtualIndex}`}
       pixelsFromTop={pixelsFromTop}
+      data-replay-ignore-mutations="true"
     >
       {TABLE_VIRTUALIZATION_DEBUG_ACTIVATED && (
         <RecordTableRowVirtualizedDebugRowHelper virtualIndex={virtualIndex} />

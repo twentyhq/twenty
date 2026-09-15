@@ -122,7 +122,7 @@ describe('Send Email Body Rendering', () => {
         if (!element || typeof element !== 'object') return false;
         if (element.type === 'br') return true;
 
-        const children = element.props?.children;
+        const children = (element.props as { children?: unknown })?.children;
 
         if (!children) return false;
         if (Array.isArray(children)) {

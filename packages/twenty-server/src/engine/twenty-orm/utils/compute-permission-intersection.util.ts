@@ -1,7 +1,29 @@
 import {
   type ObjectsPermissions,
   type RestrictedFieldPermissions,
+  type RowLevelPermissionPredicate,
 } from 'twenty-shared/types';
+
+// An intersection has no combined predicate tree to expose, since each role
+// compiles separately. Keeping a field constrained by one role alone would
+// let that role's rule cancel another role's deny in the insert guard.
+const intersectRowLevelPermissionPredicates = (
+  rowLevelPermissionPredicatesPerRole: RowLevelPermissionPredicate[][],
+): RowLevelPermissionPredicate[] => {
+  const [firstRolePredicates = [], ...otherRolesPredicates] =
+    rowLevelPermissionPredicatesPerRole;
+
+  const constrainedFieldMetadataIdsPerOtherRole = otherRolesPredicates.map(
+    (predicates) =>
+      new Set(predicates.map((predicate) => predicate.fieldMetadataId)),
+  );
+
+  return firstRolePredicates.filter((predicate) =>
+    constrainedFieldMetadataIdsPerOtherRole.every((fieldMetadataIds) =>
+      fieldMetadataIds.has(predicate.fieldMetadataId),
+    ),
+  );
+};
 
 export const computePermissionIntersection = (
   permissionsArray: ObjectsPermissions[],
@@ -30,6 +52,8 @@ export const computePermissionIntersection = (
     let canSoftDeleteObjectRecords = true;
     let canDestroyObjectRecords = true;
     const restrictedFields: Record<string, RestrictedFieldPermissions> = {};
+    const rowLevelPermissionPredicatesPerRole: RowLevelPermissionPredicate[][] =
+      [];
 
     for (const permissions of permissionsArray) {
       const objPerm = permissions[objectMetadataId];
@@ -39,6 +63,7 @@ export const computePermissionIntersection = (
         canUpdateObjectRecords = false;
         canSoftDeleteObjectRecords = false;
         canDestroyObjectRecords = false;
+        rowLevelPermissionPredicatesPerRole.push([]);
         continue;
       }
 
@@ -51,6 +76,10 @@ export const computePermissionIntersection = (
         objPerm.canSoftDeleteObjectRecords === true;
       canDestroyObjectRecords =
         canDestroyObjectRecords && objPerm.canDestroyObjectRecords === true;
+
+      rowLevelPermissionPredicatesPerRole.push(
+        objPerm.rowLevelPermissionPredicates,
+      );
 
       if (objPerm.restrictedFields) {
         for (const [fieldName, fieldPerm] of Object.entries(
@@ -85,7 +114,9 @@ export const computePermissionIntersection = (
       canSoftDeleteObjectRecords,
       canDestroyObjectRecords,
       restrictedFields,
-      rowLevelPermissionPredicates: [],
+      rowLevelPermissionPredicates: intersectRowLevelPermissionPredicates(
+        rowLevelPermissionPredicatesPerRole,
+      ),
       rowLevelPermissionPredicateGroups: [],
     };
   }

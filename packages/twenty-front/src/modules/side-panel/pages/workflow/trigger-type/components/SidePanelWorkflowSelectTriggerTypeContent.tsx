@@ -17,7 +17,7 @@ import { getTriggerDefaultDefinition } from '@/workflow/workflow-trigger/utils/g
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 import { useContext } from 'react';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext } from 'twenty-ui/theme-constants';
@@ -65,12 +65,12 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
 
       setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
-      openWorkflowEditStepInSidePanel(
+      openWorkflowEditStepInSidePanel({
         workflowId,
-        defaultLabel,
-        getIcon(icon),
-        TRIGGER_STEP_ID,
-      );
+        title: defaultLabel,
+        icon: getIcon(icon),
+        stepId: TRIGGER_STEP_ID,
+      });
     };
   };
 

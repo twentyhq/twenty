@@ -54,7 +54,7 @@ export const main = async () => {
 ```
 
 <Tip>
-  `updated_at >= last X minutes`로 필터링하여 최근에 변경된 레코드만 가져옵니다. 동기화를 효율적으로 유지할 수 있습니다.
+`updated_at >= last X minutes`로 필터링하여 최근에 변경된 레코드만 가져옵니다. 동기화를 효율적으로 유지할 수 있습니다.
 </Tip>
 
 ## 단계 3: 데이터 형식 지정(선택)
@@ -163,7 +163,7 @@ export const main = async (params: { deals: any }) => {
 | **Price** | `{{iterator.item.price}}`  |
 
 <Tip>
-  생성과 업데이트를 위한 분기 흐름을 따로 만들기보다 **Upsert**(업데이트 또는 생성)를 사용하세요. 구현이 더 빠르고 디버깅이 더 쉽습니다.
+생성과 업데이트를 위한 분기 흐름을 따로 만들기보다 **Upsert**(업데이트 또는 생성)를 사용하세요. 구현이 더 빠르고 디버깅이 더 쉽습니다.
 </Tip>
 
 ## 사용 예시

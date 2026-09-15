@@ -1,22 +1,43 @@
-import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/useLinkedObjectsTitle';
+import { useCallback, useMemo } from 'react';
+
+import { useLinkedRecordsIdentifiers } from '@/activities/timeline-activities/hooks/useLinkedRecordsIdentifiers';
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
+import { getTimelineActivityRecordGqlFields } from '@/activities/timeline-activities/utils/getTimelineActivityRecordGqlFields';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlOperationFilter,
+} from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
-// do we need to test this?
 export const useTimelineActivities = (
   targetableObject: ActivityTargetableObject,
 ) => {
   const targetableObjectFieldIdName = `target${capitalize(targetableObject.targetObjectNameSingular)}Id`;
 
+  const filter: RecordGqlOperationFilter = useMemo(
+    () => ({
+      [targetableObjectFieldIdName]: {
+        eq: targetableObject.id,
+      },
+    }),
+    [targetableObjectFieldIdName, targetableObject.id],
+  );
+
   const { objectMetadataItem: timelineActivityMetadata } =
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.TimelineActivity,
     });
+
+  const { objectMetadataItems } = useFilteredObjectMetadataItems();
+  const { objectMetadataItems: allObjectMetadataItems } =
+    useObjectMetadataItems();
 
   const hasTimelineActivityField = timelineActivityMetadata.fields.some(
     (field) =>
@@ -28,45 +49,76 @@ export const useTimelineActivities = (
       ),
   );
 
-  const { recordGqlFields: depthOneRecordGqlFields } =
-    useGenerateDepthRecordGqlFieldsFromObject({
-      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
-      depth: 1,
-    });
+  const recordGqlFields = useMemo(
+    () =>
+      getTimelineActivityRecordGqlFields({
+        objectMetadataItems: allObjectMetadataItems,
+        fields: timelineActivityMetadata.fields,
+      }),
+    [allObjectMetadataItems, timelineActivityMetadata.fields],
+  );
 
   const {
     records: timelineActivities,
     loading: loadingTimelineActivities,
     fetchMoreRecords,
+    refetch,
   } = useFindManyRecords<TimelineActivity>({
     skip: !hasTimelineActivityField,
     objectNameSingular: CoreObjectNameSingular.TimelineActivity,
-    filter: {
-      [targetableObjectFieldIdName]: {
-        eq: targetableObject.id,
-      },
-    },
+    filter,
     orderBy: [
       {
-        createdAt: 'DescNullsFirst',
+        happensAt: 'DescNullsFirst',
       },
     ],
-    recordGqlFields: depthOneRecordGqlFields,
+    recordGqlFields,
     fetchPolicy: 'cache-and-network',
   });
 
-  const activityIds = timelineActivities
-    .filter((timelineActivity) => timelineActivity.name.match(/note|task/i))
-    .map((timelineActivity) => timelineActivity.linkedRecordId)
-    .filter(isDefined);
+  const operationSignature = useMemo(
+    () => ({
+      objectNameSingular: CoreObjectNameSingular.TimelineActivity,
+      variables: {
+        filter,
+      },
+    }),
+    [filter],
+  );
 
-  useLinkedObjectsTitle(activityIds);
+  useListenToEventsForQuery({
+    queryId: `timeline-activities-${targetableObject.targetObjectNameSingular}-${targetableObject.id}`,
+    operationSignature,
+    skip: !hasTimelineActivityField,
+  });
 
-  const loading = loadingTimelineActivities;
+  const handleTimelineActivityOperation = useCallback(() => {
+    if (!hasTimelineActivityField) {
+      return;
+    }
+
+    refetch();
+  }, [hasTimelineActivityField, refetch]);
+
+  useListenToObjectRecordOperationBrowserEvent({
+    onObjectRecordOperationBrowserEvent: handleTimelineActivityOperation,
+    objectMetadataItemId: timelineActivityMetadata.id,
+  });
+
+  const { result: linkedRecordsByObjectNamePlural } =
+    useLinkedRecordsIdentifiers({ timelineActivities, objectMetadataItems });
+
+  const firstQueryLoading =
+    loadingTimelineActivities && timelineActivities.length === 0;
+
+  const loadingMore =
+    loadingTimelineActivities && timelineActivities.length > 0;
 
   return {
     timelineActivities,
-    loading,
+    firstQueryLoading,
+    loadingMore,
     fetchMoreRecords,
+    linkedRecords: Object.values(linkedRecordsByObjectNamePlural).flat(),
   };
 };

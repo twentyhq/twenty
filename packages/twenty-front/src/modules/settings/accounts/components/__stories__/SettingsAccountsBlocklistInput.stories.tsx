@@ -55,8 +55,8 @@ export const AddToBlocklist: Story = {
     await userEvent.click(addToBlocklistButton);
 
     expect(updateBlockedEmailListJestFn).toHaveBeenCalledTimes(1);
-    expect(updateBlockedEmailListJestFn).toHaveBeenCalledWith(
+    expect(updateBlockedEmailListJestFn).toHaveBeenCalledWith([
       'test@twenty.com',
-    );
+    ]);
   },
 };

@@ -12,7 +12,7 @@ import { type Response } from 'express';
 // This class add CORS headers to exception response to avoid misleading CORS error
 @Catch()
 export class UnhandledExceptionFilter implements ExceptionFilter {
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
@@ -22,19 +22,24 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
     }
 
     // TODO: Check if needed, remove otherwise.
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header(
-      'Access-Control-Allow-Methods',
-      'GET,HEAD,PUT,PATCH,POST,DELETE',
-    );
-    response.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept',
-    );
+    // Only for a response the CORS middleware never reached. Overwriting a
+    // reflected origin with the wildcard would make the browser reject a
+    // credentialed request that hit an exception, hiding the real error.
+    if (!response.getHeader('Access-Control-Allow-Origin')) {
+      response.header('Access-Control-Allow-Origin', '*');
+      response.header(
+        'Access-Control-Allow-Methods',
+        'GET,HEAD,PUT,PATCH,POST,DELETE',
+      );
+      response.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept',
+      );
+    }
 
     const status =
       exception instanceof HttpException ? exception.getStatus() : 500;
 
-    response.status(status).json(exception.response);
+    response.status(status).json(exception.response ?? exception.message);
   }
 }

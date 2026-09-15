@@ -1,4 +1,3 @@
-import type { PermissionFlagType } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export type FilteredPermissionsResult<T> = {
@@ -7,14 +6,14 @@ export type FilteredPermissionsResult<T> = {
 };
 
 export const getFilteredPermissions = <
-  T extends { key: PermissionFlagType; name: string },
+  T extends { key: string; name: string },
 >({
   permissions,
   permissionFlagKeys,
   searchQuery,
 }: {
   permissions: T[];
-  permissionFlagKeys: PermissionFlagType[];
+  permissionFlagKeys: string[];
   searchQuery: string;
 }): FilteredPermissionsResult<T> => {
   const filteredPermissions = filterBySearchQuery<T>({

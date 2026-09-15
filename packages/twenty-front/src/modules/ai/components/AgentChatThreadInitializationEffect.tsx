@@ -1,7 +1,12 @@
 import { useAtomValue, useStore } from 'jotai';
 import { useEffect } from 'react';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import {
+  isDefined,
+  isValidUuid,
+  tipTapDocumentToMarkdown,
+} from 'twenty-shared/utils';
 
+import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
@@ -15,25 +20,19 @@ import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/curren
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
-import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useApolloClient } from '@apollo/client/react';
-import {
-  GetChatThreadsDocument,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
+
+const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
 export const AgentChatThreadInitializationEffect = () => {
-  const client = useApolloClient();
-  const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
-  const hasAiSettingsPermission = useHasPermissionFlag(
-    PermissionFlagType.AI_SETTINGS,
-  );
+  const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -58,36 +57,42 @@ export const AgentChatThreadInitializationEffect = () => {
     useAtomState(hasInitializedAgentChatThreadsState);
 
   useEffect(() => {
-    if (storeEntry.status !== 'empty' || !hasAiSettingsPermission) {
+    if (storeEntry.status !== 'empty' || !hasAiPermission) {
       return;
     }
 
-    client
-      .query({
-        query: GetChatThreadsDocument,
-        fetchPolicy: 'network-only',
-      })
-      .then((result) => {
-        if (!isDefined(result.data?.chatThreads)) {
-          return;
-        }
+    let isActive = true;
+    let retryTimeoutId: number | undefined;
 
-        replaceDraft('agentChatThreads', result.data.chatThreads);
-        applyChanges();
-      });
-  }, [
-    storeEntry.status,
-    hasAiSettingsPermission,
-    client,
-    replaceDraft,
-    applyChanges,
-  ]);
+    const refreshUntilLoaded = async () => {
+      const agentChatThreads = await refreshAgentChatThreads();
+
+      if (!isActive || isDefined(agentChatThreads)) {
+        return;
+      }
+
+      retryTimeoutId = window.setTimeout(
+        () => void refreshUntilLoaded(),
+        AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS,
+      );
+    };
+
+    void refreshUntilLoaded();
+
+    return () => {
+      isActive = false;
+
+      if (isDefined(retryTimeoutId)) {
+        window.clearTimeout(retryTimeoutId);
+      }
+    };
+  }, [storeEntry.status, hasAiPermission, refreshAgentChatThreads]);
 
   useEffect(() => {
     setAgentChatThreadsLoading(
-      storeEntry.status === 'empty' && hasAiSettingsPermission,
+      storeEntry.status === 'empty' && hasAiPermission,
     );
-  }, [storeEntry.status, hasAiSettingsPermission, setAgentChatThreadsLoading]);
+  }, [storeEntry.status, hasAiPermission, setAgentChatThreadsLoading]);
 
   useEffect(() => {
     if (
@@ -97,7 +102,7 @@ export const AgentChatThreadInitializationEffect = () => {
       return;
     }
 
-    if (storeEntry.status === 'empty' && hasAiSettingsPermission) {
+    if (storeEntry.status === 'empty' && hasAiPermission) {
       return;
     }
 
@@ -113,7 +118,7 @@ export const AgentChatThreadInitializationEffect = () => {
         store.get(agentChatDraftsByThreadIdState.atom)[firstThread.id] ?? '';
 
       setCurrentAiChatThread(firstThread.id);
-      setAgentChatInput(draftForThread);
+      setAgentChatInput(tipTapDocumentToMarkdown(draftForThread));
 
       const firstThreadFamilyKey = { threadId: firstThread.id };
 
@@ -144,15 +149,17 @@ export const AgentChatThreadInitializationEffect = () => {
       store.set(hasTriggeredCreateForDraftState.atom, false);
       setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
       setAgentChatInput(
-        store.get(agentChatDraftsByThreadIdState.atom)[
-          AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-        ] ?? '',
+        tipTapDocumentToMarkdown(
+          store.get(agentChatDraftsByThreadIdState.atom)[
+            AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+          ] ?? '',
+        ),
       );
     }
   }, [
     agentChatVisibleThreads,
     currentAiChatThread,
-    hasAiSettingsPermission,
+    hasAiPermission,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     storeEntry.status,

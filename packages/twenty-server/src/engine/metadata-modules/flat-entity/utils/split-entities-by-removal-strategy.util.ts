@@ -1,34 +1,50 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { dispatchIsActiveUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-is-active-update-to-authored-override.util';
+
 type EntityWithApplicationIdentifier = {
   applicationUniversalIdentifier: string;
+  isActive?: boolean;
+  overrides?: unknown;
+  isSystemSideEffect?: boolean;
 };
 
 export const splitEntitiesByRemovalStrategy = <
   T extends EntityWithApplicationIdentifier,
 >({
+  metadataName,
   entitiesToRemove,
   workspaceCustomApplicationUniversalIdentifier,
   now,
 }: {
+  metadataName: AllMetadataName;
   entitiesToRemove: T[];
   workspaceCustomApplicationUniversalIdentifier: string;
   now: string;
 }): {
   toHardDelete: T[];
-  toDeactivate: (T & { isActive: false; updatedAt: string })[];
+  toDeactivate: (T & { updatedAt: string })[];
 } => {
   const toHardDelete: T[] = [];
-  const toDeactivate: (T & { isActive: false; updatedAt: string })[] = [];
+  const toDeactivate: (T & { updatedAt: string })[] = [];
 
   for (const entity of entitiesToRemove) {
     if (
       entity.applicationUniversalIdentifier ===
-      workspaceCustomApplicationUniversalIdentifier
+        workspaceCustomApplicationUniversalIdentifier &&
+      !entity.isSystemSideEffect
     ) {
       toHardDelete.push(entity);
     } else {
       toDeactivate.push({
-        ...entity,
-        isActive: false as const,
+        ...dispatchIsActiveUpdateToAuthoredOverride({
+          metadataName,
+          flatEntity: entity,
+          isActive: false,
+          authorUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        }),
         updatedAt: now,
       });
     }

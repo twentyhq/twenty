@@ -27,6 +27,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception';
 import { fieldMetadataTypeToColumnType } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/field-metadata-type-to-column-type.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
+import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
 
 export const generateCompositeColumnDefinition = ({
   compositeProperty,
@@ -58,9 +59,14 @@ export const generateCompositeColumnDefinition = ({
     parentFlatFieldMetadata.name,
     compositeProperty,
   );
+  const normalizedDefaultValue = nullifyEmptyCompositeDefaultValue({
+    defaultValue: parentFlatFieldMetadata.defaultValue,
+    fieldType: parentFlatFieldMetadata.type as CompositeFieldMetadataType,
+  });
   const defaultValue =
-    // @ts-expect-error - TODO: fix this
-    parentFlatFieldMetadata.defaultValue?.[compositeProperty.name];
+    normalizedDefaultValue?.[
+      compositeProperty.name as keyof typeof normalizedDefaultValue
+    ];
   const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
   const serializedDefaultValue = serializeDefaultValue({
     columnName,
@@ -83,7 +89,6 @@ export const generateCompositeColumnDefinition = ({
         : columnType,
     isNullable:
       parentFlatFieldMetadata.isNullable || !compositeProperty.isRequired,
-    isUnique: parentFlatFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
     isArray: isArrayFlag,
     isPrimary: false,
@@ -94,6 +99,7 @@ export const generateCompositeColumnDefinition = ({
 
 const generateTsVectorColumnDefinition = (
   flatFieldMetadata: FlatFieldMetadata<FieldMetadataType.TS_VECTOR>,
+  searchVectorAsExpression?: string,
 ): WorkspaceSchemaColumnDefinition => {
   const columnName = computeColumnName(flatFieldMetadata.name);
 
@@ -102,10 +108,9 @@ const generateTsVectorColumnDefinition = (
     type: fieldMetadataTypeToColumnType(flatFieldMetadata.type),
     isNullable: true,
     isArray: false,
-    isUnique: false,
     default: null,
-    asExpression: flatFieldMetadata.settings?.asExpression ?? undefined,
-    generatedType: flatFieldMetadata.settings?.generatedType ?? undefined,
+    asExpression: searchVectorAsExpression ?? undefined,
+    generatedType: 'STORED',
     isPrimary: false,
   };
 };
@@ -128,7 +133,6 @@ const generateRelationColumnDefinition = (
     type: fieldMetadataTypeToColumnType(FieldMetadataType.UUID),
     isNullable: true,
     isArray: false,
-    isUnique: false,
     default: null,
     isPrimary: false,
   };
@@ -165,7 +169,6 @@ const generateColumnDefinition = ({
     isArray:
       flatFieldMetadata.type === FieldMetadataType.ARRAY ||
       flatFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
-    isUnique: flatFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
     isPrimary: flatFieldMetadata.name === 'id',
   };
@@ -175,10 +178,12 @@ export const generateColumnDefinitions = ({
   flatFieldMetadata,
   flatObjectMetadata,
   workspaceId,
+  searchVectorAsExpression,
 }: {
   flatFieldMetadata: FlatFieldMetadata;
   flatObjectMetadata: FlatObjectMetadata;
   workspaceId: string;
+  searchVectorAsExpression?: string;
 }): WorkspaceSchemaColumnDefinition[] => {
   const { tableName, schemaName } = getWorkspaceSchemaContextForMigration({
     workspaceId,
@@ -201,7 +206,12 @@ export const generateColumnDefinitions = ({
   if (
     isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.TS_VECTOR)
   ) {
-    return [generateTsVectorColumnDefinition(flatFieldMetadata)];
+    return [
+      generateTsVectorColumnDefinition(
+        flatFieldMetadata,
+        searchVectorAsExpression,
+      ),
+    ];
   }
 
   if (isMorphOrRelationFlatFieldMetadata(flatFieldMetadata)) {

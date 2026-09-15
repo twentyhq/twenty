@@ -31,4 +31,18 @@ describe('getOperatorsForFieldType', () => {
     expect(result).toContain('containsIlike');
     expect(result).toContain('isEmptyArray');
   });
+
+  it.each([FieldMetadataType.SELECT, FieldMetadataType.RATING])(
+    'should allow enum operators and ordering operators for %s',
+    (fieldType) => {
+      const result = getOperatorsForFieldType(fieldType);
+
+      expect(result).toContain('eq');
+      expect(result).toContain('in');
+      expect(result).toContain('gt');
+      expect(result).toContain('gte');
+      expect(result).toContain('lt');
+      expect(result).toContain('lte');
+    },
+  );
 });

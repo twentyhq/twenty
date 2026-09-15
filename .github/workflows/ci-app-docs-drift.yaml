@@ -1,0 +1,172 @@
+name: CI App Docs Drift
+
+# When a PR changes the app-development surface (twenty-sdk, create-twenty-app,
+# twenty-client-sdk, or the shared manifest types), an agent checks whether the
+# app documentation under packages/twenty-docs/developers/extend/apps is
+# impacted and, only when it is, posts a single sticky comment with its findings.
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        packages/twenty-sdk/**
+        packages/create-twenty-app/**
+        packages/twenty-client-sdk/**
+        packages/twenty-shared/src/application/**
+        packages/twenty-shared/src/types/**
+
+  docs-drift-check:
+    needs: changed-files-check
+    # Secrets are unavailable on fork PRs; skip there and on bot PRs.
+    if: >-
+      needs.changed-files-check.outputs.any_changed == 'true' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.pull_request.user.type != 'Bot'
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - name: Run docs drift agent
+        id: drift-agent
+        uses: anthropics/claude-code-action@ac7e24bf2938964b8ab203e417a2773802392ddd # v1.0.146
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          claude_args: |
+            --max-turns 60 --json-schema '{"type":"object","properties":{"hasDrift":{"type":"boolean"},"summary":{"type":"string"}},"required":["hasDrift","summary"]}' --allowedTools "Bash(git diff *),Bash(git log *),Bash(git show *),Bash(grep *),Bash(cat *),Bash(ls *),Bash(find *),Bash(head *),Bash(tail *),Bash(gh pr comment *)"
+          prompt: |
+            You are the app-documentation drift checker for the twenty repository.
+
+            A pull request changed files in the app-development platform. Your job is to
+            decide whether the documentation under
+            `packages/twenty-docs/developers/extend/apps/` (English pages only — ignore
+            `packages/twenty-docs/l/`) is impacted, and report your findings as ONE pull
+            request comment.
+
+            ## Step 1 — Understand the change
+
+            The PR branch is checked out with full history; the base branch is
+            `origin/${{ github.base_ref }}`. Inspect what the PR changes however you
+            see fit. Only these kinds of changes are documentation-relevant:
+
+            - CLI commands, subcommands, flags, defaults, or help text
+              (`packages/twenty-sdk/src/cli/commands/**`)
+            - `define*` function signatures, config properties, validation rules,
+              or their warnings (`packages/twenty-sdk/src/sdk/define/**`)
+            - Enum / string-union values and manifest types
+              (`packages/twenty-shared/src/application/**`, `packages/twenty-shared/src/types/**`)
+            - Exports added/removed/renamed in the `exports` maps of `twenty-sdk` or
+              `twenty-client-sdk` package.json, or in their public entry points
+            - Front-component runtime hooks and host API
+              (`packages/twenty-sdk/src/sdk/front-component/**`)
+            - The scaffold template (`packages/create-twenty-app/src/constants/template/**`)
+              and scaffolder flags/prompts (`packages/create-twenty-app/src/cli.ts`,
+              `create-app.command.ts`)
+            - Environment variables injected into logic functions or front components
+            - Error codes surfaced to app developers
+
+            Internal refactors, tests, and implementation-only changes are NOT relevant —
+            if the changes contain only those, say so and stop.
+
+            ## Step 2 — Map to documentation
+
+            Use this mapping to know which pages to check (read the actual pages):
+
+            | Source area | Docs pages |
+            |---|---|
+            | CLI commands (`src/cli/commands`) | `operations/cli.mdx`, `getting-started/quick-start.mdx`, `operations/sync-and-recovery.mdx`, `getting-started/local-server.mdx`, `getting-started/scaffolding.mdx` |
+            | `defineObject`/`defineField`/relations/indexes | `data/*.mdx` |
+            | `defineApplication`/roles/install hooks/variables | `config/*.mdx` |
+            | Logic functions, triggers, connections, agents/skills | `logic/*.mdx` |
+            | Views, navigation, page layouts, front components, command menu | `layout/*.mdx` |
+            | Publish/install/deploy, versioning, engines | `operations/publishing.mdx`, `operations/sync-and-recovery.mdx` |
+            | Testing APIs (`twenty-sdk/cli` operations) | `operations/testing.mdx` |
+            | Scaffold template | `getting-started/project-structure.mdx`, `getting-started/quick-start.mdx`, `operations/testing.mdx`, `operations/publishing.mdx` |
+            | client SDK (`core`/`metadata`/`rest`/`generate`) | `logic/logic-functions.mdx`, `layout/front-components.mdx`, `operations/cli.mdx` |
+            | Enum value sets (FieldType, ViewType, availabilityType, NavigationMenuItemType, ...) | the page documenting that value set (search for the enum name) |
+
+            Also check whether the PR already updates the impacted docs pages — if it
+            does, verify the update matches the code change.
+
+            ## Step 3 — Report
+
+            If there is NO documentation impact, do NOT post or create any comment.
+            Skip the comment entirely and go straight to Step 4.
+
+            Only when the documentation is impacted, post exactly one comment on PR
+            #${{ github.event.pull_request.number }} with:
+            `gh pr comment ${{ github.event.pull_request.number }} --edit-last --create-if-none --body ...`
+            (this updates the previous drift-check comment in place on subsequent runs).
+            Start the comment body with the marker `<!-- app-docs-drift-check -->`.
+
+            Comment format:
+            - Title line: `### App docs drift check`
+            - A table with columns **Change** (what changed in the code),
+              **Docs page** (repo-relative path), **Status** (`✅ already updated in this PR`
+              / `⚠️ needs update`), and **Suggested fix** (one concrete sentence, e.g. the
+              exact value to add to a table).
+            - Be terse. No preamble, no sign-off. Only report genuine drift — if unsure
+              whether something is user-facing, say it's uncertain rather than asserting.
+
+            ## Step 4 — Return the verdict
+
+            After posting the comment, return your final answer as the structured
+            output the CI gate consumes:
+            - `hasDrift`: `true` if at least one impacted docs page still needs updating
+              (drift is NOT fully resolved by this PR); `false` if there is no
+              documentation impact, or every impacted page is already correctly updated
+              in this PR.
+            - `summary`: one terse sentence describing the verdict.
+
+            Environment: GH_TOKEN is available for `gh`. The PR branch is checked out.
+          settings: |
+            {
+              "env": {
+                "GH_TOKEN": "${{ secrets.GITHUB_TOKEN }}"
+              }
+            }
+
+      - name: Gate on drift verdict
+        if: always()
+        env:
+          AGENT_OUTCOME: ${{ steps.drift-agent.outcome }}
+          STRUCTURED_OUTPUT: ${{ steps.drift-agent.outputs.structured_output }}
+        run: |
+          if [ "$AGENT_OUTCOME" != "success" ]; then
+            echo "::error::Docs drift checker did not complete (agent step outcome: $AGENT_OUTCOME)."
+            exit 1
+          fi
+          if [ -z "$STRUCTURED_OUTPUT" ]; then
+            echo "::error::Docs drift checker did not return a structured verdict."
+            exit 1
+          fi
+          has_drift=$(printf '%s' "$STRUCTURED_OUTPUT" | jq -r '.hasDrift')
+          if [ "$has_drift" = "true" ]; then
+            echo "::error::App docs drift detected. See the app-docs-drift-check comment on this PR."
+            exit 1
+          fi
+          if [ "$has_drift" = "false" ]; then
+            echo "No app docs drift."
+            exit 0
+          fi
+          echo "::error::Structured verdict present but 'hasDrift' was not a recognizable boolean: $has_drift"
+          exit 1

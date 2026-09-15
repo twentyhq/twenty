@@ -16,7 +16,7 @@ Twenty は現時点でネイティブの数式フィールドをまだサポー�
 | **リードスコア**   | 複数の基準に基づくポイント                |
 
 <Tip>
-  パイプラインのステージでの時間を追跡する完全な例については、[商談が各ステージにとどまる時間を追跡](/l/ja/user-guide/views-pipelines/how-tos/track-time-in-stage) を参照してください。
+パイプラインのステージでの時間を追跡する完全な例については、[商談が各ステージにとどまる時間を追跡](/l/ja/user-guide/views-pipelines/how-tos/track-time-in-stage) を参照してください。
 </Tip>
 
 ## 基本の式：連結
@@ -55,7 +55,7 @@ export const main = async (params) => {
 
 ワークフロー全体については、[パイプラインで見込み金額を表示する方法](/l/ja/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) を参照してください。
 
-### クイックセットアップ
+### セットアップ
 
 1. **トリガー**: レコードが更新される（Opportunities、Amount または Probability フィールド）
 
@@ -105,7 +105,7 @@ export const main = async (params) => {
 3. **レコードを更新**: 期日までの日数を `{{code.daysUntilDue}}` に設定
 
 <Note>
-  負の値は期限超過のタスクを示します。 このフィールドを使用して、緊急度でタスクをフィルターまたは並べ替えることができます。
+負の値は期限超過のタスクを示します。 このフィールドを使用して、緊急度でタスクをフィルターまたは並べ替えることができます。
 </Note>
 
 ## 条件付き式：リードスコア

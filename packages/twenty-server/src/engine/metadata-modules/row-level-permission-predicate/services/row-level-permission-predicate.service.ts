@@ -35,6 +35,8 @@ import {
 } from 'src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception';
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { validateRowLevelPermissionRuleOwnershipOrThrow } from 'src/engine/metadata-modules/row-level-permission-predicate/utils/validate-row-level-permission-rule-ownership.util';
+import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -189,6 +191,19 @@ export class RowLevelPermissionPredicateService {
           ],
         },
       );
+
+    validateRowLevelPermissionRuleOwnershipOrThrow({
+      roleId,
+      objectMetadataId,
+      predicates,
+      predicateGroups,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps,
+      workspaceMemberObjectMetadataId: buildObjectIdByNameMaps(
+        flatObjectMetadataMaps,
+      ).idByNameSingular.workspaceMember,
+    });
 
     const existingPredicates = Object.values(
       flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,

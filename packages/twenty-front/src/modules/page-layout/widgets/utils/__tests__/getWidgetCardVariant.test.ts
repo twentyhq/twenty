@@ -1,115 +1,40 @@
 import { getWidgetCardVariant } from '@/page-layout/widgets/utils/getWidgetCardVariant';
-import {
-  PageLayoutTabLayoutMode,
-  PageLayoutType,
-} from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 describe('getWidgetCardVariant', () => {
-  it('should return dashboard for DASHBOARD page layout type', () => {
+  describe('page layout variants', () => {
+    it.each([
+      ['DASHBOARD', PageLayoutType.DASHBOARD],
+      ['STANDALONE_PAGE', PageLayoutType.STANDALONE_PAGE],
+    ])("returns 'framed' for %s", (_label, pageLayoutType) => {
+      expect(
+        getWidgetCardVariant({
+          isSideColumnContext: false,
+          pageLayoutType,
+        }),
+      ).toBe('framed');
+    });
+
+    it.each([
+      ['RECORD_PAGE', PageLayoutType.RECORD_PAGE],
+      ['RECORD_INDEX', PageLayoutType.RECORD_INDEX],
+      ['no page layout type', null],
+    ])("returns 'flush' for %s", (_label, pageLayoutType) => {
+      expect(
+        getWidgetCardVariant({
+          isSideColumnContext: false,
+          pageLayoutType,
+        }),
+      ).toBe('flush');
+    });
+  });
+
+  it("returns 'flush' in a side column context, even on a framed page", () => {
     expect(
       getWidgetCardVariant({
-        layoutMode: PageLayoutTabLayoutMode.GRID,
-        isInPinnedTab: false,
+        isSideColumnContext: true,
         pageLayoutType: PageLayoutType.DASHBOARD,
-        isMobile: false,
-        isInSidePanel: false,
       }),
-    ).toBe('dashboard');
-  });
-
-  it('should return standalone for STANDALONE_PAGE page layout type', () => {
-    expect(
-      getWidgetCardVariant({
-        layoutMode: PageLayoutTabLayoutMode.GRID,
-        isInPinnedTab: false,
-        pageLayoutType: PageLayoutType.STANDALONE_PAGE,
-        isMobile: false,
-        isInSidePanel: false,
-      }),
-    ).toBe('standalone');
-  });
-
-  it('should prioritize standalone over canvas', () => {
-    expect(
-      getWidgetCardVariant({
-        layoutMode: PageLayoutTabLayoutMode.CANVAS,
-        isInPinnedTab: false,
-        pageLayoutType: PageLayoutType.STANDALONE_PAGE,
-        isMobile: false,
-        isInSidePanel: false,
-      }),
-    ).toBe('standalone');
-  });
-
-  it('should return canvas for CANVAS layout mode', () => {
-    expect(
-      getWidgetCardVariant({
-        layoutMode: PageLayoutTabLayoutMode.CANVAS,
-        isInPinnedTab: false,
-        pageLayoutType: PageLayoutType.RECORD_PAGE,
-        isMobile: false,
-        isInSidePanel: false,
-      }),
-    ).toBe('canvas');
-  });
-
-  it('should return side-column when isInPinnedTab is true', () => {
-    expect(
-      getWidgetCardVariant({
-        layoutMode: PageLayoutTabLayoutMode.GRID,
-        isInPinnedTab: true,
-        pageLayoutType: PageLayoutType.RECORD_PAGE,
-        isMobile: false,
-        isInSidePanel: false,
-      }),
-    ).toBe('side-column');
-  });
-
-  it('should return side-column when isMobile is true', () => {
-    expect(
-      getWidgetCardVariant({
-        layoutMode: PageLayoutTabLayoutMode.GRID,
-        isInPinnedTab: false,
-        pageLayoutType: PageLayoutType.RECORD_PAGE,
-        isMobile: true,
-        isInSidePanel: false,
-      }),
-    ).toBe('side-column');
-  });
-
-  it('should return side-column when isInSidePanel is true', () => {
-    expect(
-      getWidgetCardVariant({
-        layoutMode: PageLayoutTabLayoutMode.GRID,
-        isInPinnedTab: false,
-        pageLayoutType: PageLayoutType.RECORD_PAGE,
-        isMobile: false,
-        isInSidePanel: true,
-      }),
-    ).toBe('side-column');
-  });
-
-  it('should return record-page as default', () => {
-    expect(
-      getWidgetCardVariant({
-        layoutMode: PageLayoutTabLayoutMode.GRID,
-        isInPinnedTab: false,
-        pageLayoutType: PageLayoutType.RECORD_PAGE,
-        isMobile: false,
-        isInSidePanel: false,
-      }),
-    ).toBe('record-page');
-  });
-
-  it('should prioritize dashboard over canvas', () => {
-    expect(
-      getWidgetCardVariant({
-        layoutMode: PageLayoutTabLayoutMode.CANVAS,
-        isInPinnedTab: false,
-        pageLayoutType: PageLayoutType.DASHBOARD,
-        isMobile: false,
-        isInSidePanel: false,
-      }),
-    ).toBe('dashboard');
+    ).toBe('flush');
   });
 });

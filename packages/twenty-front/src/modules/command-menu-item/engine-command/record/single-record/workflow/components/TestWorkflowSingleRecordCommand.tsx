@@ -1,6 +1,7 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRunWorkflowVersion } from '@/workflow/hooks/useRunWorkflowVersion';
+import { useWorkflowVersionContent } from '@/workflow/workflow-version/hooks/useWorkflowVersionContent';
 import { useWorkflowWithCurrentVersion } from '@/workflow/hooks/useWorkflowWithCurrentVersion';
 import { getTestPayloadFromTrigger } from '@/workflow/workflow-trigger/utils/getTestPayloadFromTrigger';
 import { isDefined } from 'twenty-shared/utils';
@@ -12,6 +13,9 @@ export const TestWorkflowSingleRecordCommand = () => {
   const { runWorkflowVersion } = useRunWorkflowVersion();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(
     recordId ?? '',
+  );
+  const { content } = useWorkflowVersionContent(
+    workflowWithCurrentVersion?.currentVersion.id,
   );
 
   if (!isDefined(recordId)) {
@@ -25,21 +29,21 @@ export const TestWorkflowSingleRecordCommand = () => {
 
     const { currentVersion } = workflowWithCurrentVersion;
 
-    if (!isDefined(currentVersion.trigger)) {
+    if (!isDefined(content?.trigger)) {
       return;
     }
 
     runWorkflowVersion({
       workflowVersionId: currentVersion.id,
       workflowId: workflowWithCurrentVersion.id,
-      payload: getTestPayloadFromTrigger(currentVersion.trigger),
+      payload: getTestPayloadFromTrigger(content.trigger),
     });
   };
 
   return (
     <HeadlessEngineCommandWrapperEffect
       execute={handleExecute}
-      ready={isDefined(workflowWithCurrentVersion)}
+      ready={isDefined(workflowWithCurrentVersion) && isDefined(content)}
     />
   );
 };

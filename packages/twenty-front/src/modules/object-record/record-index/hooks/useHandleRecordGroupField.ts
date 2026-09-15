@@ -1,17 +1,14 @@
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { useSetRecordGroups } from '@/object-record/record-group/hooks/useSetRecordGroups';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
 import { useLoadRecordIndexStates } from '@/object-record/record-index/hooks/useLoadRecordIndexStates';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useGetViewFromState } from '@/views/hooks/useGetViewFromState';
-import { type ViewGroup } from '@/views/types/ViewGroup';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { v4 } from 'uuid';
-import { type View as GqlView } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useHandleRecordGroupField = () => {
@@ -23,12 +20,40 @@ export const useHandleRecordGroupField = () => {
 
   const { getViewFromState } = useGetViewFromState();
 
-  const { setRecordGroupsFromViewGroups } = useSetRecordGroups();
-
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
   const { loadRecordIndexStates } = useLoadRecordIndexStates();
 
   const store = useStore();
+
+  const updateViewMainGroupByFieldMetadataId = useCallback(
+    async ({
+      viewId,
+      mainGroupByFieldMetadataId,
+    }: {
+      viewId: string;
+      mainGroupByFieldMetadataId: string | null;
+    }) => {
+      const updatedViewResult = await performViewApiUpdate({
+        id: viewId,
+        input: {
+          mainGroupByFieldMetadataId,
+        },
+      });
+
+      if (updatedViewResult.status !== 'successful') {
+        return;
+      }
+
+      const updatedView = updatedViewResult.response.data?.updateView;
+
+      if (!isDefined(updatedView)) {
+        return;
+      }
+
+      loadRecordIndexStates(updatedView, objectMetadataItem);
+    },
+    [performViewApiUpdate, loadRecordIndexStates, objectMetadataItem],
+  );
 
   const handleRecordGroupFieldChange = useCallback(
     async (fieldMetadataItem: FieldMetadataItem) => {
@@ -44,84 +69,25 @@ export const useHandleRecordGroupField = () => {
         return;
       }
 
+      const isRelationGroupBy = isManyToOneRelationField(fieldMetadataItem);
+
       if (
-        isUndefinedOrNull(fieldMetadataItem.options) ||
-        fieldMetadataItem.options.length === 0
+        !isRelationGroupBy &&
+        (isUndefinedOrNull(fieldMetadataItem.options) ||
+          fieldMetadataItem.options.length === 0)
       ) {
         return;
       }
 
-      const updatedViewResult = await performViewAPIUpdate({
-        id: view.id,
-        input: {
-          mainGroupByFieldMetadataId: fieldMetadataItem.id,
-        },
-      });
-
-      if (updatedViewResult.status === 'successful') {
-        const updatedView = updatedViewResult.response.data
-          ?.updateView as GqlView;
-
-        if (isDefined(updatedView)) {
-          await loadRecordIndexStates(updatedView, objectMetadataItem);
-        }
-      }
-
-      const existingGroupKeys = new Set(
-        view.viewGroups.map(
-          (group) => `${view.mainGroupByFieldMetadataId}:${group.fieldValue}`,
-        ),
-      );
-
-      const viewGroupsToCreate = fieldMetadataItem.options
-        .filter(
-          (option) =>
-            !existingGroupKeys.has(`${fieldMetadataItem.id}:${option.value}`),
-        )
-        .sort((a, b) => a.value.localeCompare(b.value))
-        .map(
-          (option, index) =>
-            ({
-              id: v4(),
-              fieldValue: option.value,
-              isVisible: true,
-              position: index,
-            }) satisfies ViewGroup,
-        );
-
-      if (
-        !existingGroupKeys.has(`${fieldMetadataItem.id}:`) &&
-        fieldMetadataItem.isNullable === true
-      ) {
-        viewGroupsToCreate.push({
-          id: v4(),
-          fieldValue: '',
-          isVisible: true,
-          position: fieldMetadataItem.options.length,
-        } satisfies ViewGroup);
-      }
-
-      const newViewGroupsList = [
-        ...view.viewGroups.filter(
-          (_group) => view.mainGroupByFieldMetadataId === fieldMetadataItem.id,
-        ),
-        ...viewGroupsToCreate,
-      ];
-
-      setRecordGroupsFromViewGroups({
+      await updateViewMainGroupByFieldMetadataId({
         viewId: view.id,
         mainGroupByFieldMetadataId: fieldMetadataItem.id,
-        viewGroups: newViewGroupsList,
-        objectMetadataItem,
       });
     },
     [
       currentViewIdCallbackState,
       getViewFromState,
-      performViewAPIUpdate,
-      setRecordGroupsFromViewGroups,
-      objectMetadataItem,
-      loadRecordIndexStates,
+      updateViewMainGroupByFieldMetadataId,
       store,
     ],
   );
@@ -139,20 +105,18 @@ export const useHandleRecordGroupField = () => {
       return;
     }
 
-    if (view.viewGroups.length === 0) {
+    if (!isDefined(view.mainGroupByFieldMetadataId)) {
       return;
     }
 
-    await performViewAPIUpdate({
-      id: view.id,
-      input: {
-        mainGroupByFieldMetadataId: null,
-      },
+    await updateViewMainGroupByFieldMetadataId({
+      viewId: view.id,
+      mainGroupByFieldMetadataId: null,
     });
   }, [
     currentViewIdCallbackState,
     getViewFromState,
-    performViewAPIUpdate,
+    updateViewMainGroupByFieldMetadataId,
     store,
   ]);
 

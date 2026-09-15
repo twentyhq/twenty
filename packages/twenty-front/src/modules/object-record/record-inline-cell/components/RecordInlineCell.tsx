@@ -20,7 +20,7 @@ import { getDropdownFocusIdForRecordField } from '@/object-record/utils/getDropd
 import { useGoBackToPreviousDropdownFocusId } from '@/ui/layout/dropdown/hooks/useGoBackToPreviousDropdownFocusId';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { useStore } from 'jotai';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 import {
   RecordInlineCellContext,
@@ -98,12 +98,18 @@ export const RecordInlineCell = ({
     closeInlineCell();
   };
 
-  const handleSubmit: FieldInputEvent = ({ newValue, skipPersist }) => {
+  const handleSubmit: FieldInputEvent = ({
+    newValue,
+    skipPersist,
+    skipClose,
+  }) => {
     if (skipPersist !== true) {
       persistFieldFromFieldInputContext(newValue);
     }
 
-    closeInlineCell();
+    if (skipClose !== true) {
+      closeInlineCell();
+    }
   };
 
   const handleCancel = () => {

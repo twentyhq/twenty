@@ -1,4 +1,4 @@
-import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
+import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { MESSAGE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-data-seeds.constant';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 
@@ -87,13 +87,11 @@ const GENERATE_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_SEEDS =
         CHANNEL_ID = MESSAGE_CHANNEL_DATA_SEED_IDS.SALES;
       }
 
-      // 50/50 split between incoming and outgoing messages
       const DIRECTION: MessageDirection =
         Math.random() < 0.5
           ? MessageDirection.INCOMING
           : MessageDirection.OUTGOING;
 
-      // Generate unique external IDs for email sync
       const MESSAGE_EXTERNAL_ID = `msg-${ASSOCIATION_INDEX}-${Date.now()}`;
       const MESSAGE_THREAD_EXTERNAL_ID = `thread-${Math.floor(ASSOCIATION_INDEX / 2)}-${Date.now()}`;
 

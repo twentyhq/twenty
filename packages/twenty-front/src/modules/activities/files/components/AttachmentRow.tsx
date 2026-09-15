@@ -17,7 +17,8 @@ import { type AttachmentWithFile } from '@/activities/files/utils/filterAttachme
 import { FileIcon } from '@/file/components/FileIcon';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { IconCalendar, OverflowingTextWithTooltip } from 'twenty-ui/display';
+import { IconCalendar } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNavigationModifierPressed } from 'twenty-ui/utilities';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -71,6 +72,10 @@ const StyledLinkContainer = styled.div`
   width: 100%;
 `;
 
+const StyledTextInputContainer = styled.div`
+  width: 100%;
+`;
+
 type AttachmentRowProps = {
   attachment: AttachmentWithFile;
   onPreview?: (attachment: AttachmentWithFile) => void;
@@ -96,6 +101,7 @@ export const AttachmentRow = ({
   const fileCategory = getFileCategoryFromExtension(attachment.file.extension);
 
   const fileUrl = attachment.file.url;
+  const safeFileUrl = getSafeUrl(fileUrl);
 
   const { destroyOneRecord: destroyOneAttachment } = useDestroyOneRecord({
     objectNameSingular: CoreObjectNameSingular.Attachment,
@@ -140,6 +146,9 @@ export const AttachmentRow = ({
   };
 
   const handleOnKeyDown = (e: React.KeyboardEvent) => {
+    if (e.nativeEvent.isComposing || e.keyCode === 229) {
+      return;
+    }
     if (e.key === 'Enter') {
       saveAttachmentName();
     }
@@ -149,15 +158,29 @@ export const AttachmentRow = ({
     downloadFile(fileUrl, `${attachmentFileName}${attachmentFileExtension}`);
   };
 
-  const handleOpenDocument = (e: React.MouseEvent) => {
-    // Cmd/Ctrl+click opens new tab, right click opens context menu
-    if (isNavigationModifierPressed(e) === true) {
+  const handleRowClick = () => {
+    if (isDefined(onPreview)) {
+      onPreview(attachment);
       return;
     }
 
-    // Only prevent default and use preview if onPreview is provided
+    if (!isDefined(safeFileUrl)) {
+      return;
+    }
+
+    window.open(safeFileUrl, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleFileLinkClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.stopPropagation();
+
+    // Cmd/Ctrl+click opens new tab, right click opens context menu
+    if (isNavigationModifierPressed(event) === true) {
+      return;
+    }
+
     if (isDefined(onPreview)) {
-      e.preventDefault();
+      event.preventDefault();
       onPreview(attachment);
     }
   };
@@ -170,23 +193,27 @@ export const AttachmentRow = ({
         } as GenericFieldContextType
       }
     >
-      <ActivityRow disabled>
+      <ActivityRow onClick={handleRowClick} disabled={isEditing}>
         <StyledLeftContent>
-          <FileIcon fileCategory={fileCategory} />
+          <FileIcon fileCategory={fileCategory} thumbnailUrl={fileUrl} />
           {isEditing ? (
-            <SettingsTextInput
-              instanceId={`attachment-${attachment.id}-name`}
-              value={attachmentFileName}
-              onChange={handleOnChange}
-              onBlur={handleOnBlur}
-              autoFocus
-              onKeyDown={handleOnKeyDown}
-            />
+            <StyledTextInputContainer
+              onClick={(event) => event.stopPropagation()}
+            >
+              <SettingsTextInput
+                instanceId={`attachment-${attachment.id}-name`}
+                value={attachmentFileName}
+                onChange={handleOnChange}
+                onBlur={handleOnBlur}
+                autoFocus
+                onKeyDown={handleOnKeyDown}
+              />
+            </StyledTextInputContainer>
           ) : (
             <StyledLinkContainer>
               <StyledLink
-                onClick={handleOpenDocument}
-                href={getSafeUrl(fileUrl)}
+                onClick={handleFileLinkClick}
+                href={safeFileUrl}
                 target="_blank"
                 rel="noopener noreferrer"
               >

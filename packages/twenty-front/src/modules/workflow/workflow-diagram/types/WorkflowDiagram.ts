@@ -3,7 +3,7 @@ import {
   type WorkflowRunStepStatus,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
-import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/workflow-iterator/types/WorkflowStepConnectionOptions';
+import { type WorkflowStepConnectionOptions } from '@/workflow/workflow-diagram/types/WorkflowStepConnectionOptions';
 import { type MessageDescriptor } from '@lingui/core';
 import {
   type Connection,
@@ -48,6 +48,7 @@ export type WorkflowDiagramNodeDefaultHandleOptions = {
 export type WorkflowDiagramStepNodeData =
   | {
       nodeType: 'trigger';
+      targetHandleIds?: string[];
       triggerType: WorkflowTriggerType;
       name: string;
       icon?: string;
@@ -63,8 +64,10 @@ export type WorkflowDiagramStepNodeData =
     }
   | {
       nodeType: 'action';
+      targetHandleIds?: string[];
       actionType: WorkflowActionType;
       name: string;
+      logicFunctionId?: string;
       runStatus?: WorkflowRunStepStatus;
       hasNextStepIds: boolean;
       stepId: string;
@@ -108,13 +111,16 @@ export type WorkflowDiagramEdgeLabelOptions = {
 
 export type WorkflowDiagramEdgePathStrategy =
   | 'smooth-step-path-to-target'
-  | 'bypass-source-node-on-right-side';
+  | 'bypass-source-node-on-right-side'
+  | 'parallel-edge';
 
 export type WorkflowDiagramDefaultEdgeData = {
   edgeType: 'default';
+  sourceConnectionOptions?: WorkflowStepConnectionOptions;
   edgeExecutionStatus?: StepStatus;
   labelOptions?: WorkflowDiagramEdgeLabelOptions;
   edgePathStrategy?: WorkflowDiagramEdgePathStrategy;
+  parallelEdgeOffset?: number;
 };
 
 export type WorkflowDiagramEdgeData = WorkflowDiagramDefaultEdgeData;

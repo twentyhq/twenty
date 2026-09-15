@@ -1,0 +1,908 @@
+---
+title: الوظائف المنطقية
+description: عرّف دوال TypeScript على جانب الخادم مع HTTP وcron ومشغّلات أحداث قاعدة البيانات.
+icon: bolt
+---
+
+دوال المنطق هي دوال TypeScript على جانب الخادم تعمل على منصة Twenty. يمكن تشغيلها بواسطة طلبات HTTP أو جداول cron أو أحداث قاعدة البيانات — كما يمكن إتاحتها كأدوات لوكلاء الذكاء الاصطناعي.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="عرّف الدوال المنطقية ومشغّلاتها">
+
+كل ملف وظيفة يستخدم `defineLogicFunction()` لتصدير تكوين مع معالج ومشغّلات اختيارية.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const body = (params.body ?? {}) as { name?: string };
+  const name = body.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+أنواع المشغّلات المتاحة:
+* **httpRoute**: يعرِض وظيفتك على مسار وطريقة HTTP. في شيفرة التطبيق، أضف البادئة `/s/` إلى مسار التوجيه عند استخدام `RestApiClient`؛ يستخدم عنوان URL المنشور قاعدة `TWENTY_FUNCTIONS_URL` المُحدَّدة (أو `\<server-url>/s` إذا لم تُحدَّد).
+
+<Note>
+لاستدعاء دالة منطقية يتم تشغيلها بواسطة مسار من مكون واجهة (بدون واجهة رسومية)، راجع قسم [استدعاء دالة منطقية](/l/ar/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
+* **cron**: يشغّل وظيفتك على جدول باستخدام تعبير CRON.
+* **databaseEvent**: يعمل على أحداث دورة حياة كائنات مساحة العمل. عندما تكون عملية الحدث هي `updated`، يمكن تحديد الحقول المحددة المراد الاستماع إليها في مصفوفة `updatedFields`. إذا تُركت غير معرّفة أو فارغة، فسيؤدي أي تحديث إلى تشغيل الدالة.
+> مثال: `person.updated`، `*.created`، `company.*`
+* **serverRoute**: يوفّر مسار HTTP واحدًا بنطاق التسجيل. تعمل دالة **resolver** (المُعلَنة باستخدام `serverRouteTriggerSettings`) في مساحة عمل المالك وتُرجِع إمّا كائن `Response` متزامنًا أو كلاً من مساحة العمل المستهدفة ودالة المنطق المطلوب إدراجها في قائمة الانتظار؛ في مسار الإدراج في قائمة الانتظار يؤكّد النظام الأساسي تلقّي الطلب برمز `202` ويُشغِّل ذلك **الهدف** في طابور العامل (worker queue). راجع [مشغّل مسار الخادم](#server-route-trigger).
+
+<Note>
+يمكنك أيضًا تنفيذ دالة يدويًا باستخدام CLI:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+يمكنك متابعة السجلات باستخدام:
+
+```bash filename="Terminal"
+yarn twenty dev:function:logs
+```
+</Note>
+
+#### حمولة مشغل المسار
+
+عندما يستدعي مُشغِّل المسار وظيفتك المنطقية، فإنها تتلقّى كائن `RoutePayload` الذي يتبع [صيغة AWS HTTP API v2](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+استورد نوع `RoutePayload` من `twenty-sdk/logic-function`:
+
+```ts
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+يحتوي نوع `RoutePayload` على البنية التالية:
+
+  | الخاصية                      | النوع                                                   | الوصف                                                                                                                                                                                          | مثال                                                                       |
+  | ---------------------------- | ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | رؤوس HTTP (فقط تلك المدرجة في `forwardedRequestHeaders`)                                                                                                                                       | انظر القسم أدناه                                                           |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | معلمات سلسلة الاستعلام (تُضمّ القيم المتعددة باستخدام فواصل)                                                                                                                                   | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | معلمات المسار المستخرجة من نمط المسار                                                                                                                                                          | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | جسم الطلب المُحلَّل (JSON)                                                                                                                                                                     | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | نص الطلب الأصلي بترميز UTF-8، قبل تحليل JSON. مفيد للتحقق من تواقيع خطافات الويب على نمط HMAC (مثل `X-Hub-Signature-256` الخاص بـ GitHub وStripe). `undefined` عندما لم يحتفظ وقت التشغيل بها. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | ما إذا كان جسم الطلب مُرمَّزًا بترميز base64                                                                                                                                                   |                                                                            |
+  | `requestContext.http.method` | `سلسلة نصية`                                            | طريقة HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                     |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | المسار الخام للطلب                                                                                                                                                                             |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+افتراضيًا، **لا** تُمرَّر رؤوس HTTP من الطلبات الواردة إلى دالتك المنطقية لأسباب أمنية.
+للوصول إلى رؤوس محددة، أدرِجها في مصفوفة `forwardedRequestHeaders`:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+في معالجك، يمكنك الوصول إلى الرؤوس المُمرَّرة بهذه الطريقة:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+تُحوَّل أسماء الرؤوس إلى أحرف صغيرة. يمكنك الوصول إليها باستخدام مفاتيح بأحرف صغيرة (على سبيل المثال، `event.headers['content-type']`).
+</Note>
+
+#### استجابة HTTP مخصصة
+
+بشكل افتراضي، فإن إرجاع قيمة بسيطة من المعالج الخاص بك يعيدها كاستجابة `200` (بصيغة JSON للكائنات و`text/plain` للسلاسل النصية). للتحكم في رمز الحالة ورؤوس الاستجابة، أعد كائن `Response` من `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+لأسباب أمنية، يتم تقييد ترويسات الاستجابة بقائمة مسموح بها. يتم إسقاط أي ترويسة ليست في القائمة (مثل `Set-Cookie`، وترويسات CORS مثل `Access-Control-Allow-Origin`، أو ترويسات `X-*` المخصصة) بصمت قبل إرسال الاستجابة. ترويسات الاستجابة المسموح بها هي:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+يجب أن يكون رمز الحالة رمز حالة HTTP صالحًا (بين 100 و599). تتم مطابقة أسماء ترويسات الاستجابة دون حساسية لحالة الأحرف.
+</Note>
+
+#### استجابات أخطاء المنصة
+
+إلى جانب استجابات المعالج لديك، تتعامل المنصة مع استدعاءات المسارات مباشرة في بعض الحالات: `404` عندما لا يكون المسار موجودًا أو لا تكون الدالة موجودة، و`403` عندما يكون التطبيق متوقفًا، و`429` عند بلوغ حد معدل التنفيذ، و`422` عندما تكون `dependencies` الخاصة بالإنتاج للتطبيق كبيرة جدًا بحيث يتعذر تثبيتها — راجع [حدود حجم dependencies](/l/ar/developers/extend/apps/getting-started/project-structure#dependencies).
+
+#### مشغّل مسار الخادم
+
+`httpRouteTriggerSettings` يوفّر دالة تحت ‎`/s/`‎ ويحل مساحة العمل من مضيف الطلب — وهذا يعمل عندما تكون لكل مساحة عمل نطاقها الخاص. لكن المزوّدين من جهات خارجية يرسلون أحداث كل مستأجر إلى عنوان URL **واحد**. في هذه الحالة، استخدم `serverRouteTriggerSettings`.
+
+يتكوّن المشغّل من جزأين:
+
+1. دالة منطق **resolver** — يتم التصريح عنها باستخدام `serverRouteTriggerSettings` — تعمل في **مساحة العمل المالكة** (مساحة العمل التي تمتلك تسجيل التطبيق). تفحص الطلب الوارد وتُرجِع إمّا:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — يضع النظام الأساسي ذلك الهدف في قائمة الانتظار في مساحة العمل المُحدَّدة ويؤكّد تلقّي الطلب برمز `202 { queued: true }`، أو
+   * `Response` من `twenty-sdk/logic-function` — تُعيد المنصّة إرسال تلك الاستجابة عبر HTTP بشكل متزامن ولا تُدرِج هدفًا في قائمة الانتظار (استخدم هذا لمصافحات التحدّي مثل Slack `url_verification`).
+
+   يُعَدّ الـ resolver نقطة التفويض الوحيدة — فعنوان URL يحمل فقط معرّف الـ resolver. **هذا هو المكان المفضّل للتحقق من تواقيع الطلبات**: يعمل الـ resolver قبل أي تأثير جانبي، ولديه إمكانية الوصول إلى `rawBody` الأصلي والرؤوس المُمرَّرة، ويمكنه رفض الطلب دون لمس الهدف مطلقًا.
+2. دالة منطق **target** — دالة منطق عادية لكل مساحة عمل — تعمل بعد ذلك في مساحة العمل التي تم حلّها باستخدام الحمولة التي أعادها الـ resolver (أو حمولة الطلب الأصلية إذا لم يقم الـ resolver بتحويلها). قيمة الإرجاع الخاصة به **لا** يطّلع عليها مستدعي HTTP عندما يختار الـ resolver مسار الإضافة إلى الطابور (enqueue path).
+
+```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
+const handler = async (event: RoutePayload) => {
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
+  const body = (event.body ?? {}) as {
+    challenge?: string;
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
+
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
+  return {
+    workspaceId,
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'resolve-server-route',
+  handler,
+  serverRouteTriggerSettings: {
+    forwardedRequestHeaders: ['x-hub-signature-256'],
+  },
+});
+```
+
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
+const handler = async (event: RoutePayload) => {
+  // ...handle the verified event
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-invoice-paid',
+  handler,
+});
+```
+
+يمكن الوصول إلى نقطة النهاية عند:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
+```
+
+المعرّف هو `universalIdentifier` الخاص بالـ resolver من ملف manifest لديك. سجّل عنوان URL هذا لدى المزوّد.
+
+**الرد على طلب GET للتحقق.** يتحقق بعض الموفّرين من نقطة نهاية قبل أن يرسلوا إليها، وذلك بإرسال طلب `GET` يحمل تحديًا إلى عنوان URL نفسه الذي سيرسلون إليه الأحداث لاحقًا عبر `POST` — وتُعد WhatsApp Cloud API من Meta أحدهم. لا يستجيب مسار الخادم إلا لطلبات `POST` ما لم تحدد خلاف ذلك، لذا أعلن الطريقتين معًا:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+يصل التحدي في `event.queryStringParameters`، وتؤدي إعادة `Response` إلى إرجاعه إلى الموفّر ضمن الطلب نفسه. يُرسل نص سلسلة كـ `text/plain`، وهذا ما يتوقعه هؤلاء الموفّرون:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+يستبدل `httpMethods` الإعداد الافتراضي بدلاً من الإضافة إليه، لذا فإن `['GET']` وحده يجعل المسار يرفض `POST`. يتم دعم `GET` و`POST` فقط. اتركه غير معيّن ما لم يكن المزوّد يحتاج إلى الفعل الثاني: فالمسار الذي يعلن `GET` سيُنفَّذ محلّله بواسطة أي مستدعٍ غير موثَّق، بما في ذلك برامج الزحف وأدوات توسيع الروابط التي ترسل `GET` دون طلب مسبق. يُستجاب لكل ما لا تتوفر للمنصة طريقة له بالرمز `405` دون أن يُشغَّل المحلّل مطلقًا.
+
+<Note>
+**يجب أن يتم المطالبة بالتطبيق وتثبيته في مساحة عمل المالك الخاصة به.** نظرًا لأن محلِّل الاستدعاء يعمل في **مساحة عمل المالك** (مساحة العمل التي تمتلك تسجيل التطبيق)، فإن مشغّل مسار الخادم يعمل فقط بمجرد أن يكون قد تم *المطالبة* بالتطبيق — أي أصبح لديه مساحة عمل مالكة — **و** تم **تثبيت هذا التطبيق في مساحة عمل المالك**. إلى أن يتحقق الشرطان معًا، فلن يكون لدى محلِّل الاستدعاء مكان يعمل فيه، وبالتالي لا يمكن إرسال المسار. لذلك لا يمكن إدراج أي تطبيق يعرِّض دالة منطقية `serverRouteTriggerSettings` في السوق حتى تتم المطالبة به وتثبيته في مساحة عمل المالك الخاصة به.
+</Note>
+
+**عقد الـ Resolver.** يفرض نوع `LogicFunctionConfig` في حزمة SDK هذا في وقت الترجمة: بمجرد تعيينك لـ `serverRouteTriggerSettings`، يُقيَّد الـ handler الخاص بك بأن يُرجِع إما `Response`، أو `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (أو `Promise` لأيٍّ منهما). على مسار الإرسال (dispatch path)، يجب أن يكون `workspaceId` لمساحة عمل تكون الدالة المستهدفة مثبّتة فيها، وإلا فسيتم رفض الطلب مع `404`. أي نتيجة لا تطابق أياً من البنيتين — بما في ذلك تلك التي لا تكون معرّفاتها UUIDs — تُرفَض مع رمز الحالة `502`.
+
+| الحقل                                    | النوع              | الملاحظات                                                              |
+| ---------------------------------------- | ------------------ | ---------------------------------------------------------------------- |
+| `workspaceId`                            | `string`           | معرّف UUID لمساحة العمل التي سيعمل فيها الهدف.                         |
+| `targetLogicFunctionUniversalIdentifier` | `string`           | `universalIdentifier` لدالة المنطق التي سيتم استدعاؤها في تلك المساحة. |
+| `payload`                                | `object` (اختياري) | إذا تم تعيينه، فإنه يستبدل جسم الطلب المُرسَل إلى الهدف.               |
+
+<Warning>
+**مسؤولية التحقق من التوقيع تقع عليك — تحقّق في الـ resolver.** المنصّة لا تتحقق من تواقيع الطلبات. يُعَدّ الـ resolver المكان الموصى به للقيام بذلك: فهو يعمل أولًا، مع إمكانية الوصول إلى `event.rawBody` والرؤوس التي أدرجتها في `forwardedRequestHeaders`، وأي خطأ يتم رميه (أو أي `workspaceId` لا يطابق) يوقف عملية الإرسال قبل استدعاء الهدف. إذا دفعت التحقق بدلًا من ذلك إلى داخل الهدف، فيجب على الهدف أن يكون حذرًا حتى لا يفقد `rawBody` والرؤوس — أي يجب ألّا يعيد الـ resolver خاصية `payload`. تحقّق دائمًا **قبل** أي تأثير جانبي، واستخدم مقارنة بزمن ثابت.
+</Warning>
+
+بالنسبة لتواقيع الطلبات، يستخدم معظم المزوّدين HMAC-SHA256 للتوقيع؛ الأجزاء التي تختلف هي اسم الرأس وترميز الملخّص وسلسلة الحمولة الموقّعة. بعض الأمثلة:
+
+| المزود                       | الرؤوس المطلوب تمريرها                                 | السلسلة الموقَّعة            | الملخّص                                            |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | -------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (السر يكون بصيغة base64 بعد إزالة `whsec_`) |
+| سترايب                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                |
+| جيت هاب                      | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (يبدأ بـ `sha256=`)                            |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                             |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (يبدأ بـ `v0=`)                                |
+
+يُظهِر مثال الـ resolver أعلاه بالفعل تدفّق GitHub HMAC-SHA256 — عدِّل اسم الرأس وترميز الملخّص وسلسلة الحمولة الموقّعة بحسب المزوّد الذي تدمجه.
+
+<Note>
+عندما يُرجِع الـ resolver كائن إرسال (dispatch object)، يستجيب المسار بـ `202 { queued: true }` وتعمل الدالة المستهدفة على طابور العامل (worker queue) — المتصل لا يطّلع أبدًا على زمن استجابة الدالة المستهدفة أو نتيجتها أو حالات الفشل الخاصة بها (تُسجَّل هذه في سجلات التنفيذ). هذا يمنع عمليات إعادة الإرسال من جهة المرسِل من تضخيم تباطؤ المعالجة، وهو ما تريده عند استيعاب خطافات الويب.
+
+عندما يجب على المتصل قراءة جسم الاستجابة في نفس الطلب (مثل challenge handshakes أو interactive acknowledgements)، أرجِع `Response` من **الـ resolver** بدلًا من ذلك. تعيد المنصّة إرجاعها بشكل متزامن وتتجاوز الطابور؛ تمر ترويساتها (headers) عبر نفس قائمة السماح (allow-list) الخاصة باستجابات مسارات HTTP. احرص على أن تكون دالة resolver سريعة — بعض المزوّدين (مثل Slack) تنتهي مهلة طلباتهم خلال بضع ثوانٍ. نظرًا لأن الـ resolver يمكن الوصول إليه كنقطة نهاية عامة، قم بحمايته من خلال تحديد المعدّل (rate limiting) على الحافة لديك.
+</Note>
+
+#### حمولة مُحفِّز حدث قاعدة البيانات
+
+عندما يستدعي مُحفِّز حدث قاعدة البيانات دالة المنطق الخاصة بك، فإنه يستقبل كائن `DatabaseEventPayload` واحدًا لكل سجل تم تغييره. تجمع الحمولة بين البيانات الوصفية حول مساحة العمل والكائن المصدر وبين الحدث على مستوى السجل.
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+تتضمن الحمولة ما يلي:
+
+| الخاصية                                          | الوصف                                                                                           |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `name`                                           | اسم الحدث، مثل `person.updated`.                                                                |
+| `workspaceId`                                    | مساحة العمل التي وقع فيها الحدث.                                                                |
+| `objectMetadata`                                 | بيانات وصفية للكائن الذي تم تغييره.                                                             |
+| `recordId`                                       | معرّف السجل الذي تم تغييره.                                                                     |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | حقول الفاعل عندما يكون الحدث ناتجًا عن مستخدم في مساحة العمل.                                   |
+| `properties`                                     | بيانات السجل الخاصة بالحدث، مع `before` و`after` و`diff` و`updatedFields` اعتمادًا على العملية. |
+
+| حدث                | بيانات السجل                                                                                                   |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
+
+في عمليات الحذف اللين (soft deletes)، يتبع `.deleted` بنية نمط التحديث لأن حقل `deletedAt` في السجل يتغيّر.
+في عمليات الحذف الدائم، استخدم `.destroyed`.
+
+<Note>
+`databaseEventTriggerSettings.updatedFields` يرشّح أيّ أحداث التحديث التي تُشغِّل الدالة.
+`event.properties.updatedFields` يوضّح لك أي الحقول تغيّرت فعليًا في الحدث الحالي.
+</Note>
+
+مثال على حدث الإنشاء:
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+مثال على حدث التحديث:
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+تشغيل المشغّل فقط عند تحديثات البريد الإلكتروني:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+مثال على حدث الحذف:
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
+
+#### سياق التنفيذ
+
+يتلقى كل معالج وسيطًا ثانيًا يصف عملية التشغيل نفسها، بغض النظر عما شغّلها. بينما يتغير شكل الوسيط الأول بحسب المُشغِّل، لا يتغير شكل هذا الوسيط:
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| الحقل               | النوع            | الوصف                                                                                         |
+| ------------------- | ---------------- | --------------------------------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | مساحة العمل التي تنتمي إليها عملية التشغيل.                                                   |
+| `userWorkspaceId`   | `string \| null` | الشخص الذي شغّل عملية التشغيل، ممثلًا بعضويته في مساحة العمل هذه.                             |
+| `workspaceMemberId` | `string \| null` | الشخص نفسه بصفته سجل عضو في مساحة العمل، وهو ما تربط السجلات به.                              |
+| `retryCount`        | `number`         | `0` في المحاولة الأولى. راجع [المهام الخلفية](/l/ar/developers/extend/apps/logic/background-jobs). |
+| `maxRetries`        | `number`         | الحد الأقصى لعمليات إعادة المحاولة التي يطلبها التطبيق.                                       |
+
+يكون `userWorkspaceId` و`workspaceMemberId` بقيمة `null` عندما لا يشغّل أحد عملية التشغيل: فلا توجد جهة خلف جداول cron وخطافات التثبيت وخطافات الويب غير الموثقة. ويكونان أيضًا بقيمة `null` عندما لا يكون لدى الشخص سجل عضو في مساحة العمل، أو عندما يكون سجله قد حُذف.
+
+<Note>
+**يخبرك السياق بمن شغّل عملية التشغيل.** أما ما قد *تفعله* عملية التشغيل فهو تعريف منفصل أدناه.
+</Note>
+
+#### أذونات الوصول التي تستخدمها المكالمة
+
+يتصرف كل عميل — `CoreApiClient` و`MetadataApiClient` و`RestApiClient` — بصفته الشخص الذي شغّل عملية التشغيل: إذ يتقاطع دوره مع دور تطبيقك، لذا لا يمكن للمكالمة أبدًا أن تفعل أكثر مما يسمح به أيّ منكما. هذا هو السلوك الافتراضي، ويعني أنه لا يمكن للشخص أبدًا استخدام تطبيقك لتجاوز أذوناته الخاصة.
+
+عندما لا يشغّل أحد عملية التشغيل، لا يوجد شخص للتصرف بصفته، لذا يعود العميل نفسه إلى أذونات الوصول الخاصة بتطبيقك: لا تحتاج جداول cron وخطافات التثبيت وخطافات الويب غير الموثقة إلى معالجة خاصة.
+
+تحتاج بعض المكالمات بصورة مشروعة إلى أذونات الوصول الخاصة بالتطبيق حتى عندما يكون هناك شخص *خلف* عملية التشغيل — مثل قراءة سجلات إعدادات تطبيقك، أو تنفيذ عمل لا يستطيع ذلك الشخص تنفيذه بنفسه. أنشئ عميلاً ثانيًا لهذه الحالات:
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+أنشئ كليهما مرة واحدة، في نطاق الوحدة، ثم يحدد كل موضع استدعاء أذونات الوصول التي يستخدمها من خلال العميل الذي يستدعيه. يأخذ `RestApiClient` الخيار نفسه:
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**عملية التشغيل التي لم يشغّلها أحد تتصرف بصفتها تطبيقك.** لا يوجد شخص خلف جداول cron وخطافات التثبيت وخطافات الويب غير الموثقة، لذا يعود العميل الافتراضي إلى أذونات الوصول الخاصة بتطبيقك ويستمر في العمل. لا يلزم استخدام `runAs: 'application'` إلا عندما تريد أذونات الوصول تلك في عملية تشغيل شغّلها شخص *بالفعل*.
+
+تحقق من `context.workspaceMemberId` عندما تتصرف دالة بشكل مختلف بناءً على وجود شخص خلفها، على سبيل المثال لإسناد سجل.
+</Note>
+
+تستخدم مساعدات SDK التي تصل إلى موارد تطبيقك الخاصة أذونات الوصول الخاصة به دائمًا وتتجاهل `runAs`: وهي [مخزن المفتاح-القيمة](/l/ar/developers/extend/apps/logic/key-value-store) و[الاتصالات](/l/ar/developers/extend/apps/logic/connections) و`runAgent` و`getPublicAssetUrl` وفرض رسوم الأرصدة.
+
+#### إتاحة دالة كأداة ذكاء اصطناعي أو كإجراء ضمن سير العمل
+
+يمكن إتاحة دوال المنطق على واجهتين، ولكلٍ منهما مشغِّل خاص به:
+
+* **`toolTriggerSettings`** — يجعل الدالة قابلة للاكتشاف عبر ميزات الذكاء الاصطناعي الخاصة بـ Twenty (الدردشة، MCP، استدعاء الدوال). يستخدم JSON Schema القياسي، وهو التنسيق الذي تفهمه LLMs أصلاً.
+* **`workflowActionTriggerSettings`** — يجعل الدالة تظهر كخطوة في منشئ سير العمل المرئي. يستخدم `InputSchema` الغني الخاص بـ Twenty لكي يتمكن المُنشئ من عرض محرّرات الحقول المناسبة، وأدوات انتقاء المتغيّرات، والتسميات.
+
+يمكن للدالة اختيار أحدهما، أو الآخر، أو كليهما. توجد جنبًا إلى جنب مع `cronTriggerSettings` و`databaseEventTriggerSettings` و`httpRouteTriggerSettings` — النمط نفسه، والشكل نفسه.
+
+<Note>
+**العلاقة بإجراء Code الخاص بسير العمل.** يُعَد إجراء **Code** المضمَّن في منشئ سير العمل دالة منطقية بحد ذاته — حيث ينشئ Twenty واحدًا لكل خطوة Code ويعرض محرره مضمّنًا. تُستخدَم `workflowActionTriggerSettings` لتحويل هذا الكود المضمَّن لمرة واحدة إلى إجراء **قابل لإعادة الاستخدام**: عرِّف الدالة مرة واحدة في تطبيقك وستصبح قابلة للاختيار في أي سير عمل، بدلاً من نسخها ولصقها في كل خطوة Code. راجع [إجراء Code](/l/ar/user-guide/workflows/capabilities/workflow-actions#code) في دليل المستخدم لعرض منظور المستخدم النهائي.
+</Note>
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+النقاط الرئيسية:
+
+* يمكن للدالة مزج الواجهات — صرِّح بكلٍ من `toolTriggerSettings` و`workflowActionTriggerSettings` لإتاحتها في الدردشة وفي منشئ سير العمل.
+* `toolTriggerSettings.inputSchema` و`workflowActionTriggerSettings.inputSchema` كلاهما اختياري. عند الإغفال، يستنتج مُنشئ البيان هذه المخططات من الشيفرة المصدرية للمعالج (JSON Schema لأداة الذكاء الاصطناعي، و`InputSchema` الخاصة بـ Twenty لإجراء سير العمل). قدّم واحدًا صراحةً عندما ترغب في أنواع أكثر ثراءً — على سبيل المثال، مع حقول واعية بـ `FieldMetadataType` مثل `CURRENCY` أو `RELATION` لمنشئ سير العمل، أو مع حقول `description` التي يمكن لوكيل الذكاء الاصطناعي قراءتها:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+للتصريح بمعاملاتك **مرة واحدة** وخدمة كلتا الواجهتين، عرّف مخطط JSON واحد (`InputJsonSchema`) وحوِّله لاستخدامه في إجراء سير العمل باستخدام `jsonSchemaToInputSchema` من `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` يستخدم مخطط JSON مباشرة، بينما `workflowActionTriggerSettings.inputSchema` يتوقّع `InputSchema` الخاص بـ Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
+##### مثال كامل لإجراء سير عمل
+
+تقبل `workflowActionTriggerSettings` أربعة حقول:
+
+| الحقل          | الغرض                                                                                                                                                     |
+| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | الاسم المعروض للإجراء في منتقّي الخطوات في منشئ سير العمل. الإعداد الافتراضي هو `name` الخاص بالدالة.                                                     |
+| `icon`         | أيقونة تُعرَض بجانب الإجراء (اسم من `tabler-icons`، مثلًا `IconBuilding`).                                                                                |
+| `inputSchema`  | مخطط الإدخال الغني الخاص بـ Twenty — ما يعرضه المُنشئ كحقول قابلة للضبط (مع منتقّي المتغيرات). اختياري؛ يستنتج من المعالج عند حذفه.                       |
+| `outputSchema` | يصرِّح بالشكل الذي يعيده المعالج، بحيث **يمكن للخطوات اللاحقة أن تطابق حقول المخرجات الخاصة به**. اختياري؛ من دونه يتم كشف المخرَج كقيمة واحدة غير شفافة. |
+
+تجميع ذلك معًا — دالّة معروضة كإجراء سير عمل، مع مخرَج مُعلَن بحيث يمكن للخطوات اللاحقة الرجوع إلى `taskId`:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+بمجرد تثبيت التطبيق، سيظهر **Enrich Company** في منتقّي الإجراءات في منشئ سير العمل. يعرض المُنشئ `companyName` و`domain` كحقول إدخال (كلٌّ منهما قادر على سحب القيم من الخطوات السابقة)، ويمكن للخطوات اللاحقة الرجوع إلى مخرجات الخطوة `taskId` و`enriched`.
+
+<Note>
+**اكتب `description` جيدًا.** يعتمد وكلاء الذكاء الاصطناعي على حقل `description` الخاص بالدالة لتحديد وقت استخدام الأداة. كن محددًا بشأن ما تفعله الأداة ومتى ينبغي استدعاؤها.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+**مساعدات وقت التشغيل.** يقوم `twenty-sdk/utils` بإعادة تصدير مساعدات صغيرة لوقت التشغيل حتى لا تستورد المعالجات مباشرةً من `twenty-shared`. على سبيل المثال، تُرجِع `isDefined(value)` القيمة `false` لكلٍّ من `null` و`undefined` — استخدمها لتضييق نطاق مُدخلات المعالِجات الاختيارية بأمان، والتي يمكن أن تصل كقيمة `null` أثناء وقت التشغيل حتى عندما تكون مكتوبة كـ `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
+
+<Note>
+**خطافات التثبيت** — معالجات ما قبل التثبيت وما بعد التثبيت وإلغاء التثبيت — تشترك في وقت التشغيل نفسه، ولكن يُصرَّح عنها بدوال تعريف خاصة بها ولا تأخذ إعدادات المشغّلات. راجع [خطافات التثبيت (Install Hooks)](/l/ar/developers/extend/apps/config/install-hooks) لمعرفة `definePreInstallLogicFunction` و `definePostInstallLogicFunction` و `defineUninstallLogicFunction`.
+</Note>
+
+## إنشاء نشاط في المخطط الزمني
+
+استخدم `createTimelineActivity()` لنشر حدث مجال صريح من دالة منطقية. عرّف الحدث أولاً باعتباره [نوع نشاط في المخطط الزمني](/l/ar/developers/extend/apps/data/timeline-activity-types)، ثم عالج النوع والكائنات باستخدام معرفاتها العامة الثابتة:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+يحوّل Twenty المعرفات العامة إلى معرّفات البيانات الوصفية الخاصة بالتثبيت، ويتحقق من أن نوع نشاط المخطط الزمني ينتمي إلى التطبيق المستدعي، ويلتقط لقطة من بيانات العرض الوصفية الخاصة به في النشاط الجديد.
+
+المدخلات المطلوبة هي `timelineActivityTypeUniversalIdentifier` و`targetObjectUniversalIdentifier` و`targetRecordId`. يمكنك أيضاً توفير `happensAt` و`properties` و`workspaceMemberId`. يتحكم `happensAt` في موضع الحدث ووقته المعروض في المخطط الزمني؛ ويكون افتراضياً وقت الإنشاء.
+
+لربط سجل آخر بالحدث، وفّر `linkedRecordId` و`linkedObjectMetadataUniversalIdentifier` معاً. يمكنك بالإضافة إلى ذلك توفير `linkedRecordCachedName` كخيار احتياطي للعرض التاريخي:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+يحتاج دور الدالة المنطقية إلى إذن كتابة على كائن `timelineActivity` القياسي. أبقِ أنواع الأحداث الصريحة غير مرتبطة بـ`action`؛ إذ إن النوع المرتبط بإجراء يتلقى بالفعل أحداث تدقيق تلقائية، وإلا فسينتج صفوفاً مكررة.
+
+## عملاء واجهة برمجة تطبيقات مضبوطة الأنواع (`twenty-client-sdk`)
+
+توفر حزمة `twenty-client-sdk` عميلين لـ GraphQL ذوي أنواع ثابتة للتفاعل مع واجهة Twenty البرمجية من وظائفك المنطقية ومكوّنات الواجهة الأمامية.
+
+| العميل              | استيراد                      | نقطة النهاية                                        | مُولَّد؟                   |
+| ------------------- | ---------------------------- | --------------------------------------------------- | -------------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — بيانات مساحة العمل (السجلات، الكائنات) | نعم، في وقت التطوير/البناء |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — تكوين مساحة العمل، رفع الملفات        | لا، يأتي مُجهزًا مسبقًا    |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="استعلام وتعديل بيانات مساحة العمل (السجلات، الكائنات)">
+
+`CoreApiClient` هو العميل الرئيسي للاستعلام وتعديل بيانات مساحة العمل. يُولَّد **من مخطط مساحة العمل لديك** أثناء `yarn twenty dev` أو `yarn twenty dev:build`، لذا فهو مضبوط الأنواع بالكامل ليتوافق مع كائناتك وحقولك.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+يستخدم العميل صياغة مجموعة اختيار: مرِّر `true` لتضمين حقل، واستخدم `__args` للوسيطات، وعشّش الكائنات للعلاقات. ستحصل على إكمال تلقائي كامل وفحص للأنواع يعتمد على مخطط مساحة العمل لديك.
+
+<Note>
+**يتم توليد CoreApiClient في وقت التطوير/البناء.** إذا استخدمته دون تشغيل `yarn twenty dev` أو `yarn twenty dev:build` أولًا، فسيؤدي ذلك إلى خطأ. تحدث عملية التوليد تلقائيًا — إذ يستطلع CLI مخطط GraphQL لمساحة عملك وينشئ عميلًا مضبوط الأنواع باستخدام `@genql/cli`.
+</Note>
+
+#### استخدام CoreSchema للتعليقات التوضيحية للأنواع
+
+`CoreSchema` يوفّر أنواع TypeScript المطابقة لكائنات مساحة العمل لديك — مفيد لتعيين أنواع حالة المكوّن أو معاملات الدوال:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="إعدادات مساحة العمل، والتطبيقات، ورفع الملفات">
+
+يأتي `MetadataApiClient` مُجهّزًا مسبقًا مع SDK (لا حاجة للتوليد). يستعلم عن نقطة النهاية `/metadata` للحصول على تكوين مساحة العمل والتطبيقات ورفع الملفات. يأخذ خيار `runAs` نفسه الذي يأخذه `CoreApiClient` — راجع [أذونات الوصول التي تستخدمها المكالمة](#whose-access-a-call-uses).
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### رفع الملفات
+
+يتضمن `MetadataApiClient` طريقة `uploadFile` لإرفاق الملفات بالحقول من نوع الملف:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| المعلمة                            | النوع        | الوصف                                                                  |
+| ---------------------------------- | ------------ | ---------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer`     | المحتوى الخام للملف                                                    |
+| `filename`                         | `سلسلة نصية` | اسم الملف (يُستخدم للتخزين والعرض)                                     |
+| `contentType`                      | `string`     | نوع MIME (القيمة الافتراضية `application/octet-stream` إذا لم يُحدَّد) |
+| `fieldMetadataUniversalIdentifier` | `string`     | قيمة `universalIdentifier` لحقل نوع الملف في كائنك                     |
+
+النقاط الرئيسية:
+* يستخدم `universalIdentifier` الخاص بالحقل (وليس معرّفه الخاص بمساحة العمل)، بحيث يعمل كود الرفع لديك عبر أي مساحة عمل مُثبَّت فيها تطبيقك.
+* العنوان `url` المُعاد هو عنوان URL موقّع يمكنك استخدامه للوصول إلى الملف المرفوع.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  عند تشغيل كودك على Twenty (وظائف منطقية أو مكوّنات أمامية)، يقوم النظام الأساسي بحقن بيانات الاعتماد كمتغيرات بيئية:
+
+  * `TWENTY_API_URL` — عنوان URL الأساسي لواجهة Twenty البرمجية
+  * `TWENTY_APP_ACCESS_TOKEN` — مفتاح قصير العمر لأذونات الوصول الافتراضية: دور الشخص متقاطعًا مع دور تطبيقك عندما يكون هناك شخص خلف عملية التشغيل، ودور تطبيقك الخاص عندما لا يكون هناك أحد. الشخص هو من شغّل عملية التشغيل في دالة منطقية، أو من ينظر إلى الصفحة في مكوّن أمامي.
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — مفتاح قصير العمر يقتصر نطاقه على دور تطبيقك الخاص وحده. للدوال المنطقية فقط، ويُحقن فيها دائمًا، وهو ما يستخدمه `runAs: 'application'`.
+
+  **لا** تحتاج إلى تمرير هذه إلى العملاء — فهم يقرؤون من `process.env` تلقائيًا، ويغطي [أذونات الوصول التي تستخدمها المكالمة](#whose-access-a-call-uses) الاختيار بينها. تُحدَّد أذونات تطبيقك الخاصة بواسطة الدور المُعلن باستخدام `defineApplicationRole()` (أو المشار إليه عبر `defaultRoleUniversalIdentifier` في `application-config.ts`)؛ ولا يمكن لعملية تشغيل تتصرف بصفة شخص أن تتجاوز ذلك الدور أو دوره.
+</Note>

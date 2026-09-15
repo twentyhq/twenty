@@ -15,6 +15,7 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           name: 'Test Licensed Product',
           billingPrices: [
             {
+              active: true,
               interval: SubscriptionInterval.Month,
               unitAmount: 1500,
               stripePriceId: 'price_123',
@@ -59,6 +60,7 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
           name: 'Test Licensed Product',
           billingPrices: [
             {
+              active: true,
               interval: SubscriptionInterval.Month,
               unitAmount: 1500,
               stripePriceId: 'price_123',
@@ -72,6 +74,7 @@ describe('formatBillingDatabaseProductToGraphqlDTO', () => {
               stripePriceId: 'price_123',
               priceUsageType: BillingUsageType.LICENSED,
               creditAmount: null,
+              isSellable: true,
             },
           ],
         },

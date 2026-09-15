@@ -1,7 +1,7 @@
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -10,10 +10,12 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import Skeleton from 'react-loading-skeleton';
+import { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, Status } from 'twenty-ui/display';
+import { Status } from 'twenty-ui/data-display';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -74,12 +76,12 @@ export const SettingsAgentTurnDetail = () => {
 
   if (loading) {
     return (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Turn Details`}
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
           {
@@ -95,18 +97,18 @@ export const SettingsAgentTurnDetail = () => {
         <SettingsPageContainer>
           <Skeleton height={200} />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   if (!turn) {
     return (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Turn Not Found`}
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
           { children: t`Turn` },
@@ -115,17 +117,17 @@ export const SettingsAgentTurnDetail = () => {
         <SettingsPageContainer>
           <div>{t`Turn not found`}</div>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Turn Details`}
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
         {
@@ -148,38 +150,41 @@ export const SettingsAgentTurnDetail = () => {
             })}
           />
           {turn.messages.length > 0 ? (
-            <StyledMessagesContainer>
-              {mapDBMessagesToUIMessages(
-                ([...turn.messages] as AgentMessage[])
-                  .filter((msg) => msg.parts.length > 0)
-                  .sort((a, b) => {
-                    if (a.role === 'user' && b.role === 'assistant') return -1;
-                    if (a.role === 'assistant' && b.role === 'user') return 1;
-                    return (
-                      new Date(a.createdAt).getTime() -
-                      new Date(b.createdAt).getTime()
-                    );
-                  }),
-              ).map((message) => {
-                const roleLabel =
-                  message.role === 'user'
-                    ? t`User`
-                    : message.role === 'system'
-                      ? t`System`
-                      : t`Assistant`;
-                return (
-                  <StyledMessageBubble key={message.id}>
-                    <StyledMessageRole>{roleLabel}</StyledMessageRole>
-                    <StyledMessageContent>
-                      <AiChatAssistantMessageRenderer
-                        messageParts={message.parts}
-                        isLastMessageStreaming={false}
-                      />
-                    </StyledMessageContent>
-                  </StyledMessageBubble>
-                );
-              })}
-            </StyledMessagesContainer>
+            <Suspense fallback={<Skeleton height={16} width={200} />}>
+              <StyledMessagesContainer>
+                {mapDBMessagesToUIMessages(
+                  ([...turn.messages] as AgentMessage[])
+                    .filter((msg) => msg.parts.length > 0)
+                    .sort((a, b) => {
+                      if (a.role === 'user' && b.role === 'assistant')
+                        return -1;
+                      if (a.role === 'assistant' && b.role === 'user') return 1;
+                      return (
+                        new Date(a.createdAt).getTime() -
+                        new Date(b.createdAt).getTime()
+                      );
+                    }),
+                ).map((message) => {
+                  const roleLabel =
+                    message.role === 'user'
+                      ? t`User`
+                      : message.role === 'system'
+                        ? t`System`
+                        : t`Assistant`;
+                  return (
+                    <StyledMessageBubble key={message.id}>
+                      <StyledMessageRole>{roleLabel}</StyledMessageRole>
+                      <StyledMessageContent>
+                        <AiChatAssistantMessageRenderer
+                          messageParts={message.parts}
+                          isLastMessageStreaming={false}
+                        />
+                      </StyledMessageContent>
+                    </StyledMessageBubble>
+                  );
+                })}
+              </StyledMessagesContainer>
+            </Suspense>
           ) : (
             <div>{t`No messages found for this turn`}</div>
           )}
@@ -222,8 +227,7 @@ export const SettingsAgentTurnDetail = () => {
                       <TableCell gap={themeCssVariables.spacing[2]}>
                         <Status
                           color={getScoreColor(evaluation.score)}
-                          text={`${evaluation.score}`}
-                        />
+                        >{`${evaluation.score}`}</Status>
                       </TableCell>
                       <TableCell
                         overflow="hidden"
@@ -241,6 +245,6 @@ export const SettingsAgentTurnDetail = () => {
           )}
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

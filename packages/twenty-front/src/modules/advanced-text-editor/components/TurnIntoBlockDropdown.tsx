@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type Editor } from '@tiptap/react';
 import { useContext, useId } from 'react';
-import { IconPilcrow } from 'twenty-ui/display';
+import { IconPilcrow } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -49,7 +49,7 @@ export class AdminPanelHealthService {
       : AdminPanelHealthServiceStatus.OUTAGE;
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   private transformServiceDetails(details: any) {
     if (!details) return details;
 

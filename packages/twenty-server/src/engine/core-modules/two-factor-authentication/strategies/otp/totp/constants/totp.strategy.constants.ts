@@ -1,5 +1,6 @@
 import { z } from 'zod';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { type OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 
 export enum TOTPHashAlgorithms {
@@ -20,13 +21,13 @@ export const TOTP_DEFAULT_CONFIGURATION = {
   algorithm: TOTPHashAlgorithms.SHA1,
   digits: 6,
   encodings: TOTPKeyEncodings.HEX, // Keep as hex - this is correct for @otplib/core
-  window: 3,
+  window: 1,
   step: 30,
 };
 
 export type TotpContext = {
   status: OTPStatus;
-  secret: string;
+  secret: PlaintextString;
 };
 
 export type TOTPStrategyConfig = z.infer<typeof TOTP_STRATEGY_CONFIG_SCHEMA>;

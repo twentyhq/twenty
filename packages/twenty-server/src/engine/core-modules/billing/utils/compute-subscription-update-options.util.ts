@@ -9,6 +9,7 @@ import {
 
 export const computeSubscriptionUpdateOptions = (
   subscriptionUpdate: SubscriptionUpdate,
+  context?: { currentSeats?: number; isTrialing?: boolean },
 ): {
   proration: Stripe.SubscriptionUpdateParams.ProrationBehavior;
   metadata?: Record<string, string>;
@@ -17,28 +18,34 @@ export const computeSubscriptionUpdateOptions = (
   switch (subscriptionUpdate.type) {
     case SubscriptionUpdateType.PLAN:
       return {
-        proration: 'always_invoice',
+        proration: context?.isTrialing ? 'none' : 'always_invoice',
         metadata: {
           plan: subscriptionUpdate.newPlan,
         },
-      };
-    case SubscriptionUpdateType.METERED_PRICE:
-      return {
-        proration: 'create_prorations',
       };
     case SubscriptionUpdateType.RESOURCE_CREDIT_PRICE:
       return {
         proration: 'none',
       };
     case SubscriptionUpdateType.INTERVAL:
+      return context?.isTrialing
+        ? {
+            proration: 'none',
+          }
+        : {
+            proration: 'create_prorations',
+            anchor: 'now',
+          };
+    case SubscriptionUpdateType.SEATS: {
+      const currentSeats = context?.currentSeats ?? subscriptionUpdate.newSeats;
+
       return {
-        proration: 'create_prorations',
-        anchor: 'now',
+        proration:
+          subscriptionUpdate.newSeats > currentSeats
+            ? 'always_invoice'
+            : 'create_prorations',
       };
-    case SubscriptionUpdateType.SEATS:
-      return {
-        proration: 'create_prorations',
-      };
+    }
     default:
       return assertUnreachable(
         subscriptionUpdate,

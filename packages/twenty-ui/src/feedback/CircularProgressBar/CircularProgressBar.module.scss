@@ -1,0 +1,40 @@
+.svg {
+  animation: circularProgressBarRotate 2s linear infinite;
+  transform-origin: center;
+}
+
+.circle {
+  animation: circularProgressBarDash 2s linear infinite;
+}
+
+@keyframes circularProgressBarRotate {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(720deg);
+  }
+}
+
+@keyframes circularProgressBarDash {
+  0% {
+    stroke-dasharray: 10 90;
+  }
+
+  25% {
+    stroke-dasharray: 20 80;
+  }
+
+  50% {
+    stroke-dasharray: 30 70;
+  }
+
+  75% {
+    stroke-dasharray: 20 80;
+  }
+
+  100% {
+    stroke-dasharray: 10 90;
+  }
+}

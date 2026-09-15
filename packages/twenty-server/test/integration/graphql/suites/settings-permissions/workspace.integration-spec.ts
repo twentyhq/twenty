@@ -23,7 +23,6 @@ describe('workspace permissions', () => {
   let originalWorkspaceState: Record<string, unknown>;
 
   beforeAll(async () => {
-    // Store original workspace state
     const query = gql`
       query getWorkspace {
         currentWorkspace {
@@ -44,7 +43,6 @@ describe('workspace permissions', () => {
   });
 
   afterAll(async () => {
-    // Restore workspace state
     const restoreQuery = gql`
       mutation updateWorkspace {
         updateWorkspace(data: {
@@ -236,9 +234,9 @@ describe('workspace permissions', () => {
         expect(response.body.errors[0].extensions.code).toBe(
           ErrorCode.CONFLICT,
         );
-        expect(
-          response.body.errors[0].extensions.userFriendlyMessage,
-        ).toBe('Invalid subdomain.');
+        expect(response.body.errors[0].extensions.userFriendlyMessage).toBe(
+          'Invalid subdomain.',
+        );
       });
 
       it('should return a validation error when subdomain has invalid characters', async () => {
@@ -263,9 +261,9 @@ describe('workspace permissions', () => {
         expect(response.body.errors[0].extensions.code).toBe(
           ErrorCode.CONFLICT,
         );
-        expect(
-          response.body.errors[0].extensions.userFriendlyMessage,
-        ).toBe('Invalid subdomain.');
+        expect(response.body.errors[0].extensions.userFriendlyMessage).toBe(
+          'Invalid subdomain.',
+        );
       });
 
       it('should return a validation error when subdomain starts with api-', async () => {
@@ -290,9 +288,9 @@ describe('workspace permissions', () => {
         expect(response.body.errors[0].extensions.code).toBe(
           ErrorCode.CONFLICT,
         );
-        expect(
-          response.body.errors[0].extensions.userFriendlyMessage,
-        ).toBe('Invalid subdomain.');
+        expect(response.body.errors[0].extensions.userFriendlyMessage).toBe(
+          'Invalid subdomain.',
+        );
       });
     });
 

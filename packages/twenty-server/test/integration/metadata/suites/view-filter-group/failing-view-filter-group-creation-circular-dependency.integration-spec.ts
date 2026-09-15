@@ -47,7 +47,6 @@ describe('View Filter Group creation should fail with circular dependency', () =
     createdViewId = viewData?.createView?.id;
     jestExpectToBeDefined(createdViewId);
 
-    // Create parent view filter group for max depth test
     const { data: parentFilterGroupData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
@@ -56,11 +55,9 @@ describe('View Filter Group creation should fail with circular dependency', () =
       },
     });
 
-    parentViewFilterGroupId =
-      parentFilterGroupData?.createViewFilterGroup?.id;
+    parentViewFilterGroupId = parentFilterGroupData?.createViewFilterGroup?.id;
     jestExpectToBeDefined(parentViewFilterGroupId);
 
-    // Create child view filter group for max depth test
     const { data: childFilterGroupData } = await createOneViewFilterGroup({
       expectToFail: false,
       input: {
@@ -70,8 +67,7 @@ describe('View Filter Group creation should fail with circular dependency', () =
       },
     });
 
-    childViewFilterGroupId =
-      childFilterGroupData?.createViewFilterGroup?.id;
+    childViewFilterGroupId = childFilterGroupData?.createViewFilterGroup?.id;
     jestExpectToBeDefined(childViewFilterGroupId);
   });
 

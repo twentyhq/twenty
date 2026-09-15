@@ -1,0 +1,199 @@
+import {
+  getCallLevelProviderOptions,
+  getCacheProviderOptions,
+  injectCacheBreakpoint,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+import {
+  AI_SDK_ANTHROPIC,
+  AI_SDK_AZURE,
+  AI_SDK_BEDROCK,
+  AI_SDK_OPENAI,
+} from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+
+describe('provider-options.util', () => {
+  describe('getCallLevelProviderOptions', () => {
+    it('returns cache provider options for Anthropic models', () => {
+      expect(
+        getCallLevelProviderOptions({ sdkPackage: AI_SDK_ANTHROPIC }),
+      ).toEqual({
+        anthropic: {
+          cacheControl: { type: 'ephemeral' },
+        },
+      });
+    });
+
+    it('keeps the thinking config the executor passes for Anthropic', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_ANTHROPIC,
+          providerOptions: { anthropic: { thinking: { type: 'adaptive' } } },
+        }),
+      ).toEqual({
+        anthropic: {
+          thinking: { type: 'adaptive' },
+          cacheControl: { type: 'ephemeral' },
+        },
+      });
+    });
+
+    it('keeps existing OpenAI options alongside store false', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_OPENAI,
+          providerOptions: { openai: { reasoningEffort: 'high' } },
+          promptCacheKey: 'thread-123',
+        }),
+      ).toEqual({
+        openai: {
+          reasoningEffort: 'high',
+          store: false,
+          promptCacheKey: 'thread-123',
+        },
+      });
+    });
+
+    it('keeps existing Azure options alongside store false', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_AZURE,
+          providerOptions: { azure: { reasoningEffort: 'high' } },
+        }),
+      ).toEqual({
+        azure: { reasoningEffort: 'high', store: false },
+      });
+    });
+
+    it('merges existing provider options with call-level options', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_OPENAI,
+          providerOptions: {
+            xai: {
+              searchParameters: { mode: 'auto' },
+            },
+          },
+        }),
+      ).toEqual({
+        xai: {
+          searchParameters: { mode: 'auto' },
+        },
+        openai: {
+          store: false,
+        },
+      });
+    });
+
+    it('returns store false for OpenAI models', () => {
+      expect(
+        getCallLevelProviderOptions({ sdkPackage: AI_SDK_OPENAI }),
+      ).toEqual({
+        openai: {
+          store: false,
+        },
+      });
+    });
+
+    it('includes promptCacheKey for OpenAI when provided', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_OPENAI,
+          promptCacheKey: 'thread-123',
+        }),
+      ).toEqual({
+        openai: {
+          store: false,
+          promptCacheKey: 'thread-123',
+        },
+      });
+    });
+
+    it('returns store false for Azure models', () => {
+      expect(getCallLevelProviderOptions({ sdkPackage: AI_SDK_AZURE })).toEqual(
+        {
+          azure: {
+            store: false,
+          },
+        },
+      );
+    });
+
+    it('merges existing provider options with Azure store false', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_AZURE,
+          providerOptions: {
+            xai: {
+              searchParameters: { mode: 'auto' },
+            },
+          },
+        }),
+      ).toEqual({
+        xai: {
+          searchParameters: { mode: 'auto' },
+        },
+        azure: {
+          store: false,
+        },
+      });
+    });
+
+    it('omits promptCacheKey for non-OpenAI providers', () => {
+      expect(
+        getCallLevelProviderOptions({
+          sdkPackage: AI_SDK_ANTHROPIC,
+          promptCacheKey: 'thread-123',
+        }),
+      ).toEqual({
+        anthropic: {
+          cacheControl: { type: 'ephemeral' },
+        },
+      });
+    });
+  });
+
+  describe('getCacheProviderOptions', () => {
+    it('returns cache point provider options for Bedrock models', () => {
+      expect(getCacheProviderOptions(AI_SDK_BEDROCK)).toEqual({
+        bedrock: {
+          cachePoint: { type: 'default' },
+        },
+      });
+    });
+  });
+
+  describe('injectCacheBreakpoint', () => {
+    it('injects cache provider options on the last message only', () => {
+      expect(
+        injectCacheBreakpoint(
+          [
+            { role: 'user', content: 'first' },
+            {
+              role: 'user',
+              content: 'last',
+              providerOptions: {
+                openai: {
+                  store: false,
+                },
+              },
+            },
+          ],
+          AI_SDK_BEDROCK,
+        ),
+      ).toEqual([
+        { role: 'user', content: 'first' },
+        {
+          role: 'user',
+          content: 'last',
+          providerOptions: {
+            openai: {
+              store: false,
+            },
+            bedrock: {
+              cachePoint: { type: 'default' },
+            },
+          },
+        },
+      ]);
+    });
+  });
+});

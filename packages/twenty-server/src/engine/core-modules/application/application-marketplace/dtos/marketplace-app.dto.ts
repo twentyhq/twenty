@@ -36,7 +36,7 @@ export class MarketplaceAppDTO {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
-  logo?: string;
+  logoUrl?: string;
 
   @IsOptional()
   @IsString()
@@ -45,5 +45,5 @@ export class MarketplaceAppDTO {
 
   @IsBoolean()
   @Field(() => Boolean)
-  isFeatured: boolean;
+  isVetted: boolean;
 }

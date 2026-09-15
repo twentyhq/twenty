@@ -15,11 +15,7 @@ import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fiel
 import { Select } from '@/ui/input/components/Select';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import {
-  IconCheckbox,
-  IconCurrencyDollar,
-  IconDecimal,
-} from 'twenty-ui/display';
+import { IconCheckbox, IconCurrencyDollar, IconDecimal } from 'twenty-ui/icon';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 
@@ -94,6 +90,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
         render={({ field: { onChange, value } }) => {
           const format = value?.format ?? fieldMetadataCurrencyFormat[0];
           const decimals = value?.decimals ?? DEFAULT_DECIMAL_VALUE;
+          const example = (1000).toFixed(decimals);
 
           return (
             <>
@@ -130,8 +127,8 @@ export const SettingsDataModelFieldCurrencyForm = ({
                   Icon={IconDecimal}
                   title={t`Number of decimals`}
                   description={plural(decimals, {
-                    one: `E.g. ${(1000).toFixed(decimals)} for ${decimals} decimal`,
-                    other: `E.g. ${(1000).toFixed(decimals)} for ${decimals} decimals`,
+                    one: `E.g. ${example} for # decimal`,
+                    other: `E.g. ${example} for # decimals`,
                   })}
                   value={decimals}
                   onChange={(newDecimals: number) =>

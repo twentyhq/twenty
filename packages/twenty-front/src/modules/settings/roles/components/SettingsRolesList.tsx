@@ -13,16 +13,16 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import {
-  H2Title,
   IconFilter,
   IconKey,
+  IconLego,
   IconPlus,
-  IconRobot,
   IconSearch,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -111,19 +111,19 @@ export const SettingsRolesList = () => {
           dropdownComponents={
             <DropdownContent>
               <DropdownMenuItemsContainer>
-                <MenuItemToggle
-                  LeftIcon={IconRobot}
-                  onToggleChange={() => setShowAgentRoles(!showAgentRoles)}
-                  toggled={showAgentRoles}
+                <MenuItemSwitch
+                  LeftIcon={IconLego}
+                  onCheckedChange={() => setShowAgentRoles(!showAgentRoles)}
+                  checked={showAgentRoles}
                   text={t`Agent roles`}
-                  toggleSize="small"
+                  size="sm"
                 />
-                <MenuItemToggle
+                <MenuItemSwitch
                   LeftIcon={IconKey}
-                  onToggleChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
-                  toggled={showApiKeyRoles}
+                  onCheckedChange={() => setShowApiKeyRoles(!showApiKeyRoles)}
+                  checked={showApiKeyRoles}
                   text={t`API key roles`}
-                  toggleSize="small"
+                  size="sm"
                 />
               </DropdownMenuItemsContainer>
             </DropdownContent>

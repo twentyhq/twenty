@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { DataSource, Repository } from 'typeorm';
+import { ViewKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
@@ -13,24 +18,31 @@ import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/se
 import { type UpgradeMigrationStatus } from 'src/engine/core-modules/upgrade/upgrade-migration.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
+import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { WorkspaceSchemaService } from 'src/engine/workspace-datasource/workspace-schema.service';
 import { seedBillingCustomers } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-customers.util';
 import { seedBillingSubscriptions } from 'src/engine/workspace-manager/dev-seeder/core/billing/utils/seed-billing-subscriptions.util';
 import {
-  type SeededEmptyWorkspacesIds,
   type SeededWorkspacesIds,
-  SEEDER_CREATE_EMPTY_WORKSPACE_INPUT,
   SEEDER_CREATE_WORKSPACE_INPUT,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
-import { seedAgents } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
+import {
+  type ChatReferenceIds,
+  seedAgents,
+} from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-agents.util';
 import { seedApiKeys } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-api-keys.util';
+import { seedEmailingDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { seedFeatureFlags } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-feature-flags.util';
+import { seedMessageSuppressions } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-message-suppressions.util';
 import { seedMetadataEntities } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-metadata-entities.util';
 import { seedPageLayouts } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-page-layouts.util';
 import { seedServerId } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-server-id.util';
+import { seedTwoFactorAuthenticationMethods } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-two-factor-authentication-methods.util';
+import { seedUnsubscribeTopics } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-unsubscribe-topics.util';
 import { seedUserWorkspaces } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { seedUsers } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { createWorkspace } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-workspace.util';
@@ -40,6 +52,7 @@ import { PrefillFrontComponentService } from 'src/engine/workspace-manager/stand
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { getSeedFrontComponentDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-definitions.util';
 import { getCreateCompanyWhenAddingNewPersonCodeStepLogicFunctionDefinitions } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-workflow-code-step-logic-functions.util';
+import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { TwentyStandardApplicationService } from 'src/engine/workspace-manager/twenty-standard-application/services/twenty-standard-application.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -48,7 +61,7 @@ export class DevSeederService {
   constructor(
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceSchemaService: WorkspaceSchemaService,
     private readonly twentyStandardApplicationService: TwentyStandardApplicationService,
     private readonly devSeederMetadataService: DevSeederMetadataService,
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
@@ -62,6 +75,7 @@ export class DevSeederService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly prefillFrontComponentService: PrefillFrontComponentService,
     private readonly prefillLogicFunctionService: PrefillLogicFunctionService,
+    private readonly secretEncryptionService: SecretEncryptionService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
     @InjectRepository(WorkspaceEntity)
@@ -93,9 +107,7 @@ export class DevSeederService {
     await this.applicationRegistrationService.createCliRegistrationIfNotExists();
 
     const schemaName =
-      await this.workspaceDataSourceService.createWorkspaceDBSchema(
-        workspaceId,
-      );
+      await this.workspaceSchemaService.createWorkspaceDBSchema(workspaceId);
 
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
@@ -124,6 +136,7 @@ export class DevSeederService {
       applicationId: twentyStandardFlatApplication.id,
       applicationUniversalIdentifier:
         twentyStandardFlatApplication.universalIdentifier,
+      trigger: 'dev-seeder',
     });
 
     await this.devSeederMetadataService.seed({
@@ -136,6 +149,7 @@ export class DevSeederService {
       applicationId: workspaceCustomFlatApplication.id,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
+      trigger: 'dev-seeder',
     });
 
     await this.devSeederMetadataService.seedRelations({
@@ -156,6 +170,26 @@ export class DevSeederService {
       where: { workspaceId },
       relations: { fields: true },
     });
+
+    const companyObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) => objectMetadataItem.nameSingular === 'company',
+    );
+
+    if (!isDefined(companyObjectMetadataItem)) {
+      throw new Error('Company object metadata is required to seed AI chat');
+    }
+
+    const [allCompaniesView, adminRole] = await Promise.all([
+      this.coreDataSource.getRepository(ViewEntity).findOneByOrFail({
+        workspaceId,
+        objectMetadataId: companyObjectMetadataItem.id,
+        key: ViewKey.INDEX,
+      }),
+      this.coreDataSource.getRepository(RoleEntity).findOneByOrFail({
+        workspaceId,
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      }),
+    ]);
 
     await this.prefillLogicFunctionService.ensureSeeded({
       workspaceId,
@@ -185,54 +219,38 @@ export class DevSeederService {
       light,
     });
 
-    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
+    await this.seedAgentChat({
+      workspaceId,
+      chatReferenceIds: {
+        applicationId: twentyStandardFlatApplication.id,
+        objectMetadataId: companyObjectMetadataItem.id,
+        roleId: adminRole.id,
+        viewId: allCompaniesView.id,
+      },
+    });
+
+    await this.workspaceCacheStorageService.flush(workspaceId);
   }
 
-  public async seedEmptyWorkspace(
-    workspaceId: SeededEmptyWorkspacesIds,
-  ): Promise<void> {
-    const appVersion = this.twentyConfigService.get('APP_VERSION') ?? 'unknown';
-    const lastAttemptedInstanceCommand =
-      await this.upgradeMigrationService.getLastAttemptedInstanceCommandOrThrow();
-    const initialCursor =
-      this.upgradeSequenceReaderService.getInitialCursorForNewWorkspace(
-        lastAttemptedInstanceCommand,
-      );
-
-    const createWorkspaceStaticInput =
-      SEEDER_CREATE_EMPTY_WORKSPACE_INPUT[workspaceId];
+  private async seedAgentChat({
+    workspaceId,
+    chatReferenceIds,
+  }: {
+    workspaceId: SeededWorkspacesIds;
+    chatReferenceIds: ChatReferenceIds;
+  }) {
     const queryRunner = this.coreDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const workspaceCustomApplicationId = v4();
-
-      await createWorkspace({
+      await seedAgents({
         queryRunner,
         schemaName: 'core',
-        createWorkspaceInput: {
-          ...createWorkspaceStaticInput,
-          workspaceCustomApplicationId,
-        },
+        workspaceId,
+        chatReferenceIds,
       });
-
-      await this.applicationService.createWorkspaceCustomApplication(
-        {
-          workspaceId,
-          applicationId: workspaceCustomApplicationId,
-        },
-        queryRunner,
-      );
-
-      await this.applicationService.createTwentyStandardApplication(
-        {
-          workspaceId,
-          skipCacheInvalidation: true,
-        },
-        queryRunner,
-      );
 
       await queryRunner.commitTransaction();
     } catch (error) {
@@ -241,29 +259,6 @@ export class DevSeederService {
     } finally {
       await queryRunner.release();
     }
-
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        {
-          workspaceId,
-        },
-      );
-
-    await this.devSeederPermissionsService.initMinimalPermissionsAndActivateWorkspace(
-      {
-        workspaceId,
-        workspaceCustomFlatApplication,
-      },
-    );
-
-    await this.upgradeMigrationService.markAsWorkspaceInitial({
-      name: initialCursor.name,
-      workspaceId,
-      executedByVersion: appVersion,
-      status: initialCursor.status,
-    });
-
-    await this.workspaceCacheStorageService.flush(workspaceId, undefined);
   }
 
   private async seedCoreSchema({
@@ -308,6 +303,15 @@ export class DevSeederService {
       await seedServerId({ queryRunner, schemaName });
       await seedUsers({ queryRunner, schemaName });
       await seedUserWorkspaces({ queryRunner, schemaName, workspaceId });
+      await seedTwoFactorAuthenticationMethods({
+        queryRunner,
+        schemaName,
+        workspaceId,
+        encryptedSecret: this.secretEncryptionService.encryptVersioned(
+          'seed-totp-secret-test-fixture' as PlaintextString,
+          { workspaceId },
+        ),
+      });
 
       await this.applicationService.createTwentyStandardApplication(
         {
@@ -317,8 +321,15 @@ export class DevSeederService {
         queryRunner,
       );
 
-      await seedAgents({ queryRunner, schemaName, workspaceId });
       await seedApiKeys({ queryRunner, schemaName, workspaceId });
+      if (
+        this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+        EmailingDomainDriver.LOG
+      ) {
+        await seedEmailingDomains({ queryRunner, schemaName, workspaceId });
+      }
+      await seedUnsubscribeTopics({ queryRunner, schemaName, workspaceId });
+      await seedMessageSuppressions({ queryRunner, schemaName, workspaceId });
       await seedFeatureFlags({ queryRunner, schemaName, workspaceId });
 
       if (seedBilling) {

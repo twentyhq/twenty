@@ -23,7 +23,7 @@ import {
 import { buildColumnsToReturn } from 'src/engine/api/graphql/graphql-query-runner/utils/build-columns-to-return';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
@@ -39,25 +39,12 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
     queryRunnerContext: CommonExtendedQueryRunnerContext,
   ): Promise<ObjectRecord[]> {
     const {
-      repository,
       authContext,
       rolePermissionConfig,
-      workspaceDataSource,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatObjectMetadata,
-      commonQueryParser,
     } = queryRunnerContext;
-
-    const queryBuilder = repository.createQueryBuilder(
-      flatObjectMetadata.nameSingular,
-    );
-
-    commonQueryParser.applyFilterToBuilder(
-      queryBuilder,
-      flatObjectMetadata.nameSingular,
-      args.filter,
-    );
 
     const columnsToReturn = buildColumnsToReturn({
       select: args.selectedFieldsResult.select,
@@ -67,12 +54,12 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
       flatFieldMetadataMaps,
     });
 
-    const deletedObjectRecords = await queryBuilder
-      .softDelete()
-      .returning(columnsToReturn)
-      .execute();
-
-    const deletedRecords = deletedObjectRecords.generatedMaps as ObjectRecord[];
+    const deletedRecords = await this.runFilteredMutation({
+      queryRunnerContext,
+      filter: args.filter,
+      columnsToReturn,
+      kind: 'soft-delete',
+    });
 
     if (isDefined(args.selectedFieldsResult.relations)) {
       await this.processNestedRelationsHelper.processNestedRelations({
@@ -86,9 +73,9 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
         >,
         limit: QUERY_MAX_RECORDS_FROM_RELATION,
         authContext,
-        workspaceDataSource,
         rolePermissionConfig,
         selectedFields: args.selectedFieldsResult.select,
+        ...this.getNestedRelationsReadPathOptions(),
       });
     }
 
@@ -99,13 +86,18 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
     args: CommonInput<DeleteManyQueryArgs>,
     queryRunnerContext: CommonBaseQueryRunnerContext,
   ): Promise<CommonInput<DeleteManyQueryArgs>> {
-    const { flatObjectMetadata, flatFieldMetadataMaps } = queryRunnerContext;
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
 
     return {
       ...args,
       filter: this.filterArgProcessor.process({
         filter: args.filter,
         flatObjectMetadata,
+        flatObjectMetadataMaps,
         flatFieldMetadataMaps,
       }),
     };
@@ -115,7 +107,7 @@ export class CommonDeleteManyQueryRunnerService extends CommonBaseQueryRunnerSer
     queryResult: ObjectRecord[],
     flatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     authContext: WorkspaceAuthContext,
   ): Promise<ObjectRecord[]> {
     return this.commonResultGettersService.processRecordArray(

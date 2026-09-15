@@ -5,6 +5,7 @@ export type ToolOutput<T = object> = {
   message: string;
   error?: string;
   result?: T;
+  warnings?: string[];
   status?: number;
   statusText?: string;
   headers?: Record<string, string>;

@@ -14,10 +14,12 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
+import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import { getOrganizedDiagram } from '@/workflow/workflow-diagram/utils/getOrganizedDiagram';
 import { UPDATE_WORKFLOW_VERSION_POSITIONS } from '@/workflow/workflow-version/graphql/mutations/updateWorkflowVersionPositions';
 
-export const useTidyUpWorkflowVersion = () => {
+export const useTidyUpWorkflowVersion = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -30,6 +32,8 @@ export const useTidyUpWorkflowVersion = () => {
     objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
   });
 
+  const setFlow = useSetAtomComponentState(flowComponentState, instanceId);
+
   const [mutate] = useMutation<
     UpdateWorkflowVersionPositionsMutation,
     UpdateWorkflowVersionPositionsMutationVariables
@@ -40,6 +44,38 @@ export const useTidyUpWorkflowVersion = () => {
     positions: { id: string; position: { x: number; y: number } }[],
   ) => {
     await mutate({ variables: { input: { workflowVersionId, positions } } });
+
+    setFlow((currentFlow) => {
+      if (!isDefined(currentFlow)) {
+        return currentFlow;
+      }
+
+      const triggerPositionInFlow = positions.find(
+        (position) => position.id === 'trigger',
+      );
+
+      return {
+        ...currentFlow,
+        workflowVersionId,
+        trigger:
+          isDefined(triggerPositionInFlow) && isDefined(currentFlow.trigger)
+            ? {
+                ...currentFlow.trigger,
+                position: triggerPositionInFlow.position,
+              }
+            : currentFlow.trigger,
+        steps:
+          currentFlow.steps?.map((step) => {
+            const stepPosition = positions.find(
+              (position) => position.id === step.id,
+            );
+
+            return isDefined(stepPosition)
+              ? { ...step, position: stepPosition.position }
+              : step;
+          }) ?? null,
+      };
+    });
 
     const cachedRecord = getRecordFromCache<WorkflowVersion>(workflowVersionId);
 

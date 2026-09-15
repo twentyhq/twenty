@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconArrowUpRight } from 'twenty-ui/display';
+import { IconArrowUpRight } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTooltip = styled.div`
@@ -18,7 +18,10 @@ const StyledTooltip = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-width: min(${GRAPH_TOOLTIP_MAX_WIDTH_PX}px, calc(100vw - 40px));
+  max-width: min(
+    ${GRAPH_TOOLTIP_MAX_WIDTH_PX}px,
+    calc(100vw / var(--t-zoom, 1) - 40px)
+  );
   min-width: ${GRAPH_TOOLTIP_MIN_WIDTH_PX}px;
   pointer-events: auto;
 `;

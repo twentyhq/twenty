@@ -4,7 +4,12 @@ import { ApplicationApi } from '@/cli/utilities/api/application-api';
 import { FileApi } from '@/cli/utilities/api/file-api';
 import { LogicFunctionApi } from '@/cli/utilities/api/logic-function-api';
 import { SchemaApi } from '@/cli/utilities/api/schema-api';
+import { type ApplicationExport } from '@/cli/utilities/pull/application-export-type';
 import { type Manifest } from 'twenty-shared/application';
+import {
+  type MetadataValidationErrorResponse,
+  type SyncAction,
+} from 'twenty-shared/metadata';
 
 type ApiServiceOptions = {
   disableInterceptors?: boolean;
@@ -30,6 +35,10 @@ export class ApiService {
 
   validateAuth(): Promise<{ authValid: boolean; serverUp: boolean }> {
     return this.apiClient.validateAuth();
+  }
+
+  getWorkspaceFrontendUrl(): Promise<string | null> {
+    return this.apiClient.getWorkspaceFrontendUrl();
   }
 
   refreshToken(): Promise<string | null> {
@@ -68,8 +77,31 @@ export class ApiService {
     return this.applicationApi.createDevelopmentApplication(...args);
   }
 
-  syncApplication(manifest: Manifest): Promise<ApiResponse> {
-    return this.applicationApi.syncApplication(manifest);
+  generateApplicationToken(
+    ...args: Parameters<ApplicationApi['generateApplicationToken']>
+  ) {
+    return this.applicationApi.generateApplicationToken(...args);
+  }
+
+  syncApplication(
+    manifest: Manifest,
+    options?: { dryRun?: boolean; inferDeletionFromMissingEntities?: boolean },
+  ): Promise<
+    ApiResponse<
+      {
+        applicationUniversalIdentifier: string;
+        actions: SyncAction[];
+      },
+      MetadataValidationErrorResponse
+    >
+  > {
+    return this.applicationApi.syncApplication(manifest, options);
+  }
+
+  exportApplication(
+    universalIdentifier: string,
+  ): Promise<ApiResponse<ApplicationExport>> {
+    return this.applicationApi.exportApplication(universalIdentifier);
   }
 
   uninstallApplication(universalIdentifier: string): Promise<ApiResponse> {
@@ -118,5 +150,17 @@ export class ApiService {
 
   uploadFile(...args: Parameters<FileApi['uploadFile']>) {
     return this.fileApi.uploadFile(...args);
+  }
+
+  createApplicationFileUploads(
+    ...args: Parameters<FileApi['createApplicationFileUploads']>
+  ) {
+    return this.fileApi.createApplicationFileUploads(...args);
+  }
+
+  completeApplicationFileUploads(
+    ...args: Parameters<FileApi['completeApplicationFileUploads']>
+  ) {
+    return this.fileApi.completeApplicationFileUploads(...args);
   }
 }

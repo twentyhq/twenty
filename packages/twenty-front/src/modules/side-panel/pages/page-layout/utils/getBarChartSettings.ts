@@ -9,6 +9,7 @@ import { DATA_LABELS_SETTING } from '@/side-panel/pages/page-layout/constants/se
 import { DATE_GRANULARITY_X_SETTING } from '@/side-panel/pages/page-layout/constants/settings/DateGranularityXSetting';
 import { DATE_GRANULARITY_Y_SETTING } from '@/side-panel/pages/page-layout/constants/settings/DateGranularityYSetting';
 import { FILTER_SETTING } from '@/side-panel/pages/page-layout/constants/settings/FilterSetting';
+import { FORMAT_SETTING } from '@/side-panel/pages/page-layout/constants/settings/FormatSetting';
 import { GROUP_BY_SETTING } from '@/side-panel/pages/page-layout/constants/settings/GroupBySetting';
 import { OMIT_NULL_VALUES_SETTING } from '@/side-panel/pages/page-layout/constants/settings/OmitNullValuesSetting';
 import { PRIMARY_SORT_BY_SETTING } from '@/side-panel/pages/page-layout/constants/settings/PrimarySortBySetting';
@@ -20,7 +21,7 @@ import { SPLIT_MULTI_VALUE_FIELDS_X_SETTING } from '@/side-panel/pages/page-layo
 import { SPLIT_MULTI_VALUE_FIELDS_Y_SETTING } from '@/side-panel/pages/page-layout/constants/settings/SplitMultiValueFieldsYSetting';
 import { STACKED_BARS_SETTING } from '@/side-panel/pages/page-layout/constants/settings/StackedBarsSetting';
 import { type ChartSettingsGroup } from '@/side-panel/pages/page-layout/types/ChartSettingsGroup';
-import { IconAxisX, IconAxisY } from 'twenty-ui/display';
+import { IconAxisX, IconAxisY } from 'twenty-ui/icon';
 import { BarChartLayout } from '~/generated-metadata/graphql';
 
 export const getBarChartSettings = (
@@ -73,6 +74,7 @@ export const getBarChartSettings = (
         AXIS_NAME_SETTING,
         STACKED_BARS_SETTING,
         DATA_LABELS_SETTING,
+        FORMAT_SETTING,
         SHOW_LEGEND_SETTING,
       ],
     },

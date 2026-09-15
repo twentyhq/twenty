@@ -1,17 +1,6 @@
 import { type FieldMetadataType } from '@/types/FieldMetadataType';
 import { type IsExactly } from '@/types/IsExactly';
-
-export type TagColor =
-  | 'green'
-  | 'turquoise'
-  | 'sky'
-  | 'blue'
-  | 'purple'
-  | 'pink'
-  | 'red'
-  | 'orange'
-  | 'yellow'
-  | 'gray';
+import { type TagColor } from '@/types/TagColor';
 
 export class FieldMetadataDefaultOption {
   id?: string;

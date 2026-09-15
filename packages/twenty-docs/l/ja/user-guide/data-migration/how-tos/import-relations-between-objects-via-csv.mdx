@@ -51,9 +51,9 @@ description: CSV インポート時にレコードを関連付けるための完
 4. **タスク/メモ**（上記のいずれかにリンク）
 
 <Warning>
-  **親レコードが存在しない場合、インポートは失敗します。**
+**親レコードが存在しない場合、インポートは失敗します。**
 
-  会社参照を含む連絡先をインポートする前に、必ず会社がインポート済みであることを確認してください。
+会社参照を含む連絡先をインポートする前に、必ず会社がインポート済みであることを確認してください。
 </Warning>
 
 ## ステップ 3: 親の一意識別子を控える
@@ -117,9 +117,9 @@ Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 | ID   | UUID        | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **ドメインの形式が重要です！**
+**ドメインの形式が重要です！**
 
-  `https://domain.com` を使用してください（`domain.com` だけではありません）。 これは Twenty が会社のドメインを保存する方法に一致し、照合エラーを防ぎます。
+`https://domain.com` を使用してください（`domain.com` だけではありません）。 これは Twenty が会社のドメインを保存する方法に一致し、照合エラーを防ぎます。
 </Warning>
 
 ### 重要なルール
@@ -178,7 +178,6 @@ Review proposal,jane@yourcompany.com
 <AccordionGroup>
   <Accordion title="親レコードにドメインやメールがない場合はどうすればよいですか？">
     次の 2 つの選択肢があります：
-
     1. Twenty の `id` を使用する（親レコードをエクスポートして ID を取得）
     2. データモデルにカスタムの一意フィールドを作成し、以前のシステムの外部 ID を保存する
   </Accordion>
@@ -197,7 +196,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="親レコードが存在しない場合はどうなりますか？">
     その行に対してエラーが表示されます。 次のいずれかを行うことができます。
-
     * 先に親レコードをインポートしてから再インポートする
     * 参照値を修正する
     * インポート対象からその行を削除する
@@ -205,7 +203,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="リレーションが正しくリンクされないのはなぜですか？">
     よくある原因：
-
     * 形式の誤り（ドメインには `https://domain.com` を使用）
     * 大文字小文字の不一致（綴りを正確に確認）
     * 親が存在しない（先に親をインポート）
@@ -214,9 +211,9 @@ Review proposal,jane@yourcompany.com
 </AccordionGroup>
 
 <Warning>
-  **注意: 論理削除されたレコードも一意性の判定に含まれます。**
+**注意: 論理削除されたレコードも一意性の判定に含まれます。**
 
-  「not found」エラーが出るのにレコードが存在するように見える場合は、Command Menu → See deleted records を確認してください。 親が論理削除されている可能性があります。
+「not found」エラーが出るのにレコードが存在するように見える場合は、Command Menu → See deleted records を確認してください。 親が論理削除されている可能性があります。
 </Warning>
 
 ## トラブルシューティング

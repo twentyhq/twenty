@@ -17,6 +17,7 @@ import {
   BarChartLayout,
   FindOnePageLayoutDocument,
   GraphOrderBy,
+  PageLayoutTabLayoutMode,
   PageLayoutType,
   type PageLayoutWidget,
   WidgetConfigurationType,
@@ -47,7 +48,6 @@ const validatePageLayoutContent = async (canvasElement: HTMLElement) => {
   const canvas = within(canvasElement);
 
   await expect(await canvas.findByText('Revenue')).toBeVisible();
-  await expect(await canvas.findByText('Goal Progress')).toBeVisible();
   await expect(await canvas.findByText('Revenue Sources')).toBeVisible();
   await expect(await canvas.findByText('Quarterly Comparison')).toBeVisible();
 };
@@ -76,14 +76,17 @@ const mixedGraphsPageLayoutMocks = {
         {
           __typename: 'PageLayoutWidget',
           applicationId: '',
+          universalIdentifier: 'universal-identifier-mock',
+          isSystemSideEffect: false,
           isActive: true,
           id: 'number-widget',
           pageLayoutTabId: 'mixed-tab',
           type: WidgetType.GRAPH,
           title: 'Revenue',
           objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            __typename: 'PageLayoutWidgetGridPosition',
             row: 0,
             column: 0,
             rowSpan: 2,
@@ -100,33 +103,8 @@ const mixedGraphsPageLayoutMocks = {
           deletedAt: null,
         } satisfies PageLayoutWidget,
         {
-          __typename: 'PageLayoutWidget',
-          applicationId: '',
-          isActive: true,
-          id: 'gauge-widget',
-          pageLayoutTabId: 'mixed-tab',
-          type: WidgetType.GRAPH,
-          title: 'Goal Progress',
-          objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
-            row: 0,
-            column: 3,
-            rowSpan: 4,
-            columnSpan: 3,
-          },
-          configuration: {
-            __typename: 'GaugeChartConfiguration',
-            configurationType: WidgetConfigurationType.GAUGE_CHART,
-            aggregateOperation: AggregateOperations.COUNT,
-            aggregateFieldMetadataId: idField.id,
-            displayDataLabel: false,
-          },
-          createdAt: '2024-01-01T00:00:00Z',
-          updatedAt: '2024-01-01T00:00:00Z',
-          deletedAt: null,
-        } satisfies PageLayoutWidget,
-        {
+          isSystemSideEffect: false,
+          universalIdentifier: 'universal-identifier-mock',
           __typename: 'PageLayoutWidget',
           applicationId: '',
           isActive: true,
@@ -135,8 +113,9 @@ const mixedGraphsPageLayoutMocks = {
           type: WidgetType.GRAPH,
           title: 'Revenue Sources',
           objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            __typename: 'PageLayoutWidgetGridPosition',
             row: 0,
             column: 6,
             rowSpan: 4,
@@ -155,6 +134,8 @@ const mixedGraphsPageLayoutMocks = {
           deletedAt: null,
         } satisfies PageLayoutWidget,
         {
+          isSystemSideEffect: false,
+          universalIdentifier: 'universal-identifier-mock',
           __typename: 'PageLayoutWidget',
           applicationId: '',
           isActive: true,
@@ -163,8 +144,9 @@ const mixedGraphsPageLayoutMocks = {
           type: WidgetType.GRAPH,
           title: 'Quarterly Comparison',
           objectMetadataId: mockPersonObjectMetadataItem.id,
-          gridPosition: {
-            __typename: 'GridPosition',
+          position: {
+            layoutMode: PageLayoutTabLayoutMode.GRID,
+            __typename: 'PageLayoutWidgetGridPosition',
             row: 2,
             column: 0,
             rowSpan: 4,
@@ -283,7 +265,6 @@ const meta: Meta<typeof PageLayoutRenderer> = {
           <CoreClientProviderWrapper>
             <LayoutRenderingProvider
               value={{
-                isInSidePanel: false,
                 layoutType: PageLayoutType.DASHBOARD,
                 targetRecordIdentifier: {
                   targetObjectNameSingular: CoreObjectNameSingular.Dashboard,

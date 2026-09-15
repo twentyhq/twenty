@@ -1,8 +1,8 @@
 import { t } from '@lingui/core/macro';
-import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { InputLabel } from '@/ui/input/components/InputLabel';
+import { InputLabel } from 'twenty-ui/input';
 import { Select } from '@/ui/input/components/Select';
 import {
   BODY_TYPES,
@@ -21,7 +21,7 @@ import {
   CONTENT_TYPE_VALUES_HTTP_REQUEST,
   type BodyType,
 } from 'twenty-shared/workflow';
-import { IconFileText, IconKey } from 'twenty-ui/display';
+import { IconFileText, IconKey } from 'twenty-ui/icon';
 import { type JsonValue } from 'type-fest';
 import { KeyValuePairInput } from './KeyValuePairInput';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

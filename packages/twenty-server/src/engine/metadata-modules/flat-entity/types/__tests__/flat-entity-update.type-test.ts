@@ -17,11 +17,16 @@ type Assertions = [
       | 'description'
       | 'isActive'
       | 'defaultValue'
-      | 'standardOverrides'
+      | 'overrides'
       | 'options'
       | 'settings'
       | 'isUnique'
+      | 'isSearchable'
+      | 'isAuditLogged'
       | 'isLabelSyncedWithName'
+      | 'isUIEditable'
+      | 'writability'
+      | 'isNullable'
       | 'universalSettings'
     >
   >,
@@ -39,9 +44,10 @@ type Assertions = [
       keyof FlatEntityUpdate<'objectMetadata'>,
       | 'icon'
       | 'color'
+      | 'openRecordIn'
       | 'description'
       | 'isActive'
-      | 'standardOverrides'
+      | 'overrides'
       | 'isLabelSyncedWithName'
       | 'nameSingular'
       | 'namePlural'
@@ -52,6 +58,11 @@ type Assertions = [
       | 'imageIdentifierFieldMetadataId'
       | 'imageIdentifierFieldMetadataUniversalIdentifier'
       | 'isSearchable'
+      | 'isUIEditable'
+      | 'isUICreatable'
+      | 'writability'
+      | 'readability'
+      | 'readabilityParentFieldUniversalIdentifiers'
     >
   >,
 

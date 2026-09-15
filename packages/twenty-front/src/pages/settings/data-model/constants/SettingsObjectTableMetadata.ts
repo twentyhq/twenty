@@ -25,7 +25,7 @@ export const GET_SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTab
         align: 'right',
       },
       {
-        fieldLabel: msg`Instances`,
+        fieldLabel: msg`Records`,
         fieldName: 'totalObjectCount',
         fieldType: 'number',
         align: 'right',
@@ -33,6 +33,6 @@ export const GET_SETTINGS_OBJECT_TABLE_METADATA: TableMetadata<SettingsObjectTab
     ],
     initialSort: {
       fieldName: 'labelPlural',
-      orderBy: 'AscNullsLast',
+      direction: 'asc',
     },
   };

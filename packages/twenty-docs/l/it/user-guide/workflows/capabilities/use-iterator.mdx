@@ -19,9 +19,15 @@ Iterator consente di scorrere un array di record ed eseguire azioni su ciascuno.
 Iterator si aspetta un **array** come input. Quindi:
 
 1. Prende il primo elemento dall'array
-2. Esegue tutte le azioni all'interno di Iterator con quell'elemento
+2. Esegue tutte le azioni all'interno dell'Iteratore con quell'oggetto
 3. Passa all'elemento successivo
 4. Ripete finché tutti gli elementi non sono stati elaborati
+
+### Selezionare l'array su cui iterare
+
+La maggior parte delle origini di array (Search Records, un campo array di un webhook, un trigger manuale Bulk) può essere selezionata direttamente nel selettore di variabili.
+
+Quando uno step **Code** o **Logic Function** restituisce un *array di primo livello*, il relativo output viene visualizzato nel selettore di variabili come voci indicizzate (`0`, `1`, `2`, …). Per iterare sull'intero array, seleziona l'opzione **Whole list** per quello step — l'Iterator deduce quindi automaticamente la struttura di ciascun elemento dall'elenco.
 
 ## Configurazione di base
 
@@ -52,7 +58,7 @@ Iterator si aspetta un **array** come input. Quindi:
 
 Le azioni posizionate sotto Iterator vengono eseguite per ciascun elemento:
 
-1. Aggiungi un'azione **Send Email** (all'interno di Iterator)
+1. Aggiungi azione **Invia email** (dentro Iterator)
 2. A: `{{iterator.currentItem.email}}`
 3. Oggetto: Ciao `{{iterator.currentItem.firstName}}`!
 4. Corpo: Messaggio personalizzato utilizzando i campi dell'elemento corrente
@@ -76,6 +82,8 @@ All'interno di Iterator, usa `{{iterator.currentItem}}` per accedere al record c
 | `{{iterator.currentItem.email}}`        | Campo email                                           |
 | `{{iterator.currentItem.company.name}}` | Nome dell'azienda correlata                           |
 | `{{iterator.index}}`                    | Posizione corrente nell'array (indice a partire da 0) |
+
+Nel selettore di variabili, puoi esplorare un campo specifico dell'elemento corrente oppure scegliere **Use the whole item** per fare riferimento all'intero elemento corrente (`{{iterator.currentItem}}`). Selezionare l'intero elemento è utile quando vuoi passare un record completo direttamente a uno step a valle invece di ricostruirlo campo per campo.
 
 ## Modelli comuni
 

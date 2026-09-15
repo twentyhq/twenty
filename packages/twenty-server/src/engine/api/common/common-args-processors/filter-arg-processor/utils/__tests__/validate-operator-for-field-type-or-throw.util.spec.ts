@@ -46,4 +46,19 @@ describe('validateOperatorForFieldTypeOrThrow', () => {
       validateOperatorForFieldTypeOrThrow('like', fieldMetadata, 'testField'),
     ).toThrow(CommonQueryRunnerException);
   });
+
+  it.each(['gt', 'gte', 'lt', 'lte'] as const)(
+    'should not throw when ordering operator "%s" is used on a SELECT field',
+    (operator) => {
+      const fieldMetadata = createFieldMetadata(FieldMetadataType.SELECT);
+
+      expect(() =>
+        validateOperatorForFieldTypeOrThrow(
+          operator,
+          fieldMetadata,
+          'severity',
+        ),
+      ).not.toThrow();
+    },
+  );
 });

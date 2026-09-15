@@ -5,13 +5,17 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { WorkspaceFlatSkillMapCacheService } from 'src/engine/metadata-modules/flat-skill/services/workspace-flat-skill-map-cache.service';
 import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ApplicationEntity, SkillEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
-  providers: [WorkspaceFlatSkillMapCacheService],
+  providers: [
+    WorkspaceFlatSkillMapCacheService,
+    provideWorkspaceScopedRepository(SkillEntity),
+  ],
   exports: [WorkspaceFlatSkillMapCacheService],
 })
 export class FlatSkillModule {}

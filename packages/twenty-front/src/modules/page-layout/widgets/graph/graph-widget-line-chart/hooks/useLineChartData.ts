@@ -4,6 +4,7 @@ import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph
 import { graphWidgetHiddenLegendIdsComponentState } from '@/page-layout/widgets/graph/states/graphWidgetHiddenLegendIdsComponentState';
 import { type GraphColorMode } from '@/page-layout/widgets/graph/types/GraphColorMode';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
+import { buildAlphabeticalRankByKey } from '@/page-layout/widgets/graph/utils/buildAlphabeticalRankByKey';
 import { getColorScheme } from '@/page-layout/widgets/graph/utils/getColorScheme';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { type LineSeries } from '@nivo/line';
@@ -27,20 +28,23 @@ export const useLineChartData = ({
   );
 
   const allEnrichedSeries = useMemo((): LineChartEnrichedSeries[] => {
-    const shouldApplyGradient = colorMode === 'explicitSingleColor';
+    const alphabeticalRankByKey = buildAlphabeticalRankByKey(
+      data.map((series) => series.key),
+    );
 
     return data.map((series, index) => {
       const colorScheme = getColorScheme({
         registry: colorRegistry,
         colorName: series.color,
-        fallbackIndex: index,
-        totalGroups: shouldApplyGradient ? data.length : undefined,
+        colorKey: series.key,
+        colorMode,
+        alphabeticalRankByKey,
       });
 
-      const sanitizedSeriesId = series.id
+      const sanitizedSeriesKey = series.key
         .replace(/\s+/g, '_')
         .replace(/[^a-zA-Z0-9_-]/g, '');
-      const areaFillId = `areaFill-${id}-${sanitizedSeriesId}-${index}`;
+      const areaFillId = `areaFill-${id}-${sanitizedSeriesKey}-${index}`;
 
       return { ...series, colorScheme, areaFillId };
     });
@@ -48,22 +52,22 @@ export const useLineChartData = ({
 
   const legendItems: GraphWidgetLegendItem[] = allEnrichedSeries.map(
     (series) => ({
-      id: series.id,
+      id: series.key,
       label: series.label,
       color: series.colorScheme.solid,
     }),
   );
 
   const visibleData = data.filter(
-    (series) => !graphWidgetHiddenLegendIds.includes(series.id),
+    (series) => !graphWidgetHiddenLegendIds.includes(series.key),
   );
 
   const enrichedSeries = allEnrichedSeries.filter(
-    (series) => !graphWidgetHiddenLegendIds.includes(series.id),
+    (series) => !graphWidgetHiddenLegendIds.includes(series.key),
   );
 
   const nivoData: LineSeries[] = visibleData.map((series) => ({
-    id: series.id,
+    id: series.key,
     data: series.data.map((point) => ({ x: point.x, y: point.y })),
   }));
 

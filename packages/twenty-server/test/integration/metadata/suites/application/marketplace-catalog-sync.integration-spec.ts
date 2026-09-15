@@ -1,9 +1,23 @@
 import crypto from 'crypto';
+import { promises as fs } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
+import { gql } from 'graphql-tag';
 import request from 'supertest';
+import * as tar from 'tar';
+import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
-const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
+const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
 
 const MARKETPLACE_QUERY = `
   query {
@@ -14,15 +28,17 @@ const MARKETPLACE_QUERY = `
       author
       sourcePackage
       category
-      logo
-      isFeatured
+      logoUrl
+      isVetted
     }
   }
 `;
 
 const INSTALL_MUTATION = `
-  mutation InstallMarketplaceApp($universalIdentifier: String!) {
-    installMarketplaceApp(universalIdentifier: $universalIdentifier)
+  mutation InstallApplication($universalIdentifier: String!) {
+    installApplication(universalIdentifier: $universalIdentifier) {
+      id
+    }
   }
 `;
 
@@ -59,6 +75,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
     sourcePackage: string;
     latestAvailableVersion?: string;
     manifest?: Record<string, unknown>;
+    category?: string;
   }): Promise<string> => {
     const id = crypto.randomUUID();
     const oAuthClientId = crypto.randomUUID();
@@ -68,8 +85,8 @@ describe('Marketplace Catalog Sync (integration)', () => {
         (id, "universalIdentifier", name, "oAuthClientId",
          "oAuthRedirectUris", "oAuthScopes", "workspaceId",
          "sourceType", "sourcePackage", "latestAvailableVersion",
-         "manifest", "isListed")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
+         "manifest", "isListed", "category")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
       [
         id,
         params.universalIdentifier,
@@ -83,6 +100,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         params.latestAvailableVersion ?? '1.0.0',
         params.manifest ? JSON.stringify(params.manifest) : null,
         true,
+        params.category ?? null,
       ],
     );
 
@@ -137,6 +155,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
             category: 'Data',
           },
         },
+        category: 'Data',
       });
     });
 
@@ -176,7 +195,104 @@ describe('Marketplace Catalog Sync (integration)', () => {
     });
   });
 
-  describe('installMarketplaceApp', () => {
+  describe.each([true, false])(
+    'catalog sync with manifest: %s',
+    (hasManifest) => {
+      it.each([true, false])(
+        'preserves the admin choice isVetted=%s',
+        async (isVetted) => {
+          const applicationRegistrationService =
+            getAppProviderByClassName<ApplicationRegistrationService>(
+              'ApplicationRegistrationService',
+            );
+          const universalIdentifier = isVetted
+            ? crypto.randomUUID()
+            : MARKETPLACE_VETTED_APPLICATIONS[0].universalIdentifier;
+          const catalogParams = {
+            universalIdentifier,
+            name: 'Vetted catalog sync test',
+            sourceType: ApplicationRegistrationSourceType.NPM,
+            sourcePackage: '@test/vetted-catalog-sync',
+            latestAvailableVersion: '1.0.0',
+            manifest: hasManifest
+              ? buildBaseManifest({
+                  appId: universalIdentifier,
+                  roleId: crypto.randomUUID(),
+                })
+              : null,
+          };
+
+          expect(
+            await applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+              universalIdentifier,
+            ),
+          ).toBeNull();
+
+          try {
+            await applicationRegistrationService.upsertFromCatalog(
+              catalogParams,
+            );
+
+            const registration =
+              await applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+                universalIdentifier,
+              );
+
+            expect(registration).toMatchObject({ isVetted: !isVetted });
+
+            const updateResponse = await makeAdminPanelAPIRequest({
+              query: gql`
+                mutation UpdateAdminApplicationRegistration(
+                  $input: UpdateApplicationRegistrationInput!
+                ) {
+                  updateAdminApplicationRegistration(input: $input) {
+                    id
+                    isVetted
+                  }
+                }
+              `,
+              variables: {
+                input: { id: registration?.id, update: { isVetted } },
+              },
+            });
+
+            expect(updateResponse.body.errors).toBeUndefined();
+            expect(
+              updateResponse.body.data.updateAdminApplicationRegistration,
+            ).toMatchObject({ isVetted });
+
+            await applicationRegistrationService.upsertFromCatalog(
+              catalogParams,
+            );
+
+            const refreshedResponse = await makeAdminPanelAPIRequest({
+              query: gql`
+                query FindOneAdminApplicationRegistration($id: String!) {
+                  findOneAdminApplicationRegistration(id: $id) {
+                    id
+                    isVetted
+                  }
+                }
+              `,
+              variables: { id: registration?.id },
+            });
+
+            expect(refreshedResponse.body.errors).toBeUndefined();
+            expect(
+              refreshedResponse.body.data.findOneAdminApplicationRegistration,
+            ).toMatchObject({ isVetted });
+          } finally {
+            await ds.query(
+              `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+              [universalIdentifier],
+            );
+          }
+        },
+      );
+    },
+  );
+
+  describe('installApplication', () => {
     it('should fail if registration does not exist', async () => {
       const res = await gqlRequest(INSTALL_MUTATION, {
         universalIdentifier: crypto.randomUUID(),
@@ -187,5 +303,107 @@ describe('Marketplace Catalog Sync (integration)', () => {
         'No application registration found',
       );
     });
+
+    it('should install a tarball app and return the application id', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const roleId = crypto.randomUUID();
+
+      const manifest = JSON.stringify({
+        application: {
+          universalIdentifier,
+          displayName: 'Install Test App',
+          description: 'App for testing installApplication',
+          icon: 'IconTestPipe',
+          defaultRoleUniversalIdentifier: roleId,
+          applicationVariables: {},
+          packageJsonChecksum: null,
+          yarnLockChecksum: null,
+        },
+        roles: [
+          {
+            universalIdentifier: roleId,
+            label: 'Default Role',
+            description: 'Default role',
+          },
+        ],
+        skills: [],
+        agents: [],
+        objects: [],
+        fields: [],
+        logicFunctions: [],
+        frontComponents: [],
+        publicAssets: [],
+        views: [],
+        navigationMenuItems: [],
+        pageLayouts: [],
+        pageLayoutTabs: [],
+        pageLayoutWidgets: [],
+        commandMenuItems: [],
+      });
+
+      const packageJson = JSON.stringify({
+        name: 'test-install-app',
+        version: '1.0.0',
+      });
+
+      const tempId = crypto.randomUUID();
+      const sourceDir = join(tmpdir(), `test-tarball-src-${tempId}`);
+      const tarballPath = join(tmpdir(), `test-tarball-${tempId}.tar.gz`);
+
+      await fs.mkdir(sourceDir, { recursive: true });
+      await fs.writeFile(join(sourceDir, 'manifest.json'), manifest);
+      await fs.writeFile(join(sourceDir, 'package.json'), packageJson);
+
+      await tar.create({ file: tarballPath, gzip: true, cwd: sourceDir }, [
+        'manifest.json',
+        'package.json',
+      ]);
+
+      const tarballBuffer = await fs.readFile(tarballPath);
+
+      await fs.rm(sourceDir, { recursive: true, force: true });
+      await fs.rm(tarballPath, { force: true });
+
+      const UPLOAD_MUTATION = `
+        mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {
+          uploadAppTarball(file: $file, universalIdentifier: $universalIdentifier) {
+            id
+            universalIdentifier
+            name
+          }
+        }
+      `;
+
+      const uploadRes = await request(baseUrl)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .field(
+          'operations',
+          JSON.stringify({
+            query: UPLOAD_MUTATION,
+            variables: { file: null, universalIdentifier },
+          }),
+        )
+        .field('map', JSON.stringify({ '0': ['variables.file'] }))
+        .attach('0', tarballBuffer, 'app.tar.gz')
+        .expect(200);
+
+      expect(uploadRes.body.errors).toBeUndefined();
+      expect(uploadRes.body.data.uploadAppTarball.id).toBeDefined();
+
+      try {
+        const installRes = await gqlRequest(INSTALL_MUTATION, {
+          universalIdentifier,
+        }).expect(200);
+
+        expect(installRes.body.errors).toBeUndefined();
+        expect(installRes.body.data.installApplication).toBeDefined();
+        expect(installRes.body.data.installApplication.id).toBeDefined();
+      } finally {
+        await cleanupApplicationAndAppRegistration({
+          applicationUniversalIdentifier: universalIdentifier,
+        });
+      }
+    }, 120000);
   });
 });

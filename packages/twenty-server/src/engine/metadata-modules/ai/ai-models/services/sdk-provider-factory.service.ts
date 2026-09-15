@@ -7,10 +7,16 @@ import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { createMistral } from '@ai-sdk/mistral';
 import { createOpenAI, type OpenAIProvider } from '@ai-sdk/openai';
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
-import { createXai } from '@ai-sdk/xai';
+import { createXai, type XaiProvider } from '@ai-sdk/xai';
 import { fromNodeProviderChain } from '@aws-sdk/credential-providers';
-import { type LanguageModel } from 'ai';
+import {
+  wrapLanguageModel,
+  type LanguageModel,
+  type LanguageModelMiddleware,
+  type TranscriptionModel,
+} from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   AI_SDK_ANTHROPIC,
@@ -22,10 +28,14 @@ import {
   AI_SDK_OPENAI_COMPATIBLE,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+import { sanitizeGeminiToolResultRefsMiddleware } from 'src/engine/metadata-modules/ai/ai-models/middleware/sanitize-gemini-tool-result-refs.middleware';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
+import { getTranscriptionModelFactory } from 'src/engine/metadata-modules/ai/ai-models/utils/get-transcription-model-factory.util';
 
 export type AiSdkProviderInstance = {
   createModel: (modelId: string) => LanguageModel;
+  // Absent on providers with no speech-to-text API.
+  createTranscriptionModel?: (modelId: string) => TranscriptionModel;
   rawProvider: unknown;
   sdkPackage: AiSdkPackage;
 };
@@ -75,8 +85,27 @@ export class SdkProviderFactoryService {
     return this.getRawProvider<OpenAIProvider>(providerName, AI_SDK_OPENAI);
   }
 
+  getRawXaiProvider(providerName: string): XaiProvider | undefined {
+    return this.getRawProvider<XaiProvider>(providerName, AI_SDK_XAI);
+  }
+
   clearCache(): void {
     this.providerInstances.clear();
+  }
+
+  private toProviderInstance(
+    provider: unknown,
+    sdkPackage: AiSdkPackage,
+    createModel: (modelId: string) => LanguageModel,
+  ): AiSdkProviderInstance {
+    const createTranscriptionModel = getTranscriptionModelFactory(provider);
+
+    return {
+      createModel,
+      ...(isDefined(createTranscriptionModel) && { createTranscriptionModel }),
+      rawProvider: provider,
+      sdkPackage,
+    };
   }
 
   private buildProviderInstance(
@@ -88,11 +117,13 @@ export class SdkProviderFactoryService {
       case AI_SDK_ANTHROPIC:
         return this.buildStandardProvider(config, createAnthropic);
       case AI_SDK_GOOGLE:
-        return this.buildStandardProvider(config, createGoogleGenerativeAI);
+        return this.buildStandardProvider(config, createGoogleGenerativeAI, {
+          middleware: sanitizeGeminiToolResultRefsMiddleware,
+        });
       case AI_SDK_MISTRAL:
         return this.buildStandardProvider(config, createMistral);
       case AI_SDK_XAI:
-        return this.buildStandardProvider(config, createXai);
+        return this.buildXaiProvider(config);
       case AI_SDK_BEDROCK:
         return this.buildBedrockProvider(config);
       case AI_SDK_OPENAI_COMPATIBLE:
@@ -107,18 +138,31 @@ export class SdkProviderFactoryService {
   private buildStandardProvider(
     config: AiProviderConfig,
     factory: (opts: { apiKey?: string; baseURL?: string }) => CallableFunction,
+    options?: { middleware?: LanguageModelMiddleware },
   ): AiSdkProviderInstance {
     const provider = factory({
       ...(config.apiKey && { apiKey: config.apiKey }),
       ...(config.baseUrl && { baseURL: config.baseUrl }),
     });
 
-    return {
-      createModel: (modelId: string) =>
-        (provider as CallableFunction)(modelId) as LanguageModel,
-      rawProvider: provider,
-      sdkPackage: config.npm,
-    };
+    return this.toProviderInstance(provider, config.npm, (modelId: string) => {
+      const model = (provider as CallableFunction)(modelId);
+
+      return options?.middleware
+        ? wrapLanguageModel({ model, middleware: options.middleware })
+        : model;
+    });
+  }
+
+  private buildXaiProvider(config: AiProviderConfig): AiSdkProviderInstance {
+    const provider = createXai({
+      ...(config.apiKey && { apiKey: config.apiKey }),
+      ...(config.baseUrl && { baseURL: config.baseUrl }),
+    });
+
+    return this.toProviderInstance(provider, AI_SDK_XAI, (modelId: string) =>
+      provider.responses(modelId),
+    );
   }
 
   private buildBedrockProvider(
@@ -152,11 +196,11 @@ export class SdkProviderFactoryService {
         }),
     });
 
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_BEDROCK,
-    };
+    return this.toProviderInstance(
+      provider,
+      AI_SDK_BEDROCK,
+      (modelId: string) => provider(modelId),
+    );
   }
 
   private buildOpenAiCompatibleProvider(
@@ -172,11 +216,11 @@ export class SdkProviderFactoryService {
       ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_OPENAI_COMPATIBLE,
-    };
+    return this.toProviderInstance(
+      provider,
+      AI_SDK_OPENAI_COMPATIBLE,
+      (modelId: string) => provider(modelId),
+    );
   }
 
   private buildAzureProvider(config: AiProviderConfig): AiSdkProviderInstance {
@@ -189,10 +233,8 @@ export class SdkProviderFactoryService {
       ...(config.apiKey && { apiKey: config.apiKey }),
     });
 
-    return {
-      createModel: (modelId: string) => provider(modelId),
-      rawProvider: provider,
-      sdkPackage: AI_SDK_AZURE,
-    };
+    return this.toProviderInstance(provider, AI_SDK_AZURE, (modelId: string) =>
+      provider(modelId),
+    );
   }
 }

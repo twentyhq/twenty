@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.3.0', 1797000001000)
-export class AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddToolAndWorkflowActionTriggerSettingsFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."logicFunction" ADD "toolTriggerSettings" jsonb`,

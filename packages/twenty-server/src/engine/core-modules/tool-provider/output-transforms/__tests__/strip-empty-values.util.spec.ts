@@ -141,6 +141,47 @@ describe('stripEmptyValues', () => {
     });
   });
 
+  it('should preserve Date objects', () => {
+    const date = new Date('2024-01-15T10:30:00.000Z');
+
+    expect(stripEmptyValues({ createdAt: date, name: 'Test' })).toEqual({
+      createdAt: date,
+      name: 'Test',
+    });
+  });
+
+  it('should preserve Date objects inside nested records', () => {
+    const createdAt = new Date('2024-01-15T10:30:00.000Z');
+    const updatedAt = new Date('2024-02-20T14:00:00.000Z');
+
+    const input = {
+      result: {
+        records: [
+          {
+            id: 'abc-123',
+            name: 'Acme',
+            createdAt,
+            updatedAt,
+            deletedAt: null,
+          },
+        ],
+      },
+    };
+
+    expect(stripEmptyValues(input)).toEqual({
+      result: {
+        records: [
+          {
+            id: 'abc-123',
+            name: 'Acme',
+            createdAt,
+            updatedAt,
+          },
+        ],
+      },
+    });
+  });
+
   it('should handle primitive values', () => {
     expect(stripEmptyValues(42)).toBe(42);
     expect(stripEmptyValues('hello')).toBe('hello');

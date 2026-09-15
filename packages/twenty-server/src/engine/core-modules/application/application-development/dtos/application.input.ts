@@ -7,4 +7,10 @@ import { Manifest } from 'twenty-shared/application';
 export class ApplicationInput {
   @Field(() => GraphQLJSON, { nullable: false })
   manifest: Manifest;
+
+  @Field(() => Boolean, { nullable: true })
+  dryRun?: boolean;
+
+  @Field(() => Boolean, { nullable: true })
+  inferDeletionFromMissingEntities?: boolean;
 }

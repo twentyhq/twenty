@@ -15,7 +15,7 @@ export const getWorkspaceSchemaContextForMigration = ({
   workspaceId: string;
   objectMetadata: Pick<
     FlatObjectMetadata | UniversalFlatObjectMetadata,
-    'nameSingular' | 'isCustom'
+    'nameSingular' | 'applicationUniversalIdentifier'
   >;
 }): WorkspaceSchemaContextForMigration => {
   return {

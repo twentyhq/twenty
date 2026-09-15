@@ -7,7 +7,6 @@ import {
   useRecordId,
 } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 
 const SendPostCardsEffect = () => {
   const recordId = useRecordId();
@@ -53,19 +52,13 @@ const SendPostCardsEffect = () => {
   return null;
 };
 
+export const SEND_POST_CARDS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
+  'a3b7c2d1-4e5f-4a8b-9c0d-1e2f3a4b5c6d';
+
 export default defineFrontComponent({
-  universalIdentifier: 'a3b7c2d1-4e5f-4a8b-9c0d-1e2f3a4b5c6d',
+  universalIdentifier: SEND_POST_CARDS_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
   name: 'Send Post Cards',
   description: 'Sets postcard status to Sent',
   isHeadless: true,
   component: SendPostCardsEffect,
-  command: {
-    universalIdentifier: 'bd75de13-87a1-4f7a-94e2-92e19e97523c',
-    label: 'Send post cards',
-    shortLabel: 'Send',
-    icon: 'IconSend',
-    isPinned: true,
-    availabilityType: 'RECORD_SELECTION',
-    availabilityObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
-  },
 });

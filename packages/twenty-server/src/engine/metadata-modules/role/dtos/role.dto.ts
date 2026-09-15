@@ -7,7 +7,7 @@ import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-
 import { AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { FieldPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/field-permission.dto';
 import { ObjectPermissionDTO } from 'src/engine/metadata-modules/object-permission/dtos/object-permission.dto';
-import { PermissionFlagDTO } from 'src/engine/metadata-modules/permission-flag/dtos/permission-flag.dto';
+import { RolePermissionFlagDTO } from 'src/engine/metadata-modules/role-permission-flag/dtos/role-permission-flag.dto';
 import { type RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RowLevelPermissionPredicateGroupDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate-group.dto';
 import { RowLevelPermissionPredicateDTO } from 'src/engine/metadata-modules/row-level-permission-predicate/dtos/row-level-permission-predicate.dto';
@@ -86,8 +86,8 @@ export class RoleDTO {
   @Field({ nullable: false })
   canDestroyAllObjectRecords: boolean;
 
-  @Field(() => [PermissionFlagDTO], { nullable: true })
-  permissionFlags?: PermissionFlagDTO[];
+  @Field(() => [RolePermissionFlagDTO], { nullable: true })
+  permissionFlags?: RolePermissionFlagDTO[];
 
   @Field(() => [ObjectPermissionDTO], { nullable: true })
   objectPermissions?: ObjectPermissionDTO[];

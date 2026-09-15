@@ -156,6 +156,7 @@ export const ConfigVariableDatabaseInput = ({
             <TextArea
               textAreaId={jsonArrayTextAreaId}
               label={label}
+              maxRows={5}
               value={
                 Array.isArray(value)
                   ? JSON.stringify(value)

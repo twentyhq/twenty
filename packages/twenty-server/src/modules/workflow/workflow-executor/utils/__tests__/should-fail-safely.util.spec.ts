@@ -2,9 +2,11 @@ import { StepStatus } from 'twenty-shared/workflow';
 
 import {
   createMockCodeStep,
+  createMockIfElseStep,
   createMockIteratorStep,
 } from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 describe('shouldFailSafely', () => {
   it('should return false when step has no parents', () => {
@@ -106,6 +108,80 @@ describe('shouldFailSafely', () => {
     });
 
     expect(result).toBe(true);
+  });
+
+  it('should return true when IF-ELSE parent is FAILED_SAFELY and step is a branch child', () => {
+    const childStep = createMockCodeStep('child');
+    const ifElseStep = createMockIfElseStep('if-else', [
+      { id: 'true-branch', nextStepIds: ['child'] },
+      { id: 'false-branch', nextStepIds: ['other'] },
+    ]);
+    const steps: WorkflowAction[] = [ifElseStep, childStep];
+
+    const result = shouldFailSafely({
+      step: childStep,
+      steps,
+      stepInfos: {
+        'if-else': { status: StepStatus.FAILED_SAFELY, error: 'err' },
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when IF-ELSE parent succeeded and step is a branch child', () => {
+    const childStep = createMockCodeStep('child');
+    const ifElseStep = createMockIfElseStep('if-else', [
+      { id: 'branch', nextStepIds: ['child'] },
+    ]);
+    const steps: WorkflowAction[] = [ifElseStep, childStep];
+
+    const result = shouldFailSafely({
+      step: childStep,
+      steps,
+      stepInfos: {
+        'if-else': { status: StepStatus.SUCCESS },
+      },
+    });
+
+    expect(result).toBe(false);
+  });
+  it('should return true when a continuing parent is joined by a cascaded FAILED_SAFELY parent', () => {
+    const continuingParent = createMockCodeStep('parent1', ['child'], {
+      continueOnFailure: true,
+    });
+    const cascadedParent = createMockCodeStep('parent2', ['child']);
+    const childStep = createMockCodeStep('child');
+    const steps = [continuingParent, cascadedParent, childStep];
+
+    const result = shouldFailSafely({
+      step: childStep,
+      steps,
+      stepInfos: {
+        parent1: { status: StepStatus.FAILED_SAFELY, error: 'some error' },
+        parent2: { status: StepStatus.FAILED_SAFELY },
+      },
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when the FAILED_SAFELY parent continued on failure', () => {
+    const parent = createMockCodeStep('parent', ['child'], {
+      continueOnFailure: true,
+    });
+    const childStep = createMockCodeStep('child');
+    const steps = [parent, childStep];
+
+    const result = shouldFailSafely({
+      step: childStep,
+      steps,
+      stepInfos: {
+        parent: { status: StepStatus.FAILED_SAFELY, error: 'some error' },
+      },
+    });
+
+    expect(result).toBe(false);
   });
 });
 

@@ -6,7 +6,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TwoFactorAuthenticationVerificationCodeDash } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeDash';
 import { TwoFactorAuthenticationVerificationCodeSlot } from '@/settings/two-factor-authentication/components/TwoFactorAuthenticationVerificationCodeSlot';
 
-// OTP Form Types
 type OTPFormValues = {
   otp: string;
 };
@@ -34,6 +33,7 @@ export const TwoFactorAuthenticationVerificationForSettings = () => {
           onBlur={onBlur}
           onChange={onChange}
           value={value}
+          autoFocus
           render={({ slots }) => (
             <StyledOTPContainer>
               {slots.slice(0, 3).map((slot, idx) => (

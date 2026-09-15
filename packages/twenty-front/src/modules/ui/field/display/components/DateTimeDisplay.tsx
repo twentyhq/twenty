@@ -8,7 +8,7 @@ import { useContext } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
-import { EllipsisDisplay } from './EllipsisDisplay';
+import { EllipsisDisplay } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTimeZoneSpacer = styled.span`

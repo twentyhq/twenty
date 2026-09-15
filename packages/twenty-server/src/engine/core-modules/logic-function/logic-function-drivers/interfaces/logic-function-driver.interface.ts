@@ -1,5 +1,8 @@
+import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
+
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { type LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 export type LogicFunctionExecuteError = {
@@ -11,6 +14,7 @@ export type LogicFunctionExecuteError = {
 export type LogicFunctionExecuteResult = {
   data: object | null;
   duration: number;
+  billedDurationMs: number;
   logs: string;
   status: LogicFunctionExecutionStatus;
   error?: LogicFunctionExecuteError;
@@ -21,8 +25,16 @@ export type LogicFunctionExecuteParams = {
   flatApplication: FlatApplication;
   applicationUniversalIdentifier: string;
   payload: object;
+  context: LogicFunctionExecutionContext;
   env?: Record<string, string>;
   timeoutMs?: number;
+  forceExecutionMode?: LogicFunctionExecutionMode;
+};
+
+export type LogicFunctionInstallPrebuiltBundleParams = {
+  flatLogicFunction: FlatLogicFunction;
+  flatApplication: FlatApplication;
+  applicationUniversalIdentifier: string;
 };
 
 export type LogicFunctionTranspileParams = {
@@ -35,14 +47,28 @@ export type LogicFunctionTranspileResult = {
   builtCode: string;
 };
 
+export type LogicFunctionDeleteApplicationResourcesParams = {
+  workspaceId: string;
+  applicationUniversalIdentifier: string;
+};
+
 export interface LogicFunctionDriver {
   delete(flatLogicFunction: FlatLogicFunction): Promise<void>;
+  deleteApplicationResources(
+    params: LogicFunctionDeleteApplicationResourcesParams,
+  ): Promise<void>;
   execute(
     params: LogicFunctionExecuteParams,
   ): Promise<LogicFunctionExecuteResult>;
   transpile(
     params: LogicFunctionTranspileParams,
   ): Promise<LogicFunctionTranspileResult>;
+  installPrebuiltBundle(
+    params: LogicFunctionInstallPrebuiltBundleParams,
+  ): Promise<void>;
+  getInstalledBundleChecksum(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<string | null>;
 }
 
 export enum LogicFunctionDriverType {

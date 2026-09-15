@@ -4,11 +4,11 @@ import { NavigationSections } from '@/navigation-menu-item/common/constants/Navi
 import { PageDragDropProviderMountEffect } from '@/navigation-menu-item/display/dnd/providers/PageDragDropProviderMountEffect';
 
 const LazyNavigationMenuItemDndKitProvider = lazy(() =>
-  import(
-    '@/navigation-menu-item/display/dnd/providers/NavigationMenuItemDndKitProvider'
-  ).then((m) => ({
-    default: m.NavigationMenuItemDndKitProvider,
-  })),
+  import('@/navigation-menu-item/display/dnd/providers/NavigationMenuItemDndKitProvider').then(
+    (m) => ({
+      default: m.NavigationMenuItemDndKitProvider,
+    }),
+  ),
 );
 
 type PageDragDropProviderProps = {

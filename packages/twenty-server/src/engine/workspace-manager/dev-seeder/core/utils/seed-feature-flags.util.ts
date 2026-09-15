@@ -3,6 +3,17 @@ import { type QueryRunner } from 'typeorm';
 
 const tableName = 'featureFlag';
 
+const DEFAULT_SEEDED_FEATURE_FLAGS: Partial<Record<FeatureFlagKey, boolean>> = {
+  [FeatureFlagKey.IS_APP_CLAIMING_ENABLED]: false,
+  [FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED]: false,
+  [FeatureFlagKey.IS_EMAIL_GROUP_ENABLED]: true,
+  [FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED]: true,
+  [FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED]: true,
+  [FeatureFlagKey.IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED]: false,
+  [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED]: false,
+  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: false,
+};
+
 type SeedFeatureFlagsArgs = {
   queryRunner: QueryRunner;
   schemaName: string;
@@ -19,48 +30,13 @@ export const seedFeatureFlags = async ({
     .insert()
     .into(`${schemaName}.${tableName}`, ['key', 'workspaceId', 'value'])
     .orIgnore()
-    .values([
-      {
-        key: FeatureFlagKey.IS_UNIQUE_INDEXES_ENABLED,
-        workspaceId: workspaceId,
-        value: false,
-      },
-      {
-        key: FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_JUNCTION_RELATIONS_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
-        workspaceId: workspaceId,
-        value: true,
-      },
-    ])
+    .values(
+      Object.entries(DEFAULT_SEEDED_FEATURE_FLAGS).map(([key, value]) => ({
+        key,
+        workspaceId,
+        value,
+      })),
+    )
     .execute();
 };
 

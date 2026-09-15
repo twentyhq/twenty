@@ -1,0 +1,110 @@
+---
+title: Key-Value-Store
+description: Bewahren Sie Zwischenergebnisse auf, zwischenspeichern Sie Daten und teilen Sie den Zustand zwischen Ausführungen von Logikfunktionen mit dem integrierten Key-Value-Speicher der Anwendung.
+icon: database
+---
+
+Logikfunktionen laufen isoliert in kurzlebigen Node.js-Prozessen – sobald ein Durchlauf abgeschlossen ist, überlebt nichts, was im Speicher gehalten wurde. Wenn Sie sich **zwischen Durchläufen etwas merken müssen** (eine teure API-Antwort zwischenspeichern, einen Cursor für inkrementelle Synchronisierungen speichern, Arbeit entprellen oder Zustand von einer Funktion an eine andere übergeben), speichern Sie es im integrierten Key-Value-Speicher.
+
+Jede Anwendung erhält ihren eigenen isolierten Namespace: Einträge werden durch die authentifizierte App indiziert, sodass Ihre Schlüssel niemals mit denen einer anderen Anwendung kollidieren können – oder von ihr gelesen werden können.
+
+```text
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
+```
+
+## Abrufen, Setzen, Löschen
+
+Importieren Sie `kv` aus `twenty-sdk/logic-function`. Werte können beliebige JSON-serialisierbare Werte sein.
+
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
+
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
+
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Geltungsbereiche
+
+Jeder Eintrag hat einen Geltungsbereich, der bei jedem Aufruf als Option übergeben wird. Der Standardwert ist `WORKSPACE`.
+
+* **`WORKSPACE`** (Standard) – der Eintrag ist nur für die aktuelle Workspace-Installation Ihrer App sichtbar. Jeder Workspace, der die App installiert, erhält seinen eigenen unabhängigen Satz von Schlüsseln. Das ist genau das, was Sie für Caches, Cursor und workspacespezifischen Zustand benötigen.
+* **`SERVER`** – der Eintrag wird über **alle Installationen** Ihrer App auf dem Server hinweg geteilt. Server-Einträge verhalten sich wie **Claims**: Der gespeicherte Wert ist immer die workspaceId, die den Schlüssel beansprucht hat (lassen Sie `value` bei `set` weg, um den Schlüssel für den aktuellen Workspace zu beanspruchen), und nur dieser Workspace kann ihn überschreiben oder löschen. Jede Installation kann den Eintrag lesen.
+
+Server-Claims existieren für Cross-Workspace-Routing. Ein [Server-Route-Resolver](/l/de/developers/extend/apps/logic/logic-functions#server-route-trigger) läuft im Workspace des Anwendungsregistrierungs-Inhabers, aber ein eingehender Webhook übermittelt in der Regel nur eine externe Konto-ID – nicht eine Twenty workspaceId. Lassen Sie jeden Workspace seine externe ID zum Verbindungszeitpunkt beanspruchen und lösen Sie sie dann in der Route auf:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
+});
+```
+
+Da ein Server-Schlüssel nur für den eigenen Workspace des Aufrufers beansprucht und niemals von einem anderen überschrieben werden kann, kann ein Workspace kein Mapping kapern, das jemand anderem gehört. `kv.set` löst eine Exception aus, wenn der Schlüssel bereits von einem anderen Workspace beansprucht wurde.
+
+## Verwenden Sie ihn: einen teuren Aufruf zwischenspeichern
+
+Eine typische Verwendung ist das Zwischenspeichern einer langsamen oder ratelimitierten Antwort eines Drittanbieters, sodass wiederholte Durchläufe sie wiederverwenden, anstatt jedes Mal die Kosten zu tragen.
+
+```ts src/logic-functions/getExchangeRate.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+type CachedRate = { rate: number; fetchedAt: number };
+
+const handler = async (params: { from: string; to: string }) => {
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
+
+  if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
+    return { rate: cached.rate, cached: true };
+  }
+
+  const response = await fetch(
+    `https://api.example.com/rate?from=${params.from}&to=${params.to}`,
+  );
+  const { rate } = (await response.json()) as { rate: number };
+
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
+
+  return { rate, cached: false };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'd9b2f4e6-1c83-4a07-9e52-6b1d3c8a0f47',
+  name: 'get-exchange-rate',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+## Muster & Tipps
+
+* **Namespacing.** Präfixieren Sie Schlüssel, um unterschiedliche Belange getrennt zu halten – `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Ablauf (TTL).** Der Store hat keine eingebaute Ablaufzeit. Speichern Sie einen Zeitstempel im Wert (wie im Cache-Beispiel) und prüfen Sie ihn beim Lesen, oder löschen Sie veraltete Schlüssel aus einer [cron-getriggerten Funktion](/l/de/developers/extend/apps/logic/logic-functions).
+* **Was gespeichert wird.** Jeder JSON-serialisierbare Wert – Zahlen, Zeichenketten, Arrays, Objekte. Halten Sie Einträge klein; dies ist für Koordination und Caching gedacht, nicht für große Blobs oder Dateien. Für Dateien verwenden Sie ein `FILES`-Feld und [`uploadFile`](/l/de/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Sichtbarkeit.** Einträge liegen in der Instanzdatenbank, nicht als Workspace-Datensätze – sie erscheinen nie in der Workspace-UI, sind kein Teil des Datenmodells Ihrer App und benötigen keine Rollen- oder Objektberechtigungen.
+
+## Alternative: ein abfragbares Store-Objekt
+
+Der integrierte Store ist bewusst intransparent: Einträge sind keine Datensätze, daher können Sie sie nicht in der UI durchsuchen, nicht mit anderen Objekten verknüpfen oder mit Record-Abfragen filtern. Wenn Sie irgendetwas davon benötigen – etwa ein sichtbares Sync-Log oder pro-Datensatz-Zustand – definieren Sie stattdessen ein kleines **technisches Objekt** mit einem eindeutigen `key`-Feld und einem `RAW_JSON`-`value`-Feld und fragen Sie es über den [typisierten API-Client](/l/de/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk) ab. Siehe [Objekte](/l/de/developers/extend/apps/data/objects) für die Referenz zu `defineObject` und [Daten → Eindeutige Indizes](/l/de/developers/extend/apps/data/overview#unique-indexes) zur Durchsetzung der Schlüssel-Eindeutigkeit.
+
+* **Geltungsbereich für einen Datensatz.** Fügen Sie vom Store-Objekt eine [Relation](/l/de/developers/extend/apps/data/relations) zum Zielobjekt hinzu, anstatt die ID in den Schlüssel zu kodieren.
+* **Sichtbarkeit & Berechtigungen.** Zeilen befinden sich wie jeder andere Datensatz in der Workspace-Datenbank, sind also über die API abfragbar und respektieren die [Rolle](/l/de/developers/extend/apps/config/roles) Ihrer App. Um den Store aus dem Haupt-UI herauszuhalten, führen Sie ihn nicht in Ihrem [Navigationsmenü](/l/de/developers/extend/apps/layout/navigation-menu-items) auf.
+
+<Note>
+Im Gegensatz zum integrierten Store ist ein benutzerdefiniertes Objekt immer auf einen Workspace begrenzt – es kann keine Einträge über Installationen hinweg teilen, so wie es `SERVER`-Schlüssel tun.
+</Note>

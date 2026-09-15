@@ -1,14 +1,11 @@
 import type { StorybookConfig } from '@storybook/react-vite';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 const dirname =
   typeof __dirname !== 'undefined'
     ? __dirname
     : path.dirname(fileURLToPath(import.meta.url));
-
-const packageRoot = path.resolve(dirname, '..');
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
@@ -37,6 +34,7 @@ const config: StorybookConfig = {
       ...viteConfig,
       resolve: {
         ...viteConfig.resolve,
+        tsconfigPaths: true,
         alias: {
           ...viteConfig.resolve?.alias,
           '@': path.resolve(dirname, '../src'),
@@ -55,10 +53,6 @@ const config: StorybookConfig = {
           ),
         },
       },
-      plugins: [
-        ...(viteConfig.plugins ?? []),
-        tsconfigPaths({ root: packageRoot }),
-      ],
       optimizeDeps: {
         ...viteConfig.optimizeDeps,
         include: [

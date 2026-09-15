@@ -1,7 +1,10 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
+import { removeTypenamesFromCompositeFieldValue } from '@/object-record/utils/removeTypenamesFromCompositeFieldValue';
 import {
   computeMorphRelationGqlFieldName,
   computeRelationGqlFieldJoinColumnName,
@@ -63,9 +66,9 @@ export const sanitizeRecordInput = ({
 
         if (
           isDefined(fieldMetadataItem) &&
-          fieldMetadataItem.type === FieldMetadataType.RELATION &&
-          fieldMetadataItem.relation?.type === RelationType.MANY_TO_ONE &&
-          !isDefined(recordInput[fieldMetadataItem.name]?.connect?.where)
+          isManyToOneRelationField(fieldMetadataItem) &&
+          !isDefined(recordInput[fieldMetadataItem.name]?.connect?.where) &&
+          !isDefined(recordInput[fieldMetadataItem.name]?.create)
         ) {
           return undefined;
         }
@@ -88,6 +91,16 @@ export const sanitizeRecordInput = ({
             label: file.label,
           }));
           return [fieldName, cleanedFiles];
+        }
+
+        if (
+          isDefined(fieldMetadataItem) &&
+          isCompositeFieldType(fieldMetadataItem.type)
+        ) {
+          return [
+            fieldName,
+            removeTypenamesFromCompositeFieldValue(fieldValue),
+          ];
         }
 
         // Todo: we should check that the fieldValue is a valid value

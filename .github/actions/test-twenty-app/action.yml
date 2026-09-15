@@ -1,0 +1,85 @@
+name: Test Twenty App
+description: >
+  Exercises a single Twenty app against an already-running server. In
+  "installation-and-integration-test" mode it runs the app's integration suite,
+  then deploys and installs the app. In "installation-only" mode it only deploys
+  and installs, which is enough to catch server-side install regressions without
+  paying for each app's full test suite.
+
+inputs:
+  api-url:
+    description: Base URL of the target Twenty instance
+    required: true
+  api-key:
+    description: API key or access token for the target workspace
+    required: true
+  app-path:
+    description: Path to the app directory (relative to repo root)
+    required: true
+  mode:
+    description: >
+      What to run: "installation-and-integration-test" (integration + deploy +
+      install), "integration-test-only" (integration suite only) or
+      "installation-only" (deploy + install only).
+    required: false
+    default: 'installation-and-integration-test'
+
+runs:
+  using: composite
+  steps:
+    - name: Validate mode
+      shell: bash
+      env:
+        MODE: ${{ inputs.mode }}
+      run: |
+        case "$MODE" in
+          installation-and-integration-test|integration-test-only|installation-only) ;;
+          *)
+            echo "::error::Unknown mode '$MODE' (expected 'installation-and-integration-test', 'integration-test-only' or 'installation-only')"
+            exit 1
+            ;;
+        esac
+
+    - name: Enable Corepack
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
+      shell: bash
+      run: corepack enable
+
+    - name: Setup Node.js
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
+      uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+      with:
+        node-version-file: '${{ inputs.app-path }}/.nvmrc'
+        cache: yarn
+        cache-dependency-path: '${{ inputs.app-path }}/yarn.lock'
+
+    - name: Install dependencies
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
+      shell: bash
+      working-directory: ${{ inputs.app-path }}
+      run: yarn install --immutable
+
+    - name: Integration tests
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'integration-test-only'
+      shell: bash
+      working-directory: ${{ inputs.app-path }}
+      env:
+        TWENTY_API_URL: ${{ inputs.api-url }}
+        TWENTY_API_KEY: ${{ inputs.api-key }}
+      run: yarn test
+
+    - name: Deploy app
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'installation-only'
+      uses: ./.github/actions/deploy-twenty-app
+      with:
+        api-url: ${{ inputs.api-url }}
+        api-key: ${{ inputs.api-key }}
+        app-path: ${{ inputs.app-path }}
+
+    - name: Install app
+      if: inputs.mode == 'installation-and-integration-test' || inputs.mode == 'installation-only'
+      uses: ./.github/actions/install-twenty-app
+      with:
+        api-url: ${{ inputs.api-url }}
+        api-key: ${{ inputs.api-key }}
+        app-path: ${{ inputs.app-path }}

@@ -9,9 +9,7 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook('workflow.destroyOne')
-export class WorkflowDestroyOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowDestroyOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}

@@ -30,8 +30,8 @@ export type UpdateMetadataEventDiff<
 
 export type UpdateMetadataEvent<
   T extends AllMetadataName,
-  TProperties extends
-    MetadataUniversalFlatEntityPropertiesToCompare<T> = MetadataUniversalFlatEntityPropertiesToCompare<T>,
+  TProperties extends MetadataUniversalFlatEntityPropertiesToCompare<T> =
+    MetadataUniversalFlatEntityPropertiesToCompare<T>,
 > = BaseMetadataEvent<
   T,
   {

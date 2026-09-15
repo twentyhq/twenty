@@ -1,0 +1,121 @@
+import {
+  STANDARD_OBJECTS,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-shared/metadata';
+import {
+  PageLayoutTabLayoutMode,
+  PageLayoutType,
+  WidgetType,
+} from 'twenty-shared/types';
+
+import {
+  TAB_PROPS,
+  VERTICAL_LIST_LAYOUT_POSITIONS,
+  WIDGET_PROPS,
+} from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template';
+import {
+  type StandardPageLayoutConfig,
+  type StandardPageLayoutTabConfig,
+} from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-page-layout-config.type';
+
+const CALENDAR_EVENT_PAGE_TABS = {
+  home: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .home.universalIdentifier,
+    ...TAB_PROPS.home,
+    widgets: {
+      fields: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.home.widgets.fields.universalIdentifier,
+        ...WIDGET_PROPS.fields,
+      },
+      participants: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.home.widgets.participants.universalIdentifier,
+        title: 'Participants',
+        type: WidgetType.FIELD,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.SECOND,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.calendarEvent.fields.calendarEventParticipants
+            .universalIdentifier,
+      },
+      callRecordings: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.home.widgets.callRecordings.universalIdentifier,
+        title: 'Call Recordings',
+        type: WidgetType.FIELD,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.THIRD,
+        fieldUniversalIdentifier:
+          STANDARD_OBJECTS.calendarEvent.fields.callRecordings
+            .universalIdentifier,
+      },
+    },
+  },
+  timeline: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .timeline.universalIdentifier,
+    ...TAB_PROPS.timeline,
+    widgets: {
+      timeline: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.timeline.widgets.timeline.universalIdentifier,
+        ...WIDGET_PROPS.timeline,
+      },
+    },
+  },
+  summary: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .summary.universalIdentifier,
+    title: 'Summary',
+    position: 30,
+    icon: 'IconFileText',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: {
+      summary: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.summary.widgets.summary.universalIdentifier,
+        title: 'Summary',
+        type: WidgetType.CALL_RECORDING_SUMMARY,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      },
+    },
+  },
+  callRecording: {
+    universalIdentifier:
+      STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage.tabs
+        .callRecording.universalIdentifier,
+    title: 'Call Recording',
+    position: 40,
+    icon: 'IconVideo',
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    widgets: {
+      transcript: {
+        universalIdentifier:
+          STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+            .tabs.callRecording.widgets.transcript.universalIdentifier,
+        title: 'Transcript',
+        type: WidgetType.CALL_RECORDING_TRANSCRIPT,
+        position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
+      },
+    },
+  },
+} as const satisfies Record<string, StandardPageLayoutTabConfig>;
+
+export const STANDARD_CALENDAR_EVENT_PAGE_LAYOUT_CONFIG = {
+  name: 'Default Calendar Event Layout',
+  type: PageLayoutType.RECORD_PAGE,
+  objectUniversalIdentifier: STANDARD_OBJECTS.calendarEvent.universalIdentifier,
+  universalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.calendarEventRecordPage
+      .universalIdentifier,
+  defaultTabUniversalIdentifier: null,
+  tabs: CALENDAR_EVENT_PAGE_TABS,
+} as const satisfies StandardPageLayoutConfig;

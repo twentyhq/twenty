@@ -32,7 +32,7 @@ export const copyYarnEngineAndBuildDependencies = async (
         env: cleanEnv,
       },
     );
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   } catch (error: any) {
     const errorMessage =
       [error?.stdout, error?.stderr].filter(Boolean).join('\n') ||

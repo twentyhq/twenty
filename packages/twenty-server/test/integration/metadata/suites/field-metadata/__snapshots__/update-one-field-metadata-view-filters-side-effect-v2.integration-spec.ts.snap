@@ -2,7 +2,7 @@
 
 exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should handle adding new options while maintaining existing view filter 1`] = `
 {
-  "operand": "IS",
+  "operand": "CONTAINS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
   "value": [
@@ -15,7 +15,7 @@ exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT shou
 
 exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should handle no changes update of options while maintaining existing view filter values 1`] = `
 {
-  "operand": "IS",
+  "operand": "CONTAINS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
   "value": [
@@ -36,7 +36,7 @@ exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT shou
 
 exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should handle partial deletion of selected options in view filter 1`] = `
 {
-  "operand": "IS",
+  "operand": "CONTAINS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
   "value": [
@@ -53,7 +53,7 @@ exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT shou
 
 exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should handle reordering of options while maintaining view filter values 1`] = `
 {
-  "operand": "IS",
+  "operand": "CONTAINS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
   "value": [
@@ -64,22 +64,9 @@ exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT shou
 }
 `;
 
-exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should throw error if view filter value is not a stringified JSON array 1`] = `
-[
-  {
-    "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
-      "userFriendlyMessage": "An error occurred.",
-    },
-    "message": "Unexpected invalid view filter value for filter 20202020-e3b5-4fa7-85aa-9b1950fc7bf5",
-  },
-]
-`;
-
 exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should update related multi selected options view filter 1`] = `
 {
-  "operand": "IS",
+  "operand": "CONTAINS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
   "value": [
@@ -100,7 +87,7 @@ exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT shou
 
 exports[`update-one-field-metadata-view-filters-side-effect-v2 MULTI_SELECT should update related solo selected option view filter 1`] = `
 {
-  "operand": "IS",
+  "operand": "CONTAINS",
   "positionInViewFilterGroup": null,
   "subFieldName": null,
   "value": [
@@ -172,19 +159,6 @@ exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should han
   ],
   "viewFilterGroupId": null,
 }
-`;
-
-exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should throw error if view filter value is not a stringified JSON array 1`] = `
-[
-  {
-    "extensions": {
-      "code": "INTERNAL_SERVER_ERROR",
-      "exceptionEventId": "mocked-exception-id",
-      "userFriendlyMessage": "An error occurred.",
-    },
-    "message": "Unexpected invalid view filter value for filter 20202020-e3b5-4fa7-85aa-9b1950fc7bf5",
-  },
-]
 `;
 
 exports[`update-one-field-metadata-view-filters-side-effect-v2 SELECT should update related multi selected options view filter 1`] = `

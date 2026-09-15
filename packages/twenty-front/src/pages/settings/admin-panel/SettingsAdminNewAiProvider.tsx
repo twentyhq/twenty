@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -7,7 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconPlus, Info } from 'twenty-ui/display';
+import { Info } from 'twenty-ui/feedback';
+import { IconPlus } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
@@ -25,7 +29,9 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
+import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
 
@@ -50,6 +56,11 @@ export const SettingsAdminNewAiProvider = () => {
     null,
   );
   const [isCustomMode, setIsCustomMode] = useState(false);
+  const {
+    hasAccess: hasCustomAiProviderAccess,
+    gateDescription: customAiProviderGateDescription,
+    tooltipContent: customAiProviderTooltipContent,
+  } = useCustomAiProviderAccess();
 
   const [addAiProvider] = useMutation(ADD_AI_PROVIDER, {
     client: apolloAdminClient,
@@ -174,11 +185,28 @@ export const SettingsAdminNewAiProvider = () => {
       }
       config.region = values.region.trim();
 
-      if (values.accessKeyId.trim()) {
-        config.accessKeyId = values.accessKeyId.trim();
+      const accessKeyId = values.accessKeyId.trim();
+      const secretAccessKey = values.secretAccessKey.trim();
+
+      // Half a key pair is a slip, not a mode: role auth ignores both fields,
+      // so accepting it would run under an identity nobody chose.
+      if (isNonEmptyString(accessKeyId) !== isNonEmptyString(secretAccessKey)) {
+        form.setError(
+          isNonEmptyString(accessKeyId) ? 'secretAccessKey' : 'accessKeyId',
+          {
+            type: 'manual',
+            message: t`Enter both keys, or neither to use the instance IAM role`,
+          },
+        );
+
+        return;
       }
-      if (values.secretAccessKey.trim()) {
-        config.secretAccessKey = values.secretAccessKey.trim();
+
+      if (isNonEmptyString(accessKeyId)) {
+        config.accessKeyId = accessKeyId;
+        config.secretAccessKey = secretAccessKey;
+      } else {
+        config.authType = 'role';
       }
     }
 
@@ -229,7 +257,7 @@ export const SettingsAdminNewAiProvider = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New AI Provider`}
         links={[
           {
@@ -241,16 +269,32 @@ export const SettingsAdminNewAiProvider = () => {
         actionButton={
           <SaveAndCancelButtons
             onCancel={() => navigate(AI_ADMIN_PATH)}
-            isSaveDisabled={isSubmitting || !hasSelected}
+            isSaveDisabled={
+              isSubmitting || !hasSelected || !hasCustomAiProviderAccess
+            }
             onSave={handleSave}
           />
         }
       >
         <SettingsPageContainer>
+          {!hasCustomAiProviderAccess && (
+            <Info
+              accent="danger"
+              text={customAiProviderGateDescription}
+              buttonTitle={t`Activate`}
+              to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
+            />
+          )}
+
           <Section>
             <H2Title
               title={t`Provider`}
               description={t`Select a known provider or create a custom one`}
+              adornment={
+                <OrganizationAdornment
+                  tooltipContent={customAiProviderTooltipContent}
+                />
+              }
             />
             <Select
               dropdownId="ai-provider-models-dev-select"
@@ -410,12 +454,16 @@ export const SettingsAdminNewAiProvider = () => {
                     <Controller
                       name="accessKeyId"
                       control={form.control}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <TextInput
                           value={value}
                           onChange={onChange}
                           placeholder={t`AKIA...`}
                           fullWidth
+                          error={error?.message}
                         />
                       )}
                     />
@@ -429,12 +477,16 @@ export const SettingsAdminNewAiProvider = () => {
                     <Controller
                       name="secretAccessKey"
                       control={form.control}
-                      render={({ field: { onChange, value } }) => (
+                      render={({
+                        field: { onChange, value },
+                        fieldState: { error },
+                      }) => (
                         <TextInput
                           value={value}
                           onChange={onChange}
                           fullWidth
                           type="password"
+                          error={error?.message}
                         />
                       )}
                     />
@@ -444,7 +496,7 @@ export const SettingsAdminNewAiProvider = () => {
             </>
           )}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </form>
   );
 };

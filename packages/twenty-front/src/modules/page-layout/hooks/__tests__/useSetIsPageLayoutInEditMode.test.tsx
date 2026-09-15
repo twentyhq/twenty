@@ -13,11 +13,15 @@ import { type ReactNode } from 'react';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 const MOCK_DASHBOARD_LAYOUT: PageLayout = {
+  applicationId: 'application-id-mock',
   __typename: 'PageLayout',
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Dashboard Layout',
   type: PageLayoutType.DASHBOARD,
+  isFirstTabPinned: true,
+  isSystemSideEffect: false,
   objectMetadataId: 'object-metadata-id',
+  universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',

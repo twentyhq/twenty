@@ -1,7 +1,6 @@
 name: 'Preview Environment Dispatch'
 
-permissions:
-  contents: write
+permissions: {}
 
 on:
   pull_request_target:
@@ -10,11 +9,13 @@ on:
       - packages/twenty-docker/**
       - packages/twenty-server/**
       - packages/twenty-front/**
+      - packages/twenty-apps/examples/**
+      - packages/twenty-apps/internal/**
+      - packages/twenty-apps/public/**
       - .github/workflows/preview-env-dispatch.yaml
-      - .github/workflows/preview-env-keepalive.yaml
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
 jobs:
@@ -34,19 +35,57 @@ jobs:
       )
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     steps:
-      - name: Trigger preview environment workflow
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          repository: ${{ github.repository }}
-          event-type: preview-environment
-          client-payload: '{"pr_number": "${{ github.event.pull_request.number }}", "pr_head_sha": "${{ github.event.pull_request.head.sha }}", "repo_full_name": "${{ github.repository }}"}'
+      # Files API, not a checkout: under pull_request_target nothing from the
+      # PR head may be checked out here.
+      - name: List changed apps
+        id: apps
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          changed_files=$(gh api "repos/${REPOSITORY}/pulls/${PR_NUMBER}/files" --paginate --jq '.[].filename')
+          app_paths=$(printf '%s\n' "$changed_files" \
+            | grep -oE '^packages/twenty-apps/(examples|internal|public)/[a-z0-9][a-z0-9-]*' \
+            | sort -u || true)
 
-      - name: Dispatch to ci-privileged for PR comment
-        uses: peter-evans/repository-dispatch@v2
+          echo "Changed apps:"
+          printf '%s\n' "${app_paths:-<none>}"
+          {
+            echo 'app_paths<<APPS_EOF'
+            printf '%s\n' "$app_paths"
+            echo 'APPS_EOF'
+          } >> "$GITHUB_OUTPUT"
+
+      # Preview envs run on the PUBLIC ci-public repo so the 5h keepalive job
+      # consumes free Actions minutes (private repos bill them). ci-public holds
+      # no privileged secret: it starts the tunnel and dispatches the URL back to
+      # twenty-factory for the PR comment *before* running any PR-controlled code.
+      - name: Mint ci-public dispatch token
+        id: app-token
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
         with:
-          token: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
-          repository: twentyhq/ci-privileged
-          event-type: preview-env-url
-          client-payload: '{"pr_number": ${{ toJSON(github.event.pull_request.number) }}, "keepalive_dispatch_time": ${{ toJSON(github.event.pull_request.updated_at) }}, "repo": ${{ toJSON(github.repository) }}}'
+          client-id: ${{ vars.TWENTY_WORKFLOW_DISPATCHER_CLIENT_ID }}
+          private-key: ${{ secrets.TWENTY_WORKFLOW_DISPATCHER_PRIVATE_KEY }}
+          owner: twentyhq
+          repositories: ci-public
+          permission-actions: write
+
+      - name: Dispatch preview-env to ci-public
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          REPOSITORY: ${{ github.repository }}
+          APP_PATHS: ${{ steps.apps.outputs.app_paths }}
+        run: |
+          gh workflow run preview-env.yaml --repo twentyhq/ci-public --ref main \
+            -f pr_number="$PR_NUMBER" \
+            -f pr_head_sha="$PR_HEAD_SHA" \
+            -f repo="$REPOSITORY" \
+            -f app_paths="$APP_PATHS"

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type DropResult } from '@hello-pangea/dnd';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -39,9 +39,9 @@ import {
   IconPlus,
   IconPoint,
   IconTrash,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { LightButton, LightIconButton } from 'twenty-ui/input';
-import { CardContent, CardFooter } from 'twenty-ui/layout';
+import { CardContent, CardFooter } from 'twenty-ui/surfaces';
 import { MenuItem } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
@@ -68,7 +68,7 @@ type SettingsDataModelFieldSelectFormProps = {
 };
 
 const StyledContainerWrapper = styled.div`
-  > * {
+  > div {
     padding-bottom: 14px;
   }
 `;
@@ -128,7 +128,7 @@ const StyledIconPointContainer = styled.span`
 `;
 
 const StyledFooterContainer = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.secondary};
     padding: ${themeCssVariables.spacing[1]};
   }
@@ -203,14 +203,17 @@ export const SettingsDataModelFieldSelectForm = ({
 
       const optionsWithNew = [...initialOptions, newOption];
 
-      setFormValue('options', optionsWithNew, { shouldDirty: true });
+      setFormValue('options', optionsWithNew, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
       setHasAppliedNewOption(true);
     }
   }, [searchParams, hasAppliedNewOption, initialOptions, setFormValue]);
 
   const handleDragEnd = (
     values: FieldMetadataItemOption[],
-    result: DropResult,
+    result: DraggableListDropResult,
     onChange: (options: FieldMetadataItemOption[]) => void,
   ) => {
     if (!result.destination) return;
@@ -301,13 +304,19 @@ export const SettingsDataModelFieldSelectForm = ({
   const handleAddOption = () => {
     const newOptions = getOptionsWithNewOption();
 
-    setFormValue('options', newOptions, { shouldDirty: true });
+    setFormValue('options', newOptions, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   const handleInputEnter = () => {
     const newOptions = getOptionsWithNewOption();
 
-    setFormValue('options', newOptions, { shouldDirty: true });
+    setFormValue('options', newOptions, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   return (
@@ -440,11 +449,9 @@ export const SettingsDataModelFieldSelectForm = ({
                         <>
                           {options.map((option, index) => (
                             <DraggableItem
-                              isInsideScrollableContainer
                               key={option.id}
                               draggableId={option.id}
                               index={index}
-                              isDragDisabled={options.length === 1}
                               itemComponent={
                                 <SettingsDataModelFieldSelectFormOptionRow
                                   key={option.id}
@@ -462,7 +469,6 @@ export const SettingsDataModelFieldSelectForm = ({
                                     );
                                     onChange(nextOptions);
 
-                                    // Update option value in defaultValue if value has changed
                                     if (
                                       nextOption.value !== option.value &&
                                       isOptionDefaultValue(option.value)

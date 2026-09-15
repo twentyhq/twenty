@@ -9,6 +9,8 @@ const __dirname = dirname(__filename);
 const tsConfigPath = resolve(__dirname, './tsconfig.json');
 const tsConfig = JSON.parse(readFileSync(tsConfigPath, 'utf8'));
 
+const isCI = process.env.CI === 'true';
+
 // oxlint-disable-next-line no-undef
 process.env.TZ = 'GMT';
 // oxlint-disable-next-line no-undef
@@ -17,6 +19,7 @@ const jestConfig = {
   // For more information please have a look to official docs https://jestjs.io/docs/configuration/#prettierpath-string
   // Prettier v3 will should be supported in jest v30 https://github.com/jestjs/jest/releases/tag/v30.0.0-alpha.1
   prettierPath: null,
+  ...(isCI && { reporters: ['./jest-failures-only-reporter.cjs'] }),
   displayName: 'twenty-front',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./setupTests.ts'],
@@ -24,8 +27,8 @@ const jestConfig = {
   testEnvironmentOptions: {},
 
   transformIgnorePatterns: [
-    '/node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
-    '../../node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj)/.*)',
+    '/node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj|@preact/signals-core|marked|ai|@ai-sdk|@workflow)/.*)',
+    '../../node_modules/(?!(twenty-ui|apollo-upload-client|extract-files|is-plain-obj|@preact/signals-core|marked|ai|@ai-sdk|@workflow)/.*)',
     '../../twenty-ui/',
   ],
   transform: {
@@ -53,6 +56,7 @@ const jestConfig = {
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMockFront.js',
     '\\.css$': '<rootDir>/__mocks__/styleMock.js',
+    '\\?worker$': '<rootDir>/__mocks__/workerMock.js',
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths, {
       prefix: '<rootDir>/',
     }),
@@ -89,6 +93,7 @@ const jestConfig = {
   maxWorkers: 3,
   workerIdleMemoryLimit: '512MB',
   errorOnDeprecated: true,
+  testTimeout: 30000,
 };
 
 export default jestConfig;

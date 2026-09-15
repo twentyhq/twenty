@@ -20,10 +20,21 @@ export enum DateDisplayFormat {
 
 export type FieldNumberVariant = 'number' | 'percentage';
 
+export type FieldCurrencyFormat = 'short' | 'full';
+
+export const FIELD_LINKS_VARIANTS = ['url', 'domain'] as const;
+
+export type FieldLinksVariant = (typeof FIELD_LINKS_VARIANTS)[number];
+
 type FieldMetadataNumberSettings = {
   dataType?: NumberDataType;
   decimals?: number;
   type?: FieldNumberVariant;
+};
+
+type FieldMetadataCurrencySettings = {
+  format?: FieldCurrencyFormat;
+  decimals?: number;
 };
 
 type FieldMetadataTextSettings = {
@@ -51,27 +62,27 @@ type FieldMetadataAddressSettings = {
   subFields?: AllowedAddressSubField[];
 };
 
+type FieldMetadataLinksSettings = FieldMetadataMultiItemSettings & {
+  type?: FieldLinksVariant;
+};
+
 type FieldMetadataFilesSettings = {
   maxNumberOfValues: number;
 };
 
-type FieldMetadataTsVectorSettings = {
-  asExpression?: string;
-  generatedType?: 'STORED' | 'VIRTUAL';
-};
-
 export type FieldMetadataSettingsMapping = {
   [FieldMetadataType.NUMBER]: FieldMetadataNumberSettings | null;
+  [FieldMetadataType.CURRENCY]: FieldMetadataCurrencySettings | null;
   [FieldMetadataType.DATE]: FieldMetadataDateSettings | null;
   [FieldMetadataType.DATE_TIME]: FieldMetadataDateTimeSettings | null;
   [FieldMetadataType.TEXT]: FieldMetadataTextSettings | null;
   [FieldMetadataType.RELATION]: FieldMetadataRelationSettings;
   [FieldMetadataType.ADDRESS]: FieldMetadataAddressSettings | null;
   [FieldMetadataType.MORPH_RELATION]: FieldMetadataRelationSettings;
-  [FieldMetadataType.TS_VECTOR]: FieldMetadataTsVectorSettings | null;
+  [FieldMetadataType.TS_VECTOR]: null;
   [FieldMetadataType.PHONES]: FieldMetadataMultiItemSettings | null;
   [FieldMetadataType.EMAILS]: FieldMetadataMultiItemSettings | null;
-  [FieldMetadataType.LINKS]: FieldMetadataMultiItemSettings | null;
+  [FieldMetadataType.LINKS]: FieldMetadataLinksSettings | null;
   [FieldMetadataType.ARRAY]: FieldMetadataMultiItemSettings | null;
   [FieldMetadataType.FILES]: FieldMetadataFilesSettings;
 };

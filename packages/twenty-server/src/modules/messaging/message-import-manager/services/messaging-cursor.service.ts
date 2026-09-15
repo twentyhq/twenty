@@ -4,14 +4,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 @Injectable()
 export class MessagingCursorService {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(MessageFolderEntity)
@@ -26,37 +26,41 @@ export class MessagingCursorService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      if (!folderId) {
-        await this.messageChannelRepository.update(
-          { id: messageChannel.id, workspaceId },
-          {
-            throttleFailureCount: 0,
-            throttleRetryAfter: null,
-            syncStageStartedAt: null,
-            syncCursor:
-              !messageChannel.syncCursor ||
-              nextSyncCursor > messageChannel.syncCursor
-                ? nextSyncCursor
-                : messageChannel.syncCursor,
-          },
-        );
-      } else {
-        await this.messageFolderRepository.update(
-          { id: folderId, workspaceId },
-          {
-            syncCursor: nextSyncCursor,
-          },
-        );
-        await this.messageChannelRepository.update(
-          { id: messageChannel.id, workspaceId },
-          {
-            throttleFailureCount: 0,
-            throttleRetryAfter: null,
-            syncStageStartedAt: null,
-          },
-        );
-      }
-    }, authContext);
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        if (!folderId) {
+          await this.messageChannelRepository.update(
+            { id: messageChannel.id, workspaceId },
+            {
+              throttleFailureCount: 0,
+              throttleRetryAfter: null,
+              syncStageStartedAt: null,
+              syncCursor:
+                !messageChannel.syncCursor ||
+                nextSyncCursor > messageChannel.syncCursor
+                  ? nextSyncCursor
+                  : messageChannel.syncCursor,
+            },
+          );
+        } else {
+          await this.messageFolderRepository.update(
+            { id: folderId, workspaceId },
+            {
+              syncCursor: nextSyncCursor,
+            },
+          );
+          await this.messageChannelRepository.update(
+            { id: messageChannel.id, workspaceId },
+            {
+              throttleFailureCount: 0,
+              throttleRetryAfter: null,
+              syncStageStartedAt: null,
+            },
+          );
+        }
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

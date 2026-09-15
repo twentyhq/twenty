@@ -1,7 +1,7 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
-import { Tag } from 'twenty-ui/components';
+import { Tag } from 'twenty-ui/data-display';
 import { type SelectOption } from 'twenty-ui/input';
 
 const StyledContainer = styled.div`
@@ -37,9 +37,12 @@ export const MultiSelectDisplay = ({
           preventShrink
           key={index}
           color={selectedOption.color ?? 'transparent'}
-          text={selectedOption.label}
-          Icon={selectedOption.Icon ?? undefined}
-        />
+          startIcon={
+            isDefined(selectedOption.Icon) ? <selectedOption.Icon /> : undefined
+          }
+        >
+          {selectedOption.label}
+        </Tag>
       ))}
     </StyledContainer>
   );

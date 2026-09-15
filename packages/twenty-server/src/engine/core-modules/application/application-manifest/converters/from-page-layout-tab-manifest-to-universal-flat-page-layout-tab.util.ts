@@ -1,5 +1,4 @@
-import { type PageLayoutTabManifest } from 'twenty-shared/application';
-import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
+import { type NormalizedPageLayoutTabManifest } from 'twenty-shared/application';
 
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
 
@@ -9,7 +8,7 @@ export const fromPageLayoutTabManifestToUniversalFlatPageLayoutTab = ({
   applicationUniversalIdentifier,
   now,
 }: {
-  pageLayoutTabManifest: PageLayoutTabManifest;
+  pageLayoutTabManifest: NormalizedPageLayoutTabManifest;
   pageLayoutUniversalIdentifier: string;
   applicationUniversalIdentifier: string;
   now: string;
@@ -21,9 +20,9 @@ export const fromPageLayoutTabManifestToUniversalFlatPageLayoutTab = ({
     position: pageLayoutTabManifest.position,
     pageLayoutUniversalIdentifier,
     icon: pageLayoutTabManifest.icon ?? null,
-    layoutMode:
-      pageLayoutTabManifest.layoutMode ?? PageLayoutTabLayoutMode.GRID,
+    layoutMode: pageLayoutTabManifest.layoutMode,
     isActive: true,
+    isSystemSideEffect: false,
     widgetUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,

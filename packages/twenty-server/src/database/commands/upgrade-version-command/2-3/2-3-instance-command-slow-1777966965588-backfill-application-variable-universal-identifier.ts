@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 @RegisteredInstanceCommand('2.3.0', 1777966965588, { type: 'slow' })
-export class BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class BackfillApplicationVariableUniversalIdentifierSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
       'DELETE FROM "core"."applicationVariable" WHERE "applicationId" IS NULL',

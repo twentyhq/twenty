@@ -5,6 +5,7 @@ import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
 import { signInUpModeState } from '@/auth/states/signInUpModeState';
+import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState';
 import {
   SignInUpStep,
   signInUpStepState,
@@ -24,6 +25,7 @@ import { buildAppPathWithQueryParams } from '~/utils/buildAppPathWithQueryParams
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
@@ -33,6 +35,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const [signInUpStep, setSignInUpStep] = useAtomState(signInUpStepState);
   const [signInUpMode, setSignInUpMode] = useAtomState(signInUpModeState);
   const { isOnAWorkspace } = useIsCurrentLocationOnAWorkspace();
+  const workspacePublicData = useAtomStateValue(workspacePublicDataState);
   const { isCaptchaReady } = useCaptcha();
   const setLastAuthenticatedMethod = useSetAtomState(
     lastAuthenticatedMethodState,
@@ -156,7 +159,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         if (
           !isInviteMode &&
           signInUpMode === SignInUpMode.SignUp &&
-          !isOnAWorkspace
+          (!isOnAWorkspace || !isDefined(workspacePublicData))
         ) {
           return await signUpWithCredentials(
             data.email.toLowerCase().trim(),
@@ -198,6 +201,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       enqueueErrorSnackBar,
       buildSearchParamsFromUrlSyncedStates,
       isOnAWorkspace,
+      workspacePublicData,
       setLastAuthenticatedMethod,
       t,
     ],

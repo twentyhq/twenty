@@ -42,10 +42,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 
 <Warning>
 Each variable is documented with descriptions in your admin panel at **Settings → Admin Panel → Configuration Variables**.
-Some infrastructure settings like database connections (`PG_DATABASE_URL`), server URLs (`SERVER_URL`), and app secrets (`APP_SECRET`) can only be configured via `.env` file.
+Some infrastructure settings like database connections (`PG_DATABASE_URL`), server URLs (`SERVER_URL`), and secrets (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) can only be configured via `.env` file.
 
 [Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Encryption keys
+
+Twenty uses two env-only encryption keys:
+
+| Variable | Purpose | Required |
+| --- | --- | --- |
+| `ENCRYPTION_KEY` | Primary key used to encrypt secrets at rest (OAuth tokens, application variables, signing-key private keys, TOTP secrets, sensitive config values). | Yes for new installs (legacy installs may instead rely on `APP_SECRET` — see below) |
+| `FALLBACK_ENCRYPTION_KEY` | Verification-only key. Set during a rotation to the *previous* `ENCRYPTION_KEY` so existing rows remain decryptable. | Only during rotation |
+
+For backward compatibility, if `ENCRYPTION_KEY` is unset, Twenty falls back to `APP_SECRET` for at-rest encryption — matching the legacy behaviour for older deployments. New installs should always set a dedicated `ENCRYPTION_KEY`.
+
+Generate values with `openssl rand -base64 32` and store them somewhere safe (a secrets manager, sealed config, etc.). Losing `ENCRYPTION_KEY` means losing access to every secret stored in the database.
+
+To rotate `ENCRYPTION_KEY` without downtime, see the [Key rotation guide](/developers/self-host/capabilities/key-rotation).
 
 ## 2. Environment-Only Configuration
 
@@ -185,7 +200,13 @@ On Microsoft Azure Console enable the following APIs in "Permissions":
 - Microsoft Graph: profile
 - Microsoft Graph: offline_access
 
-Note: "Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
+<Note>
+"Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send emails using our workflow actions. You can use "Mail.Read" instead if you only want to receive emails.
+</Note>
+
+<Note>
+"Calendars.ReadWrite" is mandatory if you want to create calendar events using our workflow actions. If you want to only sync calendar events, use "Calendars.Read".
+</Note>
 
 ### Authorized redirect URIs
 
@@ -242,15 +263,27 @@ yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
 
+## Outbound Connections to Internal Hosts
+
+By default, Twenty refuses outbound connections to private/internal IP addresses (SSRF protection). This covers HTTP workflow actions, webhooks, SSO identity providers and IMAP/SMTP/CalDAV connections. If your identity provider, mail or calendar server runs on a private network, list its hostname or IP literal:
+
+```bash
+OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS=keycloak,mail.internal,192.168.1.10
+```
+
+Entries are matched on the hostname only, without wildcards: for an OIDC issuer such as `http://keycloak:8080/realms/twenty`, list `keycloak`. Every other private address stays blocked, and even an allowed host can never reach the cloud metadata address range. Set the variable to `*` to disable the protection entirely, which is only appropriate on trusted, isolated networks.
+
+`OUTBOUND_HTTP_SAFE_MODE_ENABLED` is deprecated. While it is set to `false`, the protection stays fully off and `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS` is ignored, so remove it when you migrate to the list.
+
 ## Email Configuration
 
 1. Go to **Settings → Admin Panel → Configuration Variables**
 2. Find the **Email** section
 3. Configure your SMTP settings:
 
-<ArticleTabs label1="Gmail" label2="Office365" label3="Smtp4dev">
+<Tabs>
 
-  <ArticleTab>
+  <Tab title="Gmail">
 
   You will need to provision an [App Password](https://support.google.com/accounts/answer/185833).
   - EMAIL_DRIVER=smtp
@@ -259,9 +292,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   - EMAIL_SMTP_USER=gmail_email_address
   - EMAIL_SMTP_PASSWORD='gmail_app_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="Office365">
 
   Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
   - EMAIL_DRIVER=smtp
@@ -270,9 +303,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
   - EMAIL_SMTP_USER=office365_email_address
   - EMAIL_SMTP_PASSWORD='office365_password'
 
-  </ArticleTab>
+  </Tab>
 
-  <ArticleTab>
+  <Tab title="smtp4dev">
 
   **smtp4dev** is a fake SMTP email server for development and testing.
   - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
@@ -282,9 +315,9 @@ yarn command:prod cron:workflow:automated-cron-trigger
     - EMAIL_SMTP_HOST=localhost
     - EMAIL_SMTP_PORT=2525
 
-  </ArticleTab>
+  </Tab>
 
-</ArticleTabs>
+</Tabs>
 
 <Warning>
 **Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
@@ -354,3 +387,30 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 <Note>
 When using `LOGIC_FUNCTION_TYPE=DISABLED` or `CODE_INTERPRETER_TYPE=DISABLED`, any attempt to execute will return an error. This is useful if you want to run Twenty without these capabilities.
 </Note>
+
+## API and front-end on separate hosts
+
+Only relevant if you do not let the back-end serve the front-end. Same-origin
+deployments need nothing here.
+
+Declare every browser origin that talks to the API, comma separated. `SERVER_URL`
+and `FRONTEND_URL` are already trusted. The server logs a warning when a browser
+calls it from an undeclared origin.
+
+```bash
+AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
+```
+
+<Warning>
+The front-end sends credentials on every request, and browsers reject a
+credentialed response from an undeclared origin, so the app fails to load until
+you set this.
+</Warning>
+
+If the two hosts are on different registrable domains (not just different
+subdomains), also set `AUTH_COOKIE_SAME_SITE=none`, which requires HTTPS.
+
+With multi-workspace enabled, do not list every workspace subdomain here.
+Instead, route API paths (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) to the back-end on each workspace hostname, so every
+workspace stays same-origin — this is how Twenty Cloud runs.

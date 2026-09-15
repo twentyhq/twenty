@@ -10,15 +10,10 @@ import {
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { t } from '@lingui/core/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import {
-  IconGmail,
-  IconMail,
-  IconMailX,
-  IconMicrosoft,
-} from 'twenty-ui/display';
+import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
 import { MainButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui/utilities';
+import { AnimatedEaseIn } from 'twenty-ui/layout';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -79,6 +74,7 @@ const StyledLinkButton = styled.button`
 const StyledDot = styled.div`
   background: ${themeCssVariables.font.color.light};
   border-radius: 50%;
+  corner-shape: round;
   height: 2px;
   width: 2px;
 `;

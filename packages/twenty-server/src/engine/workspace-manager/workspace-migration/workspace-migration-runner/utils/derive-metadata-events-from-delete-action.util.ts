@@ -56,12 +56,15 @@ const deriveAllMetadataEventsFromDeleteAction = ({
     case 'commandMenuItem':
     case 'frontComponent':
     case 'navigationMenuItem':
+    case 'rolePermissionFlag':
     case 'permissionFlag':
     case 'objectPermission':
     case 'fieldPermission':
     case 'viewSort':
     case 'webhook':
-    case 'connectionProvider': {
+    case 'connectionProvider':
+    case 'timelineActivityType':
+    case 'searchFieldMetadata': {
       const flatEntityToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow<
         MetadataFlatEntity<typeof flatAction.metadataName>
       >({

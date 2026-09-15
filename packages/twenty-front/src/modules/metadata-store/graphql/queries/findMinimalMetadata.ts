@@ -10,7 +10,6 @@ export const FIND_MINIMAL_METADATA = gql`
         labelSingular
         labelPlural
         icon
-        isCustom
         isActive
         isSystem
         isRemote

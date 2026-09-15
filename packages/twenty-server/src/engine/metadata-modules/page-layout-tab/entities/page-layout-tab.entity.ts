@@ -15,11 +15,14 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { PageLayoutWidgetEntity } from 'src/engine/metadata-modules/page-layout-widget/entities/page-layout-widget.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { OverridableEntity } from 'src/engine/workspace-manager/types/overridable-entity';
 
 export type PageLayoutTabOverrides = {
+  isActive?: boolean;
   title?: string;
   position?: number;
   icon?: string | null;
@@ -32,6 +35,7 @@ export type PageLayoutTabOverrides = {
   ['workspaceId', 'pageLayoutId'],
   { where: '"deletedAt" IS NULL' },
 )
+@Index('IDX_PAGE_LAYOUT_TAB_PAGE_LAYOUT_ID', ['pageLayoutId'])
 export class PageLayoutTabEntity
   extends OverridableEntity<PageLayoutTabOverrides>
   implements Required<PageLayoutTabEntity>
@@ -69,6 +73,12 @@ export class PageLayoutTabEntity
     default: PageLayoutTabLayoutMode.GRID,
   })
   layoutMode: PageLayoutTabLayoutMode;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isSystemSideEffect: boolean;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -28,6 +28,8 @@
         "{projectRoot}/metadata/dist",
         "{projectRoot}/testing/package.json",
         "{projectRoot}/testing/dist",
+        "{projectRoot}/timeline/package.json",
+        "{projectRoot}/timeline/dist",
         "{projectRoot}/translations/package.json",
         "{projectRoot}/translations/dist",
         "{projectRoot}/types/package.json",

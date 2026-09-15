@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
+import { IsNull } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -11,6 +11,9 @@ import { fromCreateViewFilterInputToFlatViewFilterToCreate } from 'src/engine/me
 import { fromDeleteViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-delete-view-filter-input-to-flat-view-filter-or-throw.util';
 import { fromDestroyViewFilterInputToFlatViewFilterOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-destroy-view-filter-input-to-flat-view-filter-or-throw.util';
 import { fromUpdateViewFilterInputToFlatViewFilterToUpdateOrThrow } from 'src/engine/metadata-modules/flat-view-filter/utils/from-update-view-filter-input-to-flat-view-filter-to-update-or-throw.util';
+import { type MetadataCursorPage } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-page.type';
+import { type MetadataCursorPagination } from 'src/engine/metadata-modules/pagination/types/metadata-cursor-pagination.type';
+import { paginateMetadataOrderedItems } from 'src/engine/metadata-modules/pagination/utils/paginate-metadata-ordered-items.util';
 import { CreateViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/create-view-filter.input';
 import { DeleteViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/delete-view-filter.input';
 import { DestroyViewFilterInput } from 'src/engine/metadata-modules/view-filter/dtos/inputs/destroy-view-filter.input';
@@ -18,14 +21,16 @@ import { UpdateViewFilterInput } from 'src/engine/metadata-modules/view-filter/d
 import { ViewFilterDTO } from 'src/engine/metadata-modules/view-filter/dtos/view-filter.dto';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { fromFlatViewFilterToViewFilterDto } from 'src/engine/metadata-modules/view-filter/utils/from-flat-view-filter-to-view-filter-dto.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @Injectable()
 export class ViewFilterService {
   constructor(
-    @InjectRepository(ViewFilterEntity)
-    private readonly viewFilterRepository: Repository<ViewFilterEntity>,
+    @InjectWorkspaceScopedRepository(ViewFilterEntity)
+    private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -319,27 +324,69 @@ export class ViewFilterService {
   }
 
   async findByWorkspaceId(workspaceId: string): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find({
+    return this.viewFilterRepository.find(workspaceId, {
       where: {
-        workspaceId,
         deletedAt: IsNull(),
       },
-      order: { positionInViewFilterGroup: 'ASC' },
+      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view', 'viewFilterGroup'],
     });
+  }
+
+  async findManyPaginated({
+    workspaceId,
+    viewId,
+    pagination,
+  }: {
+    workspaceId: string;
+    viewId?: string;
+    pagination: MetadataCursorPagination;
+  }): Promise<MetadataCursorPage<ViewFilterDTO> & { totalCount: number }> {
+    const { flatViewFilterMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatViewFilterMaps'],
+        },
+      );
+    const flatViewFilters = Object.values(
+      flatViewFilterMaps.byUniversalIdentifier,
+    )
+      .filter(isDefined)
+      .filter(
+        (flatViewFilter) =>
+          flatViewFilter.workspaceId === workspaceId &&
+          flatViewFilter.deletedAt === null &&
+          (!isDefined(viewId) || flatViewFilter.viewId === viewId),
+      )
+      .sort(
+        (first, second) =>
+          (first.positionInViewFilterGroup ?? Number.POSITIVE_INFINITY) -
+            (second.positionInViewFilterGroup ?? Number.POSITIVE_INFINITY) ||
+          first.id.localeCompare(second.id),
+      );
+    const page = paginateMetadataOrderedItems({
+      items: flatViewFilters,
+      pagination,
+    });
+
+    return {
+      ...page,
+      items: page.items.map(fromFlatViewFilterToViewFilterDto),
+      totalCount: flatViewFilters.length,
+    };
   }
 
   async findByViewId(
     workspaceId: string,
     viewId: string,
   ): Promise<ViewFilterEntity[]> {
-    return this.viewFilterRepository.find({
+    return this.viewFilterRepository.find(workspaceId, {
       where: {
-        workspaceId,
         viewId,
         deletedAt: IsNull(),
       },
-      order: { positionInViewFilterGroup: 'ASC' },
+      order: { positionInViewFilterGroup: 'ASC', id: 'ASC' },
       relations: ['workspace', 'view', 'viewFilterGroup'],
     });
   }
@@ -348,10 +395,9 @@ export class ViewFilterService {
     id: string,
     workspaceId: string,
   ): Promise<ViewFilterEntity | null> {
-    const viewFilter = await this.viewFilterRepository.findOne({
+    const viewFilter = await this.viewFilterRepository.findOne(workspaceId, {
       where: {
         id,
-        workspaceId,
         deletedAt: IsNull(),
       },
       relations: ['workspace', 'view', 'viewFilterGroup'],

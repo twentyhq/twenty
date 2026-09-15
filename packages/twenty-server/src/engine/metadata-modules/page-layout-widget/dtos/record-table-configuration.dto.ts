@@ -1,7 +1,18 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 
-import { IsIn, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
-import { type RecordTableConfiguration } from 'twenty-shared/types';
+import {
+  IsBoolean,
+  IsIn,
+  IsInt,
+  IsNotEmpty,
+  IsOptional,
+  IsUUID,
+  Min,
+} from 'class-validator';
+import {
+  type RecordTableConfiguration,
+  type SerializedRelation,
+} from 'twenty-shared/types';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
@@ -15,5 +26,16 @@ export class RecordTableConfigurationDTO implements RecordTableConfiguration {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsUUID()
-  viewId?: string;
+  viewId?: SerializedRelation | null;
+
+  @Field(() => Int, { nullable: true })
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  recordLimit?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  @IsBoolean()
+  isUIEditable?: boolean;
 }

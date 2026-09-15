@@ -1,0 +1,19 @@
+.title {
+  font-size: var(--t-font-size-lg);
+  font-weight: var(--t-font-weight-semi-bold);
+  line-height: var(--t-text-line-height-md);
+  margin: 0;
+  margin-bottom: var(--t-spacing-4);
+}
+
+.primary {
+  color: var(--t-font-color-primary);
+}
+
+.secondary {
+  color: var(--t-font-color-secondary);
+}
+
+.tertiary {
+  color: var(--t-font-color-tertiary);
+}

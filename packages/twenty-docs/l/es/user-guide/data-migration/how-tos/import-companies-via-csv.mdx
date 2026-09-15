@@ -12,23 +12,23 @@ Esta guía te llevará paso a paso por el proceso de importar tus empresas en Tw
 ### Lista de verificación de requisitos previos
 
 <Check>
-  Tu archivo está en formato CSV, XLSX o XLS
+Tu archivo está en formato CSV, XLSX o XLS
 </Check>
 
 <Check>
-  El archivo tiene menos de 10.000 registros
+El archivo tiene menos de 10.000 registros
 </Check>
 
 <Check>
-  No hay dominios duplicados en tu archivo
+No hay dominios duplicados en tu archivo
 </Check>
 
 <Check>
-  Todos los campos personalizados existen en **Settings → Data Model**
+Todos los campos personalizados existen en **Settings → Data Model**
 </Check>
 
 <Note>
-  ¿Necesitas importar más de 10.000 empresas? Divídelo en varios archivos o usa la [importación por API](/l/es/user-guide/data-migration/how-tos/import-data-via-api).
+¿Necesitas importar más de 10.000 empresas? Divídelo en varios archivos o usa la [importación por API](/l/es/user-guide/data-migration/how-tos/import-data-via-api).
 </Note>
 
 ## Paso 1: Preparar tus datos de empresa
@@ -46,9 +46,9 @@ Esta guía te llevará paso a paso por el proceso de importar tus empresas en Tw
 ### Formato de dominio
 
 <Warning>
-  **Use el formato `https://domain.com` para dominios.**
+**Use el formato `https://domain.com` para dominios.**
 
-  Esto coincide con el formato utilizado cuando las Empresas se crean automáticamente a partir de la sincronización de correo/calendario, lo que evita duplicados posteriormente.
+Esto coincide con el formato utilizado cuando las Empresas se crean automáticamente a partir de la sincronización de correo/calendario, lo que evita duplicados posteriormente.
 </Warning>
 
 **Columnas de dominio:**
@@ -74,7 +74,7 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 ```
 
 <Note>
-  **Consejo profesional:** Haz clic en **Download sample file** durante la importación para ver los nombres de columna exactos que Twenty espera.
+**Consejo profesional:** Haz clic en **Download sample file** durante la importación para ver los nombres de columna exactos que Twenty espera.
 </Note>
 
 ## Paso 2: Acceder a la función de importación
@@ -123,7 +123,7 @@ Si tienes campos Select o Multi-Select:
 3. O crea opciones nuevas si es necesario
 
 <Note>
-  Las opciones de Select usan **nombres de API**, no las etiquetas visibles. Ve a **Settings → Data Model** → Activa el **Advanced mode** para ver los nombres de API.
+Las opciones de Select usan **nombres de API**, no las etiquetas visibles. Ve a **Settings → Data Model** → Activa el **Advanced mode** para ver los nombres de API.
 </Note>
 
 ## Paso 6: Revisa y corrige errores

@@ -2,7 +2,7 @@ import type {
   DefaultReactSuggestionItem,
   SuggestionMenuProps,
 } from '@blocknote/react';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 
 export type SuggestionItem = DefaultReactSuggestionItem & {
   aliases?: string[];

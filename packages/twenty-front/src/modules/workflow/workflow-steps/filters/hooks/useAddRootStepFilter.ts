@@ -1,24 +1,15 @@
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import { useSetAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentFamilyState';
 import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/states/context/WorkflowStepFilterContext';
 import { currentStepFilterGroupsComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFilterGroupsComponentState';
 import { currentStepFiltersComponentState } from '@/workflow/workflow-steps/filters/states/currentStepFiltersComponentState';
-import { hasInitializedCurrentStepFilterGroupsComponentFamilyState } from '@/workflow/workflow-steps/filters/states/hasInitializedCurrentStepFilterGroupsComponentFamilyState';
-import { hasInitializedCurrentStepFiltersComponentFamilyState } from '@/workflow/workflow-steps/filters/states/hasInitializedCurrentStepFiltersComponentFamilyState';
+import { buildEmptyStepFilter } from '@/workflow/workflow-steps/filters/utils/buildEmptyStepFilter';
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
-import {
-  type StepFilter,
-  type StepFilterGroup,
-  StepLogicalOperator,
-  ViewFilterOperand,
-} from 'twenty-shared/types';
+import { type StepFilterGroup, StepLogicalOperator } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 export const useAddRootStepFilter = () => {
-  const { stepId, onFilterSettingsUpdate } = useContext(
-    WorkflowStepFilterContext,
-  );
+  const { onFilterSettingsUpdate } = useContext(WorkflowStepFilterContext);
   const currentStepFilterGroups = useAtomComponentStateCallbackState(
     currentStepFilterGroupsComponentState,
   );
@@ -26,17 +17,6 @@ export const useAddRootStepFilter = () => {
   const currentStepFilters = useAtomComponentStateCallbackState(
     currentStepFiltersComponentState,
   );
-
-  const setHasInitializedCurrentStepFilters = useSetAtomComponentFamilyState(
-    hasInitializedCurrentStepFiltersComponentFamilyState,
-    { stepId },
-  );
-
-  const setHasInitializedCurrentStepFilterGroups =
-    useSetAtomComponentFamilyState(
-      hasInitializedCurrentStepFilterGroupsComponentFamilyState,
-      { stepId },
-    );
 
   const store = useStore();
 
@@ -46,21 +26,13 @@ export const useAddRootStepFilter = () => {
       logicalOperator: StepLogicalOperator.AND,
     };
 
-    const newStepFilter: StepFilter = {
-      id: v4(),
-      type: 'unknown',
-      value: '',
-      operand: ViewFilterOperand.IS,
+    const newStepFilter = buildEmptyStepFilter({
       stepFilterGroupId: newStepFilterGroup.id,
-      stepOutputKey: '',
       positionInStepFilterGroup: 0,
-    };
+    });
 
     store.set(currentStepFilterGroups, [newStepFilterGroup]);
     store.set(currentStepFilters, [newStepFilter]);
-
-    setHasInitializedCurrentStepFilters(true);
-    setHasInitializedCurrentStepFilterGroups(true);
 
     onFilterSettingsUpdate({
       stepFilterGroups: [newStepFilterGroup],
@@ -70,8 +42,6 @@ export const useAddRootStepFilter = () => {
     onFilterSettingsUpdate,
     currentStepFilterGroups,
     currentStepFilters,
-    setHasInitializedCurrentStepFilters,
-    setHasInitializedCurrentStepFilterGroups,
     store,
   ]);
 

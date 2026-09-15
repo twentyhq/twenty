@@ -1,6 +1,6 @@
 ---
 title: Beste Praktiken
-icon: Stern
+icon: star
 ---
 
 Dieses Dokument beschreibt die besten Praktiken, die Sie beim Arbeiten am Frontend beachten sollten.
@@ -62,29 +62,29 @@ Beachten Sie, dass Sie **immer** Re-Renderings vermeiden können, indem Sie dere
 
 Das Vermeiden von Re-Renderings in neuen Funktionen wird jetzt erleichtert, indem sie auf Root-Ebene eliminiert werden.
 
-The `PageChangeEffect` sidecar component contains just one `useEffect` that holds all the logic to execute on a page change.
+Die `PageChangeEffect`-Sidecar-Komponente enthält nur einen `useEffect`-Hook, der die gesamte Logik für den Seitenwechsel enthält.
 
 Auf diese Weise wissen Sie, dass es nur einen Ort gibt, der ein Re-Rendering auslösen kann.
 
-### Always think twice before adding `useEffect` in your codebase
+### Denken Sie immer zweimal nach, bevor Sie `useEffect` in Ihre Codebasis aufnehmen.
 
-Re-renders are often caused by unnecessary `useEffect`.
+Re-Renderings werden oft durch unnötige `useEffect`-Verwendungen verursacht.
 
-You should think whether you need `useEffect`, or if you can move the logic in a event handler function.
+Sie sollten überlegen, ob Sie `useEffect` benötigen oder ob Sie die Logik in eine Event-Handler-Funktion verschieben können.
 
-You'll find it generally easy to move the logic in a `handleClick` or `handleChange` function.
+Es ist in der Regel einfach, die Logik in eine `handleClick` oder `handleChange`-Funktion zu verschieben.
 
 Sie können sie auch in Bibliotheken wie Apollo finden: `onCompleted`, `onError`, usw.
 
-### Use a sibling component to extract `useEffect` or data fetching logic
+### Verwenden Sie eine Geschwisterkomponente, um `useEffect`- oder Datenabruf-Logik auszulagern.
 
-If you feel like you need to add a `useEffect` in your root component, you should consider extracting it in a sidecar component.
+Wenn Sie das Gefühl haben, Ihrer Root-Komponente einen `useEffect` hinzufügen zu müssen, sollten Sie erwägen, ihn in eine Sidecar-Komponente auszulagern.
 
 Dasselbe können Sie auch für die Datenabruflogik mit Apollo-Hooks anwenden.
 
 ```tsx
-// ❌ Schlecht, verursacht Re-Renders, auch wenn sich die Daten nicht ändern,
-//    weil useEffect neu ausgewertet werden muss
+// ❌ Bad, will cause re-renders even if data is not changing,
+//    because useEffect needs to be re-evaluated
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
   const [someDependency] = useAtomState(someDependencyState);
@@ -104,8 +104,8 @@ export const App = () => (
 ```
 
 ```tsx
-// ✅ Gut, verursacht keine Re-Renders, wenn sich die Daten nicht ändern,
-//   weil useEffect in einer anderen Geschwisterkomponente neu ausgewertet wird
+// ✅ Good, will not cause re-renders if data is not changing,
+//   because useEffect is re-evaluated in another sibling component
 export const PageComponent = () => {
   const [data, setData] = useAtomState(dataState);
 
@@ -172,13 +172,13 @@ Variablennamen sollten den Zweck oder die Funktion der Variable genau beschreibe
 Generische Namen in der Programmierung sind nicht ideal, weil ihnen die Spezifität fehlt, was zu Mehrdeutigkeit und verminderter Lesbarkeit des Codes führt. Solche Namen vermitteln nicht den Zweck der Variablen oder Funktion, was es Entwicklern erschwert, die Absicht des Codes ohne tiefere Untersuchung zu verstehen. Dies kann zu erhöhten Debugging-Zeiten, höherer Fehleranfälligkeit und Schwierigkeiten bei der Wartung und Zusammenarbeit führen. In der Zwischenzeit macht eine beschreibende Namensgebung den Code selbsterklärend und einfacher zu navigieren, was die Codequalität und die Produktivität der Entwickler verbessert.
 
 ```tsx
-// ❌ Schlecht, verwendet einen generischen Namen, der seinen
-//    Zweck oder Inhalt nicht klar kommuniziert
+// ❌ Bad, uses a generic name that doesn't communicate its
+//    purpose or content clearly
 const [value, setValue] = useState('');
 ```
 
 ```tsx
-// ✅ Gut, verwendet einen beschreibenden Namen
+// ✅ Good, uses a descriptive name
 const [email, setEmail] = useState('');
 ```
 

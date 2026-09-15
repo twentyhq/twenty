@@ -3,19 +3,19 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import {
   IconApps,
-  IconCode,
   IconCreditCard,
   IconHierarchy,
   IconKey,
-  IconLayoutSidebarRightCollapse,
-  IconLockOpen,
+  IconAppWindow,
+  IconLock,
+  IconPlug,
   IconSettings,
   IconSettingsAutomation,
   IconShield,
   IconSparkles,
   IconSpy,
   IconUsers,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type UseSettingsRolePermissionFlagConfigParams = {
@@ -41,9 +41,9 @@ export const useSettingsRolePermissionFlagConfig = ({
     const allPermissions: SettingsRolePermissionsSettingPermission[] = [
       {
         key: PermissionFlagType.API_KEYS_AND_WEBHOOKS,
-        name: t`API Keys & Webhooks`,
-        description: t`Manage API keys and webhooks`,
-        Icon: IconCode,
+        name: t`MCP & APIs`,
+        description: t`Manage MCP, API keys, and webhooks`,
+        Icon: IconPlug,
         isRelevantForAgents: true,
         isRelevantForApiKeys: true,
         isRelevantForUsers: true,
@@ -70,7 +70,7 @@ export const useSettingsRolePermissionFlagConfig = ({
         key: PermissionFlagType.ROLES,
         name: t`Roles`,
         description: t`Define user roles and access levels`,
-        Icon: IconLockOpen,
+        Icon: IconLock,
         isRelevantForAgents: true,
         isRelevantForApiKeys: true,
         isRelevantForUsers: true,
@@ -133,7 +133,7 @@ export const useSettingsRolePermissionFlagConfig = ({
         key: PermissionFlagType.LAYOUTS,
         name: t`Layouts`,
         description: t`Customize page layouts and UI structure`,
-        Icon: IconLayoutSidebarRightCollapse,
+        Icon: IconAppWindow,
         isRelevantForAgents: true,
         isRelevantForApiKeys: true,
         isRelevantForUsers: true,

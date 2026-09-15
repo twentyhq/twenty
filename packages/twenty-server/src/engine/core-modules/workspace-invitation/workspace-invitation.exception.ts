@@ -11,6 +11,7 @@ export enum WorkspaceInvitationExceptionCode {
   USER_ALREADY_EXIST = 'USER_ALREADY_EXIST',
   INVALID_INVITATION = 'INVALID_INVITATION',
   EMAIL_MISSING = 'EMAIL_MISSING',
+  TOO_MANY_ONBOARDING_INVITATIONS = 'TOO_MANY_ONBOARDING_INVITATIONS',
 }
 
 const getWorkspaceInvitationExceptionUserFriendlyMessage = (
@@ -27,6 +28,8 @@ const getWorkspaceInvitationExceptionUserFriendlyMessage = (
       return msg`This user is already a member of the workspace.`;
     case WorkspaceInvitationExceptionCode.EMAIL_MISSING:
       return msg`Email is required.`;
+    case WorkspaceInvitationExceptionCode.TOO_MANY_ONBOARDING_INVITATIONS:
+      return msg`You have reached the maximum number of invitations for this step.`;
     default:
       assertUnreachable(code);
   }

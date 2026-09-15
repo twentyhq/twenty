@@ -17,19 +17,19 @@ const StyledDialogOverlayBase = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.overlayPrimary};
   display: flex;
-  height: 100dvh;
+  height: calc(100dvh / var(--t-zoom, 1));
   justify-content: center;
   left: 0;
   position: fixed;
   top: 0;
-  width: 100vw;
+  width: calc(100vw / var(--t-zoom, 1));
   z-index: ${RootStackingContextZIndices.Dialog};
 `;
 const StyledDialogOverlay = motion.create(StyledDialogOverlayBase);
 
 const StyledDialogContainerBase = styled.div`
   background: ${themeCssVariables.background.primary};
-  border-radius: 8px;
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
   max-width: 320px;

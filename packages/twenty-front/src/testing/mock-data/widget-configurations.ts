@@ -1,6 +1,5 @@
 import { type TypedAggregateChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedAggregateChartConfiguration';
 import { type TypedBarChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedBarChartConfiguration';
-import { type TypedGaugeChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedGaugeChartConfiguration';
 import { type TypedLineChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedLineChartConfiguration';
 import { type TypedPieChartConfiguration } from '@/side-panel/pages/page-layout/types/TypedPieChartConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
@@ -12,6 +11,7 @@ import {
   type FieldsConfiguration,
   GraphOrderBy,
   type IframeConfiguration,
+  PageLayoutTabLayoutMode,
   type StandaloneRichTextConfiguration,
   type WidgetConfiguration,
   WidgetConfigurationType,
@@ -77,14 +77,6 @@ export const TEST_AGGREGATE_CHART_CONFIGURATION: TypedAggregateChartConfiguratio
     displayDataLabel: false,
   };
 
-export const TEST_GAUGE_CHART_CONFIGURATION: TypedGaugeChartConfiguration = {
-  __typename: 'GaugeChartConfiguration',
-  configurationType: WidgetConfigurationType.GAUGE_CHART,
-  aggregateFieldMetadataId: TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.SUM,
-  displayDataLabel: false,
-};
-
 export const TEST_IFRAME_CONFIGURATION: IframeConfiguration = {
   __typename: 'IframeConfiguration',
   configurationType: WidgetConfigurationType.IFRAME,
@@ -109,7 +101,6 @@ export const ALL_CHART_CONFIGURATIONS: WidgetConfiguration[] = [
   TEST_LINE_CHART_CONFIGURATION,
   TEST_PIE_CHART_CONFIGURATION,
   TEST_AGGREGATE_CHART_CONFIGURATION,
-  TEST_GAUGE_CHART_CONFIGURATION,
 ];
 
 export const ALL_NON_CHART_CONFIGURATIONS = [
@@ -124,10 +115,19 @@ export const createTestWidget = (
   __typename: 'PageLayoutWidget',
   id: 'widget-1',
   applicationId: 'test-application-id',
+  universalIdentifier: 'universal-identifier-mock',
+  isSystemSideEffect: false,
   pageLayoutTabId: 'tab-1',
   title: 'Test Widget',
   type: WidgetType.GRAPH,
-  gridPosition: { row: 0, column: 0, rowSpan: 2, columnSpan: 2 },
+  position: {
+    __typename: 'PageLayoutWidgetGridPosition' as const,
+    layoutMode: PageLayoutTabLayoutMode.GRID,
+    row: 0,
+    column: 0,
+    rowSpan: 2,
+    columnSpan: 2,
+  },
   objectMetadataId: TEST_OBJECT_METADATA_ID,
   configuration: TEST_BAR_CHART_CONFIGURATION,
   createdAt: '2024-01-01',

@@ -12,7 +12,7 @@ export function IsValidMetadataName(validationOptions?: ValidationOptions) {
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+        // oxlint-disable-next-line typescript/no-explicit-any
         validate(value: any) {
           return /^(?!(?:not|or|and|Int|Float|Boolean|String|ID)$)[^'"\\;.=*/]+$/.test(
             value,

@@ -4,7 +4,8 @@ import { type ReactNode, useContext } from 'react';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { OverflowingTextWithTooltip, useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type Skill } from '~/generated-metadata/graphql';
@@ -28,7 +29,7 @@ export const SettingsSkillTableRow = ({
 }: SettingsSkillTableRowProps) => {
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
-  const Icon = getIcon(skill.icon ?? 'IconSparkles');
+  const Icon = getIcon(skill.icon ?? 'IconBook');
 
   return (
     <TableRow

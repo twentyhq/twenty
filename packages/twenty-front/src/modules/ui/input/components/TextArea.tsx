@@ -5,11 +5,10 @@ import TextareaAutosize from 'react-textarea-autosize';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { isDefined } from 'twenty-shared/utils';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const MAX_ROWS = 5;
 
 export type TextAreaProps = {
   textAreaId: string;
@@ -22,8 +21,10 @@ export type TextAreaProps = {
   placeholder?: string;
   value?: string;
   className?: string;
+  onFocus?: () => void;
   onBlur?: () => void;
   readOnly?: boolean;
+  variant?: FormFieldInputVariant;
 };
 
 const StyledContainer = styled.div`
@@ -40,26 +41,45 @@ const StyledLabel = styled.label`
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
-const StyledTextAreaContainer = styled.div`
+const StyledTextAreaContainer = styled.div<{
+  variant: FormFieldInputVariant;
+}>`
   > textarea {
-    background-color: ${themeCssVariables.background.transparent.lighter};
-    border: 1px solid ${themeCssVariables.border.color.medium};
-    border-radius: ${themeCssVariables.border.radius.sm};
+    background-color: ${({ variant }) =>
+      variant === 'transparent'
+        ? 'transparent'
+        : themeCssVariables.background.transparent.lighter};
+    border: ${({ variant }) =>
+      variant === 'transparent'
+        ? 'none'
+        : `1px solid ${themeCssVariables.border.color.medium}`};
+    border-radius: ${({ variant }) =>
+      variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
     box-sizing: border-box;
     color: ${themeCssVariables.font.color.primary};
+    display: block;
     font-family: inherit;
     font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};
-    line-height: 16px;
-    overflow: auto;
-    padding: ${themeCssVariables.spacing[2]};
+    line-height: ${({ variant }) =>
+      variant === 'transparent' ? 'inherit' : '16px'};
+    overflow: ${({ variant }) =>
+      variant === 'transparent' ? 'hidden' : 'auto'};
+    padding: ${({ variant }) =>
+      variant === 'transparent' ? '0' : themeCssVariables.spacing[2]};
     resize: none;
     width: 100%;
 
     &:focus {
       outline: none;
-      box-shadow: 0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2};
-      border-color: ${themeCssVariables.color.blue};
+      box-shadow: ${({ variant }) =>
+        variant === 'transparent'
+          ? 'none'
+          : `0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2}`};
+      border-color: ${({ variant }) =>
+        variant === 'transparent'
+          ? 'transparent'
+          : themeCssVariables.color.blue};
     }
 
     &::placeholder {
@@ -80,14 +100,18 @@ export const TextArea = ({
   height,
   placeholder,
   minRows = 1,
-  maxRows = MAX_ROWS,
+  maxRows,
   value = '',
   className,
   onChange,
+  onFocus,
   onBlur,
   readOnly = false,
+  variant = 'default',
 }: TextAreaProps) => {
-  const computedMinRows = Math.min(minRows, maxRows);
+  const computedMinRows = isDefined(maxRows)
+    ? Math.min(minRows, maxRows)
+    : minRows;
 
   const instanceId = useId();
 
@@ -106,6 +130,8 @@ export const TextArea = ({
         enableGlobalHotkeysConflictingWithKeyboard: false,
       },
     });
+
+    onFocus?.();
   };
 
   const handleBlur: FocusEventHandler<HTMLTextAreaElement> = () => {
@@ -117,7 +143,7 @@ export const TextArea = ({
     <StyledContainer>
       {label && <StyledLabel htmlFor={instanceId}>{label}</StyledLabel>}
 
-      <StyledTextAreaContainer>
+      <StyledTextAreaContainer variant={variant}>
         <TextareaAutosize
           id={instanceId}
           placeholder={placeholder}

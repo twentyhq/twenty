@@ -1,3 +1,5 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
@@ -35,6 +37,8 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { objectMetadataItem } = useRecordTableContextOrThrow();
   const { recordGroupFilter } = useRecordGroupFilter(objectMetadataItem.fields);
 
+  const { numberFormat, formatNumber } = useNumberFormat();
+
   const currentRecordFilterGroups = useAtomComponentStateValue(
     currentRecordFilterGroupsComponentState,
   );
@@ -45,10 +49,14 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
 
   const dateLocale = useAtomStateValue(dateLocaleState);
 
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
   const { filterValueDependencies } = useFilterValueDependencies();
 
   const requestFilters = computeRecordGqlOperationFilter({
-    fields: objectMetadataItem.fields,
+    fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     recordFilterGroups: currentRecordFilterGroups,
     recordFilters: currentRecordFilters,
@@ -109,7 +117,11 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   const { data, loading } = useAggregateRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordGqlFieldsAggregate,
-    filter: { ...requestFilters, ...recordGroupFilter, ...anyFieldFilter },
+    filter: {
+      ...requestFilters,
+      ...recordGroupFilter,
+      ...anyFieldFilter,
+    },
     skip: !isDefined(aggregateOperationForViewField),
   });
 
@@ -120,11 +132,15 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
   );
 
   if (!isDefined(aggregateFieldMetadataItem)) {
+    const totalCountAggregateValue =
+      data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
+        AggregateOperations.COUNT
+      ];
+
     return {
-      aggregateValue:
-        data?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
-          AggregateOperations.COUNT
-        ],
+      aggregateValue: isDefined(totalCountAggregateValue)
+        ? formatNumber(Number(totalCountAggregateValue))
+        : totalCountAggregateValue,
       aggregateLabel: getAggregateOperationLabel(AggregateOperations.COUNT),
       isLoading: loading,
     };
@@ -150,6 +166,7 @@ export const useAggregateRecordsForRecordTableColumnFooter = (
       localeCatalog: dateLocale.localeCatalog,
       timeFormat,
       timeZone,
+      numberFormat,
     });
 
   const { aggregateLabel } = getRecordAggregateDisplayLabel({

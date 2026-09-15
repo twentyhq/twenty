@@ -1,0 +1,55 @@
+---
+title: Flujos de trabajo
+description: Automatiza tus procesos empresariales con el creador visual de flujos de trabajo de Twenty.
+icon: bolt
+---
+
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+Los flujos de trabajo te permiten automatizar tareas repetitivas y conectar Twenty con herramientas externas, sin escribir código (aunque puedes hacerlo si quieres).
+
+<VimeoEmbed videoId="1185511711" title="Flujo de trabajo" />
+
+## Cómo funcionan los flujos de trabajo
+
+Cada flujo de trabajo tiene tres partes:
+
+1. **Disparador** — Lo que inicia el flujo de trabajo
+2. **Pasos** — Lo que ocurre a continuación (una o más acciones en secuencia)
+3. **Variables** — Datos que fluyen entre los pasos
+
+## Disparadores
+
+| Disparador             | Cuándo se activa                                                                                  |
+| ---------------------- | ------------------------------------------------------------------------------------------------- |
+| **Evento de registro** | Se crea, actualiza, elimina o se realiza un upsert en un registro                                 |
+| **Manual**             | Un usuario hace clic en un botón (en un único registro, en múltiples registros o de forma global) |
+| **Programación**       | En un intervalo recurrente (sintaxis cron)                                                        |
+| **Webhook**            | Un sistema externo envía un HTTP POST                                                             |
+
+## Acciones
+
+Los flujos de trabajo pueden encadenar cualquier combinación de:
+
+* **Operaciones de registro** — Crear, actualizar, buscar, eliminar o realizar un upsert en registros
+* **Enviar correo electrónico** — Enviar o redactar correos electrónicos desde cuentas conectadas
+* **Solicitud HTTP** — Llamar a cualquier API externa
+* **Código** — Ejecutar JavaScript personalizado para lógica compleja
+* **Ramificaciones** — Condiciones if/else para dividir la ruta del flujo de trabajo
+* **Iterador** — Recorrer arrays de datos
+* **Agente de IA** — Permitir que un agente de IA procese datos de forma autónoma
+* **Espera** — Pausar antes de continuar
+* **Formulario** — Recoger la información del usuario en mitad del flujo de trabajo
+
+## Lo que puedes crear
+
+* Enviar alertas de Slack cuando una oportunidad alcance una determinada etapa
+* Enriquecer automáticamente los nuevos contactos con datos de APIs externas
+* Detectar oportunidades estancadas y notificar al propietario
+* Sincronizar datos entre Twenty y tu sistema de facturación
+* Generar archivos PDF o facturas a partir de los datos de los registros
+* Responder automáticamente a los correos electrónicos entrantes que cumplan determinados criterios
+
+<Card title="Guía completa de flujos de trabajo" icon="arrow-right" href="/l/es/user-guide/workflows/overview">
+  Referencia detallada sobre disparadores, acciones, variables y recetas de automatización del mundo real.
+</Card>

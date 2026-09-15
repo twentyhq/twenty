@@ -1,6 +1,11 @@
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  EmailingDomainException,
+  EmailingDomainExceptionCode,
+} from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import {
+  ConflictError,
   ForbiddenError,
   InternalServerError,
   NotFoundError,
@@ -26,6 +31,29 @@ export const messageChannelGraphqlApiExceptionHandler = (error: Error) => {
         throw new ForbiddenError(error);
       case MessageChannelExceptionCode.EMAIL_GROUP_NOT_CONFIGURED:
         throw new InternalServerError(error);
+      default: {
+        return assertUnreachable(error.code);
+      }
+    }
+  }
+
+  if (error instanceof EmailingDomainException) {
+    switch (error.code) {
+      case EmailingDomainExceptionCode.EMAILING_DOMAIN_ALREADY_REGISTERED:
+        throw new ConflictError(error);
+      case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND:
+        throw new NotFoundError(error);
+      case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE:
+        throw new ForbiddenError(error);
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_FOUND:
+        throw new NotFoundError(error);
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_INSUFFICIENT_CREDITS:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_SENDABLE:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_NOT_CANCELABLE:
+      case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE:
+      case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
+      case EmailingDomainExceptionCode.EMAILING_DOMAIN_NOT_VERIFIED:
+        throw new UserInputError(error);
       default: {
         return assertUnreachable(error.code);
       }

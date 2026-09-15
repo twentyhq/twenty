@@ -1,5 +1,7 @@
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
+import { MetadataWritability } from '~/generated-metadata/graphql';
 
 describe('generateAggregateQuery', () => {
   it('should generate correct aggregate query', () => {
@@ -11,7 +13,6 @@ describe('generateAggregateQuery', () => {
       labelSingular: 'Company',
       labelPlural: 'Companies',
       labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',
-      isCustom: false,
       isActive: true,
       isSearchable: false,
       createdAt: new Date().toISOString(),
@@ -20,10 +21,14 @@ describe('generateAggregateQuery', () => {
       readableFields: [],
       updatableFields: [],
       indexMetadatas: [],
+      searchFieldMetadatas: [],
       isLabelSyncedWithName: true,
       isRemote: false,
       isSystem: false,
-      isUIReadOnly: false,
+      isUIEditable: true,
+      isUICreatable: true,
+      writability: MetadataWritability.OPEN,
+      openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     };
 
     const mockRecordGqlFields = {
@@ -54,7 +59,6 @@ describe('generateAggregateQuery', () => {
       labelSingular: 'Person',
       labelPlural: 'People',
       labelIdentifierFieldMetadataId: '20202020-72ba-4e11-a36d-e17b544541e1',
-      isCustom: false,
       isActive: true,
       isSearchable: false,
       createdAt: new Date().toISOString(),
@@ -63,10 +67,14 @@ describe('generateAggregateQuery', () => {
       readableFields: [],
       updatableFields: [],
       indexMetadatas: [],
+      searchFieldMetadatas: [],
       isLabelSyncedWithName: true,
       isRemote: false,
       isSystem: false,
-      isUIReadOnly: false,
+      isUIEditable: true,
+      isUICreatable: true,
+      writability: MetadataWritability.OPEN,
+      openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     };
 
     const mockRecordGqlFields = {

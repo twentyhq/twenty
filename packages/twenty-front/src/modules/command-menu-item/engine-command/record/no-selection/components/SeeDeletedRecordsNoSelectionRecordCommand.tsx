@@ -1,6 +1,7 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useHandleToggleTrashColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleTrashColumnFilter';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
 
 export const SeeDeletedRecordsNoSelectionRecordCommand = () => {
@@ -18,12 +19,14 @@ export const SeeDeletedRecordsNoSelectionRecordCommand = () => {
       viewBarId: recordIndexId,
       recordFiltersInstanceId: recordIndexId,
     });
+  const { closeSidePanelMenu } = useSidePanelMenu();
 
   return (
     <HeadlessEngineCommandWrapperEffect
       execute={() => {
         handleToggleTrashColumnFilter();
         toggleSoftDeleteFilterState(true);
+        closeSidePanelMenu();
       }}
     />
   );

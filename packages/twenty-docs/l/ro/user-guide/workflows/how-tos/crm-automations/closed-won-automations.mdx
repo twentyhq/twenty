@@ -82,19 +82,19 @@ Creați un flux de lucru care gestionează automat toate activitățile de după
 **Exemplu de corp al e-mailului**:
 
 ```
-Bună, echipă CS,
+Hi CS Team,
 
-Avem un client nou!
+We have a new customer!
 
-Companie: {{trigger.object.company.name}}
-Tranzacție: {{trigger.object.name}}
-Valoare: {{trigger.object.amount}}
-Reprezentant de vânzări: {{trigger.object.owner.name}}
-Data închiderii: {{trigger.object.closedAt}}
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
 
-O sarcină de onboarding a fost creată automat.
+An onboarding task has been created automatically.
 
-Să le oferim un început grozav!
+Let's give them a great start!
 ```
 
 ### Pasul 7: Confirmare către reprezentantul de vânzări
@@ -157,7 +157,7 @@ Utilizați **Iterator** pentru a crea fiecare sarcină din array.
 
 * Creați un client în sistemul de facturare cu un **HTTP Request**
 
-### Acțiuni condiționale
+### Acţiuni condiţionate
 
 Utilizați acțiunile **Filter** pentru:
 
@@ -165,7 +165,7 @@ Utilizați acțiunile **Filter** pentru:
 * Responsabili diferiți în funcție de regiune
 * Omiteți notificările pentru tranzacții mici
 
-### Includeți detaliile tranzacției
+### Include detaliile tranzacției
 
 Utilizați acțiunea **Code** pentru a formata:
 

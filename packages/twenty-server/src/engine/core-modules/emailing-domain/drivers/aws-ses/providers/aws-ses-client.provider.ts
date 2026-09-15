@@ -6,6 +6,7 @@ import {
 } from '@aws-sdk/client-sesv2';
 
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { buildAwsRequestHandlerOptions } from 'src/utils/aws-request-handler.util';
 
 @Injectable()
 export class AwsSesClientProvider {
@@ -17,6 +18,7 @@ export class AwsSesClientProvider {
     if (!this.sesClient) {
       const config: SESClientConfig = {
         region: this.twentyConfigService.get('AWS_SES_REGION'),
+        requestHandler: buildAwsRequestHandlerOptions(),
       };
 
       const accessKeyId = this.twentyConfigService.get('AWS_SES_ACCESS_KEY_ID');
@@ -27,11 +29,11 @@ export class AwsSesClientProvider {
         'AWS_SES_SESSION_TOKEN',
       );
 
-      if (accessKeyId && secretAccessKey && sessionToken) {
+      if (accessKeyId && secretAccessKey) {
         config.credentials = {
           accessKeyId,
           secretAccessKey,
-          sessionToken,
+          ...(sessionToken ? { sessionToken } : {}),
         };
       }
 

@@ -9,7 +9,7 @@ import { getWorkflowRunStepContext } from '@/workflow/workflow-steps/utils/getWo
 import { getWorkflowVariablesUsedInStep } from '@/workflow/workflow-steps/utils/getWorkflowVariablesUsedInStep';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconBrackets } from 'twenty-ui/display';
+import { IconBrackets } from 'twenty-ui/icon';
 import {
   type GetJsonNodeHighlighting,
   JsonNestedNode,

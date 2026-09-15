@@ -43,17 +43,17 @@ const createMockSlice = (
     points,
   }) as unknown as SliceTooltipProps<LineSeries>['slice'];
 
-const createSeries = (id: string): LineChartEnrichedSeries =>
+const createSeries = (key: string): LineChartEnrichedSeries =>
   ({
-    id,
-    label: id,
+    key,
+    label: key,
     data: [],
     colorScheme: {
       name: 'test',
       solid: '#solid',
       variations: Array(12).fill('#v0'),
     },
-    areaFillId: `area-${id}`,
+    areaFillId: `area-${key}`,
   }) as unknown as LineChartEnrichedSeries;
 
 describe('getLineChartTooltipData', () => {

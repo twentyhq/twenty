@@ -14,10 +14,13 @@ export enum LogicFunctionExceptionCode {
   LOGIC_FUNCTION_CREATE_FAILED = 'LOGIC_FUNCTION_CREATE_FAILED',
   LOGIC_FUNCTION_COMPILATION_FAILED = 'LOGIC_FUNCTION_COMPILATION_FAILED',
   LOGIC_FUNCTION_EXECUTION_TIMEOUT = 'LOGIC_FUNCTION_EXECUTION_TIMEOUT',
-  LOGIC_FUNCTION_EXECUTION_FAILED = 'LOGIC_FUNCTION_EXECUTION_FAILED',
+  LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR = 'LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR',
   LOGIC_FUNCTION_LAYER_BUILD_FAILED = 'LOGIC_FUNCTION_LAYER_BUILD_FAILED',
+  LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED = 'LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED',
   LOGIC_FUNCTION_DISABLED = 'LOGIC_FUNCTION_DISABLED',
   LOGIC_FUNCTION_INVALID_SEED_PROJECT = 'LOGIC_FUNCTION_INVALID_SEED_PROJECT',
+  INVALID_LOGIC_FUNCTION_INPUT = 'INVALID_LOGIC_FUNCTION_INPUT',
+  LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED = 'LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED',
 }
 
 const getLogicFunctionExceptionUserFriendlyMessage = (
@@ -42,14 +45,20 @@ const getLogicFunctionExceptionUserFriendlyMessage = (
       return msg`Function code failed to compile.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_TIMEOUT:
       return msg`Function execution timed out.`;
-    case LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED:
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_PLATFORM_EXECUTION_ERROR:
       return msg`Function execution failed.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED:
       return msg`Failed to build function dependencies.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED:
+      return msg`Your application's production dependencies are too large to install. Move packages that are not imported by your logic functions (UI libraries, dev tooling) out of "dependencies".`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
       return msg`Logic function execution is disabled.`;
     case LogicFunctionExceptionCode.LOGIC_FUNCTION_INVALID_SEED_PROJECT:
       return msg`Invalid seed project configuration.`;
+    case LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT:
+      return msg`Invalid logic function input.`;
+    case LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED:
+      return msg`Prebuilt bundle is not installed on the function. Rebuild and try again.`;
     default:
       assertUnreachable(code);
   }

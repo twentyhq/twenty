@@ -18,7 +18,7 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { cx } from '@linaria/core';
 import { useContext } from 'react';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledPlusIconHeaderCell = styled.div<{
@@ -41,8 +41,10 @@ const StyledPlusIconHeaderCell = styled.div<{
   width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   z-index: 1;
 
-  &:hover {
-    background: ${themeCssVariables.background.secondary};
+  @media (hover: hover) {
+    &:hover {
+      background: ${themeCssVariables.background.secondary};
+    }
   }
 `;
 
@@ -93,7 +95,7 @@ export const RecordTableHeaderAddColumnButton = () => {
     !isFirstRowActiveOrFocused ||
     isRecordTableScrolledVertically;
 
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
 
   return (
     <StyledPlusIconHeaderCell
@@ -109,7 +111,7 @@ export const RecordTableHeaderAddColumnButton = () => {
       />
       <StyledDropdownContainer>
         <Dropdown
-          dropdownId={HIDDEN_TABLE_COLUMN_DROPDOWN_ID}
+          dropdownId={`${HIDDEN_TABLE_COLUMN_DROPDOWN_ID}-${recordTableId}`}
           clickableComponent={
             <StyledPlusIconContainer>
               <IconPlus size={theme.icon.size.md} />

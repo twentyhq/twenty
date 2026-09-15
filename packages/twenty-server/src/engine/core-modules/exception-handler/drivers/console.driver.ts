@@ -3,11 +3,9 @@ import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-
 
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 
-export class ExceptionHandlerConsoleDriver
-  implements ExceptionHandlerDriverInterface
-{
+export class ExceptionHandlerConsoleDriver implements ExceptionHandlerDriverInterface {
   captureExceptions(
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     exceptions: ReadonlyArray<any>,
     options?: ExceptionHandlerOptions,
   ) {

@@ -1,3 +1,4 @@
+import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
 import { expect, within } from 'storybook/test';
@@ -42,7 +43,7 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
             <CommandMenuContext.Provider
               value={{
                 displayType: 'dropdownItem',
-                containerType: 'index-page-dropdown',
+                containerType: CommandMenuItemContainerType.IndexPageDropdown,
                 commandMenuItems: createMockCommandMenuItems(),
                 commandMenuContextApi: EMPTY_COMMAND_MENU_CONTEXT_API,
                 isInPreviewMode: false,

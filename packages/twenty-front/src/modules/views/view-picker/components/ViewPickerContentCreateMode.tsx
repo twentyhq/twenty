@@ -10,21 +10,19 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { viewObjectMetadataIdComponentState } from '@/views/states/viewObjectMetadataIdComponentState';
-import { ViewType, viewTypeIconMapping } from '@/views/types/ViewType';
+import { ViewType, viewTypeIconKeyMapping } from '@/views/types/ViewType';
 import { ViewPickerCreateButton } from '@/views/view-picker/components/ViewPickerCreateButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
 import { ViewPickerSelectContainer } from '@/views/view-picker/components/ViewPickerSelectContainer';
-import { VIEW_PICKER_CALENDAR_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerCalendarFieldDropdownId';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
-import { VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerKanbanFieldDropdownId';
 import { VIEW_PICKER_TYPE_SELECT_OPTIONS } from '@/views/view-picker/constants/ViewPickerTypeSelectOptions';
-import { VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerViewTypeDropdownId';
 import { useCreateViewFromCurrentState } from '@/views/view-picker/hooks/useCreateViewFromCurrentState';
 import { useGetAvailableFieldsForCalendar } from '@/views/view-picker/hooks/useGetAvailableFieldsForCalendar';
 import { useGetAvailableFieldsToGroupRecordsBy } from '@/views/view-picker/hooks/useGetAvailableFieldsToGroupRecordsBy';
@@ -38,7 +36,7 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { IconX } from 'twenty-ui/display';
+import { IconX } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledFieldAvailableContainer = styled.div`
@@ -51,6 +49,9 @@ const StyledFieldAvailableContainer = styled.div`
 
 export const ViewPickerContentCreateMode = () => {
   const { t } = useLingui();
+  const dropdownId = useAvailableComponentInstanceIdOrThrow(
+    DropdownComponentInstanceContext,
+  );
   const { viewPickerMode, setViewPickerMode } = useViewPickerMode();
   const [hasManuallySelectedIcon, setHasManuallySelectedIcon] = useState(false);
 
@@ -112,7 +113,7 @@ export const ViewPickerContentCreateMode = () => {
 
       await createViewFromCurrentState();
     },
-    focusId: VIEW_PICKER_DROPDOWN_ID,
+    focusId: dropdownId,
     dependencies: [
       viewPickerIsPersisting,
       createViewFromCurrentState,
@@ -122,7 +123,7 @@ export const ViewPickerContentCreateMode = () => {
     ],
   });
 
-  const defaultIcon = viewTypeIconMapping(viewPickerType).displayName;
+  const defaultIcon = viewTypeIconKeyMapping(viewPickerType);
 
   const selectedIcon = useMemo(() => {
     if (hasManuallySelectedIcon) {
@@ -180,12 +181,18 @@ export const ViewPickerContentCreateMode = () => {
             onChange={(value) => {
               setViewPickerIsDirty(true);
               setViewPickerType(value);
+              if (
+                viewPickerMode === 'create-empty' &&
+                !hasManuallySelectedIcon
+              ) {
+                setViewPickerSelectedIcon(viewTypeIconKeyMapping(value));
+              }
             }}
             options={VIEW_PICKER_TYPE_SELECT_OPTIONS.map((option) => ({
               ...option,
               label: t(option.label),
             }))}
-            dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
+            dropdownId={`${dropdownId}-view-type`}
           />
         </ViewPickerSelectContainer>
         {viewPickerType === ViewType.KANBAN && (
@@ -207,7 +214,7 @@ export const ViewPickerContentCreateMode = () => {
                       }))
                     : [{ value: '', label: t`No Select field` }]
                 }
-                dropdownId={VIEW_PICKER_KANBAN_FIELD_DROPDOWN_ID}
+                dropdownId={`${dropdownId}-kanban-field`}
               />
             </ViewPickerSelectContainer>
             {availableFieldsForGrouping.length === 0 && (
@@ -238,7 +245,7 @@ export const ViewPickerContentCreateMode = () => {
                       }))
                     : [{ value: '', label: t`No Date field` }]
                 }
-                dropdownId={VIEW_PICKER_CALENDAR_FIELD_DROPDOWN_ID}
+                dropdownId={`${dropdownId}-calendar-field`}
               />
             </ViewPickerSelectContainer>
             {availableFieldsForCalendar.length === 0 && (

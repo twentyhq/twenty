@@ -1,6 +1,7 @@
 import { useComposeEmailForTargetRecord } from '@/activities/emails/hooks/useComposeEmailForTargetRecord';
+import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { IconMail } from 'twenty-ui/display';
+import { IconMail } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import {
   AnimatedPlaceholder,
@@ -8,18 +9,16 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-  EMPTY_PLACEHOLDER_TRANSITION_PROPS,
-} from 'twenty-ui/layout';
+} from 'twenty-ui/feedback';
 
 export const EmptyInboxPlaceholder = () => {
   const { t } = useLingui();
-  const { openComposer, loading } = useComposeEmailForTargetRecord();
+  const targetRecord = useTargetRecord();
+  const { openComposer, loading } =
+    useComposeEmailForTargetRecord(targetRecord);
 
   return (
-    <AnimatedPlaceholderEmptyContainer
-      // oxlint-disable-next-line react/jsx-props-no-spreading
-      {...EMPTY_PLACEHOLDER_TRANSITION_PROPS}
-    >
+    <AnimatedPlaceholderEmptyContainer>
       <AnimatedPlaceholder type="emptyInbox" />
       <AnimatedPlaceholderEmptyTextContainer>
         <AnimatedPlaceholderEmptyTitle>

@@ -1,25 +1,27 @@
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { FindOneApplicationRegistrationDocument } from '~/generated-metadata/graphql';
 import { useLingui } from '@lingui/react/macro';
-import { Tag } from 'twenty-ui/components';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { Avatar, Tag } from 'twenty-ui/data-display';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   IconInfoCircle,
   IconKey,
   IconSettings,
   IconWorld,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 const REGISTRATION_DETAIL_TAB_LIST_ID =
   'application-registration-detail-tab-list';
@@ -36,9 +38,17 @@ export const SettingsApplicationRegistrationDetails = () => {
     applicationRegistrationId: string;
   }>();
 
-  const { data, loading } = useQuery(FindOneApplicationRegistrationDocument, {
-    variables: { id: applicationRegistrationId },
-    skip: !applicationRegistrationId,
+  const { data, loading, refetch } = useQuery(
+    FindOneApplicationRegistrationDocument,
+    {
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
+
+  useRefetchOnApplicationRegistrationChange({
+    applicationRegistrationId,
+    refetch,
   });
 
   const registration = data?.findOneApplicationRegistration;
@@ -85,13 +95,23 @@ export const SettingsApplicationRegistrationDetails = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={registration.name}
-      tag={<Tag text={t`Owner`} color={'gray'} />}
+      icon={
+        <Avatar
+          shape="square"
+          variant="outline"
+          size="md"
+          src={getAbsoluteImageUrl(registration.logoUrl ?? undefined)}
+          name={registration.name}
+          colorSeed={registration.name}
+        />
+      }
+      tag={<Tag color="gray">{t`Owner`}</Tag>}
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`Applications - Developer`,
@@ -104,14 +124,14 @@ export const SettingsApplicationRegistrationDetails = () => {
         },
         { children: registration.name },
       ]}
-    >
-      <SettingsPageContainer>
-        <TabList
+      secondaryBar={
+        <SettingsTabBar
           tabs={tabs}
           componentInstanceId={REGISTRATION_DETAIL_TAB_LIST_ID}
         />
-        {renderActiveTabContent()}
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+      }
+    >
+      <SettingsPageContainer>{renderActiveTabContent()}</SettingsPageContainer>
+    </SettingsPageLayout>
   );
 };

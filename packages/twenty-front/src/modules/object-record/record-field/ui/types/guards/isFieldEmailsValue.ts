@@ -1,12 +1,7 @@
-import { z } from 'zod';
-
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-
-export const emailsSchema = z.object({
-  primaryEmail: z.string(),
-  additionalEmails: z.array(z.string()).nullable(),
-}) satisfies z.ZodType<FieldEmailsValue>;
+import { emailsFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/emailsFieldValueSchema';
 
 export const isFieldEmailsValue = (
   fieldValue: unknown,
-): fieldValue is FieldEmailsValue => emailsSchema.safeParse(fieldValue).success;
+): fieldValue is FieldEmailsValue =>
+  emailsFieldValueSchema.safeParse(fieldValue).success;

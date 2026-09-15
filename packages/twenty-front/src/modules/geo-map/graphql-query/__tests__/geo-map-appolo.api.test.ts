@@ -167,7 +167,6 @@ describe('geo-map GraphQL queries', () => {
   describe('query validation', () => {
     it('should have valid GraphQL syntax for both queries', () => {
       expect(() => {
-        // This will throw if the query is malformed
         expect(GET_AUTOCOMPLETE_QUERY.definitions[0]).toBeDefined();
         expect(GET_PLACE_DETAILS_QUERY.definitions[0]).toBeDefined();
       }).not.toThrow();
@@ -177,11 +176,9 @@ describe('geo-map GraphQL queries', () => {
       const autocompleteQuery = GET_AUTOCOMPLETE_QUERY.definitions[0] as any;
       const detailsQuery = GET_PLACE_DETAILS_QUERY.definitions[0] as any;
 
-      // Both should use PascalCase for query names
       expect(autocompleteQuery.name.value).toMatch(/^[A-Z][a-zA-Z]*$/);
       expect(detailsQuery.name.value).toMatch(/^[A-Z][a-zA-Z]*$/);
 
-      // Both should use camelCase for field names
       const autocompleteFields =
         autocompleteQuery.selectionSet.selections[0].selectionSet.selections;
       const detailsFields =

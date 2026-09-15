@@ -11,13 +11,10 @@ export const findFrontComponents = async ({
   gqlFields,
   expectToFail = false,
   token,
-}: PerformMetadataQueryParams<undefined>): CommonResponseBody<{
+}: Partial<PerformMetadataQueryParams<undefined>>): CommonResponseBody<{
   frontComponents: FrontComponentDTO[];
 }> => {
-  const graphqlOperation = findFrontComponentsQueryFactory({
-    gqlFields,
-    input: undefined,
-  });
+  const graphqlOperation = findFrontComponentsQueryFactory({ gqlFields });
 
   const response = await makeMetadataAPIRequest(graphqlOperation, token);
 

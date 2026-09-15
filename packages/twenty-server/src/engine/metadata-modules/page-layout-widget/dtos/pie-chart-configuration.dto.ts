@@ -24,6 +24,7 @@ import {
 } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -96,6 +97,11 @@ export class PieChartConfigurationDTO implements PieChartConfiguration {
   @IsBoolean()
   @IsOptional()
   hideEmptyCategory?: boolean;
+
+  @Field(() => ChartNumberFormat, { nullable: true })
+  @IsEnum(ChartNumberFormat)
+  @IsOptional()
+  numberFormat?: ChartNumberFormat;
 
   @Field(() => Boolean, { nullable: true, defaultValue: true })
   @IsBoolean()

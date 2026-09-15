@@ -16,10 +16,13 @@ import {
   type FieldRelationMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { styled } from '@linaria/react';
-import { CustomError } from 'twenty-shared/utils';
-import { IconPencil, IconPlus } from 'twenty-ui/display';
-import { LightIconButton } from 'twenty-ui/input';
+import { t } from '@lingui/core/macro';
+import { CustomError, isDefined } from 'twenty-shared/utils';
+import { IconPencil, IconPlus } from 'twenty-ui/icon';
+import { IconButton } from 'twenty-ui/input';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type FieldWidgetRelationEditActionProps = {
@@ -72,14 +75,30 @@ export const FieldWidgetRelationEditAction = ({
 
   const isMorphRelation = isFieldMorphRelation(fieldDefinition);
 
-  const triggerIcon =
-    fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE
-      ? IconPencil
-      : IconPlus;
+  const relationValue = useAtomFamilySelectorValue(recordStoreFamilySelector, {
+    recordId,
+    fieldName: fieldDefinition.metadata.fieldName,
+  });
+
+  const hasAtLeastOneRelationRecord = Array.isArray(relationValue)
+    ? relationValue.length > 0
+    : isDefined(relationValue);
+
+  const isEditAction =
+    fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE ||
+    hasAtLeastOneRelationRecord;
+
+  const triggerIcon = isEditAction ? IconPencil : IconPlus;
+  const triggerLabel = isEditAction ? t`Edit relation` : t`Add relation`;
 
   const dropdownTriggerClickableComponent = (
     <StyledEditButtonWrapper>
-      <LightIconButton Icon={triggerIcon} accent="secondary" />
+      <IconButton
+        Icon={triggerIcon}
+        variant="tertiary"
+        size="small"
+        ariaLabel={triggerLabel}
+      />
     </StyledEditButtonWrapper>
   );
 

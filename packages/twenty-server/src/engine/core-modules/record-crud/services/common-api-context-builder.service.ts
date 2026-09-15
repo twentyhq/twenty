@@ -22,6 +22,8 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 export type CommonApiContext = {
@@ -45,17 +47,23 @@ export class CommonApiContextBuilderService {
   async build({
     authContext,
     objectName,
+    rolePermissionConfig,
   }: {
     authContext: WorkspaceAuthContext;
     objectName: string;
+    rolePermissionConfig?: RolePermissionConfig;
   }): Promise<CommonApiContext> {
     const workspaceId = authContext.workspace.id;
 
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+          flatMapsKeys: [
+            'flatObjectMetadataMaps',
+            'flatFieldMetadataMaps',
+            'flatIndexMaps',
+          ],
         },
       );
 
@@ -90,7 +98,10 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const objectsPermissions = await this.getObjectsPermissions(authContext);
+    const objectsPermissions = await this.getObjectsPermissions({
+      authContext,
+      rolePermissionConfig,
+    });
 
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
@@ -107,7 +118,9 @@ export class CommonApiContextBuilderService {
         flatObjectMetadata,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatIndexMaps,
         objectIdByNameSingular: idByNameSingular,
+        rolePermissionConfig,
       },
       selectedFields,
       flatObjectMetadata,
@@ -117,10 +130,27 @@ export class CommonApiContextBuilderService {
     };
   }
 
-  private async getObjectsPermissions(
-    authContext: WorkspaceAuthContext,
-  ): Promise<ObjectsPermissions> {
+  private async getObjectsPermissions({
+    authContext,
+    rolePermissionConfig,
+  }: {
+    authContext: WorkspaceAuthContext;
+    rolePermissionConfig?: RolePermissionConfig;
+  }): Promise<ObjectsPermissions> {
     const workspaceId = authContext.workspace.id;
+
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
+
+    if (isDefined(rolePermissionConfig)) {
+      return getObjectsPermissionsFromRolePermissionConfig({
+        rolesPermissions,
+        rolePermissionConfig,
+      });
+    }
+
     let roleId: string;
 
     if (isApiKeyAuthContext(authContext)) {
@@ -154,11 +184,6 @@ export class CommonApiContextBuilderService {
         RecordCrudExceptionCode.INVALID_REQUEST,
       );
     }
-
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
 
     return rolesPermissions[roleId] ?? {};
   }

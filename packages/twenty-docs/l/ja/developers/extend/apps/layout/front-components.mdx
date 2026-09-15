@@ -1,0 +1,849 @@
+---
+title: フロントコンポーネント
+description: Twenty の UI 内でレンダリングされる、サンドボックスで分離された React コンポーネントを構築します。
+icon: window-maximize
+---
+
+フロントコンポーネントは、Twenty の UI 内で直接レンダリングされる React コンポーネントです。 フロントコンポーネントは Remote DOM を使用する**分離された Web Worker**内で実行されます。コードはサンドボックス化され、不透明なオリジンの iframe 内で動作しますが、その UI はその iframe 内に制限されるのではなく、ページ内でネイティブにレンダリングされます。
+
+<Warning>
+Front components は現在も積極的に開発が進められています。 あなたのコードは実際のブラウザページではなく不完全な DOM に対して実行されるため、高度な使い方では、しばしば何の表示もなく失敗することがあります。 [現在の制限](#current-limitations) を参照してください。
+</Warning>
+
+## フロントコンポーネントを使用できる場所
+
+フロントコンポーネントは、Twenty 内の3つの場所でレンダリングできます:
+
+* **サイドパネル** — ヘッドレスでないフロントコンポーネントは、右側のサイドパネルで開きます。 フロントコンポーネントがコマンドメニューからトリガーされた場合のデフォルトの動作です。
+* **ウィジェット（ダッシュボードとレコードページ）** — フロントコンポーネントは、[ページレイアウト](/l/ja/developers/extend/apps/layout/page-layouts)内にウィジェットとして埋め込めます。 ダッシュボードやレコードページのレイアウトを設定する際、ユーザーはフロントコンポーネントのウィジェットを追加できます。
+* **App settings** — [`defineSettingsFrontComponent()`](#custom-settings-component) で定義されたフロントコンポーネントは、アプリの **Settings** タブ内のセクションとして、デフォルトの変数設定 UI の代わりにレンダリングされます。
+
+フロントコンポーネント単体では UI から直接アクセスできないため、それを*表示*する必要があります。 それを行う方法は次の3つです。
+
+* **[コマンドメニュー項目](/l/ja/developers/extend/apps/layout/command-menu-items)とペアにする** — コマンドメニュー（Cmd+K）に登録し、必要に応じてピン留めされたクイックアクションとして登録します。
+* **[ページレイアウト](/l/ja/developers/extend/apps/layout/page-layouts)内のウィジェットとして埋め込む** — レコードの詳細ページまたはダッシュボード上に配置します。
+* **[`defineSettingsFrontComponent()`](#custom-settings-component) で定義する** — アプリの **Settings** タブ内のセクションとして、デフォルトの変数設定 UI の代わりにレンダリングされます。
+
+## 基本的な例
+
+フロントコンポーネントの動作を手早く確認するには、[`defineCommandMenuItem`](/l/ja/developers/extend/apps/layout/command-menu-items)とペアにして、ページ右上隅にクイックアクションボタンとして表示させるのが最も簡単です。
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+`yarn twenty dev` で同期するか（または 1 回限りで `yarn twenty apply` を実行すると）、ページ右上にクイックアクションが表示されます：
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="右上のクイックアクションボタン" />
+</div>
+
+クリックすると、コンポーネントがインラインでレンダリングされます。
+
+## 設定フィールド
+
+| フィールド                 | 必須  | 説明                                        |
+| --------------------- | --- | ----------------------------------------- |
+| `universalIdentifier` | はい  | このコンポーネントの安定した一意の ID                      |
+| `component`           | はい  | React コンポーネント関数                           |
+| `name`                | いいえ | 表示名                                       |
+| `description`         | いいえ | コンポーネントの機能の説明                             |
+| `isHeadless`          | いいえ | コンポーネントに可視の UI がない場合は `true` を設定します（下記参照） |
+
+## フロントコンポーネントをページに配置する
+
+コマンド以外にも、**ページレイアウト**でウィジェットとして追加することで、フロントコンポーネントをレコードページに直接埋め込めます。 詳しくは[ページレイアウト](/l/ja/developers/extend/apps/layout/page-layouts)を参照してください。
+
+## カスタム設定コンポーネント
+
+アプリの **Settings** タブ内の自動生成された変数設定 UI を独自のコンポーネントに置き換えるには、`defineFrontComponent` ではなく `defineSettingsFrontComponent` で定義します。 このコンポーネントは、同じ[configuration fields](#configuration-fields)（ただし、設定コンポーネントは常に可視の UI をレンダーするため、受け付けられない `isHeadless` を除く）を受け取り、さらにこのコンポーネントをアプリの設定 UI としてマークします。
+
+このコンポーネントは、Settings タブ全体を置き換えるのではなく、そのタブの内部のセクションとしてレンダリングされます。 Twenty のシステム管理セクション（自動アップグレード、App URL、接続）は常にその上にレンダーされ、アプリ側で上書きすることはできません。
+
+```tsx src/front-components/app-settings.tsx
+import { defineSettingsFrontComponent } from 'twenty-sdk/define';
+
+const AppSettings = () => {
+  return (
+    <div style={{ padding: '20px' }}>
+      <h2>My app settings</h2>
+      {/* render your own configuration UI here */}
+    </div>
+  );
+};
+
+export default defineSettingsFrontComponent({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'app-settings',
+  description: "Custom UI for the app's Settings tab",
+  component: AppSettings,
+});
+```
+
+1 つのアプリにつき許可される settings front コンポーネントは 1 つだけであり、2 つ以上を宣言するとビルドは失敗します。 存在する場合、アプリの **Settings** タブはデフォルトの変数設定 UI の代わりにこのコンポーネントをレンダーします。
+
+## ヘッドレスと非ヘッドレス
+
+フロントコンポーネントには、`isHeadless` オプションで制御される2つのレンダリングモードがあります:
+
+**非ヘッドレス（デフォルト）** — コンポーネントは可視のUIをレンダリングします。 コマンドメニューからトリガーされた場合、サイドパネルで開きます。 `isHeadless` が `false` または省略された場合のデフォルトの動作です。
+
+**ヘッドレス (`isHeadless: true`)** — コンポーネントはバックグラウンドで不可視のままマウントされます。 サイドパネルは開きません。 ヘッドレスコンポーネントは、ロジックを実行して自動的にアンマウントするアクション向けに設計されています。例えば、非同期タスクの実行、ページへのナビゲーション、確認モーダルの表示などです。 以下で説明する SDK の Command コンポーネントと自然に組み合わせて使用できます。
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const [recordId] = useSelectedRecordIds();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+このコンポーネントが `null` を返すため、Twenty はそのためのコンテナのレンダリングをスキップします—レイアウトに空白は発生しません。 コンポーネントは引き続き、すべてのフックとホスト通信 API にアクセスできます。
+
+## SDK の Command コンポーネント
+
+`twenty-sdk` パッケージは、ヘッドレスのフロントコンポーネント向けに設計された4つの Command ヘルパーコンポーネントを提供します。 各コンポーネントは、マウント時にアクションを実行し、エラーをスナックバー通知で処理し、完了時にフロントコンポーネントを自動的にアンマウントします。
+
+`twenty-sdk/front-component` からインポートします:
+
+* **`Command`** — `execute` プロップ経由で非同期コールバックを実行します。
+* **`CommandLink`** — アプリのパスにナビゲートします。 Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — 確認モーダルを開きます。 ユーザーが確認すると、`execute` コールバックを実行します。 Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — サイドパネルページを開きます。 Props は `page` に依存します。たとえば、`ViewRecord` は `recordId` と `objectNameSingular`（さらに任意で、特定のタブでレコードを開くための `tab` id）を受け取り、他のページは `pageTitle` と `pageIcon` を受け取ります。
+
+`Command` を使用してコマンドメニューからアクションを実行するヘッドレスのフロントコンポーネントの完全な例です:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+さらに、実行前に確認を求めるために `CommandModal` を使用する例です:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/front-component';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+そして、`CommandOpenSidePanelPage` を使用して、現在のレコードを特定のタブのサイドパネルで開く例です。 `tab` はページレイアウトのタブ id です（デフォルトのレイアウトでは `company-tab-emails` や `company-tab-timeline` のような id を使用し、カスタムレイアウトではタブ自身の id を使用します）。 その id がレコードのレイアウト内に存在しない場合は、代わりにデフォルトのタブが開きます。
+
+```tsx src/front-components/open-company-emails.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  CommandOpenSidePanelPage,
+  SidePanelPages,
+  useSelectedRecordIds,
+} from 'twenty-sdk/front-component';
+
+const OpenCompanyEmails = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+  const recordId = selectedRecordIds.length === 1 ? selectedRecordIds[0] : null;
+
+  if (!recordId) {
+    return null;
+  }
+
+  return (
+    <CommandOpenSidePanelPage
+      page={SidePanelPages.ViewRecord}
+      recordId={recordId}
+      objectNameSingular="company"
+      tab="company-tab-emails"
+      resetNavigationStack={false}
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b8c9d0e1-f2a3-4567-bcde-678901234567',
+  name: 'open-company-emails',
+  description: 'Opens the current company on its Emails tab',
+  component: OpenCompanyEmails,
+  isHeadless: true,
+});
+```
+
+## ロジック関数の呼び出し
+
+フロントコンポーネントは不透明なオリジンの iframe 内にサンドボックス化された Web Worker 内でブラウザーサイドで実行され、一方で[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)はサーバーサイドで実行されます。 両者の間にプロセス内での直接呼び出しはありません。その代わり、フロントコンポーネントは HTTP 経由でロジック関数にアクセスします。
+
+`httpRouteTriggerSettings` で宣言されたロジック関数は、そのルートパスで HTTP 経由でアクセスできます。 `RestApiClient` は、`/s/` で始まるパスをアプリのルートとして扱い、それらをあなたの関数が提供されている URL に解決し、`TWENTY_APP_ACCESS_TOKEN` で認証します。
+
+> **Twenty Cloud では、HTTP トリガーのロジック関数はワークスペースごとの専用ドメインで提供されます**。`https://\<your-workspace-subdomain>.withtwenty.com\<path>` で提供されます。 外部から呼び出す場合は、関数の **HTTP trigger** 設定、もしくはアプリケーションの **Settings** タブから、正確な URL をコピーしてください。
+
+ヘッドレスフロントコンポーネントは、`Command` コンポーネント経由でマウント時に呼び出しを実行し、その後自動的にアンマウントできます。
+
+```tsx src/front-components/sync-prs.tsx
+import { RestApiClient } from 'twenty-client-sdk/rest';
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/front-component';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await new RestApiClient().post('/s/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+`RestApiClient` に渡されるパスは、ロジック関数の `httpRouteTriggerSettings.path` に `/s` を付加したものです。 `isAuthRequired: true` のままにしておいてください。コンポーネント用に Twenty が発行する `TWENTY_APP_ACCESS_TOKEN` によってリクエストが認証されます。
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_APP_ACCESS_TOKEN` は自動的に挿入されます。詳しくは [Application variables](#application-variables) を参照してください。 秘匿アプリケーション変数はフロントコンポーネントに公開されることがないため、API キーやその他の機密性の高いロジックはフロントコンポーネントではなく、ロジック関数側に保持してください。
+</Note>
+
+### Twenty REST API の呼び出し
+
+アプリの HTTP ルートを呼び出したり、フロントコンポーネントから Twenty のレコードを読み書きしたりするには、`twenty-client-sdk/rest` の `RestApiClient` を使用します。 これは、`/s/...` のパスをワークスペースの関数のベース URL に送り、`/rest/...` を含むそれ以外のすべてのパスを `TWENTY_API_URL` に送信します。
+
+常にページを見ている人として動作します。 `runAs: 'application'` はロジック関数専用のオプションです。コンポーネントにはアプリケーション自身のトークンが渡されないため、ここでそれを要求するとエラーになります。 アプリ自身のアクセスが必要な処理はロジック関数内に置き、代わりにその関数を呼び出してください。
+
+| メソッド                              | 説明                                   |
+| --------------------------------- | ------------------------------------ |
+| `get(path, options?)`             | `GET` リクエストを送信します                    |
+| `post(path, body?, options?)`     | `POST` リクエストを送信します                   |
+| `put(path, body?, options?)`      | `PUT` リクエストを送信します                    |
+| `patch(path, body?, options?)`    | `PATCH` リクエストを送信します                  |
+| `delete(path, options?)`          | `DELETE` リクエストを送信します                 |
+| `request(method, path, options?)` | 任意の HTTP メソッドによる汎用的なリクエスト            |
+| `resolveUrl(path, options?)`      | リクエストを送信せずに、パスを完全な URL に解決します（リンク向け） |
+
+`options` には、`headers`、`query`（クエリ文字列パラメーターのレコード。null 相当の値はスキップされます）、および `signal` 経由の `AbortSignal` を指定できます。 `FormData` ではないオブジェクト `body` は、自動的に JSON シリアル化されます。 `401` が発生した場合、クライアントはホスト経由で一度だけアクセス トークンを更新し、そのリクエストを再試行します。
+
+ベース URL とトークンは、デフォルトで環境から解決されます。 必要に応じてコンストラクターに上書き設定を渡します — たとえばテスト時などです:
+
+```ts
+const client = new RestApiClient({
+  baseUrl: 'https://myworkspace.twenty.com',
+  token: 'my-token',
+});
+```
+
+失敗したリクエストは `RestApiClientError` をスローし、`status`、`statusText`、`url`、および解析済みの `body` を公開します:
+
+```tsx
+import { RestApiClient, RestApiClientError } from 'twenty-client-sdk/rest';
+
+const client = new RestApiClient();
+
+try {
+  const people = await client.get('/rest/people', {
+    query: { limit: 10 },
+  });
+} catch (error) {
+  if (error instanceof RestApiClientError) {
+    console.error(error.status, error.body);
+  }
+}
+```
+
+## ランタイムコンテキストへのアクセス
+
+コンポーネント内で、SDK のフックを使用して現在のユーザー、レコード、コンポーネントインスタンスにアクセスします：
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useSelectedRecordIds,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const [recordId] = useSelectedRecordIds();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+利用可能なフック：
+
+| フック                                           | 戻り値                    | 説明                                               |
+| --------------------------------------------- | ---------------------- | ------------------------------------------------ |
+| `useUserId()`                                 | `string` または `null`    | 現在のユーザーの ID                                      |
+| `useSelectedRecordIds()`                      | `string[]`             | 選択されたレコードIDの配列（未選択の場合は空配列）                       |
+| `useRecordId()`                               | `string` または `null`    | **非推奨。** 代わりに `useSelectedRecordIds()` を使用してください |
+| `useFrontComponentId()`                       | `string`               | このコンポーネントインスタンスの ID                              |
+| `useTimelineActivityId()`                     | `string` または `null`    | カスタムタイムライン行をレンダリングする際の現在のタイムラインアクティビティ ID        |
+| `useColorScheme()`                            | `'light'` または `'dark'` | ホスト UI のアクティブなカラースキーム（`System` はすでに解決済み）         |
+| `useFrontComponentExecutionContext(selector)` | 項目により異なる               | セレクター関数で実行コンテキスト全体にアクセス                          |
+
+## アプリケーション変数
+
+`isSecret: false` が設定された [`defineApplication()`](/l/ja/developers/extend/apps/config/application) 内で定義されたアプリケーション変数は、`getApplicationVariable` ユーティリティを通じてフロントコンポーネント内で利用できます。
+
+```tsx src/front-components/greeting.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getApplicationVariable } from 'twenty-sdk/front-component';
+
+const Greeting = () => {
+  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+
+  return <p>Hello, {recipientName}!</p>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'greeting',
+  component: Greeting,
+});
+```
+
+<Warning>
+シークレット変数（`isSecret: true`）はフロントコンポーネントには公開**されません**。 それらは、サーバーサイドで実行される[ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions)でのみ利用できます。 これにより、API キーなどの機密値がブラウザーに送信されるのを防ぎます。
+</Warning>
+
+`getApplicationVariable` は、変数に宣言されている `type` に関係なく、常に **string**（または `undefined`）を返します。 文字列は型に応じて一貫した方法でシリアライズされます（boolean は `"true"` / `"false"`、number は 10 進数の文字列、配列 / オブジェクトは JSON）。これはロジック関数の `process.env` で使用されているのと同じ形式です。各自でパースしてください（`Number(...)`、`JSON.parse(...)`、`=== 'true'` など）。 [Variable types](/l/ja/developers/extend/apps/config/application#variable-types) を参照してください。
+
+次のシステム変数は、常に `process.env` 経由で利用できます。
+
+| 変数                        | 説明                                                                               |
+| ------------------------- | -------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Twenty コア API のベース URL                                                           |
+| `TWENTY_APP_ACCESS_TOKEN` | サインインしている人のロールとアプリのロールの共通部分にスコープ設定された短期間有効なトークン。そのため、コンポーネントが閲覧者以上の権限を持つことはありません |
+
+### `TWENTY_FUNCTIONS_URL`
+
+Twenty はまた、`TWENTY_FUNCTIONS_URL` をフロントコンポーネントとロジック関数に挿入します。これは、アプリの HTTP トリガーのロジック関数が提供されるベース URL です。
+
+この変数が存在するのは、その URL が必ずしも Twenty サーバー自体とは限らないためです。 Twenty Cloud では、アプリのルートはワークスペースごとの専用ドメイン（`https://\<your-workspace-subdomain>.withtwenty.com`、または設定されている場合はアプリケーションのプライマリ公開ドメイン）で提供されます。これにより、アプリで作成されたレスポンスが Twenty アプリのオリジンではなく分離されたオリジン上で実行されます。 セルフホストおよびローカルインスタンスでは、アプリのルートはサーバー自体の `/s` プレフィックスの下で提供され、この変数がまったく設定されない場合もあります。 ベース URL はワークスペースやインスタンスごとに異なるため、コードでハードコードすることはできません。サーバーが実行時に正しい値を挿入します。
+
+この変数を直接読む必要があることはほとんどありません。 `/s/` プレフィックス付きのパスで `RestApiClient` を通じてルートを呼び出すと、クライアントが URL を解決します。`/s` プレフィックスを取り除き、`TWENTY_FUNCTIONS_URL` をターゲットにし、この変数が設定されていない場合は `\<TWENTY_API_URL>/s` をフォールバックとして使用します。 リクエストを送信せずに絶対 URL を取得するには、`resolveUrl('/s/\<path>')` を使用します（リンクなどの用途）。 URL を手作業で組み立てる場合にのみ、この変数を直接読み取ってください。
+
+```ts
+const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_API_URL}/s`}/documents/generate`;
+```
+
+## ホスト通信 API
+
+フロントコンポーネントは、`twenty-sdk` の関数を使用してナビゲーション、モーダル、通知をトリガーできます：
+
+| 機能                                                 | 説明                                                                                                                                                                                    |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | アプリ内のページに移動                                                                                                                                                                           |
+| `openSidePanelPage(params)`                        | サイドパネルを開く                                                                                                                                                                             |
+| `closeSidePanel()`                                 | サイドパネルを閉じる                                                                                                                                                                            |
+| `openCommandConfirmationModal(params)`             | 確認ダイアログを表示                                                                                                                                                                            |
+| `enqueueSnackbar(params)`                          | トースト通知を表示                                                                                                                                                                             |
+| `unmountFrontComponent()`                          | コンポーネントをアンマウント                                                                                                                                                                        |
+| `updateProgress(progress)`                         | 進行状況インジケーターを更新                                                                                                                                                                        |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | `Blob` を FILES フィールドにアップロードします。返り値は `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` または `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` です。 |
+
+アクション完了後にホスト API を使用してスナックバーを表示し、サイドパネルを閉じる例です:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { enqueueSnackbar, closeSidePanel, useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const ArchiveRecord = () => {
+  const [recordId] = useSelectedRecordIds();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### ストレージ
+
+`localStorage` と `sessionStorage` は、通常のページと同様に、標準的な同期 API として動作します。 キーはアプリのインストールとサインインしているユーザーにスコープされており、他のアプリがそれらを読み取ることはできません。また、同じブラウザに別のユーザーがサインインした場合は、空のストアから開始します。 `localStorage` に書き込まれた値は、リロードをまたいでもデバイス上に保持されます。一方、`sessionStorage` はブラウザセッションの間だけ有効です。
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty はアプリに代わって値を保存するため、書き込みはローカルに即座に反映され、その後バックグラウンドで保存されます。 読み取り処理がホストで待機することはありません。 何も同期されません。値は別のブラウザやマシンには引き継がれないため、デバイス変更後も保持する必要があるものには、ロジック関数の[key-value store](/l/ja/developers/extend/apps/logic/key-value-store)を使用してください。
+
+書き込みには上限があり、すべての制限はバイト数ではなく文字数でカウントされます。キーは最大 512 文字、1 つの値は最大 262,144 文字、各ストレージはアプリおよびユーザーごとに最大 1,048,576 文字です。 制限を超える書き込みは、ブラウザ API と同様に `QuotaExceededError` をスローします。
+
+### 複数のレコードを扱う
+
+複数の選択されたレコードを処理するには `useSelectedRecordIds()` を使用してください。 これは一括操作に役立ちます:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+});
+```
+
+レコードの選択に制限された[コマンドメニューアイテム](/l/ja/developers/extend/apps/layout/command-menu-items)として表示します：
+
+```ts src/command-menu-items/bulk-export.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+  label: 'Bulk Export',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+});
+```
+
+## 公開アセット
+
+フロントコンポーネントは、`getPublicAssetUrl` を使用してアプリの `public/` ディレクトリ内のファイルにアクセスできます：
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { getPublicAssetUrl } from 'twenty-sdk/utils';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+詳細は[公開アセットのセクション](/l/ja/developers/extend/apps/config/public-assets)を参照してください。
+
+## フロントコンポーネント間で依存関係を共有することについて
+
+デフォルトでは、各フロントコンポーネントはインポートするライブラリのコピーをそれぞれ同梱するため、5つのコンポーネントを持つアプリでは、React が5回配信されます。 共有する依存関係をアプリの `package.json` に宣言すると、それらのライブラリを一度だけビルドし、アプリ内のすべてのコンポーネントが単一のキャッシュ済みファイルから読み込むようにできます:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+その後、各コンポーネントはこれまでどおり依存関係をインポートするだけで済み、コンポーネントコード側で変更する必要はありません:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+知っておくべきこと：
+
+* **アプリごとに1つの共有依存関係バンドル。** バンドルはアプリ自身の依存関係からビルドされるため、配信するバージョンを完全にコントロールできます。
+* **インポートする正確な指定子を列挙してください。** `twenty-ui/input` と `twenty-ui/display` は 2 つのエントリです。パッケージ名だけでは、そのサブパスは対象になりません。 `react` を列挙すると、自動的に `react/jsx-runtime` も対象になります。
+* **`react` と一緒に `react-dom/client` を共有してください。** すべてのコンポーネントは `createRoot` を通じてレンダーされるため、これを含めない場合、各コンポーネントは引き続き React DOM を同梱することになります。
+* **バンドルはキャッシュされます。** バンドルは長期間有効な不変キャッシュ付きのコンテンツハッシュ URL で提供されるため、一度ダウンロードされると、その依存関係のいずれかが変更されるまでアプリのすべてのコンポーネントで再利用されます。
+* **共有パッケージを一切インポートしないコンポーネントは、バンドルをダウンロードすることはありません。**
+
+## スタイリング
+
+フロントコンポーネントは複数のスタイリング手法をサポートしています。 次のものを使用できます：
+
+* **インラインスタイル** — `style={{ color: 'red' }}`
+* **Twenty UI コンポーネント** — Twenty 独自のコンポーネントライブラリです。以下の [Using Twenty UI components](#using-twenty-ui-components) を参照してください
+* **Emotion** — `@emotion/react` による CSS-in-JS
+* **styled-components** — `styled.div` パターン
+* **Tailwind CSS** — ユーティリティクラス
+* React と互換性のある**任意の CSS-in-JS ライブラリ**
+
+## Twenty UI コンポーネントの使用
+
+Twenty はコンポーネントライブラリを [`twenty-ui`](https://www.npmjs.com/package/twenty-ui/v/1.0.0-alpha.1) パッケージとして提供しています。 フロントエンドコンポーネントでは、ボタン、タグ、ステータスピル、チップ、アバター、アイコン、タイポグラフィ、そしてワークスペースのライト／ダークテーマに自動で合わせてくれるテーマトークンなどに利用できます。
+
+### インストール
+
+Twenty インスタンスに同梱されているバージョンに固定して、そのパッケージをアプリに追加します。
+
+```bash
+yarn add twenty-ui@1.0.0-alpha.1
+```
+
+`twenty-ui` はビルド時にフロントエンドコンポーネントへバンドルされるため、アプリの依存関係に追加するだけで済み、実行時に設定することは何もありません。
+
+### コンポーネントのインポート
+
+パッケージのルートではなく、対応するサブパスからインポートすることで、使用しているコンポーネントだけがバンドルに含まれるようにします。
+
+| サブパス                        | エクスポート内容                                 |
+| --------------------------- | ---------------------------------------- |
+| `twenty-ui/input`           | `Button` とフォーム入力                         |
+| `twenty-ui/data-display`    | `Tag`、`Status`、`Chip`、`Avatar` など        |
+| `twenty-ui/feedback`        | `Callout`、`Banner`、`Info` など             |
+| `twenty-ui/typography`      | `H1Title`、`H2Title`、`H3Title`、`Label` など |
+| `twenty-ui/icon`            | `Icon*` コンポーネント（例: `IconCheck`）          |
+| `twenty-ui/theme-constants` | `ThemeProvider`、`themeCssVariables`      |
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```
+
+### アイコン
+
+`twenty-ui/icon` から個別のアイコンをインポートします:
+
+```tsx
+import { IconBox, IconCheck } from 'twenty-ui/icon';
+```
+
+それぞれの名前付きアイコンはツリーシェイクされるため、少数をインポートしてもバンドルサイズへの影響はわずかです。 `IconsProvider`、`useIcons`、`iconsState` の使用は避けてください。これらは Tabler アイコンセット全体（数 MB）を読み込みます。
+
+### テーマ設定とテーマトークン
+
+Twenty UI コンポーネントはワークスペースのライト／ダークテーマに自動的に追従します。レンダラーがホスト上のアクティブなカラースキームを適用し、コンポーネントはそれに基づいて色を決定します。
+
+独自のインラインスタイルでも同じデザイントークンを使うには、`useTheme()` フックを呼び出します。 これにより、アクティブなテーマに紐づいた Twenty のテーマトークン（スペーシング、カラー、角丸、フォント）が返されます。コンポーネント側で `ThemeProvider` をセットアップする必要はありません。
+
+```tsx
+import { useTheme } from 'twenty-ui/theme-constants';
+
+const Card = () => {
+  const theme = useTheme();
+
+  return (
+    <div
+      style={{
+        padding: theme.spacing[4],
+        background: theme.background.secondary,
+        color: theme.font.color.primary,
+      }}
+    >
+      Themed card
+    </div>
+  );
+};
+```
+
+`useTheme()` はフックなので、コンポーネント本体の中でトークンを読み取り、値が常に現在のテーマを反映するようにできます。 同じトークンマップは `themeCssVariables` 定数としてもエクスポートされていますが、フロントエンドコンポーネントでは `useTheme()` を優先してください。アプリのマニフェストを抽出している間は、`themeCssVariables` を参照するモジュールレベルの定数が未定義になる可能性があります。
+
+アクティブなスキームを明示的に分岐させるには、`twenty-sdk/front-component` の `useColorScheme()` を使って取得します。このフックは `'light'` または `'dark'` を返します。
+
+## 現在の制限
+
+Front components は現在も積極的に開発が進められています。 レンダリング、スタイリング、イベント処理、要素の計測、およびブラウザー ストレージの操作は問題なく動作します。 それらを*越えた*処理（ref に対する DOM メソッドの呼び出し、要素リサイズの監視、ツリーの外へのポータル）については、現在は未実装または不完全であり、そのほとんどは例外も出さずに黙って失敗します。スキャフォールドがフルなブラウザー DOM を前提に型付けされているため、TypeScript エラーも発生しません。
+
+これらのいずれかが原因でブロックされている場合は、[issue を作成](https://github.com/twentyhq/twenty/issues/new/choose)して、優先度を上げてもらってください。
+
+### レイアウトと計測
+
+要素は自分自身を計測できます。ホストがジオメトリをサンドボックス側にミラーリングするため、読み取りはローカルで応答されますが、最大 1 フレーム分までは古い値になる可能性があり、まだ一度も計測されていない要素の最初の読み取りは 0 を返します。 書き込み後は、`requestAnimationFrame` コールバックまたはエフェクト内で再度読み取ってください。
+
+| API                                                                                      | 何が起きるか                                                                                       |
+| ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | ミラーからは動作しますが、`scrollTop` / `scrollLeft` を代入しても何も起こりません (no-op)                               |
+| `getClientRects()`, `window.matchMedia()`                                                | 例外を投げます                                                                                      |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | **ブラウザーのビューポート** を報告する点では動作します。ウィジェット自体のサイズは `document.body.clientWidth` / `clientHeight` です |
+| `window.getComputedStyle()`                                                              | 要素のインラインスタイルのみを返し、ホストで計算されたカスケードは一切返しません                                                     |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError`（`typeof` ガードは機能します）                                                         |
+| `MutationObserver`                                                                       | `subtree`、`attributeFilter`、旧値、および `takeRecords()` を含めて動作します                                 |
+
+`getBoundingClientRect` による位置決めは現在動作しますが、`ResizeObserver` を介してサイズ変更を監視しているもの（recharts の `ResponsiveContainer`、Floating UI の `autoUpdate`）は依然として動作しません。 レイアウトにはいずれにせよ CSS を優先してください。スタイルシートは実際のページに適用されるので、flexbox、grid、`aspect-ratio`、`clamp()`、`@container` はフレーム遅延なしで通常どおり動作します。
+
+<Note>
+`requestAnimationFrame`, `fetch`, `setTimeout`, `queueMicrotask` は、`window.` プレフィックスなしで動作します。 `window.requestAnimationFrame(...)` などを使った場合だけ例外が投げられます。
+</Note>
+
+### DOM アクセス
+
+`ref` が返すのは `HTMLElement` ではなくサンドボックス要素です。
+
+| 記述するコード                                                                                                     | 何が起きるか                                 | 代わりに使うもの                                                                                                                                         |
+| ----------------------------------------------------------------------------------------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 例外を投げます                                | 制御されたコンポーネントを使い、値は `event.target` から読み取ります                                                                                                       |
+| `element.classList.add(...)`                                                                                | 例外を投げます（`classList` は `undefined` です）  | `className` 文字列を自分で組み立ててください                                                                                                                     |
+| `document.createTreeWalker()`                                                                               | 例外を投げます                                | `querySelector()` / `querySelectorAll()` と `getElementById()` は動作します。`getElementsByClassName()` も動作しますが、ライブな `HTMLCollection` ではなく静的なコレクションを返します |
+| `document.activeElement`                                                                                    | 常に `undefined` です                      | `onFocus` / `onBlur` でフォーカスを追跡してください                                                                                                             |
+| `canvas`                                                                                                    | 何もレンダリングされず、エラーも出ません                   | SVG、またはオフスクリーンで描画して、その結果を `img` 要素で表示します                                                                                                         |
+| `createPortal(node, document.body)`                                                                         | `isConnected` は成功を報告しますが、何もレンダリングされません | `position: absolute` によるインラインのオーバーレイを使うか、ライブラリに自前のコンテナー要素を渡してください                                                                                |
+
+このポータルのギャップが原因で、Radix、Headless UI、MUI、react-select のポップオーバーはデフォルトでは何もレンダリングしません。 ほとんどのライブラリは container プロップを受け付けるので、自分がレンダリングした要素を指定してください。
+
+### イベント
+
+マウス、ポインター、タッチ、ドラッグ、キーボード、フォーカス、`input`/`change`/`submit`、`scroll`/`wheel`/`contextmenu`、そして `animationend`/`transitionend` はホストへ渡されます。さらに、要素ごとにいくつかのイベントも渡されます：`img` の `load`/`error`、`input`/`textarea` のクリップボードおよびコンポジション、`video`/`audio` のメディア、`details`/`dialog` の `toggle` などです。 それ以外（`onAuxClick`、`onSelect`、`onInvalid`、`onReset`、`onAnimationStart`、pointer capture、`img` の `onLoad`）は、警告なしに破棄されます。
+
+`document.addEventListener()` と `window.addEventListener()` はエラーなく登録されますが、一度も発火しません。そのため、ドラッグは開始した要素からポインターが離れた瞬間に止まります。 `event.preventDefault()` も渡されません。フォーム送信、`dragover`/`drop`、およびリンクのクリックは、すでに保護されています。
+
+### 属性とスタイリング
+
+各要素は自分自身のプロパティをホスト DOM にフォワードします（`a` の `href`、`img` の `src`/`alt`、`input` の `value`/`placeholder`/`disabled` など）。さらに、すべての要素に共通のプロパティセットもフォワードされます：`id`、`className`、`style`、`title`、`tabIndex`、`role`、`draggable`、および任意の `aria-*` / `data-*` 属性（ハイフン区切りのため、`ariaLabel` は破棄されます）。 それ以外のものはすべて暗黙的に破棄されるため、カスタム状態は `data-*` として表現してください。
+
+コンポーネントの CSS（`import './styles.css'`、CSS-in-JS、または `style` 要素のいずれであっても）は、ホストページの `head` に **スコープなし（unscoped）** で挿入されます。 そのため、クラス名が Twenty 独自のクラス名と衝突します（プレフィックスを付け、決して素の `div { ... }` セレクタは書かないでください）。また、`@media` はウィジェットではなくブラウザウィンドウに対してマッチします（独自の `container-type` を指定した `@container` を使用してください）。 インラインの `style` props には影響しません。
+
+### ストレージとネットワーク
+
+`localStorage` と `sessionStorage` はブラウザではなく Twenty によって提供されます。コンポーネントは不透明なオリジンのワーカー内で実行されるため、ホストがアプリに代わって値を保存します。 スコープと制限については、[storage](#storage) を参照してください。 IndexedDB、Cookie、Cache API、および `BroadcastChannel` は引き続き利用できません。 デバイス間で状態を永続化するには、[logic function](/l/ja/developers/extend/apps/logic/logic-functions)を呼び出し、その[key-value store](/l/ja/developers/extend/apps/logic/key-value-store)を使用してください。
+
+`fetch` は動作しますが、いくつか注意点があります。
+
+* Twenty API への呼び出しやアプリのルートへの呼び出しはホストによってプロキシされるため、[`RestApiClient`](#calling-the-twenty-rest-api) を優先して使用してください。 プロキシされた呼び出しでは、`AbortSignal` などの `RequestInit` オプションは破棄され、`string` と `URLSearchParams` のボディのみがサポートされます。
+* その他のオリジンからのリクエストは、`Origin: null` を付けてサンドボックスの外へ送信されるため、サードパーティ API は `Access-Control-Allow-Origin: *` を返す場合にのみ応答します。 代わりにロジック関数から呼び出してください。
+* `fetch('/rest/people')` は、サンドボックスに相対パスを解決するためのページ URL がないため、Twenty API には決してマッチしません。
+
+### メディアキャプチャ
+
+`navigator.mediaDevices.getUserMedia()` と `MediaRecorder` は、サンドボックス polyfill を通じて front コンポーネント内で動作するため、標準的な録画コードは変更なしで実行でき、一般的なコンテナ／コーデックの組み合わせに対しては `MediaRecorder.isTypeSupported` が応答します。 詳細な `getUserMedia` 制約オブジェクトは受け付けられますが転送はされません。ホストは、要求された種類に対してデフォルト設定でキャプチャを行い、アプリケーション全体を通して同時にライブにできるキャプチャは 1 つだけです。 記録された `Blob` を `uploadFile` ホスト関数で保存します。
+
+### その他のギャップ
+
+* **ファイル内容。** type が `file` の `input` は、ハンドラーにファイルのメタデータのみを渡し、バイト列は渡さないため、`FileReader` は利用できません。 `MediaRecorder` で生成されたものなど、コードですでに保持している `Blob` をアップロードするには、`uploadFile` ホスト関数を使用します。
+* **ドラッグ＆ドロップのペイロード。** ドラッグイベントは発火しますが、`event.dataTransfer` は `undefined` です。
+* **Node 組み込みモジュール。** `fs`、`path`、`node:crypto` はビルドに失敗するため、その処理は [ロジック関数](/l/ja/developers/extend/apps/logic/logic-functions) に移動してください。 Web Crypto、`fetch`、`TextEncoder`、および `URL` は利用可能です。
+* **`iframe`** は常に `allow-same-origin` なしで再サンドボックス化されるため、独自のセッションに依存する埋め込みは、ログアウト状態としてレンダリングされます。 また、`onLoad` もありません。

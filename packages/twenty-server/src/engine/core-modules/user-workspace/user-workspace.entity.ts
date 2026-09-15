@@ -1,6 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
   PermissionFlagType,
   PermissionsOnAllObjectRecords,
@@ -48,7 +47,7 @@ registerEnumType(PermissionsOnAllObjectRecords, {
 @Index('IDX_USER_WORKSPACE_USER_ID', ['userId'])
 @Index('IDX_USER_WORKSPACE_WORKSPACE_ID', ['workspaceId'])
 export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -103,4 +102,7 @@ export class UserWorkspaceEntity extends WorkspaceRelatedEntity {
 
   @Field(() => [TwoFactorAuthenticationMethodSummaryDTO], { nullable: true })
   twoFactorAuthenticationMethodSummary?: TwoFactorAuthenticationMethodSummaryDTO[];
+
+  @Field(() => Boolean, { nullable: true })
+  isImpersonating?: boolean;
 }

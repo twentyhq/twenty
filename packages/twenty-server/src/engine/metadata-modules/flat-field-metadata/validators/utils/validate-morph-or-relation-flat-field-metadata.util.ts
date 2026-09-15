@@ -243,6 +243,7 @@ export const validateMorphOrRelationFlatFieldMetadata = ({
     ...validateJunctionTargetSettings({
       universalFlatFieldMetadata: universalFlatFieldMetadataToValidate,
       flatFieldMetadataMaps,
+      remainingFlatFieldMetadataMaps: remainingFlatEntityMapsToValidate,
     }),
   );
 

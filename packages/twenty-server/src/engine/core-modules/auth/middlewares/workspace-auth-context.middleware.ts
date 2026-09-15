@@ -28,7 +28,7 @@ export class WorkspaceAuthContextMiddleware implements NestMiddleware {
 
     applyWorkspaceSentryContext(authContext);
 
-    withWorkspaceAuthContext(authContext, () => {
+    void withWorkspaceAuthContext(authContext, () => {
       next();
     });
   }
@@ -53,6 +53,7 @@ export class WorkspaceAuthContextMiddleware implements NestMiddleware {
         user: req.user,
         workspaceMemberId: req.workspaceMemberId,
         workspaceMember: req.workspaceMember,
+        application: req.application,
       });
     }
 

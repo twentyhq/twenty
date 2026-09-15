@@ -8,17 +8,13 @@ config({
 });
 
 export function generateFrontConfig(): void {
-  const configObject = {
-    window: {
-      _env_: {
-        REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL,
-      },
-    },
-  };
-
+  // A page served by this server can always reach the API on the origin it
+  // was loaded from, so the front resolves it from window.location (see
+  // packages/twenty-front/src/config). Rewriting clears any value baked into
+  // index.html at build time.
   const configString = `<!-- BEGIN: Twenty Config -->
     <script id="twenty-env-config">
-      window._env_ = ${JSON.stringify(configObject.window._env_, null, 2)};
+      window._env_ = {};
     </script>
     <!-- END: Twenty Config -->`;
 

@@ -18,6 +18,7 @@ import {
   type GroupByRegularField,
 } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
 import { getGroupByOrderExpression } from 'src/engine/api/common/common-query-runners/utils/get-group-by-order-expression.util';
+import { getObjectAlias } from 'src/engine/api/common/common-query-runners/utils/get-object-alias-for-group-by.util';
 import { convertOrderByToFindOptionsOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/convert-order-by-to-find-options-order';
 import { getOptionalOrderByCasting } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/get-optional-order-by-casting.util';
 import { parseCompositeFieldForOrder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/utils/parse-composite-field-for-order.util';
@@ -28,11 +29,12 @@ import {
   getAvailableAggregationsFromObjectFields,
 } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-available-aggregations-from-object-fields.util';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { getGroupableSubFieldsForCompositeType } from 'src/engine/metadata-modules/field-metadata/utils/get-groupable-sub-fields-for-composite-type.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -43,17 +45,19 @@ import { type OrderByClause } from './types/order-by-condition.type';
 export class GraphqlQueryOrderGroupByParser {
   private flatObjectMetadata: FlatObjectMetadata;
   private flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  private flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  private flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   private fieldIdByName: Record<string, string>;
+  private objectAlias: string;
 
   constructor(
     flatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   ) {
     this.flatObjectMetadata = flatObjectMetadata;
     this.flatObjectMetadataMaps = flatObjectMetadataMaps;
     this.flatFieldMetadataMaps = flatFieldMetadataMaps;
+    this.objectAlias = getObjectAlias(flatObjectMetadata);
 
     const fieldMaps = buildFieldMapsFromFlatObjectMetadata(
       flatFieldMetadataMaps,
@@ -85,7 +89,6 @@ export class GraphqlQueryOrderGroupByParser {
         const parsedAggregateOrderBy = this.parseAggregateOrderByArg(
           availableAggregations,
           orderByArg,
-          this.flatObjectMetadata,
         );
 
         parsedOrderBy.push(parsedAggregateOrderBy);
@@ -114,7 +117,6 @@ export class GraphqlQueryOrderGroupByParser {
           this.parseObjectRecordOrderByForScalarField({
             groupByFields,
             orderByArg,
-            flatObjectMetadata: this.flatObjectMetadata,
             fieldMetadata,
           });
 
@@ -170,7 +172,6 @@ export class GraphqlQueryOrderGroupByParser {
           this.parseObjectRecordOrderByForCompositeField({
             groupByFields,
             orderByArg,
-            flatObjectMetadata: this.flatObjectMetadata,
             fieldMetadata,
           });
 
@@ -321,7 +322,7 @@ export class GraphqlQueryOrderGroupByParser {
       | ObjectRecordOrderByForCompositeField
       | ObjectRecordOrderByWithGroupByDateField
       | ObjectRecordOrderByForRelationField,
-    fieldMetadata: FlatFieldMetadata,
+    fieldMetadata: OrmFlatFieldMetadata,
   ): orderByArg is ObjectRecordOrderByForRelationField => {
     if (!isMorphOrRelationFlatFieldMetadata(fieldMetadata)) {
       return false;
@@ -339,7 +340,6 @@ export class GraphqlQueryOrderGroupByParser {
   private parseAggregateOrderByArg = (
     availableAggregations: Record<string, AggregationField>,
     orderByArg: AggregateOrderByWithGroupByField,
-    flatObjectMetadata: FlatObjectMetadata,
   ): Record<string, OrderByClause> => {
     const aggregate = orderByArg.aggregate;
 
@@ -359,7 +359,7 @@ export class GraphqlQueryOrderGroupByParser {
 
     const aggregateExpression = ProcessAggregateHelper.getAggregateExpression(
       aggregateField,
-      flatObjectMetadata.nameSingular,
+      this.objectAlias,
     );
 
     if (!isDefined(aggregateExpression)) {
@@ -379,13 +379,11 @@ export class GraphqlQueryOrderGroupByParser {
   private parseObjectRecordOrderByForScalarField = ({
     groupByFields,
     orderByArg,
-    flatObjectMetadata,
     fieldMetadata,
   }: {
     groupByFields: GroupByField[];
     orderByArg: ObjectRecordOrderByForScalarField;
-    flatObjectMetadata: FlatObjectMetadata;
-    fieldMetadata: FlatFieldMetadata;
+    fieldMetadata: OrmFlatFieldMetadata;
   }): Record<string, OrderByClause> | null => {
     const groupByField = groupByFields.find(
       (groupByField) => groupByField.fieldMetadata.id === fieldMetadata.id,
@@ -404,7 +402,7 @@ export class GraphqlQueryOrderGroupByParser {
       return null;
     }
 
-    const columnNameWithQuotes = `"${flatObjectMetadata.nameSingular}"."${fieldMetadata.name}"`;
+    const columnNameWithQuotes = `"${this.objectAlias}"."${fieldMetadata.name}"`;
 
     const expression = getGroupByOrderExpression({
       groupByField,
@@ -420,13 +418,11 @@ export class GraphqlQueryOrderGroupByParser {
   private parseObjectRecordOrderByForCompositeField = ({
     groupByFields,
     orderByArg,
-    flatObjectMetadata,
     fieldMetadata,
   }: {
     groupByFields: GroupByField[];
     orderByArg: ObjectRecordOrderByForCompositeField;
-    flatObjectMetadata: FlatObjectMetadata;
-    fieldMetadata: FlatFieldMetadata;
+    fieldMetadata: OrmFlatFieldMetadata;
   }): Record<string, OrderByClause> | null => {
     const fieldName = Object.keys(orderByArg)[0];
     const orderBySubField = orderByArg[fieldName];
@@ -458,7 +454,7 @@ export class GraphqlQueryOrderGroupByParser {
     return parseCompositeFieldForOrder(
       fieldMetadata,
       orderBySubField,
-      flatObjectMetadata.nameSingular,
+      this.objectAlias,
     );
   };
 
@@ -497,7 +493,7 @@ export class GraphqlQueryOrderGroupByParser {
       );
     }
 
-    const columnNameWithQuotes = `"${
+    const columnNameWithQuotes = `"${this.objectAlias}"."${
       formatColumnNamesFromCompositeFieldAndSubfields(
         associatedGroupByField.fieldMetadata.name,
         associatedGroupByField.subFieldName
@@ -523,12 +519,13 @@ export class GraphqlQueryOrderGroupByParser {
   }: {
     groupByFields: GroupByField[];
     orderByArg: ObjectRecordOrderByForRelationField;
-    fieldMetadata: FlatFieldMetadata;
+    fieldMetadata: OrmFlatFieldMetadata;
   }): Record<string, OrderByClause> | null => {
     const {
       associatedGroupByField,
       nestedFieldMetadata,
       nestedFieldOrderByValue,
+      isMatchedOnTargetPrimaryKeyGroupBy,
     } = prepareForOrderByRelationFieldParsing({
       orderByArg,
       fieldMetadata,
@@ -545,7 +542,6 @@ export class GraphqlQueryOrderGroupByParser {
       return null;
     }
 
-    // Handle composite fields
     if (isCompositeFieldMetadataType(nestedFieldMetadata.type)) {
       if (!isObject(nestedFieldOrderByValue)) {
         throw new UserInputError(
@@ -570,7 +566,17 @@ export class GraphqlQueryOrderGroupByParser {
         return null;
       }
 
-      if (
+      if (isMatchedOnTargetPrimaryKeyGroupBy === true) {
+        const groupableSubFields = getGroupableSubFieldsForCompositeType(
+          nestedFieldMetadata.type,
+        );
+
+        if (!groupableSubFields?.includes(nestedSubFieldName)) {
+          throw new UserInputError(
+            `Composite subfield "${nestedSubFieldName}" is not orderable for "${nestedFieldMetadata.name}"`,
+          );
+        }
+      } else if (
         !isDefined(associatedGroupByField.nestedSubFieldName) ||
         associatedGroupByField.nestedSubFieldName !== nestedSubFieldName
       ) {
@@ -643,7 +649,6 @@ export class GraphqlQueryOrderGroupByParser {
       };
     }
 
-    // Handle regular nested fields
     if (
       typeof nestedFieldOrderByValue === 'string' &&
       Object.values(OrderByDirection).includes(

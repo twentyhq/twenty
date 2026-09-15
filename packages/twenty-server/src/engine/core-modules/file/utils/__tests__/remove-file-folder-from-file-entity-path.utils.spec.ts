@@ -7,14 +7,14 @@ import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file
 describe('removeFileFolderFromFileEntityPath', () => {
   it('should remove file folder prefix from path', () => {
     expect(
-      removeFileFolderFromFileEntityPath(`${FileFolder.Attachment}/file.txt`),
+      removeFileFolderFromFileEntityPath(`${FileFolder.FilesField}/file.txt`),
     ).toBe('file.txt');
   });
 
   it('should handle nested paths correctly', () => {
     expect(
       removeFileFolderFromFileEntityPath(
-        `${FileFolder.Attachment}/subfolder/file.txt`,
+        `${FileFolder.FilesField}/subfolder/file.txt`,
       ),
     ).toBe('subfolder/file.txt');
   });
@@ -22,14 +22,12 @@ describe('removeFileFolderFromFileEntityPath', () => {
   it('should work with different valid file folders', () => {
     expect(
       removeFileFolderFromFileEntityPath(
-        `${FileFolder.ProfilePicture}/avatar.png`,
+        `${FileFolder.CorePicture}/avatar.png`,
       ),
     ).toBe('avatar.png');
 
     expect(
-      removeFileFolderFromFileEntityPath(
-        `${FileFolder.WorkspaceLogo}/logo.svg`,
-      ),
+      removeFileFolderFromFileEntityPath(`${FileFolder.Workflow}/logo.svg`),
     ).toBe('logo.svg');
 
     expect(

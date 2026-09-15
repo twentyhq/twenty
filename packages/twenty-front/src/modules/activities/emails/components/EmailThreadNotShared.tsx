@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
-import { AppTooltip, IconLock, TooltipDelay } from 'twenty-ui/display';
+import { IconLock } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { MessageChannelVisibility } from '~/generated/graphql';
 
@@ -9,7 +10,7 @@ const StyledContainer = styled.div<{ isCompact?: boolean }>`
   align-items: center;
   background: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: 4px;
+  border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   flex: 1;
@@ -47,7 +48,7 @@ export const EmailThreadNotShared = ({
       {visibility === MessageChannelVisibility.SUBJECT && (
         <AppTooltip
           anchorSelect={`#${containerId}`}
-          content={t`Only the subject is shared`}
+          title={t`Only the subject is shared`}
           delay={TooltipDelay.mediumDelay}
           noArrow
           place="bottom"

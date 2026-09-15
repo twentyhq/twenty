@@ -1,91 +1,85 @@
 // @ts-nocheck
-import type {
-  QueryGenqlSelection,
-  Query,
-  MutationGenqlSelection,
-  Mutation,
-  SubscriptionGenqlSelection,
-  Subscription,
-} from './schema'
-import {
-  linkTypeMap,
-  createClient as createClientOriginal,
-  generateGraphqlOperation,
-  type FieldsSelection,
-  type GraphqlOperation,
-  type ClientOptions,
-  GenqlError,
-} from './runtime'
-export type { FieldsSelection } from './runtime'
-export { GenqlError }
 
-import types from './types'
-export * from './schema'
-const typeMap = linkTypeMap(types as any)
 
-export interface Client {
-  query<R extends QueryGenqlSelection>(
-    request: R & { __name?: string },
-  ): Promise<FieldsSelection<Query, R>>
+import type {QueryGenqlSelection,Query,MutationGenqlSelection,Mutation,SubscriptionGenqlSelection,Subscription} from './schema'
+  import { 
+      linkTypeMap, 
+      createClient as createClientOriginal, 
+      generateGraphqlOperation,
+      type FieldsSelection, type GraphqlOperation, type ClientOptions, GenqlError
+  } from './runtime'
+  export type { FieldsSelection } from './runtime'
+  export { GenqlError }
 
-  mutation<R extends MutationGenqlSelection>(
-    request: R & { __name?: string },
-  ): Promise<FieldsSelection<Mutation, R>>
-}
+  import types from './types'
+  export * from './schema'
+  const typeMap = linkTypeMap(types as any)
 
-export const createClient = function (options?: ClientOptions): Client {
+  
+  export interface Client {
+      
+      query<R extends QueryGenqlSelection>(
+          request: R & { __name?: string },
+      ): Promise<FieldsSelection<Query, R>>
+      
+      mutation<R extends MutationGenqlSelection>(
+          request: R & { __name?: string },
+      ): Promise<FieldsSelection<Mutation, R>>
+      
+  }
+  
+
+  export const createClient = 
+function(options?: ClientOptions): Client {
   return createClientOriginal({
-    url: undefined,
-
-    ...options,
-    queryRoot: typeMap.Query!,
-    mutationRoot: typeMap.Mutation!,
-    subscriptionRoot: typeMap.Subscription!,
+      url: undefined,
+      
+      ...options,
+      queryRoot: typeMap.Query!,
+      mutationRoot: typeMap.Mutation!,
+      subscriptionRoot: typeMap.Subscription!,
   }) as any
 }
 
-export const everything = {
-  __scalar: true,
-}
+  export const everything = {
+    __scalar: true
+  }
+  
 
-export type QueryResult<fields extends QueryGenqlSelection> = FieldsSelection<
-  Query,
-  fields
->
-export const generateQueryOp: (
-  fields: QueryGenqlSelection & { __name?: string },
-) => GraphqlOperation = function (fields) {
-  return generateGraphqlOperation('query', typeMap.Query!, fields as any)
-}
 
-export type MutationResult<fields extends MutationGenqlSelection> =
-  FieldsSelection<Mutation, fields>
-export const generateMutationOp: (
-  fields: MutationGenqlSelection & { __name?: string },
-) => GraphqlOperation = function (fields) {
-  return generateGraphqlOperation('mutation', typeMap.Mutation!, fields as any)
-}
+        export type QueryResult<fields extends QueryGenqlSelection> = FieldsSelection<Query, fields>
+        export const generateQueryOp: (fields: QueryGenqlSelection & { __name?: string }) => GraphqlOperation = function(fields) {
+        return generateGraphqlOperation('query', typeMap.Query!, fields as any)
+      }
+    
 
-export type SubscriptionResult<fields extends SubscriptionGenqlSelection> =
-  FieldsSelection<Subscription, fields>
-export const generateSubscriptionOp: (
-  fields: SubscriptionGenqlSelection & { __name?: string },
-) => GraphqlOperation = function (fields) {
-  return generateGraphqlOperation(
-    'subscription',
-    typeMap.Subscription!,
-    fields as any,
-  )
-}
 
+        export type MutationResult<fields extends MutationGenqlSelection> = FieldsSelection<Mutation, fields>
+        export const generateMutationOp: (fields: MutationGenqlSelection & { __name?: string }) => GraphqlOperation = function(fields) {
+        return generateGraphqlOperation('mutation', typeMap.Mutation!, fields as any)
+      }
+    
+
+
+        export type SubscriptionResult<fields extends SubscriptionGenqlSelection> = FieldsSelection<Subscription, fields>
+        export const generateSubscriptionOp: (fields: SubscriptionGenqlSelection & { __name?: string }) => GraphqlOperation = function(fields) {
+        return generateGraphqlOperation('subscription', typeMap.Subscription!, fields as any)
+      }
+    
 // MetadataApiClient (auto-injected by twenty-client-sdk)
+import type { TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
+
 // Ambient type stubs for the genql-generated code this template gets
 // injected into. They enable full typecheck/lint on this file.
 
 const APP_ACCESS_TOKEN_ENV_KEY = 'TWENTY_APP_ACCESS_TOKEN';
+const APP_APPLICATION_ACCESS_TOKEN_ENV_KEY =
+  'TWENTY_APP_APPLICATION_ACCESS_TOKEN';
 const API_KEY_ENV_KEY = 'TWENTY_API_KEY';
 
-type MetadataApiClientOptions = ClientOptions;
+export type MetadataApiClientOptions = ClientOptions & {
+  runAs?: TwentyClientRunAs;
+};
 
 type ProcessEnvironment = Record<string, string | undefined>;
 
@@ -209,6 +203,7 @@ export class MetadataApiClient {
       fetch: customFetchImplementation,
       fetcher: _fetcher,
       batch: _batch,
+      runAs,
       ...requestOptions
     } = merged;
 
@@ -223,10 +218,15 @@ export class MetadataApiClient {
       typeof headers === 'function' ? undefined : headers,
     );
 
-    // Priority: explicit header > app access token > api key (legacy).
+    // Priority: explicit header > the token for the requested access > api key
+    // (legacy).
     this.authorizationToken =
       tokenFromHeaders ??
-      processEnvironment[APP_ACCESS_TOKEN_ENV_KEY] ??
+      processEnvironment[
+        runAs === 'application'
+          ? APP_APPLICATION_ACCESS_TOKEN_ENV_KEY
+          : APP_ACCESS_TOKEN_ENV_KEY
+      ] ??
       processEnvironment[API_KEY_ENV_KEY] ??
       null;
 

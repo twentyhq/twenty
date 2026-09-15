@@ -1,8 +1,19 @@
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
+import { resolveEffectiveFlatEntity } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity.util';
 
 export const fromFlatViewToViewDto = (flatView: FlatView): ViewDTO => {
-  const { createdAt, updatedAt, deletedAt, ...rest } = flatView;
+  const effectiveFlatView = resolveEffectiveFlatEntity({
+    metadataName: 'view',
+    flatEntity: flatView,
+  });
+  const {
+    createdAt,
+    updatedAt,
+    deletedAt,
+    overrides: _overrides,
+    ...rest
+  } = effectiveFlatView;
 
   return {
     ...rest,

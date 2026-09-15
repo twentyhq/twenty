@@ -1,16 +1,20 @@
-import { Button } from 'twenty-ui/input';
+import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
+import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
+import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { useQuery } from '@apollo/client/react';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconArrowUpRight,
   IconCopy,
   IconDownload,
   IconInfoCircle,
-} from 'twenty-ui/display';
-import { styled } from '@linaria/react';
+} from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { FindMarketplaceAppDetailDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
-import { useLingui } from '@lingui/react/macro';
-import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
-import { isDefined } from 'twenty-shared/utils';
 
 const StyledButtonGroup = styled.div`
   display: flex;
@@ -34,29 +38,44 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { install, isInstalling } = useInstallMarketplaceApp();
-
   const installable =
     isDefined(isInstalled) && isDefined(universalIdentifier) && !isInstalled;
 
-  const handleInstall = async () => {
-    if (installable) {
-      await install({
-        universalIdentifier,
-      });
-    }
-  };
+  const { requestInstall, install, isInstalling, modalInstanceId } =
+    useInstallMarketplaceAppWithPermissionValidation({
+      universalIdentifier,
+    });
+
+  const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
+    variables: { universalIdentifier: universalIdentifier ?? '' },
+    skip: !installable || !isDefined(universalIdentifier),
+  });
+
+  const detail = detailData?.findMarketplaceAppDetail;
+  const displayName = detail?.name ?? '';
+
+  const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
   return (
     <StyledButtonGroup>
       {installable && (
-        <Button
-          Icon={IconDownload}
-          title={isInstalling ? t`Installing...` : t`Install`}
-          variant={'secondary'}
-          onClick={handleInstall}
-          disabled={isInstalling}
-        />
+        <>
+          <Button
+            Icon={IconDownload}
+            title={isInstalling ? t`Installing...` : t`Install`}
+            variant={'secondary'}
+            onClick={requestInstall}
+            disabled={isInstalling}
+          />
+          <SettingsApplicationInstallPermissionValidationModal
+            modalInstanceId={modalInstanceId}
+            appDisplayName={displayName}
+            appLogoUrl={detail?.logoUrl ?? undefined}
+            defaultRole={defaultRole}
+            onAuthorize={install}
+            isInstalling={isInstalling}
+          />
+        </>
       )}
       {withCopyButton && (
         <Button

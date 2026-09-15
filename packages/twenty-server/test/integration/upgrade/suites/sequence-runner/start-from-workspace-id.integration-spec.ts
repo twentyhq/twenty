@@ -6,8 +6,10 @@ import {
   makeWorkspace,
   migrationRecordToKey,
   resetSeedSequenceCounter,
+  restoreUpgradeMigrations,
   seedInstanceMigration,
   setMockActiveWorkspaceIds,
+  snapshotUpgradeMigrations,
   testGetExecutedMigrationsInOrder,
   WS_1,
   WS_2,
@@ -19,13 +21,19 @@ import {
 
 describe('UpgradeSequenceRunnerService — startFromWorkspaceId (integration)', () => {
   let context: IntegrationTestContext;
+  let savedUpgradeMigrations: Awaited<
+    ReturnType<typeof snapshotUpgradeMigrations>
+  >;
 
   beforeAll(async () => {
     context = await createUpgradeSequenceRunnerIntegrationTestModule();
+    savedUpgradeMigrations = await snapshotUpgradeMigrations(
+      context.dataSource,
+    );
   }, 30000);
 
   afterAll(async () => {
-    await context.dataSource.query('DELETE FROM core."upgradeMigration"');
+    await restoreUpgradeMigrations(context.dataSource, savedUpgradeMigrations);
     await context.module?.close();
     await context.dataSource?.destroy();
   }, 15000);
@@ -67,7 +75,6 @@ describe('UpgradeSequenceRunnerService — startFromWorkspaceId (integration)', 
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
       `Ic1:${WS_2}:completed:1`,
@@ -107,7 +114,6 @@ describe('UpgradeSequenceRunnerService — startFromWorkspaceId (integration)', 
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
       `Ic1:${WS_2}:completed:1`,
@@ -150,7 +156,6 @@ describe('UpgradeSequenceRunnerService — startFromWorkspaceId (integration)', 
     const executed = await testGetExecutedMigrationsInOrder(context.dataSource);
 
     expect(executed.map(migrationRecordToKey)).toStrictEqual([
-      // Seeds
       'Ic1:instance:completed:1',
       `Ic1:${WS_1}:completed:1`,
       `Ic1:${WS_2}:completed:1`,

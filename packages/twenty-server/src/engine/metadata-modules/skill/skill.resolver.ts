@@ -16,6 +16,8 @@ import { SkillGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 
+// Reads are open to chat users so the composer can list skills; mutations
+// stay behind AI settings.
 @UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
@@ -41,6 +43,7 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async createSkill(
     @Args('input') input: CreateSkillInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -49,6 +52,7 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async updateSkill(
     @Args('input') input: UpdateSkillInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -57,6 +61,7 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async deleteSkill(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -65,6 +70,7 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async activateSkill(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -73,6 +79,7 @@ export class SkillResolver {
   }
 
   @Mutation(() => SkillDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async deactivateSkill(
     @Args('id', { type: () => UUIDScalarType }) id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

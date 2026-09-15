@@ -1,4 +1,5 @@
 import { isArray } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepInfo } from 'twenty-shared/workflow';
 
 export const getWorkflowRunAllStepInfoHistory = ({
@@ -6,8 +7,12 @@ export const getWorkflowRunAllStepInfoHistory = ({
 }: {
   stepInfo: WorkflowRunStepInfo;
 }) => {
+  const iterationHistory = isArray(stepInfo?.history)
+    ? stepInfo.history.filter((entry) => !isDefined(entry.retryAttempt))
+    : [];
+
   const allStepInfoHistory: WorkflowRunStepInfo[] = [
-    ...(isArray(stepInfo?.history) ? stepInfo.history : []),
+    ...iterationHistory,
     stepInfo,
   ];
 

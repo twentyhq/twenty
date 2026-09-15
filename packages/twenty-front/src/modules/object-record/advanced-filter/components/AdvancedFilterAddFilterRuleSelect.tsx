@@ -4,12 +4,12 @@ import { useGetDefaultFieldMetadataItemForFilter } from '@/object-record/advance
 import { useSetRecordFilterUsedInAdvancedFilterDropdownRow } from '@/object-record/advanced-filter/hooks/useSetRecordFilterUsedInAdvancedFilterDropdownRow';
 import { AdvancedFilterContext } from '@/object-record/advanced-filter/states/context/AdvancedFilterContext';
 import { getAdvancedFilterAddFilterRuleSelectDropdownId } from '@/object-record/advanced-filter/utils/getAdvancedFilterAddFilterRuleSelectDropdownId';
+import { getDefaultAdvancedFilterOperand } from '@/object-record/advanced-filter/utils/getDefaultAdvancedFilterOperand';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { useUpsertRecordFilter } from '@/object-record/record-filter/hooks/useUpsertRecordFilter';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { getDefaultSubFieldNameForCompositeFilterableFieldType } from '@/object-record/record-filter/utils/getDefaultSubFieldNameForCompositeFilterableFieldType';
-import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -19,7 +19,7 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
-import { IconLibraryPlus, IconPlus } from 'twenty-ui/display';
+import { IconLibraryPlus, IconPlus } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { v4 } from 'uuid';
 
@@ -77,9 +77,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItemForFilter.id,
       type: filterType,
-      operand: getRecordFilterOperands({
-        filterType,
-      })[0],
+      operand: getDefaultAdvancedFilterOperand({ filterType }),
       value: '',
       displayValue: '',
       recordFilterGroupId: recordFilterGroup.id,
@@ -126,9 +124,7 @@ export const AdvancedFilterAddFilterRuleSelect = ({
       id: v4(),
       fieldMetadataId: defaultFieldMetadataItemForFilter.id,
       type: filterType,
-      operand: getRecordFilterOperands({
-        filterType,
-      })[0],
+      operand: getDefaultAdvancedFilterOperand({ filterType }),
       value: '',
       displayValue: '',
       recordFilterGroupId: newRecordFilterGroupId,

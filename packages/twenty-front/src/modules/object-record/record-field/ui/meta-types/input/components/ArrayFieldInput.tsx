@@ -4,7 +4,7 @@ import { useArrayField } from '@/object-record/record-field/ui/meta-types/hooks/
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
 import { MultiItemFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInput';
 import { MULTI_ITEM_FIELD_INPUT_DROPDOWN_ID_PREFIX } from '@/object-record/record-field/ui/meta-types/input/constants/MultiItemFieldInputDropdownClickOutsideId';
-import { arraySchema } from '@/object-record/record-field/ui/types/guards/isFieldArrayValue';
+import { arrayFieldValueSchema } from '@/object-record/record-field/ui/validation-schemas/arrayFieldValueSchema';
 import { useContext, useMemo } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,7 +13,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export const ArrayFieldInput = () => {
   const { setDraftValue, draftValue, fieldDefinition } = useArrayField();
 
-  const { onEscape, onClickOutside, onEnter } = useContext(
+  const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
     FieldInputEventContext,
   );
 
@@ -22,7 +22,7 @@ export const ArrayFieldInput = () => {
     [draftValue],
   );
   const parseStringArrayToArrayValue = (arrayItems: string[]) => {
-    const parseResponse = arraySchema.safeParse(arrayItems);
+    const parseResponse = arrayFieldValueSchema.safeParse(arrayItems);
 
     if (parseResponse.success) {
       return parseResponse.data;
@@ -57,6 +57,13 @@ export const ArrayFieldInput = () => {
     onEnter?.({ newValue: parseStringArrayToArrayValue(newValue) });
   };
 
+  const handleSubmit = (newValue: string[]) => {
+    onSubmit?.({
+      newValue: parseStringArrayToArrayValue(newValue),
+      skipClose: true,
+    });
+  };
+
   const maxNumberOfValues =
     fieldDefinition.metadata.settings?.maxNumberOfValues ??
     MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES;
@@ -67,6 +74,7 @@ export const ArrayFieldInput = () => {
       items={arrayItems}
       onChange={handleChange}
       onEnter={handleEnter}
+      onSubmit={handleSubmit}
       onEscape={handleEscape}
       onClickOutside={handleClickOutside}
       placeholder={t`Enter value`}

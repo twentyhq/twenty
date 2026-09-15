@@ -12,9 +12,13 @@ import {
   searchForWorkspaceRoot,
 } from 'vite';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 import { createWywProfilingPlugin } from 'twenty-shared/vite';
+
+import {
+  API_PROXY_PATHS,
+  buildApiProxyMatcher,
+} from './src/config/apiProxyPrefixes';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, __dirname, '');
@@ -25,12 +29,24 @@ export default defineConfig(({ mode }) => {
     SSL_CERT_PATH,
     SSL_KEY_PATH,
     REACT_APP_PORT,
+    REACT_APP_SERVER_BASE_URL,
     IS_DEBUG_MODE,
   } = env;
 
   const port = isNonEmptyString(REACT_APP_PORT)
     ? parseInt(REACT_APP_PORT)
     : 3001;
+
+  const apiProxyTarget = isNonEmptyString(REACT_APP_SERVER_BASE_URL)
+    ? REACT_APP_SERVER_BASE_URL
+    : 'http://localhost:3000';
+
+  const apiProxy = Object.fromEntries(
+    API_PROXY_PATHS.map((apiPath) => [
+      buildApiProxyMatcher(apiPath),
+      { target: apiProxyTarget },
+    ]),
+  );
 
   const CHUNK_SIZE_WARNING_LIMIT = 1024 * 1024; // 1MB
   // Please don't increase this limit for main index chunk
@@ -50,6 +66,7 @@ export default defineConfig(({ mode }) => {
 
     server: {
       port: port,
+      proxy: apiProxy,
       ...(VITE_HOST ? { host: VITE_HOST } : {}),
       ...(SSL_KEY_PATH && SSL_CERT_PATH
         ? {
@@ -73,10 +90,6 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react({
         plugins: [['@lingui/swc-plugin', {}]],
-      }),
-      tsconfigPaths({
-        root: __dirname,
-        projects: ['tsconfig.json'],
       }),
       svgr(),
       lingui({
@@ -138,6 +151,24 @@ export default defineConfig(({ mode }) => {
         '../../node_modules/.cache',
         '../../node_modules/twenty-ui',
       ],
+      // Pre-bundle React and the heavy libraries reached through lazy() chains
+      // (charts, rich-text editors). Otherwise a lazy story (e.g. a graph widget)
+      // makes Vite discover the dep mid-render, triggering a re-optimize + page
+      // reload that 404s every in-flight story import in browser-mode Storybook
+      // tests (vite 8 / rolldown).
+      include: [
+        'react',
+        'react-dom',
+        'react-dom/client',
+        'react/jsx-runtime',
+        'react/jsx-dev-runtime',
+        '@nivo/core',
+        '@nivo/pie',
+        '@nivo/line',
+        '@nivo/arcs',
+        '@react-spring/web',
+        'd3-shape',
+      ],
     },
 
     build: {
@@ -150,7 +181,6 @@ export default defineConfig(({ mode }) => {
         // including this one we wasted a lot of time on:
         // https://github.com/rollup/rollup/issues/2793
         output: {
-          // Custom plugin to fail build if chunks exceed max size
           plugins: [
             {
               name: 'chunk-size-limit',
@@ -242,9 +272,21 @@ export default defineConfig(({ mode }) => {
       },
     },
     resolve: {
-      alias: {
-        path: 'rollup-plugin-node-polyfills/polyfills/path',
-      },
+      tsconfigPaths: true,
+      alias: [
+        // wyw-in-js 1.x resolves modules in its CSS evaluator via vite's
+        // resolve.alias (not resolve.tsconfigPaths), so the `@/` and `~/`
+        // tsconfig path aliases must be mirrored here.
+        {
+          find: /^@\//,
+          replacement: path.resolve(__dirname, 'src/modules') + '/',
+        },
+        { find: /^~\//, replacement: path.resolve(__dirname, 'src') + '/' },
+        {
+          find: 'path',
+          replacement: 'rollup-plugin-node-polyfills/polyfills/path',
+        },
+      ],
     },
   };
 });

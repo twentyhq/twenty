@@ -1,5 +1,7 @@
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
-import { type ViewType } from 'twenty-shared/types';
+import { getFieldUniversalIdentifier } from 'twenty-shared/application';
+import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
+import { ViewType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 type ViewFieldTemplateBase = {
@@ -17,23 +19,28 @@ const renderFieldEntry = ({
   field,
   index,
   objectUniversalIdentifier,
+  applicationUniversalIdentifier,
 }: {
   field: ViewFieldTemplate;
   index: number;
   objectUniversalIdentifier: string;
+  applicationUniversalIdentifier: string;
 }) => {
   const universalIdentifier = field.universalIdentifier ?? v4();
   const position = field.position ?? index;
   const isVisible = field.isVisible ?? true;
   const size = field.size ?? 200;
 
-  const fieldMetadataUniversalIdentifierLine =
+  const resolvedFieldMetadataUniversalIdentifier =
     'defaultFieldName' in field
-      ? `    fieldMetadataUniversalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectUniversalIdentifier: '${objectUniversalIdentifier}',
-      fieldName: '${field.defaultFieldName}',
-    })`
-      : `    fieldMetadataUniversalIdentifier: '${field.fieldMetadataUniversalIdentifier}'`;
+      ? getFieldUniversalIdentifier({
+          applicationUniversalIdentifier,
+          objectUniversalIdentifier,
+          name: field.defaultFieldName,
+        })
+      : field.fieldMetadataUniversalIdentifier;
+
+  const fieldMetadataUniversalIdentifierLine = `    fieldMetadataUniversalIdentifier: '${resolvedFieldMetadataUniversalIdentifier}'`;
 
   return `  {
     universalIdentifier: '${universalIdentifier}',
@@ -48,20 +55,18 @@ export const getViewBaseFile = ({
   name,
   universalIdentifier = v4(),
   objectUniversalIdentifier = 'fill-later',
+  applicationUniversalIdentifier,
   fields = [],
   type,
 }: {
   name: string;
   universalIdentifier?: string;
   objectUniversalIdentifier?: string;
+  applicationUniversalIdentifier: string;
   fields?: ViewFieldTemplate[];
   type?: ViewType;
 }) => {
   const kebabCaseName = kebabCase(name);
-
-  const hasDefaultFieldEntry = fields.some(
-    (field) => 'defaultFieldName' in field,
-  );
 
   const defaultFields = `  // fields: [
   //   {
@@ -77,20 +82,21 @@ export const getViewBaseFile = ({
       ? `  fields: [
 ${fields
   .map((field, index) =>
-    renderFieldEntry({ field, index, objectUniversalIdentifier }),
+    renderFieldEntry({
+      field,
+      index,
+      objectUniversalIdentifier,
+      applicationUniversalIdentifier,
+    }),
   )
   .join(',\n')},
   ],`
       : defaultFields;
 
   const typeBlock = type !== undefined ? `  type: '${type}',\n` : '';
+  const icon = VIEW_TYPE_DEFAULT_ICONS[type ?? ViewType.TABLE];
 
-  const imports = hasDefaultFieldEntry
-    ? `import {
-  defineView,
-  generateDefaultFieldUniversalIdentifier,
-} from 'twenty-sdk/define';`
-    : `import { defineView } from 'twenty-sdk/define';`;
+  const imports = `import { defineView } from 'twenty-sdk/define';`;
 
   return `${imports}
 
@@ -98,7 +104,7 @@ export default defineView({
   universalIdentifier: '${universalIdentifier}',
   name: '${kebabCaseName}',
   objectUniversalIdentifier: '${objectUniversalIdentifier}',
-${typeBlock}  icon: 'IconList',
+${typeBlock}  icon: '${icon}',
   position: 0,
 ${fieldsBlock}
   // filters: [

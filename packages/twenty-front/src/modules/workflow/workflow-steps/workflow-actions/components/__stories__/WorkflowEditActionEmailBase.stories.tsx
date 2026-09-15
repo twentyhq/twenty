@@ -13,8 +13,31 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedConnectedAccountRecords } from '~/testing/mock-data/generated/data/connectedAccounts/mock-connectedAccounts-data';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+
+const MOCK_CONNECTED_ACCOUNT_ID = '20202020-9ac0-4390-9a1a-ab4d2c4e1bb7';
+
+const mockedConnectedAccounts = [
+  {
+    id: MOCK_CONNECTED_ACCOUNT_ID,
+    handle: 'tim@apple.dev',
+    provider: 'google',
+    authFailedAt: null,
+    authFailedReason: null,
+    archivedAt: null,
+    scopes: ['email', 'calendar'],
+    handleAliases: ['sales@apple.dev'],
+    lastSignedInAt: null,
+    userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
+    connectionProviderId: null,
+    name: 'Tim Apple',
+    visibility: 'SHARE_EVERYTHING',
+    lastCredentialsRefreshedAt: null,
+    connectionParameters: null,
+    createdAt: '2026-02-27T01:17:25.392Z',
+    updatedAt: '2026-02-27T01:17:25.392Z',
+  },
+];
 
 const DEFAULT_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
   id: getWorkflowNodeIdMock(),
@@ -37,7 +60,7 @@ const DEFAULT_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -53,7 +76,7 @@ const CONFIGURED_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
   valid: true,
   settings: {
     input: {
-      connectedAccountId: mockedConnectedAccountRecords[0].id as string,
+      connectedAccountId: MOCK_CONNECTED_ACCOUNT_ID,
       recipients: {
         to: 'test@twenty.com',
         cc: '',
@@ -67,7 +90,7 @@ const CONFIGURED_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: true,
+        value: 3,
       },
       continueOnFailure: {
         value: false,
@@ -97,7 +120,67 @@ const DEFAULT_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
+        value: 0,
+      },
+      continueOnFailure: {
         value: false,
+      },
+    },
+  },
+};
+
+const VARIABLE_SENDER_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
+  id: getWorkflowNodeIdMock(),
+  name: 'Send Email',
+  type: 'SEND_EMAIL',
+  valid: true,
+  settings: {
+    input: {
+      connectedAccountId: '{{trigger._metadata.workspaceMemberId}}',
+      recipients: {
+        to: 'test@twenty.com',
+        cc: '',
+        bcc: '',
+      },
+      subject: 'Welcome to Twenty!',
+      body: 'Hello',
+      files: [],
+      inReplyTo: '',
+    },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: {
+        value: 0,
+      },
+      continueOnFailure: {
+        value: false,
+      },
+    },
+  },
+};
+
+const VARIABLE_SENDER_DRAFT_EMAIL_ACTION: WorkflowDraftEmailAction = {
+  id: getWorkflowNodeIdMock(),
+  name: 'Draft Email',
+  type: 'DRAFT_EMAIL',
+  valid: true,
+  settings: {
+    input: {
+      connectedAccountId: '{{trigger._metadata.workspaceMemberId}}',
+      recipients: {
+        to: 'test@twenty.com',
+        cc: '',
+        bcc: '',
+      },
+      subject: 'Welcome to Twenty!',
+      body: 'Hello',
+      files: [],
+      inReplyTo: '',
+    },
+    outputSchema: {},
+    errorHandlingOptions: {
+      retryOnFailure: {
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -113,21 +196,24 @@ const meta: Meta<typeof WorkflowEditActionEmailBase> = {
     msw: {
       handlers: [
         ...graphqlMocks.handlers,
-        graphql.query('FindManyConnectedAccounts', () => {
+        graphql.query('MyConnectedAccounts', () => {
           return HttpResponse.json({
             data: {
-              connectedAccounts: {
-                edges: mockedConnectedAccountRecords.map((record) => ({
-                  node: record,
-                  cursor: record.id,
-                })),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: null,
-                  endCursor: null,
-                },
-              },
+              myConnectedAccounts: mockedConnectedAccounts,
+            },
+          });
+        }),
+        graphql.query('MyMessageChannels', () => {
+          return HttpResponse.json({
+            data: {
+              myMessageChannels: [],
+            },
+          });
+        }),
+        graphql.query('MyCalendarChannels', () => {
+          return HttpResponse.json({
+            data: {
+              myCalendarChannels: [],
             },
           });
         }),
@@ -161,7 +247,7 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByText('From')).toBeVisible();
     expect(await canvas.findByText('To')).toBeVisible();
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
@@ -179,7 +265,7 @@ export const Configured: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByText('From')).toBeVisible();
     expect(await canvas.findByText('To')).toBeVisible();
 
     const emailInput = await canvas.findByText('test@twenty.com');
@@ -200,10 +286,50 @@ export const DraftEmail: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(await canvas.findByText('Account')).toBeVisible();
+    expect(await canvas.findByText('From')).toBeVisible();
     expect(await canvas.findByText('To')).toBeVisible();
     expect(await canvas.findByText('Subject')).toBeVisible();
     expect(await canvas.findByText('Body')).toBeVisible();
     expect(await canvas.findByText('Advanced options')).toBeVisible();
+  },
+};
+
+export const VariableSender: Story = {
+  args: {
+    action: VARIABLE_SENDER_DRAFT_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('From')).toBeVisible();
+    expect(await canvas.findByLabelText('Remove variable')).toBeInTheDocument();
+    expect(
+      await canvas.findByText(
+        'Pick an address to send from or set a workspace member as variable',
+      ),
+    ).toBeVisible();
+  },
+};
+
+export const VariableSenderSendEmail: Story = {
+  args: {
+    action: VARIABLE_SENDER_SEND_EMAIL_ACTION,
+    actionOptions: {
+      onActionUpdate: fn(),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(await canvas.findByText('From')).toBeVisible();
+    expect(await canvas.findByLabelText('Remove variable')).toBeInTheDocument();
+    expect(
+      await canvas.findByText(
+        'Pick an address to send from or set a workspace member as variable',
+      ),
+    ).toBeVisible();
   },
 };

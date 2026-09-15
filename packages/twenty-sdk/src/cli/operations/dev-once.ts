@@ -1,28 +1,51 @@
 import path from 'path';
-import { OUTPUT_DIR, type Manifest } from 'twenty-shared/application';
+import { type Manifest, OUTPUT_DIR } from 'twenty-shared/application';
+import { type MetadataValidationErrorResponse } from 'twenty-shared/metadata';
+import { isPlainObject } from 'twenty-shared/utils';
 
 import { ApiService } from '@/cli/utilities/api/api-service';
 import {
   ensureAppAccessTokenIsValidOrRefresh,
   ensureAppRegistration,
 } from '@/cli/utilities/auth';
+import { buildAppTokenPairFetcher } from '@/cli/utilities/auth/build-app-token-pair-fetcher';
+import { promptForReauthentication } from '@/cli/utilities/auth/reauth-helper';
 import { buildApplication } from '@/cli/utilities/build/common/build-application';
 import { runTypecheck } from '@/cli/utilities/build/common/typecheck-plugin';
 import { buildAndValidateManifest } from '@/cli/utilities/build/manifest/build-and-validate-manifest';
+import { compileApplicationTranslations } from '@/cli/utilities/translations/compile-application-translations';
 import { manifestUpdateChecksums } from '@/cli/utilities/build/manifest/manifest-update-checksums';
 import { writeManifestToOutput } from '@/cli/utilities/build/manifest/manifest-writer';
 import { ClientService } from '@/cli/utilities/client/client-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import {
+  countDestructiveActions,
+  formatSyncActionsPlan,
+  hasDestructiveActions,
+} from '@/cli/utilities/dev/orchestrator/steps/format-sync-actions-plan';
 import { formatManifestValidationErrors } from '@/cli/utilities/error/format-manifest-validation-errors';
+import { getSyncErrorRecoveryHint } from '@/cli/utilities/error/get-sync-error-recovery-hint';
+import { getGraphQLErrorMessage } from '@/cli/utilities/error/parse-server-error';
 import { serializeError } from '@/cli/utilities/error/serialize-error';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
+import { formatUploadFailures } from '@/cli/utilities/file/format-upload-failures';
 import { runSafe } from '@/cli/utilities/run-safe';
-import { APP_ERROR_CODES, type CommandResult } from '@/cli/types';
+import {
+  APP_ERROR_CODES,
+  type CommandError,
+  type CommandResult,
+} from '@/cli/types';
+import chalk from 'chalk';
 
 export type AppDevOnceOptions = {
   appPath: string;
   verbose?: boolean;
+  apply?: boolean;
+  force?: boolean;
+  inferDeletionFromMissingEntities?: boolean;
   onProgress?: (message: string) => void;
+  onPlan?: (text: string) => void;
+  confirmApply?: (deleteCount: number) => Promise<boolean>;
 };
 
 export type AppDevOnceResult = {
@@ -30,12 +53,77 @@ export type AppDevOnceResult = {
   fileCount: number;
   applicationDisplayName: string;
   applicationUniversalIdentifier: string;
+  applied: boolean;
+};
+
+const appendRecoveryHint = (
+  message: string,
+  errorMessage: string | undefined,
+): string => {
+  const hint = getSyncErrorRecoveryHint(errorMessage);
+
+  return hint ? `${message}\n\n${hint}` : message;
+};
+
+const NOT_INSTALLED_SUB_CODES = new Set([
+  'APP_NOT_INSTALLED',
+  'APPLICATION_NOT_FOUND',
+]);
+
+const isAppNotInstalledError = (result: {
+  error?: MetadataValidationErrorResponse;
+  message?: string;
+}): boolean => {
+  const extensions = result.error;
+
+  if (
+    isPlainObject(extensions) &&
+    NOT_INSTALLED_SUB_CODES.has(
+      (extensions as { subCode?: string }).subCode ?? '',
+    )
+  ) {
+    return true;
+  }
+
+  const message = (result.message ?? '').toLowerCase();
+
+  return (
+    message.includes('not installed in workspace') ||
+    message.includes('not found in workspace')
+  );
+};
+
+const buildSyncError = (
+  result: { error?: MetadataValidationErrorResponse; message?: string },
+  verbose: boolean,
+): CommandError => {
+  const errorEvents = verbose
+    ? null
+    : formatManifestValidationErrors(result.error);
+
+  const message = errorEvents
+    ? errorEvents.map((event) => event.message).join('\n')
+    : `Sync failed with error: ${result.message ?? 'Unknown error'}`;
+
+  return {
+    code: APP_ERROR_CODES.SYNC_FAILED,
+    message: appendRecoveryHint(message, result.message),
+  };
 };
 
 const innerAppDevOnce = async (
   options: AppDevOnceOptions,
 ): Promise<CommandResult<AppDevOnceResult>> => {
-  const { appPath, onProgress, verbose } = options;
+  const {
+    appPath,
+    onProgress,
+    onPlan,
+    confirmApply,
+    verbose = false,
+    apply = true,
+    force = false,
+    inferDeletionFromMissingEntities = true,
+  } = options;
 
   onProgress?.('Checking server...');
 
@@ -50,22 +138,28 @@ const innerAppDevOnce = async (
         message:
           'Cannot reach Twenty server.\n\n' +
           '  Start a local server:\n' +
-          '    yarn twenty server start\n\n' +
+          '    yarn twenty docker:start\n\n' +
           '  Check server status:\n' +
-          '    yarn twenty server status',
+          '    yarn twenty docker:status',
       },
     };
   }
 
   if (!validateAuth.authValid) {
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.SYNC_FAILED,
-        message:
-          'Authentication failed. Run `yarn twenty remote add --local` to authenticate.',
-      },
-    };
+    const outcome = await promptForReauthentication(
+      ConfigService.getActiveRemote(),
+    );
+
+    if (outcome !== 'reauthenticated') {
+      return {
+        success: false,
+        error: {
+          code: APP_ERROR_CODES.SYNC_FAILED,
+          message:
+            'Authentication failed. Run `yarn twenty remote:add` to authenticate.',
+        },
+      };
+    }
   }
 
   onProgress?.('Building manifest...');
@@ -83,7 +177,7 @@ const innerAppDevOnce = async (
   }
 
   for (const warning of manifestResult.warnings) {
-    onProgress?.(`⚠ ${warning}`);
+    onProgress?.(chalk.yellow(`⚠ ${warning}`));
   }
 
   onProgress?.('Building application files...');
@@ -113,12 +207,86 @@ const innerAppDevOnce = async (
     };
   }
 
-  const manifest: Manifest = manifestUpdateChecksums({
-    manifest: manifestResult.manifest,
-    builtFileInfos: buildResult.builtFileInfos,
-  });
+  const translations = await compileApplicationTranslations(appPath);
+
+  const manifest: Manifest = {
+    ...manifestUpdateChecksums({
+      manifest: manifestResult.manifest,
+      builtFileInfos: buildResult.builtFileInfos,
+    }),
+    translations,
+  };
 
   await writeManifestToOutput(appPath, manifest);
+
+  const makeData = (): AppDevOnceResult => ({
+    outputDir: path.join(appPath, OUTPUT_DIR),
+    fileCount: buildResult.builtFileInfos.size,
+    applicationDisplayName: manifest.application.displayName,
+    applicationUniversalIdentifier: manifest.application.universalIdentifier,
+    applied: apply,
+  });
+
+  if (!apply) {
+    onProgress?.(
+      'Computing metadata plan (read-only, nothing will be applied)...',
+    );
+
+    const planResult = await apiService.syncApplication(manifest, {
+      dryRun: true,
+      inferDeletionFromMissingEntities,
+    });
+
+    if (!planResult.success) {
+      return { success: false, error: buildSyncError(planResult, verbose) };
+    }
+
+    onPlan?.(
+      formatSyncActionsPlan(planResult.data.actions, {
+        showNoDeleteHint: inferDeletionFromMissingEntities,
+      }),
+    );
+
+    return { success: true, data: makeData() };
+  }
+
+  let planRendered = false;
+
+  if (!force) {
+    onProgress?.('Computing metadata plan...');
+
+    const planResult = await apiService.syncApplication(manifest, {
+      dryRun: true,
+      inferDeletionFromMissingEntities,
+    });
+
+    if (planResult.success) {
+      onPlan?.(
+        formatSyncActionsPlan(planResult.data.actions, {
+          showNoDeleteHint: inferDeletionFromMissingEntities,
+        }),
+      );
+      planRendered = true;
+
+      if (hasDestructiveActions(planResult.data.actions)) {
+        const approved = confirmApply
+          ? await confirmApply(countDestructiveActions(planResult.data.actions))
+          : false;
+
+        if (!approved) {
+          return {
+            success: false,
+            error: {
+              code: APP_ERROR_CODES.APPLY_ABORTED,
+              message: 'Apply cancelled — no changes were made.',
+            },
+          };
+        }
+      }
+    } else if (!isAppNotInstalledError(planResult)) {
+      return { success: false, error: buildSyncError(planResult, verbose) };
+    }
+  }
 
   onProgress?.('Registering application...');
 
@@ -143,7 +311,9 @@ const innerAppDevOnce = async (
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
+        message:
+          getGraphQLErrorMessage(createDevAppResult.error) ??
+          `Failed to install development application: ${serializeError(createDevAppResult.error)}`,
       },
     };
   }
@@ -157,59 +327,35 @@ const innerAppDevOnce = async (
     applicationUniversalIdentifier: manifest.application.universalIdentifier,
   });
 
-  const uploadErrors: string[] = [];
-
-  const uploadPromises = Array.from(buildResult.builtFileInfos.values()).map(
-    async (builtFileInfo) => {
-      if (verbose) {
-        onProgress?.(`Uploading ${builtFileInfo.builtPath}`);
-      }
-
-      const result = await fileUploader.uploadFile({
-        builtPath: builtFileInfo.builtPath,
-        fileFolder: builtFileInfo.fileFolder,
-      });
-
-      if (!result.success) {
-        uploadErrors.push(
-          `Failed to upload ${builtFileInfo.builtPath}: ${serializeError(result.error)}`,
-        );
-      }
-    },
+  const uploadFailures = await fileUploader.uploadFiles(
+    Array.from(buildResult.builtFileInfos.values()).map((builtFileInfo) => ({
+      builtPath: builtFileInfo.builtPath,
+      fileFolder: builtFileInfo.fileFolder,
+    })),
   );
 
-  await Promise.all(uploadPromises);
-
-  if (uploadErrors.length > 0) {
+  if (uploadFailures.length > 0) {
     return {
       success: false,
       error: {
         code: APP_ERROR_CODES.SYNC_FAILED,
-        message: uploadErrors.join('\n'),
+        message: formatUploadFailures(uploadFailures).join('\n'),
       },
     };
   }
 
   onProgress?.('Syncing manifest...');
 
-  const syncResult = await apiService.syncApplication(manifest);
+  const syncResult = await apiService.syncApplication(manifest, {
+    inferDeletionFromMissingEntities,
+  });
 
   if (!syncResult.success) {
-    const errorEvents = verbose
-      ? null
-      : formatManifestValidationErrors(syncResult.error);
+    return { success: false, error: buildSyncError(syncResult, verbose) };
+  }
 
-    const message = errorEvents
-      ? errorEvents.map((event) => event.message).join('\n')
-      : `Sync failed with error: ${serializeError(syncResult.error)}`;
-
-    return {
-      success: false,
-      error: {
-        code: APP_ERROR_CODES.SYNC_FAILED,
-        message,
-      },
-    };
+  if (!planRendered) {
+    onPlan?.(formatSyncActionsPlan(syncResult.data.actions));
   }
 
   onProgress?.('Generating API client...');
@@ -217,7 +363,13 @@ const innerAppDevOnce = async (
   try {
     const appAccessToken = await ensureAppAccessTokenIsValidOrRefresh(
       configService,
-      { clientId, clientSecret },
+      {
+        credentials: clientSecret ? { clientId, clientSecret } : undefined,
+        fetchTokenPair: buildAppTokenPairFetcher(
+          apiService,
+          createDevAppResult.data.id,
+        ),
+      },
     );
 
     const clientService = new ClientService();
@@ -236,15 +388,7 @@ const innerAppDevOnce = async (
     };
   }
 
-  return {
-    success: true,
-    data: {
-      outputDir: path.join(appPath, OUTPUT_DIR),
-      fileCount: buildResult.builtFileInfos.size,
-      applicationDisplayName: manifest.application.displayName,
-      applicationUniversalIdentifier: manifest.application.universalIdentifier,
-    },
-  };
+  return { success: true, data: makeData() };
 };
 
 export const appDevOnce = (

@@ -22,7 +22,6 @@ export const queries = {
         label
         description
         icon
-        isCustom
         isActive
         isNullable
         createdAt
@@ -45,7 +44,6 @@ export const queries = {
         label
         description
         icon
-        isCustom
         isActive
         isUnique
         isNullable
@@ -103,7 +101,6 @@ const defaultResponseData = {
   label: 'label',
   description: 'description',
   icon: 'icon',
-  isCustom: false,
   isActive: true,
   isNullable: false,
   createdAt: '1977-09-28T13:56:55.157Z',
@@ -161,7 +158,6 @@ export const responseData = {
         allowImpersonation: false,
         activationStatus: 'active',
         isPublicInviteLinkEnabled: false,
-        hasValidEnterpriseKey: false,
         hasValidSignedEnterpriseKey: false,
         hasValidEnterpriseValidityToken: false,
         isGoogleAuthEnabled: true,

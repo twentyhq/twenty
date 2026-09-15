@@ -9,9 +9,9 @@ icon: rocket
 ```text
    develop ─▶ test ─▶ build ─▶ deploy / publish
    ───────    ────    ─────    ─────────────────
-   yarn       yarn    yarn     yarn twenty deploy   (tarball → one server)
+   yarn       yarn    yarn     yarn twenty app:publish --private  (tarball → one server)
    twenty     test    twenty
-   dev                build    yarn twenty publish  (npm → marketplace)
+   dev                dev:build    yarn twenty app:publish         (npm → marketplace)
 ```
 
 ## Bu bölümde
@@ -19,6 +19,9 @@ icon: rocket
 <CardGroup cols={2}>
   <Card title="CLI" icon="terminal" href="/l/tr/developers/extend/apps/operations/cli">
     `yarn twenty` referansı — exec, logs, uninstall, remotes.
+  </Card>
+  <Card title="Senkronizasyon ve kurtarma" icon="compass" href="/l/tr/developers/extend/apps/operations/sync-and-recovery">
+    Hangi komut ne zaman, senkronizasyon diff'ini okuma ve kurtarma basamakları.
   </Card>
   <Card title="Test" icon="flask" href="/l/tr/developers/extend/apps/operations/testing">
     Vitest kurulumu, entegrasyon testleri, tür denetimi, CI iş akışı.

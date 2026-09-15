@@ -96,6 +96,7 @@ const buildManifestWithCrossEntityIdentifierConflict = (
     navigationMenuItems: [],
     pageLayouts: [],
     pageLayoutTabs: [],
+    pageLayoutWidgets: [],
   });
 
 describe('Install application should return structured validation errors', () => {
@@ -141,13 +142,11 @@ describe('Install application should return structured validation errors', () =>
     expect(uploadResult.errors).toBeUndefined();
     expect(uploadResult.data?.uploadAppTarball.id).toBeDefined();
 
-    const registrationId = uploadResult.data!.uploadAppTarball.id;
-
     createdApplicationUniversalIdentifiers.push(universalIdentifier);
 
     const { errors } = await installApplication({
       input: {
-        appRegistrationId: registrationId,
+        universalIdentifier,
       },
       expectToFail: true,
     });

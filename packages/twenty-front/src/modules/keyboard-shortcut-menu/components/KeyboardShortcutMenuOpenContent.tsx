@@ -1,6 +1,7 @@
 import { Key } from 'ts-key-enum';
 
 import { KEYBOARD_SHORTCUTS_GENERAL } from '@/keyboard-shortcut-menu/constants/KeyboardShortcutsGeneral';
+import { KEYBOARD_SHORTCUTS_SIDE_PANEL } from '@/keyboard-shortcut-menu/constants/KeyboardShortcutsSidePanel';
 import { KEYBOARD_SHORTCUTS_TABLE } from '@/keyboard-shortcut-menu/constants/KeyboardShortcutsTable';
 
 import {
@@ -35,9 +36,14 @@ export const KeyboardShortcutMenuOpenContent = () => {
             <KeyboardMenuItem shortcut={TableShortcut} key={index} />
           ))}
         </KeyboardMenuGroup>
+        <KeyboardMenuGroup heading={t`Side Panel`}>
+          {KEYBOARD_SHORTCUTS_SIDE_PANEL.map((SidePanelShortcut, index) => (
+            <KeyboardMenuItem shortcut={SidePanelShortcut} key={index} />
+          ))}
+        </KeyboardMenuGroup>
         <KeyboardMenuGroup heading={t`General`}>
-          {KEYBOARD_SHORTCUTS_GENERAL.map((GeneralShortcut) => (
-            <KeyboardMenuItem shortcut={GeneralShortcut} />
+          {KEYBOARD_SHORTCUTS_GENERAL.map((GeneralShortcut, index) => (
+            <KeyboardMenuItem shortcut={GeneralShortcut} key={index} />
           ))}
         </KeyboardMenuGroup>
       </KeyboardMenuDialog>

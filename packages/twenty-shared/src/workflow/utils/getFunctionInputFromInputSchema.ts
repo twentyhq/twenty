@@ -1,11 +1,20 @@
 import { type InputSchema, type FunctionInput } from '@/workflow';
 import { type InputJsonSchema } from '@/logic-function';
+import { isRecordObjectSchema } from '@/logic-function/is-record-object-schema';
 import { isDefined } from '@/utils';
 
 export const getFunctionInputFromInputSchema = (
   inputSchema: InputSchema | InputJsonSchema[],
 ): FunctionInput => {
   return inputSchema.map((param) => {
+    if (isRecordObjectSchema(param)) {
+      return null;
+    }
+
+    if (param.type === 'records') {
+      return [];
+    }
+
     if (
       isDefined(param.type) &&
       ['string', 'number', 'boolean'].includes(param.type)

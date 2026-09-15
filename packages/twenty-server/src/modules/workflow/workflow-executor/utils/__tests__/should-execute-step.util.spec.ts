@@ -1,11 +1,12 @@
-import { StepStatus } from 'twenty-shared/workflow';
+import { StepStatus, WorkflowActionType } from 'twenty-shared/workflow';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import {
-  type WorkflowAction,
-  WorkflowActionType,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+  createMockCodeStep,
+  createMockIfElseStep,
+} from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
+import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 describe('shouldExecuteStep', () => {
   const steps = [
@@ -15,7 +16,7 @@ describe('shouldExecuteStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
       },
       nextStepIds: ['step-3'],
@@ -26,7 +27,7 @@ describe('shouldExecuteStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
       },
       nextStepIds: ['step-3'],
@@ -37,7 +38,7 @@ describe('shouldExecuteStep', () => {
       settings: {
         errorHandlingOptions: {
           continueOnFailure: { value: false },
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
         },
       },
       nextStepIds: [],
@@ -247,7 +248,7 @@ describe('shouldExecuteStep', () => {
           },
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
           outputSchema: {},
         },
@@ -301,7 +302,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: ['step-3'],
@@ -313,7 +314,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: [],
@@ -368,7 +369,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: ['step-4'],
@@ -379,7 +380,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: ['step-4'],
@@ -390,7 +391,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: ['step-4'],
@@ -401,7 +402,7 @@ describe('shouldExecuteStep', () => {
         settings: {
           errorHandlingOptions: {
             continueOnFailure: { value: false },
-            retryOnFailure: { value: false },
+            retryOnFailure: { value: 0 },
           },
         },
         nextStepIds: [],
@@ -461,6 +462,48 @@ describe('shouldExecuteStep', () => {
       },
       steps,
       step: steps[2],
+      workflowRunStatus: WorkflowRunStatus.RUNNING,
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when IF-ELSE parent succeeded and step is a branch child', () => {
+    const ifElseStep = createMockIfElseStep('if-else', [
+      { id: 'true-branch', nextStepIds: ['step-a'] },
+      { id: 'false-branch', nextStepIds: ['step-b'] },
+    ]);
+    const stepA = createMockCodeStep('step-a');
+    const allSteps: WorkflowAction[] = [ifElseStep, stepA];
+
+    const result = shouldExecuteStep({
+      step: stepA,
+      steps: allSteps,
+      stepInfos: {
+        'if-else': { status: StepStatus.SUCCESS },
+        'step-a': { status: StepStatus.NOT_STARTED },
+      },
+      workflowRunStatus: WorkflowRunStatus.RUNNING,
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when IF-ELSE parent is skipped and step is a branch child', () => {
+    const ifElseStep = createMockIfElseStep('if-else', [
+      { id: 'true-branch', nextStepIds: ['step-a'] },
+      { id: 'false-branch', nextStepIds: ['step-b'] },
+    ]);
+    const stepA = createMockCodeStep('step-a');
+    const allSteps: WorkflowAction[] = [ifElseStep, stepA];
+
+    const result = shouldExecuteStep({
+      step: stepA,
+      steps: allSteps,
+      stepInfos: {
+        'if-else': { status: StepStatus.SKIPPED },
+        'step-a': { status: StepStatus.NOT_STARTED },
+      },
       workflowRunStatus: WorkflowRunStatus.RUNNING,
     });
 

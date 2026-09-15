@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, MoreThanOrEqual, QueryRunner, Repository } from 'typeorm';
+import { PROVISIONED_WORKSPACE_ACTIVATION_STATUSES } from 'twenty-shared/workspace';
+import { MoreThanOrEqual, QueryRunner, Repository } from 'typeorm';
 
+import { activationStatusIn } from 'src/database/commands/command-runners/utils/activation-status-in.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Injectable()
@@ -13,18 +14,17 @@ export class WorkspaceVersionService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  async hasActiveOrSuspendedWorkspaces(): Promise<boolean> {
+  async hasProvisionedWorkspaces(): Promise<boolean> {
     return this.workspaceRepository.exists({
       where: {
-        activationStatus: In([
-          WorkspaceActivationStatus.ACTIVE,
-          WorkspaceActivationStatus.SUSPENDED,
-        ]),
+        activationStatus: activationStatusIn(
+          PROVISIONED_WORKSPACE_ACTIVATION_STATUSES,
+        ),
       },
     });
   }
 
-  async getActiveOrSuspendedWorkspaceIds({
+  async getProvisionedWorkspaceIds({
     startFromWorkspaceId,
     workspaceCountLimit,
     queryRunner,
@@ -40,10 +40,9 @@ export class WorkspaceVersionService {
     const workspaces = await repository.find({
       select: ['id'],
       where: {
-        activationStatus: In([
-          WorkspaceActivationStatus.ACTIVE,
-          WorkspaceActivationStatus.SUSPENDED,
-        ]),
+        activationStatus: activationStatusIn(
+          PROVISIONED_WORKSPACE_ACTIVATION_STATUSES,
+        ),
         ...(startFromWorkspaceId
           ? { id: MoreThanOrEqual(startFromWorkspaceId) }
           : {}),

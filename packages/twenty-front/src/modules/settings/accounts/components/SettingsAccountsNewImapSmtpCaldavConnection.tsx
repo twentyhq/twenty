@@ -3,7 +3,7 @@ import { FormProvider } from 'react-hook-form';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -30,7 +30,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
   return (
     // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New Account`}
         links={[
           {
@@ -56,7 +56,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
         <SettingsPageContainer>
           <SettingsAccountsConnectionForm control={control} isEditing={false} />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </FormProvider>
   );
 };

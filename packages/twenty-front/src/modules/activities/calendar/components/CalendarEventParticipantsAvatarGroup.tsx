@@ -1,15 +1,20 @@
+import { CalendarEventCallRecorderAvatar } from '@/activities/calendar/components/CalendarEventCallRecorderAvatar';
+import { type CalendarEventCallRecording } from '@/activities/calendar/types/CalendarEventCallRecording';
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { isTimelineCalendarEventParticipant } from '@/activities/calendar/types/guards/IsTimelineCalendarEventParticipant';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, AvatarGroup } from 'twenty-ui/display';
+import { Avatar, AvatarGroup } from 'twenty-ui/data-display';
 import { type TimelineCalendarEventParticipant } from '~/generated/graphql';
+import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type CalendarEventParticipantsAvatarGroupProps = {
   participants: CalendarEventParticipant[] | TimelineCalendarEventParticipant[];
+  callRecordings?: CalendarEventCallRecording[];
 };
 
 export const CalendarEventParticipantsAvatarGroup = ({
   participants,
+  callRecordings = [],
 }: CalendarEventParticipantsAvatarGroupProps) => {
   const timelineParticipants: TimelineCalendarEventParticipant[] =
     participants.map((participant) => {
@@ -46,23 +51,32 @@ export const CalendarEventParticipantsAvatarGroup = ({
 
   return (
     <AvatarGroup
-      avatars={timelineParticipants.map((participant) => (
-        <Avatar
-          key={[participant.workspaceMemberId, participant.displayName]
-            .filter(isDefined)
-            .join('-')}
-          avatarUrl={participant.avatarUrl}
-          placeholder={
-            participant.firstName && participant.lastName
-              ? `${participant.firstName} ${participant.lastName}`
-              : participant.displayName
-          }
-          placeholderColorSeed={
-            participant.workspaceMemberId || participant.personId || ''
-          }
-          type="rounded"
-        />
-      ))}
+      avatars={[
+        ...callRecordings.map((callRecording) => (
+          <CalendarEventCallRecorderAvatar
+            key={callRecording.id}
+            applicationId={callRecording.applicationId}
+            status={callRecording.status}
+          />
+        )),
+        ...timelineParticipants.map((participant) => (
+          <Avatar
+            key={[participant.workspaceMemberId, participant.displayName]
+              .filter(isDefined)
+              .join('-')}
+            src={getAbsoluteImageUrl(participant.avatarUrl)}
+            name={
+              participant.firstName && participant.lastName
+                ? `${participant.firstName} ${participant.lastName}`
+                : participant.displayName
+            }
+            colorSeed={
+              participant.workspaceMemberId || participant.personId || ''
+            }
+            shape="circle"
+          />
+        )),
+      ]}
     />
   );
 };

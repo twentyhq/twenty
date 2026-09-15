@@ -14,7 +14,8 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { ViewPickerEditButton } from '@/views/view-picker/components/ViewPickerEditButton';
 import { ViewPickerIconAndNameContainer } from '@/views/view-picker/components/ViewPickerIconAndNameContainer';
 import { ViewPickerSaveButtonContainer } from '@/views/view-picker/components/ViewPickerSaveButtonContainer';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
+import { DropdownComponentInstanceContext } from '@/ui/layout/dropdown/contexts/DropdownComponentInstanceContext';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpdateViewFromCurrentState';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
@@ -22,9 +23,12 @@ import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/view
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states/viewPickerSelectedIconComponentState';
 import { t } from '@lingui/core/macro';
-import { IconChevronLeft } from 'twenty-ui/display';
+import { IconChevronLeft } from 'twenty-ui/icon';
 
 export const ViewPickerContentEditMode = () => {
+  const dropdownId = useAvailableComponentInstanceIdOrThrow(
+    DropdownComponentInstanceContext,
+  );
   const { setViewPickerMode } = useViewPickerMode();
 
   const [viewPickerInputName, setViewPickerInputName] = useAtomComponentState(
@@ -51,7 +55,7 @@ export const ViewPickerContentEditMode = () => {
 
       await updateViewFromCurrentState();
     },
-    focusId: VIEW_PICKER_DROPDOWN_ID,
+    focusId: dropdownId,
     dependencies: [viewPickerIsPersisting, updateViewFromCurrentState],
   });
 
@@ -60,7 +64,7 @@ export const ViewPickerContentEditMode = () => {
     setViewPickerSelectedIcon(iconKey);
   };
 
-  const handleClose = async () => {
+  const handleGoBack = async () => {
     await updateViewFromCurrentState();
 
     setViewPickerMode('list');
@@ -71,7 +75,7 @@ export const ViewPickerContentEditMode = () => {
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            onClick={handleClose}
+            onClick={handleGoBack}
             Icon={IconChevronLeft}
           />
         }

@@ -1,30 +1,46 @@
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
+  isFieldMetadataSelectKind,
 } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES } from 'src/engine/metadata-modules/field-metadata/constants/field-metadata-standard-overrides-properties.constant';
 import { type UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
 import {
   FieldMetadataException,
   FieldMetadataExceptionCode,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.exception';
-import { FLAT_FIELD_METADATA_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import {
+  FLAT_FIELD_METADATA_EDITABLE_PROPERTIES,
+  FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES,
+} from 'src/engine/metadata-modules/flat-field-metadata/constants/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadataEditableProperties } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata-editable-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { nullifyEmptyCompositeDefaultValue } from 'src/engine/metadata-modules/flat-field-metadata/utils/nullify-empty-composite-default-value.util';
+import { sanitizeSelectOptionColors } from 'src/engine/metadata-modules/flat-field-metadata/utils/sanitize-select-option-colors.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { dispatchUpdateToAuthoredOverride } from 'src/engine/metadata-modules/overrides/utils/dispatch-update-to-authored-override.util';
+import { findInvalidTranslationOverrideProperties } from 'src/engine/metadata-modules/overrides/utils/find-invalid-translation-override-properties.util';
+import { mergeTranslationsIntoOverrides } from 'src/engine/metadata-modules/overrides/utils/merge-translations-into-overrides.util';
 
 type SanitizeRawUpdateFieldInputArgs = {
   rawUpdateFieldInput: UpdateFieldInput;
   existingFlatFieldMetadata: FlatFieldMetadata;
   isSystemBuild: boolean;
+  workspaceCustomApplicationUniversalIdentifier: string;
 };
 export const sanitizeRawUpdateFieldInput = ({
   existingFlatFieldMetadata,
   rawUpdateFieldInput,
   isSystemBuild,
+  workspaceCustomApplicationUniversalIdentifier,
 }: SanitizeRawUpdateFieldInputArgs) => {
+  const authorContext = {
+    workspaceCustomApplicationUniversalIdentifier,
+    ownerApplicationUniversalIdentifier:
+      existingFlatFieldMetadata.applicationUniversalIdentifier,
+  };
   const isStandardField = belongsToTwentyStandardApp(existingFlatFieldMetadata);
   const updatedEditableFieldProperties = extractAndSanitizeObjectStringFields(
     rawUpdateFieldInput,
@@ -36,19 +52,83 @@ export const sanitizeRawUpdateFieldInput = ({
     ],
   );
 
-  updatedEditableFieldProperties.options = !isDefined(
-    updatedEditableFieldProperties.options,
-  )
-    ? updatedEditableFieldProperties.options
-    : updatedEditableFieldProperties.options.map((option) => ({
+  if (existingFlatFieldMetadata.isSystemSideEffect === true && !isSystemBuild) {
+    const forbiddenUpdatedProperties = [
+      ...Object.keys(updatedEditableFieldProperties),
+      ...(isDefined(rawUpdateFieldInput.morphRelationsUpdatePayload)
+        ? ['morphRelationsUpdatePayload']
+        : []),
+    ].filter(
+      (property) =>
+        !FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES.includes(
+          property as (typeof FLAT_FIELD_METADATA_SYSTEM_SIDE_EFFECT_EDITABLE_PROPERTIES)[number],
+        ),
+    );
+
+    if (forbiddenUpdatedProperties.length > 0) {
+      throw new FieldMetadataException(
+        `Cannot edit system-managed field "${existingFlatFieldMetadata.name}" properties: ${forbiddenUpdatedProperties.join(', ')}`,
+        FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+      );
+    }
+  }
+
+  if (
+    (updatedEditableFieldProperties.isSearchable as boolean | null) === null
+  ) {
+    updatedEditableFieldProperties.isSearchable = false;
+  }
+
+  if (isDefined(updatedEditableFieldProperties.options)) {
+    const optionsWithIds = updatedEditableFieldProperties.options.map(
+      (option) => ({
         id: v4(),
         ...option,
-      }));
+      }),
+    );
+
+    updatedEditableFieldProperties.options = isFieldMetadataSelectKind(
+      existingFlatFieldMetadata.type,
+    )
+      ? sanitizeSelectOptionColors(optionsWithIds)
+      : optionsWithIds;
+  }
+
+  if (
+    updatedEditableFieldProperties.defaultValue !== undefined &&
+    isCompositeFieldMetadataType(existingFlatFieldMetadata.type)
+  ) {
+    updatedEditableFieldProperties.defaultValue =
+      nullifyEmptyCompositeDefaultValue({
+        defaultValue: updatedEditableFieldProperties.defaultValue,
+        fieldType: existingFlatFieldMetadata.type,
+      });
+  }
+
+  const translationEntries = rawUpdateFieldInput.translations ?? [];
+  const invalidTranslationProperties = findInvalidTranslationOverrideProperties(
+    translationEntries,
+    'fieldMetadata',
+  );
+
+  if (invalidTranslationProperties.length > 0) {
+    throw new FieldMetadataException(
+      `Cannot translate field metadata properties: ${invalidTranslationProperties.join(', ')}`,
+      FieldMetadataExceptionCode.FIELD_MUTATION_NOT_ALLOWED,
+    );
+  }
 
   if (!isStandardField || isSystemBuild) {
     return {
       updatedEditableFieldProperties,
-      standardOverrides: null,
+      overrides: mergeTranslationsIntoOverrides({
+        metadataName: 'fieldMetadata',
+        existingOverrides: existingFlatFieldMetadata.overrides,
+        translationEntries,
+        authorUniversalIdentifier:
+          workspaceCustomApplicationUniversalIdentifier,
+        authorContext,
+      }),
     };
   }
 
@@ -68,51 +148,23 @@ export const sanitizeRawUpdateFieldInput = ({
     );
   }
 
-  const standardOverrides = FIELD_METADATA_STANDARD_OVERRIDES_PROPERTIES.reduce(
-    (standardOverrides, property) => {
-      const propertyValue = updatedEditableFieldProperties[property];
-
-      const isPropertyUpdated =
-        updatedEditableFieldProperties[property] !== undefined;
-
-      if (!isPropertyUpdated) {
-        return standardOverrides;
-      }
-      delete updatedEditableFieldProperties[property];
-
-      if (propertyValue === existingFlatFieldMetadata[property]) {
-        if (
-          isDefined(standardOverrides) &&
-          Object.prototype.hasOwnProperty.call(standardOverrides, property)
-        ) {
-          const { [property]: _, ...restOverrides } = standardOverrides;
-
-          return restOverrides;
-        }
-
-        return standardOverrides;
-      }
-
-      return {
-        ...standardOverrides,
-        [property]: propertyValue,
-      };
-    },
-    existingFlatFieldMetadata.standardOverrides,
-  );
-
-  if (
-    isDefined(standardOverrides) &&
-    Object.keys(standardOverrides).length === 0
-  ) {
-    return {
-      standardOverrides: null,
-      updatedEditableFieldProperties,
-    };
-  }
+  const { overrides, columnProperties } = dispatchUpdateToAuthoredOverride({
+    metadataName: 'fieldMetadata',
+    updatedProperties: updatedEditableFieldProperties,
+    existingEntity: existingFlatFieldMetadata,
+    existingOverrides: existingFlatFieldMetadata.overrides,
+    authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
+    authorContext,
+  });
 
   return {
-    standardOverrides,
-    updatedEditableFieldProperties,
+    overrides: mergeTranslationsIntoOverrides({
+      metadataName: 'fieldMetadata',
+      existingOverrides: overrides,
+      translationEntries,
+      authorUniversalIdentifier: workspaceCustomApplicationUniversalIdentifier,
+      authorContext,
+    }),
+    updatedEditableFieldProperties: columnProperties,
   };
 };

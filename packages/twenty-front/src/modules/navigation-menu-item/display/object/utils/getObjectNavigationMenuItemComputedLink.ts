@@ -7,8 +7,9 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 export const getObjectNavigationMenuItemComputedLink = (
   item: Pick<NavigationMenuItem, 'targetObjectMetadataId'>,
-  objectMetadataItems: EnrichedObjectMetadataItem[],
+  objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'namePlural'>[],
   views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[],
+  lastVisitedViewId?: string,
 ): string => {
   const objectMetadataItem = objectMetadataItems.find(
     (meta) => meta.id === item.targetObjectMetadataId,
@@ -16,14 +17,18 @@ export const getObjectNavigationMenuItemComputedLink = (
   if (!isDefined(objectMetadataItem)) {
     return '';
   }
-  const indexView = views.find(
+
+  const indexViewId = views.find(
     (view) =>
       view.objectMetadataId === objectMetadataItem.id &&
       view.key === ViewKey.INDEX,
-  );
+  )?.id;
+
+  const targetViewId = lastVisitedViewId ?? indexViewId;
+
   return getAppPath(
     AppPath.RecordIndexPage,
     { objectNamePlural: objectMetadataItem.namePlural },
-    indexView ? { viewId: indexView.id } : {},
+    isDefined(targetViewId) ? { viewId: targetViewId } : undefined,
   );
 };

@@ -15,13 +15,18 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { AggregateOperations } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutTabLayoutMode,
+  type PageLayoutWidgetGridPosition,
+  WidgetType,
+} from 'twenty-shared/types';
 
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
+import { ChartNumberFormat } from 'src/engine/metadata-modules/page-layout-widget/enums/chart-number-format.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 
 type StaticTestContext = {
@@ -29,12 +34,7 @@ type StaticTestContext = {
     title: string;
     type: WidgetType;
     configuration: AllPageLayoutWidgetConfiguration;
-    gridPosition: {
-      row: number;
-      column: number;
-      rowSpan: number;
-      columnSpan: number;
-    };
+    position: PageLayoutWidgetGridPosition;
   };
 };
 
@@ -44,6 +44,7 @@ type GraphTestContext = {
 };
 
 const DEFAULT_GRID_POSITION = {
+  layoutMode: PageLayoutTabLayoutMode.GRID as const,
   row: 0,
   column: 0,
   rowSpan: 1,
@@ -58,7 +59,7 @@ const STATIC_TEST_CASES: EachTestingContext<StaticTestContext>[] = [
         title: 'Iframe Widget',
         type: WidgetType.IFRAME,
         configuration: TEST_IFRAME_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
+        position: DEFAULT_GRID_POSITION,
       },
     },
   },
@@ -71,7 +72,7 @@ const STATIC_TEST_CASES: EachTestingContext<StaticTestContext>[] = [
         configuration: {
           configurationType: WidgetConfigurationType.IFRAME,
         },
-        gridPosition: DEFAULT_GRID_POSITION,
+        position: DEFAULT_GRID_POSITION,
       },
     },
   },
@@ -83,7 +84,7 @@ const STATIC_TEST_CASES: EachTestingContext<StaticTestContext>[] = [
         title: 'Rich Text Widget',
         type: WidgetType.STANDALONE_RICH_TEXT,
         configuration: TEST_STANDALONE_RICH_TEXT_CONFIG,
-        gridPosition: DEFAULT_GRID_POSITION,
+        position: DEFAULT_GRID_POSITION,
       },
     },
   },
@@ -95,7 +96,7 @@ const STATIC_TEST_CASES: EachTestingContext<StaticTestContext>[] = [
         title: 'Rich Text Widget Minimal',
         type: WidgetType.STANDALONE_RICH_TEXT,
         configuration: TEST_STANDALONE_RICH_TEXT_CONFIG_MINIMAL,
-        gridPosition: DEFAULT_GRID_POSITION,
+        position: DEFAULT_GRID_POSITION,
       },
     },
   },
@@ -125,7 +126,7 @@ describe('Page layout widget creation should succeed', () => {
           aggregateOperation: AggregateOperations.COUNT,
           label: 'Total Records',
           description: 'Count of all records',
-          format: '0,0',
+          numberFormat: ChartNumberFormat.SHORT,
           displayDataLabel: true,
         }),
       },
@@ -156,6 +157,7 @@ describe('Page layout widget creation should succeed', () => {
           primaryAxisGroupByFieldMetadataId: testSetup.fieldMetadataId2,
           primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
           displayDataLabel: true,
+          numberFormat: ChartNumberFormat.SHORT,
           axisNameDisplay: AxisNameDisplay.NONE,
           color: 'red',
           description: 'Monthly revenue breakdown',
@@ -195,6 +197,7 @@ describe('Page layout widget creation should succeed', () => {
           primaryAxisGroupByFieldMetadataId: testSetup.fieldMetadataId2,
           primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
           displayDataLabel: true,
+          numberFormat: ChartNumberFormat.SHORT,
           axisNameDisplay: AxisNameDisplay.NONE,
           color: 'blue',
           description: 'Horizontal revenue breakdown',
@@ -233,6 +236,7 @@ describe('Page layout widget creation should succeed', () => {
           orderBy: GraphOrderBy.VALUE_DESC,
           displayDataLabel: true,
           displayLegend: true,
+          numberFormat: ChartNumberFormat.SHORT,
           showCenterMetric: true,
           color: 'yellow',
           description: 'Distribution by category',
@@ -268,6 +272,7 @@ describe('Page layout widget creation should succeed', () => {
             testSetup.fieldMetadataId3SubFieldName,
           secondaryAxisOrderBy: GraphOrderBy.FIELD_DESC,
           displayDataLabel: true,
+          numberFormat: ChartNumberFormat.SHORT,
           axisNameDisplay: AxisNameDisplay.NONE,
           color: 'cyan',
           description: 'Trend over time',
@@ -290,32 +295,6 @@ describe('Page layout widget creation should succeed', () => {
           primaryAxisOrderBy: GraphOrderBy.VALUE_ASC,
           displayDataLabel: false,
           axisNameDisplay: AxisNameDisplay.NONE,
-        }),
-      },
-    },
-    {
-      title: 'create a page layout widget with GAUGE_CHART full configuration',
-      context: {
-        widgetTitle: 'Gauge Chart Widget',
-        buildConfiguration: () => ({
-          configurationType: WidgetConfigurationType.GAUGE_CHART,
-          aggregateFieldMetadataId: testSetup.fieldMetadataId1,
-          aggregateOperation: AggregateOperations.SUM,
-          description: 'Completion percentage',
-          displayDataLabel: true,
-        }),
-      },
-    },
-    {
-      title:
-        'create a page layout widget with GAUGE_CHART minimal configuration',
-      context: {
-        widgetTitle: 'Gauge Chart Widget Minimal',
-        buildConfiguration: () => ({
-          configurationType: WidgetConfigurationType.GAUGE_CHART,
-          aggregateFieldMetadataId: testSetup.fieldMetadataId1,
-          aggregateOperation: AggregateOperations.COUNT_TRUE,
-          displayDataLabel: false,
         }),
       },
     },
@@ -396,7 +375,7 @@ describe('Page layout widget creation should succeed', () => {
           objectMetadataId: testSetup.objectMetadataId,
           configuration: buildConfiguration(),
           pageLayoutTabId: testSetup.pageLayoutTabId,
-          gridPosition: DEFAULT_GRID_POSITION,
+          position: DEFAULT_GRID_POSITION,
         },
       });
 

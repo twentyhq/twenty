@@ -1,0 +1,87 @@
+---
+title: ローカルサーバー
+description: ローカルの Twenty Docker サーバーを管理します — 起動、停止、アップグレード、並列テスト用インスタンス、および手動での SDK セットアップ。
+icon: server
+---
+
+## ローカルサーバーの管理
+
+ローカルの Twenty コンテナを操作するには `yarn twenty docker:*` を使用します:
+
+| コマンド                                   | 機能                          |
+| -------------------------------------- | --------------------------- |
+| `yarn twenty docker:start`             | サーバーを起動します（必要に応じてイメージを取得）   |
+| `yarn twenty docker:start 2.2.0`       | 特定のサーバーバージョンを起動する           |
+| `yarn twenty docker:start --port 3030` | カスタムポートで起動                  |
+| `yarn twenty docker:stop`              | サーバーを停止します（データは保持）          |
+| `yarn twenty docker:status`            | URL、バージョン、ログイン資格情報を表示       |
+| `yarn twenty docker:logs`              | サーバーログをストリーム表示              |
+| `yarn twenty docker:reset`             | データを消去してクリーンに開始             |
+| `yarn twenty docker:upgrade`           | `twenty-app-dev` の最新イメージを取得 |
+| `yarn twenty docker:upgrade 2.2.0`     | 特定のバージョンにアップグレードする          |
+
+データは再起動をまたいで、2 つの Docker ボリューム（PostgreSQL 用の `twenty-app-dev-data`、ファイル用の `twenty-app-dev-storage`）に永続化されます。 `reset` を使用して、すべてを消去します。
+
+## サーバーのバージョンを固定する
+
+バージョンが指定されていない場合、`docker:start` は `package.json` 内のアプリの `engines.twenty` の範囲からバージョンを解決します。これは、アプリのインストール時にサーバーが検証に使用する範囲と同じです。 このコマンドは、その範囲を満たす最新の公開済み `twenty-app-dev` イメージを起動し、フィールドが存在しない場合や公開済みバージョンが一致しない場合は `latest` にフォールバックします。
+
+```json filename="package.json"
+{
+  "engines": {
+    "twenty": ">=2.2.0"
+  }
+}
+```
+
+単回の実行でその範囲を上書きするには、バージョンを明示的に指定します: `yarn twenty docker:start 2.3.0`。 すでに別バージョンのコンテナが存在する場合、`docker:start` はその場でアップグレードします（データボリュームを保持したままコンテナを再作成します）。
+
+## サーバーイメージのアップグレード
+
+`yarn twenty docker:upgrade` は最新のイメージを取得してダイジェストを比較し、実際に変更があった場合にのみコンテナを再作成します。 ボリュームは保持されます — 置き換えられるのはコンテナだけです。 新しいイメージが取得され、コンテナが稼働中だった場合、アップグレードは自動的に新しいコンテナを起動します。その後、`yarn twenty docker:start` を実行して、正常稼働になるまで待機します。
+
+```bash filename="Terminal"
+yarn twenty docker:upgrade            # Latest
+yarn twenty docker:upgrade 2.2.0      # Specific version
+```
+
+`yarn twenty docker:status` で実行中のバージョンを確認できます。コンテナの `APP_VERSION` が表示されます。
+
+## テスト用インスタンスを並行実行する
+
+任意の `docker:*` コマンドに `--test` を指定すると、完全に分離された第2のインスタンスを管理できます。統合テストの実行や、メインの開発データに触れることなく試す際に便利です。
+
+| コマンド                                | 機能                               |
+| ----------------------------------- | -------------------------------- |
+| `yarn twenty docker:start --test`   | テスト用インスタンスを起動します（デフォルトはポート2021）。 |
+| `yarn twenty docker:stop --test`    | 停止する                             |
+| `yarn twenty docker:status --test`  | ステータスを表示                         |
+| `yarn twenty docker:logs --test`    | ログをストリーム表示                       |
+| `yarn twenty docker:reset --test`   | データを消去                           |
+| `yarn twenty docker:upgrade --test` | イメージをアップグレード                     |
+
+テスト用インスタンスは、専用のボリューム（`twenty-app-dev-test-data`、`twenty-app-dev-test-storage`）と設定を備えた独自の Docker コンテナ（`twenty-app-dev-test`）内で実行されるため、メインのインスタンスと競合することなく並行して実行できます。 `--test` と `--port` を併用して、2021 を上書きできます。
+
+## 手動セットアップ（スキャフォルダーなし）
+
+既存プロジェクトに SDK を追加する場合はスキャフォルダーを省略します:
+
+```bash filename="Terminal"
+yarn add twenty-sdk twenty-client-sdk
+```
+
+`package.json` にスクリプトを追加します:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+これで `yarn twenty dev`、`yarn twenty docker:start` などを実行できます。
+
+<Note>
+`twenty-sdk` をグローバルインストールしないでください — プロジェクトごとに固定し、各アプリがそれぞれのバージョンを使用するようにします。
+</Note>

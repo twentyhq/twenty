@@ -14,7 +14,21 @@ describe('resolveOutboundThreadExternalId', () => {
     expect(result).toBe('gmail-thread-id');
   });
 
-  it('should fall back to inReplyTo so IMAP/SMTP replies attach to the parent thread', () => {
+  it('should prefer the parent-derived thread id over inReplyTo so IMAP/SMTP replies attach to the original thread root, not the immediate parent', () => {
+    const result = resolveOutboundThreadExternalId({
+      sendResult: {
+        headerMessageId: '<reply@mail.example>',
+        messageExternalId: undefined,
+        threadExternalId: undefined,
+      },
+      parentThreadExternalId: '<root@mail.example>',
+      inReplyTo: '<parent@mail.example>',
+    });
+
+    expect(result).toBe('<root@mail.example>');
+  });
+
+  it('should fall back to inReplyTo when the parent is unknown locally so the reply still anchors on the parent Message-ID per RFC 5322', () => {
     const result = resolveOutboundThreadExternalId({
       sendResult: {
         headerMessageId: '<reply@mail.example>',

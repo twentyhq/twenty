@@ -7,6 +7,7 @@ const FIELD_ID_TEXT = 'field-text-id';
 const FIELD_ID_DATE_TIME = 'field-date-time-id';
 const FIELD_ID_ADDRESS = 'field-address-id';
 const FIELD_ID_NUMBER = 'field-number-id';
+const FIELD_ID_RELATION = 'field-relation-id';
 const FIELD_ID_UNKNOWN = 'field-unknown-id';
 
 const mockObjectMetadataItem = {
@@ -16,6 +17,13 @@ const mockObjectMetadataItem = {
       name: 'companyName',
       type: 'TEXT',
       options: null,
+    },
+    {
+      id: FIELD_ID_RELATION,
+      name: 'company',
+      type: 'RELATION',
+      options: null,
+      relation: { type: 'MANY_TO_ONE' },
     },
     {
       id: FIELD_ID_DATE_TIME,
@@ -62,6 +70,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({ companyName: 'Acme' });
@@ -80,9 +89,13 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
-    expect(result.createdAt).toEqual(new Date('2025-06-15T10:29:00.000Z'));
+    expect(typeof result.createdAt).toBe('string');
+    expect(new Date(result.createdAt as string).getTime()).toBe(
+      new Date('2025-06-15T10:29:00.000Z').getTime(),
+    );
   });
 
   it('should not subtract a minute for DATE_TIME with IS operand', () => {
@@ -98,9 +111,33 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
-    expect(result.createdAt).toEqual(filterDate);
+    expect(typeof result.createdAt).toBe('string');
+    expect(new Date(result.createdAt as string).getTime()).toBe(
+      filterDate.getTime(),
+    );
+  });
+
+  it('should assign an ISO string (not a Date) for DATE_TIME with IS_RELATIVE operand', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_DATE_TIME,
+          type: 'DATE_TIME',
+          operand: ViewFilterOperand.IS_RELATIVE,
+          value: 'THIS_QUARTER',
+        }),
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
+    });
+
+    expect(typeof result.createdAt).toBe('string');
+    expect(() =>
+      new Date(result.createdAt as string).toISOString(),
+    ).not.toThrow();
   });
 
   it('should deep-merge a single composite address sub-field starting from empty object', () => {
@@ -115,6 +152,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result.address).toEqual({ addressCity: 'Paris' });
@@ -140,6 +178,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result.address).toEqual({
@@ -159,6 +198,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({});
@@ -175,6 +215,7 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({});
@@ -191,8 +232,52 @@ describe('buildRecordInputFromFilter', () => {
         }),
       ],
       objectMetadataItem: mockObjectMetadataItem,
+      timeZone: 'UTC',
     });
 
     expect(result).toEqual({ revenue: 42 });
+  });
+
+  it('should prefill the join column for a direct relation filter on the current record', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_RELATION,
+          type: 'RELATION',
+          operand: ViewFilterOperand.IS,
+          value: JSON.stringify({
+            isCurrentRecordSelected: true,
+            selectedRecordIds: [],
+          }),
+        }),
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+      currentRecordId: 'current-record-id',
+      timeZone: 'UTC',
+    });
+
+    expect(result).toEqual({ companyId: 'current-record-id' });
+  });
+
+  it('should skip relation traversal filters instead of prefilling the join column', () => {
+    const result = buildRecordInputFromFilter({
+      currentRecordFilters: [
+        createFilter({
+          fieldMetadataId: FIELD_ID_RELATION,
+          type: 'RELATION',
+          operand: ViewFilterOperand.IS,
+          value: JSON.stringify({
+            isCurrentRecordSelected: true,
+            selectedRecordIds: [],
+          }),
+          relationTargetFieldMetadataId: 'relation-target-field-id',
+        }),
+      ],
+      objectMetadataItem: mockObjectMetadataItem,
+      currentRecordId: 'current-record-id',
+      timeZone: 'UTC',
+    });
+
+    expect(result).toEqual({});
   });
 });

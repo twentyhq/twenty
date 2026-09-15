@@ -1,5 +1,6 @@
 import {
   type ConnectObject,
+  type CreateObject,
   type DisconnectObject,
 } from 'src/engine/twenty-orm/entity-manager/types/query-deep-partial-entity-with-nested-relation-fields.type';
 
@@ -11,4 +12,8 @@ export type RelationDisconnectQueryFieldsByEntityIndex = {
   [entityIndex: string]: {
     [key: string]: DisconnectObject;
   };
+};
+
+export type RelationCreateQueryFieldsByEntityIndex = {
+  [entityIndex: string]: { [key: string]: CreateObject };
 };

@@ -4,15 +4,10 @@ import { useWorkflowVersionIdOrThrow } from '@/workflow/hooks/useWorkflowVersion
 import { stepsOutputSchemaFamilySelector } from '@/workflow/states/selectors/stepsOutputSchemaFamilySelector';
 import { searchVariableThroughOutputSchemaV2 } from '@/workflow/workflow-variables/utils/searchVariableThroughOutputSchemaV2';
 import { isDefined } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-
-export type VariableSearchResult = {
-  variableLabel: string | undefined;
-  variablePathLabel: string | undefined;
-  variableType?: string;
-  fieldMetadataId?: string;
-  compositeFieldSubFieldName?: string;
-};
+import {
+  TRIGGER_STEP_ID,
+  type VariableSearchResult,
+} from 'twenty-shared/workflow';
 
 export const useSearchVariable = ({
   stepId,

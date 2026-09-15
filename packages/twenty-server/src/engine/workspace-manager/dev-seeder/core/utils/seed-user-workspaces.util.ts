@@ -19,6 +19,7 @@ export const USER_WORKSPACE_DATA_SEED_IDS = {
   TIM_ACME: '20202020-e10a-4c27-a90b-b08c57b02d44',
   JONY_ACME: '20202020-e10a-4c27-a90b-b08c57b02d45',
   PHIL_ACME: '20202020-e10a-4c27-a90b-b08c57b02d46',
+  SCOTT: '20202020-1111-4a01-8001-000000000002',
 };
 
 const {
@@ -64,6 +65,11 @@ export const seedUserWorkspaces = async ({
       {
         id: USER_WORKSPACE_DATA_SEED_IDS.PHIL,
         userId: USER_DATA_SEED_IDS.PHIL,
+        workspaceId,
+      },
+      {
+        id: USER_WORKSPACE_DATA_SEED_IDS.SCOTT,
+        userId: USER_DATA_SEED_IDS.SCOTT,
         workspaceId,
       },
     ];

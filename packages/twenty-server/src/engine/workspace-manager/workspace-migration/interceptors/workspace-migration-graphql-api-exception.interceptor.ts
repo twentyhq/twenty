@@ -12,15 +12,18 @@ import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
+import { logicFunctionDependenciesSizeGraphqlApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/logic-function-dependencies-size-graphql-api-exception-handler.util';
 import { workspaceMigrationBuilderGraphqlApiExceptionHandler } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/workspace-migration-builder-graphql-api-exception-handler.util';
 import { workspaceMigrationRunnerExceptionFormatter } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-runner-exception-formatter';
 import { WorkspaceMigrationRunnerException } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 
 @Injectable()
-export class WorkspaceMigrationGraphqlApiExceptionInterceptor
-  implements NestInterceptor
-{
+export class WorkspaceMigrationGraphqlApiExceptionInterceptor implements NestInterceptor {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
       catchError((error) => {
@@ -37,6 +40,14 @@ export class WorkspaceMigrationGraphqlApiExceptionInterceptor
 
         if (error instanceof WorkspaceMigrationBuilderException) {
           workspaceMigrationBuilderGraphqlApiExceptionHandler(error);
+        }
+
+        if (
+          error instanceof LogicFunctionException &&
+          error.code ===
+            LogicFunctionExceptionCode.LOGIC_FUNCTION_DEPENDENCIES_SIZE_EXCEEDED
+        ) {
+          logicFunctionDependenciesSizeGraphqlApiExceptionHandler(error);
         }
 
         if (error instanceof WorkspaceMigrationRunnerException) {

@@ -8,19 +8,16 @@ describe('PromiseMemoizer', () => {
   const TTL_MS = 1000; // 1 second TTL for testing
 
   beforeAll(() => {
-    // Store the original Date.now function
     originalDateNow = Date.now;
   });
 
   afterAll(() => {
-    // Restore the original Date.now function
     global.Date.now = originalDateNow;
   });
 
   beforeEach(() => {
     jest.clearAllMocks();
 
-    // Start with a fixed timestamp
     const currentTimestamp = 1000;
 
     global.Date.now = jest.fn(() => currentTimestamp);
@@ -46,7 +43,6 @@ describe('PromiseMemoizer', () => {
 
       await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
 
-      // Move time forward but still within TTL
       const currentTime = Date.now();
 
       jest
@@ -67,7 +63,6 @@ describe('PromiseMemoizer', () => {
 
       await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
 
-      // Move time beyond TTL
       const currentTime = Date.now();
 
       jest
@@ -81,6 +76,29 @@ describe('PromiseMemoizer', () => {
 
       expect(result).toBe('test-value');
       expect(mockFactory).toHaveBeenCalledTimes(2);
+    });
+
+    it('should re-execute factory after TTL expires even under continuous reads', async () => {
+      mockFactory.mockResolvedValue('test-value');
+
+      const startTime = Date.now();
+
+      await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
+
+      for (const elapsedTime of [
+        TTL_MS / 2,
+        TTL_MS,
+        (3 * TTL_MS) / 2,
+        2 * TTL_MS,
+      ]) {
+        jest
+          .spyOn(global.Date, 'now')
+          .mockImplementation(() => startTime + elapsedTime + 1);
+
+        await memoizer.memoizePromiseAndExecute('test-key-1', mockFactory);
+      }
+
+      expect(mockFactory).toHaveBeenCalledTimes(3);
     });
 
     it('should handle null values', async () => {
@@ -118,6 +136,52 @@ describe('PromiseMemoizer', () => {
       expect(result1).toBe('test-value');
       expect(result2).toBe('test-value');
       expect(mockFactory).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not cache a stale promise after its key is cleared', async () => {
+      let markFirstFactoryStarted: (() => void) | undefined;
+      const firstFactoryStarted = new Promise<void>((resolve) => {
+        markFirstFactoryStarted = resolve;
+      });
+      let resolveFirstFactory: (value: string) => void;
+      let resolveSecondFactory: (value: string) => void;
+      const firstFactoryPromise = new Promise<string>((resolve) => {
+        resolveFirstFactory = resolve;
+      });
+      const secondFactoryPromise = new Promise<string>((resolve) => {
+        resolveSecondFactory = resolve;
+      });
+
+      mockFactory
+        .mockImplementationOnce(() => {
+          markFirstFactoryStarted?.();
+
+          return firstFactoryPromise;
+        })
+        .mockImplementationOnce(() => secondFactoryPromise);
+
+      const firstResultPromise = memoizer.memoizePromiseAndExecute(
+        'test-key-1',
+        mockFactory,
+      );
+
+      await firstFactoryStarted;
+      await memoizer.clearKey('test-key-1');
+
+      const secondResultPromise = memoizer.memoizePromiseAndExecute(
+        'test-key-1',
+        mockFactory,
+      );
+
+      resolveFirstFactory!('stale-value');
+      resolveSecondFactory!('fresh-value');
+
+      await expect(firstResultPromise).resolves.toBe('stale-value');
+      await expect(secondResultPromise).resolves.toBe('fresh-value');
+      await expect(
+        memoizer.memoizePromiseAndExecute('test-key-1', mockFactory),
+      ).resolves.toBe('fresh-value');
+      expect(mockFactory).toHaveBeenCalledTimes(2);
     });
   });
 

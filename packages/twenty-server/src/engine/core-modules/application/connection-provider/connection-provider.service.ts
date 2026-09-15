@@ -4,12 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
-import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
-import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
-import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
-import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
+import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 @Injectable()
@@ -52,9 +52,7 @@ export class ConnectionProviderService {
     const valuesByKey = new Map(
       variables.map((v) => [
         v.key,
-        v.encryptedValue
-          ? this.secretEncryptionService.decrypt(v.encryptedValue)
-          : '',
+        this.secretEncryptionService.decryptVersionedOrThrow(v.encryptedValue),
       ]),
     );
 
@@ -136,7 +134,13 @@ export class ConnectionProviderService {
     const filledKeysByRegistrationId = new Map<string, Set<string>>();
 
     for (const variable of variables) {
-      if (variable.encryptedValue === '') continue;
+      if (
+        this.secretEncryptionService.decryptVersionedOrThrow(
+          variable.encryptedValue,
+        ) === ''
+      ) {
+        continue;
+      }
       const set =
         filledKeysByRegistrationId.get(variable.applicationRegistrationId) ??
         new Set<string>();

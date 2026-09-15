@@ -1,0 +1,87 @@
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useState } from 'react';
+import { Chip, Status, Tag } from 'twenty-ui/data-display';
+import { Button } from 'twenty-ui/input';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
+import { H2Title } from 'twenty-ui/typography';
+
+const CARD_STYLE = {
+  padding: 24,
+  display: 'flex',
+  flexDirection: 'column' as const,
+  gap: 16,
+  fontFamily: 'system-ui, sans-serif',
+  background: '#fafafa',
+  borderRadius: 12,
+  border: '2px solid #e4e4e7',
+  maxWidth: 360,
+};
+
+const ROW_STYLE = {
+  display: 'flex',
+  flexWrap: 'wrap' as const,
+  gap: 8,
+  alignItems: 'center' as const,
+};
+
+const TwentyUiComponent = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <ThemeProvider colorScheme="light">
+      <div data-testid="twenty-ui-component" style={CARD_STYLE}>
+        <H2Title
+          title="Twenty UI"
+          description="The CRM's own component library with theme-aware styling."
+        />
+        <div style={ROW_STYLE}>
+          <Tag color="green" variant="soft">
+            Badge
+          </Tag>
+          <Tag color="purple" variant="soft">
+            Styled
+          </Tag>
+          <Tag color="blue" variant="outline" borderStyle="dashed">
+            Themed
+          </Tag>
+        </div>
+        <div style={ROW_STYLE}>
+          <Status color="green">Online</Status>
+          <Status color="red">Offline</Status>
+          <Status color="orange">Away</Status>
+        </div>
+        <div style={ROW_STYLE}>
+          <Chip variant="soft">Highlighted</Chip>
+          <Chip variant="ghost" shape="round">
+            Rounded
+          </Chip>
+        </div>
+        <p
+          data-testid="twenty-ui-count"
+          style={{ fontSize: 24, fontWeight: 800, margin: 0 }}
+        >
+          Count: {count}
+        </p>
+        <div style={ROW_STYLE}>
+          <Button
+            title="Increment"
+            accent="blue"
+            onClick={() => setCount((previous) => previous + 1)}
+          />
+          <Button
+            title="Reset"
+            variant="secondary"
+            onClick={() => setCount(0)}
+          />
+        </div>
+      </div>
+    </ThemeProvider>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'test-20ui0-0000-0000-0000-000000000010',
+  name: 'twenty-ui-component',
+  description: 'A front component using Twenty UI remote components',
+  component: TwentyUiComponent,
+});

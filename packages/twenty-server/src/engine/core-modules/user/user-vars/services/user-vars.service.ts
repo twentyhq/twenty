@@ -8,7 +8,7 @@ import { mergeUserVars } from 'src/engine/core-modules/user/user-vars/utils/merg
 
 @Injectable()
 export class UserVarsService<
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   KeyValueTypesMap extends Record<string, any> = Record<string, any>,
 > {
   constructor(private readonly keyValuePairService: KeyValuePairService) {}
@@ -22,7 +22,7 @@ export class UserVarsService<
     workspaceId?: string;
     key: Extract<K, string>;
   }): Promise<KeyValueTypesMap[K]> {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     let userVarWorkspaceLevel: any[] = [];
 
     if (workspaceId) {
@@ -40,7 +40,7 @@ export class UserVarsService<
       );
     }
 
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     let userVarUserLevel: any[] = [];
 
     if (userId) {
@@ -56,7 +56,7 @@ export class UserVarsService<
       throw new Error(`Multiple values found for key ${key} at user level`);
     }
 
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     let userVarWorkspaceAndUserLevel: any[] = [];
 
     if (userId && workspaceId) {
@@ -87,9 +87,9 @@ export class UserVarsService<
   }: {
     userId?: string;
     workspaceId?: string;
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   }): Promise<Map<Extract<keyof KeyValueTypesMap, string>, any>> {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     let result: any[] = [];
 
     if (userId) {
@@ -147,6 +147,32 @@ export class UserVarsService<
         userId,
         workspaceId,
         key: key,
+        value,
+        type: KeyValuePairType.USER_VARIABLE,
+      },
+      queryRunner,
+    );
+  }
+
+  setIfNotExists<K extends keyof KeyValueTypesMap>(
+    {
+      userId,
+      workspaceId,
+      key,
+      value,
+    }: {
+      userId?: string;
+      workspaceId?: string;
+      key: Extract<K, string>;
+      value: KeyValueTypesMap[K];
+    },
+    queryRunner?: QueryRunner,
+  ): Promise<boolean> {
+    return this.keyValuePairService.setIfNotExists(
+      {
+        userId,
+        workspaceId,
+        key,
         value,
         type: KeyValuePairType.USER_VARIABLE,
       },

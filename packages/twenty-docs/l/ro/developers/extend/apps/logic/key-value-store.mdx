@@ -1,0 +1,110 @@
+---
+title: Stocare cheie-valoare
+description: Păstrați rezultatele intermediare, puneți datele în cache și partajați starea între rulările funcțiilor logice cu spațiul de stocare cheie-valoare integrat al aplicației.
+icon: database
+---
+
+Funcțiile logice rulează în sandbox în procese Node.js de scurtă durată — odată ce o rulare se termină, nimic din ce a fost păstrat în memorie nu supraviețuiește. Când ai nevoie să **îți amintești ceva între rulări** (să pui în cache un răspuns API costisitor, să stochezi un cursor pentru sincronizări incrementale, să aplici debounce sau să transmiți starea de la o funcție la alta), salvează-l în spațiul de stocare cheie-valoare integrat.
+
+Fiecare aplicație primește propriul spațiu de nume izolat: intrările sunt asociate cu aplicația autentificată, astfel încât cheile tale nu pot intra niciodată în coliziune cu — sau fi citite de — o altă aplicație.
+
+```text
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
+```
+
+## Get, set, delete
+
+Importați `kv` din `twenty-sdk/logic-function`. Valorile pot fi orice payload serializabil JSON.
+
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
+
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
+
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Domenii de aplicare
+
+Fiecare intrare are un domeniu de aplicare, transmis ca opțiune la fiecare apel. Valoarea implicită este `WORKSPACE`.
+
+* **`WORKSPACE`** (implicit) — intrarea este privată pentru instalarea curentă a workspace-ului aplicației tale. Fiecare workspace care instalează aplicația primește propriul set independent de chei. Aceasta este opțiunea potrivită pentru cache-uri, cursoare și stare specifică fiecărui workspace.
+* **`SERVER`** — intrarea este partajată între **fiecare instalare** a aplicației tale de pe server. Intrările de tip server se comportă ca niște **claim-uri**: valoarea stocată este întotdeauna workspaceId-ul care a revendicat cheia (omite `value` la `set` pentru a revendica cheia pentru workspace-ul curent), iar doar acel workspace o poate suprascrie sau șterge. Orice instalare poate citi intrarea.
+
+Revendicările de server există pentru rutare între workspace-uri. Un [server-route resolver](/l/ro/developers/extend/apps/logic/logic-functions#server-route-trigger) rulează în workspace-ul proprietar al înregistrării aplicației, dar un webhook de intrare, de obicei, conține doar un id de cont extern — nu un Twenty workspaceId. Configurați fiecare workspace să își revendice ID-ul extern la momentul conectării, apoi rezolvați-l în rută:
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
+});
+```
+
+Deoarece o cheie de tip server poate fi revendicată doar pentru propriul workspace al apelantului și nu poate fi niciodată suprascrisă de un altul, un workspace nu poate deturna o mapare care aparține altcuiva. `kv.set` aruncă o eroare atunci când cheia este deja revendicată de un alt workspace.
+
+## Folosește-l: păstrează în cache un apel costisitor
+
+O utilizare tipică este păstrarea în cache a unui răspuns lent sau cu limitare de rată de la un terț, astfel încât rulările repetate să îl refolosească în loc să plătească costul de fiecare dată.
+
+```ts src/logic-functions/getExchangeRate.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+type CachedRate = { rate: number; fetchedAt: number };
+
+const handler = async (params: { from: string; to: string }) => {
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
+
+  if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
+    return { rate: cached.rate, cached: true };
+  }
+
+  const response = await fetch(
+    `https://api.example.com/rate?from=${params.from}&to=${params.to}`,
+  );
+  const { rate } = (await response.json()) as { rate: number };
+
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
+
+  return { rate, cached: false };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'd9b2f4e6-1c83-4a07-9e52-6b1d3c8a0f47',
+  name: 'get-exchange-rate',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+## Tipare și sfaturi
+
+* **Spații de nume.** Prefixează cheile pentru a păstra domeniile diferite separate — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Expiry (TTL).** Store-ul nu are expirare integrată. Stochează un timestamp în interiorul valorii (ca în exemplul de cache) și verifică-l la citire sau curăță cheile învechite dintr-o [funcție declanșată de cron](/l/ro/developers/extend/apps/logic/logic-functions).
+* **Ce să stochezi.** Orice valoare serializabilă JSON — numere, stringuri, array-uri, obiecte. Păstrează intrările mici; acesta este pentru coordonare și caching, nu pentru blob-uri mari sau fișiere. Pentru fișiere, folosește un câmp `FILES` și [`uploadFile`](/l/ro/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Vizibilitate.** Intrările există în baza de date a instanței, nu ca înregistrări ale workspace-ului — nu apar niciodată în interfața workspace-ului, nu fac parte din modelul de date al aplicației tale și nu necesită permisiuni de rol sau de obiect.
+
+## Alternativă: un obiect de stocare interogabil
+
+Spațiul de stocare integrat este, în mod deliberat, opac: intrările nu sunt înregistrări, astfel că nu le poți răsfoi în UI, nu le poți corela cu alte obiecte și nu le poți filtra cu interogări de înregistrări. Când ai nevoie de oricare dintre acestea — de exemplu un jurnal de sincronizare vizibil sau o stare per-înregistrare — definește în schimb un mic **obiect tehnic** cu un câmp `key` unic și un câmp `RAW_JSON` `value`, și interoghează-l prin [clientul API tipizat](/l/ro/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk). Vezi [Objects](/l/ro/developers/extend/apps/data/objects) pentru referința `defineObject` și [Data → Unique indexes](/l/ro/developers/extend/apps/data/overview#unique-indexes) pentru aplicarea unicității cheilor.
+
+* **Limitarea la o înregistrare.** Adaugă o [relație](/l/ro/developers/extend/apps/data/relations) de la obiectul de stocare la obiectul țintă, în loc să codifici id-ul în cheie.
+* **Vizibilitate și permisiuni.** Rândurile trăiesc în baza de date a workspace-ului ca orice altă înregistrare, astfel încât pot fi interogate prin API și respectă [rolul](/l/ro/developers/extend/apps/config/roles) aplicației tale. Pentru a ține store-ul în afara UI-ului principal, nu îl include în [navigation menu](/l/ro/developers/extend/apps/layout/navigation-menu-items).
+
+<Note>
+Spre deosebire de spațiul de stocare integrat, un obiect personalizat este întotdeauna limitat la un singur workspace — nu poate partaja intrări între instalări, așa cum fac cheile `SERVER`.
+</Note>

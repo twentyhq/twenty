@@ -112,15 +112,15 @@ Vytvoří nový záznam nebo aktualizuje existující na základě kritérií sh
 
 **Konfigurace**:
 
-* Vyberte pole záznamů z předchozího kroku (např. výsledky z vyhledávání záznamů, z ručního spouštěče s hromadnou dostupností, z uzlu kódu)
+* Vyberte pole záznamů z předchozího kroku (např. výsledky vyhledávacích záznamů, z manuálního spouštěče s hromadnou dostupností z kódu uzlu). Když krok Code nebo Logic Function vrátí pole na nejvyšší úrovni, vyberte možnost **Whole list**, abyste procházeli celý výstup.
 * Definujte akce, které budou provedeny na každém záznamu v cyklu.
 
 <Note>
-- V rámci iterátoru můžete přidat několik akcí.
-- Při používání větví uvnitř iterátoru se ujistěte, že poslední krok každé větve se vrací zpět do iterátoru, aby se smyčka uzavřela.
+- V Iterátoru můžete přidat několik akcí.
+- Pokud používáte větve uvnitř Iteratoru, ujistěte se, že poslední krok každé větve se připojí zpět k Iteratoru pro zavření smyčky.
 </Note>
 
-* Přístup k polím `Current Item`: chcete-li použít pole ze záznamu, který se právě zpracovává, klikněte na krok **Iterator** a vyberte **Current item**. Zobrazí se seznam dostupných polí z daného záznamu a můžete je vybrat k použití v následujících akcích.
+* Přístup k polím `Current Item`: chcete-li použít pole ze záznamu, který se právě zpracovává, klikněte na krok **Iterator** a vyberte **Current item**. Zobrazí se seznam dostupných polí z daného záznamu a můžete je vybrat k použití v následujících akcích. Můžete také vybrat **Use the whole item**, abyste předali celou aktuální položku do následujícího kroku.
 
 <VimeoEmbed videoId="1146577247" title="Ukázka videa" />
 
@@ -181,7 +181,7 @@ Naplánované datum nesmí být v minulosti. Pokud je použito datumové pole z 
 ### Odeslat e-mail
 
 Odesílá e-mail z vašeho pracovního postupu. Skvělé pro šablonované hromadné e-maily. E-maily budou vypadat jako ty, které posíláte ze své schránky.
-Nevhodné pro newslettery (které vyžadují bohatší formátování) ani pro automatizované e-mailové sekvence.
+Není vhodné pro newslettery (které vyžadují bohatší formátování) nebo automatické e-mailové sekvence.
 
 **Předpoklady**: Přidejte e-mailový účet v Nastavení → Účty
 
@@ -202,7 +202,7 @@ V tuto chvíli je možný pouze jeden příjemce.
 </Note>
 
 * Nastavte předmět.
-* Sestavte tělo zprávy. Můžete formátovat odkazy, vytvářet číslované i odrážkové seznamy, přidávat přílohy.
+* Sestavte tělo zprávy. Můžete formátovat odkazy, vytvářet číslované seznamy, seznamy odrážek a přidávat přílohy.
 
 <Note>
 Přidávání HTML podpisů momentálně není možné.
@@ -213,24 +213,24 @@ Přidávání HTML podpisů momentálně není možné.
 Vyvolá formulář během provádění pracovního postupu pro sběr uživatelských vstupů. Odpovědi lze poté použít v následujících krocích k vytváření záznamů, odesílání e-mailů nebo provádění jiných akcí na základě zadaných údajů.
 
 <Warning>
-**Formuláře jsou navrženy pouze pro ruční spuštění**. U workflow s jinými spouštěči (vytvoření záznamu, aktualizace atd.) jsou formuláře přístupné pouze přes rozhraní běžů workflow, což neodpovídá očekávané uživatelské zkušenosti. V roce 2026 bude uvedeno centrum oznámení pro správnou podporu formulářů v automatizovaných pracovních postupech.
+**Formuláře jsou navrženy pouze pro ruční spuštění**. U workflow s jinými spouštěči (vytvoření záznamu, aktualizace atd.) jsou formuláře přístupné pouze přes rozhraní běžů workflow, což neodpovídá očekávané uživatelské zkušenosti. Oznamovací středisko bude uvolněno v roce 2026 za účelem řádné podpory formulářů v automatizovaných pracovních postupech.
 </Warning>
 
 **Konfigurace**:
 
 * Nakonfigurujte pole, která budou uživatelé vyplňovat. Pro každé pole zvolte
-  * typ z možností: text, číslo, datum, daný záznam, výběrové pole. Výběrová pole ze všech objektů jsou k dispozici.
+  * typ z možností: text, číslo, datum, daný záznam, výběrové pole. Pole všech objektů jsou k dispozici pro výběr.
   * štítek
   * výchozí hodnotu pod `Placeholder` (volitelné)
 * Upravte název formuláře
 
 **Výstup**: Odpovědi z formuláře jsou k dispozici pro použití v následujících krocích.
 
-**Příklad**: Pracovní postup "Quick Lead" je ve výchozím nastavení dostupný ve všech pracovních prostorech a je dostupný odkudkoli v nabídce Command `Cmd + K`.
+**Příklad**: Pracovní postup "Rychlé vedení" je ve výchozím nastavení dostupný ve všech pracovních prostorách, dostupný kdekoli v příkazové nabídce `Cmd+K`.
 
 **Jak vyplnit formulář**:
 
-* Spusťte svůj ruční pracovní postup z příkazové nabídky `Cmd K`
+* Spusťte manuální pracovní tok z menu příkazu `Cmd+K`
 * Vyplňte formulář zobrazený v postranním panelu a klikněte na `Submit`.
 
 <Note>
@@ -245,9 +245,11 @@ Pole nelze nastavit jako povinná.
 
 Spouští vlastní JavaScript ve vašem pracovním postupu.
 
+Na pozadí je každá akce Code podpořena vlastní **logickou funkcí** — serverovou funkcí v TypeScriptu, která běží na platformě Twenty. Když přidáte akci Code, Twenty vytvoří pro tento krok vyhrazenou logickou funkci a zobrazí její editor přímo inline, takže kód, který napíšete, zůstává u pracovního postupu.
+
 **Konfigurace**:
 
-* Přístup k proměnným z předchozích kroků. Názvy proměnných můžete upravovat dynamicky.
+* Přístup k proměnným z předchozích kroků. Názvy proměnných můžete dynamicky upravovat.
 
 <VimeoEmbed videoId="1147281795" title="Ukázka videa" />
 
@@ -256,7 +258,7 @@ Spouští vlastní JavaScript ve vašem pracovním postupu.
 * Testovat kód přímo ve kroku
 
 <Note>
-Pokud potřebujete ve svém kódu použít externí klíče API, musíte je zadat přímo do těla funkce. You cannot configure API keys elsewhere and reference them in the logic function.
+Pokud potřebujete ve svém kódu použít externí klíče API, musíte je zadat přímo do těla funkce. Nelze nakonfigurovat API klíče jinde a odkazovat na ně v logické funkci.
 </Note>
 
 <Tip>
@@ -265,6 +267,25 @@ Pokud potřebujete ve svém kódu použít externí klíče API, musíte je zada
 
 <Tip>
 Klikněte na čtvercovou ikonu vpravo nahoře v editoru kódu a zobrazte jej na celou obrazovku — hodí se to, protože výchozí šířka editoru je omezená.
+</Tip>
+
+#### Znovupoužití logické funkce napříč pracovními postupy
+
+Inline akce Code je skvělá pro jednorázovou logiku, ale kód, který obsahuje, patří pouze tomuto jedinému kroku. Když chcete sdílet stejnou logiku napříč několika pracovními postupy — nebo ji udržovat jako verzovaný zdrojový kód v aplikaci — definujte **znovupoužitelnou logickou funkci** místo kopírování a vkládání kódu do každé akce Code.
+
+Logická funkce je definována jednou v aplikaci (pomocí SDK `defineLogicFunction`) a zpřístupněna v nástroji pro tvorbu pracovních postupů přidáním `workflowActionTriggerSettings`. Jakmile je vaše aplikace nainstalována, tato funkce se objeví jako samostatná akce v nástroji pro tvorbu pracovních postupů vedle vestavěných akcí. Její výběr vykreslí vstupní pole, která jste deklarovali (s výběry proměnných, stejně jako u jiných akcí), a spustí váš sdílený kód — není potřeba žádný inline JavaScript.
+
+|                  | Akce Code                                              | Znovupoužitelná logická funkce                                    |
+| ---------------- | ------------------------------------------------------ | ----------------------------------------------------------------- |
+| **Kde kód žije** | Inline editor, vázaný na jeden krok pracovního postupu | Definována v aplikaci, verzovaná v systému správy zdrojového kódu |
+| **Znovupoužití** | Kopírováno a vkládáno pro každý krok                   | Přidána jako akce v libovolném pracovním postupu                  |
+| **Vstupy**       | Proměnné zapojené v editoru                            | Pole vykreslená z vámi deklarovaného vstupního schématu           |
+| **Vhodné pro**   | Rychlá logika specifická pro daný pracovní postup      | Sdílená logika používaná napříč více pracovními postupy           |
+
+Obě běží ve stejném běhovém prostředí logických funkcí, takže akci Code, kterou jste prototypovali inline, lze později povýšit na znovupoužitelnou logickou funkci s minimálními změnami.
+
+<Tip>
+Referenční dokumentaci pro vývojáře k definování logických funkcí a jejich zpřístupnění v nástroji pro tvorbu pracovních postupů najdete v [Logic Functions](/l/cs/developers/extend/apps/logic/logic-functions) — zejména v sekci **Exposing a function as an AI tool or workflow action** a `workflowActionTriggerSettings`.
 </Tip>
 
 ### HTTP požadavek
@@ -307,5 +328,5 @@ Akce agenta AI spotřebovávají kredity pracovního postupu podle použitého m
 </Note>
 
 <Note>
-Agenti AI respektují oprávnění založená na rolích. V části **Nastavení → Role** můžete agentům přiřadit konkrétní role, abyste řídili, k jakým datům mají přístup. Podrobnosti viz [Oprávnění](/l/cs/user-guide/permissions-access/capabilities/permissions).
+Agenti AI respektují oprávnění založená na rolích. V části **Nastavení → Členové → Role** můžete agentům přiřadit konkrétní role, abyste řídili, k jakým datům mají přístup. Podrobnosti viz [Oprávnění](/l/cs/user-guide/permissions-access/capabilities/permissions).
 </Note>

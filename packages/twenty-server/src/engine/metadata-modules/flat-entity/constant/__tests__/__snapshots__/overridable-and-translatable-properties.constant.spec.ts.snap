@@ -1,0 +1,149 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`registry-derived override property maps derives the overridable properties for every metadata entity 1`] = `
+{
+  "agent": [],
+  "applicationVariable": [],
+  "commandMenuItem": [
+    "label",
+    "icon",
+    "shortLabel",
+    "position",
+    "isPinned",
+    "availabilityType",
+    "availabilityObjectMetadataId",
+    "engineComponentKey",
+    "hotKeys",
+    "pageLayoutId",
+    "isActive",
+  ],
+  "connectionProvider": [],
+  "fieldMetadata": [
+    "description",
+    "icon",
+    "isActive",
+    "label",
+  ],
+  "fieldPermission": [],
+  "frontComponent": [],
+  "index": [],
+  "logicFunction": [],
+  "navigationMenuItem": [],
+  "objectMetadata": [
+    "openRecordIn",
+    "color",
+    "description",
+    "icon",
+    "isActive",
+    "labelPlural",
+    "labelSingular",
+    "imageIdentifierFieldMetadataId",
+  ],
+  "objectPermission": [],
+  "pageLayout": [],
+  "pageLayoutTab": [
+    "title",
+    "position",
+    "icon",
+    "isActive",
+  ],
+  "pageLayoutWidget": [
+    "title",
+    "position",
+    "pageLayoutTabId",
+    "conditionalDisplay",
+    "conditionalAvailabilityExpression",
+    "isActive",
+  ],
+  "permissionFlag": [],
+  "role": [],
+  "rolePermissionFlag": [],
+  "roleTarget": [],
+  "rowLevelPermissionPredicate": [],
+  "rowLevelPermissionPredicateGroup": [],
+  "searchFieldMetadata": [],
+  "skill": [],
+  "timelineActivityType": [
+    "label",
+    "icon",
+    "isActive",
+  ],
+  "view": [
+    "name",
+    "type",
+    "icon",
+    "position",
+    "isCompact",
+    "openRecordIn",
+    "kanbanAggregateOperation",
+    "kanbanAggregateOperationFieldMetadataId",
+    "anyFieldFilterValue",
+    "calendarLayout",
+    "calendarFieldMetadataId",
+    "calendarEndFieldMetadataId",
+    "visibility",
+    "mainGroupByFieldMetadataId",
+    "shouldHideEmptyGroups",
+    "kanbanColumnWidth",
+    "isActive",
+  ],
+  "viewField": [
+    "isVisible",
+    "size",
+    "position",
+    "aggregateOperation",
+    "viewFieldGroupId",
+    "isActive",
+  ],
+  "viewFieldGroup": [
+    "name",
+    "position",
+    "isVisible",
+    "isActive",
+  ],
+  "viewFilter": [],
+  "viewFilterGroup": [],
+  "viewGroup": [],
+  "viewSort": [],
+  "webhook": [],
+}
+`;
+
+exports[`registry-derived override property maps derives the translatable properties for every metadata entity 1`] = `
+{
+  "commandMenuItem": [
+    "label",
+    "shortLabel",
+  ],
+  "fieldMetadata": [
+    "label",
+    "description",
+  ],
+  "navigationMenuItem": [
+    "name",
+  ],
+  "objectMetadata": [
+    "labelSingular",
+    "labelPlural",
+    "description",
+  ],
+  "pageLayout": [
+    "name",
+  ],
+  "pageLayoutTab": [
+    "title",
+  ],
+  "pageLayoutWidget": [
+    "title",
+  ],
+  "timelineActivityType": [
+    "label",
+  ],
+  "view": [
+    "name",
+  ],
+  "viewFieldGroup": [
+    "name",
+  ],
+}
+`;

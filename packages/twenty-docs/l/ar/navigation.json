@@ -145,6 +145,14 @@
               "label": "الإرشادات"
             }
           }
+        },
+        "legal": {
+          "label": "قانوني",
+          "groups": {
+            "legalHowTos": {
+              "label": "الإرشادات"
+            }
+          }
         }
       }
     },
@@ -155,7 +163,30 @@
           "label": "نظرة عامة"
         },
         "apps": {
-          "label": "التطبيقات"
+          "label": "التطبيقات",
+          "groups": {
+            "appsGettingStarted": {
+              "label": "البدء"
+            },
+            "appsTutorial": {
+              "label": "البرنامج التعليمي"
+            },
+            "appsConfig": {
+              "label": "التهيئة"
+            },
+            "appsData": {
+              "label": "بيانات"
+            },
+            "appsLogic": {
+              "label": "المنطق"
+            },
+            "appsLayout": {
+              "label": "التخطيط"
+            },
+            "appsOperations": {
+              "label": "العمليات"
+            }
+          }
         },
         "api": {
           "label": "واجهة برمجة التطبيقات"

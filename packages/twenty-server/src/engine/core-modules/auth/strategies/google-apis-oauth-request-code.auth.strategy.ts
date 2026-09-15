@@ -5,7 +5,7 @@ import { type VerifyCallback } from 'passport-google-oauth20';
 import { GoogleAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/google-apis-oauth-common.auth.strategy';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-export type GoogleAPIScopeConfig = {
+export type GoogleApiScopeConfig = {
   isCalendarEnabled?: boolean;
   isMessagingAliasFetchingEnabled?: boolean;
 };
@@ -16,7 +16,7 @@ export class GoogleAPIsOauthRequestCodeStrategy extends GoogleAPIsOauthCommonStr
     super(twentyConfigService);
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   authenticate(req: any, options: any) {
     options = {
       ...options,

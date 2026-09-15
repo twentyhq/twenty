@@ -1,6 +1,5 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import {
   BeforeInsert,
@@ -36,7 +35,7 @@ registerEnumType(OnboardingStatus, {
   where: '"deletedAt" IS NULL',
 })
 export class UserEntity {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -55,7 +54,7 @@ export class UserEntity {
   }
 
   @Field()
-  @Column()
+  @Column({ type: 'citext' })
   email: string;
 
   @Field()
@@ -115,6 +114,9 @@ export class UserEntity {
 
   @Field(() => OnboardingStatus, { nullable: true })
   onboardingStatus: OnboardingStatus;
+
+  @Field(() => OnboardingStatus, { nullable: true })
+  previousOnboardingStatus: OnboardingStatus;
 
   @Field(() => WorkspaceEntity, { nullable: true })
   currentWorkspace?: Relation<WorkspaceEntity>;

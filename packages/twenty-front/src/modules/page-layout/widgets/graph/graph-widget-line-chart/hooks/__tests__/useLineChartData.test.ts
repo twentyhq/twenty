@@ -1,9 +1,9 @@
+import { type LineChartEnrichedSeries } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartEnrichedSeries';
 import { type LineChartSeriesWithColor } from '@/page-layout/widgets/graph/graph-widget-line-chart/types/LineChartSeriesWithColor';
 import { type GraphColorRegistry } from '@/page-layout/widgets/graph/types/GraphColorRegistry';
 import { renderHook } from '@testing-library/react';
 
 import { useLineChartData } from '@/page-layout/widgets/graph/graph-widget-line-chart/hooks/useLineChartData';
-import { type LineChartSeries } from '~/generated-metadata/graphql';
 
 const mockUseAtomComponentStateValue = jest.fn();
 jest.mock(
@@ -60,7 +60,7 @@ describe('useLineChartData', () => {
 
   const mockData: LineChartSeriesWithColor[] = [
     {
-      id: 'series1',
+      key: 'series1',
       data: [
         { x: 'Jan', y: 100 },
         { x: 'Feb', y: 120 },
@@ -70,7 +70,7 @@ describe('useLineChartData', () => {
       color: 'red',
     },
     {
-      id: 'series2',
+      key: 'series2',
       data: [
         { x: 'Jan', y: 80 },
         { x: 'Feb', y: 90 },
@@ -171,10 +171,10 @@ describe('useLineChartData', () => {
     expect(result.current.legendItems).toEqual([]);
   });
 
-  it('should use series id as label when label is not provided', () => {
-    const dataWithoutLabel: LineChartSeries[] = [
+  it('should use series key as label when label is not provided', () => {
+    const dataWithoutLabel: LineChartSeriesWithColor[] = [
       {
-        id: 'series1',
+        key: 'series1',
         data: [{ x: 'Jan', y: 100 }],
         label: 'series1',
       },
@@ -205,7 +205,7 @@ describe('useLineChartData', () => {
     );
 
     expect(result.current.visibleData).toHaveLength(1);
-    expect(result.current.visibleData[0].id).toBe('series1');
+    expect(result.current.visibleData[0].key).toBe('series1');
     expect(result.current.enrichedSeries).toHaveLength(1);
     expect(result.current.nivoData).toHaveLength(1);
   });
@@ -256,6 +256,95 @@ describe('useLineChartData', () => {
     expect(result.current.nivoData.length).toBe(result.current.colors.length);
     expect(result.current.nivoData.length).toBe(1);
     expect(result.current.nivoData[0].id).toBe('series2');
+  });
+
+  it('should keep the same automatic palette color per key when series order changes', () => {
+    const series = (key: string): LineChartSeriesWithColor => ({
+      key,
+      label: key,
+      data: [{ x: 'Jan', y: 100 }],
+    });
+
+    const { result: firstOrderResult } = renderHook(() =>
+      useLineChartData({
+        data: [series('gamma'), series('alpha'), series('beta')],
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+        colorMode: 'automaticPalette',
+      }),
+    );
+
+    const { result: reorderedResult } = renderHook(() =>
+      useLineChartData({
+        data: [series('beta'), series('gamma'), series('alpha')],
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+        colorMode: 'automaticPalette',
+      }),
+    );
+
+    const colorsByKey = (enrichedSeries: LineChartEnrichedSeries[]) =>
+      Object.fromEntries(
+        enrichedSeries.map((item) => [item.key, item.colorScheme.name]),
+      );
+
+    const expectedColorsByKey = {
+      alpha: 'red',
+      beta: 'blue',
+      gamma: 'red',
+    };
+
+    expect(colorsByKey(firstOrderResult.current.enrichedSeries)).toEqual(
+      expectedColorsByKey,
+    );
+    expect(colorsByKey(reorderedResult.current.enrichedSeries)).toEqual(
+      expectedColorsByKey,
+    );
+  });
+
+  it('should keep the same gradient shade per key when series order changes in explicitSingleColor mode', () => {
+    const series = (key: string): LineChartSeriesWithColor => ({
+      key,
+      label: key,
+      data: [{ x: 'Jan', y: 100 }],
+      color: 'red',
+    });
+
+    const { result: firstOrderResult } = renderHook(() =>
+      useLineChartData({
+        data: [series('won'), series('open'), series('lost')],
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+        colorMode: 'explicitSingleColor',
+      }),
+    );
+
+    const { result: reorderedResult } = renderHook(() =>
+      useLineChartData({
+        data: [series('lost'), series('won'), series('open')],
+        colorRegistry: mockColorRegistry,
+        id: 'test-chart',
+        colorMode: 'explicitSingleColor',
+      }),
+    );
+
+    const shadesByKey = (enrichedSeries: LineChartEnrichedSeries[]) =>
+      Object.fromEntries(
+        enrichedSeries.map((item) => [item.key, item.colorScheme.solid]),
+      );
+
+    const expectedShadesByKey = {
+      lost: 'red4',
+      open: 'red6',
+      won: 'red8',
+    };
+
+    expect(shadesByKey(firstOrderResult.current.enrichedSeries)).toEqual(
+      expectedShadesByKey,
+    );
+    expect(shadesByKey(reorderedResult.current.enrichedSeries)).toEqual(
+      expectedShadesByKey,
+    );
   });
 
   it('should handle hidden ids that do not exist in data', () => {

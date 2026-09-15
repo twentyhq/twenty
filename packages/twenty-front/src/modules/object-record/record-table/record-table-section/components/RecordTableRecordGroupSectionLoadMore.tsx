@@ -5,7 +5,7 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableActionRow } from '@/object-record/record-table/record-table-row/components/RecordTableActionRow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { t } from '@lingui/core/macro';
-import { IconArrowDown } from 'twenty-ui/display';
+import { IconArrowDown } from 'twenty-ui/icon';
 
 export const RecordTableRecordGroupSectionLoadMore = () => {
   const { objectNameSingular } = useRecordTableContextOrThrow();

@@ -3,6 +3,10 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { DataSource } from 'typeorm';
 
+import {
+  DatabasePoolMetricsService,
+  DatabasePoolName,
+} from 'src/database/typeorm/database-pool-metrics.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
 @Injectable()
@@ -13,9 +17,15 @@ export class DatabaseGaugeService implements OnModuleInit {
     @InjectDataSource()
     private readonly dataSource: DataSource,
     private readonly metricsService: MetricsService,
+    private readonly databasePoolMetricsService: DatabasePoolMetricsService,
   ) {}
 
   onModuleInit() {
+    this.databasePoolMetricsService.registerDataSource({
+      poolName: DatabasePoolName.Core,
+      dataSource: this.dataSource,
+    });
+
     this.metricsService.createObservableGauge({
       metricName: 'twenty_database_up',
       options: {

@@ -20,11 +20,12 @@ export const StyledSettingsCardIcon = styled.div`
   background-color: ${themeCssVariables.background.primary};
   border: 2px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
+  box-sizing: border-box;
   display: flex;
-  height: ${themeCssVariables.spacing[7]};
+  height: ${themeCssVariables.spacing[8]};
   justify-content: center;
-  min-width: ${themeCssVariables.icon.size.md};
-  width: ${themeCssVariables.spacing[7]};
+  min-width: ${themeCssVariables.spacing[8]};
+  width: ${themeCssVariables.spacing[8]};
 `;
 
 export const StyledSettingsCardTitle = styled.div`
@@ -41,7 +42,7 @@ export const StyledSettingsCardTextContainer = styled.div`
 export const StyledSettingsCardDescription = styled.div`
   color: ${themeCssVariables.font.color.secondary};
   font-size: ${themeCssVariables.font.size.sm};
-  line-height: 1.5;
+  line-height: ${themeCssVariables.text.lineHeight.lg};
   overflow: hidden;
 
   a {

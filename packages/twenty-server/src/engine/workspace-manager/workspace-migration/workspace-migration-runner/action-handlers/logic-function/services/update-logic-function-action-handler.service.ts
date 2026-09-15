@@ -5,10 +5,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
   FlatUpdateLogicFunctionAction,
@@ -64,10 +66,11 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     } = context;
     const { entityId, update } = flatAction;
 
-    const existingLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
-      flatEntityId: entityId,
-    });
+    const existingLogicFunction =
+      findFlatEntityByIdInFlatEntityMapsOrThrow<FlatLogicFunction>({
+        flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
+        flatEntityId: entityId,
+      });
 
     const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
@@ -86,12 +89,21 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     );
 
     if (builtPathChanged) {
-      await this.fileStorageService.delete({
+      const deleteFileStart = performance.now();
+
+      await this.fileStorageService.deleteFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,
         resourcePath: existingLogicFunction.builtHandlerPath,
       });
+
+      const deleteFileMs = performance.now() - deleteFileStart;
+
+      this.logger.perf(
+        `[install-perf] update logicFunction fileStorageService.deleteFile took ${deleteFileMs.toFixed(1)}ms (fnId=${entityId})`,
+        UpdateLogicFunctionActionHandlerService.name,
+      );
     }
   }
 }

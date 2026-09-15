@@ -6,7 +6,7 @@ import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimensio
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { useIcons } from 'twenty-ui/display';
+import { useIcons } from 'twenty-ui/icon';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type ElementDimensions = {
@@ -16,6 +16,7 @@ type ElementDimensions = {
 
 type PinnedCommandMenuItemsInlineMeasurementsProps = {
   pinnedCommandMenuItems: CommandMenuItemFieldsFragment[];
+  shouldHideCommandMenuItemLabel: (commandMenuItemId: string) => boolean;
   onPinnedCommandMenuItemDimensionChange: (
     commandMenuItemKey: string,
   ) => (dimensions: ElementDimensions) => void;
@@ -32,6 +33,7 @@ const StyledHiddenMeasurementsContainer = styled.div`
 
 export const PinnedCommandMenuItemsInlineMeasurements = ({
   pinnedCommandMenuItems,
+  shouldHideCommandMenuItemLabel,
   onPinnedCommandMenuItemDimensionChange,
 }: PinnedCommandMenuItemsInlineMeasurementsProps) => {
   const { getIcon } = useIcons();
@@ -59,6 +61,7 @@ export const PinnedCommandMenuItemsInlineMeasurements = ({
                 shortLabel,
                 Icon,
               }}
+              shouldHideLabel={shouldHideCommandMenuItemLabel(item.id)}
             />
           </NodeDimension>
         );

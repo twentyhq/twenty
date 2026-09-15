@@ -1,9 +1,12 @@
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
+import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
 import { useGraphGroupBySortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphGroupBySortOptionLabels';
 import { useGraphXSortOptionLabels } from '@/side-panel/pages/page-layout/hooks/useGraphXSortOptionLabels';
 import { type ChartConfiguration } from '@/side-panel/pages/page-layout/types/ChartConfiguration';
 import { CHART_CONFIGURATION_SETTING_IDS } from '@/side-panel/pages/page-layout/types/ChartConfigurationSettingIds';
 import { getChartAxisNameDisplayOptions } from '@/side-panel/pages/page-layout/utils/getChartAxisNameDisplayOptions';
 import { getChartFilterRulesCount } from '@/side-panel/pages/page-layout/utils/getChartFilterRulesCount';
+import { getChartNumberFormatLabel } from '@/side-panel/pages/page-layout/utils/getChartNumberFormatLabel';
 import { getDateGranularityLabel } from '@/side-panel/pages/page-layout/utils/getDateGranularityLabel';
 import { getFieldLabelWithSubField } from '@/side-panel/pages/page-layout/utils/getFieldLabelWithSubField';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -47,9 +50,7 @@ export const useChartSettingsValues = ({
     configuration.__typename === 'LineChartConfiguration';
 
   const hasColorProperty =
-    isBarOrLineChart ||
-    configuration.__typename === 'GaugeChartConfiguration' ||
-    configuration.__typename === 'PieChartConfiguration';
+    isBarOrLineChart || configuration.__typename === 'PieChartConfiguration';
 
   const isPieChart = configuration.__typename === 'PieChartConfiguration';
 
@@ -76,11 +77,17 @@ export const useChartSettingsValues = ({
   }
 
   const groupByFieldX = isDefined(groupByFieldXId)
-    ? objectMetadataItem?.fields.find((field) => field.id === groupByFieldXId)
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        fieldMetadataId: groupByFieldXId,
+      })
     : undefined;
 
   const groupByFieldY = isDefined(groupByFieldYId)
-    ? objectMetadataItem?.fields.find((field) => field.id === groupByFieldYId)
+    ? findFieldMetadataItemByFieldMetadataId({
+        fieldMetadataItems: objectMetadataItem?.fields,
+        fieldMetadataId: groupByFieldYId,
+      })
     : undefined;
 
   const groupBySubFieldNameXLabel =
@@ -201,9 +208,10 @@ export const useChartSettingsValues = ({
       }
       case CHART_CONFIGURATION_SETTING_IDS.DATA_ON_DISPLAY_PIE_CHART: {
         const pieChartGroupByField = isDefined(finalGroupByFieldYId)
-          ? objectMetadataItem?.fields.find(
-              (field) => field.id === finalGroupByFieldYId,
-            )
+          ? findFieldMetadataItemByFieldMetadataId({
+              fieldMetadataItems: objectMetadataItem?.fields,
+              fieldMetadataId: finalGroupByFieldYId,
+            })
           : undefined;
         const pieChartGroupBySubFieldNameLabel =
           isDefined(finalGroupBySubFieldNameY) &&
@@ -292,6 +300,17 @@ export const useChartSettingsValues = ({
         return isBarOrLineChart || isPieChart
           ? (configuration.displayLegend ?? true)
           : true;
+      case CHART_CONFIGURATION_SETTING_IDS.FORMAT:
+        if (isBarOrLineChart || isPieChart) {
+          return getChartNumberFormatLabel(
+            configuration.numberFormat ?? CHART_NUMBER_FORMAT_DEFAULT,
+          );
+        }
+
+        return configuration.__typename === 'AggregateChartConfiguration' &&
+          isDefined(configuration.numberFormat)
+          ? getChartNumberFormatLabel(configuration.numberFormat)
+          : undefined;
       case CHART_CONFIGURATION_SETTING_IDS.PREFIX:
         return configuration.__typename === 'AggregateChartConfiguration'
           ? (configuration.prefix ?? '')

@@ -208,8 +208,6 @@ const generateTests = async (force = false) => {
   }
 };
 
-// Basic command-line argument parsing
 const forceArg = process.argv.includes('--force');
 
-// Call the function with the parsed argument
-generateTests(forceArg);
+void generateTests(forceArg);

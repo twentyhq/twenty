@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps-or-throw.util';
 import { validateFlatObjectMetadataIdentifiers } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-identifiers.util';
-import { validateObjectMetadataSystemFieldsIntegrity } from 'src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-object-metadata-system-fields-integrity.util';
 import {
   type OrchestratorActionsReport,
   type OrchestratorFailureReport,
@@ -55,14 +54,6 @@ export const validateObjectMetadataCrossEntity = ({
         metadataName: 'objectMetadata',
         type: 'create',
       },
-    );
-
-    createFailedFlatEntityValidations.errors.push(
-      ...validateObjectMetadataSystemFieldsIntegrity({
-        universalFlatFieldMetadataMaps:
-          optimisticUniversalFlatMaps.flatFieldMetadataMaps,
-        universalFlatObjectMetadata,
-      }),
     );
 
     createFailedFlatEntityValidations.errors.push(

@@ -32,7 +32,7 @@ CSV, XLSX veya XLS dosyaları kullanarak herhangi bir nesnenin verilerini içe a
 6. Hataları (sarıyla vurgulanan) gözden geçirin ve kullanıcı arayüzünde doğrudan düzenleyerek düzeltin
 7. İçe aktarmayı onaylayın
 
-### Nesneler arasındaki ilişkileri içe aktarma
+### Nesneler Arasındaki İlişkileri İçe Aktarma
 
 CSV içe aktarma işlevini kullanarak nesneler arasındaki ilişkileri içe aktarabilirsiniz. İlgili nesneye, bu nesnedeki benzersiz bir alanı kullanarak referans vermeniz gerekir: `id`, People ve Çalışma Alanı Üyeleri için `email`, şirketler için `domain`, diğer nesneler için veri modelinde benzersiz olarak ayarlanmış herhangi bir başka alan.
 
@@ -43,8 +43,8 @@ CSV içe aktarma işlevini kullanarak nesneler arasındaki ilişkileri içe akta
 
 İlişkili nesneleri içe aktarırken dosyaları şu sırayla yükleyin:
 1. **Şirketler** önce (ilişkilerin "bir" tarafı)
-2. **Kişiler** ikinci (companyId aracılığıyla şirketlere bağlı)
-3. **Fırsatlar** üçüncü (şirketlere/kişilere bağlı)
+2. İkinci olarak **Kişiler** (companyId üzerinden Şirketlere bağlı)
+3. Üçüncü olarak **Fırsatlar** (Şirketlere/Kişilere bağlı)
 4. **İlişkileri olan özel nesneler** en son
 
 Neden? Bire-çok ilişkinin "bir" tarafı, ona referans verebilmeden önce mevcut olmalıdır. Örneğin, o şirketin kimliğine sahip bir Kişi içe aktarmadan önce Şirket kaydının mevcut olması gerekir.

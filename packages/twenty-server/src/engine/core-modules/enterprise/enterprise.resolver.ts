@@ -2,13 +2,12 @@
 
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
-import { EnterpriseExceptionFilter } from 'src/engine/core-modules/enterprise/enterprise-exception.filter';
 import { EnterpriseLicenseInfoDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-license-info.dto';
 import { EnterpriseSubscriptionStatusDTO } from 'src/engine/core-modules/enterprise/dtos/enterprise-subscription-status.dto';
+import { EnterpriseExceptionFilter } from 'src/engine/core-modules/enterprise/enterprise-exception.filter';
 import {
   EnterpriseException,
   EnterpriseExceptionCode,
@@ -17,28 +16,44 @@ import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/servic
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { ConfigVariableExceptionCode } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 
+// Server-binding rejections that should surface as an activation failure with
+// their own user-facing message (rather than being silently swallowed).
+const SERVER_BINDING_REJECTION_CODES: EnterpriseExceptionCode[] = [
+  EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER,
+  EnterpriseExceptionCode.ENTERPRISE_MISSING_SERVER_ID,
+  EnterpriseExceptionCode.ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION,
+  EnterpriseExceptionCode.ENTERPRISE_DEV_SLOT_IN_USE,
+];
+
 @Resolver()
 @UsePipes(ResolverValidationPipe)
 @UseFilters(EnterpriseExceptionFilter, PreventNestToAutoLogGraphqlErrorsFilter)
 export class EnterpriseResolver {
-  constructor(
-    private readonly enterprisePlanService: EnterprisePlanService,
-    @InjectRepository(UserWorkspaceEntity)
-    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
-  ) {}
+  constructor(private readonly enterprisePlanService: EnterprisePlanService) {}
 
-  private async getActiveUserWorkspaceCount(): Promise<number> {
-    const count = await this.userWorkspaceRepository.count({
-      where: { deletedAt: IsNull() },
-    });
+  // Turn a server-binding rejection from the last refresh into a user-facing
+  // error, so activation and manual refresh surface the real reason instead of
+  // silently failing.
+  private throwIfServerBindingRejected(): void {
+    const rejectionCode =
+      this.enterprisePlanService.getLastRefreshRejectionCode();
 
-    return Math.max(1, count);
+    if (
+      isDefined(rejectionCode) &&
+      SERVER_BINDING_REJECTION_CODES.includes(
+        rejectionCode as EnterpriseExceptionCode,
+      )
+    ) {
+      throw new EnterpriseException(
+        `Enterprise key rejected: ${rejectionCode}`,
+        rejectionCode as EnterpriseExceptionCode,
+      );
+    }
   }
 
   @Query(() => String, { nullable: true })
@@ -67,7 +82,7 @@ export class EnterpriseResolver {
     @Args('billingInterval', { nullable: true }) billingInterval?: string,
   ): Promise<string | null> {
     const interval = billingInterval === 'yearly' ? 'yearly' : 'monthly';
-    const seatCount = await this.getActiveUserWorkspaceCount();
+    const seatCount = await this.enterprisePlanService.getBillableSeatCount();
 
     return this.enterprisePlanService.getCheckoutUrl(interval, seatCount);
   }
@@ -91,7 +106,30 @@ export class EnterpriseResolver {
     NoPermissionGuard,
   )
   async refreshEnterpriseValidityToken(): Promise<boolean> {
-    return this.enterprisePlanService.refreshValidityToken();
+    const refreshed = await this.enterprisePlanService.refreshValidityToken();
+
+    this.throwIfServerBindingRejected();
+
+    return refreshed;
+  }
+
+  @Mutation(() => EnterpriseLicenseInfoDTO)
+  @UseGuards(
+    WorkspaceAuthGuard,
+    BillingDisabledGuard,
+    AdminPanelGuard,
+    NoPermissionGuard,
+  )
+  async releaseEnterpriseServerBinding(): Promise<EnterpriseLicenseInfoDTO> {
+    await this.enterprisePlanService.releaseServerBinding();
+
+    await this.enterprisePlanService.refreshValidityToken();
+
+    const seatCount = await this.enterprisePlanService.getBillableSeatCount();
+
+    await this.enterprisePlanService.reportSeats(seatCount);
+
+    return this.enterprisePlanService.getLicenseInfo();
   }
 
   @Mutation(() => EnterpriseLicenseInfoDTO)
@@ -118,7 +156,9 @@ export class EnterpriseResolver {
 
       await this.enterprisePlanService.refreshValidityToken();
 
-      const seatCount = await this.getActiveUserWorkspaceCount();
+      this.throwIfServerBindingRejected();
+
+      const seatCount = await this.enterprisePlanService.getBillableSeatCount();
 
       await this.enterprisePlanService.reportSeats(seatCount);
 

@@ -1,141 +1,219 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { i18n } from '@lingui/core';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import { isDefined } from 'twenty-shared/utils';
+import { DataSource, type EntityManager } from 'typeorm';
+
+import {
+  BillingException,
+  BillingExceptionCode,
+} from 'src/engine/core-modules/billing/billing.exception';
+import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
+import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
-import { StripeCreditGrantService } from 'src/engine/core-modules/billing/stripe/services/stripe-credit-grant.service';
+import { buildBillingCreditStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-credit-state-lock-key.util';
+import { computeCarryForwardGrants } from 'src/engine/core-modules/billing/utils/compute-carry-forward-grants.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+type ProcessRolloverParams = {
+  workspaceId: string;
+  closingPeriodStart: Date;
+  closingPeriodEnd: Date;
+  closingAllowanceMicro: number;
+  nextPeriodStart: Date;
+  nextAllowanceMicro: number;
+};
+
+// The transition writes more rows than a single grant does, so it is given more
+// room than the lock's default before it gives up.
+const ROLLOVER_LOCK_OPTIONS = { ms: 200, maxRetries: 50, ttl: 30_000 };
 
 @Injectable()
 export class BillingCreditRolloverService {
   constructor(
-    private readonly stripeCreditGrantService: StripeCreditGrantService,
-    private readonly stripeBillingMeterEventService: StripeBillingMeterEventService,
     private readonly billingUsageService: BillingUsageService,
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    private readonly billingCreditGrantService: BillingCreditGrantService,
+    private readonly billingCreditService: BillingCreditService,
+    private readonly cacheLockService: CacheLockService,
+    private readonly twentyConfigService: TwentyConfigService,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
-  async processRolloverOnPeriodTransition({
-    stripeCustomerId,
-    subscriptionId,
-    stripeMeterId,
-    previousPeriodStart,
-    previousPeriodEnd,
-    newPeriodEnd,
-    tierQuantity,
-    unitPriceCents,
-  }: {
-    stripeCustomerId: string;
-    subscriptionId: string;
-    stripeMeterId: string;
-    previousPeriodStart: Date;
-    previousPeriodEnd: Date;
-    newPeriodEnd: Date;
-    tierQuantity: number;
-    unitPriceCents: number;
-  }): Promise<void> {
-    // Void any existing rollover grants before creating a new one
-    // This ensures only one rollover grant is active at a time
-    await this.voidExistingRolloverGrants(stripeCustomerId);
+  async processRolloverOnPeriodTransition(
+    params: ProcessRolloverParams,
+  ): Promise<void> {
+    const { workspaceId, closingPeriodStart, closingPeriodEnd } = params;
 
-    const usedCredits =
-      await this.stripeBillingMeterEventService.sumMeterEvents(
-        stripeMeterId,
-        stripeCustomerId,
-        previousPeriodStart,
-        previousPeriodEnd,
+    // Read outside the lock: usage comes from ClickHouse and no credit write
+    // can change it, so paying that latency while holding the lock would only
+    // stall concurrent grants.
+    const usageMicro =
+      await this.billingUsageService.getCreditsUsedBetweenOrNull({
+        workspaceId,
+        from: closingPeriodStart,
+        to: closingPeriodEnd,
+      });
+
+    // Reading usage as zero when the query failed would roll a full unused
+    // allowance over to every workspace invoiced during the outage. Throwing
+    // fails the webhook so Stripe redelivers it; returning normally would
+    // answer 200 and the transition would never run, closing no grants and
+    // carrying nothing forward, so the workspace silently loses its balance
+    // at expiry.
+    if (!isDefined(usageMicro)) {
+      throw new BillingException(
+        `Cannot roll credits over for workspace ${workspaceId}: usage for the period starting ${closingPeriodStart.toISOString()} could not be read`,
+        BillingExceptionCode.BILLING_USAGE_UNAVAILABLE,
       );
-
-    const unusedCredits = Math.max(0, tierQuantity - usedCredits);
-
-    if (unusedCredits <= 0) {
-      await this.refreshCreditBalance(stripeCustomerId, unitPriceCents);
-
-      return;
     }
 
-    const rolloverAmount = Math.min(unusedCredits, tierQuantity);
+    // Everything from here reads the ledger, decides from that snapshot, then
+    // writes it back. A grant landing in between would either be carried twice
+    // or dropped, so the whole read-decide-write runs alone.
+    await this.cacheLockService.withLock(
+      () => this.carryGrantsForward({ ...params, usageMicro }),
+      buildBillingCreditStateLockKey(workspaceId),
+      ROLLOVER_LOCK_OPTIONS,
+    );
+  }
 
-    await this.stripeCreditGrantService.createCreditGrant({
-      customerId: stripeCustomerId,
-      creditUnits: rolloverAmount,
-      unitPriceCents,
-      expiresAt: newPeriodEnd,
-      metadata: {
-        type: 'rollover',
-        fromPeriodStart: previousPeriodStart.toISOString(),
-        fromPeriodEnd: previousPeriodEnd.toISOString(),
-        subscriptionId,
-      },
+  private async carryGrantsForward(
+    params: ProcessRolloverParams & { usageMicro: number },
+  ): Promise<void> {
+    const { workspaceId, nextPeriodStart, nextAllowanceMicro } = params;
+
+    const rolloverCapMultiplier = this.twentyConfigService.get(
+      'BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER',
+    );
+
+    // Closing the old grants and writing their successors is one settlement:
+    // committing the first half alone would leave the workspace with every
+    // grant closed and nothing carrying the unspent part forward.
+    const { carriedForwardMicro, hasReplayedGrant } =
+      await this.dataSource.transaction(async (entityManager) =>
+        this.settleGrants({
+          ...params,
+          entityManager,
+          rolloverCapMicro: (rolloverCapMultiplier - 1) * nextAllowanceMicro,
+        }),
+      );
+
+    await this.billingCreditService.refreshWorkspaceCreditState({
+      workspaceId,
+      availableDeltaMicro: carriedForwardMicro,
+      isReplay: hasReplayedGrant,
+      adjustmentKey: buildRolloverAdjustmentKey(nextPeriodStart),
+    });
+  }
+
+  private async settleGrants({
+    entityManager,
+    workspaceId,
+    closingPeriodStart,
+    closingPeriodEnd,
+    closingAllowanceMicro,
+    nextPeriodStart,
+    usageMicro,
+    rolloverCapMicro,
+  }: ProcessRolloverParams & {
+    usageMicro: number;
+    rolloverCapMicro: number;
+    entityManager: EntityManager;
+  }): Promise<{ carriedForwardMicro: number; hasReplayedGrant: boolean }> {
+    const closingGrants =
+      await this.billingCreditGrantService.findGrantsLiveDuringPeriod(
+        {
+          workspaceId,
+          periodStart: closingPeriodStart,
+          periodEnd: closingPeriodEnd,
+        },
+        entityManager,
+      );
+
+    const carryForwardGrants = computeCarryForwardGrants({
+      allowanceMicro: closingAllowanceMicro,
+      liveGrants: closingGrants.map((grant) => ({
+        grantId: grant.id,
+        type: grant.type,
+        amountMicro: grant.amountMicro,
+        createdAt: grant.createdAt,
+        expiresAt: grant.expiresAt,
+      })),
+      usageMicro,
+      rolloverCapMicro,
+      boundary: closingPeriodEnd,
     });
 
-    await this.refreshCreditBalance(stripeCustomerId, unitPriceCents);
-  }
+    await this.billingCreditGrantService.closeGrantsAtPeriodEnd(
+      { workspaceId, periodEnd: closingPeriodEnd },
+      entityManager,
+    );
 
-  // V2 path — reads usedCredits from ClickHouse; writes rollover directly to creditBalanceMicro
-  async processRolloverOnPeriodTransitionV2({
-    workspaceId,
-    stripeCustomerId,
-    tierQuantity,
-    previousPeriodStart,
-  }: {
-    workspaceId: string;
-    stripeCustomerId: string;
-    tierQuantity: number;
-    previousPeriodStart: Date;
-  }): Promise<void> {
-    const usedCredits =
-      await this.billingUsageService.getCurrentPeriodCreditsUsed(
-        workspaceId,
-        previousPeriodStart,
+    let carriedForwardMicro = 0;
+    let hasReplayedGrant = false;
+
+    for (const carryForwardGrant of carryForwardGrants) {
+      const grant = await this.billingCreditGrantService.createGrant(
+        {
+          workspaceId,
+          amountMicro: carryForwardGrant.amountMicro,
+          type: carryForwardGrant.type,
+          sourceGrantId: carryForwardGrant.sourceGrantId,
+          effectiveAt: nextPeriodStart,
+          // Null for everything but a time-boxed grant, whose deadline the
+          // successor inherits. Stamping the period end here instead would make
+          // every balance depend on the next transition running, which is the
+          // failure this settlement exists to survive.
+          expiresAt: carryForwardGrant.expiresAt,
+          // Pinned to UTC: Stripe's boundaries are UTC instants, and a
+          // midnight boundary rendered in the server's local zone dates to the
+          // previous day.
+          reason: `Carried over from the period starting ${i18n.date(
+            closingPeriodStart,
+            { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' },
+          )}`,
+          idempotencyKey: buildCarryForwardIdempotencyKey({
+            workspaceId,
+            nextPeriodStart,
+            type: carryForwardGrant.type,
+            sourceGrantId: carryForwardGrant.sourceGrantId,
+          }),
+        },
+        entityManager,
       );
 
-    const unusedCredits = Math.max(0, tierQuantity - usedCredits);
-    const rolloverAmount = Math.min(unusedCredits, tierQuantity);
-
-    await this.billingCustomerRepository.update(
-      { stripeCustomerId },
-      { creditBalanceMicro: rolloverAmount },
-    );
-  }
-
-  private async refreshCreditBalance(
-    stripeCustomerId: string,
-    unitPriceCents: number,
-  ): Promise<void> {
-    const creditBalanceMicro =
-      await this.stripeCreditGrantService.getCustomerCreditBalance(
-        stripeCustomerId,
-        unitPriceCents,
-      );
-
-    await this.billingCustomerRepository.update(
-      { stripeCustomerId },
-      { creditBalanceMicro },
-    );
-  }
-
-  private async voidExistingRolloverGrants(
-    stripeCustomerId: string,
-  ): Promise<void> {
-    const existingGrants =
-      await this.stripeCreditGrantService.listCreditGrants(stripeCustomerId);
-
-    const rolloverGrants = existingGrants.filter(
-      (grant) => grant.metadata?.type === 'rollover' && !grant.voided_at,
-    );
-
-    if (rolloverGrants.length === 0) {
-      return;
+      if (isDefined(grant)) {
+        carriedForwardMicro += grant.amountMicro;
+      } else {
+        hasReplayedGrant = true;
+      }
     }
 
-    for (const grant of rolloverGrants) {
-      await this.stripeCreditGrantService.voidCreditGrant(grant.id);
-    }
+    return { carriedForwardMicro, hasReplayedGrant };
   }
 }
+
+const buildRolloverAdjustmentKey = (nextPeriodStart: Date): string =>
+  `rollover:${nextPeriodStart.toISOString()}`;
+
+// Stripe redelivers webhooks, so the whole transition has to be replayable.
+const buildCarryForwardIdempotencyKey = ({
+  workspaceId,
+  nextPeriodStart,
+  type,
+  sourceGrantId,
+}: {
+  workspaceId: string;
+  nextPeriodStart: Date;
+  type: string;
+  sourceGrantId: string | null;
+}): string =>
+  `carry-forward:${workspaceId}:${nextPeriodStart.toISOString()}:${type}:${
+    sourceGrantId ?? 'allowance'
+  }`;

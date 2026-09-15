@@ -7,7 +7,7 @@ import { FileFolder } from 'twenty-shared/types';
 import { Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import {
   FileStorageException,
   FileStorageExceptionCode,
@@ -165,6 +165,7 @@ export class SdkClientArchiveService {
       workspaceId,
       applicationId,
       applicationUniversalIdentifier,
+      trigger: 'missing-archive',
     });
   }
 }

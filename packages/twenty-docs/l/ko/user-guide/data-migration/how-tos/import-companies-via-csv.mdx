@@ -12,23 +12,23 @@ description: Twenty로 회사를 가져오는 포괄적인 단계별 가이드.
 ### 사전 준비 체크리스트
 
 <Check>
-  파일이 CSV, XLSX 또는 XLS 형식임
+파일이 CSV, XLSX 또는 XLS 형식임
 </Check>
 
 <Check>
-  파일의 레코드가 10,000개 미만임
+파일의 레코드가 10,000개 미만임
 </Check>
 
 <Check>
-  파일에 중복된 도메인이 없음
+파일에 중복된 도메인이 없음
 </Check>
 
 <Check>
-  모든 사용자 정의 필드가 **Settings → Data Model**에 존재함
+모든 사용자 정의 필드가 **Settings → Data Model**에 존재함
 </Check>
 
 <Note>
-  10,000개 이상의 회사를 가져와야 하나요? 여러 파일로 분할하거나 [API 가져오기](/l/ko/user-guide/data-migration/how-tos/import-data-via-api)를 사용하세요.
+10,000개 이상의 회사를 가져와야 하나요? 여러 파일로 분할하거나 [API 가져오기](/l/ko/user-guide/data-migration/how-tos/import-data-via-api)를 사용하세요.
 </Note>
 
 ## 1단계: 회사 데이터 준비
@@ -46,9 +46,9 @@ description: Twenty로 회사를 가져오는 포괄적인 단계별 가이드.
 ### 도메인 형식
 
 <Warning>
-  **도메인에는 `https://domain.com` 형식을 사용하세요.**
+**도메인에는 `https://domain.com` 형식을 사용하세요.**
 
-  이는 이메일/캘린더 동기화로 회사가 자동 생성될 때 사용하는 형식과 일치하여, 이후 중복을 방지합니다.
+이는 이메일/캘린더 동기화로 회사가 자동 생성될 때 사용하는 형식과 일치하여, 이후 중복을 방지합니다.
 </Warning>
 
 **도메인 열:**
@@ -74,7 +74,7 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 ```
 
 <Note>
-  **전문가 팁:** 가져오기 중에 **Download sample file**을 클릭하여 Twenty가 기대하는 정확한 열 이름을 확인하세요.
+**전문가 팁:** 가져오기 중에 **Download sample file**을 클릭하여 Twenty가 기대하는 정확한 열 이름을 확인하세요.
 </Note>
 
 ## 2단계: 가져오기 기능에 액세스
@@ -123,7 +123,7 @@ Twenty가 열을 필드에 자동으로 매칭하려고 시도합니다. 검토 
 3. 필요하면 새 옵션을 만드세요
 
 <Note>
-  선택 옵션은 표시 레이블이 아니라 **API 이름**을 사용합니다. API 이름을 보려면 **Settings → Data Model**에서 **Advanced mode**를 활성화하세요.
+선택 옵션은 표시 레이블이 아니라 **API 이름**을 사용합니다. API 이름을 보려면 **Settings → Data Model**에서 **Advanced mode**를 활성화하세요.
 </Note>
 
 ## 6단계: 오류 검토 및 수정

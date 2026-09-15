@@ -1,7 +1,7 @@
-import { type PropertySchema } from './PropertySchema';
-import { SVG_PRESENTATION_PROPERTIES } from './SvgPresentationProperties';
+import { type PropertySchema } from '@/types/PropertySchema';
+import { SVG_PRESENTATION_PROPERTIES } from '@/constants/SvgPresentationProperties';
 
-export type AllowedHtmlElement = {
+type AllowedHtmlElement = {
   tag: string;
   name: string;
   properties: Record<string, PropertySchema>;
@@ -50,6 +50,7 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       width: { type: 'number', optional: true },
       height: { type: 'number', optional: true },
     },
+    events: ['load', 'error'],
   },
   { tag: 'html-ul', name: 'HtmlUl', properties: {} },
   { tag: 'html-ol', name: 'HtmlOl', properties: {} },
@@ -80,7 +81,19 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       disabled: { type: 'boolean', optional: true },
       checked: { type: 'boolean', optional: true },
       readOnly: { type: 'boolean', optional: true },
+      accept: { type: 'string', optional: true },
+      multiple: { type: 'boolean', optional: true },
+      capture: { type: 'string', optional: true },
     },
+    events: [
+      'beforeinput',
+      'compositionstart',
+      'compositionupdate',
+      'compositionend',
+      'copy',
+      'paste',
+      'cut',
+    ],
   },
   {
     tag: 'html-textarea',
@@ -94,6 +107,15 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
       rows: { type: 'number', optional: true },
       cols: { type: 'number', optional: true },
     },
+    events: [
+      'beforeinput',
+      'compositionstart',
+      'compositionupdate',
+      'compositionend',
+      'copy',
+      'paste',
+      'cut',
+    ],
   },
   {
     tag: 'html-select',
@@ -330,6 +352,7 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     properties: {
       open: { type: 'boolean', optional: true },
     },
+    events: ['toggle'],
   },
   { tag: 'html-summary', name: 'HtmlSummary', properties: {} },
   { tag: 'html-address', name: 'HtmlAddress', properties: {} },
@@ -339,6 +362,7 @@ export const ALLOWED_HTML_ELEMENTS: AllowedHtmlElement[] = [
     properties: {
       open: { type: 'boolean', optional: true },
     },
+    events: ['toggle'],
   },
   { tag: 'html-hgroup', name: 'HtmlHgroup', properties: {} },
   { tag: 'html-search', name: 'HtmlSearch', properties: {} },

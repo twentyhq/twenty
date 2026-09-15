@@ -13,9 +13,7 @@ import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace
   key: 'workflow.restoreOne',
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class WorkflowRestoreOnePostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class WorkflowRestoreOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
   ) {}

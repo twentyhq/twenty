@@ -8,7 +8,7 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
   <Accordion title="Perché non riesco ad attivare un flusso di lavoro?">
     È probabilmente un problema di permessi. Hai bisogno dell'accesso ai flussi di lavoro per crearli e attivarli.
 
-    **Soluzione**: Contatta l'amministratore dello spazio di lavoro per concederti l'accesso ai flussi di lavoro in **Impostazioni → Ruoli**.
+    **Soluzione**: Contatta l'amministratore dello spazio di lavoro per concederti l'accesso ai flussi di lavoro in **Impostazioni → Membri → Ruoli**.
 
     Se non vedi affatto la sezione Flussi di lavoro nella barra laterale, ciò conferma che è un problema di permessi.
   </Accordion>
@@ -45,11 +45,11 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
     **Soluzione temporanea**: Crea più diramazioni dal tuo passaggio, ciascuna iniziando con un'azione **Filtro**:
 
     ```
-    Passaggio 1
+    Step 1
        │
-       ├── Diramazione A: Filtro (condizione = true) → Azioni...
+       ├── Branch A: Filter (condition = true) → Actions...
        │
-       └── Diramazione B: Filtro (condizione = false) → Azioni...
+       └── Branch B: Filter (condition = false) → Actions...
     ```
 
     Solo la diramazione in cui la condizione del filtro è soddisfatta eseguirà le azioni successive.
@@ -155,11 +155,9 @@ description: Domande frequenti sui flussi di lavoro in Twenty.
   </Accordion>
 
   <Accordion title="Perché non vedo le esecuzioni dei miei flussi di lavoro?">
-    Le esecuzioni dei flussi di lavoro potrebbero non riuscire immediatamente a causa dei limiti di frequenza.
+    Le esecuzioni dei flussi di lavoro potrebbero non riuscire immediatamente a causa dei limiti di frequenza. Twenty impone un limite rigido di 5.000 esecuzioni all'ora per spazio di lavoro.
 
-    **Limite hard: 5.000 esecuzioni all'ora per spazio di lavoro.**
-
-    Se superi questo limite, i flussi di lavoro vengono contrassegnati immediatamente come non riusciti e non appariranno nell'elenco delle esecuzioni come previsto.
+    Se superi questo limite, i flussi di lavoro vengono immediatamente contrassegnati come non riusciti e non appariranno nell'elenco delle esecuzioni.
 
     **Scenari comuni che raggiungono questo limite**:
     * Selezionare più di 5.000 record con un trigger manuale Single

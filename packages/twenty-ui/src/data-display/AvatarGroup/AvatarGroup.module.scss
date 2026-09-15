@@ -1,0 +1,24 @@
+.container {
+  align-items: center;
+  display: flex;
+}
+
+.itemContainer {
+  display: flex;
+
+  &[data-overlap='right'] {
+    margin-right: calc(-1 * var(--avatar-group-overlap-offset));
+  }
+
+  &[data-overlap='right']:last-child {
+    margin-right: 0;
+  }
+
+  &[data-overlap='left'] {
+    margin-left: calc(-1 * var(--avatar-group-overlap-offset));
+  }
+
+  &[data-overlap='left']:first-child {
+    margin-left: 0;
+  }
+}

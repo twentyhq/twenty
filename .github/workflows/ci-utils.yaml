@@ -25,11 +25,26 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.action != 'closed'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Utils / Run Danger.js
-        run: cd packages/twenty-utils && npx nx danger:ci
+        # Danger's bundled node-fetch intermittently fails to decode gzipped
+        # GitHub API responses with ERR_STREAM_PREMATURE_CLOSE. Retry to absorb
+        # those transient fetch errors instead of failing the whole check.
+        run: |
+          cd packages/twenty-utils
+          for attempt in 1 2 3; do
+            if npx nx danger:ci; then
+              exit 0
+            fi
+            if [ "${attempt}" -lt 3 ]; then
+              echo "Danger.js attempt ${attempt} failed, retrying in 5s..."
+              sleep 5
+            fi
+          done
+          echo "Danger.js failed after 3 attempts"
+          exit 1
         env:
           DANGER_GITHUB_API_TOKEN: ${{ github.token }}
 
@@ -38,10 +53,23 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
       - name: Install dependencies
         uses: ./.github/actions/yarn-install
       - name: Run congratulate-dangerfile.js
-        run: cd packages/twenty-utils && npx nx danger:congratulate
+        # Same transient ERR_STREAM_PREMATURE_CLOSE protection as danger-js.
+        run: |
+          cd packages/twenty-utils
+          for attempt in 1 2 3; do
+            if npx nx danger:congratulate; then
+              exit 0
+            fi
+            if [ "${attempt}" -lt 3 ]; then
+              echo "Danger.js congratulate attempt ${attempt} failed, retrying in 5s..."
+              sleep 5
+            fi
+          done
+          echo "Danger.js congratulate failed after 3 attempts"
+          exit 1
         env:
           DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}

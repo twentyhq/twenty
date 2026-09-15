@@ -11,9 +11,10 @@ import { transformEmailsValue } from 'src/engine/core-modules/record-transformer
 import { transformLinksValue } from 'src/engine/core-modules/record-transformer/utils/transform-links-value.util';
 import { transformPhonesValue } from 'src/engine/core-modules/record-transformer/utils/transform-phones-value.util';
 import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
+import { isFieldMetadataSettingsOfType } from 'src/engine/metadata-modules/field-metadata/utils/is-field-metadata-settings-of-type.util';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -26,7 +27,7 @@ export class RecordInputTransformerService {
   }: {
     recordInput: Partial<ObjectRecord>;
     flatObjectMetadata: FlatObjectMetadata;
-    flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   }): Promise<Partial<ObjectRecord>> {
     let transformedEntries = {};
 
@@ -52,7 +53,7 @@ export class RecordInputTransformerService {
       const transformedValue = this.parseSubFields(
         fieldMetadata.type,
         await this.transformFieldValue(
-          fieldMetadata.type,
+          fieldMetadata,
           this.stringifySubFields(fieldMetadata.type, value),
         ),
       );
@@ -64,16 +65,16 @@ export class RecordInputTransformerService {
   }
 
   private async transformFieldValue(
-    fieldType: FieldMetadataType,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    fieldMetadata: OrmFlatFieldMetadata,
+    // oxlint-disable-next-line typescript/no-explicit-any
     value: any,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
   ): Promise<any> {
     if (!isDefined(value)) {
       return value;
     }
 
-    switch (fieldType) {
+    switch (fieldMetadata.type) {
       case FieldMetadataType.UUID:
         return value || null;
       case FieldMetadataType.NUMBER:
@@ -81,7 +82,15 @@ export class RecordInputTransformerService {
       case FieldMetadataType.RICH_TEXT:
         return await transformRichTextValue(value);
       case FieldMetadataType.LINKS:
-        return transformLinksValue(value);
+        return transformLinksValue({
+          input: value,
+          settings: isFieldMetadataSettingsOfType(
+            fieldMetadata.settings,
+            FieldMetadataType.LINKS,
+          )
+            ? fieldMetadata.settings
+            : null,
+        });
       case FieldMetadataType.EMAILS:
         return transformEmailsValue(value);
       case FieldMetadataType.PHONES:
@@ -91,7 +100,7 @@ export class RecordInputTransformerService {
     }
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   private stringifySubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -120,7 +129,7 @@ export class RecordInputTransformerService {
     );
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   private parseSubFields(fieldMetadataType: FieldMetadataType, value: any) {
     const compositeType = compositeTypeDefinitions.get(fieldMetadataType);
 
@@ -129,7 +138,7 @@ export class RecordInputTransformerService {
     }
 
     return Object.entries(value).reduce(
-      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       (acc, [subFieldName, subFieldValue]: [string, any]) => {
         const subFieldType = compositeType.properties.find(
           (property) => property.name === subFieldName,

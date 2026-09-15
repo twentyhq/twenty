@@ -27,8 +27,7 @@ const StyledThreadList = styled.div`
   flex: 1;
   flex-direction: column;
   min-height: 0;
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[0]};
-  width: calc(100% - ${themeCssVariables.spacing[2]});
+  width: 100%;
 `;
 
 const StyledSectionsContainer = styled.div`

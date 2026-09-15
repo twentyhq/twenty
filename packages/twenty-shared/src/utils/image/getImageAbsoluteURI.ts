@@ -7,7 +7,13 @@ export const getImageAbsoluteURI = ({
   imageUrl,
   baseUrl,
 }: getImageAbsoluteURIProps): string => {
-  if (imageUrl.startsWith('https:') || imageUrl.startsWith('http:')) {
+  const lowerCaseImageUrl = imageUrl.toLowerCase();
+  const isAlreadyAbsoluteUri =
+    ['http:', 'https:', 'data:', 'blob:'].some((scheme) =>
+      lowerCaseImageUrl.startsWith(scheme),
+    ) || imageUrl.startsWith('//');
+
+  if (isAlreadyAbsoluteUri) {
     return imageUrl;
   }
 

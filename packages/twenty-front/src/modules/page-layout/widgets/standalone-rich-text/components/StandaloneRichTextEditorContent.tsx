@@ -1,9 +1,8 @@
 import { useCallback, useState } from 'react';
 
-import { type Attachment } from '@/activities/files/types/Attachment';
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { isDashboardInEditModeComponentState } from '@/page-layout/states/isDashboardInEditModeComponentState';
-import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { DashboardsBlockEditor } from '@/page-layout/widgets/standalone-rich-text/components/DashboardsBlockEditor';
 import { StandaloneRichTextWidgetAutoFocusEffect } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidgetAutoFocusEffect';
@@ -11,13 +10,11 @@ import { DASHBOARD_BLOCK_SCHEMA } from '@/page-layout/widgets/standalone-rich-te
 import { filterSupportedBlocks } from '@/page-layout/widgets/standalone-rich-text/utils/filterSupportedBlocks';
 
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
-import { useAttachmentSync } from '@/blocknote-editor/hooks/useAttachmentSync';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
 import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
@@ -29,16 +26,16 @@ import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 type StandaloneRichTextEditorContentProps = {
   widget: PageLayoutWidget;
   currentBody: string;
-  attachments: Attachment[];
   isEditable: boolean;
+  shouldFocus: boolean;
   containerElement: HTMLDivElement | null;
 };
 
 export const StandaloneRichTextEditorContent = ({
   widget,
   currentBody,
-  attachments,
   isEditable,
+  shouldFocus,
   containerElement,
 }: StandaloneRichTextEditorContentProps) => {
   const { updatePageLayoutWidget } = useUpdatePageLayoutWidget();
@@ -48,25 +45,17 @@ export const StandaloneRichTextEditorContent = ({
   const isDashboardInEditModeState = useAtomComponentStateCallbackState(
     isDashboardInEditModeComponentState,
   );
-  const pageLayoutEditingWidgetIdState = useAtomComponentStateCallbackState(
-    pageLayoutEditingWidgetIdComponentState,
-  );
-
-  const { syncAttachments } = useAttachmentSync(attachments);
-
   const store = useStore();
 
   const shouldPersistDraft = useCallback(() => {
     const isDashboardInEditMode = store.get(isDashboardInEditModeState);
-    const editingWidgetId = store.get(pageLayoutEditingWidgetIdState);
-
-    return isDashboardInEditMode && editingWidgetId === widget.id;
-  }, [
-    isDashboardInEditModeState,
-    pageLayoutEditingWidgetIdState,
-    widget.id,
-    store,
-  ]);
+    const isLayoutCustomizationModeEnabled = store.get(
+      isLayoutCustomizationModeEnabledState.atom,
+    );
+    return (
+      isEditable && (isDashboardInEditMode || isLayoutCustomizationModeEnabled)
+    );
+  }, [isDashboardInEditModeState, isEditable, store]);
 
   const [initialContent] = useState(() =>
     filterSupportedBlocks(parseInitialBlocknote(currentBody)),
@@ -96,21 +85,10 @@ export const StandaloneRichTextEditorContent = ({
     });
   }, 300);
 
-  const handleAttachmentSync = useDebouncedCallback(
-    async (newStringifiedBody: string, previousBody: string) => {
-      if (!shouldPersistDraft()) {
-        return;
-      }
-      await syncAttachments(newStringifiedBody, previousBody);
-    },
-    500,
-  );
-
   const handleEditorChange = () => {
     const newStringifiedBody = JSON.stringify(editor.document) ?? '';
 
     handlePersistBody(newStringifiedBody);
-    handleAttachmentSync(newStringifiedBody, currentBody);
   };
 
   const handleBlockEditorFocus = () => {
@@ -134,7 +112,7 @@ export const StandaloneRichTextEditorContent = ({
   return (
     <>
       <StandaloneRichTextWidgetAutoFocusEffect
-        shouldFocus={isEditable}
+        shouldFocus={shouldFocus}
         editor={editor}
         containerElement={containerElement}
       />
@@ -144,7 +122,6 @@ export const StandaloneRichTextEditorContent = ({
         onChange={handleEditorChange}
         editor={editor}
         readonly={!isEditable}
-        boundaryElement={containerElement}
       />
     </>
   );

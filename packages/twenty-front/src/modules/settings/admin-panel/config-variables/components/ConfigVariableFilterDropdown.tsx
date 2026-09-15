@@ -4,7 +4,7 @@ import { type ConfigVariableSourceFilter } from '@/settings/admin-panel/config-v
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
-import { IconSettings } from 'twenty-ui/display';
+import { IconSettings } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/input';
 import { ConfigVariableOptionsDropdownContent } from './ConfigVariableOptionsDropdownContent';
 

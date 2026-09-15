@@ -4,6 +4,8 @@ import {
   isObject,
   isString,
 } from '@sniptt/guards';
+import isEqual from 'lodash.isequal';
+import { Temporal } from 'temporal-polyfill';
 import {
   type StepFilter,
   type StepFilterGroup,
@@ -13,6 +15,8 @@ import {
 import {
   convertViewFilterOperandToCoreOperand as convertViewFilterOperandDeprecated,
   isDefined,
+  isSamePlainDate,
+  parseToInstantOrThrow,
 } from 'twenty-shared/utils';
 import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
 
@@ -75,6 +79,8 @@ function evaluateFilter(
       return evaluateBooleanFilter(filterWithConvertedOperand);
     case 'UUID':
       return evaluateUuidFilter(filterWithConvertedOperand);
+    case 'RATING':
+      return evaluateRatingFilter(filterWithConvertedOperand);
     case 'RELATION':
       return evaluateRelationFilter(filterWithConvertedOperand);
     case 'CURRENCY':
@@ -131,7 +137,6 @@ function evaluateFilterGroup(
 }
 
 function contains(leftValue: unknown, rightValue: unknown): boolean {
-  // if two arrays, check if any item is in the other array
   if (Array.isArray(leftValue) && Array.isArray(rightValue)) {
     return leftValue.some((item) => rightValue.includes(item));
   }
@@ -181,6 +186,10 @@ function evaluateTextAndArrayFilter(
         (isDefined(nullEquivalentRightValue) &&
           isNotEmptyTextOrArray(filter.leftOperand))
       );
+    case ViewFilterOperand.IS:
+      return isEqual(filter.leftOperand, filter.rightOperand);
+    case ViewFilterOperand.IS_NOT:
+      return !isEqual(filter.leftOperand, filter.rightOperand);
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(filter.leftOperand);
 
@@ -212,46 +221,83 @@ function evaluateBooleanFilter(filter: ResolvedFilter): boolean {
   }
 }
 
+function parseDateOperandToInstant(value: unknown): Temporal.Instant | null {
+  try {
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      return Temporal.Instant.fromEpochMilliseconds(value.getTime());
+    }
+
+    return parseToInstantOrThrow(String(value));
+  } catch {
+    return null;
+  }
+}
+
+function toUtcPlainDate(instant: Temporal.Instant): Temporal.PlainDate {
+  return instant.toZonedDateTimeISO('UTC').toPlainDate();
+}
+
 function evaluateDateFilter(filter: ResolvedFilter): boolean {
-  // TODO: refactor this with Temporal
-  const dateLeftValue = new Date(String(filter.leftOperand));
+  if (filter.operand === ViewFilterOperand.IS_EMPTY) {
+    return !isDefined(filter.leftOperand) || filter.leftOperand === '';
+  }
+
+  if (filter.operand === ViewFilterOperand.IS_NOT_EMPTY) {
+    return isDefined(filter.leftOperand) && filter.leftOperand !== '';
+  }
+
+  const leftInstant = parseDateOperandToInstant(filter.leftOperand);
+
+  if (!isDefined(leftInstant)) {
+    return false;
+  }
 
   switch (filter.operand) {
-    case ViewFilterOperand.IS:
+    case ViewFilterOperand.IS: {
+      const rightInstant = parseDateOperandToInstant(filter.rightOperand);
+
       return (
-        dateLeftValue.getDate() ===
-        new Date(String(filter.rightOperand)).getDate()
+        isDefined(rightInstant) &&
+        isSamePlainDate(
+          toUtcPlainDate(leftInstant),
+          toUtcPlainDate(rightInstant),
+        )
       );
+    }
+
     case ViewFilterOperand.IS_IN_PAST:
-      return dateLeftValue.getTime() < Date.now();
+      return Temporal.Instant.compare(leftInstant, Temporal.Now.instant()) < 0;
 
     case ViewFilterOperand.IS_IN_FUTURE:
-      return dateLeftValue.getTime() > Date.now();
+      return Temporal.Instant.compare(leftInstant, Temporal.Now.instant()) > 0;
 
     case ViewFilterOperand.IS_TODAY:
-      return dateLeftValue.toDateString() === new Date().toDateString();
-
-    case ViewFilterOperand.IS_BEFORE:
-      return (
-        dateLeftValue.getTime() <
-        new Date(String(filter.rightOperand)).getTime()
+      return isSamePlainDate(
+        toUtcPlainDate(leftInstant),
+        Temporal.Now.zonedDateTimeISO('UTC').toPlainDate(),
       );
 
-    case ViewFilterOperand.IS_AFTER:
+    case ViewFilterOperand.IS_BEFORE: {
+      const rightInstant = parseDateOperandToInstant(filter.rightOperand);
+
       return (
-        dateLeftValue.getTime() >
-        new Date(String(filter.rightOperand)).getTime()
+        isDefined(rightInstant) &&
+        Temporal.Instant.compare(leftInstant, rightInstant) < 0
       );
+    }
 
-    case ViewFilterOperand.IS_EMPTY:
-      return !isDefined(filter.leftOperand) || filter.leftOperand === '';
+    case ViewFilterOperand.IS_AFTER: {
+      const rightInstant = parseDateOperandToInstant(filter.rightOperand);
 
-    case ViewFilterOperand.IS_NOT_EMPTY:
-      return isDefined(filter.leftOperand) && filter.leftOperand !== '';
+      return (
+        isDefined(rightInstant) &&
+        Temporal.Instant.compare(leftInstant, rightInstant) > 0
+      );
+    }
 
     case ViewFilterOperand.IS_RELATIVE:
       return parseAndEvaluateRelativeDateFilter({
-        dateToCheck: dateLeftValue,
+        dateToCheck: new Date(leftInstant.epochMilliseconds),
         relativeDateString: String(filter.rightOperand),
       });
 
@@ -268,9 +314,66 @@ function evaluateUuidFilter(filter: ResolvedFilter): boolean {
       return filter.leftOperand === filter.rightOperand;
     case ViewFilterOperand.IS_NOT:
       return filter.leftOperand !== filter.rightOperand;
+    case ViewFilterOperand.IS_EMPTY:
+      return !isNonEmptyString(filter.leftOperand);
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isNonEmptyString(filter.leftOperand);
     default:
       throw new Error(
         `Operand ${filter.operand} not supported for uuid filter`,
+      );
+  }
+}
+
+// Rating values are stored as enum strings 'RATING_1'..'RATING_5'. Comparisons
+// must operate on the numeric rank (1..5), not lexicographic order or Number()
+// on the enum string (which would be NaN).
+function parseRatingRank(value: unknown): number | undefined {
+  if (typeof value === 'number' && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === 'string' && value.length > 0) {
+    const ratingPrefixMatch = value.match(/^RATING_(\d+)$/);
+
+    if (ratingPrefixMatch !== null) {
+      return Number(ratingPrefixMatch[1]);
+    }
+
+    const numericValue = Number(value);
+
+    if (Number.isFinite(numericValue)) {
+      return numericValue;
+    }
+  }
+
+  return undefined;
+}
+
+function evaluateRatingFilter(filter: ResolvedFilter): boolean {
+  const leftRank = parseRatingRank(filter.leftOperand);
+  const rightRank = parseRatingRank(filter.rightOperand);
+
+  switch (filter.operand) {
+    case ViewFilterOperand.IS:
+      return isDefined(leftRank) && leftRank === rightRank;
+    case ViewFilterOperand.IS_NOT:
+      return !isDefined(leftRank) || leftRank !== rightRank;
+    case ViewFilterOperand.GREATER_THAN_OR_EQUAL:
+      return (
+        isDefined(leftRank) && isDefined(rightRank) && leftRank >= rightRank
+      );
+    case ViewFilterOperand.LESS_THAN_OR_EQUAL:
+      return (
+        isDefined(leftRank) && isDefined(rightRank) && leftRank <= rightRank
+      );
+    case ViewFilterOperand.IS_EMPTY:
+      return !isDefined(leftRank);
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return isDefined(leftRank);
+    default:
+      throw new Error(
+        `Operand ${filter.operand} not supported for rating filter`,
       );
   }
 }

@@ -3,12 +3,8 @@ import { search } from 'test/integration/graphql/utils/search.util';
 import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/create-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
-import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { FieldMetadataType } from 'twenty-shared/types';
-
-import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
 describe('Object metadata update - search vector side effect', () => {
   let testObjectMetadataId: string;
@@ -94,7 +90,7 @@ describe('Object metadata update - search vector side effect', () => {
     });
   });
 
-  it('should update search vector asExpression when updating label identifier and search should work with new field', async () => {
+  it('should index the new label identifier without dropping the existing name surface', async () => {
     await updateOneObjectMetadata({
       input: {
         idToUpdate: testObjectMetadataId,
@@ -105,66 +101,33 @@ describe('Object metadata update - search vector side effect', () => {
       expectToFail: false,
     });
 
-    const { objects } = await findManyObjectMetadata({
-      expectToFail: false,
-      input: {
-        filter: {
-          id: { eq: testObjectMetadataId },
-        },
-        paging: { first: 1 },
-      },
-      gqlFields: `
-        id
-        nameSingular
-        fieldsList {
-          id
-          name
-          type
-          settings
-        }
-      `,
-    });
-
-    expect(objects).toBeDefined();
-    expect(objects.length).toBe(1);
-
-    const testObject = objects[0];
-
-    jestExpectToBeDefined(testObject);
-    jestExpectToBeDefined(testObject.fieldsList);
-
-    const searchVectorField = testObject.fieldsList.find(
-      (field: FieldMetadataDTO) => field.type === FieldMetadataType.TS_VECTOR,
-    );
-
-    jestExpectToBeDefined(searchVectorField);
-
-    const settings = searchVectorField.settings as {
-      asExpression?: string;
-      generatedType?: string;
-    };
-
-    jestExpectToBeDefined(settings);
-    expect(settings.asExpression).toBeDefined();
-    expect(settings.asExpression).toContain(NEW_LABEL_IDENTIFIER_FIELD_NAME);
-    expect(settings.asExpression).not.toContain('name');
-
-    const searchResult = await search({
+    // The record is now reachable through the new label identifier value.
+    const searchByNewLabelField = await search({
       searchInput: RECORD_FIELD_VALUE,
       includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
       limit: 10,
       expectToFail: false,
     });
 
-    expect(searchResult.data).toBeDefined();
-    expect(searchResult.data.search).toBeDefined();
-    expect(searchResult.data.search.edges).toBeDefined();
-    expect(searchResult.data.search.edges.length).toBe(1);
-    expect(searchResult.data.search.edges[0].node.recordId).toBe(
+    expect(searchByNewLabelField.data.search.edges.length).toBe(1);
+    expect(searchByNewLabelField.data.search.edges[0].node.recordId).toBe(
       createdRecordId,
     );
-    expect(searchResult.data.search.edges[0].node.objectNameSingular).toBe(
-      OBJECT_NAME_SINGULAR,
+    expect(
+      searchByNewLabelField.data.search.edges[0].node.objectNameSingular,
+    ).toBe(OBJECT_NAME_SINGULAR);
+
+    // The previously indexed name field remains searchable.
+    const searchByName = await search({
+      searchInput: RECORD_NAME_FIELD_VALUE,
+      includedObjectNameSingulars: [OBJECT_NAME_SINGULAR],
+      limit: 10,
+      expectToFail: false,
+    });
+
+    expect(searchByName.data.search.edges.length).toBe(1);
+    expect(searchByName.data.search.edges[0].node.recordId).toBe(
+      createdRecordId,
     );
   });
 });

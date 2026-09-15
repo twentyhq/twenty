@@ -4,6 +4,7 @@
 // Usage: npx tsx scripts/build-seed-front-components.ts
 
 import * as esbuild from 'esbuild';
+import { existsSync, readdirSync } from 'fs';
 import { join, resolve } from 'path';
 import { getFrontComponentBuildPlugins } from 'twenty-sdk/front-component-renderer/build';
 
@@ -20,7 +21,14 @@ const alias: Record<string, string> = {
   'react-dom': join(ROOT_NODE_MODULES, 'react-dom'),
 };
 
-const COMPONENTS = ['hello-world', 'show-notification'];
+const COMPONENTS = readdirSync(SEED_PROJECT_DIR, { withFileTypes: true })
+  .filter(
+    (entry) =>
+      entry.isDirectory() &&
+      existsSync(join(SEED_PROJECT_DIR, entry.name, 'index.tsx')),
+  )
+  .map((entry) => entry.name)
+  .sort();
 
 const build = async () => {
   for (const component of COMPONENTS) {

@@ -1,13 +1,15 @@
 import { type gmail_v1 as gmailV1 } from 'googleapis';
-import planer from 'planer';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
 import { parseGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { buildReplyToParticipants } from 'src/modules/messaging/message-import-manager/utils/build-reply-to-participants.util';
+import { extractMessageTextWithoutQuotedHistory } from 'src/modules/messaging/message-import-manager/utils/extract-message-text-without-quoted-history.util';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
-import { sanitizeString } from 'src/modules/messaging/message-import-manager/utils/sanitize-string.util';
 
 export const parseAndFormatGmailMessage = (
   message: gmailV1.Schema$Message,
@@ -19,69 +21,74 @@ export const parseAndFormatGmailMessage = (
     internalDate,
     subject,
     from,
+    replyTo,
     to,
     cc,
     bcc,
     headerMessageId,
-    text,
+    body,
+    isHtml,
     attachments,
     deliveredTo,
     labelIds,
+    messageHeaders,
   } = parseGmailMessage(message);
 
+  const isDraft = (labelIds ?? []).includes('DRAFT');
+
+  // Gmail may omit the Message-ID header on drafts; synthesize a stable id from
+  // the message id so drafts aren't dropped.
+  const resolvedHeaderMessageId =
+    headerMessageId ?? (isDraft ? `draft-${id}` : undefined);
+
   if (
-    !from ||
-    (!to && !deliveredTo && !bcc && !cc) ||
-    !headerMessageId ||
-    !threadId
+    !isDefined(from) ||
+    !isDefined(resolvedHeaderMessageId) ||
+    !isDefined(threadId)
   ) {
     return null;
   }
 
-  const toParticipants = to ?? deliveredTo;
+  const toParticipants = isNonEmptyArray(to)
+    ? to
+    : isNonEmptyString(deliveredTo)
+      ? [{ address: deliveredTo }]
+      : [];
 
   const participants = [
-    ...(from
-      ? formatAddressObjectAsParticipants(
-          [{ address: from }],
-          MessageParticipantRole.FROM,
-        )
-      : []),
-    ...(toParticipants
-      ? formatAddressObjectAsParticipants(
-          [{ address: toParticipants, name: '' }],
-          MessageParticipantRole.TO,
-        )
-      : []),
-    ...(cc
-      ? formatAddressObjectAsParticipants(
-          [{ address: cc }],
-          MessageParticipantRole.CC,
-        )
-      : []),
-    ...(bcc
-      ? formatAddressObjectAsParticipants(
-          [{ address: bcc }],
-          MessageParticipantRole.BCC,
-        )
-      : []),
+    ...formatAddressObjectAsParticipants([from], MessageParticipantRole.FROM),
+    ...buildReplyToParticipants(replyTo, from),
+    ...formatAddressObjectAsParticipants(
+      toParticipants,
+      MessageParticipantRole.TO,
+    ),
+    ...formatAddressObjectAsParticipants(cc, MessageParticipantRole.CC),
+    ...formatAddressObjectAsParticipants(bcc, MessageParticipantRole.BCC),
   ];
 
-  const textWithoutReplyQuotations = text
-    ? planer.extractFrom(text, 'text/plain')
-    : '';
+  const hasRecipientParticipant = participants.some(
+    (participant) => participant.role !== MessageParticipantRole.FROM,
+  );
+
+  if (!hasRecipientParticipant && !isDraft) {
+    return null;
+  }
 
   return {
     externalId: id,
-    headerMessageId,
+    headerMessageId: resolvedHeaderMessageId,
     subject: subject || '',
     messageThreadExternalId: threadId,
     receivedAt: new Date(parseInt(internalDate)),
-    direction: computeMessageDirection(from || '', connectedAccount),
+    direction: computeMessageDirection(from.address || '', connectedAccount),
     participants,
-    text: sanitizeString(textWithoutReplyQuotations),
+    text: extractMessageTextWithoutQuotedHistory(
+      isHtml ? { html: body } : { text: body },
+    ),
     attachments,
     messageFolderExternalIds: labelIds,
     labelIds,
+    isDraft,
+    messageHeaders,
   };
 };

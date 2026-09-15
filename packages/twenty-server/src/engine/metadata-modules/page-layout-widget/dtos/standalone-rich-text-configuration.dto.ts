@@ -8,9 +8,7 @@ import { RichTextBodyDTO } from 'src/engine/metadata-modules/page-layout-widget/
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 @ObjectType('StandaloneRichTextConfiguration')
-export class StandaloneRichTextConfigurationDTO
-  implements StandaloneRichTextConfiguration
-{
+export class StandaloneRichTextConfigurationDTO implements StandaloneRichTextConfiguration {
   @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.STANDALONE_RICH_TEXT])
   @IsNotEmpty()

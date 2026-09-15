@@ -1,0 +1,77 @@
+import { isUndefined } from '@sniptt/guards';
+import { type CoreApiClient } from 'twenty-client-sdk/core';
+
+import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
+import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
+import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
+import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { rescheduleRecallBot } from 'src/logic-functions/recall-api/reschedule-recall-bot.util';
+import { updateCallRecording } from 'src/logic-functions/data/update-call-recording.util';
+
+const RECALL_BOT_NOT_FOUND_STATUS = 404;
+
+export const rescheduleCallRecordingBot = async (
+  client: CoreApiClient,
+  { callRecording, calendarEvent }: MeetingRecording,
+): Promise<void> => {
+  const externalBotId = callRecording.externalBotId;
+
+  if (isUndefined(externalBotId)) {
+    return;
+  }
+
+  const meetingUrl = calendarEvent.conferenceLinkUrl;
+  const meetingStartsAt = calendarEvent.startsAt;
+
+  if (isUndefined(meetingUrl) || isUndefined(meetingStartsAt)) {
+    return;
+  }
+
+  const joinAt = computeRecallBotJoinAt(meetingStartsAt);
+
+  const workspaceId = getCurrentWorkspaceId();
+
+  if (isUndefined(workspaceId)) {
+    console.warn(
+      `[call-recorder] cannot reschedule Recall bot for callRecording ${callRecording.id}: workspace id unavailable`,
+    );
+
+    return;
+  }
+
+  const rescheduleResult = await rescheduleRecallBot({
+    externalBotId,
+    meetingUrl,
+    meetingStartsAt,
+    joinAt,
+    metadata: buildRecallRoutingMetadata({
+      callRecordingId: callRecording.id,
+      workspaceId,
+    }),
+  });
+
+  if (rescheduleResult.ok) {
+    return;
+  }
+
+  // The bot vanished externally; drop the id so recovery re-creates it as the
+  // single writer. The recorded attempt state is resolved (its bot is
+  // confirmed gone), so clearing it lets recovery schedule directly instead
+  // of treating the row as an ambiguous attempt.
+  if (rescheduleResult.status === RECALL_BOT_NOT_FOUND_STATUS) {
+    await updateCallRecording(client, {
+      id: callRecording.id,
+      data: {
+        externalBotId: null,
+        botScheduleAttemptedAt: null,
+        botScheduleIdempotencyKey: null,
+      },
+    });
+
+    return;
+  }
+
+  console.warn(
+    `[call-recorder] failed to update Recall bot for callRecording ${callRecording.id}: ${rescheduleResult.errorMessage}`,
+  );
+};

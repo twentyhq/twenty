@@ -1,5 +1,4 @@
 import {
-  type PartialFieldMetadataItem,
   type RecordFilterValueDependencies,
   type RecordGqlOperationFilter,
 } from '@/types';
@@ -8,27 +7,34 @@ import {
   type RecordFilter,
   type RecordFilterGroup,
 } from '@/utils/filter/turnRecordFilterGroupIntoGqlOperationFilter';
-import { turnRecordFilterIntoRecordGqlOperationFilter } from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
+import {
+  type FieldShared,
+  turnRecordFilterIntoRecordGqlOperationFilter,
+} from '@/utils/filter/turnRecordFilterIntoGqlOperationFilter';
 import { isDefined } from '@/utils/validation/isDefined';
 
 export const computeRecordGqlOperationFilter = ({
-  fields,
+  fieldMetadataItems,
   recordFilters,
   recordFilterGroups,
   filterValueDependencies,
 }: {
   recordFilters: Omit<RecordFilter, 'id'>[];
-  fields: PartialFieldMetadataItem[];
+  fieldMetadataItems: FieldShared[];
   recordFilterGroups: RecordFilterGroup[];
   filterValueDependencies: RecordFilterValueDependencies;
 }): RecordGqlOperationFilter => {
+  const fieldMetadataItemById = new Map(
+    fieldMetadataItems.map((field) => [field.id, field]),
+  );
+
   const regularRecordGqlOperationFilter: RecordGqlOperationFilter[] =
     recordFilters
       .filter((filter) => !isDefined(filter.recordFilterGroupId))
       .map((regularFilter) => {
         return turnRecordFilterIntoRecordGqlOperationFilter({
           recordFilter: regularFilter,
-          fieldMetadataItems: fields,
+          fieldMetadataItemById,
           filterValueDependencies,
         });
       })
@@ -42,7 +48,7 @@ export const computeRecordGqlOperationFilter = ({
     turnRecordFilterGroupsIntoGqlOperationFilter({
       filterValueDependencies,
       filters: recordFilters,
-      fields,
+      fieldMetadataItemById,
       recordFilterGroups,
       currentRecordFilterGroupId: outermostFilterGroupId,
     });

@@ -10,7 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -28,7 +28,7 @@ export type BlocklistReimportMessagesJobData = WorkspaceEventBatch<
 })
 export class BlocklistReimportMessagesJob {
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     @InjectRepository(ConnectedAccountEntity)
@@ -44,57 +44,62 @@ export class BlocklistReimportMessagesJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const workspaceMemberRepository =
-        await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-          workspaceId,
-          'workspaceMember',
-          { shouldBypassPermissionChecks: true },
-        );
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
 
-      for (const eventPayload of data.events) {
-        const workspaceMemberId =
-          eventPayload.properties.before.workspaceMemberId;
+        for (const eventPayload of data.events) {
+          const workspaceMemberId =
+            eventPayload.properties.before.workspaceMemberId;
 
-        const workspaceMember = await workspaceMemberRepository.findOne({
-          where: { id: workspaceMemberId },
-        });
+          const workspaceMember = await workspaceMemberRepository.findOne({
+            where: { id: workspaceMemberId },
+          });
 
-        if (!workspaceMember) {
-          continue;
-        }
+          if (!workspaceMember) {
+            continue;
+          }
 
-        const userWorkspace = await this.userWorkspaceRepository.findOne({
-          where: { userId: workspaceMember.userId, workspaceId },
-        });
+          const userWorkspace = await this.userWorkspaceRepository.findOne({
+            where: { userId: workspaceMember.userId, workspaceId },
+          });
 
-        if (!userWorkspace) {
-          continue;
-        }
+          if (!userWorkspace) {
+            continue;
+          }
 
-        const connectedAccounts = await this.connectedAccountRepository.find({
-          where: { userWorkspaceId: userWorkspace.id, workspaceId },
-        });
+          const connectedAccounts = await this.connectedAccountRepository.find({
+            where: { userWorkspaceId: userWorkspace.id, workspaceId },
+          });
 
-        const connectedAccountIds = connectedAccounts.map((ca) => ca.id);
+          const connectedAccountIds = connectedAccounts.map((ca) => ca.id);
 
-        if (connectedAccountIds.length === 0) {
-          continue;
-        }
+          if (connectedAccountIds.length === 0) {
+            continue;
+          }
 
-        const messageChannels = await this.messageChannelRepository.find({
-          where: {
-            connectedAccountId: In(connectedAccountIds),
-            syncStage: Not(MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING),
+          const messageChannels = await this.messageChannelRepository.find({
+            where: {
+              connectedAccountId: In(connectedAccountIds),
+              syncStage: Not(
+                MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+              ),
+              workspaceId,
+            },
+          });
+
+          await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
+            messageChannels.map((messageChannel) => messageChannel.id),
             workspaceId,
-          },
-        });
-
-        await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
-          messageChannels.map((messageChannel) => messageChannel.id),
-          workspaceId,
-        );
-      }
-    }, authContext);
+          );
+        }
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

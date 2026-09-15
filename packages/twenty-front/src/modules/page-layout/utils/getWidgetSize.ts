@@ -1,4 +1,4 @@
-import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
+import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import { GRAPH_WIDGET_SIZES } from '@/page-layout/constants/GraphWidgetSizes';
 import { type WidgetConfigurationType } from '~/generated-metadata/graphql';
 

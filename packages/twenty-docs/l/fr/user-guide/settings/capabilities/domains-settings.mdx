@@ -1,25 +1,28 @@
 ---
 title: Paramètres des domaines
-description: Configurez le domaine de l'espace de travail, les domaines d'accès approuvés et les domaines publics.
+description: Configurez le domaine de l'espace de travail, les domaines d'accès approuvés et les domaines personnalisés des applications.
 ---
 
-Configurez les paramètres de domaine dans **Paramètres → Domaines**.
+Les paramètres de domaine se trouvent à trois endroits, en fonction de ce que vous configurez.
 
 ## Domaine de l'espace de travail
+
+Configurer sous **Paramètres → Général**.
 
 Modifiez le nom de votre sous-domaine ou définissez un domaine personnalisé pour votre espace de travail.
 
 ### Personnaliser le domaine
 
-1. Cliquez sur **Personnaliser le domaine**
-2. Modifiez votre sous-domaine (par exemple, `yourcompany.twenty.com`)
-3. Ou configurez un domaine personnalisé (par exemple, `crm.yourcompany.com`)
+1. Cliquez sur **Sous-domaine** pour modifier votre sous-domaine (par exemple, `yourcompany.twenty.com`)
+2. Ou cliquez sur **Domaine personnalisé** pour configurer un domaine personnalisé (par exemple, `crm.yourcompany.com`)
 
 Pour les domaines personnalisés, vous devrez configurer les paramètres DNS auprès de votre fournisseur de domaine.
 
 ## Domaines approuvés
 
-Toute personne ayant une adresse e-mail dans l'un de ces domaines est autorisée à s'inscrire automatiquement à cet espace de travail.
+Configurez dans **Paramètres → Membres → Invitation**.
+
+Ajoutez le domaine de votre entreprise pour permettre aux membres de l'équipe de s'inscrire automatiquement à cet espace de travail.
 
 ### Ajouter un domaine d'accès approuvé
 
@@ -30,18 +33,20 @@ Toute personne ayant une adresse e-mail dans l'un de ces domaines est autorisée
 Une fois configuré, toute personne ayant une adresse e-mail de ce domaine peut rejoindre votre espace de travail sans avoir besoin d'une invitation directe.
 
 <Note>
-  Cela est utile pour permettre à toute votre équipe de s'auto-inscrire tout en gardant l'espace de travail restreint à votre organisation.
+Cela est utile pour permettre à toute votre équipe de s'auto-inscrire tout en gardant l'espace de travail restreint à votre organisation.
 </Note>
 
-## Domaines publics
+## Domaines personnalisés des applications
 
-Provisionner un environnement d'hébergement complet et sécurisé sur ces domaines.
+Configurez dans **Paramètres → Applications → votre application → Paramètres → URL de l'application**.
 
-### Ajouter domaine public
+Les applications qui exposent des routes sur le Web sont accessibles via une URL dédiée, indiquée dans la section **URL de l'application**. Vous pouvez plutôt héberger une application sur un domaine que vous possédez.
 
-1. Cliquez sur **Ajouter un domaine public**
-2. Saisissez le domaine que vous souhaitez utiliser
+### Ajouter un domaine personnalisé
+
+1. Cliquez sur **Domaine personnalisé**
+2. Saisissez le domaine que vous souhaitez utiliser (par exemple, `app.yourcompany.com`)
 3. Configurez les paramètres DNS comme indiqué
 4. Vérifiez le domaine
 
-Les certificats SSL sont automatiquement fournis pour les domaines publics.
+Seules les routes de cette application sont accessibles sur le domaine. Les certificats SSL sont fournis automatiquement.

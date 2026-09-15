@@ -1,35 +1,28 @@
-import { Field, HideField, ObjectType } from '@nestjs/graphql';
+import {
+  Field,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import {
-  Authorize,
-  CursorConnection,
-  FilterableField,
-  IDField,
-  QueryOptions,
-} from '@ptc-org/nestjs-query-graphql';
+  MetadataReadability,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
-import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';
-import { ObjectStandardOverridesDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-standard-overrides.dto';
+import { type ObjectMetadataOverrides } from 'src/engine/metadata-modules/object-metadata/types/object-metadata-overrides.type';
+
+registerEnumType(ObjectOpenRecordIn, { name: 'ObjectOpenRecordIn' });
+registerEnumType(MetadataReadability, { name: 'MetadataReadability' });
+registerEnumType(MetadataWritability, { name: 'MetadataWritability' });
 
 @ObjectType('Object')
-@Authorize({
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-  authorize: (context: any) => ({
-    workspaceId: { eq: context?.req?.workspace?.id },
-  }),
-})
-@QueryOptions({
-  defaultResultSize: 10,
-  disableSort: true,
-  maxResultsSize: 1000,
-})
-@CursorConnection('fields', () => FieldMetadataDTO)
-@CursorConnection('indexMetadatas', () => IndexMetadataDTO)
 export class ObjectMetadataDTO {
-  @IDField(() => UUIDScalarType)
+  @Field(() => UUIDScalarType)
   id: string;
 
   @Field()
@@ -53,8 +46,8 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   icon?: string;
 
-  @Field(() => ObjectStandardOverridesDTO, { nullable: true })
-  standardOverrides?: ObjectStandardOverridesDTO;
+  @HideField()
+  overrides?: AuthoredOverrides<ObjectMetadataOverrides> | null;
 
   @Field({ nullable: true })
   shortcut?: string;
@@ -62,23 +55,41 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   color?: string;
 
-  @FilterableField()
-  isCustom: boolean;
-
-  @FilterableField()
+  @Field()
   isRemote: boolean;
 
-  @FilterableField()
+  @Field()
   isActive: boolean;
 
-  @FilterableField()
+  @Field()
   isSystem: boolean;
 
-  @FilterableField()
+  @Field()
+  isUIEditable: boolean;
+
+  @Field()
+  isUICreatable: boolean;
+
+  // Deprecated alias kept for one release: stays exposed (and filterable via
+  // ObjectFilter) so external API consumers are not broken.
+  @Field({
+    deprecationReason: 'Use isUIEditable',
+  })
   isUIReadOnly: boolean;
 
-  @FilterableField()
+  @Field()
   isSearchable: boolean;
+
+  @Field(() => ObjectOpenRecordIn)
+  openRecordIn: ObjectOpenRecordIn;
+
+  @Field(() => MetadataReadability)
+  readability: MetadataReadability;
+
+  @Field(() => [UUIDScalarType], { nullable: true })
+  readabilityParentFieldUniversalIdentifiers: string[] | null;
+  @Field(() => MetadataWritability)
+  writability: MetadataWritability;
 
   @HideField()
   workspaceId: string;

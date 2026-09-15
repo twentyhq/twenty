@@ -1,0 +1,149 @@
+---
+title: 3. HTTP-Routen
+icon: globe
+description: Trigger die Funktion über HTTP und rendern Sie Dokumente als Webseiten.
+---
+
+Der gleiche Handler kann auch HTTP-Anfragen beantworten. Wir werden zwei Routen hinzufügen:
+
+* ein **POST** Endpunkt der UI-Aufrufe, um ein Dokument zu generieren, und
+* ein öffentlicher **GET** Endpunkt, der ein Dokument als druckbare Webseite darstellt.
+
+Beide verwenden `httpRouteTriggerSettings`. App-Routen werden über einen `/s/`-Pfad adressiert; auf lokalen
+und selbstgehosteten Instanzen wird dieser Pfad von Ihrem Twenty-Server
+bereitgestellt (z. B. `http://localhost:2020/s/documents/generate`). In Twenty Cloud löst `RestApiClient` den Pfad über die Funktionen-Domain des Workspaces auf.
+
+## POST-Route — bei Bedarf generieren
+
+Dies verwendet `generateDocumentHandler`, also gibt es keine Logik zu wiederholen — nur ein dünner
+-Adapter, der den Request-Körper liest.
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+Der Shared-Handler gibt einen vorgeschlagenen `status` bei einem Fehler zurück, so dass die Route
+mit einem richtigen `4xx`/`5xx` Code antworten kann. `isAuthRequired: true` bedeutet, dass der Anrufer
+ein gültiges Token vorweisen muss — die vorderste Komponente im nächsten Kapitel übergeht automatisch das Zugriffstoken des
+Benutzers.
+
+## GET-Route — als Webseite rendern
+
+Um HTML anstelle von JSON zurückzugeben, wickeln Sie den Körper in eine `Response` mit einem
+`Content-Type` Header. Diese Route ist öffentlich (`isAuthRequired: falsch`), so dass ein
+generiertes Dokument als Link freigegeben werden kann.
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`documentHtmlPage` stellt den Markdown-Text in HTML dar (mit [marked](https://marked.js.org/),
+bereinigt) und lässt ihn in ein Reinigen druckbare Seite, die nur die Inhalte der Vorlage
+zeigt — das gleiche Aussehen wie die PDF und die In-App-Vorschau.
+[Siehe den Helfer](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
+
+## Testen
+
+Mit einer Vorlage und einer Person im Arbeitsbereich rufen Sie die Route an (Benutzen Sie ein Token von
+**Einstellungen → APIs & Webhooks**):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+Öffnen Sie das zurückgegebene Dokument in Ihrem Browser:
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="Die öffentliche GET-Route macht das Dokument als druckbare Seite.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Eine gerenderte Dokumenten-Webseite" />
+</Frame>
+
+<Tip>
+Sie können auch Protokolle einer Funktion beim Testen mit
+`yarn zwanzig dev:function:logs` streamen oder direkt mit
+`yarn zwanzig dev:function:exec` aufrufen.
+</Tip>
+
+**Nach diesem Schritt:** Die App kann Dokumente über HTTP generieren und sie als
+Webseiten bedienen. Jetzt machen wir es brauchbar ohne `curl`.
+
+<Card title="Nächste: Bauen der UI →" icon="table-columns" href="/l/de/developers/extend/apps/tutorials/document-generator/building-the-ui">
+  Views, Navigation, ein Kommando und eine Frontkomponente.
+</Card>

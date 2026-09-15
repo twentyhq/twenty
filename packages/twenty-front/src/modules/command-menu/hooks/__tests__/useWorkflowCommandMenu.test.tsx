@@ -2,7 +2,6 @@ import { renderHook } from '@testing-library/react';
 
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { useSidePanelWorkflowNavigation } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowNavigation';
-import { viewableRecordNameSingularComponentState } from '@/side-panel/pages/record-page/states/viewableRecordNameSingularComponentState';
 import { sidePanelWorkflowIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowIdComponentState';
 import { sidePanelWorkflowVersionIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowVersionIdComponentState';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
@@ -14,11 +13,12 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { act } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { IconBolt, IconSettingsAutomation, useIcons } from 'twenty-ui/display';
+import { IconBolt, IconSettingsAutomation, useIcons } from 'twenty-ui/icon';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
 jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
   v4: jest.fn().mockReturnValue('mocked-uuid'),
 }));
 
@@ -65,10 +65,6 @@ const renderHooks = () => {
         openWorkflowViewStepInSidePanel,
       } = useSidePanelWorkflowNavigation();
 
-      const viewableRecordNameSingular = useAtomComponentStateValue(
-        viewableRecordNameSingularComponentState,
-        'mocked-uuid',
-      );
       const contextStoreCurrentObjectMetadataItemId =
         useAtomComponentStateValue(
           contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -104,7 +100,6 @@ const renderHooks = () => {
         openWorkflowViewStepInSidePanel,
         sidePanelWorkflowId,
         sidePanelWorkflowVersionId,
-        viewableRecordNameSingular,
         contextStoreCurrentObjectMetadataItemId,
         contextStoreTargetedRecordsRule,
         contextStoreNumberOfSelectedRecords,
@@ -179,11 +174,11 @@ describe('useSidePanelWorkflowNavigation', () => {
     const { result } = renderHooks();
 
     act(() => {
-      result.current.openWorkflowEditStepInSidePanel(
-        'test-workflow-id',
-        'Edit Step',
-        IconSettingsAutomation,
-      );
+      result.current.openWorkflowEditStepInSidePanel({
+        workflowId: 'test-workflow-id',
+        title: 'Edit Step',
+        icon: IconSettingsAutomation,
+      });
     });
 
     expect(result.current.sidePanelWorkflowId).toBe('test-workflow-id');

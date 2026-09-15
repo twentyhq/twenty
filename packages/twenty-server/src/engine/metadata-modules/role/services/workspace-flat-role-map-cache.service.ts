@@ -1,142 +1,64 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';
 
-import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
-
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
+import { type FlatRoleMaps } from 'src/engine/metadata-modules/flat-role/types/flat-role-maps.type';
 import { fromRoleEntityToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/from-role-entity-to-flat-role.util';
-import { FieldPermissionEntity } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.entity';
-import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
-import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
-import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-import { RowLevelPermissionPredicateGroupEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate-group.entity';
-import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
+import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
-import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
+const FLAT_ROLE_ROWS_REQUIREMENT = {
+  role: true,
+  application: ['id', 'universalIdentifier'],
+  roleTarget: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  objectPermission: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  rolePermissionFlag: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  fieldPermission: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  rowLevelPermissionPredicate: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+  rowLevelPermissionPredicateGroup: {
+    columns: ['id', 'universalIdentifier'],
+    groupBy: ['roleId'],
+  },
+} as const;
+
 @Injectable()
-@WorkspaceCache('flatRoleMaps')
-export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
-  FlatEntityMaps<FlatRole>
-> {
-  constructor(
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(ApplicationEntity)
-    private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
-    @InjectRepository(ObjectPermissionEntity)
-    private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
-    @InjectRepository(PermissionFlagEntity)
-    private readonly permissionFlagRepository: Repository<PermissionFlagEntity>,
-    @InjectRepository(FieldPermissionEntity)
-    private readonly fieldPermissionRepository: Repository<FieldPermissionEntity>,
-    @InjectRepository(RowLevelPermissionPredicateEntity)
-    private readonly rowLevelPermissionPredicateRepository: Repository<RowLevelPermissionPredicateEntity>,
-    @InjectRepository(RowLevelPermissionPredicateGroupEntity)
-    private readonly rowLevelPermissionPredicateGroupRepository: Repository<RowLevelPermissionPredicateGroupEntity>,
-  ) {
-    super();
-  }
+@WorkspaceCache('flatRoleMaps', { packingPonderation: 1 })
+export class WorkspaceFlatRoleMapCacheService extends MetadataFlatEntityMapsCacheProvider<'role'> {
+  override readonly rowsRequirement = FLAT_ROLE_ROWS_REQUIREMENT;
 
-  async computeForCache(
-    workspaceId: string,
-  ): Promise<FlatEntityMaps<FlatRole>> {
-    const [
-      roles,
-      applications,
-      roleTargets,
-      objectPermissions,
-      permissionFlags,
-      fieldPermissions,
-      rowLevelPermissionPredicates,
-      rowLevelPermissionPredicateGroups,
-    ] = await Promise.all([
-      this.roleRepository.find({
-        where: { workspaceId },
-        withDeleted: true,
-      }),
-      this.applicationRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier'],
-        withDeleted: true,
-      }),
-      this.roleTargetRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.objectPermissionRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.permissionFlagRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.fieldPermissionRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.rowLevelPermissionPredicateRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-      this.rowLevelPermissionPredicateGroupRepository.find({
-        where: { workspaceId },
-        select: ['id', 'universalIdentifier', 'roleId'],
-        withDeleted: true,
-      }),
-    ]);
-
-    const [
-      roleTargetsByRoleId,
-      objectPermissionsByRoleId,
-      permissionFlagsByRoleId,
-      fieldPermissionsByRoleId,
-      rowLevelPermissionPredicatesByRoleId,
-      rowLevelPermissionPredicateGroupsByRoleId,
-    ] = (
-      [
-        {
-          entities: roleTargets,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: objectPermissions,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: permissionFlags,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: fieldPermissions,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: rowLevelPermissionPredicates,
-          foreignKey: 'roleId',
-        },
-        {
-          entities: rowLevelPermissionPredicateGroups,
-          foreignKey: 'roleId',
-        },
-      ] as const
-    ).map(regroupEntitiesByRelatedEntityId);
+  computeForCache({
+    rows,
+  }: WorkspaceCacheProviderContext<
+    typeof FLAT_ROLE_ROWS_REQUIREMENT
+  >): FlatRoleMaps {
+    const {
+      role: roles,
+      application: applications,
+      roleTarget: roleTargets,
+      objectPermission: objectPermissions,
+      rolePermissionFlag: rolePermissionFlags,
+      fieldPermission: fieldPermissions,
+      rowLevelPermissionPredicate: rowLevelPermissionPredicates,
+      rowLevelPermissionPredicateGroup: rowLevelPermissionPredicateGroups,
+    } = rows;
 
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
@@ -147,14 +69,16 @@ export class WorkspaceFlatRoleMapCacheService extends WorkspaceCacheProvider<
       const flatRole = fromRoleEntityToFlatRole({
         entity: {
           ...roleEntity,
-          roleTargets: roleTargetsByRoleId.get(roleEntity.id) || [],
-          objectPermissions: objectPermissionsByRoleId.get(roleEntity.id) || [],
-          permissionFlags: permissionFlagsByRoleId.get(roleEntity.id) || [],
-          fieldPermissions: fieldPermissionsByRoleId.get(roleEntity.id) || [],
+          roleTargets: roleTargets.byRoleId.get(roleEntity.id) || [],
+          objectPermissions:
+            objectPermissions.byRoleId.get(roleEntity.id) || [],
+          rolePermissionFlags:
+            rolePermissionFlags.byRoleId.get(roleEntity.id) || [],
+          fieldPermissions: fieldPermissions.byRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicates:
-            rowLevelPermissionPredicatesByRoleId.get(roleEntity.id) || [],
+            rowLevelPermissionPredicates.byRoleId.get(roleEntity.id) || [],
           rowLevelPermissionPredicateGroups:
-            rowLevelPermissionPredicateGroupsByRoleId.get(roleEntity.id) || [],
+            rowLevelPermissionPredicateGroups.byRoleId.get(roleEntity.id) || [],
         },
         applicationIdToUniversalIdentifierMap,
       });

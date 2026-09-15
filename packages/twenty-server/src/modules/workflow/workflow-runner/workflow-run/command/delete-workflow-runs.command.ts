@@ -1,10 +1,10 @@
 import { Command, Option } from 'nest-commander';
 import { LessThan } from 'typeorm';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 
@@ -12,11 +12,11 @@ import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/sta
   name: 'workflow:delete-workflow-runs',
   description: 'Delete all workflow runs',
 })
-export class DeleteWorkflowRunsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class DeleteWorkflowRunsCommand extends ProvisionedWorkspaceCommandRunner {
   private createdBeforeDate: string | undefined;
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super(workspaceIteratorService);
@@ -48,11 +48,10 @@ export class DeleteWorkflowRunsCommand extends ActiveOrSuspendedWorkspaceCommand
   }: RunOnWorkspaceArgs): Promise<void> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       try {
         const workflowRunRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
-            workspaceId,
+          this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
             'workflowRun',
             { shouldBypassPermissionChecks: true },
           );

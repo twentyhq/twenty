@@ -3,7 +3,7 @@ title: Champs de formule
 description: Créez des champs de formule à l'aide des workflows jusqu'à ce que la prise en charge native soit disponible.
 ---
 
-Twenty ne prend pas encore en charge les champs de formule natifs (prévu en 2026), mais vous pouvez obtenir le même résultat à l'aide de workflows. Cette solution de contournement vous permet de calculer et de renseigner automatiquement les valeurs de champs — des concaténations simples à une logique métier complexe.
+Vingt ne supporte pas encore les champs de formules natives (à venir en 2026), mais vous pouvez obtenir le même résultat en utilisant les workflows. Cette solution de contournement vous permet de calculer et de renseigner automatiquement les valeurs de champs — des concaténations simples à une logique métier complexe.
 
 ## Cas d'utilisation courants
 
@@ -16,7 +16,7 @@ Twenty ne prend pas encore en charge les champs de formule natifs (prévu en 202
 | **Score de lead**          | Points basés sur plusieurs critères      |
 
 <Tip>
-  Pour un exemple complet de suivi du temps dans les étapes du pipeline, voir [Suivre la durée de présence des opportunités dans chaque étape](/l/fr/user-guide/views-pipelines/how-tos/track-time-in-stage).
+Pour un exemple complet de suivi du temps dans les étapes du pipeline, voir [Suivre la durée de présence des opportunités dans chaque étape](/l/fr/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
 ## Formule de base : concaténation
@@ -55,7 +55,7 @@ export const main = async (params) => {
 
 Voir [Comment afficher le montant attendu dans le pipeline](/l/fr/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline) pour le workflow complet.
 
-### Configuration rapide
+### Configuration
 
 1. **Déclencheur** : Enregistrement mis à jour (Opportunités, champ Montant OU Probabilité)
 
@@ -105,7 +105,7 @@ export const main = async (params) => {
 3. **Mettre à jour l'enregistrement** : Définir les jours avant l'échéance sur `{{code.daysUntilDue}}`
 
 <Note>
-  Des valeurs négatives indiquent des tâches en retard. Vous pouvez utiliser ce champ pour filtrer ou trier les tâches par urgence.
+Des valeurs négatives indiquent des tâches en retard. Vous pouvez utiliser ce champ pour filtrer ou trier les tâches par urgence.
 </Note>
 
 ## Formule conditionnelle : score de lead

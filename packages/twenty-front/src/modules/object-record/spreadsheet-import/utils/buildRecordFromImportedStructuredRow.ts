@@ -8,10 +8,12 @@ import {
 } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { parsePhoneNumberWithError, type CountryCode } from 'libphonenumber-js';
+import { type FieldMetadataSettings } from 'twenty-shared/types';
 import {
   assertUnreachable,
   isDefined,
   isEmptyObject,
+  getLinkUrlNormalizer,
   normalizeUrlOrigin,
 } from 'twenty-shared/utils';
 import { z } from 'zod';
@@ -221,7 +223,6 @@ export const buildRecordFromImportedStructuredRow = ({
     switch (field.type) {
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.ADDRESS:
-      case FieldMetadataType.LINKS:
       case FieldMetadataType.RICH_TEXT:
       case FieldMetadataType.EMAILS:
       case FieldMetadataType.FULL_NAME: {
@@ -229,6 +230,24 @@ export const buildRecordFromImportedStructuredRow = ({
           field,
           importedStructuredRow,
           COMPOSITE_FIELD_TRANSFORM_CONFIGS[field.type],
+        );
+        if (isDefined(compositeData)) {
+          recordToBuild[field.name] = compositeData;
+        }
+        break;
+      }
+      case FieldMetadataType.LINKS: {
+        const linksVariant = (
+          field.settings as FieldMetadataSettings<FieldMetadataType.LINKS>
+        )?.type;
+
+        const compositeData = buildCompositeFieldRecord(
+          field,
+          importedStructuredRow,
+          {
+            ...COMPOSITE_FIELD_TRANSFORM_CONFIGS[FieldMetadataType.LINKS],
+            primaryLinkUrl: getLinkUrlNormalizer(linksVariant),
+          },
         );
         if (isDefined(compositeData)) {
           recordToBuild[field.name] = compositeData;

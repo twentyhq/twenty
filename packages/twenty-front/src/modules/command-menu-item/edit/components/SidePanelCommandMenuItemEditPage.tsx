@@ -2,7 +2,6 @@ import { CommandMenuItemEditRecordSelectionDropdown } from '@/command-menu-item/
 import { CommandMenuItemOptionsDropdown } from '@/command-menu-item/edit/components/CommandMenuItemOptionsDropdown';
 import { useEditableCommandMenuItems } from '@/command-menu-item/edit/hooks/useEditableCommandMenuItems';
 import { useReorderCommandMenuItemsInDraft } from '@/command-menu-item/edit/hooks/useReorderCommandMenuItemsInDraft';
-import { useResetCommandMenuItemsDraft } from '@/command-menu-item/edit/hooks/useResetCommandMenuItemsDraft';
 import { useUpdateCommandMenuItemInDraft } from '@/command-menu-item/edit/hooks/useUpdateCommandMenuItemInDraft';
 import { useCurrentCommandMenuContextApi } from '@/command-menu-item/hooks/useCurrentCommandMenuContextApi';
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
@@ -14,24 +13,20 @@ import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
-import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type DropResult } from '@hello-pangea/dnd';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { ContextStorePageType } from 'twenty-shared/types';
-import {
-  interpolateCommandMenuItemTemplate,
-  isDefined,
-} from 'twenty-shared/utils';
+import { interpolateMessagePlaceholders } from 'twenty-shared/i18n';
+import { isDefined } from 'twenty-shared/utils';
+import { getCommandMenuItemPlaceholderValues } from '@/command-menu-item/utils/getCommandMenuItemPlaceholderValues';
 import {
   IconDotsVertical,
   IconPin,
   IconPinnedOff,
-  IconRefresh,
   useIcons,
-} from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+} from 'twenty-ui/icon';
 import { MenuItem, MenuItemDraggable } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
@@ -79,7 +74,6 @@ export const SidePanelCommandMenuItemEditPage = () => {
   );
   const { updateCommandMenuItemInDraft } = useUpdateCommandMenuItemInDraft();
   const { reorderCommandMenuItemInDraft } = useReorderCommandMenuItemsInDraft();
-  const { resetCommandMenuItemsDraft } = useResetCommandMenuItemsDraft();
 
   const editableCommandMenuItems = useEditableCommandMenuItems();
 
@@ -88,10 +82,10 @@ export const SidePanelCommandMenuItemEditPage = () => {
   );
 
   const getDisplayLabel = (item: CommandMenuItemFieldsFragment) =>
-    interpolateCommandMenuItemTemplate({
-      label: item.label,
-      context: commandMenuContextApi,
-    }) ?? item.label;
+    interpolateMessagePlaceholders(
+      item.label,
+      getCommandMenuItemPlaceholderValues(commandMenuContextApi),
+    );
 
   const { pinned: allPinnedItems, other: allOtherItems } =
     groupCommandMenuItems(editableCommandMenuItems);
@@ -150,7 +144,7 @@ export const SidePanelCommandMenuItemEditPage = () => {
       />
     );
 
-  const handlePinnedDragEnd = (result: DropResult) => {
+  const handlePinnedDragEnd = (result: DraggableListDropResult) => {
     const { source, destination, draggableId } = result;
 
     if (!isDefined(destination)) {
@@ -298,19 +292,6 @@ export const SidePanelCommandMenuItemEditPage = () => {
           </SidePanelGroup>
         </SidePanelList>
       </StyledContent>
-      <SidePanelFooter
-        actions={[
-          <Button
-            key="reset"
-            Icon={IconRefresh}
-            title={t`Reset to default`}
-            variant="secondary"
-            accent="default"
-            size="small"
-            onClick={resetCommandMenuItemsDraft}
-          />,
-        ]}
-      />
     </StyledContainer>
   );
 };

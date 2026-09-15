@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import {
   autoUpdate,
@@ -11,15 +11,17 @@ import {
 } from '@floating-ui/react';
 
 import {
+  DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
   DateTimePicker,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
 } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContainer';
+import { ParentClickOutsideIdContext } from '@/ui/utilities/pointer-event/contexts/ParentClickOutsideIdContext';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCalendar } from 'twenty-ui/display';
+import { IconCalendar } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID = 'settings-date-picker-floating';
@@ -62,12 +64,9 @@ const StyledIconContainer = styled.div`
   display: flex;
 `;
 
-const StyledFloatingContainer = styled.div`
-  z-index: 1000;
-`;
-
 export type SettingsDatePickerInputProps = {
-  label: string;
+  label?: string;
+  instanceId?: string;
   value: Date | undefined;
   onChange: (date: Date | undefined) => void;
   placeholder?: string;
@@ -75,6 +74,7 @@ export type SettingsDatePickerInputProps = {
 
 export const SettingsDatePickerInput = ({
   label,
+  instanceId,
   value,
   onChange,
   placeholder,
@@ -83,6 +83,9 @@ export const SettingsDatePickerInput = ({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { userTimezone } = useUserTimezone();
+  const generatedId = useId();
+
+  const pickerInstanceId = instanceId ?? label ?? generatedId;
 
   const { refs, floatingStyles } = useFloating({
     open: isOpen,
@@ -97,11 +100,12 @@ export const SettingsDatePickerInput = ({
 
   useListenClickOutside({
     refs: [containerRef],
-    listenerId: `settings-date-picker-${label}`,
+    listenerId: `settings-date-picker-${pickerInstanceId}`,
     callback: handleClose,
     enabled: isOpen,
     excludedClickOutsideIds: [
       SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID,
+      DATE_TIME_PICKER_MONTH_YEAR_PANEL_DROPDOWN_ID,
       MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
       MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
     ],
@@ -145,7 +149,7 @@ export const SettingsDatePickerInput = ({
 
   return (
     <StyledInputContainer ref={containerRef}>
-      <StyledLabel>{label}</StyledLabel>
+      {label && <StyledLabel>{label}</StyledLabel>}
       <StyledInput
         ref={refs.setReference}
         hasValue={isDefined(value)}
@@ -158,22 +162,26 @@ export const SettingsDatePickerInput = ({
       </StyledInput>
       {isOpen && (
         <FloatingPortal>
-          <StyledFloatingContainer
+          <div
             ref={refs.setFloating}
             style={floatingStyles}
             data-click-outside-id={SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID}
           >
             <OverlayContainer>
-              <DateTimePicker
-                instanceId={`settings-date-picker-${label}`}
-                date={zonedDateTime}
-                onChange={handleDateTimeChange}
-                onClose={handleDateTimeClose}
-                onClear={handleClear}
-                clearable
-              />
+              <ParentClickOutsideIdContext.Provider
+                value={SETTINGS_DATE_PICKER_CLICK_OUTSIDE_ID}
+              >
+                <DateTimePicker
+                  instanceId={`settings-date-picker-${pickerInstanceId}`}
+                  date={zonedDateTime}
+                  onChange={handleDateTimeChange}
+                  onClose={handleDateTimeClose}
+                  onClear={handleClear}
+                  clearable
+                />
+              </ParentClickOutsideIdContext.Provider>
             </OverlayContainer>
-          </StyledFloatingContainer>
+          </div>
         </FloatingPortal>
       )}
     </StyledInputContainer>

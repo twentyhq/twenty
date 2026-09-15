@@ -1,0 +1,1 @@
+export const FILE_CONTENT_SNIFF_BYTE_COUNT = 64 * 1024;

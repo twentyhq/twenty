@@ -5,10 +5,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { differenceInDays } from 'date-fns';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { Not, type Repository } from 'typeorm';
+import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
+import { Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { transformStripeSubscriptionEventToDatabaseCustomer } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-customer.util';
 import { transformStripeSubscriptionEventToDatabaseSubscriptionItem } from 'src/engine/core-modules/billing-webhook/utils/transform-stripe-subscription-event-to-database-subscription-item.util';
 import {
@@ -25,59 +27,86 @@ import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entiti
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
-import { MeteredCreditService } from 'src/engine/core-modules/billing/services/metered-credit.service';
+import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
+import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
-import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
+import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
+import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 @Injectable()
+// oxlint-disable-next-line twenty/inject-workspace-repository
 export class BillingSubscriptionService {
   protected readonly logger = new Logger(BillingSubscriptionService.name);
 
   constructor(
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPriceService: BillingPriceService,
-    private readonly billingPlanService: BillingPlanService,
-    @InjectRepository(BillingEntitlementEntity)
-    private readonly billingEntitlementRepository: Repository<BillingEntitlementEntity>,
+    @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
+    private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
+    @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
+    // Stripe webhooks resolve by stripeCustomerId before any workspaceId
+    // is known. Used only when the criteria has no workspaceId.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    private readonly billingSubscriptionRepositoryUnscoped: Repository<BillingSubscriptionEntity>,
     private readonly stripeCustomerService: StripeCustomerService,
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingSubscriptionEntity>,
-    private readonly meteredCreditService: MeteredCreditService,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     private readonly enterprisePlanService: EnterprisePlanService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly billingUsageCacheService: BillingUsageCacheService,
+    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
-    return await this.billingSubscriptionRepository.find({
-      where: { workspaceId },
-    });
+    return await this.billingSubscriptionRepository.find(workspaceId);
+  }
+
+  async getBillingCustomer(
+    workspaceId: string,
+  ): Promise<BillingCustomerEntity | null> {
+    return await this.billingCustomerRepository.findOneBy(workspaceId, {});
   }
 
   async getCurrentBillingSubscription(criteria: {
     workspaceId?: string;
     stripeCustomerId?: string;
   }): Promise<BillingSubscriptionEntity | undefined> {
-    const notCanceledSubscriptions =
-      await this.billingSubscriptionRepository.find({
-        where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
-        relations: [
-          'billingSubscriptionItems',
-          'billingSubscriptionItems.billingProduct',
-        ],
-      });
+    const baseFindOptions = {
+      relations: [
+        'billingSubscriptionItems',
+        'billingSubscriptionItems.billingProduct',
+        'billingSubscriptionItems.billingProduct.billingPrices',
+      ],
+    };
+
+    const notCanceledSubscriptions = isDefined(criteria.workspaceId)
+      ? await this.billingSubscriptionRepository.find(criteria.workspaceId, {
+          ...baseFindOptions,
+          where: { status: Not(SubscriptionStatus.Canceled) },
+        })
+      : await this.billingSubscriptionRepositoryUnscoped.find({
+          ...baseFindOptions,
+          where: { ...criteria, status: Not(SubscriptionStatus.Canceled) },
+        });
 
     if (notCanceledSubscriptions.length > 1) {
       throw new BillingException(
@@ -107,64 +136,96 @@ export class BillingSubscriptionService {
     return notCanceledSubscription;
   }
 
-  async getBaseProductCurrentBillingSubscriptionItemOrThrow(
-    workspaceId: string,
-  ) {
-    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
-      { workspaceId },
-    );
-
-    const planKey = getPlanKeyFromSubscription(billingSubscription);
-
-    const baseProduct =
-      await this.billingPlanService.getPlanBaseProduct(planKey);
-
-    if (!baseProduct) {
-      throw new BillingException(
-        'Base product not found',
-        BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
-      );
-    }
-
-    const stripeProductId = baseProduct.stripeProductId;
-
-    const billingSubscriptionItem =
-      billingSubscription.billingSubscriptionItems.find(
-        (item) => item.stripeProductId === stripeProductId,
-      );
-
-    if (!billingSubscriptionItem) {
-      throw new BillingException(
-        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
-      );
-    }
-
-    return billingSubscriptionItem;
-  }
-
-  async deleteSubscriptions(workspaceId: string) {
-    const subscriptionToCancel = await this.getCurrentBillingSubscription({
+  async cancelSubscription(workspaceId: string): Promise<void> {
+    const subscription = await this.getCurrentBillingSubscription({
       workspaceId,
     });
 
-    if (isDefined(subscriptionToCancel)) {
+    if (isDefined(subscription)) {
       await this.stripeSubscriptionService.cancelSubscription(
-        subscriptionToCancel.stripeSubscriptionId,
+        subscription.stripeSubscriptionId,
       );
     }
-    await this.billingSubscriptionRepository.delete({ workspaceId });
+  }
+
+  async assertSubscriptionCanceledOrNone(workspaceId: string): Promise<void> {
+    const activeSubscription = await this.getCurrentBillingSubscription({
+      workspaceId,
+    });
+
+    if (isDefined(activeSubscription)) {
+      throw new BillingException(
+        `Subscription for workspace ${workspaceId} is not canceled`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED,
+      );
+    }
   }
 
   async handleUnpaidInvoices(data: Stripe.SetupIntentSucceededEvent.Data) {
-    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
-      { stripeCustomerId: data.object.customer as string },
-    );
+    const stripeCustomerId =
+      typeof data.object.customer === 'string'
+        ? data.object.customer
+        : data.object.customer?.id;
 
-    if (billingSubscription.status === SubscriptionStatus.Unpaid) {
-      await this.stripeSubscriptionService.collectLastInvoice(
-        billingSubscription.stripeSubscriptionId,
+    // The Stripe account receives every setup intent, including ones that are
+    // not tied to a workspace subscription. Those can never be recovered, and
+    // failing would only have Stripe redeliver them
+    if (!isDefined(stripeCustomerId)) {
+      this.logger.warn(
+        `Ignoring successful setup intent ${data.object.id} without customer`,
       );
+
+      return { handleUnpaidInvoiceStripeSubscriptionId: undefined };
+    }
+
+    const billingSubscription = await this.getCurrentBillingSubscription({
+      stripeCustomerId,
+    });
+
+    if (!isDefined(billingSubscription)) {
+      this.logger.warn(
+        `Ignoring successful setup intent ${data.object.id}, customer ${stripeCustomerId} has no current subscription`,
+      );
+
+      return { handleUnpaidInvoiceStripeSubscriptionId: undefined };
+    }
+
+    const stripePaymentMethodId =
+      typeof data.object.payment_method === 'string'
+        ? data.object.payment_method
+        : data.object.payment_method?.id;
+
+    if (!isDefined(stripePaymentMethodId)) {
+      this.logger.warn(
+        `Ignoring successful setup intent ${data.object.id} without payment method`,
+      );
+
+      return { handleUnpaidInvoiceStripeSubscriptionId: undefined };
+    }
+
+    await this.stripeCustomerService.setDefaultPaymentMethod({
+      stripeCustomerId: billingSubscription.stripeCustomerId,
+      stripePaymentMethodId,
+    });
+
+    const stripeSubscription =
+      await this.stripeSubscriptionService.updateSubscription(
+        billingSubscription.stripeSubscriptionId,
+        { default_payment_method: stripePaymentMethodId },
+      );
+
+    // The persisted status can lag behind Stripe when this event lands before
+    // the subscription update one, so the live status decides whether an
+    // overdue invoice has to be retried
+    if (
+      [SubscriptionStatus.PastDue, SubscriptionStatus.Unpaid].includes(
+        getSubscriptionStatus(stripeSubscription.status),
+      )
+    ) {
+      await this.stripeSubscriptionService.payOpenInvoices({
+        stripeSubscriptionId: billingSubscription.stripeSubscriptionId,
+        stripePaymentMethodId,
+      });
     }
 
     return {
@@ -180,9 +241,7 @@ export class BillingSubscriptionService {
     const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
 
     const entitlements = isBillingEnabled
-      ? await this.billingEntitlementRepository.find({
-          where: { workspaceId },
-        })
+      ? await this.billingEntitlementRepository.find(workspaceId)
       : [];
 
     const entitlementsByKey = entitlements.reduce(
@@ -196,9 +255,11 @@ export class BillingSubscriptionService {
 
     return Object.values(BillingEntitlementKey).map((key) => ({
       key,
-      value:
-        hasValidEnterprisePlan &&
-        (!isBillingEnabled || (entitlementsByKey[key]?.value ?? false)),
+      value: isEntitlementActive({
+        hasValidEnterprisePlan,
+        isBillingEnabled,
+        stripeEntitlementValue: entitlementsByKey[key]?.value ?? false,
+      }),
     }));
   }
 
@@ -206,13 +267,31 @@ export class BillingSubscriptionService {
     workspaceId: string,
     key: BillingEntitlementKey,
   ): Promise<boolean> {
-    const entitlement = await this.billingEntitlementRepository.findOneBy({
+    const entitlement = await this.billingEntitlementRepository.findOne(
       workspaceId,
-      key,
-      value: true,
-    });
+      { where: { key, value: true } },
+    );
 
     return entitlement?.value ?? false;
+  }
+
+  async getWorkspaceEntitlementValue(
+    workspaceId: string,
+    key: BillingEntitlementKey,
+  ): Promise<boolean> {
+    const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
+    const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
+
+    const stripeEntitlementValue =
+      hasValidEnterprisePlan && isBillingEnabled
+        ? await this.getWorkspaceEntitlementByKey(workspaceId, key)
+        : false;
+
+    return isEntitlementActive({
+      hasValidEnterprisePlan,
+      isBillingEnabled,
+      stripeEntitlementValue,
+    });
   }
 
   async endTrialPeriod(workspace: WorkspaceEntity) {
@@ -239,22 +318,31 @@ export class BillingSubscriptionService {
       };
     }
 
+    await this.stripeCustomerService.ensureDefaultPaymentMethod(
+      billingSubscription.stripeCustomerId,
+    );
+
     const updatedSubscription =
       await this.stripeSubscriptionService.updateSubscription(
         billingSubscription.stripeSubscriptionId,
         {
           trial_end: 'now',
+          cancel_at_period_end: false,
         },
       );
 
-    await this.billingSubscriptionItemRepository.update(
-      { stripeSubscriptionId: updatedSubscription.id },
-      { hasReachedCurrentPeriodCap: false },
+    await this.syncSubscriptionToDatabase(
+      billingSubscription.workspaceId,
+      updatedSubscription.id,
     );
 
-    await this.meteredCreditService.recreateBillingAlertForSubscription(
-      billingSubscription,
-    );
+    await this.billingUsageCacheService.flushAvailableCredits(workspace.id);
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
+      'currentBillingSubscription',
+    ]);
+
+    await this.usageLimitQuotaService.dropAllowanceCounter(workspace.id);
 
     return {
       status: getSubscriptionStatus(updatedSubscription.status),
@@ -272,6 +360,7 @@ export class BillingSubscriptionService {
       );
 
     await this.billingCustomerRepository.upsert(
+      workspaceId,
       transformStripeSubscriptionEventToDatabaseCustomer(workspaceId, {
         object: subscription,
       }),
@@ -281,20 +370,43 @@ export class BillingSubscriptionService {
       },
     );
 
-    await this.billingSubscriptionRepository.upsert(
+    const incomingSubscription =
       transformStripeSubscriptionEventToDatabaseSubscription(
         workspaceId,
         subscription,
-      ),
+      );
+
+    const storedSubscription = await this.billingSubscriptionRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          stripeSubscriptionId: incomingSubscription.stripeSubscriptionId,
+        },
+        select: {
+          id: true,
+          currentPeriodStart: true,
+          currentPeriodEnd: true,
+        },
+      },
+    );
+
+    await this.billingSubscriptionRepository.upsert(
+      workspaceId,
+      {
+        ...incomingSubscription,
+        ...resolveBillingPeriodBoundaryUpdate({
+          incomingPeriodStart: incomingSubscription.currentPeriodStart,
+          storedSubscription,
+        }),
+      },
       {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
       },
     );
 
-    const billingSubscriptions = await this.billingSubscriptionRepository.find({
-      where: { workspaceId },
-    });
+    const billingSubscriptions =
+      await this.billingSubscriptionRepository.find(workspaceId);
 
     const currentBillingSubscription = billingSubscriptions.find(
       (sub) => sub.stripeSubscriptionId === subscription.id,
@@ -352,6 +464,27 @@ export class BillingSubscriptionService {
     this.logger.log(
       `Subscription synced to database: ${subscription.id} for workspace: ${workspaceId}`,
     );
+
+    if (
+      WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES.includes(
+        currentBillingSubscription.status,
+      )
+    ) {
+      const activationResult = await this.workspaceRepository.update(
+        {
+          id: workspaceId,
+          activationStatus: WorkspaceActivationStatus.CREATED,
+        },
+        { activationStatus: WorkspaceActivationStatus.ACTIVE },
+      );
+
+      if ((activationResult.affected ?? 0) > 0) {
+        await this.coreEntityCacheService.invalidate(
+          'workspaceEntity',
+          workspaceId,
+        );
+      }
+    }
 
     return currentBillingSubscription;
   }

@@ -9,6 +9,7 @@ import { useEdgeState } from '@/workflow/workflow-diagram/workflow-edges/hooks/u
 import { WorkflowDiagramHandleSource } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleSource';
 import { WorkflowDiagramHandleTarget } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramHandleTarget';
 import { WorkflowDiagramStepNodeIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeIcon';
+import { WorkflowDiagramStepNodeOptionsDropdown } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeOptionsDropdown';
 import { WorkflowNodeContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeContainer';
 import { WorkflowNodeIconContainer } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeIconContainer';
 import { WorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeLabel';
@@ -17,13 +18,14 @@ import { WorkflowNodeRightPart } from '@/workflow/workflow-diagram/workflow-node
 import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowNodeTitle';
 import { WORKFLOW_DIAGRAM_NODE_DEFAULT_SOURCE_HANDLE_ID } from '@/workflow/workflow-diagram/workflow-nodes/constants/WorkflowDiagramNodeDefaultSourceHandleId';
 import { useConnectionState } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useConnectionState';
+import { useWorkflowNodeLabel } from '@/workflow/workflow-diagram/workflow-nodes/hooks/useWorkflowNodeLabel';
 import { isNodeTitleHighlighted } from '@/workflow/workflow-diagram/workflow-nodes/utils/isNodeTitleHighlighted';
 import { workflowInsertStepIdsComponentState } from '@/workflow/workflow-steps/states/workflowInsertStepIdsComponentState';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Position } from '@xyflow/react';
 import { useState } from 'react';
-import { capitalize, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 const StyledAddStepButtonContainer = styled.div<{
   shouldDisplay: boolean;
@@ -44,11 +46,17 @@ export const WorkflowDiagramStepNodeEditableContent = ({
   data,
   selected,
   onClick,
+  onChangeNode,
+  onDuplicateNode,
+  onDelete,
 }: {
   id: string;
   data: WorkflowDiagramStepNodeData;
   selected: boolean;
   onClick?: () => void;
+  onChangeNode: () => void;
+  onDuplicateNode?: () => void;
+  onDelete: () => void;
 }) => {
   const { i18n } = useLingui();
 
@@ -75,6 +83,8 @@ export const WorkflowDiagramStepNodeEditableContent = ({
 
   const isNodeConnectable = isConnectable({ nodeId: id });
 
+  const nodeLabel = useWorkflowNodeLabel(data);
+
   const handleAddStepButtonContainerClick = (
     event: React.MouseEvent<HTMLDivElement>,
   ) => {
@@ -100,8 +110,12 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         onMouseLeave={handleMouseLeave}
         isConnectable={isNodeConnectable}
         selected={selected}
+        targetHandleCount={data.targetHandleIds?.length}
       >
-        <WorkflowDiagramHandleTarget isConnectable={isNodeConnectable} />
+        <WorkflowDiagramHandleTarget
+          isConnectable={isNodeConnectable}
+          targetHandleIds={data.targetHandleIds}
+        />
 
         <WorkflowNodeIconContainer>
           <WorkflowDiagramStepNodeIcon data={data} />
@@ -110,7 +124,7 @@ export const WorkflowDiagramStepNodeEditableContent = ({
         <WorkflowNodeRightPart>
           <WorkflowNodeLabelWithCounterPart>
             <WorkflowNodeLabel selected={selected}>
-              {capitalize(data.nodeType)}
+              {nodeLabel}
             </WorkflowNodeLabel>
           </WorkflowNodeLabelWithCounterPart>
 
@@ -121,6 +135,14 @@ export const WorkflowDiagramStepNodeEditableContent = ({
             {data.name}
           </WorkflowNodeTitle>
         </WorkflowNodeRightPart>
+
+        {id !== EMPTY_NODE_ID && selected && (
+          <WorkflowDiagramStepNodeOptionsDropdown
+            onChangeNode={onChangeNode}
+            onDuplicateNode={onDuplicateNode}
+            onDelete={onDelete}
+          />
+        )}
       </WorkflowNodeContainer>
 
       {!data.hasNextStepIds &&

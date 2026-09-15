@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  > * + * {
+    margin-left: var(--t-spacing-4);
+  }
+
+  @include respond-to(mobile) {
+    overflow: scroll;
+
+    .cardContainer {
+      flex: 0 0 160px;
+    }
+  }
+}
+
+.cardContainer {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.card {
+  width: 100%;
+}
+
+.label {
+  margin-top: var(--t-spacing-2);
+  color: var(--t-font-color-secondary);
+  font-size: var(--t-font-size-xs);
+  font-weight: var(--t-font-weight-medium);
+}

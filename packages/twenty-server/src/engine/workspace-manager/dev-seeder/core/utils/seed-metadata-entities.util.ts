@@ -13,10 +13,11 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
-import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-data-seeds.constant';
+import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
+import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
+import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-folder-seed-ids.constant';
+import { getSeededEmailGroupDomains } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-emailing-domains.util';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
-import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
-import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-folder-data-seeds.constant';
 
 type SeedMetadataEntitiesArgs = {
   queryRunner: QueryRunner;
@@ -31,6 +32,10 @@ const YC_CONNECTED_ACCOUNT_IDS = {
   PHIL: '30303030-cafc-4323-908d-e5b42ad69fdf',
   JANE: '30303030-b5c7-46f0-bf5c-3f4e4b3f7c1a',
   JANE_DELETABLE: '30303030-d1e5-4a8f-9c3b-7f6d5e4c3b2a',
+  JONY_SHARED: '30303030-c7b4-4f1a-8e2d-6b9a0f3c5d18',
+  TIM_SHARED_ARCHIVED: '30303030-e3a9-4d76-b0c1-5f8e2a7d4c93',
+  SUPPORT_GROUP: '30303030-5a1e-4b2c-9d3e-100000000001',
+  CONTACT_GROUP: '30303030-5a1e-4b2c-9d3e-100000000002',
 };
 
 const YC_MESSAGE_CHANNEL_IDS = {
@@ -40,7 +45,9 @@ const YC_MESSAGE_CHANNEL_IDS = {
   JANE: '30303030-8c4d-4e71-a672-2e6a8c9f1b3d',
   SUPPORT: '30303030-e2f1-49b5-85d2-5d3a3386990d',
   SALES: '30303030-e2f1-49b5-85d2-5d3a3386990e',
-};
+  SUPPORT_GROUP: '30303030-5a1e-4b2c-9d3e-200000000001',
+  CONTACT_GROUP: '30303030-5a1e-4b2c-9d3e-200000000002',
+} as const;
 
 const YC_CALENDAR_CHANNEL_IDS = {
   TIM: '30303030-a40f-4faf-bb9f-c6f9945b8203',
@@ -49,7 +56,7 @@ const YC_CALENDAR_CHANNEL_IDS = {
   JANE: '30303030-a40f-4faf-bb9f-c6f9945b8208',
   COMPANY_MAIN: '30303030-a40f-4faf-bb9f-c6f9945b8206',
   TEAM_CALENDAR: '30303030-a40f-4faf-bb9f-c6f9945b8207',
-};
+} as const;
 
 const YC_MESSAGE_FOLDER_IDS = {
   TIM_INBOX: '30303030-1234-4567-8901-abcdef012345',
@@ -57,22 +64,9 @@ const YC_MESSAGE_FOLDER_IDS = {
   JONY_INBOX: '30303030-1234-4567-8901-abcdef012346',
   JANE_INBOX: '30303030-1234-4567-8901-abcdef012347',
   JANE_SENT: '30303030-1234-4567-8901-abcdef012348',
-};
+} as const;
 
-type WorkspaceSeedIds = {
-  userWorkspaceIds: {
-    TIM: string;
-    JONY: string;
-    PHIL: string;
-    JANE: string;
-  };
-  connectedAccountIds: typeof CONNECTED_ACCOUNT_DATA_SEED_IDS;
-  messageChannelIds: typeof MESSAGE_CHANNEL_DATA_SEED_IDS;
-  calendarChannelIds: typeof CALENDAR_CHANNEL_DATA_SEED_IDS;
-  messageFolderIds: typeof MESSAGE_FOLDER_DATA_SEED_IDS;
-};
-
-const getSeedIds = (workspaceId: string): WorkspaceSeedIds => {
+const getSeedIds = (workspaceId: string) => {
   if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
     return {
       userWorkspaceIds: {
@@ -126,6 +120,7 @@ const seedConnectedAccounts = async ({
   workspaceId,
 }: SeedMetadataEntitiesArgs) => {
   const ids = getSeedIds(workspaceId);
+  const emailGroupDomains = getSeededEmailGroupDomains(workspaceId);
 
   const connectedAccounts = [
     {
@@ -133,6 +128,8 @@ const seedConnectedAccounts = async ({
       handle: 'tim@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -140,6 +137,8 @@ const seedConnectedAccounts = async ({
       handle: 'jony.ive@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JONY,
+      visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -147,6 +146,8 @@ const seedConnectedAccounts = async ({
       handle: 'phil.schiler@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.PHIL,
+      visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -154,6 +155,8 @@ const seedConnectedAccounts = async ({
       handle: 'jane.austen@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JANE,
+      visibility: 'user',
+      archivedAt: null,
       workspaceId,
     },
     {
@@ -161,6 +164,44 @@ const seedConnectedAccounts = async ({
       handle: 'jane-deletable@apple.dev',
       provider: 'google',
       userWorkspaceId: ids.userWorkspaceIds.JANE,
+      visibility: 'user',
+      archivedAt: null,
+      workspaceId,
+    },
+    {
+      id: ids.connectedAccountIds.JONY_SHARED,
+      handle: 'jony-shared@apple.dev',
+      provider: 'app',
+      userWorkspaceId: ids.userWorkspaceIds.JONY,
+      visibility: 'workspace',
+      archivedAt: null,
+      workspaceId,
+    },
+    {
+      id: ids.connectedAccountIds.TIM_SHARED_ARCHIVED,
+      handle: 'tim-shared-archived@apple.dev',
+      provider: 'app',
+      userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'workspace',
+      archivedAt: new Date().toISOString(),
+      workspaceId,
+    },
+    {
+      id: ids.connectedAccountIds.SUPPORT_GROUP,
+      handle: `support@${emailGroupDomains.verified}`,
+      provider: 'email_group',
+      userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'workspace',
+      archivedAt: null,
+      workspaceId,
+    },
+    {
+      id: ids.connectedAccountIds.CONTACT_GROUP,
+      handle: `contact@${emailGroupDomains.pending}`,
+      provider: 'email_group',
+      userWorkspaceId: ids.userWorkspaceIds.TIM,
+      visibility: 'workspace',
+      archivedAt: null,
       workspaceId,
     },
   ];
@@ -173,6 +214,8 @@ const seedConnectedAccounts = async ({
       'handle',
       'provider',
       'userWorkspaceId',
+      'visibility',
+      'archivedAt',
       'workspaceId',
     ])
     .orIgnore()
@@ -282,6 +325,38 @@ const seedMessageChannels = async ({
       pendingGroupEmailsAction: 'NONE',
       isSyncEnabled: true,
       connectedAccountId: ids.connectedAccountIds.TIM,
+      workspaceId,
+    },
+    {
+      id: ids.messageChannelIds.SUPPORT_GROUP,
+      handle: 'emailgroup-support@demo.invalid',
+      visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      type: MessageChannelType.EMAIL_GROUP,
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+      isContactAutoCreationEnabled: true,
+      contactAutoCreationPolicy: 'SENT_AND_RECEIVED',
+      messageFolderImportPolicy: 'ALL_FOLDERS',
+      excludeNonProfessionalEmails: false,
+      excludeGroupEmails: false,
+      pendingGroupEmailsAction: 'NONE',
+      isSyncEnabled: true,
+      connectedAccountId: ids.connectedAccountIds.SUPPORT_GROUP,
+      workspaceId,
+    },
+    {
+      id: ids.messageChannelIds.CONTACT_GROUP,
+      handle: 'emailgroup-contact@demo.invalid',
+      visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      type: MessageChannelType.EMAIL_GROUP,
+      syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+      isContactAutoCreationEnabled: true,
+      contactAutoCreationPolicy: 'SENT_AND_RECEIVED',
+      messageFolderImportPolicy: 'ALL_FOLDERS',
+      excludeNonProfessionalEmails: false,
+      excludeGroupEmails: false,
+      pendingGroupEmailsAction: 'NONE',
+      isSyncEnabled: true,
+      connectedAccountId: ids.connectedAccountIds.CONTACT_GROUP,
       workspaceId,
     },
   ];

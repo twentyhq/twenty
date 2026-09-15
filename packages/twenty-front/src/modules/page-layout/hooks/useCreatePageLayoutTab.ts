@@ -55,13 +55,15 @@ export const useCreatePageLayoutTab = ({
       const newTab: PageLayoutTab = {
         id: newTabId,
         applicationId: '',
+        universalIdentifier: newTabId,
+        isSystemSideEffect: false,
         isActive: true,
         title: title || `Tab ${tabsLength + 1}`,
         position: maxPosition + 1,
         pageLayoutId: pageLayoutId,
         icon:
           pageLayoutDraft.type === PageLayoutType.RECORD_PAGE
-            ? 'IconAppWindow'
+            ? 'IconPerspective'
             : null,
         layoutMode: getDefaultTabLayoutMode(pageLayoutDraft.type),
         widgets: [],

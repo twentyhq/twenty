@@ -4,11 +4,12 @@ import { type MessageThread } from '@/activities/emails/types/MessageThread';
 export type EmailThreadMessage = {
   id: string;
   text: string;
-  receivedAt: string;
+  receivedAt: string | null;
   subject: string;
   headerMessageId: string;
   messageThreadId: string;
   messageParticipants: EmailThreadMessageParticipant[];
   messageThread: MessageThread;
+  isDraft: boolean;
   __typename: 'EmailThreadMessage';
 };

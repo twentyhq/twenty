@@ -1,4 +1,6 @@
 import { msg } from '@lingui/core/macro';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   DateDisplayFormat,
@@ -7,6 +9,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -14,9 +17,6 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
-import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_PERSON } from 'src/modules/person/standard-objects/person.workspace-entity';
-
 export const buildPersonStandardFlatFieldMetadatas = ({
   now,
   objectName,
@@ -28,19 +28,20 @@ export const buildPersonStandardFlatFieldMetadatas = ({
   CreateStandardFieldArgs<'person', FieldMetadataType>,
   'context'
 >): Record<AllStandardObjectFieldName<'person'>, FlatFieldMetadata> => ({
-  // Base fields from BaseWorkspaceEntity
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       fieldName: 'id',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Id`),
-      description: i18nLabel(msg`Id`),
+      label: i18nLabel(msg({ message: `ID`, context: 'fieldMetadata.label' })),
+      description: i18nLabel(
+        msg({ message: `ID`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'Icon123',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'uuid',
     },
     standardObjectMetadataRelatedEntityIds,
@@ -54,12 +55,16 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Creation date`),
-      description: i18nLabel(msg`Creation date`),
+      label: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({ message: `Creation date`, context: 'fieldMetadata.description' }),
+      ),
       icon: 'IconCalendar',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -76,12 +81,19 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Last update`),
-      description: i18nLabel(msg`Last time the record was changed`),
+      label: i18nLabel(
+        msg({ message: `Last update`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Last time the record was changed`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarClock',
       isSystem: true,
       isNullable: false,
-      isUIReadOnly: true,
+      isUIEditable: false,
       defaultValue: 'now',
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
@@ -98,12 +110,19 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'deletedAt',
       type: FieldMetadataType.DATE_TIME,
-      label: i18nLabel(msg`Deleted at`),
-      description: i18nLabel(msg`Date when the record was deleted`),
+      label: i18nLabel(
+        msg({ message: `Deleted at`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Date when the record was deleted`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendarMinus',
       isSystem: true,
       isNullable: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       settings: {
         displayFormat: DateDisplayFormat.RELATIVE,
       },
@@ -114,15 +133,21 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Person-specific fields
   name: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       fieldName: 'name',
       type: FieldMetadataType.FULL_NAME,
-      label: i18nLabel(msg`Name`),
-      description: "Contact's name",
+      label: i18nLabel(
+        msg({ message: `Name`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Contact's name`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isNullable: true,
     },
@@ -137,8 +162,15 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'emails',
       type: FieldMetadataType.EMAILS,
-      label: i18nLabel(msg`Emails`),
-      description: "Contact's Emails",
+      label: i18nLabel(
+        msg({ message: `Emails`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Contact's Emails`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconMail',
       isNullable: true,
       isUnique: true,
@@ -157,25 +189,16 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'linkedinLink',
       type: FieldMetadataType.LINKS,
-      label: i18nLabel(msg`Linkedin`),
-      description: "Contact's Linkedin account",
+      label: i18nLabel(
+        msg({ message: `Linkedin`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Contact's Linkedin account`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconBrandLinkedin',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  xLink: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'xLink',
-      type: FieldMetadataType.LINKS,
-      label: i18nLabel(msg`X`),
-      description: "Contact's X/Twitter account",
-      icon: 'IconBrandX',
       isNullable: true,
     },
     standardObjectMetadataRelatedEntityIds,
@@ -189,8 +212,15 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'jobTitle',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Job Title`),
-      description: "Contact's job title",
+      label: i18nLabel(
+        msg({ message: `Job Title`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Contact's job title`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconBriefcase',
       isNullable: true,
     },
@@ -205,29 +235,20 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'phones',
       type: FieldMetadataType.PHONES,
-      label: i18nLabel(msg`Phones`),
-      description: "Contact's phone numbers",
+      label: i18nLabel(
+        msg({ message: `Phones`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Contact's phone numbers`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconPhone',
       isNullable: true,
       settings: {
         maxNumberOfValues: 1,
       },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  city: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'city',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`City`),
-      description: "Contact's city",
-      icon: 'IconMap',
-      isNullable: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -241,8 +262,15 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'avatarUrl',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Avatar`),
-      description: "Contact's avatar",
+      label: i18nLabel(
+        msg({ message: `Avatar`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Contact's avatar`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileUpload',
       isSystem: true,
       isNullable: true,
@@ -258,8 +286,15 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'avatarFile',
       type: FieldMetadataType.FILES,
-      label: i18nLabel(msg`Avatar File`),
-      description: "Contact's avatar file",
+      label: i18nLabel(
+        msg({ message: `Avatar File`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Contact's avatar file`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconFileUpload',
       isSystem: true,
       isNullable: true,
@@ -278,8 +313,15 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
-      label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`Person record Position`),
+      label: i18nLabel(
+        msg({ message: `Position`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Person record Position`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -296,11 +338,18 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'createdBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Created by`),
-      description: i18nLabel(msg`The creator of the record`),
+      label: i18nLabel(
+        msg({ message: `Created by`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `The creator of the record`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCreativeCommonsSa',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -319,13 +368,18 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     context: {
       fieldName: 'updatedBy',
       type: FieldMetadataType.ACTOR,
-      label: i18nLabel(msg`Updated by`),
+      label: i18nLabel(
+        msg({ message: `Updated by`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`The workspace member who last updated the record`,
+        msg({
+          message: `The workspace member who last updated the record`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconUserCircle',
       isSystem: true,
-      isUIReadOnly: true,
+      isUIEditable: false,
       isNullable: false,
       defaultValue: {
         source: "'MANUAL'",
@@ -339,7 +393,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     now,
   }),
 
-  // Relation fields
   company: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -347,8 +400,15 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'company',
-      label: i18nLabel(msg`Company`),
-      description: "Contact's company",
+      label: i18nLabel(
+        msg({ message: `Company`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Contact's company`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconBuildingSkyscraper',
       isNullable: true,
       targetObjectName: 'company',
@@ -371,9 +431,14 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'pointOfContactForOpportunities',
-      label: i18nLabel(msg`Opportunities`),
+      label: i18nLabel(
+        msg({ message: `Opportunities`, context: 'fieldMetadata.label' }),
+      ),
       description: i18nLabel(
-        msg`List of opportunities for which that person is the point of contact`,
+        msg({
+          message: `List of opportunities for which that person is the point of contact`,
+          context: 'fieldMetadata.description',
+        }),
       ),
       icon: 'IconTargetArrow',
       isNullable: true,
@@ -395,10 +460,18 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'taskTargets',
-      label: i18nLabel(msg`Tasks`),
-      description: i18nLabel(msg`Tasks tied to the contact`),
-      icon: 'IconCheckbox',
-      isUIReadOnly: true,
+      isSystemSideEffect: true,
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget.label,
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Tasks tied to the contact`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
+        .icon,
       isNullable: true,
       targetObjectName: 'taskTarget',
       targetFieldName: 'targetPerson',
@@ -418,16 +491,82 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'noteTargets',
-      label: i18nLabel(msg`Notes`),
-      description: i18nLabel(msg`Notes tied to the contact`),
-      icon: 'IconNotes',
-      isUIReadOnly: true,
+      isSystemSideEffect: true,
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget.label,
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Notes tied to the contact`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
+        .icon,
       isNullable: true,
       targetObjectName: 'noteTarget',
       targetFieldName: 'targetPerson',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
       },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  calendarEventTargets: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'calendarEventTargets',
+      isSystemSideEffect: true,
+      label: i18nLabel(
+        msg({ message: `Calendar events`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Calendar events tied to the contact`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconCalendar',
+      isUIEditable: false,
+      isNullable: true,
+      targetObjectName: 'calendarEventTarget',
+      targetFieldName: 'targetPerson',
+      settings: { relationType: RelationType.ONE_TO_MANY },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  messageThreadTargets: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'messageThreadTargets',
+      isSystemSideEffect: true,
+      label: i18nLabel(
+        msg({ message: `Emails`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Message threads tied to the contact`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMail',
+      isUIEditable: false,
+      isNullable: true,
+      targetObjectName: 'messageThreadTarget',
+      targetFieldName: 'targetPerson',
+      settings: { relationType: RelationType.ONE_TO_MANY },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -441,9 +580,18 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'attachments',
-      label: i18nLabel(msg`Attachments`),
-      description: i18nLabel(msg`Attachments linked to the contact.`),
-      icon: 'IconFileImport',
+      isSystemSideEffect: true,
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment.label,
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Attachments linked to the contact.`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+        .icon,
       isNullable: true,
       targetObjectName: 'attachment',
       targetFieldName: 'targetPerson',
@@ -463,8 +611,18 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'messageParticipants',
-      label: i18nLabel(msg`Message Participants`),
-      description: i18nLabel(msg`Message Participants`),
+      label: i18nLabel(
+        msg({
+          message: `Message Participants`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Message Participants`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUserCircle',
       isNullable: true,
       targetObjectName: 'messageParticipant',
@@ -485,8 +643,18 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'calendarEventParticipants',
-      label: i18nLabel(msg`Calendar Event Participants`),
-      description: i18nLabel(msg`Calendar Event Participants`),
+      label: i18nLabel(
+        msg({
+          message: `Calendar Event Participants`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Calendar Event Participants`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconCalendar',
       isNullable: true,
       targetObjectName: 'calendarEventParticipant',
@@ -507,8 +675,16 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
-      label: i18nLabel(msg`Events`),
-      description: i18nLabel(msg`Events linked to the person`),
+      isSystemSideEffect: true,
+      label: i18nLabel(
+        msg({ message: `Events`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Events linked to the person`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconTimelineEvent',
       isNullable: true,
       targetObjectName: 'timelineActivity',
@@ -522,23 +698,56 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  listMemberships: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'listMemberships',
+      label: i18nLabel(
+        msg({ message: `Lists`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Lists the contact belongs to`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconUsersGroup',
+      isUIEditable: true,
+      isNullable: true,
+      targetObjectName: 'messageListMember',
+      targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+      junctionTargetFieldUniversalIdentifier:
+        STANDARD_OBJECTS.messageListMember.fields.list.universalIdentifier,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   searchVector: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       fieldName: 'searchVector',
       type: FieldMetadataType.TS_VECTOR,
-      label: i18nLabel(msg`Search vector`),
-      description: i18nLabel(msg`Field used for full-text search`),
+      label: i18nLabel(
+        msg({ message: `Search vector`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Field used for full-text search`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
       icon: 'IconUser',
       isSystem: true,
       isNullable: true,
-      settings: {
-        generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_PERSON,
-        ),
-      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

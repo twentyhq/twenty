@@ -82,19 +82,19 @@ description: أتمتة الأنشطة بعد الفوز عند إغلاق ال�
 **مثال على محتوى البريد الإلكتروني**:
 
 ```
-مرحبًا فريق نجاح العملاء،
+Hi CS Team,
 
-لدينا عميل جديد!
+We have a new customer!
 
-الشركة: {{trigger.object.company.name}}
-الصفقة: {{trigger.object.name}}
-القيمة: {{trigger.object.amount}}
-مندوب المبيعات: {{trigger.object.owner.name}}
-تاريخ الإغلاق: {{trigger.object.closedAt}}
+Company: {{trigger.object.company.name}}
+Deal: {{trigger.object.name}}
+Value: {{trigger.object.amount}}
+Sales Rep: {{trigger.object.owner.name}}
+Close Date: {{trigger.object.closedAt}}
 
-تم إنشاء مهمة الإعداد تلقائيًا.
+An onboarding task has been created automatically.
 
-لنمنحهم بداية رائعة!
+Let's give them a great start!
 ```
 
 ### الخطوة 7: تأكيد لمندوب المبيعات
@@ -157,7 +157,7 @@ export const main = async (params) => {
 
 * أنشئ عميلًا في نظام الفوترة بواسطة **HTTP Request**
 
-### إجراءات شرطية
+### الإجراءات المشروطة
 
 استخدم إجراءات **Filter** لـ:
 

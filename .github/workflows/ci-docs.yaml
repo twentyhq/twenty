@@ -20,6 +20,9 @@ jobs:
     with:
       files: |
         package.json
+        yarn.lock
+        packages/twenty-ui/**
+        .github/workflows/ci-docs.yaml
         packages/twenty-docs/**
 
   docs-lint:
@@ -28,13 +31,8 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
-
       - name: Fetch local actions
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
 
@@ -44,3 +42,8 @@ jobs:
       - name: Docs / Lint
         run: npx nx lint twenty-docs
 
+      - name: Docs / Test
+        run: npx nx test twenty-docs
+
+      - name: Docs / Generated UI references
+        run: npx nx check:ui twenty-docs

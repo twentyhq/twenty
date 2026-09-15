@@ -1,42 +1,50 @@
+import { type AllMetadataName } from 'twenty-shared/metadata';
+
+import { resetAuthoredOverrides } from 'src/engine/metadata-modules/overrides/utils/reset-authored-overrides.util';
+
 type EntityWithApplicationIdentifierAndOverrides = {
   applicationUniversalIdentifier: string;
   isActive: boolean;
   overrides: unknown;
+  isSystemSideEffect?: boolean;
 };
 
 export const splitEntitiesByResetStrategy = <
   T extends EntityWithApplicationIdentifierAndOverrides,
 >({
+  metadataName,
   entities,
   workspaceCustomApplicationUniversalIdentifier,
   now,
 }: {
+  metadataName: AllMetadataName;
   entities: T[];
   workspaceCustomApplicationUniversalIdentifier: string;
   now: string;
 }): {
   toHardDelete: T[];
-  toReset: (T & { isActive: true; overrides: null; updatedAt: string })[];
+  toReset: (T & { updatedAt: string })[];
 } => {
   const toHardDelete: T[] = [];
-  const toReset: (T & {
-    isActive: true;
-    overrides: null;
-    updatedAt: string;
-  })[] = [];
+  const toReset: (T & { updatedAt: string })[] = [];
 
   for (const entity of entities) {
     if (
       entity.applicationUniversalIdentifier ===
-      workspaceCustomApplicationUniversalIdentifier
+        workspaceCustomApplicationUniversalIdentifier &&
+      !entity.isSystemSideEffect
     ) {
       toHardDelete.push(entity);
     } else {
       toReset.push({
-        ...entity,
-        isActive: true as const,
-        overrides: null,
-        ...('universalOverrides' in entity ? { universalOverrides: null } : {}),
+        ...resetAuthoredOverrides({
+          metadataName,
+          flatEntity: entity,
+          authorUniversalIdentifier:
+            workspaceCustomApplicationUniversalIdentifier,
+          workspaceCustomApplicationUniversalIdentifier,
+        }),
+        isActive: true,
         updatedAt: now,
       });
     }

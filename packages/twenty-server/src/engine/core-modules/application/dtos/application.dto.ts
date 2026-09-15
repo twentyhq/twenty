@@ -35,10 +35,16 @@ export class ApplicationDTO {
   @Field({ nullable: true })
   description?: string;
 
+  // Package-relative path of the logo bundled in the application, not
+  // displayable on its own: exposed to clients through the logoUrl field
   @IsOptional()
   @IsString()
-  @Field({ nullable: true })
   logo?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  logoFileId?: string;
 
   @IsOptional()
   @IsString()
@@ -80,6 +86,10 @@ export class ApplicationDTO {
   @Field(() => Boolean)
   @IsBoolean()
   canBeUninstalled: boolean;
+
+  @Field(() => Boolean)
+  @IsBoolean()
+  autoUpgrade: boolean;
 
   @IsOptional()
   @IsString()

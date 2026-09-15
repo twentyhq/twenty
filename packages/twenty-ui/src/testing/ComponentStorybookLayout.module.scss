@@ -1,0 +1,11 @@
+.layout {
+  background: var(--t-background-primary);
+  border: 1px solid var(--t-border-color-light);
+  border-radius: 5px;
+
+  display: flex;
+  flex-direction: row;
+
+  max-width: calc(100% - 40px);
+  padding: 20px;
+}

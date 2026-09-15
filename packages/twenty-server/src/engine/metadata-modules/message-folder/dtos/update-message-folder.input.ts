@@ -1,22 +1,15 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import { Type } from 'class-transformer';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsUUID,
-  ValidateNested,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType()
 export class UpdateMessageFolderInputUpdates {
-  @IsOptional()
   @IsBoolean()
-  @Field({ nullable: true })
-  isSynced?: boolean;
+  @Field()
+  isSynced: boolean;
 }
 
 @InputType()

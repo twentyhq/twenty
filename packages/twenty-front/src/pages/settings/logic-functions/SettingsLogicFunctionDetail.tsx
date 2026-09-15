@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { useLogicFunctionForm } from '@/logic-functions/hooks/useLogicFunctionForm';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -6,8 +6,8 @@ import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/
 import { SettingsLogicFunctionSettingsTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionSettingsTab';
 import { SettingsLogicFunctionTestTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab';
 import { SettingsLogicFunctionTriggersTab } from '@/settings/logic-functions/components/tabs/SettingsLogicFunctionTriggersTab';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
@@ -18,7 +18,7 @@ import {
   IconCode,
   IconPlayerPlay,
   IconSettings,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
 import { FindOneApplicationDocument } from '~/generated-metadata/graphql';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -31,6 +31,7 @@ const LOGIC_FUNCTION_DETAIL_ID = 'logic-function-detail';
 export const SettingsLogicFunctionDetail = () => {
   const { logicFunctionId = '', applicationId } = useParams();
 
+  const location = useLocation();
   const navigate = useNavigate();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -43,6 +44,11 @@ export const SettingsLogicFunctionDetail = () => {
   );
 
   const applicationName = data?.findOneApplication?.name;
+
+  const applicationVariableKeys =
+    data?.findOneApplication?.applicationVariables?.map(
+      (variable) => variable.key,
+    ) ?? [];
 
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
@@ -66,7 +72,10 @@ export const SettingsLogicFunctionDetail = () => {
   });
 
   const handleTestFunction = async () => {
-    navigate('#test');
+    navigate(
+      { search: location.search, hash: '#test' },
+      { state: location.state },
+    );
     await executeLogicFunction();
   };
 
@@ -99,7 +108,7 @@ export const SettingsLogicFunctionDetail = () => {
         return [
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`Applications`,
@@ -113,7 +122,7 @@ export const SettingsLogicFunctionDetail = () => {
     : [
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`AI`,
@@ -134,7 +143,8 @@ export const SettingsLogicFunctionDetail = () => {
   return (
     !loading &&
     !applicationLoading && (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
+        pageTitle={formValues.name}
         title={
           <SettingsLogicFunctionLabelContainer
             value={formValues.name}
@@ -143,15 +153,18 @@ export const SettingsLogicFunctionDetail = () => {
           />
         }
         links={breadcrumbLinks}
+        secondaryBar={
+          <SettingsTabBar tabs={tabs} componentInstanceId={instanceId} />
+        }
       >
         <SettingsPageContainer>
-          <TabList tabs={tabs} componentInstanceId={instanceId} />
           {isEditorTab && (
             <SettingsLogicFunctionCodeEditorTab
               files={files}
               handleExecute={handleTestFunction}
               onChange={onChange('sourceHandlerCode')}
               isTesting={isExecuting}
+              applicationVariableKeys={applicationVariableKeys}
             />
           )}
           {isTriggersTab && (
@@ -178,7 +191,7 @@ export const SettingsLogicFunctionDetail = () => {
             />
           )}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     )
   );
 };

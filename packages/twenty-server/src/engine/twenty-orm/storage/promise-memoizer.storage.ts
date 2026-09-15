@@ -1,15 +1,25 @@
 import { type Milliseconds } from 'cache-manager';
-import { isDefined } from 'twenty-shared/utils';
 
 import { type CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
 
+type PromiseMemoizerEntry<T> =
+  | {
+      state: 'pending';
+      generation: symbol;
+      promise: Promise<T | null>;
+    }
+  | {
+      state: 'resolved';
+      value: T;
+      expiresAt: number;
+    };
+
 const ONE_HOUR_IN_MS = 3600_000;
 
 export class PromiseMemoizer<T> {
-  private cache = new Map<CacheKey, { value: T; lastUsed: number }>();
-  private pending = new Map<CacheKey, Promise<T | null>>();
+  private cache = new Map<CacheKey, PromiseMemoizerEntry<T>>();
   private ttlMs: number;
 
   constructor(ttlMs: Milliseconds = ONE_HOUR_IN_MS) {
@@ -23,35 +33,52 @@ export class PromiseMemoizer<T> {
   ): Promise<T | null> {
     await this.clearExpiredKeys(onDelete);
 
-    const cachedEntry = this.cache.get(cacheKey);
+    const existingEntry = this.cache.get(cacheKey);
 
-    if (cachedEntry) {
-      cachedEntry.lastUsed = Date.now();
-
-      return cachedEntry.value;
+    if (existingEntry) {
+      return existingEntry.state === 'resolved'
+        ? existingEntry.value
+        : existingEntry.promise;
     }
 
-    const existingPromise = this.pending.get(cacheKey);
-
-    if (existingPromise) {
-      return existingPromise;
-    }
+    const generation = Symbol();
 
     const newPromise = (async () => {
       try {
         const value = await factory();
 
-        if (value) {
-          this.cache.set(cacheKey, { value, lastUsed: Date.now() });
+        const currentEntry = this.cache.get(cacheKey);
+
+        if (
+          value &&
+          currentEntry?.state === 'pending' &&
+          currentEntry.generation === generation
+        ) {
+          this.cache.set(cacheKey, {
+            state: 'resolved',
+            value,
+            expiresAt: Date.now() + this.ttlMs,
+          });
         }
 
         return value;
       } finally {
-        this.pending.delete(cacheKey);
+        const currentEntry = this.cache.get(cacheKey);
+
+        if (
+          currentEntry?.state === 'pending' &&
+          currentEntry.generation === generation
+        ) {
+          this.cache.delete(cacheKey);
+        }
       }
     })();
 
-    this.pending.set(cacheKey, newPromise);
+    this.cache.set(cacheKey, {
+      state: 'pending',
+      generation,
+      promise: newPromise,
+    });
 
     return newPromise;
   }
@@ -60,7 +87,7 @@ export class PromiseMemoizer<T> {
     const now = Date.now();
 
     for (const [cacheKey, cachedEntry] of this.cache.entries()) {
-      if (cachedEntry.lastUsed < now - this.ttlMs) {
+      if (cachedEntry.state === 'resolved' && cachedEntry.expiresAt <= now) {
         await this.clearKey(cacheKey, onDelete);
       }
     }
@@ -72,7 +99,7 @@ export class PromiseMemoizer<T> {
   ): Promise<void> {
     const cachedValue = this.cache.get(cacheKey);
 
-    if (isDefined(cachedValue)) {
+    if (cachedValue?.state === 'resolved') {
       await onDelete?.(cachedValue.value);
     }
     this.cache.delete(cacheKey);
@@ -87,17 +114,13 @@ export class PromiseMemoizer<T> {
         await this.clearKey(cacheKey, onDelete);
       }
     }
-
-    for (const cacheKey of [...this.pending.keys()]) {
-      if (cacheKey.startsWith(cacheKeyPrefix)) {
-        this.pending.delete(cacheKey);
-      }
-    }
   }
 
   async clearAll(onDelete?: (value: T) => Promise<void> | void): Promise<void> {
     for (const [, entry] of this.cache.entries()) {
-      await onDelete?.(entry.value);
+      if (entry.state === 'resolved') {
+        await onDelete?.(entry.value);
+      }
     }
 
     this.cache.clear();

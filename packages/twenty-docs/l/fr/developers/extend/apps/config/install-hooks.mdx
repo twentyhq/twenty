@@ -1,0 +1,188 @@
+---
+title: Hooks d'installation
+description: Exécutez de la logique pendant le cycle de vie d'installation, de mise à niveau ou de désinstallation — préremplissez des données, sauvegardez des enregistrements, validez la mise à niveau, nettoyez les ressources externes.
+icon: wrench
+---
+
+Les hooks d'installation sont des fonctions logiques spéciales qui s'exécutent pendant le cycle de vie d'installation, de mise à niveau ou de désinstallation. Ils partagent le même environnement d'exécution que les [fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions) classiques, mais ils sont déclarés avec leurs propres fonctions de définition et ne relèvent pas du modèle de déclencheur habituel (HTTP, cron, événements de base de données). Les hooks d'installation reçoivent un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` est `undefined` lors d'une nouvelle installation) ; le hook de désinstallation reçoit un `UninstallPayload` (`{ version?: string }` — la version supprimée).
+
+Chaque application peut définir **au maximum un seul** hook de chaque type (pré-installation, post-installation, désinstallation). La génération du manifeste renvoie une erreur si plus d'un hook de n'importe quel type est détecté.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## En un coup d'œil
+
+|                     | `definePreInstallLogicFunction`                                                                                                | `definePostInstallLogicFunction`                                                                                                           |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Exécutions          | Avant la migration des métadonnées — le schéma et les données **précédents** sont toujours intacts                             | Après la migration et la génération du SDK — le **nouveau** schéma est en place                                                            |
+| Exécution           | Toujours synchrone ; bloque l'installation                                                                                     | Asynchrone par défaut (mis en file d'attente, 3 nouvelles tentatives) ; mode synchrone en option via `shouldRunSynchronously: true`        |
+| En cas d'échec      | L'installation est **abandonnée** avant toute modification du schéma                                                           | Asynchrone : jusqu'à 3 réessais. Synchrone : l'appelant reçoit `POST_INSTALL_ERROR` (les modifications de schéma **ne** sont pas annulées) |
+| Utilisation typique | Sauvegarder ou corriger les données qu'une migration ferait perdre ; refuser une mise à niveau risquée en levant une exception | Initialiser des données par défaut, configurer l'espace de travail, enregistrer des ressources externes                                    |
+
+**Règle empirique :** privilégiez post-install par défaut. Ne recourez à la pré-installation que lorsque la migration elle-même est destructive et que vous devez intercepter l'état précédent avant qu'il ne disparaisse.
+
+| Vous souhaitez...                                                                            | Utiliser                                                                         |
+| -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Initialiser des données, configurer l'espace de travail, enregistrer des ressources externes | `post-install`                                                                   |
+| Travail de longue durée qui ne doit pas bloquer la réponse d'installation                    | `post-install` (mode asynchrone par défaut, avec nouvelles tentatives du worker) |
+| Configuration rapide dont l'appelant dépend immédiatement après le retour de l'installation  | `post-install` avec `shouldRunSynchronously: true`                               |
+| Lire ou sauvegarder des données que la migration à venir ferait perdre                       | `pre-install`                                                                    |
+| Rejeter une mise à niveau qui corromprait des données existantes                             | `pre-install` (lancer une exception depuis le gestionnaire)                      |
+| Réconciliation à chaque mise à niveau                                                        | N'importe quel hook avec `shouldRunOnVersionUpgrade: true`                       |
+
+## Comportement partagé par les deux hooks
+
+* La configuration est une configuration `defineLogicFunction` moins les paramètres de déclencheur, plus `shouldRunOnVersionUpgrade`.
+* **Quand il s'exécute** : uniquement lors des nouvelles installations, par défaut. Définissez `shouldRunOnVersionUpgrade: true` pour qu'il s'exécute également lors des mises à niveau. Utilisez `previousVersion` / `newVersion` pour bifurquer selon le chemin de mise à niveau.
+* **L'idempotence est importante** : le post-install asynchrone peut être relancé, et chaque hook est réexécuté lors des mises à niveau lorsque `shouldRunOnVersionUpgrade` est activé.
+* L'environnement habituel des fonctions logiques (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) est injecté, ce qui vous permet d'appeler l'API Twenty avec le jeton de votre application.
+* Le hook est rattaché automatiquement au manifeste de l'application au moment de la compilation (`preInstallLogicFunction` / `postInstallLogicFunction`) — rien à référencer dans [`defineApplication()`](/l/fr/developers/extend/apps/config/application).
+* La valeur par défaut de `timeoutSeconds` est 300 pour permettre des tâches de configuration plus longues comme l'initialisation des données.
+* **Non exécuté en mode dev** : `yarn twenty dev` ignore le flux d'installation et synchronise directement les fichiers, donc les hooks ne s'exécutent jamais dans ce cas. Déclenchez-les manuellement à la place :
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
+```
+
+<AccordionGroup>
+<Accordion title="definePostInstallLogicFunction" description="S'exécute après l'application de la migration des métadonnées de l'espace de travail">
+
+S'exécute une fois que votre application a terminé son installation : métadonnées synchronisées, client SDK généré, nouveau schéma interrogeable. Exemple — initialiser un enregistrement par défaut lors des nouvelles installations :
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = new CoreApiClient();
+  await client.mutation({
+    createPostCard: {
+      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
+      id: true,
+    },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+Le drapeau `shouldRunSynchronously` contrôle le modèle d'exécution :
+
+* `false` *(par défaut)* — mis en file d'attente dans la file de messages (`retryLimit: 3`) et exécuté par un worker. La réponse d'installation est renvoyée dès que la tâche est mise en file d'attente. **À utiliser pour les travaux de longue durée** — initialisation de grands ensembles de données, API tierces lentes.
+* `true` — exécuté en ligne pendant le flux d'installation. La requête d'installation est bloquée jusqu'à ce que le gestionnaire ait terminé ; une erreur levée apparaît comme `POST_INSTALL_ERROR` pour l'appelant (aucune nouvelle tentative). **À utiliser pour les travaux rapides qui doivent être terminés avant la réponse.** La migration a déjà été appliquée à ce stade, donc un échec n'annule pas les modifications du schéma — il ne fait que remonter l'erreur.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="S'exécute avant l'application de la migration des métadonnées de l'espace de travail">
+
+S'exécute avant la migration des métadonnées, sur le schéma **précédent** — l'endroit idéal pour sauvegarder des données qu'une migration ferait perdre, ou pour refuser une mise à niveau risquée. Avant l'exécution, le serveur effectue une « synchronisation réduite » purement additive qui enregistre uniquement la fonction de pré-installation de la nouvelle version ; tout le reste — les objets, champs et données de la version précédente — reste intact lorsque votre gestionnaire s'exécute.
+
+La pré-installation est toujours **synchrone** et bloque l'installation. Si le gestionnaire lève une exception, l'installation est abandonnée avant toute modification du schéma — l'espace de travail reste sur la version précédente dans un état cohérent. C'est intentionnel : la pré-installation est votre dernière chance de refuser une mise à niveau risquée.
+
+Exemple — copier les valeurs d'un champ hérité avant que la migration ne le supprime :
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = new CoreApiClient();
+  const { postCards } = await client.query({
+    postCards: {
+      __args: { filter: { notes: { isNot: null } } },
+      edges: { node: { id: true, notes: true } },
+    },
+  });
+
+  // Copy legacy `notes` into `description` before the migration drops the
+  // column. If this fails, the upgrade aborts and the workspace stays on v1.
+  for (const { node } of postCards.edges) {
+    await client.mutation({
+      updatePostCard: {
+        __args: { id: node.id, data: { description: node.notes } },
+        id: true,
+      },
+    });
+  }
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+</Accordion>
+</AccordionGroup>
+
+## Hook de désinstallation
+
+`defineUninstallLogicFunction` déclare un hook qui s'exécute lorsqu'un utilisateur désinstalle votre application. Il s'exécute **avant** que les métadonnées, les données et le code de l'application ne soient supprimés — une fois que la migration de suppression est exécutée, il ne reste plus rien à exécuter — de sorte que votre gestionnaire peut encore interroger les objets et enregistrements de l'application. Utilisez-le pour nettoyer les ressources externes : déprovisionner les ressources d'API, supprimer les bots restants, révoquer les webhooks.
+
+Notes :
+
+* Le hook fonctionne selon le principe du "best effort" : il s'exécute de manière synchrone, mais un échec est consigné dans les journaux et **ne bloque jamais la désinstallation** — le nettoyage ne doit pas rendre une application impossible à supprimer.
+* Il reçoit `UninstallPayload` (`{ version?: string }` — la version supprimée).
+* Il **ne** s'exécute **pas** lorsqu'une nouvelle installation ayant échoué est annulée — l'application n'a jamais terminé son installation.
+* Le hook ne peut pas s'exécuter après la suppression de l'application, donc le nettoyage externe qui dépend des données de l'application (par exemple des identifiants de bots stockés dans des enregistrements) doit être effectué ici, et non dans une tâche planifiée externe.
+* Comme les hooks d'installation, il **n'est pas exécuté en mode dev** — déclenchez-le manuellement à la place :
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

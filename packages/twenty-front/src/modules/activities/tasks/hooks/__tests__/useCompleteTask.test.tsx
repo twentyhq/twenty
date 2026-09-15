@@ -21,7 +21,6 @@ const task: Task = {
   updatedAt: '2024-03-15T07:33:14.212Z',
   assignee: null,
   assigneeId: null,
-  taskTargets: [],
   __typename: 'Task',
 };
 

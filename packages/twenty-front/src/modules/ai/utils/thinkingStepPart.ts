@@ -1,3 +1,7 @@
-import { type ReasoningUIPart, type ToolUIPart } from 'ai';
+import {
+  type DynamicToolUIPart,
+  type ReasoningUIPart,
+  type ToolUIPart,
+} from 'ai';
 
-export type ThinkingStepPart = ReasoningUIPart | ToolUIPart;
+export type ThinkingStepPart = ReasoningUIPart | ToolUIPart | DynamicToolUIPart;

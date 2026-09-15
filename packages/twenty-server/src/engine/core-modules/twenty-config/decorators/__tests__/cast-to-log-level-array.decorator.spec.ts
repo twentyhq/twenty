@@ -38,6 +38,14 @@ describe('CastToLogLevelArray Decorator', () => {
     expect(transformedClass.logLevels).toStrictEqual(['verbose']);
   });
 
+  it('should cast "performance" to ["performance"]', () => {
+    const transformedClass = plainToClass(TestClass, {
+      logLevels: 'performance',
+    });
+
+    expect(transformedClass.logLevels).toStrictEqual(['performance']);
+  });
+
   it('should cast "verbose,error,warn" to ["verbose", "error", "warn"]', () => {
     const transformedClass = plainToClass(TestClass, {
       logLevels: 'verbose,error,warn',
@@ -52,7 +60,7 @@ describe('CastToLogLevelArray Decorator', () => {
 
   it('should throw on invalid level "toto" with clear error message', () => {
     expect(() => plainToClass(TestClass, { logLevels: 'toto' })).toThrow(
-      'Invalid log level(s): toto. Valid levels are: log, error, warn, debug, verbose',
+      'Invalid log level(s): toto. Valid levels are: log, error, warn, debug, verbose, performance',
     );
   });
 
@@ -60,7 +68,7 @@ describe('CastToLogLevelArray Decorator', () => {
     expect(() =>
       plainToClass(TestClass, { logLevels: 'verbose,error,toto' }),
     ).toThrow(
-      'Invalid log level(s): toto. Valid levels are: log, error, warn, debug, verbose',
+      'Invalid log level(s): toto. Valid levels are: log, error, warn, debug, verbose, performance',
     );
   });
 });

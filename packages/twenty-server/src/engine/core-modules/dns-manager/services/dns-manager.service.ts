@@ -37,6 +37,10 @@ export class DnsManagerService {
     }
   }
 
+  isConfigured(): boolean {
+    return isDefined(this.cloudflareClient);
+  }
+
   async registerHostname(customDomain: string, options?: DnsManagerOptions) {
     dnsManagerValidator.isCloudflareInstanceDefined(this.cloudflareClient);
 
@@ -226,7 +230,7 @@ export class DnsManagerService {
       'More than one custom hostname found in cloudflare',
       DnsManagerExceptionCode.MULTIPLE_HOSTNAMES_FOUND,
       {
-        userFriendlyMessage: msg`${hostnameCount} hostnames found for domain '${domainName}'. Expect 1`,
+        userFriendlyMessage: msg`${hostnameCount} hostnames found for domain "${domainName}". Expect 1`,
       },
     );
   }

@@ -3,10 +3,12 @@ import { type Node } from '@tiptap/pm/model';
 import { Plugin, PluginKey } from '@tiptap/pm/state';
 import { type EditorView } from '@tiptap/pm/view';
 
+import { type UploadedImage } from '@/advanced-text-editor/types/UploadedImage';
+
 export type UploadImagePluginProps = {
   editor: Editor;
-  allowedMimeTypes?: string[];
-  onImageUpload?: (file: File) => Promise<string>;
+  allowedMimeTypes?: readonly string[];
+  onImageUpload?: (file: File) => Promise<UploadedImage>;
   onImageUploadError?: (error: Error, file: File) => void;
 };
 
@@ -34,7 +36,7 @@ export const UploadImagePlugin = (options: UploadImagePluginProps) => {
     view.dispatch(transaction);
 
     onImageUpload?.(file)
-      .then((uploadedSrc) => {
+      .then((uploadedImage) => {
         const updateTr = view.state.tr;
 
         const predicate = (node: Node) =>
@@ -44,7 +46,8 @@ export const UploadImagePlugin = (options: UploadImagePluginProps) => {
           if (predicate(node)) {
             updateTr.setNodeMarkup(pos, undefined, {
               ...node.attrs,
-              src: uploadedSrc,
+              fileId: uploadedImage.fileId ?? null,
+              src: uploadedImage.url,
             });
             return false;
           }

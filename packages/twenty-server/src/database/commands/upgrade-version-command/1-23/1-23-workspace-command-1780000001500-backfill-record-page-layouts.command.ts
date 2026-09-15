@@ -1,24 +1,28 @@
+import { SYSTEM_VIEW_KEYS } from 'twenty-shared/application';
 import { Command } from 'nest-commander';
-import { FeatureFlagKey, ViewType } from 'twenty-shared/types';
+import {
+  type FeatureFlagKey,
+  PageLayoutType,
+  ViewType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
+import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { computeTwentyStandardApplicationAllFlatEntityMapsPre231 } from 'src/database/commands/upgrade-version-command/2-10/utils/compute-twenty-standard-application-all-flat-entity-maps-pre-2-31.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
-import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
-import { computeFlatDefaultRecordPageLayoutToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-default-record-page-layout-to-create.util';
-import { computeFlatRecordPageFieldsViewToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-record-page-fields-view-to-create.util';
-import { computeFlatViewFieldsToCreate } from 'src/engine/metadata-modules/object-metadata/utils/compute-flat-view-fields-to-create.util';
+import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
+import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
+import { type UniversalFlatPageLayout } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout.type';
+import { computeSystemRecordPageLayoutToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-record-page-layout-to-create.util';
+import { computeSystemViewToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-to-create.util';
+import { computeSystemViewFieldsToCreate } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/compute-system-view-fields-to-create.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
@@ -29,7 +33,7 @@ import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-m
   description:
     'Delete and recreate all record page layouts from standard config, backfill custom objects, and enable IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED',
 })
-export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
@@ -47,7 +51,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     const isDryRun = options.dryRun ?? false;
 
     const isAlreadyEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED,
+      'IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' as FeatureFlagKey,
       workspaceId,
     );
 
@@ -88,12 +92,12 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     });
 
     await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED],
+      ['IS_RECORD_PAGE_LAYOUT_EDITING_ENABLED' as FeatureFlagKey],
       workspaceId,
     );
 
     await this.featureFlagService.enableFeatureFlags(
-      [FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED],
+      ['IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED' as FeatureFlagKey],
       workspaceId,
     );
 
@@ -182,7 +186,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     );
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             viewField: {
@@ -239,8 +243,8 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     workspaceId: string;
     twentyStandardFlatApplication: FlatApplication;
   }): Promise<void> {
-    const { allFlatEntityMaps: standardMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
+    const standardMaps =
+      computeTwentyStandardApplicationAllFlatEntityMapsPre231({
         now: new Date().toISOString(),
         workspaceId,
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
@@ -400,7 +404,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     );
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             pageLayout: {
@@ -501,16 +505,18 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
       `Creating page layouts for ${customObjectsWithoutPageLayout.length} custom object(s) in workspace ${workspaceId}`,
     );
 
-    const allPageLayouts: FlatPageLayout[] = [];
-    const allTabs: FlatPageLayoutTab[] = [];
-    const allWidgets: FlatPageLayoutWidget[] = [];
+    const allPageLayouts: UniversalFlatPageLayout[] = [];
+    const allTabs: UniversalFlatPageLayoutTab[] = [];
+    const allWidgets: UniversalFlatPageLayoutWidget[] = [];
     const allViews: (UniversalFlatView & { id: string })[] = [];
     const allViewFields: UniversalFlatViewField[] = [];
 
     for (const customObject of customObjectsWithoutPageLayout) {
-      const fieldsView = computeFlatRecordPageFieldsViewToCreate({
+      const fieldsView = computeSystemViewToCreate({
         objectMetadata: customObject,
-        flatApplication: twentyStandardFlatApplication,
+        applicationUniversalIdentifier:
+          twentyStandardFlatApplication.universalIdentifier,
+        viewKey: SYSTEM_VIEW_KEYS.FIELDS_WIDGET,
       });
 
       const objectFieldMetadatas = Object.values(
@@ -519,21 +525,23 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
         .filter(isDefined)
         .filter((field) => field.objectMetadataId === customObject.id);
 
-      const viewFields = computeFlatViewFieldsToCreate({
+      const viewFields = computeSystemViewFieldsToCreate({
         objectFlatFieldMetadatas: objectFieldMetadatas,
         viewUniversalIdentifier: fieldsView.universalIdentifier,
-        flatApplication: twentyStandardFlatApplication,
+        applicationUniversalIdentifier:
+          twentyStandardFlatApplication.universalIdentifier,
         labelIdentifierFieldMetadataUniversalIdentifier:
           customObject.labelIdentifierFieldMetadataUniversalIdentifier,
         excludeLabelIdentifier: true,
       });
 
       const { pageLayouts, pageLayoutTabs, pageLayoutWidgets } =
-        computeFlatDefaultRecordPageLayoutToCreate({
+        computeSystemRecordPageLayoutToCreate({
           objectMetadata: customObject,
-          flatApplication: twentyStandardFlatApplication,
-          recordPageFieldsView: fieldsView,
-          workspaceId,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          recordPageFieldsViewUniversalIdentifier:
+            fieldsView.universalIdentifier,
         });
 
       allPageLayouts.push(...pageLayouts);
@@ -544,7 +552,7 @@ export class BackfillRecordPageLayoutsCommand extends ActiveOrSuspendedWorkspace
     }
 
     const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
           allFlatEntityOperationByMetadataName: {
             pageLayout: {

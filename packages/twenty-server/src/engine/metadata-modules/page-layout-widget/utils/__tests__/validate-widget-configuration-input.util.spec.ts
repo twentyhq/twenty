@@ -7,7 +7,6 @@ import {
   INVALID_STANDALONE_RICH_TEXT_CONFIG_BODY_WRONG_TYPE,
   INVALID_STANDALONE_RICH_TEXT_CONFIG_MISSING_BODY,
   INVALID_VERTICAL_BAR_CHART_CONFIG_MISSING_GROUP_BY,
-  TEST_GAUGE_CHART_CONFIG,
   TEST_HORIZONTAL_BAR_CHART_CONFIG,
   TEST_HORIZONTAL_BAR_CHART_CONFIG_MINIMAL,
   TEST_IFRAME_CONFIG,
@@ -25,6 +24,67 @@ import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
 
 describe('validateWidgetConfigurationInput', () => {
+  describe('EMAIL_THREAD widget', () => {
+    it('should not throw for valid email thread configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.EMAIL_THREAD,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
+  describe('MESSAGE_CAMPAIGN_BODY widget', () => {
+    it('should not throw for valid message campaign body configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_BODY,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
+  describe('MESSAGE_CAMPAIGN_DETAILS widget', () => {
+    it('should not throw for valid message campaign details configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.MESSAGE_CAMPAIGN_DETAILS,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
+  describe('CALL_RECORDING_SUMMARY widget', () => {
+    it('should not throw for valid call recording summary configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType: WidgetConfigurationType.CALL_RECORDING_SUMMARY,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
+  describe('CALL_RECORDING_TRANSCRIPT widget', () => {
+    it('should not throw for valid call recording transcript configuration', () => {
+      expect(() =>
+        validateWidgetConfigurationInput({
+          configuration: {
+            configurationType:
+              WidgetConfigurationType.CALL_RECORDING_TRANSCRIPT,
+          },
+        }),
+      ).not.toThrow();
+    });
+  });
+
   describe('IFRAME widget', () => {
     it('should not throw for valid iframe configuration', () => {
       expect(() =>
@@ -202,16 +262,6 @@ describe('validateWidgetConfigurationInput', () => {
         expect(() =>
           validateWidgetConfigurationInput({
             configuration: TEST_LINE_CHART_CONFIG,
-          }),
-        ).not.toThrow();
-      });
-    });
-
-    describe('GAUGE_CHART graph', () => {
-      it('should not throw for gauge chart configuration', () => {
-        expect(() =>
-          validateWidgetConfigurationInput({
-            configuration: TEST_GAUGE_CHART_CONFIG,
           }),
         ).not.toThrow();
       });

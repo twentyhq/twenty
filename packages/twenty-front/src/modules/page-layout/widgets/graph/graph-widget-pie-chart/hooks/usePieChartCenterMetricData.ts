@@ -1,9 +1,11 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
 import { transformAggregateRawValueIntoAggregateDisplayValue } from '@/object-record/record-aggregate/utils/transformAggregateRawValueIntoAggregateDisplayValue';
 import { getAggregateOperationLabel } from '@/object-record/record-board/record-board-column/utils/getAggregateOperationLabel';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { convertAggregateOperationToExtendedAggregateOperation } from '@/object-record/utils/convertAggregateOperationToExtendedAggregateOperation';
+import { CHART_NUMBER_FORMAT_DEFAULT } from '@/page-layout/widgets/graph/constants/ChartNumberFormatDefault';
 import { useGraphWidgetQueryCommon } from '@/page-layout/widgets/graph/hooks/useGraphWidgetQueryCommon';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
@@ -81,6 +83,9 @@ export const usePieChartCenterMetricData = ({
 
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
+  const { numberFormat } = useNumberFormat();
+  const chartNumberFormat =
+    configuration.numberFormat ?? CHART_NUMBER_FORMAT_DEFAULT;
 
   const aggregateFieldMetadataItem = objectMetadataItem.readableFields.find(
     findById(configuration.aggregateFieldMetadataId),
@@ -115,9 +120,26 @@ export const usePieChartCenterMetricData = ({
 
   const centerMetricValue = useMemo(() => {
     if (!isDefined(aggregateFieldMetadataItem)) {
-      return centerMetricData?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
-        AggregateOperations.COUNT
-      ];
+      const totalCountValue =
+        centerMetricData?.[FIELD_FOR_TOTAL_COUNT_AGGREGATE_OPERATION]?.[
+          AggregateOperations.COUNT
+        ];
+
+      if (!isDefined(totalCountValue)) {
+        return totalCountValue;
+      }
+
+      return transformAggregateRawValueIntoAggregateDisplayValue({
+        aggregateFieldMetadataItem,
+        aggregateOperation: extendedAggregateOperation,
+        aggregateRawValue: totalCountValue,
+        dateFormat,
+        localeCatalog: dateLocale.localeCatalog,
+        timeFormat,
+        timeZone,
+        numberFormat,
+        chartNumberFormat,
+      });
     }
 
     const aggregateRawValue =
@@ -133,6 +155,8 @@ export const usePieChartCenterMetricData = ({
       localeCatalog: dateLocale.localeCatalog,
       timeFormat,
       timeZone,
+      numberFormat,
+      chartNumberFormat,
     });
   }, [
     aggregateFieldMetadataItem,
@@ -143,6 +167,8 @@ export const usePieChartCenterMetricData = ({
     dateLocale.localeCatalog,
     timeFormat,
     timeZone,
+    numberFormat,
+    chartNumberFormat,
   ]);
 
   return {

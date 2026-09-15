@@ -1,4 +1,4 @@
-import { type ToolSet } from 'ai';
+import { type ToolExecuteFunction, type ToolSet } from 'ai';
 import { type ToolCategory } from 'twenty-shared/ai';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -7,10 +7,6 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 // whose tools are produced as opaque AI-SDK ToolSet closures (view, metadata,
 // workflow, dashboard, view-field) and which therefore cannot dispatch by
 // executionRef alone.
-//
-// The factory closures expect a `loadingMessage` field (added by the chat UX
-// wrapper) and a ToolExecutionOptions object; neither is meaningful when the
-// executor is invoking them internally, so we pass empty defaults.
 export const executeToolFromToolSet = async (
   toolSet: ToolSet,
   toolName: string,
@@ -25,8 +21,17 @@ export const executeToolFromToolSet = async (
     );
   }
 
-  return tool.execute(
-    { loadingMessage: '', ...args },
-    { toolCallId: '', messages: [] },
-  ) as Promise<ToolOutput>;
+  // ToolSet widens execute to a union no argument satisfies; these tools are
+  // dispatched by name and take no per-tool context.
+  const execute = tool.execute as ToolExecuteFunction<
+    Record<string, unknown>,
+    ToolOutput,
+    undefined
+  >;
+
+  return execute(args, {
+    toolCallId: '',
+    messages: [],
+    context: undefined,
+  }) as Promise<ToolOutput>;
 };

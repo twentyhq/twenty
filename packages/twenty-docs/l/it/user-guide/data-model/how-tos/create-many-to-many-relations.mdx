@@ -6,11 +6,11 @@ description: Collega record in cui molti elementi su entrambi i lati possono ess
 Le relazioni molti-a-molti ti consentono di collegare più record su entrambi i lati. Ad esempio: molte Persone possono lavorare su molti Progetti, e ogni Progetto può avere molte Persone.
 
 <Warning>
-**Funzionalità Lab**: Le relazioni di giunzione sono attualmente nel Lab. Abilita le in **Impostazioni → Aggiornamenti → Lab** prima di seguire questa guida.
+**Funzionalità beta**: Le relazioni di giunzione sono attualmente in beta. Abilita le in **Impostazioni → Community → Funzionalità** prima di seguire questa guida.
 </Warning>
 
 <Note>
-Questa funzionalità richiede anche che la **Modalità avanzata** sia abilitata (tramite l'interruttore in basso a destra nelle Impostazioni).
+Questa funzionalità richiede anche che la **Modalità avanzata** sia abilitata (tramite l'interruttore in basso a sinistra nelle Impostazioni).
 </Note>
 
 ## Quando usare le relazioni molti-a-molti
@@ -40,8 +40,8 @@ Quando abiliti l'interruttore della relazione di giunzione, Twenty mostra dirett
 
 ## Prerequisiti
 
-1. **Abilita le relazioni di giunzione in Lab**: Vai a **Impostazioni → Aggiornamenti → Lab** e abilita **Relazioni di giunzione**
-2. **Abilita la Modalità avanzata**: Attiva la **Modalità avanzata** in basso a destra nella barra laterale di Impostazioni
+1. **Abilita le relazioni di giunzione nelle funzionalità beta**: Vai a **Impostazioni → Community → Funzionalità** e abilita **Relazioni di giunzione**
+2. **Abilita la Modalità avanzata**: Attiva la **Modalità avanzata** in basso a sinistra nella barra laterale delle Impostazioni
 3. Pianifica il tuo modello di dati:
    * Quali due oggetti stai collegando?
    * Come dovrebbe chiamarsi l'oggetto di giunzione?
@@ -51,7 +51,7 @@ Quando abiliti l'interruttore della relazione di giunzione, Twenty mostra dirett
 Per prima cosa, crea l'oggetto intermedio che conterrà i collegamenti.
 
 1. Vai a **Impostazioni → Modello dati**
-2. Fai clic su **+ Nuovo oggetto**
+2. Clicca su **+ Aggiungi oggetto**
 3. Assegnagli un nome descrittivo (ad es., "Assegnazione al progetto", "Membro del team", "Ordine del prodotto")
 4. Attiva l'opzione "Salta la creazione di un campo Nome"
 
@@ -158,7 +158,7 @@ Ecco una procedura completa:
 Poiché l'oggetto di giunzione è un vero oggetto, puoi aggiungere campi personalizzati per memorizzare informazioni sulla relazione:
 
 * **Ruolo**: "Sviluppatore", "Designer", "Responsabile"
-* **Data di inizio**: quando si sono uniti al progetto
+* **Data di inizio**: Quando la persona è entrata nel progetto
 * **Ore assegnate**: ore settimanali su questo progetto
 
 Per accedere a questi dati, vai direttamente all'oggetto di giunzione oppure interrogalo tramite l'API.

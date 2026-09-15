@@ -62,6 +62,10 @@ export const createStandardCommandMenuItemFlatMetadata = ({
     availabilityType: definition.availabilityType,
     conditionalAvailabilityExpression:
       definition.conditionalAvailabilityExpression ?? null,
+    conditionalPinnedExpression:
+      'conditionalPinnedExpression' in definition
+        ? definition.conditionalPinnedExpression
+        : null,
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: definition.engineComponentKey,
@@ -71,11 +75,18 @@ export const createStandardCommandMenuItemFlatMetadata = ({
         : null,
     hotKeys: definition.hotKeys ? [...definition.hotKeys] : null,
     workflowVersionId: null,
+    coreWorkflowVersionId: null,
     availabilityObjectMetadataId: resolvedObjectMetadataId,
     availabilityObjectMetadataUniversalIdentifier:
       resolvedObjectMetadataUniversalIdentifier,
+    navigationTargetObjectMetadataId: null,
+    navigationTargetObjectMetadataUniversalIdentifier: null,
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
+    isActive: true,
+    isSystemSideEffect: false,
+    overrides: null,
+    universalOverrides: null,
     createdAt: now,
     updatedAt: now,
   };

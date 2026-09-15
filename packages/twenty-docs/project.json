@@ -12,21 +12,66 @@
         "command": "mintlify dev"
       }
     },
-    "build": {
+    "validate": {
       "executor": "nx:run-commands",
-      "outputs": ["{projectRoot}/.mintlify"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "mintlify build"
+        "command": "mintlify validate"
       }
     },
-    "lint": {},
-    "fmt": {
+    "lint": {
+      "executor": "nx:run-commands",
+      "cache": true,
       "options": {
-        "files": "."
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx oxlint -c .oxlintrc.json .",
+          "npx tsx scripts/lint-mdx.ts"
+        ],
+        "parallel": false
+      }
+    },
+    "fmt": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "prettier . --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
       },
       "configurations": {
-        "fix": {}
+        "ci": {},
+        "fix": {
+          "command": "prettier . --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+        }
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx vitest run --config {projectRoot}/vitest.config.mts"
+      }
+    },
+    "generate:ui": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "commands": [
+          "tsx packages/twenty-ui/scripts/generateDocsData.ts",
+          "tsx packages/twenty-docs/scripts/generate-ui-reference.ts"
+        ],
+        "parallel": false
+      }
+    },
+    "check:ui": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "commands": [
+          "tsx packages/twenty-ui/scripts/generateDocsData.ts --check",
+          "tsx packages/twenty-docs/scripts/generate-ui-reference.ts --check",
+          "tsx packages/twenty-ui/scripts/checkDocsExamples.ts"
+        ],
+        "parallel": false
       }
     }
   }

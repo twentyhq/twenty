@@ -20,8 +20,24 @@ describe('getFileNameAndExtension', () => {
   it('should handle files with no extension', () => {
     const result = getFileNameAndExtension('README');
     expect(result).toEqual({
-      name: '',
-      extension: 'README',
+      name: 'README',
+      extension: '',
+    });
+  });
+
+  it('should keep the full name when there is no dot at all', () => {
+    const result = getFileNameAndExtension('my document file');
+    expect(result).toEqual({
+      name: 'my document file',
+      extension: '',
+    });
+  });
+
+  it('should handle a trailing dot', () => {
+    const result = getFileNameAndExtension('file.');
+    expect(result).toEqual({
+      name: 'file',
+      extension: '.',
     });
   });
 

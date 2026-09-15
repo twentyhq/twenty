@@ -1,3 +1,4 @@
+import { AdvancedFilterRelationValueInputClickableSelect } from '@/object-record/advanced-filter/components/AdvancedFilterRelationValueInputClickableSelect';
 import { getAdvancedFilterInputPlaceholderText } from '@/object-record/advanced-filter/utils/getAdvancedFilterInputPlacedholderText';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { SelectControl } from '@/ui/input/components/SelectControl';
@@ -69,6 +70,18 @@ export const AdvancedFilterValueInputDropdownButtonClickableSelect = ({
 
   const isDateTimeType =
     recordFilter?.type === 'DATE' || recordFilter?.type === 'DATE_TIME';
+
+  if (
+    recordFilter?.type === 'RELATION' &&
+    !shouldUsePlaceholder &&
+    isDefined(recordFilter.fieldMetadataId)
+  ) {
+    return (
+      <AdvancedFilterRelationValueInputClickableSelect
+        recordFilter={recordFilter}
+      />
+    );
+  }
 
   return isDateTimeType ? (
     <StyledControlContainer>{advancedFilterInputText}</StyledControlContainer>

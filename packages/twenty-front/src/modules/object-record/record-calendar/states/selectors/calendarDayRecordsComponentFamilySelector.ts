@@ -3,7 +3,7 @@ import { hasObjectMetadataItemPositionField } from '@/object-metadata/utils/hasO
 
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { recordCalendarRecordIdsComponentState } from '@/object-record/record-calendar/states/recordCalendarRecordIdsComponentState';
-import { recordIndexCalendarFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdState';
+import { recordIndexCalendarFieldMetadataIdComponentState } from '@/object-record/record-index/states/recordIndexCalendarFieldMetadataIdComponentState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { createAtomComponentFamilySelector } from '@/ui/utilities/state/jotai/utils/createAtomComponentFamilySelector';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -23,7 +23,8 @@ export const calendarDayRecordIdsComponentFamilySelector =
       ({ instanceId, familyKey: { day, timeZone } }) =>
       ({ get }) => {
         const calendarFieldMetadataId = get(
-          recordIndexCalendarFieldMetadataIdState,
+          recordIndexCalendarFieldMetadataIdComponentState,
+          { instanceId },
         );
 
         const objectMetadataItems = get(objectMetadataItemsSelector);
@@ -61,14 +62,18 @@ export const calendarDayRecordIdsComponentFamilySelector =
             return false;
           }
 
-          const recordDateAsPlainDateInTimeZone =
-            fieldMetadataItem.type === FieldMetadataType.DATE
-              ? Temporal.PlainDate.from(recordDate)
-              : Temporal.Instant.from(recordDate)
-                  .toZonedDateTimeISO(timeZone)
-                  .toPlainDate();
+          try {
+            const recordDay =
+              fieldMetadataItem.type === FieldMetadataType.DATE
+                ? Temporal.PlainDate.from(recordDate)
+                : Temporal.Instant.from(recordDate)
+                    .toZonedDateTimeISO(timeZone)
+                    .toPlainDate();
 
-          return isSamePlainDate(day, recordDateAsPlainDateInTimeZone);
+            return isSamePlainDate(day, recordDay);
+          } catch {
+            return false;
+          }
         });
 
         if (

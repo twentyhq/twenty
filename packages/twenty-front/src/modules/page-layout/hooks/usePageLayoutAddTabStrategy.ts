@@ -6,14 +6,13 @@ import { type PageLayoutAddTabStrategy } from '@/page-layout/types/PageLayoutAdd
 import { isReactivatableTab } from '@/page-layout/utils/isReactivatableTab';
 import { shouldEnableTabEditingFeatures } from '@/page-layout/utils/shouldEnableTabEditingFeatures';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SidePanelPages } from 'twenty-shared/types';
-import { FeatureFlagKey, PageLayoutType } from '~/generated-metadata/graphql';
+import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const usePageLayoutAddTabStrategy = ({
   pageLayoutId,
@@ -24,10 +23,6 @@ export const usePageLayoutAddTabStrategy = ({
 }): PageLayoutAddTabStrategy | undefined => {
   const { currentPageLayout } = useCurrentPageLayoutOrThrow();
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
-
-  const isRecordPageGlobalEditionEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_PAGE_LAYOUT_GLOBAL_EDITION_ENABLED,
-  );
 
   const { createPageLayoutTab } = useCreatePageLayoutTab({
     pageLayoutId,
@@ -40,7 +35,7 @@ export const usePageLayoutAddTabStrategy = ({
 
   const { navigatePageLayoutSidePanel } = useNavigatePageLayoutSidePanel();
 
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const navigate = useNavigate();
 
@@ -51,11 +46,11 @@ export const usePageLayoutAddTabStrategy = ({
       navigate(`#${newTabId}`);
     }
 
-    setPageLayoutTabSettingsOpenTabId(newTabId);
     navigatePageLayoutSidePanel({
       sidePanelPage: SidePanelPages.PageLayoutTabSettings,
       focusTitleInput: true,
     });
+    setPageLayoutTabSettingsOpenTabId(newTabId);
   }, [
     createPageLayoutTab,
     isInSidePanel,
@@ -66,10 +61,7 @@ export const usePageLayoutAddTabStrategy = ({
 
   const isEnabled =
     isPageLayoutInEditMode &&
-    shouldEnableTabEditingFeatures(
-      currentPageLayout.type,
-      isRecordPageGlobalEditionEnabled,
-    );
+    shouldEnableTabEditingFeatures(currentPageLayout.type);
 
   if (!isEnabled) {
     return undefined;

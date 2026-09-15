@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { type DropResult } from '@hello-pangea/dnd';
+import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { type MouseEvent, useCallback } from 'react';
 
 import { useContextStoreObjectMetadataItemOrThrow } from '@/context-store/hooks/useContextStoreObjectMetadataItemOrThrow';
@@ -12,17 +12,16 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { usePerformViewAPIUpdate } from '@/views/hooks/internal/usePerformViewAPIUpdate';
+import { usePerformViewApiUpdate } from '@/views/hooks/internal/usePerformViewApiUpdate';
 import { useChangeView } from '@/views/hooks/useChangeView';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useOpenCreateViewDropdown } from '@/views/hooks/useOpenCreateViewDropown';
 import { viewsFromObjectMetadataItemFamilySelector } from '@/views/states/selectors/viewsFromObjectMetadataItemFamilySelector';
 import { ViewPickerOptionDropdown } from '@/views/view-picker/components/ViewPickerOptionDropdown';
-import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
-import { IconPlus } from 'twenty-ui/display';
+import { IconPlus } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ViewVisibility } from '~/generated-metadata/graphql';
@@ -63,14 +62,14 @@ export const ViewPickerListContent = () => {
 
   const { setViewPickerMode } = useViewPickerMode();
 
-  const { performViewAPIUpdate } = usePerformViewAPIUpdate();
+  const { performViewApiUpdate } = usePerformViewApiUpdate();
   const { changeView } = useChangeView();
 
   const { closeDropdown } = useCloseDropdown();
 
   const handleViewSelect = (viewId: string) => {
     changeView(viewId);
-    closeDropdown(VIEW_PICKER_DROPDOWN_ID);
+    closeDropdown();
   };
 
   const { openCreateViewDropdown } = useOpenCreateViewDropdown();
@@ -89,7 +88,7 @@ export const ViewPickerListContent = () => {
   };
 
   const handleWorkspaceDragEnd = useCallback(
-    async (result: DropResult) => {
+    async (result: DraggableListDropResult) => {
       if (!result.destination) return;
 
       const viewsReordered = moveArrayItem(workspaceViews, {
@@ -100,7 +99,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await performViewAPIUpdate({
+            await performViewApiUpdate({
               id: view.id,
               input: { position: index },
             });
@@ -108,11 +107,11 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, workspaceViews],
+    [performViewApiUpdate, workspaceViews],
   );
 
   const handleUnlistedDragEnd = useCallback(
-    async (result: DropResult) => {
+    async (result: DraggableListDropResult) => {
       if (!result.destination) return;
 
       const viewsReordered = moveArrayItem(unlistedViews, {
@@ -123,7 +122,7 @@ export const ViewPickerListContent = () => {
       Promise.all(
         viewsReordered.map(async (view, index) => {
           if (view.position !== index) {
-            await performViewAPIUpdate({
+            await performViewApiUpdate({
               id: view.id,
               input: { position: index },
             });
@@ -131,7 +130,7 @@ export const ViewPickerListContent = () => {
         }),
       );
     },
-    [performViewAPIUpdate, unlistedViews],
+    [performViewApiUpdate, unlistedViews],
   );
 
   return (
@@ -146,6 +145,7 @@ export const ViewPickerListContent = () => {
               onDragEnd={handleWorkspaceDragEnd}
               draggableItems={workspaceViews.map((view, index) => {
                 const isIndexView = view.key === 'INDEX';
+                const isCurrentView = currentView?.id === view.id;
                 return (
                   <DraggableItem
                     key={view.id}
@@ -159,6 +159,7 @@ export const ViewPickerListContent = () => {
                         isIndexView={isIndexView}
                         isLastView={isLastView}
                         onEdit={handleEditViewButtonClick}
+                        isCurrentView={isCurrentView}
                       />
                     }
                   />
@@ -179,6 +180,7 @@ export const ViewPickerListContent = () => {
               onDragEnd={handleUnlistedDragEnd}
               draggableItems={unlistedViews.map((view, index) => {
                 const isIndexView = view.key === 'INDEX';
+                const isCurrentView = currentView?.id === view.id;
                 return (
                   <DraggableItem
                     key={view.id}
@@ -192,6 +194,7 @@ export const ViewPickerListContent = () => {
                         isIndexView={isIndexView}
                         isLastView={isLastView}
                         onEdit={handleEditViewButtonClick}
+                        isCurrentView={isCurrentView}
                       />
                     }
                   />

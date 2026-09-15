@@ -1,0 +1,124 @@
+---
+title: Configuration de l'application
+description: Déclarez l'identité de votre application, son rôle par défaut, ses variables et ses métadonnées de la marketplace avec defineApplication.
+icon: rocket
+---
+
+Chaque application doit avoir exactement un appel à `defineApplication`. Il déclare :
+
+* **Identité** — identifiant universel, nom d'affichage, description.
+* **Autorisations** — le rôle sous lequel s'exécutent ses fonctions logiques et ses composants front-end.
+* **Variables** *(facultatif)* — paires clé–valeur exposées à votre code en tant que variables d'environnement.
+* **Hooks de pré-installation / post-installation / désinstallation** *(facultatif)* — voir [Fonctions logiques](/l/fr/developers/extend/apps/logic/logic-functions).
+
+```ts src/application-config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '39783023-bcac-41e3-b0d2-ff1944d8465d',
+  displayName: 'My Twenty App',
+  description: 'My first Twenty app',
+  applicationVariables: {
+    DEFAULT_RECIPIENT_NAME: {
+      universalIdentifier: '19e94e59-d4fe-4251-8981-b96d0a9f74de',
+      description: 'Default recipient name for postcards',
+      value: 'Jane Doe',
+      isSecret: false,
+    },
+  },
+});
+```
+
+Notes :
+
+* Les champs `universalIdentifier` sont des identifiants déterministes que vous contrôlez. Générez-les une fois et conservez-les stables entre les synchronisations.
+* `applicationVariables` deviennent des variables d'environnement pour vos fonctions et vos composants front-end. Dans les fonctions logiques (côté serveur), elles sont disponibles sous `process.env.VARIABLE_NAME`. Dans les composants front-end, utilisez `getApplicationVariable('VARIABLE_NAME')` depuis `twenty-sdk/front-component`. Les variables marquées avec `isSecret: true` sont uniquement injectées dans les fonctions logiques. Les composants front-end ne reçoivent que des variables non secrètes.
+* Le rôle par défaut est détecté automatiquement à partir du fichier de rôle marqué avec [`defineApplicationRole()`](/l/fr/developers/extend/apps/config/roles) — vous n’avez pas besoin d’y faire référence depuis `defineApplication()`.
+* Les fonctions de pré-installation, de post-installation et de désinstallation sont détectées automatiquement lors de la construction du manifeste — vous n'avez pas besoin de les référencer dans `defineApplication()`.
+* Le passage explicite de `defaultRoleUniversalIdentifier` est toujours pris en charge pour des raisons de rétrocompatibilité, mais il est obsolète au profit de `defineApplicationRole()`.
+* `serverVariables` sont des configurations et des secrets au niveau de l’instance (par exemple des clés d’API). Contrairement à `applicationVariables`, ils ne déclarent aucune valeur dans le manifeste — l’opérateur de l’espace de travail les renseigne dans les paramètres de l’application, et ils sont injectés dans les fonctions logiques uniquement une fois définis.
+* Les deux types de variable acceptent `isDeprecated: true`. Utilisez-la pour mettre une variable hors service plutôt que de la supprimer : garder la clé déclarée préserve la valeur stockée (la supprimer détruit la valeur saisie par l’utilisateur), et la variable est toujours injectée, de sorte que votre code peut s’y rabattre — `process.env.NEW_API_KEY ?? process.env.API_KEY`. Une variable dépréciée disparaît des paramètres de l'application lorsqu'elle n'a plus de valeur et n'est jamais prise en compte dans la vérification de la configuration de l'application, donc `isDeprecated` l'emporte sur `isRequired`.
+* Pour afficher une interface utilisateur de configuration personnalisée dans l’onglet **Settings** de l’application (à la place de la section de configuration des variables par défaut), déclarez un composant frontal avec [`defineSettingsFrontComponent()`](/l/fr/developers/extend/apps/layout/front-components#custom-settings-component) dans son propre fichier. Un seul est autorisé par application. Les sections gérées par le système (mise à niveau automatique, App URL, connexions) restent toujours visibles.
+
+## Types de variables
+
+`applicationVariables` et `serverVariables` acceptent tous deux un `type` optionnel (et, pour `SELECT` / `MULTI_SELECT`, une liste `options`). Types pris en charge : `TEXT` (par défaut), `BOOLEAN`, `NUMBER`, `NUMERIC`, `DATE`, `DATE_TIME`, `SELECT`, `MULTI_SELECT`, `ARRAY`, `RAW_JSON`, `RICH_TEXT`.
+
+```ts src/application-config.ts
+import { defineApplication, FieldType } from 'twenty-sdk/define';
+
+export default defineApplication({
+  // ...identity, role...
+  applicationVariables: {
+    MAX_POSTCARDS: {
+      universalIdentifier: '5f4497e4-9030-4085-85eb-2c48b8d53713',
+      description: 'Maximum postcards per batch',
+      type: FieldType.NUMBER,
+      value: 10,
+    },
+    DEFAULT_REGION: {
+      universalIdentifier: '76c5c321-b6b6-46eb-b4fc-f9f04bb04227',
+      description: 'Default shipping region',
+      type: FieldType.SELECT,
+      options: [
+        { label: 'Europe', value: 'eu' },
+        { label: 'United States', value: 'us' },
+      ],
+      value: 'eu',
+    },
+  },
+});
+```
+
+Le `type` affecte uniquement **la présentation et la validation** — il sélectionne le champ de saisie correspondant dans l’interface des paramètres de l’espace de travail (un bouton bascule, un champ numérique, une liste déroulante, un sélecteur de date, un éditeur JSON, …) et permet au build de valider votre configuration (par exemple, `SELECT` / `MULTI_SELECT` doivent déclarer des `options` non vides). Il ne change **pas** la façon dont la valeur atteint votre code.
+
+Les valeurs sont **toujours injectées sous forme de chaînes de caractères** — cela est inhérent aux variables d’environnement (`process.env.*` est uniquement composé de chaînes). Lorsque votre fonction logique s’exécute, l’exécuteur sérialise chaque valeur selon son `type` déclaré lors de la construction de `process.env`, de sorte que le format de chaîne soit cohérent, quelle que soit la manière dont la valeur a été définie (valeur par défaut du manifeste, interface des paramètres ou version précédente) :
+
+| Type                                  | chaîne `process.env`                     |
+| ------------------------------------- | ---------------------------------------- |
+| `TEXT`, `SELECT`, `DATE`, `DATE_TIME` | la valeur brute (`"eu"`, `"2026-01-01"`) |
+| `BOOLEAN`                             | `"true"` / `"false"`                     |
+| `NUMBER`, `NUMERIC`                   | chaîne décimale (`"10"`, `"2.5"`)        |
+| `MULTI_SELECT`, `ARRAY`               | tableau JSON (`'["email","postcard"]'`)  |
+| `RAW_JSON`, `RICH_TEXT`               | objet JSON (`'{"retries":3}'`)           |
+
+Analysez la chaîne pour la convertir dans le type attendu :
+
+```ts
+const maxCards = Number(process.env.MAX_POSTCARDS); // "10" -> 10
+const enabled = process.env.ENABLE_TRACKING === 'true'; // "true" -> true
+const channels = JSON.parse(process.env.ENABLED_CHANNELS ?? '[]'); // '["email"]' -> ["email"]
+const config = JSON.parse(process.env.PROVIDER_CONFIG ?? '{}'); // '{"retries":3}' -> { retries: 3 }
+```
+
+Il en va de même pour les composants front qui lisent les valeurs via `getApplicationVariable('VARIABLE_NAME')` — la valeur renvoyée est une chaîne ; analysez-la selon vos besoins.
+
+## Rôle de fonction par défaut
+
+Le rôle déclaré avec [`defineApplicationRole()`](/l/fr/developers/extend/apps/config/roles) contrôle ce à quoi les fonctions logiques de l’application et les composants front peuvent accéder :
+
+* Les jetons d'exécution injectés dans vos fonctions logiques sont dérivés de ce rôle. Un appel agissant en tant que personne est davantage limité par ce que cette personne peut faire, de sorte qu'il ne peut jamais dépasser l'un ou l'autre. Voir [Les accès qu'un appel utilise](/l/fr/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
+* Le client d'API typé est limité aux autorisations accordées à ce rôle.
+* Appliquez le principe du moindre privilège : déclarez uniquement les autorisations dont vos fonctions ont besoin.
+
+Lorsque vous générez une nouvelle application, la CLI crée un fichier de rôle par défaut à `src/roles/default-role.ts`. Voir [Rôles et autorisations](/l/fr/developers/extend/apps/config/roles) pour la référence complète.
+
+## Métadonnées de la marketplace
+
+Si vous prévoyez de [publier votre application](/l/fr/developers/extend/apps/operations/publishing), ces champs optionnels contrôlent la façon dont elle apparaît dans la marketplace :
+
+| Champ              | Description                                                                                                                        |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------- |
+| `author`           | Nom de l'auteur ou de l'entreprise                                                                                                 |
+| `category`         | Catégorie de l'application pour le filtrage dans la marketplace                                                                    |
+| `logo`             | Chemin vers le logo de votre application empaqueté dans `public/` (p. ex., `public/logo.png`)                                      |
+| `galleryImages`    | Tableau de chemins d’images de galerie empaquetées dans `public/` (p. ex., `public/screenshot-1.png`)                              |
+| `aboutDescription` | Description markdown plus longue pour l'onglet "À propos". S'il est omis, la marketplace utilise le `README.md` du package sur npm |
+| `websiteUrl`       | Lien vers votre site web                                                                                                           |
+| `termsUrl`         | Lien vers les conditions d'utilisation                                                                                             |
+| `emailSupport`     | Adresse e-mail du support                                                                                                          |
+| `issueReportUrl`   | Lien vers le système de suivi des problèmes                                                                                        |
+
+<Note>
+`logoUrl` et `screenshots` sont des alias obsolètes de `logo` et `galleryImages`. Les URL absolues externes (`http://` ou `https://`) ne sont pas prises en charge pour ces champs : elles sont ignorées avec un avertissement au moment de la compilation. Placez plutôt les images dans le dossier `public/` de votre application.
+</Note>

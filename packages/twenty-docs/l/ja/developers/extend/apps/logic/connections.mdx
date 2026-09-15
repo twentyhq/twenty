@@ -1,0 +1,269 @@
+---
+title: 接続
+description: OAuth を介して、アプリがユーザーに代わってサードパーティのサービスで操作を行えるようにします。
+icon: plug
+---
+
+接続（Connection）は、ユーザーが外部サービス（Linear、GitHub、Slack など）のために保持する認証情報です。 あなたのアプリは、それらの認証情報を**どのように**取得するか — **接続プロバイダー** — を宣言し、実行時にそれらを利用してサードパーティの API へ認証付きの呼び出しを行います。
+
+現在は OAuth 2.0 のみサポートされています。 将来的な認証情報タイプ（パーソナルアクセストークン、API キー、Basic 認証）も同じインターフェースに差し込まれます — すでに `defineConnectionProvider({ type: 'oauth', ... })` を使用しているアプリは移行の必要がありません。
+
+<AccordionGroup>
+
+<Accordion title="defineConnectionProvider" description="アプリの接続をどのように取得するかを宣言する">
+
+接続プロバイダーは、アプリに必要な OAuth のハンドシェイクを記述します。 ユーザーがアプリの設定で"接続を追加"をクリックし、プロバイダーの同意画面を完了すると、そのワークスペースに `ConnectedAccount` の行が作成されます。
+
+動作するセットアップには、**2 つのファイル**が必要です — 接続プロバイダーと、OAuth クライアント認証情報を保持する `defineApplication` 上の対応する `serverVariables` 宣言です。
+
+```ts src/connection-providers/linear-connection.ts
+import { defineConnectionProvider } from 'twenty-sdk/define';
+
+export default defineConnectionProvider({
+  universalIdentifier: '9c7d1f5e-6a0b-4d44-be0c-3f8b5a9d4e6f',
+  name: 'linear',
+  displayName: 'Linear',
+  icon: 'IconBrandLinear',
+  type: 'oauth',
+  oauth: {
+    authorizationEndpoint: 'https://linear.app/oauth/authorize',
+    tokenEndpoint: 'https://api.linear.app/oauth/token',
+    scopes: ['read', 'write'],
+    // These must match keys in `defineApplication.serverVariables` below.
+    clientIdVariable: 'LINEAR_CLIENT_ID',
+    clientSecretVariable: 'LINEAR_CLIENT_SECRET',
+    // Optional: defaults to 'json'. Some providers (Linear, Slack) want
+    // 'form-urlencoded' for the token request.
+    tokenRequestContentType: 'form-urlencoded',
+    // Optional: defaults to true. Disable only if the provider rejects PKCE.
+    usePkce: false,
+    // Optional: extra query params on the authorize URL.
+    // authorizationParams: { prompt: 'consent' },
+    // Optional: provider's RFC 7009 token revocation endpoint, called on disconnect.
+    // revokeEndpoint: 'https://example.com/oauth/revoke',
+  },
+  // Optional: a logic function in this app to run right after a connection is
+  // established. See "Run a logic function on connect".
+  // onConnectLogicFunction: { universalIdentifier: '3a2b1c0d-...-...' },
+  // Optional: a logic function in this app to run right after a connection is
+  // removed. See "Run a logic function on disconnect".
+  // onDisconnectLogicFunction: { universalIdentifier: '4d5e6f70-...-...' },
+});
+```
+
+```ts src/application.config.ts
+import { defineApplication } from 'twenty-sdk/define';
+
+export default defineApplication({
+  universalIdentifier: '...',
+  displayName: 'Linear',
+  description: 'Connect Linear to Twenty.',
+  // OAuth client credentials live on the app registration (one OAuth app per
+  // Twenty server, configured by the admin) — not per-workspace. Declare them
+  // as serverVariables so the admin can fill them in once for all installs.
+  serverVariables: {
+    LINEAR_CLIENT_ID: {
+      description: 'OAuth client ID from your Linear OAuth application.',
+      isSecret: false,
+      isRequired: true,
+    },
+    LINEAR_CLIENT_SECRET: {
+      description: 'OAuth client secret from your Linear OAuth application.',
+      isSecret: true,
+      isRequired: true,
+    },
+  },
+});
+```
+
+主なポイント：
+
+* `listConnections({ providerName })` で使用される一意の識別子文字列が `name` です（kebab-case、`^[a-z][a-z0-9-]*$` に一致する必要があります）。
+* `displayName` はアプリごとの設定タブおよび AI ツール一覧に表示されます。
+* `clientIdVariable` / `clientSecretVariable` は値ではなく**名前**です — `defineApplication.serverVariables` で宣言されたキーと一致している必要があります。 実際の `client_id` と `client_secret` は、アプリ登録 UI を通じてサーバー管理者が入力し、あなたのリポジトリにコミットされることはありません。
+* `applicationVariables` ではなく `serverVariables` を使用してください — OAuth の認証情報はサーバー全体で共有され、Twenty サーバーごとに 1 つの OAuth アプリとなります。
+* 両方の `serverVariables` が入力されるまで、アプリごとの設定タブには"サーバー管理者が必要"というヒントが表示され、"接続を追加"ボタンは無効になります。
+* 現在サポートされる値は `type: 'oauth'` のみです。 この判別子は前方互換です。将来のタイプ（`'pat'`、`'api-key'`、...） は、`oauth` に並ぶ新しいサブ設定ブロックを追加します。
+
+プロバイダーで許可リストに登録する必要がある OAuth のコールバック URL は次のとおりです:
+
+```
+https://<your-twenty-server>/auth/apps/callback
+```
+
+</Accordion>
+
+<Accordion title="接続時にロジック関数を実行する" description="接続が確立された瞬間に反応する">
+
+一部のプロバイダは、接続時に、接続が実際に利用可能になる前に永続化しておく必要があるデータを渡してきます。典型的な例は Slack で、OAuth レスポンスに、受信イベントのキーとして使用されるワークスペースの `team_id` が含まれます。 `onConnectLogicFunction` を、同じアプリ内のロジック関数を `universalIdentifier` で参照するように設定すると、`ConnectedAccount` が作成された直後にその関数が実行されます。
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs claimSlackTeam after every successful Slack connection.
+  onConnectLogicFunction: {
+    universalIdentifier: '3a2b1c0d-1111-4222-8333-444455556666',
+  },
+});
+```
+
+このフックは**接続中のワークスペース内で非同期に**実行されます（待機されずにキューに入れられるため）、フックの実行が遅かったり失敗したりしても OAuth コールバックをブロックしたり壊したりすることは決してありません。冪等性を持たせ、自身でリトライ処理を行うようにしてください。 ハンドラーは次の内容を受け取ります:
+
+```ts
+type OnConnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+そこから `getConnection(connectedAccountId)` を使用して最新のアクセストークンを読み取り、プロバイダーの API（例: Slack `auth.test`）を呼び出すか、[key-value store](/l/ja/developers/extend/apps/logic/key-value-store) を使ってマッピングを永続化します。
+
+</Accordion>
+
+<Accordion title="切断時にロジック関数を実行する" description="接続が削除されたときにクリーンアップを行う">
+
+アプリが接続時に確保したものは、接続が解除されたときに必ず解放しなければなりません。 例えば、接続時に `team_id` を確保する Slack 連携は、その確保を解放して、別のワークスペースが同じ Slack チームを接続できるようにしなければなりません。 同じアプリ内のロジック関数を参照するように `onDisconnectLogicFunction` を設定すると、`ConnectedAccount` が削除された直後にその関数が実行されます。
+
+```ts src/connection-providers/slack-connection.ts
+export default defineConnectionProvider({
+  universalIdentifier: '...',
+  name: 'slack',
+  displayName: 'Slack',
+  type: 'oauth',
+  oauth: {
+    /* ... */
+  },
+  // Runs releaseSlackTeam after every Slack disconnection.
+  onDisconnectLogicFunction: {
+    universalIdentifier: '4470aba8-5ff5-4800-88db-2a427cd8677c',
+  },
+});
+```
+
+on-connect フックと同様に、**切断処理中のワークスペースで非同期に実行され**、切断をブロックすることはありません。 ハンドラーは同じペイロード構造を受け取ります:
+
+```ts
+type OnDisconnectPayload = {
+  connectionProviderId: string;
+  connectionProviderName: string; // e.g. 'slack'
+  connectedAccountId: string;
+};
+```
+
+フックが実行される時点では `ConnectedAccount` はすでに削除されているため、`getConnection(connectedAccountId)` はもう解決されません。 クリーンアップに必要なもの（`team_id` や外部サブスクリプション ID など）は、接続時に `connectedAccountId` をキーとして [key-value store](/l/ja/developers/extend/apps/logic/key-value-store) に書き込まれている必要があります。
+
+このフックは、接続が単独で削除されたときに発火します。 アプリをアンインストールすると、代わりにデータベースのカスケードによって接続が削除されるため、その場合はこのフックは実行されません。 その経路用に `defineApplication` 上で `uninstallLogicFunction` を宣言します。これはアプリのメタデータが削除される前に実行されるため、まだ `listConnections` を呼び出して残っているものをクリーンアップできます。
+
+</Accordion>
+
+<Accordion title="listConnections / getConnection" description="ロジック関数から接続を使用する">
+
+ロジック関数ハンドラー内では、`listConnections({ providerName })` が指定したプロバイダーに対するこのアプリの `ConnectedAccount` 行を、更新済みのアクセストークン付きで返します。
+
+```ts src/logic-functions/handlers/create-linear-issue-handler.ts
+import { listConnections } from 'twenty-sdk/logic-function';
+
+export const createLinearIssueHandler = async (input: {
+  teamId?: string;
+  title?: string;
+}) => {
+  if (!input.teamId || !input.title) {
+    return { success: false, error: 'teamId and title are required' };
+  }
+
+  const connections = await listConnections({ providerName: 'linear' });
+
+  // Workspace-shared credentials win when present; fall back to the first
+  // user-visibility one. For HTTP-route triggers you typically pick the
+  // request user's connection via event.userWorkspaceId instead.
+  const connection =
+    connections.find((c) => c.visibility === 'workspace') ?? connections[0];
+
+  if (!connection) {
+    return {
+      success: false,
+      error:
+        'Linear is not connected. Open the app settings and click "Add connection".',
+    };
+  }
+
+  // Use connection.accessToken to call the third-party API.
+  const response = await fetch('https://api.linear.app/graphql', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${connection.accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: `mutation { issueCreate(input: { teamId: "${input.teamId}", title: "${input.title}" }) { success } }`,
+    }),
+  });
+
+  return { success: response.ok };
+};
+```
+
+各接続には次の項目があります:
+
+| フィールド             | 説明                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| `id`              | 一意の行 ID。単一の接続を再取得するには `getConnection(id)` に渡します。                                                              |
+| `visibility`      | `'user'`（ワークスペースの 1 メンバー専用）または `'workspace'`（全メンバーと共有）                                                        |
+| `scopes`          | 連携先プロバイダーによって付与された OAuth 権限（`visibility` とは別で、無関係です）                                                          |
+| `userWorkspaceId` | 所有者の userWorkspace ID — HTTP ルートトリガーで"要求ユーザーの接続"を選ぶのに役立ちます                                                    |
+| `accessToken`     | 新しい OAuth アクセストークン（期限切れの場合は自動更新）                                                                              |
+| `name`            | 接続の表示名（OAuth コールバック時に自動取得。ユーザーが名称変更可能）                                                                        |
+| `handle`          | 接続された上流アカウントのメールアドレスは、再接続ごとに更新されます。 トークン交換時に返されたOIDC `id_token`を解決し、プロバイダが1つを返さないときに接続するTwentyユーザーの電子メールに戻ります |
+| `authFailedAt`    | 直近の更新に失敗した場合に設定されます。ユーザーは再接続する必要があります。                                                                        |
+
+主なポイント：
+
+* プロバイダーで絞り込むには `{ providerName }` を渡します。省略すると、このアプリが保有するすべてのプロバイダーの接続を取得します。
+* サーバーは返却前にアクセストークンを透過的に更新します。 ハンドラーは常に利用可能なトークン（または `authFailedAt` が設定された状態）を受け取ります。
+* `getConnection(id)` は単一行の取得に相当します。
+
+</Accordion>
+
+<Accordion title="ユーザー単位 vs ワークスペース共有の可視性" description="ユーザーがプライベートと共有の認証情報を選ぶ方法">
+
+ユーザーが"接続を追加"をクリックすると、可視性の選択を求められます:
+
+* **自分だけ** — 認証情報は接続したユーザー専用です。 そのユーザーの権限で呼び出される任意のロジック関数（`isAuthRequired: true` の HTTP ルートトリガー）は参照できますが、cron トリガーやデータベースイベントは参照できません。
+* **ワークスペースで共有** — どのワークスペースメンバーでもその認証情報を使用できます。 リクエストユーザーを持たないため、Cron／データベースのトリガーからも参照されます。
+
+各ハンドラーで適切な方を使用してください:
+
+```ts
+// HTTP-route trigger — prefer the request user's own connection.
+const conn =
+  connections.find((c) => c.userWorkspaceId === event.userWorkspaceId) ??
+  connections.find((c) => c.visibility === 'workspace');
+
+// Cron trigger — no request user; only shared credentials are sensible.
+const conn = connections.find((c) => c.visibility === 'workspace');
+```
+
+（ユーザー、プロバイダー）ごとに複数の接続が許可されているため、同一ユーザーが "Personal Linear" と "Work Linear" を並行して保持できます。
+
+</Accordion>
+
+<Accordion title="一度きりのプロバイダー設定" description="サードパーティサービスに OAuth アプリを登録する">
+
+各接続プロバイダーごとに、まずサーバー管理者がサードパーティ側で OAuth アプリを登録する必要があります。
+
+1. プロバイダーの開発者設定に移動します（例: https://linear.app/settings/api/applications/new）。
+2. **Redirect URI** を `\<SERVER_URL>/auth/apps/callback` に設定します。
+3. 生成された **Client ID** と **Client Secret** をコピーします。
+4. サーバー管理者として Twenty でインストール済みアプリを開き、対応する `serverVariables` に値を設定します。
+5. その後、ワークスペースメンバーはアプリごとの **Connections** セクションから接続を追加できます。
+
+</Accordion>
+
+</AccordionGroup>

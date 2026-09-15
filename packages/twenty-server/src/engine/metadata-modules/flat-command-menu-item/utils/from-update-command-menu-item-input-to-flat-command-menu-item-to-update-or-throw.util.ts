@@ -11,6 +11,9 @@ import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-m
 import { FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES } from 'src/engine/metadata-modules/flat-command-menu-item/constants/flat-command-menu-item-editable-properties.constant';
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { fromCommandMenuItemOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-command-menu-item/utils/from-command-menu-item-overrides-to-universal-overrides.util';
+import { isCallerOverridingEntity } from 'src/engine/metadata-modules/overrides/utils/is-caller-overriding-entity.util';
+import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/overrides/utils/sanitize-overridable-entity-input.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
 
 export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow =
@@ -19,9 +22,13 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
     updateCommandMenuItemInput,
     flatObjectMetadataMaps,
     flatPageLayoutMaps,
+    callerApplicationUniversalIdentifier,
+    workspaceCustomApplicationUniversalIdentifier,
   }: {
     flatCommandMenuItemMaps: FlatCommandMenuItemMaps;
     updateCommandMenuItemInput: UpdateCommandMenuItemInput;
+    callerApplicationUniversalIdentifier: string;
+    workspaceCustomApplicationUniversalIdentifier: string;
   } & Pick<
     AllFlatEntityMaps,
     'flatObjectMetadataMaps' | 'flatPageLayoutMaps'
@@ -40,22 +47,43 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
 
     const { id: _id, ...updates } = updateCommandMenuItemInput;
 
-    const flatCommandMenuItemToUpdate = {
-      ...mergeUpdateInExistingRecord({
-        existing: existingFlatCommandMenuItem,
-        properties: [...FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES],
-        update: updates,
-      }),
+    const shouldOverride = isCallerOverridingEntity({
+      callerApplicationUniversalIdentifier,
+      entityApplicationUniversalIdentifier:
+        existingFlatCommandMenuItem.applicationUniversalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier,
+      isSystemSideEffect: existingFlatCommandMenuItem.isSystemSideEffect,
+    });
+
+    const { overrides, updatedEditableProperties } =
+      sanitizeOverridableEntityInput({
+        metadataName: 'commandMenuItem',
+        existingFlatEntity: existingFlatCommandMenuItem,
+        updatedEditableProperties: updates,
+        shouldOverride,
+        callerApplicationUniversalIdentifier,
+        workspaceCustomApplicationUniversalIdentifier,
+      });
+
+    const mergedRecord = mergeUpdateInExistingRecord({
+      existing: existingFlatCommandMenuItem,
+      properties: [...FLAT_COMMAND_MENU_ITEM_EDITABLE_PROPERTIES],
+      update: updatedEditableProperties,
+    });
+
+    const flatCommandMenuItemToUpdate: FlatCommandMenuItem = {
+      ...mergedRecord,
+      overrides,
       updatedAt: new Date().toISOString(),
     };
 
-    if (updates.availabilityObjectMetadataId !== undefined) {
+    if (updatedEditableProperties.availabilityObjectMetadataId !== undefined) {
       const { availabilityObjectMetadataUniversalIdentifier } =
         resolveEntityRelationUniversalIdentifiers({
           metadataName: 'commandMenuItem',
           foreignKeyValues: {
             availabilityObjectMetadataId:
-              flatCommandMenuItemToUpdate.availabilityObjectMetadataId,
+              mergedRecord.availabilityObjectMetadataId,
           },
           flatEntityMaps: { flatObjectMetadataMaps },
         });
@@ -64,18 +92,31 @@ export const fromUpdateCommandMenuItemInputToFlatCommandMenuItemToUpdateOrThrow 
         availabilityObjectMetadataUniversalIdentifier;
     }
 
-    if (updates.pageLayoutId !== undefined) {
+    if (updatedEditableProperties.pageLayoutId !== undefined) {
       const { pageLayoutUniversalIdentifier } =
         resolveEntityRelationUniversalIdentifiers({
           metadataName: 'commandMenuItem',
           foreignKeyValues: {
-            pageLayoutId: flatCommandMenuItemToUpdate.pageLayoutId,
+            pageLayoutId: mergedRecord.pageLayoutId,
           },
           flatEntityMaps: { flatPageLayoutMaps },
         });
 
       flatCommandMenuItemToUpdate.pageLayoutUniversalIdentifier =
         pageLayoutUniversalIdentifier;
+    }
+
+    if (isDefined(overrides)) {
+      flatCommandMenuItemToUpdate.universalOverrides =
+        fromCommandMenuItemOverridesToUniversalOverrides({
+          overrides,
+          objectMetadataUniversalIdentifierById:
+            flatObjectMetadataMaps.universalIdentifierById,
+          pageLayoutUniversalIdentifierById:
+            flatPageLayoutMaps.universalIdentifierById,
+        });
+    } else {
+      flatCommandMenuItemToUpdate.universalOverrides = null;
     }
 
     return flatCommandMenuItemToUpdate;

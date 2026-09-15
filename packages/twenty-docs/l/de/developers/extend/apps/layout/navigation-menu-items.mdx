@@ -1,7 +1,7 @@
 ---
 title: Navigationsmenüeinträge
 description: Fügen Sie der Arbeitsbereichsseitenleiste benutzerdefinierte Einträge hinzu – Links zu gespeicherten Ansichten oder externen URLs.
-icon: Balken
+icon: bars
 ---
 
 Ein **Navigationsmenüeintrag** ist ein Eintrag in der linken Seitenleiste. Verwenden Sie `defineNavigationMenuItem()`, um benutzerdefinierte Seitenleistenlinks bereitzustellen – typischerweise einen pro [Ansicht](/l/de/developers/extend/apps/layout/views), die Sie bereitstellen – oder um auf externe URLs zu verweisen.
@@ -35,10 +35,12 @@ export default defineNavigationMenuItem({
 
 * `position` steuert die Reihenfolge in der Seitenleiste.
 
+* Das Enum enthält außerdem `NavigationMenuItemType.RECORD`, das intern für vom Benutzer erstellte Datensatzfavoriten verwendet wird — es ist in einem App-Manifest nicht verwendbar (es gibt kein Feld, um auf einen Datensatz zu verweisen).
+
 * `icon` und `color` sind optional und passen das Erscheinungsbild des Eintrags an.
 
 * `folderUniversalIdentifier` ist ebenfalls bei jedem Eintrag verfügbar, um ihn innerhalb eines übergeordneten Elements vom Typ `FOLDER` zu verschachteln.
 
 <Note>
-**Häufige Falle:** Wenn Sie ein Objekt ohne zugehörige Ansicht und Navigationsmenüeintrag erstellen, ist dieses Objekt für Benutzer unsichtbar. Sofern es sich nicht um ein technisches/internes Objekt handelt, sollte jedes benutzerdefinierte Objekt eine Standardansicht *und* einen entsprechenden Eintrag in der Seitenleiste haben.
+**Häufige Falle:** Wenn Sie ein Objekt ohne zugehörigen Navigationsmenüeintrag erstellen, ist dieses Objekt von der Seitenleiste aus nicht erreichbar. Sofern es sich nicht um ein technisches/internes Objekt handelt, sollte jedes benutzerdefinierte Objekt einen entsprechenden Eintrag in der Seitenleiste haben, der darauf verweist.
 </Note>

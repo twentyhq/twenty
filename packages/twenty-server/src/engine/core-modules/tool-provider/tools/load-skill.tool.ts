@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { tipTapDocumentToMarkdown } from 'twenty-shared/utils';
 
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 
@@ -56,9 +57,9 @@ export const createLoadSkillTool = (
       skills: skills.map((skill) => ({
         name: skill.name,
         label: skill.label,
-        content: skill.content,
+        content: tipTapDocumentToMarkdown(skill.content),
       })),
-      message: `Loaded ${skills.map((skill) => skill.label).join(', ')}`,
+      message: `Loaded ${skills.map((skill) => skill.label).join(', ')}.`,
     };
   },
 });

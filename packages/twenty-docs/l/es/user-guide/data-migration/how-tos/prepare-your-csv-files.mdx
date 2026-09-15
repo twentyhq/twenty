@@ -1,5 +1,5 @@
 ---
-title: Prepara tus archivos CSV},{
+title: Prepara tus archivos CSV
 description: Guía completa paso a paso para dar formato a tus datos para importarlos en Twenty.
 ---
 
@@ -103,8 +103,6 @@ Dirección es un **campo anidado** con varias columnas (algunas pueden dejarse e
 Usa un formato coherente en todo tu archivo:
 
 * `YYYY-MM-DD` (recomendado): `2024-03-15`
-* `MM/DD/YYYY`: `03/15/2024`
-* `DD/MM/YYYY`: `15/03/2024`
 * ISO 8601: `2024-03-15T10:30:00Z`
 
 ### Campos numéricos
@@ -210,15 +208,14 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 * Para los miembros del espacio de trabajo, usa su **email** (no el nombre)
 
 <Warning>
-  **¡El orden de importación importa!**
+**¡El orden de importación importa!**
 
-  Importa el lado "uno" antes del lado "muchos":
+Importa el lado "uno" antes del lado "muchos":
+1. **Empresas** primero
+2. **Personas** después (con referencia a la empresa)
+3. **Oportunidades** en tercer lugar
 
-  1. **Empresas** primero
-  2. **Personas** después (con referencia a la empresa)
-  3. **Oportunidades** en tercer lugar
-
-  El registro padre debe existir antes de poder referenciarlo.
+El registro padre debe existir antes de poder referenciarlo.
 </Warning>
 
 Consulta [Cómo importar relaciones](/l/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) para obtener instrucciones detalladas.

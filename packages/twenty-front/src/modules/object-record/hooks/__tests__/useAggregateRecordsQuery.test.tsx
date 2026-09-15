@@ -1,3 +1,4 @@
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -5,7 +6,10 @@ import { useAggregateRecordsQuery } from '@/object-record/hooks/useAggregateReco
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { generateAggregateQuery } from '@/object-record/utils/generateAggregateQuery';
 import { renderHook } from '@testing-library/react';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  MetadataWritability,
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
 jest.mock('@/object-metadata/hooks/useObjectMetadataItem');
@@ -18,7 +22,6 @@ const fields = [
     name: 'amount',
     label: 'Amount',
     type: FieldMetadataType.NUMBER,
-    isCustom: false,
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -29,7 +32,6 @@ const fields = [
     name: 'name',
     label: 'Name',
     type: FieldMetadataType.TEXT,
-    isCustom: false,
     isActive: true,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
@@ -43,7 +45,6 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   universalIdentifier: 'test-id',
   labelSingular: 'Company',
   labelPlural: 'Companies',
-  isCustom: false,
   isSearchable: false,
   labelIdentifierFieldMetadataId: '20202020-dd4a-4ea4-bb7b-1c7300491b65',
   isActive: true,
@@ -53,10 +54,14 @@ const mockObjectMetadataItem: EnrichedObjectMetadataItem = {
   readableFields: fields,
   updatableFields: fields,
   indexMetadatas: [],
+  searchFieldMetadatas: [],
   isLabelSyncedWithName: true,
   isRemote: false,
   isSystem: false,
-  isUIReadOnly: false,
+  isUIEditable: true,
+  isUICreatable: true,
+  writability: MetadataWritability.OPEN,
+  openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
 };
 
 const Wrapper = getJestMetadataAndApolloMocksWrapper({

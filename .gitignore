@@ -1,7 +1,9 @@
 **/**/.env
 .DS_Store
 /.idea
-.claude/
+.claude/*
+!.claude/settings.json
+!.claude/skills/
 .cursor/debug-*.log
 **/**/node_modules/
 .cache
@@ -51,7 +53,21 @@ dump.rdb
 
 mcp.json
 /.junie/
+/.agents/plugins/marketplace.json
 TRANSLATION_QA_REPORT.md
 .playwright-mcp/
 .playwright-cli/
 output/playwright/
+screenshots/
+!**/public/screenshots/
+!**/assets/screenshots/
+
+# local graphify knowledge-graph output (never commit)
+**/graphify-out/
+
+# Local scratch scripts
+/.verify*.mjs
+/.shot*.mjs
+/.diag*.mjs
+/.compare*.mjs
+/.narrow*.mjs

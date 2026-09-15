@@ -1,2 +1,2 @@
-// oxlint-disable-next-line @typescripttypescript/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any
 export type ObjectRecordProperties = Record<string, any>;

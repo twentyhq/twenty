@@ -5,20 +5,20 @@ import {
 } from 'test/integration/constants/test-person-ids.constants';
 import {
   TEST_PRIMARY_LINK_URL,
-  TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+  TEST_PRIMARY_LINK_URL_AS_DOMAIN,
 } from 'test/integration/constants/test-primary-link-url.constant';
 import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 import { deleteAllRecords } from 'test/integration/utils/delete-all-records';
 import { generateRecordName } from 'test/integration/utils/generate-record-name';
 
 describe('Core REST API Find One endpoint', () => {
-  let personCity: string;
+  let personJobTitle: string;
 
   beforeAll(async () => {
     await deleteAllRecords('person');
     await deleteAllRecords('company');
 
-    personCity = generateRecordName(TEST_PERSON_1_ID);
+    personJobTitle = generateRecordName(TEST_PERSON_1_ID);
 
     await makeRestAPIRequest({
       method: 'post',
@@ -36,7 +36,7 @@ describe('Core REST API Find One endpoint', () => {
       path: '/people',
       body: {
         id: TEST_PERSON_1_ID,
-        city: personCity,
+        jobTitle: personJobTitle,
         companyId: TEST_COMPANY_1_ID,
       },
     });
@@ -53,7 +53,7 @@ describe('Core REST API Find One endpoint', () => {
 
         expect(person).not.toBeNull();
         expect(person.id).toBe(TEST_PERSON_1_ID);
-        expect(person.city).toBe(personCity);
+        expect(person.jobTitle).toBe(personJobTitle);
       });
   });
 
@@ -108,7 +108,7 @@ describe('Core REST API Find One endpoint', () => {
 
         expect(person.company).toBeDefined();
         expect(person.company.domainName.primaryLinkUrl).toBe(
-          TEST_PRIMARY_LINK_URL_WIITHOUT_TRAILING_SLASH,
+          TEST_PRIMARY_LINK_URL_AS_DOMAIN,
         );
         expect(person.company.people).not.toBeDefined();
       });

@@ -26,6 +26,7 @@ type FromUpdateFieldInputToFlatFieldMetadataArgs = {
   updateFieldInput: UpdateFieldInput;
   flatApplication: FlatApplication;
   isSystemBuild: boolean;
+  workspaceCustomApplicationUniversalIdentifier: string;
 } & Pick<
   AllFlatEntityMaps,
   | 'flatObjectMetadataMaps'
@@ -52,6 +53,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
   flatViewMaps,
   flatViewFieldMaps,
   isSystemBuild,
+  workspaceCustomApplicationUniversalIdentifier,
 }: FromUpdateFieldInputToFlatFieldMetadataArgs): FieldInputTranspilationResult<FlatFieldMetadataAndIndexToUpdate> => {
   const updateFieldInputInformalProperties =
     extractAndSanitizeObjectStringFields(rawUpdateFieldInput, [
@@ -102,6 +104,7 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       fromFlatFieldMetadata: existingFlatFieldMetadataToUpdate,
       rawUpdateFieldInput,
       isSystemBuild,
+      workspaceCustomApplicationUniversalIdentifier,
     });
 
   const { flatFieldMetadatasToCreate, flatIndexMetadatasToCreate } =
@@ -150,7 +153,6 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       toFlatFieldMetadata,
       flatViewMaps,
       flatViewFieldMaps,
-      flatApplication,
     });
 
     if (sideEffectResult.status === 'fail') {
@@ -172,14 +174,12 @@ export const fromUpdateFieldInputToFlatFieldMetadata = ({
       flatViewsToDelete,
       flatViewFieldsToDelete,
       flatViewsToUpdate,
-      flatFieldMetadatasToUpdate: flatFieldMetadatasToUpdateFromSideEffect,
     } = sideEffectResult.result;
 
     return {
       flatFieldMetadatasToUpdate: [
         ...accumulator.flatFieldMetadatasToUpdate,
         toFlatFieldMetadata,
-        ...flatFieldMetadatasToUpdateFromSideEffect,
       ],
       flatIndexMetadatasToUpdate: [
         ...accumulator.flatIndexMetadatasToUpdate,

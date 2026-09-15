@@ -214,7 +214,6 @@ describe('roles permissions', () => {
     });
 
     it('should allow to update role when user has permission (admin role)', async () => {
-      // Arrange
       const getRolesQuery = {
         query: `
             query GetRoles {
@@ -251,7 +250,6 @@ describe('roles permissions', () => {
         `,
       };
 
-      // Act and assert
       await client
         .post('/metadata')
         .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -265,7 +263,6 @@ describe('roles permissions', () => {
           );
         });
 
-      // Clean
       const rollbackRoleUpdateQuery = {
         query: `
           mutation UpdateWorkspaceMemberRole {
@@ -307,7 +304,6 @@ describe('roles permissions', () => {
     });
 
     it('should create a role when user has permission to create a role (admin role)', async () => {
-      // Act and assert
       const query = {
         query: `
           mutation CreateOneRole {
@@ -330,7 +326,6 @@ describe('roles permissions', () => {
 
       const createdRoleId = result.body.data.createOneRole.id;
 
-      // Clean
       const deleteOneRoleQuery = deleteOneRoleOperationFactory(createdRoleId);
 
       await client
@@ -565,7 +560,7 @@ describe('roles permissions', () => {
         roleId: string;
       }) => `
       mutation UpsertPermissionFlags {
-          upsertPermissionFlags(upsertPermissionFlagsInput: {roleId: "${roleId}", permissionFlagKeys: [${PermissionFlagType.DATA_MODEL}]}) {
+          upsertPermissionFlags(upsertPermissionFlagsInput: {roleId: "${roleId}", permissionFlagKeys: ["${PermissionFlagType.DATA_MODEL}"]}) {
               id
               roleId
               flag
@@ -601,9 +596,9 @@ describe('roles permissions', () => {
             expect(res.body.errors[0].extensions.code).toBe(
               ErrorCode.METADATA_VALIDATION_FAILED,
             );
-            const permissionFlagErrors =
-              res.body.errors[0].extensions.errors?.permissionFlag ?? [];
-            const hasRoleNotEditable = permissionFlagErrors.some(
+            const rolePermissionFlagErrors =
+              res.body.errors[0].extensions.errors?.rolePermissionFlag ?? [];
+            const hasRoleNotEditable = rolePermissionFlagErrors.some(
               (failure: { errors?: Array<{ code?: string }> }) =>
                 failure.errors?.some(
                   (err) =>

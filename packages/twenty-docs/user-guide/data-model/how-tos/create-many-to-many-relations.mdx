@@ -6,11 +6,11 @@ description: Connect records where many items on both sides can be linked togeth
 Many-to-many relations let you connect multiple records on both sides. For example: many People can work on many Projects, and each Project can have many People.
 
 <Warning>
-**Lab Feature**: Junction relations are currently in the Lab. Enable them at **Settings → Updates → Lab** before following this guide.
+**Beta Feature**: Junction relations are currently in beta. Enable them at **Settings → Community → Features** before following this guide.
 </Warning>
 
 <Note>
-This feature also requires **Advanced mode** to be enabled (toggle at the bottom right of Settings).
+This feature also requires **Advanced mode** to be enabled (toggle at the bottom left of Settings).
 </Note>
 
 ## When to Use Many-to-Many
@@ -39,8 +39,8 @@ When you enable the junction relation toggle, Twenty displays linked records dir
 
 ## Prerequisites
 
-1. **Enable Junction Relations in Lab**: Go to **Settings → Updates → Lab** and enable **Junction Relations**
-2. **Enable Advanced mode**: Toggle on **Advanced mode** at the bottom right of the Settings sidebar
+1. **Enable Junction Relations in Beta Features**: Go to **Settings → Community → Features** and enable **Junction Relations**
+2. **Enable Advanced mode**: Toggle on **Advanced mode** at the bottom left of the Settings sidebar
 3. Plan your data model:
    - Which two objects are you connecting?
    - What should the junction object be called?
@@ -50,7 +50,7 @@ When you enable the junction relation toggle, Twenty displays linked records dir
 First, create the intermediate object that will hold the connections.
 
 1. Go to **Settings → Data Model**
-2. Click **+ New object**
+2. Click **+ Add object**
 3. Name it descriptively (e.g., "Project Assignment", "Team Member", "Product Order")
 4. Toggle "Skip creating a Name field" on
 
@@ -153,7 +153,7 @@ Here's a complete walkthrough:
 Since the junction object is a real object, you can add custom fields to store information about the relationship:
 
 - **Role**: "Developer", "Designer", "Manager"
-- **Start Date**: When they joined the project
+- **Start Date**: When the person joined the project
 - **Hours Allocated**: Weekly hours on this project
 
 To access this data, navigate to the junction object directly or query it via the API.

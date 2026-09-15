@@ -1,0 +1,1 @@
+export const SEARCH_OUTPUT_MAX_MATCH_LENGTH = 500;

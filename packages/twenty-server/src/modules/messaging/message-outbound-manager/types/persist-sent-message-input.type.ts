@@ -9,5 +9,6 @@ export type PersistSentMessageInput = {
   connectedAccount: Pick<ConnectedAccountEntity, 'id' | 'handle'>;
   messageChannelId: string;
   inReplyTo?: string;
+  parentThreadExternalId?: string;
   workspaceId: string;
 };

@@ -1,12 +1,12 @@
 ---
-title: Crear campos de relación},{
+title: Crear campos de relación
 description: Guía paso a paso para conectar objetos con campos de relación.
 ---
 
 Los campos de relación conectan registros de distintos objetos—por ejemplo, vinculando Personas con Empresas.
 
 <Note>
-  **Los nombres de relación no se pueden cambiar después de la creación** (afectan a la API). Planifica bien los nombres.
+**Los nombres de relación no se pueden cambiar después de la creación** (afectan a la API). Planifica bien los nombres.
 </Note>
 
 ## Antes de empezar
@@ -24,7 +24,7 @@ Consulta [Campos de Relación](/l/es/user-guide/data-model/capabilities/relation
 
 1. Ve a **Configuración → Modelo de datos**
 2. Selecciona el objeto donde quieres la relación (normalmente el lado "muchos")
-3. Haz clic en **+ Añadir Campo**
+3. Haga clic en **+ Nuevo campo**
 4. Selecciona **Relación** como tipo de campo
 5. Elige el **objeto de destino**
 6. Selecciona **Uno a muchos** o **Muchos a uno**
@@ -42,16 +42,26 @@ Consulta [Campos de Relación](/l/es/user-guide/data-model/capabilities/relation
 
 Ahora cada persona puede vincularse a una empresa, y cada empresa muestra a sus personas.
 
-## Eliminar una relación
+## Desactivando una relación
 
-1. Ve a **Configuración → Modelo de datos**
-2. Busca el campo de relación
-3. Haz clic en **⋮ → Desactivar**
+1. Ve a **Ajustes → Modelo de datos → objeto de tu elección**
+2. Encuentre el campo de relación y haga clic en él
+3. Haga clic en el botón **desactivar**
 
 Los enlaces se conservan, pero están ocultos. Vuelve a activar para restaurar.
 
 <Note>
-  **Eliminar una relación no elimina registros.** Solo se quita el enlace entre ellos.
+**Desactivar una relación no elimina registros.** Sólo se elimina el enlace entre ellos.
+</Note>
+
+## Eliminar una relación
+
+1. Ve a **Ajustes → Modelo de datos → objeto de tu elección**
+2. Encuentre el campo de relación y haga clic en él
+3. Haga clic en el botón **Eliminar**
+
+<Note>
+Se aplica sólo a las relaciones personalizadas. Las relaciones estándar sólo pueden desactivarse.
 </Note>
 
 ## Relacionado

@@ -1,5 +1,8 @@
-import { defineCommandMenuItem } from '@/sdk/define';
-import { pageType, targetObjectWritePermissions } from '@/sdk/front-component';
+import {
+  defineCommandMenuItem,
+  pageType,
+  targetObjectWritePermissions,
+} from '@/sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: 'target-permissions-cmd',

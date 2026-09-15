@@ -1,0 +1,110 @@
+---
+title: Stockage clé-valeur
+description: Conservez des résultats intermédiaires, mettez les données en cache et partagez l’état entre les exécutions de fonctions logiques avec le magasin clé-valeur intégré à l’application.
+icon: database
+---
+
+Les fonctions logiques s'exécutent dans des processus Node.js isolés et de courte durée — une fois une exécution terminée, rien de ce qui était conservé en mémoire ne survit. Lorsque vous avez besoin de **vous souvenir de quelque chose entre les exécutions** (mettre en cache une réponse d’API coûteuse, stocker un curseur pour des synchronisations incrémentales, appliquer un anti-rebond, ou transférer l’état d’une fonction à une autre), conservez-le dans le magasin clé-valeur intégré.
+
+Chaque application dispose de son propre espace de noms isolé : les entrées sont associées à l’application authentifiée, de sorte que vos clés ne peuvent jamais entrer en collision avec celles d’une autre application, ni être lues par celle-ci.
+
+```text
+  ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
+  │ Logic function  │ ─────────────────────▶ │ Application KV store     │
+  │ (your handler)  │ ◀───────────────────── │  key (unique)  │  value  │
+  └─────────────────┘   kv.get(key)          └──────────────────────────┘
+```
+
+## Obtenir, définir, supprimer
+
+Importez `kv` depuis `twenty-sdk/logic-function`. Les valeurs peuvent être n’importe quelle charge utile sérialisable en JSON.
+
+```ts src/logic-functions/sync-linear-issues.ts
+import { kv } from 'twenty-sdk/logic-function';
+
+// Read a value. Returns null when the key is missing.
+const cursor = await kv.get<string>('sync-cursor:linear');
+
+// Write a value. Creates the entry on first write, updates it afterwards.
+await kv.set('sync-cursor:linear', newCursor);
+
+// Delete an entry. Returns true when an entry was removed.
+await kv.delete('sync-cursor:linear');
+```
+
+## Périmètres
+
+Chaque entrée possède une portée, passée comme option à chaque appel. La valeur par défaut est `WORKSPACE`.
+
+* **`WORKSPACE`** (par défaut) — l’entrée est réservée à l’installation actuelle de votre application dans l’espace de travail. Chaque espace de travail qui installe l’application obtient son propre ensemble indépendant de clés. C’est ce qu’il vous faut pour les caches, les curseurs et l’état par espace de travail.
+* **`SERVER`** — l’entrée est partagée entre **toutes les installations** de votre application sur le serveur. Les entrées serveur se comportent comme des **revendications** : la valeur stockée est toujours le workspaceId qui a revendiqué la clé (omettre `value` lors de `set` pour revendiquer la clé pour l’espace de travail actuel), et seul cet espace de travail peut la remplacer ou la supprimer. N’importe quelle installation peut lire l’entrée.
+
+Les revendications serveur existent pour le routage inter-espaces de travail. Un [résolveur de route serveur](/l/fr/developers/extend/apps/logic/logic-functions#server-route-trigger) s’exécute dans l’espace de travail propriétaire de l’enregistrement de l’application, mais un webhook entrant ne transporte généralement qu’un identifiant de compte externe — pas un workspaceId Twenty. Faites en sorte que chaque espace de travail revendique son identifiant externe au moment de la connexion, puis résolvez-le dans la route :
+
+```ts
+// In the connected workspace, when the external account is linked:
+await kv.set(`slack:team:${teamId}`, undefined, { scope: 'SERVER' });
+
+// In the server-route resolver (owner workspace), on each webhook:
+const workspaceId = await kv.get<string>(`slack:team:${teamId}`, {
+  scope: 'SERVER',
+});
+```
+
+Comme une clé serveur ne peut être revendiquée que pour l’espace de travail de l’appelant et jamais écrasée par un autre, un espace de travail ne peut pas détourner un mappage appartenant à quelqu’un d’autre. `kv.set` lève une exception lorsque la clé est déjà revendiquée par un autre espace de travail.
+
+## Utilisez-le : mettez en cache un appel coûteux
+
+Un cas d'utilisation typique consiste à mettre en cache une réponse tierce lente ou soumise à des limites de débit afin que les exécutions répétées la réutilisent au lieu d'en payer le coût à chaque fois.
+
+```ts src/logic-functions/getExchangeRate.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { kv } from 'twenty-sdk/logic-function';
+
+const ONE_HOUR_MS = 60 * 60 * 1000;
+
+type CachedRate = { rate: number; fetchedAt: number };
+
+const handler = async (params: { from: string; to: string }) => {
+  const cacheKey = `cache:exchange-rate:${params.from}:${params.to}`;
+  const cached = await kv.get<CachedRate>(cacheKey);
+
+  if (cached && Date.now() - cached.fetchedAt < ONE_HOUR_MS) {
+    return { rate: cached.rate, cached: true };
+  }
+
+  const response = await fetch(
+    `https://api.example.com/rate?from=${params.from}&to=${params.to}`,
+  );
+  const { rate } = (await response.json()) as { rate: number };
+
+  await kv.set(cacheKey, { rate, fetchedAt: Date.now() });
+
+  return { rate, cached: false };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'd9b2f4e6-1c83-4a07-9e52-6b1d3c8a0f47',
+  name: 'get-exchange-rate',
+  timeoutSeconds: 10,
+  handler,
+});
+```
+
+## Modèles et conseils
+
+* **Espaces de noms.** Préfixez les clés pour séparer les différentes préoccupations — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
+* **Expiration (TTL).** Le store n'a pas d'expiration intégrée. Stockez un horodatage dans la valeur (comme dans l’exemple de cache) et vérifiez-le à la lecture, ou effacez les clés obsolètes à partir d’une [fonction déclenchée par cron](/l/fr/developers/extend/apps/logic/logic-functions).
+* **Que stocker.** Toute valeur sérialisable en JSON — nombres, chaînes de caractères, tableaux, objets. Gardez les entrées petites ; ceci sert à la coordination et à la mise en cache, pas aux blobs volumineux ni aux fichiers. Pour les fichiers, utilisez un champ `FILES` et [`uploadFile`](/l/fr/developers/extend/apps/logic/logic-functions#uploading-files).
+* **Visibilité.** Les entrées résident dans la base de données de l’instance, et non comme enregistrements d’espace de travail — elles n’apparaissent jamais dans l’interface utilisateur de l’espace de travail, ne font pas partie du modèle de données de votre application et ne nécessitent aucun droit ni aucune permission d’objet.
+
+## Alternative : un objet de stockage interrogeable
+
+Le magasin intégré est délibérément opaque : les entrées ne sont pas des enregistrements, vous ne pouvez donc pas les parcourir dans l’interface utilisateur, les relier à d’autres objets, ni les filtrer avec des requêtes sur les enregistrements. Lorsque vous avez besoin de tout cela — par exemple un journal de synchronisation visible, ou un état par enregistrement — définissez plutôt un petit **objet technique** avec un champ `key` unique et un champ `RAW_JSON` `value`, puis interrogez-le via le [client d’API typé](/l/fr/developers/extend/apps/logic/logic-functions#typed-api-clients-twenty-client-sdk). Consultez [Objets](/l/fr/developers/extend/apps/data/objects) pour la référence `defineObject` et [Données → Index uniques](/l/fr/developers/extend/apps/data/overview#unique-indexes) pour faire appliquer l’unicité des clés.
+
+* **Délimiter la portée à un enregistrement.** Ajoutez une [relation](/l/fr/developers/extend/apps/data/relations) de l’objet de stockage vers l’objet cible plutôt que de coder l’identifiant dans la clé.
+* **Visibilité et autorisations.** Les lignes résident dans la base de données de l'espace de travail comme n'importe quel autre enregistrement, elles sont donc interrogeables via l'API et respectent le [rôle](/l/fr/developers/extend/apps/config/roles) de votre application. Pour garder le store hors de l'interface principale, ne l'ajoutez pas à votre [menu de navigation](/l/fr/developers/extend/apps/layout/navigation-menu-items).
+
+<Note>
+Contrairement au magasin intégré, un objet personnalisé est toujours limité à un seul espace de travail — il ne peut pas partager des entrées entre installations comme le font les clés `SERVER`.
+</Note>

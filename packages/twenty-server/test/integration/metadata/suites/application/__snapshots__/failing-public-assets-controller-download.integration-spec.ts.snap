@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Public assets controller download should fail when path attempts to escape into another file folder 1`] = `
+{
+  "body": {
+    "code": "FILE_NOT_FOUND",
+    "error": "Error",
+    "messages": [
+      "File not found",
+    ],
+    "statusCode": 404,
+  },
+  "status": 404,
+}
+`;
+
+exports[`Public assets controller download should fail when path contains URL-encoded backslash traversal 1`] = `
+{
+  "body": {
+    "code": "FILE_NOT_FOUND",
+    "error": "Error",
+    "messages": [
+      "File not found",
+    ],
+    "statusCode": 404,
+  },
+  "status": 404,
+}
+`;
+
+exports[`Public assets controller download should fail when path contains a leading parent-directory segment (..) 1`] = `
+{
+  "body": {
+    "code": "FILE_NOT_FOUND",
+    "error": "Error",
+    "messages": [
+      "File not found",
+    ],
+    "statusCode": 404,
+  },
+  "status": 404,
+}
+`;
+
+exports[`Public assets controller download should fail when path contains multiple upward traversal segments (../../) 1`] = `
+{
+  "body": {
+    "code": "FILE_NOT_FOUND",
+    "error": "Error",
+    "messages": [
+      "File not found",
+    ],
+    "statusCode": 404,
+  },
+  "status": 404,
+}
+`;
+
+exports[`Public assets controller download should fail when the applicationId does not match any application 1`] = `
+{
+  "body": {
+    "code": "FILE_NOT_FOUND",
+    "error": "Error",
+    "messages": [
+      "File not found",
+    ],
+    "statusCode": 404,
+  },
+  "status": 404,
+}
+`;
+
+exports[`Public assets controller download should fail when the requested asset does not exist 1`] = `
+{
+  "body": {
+    "code": "FILE_NOT_FOUND",
+    "error": "Error",
+    "messages": [
+      "File not found",
+    ],
+    "statusCode": 404,
+  },
+  "status": 404,
+}
+`;
+
+exports[`Public assets controller download should fail when the workspaceId does not match any workspace 1`] = `
+{
+  "body": {
+    "code": "FILE_NOT_FOUND",
+    "error": "Error",
+    "messages": [
+      "File not found",
+    ],
+    "statusCode": 404,
+  },
+  "status": 404,
+}
+`;

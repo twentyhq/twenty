@@ -6,7 +6,7 @@ import { UsageDailyChartSection } from '@/settings/usage/components/UsageDailyCh
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { AI_OPERATION_TYPES } from '@/settings/usage/constants/AiOperationTypes';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
@@ -38,7 +38,7 @@ export const SettingsAiUsageUserDetail = () => {
   const breadcrumbLinks = [
     {
       children: <Trans>Workspace</Trans>,
-      href: getSettingsPath(SettingsPath.Workspace),
+      href: getSettingsPath(SettingsPath.General),
     },
     {
       children: <Trans>AI</Trans>,
@@ -49,7 +49,7 @@ export const SettingsAiUsageUserDetail = () => {
 
   if (isInitialLoading) {
     return (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={tLingui`AI User Usage`}
         links={breadcrumbLinks}
       >
@@ -57,12 +57,12 @@ export const SettingsAiUsageUserDetail = () => {
           <UsageSectionSkeleton />
           <UsageSectionSkeleton />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   return (
-    <SubMenuTopBarContainer title={displayName} links={breadcrumbLinks}>
+    <SettingsPageLayout title={displayName} links={breadcrumbLinks}>
       <SettingsPageContainer>
         {!hasAnyData && (
           <Section>
@@ -102,6 +102,6 @@ export const SettingsAiUsageUserDetail = () => {
           sectionId="ai-user-model"
         />
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

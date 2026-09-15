@@ -5,15 +5,30 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import {
+  ApiKeyException,
+  ApiKeyExceptionCode,
+} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { findManyFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { fromCreateRoleInputToFlatRoleToCreate } from 'src/engine/metadata-modules/flat-role/utils/from-create-role-input-to-flat-role-to-create.util';
 import { fromDeleteRoleInputToFlatRoleOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-delete-role-input-to-flat-role-or-throw.util';
 import { fromUpdateRoleInputToFlatRoleToUpdateOrThrow } from 'src/engine/metadata-modules/flat-role/utils/from-update-role-input-to-flat-role-to-update-or-throw.util';
+import { fromFlatFieldPermissionToFieldPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-field-permission-to-field-permission-dto.util';
+import { fromFlatObjectPermissionToObjectPermissionDto } from 'src/engine/metadata-modules/object-permission/utils/from-flat-object-permission-to-object-permission-dto.util';
 import { MEMBER_ROLE_LABEL } from 'src/engine/metadata-modules/permissions/constants/member-role-label.constants';
 import {
   PermissionsException,
@@ -25,7 +40,14 @@ import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
+import {
+  validateRoleDeletionDoesNotLockOutActorOrThrow,
+  validateRoleUpdateDoesNotLockOutActorOrThrow,
+} from 'src/engine/metadata-modules/role/utils/validate-role-mutation-does-not-lock-out-actor.util';
+import { fromFlatRolePermissionFlagToRolePermissionFlagDto } from 'src/engine/metadata-modules/role-permission-flag/utils/from-flat-role-permission-flag-to-role-permission-flag-dto.util';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -36,23 +58,75 @@ export class RoleService {
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly userRoleService: UserRoleService,
     private readonly applicationService: ApplicationService,
+    private readonly apiKeyRoleService: ApiKeyRoleService,
+    private readonly aiAgentRoleService: AiAgentRoleService,
   ) {}
 
-  public async getWorkspaceRoles(workspaceId: string): Promise<RoleEntity[]> {
-    return this.roleRepository.find({
-      where: {
-        workspaceId,
-      },
-      relations: {
-        roleTargets: true,
-        permissionFlags: true,
-        objectPermissions: true,
-        fieldPermissions: true,
-      },
+  public async getWorkspaceRoles(workspaceId: string): Promise<RoleDTO[]> {
+    const { flatRoleMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatRoleMaps'],
+        },
+      );
+
+    return this.findManyWithRelationsFromCache(
+      Object.values(flatRoleMaps.byUniversalIdentifier).filter(isDefined),
+      workspaceId,
+    );
+  }
+
+  private async findManyWithRelationsFromCache(
+    flatRoles: FlatRole[],
+    workspaceId: string,
+  ): Promise<RoleDTO[]> {
+    const {
+      flatRolePermissionFlagMaps,
+      flatPermissionFlagMaps,
+      flatObjectPermissionMaps,
+      flatFieldPermissionMaps,
+    } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: [
+            'flatRolePermissionFlagMaps',
+            'flatPermissionFlagMaps',
+            'flatObjectPermissionMaps',
+            'flatFieldPermissionMaps',
+          ],
+        },
+      );
+
+    return flatRoles.map((flatRole) => {
+      const roleDto = fromFlatRoleToRoleDto(flatRole);
+
+      roleDto.permissionFlags = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatRole.rolePermissionFlagIds,
+        flatEntityMaps: flatRolePermissionFlagMaps,
+      }).map((flatRolePermissionFlag) =>
+        fromFlatRolePermissionFlagToRolePermissionFlagDto(
+          flatRolePermissionFlag,
+          flatPermissionFlagMaps,
+        ),
+      );
+
+      roleDto.objectPermissions = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatRole.objectPermissionIds,
+        flatEntityMaps: flatObjectPermissionMaps,
+      }).map(fromFlatObjectPermissionToObjectPermissionDto);
+
+      roleDto.fieldPermissions = findManyFlatEntityByIdInFlatEntityMaps({
+        flatEntityIds: flatRole.fieldPermissionIds,
+        flatEntityMaps: flatFieldPermissionMaps,
+      }).map(fromFlatFieldPermissionToFieldPermissionDto);
+
+      return roleDto;
     });
   }
 
@@ -60,14 +134,15 @@ export class RoleService {
     id: string,
     workspaceId: string,
   ): Promise<RoleEntity | null> {
-    return this.roleRepository.findOne({
+    return this.roleRepository.findOne(workspaceId, {
       where: {
         id,
-        workspaceId,
       },
       relations: {
         roleTargets: true,
-        permissionFlags: true,
+        rolePermissionFlags: {
+          permissionFlag: true,
+        },
         objectPermissions: true,
         fieldPermissions: true,
       },
@@ -158,10 +233,12 @@ export class RoleService {
     input,
     workspaceId,
     ownerFlatApplication,
+    actingRoleIds,
   }: {
     input: UpdateRoleInput;
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
+    actingRoleIds?: string[];
   }): Promise<RoleDTO> {
     const resolvedOwnerFlatApplication =
       ownerFlatApplication ??
@@ -171,11 +248,11 @@ export class RoleService {
         )
       ).workspaceCustomFlatApplication;
 
-    const { flatRoleMaps: existingFlatRoleMaps } =
+    const { flatRoleMaps: existingFlatRoleMaps, flatRolePermissionFlagMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatRoleMaps'],
+          flatMapsKeys: ['flatRoleMaps', 'flatRolePermissionFlagMaps'],
         },
       );
 
@@ -183,6 +260,20 @@ export class RoleService {
       flatRoleMaps: existingFlatRoleMaps,
       updateRoleInput: input,
     });
+
+    const existingFlatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: input.id,
+      flatEntityMaps: existingFlatRoleMaps,
+    });
+
+    if (isDefined(existingFlatRole)) {
+      validateRoleUpdateDoesNotLockOutActorOrThrow({
+        flatRole: existingFlatRole,
+        canUpdateAllSettingsUpdate: input.update.canUpdateAllSettings,
+        actingRoleIds,
+        flatRolePermissionFlagMaps,
+      });
+    }
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -228,16 +319,19 @@ export class RoleService {
     roleId,
     workspaceId,
     ownerFlatApplication,
+    actingRoleIds,
   }: {
     roleId: string;
     workspaceId: string;
     ownerFlatApplication?: FlatApplication;
+    actingRoleIds?: string[];
   }): Promise<RoleDTO> {
     const deletedRoles = await this.deleteManyRoles({
       ids: [roleId],
       workspaceId,
       isSystemBuild: false,
       ownerFlatApplication,
+      actingRoleIds,
     });
 
     const [deletedRole] = deletedRoles;
@@ -250,11 +344,13 @@ export class RoleService {
     workspaceId,
     isSystemBuild = false,
     ownerFlatApplication,
+    actingRoleIds,
   }: {
     ids: string[];
     workspaceId: string;
     isSystemBuild?: boolean;
     ownerFlatApplication?: FlatApplication;
+    actingRoleIds?: string[];
   }): Promise<RoleDTO[]> {
     if (ids.length === 0) {
       return [];
@@ -302,6 +398,11 @@ export class RoleService {
         roleId,
       });
 
+      validateRoleDeletionDoesNotLockOutActorOrThrow({
+        flatRole: flatRoleToDelete,
+        actingRoleIds,
+      });
+
       if (defaultRoleId === roleId) {
         throw new PermissionsException(
           PermissionsExceptionMessage.DEFAULT_ROLE_CANNOT_BE_DELETED,
@@ -312,8 +413,9 @@ export class RoleService {
         );
       }
 
-      await this.assignDefaultRoleToMembersWithRoleToDelete({
+      await this.rebindTargetsOfRoleToDeleteToDefaultRole({
         roleId,
+        roleLabel: flatRoleToDelete.label,
         workspaceId,
         defaultRoleId,
       });
@@ -403,12 +505,14 @@ export class RoleService {
   }
 
   // TODO: Move to migration side effect / To address for rollback of role deletion
-  private async assignDefaultRoleToMembersWithRoleToDelete({
+  private async rebindTargetsOfRoleToDeleteToDefaultRole({
     roleId,
+    roleLabel,
     workspaceId,
     defaultRoleId,
   }: {
     roleId: string;
+    roleLabel: string;
     workspaceId: string;
     defaultRoleId: string;
   }): Promise<void> {
@@ -423,5 +527,82 @@ export class RoleService {
       roleId: defaultRoleId,
       workspaceId,
     });
+
+    const apiKeysToRebind =
+      await this.apiKeyRoleService.getApiKeysAssignedToRole(
+        roleId,
+        workspaceId,
+      );
+
+    for (const apiKey of apiKeysToRebind) {
+      try {
+        await this.apiKeyRoleService.assignRoleToApiKey({
+          apiKeyId: apiKey.id,
+          roleId: defaultRoleId,
+          workspaceId,
+        });
+      } catch (error) {
+        if (
+          error instanceof ApiKeyException &&
+          error.code === ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS
+        ) {
+          throw this.toRoleDeleteRebindException({
+            roleLabel,
+            targetKind: 'apiKey',
+          });
+        }
+        throw error;
+      }
+    }
+
+    const agentsToRebind =
+      await this.aiAgentRoleService.getAgentsAssignedToRole(
+        roleId,
+        workspaceId,
+      );
+
+    for (const agent of agentsToRebind) {
+      try {
+        await this.aiAgentRoleService.assignRoleToAgent({
+          agentId: agent.id,
+          roleId: defaultRoleId,
+          workspaceId,
+        });
+      } catch (error) {
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS
+        ) {
+          throw this.toRoleDeleteRebindException({
+            roleLabel,
+            targetKind: 'agent',
+          });
+        }
+        throw error;
+      }
+    }
+  }
+
+  private toRoleDeleteRebindException({
+    roleLabel,
+    targetKind,
+  }: {
+    roleLabel: string;
+    targetKind: 'apiKey' | 'agent';
+  }): Error {
+    const targetLabel = targetKind === 'apiKey' ? 'API key' : 'agent';
+
+    return new PermissionsException(
+      `Cannot delete role "${roleLabel}": the workspace default role cannot be assigned to ${targetLabel}s.`,
+      targetKind === 'apiKey'
+        ? PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS
+        : PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
+      {
+        userFriendlyMessage:
+          targetKind === 'apiKey'
+            ? msg`Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first.`
+            : msg`Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first.`,
+      },
+    );
   }
 }

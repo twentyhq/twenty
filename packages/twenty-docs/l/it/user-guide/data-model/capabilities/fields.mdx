@@ -60,7 +60,7 @@ Per aggiungere un campo personalizzato a qualsiasi oggetto, segui questi passagg
 
 1. Vai su `Impostazioni` nella barra laterale sinistra.
 2. Vai su `Modello di dati`, quindi seleziona l'oggetto che desideri personalizzare.
-3. Procedi cliccando su `Aggiungi Campo`.
+3. Procedi cliccando su `+ Nuovo Campo`.
 4. Scegli un nome e un tipo di campo che si adattano alle tue esigenze. Considera l'aggiunta di una descrizione del campo per una migliore comprensione.
 
 Il tuo nuovo campo è ora disponibile nei campi dell'applicazione. Per visualizzarlo in una vista specifica, fai clic sul menu delle opzioni, quindi seleziona `Campi`.
@@ -78,9 +78,7 @@ Puoi disattivare un campo per nasconderlo dall'app senza perdere i tuoi dati. Pe
 Ecco come puoi farlo:
 
 1. Trova il campo che desideri disattivare nelle impostazioni del tuo oggetto.
-
 2. Clicca sui tre punti `⋮` accanto al campo per aprire il menu.
-
 3. Seleziona `Disattiva` dall'elenco a discesa.
 
 <img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
@@ -88,9 +86,7 @@ Ecco come puoi farlo:
 Cosa succede quando disattivi un campo?
 
 1. **Nell'app:** Il campo scompare e non puoi aggiungervi nuovi valori.
-
-2. **Relazioni esistenti:** Se è un campo di relazione, le connessioni esistenti rimangono ma non puoi crearne di nuove.
-
+2. **Relazioni esistenti:** Se è un campo di relazione, le connessioni esistenti rimangono, ma non puoi crearne di nuove.
 3. **Accesso API:** Puoi ancora accedere al campo e ai suoi dati tramite l'API.
 
 Puoi riattivare i campi Standard e Personalizzati o avere l'opzione di eliminarli permanentemente.
@@ -100,6 +96,10 @@ Puoi riattivare i campi Standard e Personalizzati o avere l'opzione di eliminarl
 Rendi un campo unico per garantire che i record distinti non possano avere lo stesso valore. Ad esempio, gli indirizzi email sono unici per ogni persona.
 
 Se ottieni un errore impostando l'unicità, controlla i valori duplicati nei tuoi dati (inclusi i record eliminati).
+
+## Indici (Avanzato)
+
+Gli indici del database sono gestiti automaticamente — aggiungerne di propri è raramente necessario ed è facile commettere errori. Con la modalità Avanzata attiva, ogni oggetto ha una sezione **Indici** in `Impostazioni → Modello dati → <object>` per i casi in cui sai di averne bisogno.
 
 ## Procedure Migliori per la Configurazione dei Campi
 

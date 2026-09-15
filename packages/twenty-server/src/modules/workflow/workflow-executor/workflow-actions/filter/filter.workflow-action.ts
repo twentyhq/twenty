@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { resolveInput } from 'twenty-shared/utils';
-
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import {
@@ -12,7 +10,7 @@ import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
 import { isWorkflowFilterAction } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/guards/is-workflow-filter-action.guard';
-import { evaluateFilterConditions } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-filter-conditions.util';
+import { evaluateStepFilters } from 'src/modules/workflow/workflow-executor/workflow-actions/filter/utils/evaluate-step-filters.util';
 
 @Injectable()
 export class FilterWorkflowAction implements WorkflowAction {
@@ -41,15 +39,10 @@ export class FilterWorkflowAction implements WorkflowAction {
       };
     }
 
-    const resolvedFilters = stepFilters.map((filter) => ({
-      ...filter,
-      rightOperand: resolveInput(filter.value, context),
-      leftOperand: resolveInput(filter.stepOutputKey, context),
-    }));
-
-    const matchesFilter = evaluateFilterConditions({
-      filterGroups: stepFilterGroups,
-      filters: resolvedFilters,
+    const matchesFilter = evaluateStepFilters({
+      stepFilters,
+      stepFilterGroups,
+      context,
     });
 
     return {

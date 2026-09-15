@@ -29,7 +29,7 @@ import {
   IconMinus,
   IconPlus,
   IconX,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import { Button, IconButtonGroup } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

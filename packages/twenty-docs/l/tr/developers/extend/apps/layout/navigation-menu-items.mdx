@@ -35,10 +35,12 @@ export default defineNavigationMenuItem({
 
 * `position`, kenar çubuğundaki sıralamayı kontrol eder.
 
+* Enum, ayrıca kullanıcı tarafından oluşturulan kayıt favorileri için dahili olarak kullanılan `NavigationMenuItemType.RECORD` değerini de içerir — bir kayda referans verecek alan bulunmadığından uygulama manifestinde kullanılamaz.
+
 * `icon` ve `color` isteğe bağlıdır ve öğenin görünümünü özelleştirir.
 
 * `folderUniversalIdentifier`, herhangi bir öğede de mevcuttur ve onu bir `FOLDER` türü üst öğenin içine yerleştirmek için kullanılır.
 
 <Note>
-**Yaygın hata:** bir görünüm ve gezinme menüsü öğesiyle ilişkilendirilmemiş bir nesne oluşturmak, o nesneyi kullanıcılar için görünmez yapar. Teknik/içsel bir nesne olmadığı sürece, her özel nesnenin varsayılan bir görünümü *ve* ona işaret eden bir kenar çubuğu öğesi olmalıdır.
+**Yaygın hata:** gezinme menüsü öğesiyle ilişkilendirilmemiş bir nesne oluşturmak, o nesneyi kenar çubuğundan erişilemez hale getirir. Teknik/içsel bir nesne olmadığı sürece, her özel nesnenin ona işaret eden bir kenar çubuğu öğesi olmalıdır.
 </Note>

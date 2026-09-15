@@ -1,0 +1,1 @@
+export const AGENT_CHAT_KEEPALIVE_INTERVAL_MS = 2_000;

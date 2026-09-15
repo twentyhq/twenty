@@ -1,7 +1,5 @@
-import {
-  type ObjectRecordFilter,
-  type ObjectRecordOrderBy,
-} from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { type ObjectRecordProperties } from './object-record-properties.type';
 
@@ -9,6 +7,7 @@ export type CreateRecordInput = {
   objectName: string;
   objectRecord: ObjectRecordProperties;
   upsert?: boolean;
+  shareWith?: ShareWithInput[];
 };
 
 export type UpdateRecordInput = {
@@ -26,18 +25,18 @@ export type DeleteRecordInput = {
 export type FindRecordsInput = {
   objectName: string;
   filter?: {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     recordFilterGroups?: any;
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     recordFilters?: any;
-    gqlOperationFilter?: Partial<ObjectRecordFilter>[];
   };
   orderBy?: {
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+    // oxlint-disable-next-line typescript/no-explicit-any
     recordSorts?: any;
     gqlOperationOrderBy?: Partial<ObjectRecordOrderBy>;
   };
   limit?: number;
+  offset?: number;
 };
 
 export type UpsertRecordInput = {

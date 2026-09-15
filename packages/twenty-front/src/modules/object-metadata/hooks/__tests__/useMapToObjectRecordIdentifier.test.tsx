@@ -31,7 +31,7 @@ describe('useMapToObjectRecordIdentifier', () => {
       id: 'id',
       name: 'Sheldon Cooper',
       avatarUrl: '',
-      avatarType: 'rounded',
+      avatarShape: 'circle',
       linkToShowPage: '/object/person/id',
     });
   });

@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsIn, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import {
   type FrontComponentConfiguration,
   type SerializedRelation,
@@ -10,9 +10,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 @ObjectType('FrontComponentConfiguration')
-export class FrontComponentConfigurationDTO
-  implements FrontComponentConfiguration
-{
+export class FrontComponentConfigurationDTO implements FrontComponentConfiguration {
   @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.FRONT_COMPONENT])
   @IsNotEmpty()
@@ -22,4 +20,9 @@ export class FrontComponentConfigurationDTO
   @IsNotEmpty()
   @IsUUID()
   frontComponentId: SerializedRelation;
+
+  @Field(() => [UUIDScalarType], { nullable: true })
+  @IsOptional()
+  @IsUUID(undefined, { each: true })
+  headerCommandMenuItemUniversalIdentifiers?: string[];
 }

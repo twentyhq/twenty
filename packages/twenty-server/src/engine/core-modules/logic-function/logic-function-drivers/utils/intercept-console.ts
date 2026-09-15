@@ -12,11 +12,11 @@ export class ConsoleListener {
     };
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   intercept(callback: (type: string, message: any[]) => void) {
     Object.keys(this.originalConsole).forEach((method) => {
       // @ts-expect-error legacy noImplicitAny
-      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       console[method] = (...args: any[]) => {
         callback(method, args);
       };
@@ -26,7 +26,7 @@ export class ConsoleListener {
   release() {
     Object.keys(this.originalConsole).forEach((method) => {
       // @ts-expect-error legacy noImplicitAny
-      // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+      // oxlint-disable-next-line typescript/no-explicit-any
       console[method] = (...args: any[]) => {
         // @ts-expect-error legacy noImplicitAny
         this.originalConsole[method](...args);

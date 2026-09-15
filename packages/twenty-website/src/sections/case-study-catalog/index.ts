@@ -1,0 +1,1 @@
+export { CaseStudyCatalogGrid } from './CaseStudyCatalogGrid';

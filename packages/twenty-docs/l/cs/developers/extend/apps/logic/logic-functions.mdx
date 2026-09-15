@@ -1,0 +1,909 @@
+---
+title: Logické funkce
+description: Definujte serverové funkce v TypeScriptu se spouštěči pro HTTP, cron a databázové události.
+icon: bolt
+---
+
+Logické funkce jsou serverové funkce v TypeScriptu, které běží na platformě Twenty. Mohou být spouštěny požadavky HTTP, plány cronu nebo databázovými událostmi — a lze je také zpřístupnit jako nástroje pro agenty AI.
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="Definujte logické funkce a jejich spouštěče">
+
+Každý soubor funkce používá `defineLogicFunction()` k exportu konfigurace s obslužnou funkcí (handlerem) a volitelnými spouštěči.
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const body = (params.body ?? {}) as { name?: string };
+  const name = body.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+Dostupné typy spouštěčů:
+* **httpRoute**: Zpřístupní vaši funkci na HTTP cestě a metodě. V kódu aplikace přidejte prefix `/s/` k cestě routy při použití `RestApiClient`; nasazená URL používá injektovanou základní adresu `TWENTY_FUNCTIONS_URL` (nebo `\<server-url>/s`, pokud není nastavena).
+
+<Note>
+Chcete-li vyvolat logickou funkci spuštěnou trasou z (bezhlavé) front-endové komponenty, podívejte se na [Volání logické funkce](/l/cs/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
+* **cron**: Spouští vaši funkci podle plánu pomocí výrazu CRON.
+* **databaseEvent**: Spouští se při událostech životního cyklu objektů v pracovním prostoru. Když je operace události `updated`, lze konkrétní sledovaná pole určit v poli `updatedFields`. Pokud zůstane nedefinované nebo prázdné, spustí funkci jakákoli aktualizace.
+> např. `person.updated`, `*.created`, `company.*`
+* **serverRoute**: Zpřístupňuje jednu registrací omezenou trasu HTTP. Funkce **resolver** (deklarovaná pomocí `serverRouteTriggerSettings`) běží ve vlastnickém workspace a buď vrátí synchronní `Response`, nebo cílový workspace a logickou funkci, která se má zařadit do fronty; v případě zařazení platforma potvrdí přijetí kódem `202` a spustí tuto **cílovou** funkci ve frontě workeru. Viz [spouštěč serverové trasy](#server-route-trigger).
+
+<Note>
+Funkci můžete také spustit ručně pomocí CLI:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+Logy můžete sledovat pomocí:
+
+```bash filename="Terminal"
+yarn twenty dev:function:logs
+```
+</Note>
+
+#### Payload spouštěče trasy
+
+Když spouštěč typu route vyvolá vaši logickou funkci, ta obdrží objekt `RoutePayload`, který odpovídá
+[AWS HTTP API v2 formátu](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html).
+Importujte typ `RoutePayload` z `twenty-sdk/logic-function`:
+
+```ts
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+Typ `RoutePayload` má následující strukturu:
+
+  | Vlastnost                    | Typ                                                     | Popis                                                                                                                                                                                                         | Příklad                                                                    |
+  | ---------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | Záhlaví HTTP (pouze ta uvedená v `forwardedRequestHeaders`)                                                                                                                                                   | viz sekci níže                                                             |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametry query stringu (více hodnot spojených čárkami)                                                                                                                                                       | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametry cesty extrahované ze vzoru trasy                                                                                                                                                                    | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+  | `body`                       | `object \| null`                                        | Parsované tělo požadavku (JSON)                                                                                                                                                                               | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | Původní tělo požadavku v UTF-8, před parsováním JSONu. Užitečné pro ověřování podpisů webhooků typu HMAC (např. GitHubův `X-Hub-Signature-256`, Stripe). `undefined`, pokud jej běhové prostředí nezachovalo. |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | Zda je tělo kódováno base64                                                                                                                                                                                   |                                                                            |
+  | `requestContext.http.method` | `string`                                                | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                   |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | Nezpracovaná cesta požadavku                                                                                                                                                                                  |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+Ve výchozím nastavení se záhlaví HTTP z příchozích požadavků z bezpečnostních důvodů do vaší logické funkce **ne** předávají.
+Chcete-li zpřístupnit konkrétní záhlaví, výslovně je uveďte v poli `forwardedRequestHeaders`:
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+Ve vašem handleru k přeposlaným záhlavím přistupujte takto:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+Názvy záhlaví jsou normalizovány na malá písmena. Přistupujte k nim pomocí klíčů s malými písmeny (například `event.headers['content-type']`).
+</Note>
+
+#### Vlastní odpověď HTTP
+
+Ve výchozím nastavení vrácení prosté hodnoty z vašeho handleru odešle tuto hodnotu zpět jako odpověď `200` (JSON pro objekty, `text/plain` pro řetězce). Pro kontrolu stavového kódu a hlaviček odpovědi vraťte `Response` z `twenty-sdk/logic-function`:
+
+```ts
+import { Response } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  return new Response('<h1>Hello</h1>', {
+    status: 201,
+    headers: { 'content-type': 'text/html' },
+  });
+};
+```
+
+Z bezpečnostních důvodů jsou hlavičky odpovědi omezeny na seznam povolených položek. Jakákoli hlavička, která není na seznamu (např. `Set-Cookie`, CORS hlavičky jako `Access-Control-Allow-Origin` nebo vlastní hlavičky `X-*`), je tiše zahozena před odesláním odpovědi. Povolené hlavičky odpovědi jsou:
+
+* `content-type`
+* `content-language`
+* `content-disposition`
+* `cache-control`
+* `retry-after`
+
+<Note>
+Stavový kód musí být platný stavový kód HTTP (mezi 100 a 599). Názvy hlaviček odpovědi se porovnávají bez rozlišení velikosti písmen.
+</Note>
+
+#### Chybové odpovědi platformy
+
+Kromě vlastních odpovědí vašeho handleru platforma v některých situacích odpovídá na volání rout přímo: `404`, když route nebo funkce neexistuje, `403`, když je aplikace zastavena, `429`, když je dosaženo limitu rychlosti vykonávání, a `422`, když jsou produkční `dependencies` aplikace příliš velké na to, aby se nainstalovaly — viz [dependencies size limits](/l/cs/developers/extend/apps/getting-started/project-structure#dependencies).
+
+#### Spouštěč serverové trasy
+
+`httpRouteTriggerSettings` zpřístupňuje funkci pod `/s/` a workspace určuje z hostitele požadavku — což funguje, když má každý workspace svou vlastní doménu. Poskytovatelé třetích stran však doručují události každého tenanta na **jednu** adresu URL. Pro tento případ použijte `serverRouteTriggerSettings`.
+
+Spouštěč má dvě části:
+
+1. Logická funkce **resolveru** — deklarovaná pomocí `serverRouteTriggerSettings` — běží ve vašem **vlastnickém workspace** (workspace, který je vlastníkem registrace aplikace). Prozkoumá příchozí požadavek a vrátí buď:
+
+   * `{ workspaceId, targetLogicFunctionUniversalIdentifier, payload? }` — platforma zařadí tento cíl do fronty v určeném workspace a potvrdí přijetí s `202 { queued: true }`, nebo
+   * `Response` z `twenty-sdk/logic-function` — platforma tento HTTP response vrátí **synchronně** a cíl do fronty **ne**zařadí (použijte pro ověřovací handshake, například Slack `url_verification`).
+
+   Resolver je jediným místem autorizace — URL nese pouze identifikátor resolveru. **Toto je preferované místo pro ověřování podpisů requestů**: resolver běží před jakýmikoli vedlejšími efekty, má přístup k původnímu `rawBody` a předaným hlavičkám a může request odmítnout, aniž by se vůbec dotkl cíle.
+2. Cílová (**target**) logická funkce — běžná per-workspace logická funkce — pak běží v určeném workspace s payloadem vráceným resolverem (nebo s původním payloadem requestu, pokud jej resolver neupravil). Návratovou hodnotu volající HTTP **nevidí**, když resolver zvolí cestu zařazení do fronty.
+
+```ts src/logic-functions/resolve-server-route.logic-function.ts
+import { createHmac, timingSafeEqual } from 'crypto';
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { Response, type RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the owner workspace. Verifies the request signature, picks
+// which target function should handle the event, and returns the
+// workspace + target the platform should dispatch to.
+const handler = async (event: RoutePayload) => {
+  // Fail closed if the secret isn't configured — never fall back to an
+  // empty key, which would let any caller forge a matching signature.
+  const secret = process.env.GITHUB_WEBHOOK_SECRET;
+
+  if (!secret) {
+    throw new Error('GITHUB_WEBHOOK_SECRET is not configured');
+  }
+
+  const signature = event.headers['x-hub-signature-256'] ?? '';
+  const expected =
+    'sha256=' +
+    createHmac('sha256', secret).update(event.rawBody ?? '').digest('hex');
+
+  const a = Buffer.from(signature);
+  const b = Buffer.from(expected);
+
+  if (a.length !== b.length || !timingSafeEqual(a, b)) {
+    throw new Error('invalid signature');
+  }
+
+  const body = (event.body ?? {}) as {
+    challenge?: string;
+    metadata?: { twentyWorkspaceId?: string };
+    type?: string;
+  };
+
+  // Handshakes must be answered on this same response, so reply from the
+  // resolver instead of returning a dispatch target.
+  if (body.type === 'url_verification') {
+    return new Response({ challenge: body.challenge });
+  }
+
+  const workspaceId = body.metadata?.twentyWorkspaceId;
+
+  if (!workspaceId) {
+    throw new Error('event is not linked to a workspace');
+  }
+
+  return {
+    workspaceId,
+    // Route different event types to different target functions.
+    targetLogicFunctionUniversalIdentifier:
+      body.type === 'invoice.paid'
+        ? 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10' // handle-invoice-paid
+        : 'd5f3b0c2-8e5f-5d0b-a0c3-3f2e7b5d9f21', // handle-other-event
+  };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'b3c2f0a1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'resolve-server-route',
+  handler,
+  serverRouteTriggerSettings: {
+    forwardedRequestHeaders: ['x-hub-signature-256'],
+  },
+});
+```
+
+```ts src/logic-functions/handle-invoice-paid.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+// Runs in the resolved workspace. The resolver has already authenticated
+// the request, so this handler can focus on the actual work.
+const handler = async (event: RoutePayload) => {
+  // ...handle the verified event
+  return { received: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'c4e2a9b1-7d4e-4c9a-9f2b-2e1d6a4c8e10',
+  name: 'handle-invoice-paid',
+  handler,
+});
+```
+
+Endpoint je dostupný na:
+
+```
+POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniversalIdentifier
+```
+
+Identifikátor je `universalIdentifier` resolveru z vašeho manifestu. Zaregistrujte tuto adresu URL u poskytovatele.
+
+**Odpověď na ověřovací požadavek GET.** Někteří poskytovatelé ověřují koncový bod před doručováním tím, že na stejnou adresu URL, na kterou budou později pomocí `POST` odesílat události, zašlou požadavek `GET` s výzvou — jedním z nich je WhatsApp Cloud API od společnosti Meta. Trasa serveru odpovídá pouze na `POST`, pokud neuvedete jinak, proto deklarujte obě metody:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+Výzva dorazí v `event.queryStringParameters` a vrácením objektu `Response` ji ve stejném požadavku odešlete zpět poskytovateli. Tělo řetězce se odesílá jako `text/plain`, což tito poskytovatelé očekávají:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` nahrazuje výchozí nastavení, namísto aby je doplňovalo, takže samotné `['GET']` způsobí, že trasa odmítne `POST`. Podporovány jsou pouze `GET` a `POST`. Ponechte je nenastavené, pokud poskytovatel nepotřebuje druhé sloveso: trasa, která deklaruje `GET`, bude mít svůj resolver spuštěný jakýmkoli neověřeným volajícím, včetně crawlerů a nástrojů pro rozbalení odkazů, které bez vyžádání odesílají `GET`. Na cokoli, pro co platforma nemá metodu, se odpoví `405`, aniž by se resolver kdy spustil.
+
+<Note>
+**Aplikace musí být převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.** Protože resolver běží v **pracovním prostoru vlastníka** (pracovní prostor, který vlastní registraci aplikace), spouštěč serverové trasy funguje pouze tehdy, když byla aplikace *převzata do vlastnictví* — tj. má pracovní prostor vlastníka — **a** tato aplikace je **nainstalována v pracovním prostoru vlastníka**. Dokud nejsou obě podmínky splněny, resolver nemá kde běžet, takže trasu nelze zpracovat. Aplikace, která zpřístupňuje logickou funkci `serverRouteTriggerSettings`, proto nemůže být uvedena na Marketplace, dokud není převzata do vlastnictví a nainstalována v pracovním prostoru vlastníka.
+</Note>
+
+**Smlouva resolveru.** Typ `LogicFunctionConfig` v SDK toto vynucuje v době kompilace: jakmile nastavíte `serverRouteTriggerSettings`, váš handler je omezen tak, aby vracel buď `Response`, nebo `{ workspaceId: string; targetLogicFunctionUniversalIdentifier: string; payload?: object }` (nebo `Promise` jedné z těchto možností). Na dispatch cestě musí být `workspaceId` workspace, ve kterém je cílová funkce nainstalována, jinak je request odmítnut s chybou `404`. Výsledek, který neodpovídá ani jedné z těchto struktur — včetně takového, jehož identifikátory nejsou UUID — je odmítnut s chybou `502`.
+
+| Pole                                     | Typ                  | Poznámky                                                                       |
+| ---------------------------------------- | -------------------- | ------------------------------------------------------------------------------ |
+| `workspaceId`                            | `string`             | Workspace UUID, ve kterém bude cíl spuštěn.                                    |
+| `targetLogicFunctionUniversalIdentifier` | `string`             | `universalIdentifier` logické funkce, která má být v daném workspace spuštěna. |
+| `payload`                                | `object` (nepovinné) | Pokud je nastaven, nahradí tělo requestu odeslané na cíl.                      |
+
+<Warning>
+**Ověření podpisu je vaší odpovědností — proveďte ho v resolveru.** Platforma nepřezkušuje (neověřuje) podpisy requestů. Resolver je k tomu doporučené místo: běží jako první, má přístup k `event.rawBody` a hlavičkám, které jste uvedli v `forwardedRequestHeaders`, a vyhozená chyba (nebo jakékoli neodpovídající `workspaceId`) zastaví předání dříve, než je cíl zavolán. Pokud místo toho posunete ověřování až do cíle, cíl musí dávat pozor, aby neztratil `rawBody` a hlavičky — tj. resolver nesmí vracet `payload`. Vždy ověřujte **před** jakýmikoliv vedlejšími efekty a použijte porovnání v konstantním čase.
+</Warning>
+
+U podpisů requestů většina poskytovatelů podepisuje pomocí HMAC-SHA256; části, které se liší, jsou název hlavičky, kódování digestu a podepsaný řetězec payloadu. Několik příkladů:
+
+| Poskytovatel                 | Hlavičky k přeposlání                                  | Podepsaný řetězec            | Digest                                                |
+| ---------------------------- | ------------------------------------------------------ | ---------------------------- | ----------------------------------------------------- |
+| Svix (Recall, Resend, Clerk) | `webhook-id`, `webhook-timestamp`, `webhook-signature` | `{id}.{timestamp}.{rawBody}` | base64 (tajemství je v base64 po odstranění `whsec_`) |
+| Stripe                       | `stripe-signature`                                     | `{timestamp}.{rawBody}`      | hex                                                   |
+| GitHub                       | `x-hub-signature-256`                                  | `{rawBody}`                  | hex (s prefixem `sha256=`)                            |
+| Shopify                      | `x-shopify-hmac-sha256`                                | `{rawBody}`                  | base64                                                |
+| Slack                        | `x-slack-signature`, `x-slack-request-timestamp`       | `v0:{timestamp}:{rawBody}`   | hex (s prefixem `v0=`)                                |
+
+Příklad resolveru výše už ukazuje GitHub HMAC-SHA256 flow — přizpůsobte název hlavičky, kódování digestu a podepsaný řetězec payloadu podle poskytovatele, se kterým se integrujete.
+
+<Note>
+Když resolver vrátí dispatch objekt, route odpoví `202 { queued: true }` a cíl běží ve frontě workeru — volající nikdy nevidí latenci cíle, výsledek ani chyby (ty jsou zaznamenané v logách běhu). Tím se zabrání tomu, aby opakované doručování na straně odesílatele znásobovalo zpomalení zpracování, což je přesně to, co chcete pro příjem webhooků.
+
+Když volající musí v rámci stejného requestu přečíst tělo odpovědi (challenge handshaky, interaktivní potvrzení), vraťte místo toho z **resolveru** `Response`. Platforma jej synchronně zopakuje a přeskočí frontu; jeho hlavičky procházejí stejným seznamem povolených položek jako odpovědi HTTP rout. Udržujte resolver rychlý — některým poskytovatelům (např. Slack) vyprší časový limit během několika sekund. Protože je resolver dostupný jako veřejný endpoint, chraňte ho omezením rychlosti (rate limiting) na své edge vrstvě.
+</Note>
+
+#### Payload spouštěče databázové události
+
+Když spouštěč databázové události vyvolá vaši logickou funkci, obdrží jeden `DatabaseEventPayload` pro každý změněný záznam. Payload kombinuje metadata o zdrojovém pracovním prostoru a objektu s událostí na úrovni záznamu.
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+Tělo zprávy obsahuje:
+
+| Vlastnost                                        | Popis                                                                                            |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------ |
+| `name`                                           | Název události, například `person.updated`.                                                      |
+| `workspaceId`                                    | Pracovní prostor, ve kterém k události došlo.                                                    |
+| `objectMetadata`                                 | Metadata objektu, který se změnil.                                                               |
+| `recordId`                                       | ID změněného záznamu.                                                                            |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | Pole aktéra, pokud byla událost způsobena uživatelem pracovního prostoru.                        |
+| `properties`                                     | Data záznamu pro událost, s `before`, `after`, `diff` a `updatedFields` v závislosti na operaci. |
+
+| Událost            | Data záznamu                                                                                                   |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
+
+U logických smazání má `.deleted` podobu jako u aktualizace, protože se změní pole `deletedAt` záznamu.
+Pro trvalá smazání použijte `.destroyed`.
+
+<Note>
+`databaseEventTriggerSettings.updatedFields` filtruje, které události aktualizace spustí funkci.
+`event.properties.updatedFields` říká, která pole se v aktuální události skutečně změnila.
+</Note>
+
+Příklad události vytvoření:
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+Příklad události aktualizace:
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+Spouštění pouze při aktualizacích e‑mailu:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+Příklad události smazání:
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
+
+#### Kontext provádění
+
+Každá obslužná funkce obdrží druhý argument popisující samotný běh bez ohledu na to, co jej spustilo. Zatímco tvar prvního argumentu se liší podle spouštěče, tento se nemění:
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| Pole                | Typ              | Popis                                                                                        |
+| ------------------- | ---------------- | -------------------------------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | Pracovní prostor, ke kterému běh patří.                                                      |
+| `userWorkspaceId`   | `string \| null` | Osoba, která běh spustila, jako její členství v tomto pracovním prostoru.                    |
+| `workspaceMemberId` | `string \| null` | Tatáž osoba jako záznam člena pracovního prostoru, což je to, k čemu propojujete záznamy.    |
+| `retryCount`        | `number`         | `0` při prvním pokusu. Viz [Úlohy na pozadí](/l/cs/developers/extend/apps/logic/background-jobs). |
+| `maxRetries`        | `number`         | Horní limit opakovaných pokusů požadovaných aplikací.                                        |
+
+`userWorkspaceId` a `workspaceMemberId` mají hodnotu `null`, když běh nikdo nespustil: plány cron, hooky instalace a neověřené webhooky za sebou nemají žádnou osobu. Hodnotu `null` mají také tehdy, když osoba nemá záznam člena pracovního prostoru nebo když byl její záznam odstraněn.
+
+<Note>
+**Kontext vám sdělí, kdo běh spustil.** To, co běh smí *dělat*, je samostatná deklarace uvedená níže.
+</Note>
+
+#### Čí přístup volání používá
+
+Každý klient — `CoreApiClient`, `MetadataApiClient` a `RestApiClient` — jedná jako osoba, která běh spustila: její role se protíná s rolí vaší aplikace, takže volání nikdy nemůže udělat více, než může kterýkoli z vás. Toto je výchozí chování a znamená, že osoba nikdy nemůže použít vaši aplikaci k překročení vlastních oprávnění.
+
+Když běh nikdo nespustil, není žádná osoba, za kterou by bylo možné jednat, takže stejný klient přejde na vlastní přístup vaší aplikace: plány cron, hooky instalace a neověřené webhooky nevyžadují zvláštní zpracování.
+
+Některá volání oprávněně potřebují vlastní přístup aplikace, i když za během *je* osoba — například pro čtení konfiguračních záznamů vaší aplikace nebo provádění práce, kterou by tato osoba sama nemohla vykonat. Pro tyto případy vytvořte druhého klienta:
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+Oba vytvořte jednou v rozsahu modulu a každé místo volání pak podle volaného klienta určí, který přístup používá. `RestApiClient` přijímá stejnou možnost:
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**Běh, který nikdo nespustil, jedná jako vaše aplikace.** Plány cron, hooky instalace a neověřené webhooky za sebou nemají žádnou osobu, takže výchozí klient přejde na vlastní přístup vaší aplikace a nadále funguje. `runAs: 'application'` je potřeba jen tehdy, když tento přístup chcete při běhu, který osoba *skutečně* spustila.
+
+Když se funkce chová odlišně podle toho, zda za ní někdo stojí, zkontrolujte `context.workspaceMemberId`, například pro přiřazení záznamu.
+</Note>
+
+Pomocné funkce SDK, které přistupují k vlastním prostředkům vaší aplikace, vždy používají její přístup a ignorují `runAs`: [úložiště klíč-hodnota](/l/cs/developers/extend/apps/logic/key-value-store), [připojení](/l/cs/developers/extend/apps/logic/connections), `runAgent`, `getPublicAssetUrl` a účtování kreditů.
+
+#### Zpřístupnění funkce jako nástroje AI nebo akce pracovního postupu
+
+Logické funkce lze zpřístupnit na dvou rozhraních, z nichž každé má vlastní spouštěč:
+
+* **`toolTriggerSettings`** — zpřístupní funkci AI funkcím Twenty (chat, MCP, volání funkcí). Používá standardní JSON Schema, formát, kterému modely LLM nativně rozumějí.
+* **`workflowActionTriggerSettings`** — zobrazí funkci jako krok ve vizuálním builderu workflow. Používá bohaté `InputSchema` od Twenty, aby builder mohl vykreslit správné editory polí, voliče proměnných a štítky.
+
+Funkce se může rozhodnout pro jedno, druhé nebo obě. Stojí po boku `cronTriggerSettings`, `databaseEventTriggerSettings` a `httpRouteTriggerSettings` — stejný vzor, stejná struktura.
+
+<Note>
+**Vztah k akci Code ve workflow.** Vestavěná akce **Code** v tvůrci workflow je sama o sobě logická funkce — Twenty pro každý krok Code vytvoří jednu a její editor zpřístupní inline. `workflowActionTriggerSettings` je způsob, jak z jednorázového inline kódu udělat **znovupoužitelnou** akci: funkci v aplikaci nadefinujete jednou a potom je možné ji vybrat v libovolném workflow, místo aby se kopírovala do každého kroku Code. Pro pohled koncového uživatele se podívejte na [akci Code](/l/cs/user-guide/workflows/capabilities/workflow-actions#code) v uživatelské příručce.
+</Note>
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+Hlavní body:
+
+* Funkce může míchat rozhraní — deklarujte jak `toolTriggerSettings`, tak `workflowActionTriggerSettings`, abyste ji zpřístupnili v chatu i ve workflow builderu.
+* `toolTriggerSettings.inputSchema` a `workflowActionTriggerSettings.inputSchema` jsou obě volitelné. Pokud jsou vynechány, sestavovač manifestu je odvodí ze zdrojového kódu handleru (JSON Schema pro nástroj AI, `InputSchema` od Twenty pro akci workflow). Uveďte jej explicitně, když chcete bohatší typování — například u polí s podporou `FieldMetadataType`, jako `CURRENCY` nebo `RELATION` pro workflow builder, nebo s poli `description`, která si AI agent může přečíst:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+Abyste deklarovali své parametry **jen jednou** a obsloužili obě rozhraní, definujte jedno JSON Schema (`InputJsonSchema`) a převeďte jej pro akci pracovního postupu pomocí `jsonSchemaToInputSchema` z `twenty-sdk/logic-function`. `toolTriggerSettings.inputSchema` přebírá JSON Schema přímo, zatímco `workflowActionTriggerSettings.inputSchema` očekává `InputSchema` od Twenty:
+
+```ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: { inputSchema },
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+  },
+});
+```
+
+##### Kompletní příklad akce workflow
+
+`workflowActionTriggerSettings` přijímá čtyři pole:
+
+| Pole           | Účel                                                                                                                                                                             |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `label`        | Název zobrazený pro akci ve výběru kroků tvůrce workflow. Výchozí hodnota je `name` funkce.                                                                                      |
+| `icon`         | Ikona zobrazená vedle akce (název z `tabler-icons`, např. `IconBuilding`).                                                                                                       |
+| `inputSchema`  | Rozšířený `InputSchema` Twenty — to, co tvůrce zobrazuje jako konfigurovatelná pole (s výběrem proměnných). Volitelné; pokud je vynecháno, odvodí se z handleru.                 |
+| `outputSchema` | Definuje strukturu, kterou handler vrací, aby na **jeho výstupní pole mohly navazující kroky mapovat**. Volitelné; bez něj je výstup zpřístupněn jako jedna neprůhledná hodnota. |
+
+Dohromady — funkce zpřístupněná jako akce workflow s deklarovaným výstupem, aby se na `taskId` mohly odkazovat pozdější kroky:
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema, type InputJsonSchema } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const inputSchema: InputJsonSchema = {
+  type: 'object',
+  properties: {
+    companyName: { type: 'string', label: 'Company name' },
+    domain: { type: 'string', label: 'Domain' },
+  },
+  required: ['companyName'],
+};
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  // The keys returned here should match the `outputSchema` properties below.
+  return { taskId: result.createTask.id, enriched: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  workflowActionTriggerSettings: {
+    label: 'Enrich Company',
+    icon: 'IconBuilding',
+    inputSchema: jsonSchemaToInputSchema(inputSchema),
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          taskId: { type: 'string' },
+          enriched: { type: 'boolean' },
+        },
+      },
+    ],
+  },
+});
+```
+
+Jakmile je aplikace nainstalovaná, **Enrich Company** se zobrazí ve výběru akcí tvůrce workflow. Tvůrce zobrazí `companyName` a `domain` jako vstupní pole (každé z nich může získávat hodnoty z předchozích kroků) a následující kroky se mohou odkazovat na výstupy kroku `taskId` a `enriched`.
+
+<Note>
+**Napište kvalitní `description`.** Agenti AI se spoléhají na pole funkce `description` při rozhodování, kdy nástroj použít. Buďte konkrétní ohledně toho, co nástroj dělá a kdy se má volat.
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+**Pomocné nástroje za běhu.** `twenty-sdk/utils` znovu exportuje malé pomocné nástroje pro běh, takže handlery nikdy neimportují přímo z `twenty-shared`. Například `isDefined(value)` vrací `false` jak pro `null`, tak pro `undefined` — použijte jej k bezpečnému zúžení volitelných vstupů handleru, které mohou za běhu dorazit jako `null`, i když jsou typované jako `T | undefined`:
+
+```ts
+import { isDefined } from 'twenty-sdk/utils';
+
+const handler = async (params: { parentMessageId?: string }) => {
+  if (isDefined(params.parentMessageId)) {
+    // params.parentMessageId is narrowed to string here
+  }
+};
+```
+</Note>
+
+<Note>
+**Instalační hooky** — předinstalační, poinstalační a odinstalační handlery — sdílejí toto běhové prostředí, ale deklarují se vlastními funkcemi `define` a nepřebírají nastavení spouštěče (triggeru). Viz [Instalační hooky](/l/cs/developers/extend/apps/config/install-hooks) pro `definePreInstallLogicFunction`, `definePostInstallLogicFunction` a `defineUninstallLogicFunction`.
+</Note>
+
+## Vytvoření aktivity časové osy.
+
+Pomocí `createTimelineActivity()` publikujte explicitní doménovou událost z logické funkce. Nejprve definujte událost jako [typ aktivity časové osy](/l/cs/developers/extend/apps/data/timeline-activity-types) a poté typ a objekty adresujte pomocí jejich stabilních univerzálních identifikátorů:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty převede univerzální identifikátory na ID metadat specifická pro instalaci, ověří, že typ aktivity časové osy patří volající aplikaci, a uloží snímek metadat prezentace do nové aktivity.
+
+Požadované vstupy jsou `timelineActivityTypeUniversalIdentifier`, `targetObjectUniversalIdentifier` a `targetRecordId`. Můžete také zadat `happensAt`, `properties` a `workspaceMemberId`. `happensAt` určuje pozici události a zobrazený čas na časové ose; výchozí hodnotou je čas vytvoření.
+
+Chcete-li k události přidružit jiný záznam, zadejte společně `linkedRecordId` a `linkedObjectMetadataUniversalIdentifier`. Jako záložní možnost historického zobrazení můžete navíc zadat `linkedRecordCachedName`:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+Role logické funkce musí mít oprávnění k zápisu do standardního objektu `timelineActivity`. Explicitní typy událostí ponechte nevázané na `action`; typ vázaný na akci již automaticky přijímá události auditu a jinak by vytvářel duplicitní řádky.
+
+## Typovaní klienti API (twenty-client-sdk)
+
+Balíček `twenty-client-sdk` poskytuje dva typované klienty GraphQL pro práci s Twenty API z vašich logických funkcí a frontendových komponent.
+
+| Klient              | Importovat                   | Koncový bod                                                      | Generováno?                    |
+| ------------------- | ---------------------------- | ---------------------------------------------------------------- | ------------------------------ |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — data pracovního prostoru (záznamy, objekty)         | Ano, při vývoji/sestavení      |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — konfigurace pracovního prostoru, nahrávání souborů | Ne, dodává se předem sestavený |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="Dotazování a změny dat pracovního prostoru (záznamy, objekty)">
+
+`CoreApiClient` je hlavní klient pro dotazování a mutace dat pracovního prostoru. Generuje se **z vašeho schématu pracovního prostoru** během `yarn twenty dev` nebo `yarn twenty dev:build`, takže je plně typovaný tak, aby odpovídal vašim objektům a polím.
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+Klient používá syntaxi výběrové sady (selection-set): předáním `true` zahrnete pole, pro argumenty použijte `__args` a pro relace vnořujte objekty. Získáte plné automatické doplňování a kontrolu typů založené na schématu vašeho pracovního prostoru.
+
+<Note>
+**CoreApiClient je generován při vývoji/sestavení.** Pokud jej použijete bez předchozího spuštění `yarn twenty dev` nebo `yarn twenty dev:build`, vyvolá chybu. Generování probíhá automaticky — CLI prozkoumá GraphQL schéma vašeho pracovního prostoru a vygeneruje typovaného klienta pomocí `@genql/cli`.
+</Note>
+
+#### Použití CoreSchema pro anotace typů
+
+`CoreSchema` poskytuje typy TypeScriptu odpovídající objektům vašeho pracovního prostoru — hodí se pro typování stavu komponent nebo parametrů funkcí:
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="Konfigurace pracovního prostoru, aplikace a nahrávání souborů">
+
+`MetadataApiClient` je dodáván předem sestavený v rámci SDK (není vyžadováno žádné generování). Odesílá dotazy na endpoint `/metadata` pro konfiguraci pracovního prostoru, aplikace a nahrávání souborů. Přijímá stejnou možnost `runAs` jako `CoreApiClient` — viz [Čí přístup volání používá](#whose-access-a-call-uses).
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### Nahrávání souborů
+
+`MetadataApiClient` obsahuje metodu `uploadFile` pro připojování souborů k polím typu souboru:
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| Parametr                           | Typ      | Popis                                                               |
+| ---------------------------------- | -------- | ------------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | Surový obsah souboru                                                |
+| `filename`                         | `string` | Název souboru (používá se pro ukládání a zobrazení)                 |
+| `contentType`                      | `string` | Typ MIME (pokud je vynechán, výchozí je `application/octet-stream`) |
+| `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` pole typu souboru ve vašem objektu            |
+
+Hlavní body:
+* Používá `universalIdentifier` pole (nikoli jeho ID specifické pro pracovní prostor), takže váš kód pro nahrávání funguje v jakémkoli pracovním prostoru, kde je vaše aplikace nainstalována.
+* Vrácená hodnota `url` je podepsaná adresa URL, kterou můžete použít k přístupu k nahranému souboru.
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  Když váš kód běží na Twenty (logické funkce nebo frontendové komponenty), platforma vloží přihlašovací údaje jako proměnné prostředí:
+
+  * `TWENTY_API_URL` — Základní URL Twenty API
+  * `TWENTY_APP_ACCESS_TOKEN` — krátkodobý klíč pro výchozí přístup: roli osoby, když někdo stojí za během, protíná role vaší aplikace; když nikdo nestojí za během, používá se vlastní role vaší aplikace. Osobou je kdokoli, kdo spustil běh v logické funkci, nebo kdokoli, kdo si prohlíží stránku ve frontové komponentě.
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — krátkodobý klíč s rozsahem omezeným pouze na vlastní roli vaší aplikace. Pouze pro logické funkce, vždy se do nich vkládá a používá jej `runAs: 'application'`.
+
+  Tyto hodnoty klientům **nemusíte** předávat — automaticky je čtou z `process.env` a [Čí přístup volání používá](#whose-access-a-call-uses) popisuje volbu mezi nimi. Vlastní oprávnění vaší aplikace jsou určena rolí deklarovanou pomocí `defineApplicationRole()` (nebo odkazovanou prostřednictvím `defaultRoleUniversalIdentifier` v `application-config.ts`); běh jednající jako osoba nikdy nemůže překročit ani tuto roli, ani roli této osoby.
+</Note>

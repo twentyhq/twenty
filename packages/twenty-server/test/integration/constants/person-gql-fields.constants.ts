@@ -1,6 +1,5 @@
 export const PERSON_GQL_FIELDS = `
     id
-    city
     jobTitle
     avatarUrl
     avatarFile {
@@ -23,13 +22,21 @@ export const PERSON_GQL_FIELDS = `
       primaryPhoneNumber
       primaryPhoneCountryCode
       primaryPhoneCallingCode
-      additionalPhones
+      additionalPhones {
+        number
+        callingCode
+        countryCode
+      }
     }
     whatsapp {
       primaryPhoneNumber
       primaryPhoneCountryCode
       primaryPhoneCallingCode
-      additionalPhones
+      additionalPhones {
+        number
+        callingCode
+        countryCode
+      }
     }
     createdAt
     deletedAt

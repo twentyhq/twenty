@@ -145,6 +145,14 @@
               "label": "操作指南"
             }
           }
+        },
+        "legal": {
+          "label": "法律",
+          "groups": {
+            "legalHowTos": {
+              "label": "操作指南"
+            }
+          }
         }
       }
     },
@@ -159,6 +167,9 @@
           "groups": {
             "appsGettingStarted": {
               "label": "开始使用"
+            },
+            "appsTutorial": {
+              "label": "教程"
             },
             "appsConfig": {
               "label": "配置"

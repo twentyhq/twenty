@@ -9,7 +9,8 @@ import { useEnsureAgentChatThreadExistsForDraft } from '@/ai/hooks/useEnsureAgen
 import { useEnsureAgentChatThreadIdForSend } from '@/ai/hooks/useEnsureAgentChatThreadIdForSend';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatFetchedMessagesComponentFamilyState } from '@/ai/states/agentChatFetchedMessagesComponentFamilyState';
-import { agentChatIsInitialScrollPendingOnThreadChangeState } from '@/ai/states/agentChatIsInitialScrollPendingOnThreadChangeState';
+import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
+import { agentChatIsAwaitingPersistedRefetchComponentFamilyState } from '@/ai/states/agentChatIsAwaitingPersistedRefetchComponentFamilyState';
 import { agentChatIsLoadingState } from '@/ai/states/agentChatIsLoadingState';
 import { agentChatIsStreamingComponentFamilyState } from '@/ai/states/agentChatIsStreamingComponentFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
@@ -62,6 +63,16 @@ export const AgentChatStreamSubscriptionEffect = () => {
     { threadId: currentAiChatThread },
   );
 
+  const agentChatIsAwaitingPersistedRefetch = useAtomComponentFamilyStateValue(
+    agentChatIsAwaitingPersistedRefetchComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
+
+  const agentChatIsAwaitingFirstChunk = useAtomComponentFamilyStateValue(
+    agentChatIsAwaitingFirstChunkComponentFamilyState,
+    { threadId: currentAiChatThread },
+  );
+
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
@@ -70,31 +81,40 @@ export const AgentChatStreamSubscriptionEffect = () => {
     agentChatDisplayedThreadState,
   );
 
-  const setAgentChatIsInitialScrollPendingOnThreadChange = useSetAtomState(
-    agentChatIsInitialScrollPendingOnThreadChangeState,
-  );
-
   useEffect(() => {
     if (agentChatIsStreaming) {
       return;
     }
 
+    const isThreadSwitch = currentAiChatThread !== agentChatDisplayedThread;
+
+    if (
+      !isThreadSwitch &&
+      (agentChatIsAwaitingPersistedRefetch || agentChatIsAwaitingFirstChunk)
+    ) {
+      return;
+    }
+
+    if (isThreadSwitch && agentChatIsAwaitingFirstChunk) {
+      setAgentChatDisplayedThread(currentAiChatThread);
+
+      return;
+    }
+
     setAgentChatMessages(agentChatFetchedMessages);
 
-    if (currentAiChatThread !== agentChatDisplayedThread) {
-      if (agentChatFetchedMessages.length > 0) {
-        setAgentChatIsInitialScrollPendingOnThreadChange(true);
-      }
+    if (isThreadSwitch) {
       setAgentChatDisplayedThread(currentAiChatThread);
     }
   }, [
     agentChatFetchedMessages,
     agentChatIsStreaming,
+    agentChatIsAwaitingPersistedRefetch,
+    agentChatIsAwaitingFirstChunk,
     setAgentChatMessages,
     currentAiChatThread,
     agentChatDisplayedThread,
     setAgentChatDisplayedThread,
-    setAgentChatIsInitialScrollPendingOnThreadChange,
   ]);
 
   const setAgentChatIsLoading = useSetAtomState(agentChatIsLoadingState);

@@ -1,55 +1,60 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
+import { AppChip } from '@/applications/components/AppChip';
+import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { InlineBanner } from 'twenty-ui/feedback';
 import {
-  IconApps,
+  IconAlertTriangle,
   IconBox,
-  IconCommand,
+  IconBrandTypescript,
   IconGraph,
   IconInfoCircle,
   IconLego,
   IconListDetails,
   IconLock,
   IconSettings,
-} from 'twenty-ui/display';
+} from 'twenty-ui/icon';
 import {
-  ApplicationRegistrationSourceType,
   FindMarketplaceAppDetailDocument,
+  FindMarketplaceAppManifestDocument,
   FindOneApplicationDocument,
+  IsApplicationStoppedDocument,
   PermissionFlagType,
-  UninstallApplicationDocument,
 } from '~/generated-metadata/graphql';
+import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsApplicationDetailTitle } from '~/pages/settings/applications/components/SettingsApplicationDetailTitle';
 import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/CustomApplicationIllustrations';
 import { STANDARD_APPLICATION_ILLUSTRATIONS } from '~/pages/settings/applications/constants/StandardApplicationIllustrations';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
-import { SettingsApplicationCustomTab } from '~/pages/settings/applications/tabs/SettingsApplicationCustomTab';
 import { SettingsApplicationDetailAboutTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab';
 import { SettingsApplicationDetailContentTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailContentTab';
 import { SettingsApplicationDetailSettingsTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailSettingsTab';
 import { SettingsApplicationPermissionsTab } from '~/pages/settings/applications/tabs/SettingsApplicationPermissionsTab';
+import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
+import { getDisplayedApplicationVariables } from '~/pages/settings/applications/utils/getDisplayedApplicationVariables';
 import { isNewerSemver } from '~/pages/settings/applications/utils/isNewerSemver';
 
 const APPLICATION_DETAIL_ID = 'application-detail-id';
@@ -62,10 +67,12 @@ export const SettingsApplicationDetails = () => {
     APPLICATION_DETAIL_ID,
   );
 
-  const { data } = useQuery(FindOneApplicationDocument, {
+  const { data, refetch } = useQuery(FindOneApplicationDocument, {
     variables: { id: applicationId },
     skip: !applicationId,
   });
+
+  useRefetchOnApplicationOperation({ applicationId, refetch });
 
   const application = data?.findOneApplication;
 
@@ -77,9 +84,30 @@ export const SettingsApplicationDetails = () => {
     skip: !application?.universalIdentifier,
   });
 
+  const { data: manifestData } = useQuery(FindMarketplaceAppManifestDocument, {
+    variables: { universalIdentifier: application?.universalIdentifier ?? '' },
+    skip: !application?.universalIdentifier,
+  });
+
+  const { data: isApplicationStoppedData } = useQuery(
+    IsApplicationStoppedDocument,
+    {
+      variables: {
+        applicationUniversalIdentifier: application?.universalIdentifier ?? '',
+      },
+      skip: !application?.universalIdentifier,
+      // The kill switch is toggled server-side, a cached value would hide it.
+      fetchPolicy: 'network-only',
+    },
+  );
+
+  const isApplicationStopped =
+    isApplicationStoppedData?.isApplicationStopped === true;
+
   const detail = detailData?.findMarketplaceAppDetail;
-  const manifest = detail?.manifest as Manifest | undefined;
-  const app = manifest?.application;
+  const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
+    | Manifest
+    | undefined;
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isStandardApplication = isTwentyStandardApplication(application);
   const isCustomApplication = isWorkspaceCustomApplication(
@@ -90,16 +118,11 @@ export const SettingsApplicationDetails = () => {
   const resolvedDescription = useResolvedApplicationDescription(application);
 
   const displayName =
-    app?.displayName ?? application?.name ?? t`Application details`;
-  const description = app?.description ?? resolvedDescription;
-  const logoUrl =
-    app?.logoUrl ??
-    application?.logo ??
-    application?.applicationRegistration?.logoUrl ??
-    undefined;
+    detail?.name ?? application?.name ?? t`Application details`;
+  const description = detail?.description ?? resolvedDescription;
 
   const getScreenshots = () => {
-    if (app?.screenshots?.length) return app.screenshots;
+    if (detail?.galleryImages?.length) return detail.galleryImages;
     if (isStandardApplication) return STANDARD_APPLICATION_ILLUSTRATIONS;
     if (isCustomApplication) return CUSTOM_APPLICATION_ILLUSTRATIONS;
     return undefined;
@@ -107,17 +130,17 @@ export const SettingsApplicationDetails = () => {
 
   const screenshots = getScreenshots();
 
-  const settingsCustomTabFrontComponentId =
-    application?.settingsCustomTabFrontComponentId;
-
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
+  const { isInstalling } = useInstallMarketplaceApp({
+    universalIdentifier: application?.universalIdentifier,
+  });
+
   const canInstallMarketplaceApps = useHasPermissionFlag(
-    PermissionFlagType.MARKETPLACE_APPS,
+    PermissionFlagType.APPLICATIONS,
   );
 
   const sourceType = application?.applicationRegistration?.sourceType;
-  const isNpmApp = sourceType === ApplicationRegistrationSourceType.NPM;
   const registrationId = detail?.id ?? application?.applicationRegistration?.id;
   const currentVersion = application?.version;
   const latestAvailableVersion =
@@ -125,7 +148,7 @@ export const SettingsApplicationDetails = () => {
     application?.applicationRegistration?.latestAvailableVersion;
 
   const hasUpdate =
-    isNpmApp &&
+    isUpgradableApplicationSourceType(sourceType) &&
     isDefined(latestAvailableVersion) &&
     isDefined(currentVersion) &&
     isNewerSemver(latestAvailableVersion, currentVersion);
@@ -141,29 +164,14 @@ export const SettingsApplicationDetails = () => {
     });
   };
 
-  const [uninstallApplication] = useMutation(UninstallApplicationDocument);
-  const [isUninstalling, setIsUninstalling] = useState(false);
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const navigate = useNavigateSettings();
-
-  const handleUninstall = async () => {
-    if (!isDefined(application)) return;
-
-    setIsUninstalling(true);
-    try {
-      await uninstallApplication({
-        variables: { universalIdentifier: application.universalIdentifier },
-      });
-      enqueueSuccessSnackBar({
-        message: t`Application successfully uninstalled.`,
-      });
-      navigate(SettingsPath.Applications);
-    } catch {
-      enqueueErrorSnackBar({ message: t`Error uninstalling application.` });
-    } finally {
-      setIsUninstalling(false);
-    }
-  };
+  const handleUninstallCompleted = useCallback(() => {
+    navigate(SettingsPath.Applications);
+  }, [navigate]);
+  const { uninstall, isUninstalling } = useUninstallApplication({
+    universalIdentifier: application?.universalIdentifier,
+    onCompleted: handleUninstallCompleted,
+  });
 
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
@@ -200,7 +208,7 @@ export const SettingsApplicationDetails = () => {
       many: t`fields`,
     },
     {
-      icon: IconCommand,
+      icon: IconBrandTypescript,
       count: (application?.logicFunctions ?? []).length,
       one: t`logic function`,
       many: t`logic functions`,
@@ -232,9 +240,23 @@ export const SettingsApplicationDetails = () => {
       disabled: !isDefined(application?.defaultRoleId),
     },
     (() => {
-      const hasVariables = (application?.applicationVariables ?? []).length > 0;
+      const hasVariables =
+        getDisplayedApplicationVariables(
+          application?.applicationVariables ?? [],
+        ).length > 0;
       const hasConnectionProviders = connectionProviders.length > 0;
-      const hasNothingToConfigure = !hasVariables && !hasConnectionProviders;
+      const hasHttpTriggeredFunctions =
+        applicationHasHttpTriggeredFunctions(application);
+      const canShowFunctionDomain = hasHttpTriggeredFunctions;
+      const hasSettingsFrontComponent = isDefined(
+        application?.settingsCustomTabFrontComponentId,
+      );
+      const hasNothingToConfigure =
+        !hasVariables &&
+        !hasConnectionProviders &&
+        !canShowFunctionDomain &&
+        !hasSettingsFrontComponent &&
+        !isUpgradableApplicationSourceType(sourceType);
 
       return {
         id: 'settings',
@@ -246,9 +268,6 @@ export const SettingsApplicationDetails = () => {
         disabled: hasNothingToConfigure,
       };
     })(),
-    ...(isDefined(settingsCustomTabFrontComponentId)
-      ? [{ id: 'custom', title: t`Custom`, Icon: IconApps }]
-      : []),
   ];
 
   const renderActiveTabContent = () => {
@@ -262,30 +281,32 @@ export const SettingsApplicationDetails = () => {
           <SettingsApplicationDetailAboutTab
             displayName={displayName}
             description={description}
-            aboutDescription={app?.aboutDescription}
+            aboutDescription={detail?.aboutDescription ?? undefined}
+            pricingDescription={detail?.pricingDescription ?? undefined}
             screenshots={screenshots}
-            author={app?.author}
-            category={app?.category}
+            author={detail?.author ?? undefined}
+            category={detail?.category ?? undefined}
             contentEntries={contentEntries}
             currentVersion={currentVersion ?? undefined}
             latestAvailableVersion={latestAvailableVersion ?? undefined}
             developerLinks={
-              isDefined(app)
+              isDefined(detail)
                 ? {
-                    websiteUrl: app.websiteUrl,
-                    termsUrl: app.termsUrl,
-                    emailSupport: app.emailSupport,
-                    issueReportUrl: app.issueReportUrl,
+                    websiteUrl: detail.websiteUrl ?? undefined,
+                    termsUrl: detail.termsUrl ?? undefined,
+                    emailSupport: detail.emailSupport ?? undefined,
+                    issueReportUrl: detail.issueReportUrl ?? undefined,
                   }
                 : undefined
             }
             isInstalled={true}
+            isInstalling={isInstalling}
             canInstallMarketplaceApps={canInstallMarketplaceApps}
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
             isUpgrading={isUpgrading}
             canBeUninstalled={application.canBeUninstalled}
-            onUninstall={handleUninstall}
+            onUninstall={uninstall}
             isUninstalling={isUninstalling}
           />
         );
@@ -298,7 +319,7 @@ export const SettingsApplicationDetails = () => {
             applicationInfo={{
               id: application.id,
               name: displayName,
-              logo: application.logo,
+              logoUrl: application.logoUrl,
               universalIdentifier: application.universalIdentifier,
             }}
           />
@@ -313,16 +334,6 @@ export const SettingsApplicationDetails = () => {
         return (
           <SettingsApplicationDetailSettingsTab application={application} />
         );
-      case 'custom':
-        return isDefined(settingsCustomTabFrontComponentId) ? (
-          <SettingsApplicationCustomTab
-            settingsCustomTabFrontComponentId={
-              settingsCustomTabFrontComponentId
-            }
-          />
-        ) : (
-          <></>
-        );
       default:
         return <></>;
     }
@@ -330,18 +341,25 @@ export const SettingsApplicationDetails = () => {
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
-      <SubMenuTopBarContainer
-        title={
-          <SettingsApplicationDetailTitle
-            displayName={displayName}
-            description={description}
-            applicationId={application?.id}
-          />
+      <SettingsPageLayout
+        title={displayName}
+        icon={
+          isDefined(application) ? (
+            <AppChip
+              applicationId={application.id}
+              logoUrl={application.logoUrl}
+              fallbackApplicationData={{
+                name: displayName,
+              }}
+              size="md"
+              chipOnly
+            />
+          ) : undefined
         }
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`Applications`,
@@ -349,12 +367,24 @@ export const SettingsApplicationDetails = () => {
           },
           { children: displayName },
         ]}
+        secondaryBar={
+          <SettingsTabBar
+            tabs={tabs}
+            componentInstanceId={APPLICATION_DETAIL_ID}
+          />
+        }
       >
         <SettingsPageContainer>
-          <TabList tabs={tabs} componentInstanceId={APPLICATION_DETAIL_ID} />
+          {isApplicationStopped && (
+            <InlineBanner
+              color="danger"
+              LeftIcon={IconAlertTriangle}
+              message={t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}
+            />
+          )}
           {renderActiveTabContent()}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </CurrentApplicationContext.Provider>
   );
 };

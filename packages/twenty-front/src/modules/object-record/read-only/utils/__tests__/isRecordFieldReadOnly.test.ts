@@ -1,5 +1,5 @@
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { MetadataWritability } from '~/generated-metadata/graphql';
 
 describe('isRecordFieldReadOnly', () => {
   const mockObjectPermissions = {
@@ -11,20 +11,17 @@ describe('isRecordFieldReadOnly', () => {
   const mockParams = {
     isRecordReadOnly: false,
     objectPermissions: mockObjectPermissions,
-    fieldMetadataId: 'field-123',
-    fieldMetadataType: FieldMetadataType.TEXT,
-    isUIReadOnly: false,
+    fieldMetadataItem: {
+      id: 'field-123',
+      isUIEditable: true,
+      writability: MetadataWritability.OPEN,
+    },
   };
 
   it('should return true when record is read-only', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
       isRecordReadOnly: true,
-      fieldMetadataItem: {
-        id: 'field-123',
-        isUIReadOnly: false,
-        isCustom: false,
-      },
     });
 
     expect(result).toBe(true);
@@ -36,11 +33,6 @@ describe('isRecordFieldReadOnly', () => {
       objectPermissions: {
         ...mockObjectPermissions,
         canUpdateObjectRecords: false,
-      },
-      fieldMetadataItem: {
-        id: 'field-123',
-        isUIReadOnly: false,
-        isCustom: false,
       },
     });
 
@@ -56,11 +48,6 @@ describe('isRecordFieldReadOnly', () => {
           'field-123': { canUpdate: false },
         },
       },
-      fieldMetadataItem: {
-        id: 'field-123',
-        isUIReadOnly: false,
-        isCustom: false,
-      },
     });
 
     expect(result).toBe(true);
@@ -70,9 +57,8 @@ describe('isRecordFieldReadOnly', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
       fieldMetadataItem: {
-        id: 'field-123',
-        isUIReadOnly: true,
-        isCustom: false,
+        ...mockParams.fieldMetadataItem,
+        isUIEditable: false,
       },
     });
 
@@ -82,51 +68,41 @@ describe('isRecordFieldReadOnly', () => {
   it('should return false when all conditions allow editing', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      fieldMetadataItem: {
-        id: 'field-123',
-        isUIReadOnly: false,
-        isCustom: false,
-      },
     });
 
     expect(result).toBe(false);
   });
 
-  it('should return true when field is non-custom on a system object', () => {
+  it('should return true when the field writability is SYSTEM', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      isSystemObject: true,
       fieldMetadataItem: {
-        id: 'field-123',
-        isUIReadOnly: false,
-        isCustom: false,
+        ...mockParams.fieldMetadataItem,
+        writability: MetadataWritability.SYSTEM,
       },
     });
 
     expect(result).toBe(true);
   });
 
-  it('should return false when field is custom on a system object', () => {
+  it('should return true when the field writability is APPLICATION', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
-      isSystemObject: true,
       fieldMetadataItem: {
-        id: 'field-123',
-        isUIReadOnly: false,
-        isCustom: true,
+        ...mockParams.fieldMetadataItem,
+        writability: MetadataWritability.APPLICATION,
       },
     });
 
-    expect(result).toBe(false);
+    expect(result).toBe(true);
   });
 
-  it('should return false when isSystemObject is not provided', () => {
+  it('should treat a missing field writability as OPEN', () => {
     const result = isRecordFieldReadOnly({
       ...mockParams,
       fieldMetadataItem: {
-        id: 'field-123',
-        isUIReadOnly: false,
-        isCustom: false,
+        ...mockParams.fieldMetadataItem,
+        writability: undefined,
       },
     });
 

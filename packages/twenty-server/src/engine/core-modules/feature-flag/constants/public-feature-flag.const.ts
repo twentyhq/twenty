@@ -3,6 +3,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 type FeatureFlagMetadata = {
   label: string;
   description: string;
+  icon: string;
   imagePath?: string;
 };
 
@@ -18,6 +19,7 @@ export const PUBLIC_FEATURE_FLAGS: PublicFeatureFlag[] = [
       label: 'Junction Relations',
       description:
         'Enable many-to-many relations through junction tables configuration',
+      icon: 'IconRelationManyToMany',
     },
   },
   ...(process.env.CLOUDFLARE_API_KEY

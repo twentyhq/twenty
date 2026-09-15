@@ -32,7 +32,10 @@ jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
   }),
 }));
 
-jest.mock('uuid', () => ({ v4: () => 'step-id' }));
+jest.mock('uuid', () => ({
+  ...jest.requireActual('uuid'),
+  v4: () => 'step-id',
+}));
 
 const wrapper = ({ children }: { children: React.ReactNode }) => {
   const workflowVisualizerComponentInstanceId =

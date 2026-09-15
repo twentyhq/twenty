@@ -88,7 +88,6 @@ export class ViewAccessService {
       return true;
     }
 
-    // WORKSPACE visibility views require VIEWS permission
     const hasPermission = await this.hasViewsPermission(
       userWorkspaceId,
       workspaceId,

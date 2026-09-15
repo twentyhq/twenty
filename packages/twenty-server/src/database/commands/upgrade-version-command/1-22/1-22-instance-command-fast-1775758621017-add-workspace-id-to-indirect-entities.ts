@@ -15,9 +15,7 @@ const TABLES = [
 ];
 
 @RegisteredInstanceCommand('1.22.0', 1775758621017)
-export class AddWorkspaceIdToIndirectEntitiesFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddWorkspaceIdToIndirectEntitiesFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     for (const table of TABLES) {
       await queryRunner.query(

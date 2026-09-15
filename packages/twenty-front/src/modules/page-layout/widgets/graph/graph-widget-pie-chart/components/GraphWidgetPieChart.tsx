@@ -1,3 +1,4 @@
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { GraphWidgetChartContainer } from '@/page-layout/widgets/graph/components/GraphWidgetChartContainer';
 import { GraphWidgetLegend } from '@/page-layout/widgets/graph/components/GraphWidgetLegend';
 import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
@@ -29,10 +30,7 @@ import {
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  type PieChartConfiguration,
-  type PieChartDataItem,
-} from '~/generated-metadata/graphql';
+import { type PieChartConfiguration } from '~/generated-metadata/graphql';
 
 type GraphWidgetPieChartProps = {
   data: PieChartDataItemWithColor[];
@@ -44,9 +42,12 @@ type GraphWidgetPieChartProps = {
   onSliceClick?: (datum: PieChartDataItemWithColor) => void;
   showDataLabels?: boolean;
   showCenterMetric?: boolean;
+  tooltipDisplayType?: GraphValueFormatOptions['displayType'];
 } & GraphValueFormatOptions;
 
-const emptyStateData: PieChartDataItemWithColor[] = [{ id: 'empty', value: 1 }];
+const emptyStateData: PieChartDataItemWithColor[] = [
+  { key: 'empty', value: 1 },
+];
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -81,6 +82,7 @@ export const GraphWidgetPieChart = ({
   configuration,
   colorMode,
   displayType,
+  tooltipDisplayType,
   decimals,
   prefix,
   suffix,
@@ -96,12 +98,20 @@ export const GraphWidgetPieChart = ({
     graphWidgetPieTooltipComponentState,
   );
 
+  const { formatNumber } = useNumberFormat();
+
   const formatOptions: GraphValueFormatOptions = {
     displayType,
     decimals,
     prefix,
     suffix,
     customFormatter,
+    formatNumberFn: formatNumber,
+  };
+
+  const tooltipFormatOptions: GraphValueFormatOptions = {
+    ...formatOptions,
+    displayType: tooltipDisplayType ?? displayType,
   };
 
   const { enrichedData, legendItems } = usePieChartData({
@@ -194,7 +204,10 @@ export const GraphWidgetPieChart = ({
             enableArcLabels={false}
             tooltip={() => null}
             layers={[ArcsLayer, 'arcLinkLabels']}
-            arcLinkLabel={(datum: ComputedDatum<PieChartDataItem>) => {
+            id={(datum: PieChartDataItemWithColor) =>
+              `${id}:${String(datum.key)}`
+            }
+            arcLinkLabel={(datum: ComputedDatum<PieChartDataItemWithColor>) => {
               const formattedValue = getPieChartFormattedValue({
                 datum,
                 enrichedData,
@@ -227,8 +240,8 @@ export const GraphWidgetPieChart = ({
       <GraphPieChartTooltip
         containerRef={containerRef}
         enrichedData={enrichedData}
-        formatOptions={formatOptions}
-        displayType={displayType}
+        formatOptions={tooltipFormatOptions}
+        displayType={tooltipDisplayType ?? displayType}
         onSliceClick={onSliceClick}
       />
       {showLegend && data.length > 0 && (

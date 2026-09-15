@@ -1,10 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-import { useHasAccessTokenPair } from '@/auth/hooks/useHasAccessTokenPair';
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useVerifyLogin } from '@/auth/hooks/useVerifyLogin';
-import { clientConfigApiStatusState } from '@/client-config/states/clientConfigApiStatusState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -13,27 +11,27 @@ export const VerifyLoginTokenEffect = () => {
   const [searchParams] = useSearchParams();
   const loginToken = searchParams.get('loginToken');
 
-  const hasAccessTokenPair = useHasAccessTokenPair();
+  const isLogged = useIsLogged();
   const navigate = useNavigateApp();
   const { verifyLoginToken } = useVerifyLogin();
 
-  const { isSaved: clientConfigLoaded } = useAtomStateValue(
-    clientConfigApiStatusState,
-  );
+  // oxlint-disable-next-line twenty/no-state-useref
+  const hasVerifiedRef = useRef(false);
 
   useEffect(() => {
-    if (!clientConfigLoaded) {
+    if (hasVerifiedRef.current) {
       return;
     }
 
+    hasVerifiedRef.current = true;
+
     if (isDefined(loginToken)) {
       verifyLoginToken(loginToken);
-    } else if (!hasAccessTokenPair) {
+    } else if (!isLogged) {
       navigate(AppPath.SignInUp);
     }
-    // Verify only needs to run once at mount
     // oxlint-disable-next-line react-hooks/exhaustive-deps
-  }, [clientConfigLoaded]);
+  }, []);
 
   return <></>;
 };

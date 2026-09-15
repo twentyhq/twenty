@@ -12,10 +12,12 @@ export const UPDATE_WORKSPACE = gql`
       logo
       allowImpersonation
       isPublicInviteLinkEnabled
+      workspaceDiscoverability
       isGoogleAuthEnabled
       isMicrosoftAuthEnabled
       isPasswordAuthEnabled
       isTwoFactorAuthenticationEnforced
+      isInternalMessagesImportEnabled
       defaultRole {
         ...RoleFragment
       }

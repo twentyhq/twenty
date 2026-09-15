@@ -8,18 +8,20 @@ import { type SignUpDTO } from 'src/engine/core-modules/auth/dto/sign-up.dto';
 
 type SignUpOnNewWorkspaceUtilArgs = {
   accessToken: string;
+  displayName?: string;
   expectToFail?: boolean;
 };
 
 export const signUpInNewWorkspace = async ({
   accessToken,
+  displayName = 'Test Workspace',
   expectToFail,
 }: SignUpOnNewWorkspaceUtilArgs): CommonResponseBody<{
   signUpInNewWorkspace: SignUpDTO;
 }> => {
   const mutation = gql`
-    mutation SignUpInNewWorkspace {
-      signUpInNewWorkspace {
+    mutation SignUpInNewWorkspace($input: SignUpInNewWorkspaceInput) {
+      signUpInNewWorkspace(input: $input) {
         loginToken {
           token
           expiresAt
@@ -38,7 +40,7 @@ export const signUpInNewWorkspace = async ({
   const response = await makeMetadataAPIRequest(
     {
       query: mutation,
-      variables: {},
+      variables: { input: { displayName } },
     },
     accessToken,
   );

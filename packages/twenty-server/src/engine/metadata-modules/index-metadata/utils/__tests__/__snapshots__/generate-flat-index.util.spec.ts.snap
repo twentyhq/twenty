@@ -1,0 +1,11 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`generateFlatIndexMetadataWithNameOrThrow pins names for representative standard-index shapes 1`] = `
+{
+  "manyToOneJoin": "IDX_f719a95179070eac397ba18dc70",
+  "partialUnique": "IDX_UNIQUE_10f41e6e837c3c40fa07ca9d76f",
+  "scalarNonUnique": "IDX_f6529884d22eaf60dd0bfc9f831",
+  "scalarUnique": "IDX_UNIQUE_2a32339058d0b6910b0834ddf81",
+  "searchVectorGin": "IDX_fb1f4905546cfc6d70a971c76f7",
+}
+`;

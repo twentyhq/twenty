@@ -188,3 +188,56 @@ export const ConfirmButtonClick: Story = {
     });
   },
 };
+
+export const ResetsInputWhenReopened: Story = {
+  args: {
+    modalInstanceId: 'confirmation-modal',
+    title: 'Reopen Reset Test',
+    subtitle: 'Reopening the modal should clear the confirmation input.',
+    confirmButtonText: 'Confirm',
+    confirmationValue: 'email@test.dev',
+    confirmationPlaceholder: 'email@test.dev',
+    onConfirmClick: fn(),
+    onClose: fn(),
+  },
+  play: async ({ canvasElement }) => {
+    const body = within(canvasElement.ownerDocument.body);
+
+    await body.findByText('Reopen Reset Test');
+
+    await userEvent.type(
+      await body.findByTestId('confirmation-modal-input'),
+      'email@test.dev',
+    );
+
+    await waitFor(() => {
+      expect(
+        body.getByTestId('confirmation-modal-confirm-button'),
+      ).toBeEnabled();
+    });
+
+    await userEvent.click(body.getByTestId('confirmation-modal-cancel-button'));
+
+    await waitFor(() => {
+      expect(
+        body.queryByTestId('confirmation-modal-input'),
+      ).not.toBeInTheDocument();
+    });
+
+    jotaiStore.set(
+      isModalOpenedComponentState.atomFamily({
+        instanceId: 'confirmation-modal',
+      }),
+      true,
+    );
+
+    await body.findByTestId('confirmation-modal-input');
+
+    await waitFor(() => {
+      expect(body.getByTestId('confirmation-modal-input')).toHaveValue('');
+      expect(
+        body.getByTestId('confirmation-modal-confirm-button'),
+      ).toBeDisabled();
+    });
+  },
+};

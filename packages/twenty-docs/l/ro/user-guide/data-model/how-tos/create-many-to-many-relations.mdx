@@ -6,11 +6,11 @@ description: Conectați înregistrări în care multe elemente de pe ambele păr
 Relațiile mulți-la-mulți vă permit să conectați mai multe înregistrări pe ambele părți. De exemplu: multe Persoane pot lucra la multe Proiecte, iar fiecare Proiect poate avea multe Persoane.
 
 <Warning>
-**Funcție din Lab**: Relațiile prin obiecte de legătură sunt în prezent în Lab. Activați-le în **Settings → Updates → Lab** înainte de a urma acest ghid.
+**Funcție beta**: Relațiile prin obiecte de legătură sunt în prezent în versiune beta. Activați-le în **Settings → Community → Features** înainte de a urma acest ghid.
 </Warning>
 
 <Note>
-Această funcție necesită, de asemenea, ca **Advanced mode** să fie activat (comutator în dreapta jos în Settings).
+Această funcție necesită, de asemenea, ca **Advanced mode** să fie activat (comutator în stânga jos în Settings).
 </Note>
 
 ## Când să utilizați relațiile mulți-la-mulți
@@ -40,8 +40,8 @@ Când activați comutatorul pentru relația de legătură, Twenty afișează în
 
 ## Cerințe
 
-1. **Activați Junction Relations în Lab**: Mergeți la **Settings → Updates → Lab** și activați **Junction Relations**
-2. **Activați Advanced mode**: Porniți **Advanced mode** în partea dreaptă jos a barei laterale Settings
+1. **Activați Junction Relations în Beta Features**: Mergeți la **Settings → Community → Features** și activați **Junction Relations**
+2. **Activați Advanced mode**: Porniți **Advanced mode** în partea stângă jos a barei laterale Settings
 3. Planificați modelul de date:
    * Ce două obiecte conectați?
    * Cum ar trebui să se numească obiectul de legătură?
@@ -51,7 +51,7 @@ Când activați comutatorul pentru relația de legătură, Twenty afișează în
 Mai întâi, creați obiectul intermediar care va păstra conexiunile.
 
 1. Accesați **Setări → Model de date**
-2. Faceți clic pe **+ Obiect nou**
+2. Faceți clic **+ Adăugați un obiect**
 3. Dați-i un nume descriptiv (de ex., "Atribuire proiect", "Membru al echipei", "Comandă de produs")
 4. Activați "Omite crearea unui câmp Nume"
 
@@ -158,7 +158,7 @@ Iată un ghid complet:
 Deoarece obiectul de legătură este un obiect real, puteți adăuga câmpuri personalizate pentru a stoca informații despre relație:
 
 * **Rol**: "Dezvoltator", "Designer", "Manager"
-* **Data de început**: Când s-au alăturat proiectului
+* **Data de începere**: Când persoana s-a alăturat proiectului
 * **Ore alocate**: Orele săptămânale pe acest proiect
 
 Pentru a accesa aceste date, navigați direct la obiectul de legătură sau interogați-l prin API.

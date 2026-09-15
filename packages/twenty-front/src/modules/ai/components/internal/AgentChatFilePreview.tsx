@@ -10,8 +10,8 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useContext } from 'react';
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/components';
-import { type IconComponent, IconX } from 'twenty-ui/display';
+import { AvatarOrIcon, Chip } from 'twenty-ui/data-display';
+import { type IconComponent, IconX } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
@@ -90,14 +90,14 @@ export const AgentChatFilePreview = ({
       onClick={isClickable ? handleClick : undefined}
     >
       <Chip
-        label={fileName}
         emptyLabel={t`Untitled`}
-        variant={ChipVariant.Static}
-        clickable={isClickable}
-        leftComponent={leftComponent}
-        rightComponent={rightComponent}
-        rightComponentDivider={hasRightDivider}
-      />
+        variant="soft"
+        startElement={leftComponent}
+        endElement={rightComponent}
+        endElementDivider={hasRightDivider}
+      >
+        {fileName}
+      </Chip>
     </StyledClickableContainer>
   );
 };

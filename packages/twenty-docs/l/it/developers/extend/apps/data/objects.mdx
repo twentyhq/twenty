@@ -1,0 +1,143 @@
+---
+title: Oggetti
+description: Dichiara nuovi tipi di record — tabelle personalizzate con i propri campi — usando defineObject.
+icon: table
+---
+
+Gli **oggetti** personalizzati sono nuovi tipi di record che la tua app aggiunge a uno spazio di lavoro — Cartolina, Fattura, Abbonamento, qualsiasi cosa specifica per il tuo dominio. Ogni oggetto dichiara il proprio schema (campi, relazioni, valori predefiniti) e un identificatore universale stabile che persiste tra le sincronizzazioni e le distribuzioni.
+
+```ts src/objects/post-card.object.ts
+import { defineObject, FieldType } from 'twenty-sdk/define';
+
+enum PostCardStatus {
+  DRAFT = 'DRAFT',
+  SENT = 'SENT',
+  DELIVERED = 'DELIVERED',
+  RETURNED = 'RETURNED',
+}
+
+export default defineObject({
+  universalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+  nameSingular: 'postCard',
+  namePlural: 'postCards',
+  labelSingular: 'Post Card',
+  labelPlural: 'Post Cards',
+  description: 'A post card object',
+  icon: 'IconMail',
+  fields: [
+    {
+      universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+      name: 'content',
+      type: FieldType.TEXT,
+      label: 'Content',
+      description: "Postcard's content",
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: 'c6aa31f3-da76-4ac6-889f-475e226009ac',
+      name: 'recipientName',
+      type: FieldType.FULL_NAME,
+      label: 'Recipient name',
+      icon: 'IconUser',
+    },
+    {
+      universalIdentifier: '95045777-a0ad-49ec-98f9-22f9fc0c8266',
+      name: 'recipientAddress',
+      type: FieldType.ADDRESS,
+      label: 'Recipient address',
+      icon: 'IconHome',
+    },
+    {
+      universalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+      name: 'status',
+      type: FieldType.SELECT,
+      label: 'Status',
+      icon: 'IconSend',
+      defaultValue: `'${PostCardStatus.DRAFT}'`,
+      options: [
+        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
+        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
+        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
+        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+      ],
+    },
+    {
+      universalIdentifier: 'e06abe72-5b44-4e7f-93be-afc185a3c433',
+      name: 'deliveredAt',
+      type: FieldType.DATE_TIME,
+      label: 'Delivered at',
+      icon: 'IconCheck',
+      isNullable: true,
+      defaultValue: null,
+    },
+  ],
+});
+```
+
+## Punti chiave
+
+* Il `universalIdentifier` deve essere univoco e stabile tra i deployment.
+* Ogni campo richiede un `name`, `type`, `label` e il proprio `universalIdentifier` stabile.
+* L'array `fields` è facoltativo: puoi definire oggetti senza campi personalizzati.
+* `openRecordIn` imposta dove si aprono i record di questo oggetto quando vengono cliccati: `ObjectOpenRecordIn.USER_CHOICE` (l'impostazione predefinita, che segue la preferenza di ciascun membro dell'area di lavoro da Settings → Experience), `ObjectOpenRecordIn.SIDE_PANEL` oppure `ObjectOpenRecordIn.RECORD_PAGE`. Fissalo su `RECORD_PAGE` per i record che devono occupare un'intera pagina per essere usabili, come avviene per i workflow e le dashboard, oppure su `SIDE_PANEL` per i record che hanno senso solo come pannello rapido, come avviene per gli eventi di calendario.
+* `writability` controlla chi può scrivere i record dell'oggetto in generale, prima che si applichino le autorizzazioni basate sui ruoli: `MetadataWritability.OPEN` (impostazione predefinita — i ruoli dello spazio di lavoro decidono), `MetadataWritability.APPLICATION` (solo le funzioni logiche della tua app possono creare, aggiornare o eliminare record; usa questa impostazione per oggetti simili a configurazioni i cui record determinano il comportamento, in modo che i membri dello spazio di lavoro con un ampio accesso ai record non possano modificarli tramite l'API) oppure `MetadataWritability.SYSTEM` (riservato ai dati gestiti dalla piattaforma). Le letture non sono influenzate — questo è applicato lato server, diversamente da `isUIEditable`, che si limita a nascondere gli elementi dell'interfaccia utente. Esiste anche per singolo campo, dove può essere soltanto più restrittivo rispetto al livello dell'oggetto.
+* I campi inline definiti qui **non** hanno bisogno di un `objectUniversalIdentifier` — viene ereditato dall'oggetto padre. Usa [`defineField()`](/l/it/developers/extend/apps/data/extending-objects) per aggiungere campi a oggetti che non possiedi.
+* Puoi generare nuovi oggetti con `yarn twenty dev:add object`, che ti guida nella denominazione, nei campi e nelle relazioni. Vedi [Architettura → Scaffolding delle entità](/l/it/developers/extend/apps/getting-started/scaffolding).
+
+<Note>
+**I campi base vengono aggiunti automaticamente.** Quando definisci un oggetto personalizzato, Twenty crea per te campi standard come `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` e `deletedAt`. Non è necessario dichiararli nel tuo array `fields` — solo i tuoi campi personalizzati. Puoi sovrascrivere un campo predefinito dichiarandone uno con lo stesso nome, ma è raramente una buona idea.
+</Note>
+
+## Tipi di campo
+
+L’insieme completo dei valori di `FieldType`, esportati da `twenty-sdk/define`:
+
+| Categoria                  | Tipi                                                                                                                               |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Testo                      | `TEXT`, `RICH_TEXT`, `ARRAY` (di stringhe), `RAW_JSON`                                                                             |
+| Numerico                   | `NUMBER` (`universalSettings.dataType`: `'float'` / `'int'` / `'bigint'`), `NUMERIC` (precisione arbitraria), `RATING`, `POSITION` |
+| Date                       | `DATE`, `DATE_TIME`                                                                                                                |
+| Scelta                     | `BOOLEAN`, `SELECT`, `MULTI_SELECT`                                                                                                |
+| Compositi                  | `FULL_NAME`, `ADDRESS`, `EMAILS`, `PHONES`, `LINKS`, `CURRENCY`, `ACTOR`, `FILES`                                                  |
+| Identificatori e relazioni | `UUID`, `RELATION`, `MORPH_RELATION` (vedi [Relazioni](/l/it/developers/extend/apps/data/relations))                                    |
+| Sistema                    | `TS_VECTOR` (vettore per la ricerca full-text, gestito dal server)                                                                 |
+
+I tipi compositi memorizzano più sotto-campi (ad es. `FULL_NAME` = nome + cognome; `CURRENCY` = `amountMicros` + `currencyCode`). `SELECT` e `MULTI_SELECT` richiedono un array `options` come nell’esempio sopra.
+
+## Valori predefiniti
+
+I valori predefiniti letterali devono essere racchiusi tra apici singoli **all'interno** della stringa — `defaultValue: "'Draft'"`, non `defaultValue: "Draft"`. Ecco perché il campo `status` sopra utilizza `` `'${PostCardStatus.DRAFT}'` ``.
+
+Le stringhe senza virgolette sono riservate ai valori predefiniti calcolati, valutati quando viene creato un record:
+
+* `'uuid'` — genera un UUID (per i campi `UUID`)
+* `'now'` — il timestamp corrente (per i campi `DATE_TIME`)
+
+La stessa convenzione si applica ai sotto-campi stringa dei valori compositi predefiniti (ad es. `{ source: "'MANUAL'" }` su un campo `ACTOR`) e ai valori `SELECT`/`MULTI_SELECT`. Una stringa letterale predefinita lasciata senza virgolette genera un avviso quando la tua app viene compilata.
+
+## Nullabilità
+
+`isNullable` controlla se un campo accetta `NULL`. Il valore predefinito è `true` — omettilo per i campi facoltativi. Imposta `isNullable: false` per rendere un campo obbligatorio a livello di database.
+
+Le modifiche a `isNullable` vengono applicate a ogni sincronizzazione, incluse quelle che aggiornano un campo esistente — quindi puoi cambiare la nullabilità di un campo modificando il manifest e rieseguendo la sincronizzazione.
+
+<Note>
+**Rendere un campo esistente che non ammette `NULL` richiede un valore predefinito.** Quando imposti `isNullable: false` per un campo, devi anche fornire un `defaultValue` non nullo. Il valore predefinito esegue il backfill di tutte le righe `NULL` esistenti prima che venga applicato il vincolo `NOT NULL`; senza di esso la sincronizzazione non riesce con l'errore `Default value cannot be null for non-nullable fields`. I campi di relazione e i campi `TS_VECTOR` ammettono sempre `NULL`, quindi `isNullable` non ha alcun effetto su di essi.
+</Note>
+
+```ts
+{
+  universalIdentifier: 'b1a7c0de-1234-4f00-9abc-000000000000',
+  name: 'reference',
+  type: FieldType.TEXT,
+  label: 'Reference',
+  isNullable: false,
+  defaultValue: "'N/A'",
+}
+```
+
+## Cosa c'è dopo
+
+* **Collega questo oggetto ad altri** — vedi [Relazioni](/l/it/developers/extend/apps/data/relations) per il pattern di relazione bidirezionale.
+* **Aggiungi campi a oggetti di altre app** — vedi [Estendere gli oggetti](/l/it/developers/extend/apps/data/extending-objects) per `defineField()`.
+* **Visualizza questo oggetto nell'interfaccia utente (UI)** — vedi [Voci del menu di navigazione](/l/it/developers/extend/apps/layout/navigation-menu-items) per aggiungere una voce nella barra laterale; vedi [Viste](/l/it/developers/extend/apps/layout/views) per aggiungere configurazioni di elenco personalizzate.

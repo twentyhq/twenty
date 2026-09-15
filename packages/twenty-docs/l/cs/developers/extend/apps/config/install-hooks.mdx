@@ -1,0 +1,188 @@
+---
+title: Instalační hooky
+description: Spouštějte logiku během životního cyklu instalace, upgradu nebo odinstalace – vložte výchozí data, zálohujte záznamy, ověřte upgrade, vyčistěte externí prostředky.
+icon: wrench
+---
+
+Instalační hooky jsou speciální logické funkce, které se spouštějí během životního cyklu instalace, upgradu nebo odinstalace. Sdílí stejný runtime handleru jako běžné [logické funkce](/l/cs/developers/extend/apps/logic/logic-functions), ale deklarují se pomocí vlastních definičních funkcí a fungují mimo běžný model triggerů (HTTP, cron, databázové události). Instalační hooky přijímají `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` je při čisté instalaci `undefined`); hook pro odinstalaci přijímá `UninstallPayload` (`{ version?: string }` — verze, která se odstraňuje).
+
+Každá aplikace smí definovat **nanejvýš jeden** hook každého typu (předinstalační, poinstalační, odinstalační). Sestavení manifestu skončí chybou, pokud je zjištěn více než jeden hook daného typu.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+## Na první pohled
+
+|                 | `definePreInstallLogicFunction`                                                                           | `definePostInstallLogicFunction`                                                                                                 |
+| --------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Spuštění        | Před migrací metadat — **předchozí** schéma a data jsou stále neporušené                                  | Po migraci a vygenerování SDK — **nové** schéma je připravené                                                                    |
+| Spuštění        | Vždy synchronní; blokuje instalaci                                                                        | Ve výchozím nastavení asynchronní (zařazeno do fronty, 3 pokusy); synchronní režim volitelný přes `shouldRunSynchronously: true` |
+| Při selhání     | Instalace je **zrušena** před jakoukoli změnou schématu                                                   | Asynchronně: opakováno až 3krát. Synchronně: volající obdrží `POST_INSTALL_ERROR` (změny schématu se **ne**vracejí zpět)         |
+| Typické použití | Zálohovat nebo opravit data, která by migrace ztratila; odmítnout rizikovou aktualizaci vyvoláním výjimky | Naplňte výchozí data, nakonfigurujte pracovní prostor, zaregistrujte externí prostředky                                          |
+
+**Pravidlo:** výchozí volbou je post-install. Po pre-install sáhněte pouze tehdy, když je samotná migrace destruktivní a potřebujete zachytit předchozí stav, než zmizí.
+
+| Chcete...                                                                       | Použít                                                                   |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Naplňte data, nakonfigurujte pracovní prostor, zaregistrujte externí prostředky | `post-install`                                                           |
+| Dlouho běžící práce, která by neměla blokovat odpověď instalace                 | `post-install` (výchozí asynchronní režim, s opakovanými pokusy workeru) |
+| Rychlé nastavení, na které volající spoléhá ihned po dokončení instalace        | `post-install` s `shouldRunSynchronously: true`                          |
+| Čtěte nebo zálohujte data, která by nadcházející migrace ztratila               | `pre-install`                                                            |
+| Odmítněte aktualizaci, která by poškodila existující data                       | `pre-install` (vyhoďte výjimku z obslužné funkce)                        |
+| Srovnání stavu při každé aktualizaci                                            | Libovolný hook s `shouldRunOnVersionUpgrade: true`                       |
+
+## Chování sdílené oběma hooky
+
+* Konfigurace je konfigurace `defineLogicFunction` bez nastavení triggeru, doplněná o `shouldRunOnVersionUpgrade`.
+* **Kdy se spouští**: ve výchozím nastavení pouze při čistých instalacích. Nastavte `shouldRunOnVersionUpgrade: true`, aby se spouštěl i při aktualizacích. Použijte `previousVersion` / `newVersion` k větvení podle cesty aktualizace.
+* **Idempotence je důležitá**: asynchronní post-install se může spouštět opakovaně a kterýkoli hook se znovu spouští při aktualizacích, když je `shouldRunOnVersionUpgrade` zapnuté.
+* Běžné prostředí logické funkce (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) je injektováno, takže můžete volat Twenty API s tokenem své aplikace.
+* Hook je při sestavení automaticky připojen k manifestu aplikace (`preInstallLogicFunction` / `postInstallLogicFunction`) — v [`defineApplication()`](/l/cs/developers/extend/apps/config/application) není potřeba na nic odkazovat.
+* Výchozí `timeoutSeconds` je 300, aby umožnil delší úlohy nastavení, jako je naplnění daty.
+* **Nespouští se v dev režimu**: `yarn twenty dev` přeskočí instalační flow a soubory synchronizuje přímo, takže se hooky v tomto režimu nikdy nespustí. Místo toho je spouštějte ručně:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --postInstall
+yarn twenty dev:function:exec --preInstall
+```
+
+<AccordionGroup>
+<Accordion title="definePostInstallLogicFunction" description="Spouští se po aplikování migrace metadat pracovního prostoru">
+
+Spouští se, jakmile vaše aplikace dokončí instalaci: metadata jsou synchronizovaná, klient SDK vygenerovaný a nové schéma je možné dotazovat. Příklad — při čisté instalaci naplňte výchozí záznam:
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = new CoreApiClient();
+  await client.mutation({
+    createPostCard: {
+      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
+      id: true,
+    },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+Příznak `shouldRunSynchronously` řídí model spuštění:
+
+* `false` *(výchozí)* — zařazeno do fronty zpráv (`retryLimit: 3`) a spuštěno workerem. Odezva instalace se vrátí, jakmile je úloha zařazena do fronty. **Používejte pro dlouho běžící práci** — naplňování velkých datových sad, pomalá API třetích stran.
+* `true` — spuštěno inline během instalačního flow. Instalační požadavek blokuje, dokud handler neskončí; vyvolaná chyba se projeví pro volajícího jako `POST_INSTALL_ERROR` (žádné opakované pokusy). **Používejte pro rychlou práci, která musí být dokončena před odpovědí.** Migrace už je v tomto bodě aplikovaná, takže selhání nevrací změny schématu zpět — pouze předá chybu dál.
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="Spouští se před aplikováním migrace metadat pracovního prostoru">
+
+Spouští se před migrací metadat, nad **předchozím** schématem — vhodné místo pro zálohování dat, která by migrace ztratila, nebo pro odmítnutí rizikové aktualizace. Před spuštěním server provede čistě aditivní „zjednodušenou synchronizaci“, která zaregistruje pouze pre-install funkci nové verze; vše ostatní — objekty, pole a data předchozí verze — zůstává při běhu vašeho handleru nedotčeno.
+
+Pre-install je vždy **synchronní** a blokuje instalaci. Pokud obslužná funkce vyvolá výjimku, instalace se přeruší ještě před jakoukoli změnou schématu — pracovní prostor zůstane na předchozí verzi v konzistentním stavu. Je to záměrné: pre-install je vaše poslední šance odmítnout rizikovou aktualizaci.
+
+Příklad — zkopírujte hodnoty staršího pole dříve, než ho migrace odstraní:
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = new CoreApiClient();
+  const { postCards } = await client.query({
+    postCards: {
+      __args: { filter: { notes: { isNot: null } } },
+      edges: { node: { id: true, notes: true } },
+    },
+  });
+
+  // Copy legacy `notes` into `description` before the migration drops the
+  // column. If this fails, the upgrade aborts and the workspace stays on v1.
+  for (const { node } of postCards.edges) {
+    await client.mutation({
+      updatePostCard: {
+        __args: { id: node.id, data: { description: node.notes } },
+        id: true,
+      },
+    });
+  }
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+</Accordion>
+</AccordionGroup>
+
+## Odinstalační hook
+
+`defineUninstallLogicFunction` deklaruje hook, který se spustí, když uživatel odinstaluje vaši aplikaci. Spustí se **předtím**, než jsou odstraněna metadata, data a kód aplikace — jakmile se spustí migrační skript pro smazání, nezbude nic, co by se dalo vykonat — takže váš handler může stále dotazovat objekty a záznamy aplikace. Použijte ho k úklidu externích prostředků: zrušení přidělených API prostředků, smazání zbývajících botů, zrušení webhooků.
+
+Poznámky:
+
+* Hook pracuje v režimu best effort: běží synchronně, ale chyba se pouze zapíše do logu a nikdy neblokuje odinstalaci — úklid nesmí znemožnit odebrání aplikace.
+* Přijímá `UninstallPayload` (`{ version?: string }` — verze, která se odstraňuje).
+* Nespouští se, pokud je neúspěšná čistá instalace vrácena zpět — aplikace nikdy nedokončila instalaci.
+* Hook nemůže běžet poté, co je aplikace pryč, takže externí úklid, který závisí na datech aplikace (např. ID botů uložená v záznamech), patří sem, ne do externí naplánované úlohy.
+* Stejně jako instalační hooky se **nespouští v dev módu** — místo toho ho vyvolejte ručně:
+
+```bash filename="Terminal"
+yarn twenty dev:function:exec --uninstall
+```
+
+```ts src/logic-functions/uninstall.ts
+import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (_payload: UninstallPayload): Promise<void> => {
+  const client = new CoreApiClient();
+  const { meetingBots } = await client.query({
+    meetingBots: { edges: { node: { id: true, externalBotId: true } } },
+  });
+
+  // Delete the provider-side bots so nothing keeps recording after uninstall.
+  for (const { node } of meetingBots.edges) {
+    await fetch(`https://api.recorder.example/bots/${node.externalBotId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${process.env.RECORDER_API_KEY}` },
+    });
+  }
+};
+
+export default defineUninstallLogicFunction({
+  universalIdentifier: 'b2c3d4e5-6789-01bc-def0-234567890abc',
+  name: 'uninstall',
+  description: 'Deletes remaining recorder bots when the app is uninstalled.',
+  timeoutSeconds: 300,
+  handler,
+});
+```

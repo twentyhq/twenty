@@ -1,60 +1,44 @@
-import { createContext, useLayoutEffect, useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { clsx } from 'clsx';
+import { createContext, useLayoutEffect, useRef, useState } from 'react';
 
+import { isDefined } from '@ui/utilities/utils/isDefined';
+
+import { ThemeScopeContext } from './ThemeScopeContext';
 import { themeCssVariables } from './themeCssVariables';
-
-type StringLeaves<T> = {
-  [K in keyof T]: T[K] extends string ? string : StringLeaves<T[K]>;
-};
-
-type DeepMerge<T, U> = {
-  [K in keyof T]: K extends keyof U
-    ? U[K] extends Record<string, unknown>
-      ? T[K] extends Record<string, unknown>
-        ? DeepMerge<T[K], U[K]>
-        : U[K]
-      : U[K]
-    : T[K];
-};
-
-// CSS variables that resolve to pure numbers at runtime
-type NumericOverrides = {
-  icon: {
-    size: { sm: number; md: number; lg: number; xl: number };
-    stroke: { sm: number; md: number; lg: number };
-  };
-  animation: {
-    duration: { instant: number; fast: number; normal: number; slow: number };
-  };
-  text: {
-    lineHeight: { lg: number; md: number };
-    iconSizeMedium: number;
-    iconSizeSmall: number;
-    iconStrikeLight: number;
-    iconStrikeMedium: number;
-    iconStrikeBold: number;
-  };
-  spacingMultiplicator: number;
-  lastLayerZIndex: number;
-};
-
-export type ThemeType = DeepMerge<
-  StringLeaves<typeof themeCssVariables>,
-  NumericOverrides
->;
+import { type ThemeType } from './themeTypes';
 
 export type ThemeContextType = {
   theme: ThemeType;
   colorScheme: 'light' | 'dark';
 };
 
-const computeThemeFromCss = (): ThemeType => {
-  const root = document?.documentElement;
+export type ThemeOverrides = Record<string, string | number>;
 
-  if (!root || typeof getComputedStyle !== 'function') {
+const resolveTokenValue = (
+  cssVariableReference: string,
+  computedValue: string,
+): string | number => {
+  if (!isNonEmptyString(computedValue)) {
+    return cssVariableReference;
+  }
+
+  const numericValue = Number(computedValue);
+
+  return Number.isNaN(numericValue) ? computedValue : numericValue;
+};
+
+const computeThemeFromCss = (sourceElement?: HTMLElement): ThemeType => {
+  if (
+    typeof document === 'undefined' ||
+    typeof getComputedStyle !== 'function'
+  ) {
     return themeCssVariables as unknown as ThemeType;
   }
 
-  const computedStyle = getComputedStyle(root);
+  const computedStyle = getComputedStyle(
+    sourceElement ?? document.documentElement,
+  );
 
   const resolve = (obj: Record<string, unknown>): Record<string, unknown> => {
     const result: Record<string, unknown> = {};
@@ -64,9 +48,11 @@ const computeThemeFromCss = (): ThemeType => {
 
       if (typeof value === 'string' && value.startsWith('var(')) {
         const varName = value.slice(4, -1);
-        const raw = computedStyle.getPropertyValue(varName).trim();
-        const num = Number(raw);
-        result[key] = raw !== '' && !isNaN(num) ? num : raw;
+
+        result[key] = resolveTokenValue(
+          value,
+          computedStyle.getPropertyValue(varName).trim(),
+        );
       } else if (typeof value === 'object' && value !== null) {
         result[key] = resolve(value as Record<string, unknown>);
       } else {
@@ -83,7 +69,8 @@ const computeThemeFromCss = (): ThemeType => {
 };
 
 const applyColorSchemeClass = (colorScheme: 'light' | 'dark') => {
-  const root = document?.documentElement;
+  if (typeof document === 'undefined') return;
+  const root = document.documentElement;
   if (!root?.classList) return;
   root.classList.toggle('dark', colorScheme === 'dark');
   root.classList.toggle('light', colorScheme === 'light');
@@ -97,23 +84,91 @@ export const ThemeContext = createContext<ThemeContextType>({
 export const ThemeProvider = ({
   children,
   colorScheme,
+  applyToRoot = true,
+  overrides,
+  className,
+  scale,
 }: {
   children: React.ReactNode;
   colorScheme: 'light' | 'dark';
+  applyToRoot?: boolean;
+  overrides?: ThemeOverrides;
+  className?: string;
+  scale?: number;
 }) => {
+  const isScoped = isDefined(overrides) || !applyToRoot;
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
   const [theme, setTheme] = useState<ThemeType>(() => {
-    applyColorSchemeClass(colorScheme);
+    if (applyToRoot) {
+      applyColorSchemeClass(colorScheme);
+    }
     return computeThemeFromCss();
   });
+  const [scopeContainer, setScopeContainer] = useState<HTMLElement | null>(
+    null,
+  );
+
+  const overridesKey = isDefined(overrides) ? JSON.stringify(overrides) : '';
 
   useLayoutEffect(() => {
-    applyColorSchemeClass(colorScheme);
-    setTheme(computeThemeFromCss());
-  }, [colorScheme]);
+    if (applyToRoot) {
+      applyColorSchemeClass(colorScheme);
+    }
+
+    setTheme(
+      computeThemeFromCss(
+        isScoped ? (wrapperRef.current ?? undefined) : undefined,
+      ),
+    );
+    setScopeContainer(isScoped ? wrapperRef.current : null);
+  }, [colorScheme, applyToRoot, isScoped, overridesKey]);
+
+  // The interface scale preference is consumed by the root zoom rule in the
+  // app stylesheet through --t-scale-user, which only reads from the html
+  // element, so scoped providers ignore the prop instead of writing a value
+  // nothing consumes. Computed styles stay unzoomed, so no theme recompute is
+  // needed when the value changes. The cleanup is only registered from the
+  // branch that set the property, so a provider mounted without a scale can
+  // never clear a value another provider owns.
+  useLayoutEffect(() => {
+    if (typeof document === 'undefined' || isScoped || !isDefined(scale)) {
+      return;
+    }
+
+    const scaleTarget = document.documentElement;
+
+    scaleTarget.style.setProperty('--t-scale-user', String(scale));
+
+    return () => {
+      scaleTarget.style.removeProperty('--t-scale-user');
+    };
+  }, [scale, isScoped]);
+
+  const contextValue = { theme, colorScheme };
+
+  if (!isScoped) {
+    return (
+      <ThemeContext.Provider value={contextValue}>
+        {children}
+      </ThemeContext.Provider>
+    );
+  }
+
+  const overridesStyle = (overrides ?? {}) as React.CSSProperties;
 
   return (
-    <ThemeContext.Provider value={{ theme, colorScheme }}>
-      {children}
+    <ThemeContext.Provider value={contextValue}>
+      <ThemeScopeContext.Provider value={scopeContainer}>
+        <div
+          ref={wrapperRef}
+          className={clsx(applyToRoot ? undefined : colorScheme, className)}
+          style={{ display: 'contents', ...overridesStyle }}
+        >
+          {children}
+        </div>
+      </ThemeScopeContext.Provider>
     </ThemeContext.Provider>
   );
 };

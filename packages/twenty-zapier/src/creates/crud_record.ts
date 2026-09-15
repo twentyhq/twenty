@@ -2,11 +2,19 @@ import type { Bundle, ZObject } from 'zapier-platform-core';
 import { findObjectNamesSingularKey } from 'src/triggers/find_object_names_singular';
 import { listRecordIdsKey } from 'src/triggers/list_record_ids';
 import { computeInputFields } from 'src/utils/computeInputFields';
-import { type InputData } from 'src/utils/data.types';
+import { type InputData, type Node, type Schema } from 'src/utils/data.types';
 import handleQueryParams from 'src/utils/handleQueryParams';
 import requestDb, { requestSchema } from 'src/utils/requestDb';
 import { DatabaseEventAction } from 'src/utils/triggers/triggers.utils';
 import { isNonEmptyString } from '@sniptt/guards';
+
+const getObjectNode = (
+  schema: Schema,
+  nameSingular: string,
+): Node | undefined =>
+  schema.data.objects.edges.find(
+    (edge) => edge.node.nameSingular === nameSingular,
+  )?.node;
 
 const capitalize = (stringToCapitalize: string) => {
   if (!isNonEmptyString(stringToCapitalize)) return '';
@@ -51,13 +59,14 @@ const computeFields = async (z: ZObject, bundle: Bundle) => {
 const computeQueryParameters = (
   operation: DatabaseEventAction,
   data: InputData,
+  node?: Node,
 ): string => {
   switch (operation) {
     case DatabaseEventAction.CREATED:
-      return `data:{${handleQueryParams(data)}}`;
+      return `data:{${handleQueryParams(data, node)}}`;
     case DatabaseEventAction.UPDATED:
       return `
-      data:{${handleQueryParams(data)}},
+      data:{${handleQueryParams(data, node)}},
       id: "${data.id}"
       `;
     case DatabaseEventAction.DELETED:
@@ -89,17 +98,21 @@ const getOperationFromDatabaseEventAction = (
   }
 };
 
-const perform = async (z: ZObject, bundle: Bundle) => {
+const perform = async (z: ZObject, bundle: Bundle<InputData>) => {
   const data = bundle.inputData;
   const operation = data.crudZapierOperation;
   const queryOperation = getOperationFromDatabaseEventAction(z, operation);
   const nameSingular = data.nameSingular;
+  const node =
+    operation === DatabaseEventAction.DELETED
+      ? undefined
+      : getObjectNode(await requestSchema(z, bundle), nameSingular);
   delete data.nameSingular;
   delete data.crudZapierOperation;
   const query = `
   mutation ${queryOperation}${capitalize(nameSingular)} {
     ${queryOperation}${capitalize(nameSingular)}(
-      ${computeQueryParameters(operation, data)}
+      ${computeQueryParameters(operation, data, node)}
     )
     {id}
   }`;

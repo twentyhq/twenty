@@ -4,6 +4,9 @@ import { AllMetadataName } from 'twenty-shared/metadata';
 import { QueryRunner } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/workspace-migration-duration-ms-bucket-boundaries.constant';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ALL_METADATA_ENTITY_BY_METADATA_NAME } from 'src/engine/metadata-modules/flat-entity/constant/all-metadata-entity-by-metadata-name.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -26,6 +29,7 @@ import {
   WorkspaceMigrationRunnerException,
   WorkspaceMigrationRunnerExceptionCode,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
+import { type AfterCommitSideEffect } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/after-commit-side-effect.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
 import {
   WorkspaceMigrationActionRunnerContext,
@@ -54,6 +58,7 @@ export type ActionHandlerExecuteResult<TMetadataName extends AllMetadataName> =
       | MetadataToFlatEntityMapsKey<TMetadataName>
     >;
     metadataEvents: MetadataEvent[];
+    afterCommitSideEffects: AfterCommitSideEffect[];
   };
 
 export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
@@ -64,17 +69,17 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     TActionType,
     TMetadataName
   >,
-  TFlatAction extends
-    AllFlatWorkspaceMigrationAction = AllFlatWorkspaceMigrationAction<
-    TActionType,
-    TMetadataName
-  >,
+  TFlatAction extends AllFlatWorkspaceMigrationAction =
+    AllFlatWorkspaceMigrationAction<TActionType, TMetadataName>,
 > {
   public actionType: TActionType;
   public metadataName: TMetadataName;
 
   @Inject(LoggerService)
   protected readonly logger: LoggerService;
+
+  @Inject(MetricsService)
+  protected readonly metricsService: MetricsService;
 
   public abstract transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<TUniversalAction>,
@@ -135,6 +140,12 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
   ): Promise<void> {
     return Promise.resolve();
+  }
+
+  protected getAfterCommitSideEffects(
+    _context: WorkspaceMigrationActionRunnerContext<TFlatAction>,
+  ): AfterCommitSideEffect[] {
+    return [];
   }
 
   private optimisticallyApplyActionOnAllFlatEntityMaps({
@@ -281,13 +292,18 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
       allFlatEntityMaps: context.allFlatEntityMaps,
     });
 
+    const afterCommitSideEffects = this.getAfterCommitSideEffects({
+      ...context,
+      flatAction,
+    });
+
     const partialOptimisticCache =
       this.optimisticallyApplyActionOnAllFlatEntityMaps({
         flatAction,
         allFlatEntityMaps: context.allFlatEntityMaps,
       });
 
-    return { partialOptimisticCache, metadataEvents };
+    return { partialOptimisticCache, metadataEvents, afterCommitSideEffects };
   }
 
   async rollback(
@@ -310,18 +326,43 @@ export abstract class BaseWorkspaceMigrationRunnerActionHandlerService<
     label,
     method,
   }: {
-    label: string;
+    label: 'executeForMetadata' | 'executeForWorkspaceSchema';
     method: () => Promise<void>;
   }): Promise<void> {
-    this.logger.time(
+    const startedAt = performance.now();
+
+    const recordActionDuration = (status: 'success' | 'fail') =>
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.WorkspaceMigrationActionDurationMs,
+        value: performance.now() - startedAt,
+        unit: 'ms',
+        attributes: {
+          actionType: this.actionType,
+          metadataName: this.metadataName,
+          step: label,
+          status,
+        },
+        bucketBoundaries: WORKSPACE_MIGRATION_DURATION_MS_BUCKET_BOUNDARIES,
+      });
+
+    this.logger.perfTime(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
       `${this.actionType}_${this.metadataName} ${label}`,
     );
-    await method();
-    this.logger.timeEnd(
+
+    try {
+      await method();
+    } catch (error) {
+      recordActionDuration('fail');
+      throw error;
+    }
+
+    this.logger.perfTimeEnd(
       'BaseWorkspaceMigrationRunnerActionHandlerService',
       `${this.actionType}_${this.metadataName} ${label}`,
     );
+
+    recordActionDuration('success');
   }
 }
 

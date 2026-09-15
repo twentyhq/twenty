@@ -65,7 +65,7 @@ export const useSettingsCustomDomain = () => {
         });
         enqueueSuccessSnackBar({ message: t`Custom domain updated` });
         setIsSubmitting(false);
-        checkCustomDomainRecords();
+        checkCustomDomainRecords(domainValue);
       },
       onError: (mutationError) => {
         if (

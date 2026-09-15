@@ -1,0 +1,238 @@
+---
+title: 2. Generarea documentelor
+icon: bolt
+description: O funcţie logică, expusă ca instrument AI şi acţiune a fluxului de lucru.
+---
+
+Acum, nucleul: o [funcţie logică](/l/ro/developers/extend/apps/logic/logic-functions)
+care încarcă un şablon şi o înregistrare, completează substituenţii şi salvează un nou document
+.
+
+Vom scrie logica de afaceri o dată ca **manipulator**, apoi o vom expune prin
+mai mulţi declanşatori. Acest capitol le leagă pe două - un instrument **IA** și un
+**acțiune flux de lucru**.
+
+## Ajutor de redare
+
+Păstrați logica pură în propriul fișier, astfel încât să fie ușor de testat unitar. Acest lucru nivelează o înregistrare
+în `{{dot.path}}` îi jefuiește și le înlocuiește.
+
+```ts filename="src/logic-functions/utils/render-template.ts"
+const PLACEHOLDER_PATTERN = /\{\{\s*([\w.]+)\s*\}\}/g;
+
+export const renderTemplate = (body: string, values: Record<string, string>) => {
+  const missingTokens = new Set<string>();
+  const content = body.replace(PLACEHOLDER_PATTERN, (_m, token: string) => {
+    const value = values[token];
+    if (value === undefined || value === '') { missingTokens.add(token); return ''; }
+    return value;
+  });
+  return { content, missingTokens: [...missingTokens] };
+};
+```
+
+<Tip>
+Deoarece acest fișier nu are reacții adverse, îl puteți acoperi cu teste rapide de unitate
+('test yarn:unit'). Vezi [Testing](/l/ro/developers/extend/apps/operations/testing).
+</Tip>
+
+## Gestionarul
+
+Gestionarul folosește [`CoreApiClient`](/l/ro/developers/extend/apps/logic/logic-functions)
+pentru a citi și scrie date CRM. Încarcă șablonul, încarcă înregistrarea țintă, umple numărul
+și creează un `document`.
+
+```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { loadRecordValues } from 'src/logic-functions/utils/load-record-values';
+import { renderTemplate } from 'src/logic-functions/utils/render-template';
+
+export const generateDocumentHandler = async (
+  input: { templateId: string; recordId: string },
+) => {
+  const client = new CoreApiClient();
+
+  // Use a filtered list query, not the singular lookup: the singular query
+  // throws when nothing matches, which would become a 500 instead of a 404.
+  const { documentTemplates } = await client.query({
+    documentTemplates: {
+      __args: { filter: { id: { eq: input.templateId } }, first: 1 },
+      edges: { node: { id: true, name: true, body: true, target: true } },
+    },
+  });
+  const documentTemplate = documentTemplates?.edges?.[0]?.node;
+  if (!documentTemplate?.id) return { success: false, status: 404, message: 'Template not found.' };
+
+  const record = await loadRecordValues(client, documentTemplate.target, input.recordId);
+  if (!record.found) return { success: false, status: 404, message: 'Record not found.' };
+
+  const { content, missingTokens } = renderTemplate(documentTemplate.body ?? '', record.values);
+
+  const { createDocument } = await client.mutation({
+    createDocument: {
+      __args: { data: {
+        name: `${documentTemplate.name} — ${record.displayName}`,
+        content, status: 'GENERATED', templateId: documentTemplate.id,
+      } },
+      id: true, name: true,
+    },
+  });
+
+  return { success: true, documentId: createDocument.id, content, missingTokens };
+};
+```
+
+`loadRecordValues` rulează o interogare diferită pentru o Persoană vs. o companie și aplatizează
+rezultatul - vezi
+[`load-record-values.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/load-record-values.ts).
+
+## Expuneți-l ca instrument și acțiune de flux de lucru
+
+Un singur `defineLogicFunction` poate purta mai multe declanşatoare. Aici, `toolTriggerSettings`
+îl face apelabil de către agenții AI, iar `workflowActionTriggerSettings` îl transformă într-un pas
+în constructorul fluxului de lucru vizual. Amândoi descriu datele lor cu ajutorul unei scheme JSON.
+
+```ts filename="src/logic-functions/generate-document.ts"
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { jsonSchemaToInputSchema } from 'twenty-sdk/logic-function';
+import { GENERATE_DOCUMENT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+import { generateDocumentInputSchema } from 'src/logic-functions/schemas/generate-document-input.schema';
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document',
+  description: 'Generate a document from a template and a CRM record.',
+  timeoutSeconds: 30,
+  toolTriggerSettings: {
+    inputSchema: generateDocumentInputSchema,
+  },
+  workflowActionTriggerSettings: {
+    label: 'Generate Document',
+    icon: 'IconFileText',
+    inputSchema: jsonSchemaToInputSchema(generateDocumentInputSchema),
+    outputSchema: [{ type: 'object', properties: {
+      success: { type: 'boolean' }, documentId: { type: 'string' },
+    } }],
+  },
+  handler: generateDocumentHandler,
+});
+```
+
+Schema de introducere este o schemă JSON simplă care descrie `templateId` și `recordId` —
+vezi [`generate-document-input.schema.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/schemas/generate-document-input.schema.ts).
+
+## Acordă acces
+
+Funcțiile logice funcționează ca rolul aplicației. Trebuie să citească șabloane și înregistrări
+și să creeze documente, așa că permiteți acest lucru în `src/roles/default-role.ts`:
+
+```ts
+export default defineApplicationRole({
+  universalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  label: 'Document Generator default role',
+  canReadAllObjectRecords: true,
+  canUpdateAllObjectRecords: true,
+  canAccessAllTools: true,
+  canBeAssignedToAgents: true,
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.UPLOAD_FILE],
+});
+```
+
+`UPLOAD_FILE` lasă funcţia să încarce PDF-ul generat în secţiunea următoare.
+Vezi [Roles](/l/ro/developers/extend/apps/config/roles) pentru permisiunile cu bobul superior.
+
+## Atașează un fișier PDF real
+
+Un câmp text redat este util, dar utilizatorii doresc un document adevărat. Hai să generăm un
+**PDF** şi să-l stocăm în înregistrare ca un fişier ce poate fi descărcat.
+
+În primul rând, daţi "document" obiectului `FILES` un câmp pentru a ţine fișierul PDF. Aplicațiile încarcă
+în câmpurile lor **proprii** de fișiere, astfel încât acest câmp este ruta încărcării:
+
+```ts filename="src/objects/document.object.ts"
+{
+  universalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.FILES,
+  name: 'file',
+  label: 'File',
+  icon: 'IconFileTypePdf',
+  universalSettings: { maxNumberOfValues: 1 },
+}
+```
+
+Acum redă acel PDF. O aplicație este un proiect node real, astfel încât puteți adăuga pachetul npm
+de care aveți nevoie și îl puteți importa ca oriunde altundeva. Folosim **[pdf-lib](https://pdf-lib.js.org/)**
+pentru a desena PDF şi **[marked](https://marked.js.org/)** pentru a analiza corpul Markdown- CLI le instalează în rularea funcţiei:
+
+```bash filename="Terminal"
+yarn add pdf-lib marked
+```
+
+Ajutorul complet este
+[`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
+Analizează Markdown-ul în tokeni cu `marked.lexer`, apoi îl aranjează cu
+pdf-lib: titluri reale, pasaje **bold**/*italic*, liste cu buline și liste numerotate,
+blocuri de citat și linii — o redare A4 finisată, pe mai multe pagini, a șablonului
+în sine, mai degrabă decât un zid de text.
+
+<Frame caption="PDF-ul generat: tipografie reală şi formatare Markdown, redând corpul şablonului.">
+  <img src="/imagini/documente/dezvoltatori/extinderi/aplicații/generator/07b-generat-pdf.png" alt="Un PDF generat lustruit si vanzabil" />
+</Frame>
+
+<Note>
+fonturile încorporate ale pdf-lib-ului folosesc codificarea WinAnsi, astfel încât accentele europene occidentale dau
+din cutie; Hărțile ajutătoare nu pot codifica ghilimele, ghilimele și scadea cu caracterele
+. Redarea scripturilor non-latine (chineză, arabă, chirilică) ar însemna
+încorporarea unui font Unicode.
+</Note>
+
+Apoi încărcați-l și stocați referința în înregistrare. `uploadFile` trasee bytes
+către câmpul de fișiere deținute de aplicație; `id` returnat este ceea ce salvați:
+
+```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import { generateDocumentPdf } from 'src/logic-functions/utils/generate-document-pdf';
+
+const documentName = `${documentTemplate.name} — ${record.displayName}`;
+const bytes = await generateDocumentPdf(documentName, content);
+const fileName = 'proposal.pdf';
+
+const uploaded = await new MetadataApiClient().uploadFile(
+  Buffer.from(bytes),
+  fileName,
+  'application/pdf',
+  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+);
+
+await client.mutation({
+  updateDocument: {
+    __args: {
+      id: documentId,
+      data: { file: [{ fileId: uploaded.id, label: fileName }] },
+    },
+    id: true,
+  },
+});
+```
+
+Documentul generat poartă acum un PDF care poate fi descărcat:
+
+<Frame caption="Fișierul PDF generat, stocat pe câmpul Fișier al documentului.">
+  <img src="/imagini/documente/dezvoltatori/extensii/aplicații/document-generator/08-document-with-pdf.png" alt="O înregistrare document cu un fișier PDF generat" />
+</Frame>
+
+<Note>
+`uploadFile` țintește doar câmpurile fișierelor **app-owned** (astfel încât încărcările necesită întotdeauna o aplicație
+care deține câmpul, plus steagul de rol `UPLOAD_FILE`). Acesta este motivul pentru care PDF
+aterizează pe câmpul `fișier` al înregistrării - același model
+[aplicația pentru înregistrare](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/public/call-recorder)
+folosit pentru înregistrări.
+</Note>
+
+**După acest pas:** fiecare document generat are un PDF real, descărcabil. Dar
+nimic nu poate *apela* generatorul din interfață — pentru asta avem nevoie de un traseu HTTP.
+
+<Card title="Următorul: Rute HTTP →" icon="glob" href="/dezvoltatori/extindere/aplicații/tutoriale/document-generator/http-routes">
+  Serviți funcția de HTTP și redați documentele ca pagini web.
+</Card>

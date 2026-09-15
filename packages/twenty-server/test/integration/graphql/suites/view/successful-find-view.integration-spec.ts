@@ -69,8 +69,18 @@ describe('successful find view with all sub-relations (e2e)', () => {
 
       jestExpectToBeDefined(testView);
 
-      expect(testView).toMatchSnapshot(
-        extractRecordIdsAndDatesAsExpectAny({ ...testView }),
+      const stableTestView = {
+        ...testView,
+        viewFields: [...testView.viewFields].sort(
+          (a, b) => a.position - b.position,
+        ),
+      };
+
+      // universalIdentifier stays normalized: the sample-app fields seeded on
+      // the company view get per-seed identifiers, so the engine-derived view
+      // field identifiers displaying them differ across seeds too.
+      expect(stableTestView).toMatchSnapshot(
+        extractRecordIdsAndDatesAsExpectAny({ ...stableTestView }),
       );
     });
   });

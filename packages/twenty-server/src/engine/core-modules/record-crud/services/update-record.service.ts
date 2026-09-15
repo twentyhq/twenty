@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
 import { CommonUpdateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-one-query-runner.service';
 import {
@@ -30,6 +30,7 @@ export class UpdateRecordService {
       objectRecord,
       fieldsToUpdate,
       authContext,
+      rolePermissionConfig,
     } = params;
 
     if (!isDefined(objectRecordId) || !isValidUuid(objectRecordId)) {
@@ -49,16 +50,16 @@ export class UpdateRecordService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
+        rolePermissionConfig,
       });
 
       if (
-        !canObjectBeManagedByWorkflow({
+        !canObjectBeManagedByAutomation({
           nameSingular: flatObjectMetadata.nameSingular,
-          isSystem: flatObjectMetadata.isSystem,
         })
       ) {
         throw new RecordCrudException(
-          'Failed to update: Object cannot be updated by workflow',
+          'Failed to update: Object cannot be updated by automation',
           RecordCrudExceptionCode.INVALID_REQUEST,
         );
       }
@@ -73,7 +74,6 @@ export class UpdateRecordService {
         };
       }
 
-      // Filter objectRecord to only include fieldsToUpdate
       const filteredObjectRecord = Object.keys(objectRecord).reduce(
         (acc, key) => {
           if (fieldsToUpdateArray.includes(key)) {

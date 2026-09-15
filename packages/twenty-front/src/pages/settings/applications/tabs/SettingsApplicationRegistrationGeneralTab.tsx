@@ -1,13 +1,14 @@
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 
 import { useLingui } from '@lingui/react/macro';
-import { useNavigate } from 'react-router-dom';
-import { InlineBanner } from 'twenty-ui/display';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { InlineBanner } from 'twenty-ui/feedback';
 import { SettingsApplicationRegistrationGeneralInfo } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo';
 
+import { SettingsAdminApplicationRegistrationClaims } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationClaims';
 import { SettingsAdminApplicationRegistrationDangerZone } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone';
 import { SettingsApplicationRegistrationGeneralStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationGeneralStats';
-import { SettingsAdminApplicationRegistrationGeneralToggles } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralToggles';
+import { SettingsAdminApplicationRegistrationGeneralSwitches } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationGeneralSwitches';
 
 export const SettingsApplicationRegistrationGeneralTab = ({
   registration,
@@ -17,6 +18,7 @@ export const SettingsApplicationRegistrationGeneralTab = ({
   fromAdmin?: boolean;
 }) => {
   const { t } = useLingui();
+  const location = useLocation();
   const navigate = useNavigate();
 
   return (
@@ -24,22 +26,33 @@ export const SettingsApplicationRegistrationGeneralTab = ({
       {!registration.isConfigured && fromAdmin && (
         <InlineBanner
           color="danger"
-          message={t`This app has required server variables that are not configured. Users won't be able to install it until all required variables are set.`}
+          message={t`This app is not fully configured. Users won't be able to install it until all required server variables are set, and — for apps exposing a server route — until the app is claimed and installed on its owner workspace.`}
           button={{
             title: t`Configure`,
-            onClick: () => navigate('#config'),
+            onClick: () =>
+              navigate(
+                { search: location.search, hash: '#config' },
+                { state: location.state },
+              ),
           }}
         />
       )}
       <SettingsApplicationRegistrationGeneralInfo registration={registration} />
       {fromAdmin && (
-        <SettingsAdminApplicationRegistrationGeneralToggles
+        <SettingsAdminApplicationRegistrationGeneralSwitches
           registration={registration}
         />
       )}
-      <SettingsApplicationRegistrationGeneralStats
-        registration={registration}
-      />
+      {fromAdmin && (
+        <SettingsAdminApplicationRegistrationClaims
+          applicationRegistrationId={registration.id}
+        />
+      )}
+      {fromAdmin && (
+        <SettingsApplicationRegistrationGeneralStats
+          registration={registration}
+        />
+      )}
       <SettingsAdminApplicationRegistrationDangerZone
         registration={registration}
         fromAdmin={fromAdmin}

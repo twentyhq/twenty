@@ -19,7 +19,7 @@ Acțiunile definesc ce se întâmplă după declanșarea unui trigger. Puteți �
 
 <img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
 
-### Creați o Înregistrare
+### Creează înregistrare
 
 Adaugă o nouă înregistrare la un obiect selectat.
 
@@ -112,15 +112,15 @@ Creează o înregistrare nouă sau actualizează una existentă pe baza criterii
 
 **Configurare**:
 
-* Selectați array-ul de înregistrări dintr-un pas anterior (de ex., rezultate din Search Records, dintr-un declanșator Manual cu disponibilitate Bulk, dintr-un nod de cod)
+* Selectați array de înregistrări dintr-un pas anterior (de exemplu, rezultate din Căutare Records, dintr-un declanșator manual cu disponibilitate în grup, dintr-un nod Cod). Când un pas de tip Cod sau funcție logică returnează un array de nivel superior, selectează opțiunea **Whole list** pentru a itera peste întregul rezultat.
 * Definiți acțiunile de efectuat pe fiecare înregistrare în buclă.
 
 <Note>
-- Puteți adăuga mai multe acțiuni în cadrul unui iterator.
-- Când folosiți ramuri în interiorul unui iterator, asigurați-vă că ultimul pas al fiecărei ramuri se conectează înapoi la iterator pentru a închide bucla.
+- Puteți adăuga mai multe acțiuni în interiorul unui Iterator.
+- Când folosești ramuri în interiorul unui Iterator, asigură-te că ultimul pas al fiecărei ramuri se conectează înapoi la Iterator pentru a închide bucla.
 </Note>
 
-* Accesați câmpurile `Current Item`: pentru a utiliza câmpuri din înregistrarea procesată în prezent, faceți clic pe pasul **Iterator**, apoi selectați **Current item**. Lista câmpurilor disponibile din acea înregistrare va fi afișată și poate fi selectată pentru utilizare în acțiunile ulterioare.
+* Accesați câmpurile `Current Item`: pentru a utiliza câmpuri din înregistrarea procesată în prezent, faceți clic pe pasul **Iterator**, apoi selectați **Current item**. Lista câmpurilor disponibile din acea înregistrare va fi afișată și poate fi selectată pentru utilizare în acțiunile ulterioare. Poți, de asemenea, să selectezi **Use the whole item** pentru a trimite întregul element curent într-un pas ulterior.
 
 <VimeoEmbed videoId="1146577247" title="Demonstrație video" />
 
@@ -181,7 +181,7 @@ Data programată nu poate fi în trecut. Dacă este utilizat un câmp de tip dat
 ### Trimite email
 
 Trimite un email din fluxul dumneavoastră de lucru. Este excelent pentru emailuri de grup bazate pe șabloane. Emailurile vor arăta ca cele pe care le trimiteți din căsuța de e-mail.
-Nu este potrivit pentru newslettere (care necesită o formatare mai bogată) sau pentru secvențe automate de emailuri.
+Nu este potrivit pentru newsletter-uri (care necesită formatare mai bogată) sau secvențe automate de e-mail.
 
 **Cerințe prealabile**: Adăugați un cont de email în Settings → Accounts
 
@@ -202,7 +202,7 @@ Pentru toți pașii următori, puteți face referire la variabile din pașii ant
 </Note>
 
 * Setați linia de subiect.
-* Compuneți corpul mesajului. Puteți formata linkuri, crea liste numerotate, liste cu puncte, adăuga atașamente.
+* Compuneți corpul mesajului. Aveţi posibilitatea să formataţi link-uri, să creaţi liste numerotate, liste de puncte de liniuţă, şi să adăugaţi ataşamente.
 
 <Note>
 Adăugarea semnăturilor HTML nu este posibilă în acest moment.
@@ -213,24 +213,24 @@ Adăugarea semnăturilor HTML nu este posibilă în acest moment.
 Solicită un formular în timpul execuției fluxului de lucru pentru a colecta intrarea utilizatorului. Răspunsurile pot fi apoi folosite în pașii următori pentru a crea înregistrări, a trimite emailuri sau a executa orice altă acțiune pe baza datelor introduse.
 
 <Warning>
-**Formularele sunt concepute doar pentru declanșatoare manuale**. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificări va fi lansat în 2026 pentru a sprijini corespunzător formularele în fluxurile de lucru automatizate.
+**Formularele sunt concepute doar pentru declanșatoare manuale**. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificare va fi lansat în 2026 pentru a sprijini în mod corespunzător formulare în fluxuri de lucru automate.
 </Warning>
 
 **Configurare**:
 
 * Configurați câmpurile pe care utilizatorii vor fi solicitați să le completeze. Pentru fiecare câmp, alegeți
-  * un tip dintre text, număr, dată, o anumită înregistrare, un câmp select. Câmpurile de tip select din toate obiectele sunt disponibile.
+  * un tip dintre text, număr, dată, o anumită înregistrare, un câmp select. Câmpurile din toate obiectele sunt disponibile pentru selecţie.
   * o etichetă
   * o valoare implicită la `Placeholder` (opțional)
 * Editați titlul formularului
 
 **Output**: Răspunsurile formularului sunt disponibile pentru utilizare în pașii următori.
 
-**Exemplu**: Fluxul de lucru "Quick Lead" este disponibil implicit în toate spațiile de lucru, disponibil oriunde în Command Menu `Cmd + K`.
+**Exemplu**: Fluxul de lucru "Quick Lead" este disponibil implicit în toate locurile de lucru, disponibil oriunde în meniul de comandă `Cmd+K`.
 
 **Cum să completați formularul**:
 
-* Declanșați fluxul de lucru manual din meniul de comandă `Cmd K`
+* Declanşaţi fluxul de lucru manual din Meniul de Comandă `Cmd+K`
 * Completați formularul afișat în panoul lateral și faceți clic pe `Submit`.
 
 <Note>
@@ -245,9 +245,11 @@ Câmpurile nu pot fi făcute obligatorii.
 
 Rulați JavaScript personalizat în cadrul fluxului dumneavoastră de lucru.
 
+În fundal, fiecare acțiune de cod este susținută de propria **funcție logică** — o funcție TypeScript pe server, care rulează pe platforma Twenty. Când adaugi o acțiune de cod, Twenty creează o funcție logică dedicată pentru acel pas și îi afișează editorul inline, astfel încât codul pe care îl scrii rămâne asociat cu workflow-ul.
+
 **Configurare**:
 
-* Accesați variabilele din pașii anteriori. Puteți edita dinamic numele variabilelor.
+* Accesați variabilele din pașii anteriori. Poți edita dinamic numele variabilelor.
 
 <VimeoEmbed videoId="1147281795" title="Demonstrație video" />
 
@@ -265,6 +267,25 @@ Dacă trebuie să utilizați chei API externe în codul dvs., trebuie să le int
 
 <Tip>
 Faceți clic pe pictograma pătrată din dreapta sus a editorului de cod pentru a-l afișa pe tot ecranul — util, deoarece lățimea implicită a editorului este limitată.
+</Tip>
+
+#### Reutilizarea unei funcții logice între workflow-uri
+
+Acțiunea de cod inline este excelentă pentru logică ad-hoc, dar codul pe care îl conține aparține acelui singur pas. Când vrei să partajezi aceeași logică între mai multe workflow-uri — sau să o menții ca sursă versionată într-o aplicație — definește o **funcție logică reutilizabilă** în loc să copiezi și să lipești cod în fiecare acțiune de cod.
+
+O funcție logică este definită o singură dată într-o aplicație (folosind `defineLogicFunction` din SDK) și expusă în constructorul de workflow prin adăugarea `workflowActionTriggerSettings`. După ce aplicația ta este instalată, acea funcție apare ca acțiune separată în constructorul de workflow, alături de acțiunile încorporate. Selectarea acesteia afișează câmpurile de intrare pe care le-ai declarat (cu selectoare de variabile, la fel ca alte acțiuni) și rulează codul tău partajat — fără a fi necesar JavaScript inline.
+
+|                                    | Acțiune de cod                                         | Funcție logică reutilizabilă                                           |
+| ---------------------------------- | ------------------------------------------------------ | ---------------------------------------------------------------------- |
+| **Locul în care „trăiește” codul** | Editor inline, legat de un singur pas al workflow-ului | Definită într-o aplicație, versionată în sistemul de control al sursei |
+| **Reutilizare**                    | Copiat și lipit pentru fiecare pas                     | Adăugată ca acțiune în orice workflow                                  |
+| **Intrări**                        | Variabile conectate în editor                          | Câmpuri afișate pe baza schemei de intrare declarate                   |
+| **Cel mai potrivit pentru**        | Logică rapidă, specifică workflow-ului                 | Logică partajată, folosită în mai multe workflow-uri                   |
+
+Ambele rulează pe același runtime pentru funcții logice, astfel încât o acțiune de cod pe care ai prototipat-o inline poate fi ulterior promovată într-o funcție logică reutilizabilă cu modificări minime.
+
+<Tip>
+Pentru documentația destinată dezvoltatorilor privind definirea funcțiilor logice și expunerea lor în constructorul de workflow, consultă [Logic Functions](/l/ro/developers/extend/apps/logic/logic-functions) — în special secțiunea **Exposing a function as an AI tool or workflow action** și `workflowActionTriggerSettings`.
 </Tip>
 
 ### Solicitare HTTP

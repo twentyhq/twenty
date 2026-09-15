@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { useContext } from 'react';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { AnimatedCheckmark } from 'twenty-ui/display';
+import { AnimatedCheckmark } from 'twenty-ui/data-display';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -28,6 +28,7 @@ const StyledStepCircleBase = styled.div<{ isInNextSteps: boolean }>`
   border-radius: 50%;
   border-style: solid;
   border-width: 1px;
+  corner-shape: round;
   display: flex;
   flex-basis: auto;
   flex-shrink: 0;

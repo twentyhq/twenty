@@ -1,49 +1,74 @@
 ---
-title: Créditos de Workflow
-description: Comprender los créditos de flujo de trabajo, su consumo y cómo comprar más.
+title: Créditos
+description: Un saldo sencillo que impulsa tus flujos de trabajo, agentes de IA y chat de IA, y que define cuánto vale un crédito, hasta dónde llega y cómo administrarlo.
 ---
 
-## Resumen
+## ¿Qué son los créditos?
 
-Los créditos impulsan tus automatizaciones de flujo de trabajo en Twenty. Cada acción de flujo de trabajo consume créditos según su complejidad.
+Los créditos son un saldo único que impulsa todo lo que ejecutamos en tu nombre y que tiene un costo real: **automatizaciones de flujos de trabajo**, **agentes de IA** y el **chat de IA**. En lugar de lidiar con cuotas separadas para "ejecuciones de automatización" y "tokens de IA", tienes un único saldo sencillo que debes vigilar.
 
-## Asignación de créditos
+**1 crédito = $1 de uso.** Un crédito es simplemente un dólar de trabajo, por lo que tu saldo es fácil de entender: no hay unidades abstractas que convertir.
 
-Los créditos se basan en tu ciclo de facturación, no en tu plan:
+## ¿Hasta dónde llega un crédito?
 
-| Ciclo de facturación | Créditos        |
-| -------------------- | --------------- |
-| Mensual              | 5 millones/mes  |
-| Anual                | 50 millones/año |
+El costo escala con el trabajo. La automatización diaria y los mensajes de IA rápidos cuestan una fracción diminuta de un crédito; las tareas grandes de agentes de IA con múltiples pasos cuestan más. A grandes rasgos, así se ve:
+
+| Qué haces                                                                                                                            | Cuesta aproximadamente             | Qué significa                      |
+| ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- | ---------------------------------- |
+| Ejecutar un paso estándar de flujo de trabajo (buscar, crear o actualizar registros) o disparar una función lógica de una aplicación | $0.0001                            | **10.000 ejecuciones por crédito** |
+| Llamar a una API externa o ejecutar un nodo de código                                                                                | Una pequeña fracción de un crédito | Miles por crédito                  |
+| Enviar un mensaje de chat de IA rápido o un paso de IA sencillo                                                                      | Una fracción de un centavo         | Cientos por crédito                |
+| Ejecutar una tarea grande de agente de IA (p. ej., "configurar 10 objetos del espacio de trabajo")                                   | Puede llegar a **~$1 o más**       | Unos pocos por crédito             |
+| Ejecutar una búsqueda web con IA                                                                                                     | Un costo fijo por búsqueda         | Cientos de búsquedas por crédito   |
 
 <Note>
-  Los 5 millones de créditos mensuales están diseñados para permitirte ejecutar automatizaciones sin preocuparte por los costos. Para la mayoría de los flujos de trabajo que usan acciones estándar, esto es más que suficiente. Solo necesitarás créditos adicionales al ejecutar nodos de código avanzados o funciones impulsadas por IA.
+Para la mayoría de los equipos, las automatizaciones estándar son prácticamente gratuitas: solo notarás una reducción apreciable en tu saldo cuando dependas de las funciones de IA o ejecutes nodos de código exigentes. Eso es intencional: los créditos incluidos están pensados para que puedas crear sin estar pendiente de un medidor.
 </Note>
 
-## Consumo de créditos
+<Note>
+No todas las aplicaciones cobran por sus ejecuciones. Grabadora de llamadas y Último Contacto reaccionan a todos los eventos de correo electrónico y calendario importados en su espacio de trabajo, por lo que su función lógica es gratuita. Aun así se te cobrará por el trabajo medido que realizan, como los minutos de llamadas grabadas.
+</Note>
 
-Diferentes acciones consumen distintas cantidades de créditos:
+## Cómo se mide el uso de IA
 
-| Tipo de acción                                                       | Uso de Crédito        |
-| -------------------------------------------------------------------- | --------------------- |
-| **Operaciones básicas** (buscar, actualizar, crear registros)        | Mínimo                |
-| **Operaciones complejas** (nodos de código, llamadas a API externas) | Más créditos          |
-| **Consultas de IA** (próximamente)                                   | Variable según el uso |
+Cuando una acción llama a un modelo de IA, medimos exactamente los tokens usados y los valoramos según **las tarifas publicadas por el proveedor del modelo**, luego convertimos ese monto en dólares directamente en créditos; de este modo, lo que gastas refleja el costo real del trabajo, no una tarifa interna con recargo. Un mensaje de chat corto cuesta una fracción de un centavo. Una gran tarea de agente — por ejemplo, configurar 10 objetos de espacio — hace muchas llamadas de modelo sobre un contexto creciente. para que pueda sumar hasta un dólar o más. Se te factura por lo que realmente usas, hasta el nivel de token.
 
-Los créditos se deducen en tiempo real cuando se ejecutan los flujos de trabajo.
+El costo varía según el modelo: un modelo ligero es drásticamente más barato por mensaje que un modelo de razonamiento de gama alta. Puedes ver el desglose por acción —incluido qué modelo se usó— en **Configuración → Facturación**.
 
-## Supervisión del uso
+## Qué incluye
 
-Lleva un seguimiento de tu consumo de créditos:
+Cada suscripción incluye créditos, y la cantidad depende de tu **ciclo de facturación**, no de tu plan:
 
-1. Ir a **Ajustes → Facturación**
-2. Consulta tu uso actual y los créditos restantes
-3. Supervisa las tendencias para planificar créditos adicionales si es necesario
+| Ciclo de facturación | Créditos incluidos | Uso equivalente      |
+| -------------------- | ------------------ | -------------------- |
+| Mensual              | 5 / mes            | ~$5 de uso cada mes  |
+| Anual                | 50 / año           | ~$50 de uso cada año |
 
-## Adquirir Créditos Adicionales
+Estos créditos están diseñados para cubrir cómodamente la automatización diaria. Cinco créditos cubren decenas de miles de pasos de automatización estándar o cientos de mensajes de IA rápidos, aunque un puñado de grandes, las tareas de agentes de múltiples pasos pueden usarlas más rápido. Puedes recargar en cualquier momento (ver más abajo).
 
-¿Necesitas más créditos?
+## Acumulación de créditos
 
-1. Ir a **Ajustes → Facturación**
-2. Haz clic en la opción para adquirir paquetes de créditos adicionales
-3. Selecciona la cantidad que necesitas
+Los créditos no utilizados se acumulan automáticamente para el siguiente período de facturación.
+
+* **Cap**: Rollover se limita a la asignación completa de un período, por lo que nunca te llevarás más de lo que proporciona tu ciclo de facturación por período.
+* **Visibilidad**: Cuando tengas créditos acumulados, aparecerán como una línea independiente de **Créditos acumulados** en **Configuración → Facturación**, junto con tu saldo de **Total disponible**.
+
+## Monitoreo de uso
+
+Lleva un control de tu saldo y de en qué se está utilizando:
+
+1. Ir a **Configuración → Facturación**
+2. Consulta tus **créditos restantes** y el **uso del período actual**
+3. Profundiza en el desglose para ver qué flujos de trabajo y acciones de IA están consumiendo créditos y qué modelos usaron las acciones de IA
+
+Revisar esto con regularidad facilita detectar pronto un flujo de trabajo muy pesado y decidir si optimizarlo o recargar créditos.
+
+## ¿Necesitas más créditos?
+
+Si te quedas sin créditos —o quieres un colchón antes de una gran campaña de automatización— puedes comprar paquetes de créditos adicionales en cualquier momento:
+
+1. Ir a **Configuración → Facturación**
+2. Haz clic en el botón **Incrementar**
+3. Seleccione la cantidad que necesita y acepte los cambios
+
+Los créditos adquiridos se agregan de inmediato a tu saldo disponible.

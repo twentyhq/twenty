@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
-import { pathExists } from '@/cli/utilities/file/fs-utils';
+import { findAppConfigPath } from '@/cli/utilities/application/find-app-config-path';
 
 // One name + description pair to add to defineApplication.serverVariables.
 // `isSecret` defaults to false; set true on credentials that should be
@@ -11,18 +11,12 @@ export type ServerVariableSpec = {
   isSecret: boolean;
 };
 
-const APP_CONFIG_CANDIDATES = [
-  'src/application.config.ts',
-  'src/application-config.ts',
-  'src/applicationConfig.ts',
-];
-
 const SERVER_VARIABLES_PATTERN = /serverVariables\s*:\s*\{/;
 const DEFINE_APPLICATION_PATTERN = /defineApplication\s*\(\s*\{/;
 
 // Auto-appends OAuth client_id / client_secret entries to the dev's
 // `defineApplication({ serverVariables: { ... } })` block so they don't
-// have to remember the wiring after `twenty add connection-provider`.
+// have to remember the wiring after `twenty dev:add connection-provider`.
 //
 // Returns one of:
 //   - { status: 'appended', file }     — wrote new entries to an existing block
@@ -100,20 +94,6 @@ export const appendServerVariablesToAppConfig = async ({
   await writeFile(configPath, updated, 'utf8');
 
   return { status: 'created', file: configPath };
-};
-
-const findAppConfigPath = async (
-  projectRoot: string,
-): Promise<string | null> => {
-  for (const candidate of APP_CONFIG_CANDIDATES) {
-    const absolute = `${projectRoot}/${candidate}`;
-
-    if (await pathExists(absolute)) {
-      return absolute;
-    }
-  }
-
-  return null;
 };
 
 const renderServerVariableEntries = (variables: ServerVariableSpec[]): string =>

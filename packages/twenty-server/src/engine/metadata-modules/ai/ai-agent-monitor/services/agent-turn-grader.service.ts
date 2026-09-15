@@ -1,54 +1,62 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { generateText } from 'ai';
-import { Repository } from 'typeorm';
 
+import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentTurnEvaluationEntity } from 'src/engine/metadata-modules/ai/ai-agent-monitor/entities/agent-turn-evaluation.entity';
-import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
+import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-
+import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class AgentTurnGraderService {
   private readonly logger = new Logger(AgentTurnGraderService.name);
 
   constructor(
-    @InjectRepository(AgentTurnEntity)
-    private readonly turnRepository: Repository<AgentTurnEntity>,
-    @InjectRepository(AgentTurnEvaluationEntity)
-    private readonly evaluationRepository: Repository<AgentTurnEvaluationEntity>,
+    @InjectWorkspaceScopedRepository(AgentTurnEntity)
+    private readonly turnRepository: WorkspaceScopedRepository<AgentTurnEntity>,
+    @InjectWorkspaceScopedRepository(AgentTurnEvaluationEntity)
+    private readonly evaluationRepository: WorkspaceScopedRepository<AgentTurnEvaluationEntity>,
     private readonly aiModelRegistryService: AiModelRegistryService,
   ) {}
 
-  async evaluateTurn(turnId: string): Promise<AgentTurnEvaluationEntity> {
-    const turn = await this.turnRepository.findOne({
+  async evaluateTurn({
+    turnId,
+    workspaceId,
+  }: {
+    turnId: string;
+    workspaceId: string;
+  }): Promise<AgentTurnEvaluationEntity> {
+    const turn = await this.turnRepository.findOne(workspaceId, {
       where: { id: turnId },
       relations: ['messages', 'messages.parts'],
     });
 
     if (!turn) {
-      throw new Error(`Turn ${turnId} not found`);
+      throw new NotFoundError(`Turn ${turnId} not found`, {
+        userFriendlyMessage: msg`This evaluation target could not be found.`,
+      });
     }
 
     const { score, comment } = await this.evaluateWithAI(turn);
 
-    const evaluation = this.evaluationRepository.create({
+    return this.evaluationRepository.insertAndReturnOne(workspaceId, {
       turnId,
-      workspaceId: turn.workspaceId,
       score,
       comment,
     });
-
-    return this.evaluationRepository.save(evaluation);
   }
 
   private async evaluateWithAI(
     turn: AgentTurnEntity & { messages: AgentMessageEntity[] },
   ): Promise<{ score: number; comment: string }> {
     try {
-      const defaultModel = this.aiModelRegistryService.getDefaultSpeedModel();
+      const defaultModel =
+        this.aiModelRegistryService.getDefaultModelForTier('fast');
 
       if (!defaultModel) {
         this.logger.warn('No default AI model available for evaluation');
@@ -77,9 +85,16 @@ Respond ONLY with valid JSON in this exact format:
 
       const result = await generateText({
         model: defaultModel.model,
+        providerOptions: buildReasoningProviderOptions(defaultModel),
         prompt,
         temperature: 0.3,
-        experimental_telemetry: AI_TELEMETRY_CONFIG,
+        ...buildAiTelemetry({
+          functionId: 'agent-turn-grading',
+          workspaceId: turn.workspaceId,
+          agentId: turn.agentId,
+          threadId: turn.threadId,
+          turnId: turn.id,
+        }),
       });
 
       const parsed = JSON.parse(result.text);

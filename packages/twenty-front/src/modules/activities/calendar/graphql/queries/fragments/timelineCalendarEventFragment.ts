@@ -1,3 +1,4 @@
+import { timelineCalendarEventCallRecordingFragment } from '@/activities/calendar/graphql/queries/fragments/timelineCalendarEventCallRecordingFragment';
 import { timelineCalendarEventParticipantFragment } from '@/activities/calendar/graphql/queries/fragments/timelineCalendarEventParticipantFragment';
 import { gql } from '@apollo/client';
 
@@ -14,6 +15,10 @@ export const timelineCalendarEventFragment = gql`
     participants {
       ...TimelineCalendarEventParticipantFragment
     }
+    callRecordings {
+      ...TimelineCalendarEventCallRecordingFragment
+    }
   }
   ${timelineCalendarEventParticipantFragment}
+  ${timelineCalendarEventCallRecordingFragment}
 `;

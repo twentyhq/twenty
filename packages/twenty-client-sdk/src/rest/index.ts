@@ -1,0 +1,394 @@
+import {
+  DEFAULT_API_KEY_NAME,
+  DEFAULT_API_URL_NAME,
+  DEFAULT_APP_ACCESS_TOKEN_NAME,
+  DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
+  DEFAULT_FUNCTIONS_URL_NAME,
+} from 'twenty-shared/application';
+
+import { type TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
+
+export type { TwentyClientRunAs };
+
+const isDefined = <T>(value: T): value is NonNullable<T> =>
+  value !== null && value !== undefined;
+
+export type RestApiClientOptions = {
+  baseUrl?: string;
+  token?: string;
+  fetch?: typeof globalThis.fetch;
+  defaultHeaders?: HeadersInit;
+  runAs?: TwentyClientRunAs;
+};
+
+export type RestApiRequestOptions = {
+  headers?: HeadersInit;
+  query?: Record<string, string | number | boolean | null | undefined>;
+  signal?: AbortSignal;
+};
+
+type RestApiClientErrorDetails = {
+  status?: number;
+  statusText?: string;
+  url?: string;
+  body?: unknown;
+};
+
+export class RestApiClientError extends Error {
+  readonly status?: number;
+  readonly statusText?: string;
+  readonly url?: string;
+  readonly body?: unknown;
+
+  constructor(message: string, details?: RestApiClientErrorDetails) {
+    super(message);
+    this.name = 'RestApiClientError';
+    this.status = details?.status;
+    this.statusText = details?.statusText;
+    this.url = details?.url;
+    this.body = details?.body;
+  }
+}
+
+type ProcessEnvironment = Record<string, string | undefined>;
+
+const getProcessEnvironment = (): ProcessEnvironment => {
+  const processObject = (
+    globalThis as { process?: { env?: ProcessEnvironment } }
+  ).process;
+
+  return processObject?.env ?? {};
+};
+
+const isAppRoutePath = (path: string): boolean => /^\/?s\//.test(path);
+
+// The server serves app routes under /s/; isolated functions domains serve
+// them at the root, so the marker prefix is stripped before joining.
+const stripAppRoutePrefix = (path: string): string =>
+  path.replace(/^(\/?)s\//, '$1');
+
+const buildRequestUrl = (
+  baseUrl: string,
+  path: string,
+  query: RestApiRequestOptions['query'],
+): string => {
+  const url = /^https?:\/\//i.test(path)
+    ? path
+    : `${baseUrl}${path.startsWith('/') ? '' : '/'}${path}`;
+
+  if (!isDefined(query)) {
+    return url;
+  }
+
+  const searchParams = new URLSearchParams();
+
+  for (const [key, value] of Object.entries(query)) {
+    if (isDefined(value)) {
+      searchParams.append(key, String(value));
+    }
+  }
+
+  const queryString = searchParams.toString();
+
+  if (queryString.length === 0) {
+    return url;
+  }
+
+  return url.includes('?') ? `${url}&${queryString}` : `${url}?${queryString}`;
+};
+
+export class RestApiClient {
+  private baseUrl: string | undefined;
+  private token: string | undefined;
+  private defaultHeaders: HeadersInit | undefined;
+  private fetchImplementation: typeof globalThis.fetch | null;
+  private authorizationToken: string | null;
+  private runAs: TwentyClientRunAs | undefined;
+  private refreshAccessTokenPromise: Promise<string | null> | null = null;
+
+  constructor(options?: RestApiClientOptions) {
+    this.baseUrl = options?.baseUrl;
+    this.token = options?.token;
+    this.defaultHeaders = options?.defaultHeaders;
+    this.fetchImplementation = options?.fetch ?? globalThis.fetch ?? null;
+    this.authorizationToken = options?.token ?? null;
+    this.runAs = options?.runAs;
+  }
+
+  request<TResponse = unknown>(
+    method: string,
+    path: string,
+    options?: RestApiRequestOptions & { body?: unknown },
+  ) {
+    return this.execute<TResponse>(method, path, options?.body, options);
+  }
+
+  get<TResponse = unknown>(path: string, options?: RestApiRequestOptions) {
+    return this.execute<TResponse>('GET', path, undefined, options);
+  }
+
+  resolveUrl(
+    path: string,
+    requestOptions?: Pick<RestApiRequestOptions, 'query'>,
+  ): string {
+    const target = this.resolveTarget(path);
+
+    return buildRequestUrl(target.baseUrl, target.path, requestOptions?.query);
+  }
+
+  post<TResponse = unknown>(
+    path: string,
+    body?: unknown,
+    options?: RestApiRequestOptions,
+  ) {
+    return this.execute<TResponse>('POST', path, body, options);
+  }
+
+  put<TResponse = unknown>(
+    path: string,
+    body?: unknown,
+    options?: RestApiRequestOptions,
+  ) {
+    return this.execute<TResponse>('PUT', path, body, options);
+  }
+
+  patch<TResponse = unknown>(
+    path: string,
+    body?: unknown,
+    options?: RestApiRequestOptions,
+  ) {
+    return this.execute<TResponse>('PATCH', path, body, options);
+  }
+
+  delete<TResponse = unknown>(path: string, options?: RestApiRequestOptions) {
+    return this.execute<TResponse>('DELETE', path, undefined, options);
+  }
+
+  private resolveBaseUrl(): string {
+    const baseUrl =
+      this.baseUrl ?? getProcessEnvironment()[DEFAULT_API_URL_NAME];
+
+    if (!isDefined(baseUrl) || baseUrl.trim().length === 0) {
+      throw new RestApiClientError(
+        `Missing API url. Set the \`${DEFAULT_API_URL_NAME}\` environment variable or pass \`baseUrl\` to \`RestApiClient\`.`,
+      );
+    }
+
+    return baseUrl.replace(/\/+$/, '');
+  }
+
+  private resolveFunctionsBaseUrl(): string | undefined {
+    const functionsBaseUrl =
+      getProcessEnvironment()[DEFAULT_FUNCTIONS_URL_NAME];
+
+    if (!isDefined(functionsBaseUrl) || functionsBaseUrl.trim().length === 0) {
+      return undefined;
+    }
+
+    return functionsBaseUrl.trim().replace(/\/+$/, '');
+  }
+
+  private resolveTarget(path: string): { baseUrl: string; path: string } {
+    if (isDefined(this.baseUrl) || !isAppRoutePath(path)) {
+      return { baseUrl: this.resolveBaseUrl(), path };
+    }
+
+    // /s/ marks an app HTTP route. TWENTY_FUNCTIONS_URL is a complete base
+    // URL (isolated domains serve routes at the root, self-host bakes /s in);
+    // fall back to the same-site /s route when it is not injected.
+    return {
+      baseUrl: this.resolveFunctionsBaseUrl() ?? `${this.resolveBaseUrl()}/s`,
+      path: stripAppRoutePrefix(path),
+    };
+  }
+
+  private resolveToken(): string {
+    const tokenEnvironmentKey =
+      this.runAs === 'application'
+        ? DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME
+        : DEFAULT_APP_ACCESS_TOKEN_NAME;
+
+    if (!isDefined(this.authorizationToken)) {
+      const processEnvironment = getProcessEnvironment();
+
+      this.authorizationToken =
+        this.token ??
+        processEnvironment[tokenEnvironmentKey] ??
+        processEnvironment[DEFAULT_API_KEY_NAME] ??
+        null;
+    }
+
+    if (
+      !isDefined(this.authorizationToken) ||
+      this.authorizationToken.length === 0
+    ) {
+      throw new RestApiClientError(
+        `Missing application access token. Set the \`${tokenEnvironmentKey}\` environment variable or pass \`token\` to \`RestApiClient\`.`,
+      );
+    }
+
+    return this.authorizationToken;
+  }
+
+  private async requestRefreshedAccessToken(): Promise<string | null> {
+    const refreshAccessTokenFunction = (
+      globalThis as {
+        frontComponentHostCommunicationApi?: {
+          requestAccessTokenRefresh?: () => Promise<string>;
+        };
+      }
+    ).frontComponentHostCommunicationApi?.requestAccessTokenRefresh;
+
+    if (typeof refreshAccessTokenFunction !== 'function') {
+      return null;
+    }
+
+    if (!this.refreshAccessTokenPromise) {
+      this.refreshAccessTokenPromise = refreshAccessTokenFunction()
+        .then((refreshedAccessToken) => {
+          if (
+            typeof refreshedAccessToken !== 'string' ||
+            refreshedAccessToken.length === 0
+          ) {
+            return null;
+          }
+
+          this.authorizationToken = refreshedAccessToken;
+          getProcessEnvironment()[DEFAULT_APP_ACCESS_TOKEN_NAME] =
+            refreshedAccessToken;
+
+          return refreshedAccessToken;
+        })
+        .catch((refreshError: unknown) => {
+          console.error(
+            'Twenty REST client: token refresh failed',
+            refreshError,
+          );
+
+          return null;
+        })
+        .finally(() => {
+          this.refreshAccessTokenPromise = null;
+        });
+    }
+
+    return this.refreshAccessTokenPromise;
+  }
+
+  private sendRequest(
+    url: string,
+    method: string,
+    body: unknown,
+    token: string,
+    requestOptions?: RestApiRequestOptions,
+  ): Promise<Response> {
+    if (!isDefined(this.fetchImplementation)) {
+      throw new RestApiClientError(
+        'Global `fetch` function is not available, pass a fetch implementation to `RestApiClient`.',
+      );
+    }
+
+    const requestHeaders = new Headers(this.defaultHeaders);
+
+    if (isDefined(requestOptions?.headers)) {
+      new Headers(requestOptions.headers).forEach((value, key) =>
+        requestHeaders.set(key, value),
+      );
+    }
+
+    const isFormDataBody =
+      typeof FormData !== 'undefined' && body instanceof FormData;
+    const shouldSerializeBody =
+      isDefined(body) && !isFormDataBody && typeof body !== 'string';
+
+    if (isFormDataBody) {
+      requestHeaders.delete('Content-Type');
+    } else if (shouldSerializeBody) {
+      requestHeaders.set('Content-Type', 'application/json');
+    }
+
+    requestHeaders.set('Authorization', `Bearer ${token}`);
+
+    const serializedBody = !isDefined(body)
+      ? undefined
+      : isFormDataBody || typeof body === 'string'
+        ? (body as BodyInit)
+        : JSON.stringify(body);
+
+    return this.fetchImplementation.call(globalThis, url, {
+      method,
+      headers: requestHeaders,
+      body: serializedBody,
+      signal: requestOptions?.signal,
+    });
+  }
+
+  private async parseResponse<TResponse>(
+    response: Response,
+    url: string,
+  ): Promise<TResponse> {
+    const rawBody = await response.text();
+    let parsedBody: unknown = undefined;
+
+    if (rawBody.trim().length > 0) {
+      try {
+        parsedBody = JSON.parse(rawBody);
+      } catch {
+        parsedBody = rawBody;
+      }
+    }
+
+    if (!response.ok) {
+      throw new RestApiClientError(
+        `Request to ${url} failed with status ${response.status} ${response.statusText}`,
+        {
+          status: response.status,
+          statusText: response.statusText,
+          url,
+          body: parsedBody,
+        },
+      );
+    }
+
+    return parsedBody as TResponse;
+  }
+
+  private async execute<TResponse>(
+    method: string,
+    path: string,
+    body: unknown,
+    requestOptions?: RestApiRequestOptions,
+  ): Promise<TResponse> {
+    const target = this.resolveTarget(path);
+    const url = buildRequestUrl(
+      target.baseUrl,
+      target.path,
+      requestOptions?.query,
+    );
+    const token = this.resolveToken();
+
+    let response = await this.sendRequest(
+      url,
+      method,
+      body,
+      token,
+      requestOptions,
+    );
+
+    if (response.status === 401) {
+      const refreshedAccessToken = await this.requestRefreshedAccessToken();
+
+      if (isDefined(refreshedAccessToken)) {
+        response = await this.sendRequest(
+          url,
+          method,
+          body,
+          refreshedAccessToken,
+          requestOptions,
+        );
+      }
+    }
+
+    return this.parseResponse<TResponse>(response, url);
+  }
+}

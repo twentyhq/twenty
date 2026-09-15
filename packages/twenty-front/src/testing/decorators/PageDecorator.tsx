@@ -2,27 +2,26 @@ import { ApolloProvider } from '@apollo/client/react';
 import { loadDevMessages } from '@apollo/client/dev';
 import { type Decorator } from '@storybook/react-vite';
 import { Provider as JotaiProvider } from 'jotai';
-import { HelmetProvider } from 'react-helmet-async';
-import {
-  createMemoryRouter,
-  createRoutesFromElements,
-  Outlet,
-  Route,
-  RouterProvider,
-} from 'react-router-dom';
+import { HelmetProvider } from '@dr.pogodin/react-helmet';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
+import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/WorkspaceRouteObjectsProvider';
+import { type WorkspaceRouteObject } from '@/app/routing/types/WorkspaceRouteObject';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
+import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import { ApolloCoreClientMockedProvider } from '@/object-metadata/hooks/__mocks__/ApolloCoreClientMockedProvider';
 
 import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { MinimalMetadataGater } from '@/metadata-store/components/MinimalMetadataGater';
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
+import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { MockedMetadataLoadEffect } from '~/testing/decorators/MockedMetadataLoadEffect';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { useState } from 'react';
+import { type JSX, useState } from 'react';
 import { ClientConfigProvider } from '~/modules/client-config/components/ClientConfigProvider';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
-import { MainContextStoreProvider } from '@/context-store/components/MainContextStoreProvider';
+import { RouteContextStoreProvider } from '@/context-store/components/RouteContextStoreProvider';
+import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
@@ -30,7 +29,7 @@ import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProvide
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { IconsProvider } from 'twenty-ui/display';
+import { IconsProvider } from 'twenty-ui/icon';
 import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
 
@@ -38,6 +37,7 @@ export type PageDecoratorArgs = {
   routePath: string;
   routeParams: RouteParams;
   additionalRoutes?: string[];
+  searchParams?: RouteParams;
 };
 
 export type RouteParams = {
@@ -55,12 +55,18 @@ export const isRouteParams = (obj: any): obj is RouteParams => {
 export const computeLocation = (
   routePath: string,
   routeParams?: RouteParams,
+  searchParams?: RouteParams,
 ) => {
+  const search = searchParams
+    ? `?${new URLSearchParams(searchParams).toString()}`
+    : '';
+
   return {
     pathname: routePath.replace(
       /:(\w+)/g,
       (paramName) => routeParams?.[paramName] ?? '',
     ),
+    search,
   };
 };
 
@@ -88,22 +94,26 @@ const Providers = () => {
               <UserMetadataProviderInitialEffect />
               <MockedMetadataLoadEffect />
               <WorkspaceProviderEffect />
-              <MinimalMetadataGater>
+              <UserContextProvider>
                 <ApolloCoreClientMockedProvider>
-                  <PreComputedChipGeneratorsProvider>
-                    <FullHeightStorybookLayout>
-                      <HelmetProvider>
-                        <IconsProvider>
-                          <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                            <Outlet />
-                          </RecordComponentInstanceContextsWrapper>
-                        </IconsProvider>
-                      </HelmetProvider>
-                    </FullHeightStorybookLayout>
-                  </PreComputedChipGeneratorsProvider>
-                  <MainContextStoreProvider />
+                  <ContextStoreComponentInstanceContext.Provider
+                    value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+                  >
+                    <PreComputedChipGeneratorsProvider>
+                      <FullHeightStorybookLayout>
+                        <HelmetProvider>
+                          <IconsProvider>
+                            <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
+                              <MinimalMetadataGate />
+                            </RecordComponentInstanceContextsWrapper>
+                          </IconsProvider>
+                        </HelmetProvider>
+                      </FullHeightStorybookLayout>
+                    </PreComputedChipGeneratorsProvider>
+                    <RouteContextStoreProvider />
+                  </ContextStoreComponentInstanceContext.Provider>
                 </ApolloCoreClientMockedProvider>
-              </MinimalMetadataGater>
+              </UserContextProvider>
             </ClientConfigProvider>
           </I18nProvider>
         </ApolloProvider>
@@ -128,36 +138,45 @@ const createRouter = ({
     pathname: string;
   }[];
   initialIndex?: number;
-}) =>
-  createMemoryRouter(
-    createRoutesFromElements(
-      <Route element={<Providers />}>
-        <Route element={<DefaultLayout />}>
-          <Route path={args.routePath} element={<Story />} />
-          {args.additionalRoutes?.map((route) => (
-            <Route
-              key={route}
-              path={route}
-              element={<div>Navigated to {route}</div>}
-            />
-          ))}
-        </Route>
-      </Route>,
-    ),
+}) => {
+  const routeObjects: WorkspaceRouteObject[] = [
+    { path: args.routePath, element: <Story /> },
+    ...(args.additionalRoutes ?? []).map((route) => ({
+      path: route,
+      element: <div>Navigated to {route}</div>,
+    })),
+  ];
+
+  return createMemoryRouter(
+    [
+      {
+        element: <WorkspaceRouteObjectsProvider routeObjects={routeObjects} />,
+        children: [
+          {
+            element: <Providers />,
+            children: [{ element: <DefaultLayout />, children: routeObjects }],
+          },
+        ],
+      },
+    ],
     { initialEntries, initialIndex },
   );
+};
 
 export const PageDecorator: Decorator<{
   routePath: string;
   routeParams: RouteParams;
   additionalRoutes?: string[];
+  searchParams?: RouteParams;
 }> = (Story, { args }) => {
   return (
     <RouterProvider
       router={createRouter({
         Story,
         args,
-        initialEntries: [computeLocation(args.routePath, args.routeParams)],
+        initialEntries: [
+          computeLocation(args.routePath, args.routeParams, args.searchParams),
+        ],
       })}
     />
   );

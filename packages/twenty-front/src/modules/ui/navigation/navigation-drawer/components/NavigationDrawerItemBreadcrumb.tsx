@@ -1,6 +1,6 @@
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { styled } from '@linaria/react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type NavigationDrawerItemBreadcrumbProps = {
   state?: NavigationDrawerSubItemState;
@@ -9,9 +9,17 @@ export type NavigationDrawerItemBreadcrumbProps = {
 const StyledNavigationDrawerItemBreadcrumbContainer = styled.div`
   height: 28px;
 
-  margin-left: 7.5px;
-  margin-right: ${themeCssVariables.spacing[2]};
+  margin-inline-end: ${themeCssVariables.spacing[2]};
+  margin-inline-start: 7.5px;
   width: 9px;
+
+  [data-dnd-dragging] & {
+    display: none;
+  }
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    height: ${themeCssVariables.spacing[8]};
+  }
 `;
 
 const StyledGapVerticalLine = styled.div<{ darker: boolean }>`
@@ -33,10 +41,14 @@ const StyledSecondaryFullVerticalBar = styled.div<{ darker: boolean }>`
       ? themeCssVariables.font.color.tertiary
       : themeCssVariables.border.color.strong};
 
-  height: 28px;
+  height: calc(${themeCssVariables.spacing[7]} + 1px);
   position: relative;
   top: -17px;
   width: 1px;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    height: calc(${themeCssVariables.spacing[8]} + 1px);
+  }
 `;
 
 const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`
@@ -45,9 +57,11 @@ const StyledRoundedProtrusion = styled.div<{ darker: boolean }>`
       darker
         ? themeCssVariables.font.color.tertiary
         : themeCssVariables.border.color.strong};
-  border-bottom-left-radius: 4px;
+  // The elbow is the border minus two sides. Written physically it keeps its
+  // left-hand shape under dir="rtl" and hangs off the wrong side of the item.
+  border-end-start-radius: 4px;
 
-  border-right: none;
+  border-inline-end: none;
 
   border-top: none;
 

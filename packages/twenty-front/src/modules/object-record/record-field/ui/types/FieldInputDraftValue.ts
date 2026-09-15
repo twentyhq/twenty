@@ -49,7 +49,7 @@ export type FieldCurrencyDraftValue = {
 };
 export type FieldFullNameDraftValue = { firstName: string; lastName: string };
 export type FieldAddressDraftValue = {
-  addressStreet1: string;
+  addressStreet1: string | null;
   addressStreet2: string | null;
   addressCity: string | null;
   addressState: string | null;

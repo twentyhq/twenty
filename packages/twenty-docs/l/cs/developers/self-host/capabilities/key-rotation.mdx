@@ -1,0 +1,60 @@
+---
+title: Rotace klíčů
+icon: rotate
+---
+
+Twenty má dvě nezávislé rodiny klíčů:
+
+* **Klíče pro podepisování JWT** — asymetrické páry klíčů ES256 (označené `kid`), uložené v `core."signingKey"`, používané k podepisování a ověřování přístupových/obnovovacích tokenů.
+* **Šifrovací klíč pro data v klidu** — `ENCRYPTION_KEY`, používaný k šifrování OAuth tokenů, aplikačních proměnných, soukromých klíčů podepisovacích klíčů, citlivých konfiguračních hodnot a TOTP tajemství uvnitř obálky `enc:v2:`.
+
+`APP_SECRET` je starší tajný klíč ponechaný kvůli zpětné kompatibilitě: pokud `ENCRYPTION_KEY` není nastaven, slouží jako záložní řešení pro šifrování dat v klidu i pro soubory cookie relace a stále ověřuje dříve existující HS256 přístupové tokeny. Bude označen jako zastaralý (deprecated).
+
+## Klíče pro podepisování JWT
+
+Každý klíč nese `publicKey` (uchovávaný neomezeně dlouho, aby mohl ověřovat dříve vydané tokeny), zašifrovaný `privateKey` (používaný pouze tehdy, když je klíč aktuální), příznak `isCurrent` (vždy přesně jeden záznam) a volitelné `revokedAt`.
+
+### Rotace aktuálního klíče
+
+Nastavte `SIGNING_KEY_ROTATION_DAYS`, chcete-li funkci povolit: denní cron poté vydá nový klíč jako aktuální, jakmile je stávající starší než zadaný práh. Předchozí klíče *nejsou* odvolány, takže tokeny pod nimi podepsané se dál úspěšně ověřují. Ponechte proměnnou nenastavenou, abyste deaktivovali automatickou rotaci.
+
+<Note>Automatická rotace je k dispozici od verze v2.6+.</Note>
+
+### Odvolání klíče (pouze při úniku / v nouzi)
+
+**Settings → Admin Panel → Signing keys → Revoke** na neaktuálním řádku. Smaže zašifrovaný privátní materiál, nastaví `revokedAt` a odmítne každý existující token podepsaný pod daným `kid`.
+
+## Rotace `ENCRYPTION_KEY`
+
+<Note>Příkaz `secret-encryption:rotate` popsaný níže je k dispozici od verze v2.6+.</Note>
+
+Každá zašifrovaná hodnota je zabalena jako `enc:v2:\<keyId>:\<payload>`, kde `\<keyId>` je 8místný hexadecimální prefix odvozený ze surového klíče. Rotace probíhá online a je možné ji kdykoli znovu spustit.
+
+1. **Vygenerujte nový klíč**: `openssl rand -base64 32`.
+
+2. **Nakonfigurujte oba klíče vedle sebe** v `.env` a poté restartujte:
+   ```ini
+   ENCRYPTION_KEY=NEW_VALUE
+   FALLBACK_ENCRYPTION_KEY=OLD_VALUE
+   ```
+   Nové zápisy používají nový klíč, existující řádky se stále dešifrují pomocí záložního klíče.
+
+3. **Znovu zašifrujte existující řádky**:
+
+   ```bash
+   docker exec -it {server_container} yarn command:prod secret-encryption:rotate
+   ```
+
+   Příkaz prochází šest míst (`connected-account-tokens`, `application-variable`, `application-registration-variable`, `signing-key-private-keys`, `sensitive-config-storage`, `totp-secrets`). SQL filtr přeskočí řádky, které už jsou na novém `\<keyId>`, takže příkaz je idempotentní: přerušte ho a znovu spusťte podle potřeby. Ukončí se s nenulovým kódem, pokud jakýkoli řádek selže — spusťte znovu pro opakování.
+
+   | Přepínač                                 | Popis                                                    |
+   | ---------------------------------------- | -------------------------------------------------------- |
+   | `-s, --site \<site>`    | Omezí běh na jedno místo (site).                         |
+   | `-b, --batch-size \<n>` | Počet řádků v dávce (výchozí `200`, maximum `5000`).     |
+   | `-d, --dry-run`                          | Dešifruje + znovu zašifruje v paměti, přeskočí `UPDATE`. |
+
+4. **Odstraňte záložní klíč** jakmile `--dry-run` ukáže, že nezbývají žádné řádky: odeberte `FALLBACK_ENCRYPTION_KEY` a restartujte.
+
+## Podpora staršího `APP_SECRET`
+
+Starší instance, které nikdy nenastavily `ENCRYPTION_KEY`, používají `APP_SECRET` jako šifrovací klíč pro data v klidu (a jako tajemství pro soubor cookie relace, odvozené z něj). Tato cesta je zachována kvůli zpětné kompatibilitě, ale je **zastaralá (deprecated)** — nastavte vyhrazený `ENCRYPTION_KEY` a podle výše uvedeného postupu rotace proveďte migraci pryč od něj. Samotný `APP_SECRET` zůstává v používání pro ověřování starších HS256 přístupových tokenů.

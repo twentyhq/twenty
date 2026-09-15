@@ -1,8 +1,9 @@
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import {
+  PageLayoutTabLayoutMode,
   type PageLayoutWidget,
-  WidgetType,
   type WidgetConfiguration,
+  WidgetType,
 } from '~/generated-metadata/graphql';
 import {
   TEST_AGGREGATE_CHART_CONFIGURATION,
@@ -10,7 +11,6 @@ import {
   TEST_FIELD_METADATA_ID_1,
   TEST_FIELD_METADATA_ID_2,
   TEST_FIELD_METADATA_ID_3,
-  TEST_GAUGE_CHART_CONFIGURATION,
   TEST_IFRAME_CONFIGURATION,
   TEST_LINE_CHART_CONFIGURATION,
   TEST_OBJECT_METADATA_ID,
@@ -24,11 +24,20 @@ const createMockWidget = (
 ): PageLayoutWidget => ({
   id: 'widget-1',
   applicationId: '',
+  universalIdentifier: 'universal-identifier-mock',
+  isSystemSideEffect: false,
   isActive: true,
   type: WidgetType.GRAPH,
   title: 'Test',
   objectMetadataId: null,
-  gridPosition: { row: 0, column: 0, rowSpan: 1, columnSpan: 1 },
+  position: {
+    __typename: 'PageLayoutWidgetGridPosition' as const,
+    layoutMode: PageLayoutTabLayoutMode.GRID,
+    row: 0,
+    column: 0,
+    rowSpan: 1,
+    columnSpan: 1,
+  },
   pageLayoutTabId: 'tab-1',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -104,18 +113,6 @@ describe('extractFieldMetadataIdsFromWidget', () => {
   it('should extract field IDs from AggregateChartConfiguration', () => {
     const widget = createMockWidget({
       configuration: TEST_AGGREGATE_CHART_CONFIGURATION,
-      objectMetadataId: TEST_OBJECT_METADATA_ID,
-    });
-
-    const result = extractFieldMetadataIdsFromWidget(widget);
-
-    expect(result).toHaveLength(1);
-    expect(result).toContain(TEST_FIELD_METADATA_ID_1);
-  });
-
-  it('should extract field IDs from GaugeChartConfiguration', () => {
-    const widget = createMockWidget({
-      configuration: TEST_GAUGE_CHART_CONFIGURATION,
       objectMetadataId: TEST_OBJECT_METADATA_ID,
     });
 

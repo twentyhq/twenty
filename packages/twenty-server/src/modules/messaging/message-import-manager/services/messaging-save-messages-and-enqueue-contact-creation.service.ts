@@ -11,8 +11,7 @@ import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-c
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -23,12 +22,11 @@ import {
   type Participant,
   type ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
-import {
-  type MessageChannelMessageAssociationFolderAssociation,
-  MessagingMessageFolderAssociationService,
-} from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
+import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
+import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
+import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
 import { isWorkEmail } from 'src/utils/is-work-email';
 
@@ -40,7 +38,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation(
@@ -48,25 +46,29 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     messageChannel: MessageChannelEntity,
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
-  ) {
+  ): Promise<
+    | {
+        messageExternalIdsAndIdsMap: Map<string, string>;
+        messageExternalIdToMessageThreadIdMap: Map<string, string>;
+      }
+    | undefined
+  > {
     const handleAliases = connectedAccount.handleAliases || [];
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const participantsWithMessageId =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+    const savedMessagesResult =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const workspaceDataSource =
-            await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
-          return workspaceDataSource?.transaction(
-            async (transactionManager: WorkspaceEntityManager) => {
+          return this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
               const {
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageChannelMessageAssociationIdMap,
+                messageExternalIdToMessageThreadIdMap,
               } = await this.messageService.saveMessagesWithinTransaction(
                 messagesToSave,
                 messageChannel.id,
-                transactionManager,
+                transactionScope,
                 workspaceId,
               );
 
@@ -96,10 +98,18 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                         messageChannel.excludeNonProfessionalEmails &&
                         !isWorkEmail(participant.handle);
 
+                      const isExcludedByGroupEmails =
+                        messageChannel.excludeGroupEmails &&
+                        isGroupEmail(participant.handle);
+
+                      // Drafts are outgoing, so don't turn recipients of an
+                      // unsent email into CRM contacts.
                       const shouldCreateContact =
+                        !message.isDraft &&
                         !!participant.handle &&
                         !isParticipantConnectedAccount &&
                         !isExcludedByNonProfessionalEmails &&
+                        !isExcludedByGroupEmails &&
                         (messageChannel.contactAutoCreationPolicy ===
                           MessageChannelContactAutoCreationPolicy.SENT_AND_RECEIVED ||
                           (messageChannel.contactAutoCreationPolicy ===
@@ -115,11 +125,12 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   : [];
               });
 
-              await this.messageParticipantService.saveMessageParticipants(
-                participantsWithMessageId,
-                workspaceId,
-                transactionManager,
-              );
+              const savedMessageParticipants =
+                await this.messageParticipantService.saveMessageParticipants(
+                  participantsWithMessageId,
+                  workspaceId,
+                  transactionScope,
+                );
 
               const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
                 messagesToSave.flatMap((message) => {
@@ -149,23 +160,27 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               await this.messageFolderAssociationService.saveMessageFolderAssociations(
                 folderAssociations,
                 workspaceId,
-                transactionManager,
+                transactionScope,
               );
 
-              return participantsWithMessageId;
+              return {
+                participantsWithMessageId,
+                savedMessageParticipants,
+                messageExternalIdsAndIdsMap,
+                messageExternalIdToMessageThreadIdMap,
+              };
             },
           );
         },
         authContext,
+        { lite: true },
       );
 
-    if (
-      messageChannel.isContactAutoCreationEnabled &&
-      participantsWithMessageId
-    ) {
-      const contactsToCreate = participantsWithMessageId.filter(
-        (participant) => participant.shouldCreateContact,
-      );
+    if (messageChannel.isContactAutoCreationEnabled && savedMessagesResult) {
+      const contactsToCreate =
+        savedMessagesResult.participantsWithMessageId.filter(
+          (participant) => participant.shouldCreateContact,
+        );
 
       await this.messageQueueService.add<CreateCompanyAndContactJobData>(
         CreateCompanyAndContactJob.name,
@@ -177,5 +192,28 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         },
       );
     }
+
+    if (!isDefined(savedMessagesResult)) {
+      return undefined;
+    }
+
+    await this.messageParticipantService.matchMessageParticipants({
+      participants: savedMessagesResult.savedMessageParticipants,
+      messageIds: [
+        ...new Set(
+          savedMessagesResult.participantsWithMessageId.map(
+            ({ messageId }) => messageId,
+          ),
+        ),
+      ],
+      workspaceId,
+    });
+
+    return {
+      messageExternalIdsAndIdsMap:
+        savedMessagesResult.messageExternalIdsAndIdsMap,
+      messageExternalIdToMessageThreadIdMap:
+        savedMessagesResult.messageExternalIdToMessageThreadIdMap,
+    };
   }
 }

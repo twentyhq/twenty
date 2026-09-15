@@ -1,11 +1,14 @@
+import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsDataModelNewFieldBreadcrumbDropDown } from '@/settings/data-model/components/SettingsDataModelNewFieldBreadcrumbDropDown';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SettingsObjectNewFieldHeaderIcon } from '@/settings/data-model/fields/components/SettingsObjectNewFieldHeaderIcon';
 import { SettingsObjectNewFieldSelector } from '@/settings/data-model/fields/forms/components/SettingsObjectNewFieldSelector';
 import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFieldType';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { t } from '@lingui/core/macro';
 import { useEffect } from 'react';
@@ -13,6 +16,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -32,6 +36,7 @@ export type SettingsDataModelFieldTypeFormValues = z.infer<
 
 export const SettingsObjectNewFieldSelect = () => {
   const navigate = useNavigateApp();
+  const workspaceSurface = useWorkspaceSurface();
   const { objectNamePlural = '' } = useParams();
   const { findObjectMetadataItemByNamePlural } =
     useFilteredObjectMetadataItems();
@@ -53,23 +58,33 @@ export const SettingsObjectNewFieldSelect = () => {
   ).filter(isDefined);
 
   useEffect(() => {
-    if (!activeObjectMetadataItem) {
+    if (workspaceSurface.type === 'main' && !activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
     }
-  }, [activeObjectMetadataItem, navigate]);
+  }, [activeObjectMetadataItem, navigate, workspaceSurface.type]);
 
-  if (!activeObjectMetadataItem) return null;
+  if (!activeObjectMetadataItem) {
+    return workspaceSurface.type === 'side-panel' ? (
+      <WorkspaceRouteUnavailable />
+    ) : null;
+  }
 
   return (
     <FormProvider // oxlint-disable-next-line react/jsx-props-no-spreading
       {...formMethods}
     >
-      <SubMenuTopBarContainer
-        title={t`1. Select a field type`}
+      <SettingsPageLayout
+        title={activeObjectMetadataItem.labelPlural}
+        icon={
+          <SettingsObjectNewFieldHeaderIcon
+            objectMetadataItem={activeObjectMetadataItem}
+          />
+        }
+        titleColor={themeCssVariables.font.color.tertiary}
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           { children: t`Objects`, href: getSettingsPath(SettingsPath.Objects) },
           {
@@ -78,8 +93,11 @@ export const SettingsObjectNewFieldSelect = () => {
               objectNamePlural,
             }),
           },
-          { children: <SettingsDataModelNewFieldBreadcrumbDropDown /> },
+          { children: t`New field` },
         ]}
+        secondaryBar={
+          <SettingsWizardStepBar label={t`1. Select a field type`} />
+        }
       >
         <SettingsPageContainer>
           <SettingsObjectNewFieldSelector
@@ -87,7 +105,7 @@ export const SettingsObjectNewFieldSelect = () => {
             excludedFieldTypes={excludedFieldTypes}
           />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </FormProvider>
   );
 };

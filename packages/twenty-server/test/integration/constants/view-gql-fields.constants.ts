@@ -18,6 +18,9 @@ export const VIEW_GQL_FIELDS = `
 
 export const VIEW_FIELD_GQL_FIELDS = `
     id
+    universalIdentifier
+    applicationId
+    isSystemSideEffect
     fieldMetadataId
     position
     isVisible
@@ -33,6 +36,7 @@ export const VIEW_SORT_GQL_FIELDS = `
     id
     fieldMetadataId
     direction
+    subFieldName
     viewId
     createdAt
     updatedAt

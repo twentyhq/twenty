@@ -1,11 +1,14 @@
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 
 import { COMMAND_MENU_DROPDOWN_CLICK_OUTSIDE_ID } from '@/command-menu-item/constants/CommandMenuDropdownClickOutsideId';
 import { COMMAND_MENU_CLICK_OUTSIDE_ID } from '@/command-menu/constants/CommandMenuClickOutsideId';
+import { RecordCalendarGrid } from '@/object-record/record-calendar/grid/components/RecordCalendarGrid';
 import { RecordCalendarTopBar } from '@/object-record/record-calendar/components/RecordCalendarTopBar';
 import { RECORD_CALENDAR_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-calendar/constants/RecordCalendarClickOutsideListenerId';
-import { RecordCalendarMonth } from '@/object-record/record-calendar/month/components/RecordCalendarMonth';
+import { RecordCalendarEscapeHotkeyEffect } from '@/object-record/record-calendar/components/RecordCalendarEscapeHotkeyEffect';
 import { RECORD_CALENDAR_CARD_CLICK_OUTSIDE_ID } from '@/object-record/record-calendar/record-calendar-card/constants/RecordCalendarCardClickOutsideId';
+import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { RecordCalendarComponentInstanceContext } from '@/object-record/record-calendar/states/contexts/RecordCalendarComponentInstanceContext';
 import { useRecordCalendarSelection } from '@/object-record/record-calendar/states/selectors/useRecordCalendarSelection';
 import { MODAL_BACKDROP_CLICK_OUTSIDE_ID } from '@/ui/layout/modal/constants/ModalBackdropClickOutsideId';
@@ -13,7 +16,8 @@ import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constan
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/components';
+import { useEffect } from 'react';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainerContainer = styled.div`
@@ -31,7 +35,16 @@ export const RecordCalendar = () => {
     RecordCalendarComponentInstanceContext,
   );
 
-  const { resetRecordSelection } = useRecordCalendarSelection(recordCalendarId);
+  const { resetRecordCalendarSelection } =
+    useRecordCalendarSelection(recordCalendarId);
+
+  const recordIndexCalendarLayout = useAtomComponentStateValue(
+    recordIndexCalendarLayoutComponentState,
+  );
+
+  useEffect(() => {
+    resetRecordCalendarSelection();
+  }, [resetRecordCalendarSelection, recordIndexCalendarLayout]);
 
   useListenClickOutside({
     excludedClickOutsideIds: [
@@ -45,17 +58,18 @@ export const RecordCalendar = () => {
     listenerId: RECORD_CALENDAR_CLICK_OUTSIDE_LISTENER_ID,
     refs: [],
     callback: () => {
-      resetRecordSelection();
+      resetRecordCalendarSelection();
     },
   });
 
   return (
     <StyledContainerContainer>
+      <RecordCalendarEscapeHotkeyEffect recordCalendarId={recordCalendarId} />
       <RecordCalendarTopBar />
       <ScrollWrapper
         componentInstanceId={`scroll-wrapper-record-calendar-${recordCalendarId}`}
       >
-        <RecordCalendarMonth />
+        <RecordCalendarGrid calendarLayout={recordIndexCalendarLayout} />
       </ScrollWrapper>
     </StyledContainerContainer>
   );

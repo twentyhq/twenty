@@ -20,7 +20,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconForbid, IconPencil } from 'twenty-ui/display';
+import { IconForbid, IconPencil } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 
 type RecordDetailMorphRelationSectionDropdownManyToOneProps = {

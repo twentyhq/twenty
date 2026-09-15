@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.1.0', 1776886452831)
-export class AddIsPreInstalledToApplicationRegistrationFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddIsPreInstalledToApplicationRegistrationFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TABLE "core"."applicationRegistration" ADD "isPreInstalled" boolean NOT NULL DEFAULT false',

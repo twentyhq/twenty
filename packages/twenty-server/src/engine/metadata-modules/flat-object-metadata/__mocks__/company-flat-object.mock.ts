@@ -1,16 +1,19 @@
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 export const COMPANY_FLAT_OBJECT_MOCK = getFlatObjectMetadataMock({
   id: '7f5c2c7a-bb23-46fb-b59d-9b7a52a8d1cc',
   nameSingular: 'company',
+  applicationUniversalIdentifier:
+    TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   namePlural: 'companies',
   labelSingular: 'Company',
   labelPlural: 'Companies',
   description: 'A company',
   icon: 'IconBuildingSkyscraper',
-  standardOverrides: null,
+  overrides: null,
   targetTableName: 'DEPRECATED',
-  isCustom: false,
   isRemote: false,
   isActive: true,
   isSystem: false,

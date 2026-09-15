@@ -1,62 +1,87 @@
-import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { type FilterableTimelineActivity } from '@/activities/timeline-activities/types/FilterableTimelineActivity';
+import { type TimelineActivityTypeMaps } from '@/activities/timeline-activities/types/TimelineActivityTypeMaps';
+import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
+import { getTimelineActivityAction } from '@/activities/timeline-activities/utils/getTimelineActivityAction';
+import { getTimelineActivityLinkedObjectMetadataItem } from '@/activities/timeline-activities/utils/getTimelineActivityLinkedObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isDefined } from 'twenty-shared/utils';
 
-export const filterOutInvalidTimelineActivities = (
-  timelineActivities: TimelineActivity[],
+const keepActivityWithReadableDiff = <
+  TTimelineActivity extends FilterableTimelineActivity,
+>(
+  timelineActivity: TTimelineActivity,
+  readableFields: FieldMetadataItem[],
+): TTimelineActivity | undefined => {
+  const validDiffEntries = Object.entries(
+    timelineActivity.properties?.diff ?? {},
+  ).filter(([diffKey]) =>
+    isDefined(findFieldMetadataItemByDiffKey(readableFields, diffKey)),
+  );
+
+  if (validDiffEntries.length === 0) {
+    return undefined;
+  }
+
+  return {
+    ...timelineActivity,
+    properties: {
+      ...timelineActivity.properties,
+      diff: Object.fromEntries(validDiffEntries),
+    },
+  };
+};
+
+export const filterOutInvalidTimelineActivities = <
+  TTimelineActivity extends FilterableTimelineActivity,
+>(
+  timelineActivities: TTimelineActivity[],
   mainObjectSingularName: string,
   objectMetadataItems: EnrichedObjectMetadataItem[],
-): TimelineActivity[] => {
+  timelineActivityTypeMaps: TimelineActivityTypeMaps,
+): TTimelineActivity[] => {
   const mainObjectMetadataItem = objectMetadataItems.find(
     (objectMetadataItem) =>
       objectMetadataItem.nameSingular === mainObjectSingularName,
   );
 
-  const noteObjectMetadataItem = objectMetadataItems.find(
-    (objectMetadataItem) =>
-      objectMetadataItem.nameSingular === CoreObjectNameSingular.Note,
-  );
-
-  if (!mainObjectMetadataItem || !noteObjectMetadataItem) {
-    throw new Error('Object metadata items not found');
+  if (!isDefined(mainObjectMetadataItem)) {
+    throw new Error('Object metadata item not found');
   }
 
-  const fieldMetadataItemMap = new Map(
-    mainObjectMetadataItem.readableFields.map((field) => [field.name, field]),
-  );
+  return timelineActivities
+    .map((timelineActivity) => {
+      const linkedObjectMetadataItem =
+        getTimelineActivityLinkedObjectMetadataItem({
+          timelineActivity,
+          timelineActivityTypeMaps,
+          objectMetadataItems,
+        });
 
-  const noteFieldMetadataItemMap = new Map(
-    noteObjectMetadataItem.readableFields.map((field) => [field.name, field]),
-  );
+      const action = getTimelineActivityAction(
+        timelineActivity,
+        timelineActivityTypeMaps,
+      );
 
-  return timelineActivities.filter((timelineActivity) => {
-    const diff = timelineActivity.properties?.diff;
-    const canSkipValidation = !diff;
+      if (isDefined(linkedObjectMetadataItem)) {
+        if (!isDefined(timelineActivity.properties?.diff)) {
+          return timelineActivity;
+        }
 
-    if (canSkipValidation) {
-      return true;
-    }
+        return keepActivityWithReadableDiff(
+          timelineActivity,
+          linkedObjectMetadataItem.readableFields ?? [],
+        );
+      }
 
-    const isNoteOrTask =
-      timelineActivity.name.startsWith('linked-note') ||
-      timelineActivity.name.startsWith('linked-task');
+      if (action === 'updated') {
+        return keepActivityWithReadableDiff(
+          timelineActivity,
+          mainObjectMetadataItem.readableFields,
+        );
+      }
 
-    const validDiffEntries = Object.entries(diff).filter(([diffKey]) =>
-      isNoteOrTask
-        ? // Note and Task objects have the same field metadata
-          noteFieldMetadataItemMap.has(diffKey)
-        : fieldMetadataItemMap.has(diffKey),
-    );
-
-    if (validDiffEntries.length === 0) {
-      return false;
-    }
-
-    timelineActivity.properties = {
-      ...timelineActivity.properties,
-      diff: Object.fromEntries(validDiffEntries),
-    };
-
-    return true;
-  });
+      return timelineActivity;
+    })
+    .filter(isDefined);
 };

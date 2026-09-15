@@ -6,6 +6,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { MatchParticipantModule } from 'src/modules/match-participant/match-participant.module';
 import { MessagingMessageCleanerRemoveOrphansCommand } from 'src/modules/messaging/message-cleaner/commands/messaging-message-clearner-remove-orphans.command';
 import { MessagingResetChannelCommand } from 'src/modules/messaging/message-cleaner/commands/messaging-reset-channel.command';
 import { MessagingConnectedAccountDeletionCleanupJob } from 'src/modules/messaging/message-cleaner/jobs/messaging-connected-account-deletion-cleanup.job';
@@ -17,10 +18,10 @@ import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cl
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([WorkspaceEntity]),
+    TypeOrmModule.forFeature([WorkspaceEntity, MessageChannelEntity]),
     FeatureFlagModule,
     MessagingCommonModule,
-    TypeOrmModule.forFeature([MessageChannelEntity]),
+    MatchParticipantModule,
     WorkspaceIteratorModule,
   ],
   providers: [

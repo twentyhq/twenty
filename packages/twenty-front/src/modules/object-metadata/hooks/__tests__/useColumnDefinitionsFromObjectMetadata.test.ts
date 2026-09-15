@@ -1,18 +1,16 @@
 import { renderHook } from '@testing-library/react';
 
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
+  AiModelTier,
   SubscriptionInterval,
   SubscriptionStatus,
   WorkspaceActivationStatus,
+  WorkspaceDiscoverability,
 } from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
@@ -35,11 +33,11 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       allowImpersonation: false,
       subdomain: 'test',
       activationStatus: WorkspaceActivationStatus.ACTIVE,
-      hasValidEnterpriseKey: false,
       hasValidSignedEnterpriseKey: false,
       hasValidEnterpriseValidityToken: false,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
+      workspaceDiscoverability: WorkspaceDiscoverability.PUBLIC,
       isGoogleAuthEnabled: true,
       isMicrosoftAuthEnabled: false,
       isPasswordAuthEnabled: true,
@@ -71,10 +69,11 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       isTwoFactorAuthenticationEnforced: false,
       trashRetentionDays: 14,
       eventLogRetentionDays: 365 * 3,
-      fastModel: AUTO_SELECT_FAST_MODEL_ID,
-      smartModel: AUTO_SELECT_SMART_MODEL_ID,
-      enabledAiModelIds: [],
-      useRecommendedModels: true,
+      aiChatModelTier: AiModelTier.fast,
+      aiAgentModelTier: AiModelTier.fast,
+      isAutoModelSelectionEnabled: true,
+      aiModelIdByTier: {},
+      isInternalMessagesImportEnabled: false,
     });
 
     const companyObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(

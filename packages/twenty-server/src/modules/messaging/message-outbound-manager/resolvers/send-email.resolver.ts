@@ -1,3 +1,4 @@
+import { EmailOperation } from 'twenty-shared/types';
 import {
   ForbiddenException,
   Logger,
@@ -6,8 +7,6 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
-
-import { FileFolder } from 'twenty-shared/types';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -25,6 +24,8 @@ import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/con
 import { SendEmailOutputDTO } from 'src/modules/messaging/message-outbound-manager/dtos/send-email-output.dto';
 import { SendEmailInput } from 'src/modules/messaging/message-outbound-manager/dtos/send-email.input';
 import { SendEmailService } from 'src/modules/messaging/message-outbound-manager/services/send-email.service';
+import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 @MetadataResolver()
 @UsePipes(ResolverValidationPipe)
@@ -50,14 +51,14 @@ export class SendEmailResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<SendEmailOutputDTO> {
     try {
-      await this.connectedAccountMetadataService.verifyOwnership({
+      await this.connectedAccountMetadataService.verifyUsableByCaller({
         id: input.connectedAccountId,
         userWorkspaceId,
         workspaceId: workspace.id,
       });
 
-      const result = await this.emailComposerService.composeEmail(
-        {
+      const result = await this.emailComposerService.composeEmail({
+        parameters: {
           recipients: {
             to: input.to,
             cc: input.cc ?? '',
@@ -66,12 +67,13 @@ export class SendEmailResolver {
           subject: input.subject,
           body: input.body,
           connectedAccountId: input.connectedAccountId,
+          fromHandle: input.fromHandle,
           files: input.files ?? [],
           inReplyTo: input.inReplyTo,
         },
-        { workspaceId: workspace.id },
-        { attachmentsFileFolder: FileFolder.EmailAttachment },
-      );
+        context: { workspaceId: workspace.id },
+        operation: EmailOperation.SEND,
+      });
 
       if (!result.success) {
         return {
@@ -82,26 +84,60 @@ export class SendEmailResolver {
 
       const { data } = result;
 
-      const sendResult = await this.sendEmailService.sendComposedEmail(data);
+      const sendResult = isDefined(input.draftMessageId)
+        ? await this.sendEmailService.sendComposedDraft(
+            data,
+            input.draftMessageId,
+            workspace.id,
+          )
+        : await this.sendEmailService.sendComposedEmail(data);
 
-      if (data.shouldPersistMessage) {
-        await this.sendEmailService.persistSentMessage(
-          sendResult,
-          data,
-          workspace.id,
+      let messageThreadId: string | undefined;
+
+      try {
+        if (data.shouldPersistMessage) {
+          await this.sendEmailService.persistSentMessage(
+            sendResult,
+            data,
+            workspace.id,
+          );
+        }
+
+        if (isDefined(input.draftMessageId)) {
+          await this.sendEmailService.deleteSentDraft(
+            input.draftMessageId,
+            input.connectedAccountId,
+            workspace.id,
+          );
+        }
+
+        const sentMessageExternalId =
+          sendResult.messageExternalId ?? sendResult.headerMessageId;
+
+        messageThreadId =
+          isDefined(input.draftMessageId) &&
+          isNonEmptyString(sentMessageExternalId)
+            ? await this.sendEmailService.getSentMessageThreadId(
+                sentMessageExternalId,
+                workspace.id,
+              )
+            : undefined;
+
+        const attachmentFileIds = (input.files ?? []).map((file) => file.id);
+
+        if (attachmentFileIds.length > 0) {
+          await this.fileEmailAttachmentService.deleteFiles({
+            fileIds: attachmentFileIds,
+            workspaceId: workspace.id,
+          });
+        }
+      } catch (postSendError) {
+        this.logger.warn(
+          `Email sent but post-send cleanup failed (sync will recover): ${postSendError}`,
         );
       }
 
-      const attachmentFileIds = (input.files ?? []).map((file) => file.id);
-
-      if (attachmentFileIds.length > 0) {
-        await this.fileEmailAttachmentService.deleteFiles({
-          fileIds: attachmentFileIds,
-          workspaceId: workspace.id,
-        });
-      }
-
-      return { success: true };
+      return { success: true, messageThreadId };
     } catch (error) {
       if (error instanceof ForbiddenException) {
         throw error;

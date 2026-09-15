@@ -1,31 +1,25 @@
-import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
+import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
+import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import {
+  StyledWidgetContentContainer,
+  StyledWidgetScrollContainer,
+} from '@/ui/layout/components/WidgetContentContainer';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
-import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
+import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-
-const StyledWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-`;
-
-const StyledContainer = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-`;
 
 type EmailThreadWidgetProps = {
   widget: PageLayoutWidget;
@@ -35,7 +29,7 @@ export const EmailThreadWidget = ({
   widget: _widget,
 }: EmailThreadWidgetProps) => {
   const targetRecord = useTargetRecord();
-  const { isInSidePanel } = useLayoutRenderingContext();
+  const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
   const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
     targetRecord.id,
@@ -43,7 +37,36 @@ export const EmailThreadWidget = ({
 
   const replyContext = useReplyContext(targetRecord.id);
 
-  const [isComposerOpen, setIsComposerOpen] = useState(false);
+  const [composerIntent, setComposerIntent] = useState<
+    'opened' | 'closed' | null
+  >(null);
+  const [clickedDraftPrefill, setClickedDraftPrefill] =
+    useState<EmailDraftPrefill | null>(null);
+  const [previousTargetRecordId, setPreviousTargetRecordId] = useState(
+    targetRecord.id,
+  );
+
+  if (previousTargetRecordId !== targetRecord.id) {
+    setPreviousTargetRecordId(targetRecord.id);
+    setComposerIntent(null);
+    setClickedDraftPrefill(null);
+  }
+
+  const handleComposerOpenChange = useCallback((open: boolean) => {
+    setComposerIntent(open ? 'opened' : 'closed');
+
+    if (!open) {
+      setClickedDraftPrefill(null);
+    }
+  }, []);
+
+  const handleDraftClick = useCallback(
+    (message: EmailThreadMessageWithSender) => {
+      setClickedDraftPrefill(getEmailDraftPrefillFromMessage(message));
+      setComposerIntent('opened');
+    },
+    [],
+  );
 
   const canReply = isDefined(replyContext) && !replyContext.loading;
 
@@ -58,51 +81,64 @@ export const EmailThreadWidget = ({
     : [];
   const lastMessage = messages[messagesCount - 1];
 
+  const trailingDraft = lastMessage?.isDraft ? lastMessage : undefined;
+  const draftPrefill =
+    clickedDraftPrefill ??
+    (isDefined(trailingDraft)
+      ? getEmailDraftPrefillFromMessage(trailingDraft)
+      : null);
+  const isComposerOpen =
+    composerIntent === 'opened' ||
+    (composerIntent === null && isDefined(trailingDraft));
+
   if (threadLoading || !thread || !messages.length) {
     return (
-      <StyledWrapper>
-        <StyledContainer>
+      <StyledWidgetContentContainer>
+        <WidgetRelationsHeader />
+        <StyledWidgetScrollContainer>
           <EmailLoader loadingText={t`Loading thread`} />
-        </StyledContainer>
-      </StyledWrapper>
+        </StyledWidgetScrollContainer>
+      </StyledWidgetContentContainer>
     );
   }
 
   return (
-    <StyledWrapper>
-      <StyledContainer>
+    <StyledWidgetContentContainer>
+      <WidgetRelationsHeader />
+      <StyledWidgetScrollContainer>
         {firstMessages.map((message) => (
           <EmailThreadMessage
             key={message.id}
-            sender={message.sender}
-            participants={message.messageParticipants}
-            body={message.text}
-            sentAt={message.receivedAt}
+            message={message}
+            onDraftClick={handleDraftClick}
           />
         ))}
-        <EmailThreadIntermediaryMessages messages={intermediaryMessages} />
+        <EmailThreadIntermediaryMessages
+          messages={intermediaryMessages}
+          onDraftClick={handleDraftClick}
+        />
         <EmailThreadMessage
           key={lastMessage.id}
-          sender={lastMessage.sender}
-          participants={lastMessage.messageParticipants}
-          body={lastMessage.text}
-          sentAt={lastMessage.receivedAt}
+          message={lastMessage}
           isExpanded
           hideBottomBorder={!isComposerOpen}
+          onDraftClick={handleDraftClick}
         />
         <CustomResolverFetchMoreLoader
           loading={threadLoading}
           onLastRowVisible={fetchMoreMessages}
         />
-      </StyledContainer>
+      </StyledWidgetScrollContainer>
       {canReply && (
         <EmailThreadComposer
+          key={draftPrefill?.messageId ?? 'reply'}
           replyContext={replyContext}
           isInSidePanel={isInSidePanel}
           isComposerOpen={isComposerOpen}
-          setIsComposerOpen={setIsComposerOpen}
+          setIsComposerOpen={handleComposerOpenChange}
+          draftPrefill={draftPrefill}
         />
       )}
-    </StyledWrapper>
+    </StyledWidgetContentContainer>
   );
 };

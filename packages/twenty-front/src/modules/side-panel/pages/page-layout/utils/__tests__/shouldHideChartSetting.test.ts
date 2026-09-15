@@ -5,7 +5,7 @@ import { shouldHideChartSetting } from '@/side-panel/pages/page-layout/utils/sho
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { msg } from '@lingui/core/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { IconChartBar } from 'twenty-ui/display';
+import { IconChartBar } from 'twenty-ui/icon';
 
 describe('shouldHideChartSetting', () => {
   const mockItemWithoutDependencies: ChartSettingsItem = {

@@ -25,11 +25,27 @@ Wenn Sie Docker Compose verwenden, befolgen Sie diese Schritte:
 
 Der Server führt beim Start alle erforderlichen Upgrade-Migrationen automatisch aus. Kein manueller Befehl erforderlich.
 
-## Versionsübergreifende Upgrades (v1.22+)
+## Upgrade auf v2.34+ — mindestens PostgreSQL 15
 
-Ab **v1.22** unterstützt Twenty versionsübergreifende Upgrades. Sie können direkt von jeder unterstützten Version auf die neueste Version wechseln, ohne jede Zwischenversion durchlaufen zu müssen.
+Twenty v2.34 erfordert PostgreSQL 15 oder neuer. Die offizielle Docker-Compose-Konfiguration verwendet PostgreSQL 16. Wenn Ihre Instanz eine Verbindung zu einer extern verwalteten Datenbank herstellt, führen Sie deren Upgrade durch, bevor Sie den v2.34-Server starten.
 
-Zum Beispiel wird ein Upgrade direkt von v1.22 auf v2.0 vollständig unterstützt.
+## Versionsübergreifende Upgrades (v1.23+)
+
+Ab **v1.23** unterstützt Twenty versionsübergreifende Upgrades. Sie können direkt von jeder unterstützten Version auf die neueste Version wechseln, ohne jede Zwischenversion durchlaufen zu müssen.
+
+Zum Beispiel wird ein Upgrade direkt von v1.23 auf v2.0 vollständig unterstützt.
+
+## Upgrade auf v2.5+ – Verschlüsselungsumschlag für ruhende Daten
+
+Ab **v2.5** speichert Twenty Secrets im Ruhezustand (OAuth-Tokens, Anwendungsvariablen, private Signaturschlüssel, sensible Konfigurationswerte, TOTP-Secrets) in einem versionierten Umschlag `enc:v2:`, der mit `ENCRYPTION_KEY` (oder `APP_SECRET`, falls `ENCRYPTION_KEY` nicht gesetzt ist) verschlüsselt wird.
+
+Beim ersten Start mit v2.5 werden langsame Upgrade-Befehle ausgeführt, die den neuen Umschlag mit bestehenden Zeilen befüllen. Sie sind idempotent – ein Unterbrechen und Neustarten des Servers setzt an der Stelle fort, an der er aufgehört hat –, aber sie können bei großen Datenbanken eine Weile dauern. Sie können den Fortschritt mit `upgrade:status` überwachen.
+
+Sie sollten **vor** dem Upgrade auf v2.5 einen dedizierten `ENCRYPTION_KEY` setzen, damit beim Nachbefüllen die Zeilen von Anfang an unter diesem Schlüssel geschrieben werden. Ein Schlüsselwechsel nach der Nachbefüllung erfordert eine [Rotation](/l/de/developers/self-host/capabilities/key-rotation).
+
+## Rotation von Secrets und Signaturschlüsseln
+
+Für alltägliche operative Aufgaben wie das Rotieren von `ENCRYPTION_KEY`, das Rotieren des JWT-Signaturschlüssels oder das Widerrufen eines kompromittierten Signaturschlüssels siehe den dedizierten [Leitfaden zur Schlüsselrotation](/l/de/developers/self-host/capabilities/key-rotation).
 
 ## Upgrade-Status prüfen
 
@@ -85,6 +101,6 @@ docker exec -it {server_container_name_or_id} yarn command:prod upgrade:status -
 
 Dies zeigt nur Workspaces, die zurückliegen oder fehlgeschlagen sind, zusammen mit der Fehlermeldung für jeden Fehlschlag.
 
-## Vor v1.22
+## Vor v1.23
 
-Wenn Ihre Instanz älter als v1.22 ist, müssen Sie schrittweise über jede größere getaggte Version ein Upgrade durchführen (von v1.6 auf v1.7, dann von v1.7 auf v1.8 usw.), bis Sie v1.22 erreichen. Danach können Sie direkt auf die neueste Version wechseln.
+Wenn Ihre Instanz älter als v1.23 ist, müssen Sie schrittweise über jede größere getaggte Version ein Upgrade durchführen (von v1.6 auf v1.7, dann von v1.7 auf v1.8 usw.), bis Sie v1.23 erreichen. Danach können Sie direkt auf die neueste Version wechseln.

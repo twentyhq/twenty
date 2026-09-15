@@ -2,15 +2,19 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { TabListHiddenMeasurements } from '@/ui/layout/tab-list/components/TabListHiddenMeasurements';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
 import { TAB_LIST_HEIGHT } from '@/ui/layout/tab-list/constants/TabListHeight';
+import { useScrollActiveTabIntoView } from '@/ui/layout/tab-list/hooks/useScrollActiveTabIntoView';
 import { useTabListMeasurements } from '@/ui/layout/tab-list/hooks/useTabListMeasurements';
+import { SCROLLABLE_TAB_ROW_CSS } from '@/ui/layout/tab-list/styles/ScrollableTabRowCSS';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type TabListProps } from '@/ui/layout/tab-list/types/TabListProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { TabButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -36,9 +40,11 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledInnerContainer = styled.div`
+const StyledInnerContainer = styled.div<{ $centerTabs: boolean }>`
   display: flex;
   flex: 1;
+  justify-content: ${({ $centerTabs }) =>
+    $centerTabs ? 'center' : 'flex-start'};
   min-width: 0;
 `;
 
@@ -47,12 +53,13 @@ const StyledDropdownContainer = styled.div`
   display: flex;
 `;
 
-const StyledTabContainer = styled.div`
+const StyledTabContainer = styled.div<{ isScrollable: boolean }>`
   display: flex;
   gap: ${TAB_LIST_GAP}px;
   max-width: 100%;
-  overflow: hidden;
+  overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
   position: relative;
+  ${SCROLLABLE_TAB_ROW_CSS}
 `;
 
 const StyledNodeDimension = styled(NodeDimension)`
@@ -71,14 +78,17 @@ export const TabList = ({
   tabs,
   loading,
   behaveAsLinks = true,
-  isInSidePanel,
   className,
   componentInstanceId,
   onChangeTab,
   rightComponent,
+  centerTabs = false,
 }: TabListProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
+  const location = useLocation();
   const navigate = useNavigate();
+  const workspaceSurface = useWorkspaceSurface();
+  const isMobile = useIsMobile();
 
   const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
@@ -99,6 +109,17 @@ export const TabList = ({
   } = useTabListMeasurements({
     visibleTabs,
     hasAddButton: false,
+  });
+
+  const shouldScrollTabs = isMobile;
+  const renderedTabs = shouldScrollTabs
+    ? visibleTabs
+    : visibleTabs.slice(0, visibleTabCount);
+  const shouldShowOverflowDropdown = hasHiddenTabs && !shouldScrollTabs;
+
+  const { tabRowRef } = useScrollActiveTabIntoView({
+    activeTabId,
+    isScrollable: shouldScrollTabs,
   });
 
   const dropdownId = `tab-overflow-${componentInstanceId}`;
@@ -125,13 +146,27 @@ export const TabList = ({
   const handleTabSelectFromDropdown = useCallback(
     (tabId: string) => {
       if (behaveAsLinks) {
-        navigate(`#${tabId}`);
+        navigate(
+          { search: location.search, hash: `#${tabId}` },
+          {
+            replace: workspaceSurface.type === 'side-panel',
+            state: location.state,
+          },
+        );
         onChangeTab?.(tabId);
       } else {
         handleTabSelect(tabId);
       }
     },
-    [behaveAsLinks, handleTabSelect, navigate, onChangeTab],
+    [
+      behaveAsLinks,
+      handleTabSelect,
+      location.search,
+      location.state,
+      navigate,
+      onChangeTab,
+      workspaceSurface.type,
+    ],
   );
 
   if (visibleTabs.length === 0) {
@@ -143,12 +178,9 @@ export const TabList = ({
       value={{ instanceId: componentInstanceId }}
     >
       <>
-        <TabListFromUrlOptionalEffect
-          isInSidePanel={!!isInSidePanel}
-          tabListIds={tabs.map((tab) => tab.id)}
-        />
+        <TabListFromUrlOptionalEffect tabListIds={tabs.map((tab) => tab.id)} />
 
-        {visibleTabs.length > 1 && (
+        {visibleTabs.length > 1 && !shouldScrollTabs && (
           <TabListHiddenMeasurements
             visibleTabs={visibleTabs}
             activeTabId={activeTabId}
@@ -160,9 +192,12 @@ export const TabList = ({
 
         <StyledContainer className={className}>
           <StyledNodeDimension onDimensionChange={onContainerWidthChange}>
-            <StyledInnerContainer>
-              <StyledTabContainer>
-                {visibleTabs.slice(0, visibleTabCount).map((tab) => (
+            <StyledInnerContainer $centerTabs={centerTabs && !shouldScrollTabs}>
+              <StyledTabContainer
+                ref={tabRowRef}
+                isScrollable={shouldScrollTabs}
+              >
+                {renderedTabs.map((tab) => (
                   <TabButton
                     key={tab.id}
                     id={tab.id}
@@ -172,7 +207,15 @@ export const TabList = ({
                     active={tab.id === activeTabId}
                     disabled={tab.disabled ?? loading}
                     pill={tab.pill}
-                    to={behaveAsLinks ? `#${tab.id}` : undefined}
+                    to={
+                      behaveAsLinks
+                        ? { search: location.search, hash: `#${tab.id}` }
+                        : undefined
+                    }
+                    state={behaveAsLinks ? location.state : undefined}
+                    replace={
+                      behaveAsLinks && workspaceSurface.type === 'side-panel'
+                    }
                     tooltipContent={tab.tooltipContent}
                     onClick={
                       behaveAsLinks
@@ -183,7 +226,7 @@ export const TabList = ({
                 ))}
               </StyledTabContainer>
 
-              {hasHiddenTabs && (
+              {shouldShowOverflowDropdown && (
                 <StyledDropdownContainer>
                   <TabListDropdown
                     dropdownId={dropdownId}

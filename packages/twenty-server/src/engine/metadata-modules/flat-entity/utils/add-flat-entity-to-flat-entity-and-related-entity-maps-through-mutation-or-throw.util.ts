@@ -12,6 +12,7 @@ import { type MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { type MetadataRelatedFlatEntityMapsKeys } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-flat-entity-maps-keys.type';
 import { type MetadataFlatEntityAndRelatedFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/metadata-related-types.type';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-and-related-entity-maps-through-mutation-or-throw.util';
 import { replaceFlatEntityInFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/replace-flat-entity-in-flat-entity-maps-through-mutation-or-throw.util';
@@ -22,6 +23,7 @@ type AddFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArgs<
   metadataName: T;
   flatEntity: MetadataFlatEntity<T>;
   flatEntityAndRelatedMapsToMutate: MetadataFlatEntityAndRelatedFlatEntityMaps<T>;
+  skipMissingRelatedEntities?: boolean;
 };
 
 export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow =
@@ -29,6 +31,7 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
     metadataName,
     flatEntity,
     flatEntityAndRelatedMapsToMutate,
+    skipMissingRelatedEntities = false,
   }: AddFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrowArgs<T>) => {
     addUniversalFlatEntityToUniversalFlatEntityAndRelatedEntityMapsThroughMutationOrThrow(
       {
@@ -36,6 +39,7 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
         universalFlatEntity: flatEntity,
         universalFlatEntityAndRelatedMapsToMutate:
           flatEntityAndRelatedMapsToMutate,
+        skipMissingRelatedEntities,
       },
     );
 
@@ -101,6 +105,17 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
         continue;
       }
 
+      if (skipMissingRelatedEntities) {
+        const maybeRelatedFlatEntity = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: flatEntityRelatedEntityForeignKeyValue,
+          flatEntityMaps: relatedFlatEntityMetadataMaps,
+        });
+
+        if (!isDefined(maybeRelatedFlatEntity)) {
+          continue;
+        }
+      }
+
       const relatedFlatEntity = findFlatEntityByIdInFlatEntityMapsOrThrow({
         flatEntityId: flatEntityRelatedEntityForeignKeyValue,
         flatEntityMaps: relatedFlatEntityMetadataMaps,
@@ -113,8 +128,17 @@ export const addFlatEntityToFlatEntityAndRelatedEntityMapsThroughMutationOrThrow
         )
       ) {
         throw new FlatEntityMapsException(
-          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${String(flatEntityForeignKeyAggregator)}`,
+          `Should never occur, invalid flat entity typing. flat ${relatedMetadataName} should contain ${String(flatEntityForeignKeyAggregator)} (metadataName: ${metadataName}, universalIdentifier: ${flatEntity.universalIdentifier})`,
           FlatEntityMapsExceptionCode.ENTITY_MALFORMED,
+          {
+            context: {
+              id: flatEntity.id,
+              universalIdentifier: flatEntity.universalIdentifier,
+              metadataName,
+              relatedMetadataName,
+              operation: 'add',
+            },
+          },
         );
       }
 

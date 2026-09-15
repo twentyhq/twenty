@@ -1,0 +1,11 @@
+.clickable {
+  display: flex;
+  overflow: hidden;
+  white-space: nowrap;
+
+  a {
+    color: inherit;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

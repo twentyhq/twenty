@@ -1,0 +1,233 @@
+import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
+import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { type ReactNode, useMemo, useState } from 'react';
+import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
+import { Button, SearchInput } from 'twenty-ui/input';
+import { MenuItemSwitch, UndecoratedLink } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
+import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
+
+type SettingsObjectIndexesSectionProps = {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  isReadOnly: boolean;
+};
+
+const StyledContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  padding-top: ${themeCssVariables.spacing[2]};
+`;
+
+const DELETE_INDEX_MODAL_ID = 'delete-index-modal';
+const HIDE_SYSTEM_INDEXES_DROPDOWN_ID =
+  'settings-object-indexes-filter-dropdown';
+
+export const SettingsObjectIndexesSection = ({
+  objectMetadataItem,
+  isReadOnly,
+}: SettingsObjectIndexesSectionProps) => {
+  const { t } = useLingui();
+  const { openModal, closeModal } = useModal();
+  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { deleteOneIndexMetadataItem } = useDeleteOneIndexMetadataItem();
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const [hideSystemIndexes, setHideSystemIndexes] = useState(false);
+  const [pendingDelete, setPendingDelete] =
+    useState<SettingsObjectIndexesTableItem | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const tableItems = useMemo<SettingsObjectIndexesTableItem[]>(() => {
+    const fieldsById = new Map(
+      objectMetadataItem.fields.map((field) => [field.id, field]),
+    );
+
+    const objectLabelsById = new Map(
+      objectMetadataItems.map(({ id, labelSingular }) => [id, labelSingular]),
+    );
+
+    const morphFieldLabelsById = new Map(
+      objectMetadataItem.fields
+        .flatMap((field) => field.morphRelations ?? [])
+        .filter(
+          ({ sourceFieldMetadata }) => !fieldsById.has(sourceFieldMetadata.id),
+        )
+        .map(({ sourceFieldMetadata, targetObjectMetadata }) => [
+          sourceFieldMetadata.id,
+          objectLabelsById.get(targetObjectMetadata.id),
+        ]),
+    );
+
+    return objectMetadataItem.indexMetadatas.map((indexMetadataItem) => ({
+      id: indexMetadataItem.id,
+      name: indexMetadataItem.name,
+      isUnique: indexMetadataItem.isUnique,
+      isCustom: indexMetadataItem.isCustom ?? false,
+      indexType: indexMetadataItem.indexType,
+      indexWhereClause: indexMetadataItem.indexWhereClause,
+      indexFields:
+        indexMetadataItem.indexFieldMetadatas
+          ?.map((indexField) => {
+            const fieldMetadataItem = fieldsById.get(
+              indexField.fieldMetadataId,
+            );
+
+            if (!isDefined(fieldMetadataItem)) {
+              return morphFieldLabelsById.get(indexField.fieldMetadataId);
+            }
+
+            if (isNonEmptyString(indexField.subFieldName)) {
+              return `${fieldMetadataItem.label} > ${getCompositeSubFieldLabel(
+                fieldMetadataItem.type as CompositeFieldType,
+                indexField.subFieldName as CompositeFieldSubFieldName,
+              )}`;
+            }
+
+            return fieldMetadataItem.label;
+          })
+          .filter((label): label is string => Boolean(label))
+          .join(', ') ?? '',
+    }));
+  }, [
+    objectMetadataItem.indexMetadatas,
+    objectMetadataItem.fields,
+    objectMetadataItems,
+  ]);
+
+  const filteredItems = useMemo(() => {
+    const searchNormalized = normalizeSearchText(searchTerm);
+
+    return tableItems
+      .filter((item) => (hideSystemIndexes ? item.isCustom : true))
+      .filter((item) =>
+        searchNormalized.length === 0
+          ? true
+          : normalizeSearchText(item.indexFields).includes(searchNormalized) ||
+            normalizeSearchText(item.indexType).includes(searchNormalized),
+      );
+  }, [tableItems, searchTerm, hideSystemIndexes]);
+
+  const customIndexCount = tableItems.filter((item) => item.isCustom).length;
+  const reachedCap = customIndexCount >= MAX_CUSTOM_INDEXES_PER_OBJECT;
+  const canCreate = !isReadOnly && !reachedCap;
+
+  const handleRequestDelete = (item: SettingsObjectIndexesTableItem) => {
+    setPendingDelete(item);
+    openModal(DELETE_INDEX_MODAL_ID);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (pendingDelete === null) return;
+    setIsDeleting(true);
+
+    const result = await deleteOneIndexMetadataItem({
+      idToDelete: pendingDelete.id,
+    });
+
+    setIsDeleting(false);
+    closeModal(DELETE_INDEX_MODAL_ID);
+
+    if (result.status === 'successful') {
+      enqueueSuccessSnackBar({ message: t`Index deleted` });
+      setPendingDelete(null);
+    }
+  };
+
+  return (
+    <StyledContent>
+      <SearchInput
+        placeholder={t`Search an index...`}
+        value={searchTerm}
+        onChange={setSearchTerm}
+        filterDropdown={(filterButton: ReactNode) => (
+          <Dropdown
+            dropdownId={HIDE_SYSTEM_INDEXES_DROPDOWN_ID}
+            dropdownPlacement="bottom-end"
+            dropdownOffset={{ x: 0, y: 8 }}
+            clickableComponent={filterButton}
+            dropdownComponents={
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItemSwitch
+                    LeftIcon={IconEyeOff}
+                    onCheckedChange={() =>
+                      setHideSystemIndexes(!hideSystemIndexes)
+                    }
+                    checked={hideSystemIndexes}
+                    text={t`Hide system indexes`}
+                    size="sm"
+                  />
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
+            }
+          />
+        )}
+      />
+      <SettingsObjectIndexTable
+        items={filteredItems}
+        isReadOnly={isReadOnly}
+        onDeleteIndex={handleRequestDelete}
+      />
+      {!isReadOnly && (
+        <StyledButtonContainer>
+          {canCreate ? (
+            <UndecoratedLink
+              to={getSettingsPath(SettingsPath.ObjectNewIndex, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            >
+              <Button
+                Icon={IconPlus}
+                title={t`Add Index`}
+                size="small"
+                variant="secondary"
+              />
+            </UndecoratedLink>
+          ) : (
+            <Button
+              Icon={IconPlus}
+              title={t`Add Index`}
+              size="small"
+              variant="secondary"
+              disabled
+            />
+          )}
+        </StyledButtonContainer>
+      )}
+      <ConfirmationModal
+        modalInstanceId={DELETE_INDEX_MODAL_ID}
+        title={t`Delete this index?`}
+        subtitle={t`Queries that relied on it will fall back to a sequential scan. You can recreate it later.`}
+        confirmButtonText={t`Delete`}
+        onConfirmClick={handleConfirmDelete}
+        onClose={() => setPendingDelete(null)}
+        loading={isDeleting}
+      />
+    </StyledContent>
+  );
+};

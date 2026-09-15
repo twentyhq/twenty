@@ -12,8 +12,8 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type MicrosoftPassportProfile } from 'src/engine/core-modules/auth/types/microsoft-passport-profile.type';
-import { type SocialSSOSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
-import { type SocialSSOState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
+import { type SocialSsoSignInUpActionType } from 'src/engine/core-modules/auth/types/signInUp.type';
+import { type SocialSsoState } from 'src/engine/core-modules/auth/types/social-sso-state.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 export type MicrosoftRequest = Omit<
@@ -27,10 +27,10 @@ export type MicrosoftRequest = Omit<
     picture: string | null;
     locale?: keyof typeof APP_LOCALES | null;
     workspaceInviteHash?: string;
-    workspacePersonalInviteToken?: string;
     workspaceId?: string;
     billingCheckoutSessionState?: string;
-    action: SocialSSOSignInUpActionType;
+    action: SocialSsoSignInUpActionType;
+    returnToPath?: string;
   };
 };
 
@@ -42,12 +42,12 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       clientSecret: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
       callbackURL: twentyConfigService.get('AUTH_MICROSOFT_CALLBACK_URL'),
       tenant: 'common',
-      scope: ['user.read'],
+      scope: ['User.Read'],
       passReqToCallback: true,
     });
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   authenticate(req: Request, options: any) {
     options = {
       ...options,
@@ -56,8 +56,8 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
         workspaceId: req.params.workspaceId,
         locale: req.query.locale,
         billingCheckoutSessionState: req.query.billingCheckoutSessionState,
-        workspacePersonalInviteToken: req.query.workspacePersonalInviteToken,
         action: req.query.action,
+        returnToPath: req.query.returnToPath,
         oauthRetryCount: req.query.oauthRetryCount
           ? Number(req.query.oauthRetryCount)
           : undefined,
@@ -75,7 +75,7 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
     done: VerifyCallback,
   ): Promise<void> {
     const { name, userPrincipalName, photos } = profile;
-    const state = parseJson<SocialSSOState>(request.query.state as string);
+    const state = parseJson<SocialSsoState>(request.query.state as string);
 
     if (!userPrincipalName) {
       throw new AuthException(
@@ -90,11 +90,11 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
       lastName: name?.familyName,
       picture: photos?.[0]?.value ?? null,
       workspaceInviteHash: state?.workspaceInviteHash,
-      workspacePersonalInviteToken: state?.workspacePersonalInviteToken,
       workspaceId: state?.workspaceId,
       billingCheckoutSessionState: state?.billingCheckoutSessionState,
       locale: state?.locale,
       action: state?.action ?? 'list-available-workspaces',
+      returnToPath: state?.returnToPath,
     };
 
     done(null, user);

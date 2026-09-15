@@ -1,0 +1,150 @@
+---
+title: 3. Routes HTTP
+icon: globe
+description: Déclencher la fonction sur HTTP et afficher les documents en tant que pages Web.
+---
+
+Le même gestionnaire peut également répondre aux requêtes HTTP. Nous allons ajouter deux itinéraires :
+
+* un point de terminaison **POST** que l'interface utilisateur appelle pour générer un document, et
+* un point de terminaison public **GET** qui rend un document en tant que page web imprimable.
+
+Les deux utilisent `httpRouteTriggerSettings`. Les routes de l'application sont accessibles via le chemin `/s/` ; sur les instances locales
+et auto-hébergées, ce chemin est géré par votre serveur Twenty
+(par exemple, `http://localhost:2020/s/documents/generate`). Sur Twenty Cloud, `RestApiClient`
+résout le chemin via le domaine des fonctions de l'espace de travail.
+
+## Itinéraire POST — générer à la demande
+
+Ceci réutilise `generateDocumentHandler`, donc il n'y a pas de logique à répéter — juste un adaptateur
+mince qui lit le corps de la requête.
+
+```ts filename="src/logic-functions/generate-document-route.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { generateDocumentHandler } from 'src/logic-functions/handlers/generate-document-handler';
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const body = event.body as Record<string, unknown> | null;
+
+  const result = await generateDocumentHandler({
+    templateId: (body?.templateId as string) ?? '',
+    recordId: (body?.recordId as string) ?? '',
+  });
+
+  // Map the handler's failure reason onto a real HTTP status (400/404/500)
+  // instead of always returning 200.
+  return new Response(JSON.stringify(result), {
+    status: result.success ? 200 : (result.status ?? 400),
+    headers: { 'Content-Type': 'application/json' },
+  });
+};
+
+export default defineLogicFunction({
+  universalIdentifier: GENERATE_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'generate-document-route',
+  timeoutSeconds: 30,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/generate',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+Le gestionnaire partagé renvoie un `status` suggéré en cas d'échec, donc la route peut
+répondre avec un code approprié `4xx`/`5xx`. `isAuthRequired: true` signifie que l'appelant
+doit présenter un jeton valide — le composant frontal dans le chapitre suivant passe automatiquement le jeton d'accès de l'utilisateur
+.
+
+## Obtenir la route - afficher en tant que page web
+
+Pour retourner du HTML au lieu de JSON, enveloppez le corps dans un en-tête `Response` avec un
+`Content-Type`. Cette route est publique (`isAuthRequired: false`) donc un document généré par
+peut être partagé comme un lien.
+
+```ts filename="src/logic-functions/view-document.ts"
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import { Response } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { documentHtmlPage } from 'src/utils/render-document';
+
+const htmlResponse = (html: string, status = 200): Response =>
+  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+
+const handler = async (event: RoutePayload): Promise<Response> => {
+  const documentId = event.queryStringParameters?.id;
+
+  if (!documentId) {
+    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+  }
+
+  // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
+  const { documents } = await new CoreApiClient().query({
+    documents: {
+      __args: { filter: { id: { eq: documentId } }, first: 1 },
+      edges: { node: { id: true, name: true, content: true } },
+    },
+  });
+
+  const document = documents?.edges?.[0]?.node;
+  if (!document?.id) {
+    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+  }
+
+  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+};
+
+export default defineLogicFunction({
+  universalIdentifier: VIEW_DOCUMENT_ROUTE_UNIVERSAL_IDENTIFIER,
+  name: 'view-document',
+  timeoutSeconds: 15,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/documents/view',
+    httpMethod: 'GET',
+    isAuthRequired: false,
+  },
+});
+```
+
+`documentHtmlPage` rend le corps de Markdown en HTML (avec [marked](https://marked.js.org/),
+assaini et le dépose dans une netteté page imprimable qui ne montre que le contenu du modèle
+— la même apparence que le PDF et l'aperçu dans l'application.
+[Voir l'aide](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/utils/render-document.ts).
+
+## Essayez-le
+
+Avec un modèle et une personne dans votre espace de travail, appelez la route (récupérez un jeton à partir de
+**Paramètres → APIs & Webhooks**):
+
+```bash filename="Terminal"
+curl -X POST http://localhost:2020/s/documents/generate \
+  -H "Authorization: Bearer $TOKEN" -H "Content-Type: application/json" \
+  -d '{"templateId":"<templateId>","recordId":"<personId>"}'
+# → {"success":true,"documentId":"...","content":"Dear Jeffery Griffin, ..."}
+```
+
+Ouvrez le document retourné dans votre navigateur :
+
+```
+http://localhost:2020/s/documents/view?id=<documentId>
+```
+
+<Frame caption="L'itinéraire public GET rend le document en tant que page imprimable.">
+  <img src="/images/docs/developers/extends/apps/document-generator/07-rendered-document.png" alt="Une page web de document rendu" />
+</Frame>
+
+<Tip>
+Vous pouvez également diffuser les logs d'une fonction en testant avec
+`yarn twenty dev:function:logs`, ou l'appeler directement avec
+`yarn twenty dev:function:exec`.
+</Tip>
+
+**Après cette étape :** l'application peut générer des documents via HTTP et les servir comme
+pages web. Maintenant, rendons-le utilisable sans `curl`.
+
+<Card title="Prochaine étape : construire l'interface utilisateur →" icon="table-columns" href="/fr/developers/extend/apps/tutorials/document-generator/building-the-ui">
+  Vues, navigation, commande et composant frontal.
+</Card>

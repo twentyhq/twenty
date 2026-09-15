@@ -8,13 +8,11 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import {
-  type LoginTokenJwtPayload,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 
 @Injectable()
 export class LoginTokenService {
@@ -29,6 +27,13 @@ export class LoginTokenService {
     authProvider: AuthProviderEnum,
     options?: { impersonatorUserWorkspaceId?: string },
   ): Promise<AuthToken> {
+    if (!Object.values(AuthProviderEnum).includes(authProvider)) {
+      throw new AuthException(
+        'Authentication provider is required to generate a login token',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const jwtPayload: LoginTokenJwtPayload = {
       type: JwtTokenTypeEnum.LOGIN,
       sub: email,
@@ -37,18 +42,12 @@ export class LoginTokenService {
       impersonatorUserWorkspaceId: options?.impersonatorUserWorkspaceId,
     };
 
-    const secret = this.jwtWrapperService.generateAppSecret(
-      jwtPayload.type,
-      workspaceId,
-    );
-
     const expiresIn = this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
+      token: await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
         expiresIn,
       }),
       expiresAt,
@@ -67,6 +66,13 @@ export class LoginTokenService {
       throw new AuthException(
         'Expected a login token',
         AuthExceptionCode.INVALID_JWT_TOKEN_TYPE,
+      );
+    }
+
+    if (!Object.values(AuthProviderEnum).includes(decoded.authProvider)) {
+      throw new AuthException(
+        'Login token has an invalid authentication provider',
+        AuthExceptionCode.UNAUTHENTICATED,
       );
     }
 

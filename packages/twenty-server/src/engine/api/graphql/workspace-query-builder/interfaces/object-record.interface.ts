@@ -7,7 +7,7 @@ import {
 } from 'twenty-shared/types';
 
 export type ObjectRecordFilter = Partial<{
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
+  // oxlint-disable-next-line typescript/no-explicit-any
   [Property in keyof ObjectRecord]: any;
 }>;
 
@@ -37,7 +37,11 @@ export type ObjectRecordOrderBy = Array<
   ObjectRecordOrderByForScalarField | ObjectRecordOrderByForCompositeField
 >;
 
-export type ObjectRecordCursorLeafScalarValue = string | number | boolean;
+export type ObjectRecordCursorLeafScalarValue =
+  | string
+  | number
+  | boolean
+  | null;
 export type ObjectRecordCursorLeafCompositeValue = Record<
   string,
   ObjectRecordCursorLeafScalarValue

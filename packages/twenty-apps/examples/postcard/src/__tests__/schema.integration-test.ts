@@ -1,5 +1,5 @@
-import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/application.config';
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { describe, expect, it } from 'vitest';
 
 describe('App installation', () => {
@@ -7,11 +7,7 @@ describe('App installation', () => {
     const client = new MetadataApiClient();
 
     const result = await client.query({
-      findManyApplications: {
-        id: true,
-        name: true,
-        universalIdentifier: true,
-      },
+      findManyApplications: { id: true, name: true, universalIdentifier: true },
     });
 
     const app = result.findManyApplications.find(
@@ -29,15 +25,12 @@ describe('PostCard object', () => {
 
     const { objects } = await client.query({
       objects: {
-        __args: {
-          filter: { isCustom: { is: true } },
-          paging: { first: 50 },
-        },
+        __args: { paging: { first: 50 }, filter: {} },
         edges: {
           node: {
             nameSingular: true,
             fields: {
-              __args: { paging: { first: 500 } },
+              __args: { paging: { first: 500 }, filter: {} },
               edges: { node: { name: true } },
             },
           },
@@ -46,18 +39,18 @@ describe('PostCard object', () => {
     });
 
     const obj = objects.edges
-      .map((e: { node: { nameSingular: string } }) => e.node)
+      .map((e) => e.node)
       .find((n: { nameSingular: string }) => n.nameSingular === 'postCard');
     expect(obj).toBeDefined();
 
     const names = obj!.fields.edges.map(
       (e: { node: { name: string } }) => e.node.name,
     );
+    console.log('names', names);
     expect(names).toContain('name');
     expect(names).toContain('content');
     expect(names).toContain('status');
     expect(names).toContain('deliveredAt');
     expect(names).toContain('recipient');
   });
-
 });

@@ -1,0 +1,1 @@
+export const DEFAULT_SEARCH_OUTPUT_MAX_MATCHES = 10;

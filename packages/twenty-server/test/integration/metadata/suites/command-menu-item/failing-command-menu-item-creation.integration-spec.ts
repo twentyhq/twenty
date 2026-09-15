@@ -63,8 +63,7 @@ const failingCommandMenuItemCreationTestCases: EachTestingContext<TestContext>[]
       },
     },
     {
-      title:
-        'when creating TRIGGER_WORKFLOW_VERSION without workflowVersionId',
+      title: 'when creating TRIGGER_WORKFLOW_VERSION without workflowVersionId',
       context: {
         input: {
           engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
@@ -73,8 +72,7 @@ const failingCommandMenuItemCreationTestCases: EachTestingContext<TestContext>[]
       },
     },
     {
-      title:
-        'when creating TRIGGER_WORKFLOW_VERSION with frontComponentId',
+      title: 'when creating TRIGGER_WORKFLOW_VERSION with frontComponentId',
       context: {
         input: {
           workflowVersionId: faker.string.uuid(),
@@ -85,8 +83,7 @@ const failingCommandMenuItemCreationTestCases: EachTestingContext<TestContext>[]
       },
     },
     {
-      title:
-        'when creating FRONT_COMPONENT_RENDERER without frontComponentId',
+      title: 'when creating FRONT_COMPONENT_RENDERER without frontComponentId',
       context: {
         input: {
           engineComponentKey: EngineComponentKey.FRONT_COMPONENT_RENDERER,
@@ -95,8 +92,7 @@ const failingCommandMenuItemCreationTestCases: EachTestingContext<TestContext>[]
       },
     },
     {
-      title:
-        'when creating FRONT_COMPONENT_RENDERER with workflowVersionId',
+      title: 'when creating FRONT_COMPONENT_RENDERER with workflowVersionId',
       context: {
         input: {
           frontComponentId: faker.string.uuid(),

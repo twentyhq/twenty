@@ -14,6 +14,8 @@ export type CreateStandardSkillContext = {
   description: string | null;
   content: string;
   isCustom: boolean;
+  isSystem: boolean;
+  isActive?: boolean;
 };
 
 export type CreateStandardSkillArgs = StandardBuilderArgs<'skill'> & {
@@ -21,7 +23,17 @@ export type CreateStandardSkillArgs = StandardBuilderArgs<'skill'> & {
 };
 
 export const createStandardSkillFlatMetadata = ({
-  context: { skillName, name, label, icon, description, content, isCustom },
+  context: {
+    skillName,
+    name,
+    label,
+    icon,
+    description,
+    content,
+    isCustom,
+    isSystem,
+    isActive = true,
+  },
   workspaceId,
   twentyStandardApplicationId,
   now,
@@ -37,7 +49,8 @@ export const createStandardSkillFlatMetadata = ({
     description,
     content,
     isCustom,
-    isActive: true,
+    isSystem,
+    isActive,
     workspaceId,
     applicationId: twentyStandardApplicationId,
     applicationUniversalIdentifier:

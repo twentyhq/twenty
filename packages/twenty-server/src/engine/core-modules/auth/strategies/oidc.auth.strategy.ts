@@ -11,7 +11,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 
-export type OIDCRequest = Omit<
+export type OidcRequest = Omit<
   Request,
   'user' | 'workspace' | 'workspaceMetadataVersion'
 > & {
@@ -26,7 +26,7 @@ export type OIDCRequest = Omit<
 };
 
 @Injectable()
-export class OIDCAuthStrategy extends PassportStrategy(
+export class OidcAuthStrategy extends PassportStrategy(
   Strategy,
   'openidconnect',
 ) {
@@ -46,8 +46,8 @@ export class OIDCAuthStrategy extends PassportStrategy(
     });
   }
 
-  // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-  async authenticate(req: Request, options: any) {
+  // oxlint-disable-next-line typescript/no-explicit-any
+  authenticate(req: Request, options: any) {
     return super.authenticate(req, {
       ...options,
       state: JSON.stringify({
@@ -86,8 +86,8 @@ export class OIDCAuthStrategy extends PassportStrategy(
   async validate(
     req: Request,
     tokenset: TokenSet,
-    // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-    done: (err: any, user?: OIDCRequest['user']) => void,
+    // oxlint-disable-next-line typescript/no-explicit-any
+    done: (err: any, user?: OidcRequest['user']) => void,
   ) {
     try {
       const state = this.extractState(req);

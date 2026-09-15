@@ -84,6 +84,29 @@ export default defineField({
 \*\*循环导入：\*\*两个关系字段相互引用对方的 `universalIdentifier`。 为避免循环导入问题，请在各自文件中将字段 ID 作为具名常量导出，并在另一个文件中导入它们。 构建系统会在编译时解析这些引用。
 </Note>
 
+## 联结关系
+
+联结对象将一条源记录连接到一条或多条目标记录。 例如，`PostCardRecipient` 可以同时包含 `postCard` 关系和 `recipient` 关系。 在源对象的 `ONE_TO_MANY` 字段上，将 `junctionTargetFieldUniversalIdentifier` 设置为联结对象上指向目标的关系字段：
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID` 必须标识联结对象上的 `MANY_TO_ONE` 或 morph 关系。 当[时间线活动扇出](/l/zh/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events)等功能遍历联结时，它会告知 Twenty 哪条相关记录是目标。
+
 ## 与标准对象建立关系
 
 要与内置的 Twenty 对象（Person、Company 等）建立关系，请使用 `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`：
@@ -122,14 +145,15 @@ export default defineField({
 
 ## 关系字段属性
 
-| 属性                                                | 必填               | 描述                                                             |
-| ------------------------------------------------- | ---------------- | -------------------------------------------------------------- |
-| `type`                                            | 是                | 必须为 `FieldType.RELATION`                                       |
-| `relationTargetObjectMetadataUniversalIdentifier` | 是                | 目标对象的 `universalIdentifier`                                    |
-| `relationTargetFieldMetadataUniversalIdentifier`  | 是                | 目标对象上匹配字段的 `universalIdentifier`                               |
-| `universalSettings.relationType`                  | 是                | `RelationType.MANY_TO_ONE` 或 `RelationType.ONE_TO_MANY`        |
-| `universalSettings.onDelete`                      | 仅适用于 MANY_TO_ONE | 当被引用的记录被删除时的处理方式：`CASCADE`、`SET_NULL`、`RESTRICT` 或 `NO_ACTION` |
-| `universalSettings.joinColumnName`                | 仅适用于 MANY_TO_ONE | 外键的数据库列名（例如，`postCardId`）                                      |
+| 属性                                                         | 必填                 | 描述                                                             |
+| ---------------------------------------------------------- | ------------------ | -------------------------------------------------------------- |
+| `type`                                                     | 是                  | 必须为 `FieldType.RELATION`                                       |
+| `relationTargetObjectMetadataUniversalIdentifier`          | 是                  | 目标对象的 `universalIdentifier`                                    |
+| `relationTargetFieldMetadataUniversalIdentifier`           | 是                  | 目标对象上匹配字段的 `universalIdentifier`                               |
+| `universalSettings.relationType`                           | 是                  | `RelationType.MANY_TO_ONE` 或 `RelationType.ONE_TO_MANY`        |
+| `universalSettings.onDelete`                               | 仅适用于 MANY_TO_ONE   | 当被引用的记录被删除时的处理方式：`CASCADE`、`SET_NULL`、`RESTRICT` 或 `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | 仅适用于 MANY_TO_ONE   | 外键的数据库列名（例如，`postCardId`）                                      |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | 仅限联结 `ONE_TO_MANY` | 联结对象上指向扇出目标的关系字段                                               |
 
 ## 内联关系字段
 

@@ -51,9 +51,9 @@ description: CSV 가져오기 중 레코드 연결에 대한 완전한 단계별
 4. **작업/노트**(위 항목 중 하나에 연결)
 
 <Warning>
-  **상위 레코드가 존재하지 않으면 가져오기는 실패합니다.**
+**상위 레코드가 존재하지 않으면 가져오기는 실패합니다.**
 
-  회사 참조가 있는 사람을 가져오기 전에 항상 회사를 먼저 가져왔는지 확인하세요.
+회사 참조가 있는 사람을 가져오기 전에 항상 회사를 먼저 가져왔는지 확인하세요.
 </Warning>
 
 ## 3단계: 상위의 고유 식별자 확인
@@ -117,9 +117,9 @@ Bob,Johnson,bob@techstart.io,Developer,https://techstart.io
 | ID  | UUID   | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Warning>
-  **도메인 형식이 중요합니다!**
+**도메인 형식이 중요합니다!**
 
-  `https://domain.com`을 사용하세요(`domain.com`만 사용하지 마세요). 이는 Twenty가 회사 도메인을 저장하는 방식과 일치하며, 매칭 오류를 방지합니다.
+`https://domain.com`을 사용하세요(`domain.com`만 사용하지 마세요). 이는 Twenty가 회사 도메인을 저장하는 방식과 일치하며, 매칭 오류를 방지합니다.
 </Warning>
 
 ### 중요 규칙
@@ -178,7 +178,6 @@ Review proposal,jane@yourcompany.com
 <AccordionGroup>
   <Accordion title="상위 레코드에 도메인이나 이메일이 없으면 어떻게 하나요?">
     다음 두 가지 옵션이 있습니다:
-
     1. Twenty의 `id`를 사용하세요(상위 레코드를 내보내 ID를 가져오세요)
     2. 데이터 모델에 사용자 지정 고유 필드를 만들어 이전 시스템의 외부 ID를 저장하세요
   </Accordion>
@@ -197,7 +196,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="상위 레코드가 존재하지 않으면 어떻게 되나요?">
     해당 행에 대해 가져오기가 오류를 표시합니다. 다음 두 가지 방법 중 하나로 가능합니다:
-
     * 상위 레코드를 먼저 가져온 뒤 다시 가져오세요
     * 참조 값을 수정하세요
     * 가져오기에서 해당 행을 제거하세요
@@ -205,7 +203,6 @@ Review proposal,jane@yourcompany.com
 
   <Accordion title="관계가 올바르게 연결되지 않는 이유는 무엇인가요?">
     일반적인 원인:
-
     * 잘못된 형식(도메인은 `https://domain.com`을 사용)
     * 대소문자 불일치(정확한 철자 확인)
     * 상위가 존재하지 않음(상위를 먼저 가져오기)
@@ -214,9 +211,9 @@ Review proposal,jane@yourcompany.com
 </AccordionGroup>
 
 <Warning>
-  **기억하세요: 소프트 삭제된 레코드도 고유성에 포함됩니다.**
+**기억하세요: 소프트 삭제된 레코드도 고유성에 포함됩니다.**
 
-  레코드가 존재하는 것처럼 보이는데도 "not found" 오류가 발생한다면, Command Menu → See deleted records를 확인하세요. 상위가 소프트 삭제되었을 수 있습니다.
+레코드가 존재하는 것처럼 보이는데도 "not found" 오류가 발생한다면, Command Menu → See deleted records를 확인하세요. 상위가 소프트 삭제되었을 수 있습니다.
 </Warning>
 
 ## 문제 해결

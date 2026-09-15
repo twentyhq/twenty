@@ -21,6 +21,7 @@ export default defineAgent({
   label: '${name}',
   description: 'Add a description for your agent',
   prompt: 'Add the agent system prompt here',
+  responseFormat: {type: 'text'},
 });
 `;
 };

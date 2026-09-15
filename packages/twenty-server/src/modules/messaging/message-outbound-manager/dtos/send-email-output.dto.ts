@@ -7,4 +7,7 @@ export class SendEmailOutputDTO {
 
   @Field(() => String, { nullable: true })
   error?: string;
+
+  @Field(() => String, { nullable: true })
+  messageThreadId?: string;
 }

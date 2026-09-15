@@ -1,5 +1,6 @@
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
+import { isPathCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isPathCommandMenuItemPayload';
 import { isEngineCommandMountedFamilySelector } from '@/command-menu-item/engine-command/selectors/isEngineCommandMountedFamilySelector';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
@@ -10,7 +11,7 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
+import { type IconComponent } from 'twenty-ui/icon';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
@@ -80,7 +81,12 @@ export const useCommandMenuItemClick = ({
         workflowVersionId: item.workflowVersionId ?? undefined,
         availabilityType: item.availabilityType,
         availabilityObjectMetadataId: item.availabilityObjectMetadataId,
-        payload: item.payload ?? undefined,
+        payload:
+          isDefined(item.payload) && isPathCommandMenuItemPayload(item.payload)
+            ? item.payload
+            : undefined,
+        navigationTargetObjectMetadataId: item.navigationTargetObjectMetadataId,
+        isInSidePanel: commandMenuContextApi.isInSidePanel,
       });
 
       return;

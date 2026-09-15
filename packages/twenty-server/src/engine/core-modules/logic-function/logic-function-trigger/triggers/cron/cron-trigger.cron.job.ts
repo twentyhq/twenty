@@ -5,20 +5,23 @@ import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { Repository } from 'typeorm';
 
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
+import { CronTriggerDeduplicationService } from 'src/engine/core-modules/cron/services/cron-trigger-deduplication.service';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { shouldRunNow } from 'src/utils/should-run-now.utils';
 
 export const CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
@@ -33,6 +36,8 @@ export class CronTriggerCronJob {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly cronTriggerDeduplicationService: CronTriggerDeduplicationService,
+    private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
   ) {}
 
   @Process(CronTriggerCronJob.name)
@@ -49,9 +54,10 @@ export class CronTriggerCronJob {
 
     for (const activeWorkspace of activeWorkspaces) {
       try {
-        const { flatLogicFunctionMaps } =
+        const { flatLogicFunctionMaps, flatApplicationMaps } =
           await this.workspaceCacheService.getOrRecompute(activeWorkspace.id, [
             'flatLogicFunctionMaps',
+            'flatApplicationMaps',
           ]);
 
         const logicFunctions = Object.values(
@@ -73,20 +79,44 @@ export class CronTriggerCronJob {
             continue;
           }
 
-          if (!shouldRunNow(cronSettings.pattern, now)) {
+          const shouldDispatch =
+            await this.cronTriggerDeduplicationService.shouldDispatch(
+              `logic-function-cron:${activeWorkspace.id}:${logicFunction.id}`,
+              cronSettings.pattern,
+              now,
+            );
+
+          if (!shouldDispatch) {
             continue;
           }
 
-          await this.messageQueueService.add<LogicFunctionTriggerJobData[]>(
+          const application = findActiveFlatApplicationById(
+            flatApplicationMaps,
+            logicFunction.applicationId,
+          );
+          const applicationRegistrationId =
+            application?.applicationRegistrationId;
+
+          if (!isDefined(applicationRegistrationId)) {
+            continue;
+          }
+
+          await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+            applicationId: logicFunction.applicationId,
+            applicationRegistrationId,
+          });
+
+          await this.messageQueueService.add<LogicFunctionTriggerJobData>(
             LogicFunctionTriggerJob.name,
-            [
-              {
-                logicFunctionId: logicFunction.id,
-                workspaceId: activeWorkspace.id,
-                payload: {},
-              },
-            ],
-            { retryLimit: 3 },
+            {
+              logicFunctionId: logicFunction.id,
+              workspaceId: activeWorkspace.id,
+              payload: {},
+            },
+            {
+              retryLimit: 10,
+              backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+            },
           );
         }
       } catch (error) {

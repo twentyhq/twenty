@@ -16,6 +16,8 @@ export type { AppDevOnceOptions, AppDevOnceResult } from './dev-once';
 export { appInstall } from './install';
 export type { AppInstallOptions } from './install';
 export { appPublish } from './publish';
+export { appPull } from './pull';
+export type { AppPullOptions, AppPullResult } from './pull';
 export type { AppPublishOptions, AppPublishResult } from './publish';
 export { appUninstall } from './uninstall';
 export type { AppUninstallOptions } from './uninstall';
@@ -40,9 +42,14 @@ export {
   getImageDigest,
   getImageForVersion,
 } from '@/cli/utilities/server/docker-container';
+export { getEngineVersionRange } from '@/cli/utilities/version/get-engine-version-range';
+export { resolveHighestEngineVersion } from '@/cli/utilities/version/resolve-highest-engine-version';
 
 // Config
 export { ConfigService } from '@/cli/utilities/config/config-service';
+
+// Constants
+export { DEV_API_KEY, DEV_API_URL } from '@/cli/constants/dev-api-key';
 
 // Shared types and error codes
 export {

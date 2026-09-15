@@ -1,19 +1,14 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/components';
-import {
-  H2Title,
-  IconRefresh,
-  IconTrash,
-  IconUser,
-  IconUsers,
-  Status,
-} from 'twenty-ui/display';
+import { Status, Tag } from 'twenty-ui/data-display';
+import { IconRefresh, IconTrash, IconUsers } from 'twenty-ui/icon';
+import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -23,22 +18,23 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import {
+  ApplicationConnectedAccountsDocument,
   DeleteConnectedAccountDocument,
   FindOneApplicationDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import {
-  type AppConnectedAccount,
-  useMyAppConnectedAccounts,
-} from '~/pages/settings/applications/hooks/useMyAppConnectedAccounts';
+  type ApplicationConnectedAccount,
+  useApplicationConnectedAccounts,
+} from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
 import { useTriggerAppOAuth } from '~/pages/settings/applications/hooks/useTriggerAppOAuth';
 import { type FrontendApplicationConnectionProvider } from '~/pages/settings/applications/types/FrontendApplicationConnectionProvider';
 
@@ -93,7 +89,7 @@ export const SettingsApplicationConnectionDetail = () => {
   const { connectionProviders, loading: providersLoading } =
     useFindApplicationConnectionProviders(applicationId);
   const { accounts: connectedAccounts, loading: accountsLoading } =
-    useMyAppConnectedAccounts();
+    useApplicationConnectedAccounts(applicationId);
 
   const { data, loading: applicationLoading } = useQuery(
     FindOneApplicationDocument,
@@ -106,7 +102,13 @@ export const SettingsApplicationConnectionDetail = () => {
   const [deleteConnectedAccount, { loading: isDeleting }] = useMutation(
     DeleteConnectedAccountDocument,
     {
-      refetchQueries: [{ query: GET_MY_CONNECTED_ACCOUNTS }],
+      refetchQueries: [
+        {
+          query: ApplicationConnectedAccountsDocument,
+          variables: { applicationId },
+        },
+        { query: GET_MY_CONNECTED_ACCOUNTS },
+      ],
     },
   );
 
@@ -134,7 +136,7 @@ export const SettingsApplicationConnectionDetail = () => {
       ? connection.name
       : (connection?.handle ?? t`Connection`);
   const deleteModalId = `delete-application-connection-modal-${connectedAccountId}`;
-  const changeVisibilityModalId = `change-application-connection-visibility-modal-${connectedAccountId}`;
+  const shareWithWorkspaceModalId = `share-application-connection-with-workspace-modal-${connectedAccountId}`;
   const applicationSettingsPath = getSettingsPath(
     SettingsPath.ApplicationDetail,
     { applicationId },
@@ -160,7 +162,7 @@ export const SettingsApplicationConnectionDetail = () => {
     });
   };
 
-  const handleChangeVisibility = () => {
+  const handleShareWithWorkspace = () => {
     if (connection === undefined || provider === undefined) {
       return;
     }
@@ -168,7 +170,7 @@ export const SettingsApplicationConnectionDetail = () => {
     triggerAppOAuth({
       applicationId,
       providerName: provider.name,
-      visibility: connection.visibility === 'workspace' ? 'user' : 'workspace',
+      visibility: 'workspace',
       reconnectingConnectedAccountId: connection.id,
       redirectLocation: detailPath,
     });
@@ -196,7 +198,7 @@ export const SettingsApplicationConnectionDetail = () => {
     connection,
     provider,
   }: {
-    connection: AppConnectedAccount;
+    connection: ApplicationConnectedAccount;
     provider: FrontendApplicationConnectionProvider;
   }): { key: string; label: string; value: ReactNode }[] => {
     const scopes = connection.scopes ?? [];
@@ -218,21 +220,20 @@ export const SettingsApplicationConnectionDetail = () => {
         value: (
           <Status
             color={connection.visibility === 'workspace' ? 'blue' : 'gray'}
-            text={
-              connection.visibility === 'workspace'
-                ? t`Workspace shared`
-                : t`Just for me`
-            }
-          />
+          >
+            {connection.visibility === 'workspace'
+              ? t`Workspace shared`
+              : t`Just for me`}
+          </Status>
         ),
       },
       {
         key: 'status',
         label: t`Status`,
         value: connection.authFailedAt ? (
-          <Status color="red" text={t`Reconnect needed`} />
+          <Status color="red">{t`Reconnect needed`}</Status>
         ) : (
-          <Status color="green" text={t`Connected`} />
+          <Status color="green">{t`Connected`}</Status>
         ),
       },
       {
@@ -242,7 +243,9 @@ export const SettingsApplicationConnectionDetail = () => {
           scopes.length > 0 ? (
             <StyledScopeList>
               {scopes.map((scope) => (
-                <Tag key={scope} color="gray" text={scope} />
+                <Tag key={scope} color="gray">
+                  {scope}
+                </Tag>
               ))}
             </StyledScopeList>
           ) : (
@@ -265,6 +268,13 @@ export const SettingsApplicationConnectionDetail = () => {
         value: formatDateTime(connection.authFailedAt),
       },
       {
+        key: 'authFailedReason',
+        label: t`Auth failure reason`,
+        value: isNonEmptyString(connection.authFailedReason)
+          ? connection.authFailedReason
+          : '-',
+      },
+      {
         key: 'createdAt',
         label: t`Created`,
         value: formatDateTime(connection.createdAt),
@@ -283,12 +293,12 @@ export const SettingsApplicationConnectionDetail = () => {
       : [];
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={connectionLabel}
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`Applications`,
@@ -318,37 +328,35 @@ export const SettingsApplicationConnectionDetail = () => {
                 title={connectionLabel}
                 description={t`Manage this application's OAuth connection.`}
               />
-              <StyledActions>
-                {connection.authFailedAt && (
+              {connection.isOwnedByCurrentUser && (
+                <StyledActions>
+                  {connection.authFailedAt && (
+                    <Button
+                      title={t`Reconnect`}
+                      Icon={IconRefresh}
+                      variant="secondary"
+                      accent="blue"
+                      onClick={handleReconnect}
+                    />
+                  )}
+                  {connection.visibility !== 'workspace' && (
+                    <Button
+                      title={t`Share with workspace`}
+                      Icon={IconUsers}
+                      variant="secondary"
+                      accent="default"
+                      onClick={() => openModal(shareWithWorkspaceModalId)}
+                    />
+                  )}
                   <Button
-                    title={t`Reconnect`}
-                    Icon={IconRefresh}
+                    title={t`Disconnect`}
+                    Icon={IconTrash}
                     variant="secondary"
-                    accent="blue"
-                    onClick={handleReconnect}
+                    accent="danger"
+                    onClick={() => openModal(deleteModalId)}
                   />
-                )}
-                <Button
-                  title={
-                    connection.visibility === 'workspace'
-                      ? t`Make private`
-                      : t`Share with workspace`
-                  }
-                  Icon={
-                    connection.visibility === 'workspace' ? IconUser : IconUsers
-                  }
-                  variant="secondary"
-                  accent="default"
-                  onClick={() => openModal(changeVisibilityModalId)}
-                />
-                <Button
-                  title={t`Disconnect`}
-                  Icon={IconTrash}
-                  variant="secondary"
-                  accent="danger"
-                  onClick={() => openModal(deleteModalId)}
-                />
-              </StyledActions>
+                </StyledActions>
+              )}
             </Section>
             <Section>
               <H2Title
@@ -390,21 +398,21 @@ export const SettingsApplicationConnectionDetail = () => {
               loading={isDeleting}
             />
             <ConfirmationModal
-              modalInstanceId={changeVisibilityModalId}
-              title={t`Change visibility?`}
+              modalInstanceId={shareWithWorkspaceModalId}
+              title={t`Share with workspace?`}
               subtitle={
                 <Trans>
-                  Changing visibility requires reconnecting this OAuth
-                  connection. You will be redirected to authorize it again.
+                  Sharing this connection with the workspace requires
+                  reconnecting it. You will be redirected to authorize it again.
                 </Trans>
               }
-              onConfirmClick={handleChangeVisibility}
-              confirmButtonText={t`Reconnect and change visibility`}
+              onConfirmClick={handleShareWithWorkspace}
+              confirmButtonText={t`Reconnect and share`}
               confirmButtonAccent="blue"
             />
           </>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

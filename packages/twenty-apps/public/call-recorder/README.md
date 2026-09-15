@@ -1,0 +1,64 @@
+# Call Recorder
+
+**Record, transcribe, and save every meeting — right inside your CRM.**
+
+## ✨ What you get
+
+- **Recordings on every meeting**
+- **A Call Recording tab**
+- **A per-meeting on/off switch**
+- **Customizable in-meeting recording notices**
+- **AI meeting summaries**
+- **Built for AI & automation**
+
+## 💳 Billing
+
+Metered in Twenty credits based on the bot's actual recording time, prorated by
+duration — **$1.00 per recording-hour** (1 credit). No recording — opted out,
+canceled, or no-show — means no charge.
+
+AI summaries use workspace AI credits, billed on the model's token usage — the
+cost scales with how much was said in the meeting, typically **$0.02–$0.06 per
+meeting** on default models. Set the `CALL_RECORDER_SUMMARY_ENABLED` app
+variable to `false` to turn summaries off.
+
+## 🤖 The Recording Bot field
+
+Each calendar event has a **Recording Bot** field. It starts blank and the app
+sets it to On when it actually schedules the recorder for that meeting, which
+happens once the meeting is within the seven-day scheduling window. Set it to
+Off to skip a meeting. Past meetings the recorder never joined simply stay
+blank.
+
+## 🗓️ Pausing the recorder
+
+The **Record my calendar meetings** toggle in the app settings is on
+by default. Turn it off to stop scheduling bots for upcoming meetings and cancel
+every recording that is already scheduled; the Recording Bot field of those
+meetings goes back to blank, and an Off you set yourself is left alone. Turn it
+back on and the app sweeps upcoming meetings to schedule bots again.
+
+## 🎥 Supported meeting platforms
+
+The recording bot can only join meetings on these platforms:
+
+- ✅ Google Meet
+- ✅ Zoom
+- ✅ Microsoft Teams
+- ✅ Webex
+- ✅ GoTo Meeting
+
+Events whose conference link points to any other platform (e.g. ro.am, Daily,
+Whereby) or that only have a dial-in number are **ignored** — no bot is
+scheduled, since it can't join the call.
+
+Recording notices are supported in Zoom, Google Meet, and Microsoft Teams.
+Workspace admins can turn them off or customize their text in the Call Recorder
+app settings. Webex and GoTo Meeting do not support bot chat messages.
+
+## 📌 Heads up
+
+- **Needs a synced calendar + video link** — ad-hoc calls that were never on
+  your Google, Outlook, or CalDAV calendar aren't recorded.
+- **Your copy is yours** — Twenty stores its own video, audio, and transcript,
+  so they stay available after the source media expires.
