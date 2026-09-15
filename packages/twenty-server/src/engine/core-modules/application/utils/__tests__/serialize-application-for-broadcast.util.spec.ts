@@ -1,4 +1,3 @@
-import { ApplicationState } from 'src/engine/core-modules/application/enums/application-state.enum';
 import { serializeApplicationForBroadcast } from 'src/engine/core-modules/application/utils/serialize-application-for-broadcast.util';
 
 type SerializableApplication = Parameters<
@@ -13,7 +12,6 @@ const buildApplication = (
   name: 'Test application',
   description: 'A test application',
   version: '1.0.0',
-  state: ApplicationState.INSTALLING,
   applicationRegistrationId: 'ce4b7b8e-9e5b-4b7c-bd7a-5f2f61f0a9d2',
   sdkClientCoreChecksum: 'checksum',
   ...overrides,
@@ -27,7 +25,6 @@ describe('serializeApplicationForBroadcast', () => {
       name: 'Test application',
       description: 'A test application',
       version: '1.0.0',
-      state: ApplicationState.INSTALLING,
       applicationRegistrationId: 'ce4b7b8e-9e5b-4b7c-bd7a-5f2f61f0a9d2',
       sdkClientCoreChecksum: 'checksum',
     });

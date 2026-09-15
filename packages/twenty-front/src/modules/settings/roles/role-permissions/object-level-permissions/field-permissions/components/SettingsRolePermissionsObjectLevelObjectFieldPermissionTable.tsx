@@ -21,8 +21,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
@@ -112,9 +112,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
           <SortableTableHeader
             fieldName="label"
             label={t`Name`}
-            tableId={
-              SETTINGS_ROLE_PERMISSION_OBJECT_LEVEL_FIELD_PERMISSION_TABLE_ID
-            }
+            tableId={tableId}
             initialSort={{ fieldName: 'label', direction: 'asc' }}
           />
           <TableHeader>

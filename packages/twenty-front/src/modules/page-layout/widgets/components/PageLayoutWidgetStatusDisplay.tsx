@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
-import { Status } from 'twenty-ui/data-display';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { AppTooltip } from 'twenty-ui/primitives/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 
 const StyledContainer = styled.div`
@@ -25,11 +25,11 @@ export const PageLayoutWidgetStatusDisplay = ({
   return (
     <StyledContainer>
       <div id={tooltipId}>
-        <Status color={color} text={text} />
+        <Status color={color}>{text}</Status>
       </div>
       <AppTooltip
         anchorSelect={`#${tooltipId}`}
-        content={tooltipContent}
+        title={tooltipContent}
         place="top"
       />
     </StyledContainer>

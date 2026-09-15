@@ -2,14 +2,14 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type McpSetupCard } from '@/settings/mcp-and-apis/types/McpSetup';
-import { Pill } from 'twenty-ui/data-display';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import { IconExternalLink } from 'twenty-ui/icon';
 import {
   AppTooltip,
   Card,
   CardContent,
   TooltipDelay,
-} from 'twenty-ui/surfaces';
+} from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 const StyledCardContent = styled(CardContent)`
@@ -119,7 +119,7 @@ const SettingsMcpSetupCardAction = ({
         {isDefined(card.disabledTooltip) && isDefined(card.tooltipId) && (
           <AppTooltip
             anchorSelect={`[data-tooltip-id='${card.tooltipId}']`}
-            content={card.disabledTooltip}
+            title={card.disabledTooltip}
             delay={TooltipDelay.shortDelay}
             noArrow
             place="bottom"

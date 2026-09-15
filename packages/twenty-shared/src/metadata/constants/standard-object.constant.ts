@@ -414,6 +414,7 @@ export const STANDARD_OBJECTS = {
           'status',
           'list',
           'fromAddress',
+          'scheduledAt',
           'sentAt',
           'sentCount',
           'deliveredCount',
@@ -431,6 +432,7 @@ export const STANDARD_OBJECTS = {
         fields: STANDARD_OBJECT_FIELDS.messageCampaign,
         viewFieldNames: [
           'status',
+          'scheduledAt',
           'sentAt',
           'sentCount',
           'deliveredCount',
@@ -968,6 +970,22 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  recordShare: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.recordShare,
+    fields: STANDARD_OBJECT_FIELDS.recordShare,
+    indexes: {
+      recordPrincipalCauseSourceUniqueIndex: {
+        universalIdentifier: '4580f104-47a7-4110-87a8-26cb6f63ce7b',
+      },
+      principalIdIndex: {
+        universalIdentifier: '66fbc3d2-6126-4e29-a306-dbe9995bf062',
+      },
+      sourceIdIndex: {
+        universalIdentifier: '21b84593-c647-40ce-bdf4-a8b4ac658f57',
+      },
+    },
+    views: {},
+  },
   task: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.task,
     fields: STANDARD_OBJECT_FIELDS.task,
@@ -1167,6 +1185,12 @@ export const STANDARD_OBJECTS = {
       },
       dashboardIdIndex: {
         universalIdentifier: 'e8821da9-728d-470a-bf5b-5a981fff7880',
+      },
+      messageListIdIndex: {
+        universalIdentifier: 'a251f71a-c698-4526-8817-0e7c803c158e',
+      },
+      messageCampaignIdIndex: {
+        universalIdentifier: 'e808e721-91cc-4b9b-b24b-806d64b4d5e2',
       },
     },
     views: {

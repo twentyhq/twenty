@@ -1,10 +1,12 @@
 import { styled } from '@linaria/react';
-import { type ReactNode } from 'react';
+import { type MouseEventHandler, type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { ComposerFieldRow } from '@/activities/components/ComposerFieldRow';
 
 // Widest label the campaign rows use ("Unsubscribe topic"), so every value
 // starts on the same column.
-export const CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH = '116px';
+const CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH = '116px';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -57,4 +59,29 @@ export const CampaignEnvelopeBox = ({
       {below}
     </StyledColumn>
   </StyledContainer>
+);
+
+// Every envelope row shares one label width, so the draft and the sent view
+// cannot line their values up differently.
+type CampaignEnvelopeRowProps = {
+  label: string;
+  children: ReactNode;
+  trailing?: ReactNode;
+  onClick?: MouseEventHandler<HTMLDivElement>;
+};
+
+export const CampaignEnvelopeRow = ({
+  label,
+  children,
+  trailing,
+  onClick,
+}: CampaignEnvelopeRowProps) => (
+  <ComposerFieldRow
+    label={label}
+    trailing={trailing}
+    onClick={onClick}
+    labelMinWidth={CAMPAIGN_ENVELOPE_LABEL_MIN_WIDTH}
+  >
+    {children}
+  </ComposerFieldRow>
 );

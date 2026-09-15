@@ -8,7 +8,7 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -74,7 +74,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
       </StyledContainer>
       <AppTooltip
         anchorSelect={`#${containerId}`}
-        content={
+        title={
           permissionValue === false
             ? t`${roleLabel} can't ${humanReadableAction} ${objectLabel} records`
             : t`${roleLabel} can ${humanReadableAction} ${objectLabel} records`

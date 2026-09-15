@@ -16,8 +16,8 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -95,10 +95,10 @@ export const SidePanelSearchRecordsPage = () => {
                       onClick={handleClick}
                       LeftComponent={
                         <Avatar
-                          type={item.avatarType}
-                          avatarUrl={getAbsoluteImageUrl(item.imageUrl)}
-                          placeholderColorSeed={item.recordId}
-                          placeholder={item.label}
+                          shape={item.avatarShape}
+                          src={getAbsoluteImageUrl(item.imageUrl)}
+                          colorSeed={item.recordId}
+                          name={item.label}
                         />
                       }
                     />
@@ -116,11 +116,11 @@ export const SidePanelSearchRecordsPage = () => {
           place="left-start"
           offset={16}
           noArrow
-          clickable
+          interactive
           isOpen
           delay={TooltipDelay.noDelay}
           className={previewTooltipClass}
-          width={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
+          maxWidth={`${SIDE_PANEL_SEARCH_RECORD_PREVIEW_WIDTH}px`}
         >
           <SidePanelSearchRecordPreviewCard
             key={previewedItem.recordId}

@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
 import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
@@ -12,6 +12,8 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { UsageQuotaConsumptionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-consumption.service';
+import { UsageQuotaDefinitionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-definition.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
 import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-limit.resolver';
@@ -36,7 +38,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     PermissionsModule,
     DiscoveryModule,
     CacheLockModule,
-    ClickHouseModule,
+    MetricsModule,
     UsageModule,
   ],
   providers: [
@@ -46,6 +48,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageLimitsCacheService,
     UsagePeriodService,
     UsageLimitService,
+    UsageQuotaConsumptionService,
+    UsageQuotaDefinitionService,
     UsageLimitResolver,
     provideWorkspaceScopedRepository(UsageLimitEntity),
     provideWorkspaceScopedRepository(ApiKeyEntity),

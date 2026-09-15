@@ -1,9 +1,67 @@
 import { gql } from 'graphql-tag';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { makeRestAPIRequest } from 'test/integration/rest/utils/make-rest-api-request.util';
 
 describe('apiKeysResolver (e2e)', () => {
   let createdApiKeyId: string | undefined;
   let adminRoleId: string;
+
+  const createRevokedApiKey = async (name: string): Promise<string> => {
+    const createResponse = await makeMetadataAPIRequest({
+      query: gql`
+        mutation CreateApiKey($input: CreateApiKeyInput!) {
+          createApiKey(input: $input) {
+            id
+          }
+        }
+      `,
+      variables: {
+        input: {
+          name,
+          expiresAt: '2025-12-31T23:59:59Z',
+          roleId: adminRoleId,
+        },
+      },
+    });
+
+    const apiKeyId = createResponse.body.data.createApiKey.id;
+
+    createdApiKeyId = apiKeyId;
+
+    await makeMetadataAPIRequest({
+      query: gql`
+        mutation RevokeApiKey($input: RevokeApiKeyInput!) {
+          revokeApiKey(input: $input) {
+            id
+          }
+        }
+      `,
+      variables: {
+        input: { id: apiKeyId },
+      },
+    });
+
+    return apiKeyId;
+  };
+
+  const findApiKeyRevokedAt = async (
+    apiKeyId: string,
+  ): Promise<string | null> => {
+    const apiKeyResponse = await makeMetadataAPIRequest({
+      query: gql`
+        query GetApiKey($input: GetApiKeyInput!) {
+          apiKey(input: $input) {
+            revokedAt
+          }
+        }
+      `,
+      variables: {
+        input: { id: apiKeyId },
+      },
+    });
+
+    return apiKeyResponse.body.data.apiKey.revokedAt;
+  };
 
   beforeAll(async () => {
     const rolesResponse = await makeMetadataAPIRequest({
@@ -210,6 +268,78 @@ describe('apiKeysResolver (e2e)', () => {
       expect(updatedApiKey.revokedAt).toBeNull();
       expect(updatedApiKey.role).toBeDefined();
       expect(updatedApiKey.role.id).toBe(adminRoleId);
+    });
+
+    it('should not reactivate a revoked API key', async () => {
+      const apiKeyId = await createRevokedApiKey('Test API Key to Reactivate');
+
+      const updateResponse = await makeMetadataAPIRequest({
+        query: gql`
+          mutation UpdateApiKey($input: UpdateApiKeyInput!) {
+            updateApiKey(input: $input) {
+              id
+              revokedAt
+            }
+          }
+        `,
+        variables: {
+          input: { id: apiKeyId, revokedAt: null },
+        },
+      });
+
+      expect(updateResponse.status).toBe(200);
+      expect(updateResponse.body.data.updateApiKey).toBeNull();
+      expect(updateResponse.body.errors).toHaveLength(1);
+      expect(updateResponse.body.errors[0].extensions.code).toBe('FORBIDDEN');
+      expect(updateResponse.body.errors[0].extensions.userFriendlyMessage).toBe(
+        'This API key has been revoked and cannot be reactivated. Please create a new API key.',
+      );
+      expect(await findApiKeyRevokedAt(apiKeyId)).not.toBeNull();
+    });
+
+    it('should rename a revoked API key without reactivating it', async () => {
+      const apiKeyId = await createRevokedApiKey('Test API Key to Rename');
+
+      const updateResponse = await makeMetadataAPIRequest({
+        query: gql`
+          mutation UpdateApiKey($input: UpdateApiKeyInput!) {
+            updateApiKey(input: $input) {
+              id
+              name
+              revokedAt
+            }
+          }
+        `,
+        variables: {
+          input: { id: apiKeyId, name: 'Renamed Revoked API Key' },
+        },
+      });
+
+      expect(updateResponse.status).toBe(200);
+      expect(updateResponse.body.errors).toBeUndefined();
+      expect(updateResponse.body.data.updateApiKey.name).toBe(
+        'Renamed Revoked API Key',
+      );
+      expect(updateResponse.body.data.updateApiKey.revokedAt).not.toBeNull();
+    });
+  });
+
+  describe('PATCH /rest/metadata/apiKeys/:id', () => {
+    it('should not reactivate a revoked API key', async () => {
+      const apiKeyId = await createRevokedApiKey(
+        'Test API Key to Reactivate via REST',
+      );
+
+      const response = await makeRestAPIRequest({
+        method: 'patch',
+        path: `/metadata/apiKeys/${apiKeyId}`,
+        bearer: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+        body: { revokedAt: null },
+      });
+
+      expect(response.status).toBe(400);
+      expect(response.body.code).toBe('API_KEY_REVOKED');
+      expect(await findApiKeyRevokedAt(apiKeyId)).not.toBeNull();
     });
   });
 

@@ -47,7 +47,6 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
         'userWorkspace',
         'apiKey',
         'application',
-        'agent',
       ],
       allowedMeters: ['creditsUsedMicro', 'quantity'],
     },
@@ -60,13 +59,41 @@ export const USAGE_LIMIT_DEFINITIONS: Record<
     speed: {
       allowedOperationTypes: [UsageOperationType.EMAIL_SEND],
       allowedSpenderTypes: ['workspace'],
+      // Two buckets, and a send has to fit both. The workspace one keeps a
+      // single tenant's campaign from spending the whole instance budget; the
+      // server-wide one is what actually protects the provider account. The
+      // narrower scope is declared first so it names the scope when a refusal
+      // reports which limit was hit.
       defaults: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'perWorkspace',
+          limitValueConfigVariable: 'EMAIL_SEND_WORKSPACE_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable:
+            'EMAIL_SEND_WORKSPACE_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: true,
+        },
         {
           spenderType: 'workspace',
           counterScope: 'crossWorkspace',
           limitValueConfigVariable: 'EMAIL_SEND_RATE_LIMITING_LIMIT',
           windowMsConfigVariable: 'EMAIL_SEND_RATE_LIMITING_TTL_IN_MS',
           isOverridable: false,
+        },
+      ],
+    },
+  },
+  [UsageResourceType.WEBHOOK]: {
+    speed: {
+      allowedOperationTypes: [UsageOperationType.WEBHOOK_CALL],
+      allowedSpenderTypes: ['workspace'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          counterScope: 'perWorkspace',
+          limitValueConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_LIMIT',
+          windowMsConfigVariable: 'WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS',
+          isOverridable: true,
         },
       ],
     },

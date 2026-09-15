@@ -9,8 +9,8 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { IconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledNavigationIcon = styled.div`

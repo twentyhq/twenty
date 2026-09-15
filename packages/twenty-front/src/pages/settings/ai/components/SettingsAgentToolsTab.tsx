@@ -7,14 +7,15 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { SearchInput } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsAgentToolsTable } from '~/pages/settings/ai/components/SettingsAgentToolsTable';
 import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSettingsAgentToolsTable';
 import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
+import { isOwnedByInstalledApplication } from '~/pages/settings/ai/utils/isOwnedByInstalledApplication';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const StyledSearchContainer = styled.div`
@@ -40,7 +41,10 @@ export const SettingsAgentToolsTab = () => {
     currentWorkspace?.workspaceCustomApplication?.id;
 
   const isManaged = (applicationId?: string | null) =>
-    isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
+    isOwnedByInstalledApplication({
+      applicationId,
+      workspaceCustomApplicationId,
+    });
 
   const isCustom = (tool: SettingsAgentToolItem) =>
     isDefined(tool.applicationId);
@@ -91,26 +95,26 @@ export const SettingsAgentToolsTab = () => {
               dropdownComponents={
                 <DropdownContent>
                   <DropdownMenuItemsContainer>
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconTool}
-                      onToggleChange={setShowCustomTools}
-                      toggled={showCustomTools}
+                      onCheckedChange={setShowCustomTools}
+                      checked={showCustomTools}
                       text={t`Custom`}
-                      toggleSize="small"
+                      size="sm"
                     />
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconLock}
-                      onToggleChange={setShowManagedTools}
-                      toggled={showManagedTools}
+                      onCheckedChange={setShowManagedTools}
+                      checked={showManagedTools}
                       text={t`Managed`}
-                      toggleSize="small"
+                      size="sm"
                     />
-                    <MenuItemToggle
+                    <MenuItemSwitch
                       LeftIcon={IconPuzzle}
-                      onToggleChange={setShowStandardTools}
-                      toggled={showStandardTools}
+                      onCheckedChange={setShowStandardTools}
+                      checked={showStandardTools}
                       text={t`Standard`}
-                      toggleSize="small"
+                      size="sm"
                     />
                   </DropdownMenuItemsContainer>
                 </DropdownContent>

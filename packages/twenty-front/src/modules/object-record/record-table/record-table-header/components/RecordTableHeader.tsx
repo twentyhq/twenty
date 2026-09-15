@@ -1,3 +1,4 @@
+import { FieldDescriptionTooltipProvider } from '@/object-record/record-field/ui/components/FieldDescriptionTooltipProvider';
 import { RECORD_TABLE_ROW_HEIGHT } from '@/object-record/record-table/constants/RecordTableRowHeight';
 import { TABLE_Z_INDEX } from '@/object-record/record-table/constants/TableZIndex';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
@@ -35,13 +36,15 @@ export const RecordTableHeader = () => {
   useResizeTableHeader();
 
   return (
-    <StyledHeaderContainer>
-      {!isRecordTableDragColumnHidden && <RecordTableHeaderDragDropColumn />}
-      {!isRecordTableCheckboxColumnHidden && (
-        <RecordTableHeaderCheckboxColumn />
-      )}
-      <RecordTableHeaderFirstCell />
-      <RecordTableHeaderDnd />
-    </StyledHeaderContainer>
+    <FieldDescriptionTooltipProvider>
+      <StyledHeaderContainer>
+        {!isRecordTableDragColumnHidden && <RecordTableHeaderDragDropColumn />}
+        {!isRecordTableCheckboxColumnHidden && (
+          <RecordTableHeaderCheckboxColumn />
+        )}
+        <RecordTableHeaderFirstCell />
+        <RecordTableHeaderDnd />
+      </StyledHeaderContainer>
+    </FieldDescriptionTooltipProvider>
   );
 };

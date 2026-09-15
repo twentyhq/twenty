@@ -5,14 +5,13 @@ import {
   generateText,
   jsonSchema,
   type LanguageModelUsage,
-  type ModelMessage,
   Output,
-  stepCountIs,
+  isStepCount,
   type StepResult,
   type ToolSet,
 } from 'ai';
 import { type RunAgentMessage } from 'twenty-shared/application';
-import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
+import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { type ActorMetadata } from 'twenty-shared/types';
 import {
   isDefined,
@@ -43,7 +42,10 @@ import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/ut
 import { OUTPUT_NAVIGATION_TOOL_NAMES } from 'src/engine/core-modules/tool/tools/output-navigation-tool/constants/output-navigation-tool-names.constant';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
+import { WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-excluded-tool-names.const';
 import { WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/workflow-agent-registry-tool-categories.const';
+import { RunAgentAttachmentService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/run-agent-attachment.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
@@ -104,6 +106,7 @@ export class AgentAsyncExecutorService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
     private readonly metricsService: MetricsService,
+    private readonly runAgentAttachmentService: RunAgentAttachmentService,
     @InjectWorkspaceScopedRepository(RoleTargetEntity)
     private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -171,7 +174,10 @@ export class AgentAsyncExecutorService {
 
     return this.toolRegistry.getToolsByCategories(toolProviderContext, {
       categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
-      excludeTools: [...OUTPUT_NAVIGATION_TOOL_NAMES],
+      excludeTools: [
+        ...OUTPUT_NAVIGATION_TOOL_NAMES,
+        ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+      ],
       wrapWithErrorContext: false,
     });
   }
@@ -215,8 +221,13 @@ export class AgentAsyncExecutorService {
       { userId, userWorkspaceId, rolePermissionConfig },
     );
 
-    const allowedCategories = new Set(WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES);
-    const excludedToolNames = new Set<string>(OUTPUT_NAVIGATION_TOOL_NAMES);
+    const allowedCategories = new Set(
+      OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES,
+    );
+    const excludedToolNames = new Set<string>([
+      ...OUTPUT_NAVIGATION_TOOL_NAMES,
+      ...WORKFLOW_AGENT_EXCLUDED_TOOL_NAMES,
+    ]);
 
     const catalog = fullCatalog.filter(
       (entry) =>
@@ -287,29 +298,33 @@ export class AgentAsyncExecutorService {
     let cacheCreationTokens = 0;
     let nativeWebSearchCallCount = 0;
     let executionSteps: StepResult<ToolSet>[] = [];
+    let resolvedModelId: string | undefined;
 
     try {
-      if (agent) {
-        const workspace = await this.workspaceRepository.findOneBy({
-          id: agent.workspaceId,
-        });
+      const workspace = await this.workspaceRepository.findOneBy({
+        id: workspaceId,
+      });
 
-        if (workspace) {
-          this.aiModelRegistryService.validateModelAvailability(
-            agent.modelId,
-            workspace,
-          );
-        }
+      if (isDefined(agent)) {
+        this.aiModelRegistryService.validateModelAvailability(agent.modelId);
       }
 
       const registeredModel =
-        await this.aiModelRegistryService.resolveModelForAgent(agent);
+        await this.aiModelRegistryService.resolveModelForAgent(
+          agent,
+          workspace ?? undefined,
+        );
+
+      resolvedModelId = registeredModel.modelId;
 
       let tools: ToolSet = {};
       let toolCatalogSection = '';
-      let providerOptions = getCallLevelProviderOptions({
+      const providerOptions = getCallLevelProviderOptions({
         sdkPackage: registeredModel.sdkPackage,
-        providerOptions: undefined,
+        providerOptions:
+          this.aiModelConfigService.getReasoningProviderOptions(
+            registeredModel,
+          ),
         promptCacheKey: agent?.id,
       });
 
@@ -361,45 +376,37 @@ export class AgentAsyncExecutorService {
           ...registryTools,
           ...nativeTools,
         };
-
-        providerOptions = getCallLevelProviderOptions({
-          sdkPackage: registeredModel.sdkPackage,
-          providerOptions:
-            this.aiModelConfigService.getReasoningProviderOptions(
-              registeredModel,
-            ),
-          promptCacheKey: agent?.id,
-        });
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
 
       let hasNoMoreAvailableCredits = false;
 
+      const modelMessages =
+        await this.runAgentAttachmentService.buildModelMessagesOrThrow({
+          messages,
+          workspaceId,
+        });
+
       const textResponse = await generateText({
-        system: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
+        instructions: `${baseSystemPrompt}\n\n${agent ? tipTapDocumentToMarkdown(agent.prompt) : ''}${toolCatalogSection}`,
         tools,
         model: registeredModel.model,
-        messages: messages.map(
-          (message): ModelMessage => ({
-            role: message.role,
-            content: message.content,
-          }),
-        ),
+        messages: modelMessages,
         stopWhen: (step) =>
-          stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) ||
+          isStepCount(AGENT_CONFIG.MAX_STEPS)(step) ||
           hasNoMoreAvailableCredits,
         providerOptions,
-        experimental_telemetry: buildAiTelemetry({
+        ...buildAiTelemetry({
           functionId: 'agent-execution',
           workspaceId,
           userWorkspaceId,
           agentId: agent?.id,
         }),
-        experimental_onToolCallFinish: (event) => {
+        onToolExecutionEnd: (event) => {
           this.metricsService.recordHistogram({
             key: MetricsKeys.WorkflowAgentToolExecutionDurationMs,
-            value: event.durationMs,
+            value: event.toolExecutionMs,
             unit: 'ms',
             attributes: {
               model: registeredModel.modelId,
@@ -408,7 +415,7 @@ export class AgentAsyncExecutorService {
             bucketBoundaries: TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES,
           });
         },
-        onStepFinish: async (step) => {
+        onStepEnd: async (step) => {
           const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
             await this.aiBillingService.decrementAndCheckAvailableCredits({
               modelId: registeredModel.modelId,
@@ -460,7 +467,7 @@ export class AgentAsyncExecutorService {
             });
           }
         },
-        experimental_repairToolCall: async ({
+        repairToolCall: async ({
           toolCall,
           tools: toolsForRepair,
           inputSchema,
@@ -494,7 +501,7 @@ export class AgentAsyncExecutorService {
 
       if (agentSchema) {
         const structuredResult = await generateText({
-          system: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
+          instructions: STRUCTURED_OUTPUT_SYSTEM_PROMPT,
           model: registeredModel.model,
           prompt: `Based on the following execution results, generate the structured output according to the schema:
 
@@ -507,13 +514,13 @@ export class AgentAsyncExecutorService {
             providerOptions: undefined,
             promptCacheKey: agent?.id,
           }),
-          experimental_telemetry: buildAiTelemetry({
+          ...buildAiTelemetry({
             functionId: 'agent-structured-output',
             workspaceId,
             userWorkspaceId,
             agentId: agent?.id,
           }),
-          onStepFinish: async (step) => {
+          onStepEnd: async (step) => {
             const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
               await this.aiBillingService.decrementAndCheckAvailableCredits({
                 modelId: registeredModel.modelId,
@@ -550,9 +557,8 @@ export class AgentAsyncExecutorService {
         result = structuredResult.output as object;
       }
 
-      const resolvedModelId = registeredModel.modelId;
       const tokenCostInDollars = this.aiBillingService.calculateCost(
-        resolvedModelId,
+        registeredModel.modelId,
         { usage: accumulatedUsage, cacheCreationTokens },
       );
       const totalCostInDollars =
@@ -580,11 +586,18 @@ export class AgentAsyncExecutorService {
         AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     } finally {
-      const modelId = agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID;
-      const costInDollars = this.aiBillingService.calculateCost(modelId, {
-        usage: accumulatedUsage,
-        cacheCreationTokens,
-      });
+      const modelId =
+        resolvedModelId ??
+        agent?.modelId ??
+        AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID;
+      // Nothing was generated when execution failed before a model resolved,
+      // and pricing an unresolved id would throw over the original error.
+      const costInDollars = isDefined(resolvedModelId)
+        ? this.aiBillingService.calculateCost(resolvedModelId, {
+            usage: accumulatedUsage,
+            cacheCreationTokens,
+          })
+        : 0;
       const creditsUsedMicro = convertDollarsToCreditsMicro(costInDollars);
       const totalTokens =
         (accumulatedUsage.inputTokens ?? 0) +

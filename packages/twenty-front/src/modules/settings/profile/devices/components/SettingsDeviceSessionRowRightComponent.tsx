@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { SettingsDeviceSessionRowDropdownMenu } from '@/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { type CurrentUserSessionsQuery } from '~/generated-metadata/graphql';
 
 type UserSessionListItem =
@@ -17,10 +17,10 @@ export const SettingsDeviceSessionRowRightComponent = ({
   return (
     <>
       {session.isImpersonating && (
-        <Status color="orange" text={t`Impersonation`} />
+        <Status color="orange">{t`Impersonation`}</Status>
       )}
       {session.isCurrent ? (
-        <Status color="turquoise" text={t`This device`} />
+        <Status color="turquoise">{t`This device`}</Status>
       ) : (
         <SettingsDeviceSessionRowDropdownMenu userSessionId={session.id} />
       )}

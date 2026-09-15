@@ -12,6 +12,7 @@ import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChat
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { DeleteChatThreadDocument } from '~/generated-metadata/graphql';
@@ -39,6 +40,8 @@ export const useDeleteChatThread = () => {
       if (!isCurrent) {
         return;
       }
+
+      store.set(shouldOpenAiChatAfterOnboardingState.atom, false);
 
       const remaining = sortChatThreadsByLastActivityDesc(
         store

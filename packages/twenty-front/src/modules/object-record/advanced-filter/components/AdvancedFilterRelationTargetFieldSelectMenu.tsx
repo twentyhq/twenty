@@ -20,11 +20,10 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconUserCircle, useIcons } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 const RELATION_RECORD_SELECTABLE_ITEM_ID = 'relation-record-select';
 
@@ -61,14 +60,9 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
   const { advancedFilterFieldSelectDropdownId } =
     useAdvancedFilterFieldSelectDropdown(recordFilterId);
 
-  const scopedAdvancedFilterFieldSelectDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(
-      advancedFilterFieldSelectDropdownId,
-    );
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedAdvancedFilterFieldSelectDropdownId,
+    advancedFilterFieldSelectDropdownId,
   );
 
   const { objectMetadataItem: workspaceMemberObjectMetadataItem } =

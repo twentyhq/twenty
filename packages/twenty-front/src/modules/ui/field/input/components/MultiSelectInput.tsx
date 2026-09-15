@@ -16,11 +16,13 @@ import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import {
+  MenuItem,
+  MenuItemMultiSelectTag,
+} from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -49,14 +51,9 @@ export const MultiSelectInput = ({
     selectableListComponentInstanceId,
   );
 
-  const scopedSelectableListComponentInstanceId =
-    useWorkspaceSurfaceScopedComponentInstanceId(
-      selectableListComponentInstanceId,
-    );
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedSelectableListComponentInstanceId,
+    selectableListComponentInstanceId,
   );
 
   const [searchFilter, setSearchFilter] = useState('');

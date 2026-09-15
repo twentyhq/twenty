@@ -25,7 +25,7 @@ import {
   IconSwitchHorizontal,
   IconTrash,
 } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { AppTooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =
@@ -126,7 +126,7 @@ export const WidgetSettingsManageSection = ({
         {isResetToDefaultDisabled && (
           <AppTooltip
             anchorSelect={`#${RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID}`}
-            content={t`No default configuration available for this widget`}
+            title={t`No default configuration available for this widget`}
             noArrow
             place="bottom"
           />

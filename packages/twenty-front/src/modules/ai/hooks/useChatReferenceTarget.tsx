@@ -7,7 +7,7 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { AvatarOrIcon } from 'twenty-ui/data-display';
+import { AvatarOrIcon } from 'twenty-ui/primitives/data-display';
 import { IconApps, IconLock, useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme-constants';
 
@@ -23,6 +23,8 @@ import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSide
 import { useOpenRoutedPageInSidePanel } from '@/side-panel/routing/hooks/useOpenRoutedPageInSidePanel';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
+import { useSkillIcon } from '@/skill-suggestion/hooks/useSkillIcon';
 import { useViewById } from '@/views/hooks/useViewById';
 
 const PROPOSED_OBJECT_METADATA_ICON = 'IconListNumbers';
@@ -63,6 +65,9 @@ export const useChatReferenceTarget = (
   const { view } = useViewById(
     reference.kind === 'view' ? reference.viewId : null,
   );
+  const skillIcon = useSkillIcon(
+    reference.kind === 'skill' ? reference.skillId : null,
+  );
 
   const iconSize = theme.icon.size.sm;
   const iconStroke = theme.icon.stroke.sm;
@@ -85,10 +90,10 @@ export const useChatReferenceTarget = (
           path: isNonEmptyString(recordPath) ? recordPath : undefined,
           leftComponent: (
             <AvatarOrIcon
-              placeholder={reference.displayName}
-              placeholderColorSeed={reference.recordId}
-              avatarType="rounded"
-              avatarUrl=""
+              name={reference.displayName}
+              colorSeed={reference.recordId}
+              shape="circle"
+              src=""
             />
           ),
         };
@@ -190,6 +195,16 @@ export const useChatReferenceTarget = (
           }),
           leftComponent: <IconApps size={iconSize} stroke={iconStroke} />,
         };
+      case 'skill': {
+        const SkillIcon = getIcon(skillIcon ?? DEFAULT_SKILL_ICON);
+
+        return {
+          path: getSettingsPath(SettingsPath.AiSkillDetail, {
+            skillId: reference.skillId,
+          }),
+          leftComponent: <SkillIcon size={iconSize} stroke={iconStroke} />,
+        };
+      }
       default:
         return assertUnreachable(reference);
     }

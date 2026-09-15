@@ -20,6 +20,8 @@ import {
 import { scheduleRecallBotForCallRecording } from 'src/logic-functions/flows/schedule-recall-bot-for-call-recording.util';
 import { fetchCalendarEventsByIds } from 'src/logic-functions/data/fetch-calendar-events-by-ids.util';
 import { fetchCalendarEventsByStartsAtValues } from 'src/logic-functions/data/fetch-calendar-events-by-starts-at-values.util';
+import { clearCalendarEventsRecordingOn } from 'src/logic-functions/data/clear-calendar-events-recording-on.util';
+import { markCalendarEventsRecordingOn } from 'src/logic-functions/data/mark-calendar-events-recording-on.util';
 import { findCallRecordingsByCalendarEventIds } from 'src/logic-functions/data/find-call-recordings-by-calendar-event-ids.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
@@ -129,6 +131,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       calendarEventId: policyResult.calendarEventId,
       realMeetingKey: policyResult.realMeetingKey,
       shouldRequestBot: policyResult.shouldRequestBot,
+      callRecorderPreference: policyResult.callRecorderPreference,
     }));
   const meetingPolicyResults = aggregateCallRecorderPolicyResultsByMeeting(
     perCalendarEventPolicyResults,
@@ -149,6 +152,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       shouldRequestBot: false,
       calendarEventIds: [],
       requestingCalendarEventIds: [],
+      calendarEventIdsWithRecordingOn: [],
     });
   }
 
@@ -247,12 +251,16 @@ const reconcileActiveMeeting = async ({
   )[0];
 
   if (!isUndefined(existingCallRecording)) {
-    return updatePolicyManagedCallRecording({
+    const reconciliationResult = await updatePolicyManagedCallRecording({
       client,
       existingCallRecording,
       representativeCalendarEvent,
       realMeetingKey: meetingPolicyResult.realMeetingKey,
     });
+
+    await markRequestingCalendarEventsRecordingOn(client, meetingPolicyResult);
+
+    return reconciliationResult;
   }
 
   const manualOpenCallRecording = await findManualOpenCallRecording({
@@ -269,12 +277,34 @@ const reconcileActiveMeeting = async ({
     };
   }
 
-  return createPolicyManagedCallRecording({
+  const reconciliationResult = await createPolicyManagedCallRecording({
     client,
     callRecordingId,
     representativeCalendarEvent,
     realMeetingKey: meetingPolicyResult.realMeetingKey,
   });
+
+  await markRequestingCalendarEventsRecordingOn(client, meetingPolicyResult);
+
+  return reconciliationResult;
+};
+
+const markRequestingCalendarEventsRecordingOn = async (
+  client: CoreApiClient,
+  meetingPolicyResult: CallRecorderPolicyResultForMeeting,
+): Promise<void> => {
+  try {
+    await markCalendarEventsRecordingOn(
+      client,
+      meetingPolicyResult.requestingCalendarEventIds,
+    );
+  } catch (error) {
+    console.warn(
+      `[call-recorder] failed to mark the calendar events of meeting ${meetingPolicyResult.realMeetingKey} as recording on: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
 };
 
 const updatePolicyManagedCallRecording = async ({
@@ -410,18 +440,16 @@ const reconcileCanceledMeeting = async ({
     ...meetingPolicyResult.calendarEventIds,
     ...removedCalendarEventIds,
   ]);
-  const cancellableCallRecordings = (
-    await findCallRecordingsByCalendarEventIds(client, calendarEventIds)
-  ).filter(
+  const meetingCallRecordings = await findCallRecordingsByCalendarEventIds(
+    client,
+    calendarEventIds,
+  );
+  const cancellableCallRecordings = meetingCallRecordings.filter(
     (callRecording) =>
       callRecording.status === CallRecordingStatus.SCHEDULED &&
       callRecording.recordingRequestStatus ===
         CallRecordingRequestStatus.REQUESTED,
   );
-
-  if (cancellableCallRecordings.length === 0) {
-    return buildSkippedResult(meetingPolicyResult.realMeetingKey);
-  }
 
   for (const callRecording of cancellableCallRecordings) {
     await cancelCallRecordingRequest({
@@ -430,11 +458,63 @@ const reconcileCanceledMeeting = async ({
     });
   }
 
+  const cancellableCallRecordingIds = new Set(
+    cancellableCallRecordings.map((callRecording) => callRecording.id),
+  );
+
+  await clearRecordingOnForMeeting({
+    client,
+    meetingPolicyResult,
+    remainingCallRecordings: meetingCallRecordings.filter(
+      (callRecording) => !cancellableCallRecordingIds.has(callRecording.id),
+    ),
+  });
+
+  if (cancellableCallRecordings.length === 0) {
+    return buildSkippedResult(meetingPolicyResult.realMeetingKey);
+  }
+
   return {
     action: 'CANCELED',
     realMeetingKey: meetingPolicyResult.realMeetingKey,
     callRecordingId: cancellableCallRecordings[0].id,
   };
+};
+
+const clearRecordingOnForMeeting = async ({
+  client,
+  meetingPolicyResult,
+  remainingCallRecordings,
+}: {
+  client: CoreApiClient;
+  meetingPolicyResult: CallRecorderPolicyResultForMeeting;
+  remainingCallRecordings: CallRecordingRecord[];
+}): Promise<void> => {
+  const hasCallRecordingOutsideThisCancellation = remainingCallRecordings.some(
+    (callRecording) =>
+      callRecording.recordingRequestStatus !==
+      CallRecordingRequestStatus.CANCELED,
+  );
+
+  if (
+    meetingPolicyResult.calendarEventIdsWithRecordingOn.length === 0 ||
+    hasCallRecordingOutsideThisCancellation
+  ) {
+    return;
+  }
+
+  try {
+    await clearCalendarEventsRecordingOn(
+      client,
+      meetingPolicyResult.calendarEventIdsWithRecordingOn,
+    );
+  } catch (error) {
+    console.warn(
+      `[call-recorder] failed to clear the recording preference of meeting ${meetingPolicyResult.realMeetingKey}: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
+  }
 };
 
 // startedAt/endedAt come from the webhook; calendar writes never touch them.

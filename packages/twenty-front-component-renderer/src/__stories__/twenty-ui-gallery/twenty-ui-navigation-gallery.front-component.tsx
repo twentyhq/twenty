@@ -19,7 +19,7 @@ import {
   MenuItemSelectColor,
   MenuItemSelectTag,
   MenuItemSuggestion,
-  MenuItemToggle,
+  MenuItemSwitch,
   MenuPicker,
   NavigationBar,
   NavigationBarItem,
@@ -32,7 +32,7 @@ import {
   StyledMenuItemLeftContent,
   StyledMenuItemSelect,
   UndecoratedLink,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {
@@ -183,9 +183,9 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
     node: <MenuItemSuggestion text="Suggestion" onClick={() => {}} />,
   },
   {
-    name: 'MenuItemToggle',
+    name: 'MenuItemSwitch',
     node: (
-      <MenuItemToggle text="Toggle" toggled={true} onToggleChange={() => {}} />
+      <MenuItemSwitch text="Switch" checked={true} onCheckedChange={() => {}} />
     ),
   },
   {
@@ -240,7 +240,7 @@ const NAVIGATION_ENTRIES: GalleryEntry[] = [
 const NavigationGallery = () => (
   <ThemeProvider colorScheme="light">
     <ComponentGallery
-      title="twenty-ui/navigation"
+      title="twenty-ui/primitives/navigation"
       entries={NAVIGATION_ENTRIES}
     />
   </ThemeProvider>
@@ -249,6 +249,7 @@ const NavigationGallery = () => (
 export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000108',
   name: 'twenty-ui-navigation-gallery',
-  description: 'Renders every twenty-ui/navigation component in the sandbox',
+  description:
+    'Renders every twenty-ui/primitives/navigation component in the sandbox',
   component: NavigationGallery,
 });

@@ -8,7 +8,7 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { AdvancedSettingsContentWrapperWithDot } from '@/settings/components/AdvancedSettingsContentWrapperWithDot';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -17,7 +17,7 @@ import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh } from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/surfaces';
+import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
 
@@ -214,7 +214,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                                 />
                                 <AppTooltip
                                   anchorSelect="#info-circle-id-name"
-                                  content={apiNameTooltipText}
+                                  title={apiNameTooltipText}
                                   offset={5}
                                   noArrow
                                   place="bottom"
@@ -241,7 +241,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                       dotPosition="centered"
                     >
                       <Card rounded>
-                        <SettingsOptionCardContentToggle
+                        <SettingsOptionCardContentSwitch
                           Icon={IconRefresh}
                           title={t`Synchronize Field Label and API Name`}
                           description={t`Should changing a field's label also change the API name?`}

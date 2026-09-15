@@ -36,4 +36,7 @@ export class CoreWorkflowVersionDTO {
 
   @Field(() => String)
   createdAt: string;
+
+  @Field(() => String)
+  updatedAt: string;
 }

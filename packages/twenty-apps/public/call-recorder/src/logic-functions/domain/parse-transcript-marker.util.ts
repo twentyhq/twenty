@@ -12,7 +12,11 @@ export const parseTranscriptMarker = (
     return undefined;
   }
 
-  if (candidate.status !== 'PENDING' && candidate.status !== 'FAILED') {
+  if (
+    candidate.status !== 'PENDING' &&
+    candidate.status !== 'FAILED' &&
+    candidate.status !== 'EMPTY'
+  ) {
     return undefined;
   }
 

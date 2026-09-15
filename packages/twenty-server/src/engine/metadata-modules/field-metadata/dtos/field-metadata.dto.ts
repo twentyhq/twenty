@@ -17,6 +17,7 @@ import {
 } from 'class-validator';
 import { GraphQLJSON } from 'graphql-type-json';
 import {
+  type FieldMetadataDefaultOption,
   type FieldMetadataOptions,
   type FieldMetadataSettings,
   FieldMetadataType,
@@ -24,10 +25,10 @@ import {
   MetadataWritability,
 } from 'twenty-shared/types';
 
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
 import { type FieldMetadataOverrides } from 'src/engine/metadata-modules/field-metadata/types/field-metadata-overrides.type';
-import { type FieldMetadataDefaultOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { transformEnumValue } from 'src/engine/utils/transform-enum-value';
 
 registerEnumType(FieldMetadataType, {
@@ -74,7 +75,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   icon?: string;
 
   @HideField()
-  overrides?: FieldMetadataOverrides | null;
+  overrides?: AuthoredOverrides<FieldMetadataOverrides> | null;
 
   @IsBoolean()
   @IsOptional()
@@ -115,6 +116,16 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @IsOptional()
   @Field({ nullable: true })
   isUnique?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isSearchable?: boolean;
+
+  @IsBoolean()
+  @IsOptional()
+  @Field({ nullable: true })
+  isAuditLogged?: boolean;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

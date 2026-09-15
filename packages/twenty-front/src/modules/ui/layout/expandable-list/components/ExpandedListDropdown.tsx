@@ -28,6 +28,7 @@ export const ExpandedListDropdown = ({
 }: ExpandedListDropdownProps) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'bottom-start',
+    strategy: 'fixed',
     middleware: [offset({ mainAxis: -9, crossAxis: -7 }), shift()],
     elements: { reference: anchorElement },
   });
@@ -41,12 +42,13 @@ export const ExpandedListDropdown = ({
   });
 
   const dropdownContentWidth = anchorElement
-    ? Math.max(220, anchorElement.getBoundingClientRect().width)
+    ? Math.max(220, anchorElement.offsetWidth)
     : undefined;
 
   return (
     <FloatingPortal>
       <StyledDropdownContentContainer
+        data-floating-ui-viewport
         ref={refs.setFloating}
         style={floatingStyles}
       >

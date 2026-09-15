@@ -32,6 +32,34 @@ describe('isCallRecordingImportComplete', () => {
     ).toBe(false);
   });
 
+  it('is complete when the transcript came back empty', () => {
+    expect(
+      isCallRecordingImportComplete({
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'EMPTY',
+        },
+        audio: AUDIO_VALUE,
+        video: VIDEO_VALUE,
+        callRecorderFailureReason: undefined,
+      }),
+    ).toBe(true);
+  });
+
+  it('is incomplete when the transcript failed', () => {
+    expect(
+      isCallRecordingImportComplete({
+        transcript: {
+          recallTranscriptId: 'recall-transcript-1',
+          status: 'FAILED',
+        },
+        audio: AUDIO_VALUE,
+        video: VIDEO_VALUE,
+        callRecorderFailureReason: undefined,
+      }),
+    ).toBe(false);
+  });
+
   it('is incomplete when the transcript is unset', () => {
     expect(
       isCallRecordingImportComplete({

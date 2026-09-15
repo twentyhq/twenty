@@ -25,9 +25,9 @@ jest.mock('twenty-ui/utilities', () => ({
   getOsControlSymbol: () => '⌘',
 }));
 
-jest.mock('twenty-ui/surfaces', () => ({
-  ...jest.requireActual('twenty-ui/surfaces'),
-  AppTooltip: (props: { content: string }) => {
+jest.mock('twenty-ui/primitives/surfaces', () => ({
+  ...jest.requireActual('twenty-ui/primitives/surfaces'),
+  AppTooltip: (props: { title: string }) => {
     mockAppTooltip(props);
 
     return null;
@@ -224,7 +224,7 @@ describe('SidePanelToggleButton', () => {
 
     expect(mockAppTooltip).toHaveBeenCalledWith(
       expect.objectContaining({
-        content: 'Command menu | ⌘K',
+        title: 'Command menu | ⌘K',
       }),
     );
   });

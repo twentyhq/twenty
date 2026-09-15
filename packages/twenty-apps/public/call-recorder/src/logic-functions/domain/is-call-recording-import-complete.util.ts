@@ -17,11 +17,12 @@ export const isCallRecordingImportComplete = ({
 }): boolean => {
   const { audioFileTooLarge, videoFileTooLarge } =
     parseMediaFileTooLargeMarkers(callRecorderFailureReason);
+  const transcriptMarker = parseTranscriptMarker(transcript);
 
   return (
     !isNull(transcript) &&
     !isUndefined(transcript) &&
-    isUndefined(parseTranscriptMarker(transcript)) &&
+    (isUndefined(transcriptMarker) || transcriptMarker.status === 'EMPTY') &&
     (isNonEmptyArray(audio) || audioFileTooLarge) &&
     (isNonEmptyArray(video) || videoFileTooLarge)
   );

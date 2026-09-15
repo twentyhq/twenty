@@ -13,7 +13,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilter, IconFilterOff, useIcons } from 'twenty-ui/icon';
-import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemMultiSelect } from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 export const WidgetActionTimelineFilter = () => {

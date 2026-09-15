@@ -35,6 +35,7 @@ export enum SidePanelPages {
   ComposeCalendarEvent = 'compose-calendar-event',
   CreateRelatedRecord = 'create-related-record',
   SendCampaign = 'send-campaign',
+  RecordCreationForm = 'record-creation-form',
   SendCampaignTest = 'send-campaign-test',
   WorkflowVersions = 'workflow-versions',
   WorkflowVersion = 'workflow-version',

@@ -1,5 +1,8 @@
 import '@/remote/generated/remote-elements';
 
+import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
+import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
+
 import { patchRemoteElementAttributes } from '../patchRemoteElementAttributes';
 
 const createHtmlDivElement = (): HTMLElement =>
@@ -8,6 +11,10 @@ const createHtmlDivElement = (): HTMLElement =>
 describe('patchRemoteElementAttributes', () => {
   beforeAll(() => {
     patchRemoteElementAttributes();
+    installClassAttributeAccessors({
+      elementPrototype: Element.prototype,
+      remoteElementPrototypes: resolveRemoteElementPrototypes(),
+    });
   });
 
   describe('getAttribute on property-mapped attributes', () => {

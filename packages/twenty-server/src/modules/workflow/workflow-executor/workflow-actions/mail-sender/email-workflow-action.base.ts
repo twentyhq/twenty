@@ -1,12 +1,15 @@
+import { type EmailOperation } from 'twenty-shared/types';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import {
+  canConnectedAccountPerformEmailOperation,
   isDefined,
   isValidUuid,
   resolveInput as resolveWorkflowInput,
 } from 'twenty-shared/utils';
 import { IsNull, type Repository } from 'typeorm';
 
+import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -16,11 +19,11 @@ import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
+import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
+import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
+import { getUserFromAuthContext } from 'src/modules/workflow/workflow-executor/utils/get-user-from-auth-context.util';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
-import {
-  buildEmailStepLog,
-  type EmailStepLogMode,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
+import { buildEmailStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/build-email-step-log.util';
 import { resolveEmailBody } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-body.util';
 import { resolveEmailFiles } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/utils/resolve-email-files.util';
 import { ToolBackedWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-backed/tool-backed.workflow-action';
@@ -34,11 +37,12 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    private readonly workflowExecutionContextService: WorkflowExecutionContextService,
   ) {
     super(loggerName, workflowRunStepLogService);
   }
 
-  protected abstract getMode(): EmailStepLogMode;
+  protected abstract getMode(): EmailOperation;
 
   protected override async preprocessInput(
     rawInput: WorkflowSendEmailActionInput,
@@ -65,6 +69,18 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
         context,
       ) as typeof inputWithoutBody),
       body,
+    };
+  }
+
+  protected override async buildToolExecutionContext(
+    runInfo: WorkflowRunInfo,
+  ): Promise<ToolExecutionContext> {
+    const { authContext } =
+      await this.workflowExecutionContextService.getExecutionContext(runInfo);
+
+    return {
+      workspaceId: runInfo.workspaceId,
+      ...getUserFromAuthContext(authContext),
     };
   }
 
@@ -114,7 +130,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
       if (!isDefined(connectedAccountId)) {
         throw new WorkflowStepExecutorException(
-          `No connected account found for workspace member '${senderId}'`,
+          `Workspace member '${senderId}' has no connected account that can ${this.getMode().toLowerCase()} email`,
           WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
         );
       }
@@ -149,16 +165,22 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
       return null;
     }
 
-    const connectedAccount = await this.connectedAccountRepository.findOne({
+    const connectedAccounts = await this.connectedAccountRepository.find({
       where: {
         userWorkspaceId: userWorkspace.id,
         workspaceId,
         archivedAt: IsNull(),
       },
-      order: { createdAt: 'ASC' },
+      order: { createdAt: 'ASC', id: 'ASC' },
     });
 
-    return connectedAccount?.id ?? null;
+    const operation = this.getMode();
+
+    const emailCapableAccount = connectedAccounts.find((connectedAccount) =>
+      canConnectedAccountPerformEmailOperation({ connectedAccount, operation }),
+    );
+
+    return emailCapableAccount?.id ?? null;
   }
 
   protected buildStepLog({

@@ -43,6 +43,7 @@ export const RecordColumnResizeHandle = ({
     className="cursor-col-resize"
     role="separator"
     aria-orientation="vertical"
+    data-dnd-drag-disable
     isResizing={isResizing}
     position={position}
     onPointerDown={onPointerDown}

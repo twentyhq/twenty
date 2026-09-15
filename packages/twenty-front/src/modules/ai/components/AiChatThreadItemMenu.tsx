@@ -1,4 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import {
   IconArchive,
   IconArchiveOff,
@@ -6,8 +7,8 @@ import {
   IconPencil,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { type AiChatThreadActionsSurface } from '@/ai/types/AiChatThreadActionsSurface';
 import { useChatThreadArchiveActions } from '@/ai/hooks/useChatThreadArchiveActions';
@@ -27,6 +28,7 @@ type AiChatThreadItemMenuProps = {
   isArchived: boolean;
   surface: AiChatThreadActionsSurface;
   onRenameRequested: () => void;
+  clickableComponent?: ReactNode;
 };
 
 export const AiChatThreadItemMenu = ({
@@ -35,6 +37,7 @@ export const AiChatThreadItemMenu = ({
   isArchived,
   surface,
   onRenameRequested,
+  clickableComponent,
 }: AiChatThreadItemMenuProps) => {
   const { t } = useLingui();
   const dropdownId = getAiChatThreadItemMenuDropdownId(threadId, surface);
@@ -75,11 +78,13 @@ export const AiChatThreadItemMenu = ({
       dropdownId={dropdownId}
       dropdownPlacement="bottom-end"
       clickableComponent={
-        <LightIconButton
-          aria-label={t`Chat actions`}
-          Icon={IconDotsVertical}
-          accent="tertiary"
-        />
+        clickableComponent ?? (
+          <LightIconButton
+            aria-label={t`Chat actions`}
+            Icon={IconDotsVertical}
+            accent="tertiary"
+          />
+        )
       }
       dropdownComponents={
         <DropdownContent>

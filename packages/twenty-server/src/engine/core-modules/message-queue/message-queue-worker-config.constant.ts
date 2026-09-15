@@ -76,6 +76,15 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
       boundedShutdownDrain: false,
     },
   },
+  [MessageQueue.campaignSendQueue]: {
+    priority: 6,
+    workerOptions: {
+      concurrency: 10,
+      lockDuration: 30_000,
+      maxStalledCount: 1,
+      boundedShutdownDrain: false,
+    },
+  },
   [MessageQueue.calendarQueue]: {
     priority: 4,
     workerOptions: {
@@ -160,7 +169,7 @@ export const MESSAGE_QUEUE_WORKER_CONFIG: Record<
   [MessageQueue.logicFunctionQueue]: {
     priority: 4,
     workerOptions: {
-      concurrency: 10,
+      concurrency: 20,
       lockDuration: 30_000,
       maxStalledCount: 1,
       boundedShutdownDrain: false,

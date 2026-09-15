@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 
 import { CORE_WORKFLOW_VERSION_STATUS_TAG_PROPS } from '@/object-core/workflows/versions/constants/CoreWorkflowVersionStatusTagProps';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -70,7 +70,7 @@ export const CoreWorkflowVersionsListItem = ({
             day: 'numeric',
           })}
         </StyledDate>
-        <Tag color={tagProps.color} text={t(tagProps.label)} />
+        <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>
       </StyledRow>
     </SelectableListItem>
   );

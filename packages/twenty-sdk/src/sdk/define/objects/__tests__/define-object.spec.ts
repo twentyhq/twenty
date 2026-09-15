@@ -113,6 +113,60 @@ describe('defineObject', () => {
     expect(result.config.fields).toEqual([]);
   });
 
+  it('returns a validation error for malformed options in an object field', () => {
+    const config: ObjectManifest = {
+      ...validConfig,
+      fields: [
+        {
+          universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+          type: FieldMetadataType.SELECT,
+          name: 'status',
+          label: 'Status',
+          options: JSON.parse('[null]'),
+        },
+      ],
+    };
+
+    const result = defineObject(config);
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'Field "Status" option at index 0 must be an object',
+    ]);
+  });
+
+  describe.each([
+    { type: FieldMetadataType.SELECT },
+    { type: FieldMetadataType.MULTI_SELECT },
+  ] as const)('$type option colors', (fieldType) => {
+    it.each([
+      { description: 'missing', colorProperties: {} },
+      { description: 'null', colorProperties: { color: null } },
+    ])('accepts $description colors', ({ colorProperties }) => {
+      const config: ObjectManifest = {
+        ...validConfig,
+        fields: [
+          {
+            universalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
+            ...fieldType,
+            name: 'status',
+            label: 'Status',
+            options: [
+              {
+                value: 'OPEN',
+                label: 'Open',
+                position: 0,
+                ...colorProperties,
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(defineObject(config).success).toBe(true);
+    });
+  });
+
   it('should return error when field is missing label', () => {
     const config = {
       ...validConfig,
@@ -231,7 +285,7 @@ describe('defineObject', () => {
     expect(result.config.fields[0].options).toHaveLength(2);
   });
 
-  it('should return error when labelIdentifierFieldMetadataUniversalIdentifier references non-existent field', () => {
+  it('should warn but accept a labelIdentifierFieldMetadataUniversalIdentifier that names an engine-derived field', () => {
     const config: ObjectManifest = {
       ...validConfig,
       labelIdentifierFieldMetadataUniversalIdentifier:
@@ -240,9 +294,10 @@ describe('defineObject', () => {
 
     const result = defineObject(config);
 
-    expect(result.success).toBe(false);
-    expect(result.errors).toContain(
-      'labelIdentifierFieldMetadataUniversalIdentifier must reference a field defined in the fields array',
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.warnings).toContain(
+      `labelIdentifierFieldMetadataUniversalIdentifier of "${validConfig.nameSingular}" names no field in its fields array; it must name a field the engine derives for this object, or the sync will fail to resolve it`,
     );
   });
 });

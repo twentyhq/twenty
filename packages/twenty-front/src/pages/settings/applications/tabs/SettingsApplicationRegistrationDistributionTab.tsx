@@ -1,9 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
-import { CommandBlock, Tag } from 'twenty-ui/data-display';
+import { CommandBlock, Tag } from 'twenty-ui/primitives/data-display';
 import { IconCopy } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { ApplicationRegistrationSourceType } from '~/generated-metadata/graphql';
@@ -42,7 +42,7 @@ export const SettingsApplicationRegistrationDistributionTab = ({
             title={t`Ownership`}
             description={t`This application's registration is claimed by your workspace`}
           />
-          <Tag text={t`Claimed by this workspace`} color="green" />
+          <Tag color="green">{t`Claimed by this workspace`}</Tag>
         </Section>
       )}
       <Section>

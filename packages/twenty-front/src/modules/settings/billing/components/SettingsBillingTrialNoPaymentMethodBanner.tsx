@@ -6,13 +6,14 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/feedback';
+import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import {
   BillingPlanKey,
   BillingPortalSessionDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
+import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 
 type SettingsBillingTrialNoPaymentMethodBannerProps = {
   currentBillingSubscription: NonNullable<
@@ -45,7 +46,7 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
   };
 
   const planName =
-    currentBillingSubscription.metadata?.['plan'] === BillingPlanKey.PRO
+    getSubscriptionPlanKey(currentBillingSubscription) === BillingPlanKey.PRO
       ? t`pro plan`
       : t`organization plan`;
 

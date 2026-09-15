@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { billingState } from '@/client-config/states/billingState';
@@ -76,11 +76,11 @@ export const OrganizationAdornment = ({
       {adornment}
       <AppTooltip
         anchorSelect={`#${anchorId}`}
-        content={tooltipContent}
+        title={tooltipContent}
         delay={TooltipDelay.shortDelay}
         place="top"
-        width="260px"
-        clickable
+        maxWidth="260px"
+        interactive
       />
     </>
   );

@@ -1,7 +1,7 @@
+import { type FieldManifestOptions } from '@/application/fieldManifestOptionsType';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
   type FieldMetadataDefaultValue,
-  type FieldMetadataOptions,
   type FieldMetadataType,
   type FieldMetadataUniversalSettings,
   type MetadataWritability,
@@ -19,12 +19,14 @@ type BaseRegularFieldManifest<
   label: string;
   description?: string;
   icon?: string;
-  options?: FieldMetadataOptions<T>;
+  options?: FieldManifestOptions<T>;
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isUIEditable?: boolean;
   writability?: MetadataWritability;
   isUnique?: boolean;
   isLabelSyncedWithName?: boolean;
+  isSearchable?: boolean;
+  isAuditLogged?: boolean;
   objectUniversalIdentifier: string;
 };
 

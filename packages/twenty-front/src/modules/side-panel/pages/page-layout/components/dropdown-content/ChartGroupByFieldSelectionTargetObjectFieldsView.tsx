@@ -14,12 +14,11 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
@@ -55,12 +54,9 @@ export const ChartGroupByFieldSelectionTargetObjectFieldsView = ({
     DropdownComponentInstanceContext,
   );
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const { objectMetadataItems } = useObjectMetadataItems();

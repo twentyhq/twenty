@@ -2,8 +2,8 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type FallbackProps } from 'react-error-boundary';
-import { Status } from 'twenty-ui/data-display';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { AppTooltip } from 'twenty-ui/primitives/surfaces';
 
 type PageLayoutWidgetInvalidConfigDisplayProps = FallbackProps;
 
@@ -26,11 +26,11 @@ export const PageLayoutWidgetInvalidConfigDisplay = ({
   return (
     <StyledInvalidConfigContainer>
       <div id={tooltipId}>
-        <Status color="red" text={text} />
+        <Status color="red">{text}</Status>
       </div>
       <AppTooltip
         anchorSelect={`#${tooltipId}`}
-        content={tooltipContent}
+        title={tooltipContent}
         place="top"
       />
     </StyledInvalidConfigContainer>

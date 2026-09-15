@@ -7,191 +7,81 @@ const JANUARY = new Date('2026-01-01T00:00:00.000Z');
 const FEBRUARY = new Date('2026-02-01T00:00:00.000Z');
 const MARCH = new Date('2026-03-01T00:00:00.000Z');
 
-describe('deriveBillingPeriodTransition', () => {
-  it('treats the invoiced period start as the boundary between the two periods', () => {
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: FEBRUARY,
-      invoicePeriodEnd: MARCH,
-      subscriptionCurrentPeriodStart: JANUARY,
-      subscriptionCurrentPeriodEnd: FEBRUARY,
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart: null,
-    });
+const deriveFrom = (
+  overrides: Partial<Parameters<typeof deriveBillingPeriodTransition>[0]> = {},
+) =>
+  deriveBillingPeriodTransition({
+    boundary: FEBRUARY,
+    subscriptionCurrentPeriodStart: JANUARY,
+    subscriptionInterval: SubscriptionInterval.Month,
+    trialStart: null,
+    trialEnd: null,
+    subscriptionPreviousPeriodStart: null,
+    ledgerPeriodStart: null,
+    ...overrides,
+  });
 
-    expect(result).toEqual({
+describe('deriveBillingPeriodTransition', () => {
+  it('closes the period the boundary ends and opens the next one there', () => {
+    expect(deriveFrom()).toEqual({
       closingPeriodStart: JANUARY,
       closingPeriodEnd: FEBRUARY,
       nextPeriodStart: FEBRUARY,
-      nextPeriodEnd: MARCH,
+      isFirstPeriodAfterTrial: false,
     });
   });
 
   it('closes the trial period when the trial just ended', () => {
     const trialStart = new Date('2026-01-20T00:00:00.000Z');
 
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: FEBRUARY,
-      invoicePeriodEnd: MARCH,
+    const result = deriveFrom({
       subscriptionCurrentPeriodStart: FEBRUARY,
-      subscriptionCurrentPeriodEnd: MARCH,
-      subscriptionInterval: SubscriptionInterval.Month,
       trialStart,
-      isFirstPeriodAfterTrial: true,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart: null,
+      trialEnd: FEBRUARY,
     });
 
-    expect(result).toEqual({
-      closingPeriodStart: trialStart,
-      closingPeriodEnd: FEBRUARY,
-      nextPeriodStart: FEBRUARY,
-      nextPeriodEnd: MARCH,
-    });
-  });
-
-  // The invoiced period is 28 days here while the closing one is 31, so
-  // subtracting the invoiced duration would land on January 4 and drop three
-  // days of usage.
-  it('falls back one calendar month when the subscription already advanced', () => {
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: FEBRUARY,
-      invoicePeriodEnd: MARCH,
-      subscriptionCurrentPeriodStart: FEBRUARY,
-      subscriptionCurrentPeriodEnd: MARCH,
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart: null,
-    });
-
-    expect(result.closingPeriodStart).toEqual(JANUARY);
-    expect(result.closingPeriodEnd).toEqual(FEBRUARY);
-  });
-
-  it('falls back one calendar year for a yearly subscription', () => {
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: JANUARY,
-      invoicePeriodEnd: new Date('2027-01-01T00:00:00.000Z'),
-      subscriptionCurrentPeriodStart: JANUARY,
-      subscriptionCurrentPeriodEnd: new Date('2027-01-01T00:00:00.000Z'),
-      subscriptionInterval: SubscriptionInterval.Year,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart: null,
-    });
-
-    expect(result.closingPeriodStart).toEqual(
-      new Date('2025-01-01T00:00:00.000Z'),
-    );
-  });
-
-  it('keeps the closing period aligned across a leap February', () => {
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: new Date('2024-03-01T00:00:00.000Z'),
-      invoicePeriodEnd: new Date('2024-04-01T00:00:00.000Z'),
-      subscriptionCurrentPeriodStart: new Date('2024-03-01T00:00:00.000Z'),
-      subscriptionCurrentPeriodEnd: new Date('2024-04-01T00:00:00.000Z'),
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart: null,
-    });
-
-    expect(result.closingPeriodStart).toEqual(
-      new Date('2024-02-01T00:00:00.000Z'),
-    );
+    expect(result.isFirstPeriodAfterTrial).toBe(true);
+    expect(result.closingPeriodStart).toEqual(trialStart);
   });
 
   it('falls back to the trial period start only when the trial actually ran', () => {
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: FEBRUARY,
-      invoicePeriodEnd: MARCH,
-      subscriptionCurrentPeriodStart: JANUARY,
-      subscriptionCurrentPeriodEnd: FEBRUARY,
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: true,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart: null,
-    });
+    const result = deriveFrom({ trialEnd: FEBRUARY });
 
     expect(result.closingPeriodStart).toEqual(JANUARY);
   });
 
-  // A subscription anchored on the 31st runs January 31 to February 28, and
-  // subMonths clamps February 28 back to January 28. Three days of the previous
-  // period would count as usage here, and grants that expired on January 31
-  // would read as live and be carried forward a second time.
-  it('prefers the period start the ledger recorded over clamped calendar arithmetic', () => {
-    const monthEndBoundary = new Date('2026-02-28T00:00:00.000Z');
-    const ledgerPeriodStart = new Date('2026-01-31T00:00:00.000Z');
+  // The whole point of resolving the boundary from the subscription is that the
+  // invoice's stamped period is unreliable. Classifying the trial off that same
+  // stamped period_start put an arrears-stamped first paid period on the paid
+  // tier allowance instead of the trial one.
+  it('reads the trial from the boundary, not from where the closing period began', () => {
+    const trialStart = new Date('2026-01-20T00:00:00.000Z');
 
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: monthEndBoundary,
-      invoicePeriodEnd: new Date('2026-03-31T00:00:00.000Z'),
-      subscriptionCurrentPeriodStart: monthEndBoundary,
-      subscriptionCurrentPeriodEnd: new Date('2026-03-31T00:00:00.000Z'),
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart,
-    });
-
-    expect(result.closingPeriodStart).toEqual(ledgerPeriodStart);
-  });
-
-  it('ignores a ledger period start that is not before the boundary', () => {
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: FEBRUARY,
-      invoicePeriodEnd: MARCH,
+    const result = deriveFrom({
       subscriptionCurrentPeriodStart: FEBRUARY,
-      subscriptionCurrentPeriodEnd: MARCH,
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart: MARCH,
+      trialStart,
+      trialEnd: new Date('2026-02-01T00:00:30.000Z'),
     });
 
+    expect(result.isFirstPeriodAfterTrial).toBe(true);
+  });
+
+  it('does not read an unrelated renewal as the end of a trial', () => {
+    const result = deriveFrom({
+      trialStart: new Date('2025-12-20T00:00:00.000Z'),
+      trialEnd: JANUARY,
+    });
+
+    expect(result.isFirstPeriodAfterTrial).toBe(false);
     expect(result.closingPeriodStart).toEqual(JANUARY);
   });
 
-  it('falls back to calendar arithmetic when the ledger has nothing to say', () => {
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: FEBRUARY,
-      invoicePeriodEnd: MARCH,
-      subscriptionCurrentPeriodStart: FEBRUARY,
-      subscriptionCurrentPeriodEnd: MARCH,
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart: null,
-    });
-
-    expect(result.closingPeriodStart).toEqual(JANUARY);
-  });
-
-  // The subscription still carries the closing period, so it is authoritative
-  // and the ledger must not override it.
+  // The subscription still carries the closing period, so it is exact and
+  // nothing has to be reconstructed from a calendar or from the ledger.
   it('keeps the subscription period start when it precedes the boundary', () => {
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: FEBRUARY,
-      invoicePeriodEnd: MARCH,
-      subscriptionCurrentPeriodStart: JANUARY,
-      subscriptionCurrentPeriodEnd: FEBRUARY,
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
-      subscriptionPreviousPeriodStart: null,
+    const result = deriveFrom({
       ledgerPeriodStart: new Date('2026-01-15T00:00:00.000Z'),
+      subscriptionPreviousPeriodStart: new Date('2025-12-01T00:00:00.000Z'),
     });
 
     expect(result.closingPeriodStart).toEqual(JANUARY);
@@ -203,14 +93,9 @@ describe('deriveBillingPeriodTransition', () => {
   it('prefers the period start the subscription recorded over the ledger', () => {
     const monthEndBoundary = new Date('2026-02-28T00:00:00.000Z');
 
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: monthEndBoundary,
-      invoicePeriodEnd: new Date('2026-03-31T00:00:00.000Z'),
+    const result = deriveFrom({
+      boundary: monthEndBoundary,
       subscriptionCurrentPeriodStart: monthEndBoundary,
-      subscriptionCurrentPeriodEnd: new Date('2026-03-31T00:00:00.000Z'),
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
       subscriptionPreviousPeriodStart: new Date('2026-01-31T00:00:00.000Z'),
       ledgerPeriodStart: new Date('2026-01-20T00:00:00.000Z'),
     });
@@ -220,20 +105,82 @@ describe('deriveBillingPeriodTransition', () => {
     );
   });
 
-  it('uses the subscription period end when the invoice carries no forward period', () => {
-    const result = deriveBillingPeriodTransition({
-      invoicePeriodStart: FEBRUARY,
-      invoicePeriodEnd: FEBRUARY,
-      subscriptionCurrentPeriodStart: JANUARY,
-      subscriptionCurrentPeriodEnd: MARCH,
-      subscriptionInterval: SubscriptionInterval.Month,
-      trialStart: null,
-      isFirstPeriodAfterTrial: false,
-      subscriptionPreviousPeriodStart: null,
-      ledgerPeriodStart: null,
+  // A subscription anchored on the 31st runs January 31 to February 28, and
+  // subMonths clamps February 28 back to January 28. Three days of the previous
+  // period would count as usage here, and grants that expired on January 31
+  // would read as live and be carried forward a second time.
+  it('prefers the period start the ledger recorded over clamped calendar arithmetic', () => {
+    const monthEndBoundary = new Date('2026-02-28T00:00:00.000Z');
+    const ledgerPeriodStart = new Date('2026-01-31T00:00:00.000Z');
+
+    const result = deriveFrom({
+      boundary: monthEndBoundary,
+      subscriptionCurrentPeriodStart: monthEndBoundary,
+      ledgerPeriodStart,
     });
 
-    expect(result.nextPeriodStart).toEqual(FEBRUARY);
-    expect(result.nextPeriodEnd).toEqual(MARCH);
+    expect(result.closingPeriodStart).toEqual(ledgerPeriodStart);
+  });
+
+  it('ignores a ledger period start that is not before the boundary', () => {
+    const result = deriveFrom({
+      subscriptionCurrentPeriodStart: FEBRUARY,
+      ledgerPeriodStart: MARCH,
+    });
+
+    expect(result.closingPeriodStart).toEqual(JANUARY);
+  });
+
+  it('falls back one calendar month when the subscription already advanced', () => {
+    const result = deriveFrom({ subscriptionCurrentPeriodStart: FEBRUARY });
+
+    expect(result.closingPeriodStart).toEqual(JANUARY);
+  });
+
+  it('falls back one calendar year for a yearly subscription', () => {
+    const result = deriveFrom({
+      boundary: JANUARY,
+      subscriptionCurrentPeriodStart: JANUARY,
+      subscriptionInterval: SubscriptionInterval.Year,
+    });
+
+    expect(result.closingPeriodStart).toEqual(
+      new Date('2025-01-01T00:00:00.000Z'),
+    );
+  });
+
+  it('keeps the closing period aligned across a leap February', () => {
+    const result = deriveFrom({
+      boundary: new Date('2024-03-01T00:00:00.000Z'),
+      subscriptionCurrentPeriodStart: new Date('2024-03-01T00:00:00.000Z'),
+    });
+
+    expect(result.closingPeriodStart).toEqual(
+      new Date('2024-02-01T00:00:00.000Z'),
+    );
+  });
+
+  // The column is nullable while its type says otherwise. Treating a missing
+  // interval as monthly would settle a yearly subscription against one month of
+  // usage and carry eleven months of allowance forward as unspent.
+  it('refuses to guess a period length when the subscription records no interval', () => {
+    expect(() =>
+      deriveFrom({
+        subscriptionCurrentPeriodStart: FEBRUARY,
+        subscriptionInterval: null,
+      }),
+    ).toThrow(/records no interval/);
+  });
+
+  // Only the calendar fallback needs the interval, so an exact source still
+  // settles correctly without one.
+  it('settles without an interval when the subscription recorded the period start', () => {
+    const result = deriveFrom({
+      subscriptionCurrentPeriodStart: FEBRUARY,
+      subscriptionInterval: null,
+      subscriptionPreviousPeriodStart: JANUARY,
+    });
+
+    expect(result.closingPeriodStart).toEqual(JANUARY);
   });
 });

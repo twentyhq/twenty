@@ -4,11 +4,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { CalendarEventWebhookSyncService } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/services/calendar-event-webhook-sync.service';
-
-export type CalendarEventWebhookSyncJobData = {
-  calendarChannelId: string;
-  workspaceId: string;
-};
+import { type CalendarEventWebhookSyncJobData } from 'src/modules/connected-account-sync-webhooks/calendar-event-webhook-sync/types/calendar-event-webhook-sync-job-data.type';
 
 @Processor({
   queueName: MessageQueue.connectedAccountSyncWebhookQueue,

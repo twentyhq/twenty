@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
+import { FieldDescriptionTooltip } from '@/object-record/record-field/ui/components/FieldDescriptionTooltip';
 
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -29,12 +30,6 @@ const StyledIcon = styled.div`
   }
 `;
 
-const StyledText = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
 type RecordTableColumnHeadProps = {
   recordField: RecordField;
 };
@@ -53,15 +48,18 @@ export const RecordTableColumnHead = ({
   const Icon = getIcon(
     correspondingFieldMetadataItem.foundFieldMetadataItem?.icon,
   );
+  const fieldMetadataItem =
+    correspondingFieldMetadataItem.foundFieldMetadataItem;
 
   return (
     <StyledTitle className={RECORD_TABLE_CELL_CONTENT_CLASS_NAME}>
       <StyledIcon>
         <Icon size={theme.icon.size.md} />
       </StyledIcon>
-      <StyledText>
-        {correspondingFieldMetadataItem.foundFieldMetadataItem?.label}
-      </StyledText>
+      <FieldDescriptionTooltip
+        label={fieldMetadataItem?.label}
+        description={fieldMetadataItem?.description}
+      />
     </StyledTitle>
   );
 };

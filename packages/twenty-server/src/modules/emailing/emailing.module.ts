@@ -38,9 +38,12 @@ import { MessageCampaignRecoveryService } from 'src/modules/emailing/services/me
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignDeliveryFeedbackService } from 'src/modules/emailing/services/message-campaign-delivery-feedback.service';
+import { MessageCampaignBatchDeliveryService } from 'src/modules/emailing/services/message-campaign-batch-delivery.service';
+import { CampaignSendSlotService } from 'src/modules/emailing/services/campaign-send-slot.service';
 import { MessageCampaignDeliveryService } from 'src/modules/emailing/services/message-campaign-delivery.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
 import { MessageCampaignMaterializationService } from 'src/modules/emailing/services/message-campaign-materialization.service';
+import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { MessageListDuplicationService } from 'src/modules/emailing/services/message-list-duplication.service';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
@@ -76,8 +79,11 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     CampaignVariableService,
     EmailBillingService,
     MessageCampaignService,
+    MessageCampaignScheduleService,
     MessageCampaignAudienceService,
+    CampaignSendSlotService,
     MessageCampaignDeliveryService,
+    MessageCampaignBatchDeliveryService,
     MessageCampaignDeliveryFeedbackService,
     MessageCampaignLifecycleService,
     MessageCampaignMaterializationService,
@@ -106,7 +112,10 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     EmailingDomainSenderService,
     EmailBillingService,
     MessageCampaignService,
+    MessageCampaignScheduleService,
+    CampaignSendSlotService,
     MessageCampaignDeliveryService,
+    MessageCampaignBatchDeliveryService,
     MessageCampaignDeliveryFeedbackService,
     MessageCampaignMaterializationService,
     MessageCampaignDraftService,

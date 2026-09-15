@@ -75,6 +75,9 @@ describe('SignInUpWorkspaceCreationForm', () => {
 
       renderForm();
 
+      expect(screen.getByPlaceholderText('Apple')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('apple')).toBeInTheDocument();
+
       const createButton = screen.getByRole('button', {
         name: 'Create workspace',
       });

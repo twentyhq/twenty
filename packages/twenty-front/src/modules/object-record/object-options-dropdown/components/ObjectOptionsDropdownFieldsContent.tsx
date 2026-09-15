@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconChevronLeft, IconEyeOff } from 'twenty-ui/icon';
-import { MenuItemNavigate } from 'twenty-ui/navigation';
+import { MenuItemNavigate } from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownFieldsContent = () => {
   const { t } = useLingui();

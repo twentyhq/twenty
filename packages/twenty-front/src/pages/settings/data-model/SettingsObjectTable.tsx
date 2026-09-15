@@ -31,8 +31,8 @@ import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
+import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -176,24 +176,24 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItemToggle
+                      <MenuItemSwitch
                         LeftIcon={IconArchive}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           setShowDeactivated(!showDeactivated)
                         }
-                        toggled={showDeactivated}
+                        checked={showDeactivated}
                         text={t`Deactivated`}
-                        toggleSize="small"
+                        size="sm"
                       />
                       {isAdvancedModeEnabled && (
-                        <MenuItemToggle
+                        <MenuItemSwitch
                           LeftIcon={IconSettings}
-                          onToggleChange={() =>
+                          onCheckedChange={() =>
                             setShowSystemObjects(!showSystemObjects)
                           }
-                          toggled={showSystemObjects}
+                          checked={showSystemObjects}
                           text={t`System objects`}
-                          toggleSize="small"
+                          size="sm"
                         />
                       )}
                     </DropdownMenuItemsContainer>

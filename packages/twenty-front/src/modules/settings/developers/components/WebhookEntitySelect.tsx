@@ -13,7 +13,6 @@ import { SelectableList } from '@/ui/layout/selectable-list/components/Selectabl
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
@@ -25,8 +24,8 @@ import {
   IconTable,
   IconWebhook,
 } from 'twenty-ui/icon';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 const WEBHOOK_ENTITY_DROPDOWN_ID = 'webhook-entity-select';
 
@@ -49,12 +48,9 @@ export const WebhookEntitySelect = ({
   const { objectMetadataItems } = useObjectMetadataItems();
   const { closeDropdown } = useCloseDropdown();
 
-  const scopedDropdownId =
-    useWorkspaceSurfaceScopedComponentInstanceId(dropdownId);
-
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    scopedDropdownId,
+    dropdownId,
   );
 
   const metadataOptions: SelectOption<string>[] = [

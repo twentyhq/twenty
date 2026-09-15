@@ -13,7 +13,11 @@ import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownVariableButtonContainer = styled.div<{
@@ -106,7 +110,7 @@ export const WorkflowVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
         <AppTooltip
           anchorSelect={`[data-variable-picker-disabled-anchor="${dropdownId}"]`}
-          content={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
+          title={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
           place={TooltipPosition.Top}
           delay={TooltipDelay.mediumDelay}
           offset={5}

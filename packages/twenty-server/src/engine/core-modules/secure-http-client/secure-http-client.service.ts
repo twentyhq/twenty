@@ -1,12 +1,17 @@
+import * as http from 'http';
+
 import { Injectable, Logger } from '@nestjs/common';
 
 import axios, { type AxiosInstance, type CreateAxiosDefaults } from 'axios';
 import axiosRetry from 'axios-retry';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildAxiosFetch } from '@lifeomic/axios-fetch';
 
 import { createSsrfSafeAgent } from 'src/engine/core-modules/secure-http-client/utils/create-ssrf-safe-agent.util';
+import { ALLOW_ALL_INTERNAL_HOSTS } from 'src/engine/core-modules/secure-http-client/constants/allow-all-internal-hosts.constant';
+import { normalizeAllowedInternalHost } from 'src/engine/core-modules/secure-http-client/utils/normalize-allowed-internal-host.util';
 import { resolveAndValidateHostname } from 'src/engine/core-modules/secure-http-client/utils/resolve-and-validate-hostname.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -23,6 +28,7 @@ type SecureHttpClientConfig = CreateAxiosDefaults & {
 @Injectable()
 export class SecureHttpClientService {
   private readonly logger = new Logger(SecureHttpClientService.name);
+  private hasWarnedAboutDeprecatedSafeModeFlag = false;
 
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
@@ -37,15 +43,14 @@ export class SecureHttpClientService {
   ): AxiosInstance {
     const { retries, shouldResetTimeout, ...axiosConfig } = config ?? {};
 
-    const isSafeModeEnabled = this.twentyConfigService.get(
-      'OUTBOUND_HTTP_SAFE_MODE_ENABLED',
-    );
+    const allowedInternalHosts = this.getAllowedInternalHosts();
+    const isSafeModeEnabled = this.isSafeModeEnabled(allowedInternalHosts);
 
     const client = isSafeModeEnabled
       ? axios.create({
           ...axiosConfig,
-          httpAgent: createSsrfSafeAgent('http'),
-          httpsAgent: createSsrfSafeAgent('https'),
+          httpAgent: createSsrfSafeAgent('http', allowedInternalHosts),
+          httpsAgent: createSsrfSafeAgent('https', allowedInternalHosts),
           maxRedirects: Math.min(
             axiosConfig.maxRedirects ?? MAX_REDIRECTS,
             MAX_REDIRECTS,
@@ -104,22 +109,61 @@ export class SecureHttpClientService {
   }
 
   createSsrfSafeFetch(): typeof globalThis.fetch {
-    if (!this.isSafeModeEnabled()) {
+    if (!this.isSafeModeEnabled(this.getAllowedInternalHosts())) {
       return globalThis.fetch;
     }
 
     return buildAxiosFetch(this.getHttpClient()) as typeof globalThis.fetch;
   }
 
+  // For libraries that own their HTTP stack and only accept an agent
+  // (openid-client). Undefined means no restriction.
+  getSsrfSafeAgent(url: URL): http.Agent | undefined {
+    const allowedInternalHosts = this.getAllowedInternalHosts();
+
+    if (!this.isSafeModeEnabled(allowedInternalHosts)) {
+      return undefined;
+    }
+
+    return createSsrfSafeAgent(
+      url.protocol === 'https:' ? 'https' : 'http',
+      allowedInternalHosts,
+    );
+  }
+
   async getValidatedHost(hostnameOrUrl: string): Promise<string> {
-    if (!this.isSafeModeEnabled()) {
+    const allowedInternalHosts = this.getAllowedInternalHosts();
+
+    if (!this.isSafeModeEnabled(allowedInternalHosts)) {
       return hostnameOrUrl;
     }
 
-    return resolveAndValidateHostname(hostnameOrUrl);
+    return resolveAndValidateHostname(hostnameOrUrl, allowedInternalHosts);
   }
 
-  private isSafeModeEnabled(): boolean {
-    return this.twentyConfigService.get('OUTBOUND_HTTP_SAFE_MODE_ENABLED');
+  private getAllowedInternalHosts(): string[] {
+    // OUTBOUND_HTTP_SAFE_MODE_ENABLED is deprecated but still honoured so
+    // self-hosted setups that turned it off keep working after upgrading.
+    if (
+      this.twentyConfigService.get('OUTBOUND_HTTP_SAFE_MODE_ENABLED') === false
+    ) {
+      if (!this.hasWarnedAboutDeprecatedSafeModeFlag) {
+        this.hasWarnedAboutDeprecatedSafeModeFlag = true;
+        this.logger.warn(
+          'OUTBOUND_HTTP_SAFE_MODE_ENABLED=false is deprecated and overrides OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: every private address is reachable. Remove it and list the internal hosts you need instead.',
+        );
+      }
+
+      return [ALLOW_ALL_INTERNAL_HOSTS];
+    }
+
+    return this.twentyConfigService
+      .get('OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS')
+      .map(normalizeAllowedInternalHost)
+      .filter(isNonEmptyString);
+  }
+
+  private isSafeModeEnabled(allowedInternalHosts: string[]): boolean {
+    return !allowedInternalHosts.includes(ALLOW_ALL_INTERNAL_HOSTS);
   }
 }

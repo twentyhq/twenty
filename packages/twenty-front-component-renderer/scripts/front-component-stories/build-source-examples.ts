@@ -68,21 +68,27 @@ const twentySharedAliases = Object.fromEntries(
 );
 
 const TWENTY_UI_SUBMODULES = [
-  'accessibility',
-  'data-display',
-  'feedback',
+  'components',
   'icon',
-  'input',
-  'json-visualizer',
-  'layout',
-  'navigation',
-  'surfaces',
+  'primitives',
+  'primitives/accessibility',
+  'primitives/data-display',
+  'primitives/feedback',
+  'primitives/input',
+  'primitives/json-visualizer',
+  'primitives/layout',
+  'primitives/navigation',
+  'primitives/surfaces',
+  'primitives/typography',
   'theme-constants',
-  'typography',
   'utilities',
 ];
 
 const twentyUiAliases = {
+  'twenty-ui/style.css': path.join(
+    path.dirname(twentyUiIndividualIndex),
+    'twenty-ui.css',
+  ),
   'twenty-ui': twentyUiIndividualIndex,
   ...Object.fromEntries(
     TWENTY_UI_SUBMODULES.map((submodule) => [

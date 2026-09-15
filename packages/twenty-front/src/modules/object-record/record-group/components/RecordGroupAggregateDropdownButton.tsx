@@ -4,8 +4,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 
 const StyledTagContainer = styled.div`
   width: 100%;
@@ -36,16 +36,14 @@ export const RecordGroupAggregateDropdownButton = ({
       <StyledHeaderDropdownButton id={dropdownId} isUnfolded={isDropdownOpen}>
         <>
           <StyledTagContainer>
-            <Tag
-              text={isDefined(value) ? value.toString() : '-'}
-              color="transparent"
-              weight="regular"
-            />
+            <Tag color="transparent" weight="regular">
+              {isDefined(value) ? value.toString() : '-'}
+            </Tag>
           </StyledTagContainer>
           {!isDropdownOpen && (
             <AppTooltip
               anchorSelect={`#${dropdownId}`}
-              content={tooltip ?? ''}
+              title={tooltip ?? ''}
               noArrow
               place="right"
               positionStrategy="fixed"

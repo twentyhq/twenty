@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { POLLED_MESSAGE_CHANNEL_TYPES } from 'twenty-shared/constants';
 import {
   CalendarChannelSyncStage,
   CalendarChannelSyncStatus,
   MessageChannelSyncStage,
-  MessageChannelType,
   WebhookSubscriptionChannelType,
 } from 'twenty-shared/types';
-import { Not, Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -22,6 +22,7 @@ import {
   CalendarEventListFetchJob,
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
+import { WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT } from 'src/modules/connected-account/webhook-subscription-manager/constants/webhook-subscription-job-retry-limit.constant';
 import {
   CreateWebhookSubscriptionJob,
   type CreateWebhookSubscriptionJobData,
@@ -75,7 +76,7 @@ export class ChannelSyncService {
         where: {
           connectedAccountId,
           syncStage: MessageChannelSyncStage.PENDING_CONFIGURATION,
-          type: Not(MessageChannelType.EMAIL_GROUP),
+          type: In([...POLLED_MESSAGE_CHANNEL_TYPES]),
           workspaceId,
         },
       });
@@ -110,6 +111,7 @@ export class ChannelSyncService {
               channelId: messageChannel.id,
               workspaceId,
             },
+            { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
           );
         } catch (error) {
           this.logger.warn(
@@ -170,6 +172,7 @@ export class ChannelSyncService {
               channelId: calendarChannel.id,
               workspaceId,
             },
+            { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
           );
         } catch (error) {
           this.logger.warn(

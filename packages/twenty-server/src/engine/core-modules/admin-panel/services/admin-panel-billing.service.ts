@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
 
@@ -24,10 +25,7 @@ import { BillingCreditService } from 'src/engine/core-modules/billing/services/b
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  INTERNAL_CREDITS_PER_DISPLAY_CREDIT,
-  toDisplayCredits,
-} from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -58,6 +56,7 @@ export class AdminPanelBillingService {
     amount,
     type,
     reason,
+    expiresInDays,
     clientOperationId,
     grantedByUserId,
   }: {
@@ -65,6 +64,7 @@ export class AdminPanelBillingService {
     amount: number;
     type: BillingCreditGrantType;
     reason?: string;
+    expiresInDays?: number;
     clientOperationId: string;
     grantedByUserId: string;
   }): Promise<AdminPanelWorkspaceCreditGrantDTO> {
@@ -102,33 +102,22 @@ export class AdminPanelBillingService {
       amountMicro,
       type,
       reason,
+      expiresInDays,
       idempotencyKey,
       grantedByUserId,
     });
 
-    if (isDefined(grant)) {
-      return this.toCreditGrantDTO(grant);
-    }
-
-    // A null grant is either a replay of this same operation, which must answer
-    // with the grant the first attempt wrote rather than hand out the credits
-    // again, or an instance without billing. The ledger table only exists in
-    // the first case, so it is only queried there.
-    const replayedGrant = this.twentyConfigService.get('IS_BILLING_ENABLED')
-      ? await this.billingCreditGrantService.findGrantByIdempotencyKey(
-          workspaceId,
-          idempotencyKey,
-        )
-      : null;
-
-    if (!isDefined(replayedGrant)) {
+    // Answered with the grant either way, whether this attempt wrote it or a
+    // previous one did, so nothing is left but the instance that has no ledger
+    // to write to at all.
+    if (!isDefined(grant)) {
       throw new BillingException(
         `Could not grant credits to workspace ${workspaceId}, billing is disabled on this instance`,
         BillingExceptionCode.BILLING_CUSTOMER_NOT_FOUND,
       );
     }
 
-    return this.toCreditGrantDTO(replayedGrant);
+    return this.toCreditGrantDTO(grant);
   }
 
   async revokeWorkspaceCreditGrant({
@@ -169,11 +158,12 @@ export class AdminPanelBillingService {
       effectiveAt: grant.effectiveAt,
       expiresAt: grant.expiresAt,
       revokedAt: grant.revokedAt,
+      sourceGrantId: grant.sourceGrantId,
       reason: grant.reason,
       isActive:
         !isDefined(grant.revokedAt) &&
         grant.effectiveAt.getTime() <= now &&
-        grant.expiresAt.getTime() > now,
+        (!isDefined(grant.expiresAt) || grant.expiresAt.getTime() > now),
       createdAt: grant.createdAt,
     };
   }

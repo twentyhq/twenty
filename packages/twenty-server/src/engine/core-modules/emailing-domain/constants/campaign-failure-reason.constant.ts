@@ -7,6 +7,11 @@ export const CAMPAIGN_FAILURE_REASON = {
   UNSUBSCRIBE_NOT_READY: 'UNSUBSCRIBE_NOT_READY',
   UNSUBSCRIBE_MULTIPLE_RECIPIENTS: 'UNSUBSCRIBE_MULTIPLE_RECIPIENTS',
   CLAIM_EXPIRED: 'CLAIM_EXPIRED',
+  // The provider accepted the batch but settling it threw, so the rows are
+  // sent without a provider id rather than re-sendable.
+  SETTLEMENT_LOST: 'SETTLEMENT_LOST',
+  // Queued with no send job left to pick it up, found by the stale cron.
+  ORPHANED: 'ORPHANED',
   RATE_LIMITED: 'RATE_LIMITED',
   UNKNOWN: 'UNKNOWN',
 } as const;

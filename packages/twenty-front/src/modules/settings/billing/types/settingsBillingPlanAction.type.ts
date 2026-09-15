@@ -1,5 +1,8 @@
 import { type IconComponent } from 'twenty-ui/icon';
-import { type ButtonAccent, type ButtonVariant } from 'twenty-ui/input';
+import {
+  type ButtonAccent,
+  type ButtonVariant,
+} from 'twenty-ui/primitives/input';
 
 export type SettingsBillingPlanAction = {
   accent?: ButtonAccent;

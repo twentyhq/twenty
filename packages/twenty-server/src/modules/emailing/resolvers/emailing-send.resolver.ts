@@ -3,6 +3,7 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { CampaignAudiencePreviewDTO } from 'src/engine/core-modules/emailing-domain/dtos/campaign-audience-preview.dto';
@@ -32,6 +33,7 @@ import { EmailBillingService } from 'src/modules/emailing/services/email-billing
 import { EmailingDomainSenderService } from 'src/modules/emailing/services/emailing-domain-sender.service';
 import { MessageCampaignAudienceService } from 'src/modules/emailing/services/message-campaign-audience.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
+import { MessageCampaignScheduleService } from 'src/modules/emailing/services/message-campaign-schedule.service';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 import { countDeliveredRecipients } from 'src/engine/core-modules/emailing-domain/utils/count-delivered-recipients.util';
 import { type EmailingDomainSendEmailResult } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-send-email-result.type';
@@ -54,6 +56,7 @@ export class EmailingSendResolver {
   constructor(
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly messageCampaignService: MessageCampaignService,
+    private readonly messageCampaignScheduleService: MessageCampaignScheduleService,
     private readonly messageCampaignAudienceService: MessageCampaignAudienceService,
     private readonly messageCampaignLifecycleService: MessageCampaignLifecycleService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
@@ -61,7 +64,6 @@ export class EmailingSendResolver {
   ) {}
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
   async sendEmailViaEmailingDomain(
     @Args('input') input: SendEmailViaDomainInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -90,7 +92,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => SendMessageCampaignOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async sendMessageCampaign(
     @Args('input') input: SendMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -101,6 +103,15 @@ export class EmailingSendResolver {
       currentWorkspace.id,
     );
 
+    if (isDefined(input.scheduledAt)) {
+      return this.messageCampaignScheduleService.schedule({
+        workspaceId: currentWorkspace.id,
+        userWorkspaceId,
+        campaignId: input.campaignId,
+        scheduledAt: input.scheduledAt,
+      });
+    }
+
     return this.messageCampaignService.send({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
@@ -109,7 +120,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => CancelMessageCampaignOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async cancelMessageCampaign(
     @Args('input') input: CancelMessageCampaignInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -125,7 +136,7 @@ export class EmailingSendResolver {
   }
 
   @Mutation(() => SendEmailViaDomainOutputDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async sendMessageCampaignTest(
     @Args('input') input: SendMessageCampaignTestInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -150,7 +161,7 @@ export class EmailingSendResolver {
   }
 
   @Query(() => CampaignAudiencePreviewDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async previewMessageCampaignAudience(
     @Args('input') input: PreviewMessageCampaignAudienceInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

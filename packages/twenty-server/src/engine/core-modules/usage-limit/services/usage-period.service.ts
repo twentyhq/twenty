@@ -1,18 +1,86 @@
 /* @license Enterprise */
 
-import { Injectable } from '@nestjs/common';
+import { Injectable, type OnModuleInit } from '@nestjs/common';
+import { DiscoveryService } from '@nestjs/core';
 
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
+import { type CreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/interfaces/credit-allowance-provider.service';
 import { type AnchoredPeriodUnit } from 'src/engine/core-modules/usage-limit/types/anchored-period-unit.type';
+import { type CalendarPeriodUnit } from 'src/engine/core-modules/usage-limit/types/calendar-period-unit.type';
+import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
+import { type PeriodUnit } from 'src/engine/core-modules/usage-limit/types/period-unit.type';
 import { type UsagePeriod } from 'src/engine/core-modules/usage-limit/types/usage-period.type';
+import { findCreditAllowanceProvider } from 'src/engine/core-modules/usage-limit/utils/find-credit-allowance-provider.util';
 import { getCalendarDayPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-day-period.util';
 import { getCalendarMonthPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-month-period.util';
 import { getCalendarWeekPeriod } from 'src/engine/core-modules/usage-limit/utils/get-calendar-week-period.util';
 
 @Injectable()
-export class UsagePeriodService {
-  getCurrentPeriod(periodUnit: AnchoredPeriodUnit): UsagePeriod {
+export class UsagePeriodService implements OnModuleInit {
+  private creditAllowanceProvider: CreditAllowanceProvider;
+
+  constructor(private readonly discoveryService: DiscoveryService) {}
+
+  onModuleInit() {
+    this.creditAllowanceProvider = findCreditAllowanceProvider(
+      this.discoveryService,
+    );
+  }
+
+  async hasAllowancePeriod(workspaceId: string): Promise<boolean> {
+    return isDefined(
+      await this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId),
+    );
+  }
+
+  async findCurrentPeriod({
+    workspaceId,
+    periodUnit,
+  }: {
+    workspaceId: string;
+    periodUnit: AnchoredPeriodUnit;
+  }): Promise<UsagePeriod | null> {
+    if (periodUnit !== 'allowancePeriod') {
+      return this.getCalendarPeriod(periodUnit);
+    }
+
+    return this.creditAllowanceProvider.getCreditAllowancePeriod(workspaceId);
+  }
+
+  async findCurrentPeriodsByUnit({
+    workspaceId,
+    limits,
+  }: {
+    workspaceId: string;
+    limits: FlatUsageLimit[];
+  }): Promise<Partial<Record<PeriodUnit, UsagePeriod>>> {
+    const periodUnits = [
+      ...new Set(
+        limits
+          .map((limit) => limit.periodUnit)
+          .filter(
+            (periodUnit): periodUnit is AnchoredPeriodUnit =>
+              periodUnit !== 'second',
+          ),
+      ),
+    ];
+
+    const periods = await Promise.all(
+      periodUnits.map(async (periodUnit) => ({
+        periodUnit,
+        period: await this.findCurrentPeriod({ workspaceId, periodUnit }),
+      })),
+    );
+
+    return Object.fromEntries(
+      periods
+        .filter(({ period }) => isDefined(period))
+        .map(({ periodUnit, period }) => [periodUnit, period]),
+    );
+  }
+
+  private getCalendarPeriod(periodUnit: CalendarPeriodUnit): UsagePeriod {
     const now = new Date();
 
     switch (periodUnit) {

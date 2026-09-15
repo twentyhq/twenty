@@ -89,6 +89,7 @@ export const fathomWebhookHandler = async (
   const syncResult = await syncFathomMeetingToCallRecording({
     coreApiClient: new CoreApiClient({ runAs: 'application' }),
     meeting: meetingParseResult.value,
+    connectedAccountId,
   });
 
   return { success: true, ...syncResult };

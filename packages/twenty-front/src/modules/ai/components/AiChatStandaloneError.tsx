@@ -1,3 +1,4 @@
+import { StyledAiChatContentContainer } from '@/ai/components/StyledAiChatContentContainer';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -12,13 +13,11 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 
-const StyledErrorContainer = styled.div`
-  box-sizing: border-box;
+const StyledErrorContainer = styled(StyledAiChatContentContainer)`
   display: flex;
   flex: 1;
   flex-direction: column;
   padding: ${themeCssVariables.spacing[3]};
-  width: 100%;
 `;
 
 export const AiChatStandaloneError = () => {

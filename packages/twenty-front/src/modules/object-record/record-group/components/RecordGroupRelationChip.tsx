@@ -4,7 +4,7 @@ import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 
 type RecordGroupRelationChipProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -29,11 +29,15 @@ export const RecordGroupRelationChip = ({
     !isDefined(targetObjectNameSingular) ||
     (!isDefined(record) && !loading)
   ) {
-    return <Tag variant="outline" color="transparent" text={t`Deleted`} />;
+    return (
+      <Tag variant="outline" color="transparent" borderStyle="dashed">
+        {t`Deleted`}
+      </Tag>
+    );
   }
 
   if (!isDefined(record)) {
-    return <Tag variant="outline" color="transparent" text="" />;
+    return <Tag variant="outline" color="transparent" borderStyle="dashed" />;
   }
 
   return (

@@ -13,6 +13,11 @@ export type ExhaustedScope = {
   spenderId: string | null;
   operationType: UsageOperationType;
   limitValue: number;
+  // Speed limits only. What admission is actually tested against: a bucket
+  // never holds more than its burst, so a cost above it can never be admitted
+  // however long the caller waits, while limitValue only says how fast it
+  // refills.
+  burstValue?: number;
   remaining: number;
   periodCount: number | null;
   periodUnit: PeriodUnit | null;

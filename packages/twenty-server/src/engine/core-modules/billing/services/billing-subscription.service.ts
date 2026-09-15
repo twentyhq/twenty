@@ -29,14 +29,12 @@ import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entit
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
-import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingUsageCacheService } from 'src/engine/core-modules/billing/services/billing-usage-cache.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
-import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/utils/get-plan-key-from-subscription.util';
 import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
@@ -56,7 +54,6 @@ export class BillingSubscriptionService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPriceService: BillingPriceService,
-    private readonly billingPlanService: BillingPlanService,
     @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
     private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
@@ -137,42 +134,6 @@ export class BillingSubscriptionService {
     );
 
     return notCanceledSubscription;
-  }
-
-  async getBaseProductCurrentBillingSubscriptionItemOrThrow(
-    workspaceId: string,
-  ) {
-    const billingSubscription = await this.getCurrentBillingSubscriptionOrThrow(
-      { workspaceId },
-    );
-
-    const planKey = getPlanKeyFromSubscription(billingSubscription);
-
-    const baseProduct =
-      await this.billingPlanService.getPlanBaseProduct(planKey);
-
-    if (!baseProduct) {
-      throw new BillingException(
-        'Base product not found',
-        BillingExceptionCode.BILLING_PRODUCT_NOT_FOUND,
-      );
-    }
-
-    const stripeProductId = baseProduct.stripeProductId;
-
-    const billingSubscriptionItem =
-      billingSubscription.billingSubscriptionItems.find(
-        (item) => item.stripeProductId === stripeProductId,
-      );
-
-    if (!billingSubscriptionItem) {
-      throw new BillingException(
-        `Cannot find billingSubscriptionItem for product ${stripeProductId} for workspace ${workspaceId}`,
-        BillingExceptionCode.BILLING_SUBSCRIPTION_ITEM_NOT_FOUND,
-      );
-    }
-
-    return billingSubscriptionItem;
   }
 
   async cancelSubscription(workspaceId: string): Promise<void> {

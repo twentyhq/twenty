@@ -6,12 +6,14 @@ import {
 } from '@nestjs/common';
 import { Args, Mutation, Query } from '@nestjs/graphql';
 
+import bytes from 'bytes';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { settings } from 'src/engine/constants/settings';
 import { ApplicationDevelopmentService } from 'src/engine/core-modules/application/application-development/application-development.service';
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
 import { ApplicationExportDTO } from 'src/engine/core-modules/application/application-development/dtos/application-export.dto';
@@ -104,7 +106,11 @@ export class ApplicationDevelopmentResolver {
       applicationUniversalIdentifier,
       fileFolder,
       filePath,
-      getFileBuffer: () => streamToBuffer(createReadStream()),
+      getFileBuffer: () =>
+        streamToBuffer(
+          createReadStream(),
+          bytes(settings.storage.maxFileSize) ?? undefined,
+        ),
     });
   }
 

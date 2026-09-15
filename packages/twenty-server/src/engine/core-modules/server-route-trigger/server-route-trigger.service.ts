@@ -25,6 +25,7 @@ import {
   type RouteTriggerResponse,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/utils/route-trigger-response.util';
 import { DEFAULT_SERVER_ROUTE_HTTP_METHODS } from 'src/engine/core-modules/server-route-trigger/constants/default-server-route-http-methods.constant';
+import { SERVER_ROUTE_DISPATCH_JOB_PRIORITY } from 'src/engine/core-modules/server-route-trigger/constants/server-route-dispatch-job-priority.constant';
 import {
   ServerRouteTriggerException,
   ServerRouteTriggerExceptionCode,
@@ -188,6 +189,7 @@ export class ServerRouteTriggerService {
       {
         retryLimit: QUEUED_TARGET_RETRY_LIMIT,
         backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        priority: SERVER_ROUTE_DISPATCH_JOB_PRIORITY,
       },
     );
 

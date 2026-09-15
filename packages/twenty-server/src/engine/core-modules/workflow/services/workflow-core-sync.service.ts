@@ -14,6 +14,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @Injectable()
@@ -33,25 +34,36 @@ export class WorkflowCoreSyncService {
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
   ): Promise<void> {
-    if (workflows.length === 0) {
+    const liveWorkflows = workflows.filter(
+      (workflow) => !isDefined(workflow.deletedAt),
+    );
+
+    if (liveWorkflows.length === 0) {
       return;
     }
 
     const applicationId = await this.getCustomApplicationIdOrThrow(workspaceId);
 
-    const linkedCoreWorkflowIds = await this.resolveOwnedCoreWorkflowIds(
-      workspaceId,
-      workflows,
-    );
+    const workspaceWorkflowIdByOwnedCoreWorkflowId =
+      await this.resolveWorkspaceWorkflowIdByOwnedCoreWorkflowId(
+        workspaceId,
+        liveWorkflows,
+      );
+
+    const coreVersionIdByWorkspaceVersionId =
+      await this.resolveCoreVersionIdByWorkspaceVersionId(
+        workspaceId,
+        liveWorkflows,
+      );
 
     const coreWorkflowIdByWorkspaceRecordId = new Map<string, string>();
 
-    const coreRows = workflows.map((workflow) => {
+    const coreRows = liveWorkflows.map((workflow) => {
       const candidateCoreWorkflowId = workflow.coreWorkflowId;
 
       const linkedCoreWorkflowId =
         isNonEmptyString(candidateCoreWorkflowId) &&
-        linkedCoreWorkflowIds.has(candidateCoreWorkflowId)
+        workspaceWorkflowIdByOwnedCoreWorkflowId.has(candidateCoreWorkflowId)
           ? candidateCoreWorkflowId
           : null;
 
@@ -61,14 +73,29 @@ export class WorkflowCoreSyncService {
         coreWorkflowIdByWorkspaceRecordId.set(workflow.id, coreWorkflowId);
       }
 
+      const storedWorkspaceWorkflowId = isDefined(linkedCoreWorkflowId)
+        ? workspaceWorkflowIdByOwnedCoreWorkflowId.get(linkedCoreWorkflowId)
+        : null;
+
       return {
         id: coreWorkflowId,
         name: workflow.name ?? null,
+        workspaceWorkflowId: isNonEmptyString(storedWorkspaceWorkflowId)
+          ? storedWorkspaceWorkflowId
+          : workflow.id,
         lastPublishedVersionId: isNonEmptyString(
           workflow.lastPublishedVersionId,
         )
           ? workflow.lastPublishedVersionId
           : null,
+        lastPublishedCoreWorkflowVersionId: isNonEmptyString(
+          workflow.lastPublishedVersionId,
+        )
+          ? (coreVersionIdByWorkspaceVersionId.get(
+              workflow.lastPublishedVersionId,
+            ) ?? null)
+          : null,
+        createdAt: new Date(workflow.createdAt),
         universalIdentifier: uuidv4(),
         applicationId,
       };
@@ -82,26 +109,62 @@ export class WorkflowCoreSyncService {
     );
   }
 
-  // coreWorkflowId is a writable column on the workspace record, so a caller
-  // can point it at a core row owned by another workspace.
-  private async resolveOwnedCoreWorkflowIds(
+  private async resolveCoreVersionIdByWorkspaceVersionId(
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
-  ): Promise<Set<string>> {
+  ): Promise<Map<string, string>> {
+    const publishedVersionIds = workflows
+      .map((workflow) => workflow.lastPublishedVersionId)
+      .filter(isNonEmptyString);
+
+    if (publishedVersionIds.length === 0) {
+      return new Map();
+    }
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const rows = await workflowVersionRepository.find({
+        where: { id: In(publishedVersionIds) },
+        select: { id: true, coreWorkflowVersionId: true },
+      });
+
+      return new Map(
+        rows.flatMap((row) =>
+          isNonEmptyString(row.coreWorkflowVersionId)
+            ? [[row.id, row.coreWorkflowVersionId] as const]
+            : [],
+        ),
+      );
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  // coreWorkflowId is a writable column on the workspace record, so a caller
+  // can point it at a core row owned by another workspace.
+  private async resolveWorkspaceWorkflowIdByOwnedCoreWorkflowId(
+    workspaceId: string,
+    workflows: WorkflowWorkspaceEntity[],
+  ): Promise<Map<string, string | null>> {
     const candidateIds = workflows
       .map((workflow) => workflow.coreWorkflowId)
       .filter(isNonEmptyString);
 
     if (candidateIds.length === 0) {
-      return new Set();
+      return new Map();
     }
 
     const ownedRows = await this.coreWorkflowRepository.find(workspaceId, {
       where: { id: In(candidateIds) },
-      select: { id: true },
+      select: { id: true, workspaceWorkflowId: true },
     });
 
-    return new Set(ownedRows.map((row) => row.id));
+    return new Map(
+      ownedRows.map((row) => [row.id, row.workspaceWorkflowId ?? null]),
+    );
   }
 
   async deleteFromCore(
@@ -166,9 +229,7 @@ export class WorkflowCoreSyncService {
     );
   }
 
-  private async getCustomApplicationIdOrThrow(
-    workspaceId: string,
-  ): Promise<string> {
+  async getCustomApplicationIdOrThrow(workspaceId: string): Promise<string> {
     const workspace = await this.workspaceRepository.findOne({
       where: { id: workspaceId },
       select: ['id', 'workspaceCustomApplicationId'],

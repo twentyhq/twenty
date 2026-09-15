@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-08-28 16:20\n"
+"PO-Revision-Date: 2026-09-15 14:21\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -723,7 +723,7 @@ msgstr "Una nuova modalità di manutenzione aiuta gli admin a sospendere le modi
 #. js-lingui-id: iIggw/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
-msgstr "Una nuova esperienza di onboarding."
+msgstr "Una nuova esperienza di onboarding"
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -821,15 +821,15 @@ msgstr "Account owner"
 msgid "Action"
 msgstr "Azione"
 
-#. js-lingui-id: Kqfsda
+#. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
-msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
-msgstr "Attiva la tua licenza enterprise di Twenty dopo il checkout e copia la tua chiave nella tua istanza self-hosted."
+msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
+msgstr "Attiva la tua licenza Organization di Twenty dopo il checkout e copia la tua chiave nella tua istanza self-hosted."
 
-#. js-lingui-id: muhZ+X
+#. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Activating your enterprise license…"
-msgstr "Attivazione della tua licenza enterprise…"
+msgid "Activating your Organization license…"
+msgstr "Attivazione della tua licenza Organization…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -896,6 +896,11 @@ msgstr "Aggiungi testo formattato direttamente all’interno dei layout con il n
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Add Several emails for one contact"
 msgstr "Aggiungi più indirizzi email a un singolo contatto"
+
+#. js-lingui-id: /01kre
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Add shared instructions, playbooks, and other rich text with the new Note widget. Insert widgets exactly where you want them, and unpin the first tab when your layout needs more room."
+msgstr "Aggiungi istruzioni condivise, playbook e altri contenuti di testo avanzato con il nuovo widget Nota. Inserisci i widget esattamente dove desideri e sblocca la prima scheda quando il tuo layout necessita di più spazio."
 
 #. js-lingui-id: hWkQMS
 #: src/sections/product-feature/TasksVisual/components/AddTaskButton.tsx
@@ -1287,6 +1292,11 @@ msgstr "Argentina 🇦🇷"
 msgid "Armenia 🇦🇲"
 msgstr "Armenia 🇦🇲"
 
+#. js-lingui-id: hgvS2c
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Ask AI to attach files you upload in chat directly to records."
+msgstr "Chiedi all'IA di allegare direttamente ai record i file che carichi nella chat."
+
 #. js-lingui-id: GYKCBW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Ask AI to build or reconfigure dashboards and views from your workspace data."
@@ -1311,6 +1321,11 @@ msgstr "Assegna responsabili e date di scadenza"
 #: src/sections/faq/become-partner-faq.data.ts
 msgid "At least one shipped Twenty implementation — customer or internal — with a link that shows the work. Solo freelancers and agencies both qualify."
 msgstr "Almeno un'implementazione di Twenty realizzata, per un cliente o internamente, con un link che mostri il lavoro. Sono idonei sia i freelance individuali sia le agenzie."
+
+#. js-lingui-id: PbTDQ4
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Attach files to records with AI"
+msgstr "Allega file ai record con l'IA"
 
 #. js-lingui-id: awzjg/
 #: src/platform/releases/ReleaseNotes.tsx
@@ -1441,7 +1456,7 @@ msgstr "Diventa un partner Twenty — Candidati"
 #. js-lingui-id: 8x+SS7
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Join the Open Source CRM Ecosystem"
-msgstr "Diventa un partner Twenty — Unisciti all'ecosistema CRM open source di Twenty."
+msgstr "Diventa un partner Twenty — Unisciti all'ecosistema CRM open source di Twenty"
 
 #. js-lingui-id: r8MUXZ
 #: src/sections/faq/BecomePartnerFaq.tsx
@@ -1574,6 +1589,11 @@ msgstr "Esplora i partner"
 msgid "Browse the *certified partners*"
 msgstr "Esplora i *partner certificati*"
 
+#. js-lingui-id: pB7UCU
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Browse your records in a compact list, now available to everyone. Group records and see the fields that matter in a layout that adapts to desktop and mobile."
+msgstr "Esplora i tuoi record in un elenco compatto, ora disponibile per tutti. Raggruppa i record e visualizza i campi più importanti in un layout che si adatta a desktop e dispositivi mobili."
+
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
 msgid "Brunei 🇧🇳"
@@ -1612,7 +1632,7 @@ msgstr "Crea dashboard personalizzati a partire da dati CRM live. Aggrega qualsi
 #. js-lingui-id: IQcVFZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Build dashboards with AI"
-msgstr "Crea dashboard con l'IA."
+msgstr "Crea dashboard con l'IA"
 
 #. js-lingui-id: rdvFK9
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -2137,10 +2157,10 @@ msgstr "Copia"
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "Copia la trascrizione o il link al video di una registrazione di chiamata direttamente dalla pagina del record."
 
-#. js-lingui-id: 7qTWwB
+#. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Copy the enterprise key above."
-msgstr "Copia la chiave enterprise qui sopra."
+msgid "Copy the Organization key above."
+msgstr "Copia la chiave Organization qui sopra."
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2196,6 +2216,11 @@ msgstr "Crea e organizza gli elementi della sidebar più facilmente con una conf
 #: src/sections/menu/data/menu.ts
 msgid "Create apps on Twenty"
 msgstr "Crea un'app su Twenty"
+
+#. js-lingui-id: CA2rtv
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Create calendar events directly from a record’s timeline, with the current contact prefilled as a guest."
+msgstr "Crea eventi del calendario direttamente dalla timeline di un record, con il contatto corrente precompilato come invitato."
 
 #. js-lingui-id: yAL7FY
 #: src/sections/pricing-plans/plans-data.ts
@@ -2593,6 +2618,11 @@ msgstr "Data e ora"
 msgid "Datetime Field"
 msgstr "Campo data-ora"
 
+#. js-lingui-id: oLDLdM
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Day and week calendar views"
+msgstr "Viste calendario giornaliera e settimanale"
+
 #. js-lingui-id: xqKvBR
 #: src/sections/product-feature/DashboardVisual/DashboardVisual.tsx
 msgid "Deals by month"
@@ -2682,6 +2712,11 @@ msgstr "Gli sviluppatori ora possono sfruttare il nuovo tipo di campo array per 
 msgid "Developers can now use webhooks to synchronize customer data updates in real-time across applications."
 msgstr "Gli sviluppatori ora possono utilizzare i webhook per sincronizzare in tempo reale gli aggiornamenti dei dati dei clienti tra le applicazioni."
 
+#. js-lingui-id: SxCLpb
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Dictate prompts in supported browsers, and get suggested actions based on the page you are viewing."
+msgstr "Detta prompt nei browser supportati e ottieni azioni suggerite in base alla pagina che stai visualizzando."
+
 #. js-lingui-id: C39swB
 #: src/partners-marketplace/MarketplaceBriefPrompt.tsx
 msgid "Didn't find the *right partner*?"
@@ -2727,6 +2762,11 @@ msgstr "Scopri le funzionalità e i miglioramenti più recenti di Twenty, il CRM
 #: src/sections/menu/data/menu.ts
 msgid "Discover what's new"
 msgstr "Scopri le novità"
+
+#. js-lingui-id: EVc4nZ
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Display records two relationships away directly on a record page—for example, opportunities associated with a company’s contacts."
+msgstr "Visualizza i record a due relazioni di distanza direttamente nella pagina di un record, ad esempio le opportunità associate ai contatti di un'azienda."
 
 #. js-lingui-id: /Gu7LB
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2896,6 +2936,11 @@ msgstr "Modifica dei campi più semplice"
 msgid "Easier layouts"
 msgstr "Layout più semplici"
 
+#. js-lingui-id: CgFsbd
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Easier workflow editing"
+msgstr "Modifica dei workflow più semplice"
+
 #. js-lingui-id: hEtClO
 #: src/partner-application/data/partner-country-options.ts
 msgid "Ecuador 🇪🇨"
@@ -2951,11 +2996,6 @@ msgstr "Elevate Consulting usa Twenty come backbone API che collega fatturazione
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "Il CEO di Elevate è rimasto così colpito da Twenty che ha iniziato a consigliarlo ai clienti ancora prima che il setup interno fosse completo. Il team sta valutando di portare Twenty nei progetti per i clienti come parte della pratica di consulenza, anche come backend per prodotti personalizzati costruiti su misura per specifiche esigenze operative."
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "Email e Calendario"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -2997,6 +3037,7 @@ msgid "Emails"
 msgstr "Email"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "Email e Calendario"
@@ -3106,16 +3147,6 @@ msgstr "Inserisci un URL valido (che inizi con http:// o https://)."
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Enterprise"
 msgstr "Enterprise"
-
-#. js-lingui-id: 87BcPj
-#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
-msgid "Enterprise *activation*"
-msgstr "*Attivazione* Enterprise"
-
-#. js-lingui-id: NTskGY
-#: src/platform/routing/static-website-routes.ts
-msgid "Enterprise Activation | Twenty"
-msgstr "Attivazione Enterprise | Twenty"
 
 #. js-lingui-id: aDpB6R
 #: src/sections/compare/compare-data.ts
@@ -3286,10 +3317,10 @@ msgstr "Esecuzione estesa!"
 msgid "Extra Dataverse storage (10 GB)"
 msgstr "Archiviazione Dataverse extra (10 GB)"
 
-#. js-lingui-id: tX4pRm
+#. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Failed to activate enterprise key. Please try again."
-msgstr "Attivazione della chiave enterprise non riuscita. Riprova."
+msgid "Failed to activate Organization key. Please try again."
+msgstr "Attivazione della chiave Organization non riuscita. Riprova."
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -3356,11 +3387,6 @@ msgstr "App in evidenza"
 msgid "Feb"
 msgstr "Feb"
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "Permission a livello di campo"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3379,6 +3405,11 @@ msgstr "I widget di campo ora supportano più tipi di relazione, così i layout 
 #. js-lingui-id: e6BgMV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
+msgstr "Permessi a livello di campo"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
 msgstr "Permessi a livello di campo"
 
 #. js-lingui-id: RnX5oc
@@ -4281,6 +4312,11 @@ msgstr "Lo scrolling infinito è ancora \"coming soon\", a differenza della fatt
 msgid "Inline image previews"
 msgstr "Anteprime delle immagini in linea"
 
+#. js-lingui-id: IWtI58
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Insert actions into existing branches and drag connections to a different step without losing your configuration. Find variables faster by searching fields across all workflow steps."
+msgstr "Inserisci azioni nei rami esistenti e trascina le connessioni in un passaggio diverso senza perdere la configurazione. Trova più rapidamente le variabili cercando i campi in tutti i passaggi del workflow."
+
 #. js-lingui-id: /eL+82
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Inspect AI calls, code output, HTTP requests, and emails for every step of a workflow run."
@@ -4312,6 +4348,11 @@ msgstr "Installa app tarball condivisa"
 #: src/case-studies/case-study-stories.ts
 msgid "Integration"
 msgstr "Integrazione"
+
+#. js-lingui-id: mQhHfc
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Interactive call recordings"
+msgstr "Registrazioni delle chiamate interattive"
 
 #. js-lingui-id: OChKCc
 #: src/platform/routing/static-website-routes.ts
@@ -4744,6 +4785,11 @@ msgstr "Prezzi di listino dalla pagina pubblica dei prezzi di Pipedrive, fattura
 msgid "List prices from Salesforce's public pricing page, billed annually, checked on July 30, 2026."
 msgstr "Prezzi di listino dalla pagina pubblica dei prezzi di Salesforce, fatturati annualmente, verificati il 30 luglio 2026."
 
+#. js-lingui-id: 5NZpX8
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "List view"
+msgstr "Vista elenco"
+
 #. js-lingui-id: 2WIZYd
 #: src/partner-application/data/partner-country-options.ts
 msgid "Lithuania 🇱🇹"
@@ -5075,6 +5121,11 @@ msgstr "Più relazioni tra campi"
 msgid "More Field Types, More Power"
 msgstr "Più tipi di campo, più potenza"
 
+#. js-lingui-id: qlt+dy
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "More flexible record pages"
+msgstr "Pagine dei record più flessibili"
+
 #. js-lingui-id: VqXuUv
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
 msgid "More options available!"
@@ -5089,6 +5140,11 @@ msgstr "Ricerca più potente"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "More visual dashboard views"
 msgstr "Viste delle dashboard più visive"
+
+#. js-lingui-id: QsVNSj
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "More ways to work with AI"
+msgstr "Più modi per lavorare con l'IA"
 
 #. js-lingui-id: LAFO4Y
 #: src/partner-application/data/partner-country-options.ts
@@ -5558,10 +5614,10 @@ msgstr "Apri il caso di studio: {0}"
 msgid "Open menu"
 msgstr "Apri menu"
 
-#. js-lingui-id: pkXQA+
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Enterprise."
-msgstr "Apri le impostazioni della tua istanza Twenty in self‑hosting → Enterprise."
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
+msgstr "Apri le impostazioni della tua istanza Twenty in self-hosting → Pannello di amministrazione → Organizzazione."
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5593,6 +5649,16 @@ msgstr "Opportunità"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Organization"
 msgstr "Organizzazione"
+
+#. js-lingui-id: hjEu3O
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
+msgid "Organization *activation*"
+msgstr "*Attivazione dell'organizzazione*"
+
+#. js-lingui-id: CKppYD
+#: src/platform/routing/static-website-routes.ts
+msgid "Organization Activation | Twenty"
+msgstr "Attivazione dell'organizzazione | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -6592,6 +6658,11 @@ msgstr "Scala *senza rompere le operation*"
 msgid "Scale without breaking operations"
 msgstr "Scala senza rompere le operazioni"
 
+#. js-lingui-id: e7Ajb1
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Schedule meetings from records"
+msgstr "Pianifica riunioni dai record"
+
 #. js-lingui-id: sQOyAb
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
 msgid "Schedule security review"
@@ -6652,6 +6723,11 @@ msgstr ""
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "See more features"
 msgstr "Vedi più funzionalità"
+
+#. js-lingui-id: zn1p6c
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See related records across relationships"
+msgstr "Visualizza i record correlati tramite le relazioni"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6738,6 +6814,7 @@ msgstr "I workspace self-hosted ora possono tracciare l'utilizzo in modo più ac
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6761,15 +6838,15 @@ msgstr "Self-onboarding"
 msgid "Self-serve, partners optional"
 msgstr "Self-service, partner opzionali"
 
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "Selfhosting"
-
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
 msgid "Send Email"
 msgstr "Invia email"
+
+#. js-lingui-id: ig4Kg0
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Send email from aliases"
+msgstr "Invia email dagli alias"
 
 #. js-lingui-id: pi1oME
 #: src/app-preview/terminal/TerminalSendButton.tsx
@@ -6780,6 +6857,11 @@ msgstr "Invia messaggio"
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
 msgid "Send NDA"
 msgstr "Invia NDA"
+
+#. js-lingui-id: FK/sMg
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Send outbound emails using a verified alias on your connected account."
+msgstr "Invia email in uscita utilizzando un alias verificato sul tuo account connesso."
 
 #. js-lingui-id: uW79Hr
 #: src/sections/product-feature/TasksVisual/data/tasks.ts
@@ -7254,6 +7336,11 @@ msgstr "Svezia 🇸🇪"
 #: src/partners-marketplace/spoken-language-labels.ts
 msgid "Swedish"
 msgstr "Svedese"
+
+#. js-lingui-id: VRCum/
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Switch between day, week, and month views to explore your calendar. Day and week views are now available by default."
+msgstr "Passa dalla vista giornaliera, settimanale e mensile per esplorare il tuo calendario. Le viste giornaliera e settimanale sono ora disponibili per impostazione predefinita."
 
 #. js-lingui-id: IImT5c
 #: src/partner-application/data/partner-country-options.ts
@@ -8059,14 +8146,14 @@ msgstr "Twenty vs SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Prezzi Twenty vs SAP Sales Cloud — Il confronto del costo reale"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "Autenticazione a due fattori"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
+msgstr "Autenticazione a due fattori"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
 msgstr "Autenticazione a due fattori"
 
 #. js-lingui-id: O+vc/1
@@ -8395,6 +8482,11 @@ msgstr "W3villa ha utilizzato Twenty come framework di livello production per il
 msgid "Want to *offer* Twenty services?"
 msgstr "Vuoi *offrire* servizi Twenty?"
 
+#. js-lingui-id: 9cL2b3
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Watch recordings alongside their transcripts. Click a transcript entry to jump to that moment, and follow along with highlighted words and automatic scrolling during playback."
+msgstr "Guarda le registrazioni insieme alle relative trascrizioni. Fai clic su una voce della trascrizione per passare a quel momento e segui la riproduzione con parole evidenziate e scorrimento automatico."
+
 #. js-lingui-id: k1Pevc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "We are pleased to reopen the cloud subscription to everyone. No more waiting!"
@@ -8416,14 +8508,10 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "Non siamo riusciti a inviare il tuo brief. Riprova tra qualche istante."
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Non volevamo mettere una pezza al problema. Volevamo costruire qualcosa su cui le istituzioni potessero contare su larga scala, e questo significava partire da fondamenta abbastanza solide da supportare tutta la complessità di ciò che avevamo in mente."
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "Non volevamo mettere una pezza al problema. Volevamo costruire qualcosa su cui le istituzioni potessero fare affidamento su larga scala, e questo significava partire da fondamenta abbastanza solide da supportare tutta la complessità di ciò che avevamo in mente."
 
 #. js-lingui-id: GVxbgf
 #: src/platform/releases/ReleaseNotes.tsx
@@ -9063,16 +9151,6 @@ msgstr "Il tuo brief"
 msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
 msgstr "Il tuo checkout è completato. Segui i passaggi qui sotto per copiare la tua chiave di licenza nella tua istanza di Twenty."
 
-#. js-lingui-id: krHgj1
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise key"
-msgstr "La tua chiave enterprise"
-
-#. js-lingui-id: +dxjCu
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise license has been activated successfully."
-msgstr "La tua licenza enterprise è stata attivata correttamente."
-
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts
 msgid "Your name *"
@@ -9082,6 +9160,16 @@ msgstr "Il tuo nome *"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Your network, fully mapped."
 msgstr "La tua rete, completamente mappata."
+
+#. js-lingui-id: 91Ysnw
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization key"
+msgstr "La chiave della tua organizzazione"
+
+#. js-lingui-id: sarabV
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization license has been activated successfully."
+msgstr "La licenza della tua organizzazione è stata attivata correttamente."
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

@@ -15,11 +15,14 @@ import { isFlatFieldMetadataNameSyncedWithLabel } from 'src/engine/metadata-modu
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { validateFlatFieldMetadataNameAvailability } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name-availability.util';
 import { validateFlatFieldMetadataName } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-flat-field-metadata-name.util';
+import { validateSearchableFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-searchable-flat-field-metadata.util';
 import { UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
+import { readAuthoredOverrideEntry } from 'src/engine/metadata-modules/overrides/utils/read-authored-override-entry.util';
 
 @Injectable()
 export class FlatFieldMetadataValidatorService {
@@ -85,12 +88,35 @@ export class FlatFieldMetadataValidatorService {
       !buildOptions.isSystemBuild &&
       existingFlatFieldMetadataToUpdate.isSystem
     ) {
-      const disallowedProperties = Object.keys(flatEntityUpdate).filter(
+      const { overrides: updatedOverrides, ...columnUpdate } = flatEntityUpdate;
+
+      const disallowedColumnProperties = Object.keys(columnUpdate).filter(
         (property) =>
           !SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES.includes(
             property as (typeof SYSTEM_FIELD_ALLOWED_UPDATE_PROPERTIES)[number],
           ),
       );
+
+      const callerEntry = isDefined(updatedOverrides)
+        ? readAuthoredOverrideEntry<Record<string, unknown>>({
+            metadataName: 'fieldMetadata',
+            overrides: updatedOverrides,
+            authorUniversalIdentifier:
+              buildOptions.applicationUniversalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              buildOptions.applicationUniversalIdentifier,
+          })
+        : undefined;
+      const disallowedOverriddenProperties = Object.keys(
+        callerEntry ?? {},
+      ).filter((property) => property !== 'isActive');
+
+      const disallowedProperties = [
+        ...new Set([
+          ...disallowedColumnProperties,
+          ...disallowedOverriddenProperties,
+        ]),
+      ];
 
       if (disallowedProperties.length > 0) {
         validationResult.errors.push({
@@ -130,14 +156,29 @@ export class FlatFieldMetadataValidatorService {
     } else if (
       flatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier ===
         flatFieldMetadataToValidate.universalIdentifier &&
-      isDefined(flatEntityUpdate.isActive) &&
-      flatFieldMetadataToValidate.isActive === false
+      (isDefined(flatEntityUpdate.isActive) ||
+        isDefined(flatEntityUpdate.overrides)) &&
+      resolveEffectiveFlatEntityProperty({
+        metadataName: 'fieldMetadata',
+        flatEntity: flatFieldMetadataToValidate,
+        property: 'isActive',
+      }) === false
     ) {
       validationResult.errors.push({
         code: FieldMetadataExceptionCode.LABEL_IDENTIFIER_FIELD_METADATA_ID_NOT_FOUND,
         message: 'Label identifier field metadata cannot be deactivated',
         userFriendlyMessage: msg`Label identifier field cannot be deactivated`,
       });
+    }
+
+    if (isDefined(flatEntityUpdate.isSearchable)) {
+      validationResult.errors.push(
+        ...validateSearchableFlatFieldMetadata({
+          flatFieldMetadataToValidate,
+          flatObjectMetadata,
+          flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+        }),
+      );
     }
 
     // Should be moved in relation field validator
@@ -373,6 +414,22 @@ export class FlatFieldMetadataValidatorService {
           buildOptions,
         }),
       );
+
+      if (
+        flatFieldMetadataToValidate.isSearchable === true &&
+        !buildOptions.isSystemBuild &&
+        parentFlatObjectMetadata.labelIdentifierFieldMetadataUniversalIdentifier !==
+          flatFieldMetadataToValidate.universalIdentifier
+      ) {
+        validationResult.errors.push(
+          ...validateSearchableFlatFieldMetadata({
+            flatFieldMetadataToValidate,
+            flatObjectMetadata: parentFlatObjectMetadata,
+            flatFieldMetadataMaps: optimisticFlatFieldMetadataMaps,
+            remainingFlatFieldMetadataMaps: remainingFlatEntityMapsToValidate,
+          }),
+        );
+      }
     }
 
     if (
