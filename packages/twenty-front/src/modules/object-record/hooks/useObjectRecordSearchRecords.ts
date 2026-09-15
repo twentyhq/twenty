@@ -1,4 +1,3 @@
-import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -14,7 +13,7 @@ import {
 } from '~/generated/graphql';
 
 // maybe we should look at ObjectMetadataItemIdentifier to update the API even though there are many location to update
-export type UseSearchRecordsParams = {
+type UseSearchRecordsParams = {
   objectNameSingulars: string[];
   limit?: number;
   onError?: (error?: Error) => void;
@@ -49,8 +48,6 @@ export const useObjectRecordSearchRecords = ({
     fetchPolicy: fetchPolicy,
     client: apolloCoreClient,
   });
-
-  useToastOnQueryError({ error });
 
   const effectiveData = loading ? previousData : data;
 

@@ -2,7 +2,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { addEmptyOperationIfNecessary } from '@/settings/developers/utils/addEmptyOperationIfNecessary';
@@ -85,8 +84,6 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       });
     }
   }, [webhookData, formConfig]);
-
-  useToastOnQueryError({ error, message: t`Failed to load webhook` });
 
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isCreationMode

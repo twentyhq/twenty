@@ -1,4 +1,4 @@
-import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsTooltip';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
@@ -61,8 +61,6 @@ export const SettingsAdminWorkerMetricsGraph = ({
     fetchPolicy: 'no-cache',
   });
 
-  useToastOnQueryError({ error });
-
   const metricsData = data?.getQueueMetrics?.data || [];
   const hasData =
     metricsData.length > 0 &&
@@ -107,6 +105,8 @@ export const SettingsAdminWorkerMetricsGraph = ({
 
   return (
     <>
+      <ToastOnQueryErrorEffect error={error} />
+
       <StyledGraphContainer>
         {loading ? (
           <StyledNoDataMessage>{t`Loading metrics data...`}</StyledNoDataMessage>

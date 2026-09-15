@@ -1,4 +1,4 @@
-import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
@@ -37,8 +37,6 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
     skip: !hasPermissionToManageBilling,
   });
 
-  useToastOnQueryError({ error });
-
   const openPaymentMethodUpdate = () => {
     if (isDefined(data?.billingPortalSession.url)) {
       redirect(data.billingPortalSession.url);
@@ -63,14 +61,17 @@ export const SettingsBillingTrialNoPaymentMethodBanner = ({
       : t`Trial ends soon. Please contact your admin to add card details to keep the ${planName}`;
 
   return (
-    <InlineBanner
-      color="blue"
-      message={message}
-      button={{
-        title: t`Add card`,
-        hidden: !hasPermissionToManageBilling,
-        onClick: openPaymentMethodUpdate,
-      }}
-    />
+    <>
+      <ToastOnQueryErrorEffect error={error} />
+      <InlineBanner
+        color="blue"
+        message={message}
+        button={{
+          title: t`Add card`,
+          hidden: !hasPermissionToManageBilling,
+          onClick: openPaymentMethodUpdate,
+        }}
+      />
+    </>
   );
 };

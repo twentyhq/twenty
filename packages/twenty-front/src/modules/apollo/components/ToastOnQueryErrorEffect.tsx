@@ -4,14 +4,15 @@ import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 
-// Apollo v4 queries no longer support an onError callback.
-export const useToastOnQueryError = ({
-  error,
-  message,
-}: {
+type ToastOnQueryErrorEffectProps = {
   error: ErrorLike | undefined;
   message?: string;
-}) => {
+};
+
+export const ToastOnQueryErrorEffect = ({
+  error,
+  message,
+}: ToastOnQueryErrorEffectProps) => {
   const { enqueueToast } = useToast();
 
   useEffect(() => {
@@ -21,4 +22,6 @@ export const useToastOnQueryError = ({
 
     enqueueToast(getToastOptionsFromError({ error, children: message }));
   }, [error, enqueueToast, message]);
+
+  return null;
 };

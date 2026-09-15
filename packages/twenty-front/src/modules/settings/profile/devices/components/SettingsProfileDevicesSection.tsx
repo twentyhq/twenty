@@ -1,9 +1,9 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 
-import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsDeviceSessionRowRightComponent } from '@/settings/profile/devices/components/SettingsDeviceSessionRowRightComponent';
 import { parseUserAgentDescription } from '@/settings/profile/devices/utils/parseUserAgentDescription';
@@ -47,8 +47,6 @@ export const SettingsProfileDevicesSection = () => {
     { fetchPolicy: 'network-only' },
   );
 
-  useToastOnQueryError({ error });
-
   const [revokeAllOtherUserSessions] = useMutation(
     RevokeAllOtherUserSessionsDocument,
   );
@@ -58,10 +56,6 @@ export const SettingsProfileDevicesSection = () => {
   const hasCurrentSession = sessions.some((session) => session.isCurrent);
   const hasOtherSessions =
     hasCurrentSession && sessions.some((session) => !session.isCurrent);
-
-  if (!loading && sessions.length === 0) {
-    return null;
-  }
 
   const handleRevokeAllOtherSessions = async () => {
     try {
@@ -103,31 +97,36 @@ export const SettingsProfileDevicesSection = () => {
   };
 
   return (
-    <Section>
-      <H2Title
-        title={t`Devices`}
-        description={t`Devices with an active session on your account`}
-      />
-      <StyledContainer>
-        <SettingsListCard
-          items={sessions}
-          isLoading={loading}
-          getItemLabel={getSessionLabel}
-          getItemDescription={getSessionDescription}
-          RowIcon={IconDeviceDesktop}
-          RowRightComponent={SettingsDeviceSessionRowRightComponent}
-        />
-        {hasOtherSessions && (
-          <StyledButtonContainer>
-            <Button
-              Icon={IconLogout}
-              title={t`Log out all other devices`}
-              size="small"
-              onClick={() => void handleRevokeAllOtherSessions()}
+    <>
+      <ToastOnQueryErrorEffect error={error} />
+      {(loading || isNonEmptyArray(sessions)) && (
+        <Section>
+          <H2Title
+            title={t`Devices`}
+            description={t`Devices with an active session on your account`}
+          />
+          <StyledContainer>
+            <SettingsListCard
+              items={sessions}
+              isLoading={loading}
+              getItemLabel={getSessionLabel}
+              getItemDescription={getSessionDescription}
+              RowIcon={IconDeviceDesktop}
+              RowRightComponent={SettingsDeviceSessionRowRightComponent}
             />
-          </StyledButtonContainer>
-        )}
-      </StyledContainer>
-    </Section>
+            {hasOtherSessions && (
+              <StyledButtonContainer>
+                <Button
+                  Icon={IconLogout}
+                  title={t`Log out all other devices`}
+                  size="small"
+                  onClick={() => void handleRevokeAllOtherSessions()}
+                />
+              </StyledButtonContainer>
+            )}
+          </StyledContainer>
+        </Section>
+      )}
+    </>
   );
 };

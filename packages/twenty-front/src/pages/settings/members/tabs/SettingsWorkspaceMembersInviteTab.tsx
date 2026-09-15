@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -28,7 +29,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
-import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledButtonContainer = styled.div`
@@ -88,8 +88,6 @@ export const SettingsWorkspaceMembersInviteTab = () => {
     GetWorkspaceInvitationsDocument,
   );
 
-  useToastOnQueryError({ error: invitationsError });
-
   const workspaceInvitations = invitationsData?.findWorkspaceInvitations ?? [];
 
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
@@ -122,6 +120,8 @@ export const SettingsWorkspaceMembersInviteTab = () => {
 
   return (
     <>
+      <ToastOnQueryErrorEffect error={invitationsError} />
+
       <SettingsRolesQueryEffect />
       {currentWorkspace?.inviteHash &&
         currentWorkspace?.isPublicInviteLinkEnabled && (

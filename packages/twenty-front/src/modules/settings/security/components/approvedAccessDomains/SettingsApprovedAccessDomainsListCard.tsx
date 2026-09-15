@@ -1,8 +1,8 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { SettingsPath } from 'twenty-shared/types';
 
-import { useToastOnQueryError } from '@/apollo/hooks/useToastOnQueryError';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { useGetAddedRelativeDateDescription } from '@/settings/hooks/useGetAddedRelativeDateDescription';
@@ -49,43 +49,46 @@ export const SettingsApprovedAccessDomainsListCard = () => {
     }
   }, [domainsData, setApprovedAccessDomains]);
 
-  useToastOnQueryError({ error: domainsError });
-
-  return loading || !approvedAccessDomains.length ? (
-    <StyledLinkContainer>
-      <Link to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
-        <SettingsCard
-          title={t`Add Approved Access Domain`}
-          Icon={<IconMailCog />}
-        />
-      </Link>
-    </StyledLinkContainer>
-  ) : (
+  return (
     <>
-      <SettingsSecurityApprovedAccessDomainValidationEffect />
-      <SettingsListCard
-        items={approvedAccessDomains}
-        getItemLabel={({ domain }) => domain}
-        getItemDescription={({ createdAt }) =>
-          getAddedRelativeDateDescription(createdAt)
-        }
-        RowIcon={IconAt}
-        RowRightComponent={({ item: approvedAccessDomain }) => (
-          <>
-            {!approvedAccessDomain.isValidated && (
-              <Status color="orange">{t`Pending`}</Status>
-            )}
-            <SettingsSecurityApprovedAccessDomainRowDropdownMenu
-              approvedAccessDomain={approvedAccessDomain}
+      <ToastOnQueryErrorEffect error={domainsError} />
+      {loading || !approvedAccessDomains.length ? (
+        <StyledLinkContainer>
+          <Link to={getSettingsPath(SettingsPath.NewApprovedAccessDomain)}>
+            <SettingsCard
+              title={t`Add Approved Access Domain`}
+              Icon={<IconMailCog />}
             />
-          </>
-        )}
-        hasFooter
-        footerButtonLabel={t`Add Approved Access Domain`}
-        onFooterButtonClick={() =>
-          navigate(getSettingsPath(SettingsPath.NewApprovedAccessDomain))
-        }
-      />
+          </Link>
+        </StyledLinkContainer>
+      ) : (
+        <>
+          <SettingsSecurityApprovedAccessDomainValidationEffect />
+          <SettingsListCard
+            items={approvedAccessDomains}
+            getItemLabel={({ domain }) => domain}
+            getItemDescription={({ createdAt }) =>
+              getAddedRelativeDateDescription(createdAt)
+            }
+            RowIcon={IconAt}
+            RowRightComponent={({ item: approvedAccessDomain }) => (
+              <>
+                {!approvedAccessDomain.isValidated && (
+                  <Status color="orange">{t`Pending`}</Status>
+                )}
+                <SettingsSecurityApprovedAccessDomainRowDropdownMenu
+                  approvedAccessDomain={approvedAccessDomain}
+                />
+              </>
+            )}
+            hasFooter
+            footerButtonLabel={t`Add Approved Access Domain`}
+            onFooterButtonClick={() =>
+              navigate(getSettingsPath(SettingsPath.NewApprovedAccessDomain))
+            }
+          />
+        </>
+      )}
     </>
   );
 };
