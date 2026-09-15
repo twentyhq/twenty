@@ -7,6 +7,9 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -40,10 +43,12 @@ export class RemoveSeeActiveVersionCommandMenuItemCommand extends ProvisionedWor
         'flatCommandMenuItemMaps',
       ]);
 
-    const itemToDelete =
-      flatCommandMenuItemMaps.byUniversalIdentifier[
-        SEE_ACTIVE_VERSION_WORKFLOW_UNIVERSAL_IDENTIFIER
-      ];
+    const itemToDelete = findFlatEntityByUniversalIdentifier<FlatCommandMenuItem>(
+      {
+        flatEntityMaps: flatCommandMenuItemMaps,
+        universalIdentifier: SEE_ACTIVE_VERSION_WORKFLOW_UNIVERSAL_IDENTIFIER,
+      },
+    );
 
     if (!isDefined(itemToDelete)) {
       this.logger.log(
@@ -51,6 +56,15 @@ export class RemoveSeeActiveVersionCommandMenuItemCommand extends ProvisionedWor
       );
 
       return;
+    }
+
+    if (
+      itemToDelete.engineComponentKey !==
+      EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW
+    ) {
+      throw new Error(
+        `Command menu item ${SEE_ACTIVE_VERSION_WORKFLOW_UNIVERSAL_IDENTIFIER} in workspace ${workspaceId} carries engine component key ${itemToDelete.engineComponentKey}, refusing to delete`,
+      );
     }
 
     this.logger.log(
@@ -67,9 +81,12 @@ export class RemoveSeeActiveVersionCommandMenuItemCommand extends ProvisionedWor
       );
 
     const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
           isSystemBuild: true,
+          applicationUniversalIdentifier:
+            twentyStandardFlatApplication.universalIdentifier,
+          workspaceId,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],
@@ -77,9 +94,6 @@ export class RemoveSeeActiveVersionCommandMenuItemCommand extends ProvisionedWor
               flatEntityToUpdate: [],
             },
           },
-          workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
         },
       );
 
