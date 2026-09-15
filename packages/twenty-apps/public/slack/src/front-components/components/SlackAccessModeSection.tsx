@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useId } from 'react';
+import { useId } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { IconLock } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
 import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { THEME_COMMON } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { Toggle } from 'src/front-components/components/Toggle';
@@ -39,13 +40,6 @@ const StyledIcon = styled.div`
   justify-content: center;
   min-width: ${() => themeCssVariables.spacing[8]};
   width: ${() => themeCssVariables.spacing[8]};
-`;
-
-const StyledIconCustomizer = styled.div`
-  align-items: center;
-  display: inline-flex;
-  justify-content: center;
-  transform: rotate(-4deg);
 `;
 
 const StyledTextContainer = styled.div`
@@ -112,7 +106,6 @@ export const SlackAccessModeSection = ({
   canManage,
 }: SlackAccessModeSectionProps) => {
   const toggleId = useId();
-  const { theme } = useContext(ThemeContext);
   const {
     accessMode,
     hasAccessModeError,
@@ -151,12 +144,7 @@ export const SlackAccessModeSection = ({
       <Card rounded>
         <StyledCardContent $disabled={isDisabled}>
           <StyledIcon>
-            <StyledIconCustomizer>
-              <IconLock
-                size={theme.icon.size.lg}
-                stroke={theme.icon.stroke.md}
-              />
-            </StyledIconCustomizer>
+            <IconLock size={THEME_COMMON.icon.size.md} />
           </StyledIcon>
           <StyledTextContainer>
             <StyledTitle>
