@@ -1,6 +1,9 @@
+import { isCommandMenuItemNavigatingToJunctionObject } from '@/command-menu-item/utils/isCommandMenuItemNavigatingToJunctionObject';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { type FlatCommandMenuItem } from '@/metadata-store/types/FlatCommandMenuItem';
 import { type FlatFrontComponent } from '@/metadata-store/types/FlatFrontComponent';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { getJunctionObjectMetadataIds } from '@/object-record/record-field/ui/utils/junction/getJunctionObjectMetadataIds';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isDefined } from 'twenty-shared/utils';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
@@ -14,6 +17,10 @@ export const commandMenuItemsSelector = createAtomSelector<
       .current as FlatCommandMenuItem[];
     const flatFrontComponents = get(metadataStoreState, 'frontComponents')
       .current as FlatFrontComponent[];
+    const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
+
+    const junctionObjectMetadataIds =
+      getJunctionObjectMetadataIds(objectMetadataItems);
 
     const frontComponentsById = new Map(
       flatFrontComponents.map((frontComponent) => [
@@ -24,6 +31,13 @@ export const commandMenuItemsSelector = createAtomSelector<
 
     return commandMenuItems
       .filter((item) => item.isActive)
+      .filter(
+        (item) =>
+          !isCommandMenuItemNavigatingToJunctionObject({
+            commandMenuItem: item,
+            junctionObjectMetadataIds,
+          }),
+      )
       .map((item) => ({
         ...item,
         frontComponent: isDefined(item.frontComponentId)
