@@ -19,12 +19,10 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 // Expanded, the row is sized off the page card header beside it so the rules
-// read as one line across both columns. Collapsed, the modes stack into the
-// icon rail and the rules would cut it in half, so they go.
+// read as one line across both columns.
 const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
-  border-bottom: ${({ isExpanded }) =>
-    isExpanded ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   border-top: ${({ isExpanded }) =>
     isExpanded ? '1px solid transparent' : 'none'};
   box-sizing: border-box;
