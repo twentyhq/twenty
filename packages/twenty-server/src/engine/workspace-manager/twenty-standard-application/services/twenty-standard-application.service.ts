@@ -1,15 +1,17 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
+import { computeSeedObjectDefaultViewOperations } from 'src/engine/metadata-modules/view/utils/compute-seed-object-default-view-operations.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { keepWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/keep-workspace-owned-properties.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { SeedObjectDefaultViewService } from 'src/engine/metadata-modules/view/services/seed-object-default-view.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FromToAllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
@@ -22,7 +24,6 @@ export class TwentyStandardApplicationService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
-    private readonly seedObjectDefaultViewService: SeedObjectDefaultViewService,
   ) {}
 
   async synchronizeTwentyStandardApplicationOrThrow({
@@ -103,12 +104,86 @@ export class TwentyStandardApplicationService {
       );
     }
 
-    await this.seedObjectDefaultViewService.seedMissingObjectDefaultViews({
+    await this.seedStandardObjectDefaultViewsOrThrow({
       workspaceId,
-      objectMetadataUniversalIdentifiers: Object.keys(
-        toTwentyStandardAllFlatEntityMaps.flatObjectMetadataMaps
-          .byUniversalIdentifier,
+      standardObjectMetadataUniversalIdentifiers: new Set(
+        Object.keys(
+          toTwentyStandardAllFlatEntityMaps.flatObjectMetadataMaps
+            .byUniversalIdentifier,
+        ),
       ),
     });
+  }
+
+  private async seedStandardObjectDefaultViewsOrThrow({
+    workspaceId,
+    standardObjectMetadataUniversalIdentifiers,
+  }: {
+    workspaceId: string;
+    standardObjectMetadataUniversalIdentifiers: Set<string>;
+  }): Promise<void> {
+    const { flatObjectMetadataMaps, flatViewMaps, flatViewFieldMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'flatViewMaps',
+        'flatViewFieldMaps',
+      ]);
+
+    const { workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    const seedOperations = computeSeedObjectDefaultViewOperations({
+      flatObjectMetadatas: Object.values(
+        flatObjectMetadataMaps.byUniversalIdentifier,
+      )
+        .filter(isDefined)
+        .filter((flatObjectMetadata) =>
+          standardObjectMetadataUniversalIdentifiers.has(
+            flatObjectMetadata.universalIdentifier,
+          ),
+        ),
+      flatViewMaps,
+      flatViewFieldMaps,
+      seededViewApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+    });
+
+    if (
+      seedOperations.viewsToCreate.length === 0 &&
+      seedOperations.viewFieldsToCreate.length === 0
+    ) {
+      return;
+    }
+
+    const result =
+      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
+        {
+          isSystemBuild: true,
+          workspaceId,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+          allFlatEntityOperationByMetadataName: {
+            view: {
+              flatEntityToCreate: seedOperations.viewsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+            viewField: {
+              flatEntityToCreate: seedOperations.viewFieldsToCreate,
+              flatEntityToDelete: [],
+              flatEntityToUpdate: [],
+            },
+          },
+        },
+      );
+
+    if (result.status === 'fail') {
+      throw new WorkspaceMigrationBuilderException(
+        result,
+        `Multiple validation errors occurred while seeding default views for workspace ${workspaceId}`,
+      );
+    }
   }
 }

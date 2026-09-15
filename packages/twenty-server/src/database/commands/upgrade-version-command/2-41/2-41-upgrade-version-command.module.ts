@@ -13,7 +13,6 @@ import { RemoveSeeActiveVersionCommandMenuItemCommand } from 'src/database/comma
 import { SeedObjectDefaultViewCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789472356542-seed-object-default-view.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { SeedObjectDefaultViewModule } from 'src/engine/metadata-modules/view/seed-object-default-view.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/workspace-migration-runner.module';
@@ -24,7 +23,6 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
   imports: [
     TypeOrmModule.forFeature([FieldMetadataEntity]),
     ApplicationModule,
-    SeedObjectDefaultViewModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
     WorkspaceMigrationModule,
