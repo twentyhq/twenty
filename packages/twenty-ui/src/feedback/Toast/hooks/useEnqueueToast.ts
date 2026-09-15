@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { v4 } from 'uuid';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -36,7 +37,7 @@ export const useEnqueueToast = () => {
         return existingToast.notification.id;
       }
 
-      const renderKey = `toast-${crypto.getRandomValues(new Uint32Array(4)).join('-')}`;
+      const renderKey = v4();
       const id = options.id ?? renderKey;
       const limit = store.get(toastLimitState);
       const removedCount = Math.max(0, visibleToasts.length - limit + 1);
