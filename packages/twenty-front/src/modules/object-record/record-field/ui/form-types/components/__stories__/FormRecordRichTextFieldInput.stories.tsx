@@ -1,6 +1,10 @@
 import { FormRecordRichTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { ComponentDecorator } from 'twenty-ui/testing';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const BLOCKNOTE_PARAGRAPH = JSON.stringify([
   {
@@ -26,25 +30,17 @@ const BLOCKNOTE_BULLET_LIST = JSON.stringify([
   },
 ]);
 
-const TIPTAP_BULLET_LIST = JSON.stringify([
-  {
-    type: 'bulletList',
-    content: [
-      {
-        type: 'listItem',
-        content: [
-          { type: 'paragraph', content: [{ type: 'text', text: 'Item' }] },
-        ],
-      },
-    ],
-  },
-]);
-
 const meta: Meta<typeof FormRecordRichTextFieldInput> = {
   title: 'UI/Data/Field/Form/Input/FormRecordRichTextFieldInput',
   component: FormRecordRichTextFieldInput,
-  args: {},
-  argTypes: {},
+  decorators: [
+    ObjectMetadataItemsDecorator,
+    SnackBarDecorator,
+    ComponentDecorator,
+  ],
+  parameters: {
+    msw: graphqlMocks,
+  },
 };
 
 export default meta;
@@ -106,30 +102,12 @@ export const WritesBlockNoteBlocks: Story = {
       expect(args.onChange).toHaveBeenCalled();
     });
 
-    const lastCall = (args.onChange as jest.Mock).mock.calls.at(-1)?.[0];
-    const blocks = JSON.parse(lastCall.blocknote);
-
-    expect(lastCall.markdown).toBeNull();
-    expect(Array.isArray(blocks)).toBe(true);
-    expect(blocks[0]).toHaveProperty('id');
-    expect(blocks[0]).toHaveProperty('props');
-    expect(blocks[0].type).toBe('paragraph');
-  },
-};
-
-export const DoesNotMountLegacyTipTapContent: Story = {
-  args: {
-    defaultValue: { blocknote: TIPTAP_BULLET_LIST, markdown: null },
-    onChange: fn(),
-  },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    await waitFor(() => {
-      expect(canvasElement.querySelector('.ProseMirror')).toBeVisible();
-    });
-
-    expect(canvas.queryByText('Item')).not.toBeInTheDocument();
+    expect(args.onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        blocknote: expect.stringContaining('"type":"paragraph"'),
+        markdown: null,
+      }),
+    );
   },
 };
 

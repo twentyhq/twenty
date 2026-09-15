@@ -6,17 +6,19 @@ import { Field } from 'twenty-ui/input';
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
 import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants/BlockEditorGlobalHotkeysConfig';
+import { filterBlocksSupportedByBlockSchema } from '@/blocknote-editor/utils/filterBlocksSupportedByBlockSchema';
+import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { parseRecordRichTextInitialBlocks } from '@/object-record/record-field/ui/form-types/utils/parseRecordRichTextInitialBlocks';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+
+import '@blocknote/mantine/style.css';
+import '@blocknote/react/style.css';
 
 type FormRecordRichTextFieldInputProps = {
   label?: string;
-  error?: string;
-  hint?: string;
   defaultValue: FieldRichTextValue | undefined;
   onChange: (value: FieldRichTextValue) => void;
   readonly?: boolean;
@@ -25,8 +27,6 @@ type FormRecordRichTextFieldInputProps = {
 
 export const FormRecordRichTextFieldInput = ({
   label,
-  error,
-  hint,
   defaultValue,
   placeholder,
   onChange,
@@ -41,7 +41,9 @@ export const FormRecordRichTextFieldInput = ({
     useRemoveFocusItemFromFocusStackById();
 
   const editor = useCreateBlockNote({
-    initialContent: parseRecordRichTextInitialBlocks(defaultValue),
+    initialContent: filterBlocksSupportedByBlockSchema(
+      parseInitialBlocknote(defaultValue?.blocknote),
+    ),
     domAttributes: { editor: { class: 'editor' } },
     schema: BLOCK_SCHEMA,
     placeholders: {
@@ -81,8 +83,6 @@ export const FormRecordRichTextFieldInput = ({
         onBlur={handleBlur}
         readonly={readonly}
       />
-      {hint && <Field.Description>{hint}</Field.Description>}
-      {error && <Field.Error match>{error}</Field.Error>}
     </FormFieldInputContainer>
   );
 };
