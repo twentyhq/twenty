@@ -4,7 +4,7 @@ import { SettingsCardContent } from './components/SettingsCardContent/SettingsCa
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { Card } from '@ui/surfaces/Card/Card';
 import { type ReactNode } from 'react';
-import { Toggle } from '@ui/input/Toggle/Toggle';
+import { Switch } from '@ui/input/Switch/Switch';
 import { Status } from '@ui/data-display/Status/Status';
 import { SegmentedControl } from '@ui/input/SegmentedControl/SegmentedControl';
 import {
@@ -45,12 +45,11 @@ const SettingsToggle = ({
 }) => (
   <label className="toggle-row">
     <SettingsCardContent icon={icon} title={label} description={description}>
-      <Toggle
+      <Switch
         aria-label={label}
-        value={state.settings[setting]}
-        centered
+        checked={state.settings[setting]}
         disabled={isPending('settings')}
-        onChange={(value) =>
+        onCheckedChange={(value) =>
           void command({
             type: 'settings',
             settings: { [setting]: value },
@@ -189,7 +188,7 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
       >
         {state.permissions.accessibility === 'granted' ? (
           <span role="status">
-            <Status color="blue" text={i18n._('Enabled')} />
+            <Status color="blue">{i18n._('Enabled')}</Status>
           </span>
         ) : (
           <Button

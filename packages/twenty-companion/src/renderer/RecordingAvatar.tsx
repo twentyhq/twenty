@@ -6,11 +6,11 @@ export const RecordingAvatar = ({ recording }: { recording: Recording }) => {
   return (
     <span aria-hidden="true">
       <Avatar
-        avatarUrl={participant?.avatarUrl}
-        placeholder={participant?.name ?? '?'}
-        placeholderColorSeed={participant?.id}
+        src={participant?.avatarUrl}
+        name={participant?.name ?? '?'}
+        colorSeed={participant?.id}
         size="lg"
-        type="squared"
+        shape="square"
       />
     </span>
   );

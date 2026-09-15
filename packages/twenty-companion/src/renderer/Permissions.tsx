@@ -54,7 +54,7 @@ const PermissionChecklist = ({ state, isPending, command }: ActionProps) => (
           <strong className="grow">{label}</strong>
           {granted ? (
             <span role="status">
-              <Status color="blue" text={i18n._('Enabled')} />
+              <Status color="blue">{i18n._('Enabled')}</Status>
             </span>
           ) : (
             <Button

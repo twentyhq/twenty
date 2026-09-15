@@ -129,8 +129,9 @@ export const Status = ({ status }: { status: string }) => (
           ? 'blue'
           : 'gray'
     }
-    text={recordingLabel(status)}
-  />
+  >
+    {recordingLabel(status)}
+  </StatusChip>
 );
 export const RecordingControls = ({
   state,
@@ -157,10 +158,10 @@ export const RecordingControls = ({
     >
       <div className="live-heading">
         <Avatar
-          placeholder={active.title}
-          placeholderColorSeed={active.id}
+          name={active.title}
+          colorSeed={active.id}
           size="xl"
-          type="rounded"
+          shape="rounded-square"
         />
         <div className="grow">
           <H1Title
