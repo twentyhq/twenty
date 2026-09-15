@@ -1,3 +1,4 @@
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -21,7 +22,7 @@ export const SettingsAccountsBlocklistTableRow = ({
       gridAutoColumns="200px 1fr 20px"
       mobileGridAutoColumns="120px 1fr 20px"
     >
-      <TableCell>
+      <TableCell color={themeCssVariables.font.color.primary}>
         <OverflowingTextWithTooltip text={blocklistItem.handle} />
       </TableCell>
       <TableCell>

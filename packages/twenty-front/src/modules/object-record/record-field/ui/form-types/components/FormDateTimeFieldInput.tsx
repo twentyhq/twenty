@@ -108,6 +108,7 @@ export const FormDateTimeFieldInput = ({
   const { refs, floatingStyles } = useFloating({
     open: displayDatePicker,
     placement: 'bottom-start',
+    strategy: 'fixed',
     middleware: [offset(4), flip()],
     whileElementsMounted: autoUpdate,
   });
@@ -297,6 +298,7 @@ export const FormDateTimeFieldInput = ({
         {draftValue.type === 'static' && draftValue.mode === 'edit' ? (
           <FloatingPortal>
             <div
+              data-floating-ui-viewport
               ref={refs.setFloating}
               style={floatingStyles}
               data-click-outside-id={

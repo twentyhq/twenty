@@ -12,6 +12,7 @@ import { LogicFunctionTriggerService } from 'src/engine/core-modules/logic-funct
 import { RouteTriggerService } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { RecordShareModule } from 'src/engine/record-share/record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -21,6 +22,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceDomainsModule,
     WorkspaceCacheModule,
     CronModule,
+    RecordShareModule,
   ],
   providers: [
     LogicFunctionTriggerJob,

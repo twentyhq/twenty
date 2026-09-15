@@ -63,10 +63,7 @@ export class AgentResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
     if (isNonEmptyString(input.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability(
-        input.modelId,
-        workspace,
-      );
+      this.aiModelRegistryService.validateModelAvailability(input.modelId);
     }
 
     const createdAgent = await this.agentService.createOneAgent(
@@ -84,10 +81,7 @@ export class AgentResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<AgentDTO> {
     if (isNonEmptyString(input.modelId)) {
-      this.aiModelRegistryService.validateModelAvailability(
-        input.modelId,
-        workspace,
-      );
+      this.aiModelRegistryService.validateModelAvailability(input.modelId);
     }
 
     const updatedAgent = await this.agentService.updateOneAgent({

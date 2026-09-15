@@ -130,6 +130,7 @@ export const SettingsToolParameterTable = ({
                   gridTemplateColumns={PARAMETER_TABLE_GRID}
                 >
                   <TableCell
+                    color={themeCssVariables.font.color.primary}
                     overflow="hidden"
                     textOverflow="ellipsis"
                     whiteSpace="nowrap"

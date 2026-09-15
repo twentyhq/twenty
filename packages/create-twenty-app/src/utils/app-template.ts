@@ -2,6 +2,7 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 import { v4 } from 'uuid';
 
+import { TEMPLATE_FIRST_PARTY_PACKAGES } from '@/constants/template-packages';
 import createTwentyAppPackageJson from 'package.json';
 
 const SRC_FOLDER = 'src';
@@ -119,11 +120,16 @@ const updatePackageJson = async ({
 }) => {
   const packageJson = await fs.readJson(join(appDirectory, 'package.json'));
 
+  // The template yarn.lock keeps its placeholder workspace name: the only entry
+  // naming the project is the workspace root, which the scaffolder's `yarn install`
+  // rewrites from package.json without re-resolving a single dependency. Renaming
+  // it here would move the entry out of sort order and break `--immutable`.
   packageJson.name = appName;
-  packageJson.devDependencies['twenty-sdk'] =
-    createTwentyAppPackageJson.version;
-  packageJson.devDependencies['twenty-client-sdk'] =
-    createTwentyAppPackageJson.version;
+
+  for (const packageName of TEMPLATE_FIRST_PARTY_PACKAGES) {
+    packageJson.devDependencies[packageName] =
+      createTwentyAppPackageJson.version;
+  }
 
   await fs.writeFile(
     join(appDirectory, 'package.json'),

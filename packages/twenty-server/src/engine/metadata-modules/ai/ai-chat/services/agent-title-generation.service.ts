@@ -12,6 +12,7 @@ import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { buildReasoningProviderOptions } from 'src/engine/metadata-modules/ai/ai-models/utils/build-reasoning-provider-options.util';
 
 @Injectable()
 export class AgentTitleGenerationService {
@@ -33,7 +34,8 @@ export class AgentTitleGenerationService {
       spenders: { userWorkspaceId },
     });
 
-    const defaultModel = this.aiModelRegistryService.getDefaultSpeedModel();
+    const defaultModel =
+      this.aiModelRegistryService.getDefaultModelForTier('fast');
 
     if (!defaultModel) {
       this.logger.warn('No default AI model available for title generation');
@@ -47,6 +49,7 @@ export class AgentTitleGenerationService {
     try {
       const result = await generateText({
         model: defaultModel.model,
+        providerOptions: buildReasoningProviderOptions(defaultModel),
         prompt: `Generate a concise, descriptive title (maximum 60 characters) for a chat thread based on the following message. The title should capture the main topic or purpose of the conversation. Return only the title, nothing else. Message: "${messageContent}"`,
         ...buildAiTelemetry({
           functionId: 'agent-title-generation',

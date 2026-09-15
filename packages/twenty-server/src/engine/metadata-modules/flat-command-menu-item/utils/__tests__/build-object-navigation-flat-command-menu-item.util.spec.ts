@@ -152,7 +152,7 @@ describe('buildObjectNavigationFlatCommandMenuItem', () => {
     });
 
     expect(result.conditionalAvailabilityExpression).toBe(
-      'featureFlags.IS_EMAIL_GROUP_ENABLED and targetObjectReadPermissions.messageCampaign',
+      'featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED and targetObjectReadPermissions.messageCampaign',
     );
   });
 

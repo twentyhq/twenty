@@ -89,12 +89,13 @@ export const SettingsRoleApplicability = ({
               <span>{option.label}</span>
             </StyledCheckboxLabel>
             <Checkbox
+              aria-label={option.label}
               checked={values[option.key]}
-              onChange={(event) => {
-                event.stopPropagation();
-                onApplicabilityChange(option.key, event.target.checked);
+              onCheckedChange={(isChecked) => {
+                onApplicabilityChange(option.key, isChecked);
               }}
               disabled={!isEditable}
+              onClick={(event) => event.stopPropagation()}
             />
           </StyledCheckboxContainer>
         ))}

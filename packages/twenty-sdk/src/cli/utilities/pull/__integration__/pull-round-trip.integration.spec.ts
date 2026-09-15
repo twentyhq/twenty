@@ -57,6 +57,11 @@ const AGE_CHART_WIDGET_UID = '30303030-3030-4303-8303-303030303030';
 const PET_RECORD_PAGE_EXTRA_TAB_UID = '31313131-3131-4313-8313-313131313131';
 const PET_EXTRA_NOTES_WIDGET_UID = '32323232-3232-4323-8323-323232323232';
 const COMPANY_TAGLINE_TAB_UID = '34343434-3434-4343-8343-343434343434';
+const COMPANY_HOME_STANDALONE_WIDGET_UID =
+  '38383838-3838-4383-8383-383838383838';
+const CARE_FOLDER_MENU_ITEM_UID = '35353535-3535-4353-8353-353535353535';
+const PET_MENU_ITEM_UID = '36363636-3636-4363-8363-363636363636';
+const HANDBOOK_MENU_ITEM_UID = '37373737-3737-4373-8373-373737373737';
 
 const PET_RECORD_PAGE_LAYOUT_UID = getSystemRecordPageLayoutUniversalIdentifier(
   {
@@ -335,6 +340,29 @@ const EXPORTED_MANIFEST = {
       position: 3,
     },
   ],
+  navigationMenuItems: [
+    {
+      universalIdentifier: CARE_FOLDER_MENU_ITEM_UID,
+      type: 'FOLDER',
+      name: 'Care',
+      position: 0,
+    },
+    {
+      universalIdentifier: PET_MENU_ITEM_UID,
+      type: 'OBJECT',
+      position: 1,
+      folderUniversalIdentifier: CARE_FOLDER_MENU_ITEM_UID,
+      targetObjectUniversalIdentifier: PET_UID,
+    },
+    {
+      universalIdentifier: HANDBOOK_MENU_ITEM_UID,
+      type: 'LINK',
+      name: 'Handbook',
+      icon: 'IconBook',
+      position: 2,
+      link: 'https://example.com/handbook',
+    },
+  ],
   pageLayouts: [
     {
       universalIdentifier: PET_PAGE_LAYOUT_UID,
@@ -444,6 +472,19 @@ const EXPORTED_MANIFEST = {
           ],
         },
       ],
+    },
+  ],
+  pageLayoutWidgets: [
+    {
+      universalIdentifier: COMPANY_HOME_STANDALONE_WIDGET_UID,
+      pageLayoutTabUniversalIdentifier: COMPANY_TAGLINE_TAB_UID,
+      title: 'Care notes',
+      type: 'IFRAME',
+      position: { layoutMode: 'VERTICAL_LIST', index: 1000 },
+      configuration: {
+        configurationType: 'IFRAME',
+        url: 'https://example.com/care-notes',
+      },
     },
   ],
   pageLayoutTabs: [
@@ -628,6 +669,18 @@ describe('pull round trip', () => {
     );
   });
 
+  it('should rebuild the exported navigation menu items, including the nameless object item nested in its folder', () => {
+    expect(
+      canonicalize(
+        sortByUniversalIdentifier(builtManifest?.navigationMenuItems ?? []),
+      ),
+    ).toEqual(
+      canonicalize(
+        sortByUniversalIdentifier(EXPORTED_MANIFEST.navigationMenuItems),
+      ),
+    );
+  });
+
   it('should rebuild the exported page layouts with their tabs and widgets in order, without the GraphQL typename a UI-saved widget carries', () => {
     expect(
       canonicalize(sortByUniversalIdentifier(builtManifest?.pageLayouts ?? [])),
@@ -640,6 +693,18 @@ describe('pull round trip', () => {
     );
     expect(JSON.stringify(builtManifest?.pageLayouts)).not.toContain(
       '__typename',
+    );
+  });
+
+  it('should rebuild the standalone page layout widget unchanged', () => {
+    expect(
+      canonicalize(
+        sortByUniversalIdentifier(builtManifest?.pageLayoutWidgets ?? []),
+      ),
+    ).toEqual(
+      canonicalize(
+        sortByUniversalIdentifier(EXPORTED_MANIFEST.pageLayoutWidgets),
+      ),
     );
   });
 

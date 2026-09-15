@@ -1,6 +1,12 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { type Application } from 'cloudflare/resources/zero-trust/access/applications/applications';
+import GraphQLJSON from 'graphql-type-json';
+import {
+  DEFAULT_AI_AGENT_MODEL_TIER,
+  DEFAULT_AI_CHAT_MODEL_TIER,
+  type AiModelTier,
+} from 'twenty-shared/ai';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   Check,
@@ -35,7 +41,7 @@ import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorato
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
@@ -50,11 +56,6 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
-
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
 });
@@ -315,48 +316,38 @@ export class WorkspaceEntity {
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
 
-  @Field(() => String, { nullable: false })
+  @Field(() => AiModelTierEnum, { nullable: false })
   @Column({
     type: 'varchar',
     nullable: false,
-    default: AUTO_SELECT_FAST_MODEL_ID,
+    default: DEFAULT_AI_CHAT_MODEL_TIER,
   })
-  fastModel: ModelId;
+  aiChatModelTier: AiModelTier;
 
-  @Field(() => String, { nullable: false })
+  @Field(() => AiModelTierEnum, { nullable: false })
   @Column({
     type: 'varchar',
     nullable: false,
-    default: AUTO_SELECT_SMART_MODEL_ID,
+    default: DEFAULT_AI_AGENT_MODEL_TIER,
   })
-  smartModel: ModelId;
+  aiAgentModelTier: AiModelTier;
+
+  @Field(() => Boolean, { nullable: false })
+  @Column({ type: 'boolean', nullable: false, default: true })
+  isAutoModelSelectionEnabled: boolean;
+
+  // Only read while isAutoModelSelectionEnabled is false; kept when the toggle
+  // goes back on so switching off again restores the previous pins.
+  @Field(() => GraphQLJSON, { nullable: false })
+  @Column({ type: 'jsonb', nullable: false, default: {} })
+  aiModelIdByTier: Partial<Record<AiModelTier, string>>;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
   aiAdditionalInstructions: string | null;
 
-  @Field(() => [String], { nullable: true })
-  @Column({
-    type: 'varchar',
-    array: true,
-    nullable: false,
-    default: '{}',
-  })
-  enabledAiModelIds: string[];
-
-  @Field(() => Boolean, { nullable: false })
-  @Column({ type: 'boolean', nullable: false, default: true })
-  useRecommendedModels: boolean;
-
   @Column({ nullable: false, type: 'uuid' })
   workspaceCustomApplicationId: string;
-
-  // TODO: delete
-  // This is deprecated
-  // If we are in December 2025 you can remove this column from DB
-  @Field(() => String, { nullable: false })
-  @Column({ type: 'varchar', nullable: false, default: 'auto' })
-  routerModel: ModelId;
 
   @Field(() => ApplicationDTO, { nullable: true })
   @ManyToOne(() => ApplicationEntity, {

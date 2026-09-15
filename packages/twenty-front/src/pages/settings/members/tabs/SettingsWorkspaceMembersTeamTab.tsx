@@ -246,15 +246,13 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                     });
                   }}
                 >
-                  <TableCell>
+                  <TableCell color={themeCssVariables.font.color.primary}>
                     <StyledIconWrapper>
                       <Avatar
-                        avatarUrl={getAbsoluteImageUrl(
-                          workspaceMember.avatarUrl,
-                        )}
-                        placeholderColorSeed={workspaceMember.id}
-                        placeholder={workspaceMember.name.firstName ?? ''}
-                        type="rounded"
+                        src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                        colorSeed={workspaceMember.id}
+                        name={workspaceMember.name.firstName ?? ''}
+                        shape="circle"
                         size="sm"
                       />
                     </StyledIconWrapper>

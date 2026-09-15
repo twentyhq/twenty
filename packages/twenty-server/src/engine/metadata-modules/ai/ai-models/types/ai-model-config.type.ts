@@ -29,5 +29,6 @@ export type AiModelConfig = {
   // Pinned by a variant id (`model@effort`); unset runs the provider default.
   effort?: AiModelEffort;
   benchmark?: AiModelBenchmark;
+  benchmarkByEffort?: Partial<Record<AiModelEffort, AiModelBenchmark>>;
   isDeprecated?: boolean;
 };

@@ -98,7 +98,9 @@ export const SettingsAdminChatAskQuestionsQuestion = ({
     <StyledContainer>
       <StyledHeaderRow>
         {isNonEmptyString(question.header) && (
-          <Tag color="transparent" text={question.header} variant="border" />
+          <Tag color="transparent" variant="outline">
+            {question.header}
+          </Tag>
         )}
         {question.allowMultiSelect === true && (
           <StyledMultiSelectHint>{t`Multiple answers`}</StyledMultiSelectHint>

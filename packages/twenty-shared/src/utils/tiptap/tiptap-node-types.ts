@@ -5,6 +5,7 @@ export const TIPTAP_NODE_TYPES = {
   HEADING: 'heading',
   VARIABLE_TAG: 'variableTag',
   MENTION_TAG: 'mentionTag',
+  SKILL_TAG: 'skillTag',
   IMAGE: 'image',
   BULLET_LIST: 'bulletList',
   ORDERED_LIST: 'orderedList',

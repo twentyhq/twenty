@@ -171,7 +171,11 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     mobileGridAutoColumns="2fr 1fr 1fr 72px"
                     key={workspaceInvitation.id}
                   >
-                    <TableCell minWidth="0" overflow="hidden">
+                    <TableCell
+                      color={themeCssVariables.font.color.primary}
+                      minWidth="0"
+                      overflow="hidden"
+                    >
                       <StyledIconWrapper>
                         <IconMail
                           size={theme.icon.size.md}
@@ -199,10 +203,9 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
                     <TableCell align="center">
-                      <Status
-                        color="gray"
-                        text={getExpiresAtText(workspaceInvitation.expiresAt)}
-                      />
+                      <Status color="gray">
+                        {getExpiresAtText(workspaceInvitation.expiresAt)}
+                      </Status>
                     </TableCell>
                     <TableCell align="right">
                       <StyledButtonContainer>

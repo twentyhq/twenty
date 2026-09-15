@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,7 +12,10 @@ import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FindManySkillsForSuggestionDocument,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 import { setTestViewsInMetadataStore } from '~/testing/utils/setTestViewsInMetadataStore';
@@ -37,6 +41,7 @@ const RECORD_ID = '11111111-1111-4111-8111-111111111111';
 const VIEW_ID = '44444444-4444-4444-4444-444444444444';
 const ROLE_ID = '55555555-5555-4555-8555-555555555555';
 const APPLICATION_ID = '66666666-6666-4666-8666-666666666666';
+const SKILL_ID = '88888888-8888-4888-8888-888888888888';
 const UNKNOWN_ID = '77777777-7777-4777-8777-777777777777';
 
 const allCompaniesView = {
@@ -51,7 +56,30 @@ const ALL_PERMISSION_FLAGS = [
   PermissionFlagType.DATA_MODEL,
   PermissionFlagType.ROLES,
   PermissionFlagType.APPLICATIONS,
+  PermissionFlagType.AI_SETTINGS,
 ];
+
+// The skill chip reads its icon from the skill catalog
+const skillsApolloMock = {
+  request: { query: FindManySkillsForSuggestionDocument },
+  result: {
+    data: {
+      skills: [
+        {
+          __typename: 'Skill',
+          id: SKILL_ID,
+          name: 'workflow-building',
+          label: 'Workflow building',
+          description: null,
+          icon: 'IconSettingsAutomation',
+          isActive: true,
+          isSystem: false,
+        },
+      ],
+    },
+  },
+  maxUsageCount: Number.POSITIVE_INFINITY,
+};
 
 const asMatch = (
   reference: ChatReferenceIdentity & { displayName: string },
@@ -120,6 +148,15 @@ const referenceCases: Array<{
     href: `/settings/applications/${APPLICATION_ID}`,
     permissionFlag: PermissionFlagType.APPLICATIONS,
   },
+  {
+    reference: asMatch({
+      kind: 'skill',
+      skillId: SKILL_ID,
+      displayName: 'Workflow building',
+    }),
+    href: `/settings/ai/skills/${SKILL_ID}`,
+    permissionFlag: PermissionFlagType.AI_SETTINGS,
+  },
 ];
 
 const findCase = (kind: ChatReferenceIdentity['kind']) =>
@@ -153,7 +190,7 @@ const renderWithReferences = (
   } = {},
 ) => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
-    apolloMocks: [],
+    apolloMocks: [skillsApolloMock],
     onInitializeJotaiStore: (store) => {
       setTestViewsInMetadataStore(store, views);
       store.set(currentUserWorkspaceState.atom, {
@@ -214,7 +251,7 @@ describe('ChatReferenceChip', () => {
       });
 
       expect(screen.getByText(reference.displayName).closest('a')).toBeNull();
-      expect(screen.getByTestId('chip')).toBeInTheDocument();
+      expect(screen.getByText(reference.displayName)).toBeVisible();
     },
   );
 
@@ -328,7 +365,7 @@ describe('ChatReferenceChip', () => {
     });
 
     expect(screen.getByText(reference.displayName)).toBeInTheDocument();
-    expect(screen.queryByTestId('chip')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
   });
 
   it.each([
@@ -353,21 +390,29 @@ describe('ChatReferenceChip', () => {
     renderWithReferences(<ChatReferenceChip reference={reference} />);
 
     expect(screen.getByText(reference.displayName).closest('a')).toBeNull();
-    expect(screen.getByTestId('chip')).toBeInTheDocument();
+    expect(screen.getByText(reference.displayName)).toBeVisible();
   });
 
-  it('should render a static chip when navigation is disabled', () => {
-    renderWithReferences(
-      <ChatReferenceChip reference={findCase('role').reference} />,
-      { isNavigationEnabled: false },
-    );
+  it('should render a static chip when navigation is disabled', async () => {
+    const reference = findCase('role').reference;
 
+    renderWithReferences(<ChatReferenceChip reference={reference} />, {
+      isNavigationEnabled: false,
+    });
+
+    const label = screen.getByText(reference.displayName);
+
+    expect(label).toBeVisible();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
 
-    const chipClassName = screen.getByTestId('chip').className;
+    await userEvent.click(label);
 
-    expect(chipClassName).not.toMatch(/cursorPointer/);
-    expect(chipClassName).toMatch(/backgroundStatic/);
+    expect(openRoutedPageInSidePanelMock).not.toHaveBeenCalled();
+    expect(openRecordInSidePanelMock).not.toHaveBeenCalled();
+    expect(screen.getByTestId('location-probe')).toHaveTextContent(
+      '/objects/companies',
+    );
   });
 });
 
@@ -395,7 +440,7 @@ describe('TextWithChatReferences', () => {
       />,
     );
 
-    expect(screen.queryByTestId('chip')).not.toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
     expect(screen.getByText(/Sort by/)).toHaveTextContent(
       'Sort by Stage first',
     );

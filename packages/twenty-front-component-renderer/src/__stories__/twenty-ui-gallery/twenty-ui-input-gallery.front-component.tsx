@@ -70,14 +70,20 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   {
     name: 'CardPicker',
     node: (
-      <CardPicker checked={false} handleChange={() => {}}>
-        Card
-      </CardPicker>
+      <RadioGroup defaultValue="card" aria-label="Card selection">
+        <CardPicker value="card">Card</CardPicker>
+      </RadioGroup>
     ),
   },
   {
     name: 'Checkbox',
-    node: <Checkbox checked={false} onChange={() => {}} />,
+    node: (
+      <Checkbox
+        aria-label="Checkbox"
+        checked={false}
+        onCheckedChange={() => {}}
+      />
+    ),
   },
   {
     name: 'CoreEditorHeader',
@@ -172,14 +178,18 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Radio',
-    node: <Radio checked={false} label="Radio" />,
+    node: (
+      <RadioGroup aria-label="Radio example">
+        <Radio value="radio">Radio</Radio>
+      </RadioGroup>
+    ),
   },
   {
     name: 'RadioGroup',
     node: (
-      <RadioGroup value="a">
-        <Radio value="a" label="A" />
-        <Radio value="b" label="B" />
+      <RadioGroup defaultValue="a" aria-label="Letter">
+        <Radio value="a">A</Radio>
+        <Radio value="b">B</Radio>
       </RadioGroup>
     ),
   },
@@ -207,7 +217,16 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Slider',
-    node: <Slider max={100} value={50} onChange={() => {}} />,
+    node: (
+      <Slider.Root defaultValue={50}>
+        <Slider.Control>
+          <Slider.Track>
+            <Slider.Indicator />
+            <Slider.Thumb aria-label="Volume" />
+          </Slider.Track>
+        </Slider.Control>
+      </Slider.Root>
+    ),
   },
   {
     name: 'StyledTabContainer',

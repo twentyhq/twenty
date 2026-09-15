@@ -1,5 +1,7 @@
 import { type Event, type MailFolder } from '@microsoft/microsoft-graph-types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { http, HttpResponse } from 'msw';
+import { isDefined } from 'twenty-shared/utils';
 
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 import {
@@ -35,6 +37,8 @@ export type MicrosoftMock = {
     events: Event[],
     options?: { deltaToken?: string; removedEventIds?: string[] },
   ) => void;
+  moveMessageToFolder: (messageId: string, targetFolderId: string) => void;
+  deleteMessage: (messageId: string) => void;
   failSubscriptionRenewal: () => void;
   failMessageDelta: (failure: MicrosoftGraphFailure) => void;
   failCalendarDelta: (failure: MicrosoftGraphFailure) => void;
@@ -76,10 +80,38 @@ export const setupMicrosoftMock = ({
   const createdAttachments: Array<Record<string, unknown>> = [];
   const sentMessageIds: string[] = [];
   const createdCalendarEvents: Event[] = [];
+  const removedMessageIdsByFolderId: Record<string, string[]> = {};
+
+  const recordFolderRemoval = (messageId: string) => {
+    const message = messages.find((candidate) => candidate.id === messageId);
+
+    if (!isDefined(message)) {
+      throw new Error(`No mocked Microsoft message with id ${messageId}`);
+    }
+
+    const folderId = message.parentFolderId;
+
+    if (!isNonEmptyString(folderId)) {
+      throw new Error(
+        `Mocked Microsoft message ${messageId} has no parentFolderId`,
+      );
+    }
+
+    removedMessageIdsByFolderId[folderId] = [
+      ...(removedMessageIdsByFolderId[folderId] ?? []),
+      messageId,
+    ];
+
+    return message;
+  };
 
   const httpMock = setupHttpMock(
     ...microsoftAuthHandlers(handle, aliases),
-    ...microsoftMailboxHandlers(folderStore, messages),
+    ...microsoftMailboxHandlers(
+      folderStore,
+      messages,
+      removedMessageIdsByFolderId,
+    ),
     ...microsoftWebhookSubscriptionHandlers(subscriptionStore),
     http.post('*/me/messages', async ({ request }) => {
       const message = (await request.json()) as Record<string, unknown>;
@@ -178,6 +210,16 @@ export const setupMicrosoftMock = ({
       httpMock.use(
         ...microsoftCalendarEventsHandlers(events, deltaToken, removedEventIds),
       ),
+    moveMessageToFolder: (messageId, targetFolderId) => {
+      const message = recordFolderRemoval(messageId);
+
+      message.parentFolderId = targetFolderId;
+    },
+    deleteMessage: (messageId) => {
+      const message = recordFolderRemoval(messageId);
+
+      messages.splice(messages.indexOf(message), 1);
+    },
     failSubscriptionRenewal: () =>
       httpMock.use(
         ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {

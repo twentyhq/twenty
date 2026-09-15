@@ -1,0 +1,76 @@
+---
+title: Slider
+description: Choose a numeric value or range with draggable, keyboard-accessible thumbs.
+---
+
+import SliderReference from '/snippets/ui/generated/input/slider.mdx';
+
+`Slider` supports a single number or an array of numbers for a range. Compose its label, track, indicator, and thumbs inside `Root`.
+
+## Single value
+
+```tsx
+import { Slider } from 'twenty-ui/input';
+
+export const VolumeSlider = () => (
+  <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
+    <Slider.Label>Volume</Slider.Label>
+    <Slider.Value />
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+Use `value` and `onValueChange` for controlled state. `onValueCommitted` handles the value when an interaction finishes. Set `color="success"` for the alternative palette; the default is `accent`.
+
+## Range
+
+```tsx
+import { Slider } from 'twenty-ui/input';
+
+export const PriceRange = () => (
+  <Slider.Root
+    defaultValue={[25, 75]}
+    min={0}
+    max={100}
+    minStepsBetweenValues={10}
+  >
+    <Slider.Label>Price range</Slider.Label>
+    <Slider.Value />
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb index={0} aria-label="Minimum price" />
+        <Slider.Thumb index={1} aria-label="Maximum price" />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+Give range thumbs distinct accessible names and an `index` corresponding to their value. `minStepsBetweenValues` sets the minimum gap in steps. The root's generic value type is a number or a readonly array of numbers.
+
+## Parts and keyboard
+
+| Part        | Purpose                                        |
+| ----------- | ---------------------------------------------- |
+| `Root`      | Owns the value, bounds, step, and orientation. |
+| `Label`     | Names the slider.                              |
+| `Value`     | Displays the current value.                    |
+| `Control`   | Handles pointer interaction.                   |
+| `Track`     | Shows the full value range.                    |
+| `Indicator` | Shows the selected portion of the track.       |
+| `Thumb`     | Provides a focusable handle for one value.     |
+
+Arrow keys adjust a focused thumb by a step. Home and End move it toward the bounds while respecting range constraints. `orientation="vertical"` changes the layout and keyboard direction. Use `disabled` on `Root` to prevent changes.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<SliderReference />

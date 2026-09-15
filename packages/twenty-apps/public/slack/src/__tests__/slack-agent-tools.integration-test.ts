@@ -343,6 +343,7 @@ describe('Slack agent tools', () => {
           accessToken: 'xoxb-revoked-token',
           scopes: [],
           authFailedAt: null,
+          authFailedReason: null,
         },
       ]);
 
