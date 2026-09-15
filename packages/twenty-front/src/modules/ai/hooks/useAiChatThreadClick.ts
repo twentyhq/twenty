@@ -1,5 +1,3 @@
-import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
 import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/currentAiChatThreadTitleComponentFamilyState';
 import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
@@ -25,9 +23,6 @@ export const useAiChatThreadClick = (
   const threadTitleFamilyCallback = useAtomComponentFamilyStateCallbackState(
     currentAiChatThreadTitleComponentFamilyState,
   );
-  const agentChatUsageFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatUsageComponentFamilyState,
-  );
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
 
@@ -41,11 +36,6 @@ export const useAiChatThreadClick = (
     store.set(
       threadTitleFamilyCallback(clickedFamilyKey),
       thread.title ?? null,
-    );
-
-    store.set(
-      agentChatUsageFamilyCallback(clickedFamilyKey),
-      getAgentChatUsageFromThread(thread),
     );
 
     if (isCurrentPathAiChatPage()) {

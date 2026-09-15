@@ -8,7 +8,7 @@ export class AgentChatThreadDTO {
   @Field({ nullable: true })
   title: string;
 
-  @Field(() => Float, { nullable: true })
+  @Field(() => Int, { nullable: true })
   totalCacheReadTokens: number | null;
 
   @Field(() => Int)

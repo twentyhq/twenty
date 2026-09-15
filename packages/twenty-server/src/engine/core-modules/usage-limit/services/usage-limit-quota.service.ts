@@ -219,11 +219,16 @@ export class UsageLimitQuotaService implements OnModuleInit {
     const allowance =
       await this.creditAllowanceProvider.getCreditAllowance(workspaceId);
 
-    if (
-      !isDefined(allowance) ||
-      allowance.periodStart.getTime() !== counter.periodStart.getTime()
-    ) {
+    if (!isDefined(allowance)) {
       return null;
+    }
+
+    if (allowance.periodStart.getTime() !== counter.periodStart.getTime()) {
+      return {
+        limitValue: allowance.allowanceMicro,
+        consumedValue: null,
+        periodEnd: allowance.periodEnd,
+      };
     }
 
     let consumedValue: number | null = null;

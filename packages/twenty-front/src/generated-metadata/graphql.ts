@@ -73,7 +73,7 @@ export type AgentChatThread = {
   id: Scalars['ID']['output'];
   lastMessageAt?: Maybe<Scalars['DateTime']['output']>;
   title?: Maybe<Scalars['String']['output']>;
-  totalCacheReadTokens?: Maybe<Scalars['Float']['output']>;
+  totalCacheReadTokens?: Maybe<Scalars['Int']['output']>;
   totalInputCredits: Scalars['Float']['output'];
   totalInputTokens: Scalars['Int']['output'];
   totalOutputCredits: Scalars['Float']['output'];

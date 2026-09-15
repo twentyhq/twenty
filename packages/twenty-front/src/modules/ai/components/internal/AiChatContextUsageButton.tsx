@@ -1,3 +1,5 @@
+import { getAiChatUsageLabel } from '@/ai/utils/getAiChatUsageLabel';
+import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { useQuery } from '@apollo/client/react';
 import {
   FloatingPortal,
@@ -69,7 +71,7 @@ const StyledFooter = styled.div`
 `;
 
 export const AiChatContextUsageButton = () => {
-  const { t } = useLingui();
+  const { t, i18n } = useLingui();
   const shouldReduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
@@ -124,7 +126,9 @@ export const AiChatContextUsageButton = () => {
     open: isOpen,
     onOpenChange: (open) => {
       setIsOpen(open);
-      if (open) setShowDetails(false);
+      if (open) {
+        setShowDetails(false);
+      }
     },
     placement: 'top-start',
     middleware: [offset(8), flip(), shift({ padding: 8 })],
@@ -146,8 +150,6 @@ export const AiChatContextUsageButton = () => {
     dismiss,
     role,
   ]);
-  const formatTokens = (value: number) =>
-    formatNumber(value, { abbreviate: true, decimals: 1 });
 
   return (
     <>
@@ -175,7 +177,7 @@ export const AiChatContextUsageButton = () => {
               value={percentage}
               valueLabel={
                 contextWindow > 0
-                  ? `(${formatTokens(conversationSize)}/${formatTokens(contextWindow)}) ${formatNumber(percentage, { decimals: 1 })}%`
+                  ? `(${formatAiChatTokens(conversationSize)}/${formatAiChatTokens(contextWindow)}) ${formatNumber(percentage, { decimals: 1 })}%`
                   : t`Not available`
               }
               barColor={getUsageLimitRingColor({
@@ -190,20 +192,14 @@ export const AiChatContextUsageButton = () => {
                 value={
                   loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
                 }
-                valueLabel={
-                  loading
-                    ? t`Loading…`
-                    : isDefined(error)
-                      ? t`Not available`
-                      : !isDefined(creditUsage)
-                        ? t`No limit`
-                        : isDefined(daysUntilReset) &&
-                            isDefined(creditPercentage)
-                          ? t`Reset in ${daysUntilReset} days (${formatNumber(creditPercentage, { decimals: 1 })}%)`
-                          : !isDefined(creditPercentage)
-                            ? '—'
-                            : undefined
-                }
+                valueLabel={getAiChatUsageLabel({
+                  i18n,
+                  loading,
+                  hasError: isDefined(error),
+                  hasUsage: isDefined(creditUsage),
+                  daysUntilReset,
+                  creditPercentage,
+                })}
                 barColor={getUsageLimitRingColor({
                   consumedPercentage: creditPercentage ?? 0,
                   isExhausted: creditPercentage === 100,

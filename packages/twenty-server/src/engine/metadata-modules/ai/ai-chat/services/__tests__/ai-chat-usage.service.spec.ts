@@ -1,9 +1,9 @@
 import { Test } from '@nestjs/testing';
 
-import { AiChatUsageService } from 'src/engine/core-modules/usage-limit/services/ai-chat-usage.service';
+import { AiChatUsageService } from 'src/engine/metadata-modules/ai/ai-chat/services/ai-chat-usage.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
-import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -53,7 +53,16 @@ describe('AiChatUsageService', () => {
     const module = await Test.createTestingModule({
       providers: [
         AiChatUsageService,
-        { provide: UsageLimitService, useValue: { findAll } },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: async () => ({
+              usageLimits: {
+                byResourceType: { [UsageResourceType.AI]: await findAll() },
+              },
+            }),
+          },
+        },
         {
           provide: UsageLimitEntitlementService,
           useValue: { findEnforceableLimits },
@@ -135,6 +144,18 @@ describe('AiChatUsageService', () => {
       limitValue: 100,
       consumedValue: 90,
       periodEnd,
+    });
+  });
+
+  it('preserves an unknown counter when another applicable counter is warm', async () => {
+    findAll.mockResolvedValue([
+      buildLimit(),
+      buildLimit({ id: 'cold', periodUnit: 'day', limitValue: 100 }),
+    ]);
+    await expect(findUsage()).resolves.toEqual({
+      limitValue: 100,
+      consumedValue: null,
+      periodEnd: null,
     });
   });
 

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -44,7 +45,7 @@ export const UsageProgressRow = ({
       <Icon size={14} />
       <span>{label}</span>
     </StyledLabel>
-    {value === null ? (
+    {!isDefined(value) ? (
       <span>{valueLabel ?? '—'}</span>
     ) : (
       <ProgressRingWithLabel
