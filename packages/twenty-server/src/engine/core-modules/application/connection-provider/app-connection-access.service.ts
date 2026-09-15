@@ -15,11 +15,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 export class AppConnectionAccessService {
   constructor(private readonly permissionsService: PermissionsService) {}
 
-  // Every member may use a workspace-shared connection, but creating, repairing
-  // or removing one is an Applications settings action: it decides what
-  // credentials the whole workspace runs on. A private connection stays under
-  // its owner's control, which is what keeps personal email and calendar
-  // accounts manageable without the settings permission.
   async validateCallerCanManageConnection({
     isWorkspaceShared,
     workspaceId,
