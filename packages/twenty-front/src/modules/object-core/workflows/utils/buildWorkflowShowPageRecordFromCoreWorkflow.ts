@@ -16,6 +16,7 @@ export const buildWorkflowShowPageRecordFromCoreWorkflow = (
   return {
     __typename: 'Workflow',
     id: coreWorkflow.workspaceWorkflowId,
+    coreWorkflowId: coreWorkflow.id,
     name: coreWorkflow.name ?? '',
     statuses: coreWorkflow.statuses,
     lastPublishedVersionId: coreWorkflow.lastPublishedVersionId,

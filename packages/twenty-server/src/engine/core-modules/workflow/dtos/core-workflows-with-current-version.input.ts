@@ -12,5 +12,5 @@ export class CoreWorkflowsWithCurrentVersionArgs {
   @IsArray()
   @ArrayMaxSize(MAX_CORE_WORKFLOWS_WITH_CURRENT_VERSION_IDS)
   @IsUUID(undefined, { each: true })
-  workspaceWorkflowIds: string[];
+  coreWorkflowIds: string[];
 }

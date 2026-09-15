@@ -198,14 +198,14 @@ export class CoreWorkflowListService {
     };
   }
 
-  async findManyByWorkspaceWorkflowIds({
+  async findManyByIds({
     workspaceId,
-    workspaceWorkflowIds,
+    coreWorkflowIds,
   }: {
     workspaceId: string;
-    workspaceWorkflowIds: string[];
+    coreWorkflowIds: string[];
   }): Promise<CoreWorkflowDTO[]> {
-    if (workspaceWorkflowIds.length === 0) {
+    if (coreWorkflowIds.length === 0) {
       return [];
     }
 
@@ -221,12 +221,12 @@ export class CoreWorkflowListService {
        JOIN ${schemaName}."workflow" wf
          ON wf."coreWorkflowId" = c.id
          AND wf."deletedAt" IS NULL
-         AND wf.id = ANY($2)
        LEFT JOIN core."workflowVersion" v
          ON v."workflowId" = wf.id AND v."workspaceId" = $1
        WHERE c."workspaceId" = $1
+         AND c.id = ANY($2)
        GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", wf.id`,
-      [workspaceId, workspaceWorkflowIds],
+      [workspaceId, coreWorkflowIds],
     );
 
     return rows.map(toCoreWorkflowDTO);
@@ -239,12 +239,33 @@ export class CoreWorkflowListService {
     workspaceId: string;
     workspaceWorkflowId: string;
   }): Promise<CoreWorkflowDTO | null> {
-    const [coreWorkflow] = await this.findManyByWorkspaceWorkflowIds({
-      workspaceId,
-      workspaceWorkflowIds: [workspaceWorkflowId],
-    });
+    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
 
-    return coreWorkflow ?? null;
+    const rows: CoreWorkflowRow[] = await this.coreDataSource.query(
+      `SELECT
+         c.id,
+         null AS "cursorSortValue",
+         wf.id::text AS "workspaceWorkflowId",
+         ${CORE_WORKFLOW_AGGREGATE_COLUMNS}
+       FROM core."workflow" c
+       JOIN ${schemaName}."workflow" wf
+         ON wf."coreWorkflowId" = c.id
+         AND wf."deletedAt" IS NULL
+         AND wf.id = $2
+       LEFT JOIN core."workflowVersion" v
+         ON v."workflowId" = wf.id AND v."workspaceId" = $1
+       WHERE c."workspaceId" = $1
+       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", wf.id`,
+      [workspaceId, workspaceWorkflowId],
+    );
+
+    const [row] = rows;
+
+    if (!isDefined(row)) {
+      return null;
+    }
+
+    return toCoreWorkflowDTO(row);
   }
 
   private async countByWorkspaceId({

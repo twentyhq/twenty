@@ -1,6 +1,8 @@
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions';
 import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWorkflowsWithCurrentVersions';
@@ -24,14 +26,25 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   selectedWorkflowRecordIds,
   isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
+  const selectedCoreWorkflowIds = commandMenuContextApi.selectedRecords
+    .filter((record) => selectedWorkflowRecordIds.includes(record.id))
+    .map((record) => record.coreWorkflowId)
+    .filter(isNonEmptyString);
+
+  const isCorePointerAvailableForEveryWorkflow =
+    selectedCoreWorkflowIds.length === selectedWorkflowRecordIds.length;
+
   const {
     workflows: coreWorkflowsWithCurrentVersions,
     isCoreEnrichmentLoading,
     isCoreEnrichmentComplete,
-  } = useCoreWorkflowsWithCurrentVersions(selectedWorkflowRecordIds);
+  } = useCoreWorkflowsWithCurrentVersions(
+    isCorePointerAvailableForEveryWorkflow ? selectedCoreWorkflowIds : [],
+  );
 
   const shouldFallBackToWorkspaceWorkflows =
-    !isCoreEnrichmentLoading && !isCoreEnrichmentComplete;
+    !isCorePointerAvailableForEveryWorkflow ||
+    (!isCoreEnrichmentLoading && !isCoreEnrichmentComplete);
 
   const workspaceWorkflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
     shouldFallBackToWorkspaceWorkflows ? selectedWorkflowRecordIds : [],
@@ -44,7 +57,11 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {
       const workflowWithCurrentVersion = workflowsWithCurrentVersions.find(
-        (workflow) => workflow.id === record.id,
+        (workflow) =>
+          workflow.id ===
+          (shouldFallBackToWorkspaceWorkflows
+            ? record.id
+            : record.coreWorkflowId),
       );
 
       if (!isDefined(workflowWithCurrentVersion)) {

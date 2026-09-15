@@ -27,6 +27,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -112,21 +113,22 @@ export class CoreWorkflowResolver {
   @Query(() => [CoreWorkflowWithCurrentVersionDTO])
   async coreWorkflowsWithCurrentVersion(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args() { workspaceWorkflowIds }: CoreWorkflowsWithCurrentVersionArgs,
+    @Args() { coreWorkflowIds }: CoreWorkflowsWithCurrentVersionArgs,
   ): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
-    const [coreWorkflows, currentVersionByWorkspaceWorkflowId] =
-      await Promise.all([
-        this.coreWorkflowListService.findManyByWorkspaceWorkflowIds({
+    const coreWorkflows = await this.coreWorkflowListService.findManyByIds({
+      workspaceId,
+      coreWorkflowIds,
+    });
+
+    const currentVersionByWorkspaceWorkflowId =
+      await this.coreWorkflowVersionListService.findCurrentVersionsByWorkspaceWorkflowIds(
+        {
           workspaceId,
-          workspaceWorkflowIds,
-        }),
-        this.coreWorkflowVersionListService.findCurrentVersionsByWorkspaceWorkflowIds(
-          {
-            workspaceId,
-            workspaceWorkflowIds,
-          },
-        ),
-      ]);
+          workspaceWorkflowIds: coreWorkflows
+            .map((coreWorkflow) => coreWorkflow.workspaceWorkflowId)
+            .filter(isNonEmptyString),
+        },
+      );
 
     return coreWorkflows.map((coreWorkflow) => ({
       ...coreWorkflow,

@@ -15,29 +15,23 @@ const buildCurrentVersion = (
   updatedAt: '2026-01-01T00:00:00.000Z',
 });
 
-const buildCoreWorkflow = ({
-  currentVersion,
-  workspaceWorkflowId = 'workspace-workflow-1',
-}: {
-  currentVersion: CoreWorkflowCurrentVersion | null;
-  workspaceWorkflowId?: string | null;
-}) => ({
+const buildCoreWorkflow = (
+  currentVersion: CoreWorkflowCurrentVersion | null,
+) => ({
+  id: 'core-workflow-1',
   statuses: [],
   lastPublishedVersionId: null,
-  workspaceWorkflowId,
   currentVersion,
 });
 
 describe('buildCommandMenuWorkflowsFromCore', () => {
-  it('keys the workflow and its current version on workspace ids', () => {
+  it('keys the workflow on its core id and the current version on workspace ids', () => {
     const result = buildCommandMenuWorkflowsFromCore([
-      buildCoreWorkflow({
-        currentVersion: buildCurrentVersion('workspace-version-1'),
-      }),
+      buildCoreWorkflow(buildCurrentVersion('workspace-version-1')),
     ]);
 
     expect(result).toHaveLength(1);
-    expect(result[0]?.id).toBe('workspace-workflow-1');
+    expect(result[0]?.id).toBe('core-workflow-1');
     expect(result[0]?.currentVersion.id).toBe('workspace-version-1');
     expect(result[0]?.currentVersion.workflowId).toBe('workspace-workflow-1');
     expect(result[0]?.currentVersion.trigger).toEqual({ type: 'MANUAL' });
@@ -45,27 +39,14 @@ describe('buildCommandMenuWorkflowsFromCore', () => {
 
   it('omits a workflow that has no current version', () => {
     expect(
-      buildCommandMenuWorkflowsFromCore([
-        buildCoreWorkflow({ currentVersion: null }),
-      ]),
+      buildCommandMenuWorkflowsFromCore([buildCoreWorkflow(null)]),
     ).toEqual([]);
   });
 
   it('omits a workflow whose current version is not mirrored', () => {
     expect(
       buildCommandMenuWorkflowsFromCore([
-        buildCoreWorkflow({ currentVersion: buildCurrentVersion(null) }),
-      ]),
-    ).toEqual([]);
-  });
-
-  it('omits a workflow with no workspace counterpart', () => {
-    expect(
-      buildCommandMenuWorkflowsFromCore([
-        buildCoreWorkflow({
-          currentVersion: buildCurrentVersion('workspace-version-1'),
-          workspaceWorkflowId: null,
-        }),
+        buildCoreWorkflow(buildCurrentVersion(null)),
       ]),
     ).toEqual([]);
   });

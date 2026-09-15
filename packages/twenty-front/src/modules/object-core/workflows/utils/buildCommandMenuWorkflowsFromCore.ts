@@ -7,10 +7,9 @@ export const buildCommandMenuWorkflowsFromCore = (
   coreWorkflows: CoreWorkflowWithCurrentVersion[],
 ): CommandMenuWorkflow[] =>
   coreWorkflows.flatMap((coreWorkflow) => {
-    const { workspaceWorkflowId, currentVersion } = coreWorkflow;
+    const { currentVersion } = coreWorkflow;
 
     if (
-      !isDefined(workspaceWorkflowId) ||
       !isDefined(currentVersion) ||
       !isDefined(currentVersion.workspaceWorkflowVersionId)
     ) {
@@ -19,7 +18,7 @@ export const buildCommandMenuWorkflowsFromCore = (
 
     return [
       {
-        id: workspaceWorkflowId,
+        id: coreWorkflow.id,
         statuses: coreWorkflow.statuses,
         lastPublishedVersionId: coreWorkflow.lastPublishedVersionId ?? null,
         currentVersion: {
@@ -28,7 +27,7 @@ export const buildCommandMenuWorkflowsFromCore = (
           name: currentVersion.label,
           createdAt: currentVersion.createdAt,
           updatedAt: currentVersion.updatedAt,
-          workflowId: workspaceWorkflowId,
+          workflowId: currentVersion.workspaceWorkflowId,
           trigger: currentVersion.trigger ?? null,
           steps: currentVersion.steps ?? null,
           status: currentVersion.status,

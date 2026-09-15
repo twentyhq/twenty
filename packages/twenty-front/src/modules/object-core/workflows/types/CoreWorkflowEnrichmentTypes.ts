@@ -17,7 +17,7 @@ export type CoreWorkflowCurrentVersion = Pick<
 
 export type CoreWorkflowWithCurrentVersion = Pick<
   CoreWorkflowWithCurrentVersionQueryNode,
-  'statuses' | 'lastPublishedVersionId' | 'workspaceWorkflowId'
+  'id' | 'statuses' | 'lastPublishedVersionId'
 > & {
   currentVersion?: CoreWorkflowCurrentVersion | null;
 };

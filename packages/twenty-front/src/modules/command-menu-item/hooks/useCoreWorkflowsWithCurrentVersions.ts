@@ -8,7 +8,7 @@ import { buildCommandMenuWorkflowsFromCore } from '@/object-core/workflows/utils
 import { GetCoreWorkflowsWithCurrentVersionDocument } from '~/generated/graphql';
 
 export const useCoreWorkflowsWithCurrentVersions = (
-  workflowIds: string[],
+  coreWorkflowIds: string[],
 ): {
   workflows: CommandMenuWorkflow[];
   isCoreEnrichmentLoading: boolean;
@@ -21,8 +21,8 @@ export const useCoreWorkflowsWithCurrentVersions = (
     {
       client: apolloCoreClient,
       fetchPolicy: 'cache-and-network',
-      variables: { workspaceWorkflowIds: workflowIds },
-      skip: workflowIds.length === 0,
+      variables: { coreWorkflowIds },
+      skip: coreWorkflowIds.length === 0,
     },
   );
 
@@ -34,12 +34,12 @@ export const useCoreWorkflowsWithCurrentVersions = (
     [data?.coreWorkflowsWithCurrentVersion],
   );
 
-  const isCoreEnrichmentLoading = workflowIds.length > 0 && loading;
+  const isCoreEnrichmentLoading = coreWorkflowIds.length > 0 && loading;
 
   const isCoreEnrichmentComplete =
     !isDefined(error) &&
     new Set(workflows.map((workflow) => workflow.id)).size ===
-      new Set(workflowIds).size;
+      new Set(coreWorkflowIds).size;
 
   return { workflows, isCoreEnrichmentLoading, isCoreEnrichmentComplete };
 };
