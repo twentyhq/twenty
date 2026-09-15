@@ -10788,7 +10788,7 @@ msgstr "Khóa API này đã bị thu hồi và không thể sử dụng nữa."
 #. js-lingui-id: SbhNwj
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
-msgstr ""
+msgstr "Khóa API này đã bị thu hồi và không thể kích hoạt lại. Vui lòng tạo khóa API mới."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
