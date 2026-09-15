@@ -4,6 +4,7 @@ import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
+import { SELF_ASSIGNMENT } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
@@ -12,6 +13,8 @@ import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspa
 const WORKSPACE_ID = 'workspace-id';
 const ACTOR_USER_WORKSPACE_ID = 'actor-user-workspace-id';
 const INBOX_ITEM_ID = 'inbox-item-id';
+const OTHER_USER_WORKSPACE_ID = 'other-user-workspace-id';
+const QUEUE_ID = 'queue-id';
 const NOW = new Date('2026-08-07T10:00:00.000Z');
 
 const APPROVAL_TYPE = {
@@ -402,6 +405,75 @@ describe('InboxTransitionService', () => {
         expect.objectContaining({
           assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
         }),
+      );
+    });
+  });
+
+  describe('handing work to someone else', () => {
+    it('clears the previous holder snooze so the item is not invisible to the recipient', async () => {
+      const snoozedItem = buildInboxItem({
+        assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        queueId: QUEUE_ID,
+        clearedAt: new Date('2026-01-01T00:00:00.000Z'),
+        clearedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        resurfaceAt: new Date('2099-01-01T00:00:00.000Z'),
+        outcome: InboxItemOutcome.DONE,
+      });
+
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(snoozedItem);
+      inboxItemRepository.findOne.mockResolvedValue(snoozedItem);
+      userWorkspaceService.findById.mockResolvedValue({
+        id: OTHER_USER_WORKSPACE_ID,
+        workspaceId: WORKSPACE_ID,
+      });
+
+      await service.transition({
+        inboxItemId: INBOX_ITEM_ID,
+        workspaceId: WORKSPACE_ID,
+        actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        accessibleQueueIds: [QUEUE_ID],
+        transition: {
+          kind: 'ASSIGN',
+          toUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
+        },
+      });
+
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.anything(),
+        expect.objectContaining({
+          assigneeUserWorkspaceId: OTHER_USER_WORKSPACE_ID,
+          readAt: null,
+          clearedAt: null,
+          clearedByUserWorkspaceId: null,
+          resurfaceAt: null,
+          outcome: null,
+        }),
+      );
+    });
+
+    it('leaves the clear alone when the assignee is not actually changing', async () => {
+      const clearedItem = buildInboxItem({
+        assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        queueId: QUEUE_ID,
+        clearedAt: new Date('2026-01-01T00:00:00.000Z'),
+      });
+
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(clearedItem);
+      inboxItemRepository.findOne.mockResolvedValue(clearedItem);
+
+      await service.transition({
+        inboxItemId: INBOX_ITEM_ID,
+        workspaceId: WORKSPACE_ID,
+        actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        accessibleQueueIds: [QUEUE_ID],
+        transition: { kind: 'ASSIGN', toUserWorkspaceId: SELF_ASSIGNMENT },
+      });
+
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.anything(),
+        expect.not.objectContaining({ clearedAt: null }),
       );
     });
   });

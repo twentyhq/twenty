@@ -192,13 +192,20 @@ export class InboxTransitionService {
             : transition.toUserWorkspaceId,
         );
 
-        return {
-          assigneeUserWorkspaceId: assignee,
-          // Handing work to someone is not something they have seen yet.
-          ...(assignee === inboxItem.assigneeUserWorkspaceId
-            ? {}
-            : { readAt: null }),
-        };
+        // Handing work over is a fresh start for whoever receives it: the
+        // previous holder's snooze or dismissal is theirs, not the new
+        // assignee's, and inheriting it would land the item straight in the
+        // recipient's Done where they would never see it.
+        return assignee === inboxItem.assigneeUserWorkspaceId
+          ? { assigneeUserWorkspaceId: assignee }
+          : {
+              assigneeUserWorkspaceId: assignee,
+              readAt: null,
+              clearedAt: null,
+              clearedByUserWorkspaceId: null,
+              resurfaceAt: null,
+              outcome: null,
+            };
       }
     }
   }
