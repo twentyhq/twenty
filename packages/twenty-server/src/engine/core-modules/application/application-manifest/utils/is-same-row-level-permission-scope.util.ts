@@ -5,10 +5,13 @@ export type RowLevelPermissionScope = Pick<
   'roleUniversalIdentifier' | 'objectMetadataUniversalIdentifier'
 >;
 
-export const isSameRowLevelPermissionScope = (
-  scope: RowLevelPermissionScope,
-  otherScope: RowLevelPermissionScope,
-): boolean =>
+export const isSameRowLevelPermissionScope = ({
+  scope,
+  otherScope,
+}: {
+  scope: RowLevelPermissionScope;
+  otherScope: RowLevelPermissionScope;
+}): boolean =>
   scope.roleUniversalIdentifier === otherScope.roleUniversalIdentifier &&
   scope.objectMetadataUniversalIdentifier ===
     otherScope.objectMetadataUniversalIdentifier;
