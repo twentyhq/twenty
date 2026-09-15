@@ -16,7 +16,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-41:seed-object-initial-view',
   description:
-    'Seed one regular table view per object alongside its engine-owned INDEX view. The initial view copies the INDEX view field layout once and is written with isSystemSideEffect: false under the workspace-custom application, so the user owns it and no application sync reaps it. The initial view stays hidden from every read path until IS_INITIAL_OBJECT_VIEW_ENABLED is on for the workspace, so this backfill can run long before the client is ready for it. Idempotent per entity on deterministic identifiers: the initial view and each copied view field are gated independently, so a retry after a partial failure creates only what is missing. The command owns its orchestration and shares only the pure computation util with the provisioning paths (object creation and twenty-standard sync), so a workspace created after this release is seeded on the spot without the backfill running again.',
+    'Seed one user-owned initial table view per object by copying its INDEX view field layout, hidden behind IS_INITIAL_OBJECT_VIEW_ENABLED and idempotent on deterministic identifiers.',
 })
 export class SeedObjectInitialViewCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -60,14 +60,14 @@ export class SeedObjectInitialViewCommand extends ProvisionedWorkspaceCommandRun
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would seed ${totalCreateCount} default-view entities for workspace ${workspaceId}`,
+        `[DRY RUN] Would seed ${totalCreateCount} initial-view entities for workspace ${workspaceId}`,
       );
 
       return;
     }
 
     if (totalCreateCount === 0) {
-      this.logger.log(`No default view to seed for workspace ${workspaceId}`);
+      this.logger.log(`No initial view to seed for workspace ${workspaceId}`);
 
       return;
     }
@@ -102,7 +102,7 @@ export class SeedObjectInitialViewCommand extends ProvisionedWorkspaceCommandRun
     }
 
     this.logger.log(
-      `Initial ${totalCreateCount} default-view entities for workspace ${workspaceId}`,
+      `Seeded ${totalCreateCount} initial-view entities for workspace ${workspaceId}`,
     );
   }
 }

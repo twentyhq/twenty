@@ -20,7 +20,7 @@ const AGE_INDEX_VIEW_FIELD_UNIVERSAL_IDENTIFIER =
 
 const INITIAL_VIEW_UNIVERSAL_IDENTIFIER =
   getInitialObjectViewUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier:
+    viewApplicationUniversalIdentifier:
       WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     objectUniversalIdentifier: PET_OBJECT_UNIVERSAL_IDENTIFIER,
   });
@@ -29,6 +29,7 @@ type ObjectFixture = {
   universalIdentifier: string;
   labelPlural: string;
   isRemote: boolean;
+  isSystem: boolean;
   viewUniversalIdentifiers: string[];
 };
 
@@ -61,6 +62,7 @@ const PET_OBJECT: ObjectFixture = {
   universalIdentifier: PET_OBJECT_UNIVERSAL_IDENTIFIER,
   labelPlural: 'Pets',
   isRemote: false,
+  isSystem: false,
   viewUniversalIdentifiers: [PET_INDEX_VIEW_UNIVERSAL_IDENTIFIER],
 };
 
@@ -260,26 +262,34 @@ describe('computeMissingInitialObjectViewOperations', () => {
     expect(viewFieldsToCreate).toHaveLength(0);
   });
 
-  it('skips objects without a live INDEX view and remote objects', () => {
+  it('skips objects without a live INDEX view, remote objects and system objects', () => {
     const remoteObject: ObjectFixture = {
       universalIdentifier: '5f4a1c1e-0000-4000-8000-000000000008',
       labelPlural: 'Remotes',
       isRemote: true,
+      isSystem: false,
       viewUniversalIdentifiers: [],
     };
     const objectWithoutIndexView: ObjectFixture = {
       universalIdentifier: '5f4a1c1e-0000-4000-8000-000000000009',
       labelPlural: 'Orphans',
       isRemote: false,
+      isSystem: false,
       viewUniversalIdentifiers: [],
+    };
+    const systemObject: ObjectFixture = {
+      ...PET_OBJECT,
+      universalIdentifier: '5f4a1c1e-0000-4000-8000-000000000010',
+      labelPlural: 'Systems',
+      isSystem: true,
     };
 
     const { viewsToCreate, viewFieldsToCreate } =
       computeMissingInitialObjectViewOperations({
         ...buildMaps({
-          objects: [remoteObject, objectWithoutIndexView],
-          views: [],
-          viewFields: [],
+          objects: [remoteObject, objectWithoutIndexView, systemObject],
+          views: [PET_INDEX_VIEW],
+          viewFields: [NAME_INDEX_VIEW_FIELD, AGE_INDEX_VIEW_FIELD],
         }),
         initialViewApplicationUniversalIdentifier:
           WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,

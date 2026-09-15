@@ -8,7 +8,7 @@ import { ViewKey, ViewType } from 'twenty-shared/types';
 
 import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
-import { buildBaseUniversalFlatView } from 'src/engine/metadata-modules/metadata-side-effect/handlers/utils/build-base-universal-flat-view.util';
+import { buildBaseUniversalFlatView } from 'src/engine/metadata-modules/view/utils/build-base-universal-flat-view.util';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 type SystemViewObjectMetadata = Pick<

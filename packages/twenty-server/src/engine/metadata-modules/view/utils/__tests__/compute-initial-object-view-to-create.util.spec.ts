@@ -38,8 +38,7 @@ describe('computeInitialObjectViewToCreate', () => {
 
     expect(initialView.universalIdentifier).toBe(
       getInitialObjectViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier:
-          applicationUniversalIdentifier,
+        viewApplicationUniversalIdentifier: applicationUniversalIdentifier,
         objectUniversalIdentifier: objectMetadata.universalIdentifier,
       }),
     );

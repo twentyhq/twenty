@@ -104,7 +104,7 @@ export class TwentyStandardApplicationService {
       );
     }
 
-    await this.seedStandardObjectDefaultViewsOrThrow({
+    await this.seedStandardObjectInitialViewsOrThrow({
       workspaceId,
       standardObjectMetadataUniversalIdentifiers: new Set(
         Object.keys(
@@ -115,7 +115,7 @@ export class TwentyStandardApplicationService {
     });
   }
 
-  private async seedStandardObjectDefaultViewsOrThrow({
+  private async seedStandardObjectInitialViewsOrThrow({
     workspaceId,
     standardObjectMetadataUniversalIdentifiers,
   }: {
