@@ -1,7 +1,6 @@
-import { useTheme } from 'twenty-ui/theme-constants';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
+import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { useIcons } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
@@ -16,7 +15,6 @@ import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 export const SidePanelEditFolderPickerSubPage = () => {
   const { t } = useLingui();
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const [searchValue, setSearchValue] = useState('');
   const { foldersToShow, includeNoFolderOption, handleSelectFolder } =
@@ -73,11 +71,10 @@ export const SidePanelEditFolderPickerSubPage = () => {
               >
                 <CommandMenuItem
                   LeftComponent={
-                    <FolderIcon
+                    <TintedIconTile
+                      Icon={FolderIcon}
                       size={16}
-                      stroke={theme.icon.stroke.md}
-                      color={getIconTileColorShades(folderColor).iconColor}
-                      style={{ flexShrink: 0 }}
+                      color={folderColor}
                     />
                   }
                   label={folder.name}
