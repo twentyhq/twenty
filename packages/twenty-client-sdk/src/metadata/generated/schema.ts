@@ -1596,6 +1596,7 @@ export interface ApplicationConnectedAccountDTO {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     connectionParameters?: PublicImapSmtpCaldavConnectionParameters
+    /** @deprecated Ownership no longer gates connection actions, every application admin manages a workspace-shared connection */
     isOwnedByCurrentUser: Scalars['Boolean']
     __typename: 'ApplicationConnectedAccountDTO'
 }
@@ -5225,6 +5226,7 @@ export interface ApplicationConnectedAccountDTOGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     connectionParameters?: PublicImapSmtpCaldavConnectionParametersGenqlSelection
+    /** @deprecated Ownership no longer gates connection actions, every application admin manages a workspace-shared connection */
     isOwnedByCurrentUser?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
