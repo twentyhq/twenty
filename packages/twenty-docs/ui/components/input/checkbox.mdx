@@ -18,7 +18,7 @@ Use `Checkbox` when each option can be selected independently. For a mutually ex
 ## Uncontrolled state
 
 ```tsx
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 export const EmailPreference = () => (
   <label>
@@ -34,7 +34,7 @@ A checked, named checkbox contributes its value to a form. Set `uncheckedValue` 
 
 ```tsx
 import { useState } from 'react';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 export const ColumnSelection = () => {
   const [showEmail, setShowEmail] = useState(true);

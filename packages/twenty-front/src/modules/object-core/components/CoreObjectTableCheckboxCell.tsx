@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   align-items: center;

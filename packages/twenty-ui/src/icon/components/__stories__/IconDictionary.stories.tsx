@@ -7,8 +7,8 @@ import {
 } from '@ui/icon/constants/TwentyIconDictionary';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
-import { H2Title } from '@ui/typography/H2Title/H2Title';
-import { Text } from '@ui/typography/Text/Text';
+import { H2Title } from '@ui/primitives/typography/H2Title/H2Title';
+import { Text } from '@ui/primitives/typography/Text/Text';
 
 import styles from './IconDictionary.stories.module.scss';
 

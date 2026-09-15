@@ -10,9 +10,9 @@ import { t } from '@lingui/core/macro';
 import { useCallback, useContext } from 'react';
 import { type ExtendedFileUIPart } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AvatarOrIcon, Chip } from 'twenty-ui/data-display';
+import { AvatarOrIcon, Chip } from 'twenty-ui/primitives/data-display';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/feedback';
+import { Loader } from 'twenty-ui/primitives/feedback';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 const StyledClickableContainer = styled.div<{ clickable: boolean }>`
