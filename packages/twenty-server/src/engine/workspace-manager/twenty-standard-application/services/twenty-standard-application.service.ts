@@ -182,7 +182,7 @@ export class TwentyStandardApplicationService {
     if (result.status === 'fail') {
       throw new WorkspaceMigrationBuilderException(
         result,
-        `Multiple validation errors occurred while seeding default views for workspace ${workspaceId}`,
+        `Multiple validation errors occurred while seeding initial object views for workspace ${workspaceId}`,
       );
     }
   }
