@@ -6,6 +6,7 @@ import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
+import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
@@ -27,6 +28,7 @@ import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-t
     FeatureFlagModule,
     LogicFunctionModule,
     WorkflowVersionCoreModule,
+    WorkflowCoreModule,
     WorkflowVersionValidationModule,
   ],
   providers: [WorkflowTriggerWorkspaceService, WorkflowTriggerJob],

@@ -60,6 +60,7 @@ type CreateCompleteWorkflowToolDeps = Pick<
   | 'workspaceOrmManager'
   | 'recordPositionService'
   | 'workflowVersionCoreSyncService'
+  | 'workflowCoreSyncService'
 >;
 
 type CreateCompleteWorkflowToolContext = WorkflowToolContext & {
@@ -324,4 +325,9 @@ const updateWorkflowStatus = async ({
       lastPublishedVersionId: workflowVersionId,
     });
   }, authContext);
+
+  await deps.workflowCoreSyncService.mirrorWorkflowById(
+    context.workspaceId,
+    workflowId,
+  );
 };

@@ -167,6 +167,28 @@ export class WorkflowCoreSyncService {
     );
   }
 
+  async mirrorWorkflowById(
+    workspaceId: string,
+    workflowId: string,
+  ): Promise<void> {
+    const workflow = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        return await this.workspaceOrmManager
+          .getRepository<WorkflowWorkspaceEntity>('workflow', {
+            shouldBypassPermissionChecks: true,
+          })
+          .findOne({ where: { id: workflowId } });
+      },
+      buildSystemAuthContext(workspaceId),
+    );
+
+    if (!isDefined(workflow)) {
+      return;
+    }
+
+    await this.upsertToCore(workspaceId, [workflow]);
+  }
+
   async deleteFromCore(
     workspaceId: string,
     coreWorkflowIds: string[],
