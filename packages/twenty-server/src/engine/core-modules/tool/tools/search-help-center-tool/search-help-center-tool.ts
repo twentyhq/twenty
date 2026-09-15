@@ -4,11 +4,19 @@ import { isAxiosError } from 'axios';
 
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { SearchHelpCenterInputZodSchema } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool.schema';
+import { buildHelpCenterErrorDetail } from 'src/engine/core-modules/tool/tools/search-help-center-tool/utils/build-help-center-error-detail.util';
+import { extractHelpCenterResults } from 'src/engine/core-modules/tool/tools/search-help-center-tool/utils/extract-help-center-results.util';
 import { type ToolInput } from 'src/engine/core-modules/tool/types/tool-input.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+
+// Without an API key the tool falls back to a search proxy shared by every
+// self-hosted instance, which rate-limits and resets connections under load.
+// An unbounded request there leaves the agent waiting indefinitely.
+const HELP_CENTER_REQUEST_TIMEOUT_MS = 10_000;
+const HELP_CENTER_REQUEST_RETRIES = 2;
 
 @Injectable()
 export class SearchHelpCenterTool implements Tool {
@@ -43,7 +51,11 @@ export class SearchHelpCenterTool implements Tool {
         ...(useDirectApi && { Authorization: `Bearer ${MINTLIFY_API_KEY}` }),
       };
 
-      const httpClient = this.secureHttpClientService.getHttpClient();
+      const httpClient = this.secureHttpClientService.getHttpClient({
+        timeout: HELP_CENTER_REQUEST_TIMEOUT_MS,
+        retries: HELP_CENTER_REQUEST_RETRIES,
+        shouldResetTimeout: true,
+      });
 
       const response = await httpClient.post(
         endpoint,
@@ -51,7 +63,18 @@ export class SearchHelpCenterTool implements Tool {
         { headers },
       );
 
-      const results = response.data;
+      const extraction = extractHelpCenterResults(response.data);
+
+      if (!extraction.isReadable) {
+        return {
+          success: false,
+          message: `Failed to search help center for "${query}"`,
+          error:
+            'Help center search returned a response in an unrecognized shape',
+        };
+      }
+
+      const { results } = extraction;
 
       if (results.length === 0) {
         return {
@@ -68,7 +91,7 @@ export class SearchHelpCenterTool implements Tool {
       };
     } catch (error) {
       const errorDetail = isAxiosError(error)
-        ? error.response?.data?.message || error.message
+        ? buildHelpCenterErrorDetail(error)
         : error instanceof Error
           ? error.message
           : 'Help center search failed';
