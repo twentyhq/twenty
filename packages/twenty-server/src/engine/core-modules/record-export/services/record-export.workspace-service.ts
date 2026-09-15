@@ -1,3 +1,4 @@
+import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import {
   BadRequestException,
   Injectable,
@@ -23,6 +24,7 @@ import {
   RECORD_EXPORT_MAX_DURATION_MS,
   RECORD_EXPORT_CONNECTION_TTL_MS,
   RECORD_EXPORT_PROGRESS_INTERVAL_MS,
+  RECORD_EXPORT_MISSING_JOB_TIMEOUT_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
@@ -45,10 +47,13 @@ export class RecordExportWorkspaceService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async create(
-    parameters: RecordExportParameters,
-    authContext: WorkspaceAuthContext,
-  ): Promise<RecordExport> {
+  async create({
+    parameters,
+    authContext,
+  }: {
+    parameters: RecordExportParameters;
+    authContext: WorkspaceAuthContext;
+  }): Promise<RecordExport> {
     const requester =
       await this.recordExportQueryWorkspaceService.assertCanExport(authContext);
     const context = await this.recordExportQueryWorkspaceService.buildContext(
@@ -80,7 +85,10 @@ export class RecordExportWorkspaceService {
         },
       );
       if (!isDefined(cleanupJobId))
-        throw new Error('Export cleanup could not be queued');
+        throw new RecordExportException(
+          'Export cleanup could not be queued',
+          'QUEUE_UNAVAILABLE',
+        );
 
       const jobId = await this.messageQueueService.add(
         'GenerateRecordExportJob',
@@ -89,36 +97,42 @@ export class RecordExportWorkspaceService {
       );
 
       if (!isDefined(jobId)) {
-        throw new Error('The export could not be queued');
+        throw new RecordExportException(
+          'The export could not be queued',
+          'QUEUE_UNAVAILABLE',
+        );
       }
 
-      await this.recordExportCacheService.update(
+      await this.recordExportCacheService.update({
         workspaceId,
-        recordExport.id,
-        {},
-        { jobId },
-      );
+        id: recordExport.id,
+        condition: {},
+        changes: { jobId },
+      });
     } catch (error) {
-      await this.recordExportCacheService.update(
+      await this.recordExportCacheService.update({
         workspaceId,
-        recordExport.id,
-        { statuses: [RecordExportStatus.QUEUED] },
-        {
+        id: recordExport.id,
+        condition: { statuses: [RecordExportStatus.QUEUED] },
+        changes: {
           status: RecordExportStatus.FAILED,
           errorMessage: t`The export could not be queued. Please try again.`,
         },
-      );
+      });
       throw error;
     }
 
-    return this.findOrThrow(workspaceId, recordExport.id);
+    return this.findOrThrow({ workspaceId, id: recordExport.id });
   }
 
-  async stream(
-    parameters: RecordExportParameters,
-    authContext: WorkspaceAuthContext,
-  ): Promise<AsyncIterableIterator<RecordExportDTO>> {
-    const recordExport = await this.create(parameters, authContext);
+  async stream({
+    parameters,
+    authContext,
+  }: {
+    parameters: RecordExportParameters;
+    authContext: WorkspaceAuthContext;
+  }): Promise<AsyncIterableIterator<RecordExportDTO>> {
+    const recordExport = await this.create({ parameters, authContext });
     const workspaceId = recordExport.workspaceId;
     const abortController = new AbortController();
     const service = this;
@@ -127,18 +141,18 @@ export class RecordExportWorkspaceService {
     const close = () => {
       abortController.abort();
       if (!downloadReady)
-        cleanup ??= service.cancel(workspaceId, recordExport.id);
+        cleanup ??= service.cancel({ workspaceId, id: recordExport.id });
       return cleanup ?? Promise.resolve();
     };
 
     async function* events(): AsyncGenerator<RecordExportDTO> {
       try {
         while (!abortController.signal.aborted) {
-          const current = await service.recordExportCacheService.findOne(
+          const current = await service.recordExportCacheService.findOne({
             workspaceId,
-            recordExport.id,
-            true,
-          );
+            id: recordExport.id,
+            keepAlive: true,
+          });
           if (!isDefined(current))
             throw new BadRequestException(
               t`The export was interrupted. Please try again.`,
@@ -146,10 +160,10 @@ export class RecordExportWorkspaceService {
           const updated = await service.reconcile(current);
           if (abortController.signal.aborted) return;
           if (updated.status === RecordExportStatus.COMPLETED) {
-            const downloadUrl = await service.getDownloadUrl(
-              updated.id,
+            const downloadUrl = await service.getDownloadUrl({
+              id: updated.id,
               authContext,
-            );
+            });
             if (abortController.signal.aborted) return;
             downloadReady = true;
             yield { ...updated, downloadUrl };
@@ -192,19 +206,31 @@ export class RecordExportWorkspaceService {
     };
   }
 
-  async cancel(workspaceId: string, id: string): Promise<void> {
-    await this.recordExportCacheService.delete(workspaceId, id);
+  async cancel({
+    workspaceId,
+    id,
+  }: {
+    workspaceId: string;
+    id: string;
+  }): Promise<void> {
+    await this.recordExportCacheService.delete({ workspaceId, id });
     await this.fileStorageService.deleteFolderObjects({
-      ...this.getFileResource(workspaceId, id),
+      ...this.getFileResource({ workspaceId, resourcePath: id }),
       folderPath: id,
     });
   }
 
-  async findOrThrow(workspaceId: string, id: string): Promise<RecordExport> {
-    const recordExport = await this.recordExportCacheService.findOne(
+  async findOrThrow({
+    workspaceId,
+    id,
+  }: {
+    workspaceId: string;
+    id: string;
+  }): Promise<RecordExport> {
+    const recordExport = await this.recordExportCacheService.findOne({
       workspaceId,
       id,
-    );
+    });
 
     if (!isDefined(recordExport)) {
       throw new NotFoundException(t`Export not found.`);
@@ -233,38 +259,44 @@ export class RecordExportWorkspaceService {
     if (
       job?.state === 'failed' ||
       job?.state === 'completed' ||
-      (!isDefined(job) && age > 60_000) ||
+      (!isDefined(job) && age > RECORD_EXPORT_MISSING_JOB_TIMEOUT_MS) ||
       age > RECORD_EXPORT_MAX_DURATION_MS
     ) {
-      await this.recordExportCacheService.update(
-        recordExport.workspaceId,
-        recordExport.id,
-        {
+      await this.recordExportCacheService.update({
+        workspaceId: recordExport.workspaceId,
+        id: recordExport.id,
+        condition: {
           statuses: [RecordExportStatus.QUEUED, RecordExportStatus.PROCESSING],
           attemptId: recordExport.attemptId,
         },
-        {
+        changes: {
           status: RecordExportStatus.FAILED,
           errorMessage: t`The export was interrupted. Please try again.`,
         },
-      );
-      const updated = await this.findOrThrow(
-        recordExport.workspaceId,
-        recordExport.id,
-      );
+      });
+      const updated = await this.findOrThrow({
+        workspaceId: recordExport.workspaceId,
+        id: recordExport.id,
+      });
       return updated;
     }
 
     return recordExport;
   }
 
-  async getDownloadUrl(
-    id: string,
-    authContext: WorkspaceAuthContext,
-  ): Promise<string> {
+  async getDownloadUrl({
+    id,
+    authContext,
+  }: {
+    id: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<string> {
     const requester =
       await this.recordExportQueryWorkspaceService.assertCanExport(authContext);
-    const recordExport = await this.findOrThrow(requester.workspace.id, id);
+    const recordExport = await this.findOrThrow({
+      workspaceId: requester.workspace.id,
+      id,
+    });
 
     if (recordExport.userWorkspaceId !== requester.userWorkspaceId) {
       throw new NotFoundException(t`Export not found.`);
@@ -308,7 +340,13 @@ export class RecordExportWorkspaceService {
     }
   }
 
-  getFileResource(workspaceId: string, resourcePath: string) {
+  getFileResource({
+    workspaceId,
+    resourcePath,
+  }: {
+    workspaceId: string;
+    resourcePath: string;
+  }) {
     return {
       workspaceId,
       applicationUniversalIdentifier:

@@ -1,6 +1,9 @@
+import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { Logger } from '@nestjs/common';
 
-import { t } from '@lingui/core/macro';
+import { msg } from '@lingui/core/macro';
+import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { Readable } from 'stream';
 import {
   formatValueForCSV,
@@ -18,6 +21,7 @@ import {
   RECORD_EXPORT_DOWNLOAD_TTL_MS,
   RECORD_EXPORT_MAX_FILE_BYTES,
   RECORD_EXPORT_PROGRESS_INTERVAL_MS,
+  RECORD_EXPORT_REQUESTER_REFRESH_INTERVAL_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
 import { RecordExportQueryWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-query.workspace-service';
@@ -39,6 +43,7 @@ export class GenerateRecordExportJob {
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
     private readonly recordExportQueryWorkspaceService: RecordExportQueryWorkspaceService,
     private readonly fileStorageService: FileStorageService,
+    private readonly i18nService: I18nService,
   ) {}
 
   @Process(GenerateRecordExportJob.name)
@@ -46,44 +51,50 @@ export class GenerateRecordExportJob {
     workspaceId,
     recordExportId,
   }: GenerateRecordExportJobData): Promise<void> {
-    const recordExport = await this.recordExportWorkspaceService.findOrThrow(
+    const recordExport = await this.recordExportWorkspaceService.findOrThrow({
       workspaceId,
-      recordExportId,
-    );
+      id: recordExportId,
+    });
     const attemptId = v4();
     const filePath = `${recordExport.id}/${attemptId}.csv`;
-    const claimed = await this.recordExportCacheService.update(
+    const claimed = await this.recordExportCacheService.update({
       workspaceId,
-      recordExport.id,
-      {
+      id: recordExport.id,
+      condition: {
         statuses: [RecordExportStatus.QUEUED, RecordExportStatus.PROCESSING],
       },
-      {
+      changes: {
         attemptId,
         status: RecordExportStatus.PROCESSING,
         processedRecordCount: 0,
         errorMessage: null,
       },
-    );
+    });
 
     if (!claimed) return;
 
     let processedRecordCount = 0;
     let stream: Readable | undefined;
+    let locale: keyof typeof APP_LOCALES = SOURCE_LOCALE;
 
     try {
       const remainingTime =
         RECORD_EXPORT_MAX_DURATION_MS -
         (Date.now() - recordExport.createdAt.getTime());
       if (remainingTime <= 0)
-        throw new Error(
-          t`The export took too long. Please try exporting fewer records.`,
+        throw new RecordExportException(
+          'Export duration limit exceeded',
+          'DURATION_LIMIT_EXCEEDED',
+          {
+            userFriendlyMessage: msg`The export took too long. Please try exporting fewer records.`,
+          },
         );
 
       const requester =
         await this.recordExportQueryWorkspaceService.resolveRequester(
           recordExport,
         );
+      locale = requester.workspaceMember.locale;
       const context = await this.recordExportQueryWorkspaceService.buildContext(
         recordExport.parameters,
         requester,
@@ -92,19 +103,24 @@ export class GenerateRecordExportJob {
         this.recordExportQueryWorkspaceService;
       const recordExportCacheService = this.recordExportCacheService;
       let lastProgressAt = 0;
+      let lastRequesterRefreshAt = Date.now();
       let bytes = 0;
 
       const updateProgress = async () => {
-        const result = await recordExportCacheService.update(
+        const result = await recordExportCacheService.update({
           workspaceId,
-          recordExport.id,
-          {
+          id: recordExport.id,
+          condition: {
             attemptId,
             statuses: [RecordExportStatus.PROCESSING],
           },
-          { processedRecordCount },
-        );
-        if (!result) throw new Error('Export attempt was superseded');
+          changes: { processedRecordCount },
+        });
+        if (!result)
+          throw new RecordExportException(
+            'Export attempt was superseded',
+            'ATTEMPT_SUPERSEDED',
+          );
         lastProgressAt = Date.now();
       };
 
@@ -114,14 +130,17 @@ export class GenerateRecordExportJob {
           context,
         );
       if (
-        !(await recordExportCacheService.update(
+        !(await recordExportCacheService.update({
           workspaceId,
-          recordExport.id,
-          { attemptId, statuses: [RecordExportStatus.PROCESSING] },
-          { totalRecordCount },
-        ))
+          id: recordExport.id,
+          condition: { attemptId, statuses: [RecordExportStatus.PROCESSING] },
+          changes: { totalRecordCount },
+        }))
       )
-        throw new Error('Export attempt was superseded');
+        throw new RecordExportException(
+          'Export attempt was superseded',
+          'ATTEMPT_SUPERSEDED',
+        );
       await updateProgress();
 
       async function* generateCsv() {
@@ -139,10 +158,20 @@ export class GenerateRecordExportJob {
 
         do {
           await updateProgress();
-          context.queryRunnerContext.authContext =
-            await recordExportQueryWorkspaceService.resolveRequester(
-              recordExport,
+          if (
+            Date.now() - lastRequesterRefreshAt >=
+            RECORD_EXPORT_REQUESTER_REFRESH_INTERVAL_MS
+          ) {
+            context.queryRunnerContext.authContext =
+              await recordExportQueryWorkspaceService.resolveRequester(
+                recordExport,
+              );
+            lastRequesterRefreshAt = Date.now();
+          } else {
+            await recordExportQueryWorkspaceService.assertCanExport(
+              context.queryRunnerContext.authContext,
             );
+          }
           const { results } = await recordExportQueryWorkspaceService.readPage(
             recordExport.parameters,
             context,
@@ -153,8 +182,12 @@ export class GenerateRecordExportJob {
             const row = formatRecordExportRow(context.columns, record);
             bytes += Buffer.byteLength(row);
             if (bytes > RECORD_EXPORT_MAX_FILE_BYTES)
-              throw new Error(
-                t`The export file is too large. Please export fewer records.`,
+              throw new RecordExportException(
+                'Export file size limit exceeded',
+                'FILE_SIZE_LIMIT_EXCEEDED',
+                {
+                  userFriendlyMessage: msg`The export file is too large. Please export fewer records.`,
+                },
               );
             yield row;
             processedRecordCount++;
@@ -166,7 +199,10 @@ export class GenerateRecordExportJob {
 
           const endCursor = results.pageInfo.endCursor;
           if (!isDefined(endCursor) || endCursor === after)
-            throw new Error('Export pagination did not advance');
+            throw new RecordExportException(
+              'Export pagination did not advance',
+              'PAGINATION_FAILED',
+            );
           after = endCursor;
         } while (true);
       }
@@ -181,56 +217,66 @@ export class GenerateRecordExportJob {
         ),
       });
       await this.fileStorageService.writeFileStream({
-        ...this.recordExportWorkspaceService.getFileResource(
+        ...this.recordExportWorkspaceService.getFileResource({
           workspaceId,
-          filePath,
-        ),
+          resourcePath: filePath,
+        }),
         stream,
         mimeType: 'text/csv',
       });
 
-      const completed = await this.recordExportCacheService.update(
+      const completed = await this.recordExportCacheService.update({
         workspaceId,
-        recordExport.id,
-        {
+        id: recordExport.id,
+        condition: {
           attemptId,
           statuses: [RecordExportStatus.PROCESSING],
         },
-        {
+        changes: {
           status: RecordExportStatus.COMPLETED,
           processedRecordCount,
           filePath,
           expiresAt: new Date(Date.now() + RECORD_EXPORT_DOWNLOAD_TTL_MS),
         },
-      );
+      });
 
-      if (!completed) throw new Error('Export attempt was superseded');
+      if (!completed)
+        throw new RecordExportException(
+          'Export attempt was superseded',
+          'ATTEMPT_SUPERSEDED',
+        );
     } catch (error) {
       stream?.destroy();
       await this.fileStorageService
         .deleteFileObject(
-          this.recordExportWorkspaceService.getFileResource(
+          this.recordExportWorkspaceService.getFileResource({
             workspaceId,
-            filePath,
-          ),
+            resourcePath: filePath,
+          }),
         )
         .catch(() =>
           this.logger.warn(
             `Failed to remove partial export ${recordExport.id}`,
           ),
         );
-      await this.recordExportCacheService.update(
+      await this.recordExportCacheService.update({
         workspaceId,
-        recordExport.id,
-        {
+        id: recordExport.id,
+        condition: {
           attemptId,
           statuses: [RecordExportStatus.PROCESSING],
         },
-        {
+        changes: {
           status: RecordExportStatus.FAILED,
-          errorMessage: t`The export failed. Please try again or export fewer records.`,
+          errorMessage: this.i18nService
+            .getI18nInstance(locale)
+            ._(
+              error instanceof RecordExportException
+                ? error.userFriendlyMessage
+                : msg`The export failed. Please try again or export fewer records.`,
+            ),
         },
-      );
+      });
       throw error;
     }
   }

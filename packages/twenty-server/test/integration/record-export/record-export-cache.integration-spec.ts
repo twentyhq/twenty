@@ -1,5 +1,6 @@
+import { i18n } from '@lingui/core';
 import { ConflictException } from '@nestjs/common';
-import { type Cache } from 'cache-manager';
+import { caching } from 'cache-manager';
 import { redisInsStore } from 'cache-manager-redis-yet';
 import { createClient } from 'redis';
 import { setTimeout } from 'node:timers/promises';
@@ -40,13 +41,15 @@ describe('record export Redis lifetime', () => {
 
   beforeAll(async () => {
     jest.useRealTimers();
+    i18n.load('en', {});
+    i18n.activate('en');
     await redis.connect();
     const store = redisInsStore(
       redis as Parameters<typeof redisInsStore>[0],
       {},
     );
     cache = new CacheStorageService(
-      { store } as unknown as Cache,
+      await caching(store),
       CacheStorageNamespace.EngineRecordExport,
     );
     exports = new RecordExportCacheService(cache);
@@ -73,7 +76,9 @@ describe('record export Redis lifetime', () => {
       [recordKey(recordExport.id), `{${workspaceId}}:active`],
     );
     await setTimeout(20);
-    expect(await exports.findOne(workspaceId, recordExport.id)).toBeUndefined();
+    expect(
+      await exports.findOne({ workspaceId, id: recordExport.id }),
+    ).toBeUndefined();
     await expect(exports.create(input())).resolves.toBeDefined();
   });
 
@@ -96,18 +101,22 @@ describe('record export Redis lifetime', () => {
     await script("return redis.call('PEXPIRE', KEYS[1], 10000)", [
       recordKey(recordExport.id),
     ]);
-    await exports.update(
+    await exports.update({
       workspaceId,
-      recordExport.id,
-      {},
-      { processedRecordCount: 12 },
-    );
+      id: recordExport.id,
+      condition: {},
+      changes: { processedRecordCount: 12 },
+    });
     expect(
       await script("return redis.call('PTTL', KEYS[1])", [
         recordKey(recordExport.id),
       ]),
     ).toBeLessThanOrEqual(10000);
-    const restored = await exports.findOne(workspaceId, recordExport.id, true);
+    const restored = await exports.findOne({
+      workspaceId,
+      id: recordExport.id,
+      keepAlive: true,
+    });
     expect(restored?.parameters).toEqual(input().parameters);
     expect(restored?.createdAt).toBeInstanceOf(Date);
     expect(restored?.processedRecordCount).toBe(12);
@@ -117,65 +126,72 @@ describe('record export Redis lifetime', () => {
       ]),
     ).toBeGreaterThan(29000);
     expect(
-      await exports.findOne('another-workspace', recordExport.id),
+      await exports.findOne({
+        workspaceId: 'another-workspace',
+        id: recordExport.id,
+      }),
     ).toBeUndefined();
   });
 
   it('fences obsolete workers and never recreates cancelled state', async () => {
     const recordExport = await exports.create(input());
-    await exports.update(
+    await exports.update({
       workspaceId,
-      recordExport.id,
-      {},
-      { attemptId: 'old', status: RecordExportStatus.PROCESSING },
-    );
-    await exports.update(
+      id: recordExport.id,
+      condition: {},
+      changes: { attemptId: 'old', status: RecordExportStatus.PROCESSING },
+    });
+    await exports.update({
       workspaceId,
-      recordExport.id,
-      {},
-      { attemptId: 'new' },
-    );
+      id: recordExport.id,
+      condition: {},
+      changes: { attemptId: 'new' },
+    });
     expect(
-      await exports.update(
+      await exports.update({
         workspaceId,
-        recordExport.id,
-        { attemptId: 'old' },
-        { status: RecordExportStatus.COMPLETED },
-      ),
+        id: recordExport.id,
+        condition: { attemptId: 'old' },
+        changes: { status: RecordExportStatus.COMPLETED },
+      }),
     ).toBe(false);
-    await exports.delete(workspaceId, recordExport.id);
+    await exports.delete({ workspaceId, id: recordExport.id });
     expect(
-      await exports.update(
+      await exports.update({
         workspaceId,
-        recordExport.id,
-        {},
-        { processedRecordCount: 100 },
-      ),
+        id: recordExport.id,
+        condition: {},
+        changes: { processedRecordCount: 100 },
+      }),
     ).toBe(false);
     expect(
-      await exports.findOne(workspaceId, recordExport.id, true),
+      await exports.findOne({
+        workspaceId,
+        id: recordExport.id,
+        keepAlive: true,
+      }),
     ).toBeUndefined();
   });
 
   it('retains a completed file for five minutes and protects a newer active export', async () => {
     const first = await exports.create(input());
-    await exports.update(
+    await exports.update({
       workspaceId,
-      first.id,
-      {},
-      { status: RecordExportStatus.COMPLETED },
-    );
+      id: first.id,
+      condition: {},
+      changes: { status: RecordExportStatus.COMPLETED },
+    });
     const second = await exports.create(input());
     const ttl = await script("return redis.call('PTTL', KEYS[1])", [
       recordKey(first.id),
     ]);
     expect(ttl).toBeGreaterThan(RECORD_EXPORT_DOWNLOAD_TTL_MS - 1000);
-    await exports.findOne(workspaceId, first.id, true);
+    await exports.findOne({ workspaceId, id: first.id, keepAlive: true });
     expect(
       await script("return redis.call('PTTL', KEYS[1])", [recordKey(first.id)]),
     ).toBeGreaterThan(RECORD_EXPORT_DOWNLOAD_TTL_MS - 1000);
-    await exports.delete(workspaceId, first.id);
+    await exports.delete({ workspaceId, id: first.id });
     await expect(exports.create(input())).rejects.toThrow(ConflictException);
-    expect(await exports.findOne(workspaceId, second.id)).toBeDefined();
+    expect(await exports.findOne({ workspaceId, id: second.id })).toBeDefined();
   });
 });

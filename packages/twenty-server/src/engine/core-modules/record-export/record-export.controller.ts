@@ -6,6 +6,7 @@ import {
   Query,
   Res,
   UseGuards,
+  UseFilters,
 } from '@nestjs/common';
 
 import { t } from '@lingui/core/macro';
@@ -21,9 +22,11 @@ import { RecordExportQueryWorkspaceService } from 'src/engine/core-modules/recor
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller('record-exports')
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+@UseFilters(PermissionsRestApiExceptionFilter)
 export class RecordExportController {
   constructor(
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
@@ -46,15 +49,17 @@ export class RecordExportController {
         payload.fileId !== id ||
         !isDefined(payload.workspaceId)
       )
-        throw new Error('Invalid export token');
+        throw new ForbiddenException(
+          t`Invalid or expired export download link.`,
+        );
     } catch {
       throw new ForbiddenException(t`Invalid or expired export download link.`);
     }
 
-    const recordExport = await this.recordExportWorkspaceService.findOrThrow(
-      payload.workspaceId,
+    const recordExport = await this.recordExportWorkspaceService.findOrThrow({
+      workspaceId: payload.workspaceId,
       id,
-    );
+    });
     this.recordExportWorkspaceService.assertDownloadable(recordExport);
     const requester =
       await this.recordExportQueryWorkspaceService.resolveRequester(
@@ -71,10 +76,10 @@ export class RecordExportController {
       0,
     );
 
-    const resource = this.recordExportWorkspaceService.getFileResource(
-      recordExport.workspaceId,
-      recordExport.filePath!,
-    );
+    const resource = this.recordExportWorkspaceService.getFileResource({
+      workspaceId: recordExport.workspaceId,
+      resourcePath: recordExport.filePath!,
+    });
     response.setHeader('Cache-Control', 'private, no-store');
     const contentDisposition = `attachment; filename="${recordExport.filename.replace(/["\r\n\\]/g, '_')}"`;
     const stream = await this.fileStorageService.readFile(resource);
@@ -83,10 +88,10 @@ export class RecordExportController {
     try {
       await pipeline(stream, response);
     } finally {
-      await this.recordExportWorkspaceService.cancel(
-        recordExport.workspaceId,
-        recordExport.id,
-      );
+      await this.recordExportWorkspaceService.cancel({
+        workspaceId: recordExport.workspaceId,
+        id: recordExport.id,
+      });
     }
   }
 }

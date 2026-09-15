@@ -74,7 +74,10 @@ export class RecordExportCacheService {
     const created = await this.cacheStorageService.runScript<number>({
       script: CREATE_RECORD_EXPORT_SCRIPT,
       keys: [
-        this.getRecordKey(input.workspaceId, recordExport.id),
+        this.getRecordKey({
+          workspaceId: input.workspaceId,
+          id: recordExport.id,
+        }),
         this.getActiveKey(input.workspaceId),
       ],
       args: [
@@ -91,17 +94,21 @@ export class RecordExportCacheService {
     return recordExport;
   }
 
-  async findOne(
-    workspaceId: string,
-    id: string,
+  async findOne({
+    workspaceId,
+    id,
     keepAlive = false,
-  ): Promise<RecordExport | undefined> {
+  }: {
+    workspaceId: string;
+    id: string;
+    keepAlive?: boolean;
+  }): Promise<RecordExport | undefined> {
     const [data, state] = await this.cacheStorageService.runScript<
       (string | null)[]
     >({
       script: READ_RECORD_EXPORT_SCRIPT,
       keys: [
-        this.getRecordKey(workspaceId, id),
+        this.getRecordKey({ workspaceId, id }),
         this.getActiveKey(workspaceId),
       ],
       args: [id, String(keepAlive ? RECORD_EXPORT_CONNECTION_TTL_MS : 0)],
@@ -119,17 +126,22 @@ export class RecordExportCacheService {
     };
   }
 
-  async update(
-    workspaceId: string,
-    id: string,
-    condition: RecordExportCondition,
-    changes: RecordExportChanges,
-  ): Promise<boolean> {
+  async update({
+    workspaceId,
+    id,
+    condition,
+    changes,
+  }: {
+    workspaceId: string;
+    id: string;
+    condition: RecordExportCondition;
+    changes: RecordExportChanges;
+  }): Promise<boolean> {
     return (
       (await this.cacheStorageService.runScript<number>({
         script: UPDATE_RECORD_EXPORT_SCRIPT,
         keys: [
-          this.getRecordKey(workspaceId, id),
+          this.getRecordKey({ workspaceId, id }),
           this.getActiveKey(workspaceId),
         ],
         args: [
@@ -146,7 +158,13 @@ export class RecordExportCacheService {
     );
   }
 
-  private getRecordKey(workspaceId: string, id: string): string {
+  private getRecordKey({
+    workspaceId,
+    id,
+  }: {
+    workspaceId: string;
+    id: string;
+  }): string {
     return `{${workspaceId}}:export:${id}`;
   }
 
@@ -154,11 +172,17 @@ export class RecordExportCacheService {
     return `{${workspaceId}}:active`;
   }
 
-  async delete(workspaceId: string, id: string): Promise<void> {
+  async delete({
+    workspaceId,
+    id,
+  }: {
+    workspaceId: string;
+    id: string;
+  }): Promise<void> {
     await this.cacheStorageService.runScript({
       script: DELETE_RECORD_EXPORT_SCRIPT,
       keys: [
-        this.getRecordKey(workspaceId, id),
+        this.getRecordKey({ workspaceId, id }),
         this.getActiveKey(workspaceId),
       ],
       args: [id],

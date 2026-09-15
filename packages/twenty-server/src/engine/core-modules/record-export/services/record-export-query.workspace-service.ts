@@ -1,3 +1,4 @@
+import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import {
   ForbiddenException,
   Injectable,
@@ -207,7 +208,10 @@ export class RecordExportQueryWorkspaceService {
         ),
     );
     if (!isDefined(results.totalCount))
-      throw new Error('Export record count is unavailable');
+      throw new RecordExportException(
+        'Export record count is unavailable',
+        'RECORD_COUNT_UNAVAILABLE',
+      );
     return Number(results.totalCount);
   }
 

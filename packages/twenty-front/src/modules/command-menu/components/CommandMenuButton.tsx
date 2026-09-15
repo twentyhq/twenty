@@ -39,13 +39,14 @@ export const CommandMenuButton = ({
   isPrimaryAction = false,
   shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
-  const resolvedShortLabel = loading
-    ? isDefined(progress)
-      ? `${Math.round(progress)}%`
-      : t`Preparing…`
-    : isDefined(command.shortLabel) && !shouldHideLabel
-      ? command.shortLabel
-      : undefined;
+  let resolvedShortLabel = command.shortLabel ?? undefined;
+
+  if (shouldHideLabel) resolvedShortLabel = undefined;
+
+  if (loading) {
+    resolvedShortLabel = t`Preparing…`;
+    if (isDefined(progress)) resolvedShortLabel = `${Math.round(progress)}%`;
+  }
 
   const buttonAccent =
     isPrimaryAction || command.isPrimaryCTA === true ? 'blue' : 'default';

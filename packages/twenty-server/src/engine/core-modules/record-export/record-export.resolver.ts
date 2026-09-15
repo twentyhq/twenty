@@ -31,9 +31,9 @@ export class RecordExportResolver {
   exportRecords(
     @Args('input') input: CreateRecordExportInput,
   ): Promise<AsyncIterableIterator<RecordExportDTO>> {
-    return this.recordExportWorkspaceService.stream(
-      input,
-      getWorkspaceAuthContext(),
-    );
+    return this.recordExportWorkspaceService.stream({
+      parameters: input,
+      authContext: getWorkspaceAuthContext(),
+    });
   }
 }

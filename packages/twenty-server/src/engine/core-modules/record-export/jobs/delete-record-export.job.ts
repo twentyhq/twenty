@@ -1,3 +1,4 @@
+import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { RECORD_EXPORT_CONNECTION_TTL_MS } from 'src/engine/core-modules/record-export/constants/record-export.constants';
@@ -27,10 +28,10 @@ export class DeleteRecordExportJob {
     workspaceId: string;
     recordExportId: string;
   }): Promise<void> {
-    const recordExport = await this.recordExportCacheService.findOne(
+    const recordExport = await this.recordExportCacheService.findOne({
       workspaceId,
-      recordExportId,
-    );
+      id: recordExportId,
+    });
     if (isDefined(recordExport)) {
       const cleanupJobId = await this.messageQueueService.add(
         DeleteRecordExportJob.name,
@@ -47,14 +48,17 @@ export class DeleteRecordExportJob {
         },
       );
       if (!isDefined(cleanupJobId))
-        throw new Error('Export cleanup could not be queued');
+        throw new RecordExportException(
+          'Export cleanup could not be queued',
+          'QUEUE_UNAVAILABLE',
+        );
       return;
     }
     await this.fileStorageService.deleteFolderObjects({
-      ...this.recordExportWorkspaceService.getFileResource(
+      ...this.recordExportWorkspaceService.getFileResource({
         workspaceId,
-        recordExportId,
-      ),
+        resourcePath: recordExportId,
+      }),
       folderPath: recordExportId,
     });
   }

@@ -2467,7 +2467,7 @@ export interface ApplicationFileUploadTarget {
     __typename: 'ApplicationFileUploadTarget'
 }
 
-export type FileFolder = 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
+export type FileFolder = 'RecordExport' | 'CorePicture' | 'AgentChat' | 'BuiltLogicFunction' | 'BuiltFrontComponent' | 'PublicAsset' | 'Source' | 'FilesField' | 'Dependencies' | 'Workflow' | 'EmailAttachment' | 'EmailImage' | 'AppTarball' | 'GeneratedSdkClient' | 'Dpa'
 
 export interface ApplicationFileUploadError {
     fileFolder: FileFolder
@@ -2493,6 +2493,19 @@ export interface WorkspaceMigration {
     actions: Scalars['JSON']
     __typename: 'WorkspaceMigration'
 }
+
+export interface RecordExport {
+    id: Scalars['UUID']
+    filename: Scalars['String']
+    status: RecordExportStatus
+    processedRecordCount: Scalars['Int']
+    totalRecordCount?: Scalars['Int']
+    errorMessage?: Scalars['String']
+    downloadUrl?: Scalars['String']
+    __typename: 'RecordExport'
+}
+
+export type RecordExportStatus = 'QUEUED' | 'PROCESSING' | 'COMPLETED' | 'FAILED'
 
 export interface PublicDomain {
     id: Scalars['UUID']
@@ -3585,19 +3598,6 @@ export interface Subscription {
     exportRecords: RecordExport
     __typename: 'Subscription'
 }
-
-export interface RecordExport {
-    downloadUrl?: Scalars['String']
-    errorMessage?: Scalars['String']
-    filename: Scalars['String']
-    id: Scalars['UUID']
-    processedRecordCount: Scalars['Int']
-    status: RecordExportStatus
-    totalRecordCount?: Scalars['Int']
-    __typename: 'RecordExport'
-}
-
-export type RecordExportStatus = 'COMPLETED' | 'FAILED' | 'PROCESSING' | 'QUEUED'
 
 export interface BillingProductDTOGenqlSelection{
     name?: boolean | number
@@ -6205,6 +6205,18 @@ export interface WorkspaceMigrationGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface RecordExportGenqlSelection{
+    id?: boolean | number
+    filename?: boolean | number
+    status?: boolean | number
+    processedRecordCount?: boolean | number
+    totalRecordCount?: boolean | number
+    errorMessage?: boolean | number
+    downloadUrl?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface PublicDomainGenqlSelection{
     id?: boolean | number
     domain?: boolean | number
@@ -7797,19 +7809,7 @@ export interface SubscriptionGenqlSelection{
 
 export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null),applicationUniversalIdentifier?: (Scalars['UUID'] | null),name?: (Scalars['String'] | null),id?: (Scalars['UUID'] | null),universalIdentifier?: (Scalars['UUID'] | null)}
 
-export interface CreateRecordExportInput {fieldMetadataIds: Scalars['UUID'][],filter?: (Scalars['JSON'] | null),objectMetadataId: Scalars['UUID'],orderBy?: (Scalars['JSON'] | null)}
-
-export interface RecordExportGenqlSelection{
-    downloadUrl?: boolean | number
-    errorMessage?: boolean | number
-    filename?: boolean | number
-    id?: boolean | number
-    processedRecordCount?: boolean | number
-    status?: boolean | number
-    totalRecordCount?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
+export interface CreateRecordExportInput {objectMetadataId: Scalars['UUID'],fieldMetadataIds: Scalars['UUID'][],filter?: (Scalars['JSON'] | null),orderBy?: (Scalars['JSON'] | null)}
 
 
     const BillingProductDTO_possibleTypes: string[] = ['BillingLicensedProduct','BillingMeteredProduct']
@@ -9644,6 +9644,14 @@ export interface RecordExportGenqlSelection{
     
 
 
+    const RecordExport_possibleTypes: string[] = ['RecordExport']
+    export const isRecordExport = (obj?: { __typename?: any } | null): obj is RecordExport => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordExport"')
+      return RecordExport_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const PublicDomain_possibleTypes: string[] = ['PublicDomain']
     export const isPublicDomain = (obj?: { __typename?: any } | null): obj is PublicDomain => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isPublicDomain"')
@@ -10202,14 +10210,6 @@ export interface RecordExportGenqlSelection{
       return Subscription_possibleTypes.includes(obj.__typename)
     }
     
-
-
-    const RecordExport_possibleTypes: string[] = ['RecordExport']
-    export const isRecordExport = (obj?: { __typename?: any } | null): obj is RecordExport => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isRecordExport"')
-      return RecordExport_possibleTypes.includes(obj.__typename)
-    }
-
 
 export const enumApplicationRegistrationSourceType = {
    NPM: 'NPM' as const,
@@ -10861,6 +10861,7 @@ export const enumApplicationExportCoverageStatus = {
 }
 
 export const enumFileFolder = {
+   RecordExport: 'RecordExport' as const,
    CorePicture: 'CorePicture' as const,
    AgentChat: 'AgentChat' as const,
    BuiltLogicFunction: 'BuiltLogicFunction' as const,
@@ -10875,6 +10876,13 @@ export const enumFileFolder = {
    AppTarball: 'AppTarball' as const,
    GeneratedSdkClient: 'GeneratedSdkClient' as const,
    Dpa: 'Dpa' as const
+}
+
+export const enumRecordExportStatus = {
+   QUEUED: 'QUEUED' as const,
+   PROCESSING: 'PROCESSING' as const,
+   COMPLETED: 'COMPLETED' as const,
+   FAILED: 'FAILED' as const
 }
 
 export const enumEmailingDomainStatus = {
@@ -11074,11 +11082,4 @@ export const enumRunAgentMessageRole = {
 export const enumAnalyticsType = {
    PAGEVIEW: 'PAGEVIEW' as const,
    TRACK: 'TRACK' as const
-}
-
-export const enumRecordExportStatus = {
-   COMPLETED: 'COMPLETED' as const,
-   FAILED: 'FAILED' as const,
-   PROCESSING: 'PROCESSING' as const,
-   QUEUED: 'QUEUED' as const
 }
