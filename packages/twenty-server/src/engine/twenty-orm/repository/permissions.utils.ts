@@ -19,11 +19,9 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { validateWritabilityOrThrow } from 'src/engine/twenty-orm/repository/validate-writability-or-throw.util';
+import { isExemptFromObjectPermissions } from 'src/engine/twenty-orm/utils/is-exempt-from-object-permissions.util';
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
-
-const WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER =
-  STANDARD_OBJECTS.workspaceMember.universalIdentifier;
 
 export type OperationType =
   | 'select'
@@ -93,13 +91,7 @@ export const validateOperationIsPermittedOrThrow = ({
     authContext,
   });
 
-  const objectMetadataIsSystem = objectMetadata.isSystem === true;
-  const isWorkspaceMemberObject =
-    objectMetadata.universalIdentifier ===
-    WORKSPACE_MEMBER_OBJECT_UNIVERSAL_IDENTIFIER;
-
-  // TODO: this should be improved, we may have more complex permission configuration for is system objects
-  if (objectMetadataIsSystem && !isWorkspaceMemberObject) {
+  if (isExemptFromObjectPermissions(objectMetadata)) {
     return;
   }
 
