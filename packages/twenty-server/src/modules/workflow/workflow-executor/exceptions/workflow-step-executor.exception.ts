@@ -38,6 +38,18 @@ const getWorkflowStepExecutorExceptionUserFriendlyMessage = (
   }
 };
 
+// Codes that stem from user misconfiguration (bad step input, workflow with
+// no active version, a RUN_WORKFLOW loop) rather than an infrastructure
+// failure — the executor uses this to skip Sentry reporting and the
+// system-error metric for these codes.
+export const WORKFLOW_STEP_USER_ERROR_CODES = new Set([
+  WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE,
+  WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+  WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND,
+  WorkflowStepExecutorExceptionCode.NO_ACTIVE_WORKFLOW_VERSION,
+  WorkflowStepExecutorExceptionCode.WORKFLOW_RUN_DEPTH_EXCEEDED,
+]);
+
 export class WorkflowStepExecutorException extends CustomException<WorkflowStepExecutorExceptionCode> {
   constructor(
     message: string,

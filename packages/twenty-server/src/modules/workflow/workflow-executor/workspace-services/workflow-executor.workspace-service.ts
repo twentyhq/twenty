@@ -22,8 +22,8 @@ import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usa
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
 import {
+  WORKFLOW_STEP_USER_ERROR_CODES,
   WorkflowStepExecutorException,
-  WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
@@ -477,9 +477,7 @@ export class WorkflowExecutorWorkspaceService {
     } catch (error) {
       const isUserError =
         error instanceof WorkflowStepExecutorException &&
-        (error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
-          error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
-          error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
+        WORKFLOW_STEP_USER_ERROR_CODES.has(error.code);
 
       if (!isUserError) {
         this.exceptionHandlerService.captureExceptions([error], {
