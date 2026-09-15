@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, userEvent, within } from 'storybook/test';
 
 import { RadioGroup } from '@ui/input/RadioGroup/RadioGroup';
 import {
@@ -15,7 +16,7 @@ const RadioExample = ({
   selected = false,
   ...props
 }: RadioProps & { selected?: boolean }) => (
-  <RadioGroup value={selected ? props.value : ''}>
+  <RadioGroup defaultValue={selected ? props.value : ''}>
     <Radio {...props} />
   </RadioGroup>
 );
@@ -39,7 +40,20 @@ const STATE_PROPS: Record<RadioState, Partial<RadioProps>> = {
   readOnly: { readOnly: true },
 };
 
-export const Default: Story = { decorators: [ComponentDecorator] };
+export const Default: Story = {
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    const radio = within(canvasElement).getByRole('radio');
+
+    await userEvent.click(radio);
+    await expect(radio).toBeChecked();
+  },
+};
+
+export const Documentation: Story = {
+  ...Default,
+  play: undefined,
+};
 
 export const Catalog: CatalogStory<Story, typeof RadioExample> = {
   parameters: {

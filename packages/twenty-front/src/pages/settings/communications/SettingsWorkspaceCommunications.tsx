@@ -63,8 +63,8 @@ export const SettingsWorkspaceCommunications = () => {
 
   const navigateSettings = useNavigateSettings();
 
-  const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+  const isMessageCampaignFeatureEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
   const isInboxFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_INBOX_ENABLED,
@@ -77,9 +77,7 @@ export const SettingsWorkspaceCommunications = () => {
   } = useInboxSettings();
 
   const tabs = [
-    ...(isEmailGroupFeatureEnabled
-      ? [{ id: COMMUNICATIONS_TAB_ID.emails, title: t`Emails`, Icon: IconMail }]
-      : []),
+    { id: COMMUNICATIONS_TAB_ID.emails, title: t`Emails`, Icon: IconMail },
     ...(isInboxFeatureEnabled
       ? [
           {
@@ -117,10 +115,6 @@ export const SettingsWorkspaceCommunications = () => {
     tabs.filter(({ disabled }) => disabled !== true).map(({ id }) => id),
   );
 
-  if (!isEmailGroupFeatureEnabled && !isInboxFeatureEnabled) {
-    return null;
-  }
-
   return (
     <SettingsPageLayout
       title={t`Communication`}
@@ -150,24 +144,26 @@ export const SettingsWorkspaceCommunications = () => {
               />
             </Section>
             <SettingsWorkspaceEmailGroupSection />
-            <Section>
-              <H2Title
-                title={t`Unsubscribe`}
-                description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
-              />
-              <StyledCardsColumn>
-                <SettingsCard
-                  Icon={
-                    <IconMailX
-                      size={theme.icon.size.lg}
-                      stroke={theme.icon.stroke.md}
-                    />
-                  }
-                  title={t`Manage unsubscribe`}
-                  onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
+            {isMessageCampaignFeatureEnabled && (
+              <Section>
+                <H2Title
+                  title={t`Unsubscribe`}
+                  description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
                 />
-              </StyledCardsColumn>
-            </Section>
+                <StyledCardsColumn>
+                  <SettingsCard
+                    Icon={
+                      <IconMailX
+                        size={theme.icon.size.lg}
+                        stroke={theme.icon.stroke.md}
+                      />
+                    }
+                    title={t`Manage unsubscribe`}
+                    onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
+                  />
+                </StyledCardsColumn>
+              </Section>
+            )}
           </>
         )}
         {activeTabId === COMMUNICATIONS_TAB_ID.sharedInboxes && (

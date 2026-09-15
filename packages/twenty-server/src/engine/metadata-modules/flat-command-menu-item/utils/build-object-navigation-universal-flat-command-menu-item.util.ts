@@ -29,9 +29,9 @@ const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
   Record<string, FeatureFlagKey>
 > = {
   [STANDARD_OBJECTS.messageCampaign.universalIdentifier]:
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   [STANDARD_OBJECTS.messageList.universalIdentifier]:
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
 };
 
 const NAVIGATION_HIDING_FEATURE_FLAG_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<

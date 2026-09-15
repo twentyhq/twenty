@@ -8092,9 +8092,9 @@ msgstr "空白标签页"
 msgid "Enable bypass options"
 msgstr "启用绕过选项"
 
-#. js-lingui-id: Fecpp6
+#. js-lingui-id: vs9cre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns and sending domain management."
+msgid "Enable email campaigns, lists, and unsubscribe management."
 msgstr ""
 
 #. js-lingui-id: Tt0V8j
