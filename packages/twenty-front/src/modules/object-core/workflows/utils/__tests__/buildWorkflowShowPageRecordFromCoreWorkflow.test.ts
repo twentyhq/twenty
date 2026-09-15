@@ -19,6 +19,7 @@ describe('buildWorkflowShowPageRecordFromCoreWorkflow', () => {
     expect(record).toEqual({
       __typename: 'Workflow',
       id: 'workspace-workflow-id',
+      coreWorkflowId: 'core-workflow-id',
       name: 'My workflow',
       statuses: [CoreWorkflowStatus.ACTIVE],
       lastPublishedVersionId: 'published-version-id',

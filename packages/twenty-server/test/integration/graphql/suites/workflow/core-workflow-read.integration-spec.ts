@@ -64,6 +64,26 @@ type CoreWorkflowVersionResult = {
   updatedAt: string;
 };
 
+const CORE_WORKFLOWS_WITH_CURRENT_VERSION_QUERY = `
+  query CoreWorkflowsWithCurrentVersion($coreWorkflowIds: [UUID!]!) {
+    coreWorkflowsWithCurrentVersion(coreWorkflowIds: $coreWorkflowIds) {
+      id
+      name
+      statuses
+      workspaceWorkflowId
+      currentVersion {
+        id
+        label
+        status
+        workspaceWorkflowVersionId
+        workspaceWorkflowId
+        trigger
+        steps
+      }
+    }
+  }
+`;
+
 describe('coreWorkflow (e2e)', () => {
   let workspaceWorkflowId: string;
 
@@ -167,5 +187,49 @@ describe('coreWorkflow (e2e)', () => {
         updatedAt: expect.any(String),
       }),
     );
+  });
+
+  it('should read many workflows with their current version in one query', async () => {
+    const coreWorkflowResponse = await workflowGraphqlRequest(
+      CORE_WORKFLOW_QUERY,
+      { workspaceWorkflowId },
+    );
+
+    const coreWorkflowId = coreWorkflowResponse.body.data.coreWorkflow.id;
+
+    const response = await workflowGraphqlRequest(
+      CORE_WORKFLOWS_WITH_CURRENT_VERSION_QUERY,
+      { coreWorkflowIds: [coreWorkflowId] },
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const coreWorkflows = response.body.data.coreWorkflowsWithCurrentVersion;
+
+    expect(coreWorkflows).toHaveLength(1);
+    expect(coreWorkflows[0]).toEqual(
+      expect.objectContaining({
+        workspaceWorkflowId,
+        name: 'Core Workflow Read',
+      }),
+    );
+    expect(coreWorkflows[0].currentVersion).toEqual(
+      expect.objectContaining({
+        workspaceWorkflowVersionId: expect.any(String),
+        workspaceWorkflowId,
+        label: 'v1',
+        status: 'DRAFT',
+      }),
+    );
+  });
+
+  it('should return nothing for core workflow ids of another workspace', async () => {
+    const response = await workflowGraphqlRequest(
+      CORE_WORKFLOWS_WITH_CURRENT_VERSION_QUERY,
+      { coreWorkflowIds: ['20202020-0000-4000-8000-000000000000'] },
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.coreWorkflowsWithCurrentVersion).toEqual([]);
   });
 });

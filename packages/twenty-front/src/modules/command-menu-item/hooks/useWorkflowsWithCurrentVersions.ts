@@ -1,26 +1,13 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { getCurrentWorkflowVersionId } from '@/command-menu-item/utils/getCurrentWorkflowVersionId';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import {
   type Workflow,
   type WorkflowVersion,
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
-
-const getCurrentVersionId = (workflow: Workflow): string | undefined => {
-  const draftVersion = workflow.versions.find(
-    (version) => version.status === 'DRAFT',
-  );
-
-  const sortedVersions = workflow.versions.toSorted((a, b) =>
-    a.createdAt > b.createdAt ? -1 : 1,
-  );
-
-  const latestVersion = sortedVersions[0];
-
-  return (draftVersion ?? latestVersion)?.id;
-};
 
 export const useWorkflowsWithCurrentVersions = (
   workflowIds: string[],
@@ -44,7 +31,7 @@ export const useWorkflowsWithCurrentVersions = (
   });
 
   const currentVersionIds = workflows
-    .map(getCurrentVersionId)
+    .map(getCurrentWorkflowVersionId)
     .filter(isDefined);
 
   const { records: currentVersions } = useFindManyRecords<WorkflowVersion>({
@@ -55,7 +42,7 @@ export const useWorkflowsWithCurrentVersions = (
 
   return workflows
     .map((workflow) => {
-      const currentVersionId = getCurrentVersionId(workflow);
+      const currentVersionId = getCurrentWorkflowVersionId(workflow);
       const currentVersion = currentVersions.find(
         (version) => version.id === currentVersionId,
       );

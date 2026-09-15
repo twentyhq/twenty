@@ -1,7 +1,12 @@
 import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
+import { isCoreWorkflowEnrichmentConsistent } from '@/command-menu-item/utils/isCoreWorkflowEnrichmentConsistent';
+
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions';
 import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWorkflowsWithCurrentVersions';
 
 import { CommandMenuContextProviderContent } from './CommandMenuContextProviderContent';
@@ -23,14 +28,50 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   selectedWorkflowRecordIds,
   isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
-  const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
-    selectedWorkflowRecordIds,
+  const selectedCoreWorkflowIds = commandMenuContextApi.selectedRecords
+    .filter((record) => selectedWorkflowRecordIds.includes(record.id))
+    .map((record) => record.coreWorkflowId)
+    .filter(isNonEmptyString);
+
+  const isCorePointerAvailableForEveryWorkflow =
+    selectedCoreWorkflowIds.length === selectedWorkflowRecordIds.length;
+
+  const {
+    workflows: coreWorkflowsWithCurrentVersions,
+    isCoreEnrichmentLoading,
+    isCoreEnrichmentComplete,
+  } = useCoreWorkflowsWithCurrentVersions(
+    isCorePointerAvailableForEveryWorkflow ? selectedCoreWorkflowIds : [],
   );
+
+  const isCoreEnrichmentConsistent = isCoreWorkflowEnrichmentConsistent({
+    selectedWorkflowRecords: commandMenuContextApi.selectedRecords.filter(
+      (record) => selectedWorkflowRecordIds.includes(record.id),
+    ),
+    coreWorkflows: coreWorkflowsWithCurrentVersions,
+  });
+
+  const shouldFallBackToWorkspaceWorkflows =
+    !isCorePointerAvailableForEveryWorkflow ||
+    (!isCoreEnrichmentLoading &&
+      (!isCoreEnrichmentComplete || !isCoreEnrichmentConsistent));
+
+  const workspaceWorkflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
+    shouldFallBackToWorkspaceWorkflows ? selectedWorkflowRecordIds : [],
+  );
+
+  const workflowsWithCurrentVersions = shouldFallBackToWorkspaceWorkflows
+    ? workspaceWorkflowsWithCurrentVersions
+    : coreWorkflowsWithCurrentVersions;
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {
       const workflowWithCurrentVersion = workflowsWithCurrentVersions.find(
-        (workflow) => workflow.id === record.id,
+        (workflow) =>
+          workflow.id ===
+          (shouldFallBackToWorkspaceWorkflows
+            ? record.id
+            : record.coreWorkflowId),
       );
 
       if (!isDefined(workflowWithCurrentVersion)) {
@@ -40,7 +81,6 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
       return {
         ...record,
         currentVersion: workflowWithCurrentVersion.currentVersion,
-        versions: workflowWithCurrentVersion.versions,
         statuses: workflowWithCurrentVersion.statuses,
         lastPublishedVersionId:
           workflowWithCurrentVersion.lastPublishedVersionId,

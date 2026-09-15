@@ -16,6 +16,8 @@ import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/cor
 import { CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { CoreWorkflowVersionArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.input';
 import { CoreWorkflowVersionsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions.input';
+import { CoreWorkflowWithCurrentVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-current-version.dto';
+import { CoreWorkflowsWithCurrentVersionArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows-with-current-version.input';
 import { CoreWorkflowArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow.input';
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
@@ -25,6 +27,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { isDefined } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -105,6 +108,36 @@ export class CoreWorkflowResolver {
       workspaceId,
       coreWorkflowsArgs,
     );
+  }
+
+  @Query(() => [CoreWorkflowWithCurrentVersionDTO])
+  async coreWorkflowsWithCurrentVersion(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args() { coreWorkflowIds }: CoreWorkflowsWithCurrentVersionArgs,
+  ): Promise<CoreWorkflowWithCurrentVersionDTO[]> {
+    const coreWorkflows = await this.coreWorkflowListService.findManyByIds({
+      workspaceId,
+      coreWorkflowIds,
+    });
+
+    const currentVersionByWorkspaceWorkflowId =
+      await this.coreWorkflowVersionListService.findCurrentVersionsByWorkspaceWorkflowIds(
+        {
+          workspaceId,
+          workspaceWorkflowIds: coreWorkflows
+            .map((coreWorkflow) => coreWorkflow.workspaceWorkflowId)
+            .filter(isNonEmptyString),
+        },
+      );
+
+    return coreWorkflows.map((coreWorkflow) => ({
+      ...coreWorkflow,
+      currentVersion: isDefined(coreWorkflow.workspaceWorkflowId)
+        ? (currentVersionByWorkspaceWorkflowId[
+            coreWorkflow.workspaceWorkflowId
+          ] ?? null)
+        : null,
+    }));
   }
 
   @Query(() => CoreWorkflowDTO, { nullable: true })

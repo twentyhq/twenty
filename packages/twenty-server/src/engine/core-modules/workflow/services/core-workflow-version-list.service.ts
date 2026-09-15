@@ -6,6 +6,7 @@ import { In } from 'typeorm';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { buildCoreWorkflowVersionLabel } from 'src/engine/core-modules/workflow/utils/build-core-workflow-version-label.util';
+import { selectCurrentCoreWorkflowVersionsByWorkflowId } from 'src/engine/core-modules/workflow/utils/select-current-core-workflow-versions-by-workflow-id.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -19,6 +20,95 @@ export class CoreWorkflowVersionListService {
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
+
+  async findCurrentVersionsByWorkspaceWorkflowIds({
+    workspaceId,
+    workspaceWorkflowIds,
+  }: {
+    workspaceId: string;
+    workspaceWorkflowIds: string[];
+  }): Promise<Record<string, CoreWorkflowVersionDTO>> {
+    if (workspaceWorkflowIds.length === 0) {
+      return {};
+    }
+
+    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
+      workspaceId,
+      {
+        where: { workflowId: In(workspaceWorkflowIds) },
+        order: { createdAt: 'ASC', id: 'ASC' },
+        select: {
+          id: true,
+          workflowId: true,
+          status: true,
+          createdAt: true,
+          updatedAt: true,
+        },
+      },
+    );
+
+    const currentVersionByWorkflowId =
+      selectCurrentCoreWorkflowVersionsByWorkflowId(
+        coreWorkflowVersions.map((coreWorkflowVersion) => ({
+          ...coreWorkflowVersion,
+          createdAt: coreWorkflowVersion.createdAt.toISOString(),
+          updatedAt: coreWorkflowVersion.updatedAt.toISOString(),
+        })),
+      );
+
+    const currentVersionEntries = Object.entries(currentVersionByWorkflowId);
+
+    const currentVersionIds = currentVersionEntries.map(
+      ([, { currentVersion }]) => currentVersion.id,
+    );
+
+    if (currentVersionIds.length === 0) {
+      return {};
+    }
+
+    const [coreWorkflowVersionContents, workspaceVersionIdByCoreVersionId] =
+      await Promise.all([
+        this.coreWorkflowVersionRepository.find(workspaceId, {
+          where: { id: In(currentVersionIds) },
+          select: { id: true, triggers: true, steps: true },
+        }),
+        this.findWorkspaceVersionIdByCoreVersionId({
+          workspaceId,
+          workspaceWorkflowIds,
+          coreWorkflowVersionIds: currentVersionIds,
+        }),
+      ]);
+
+    const coreWorkflowVersionContentById = Object.fromEntries(
+      coreWorkflowVersionContents.map((coreWorkflowVersionContent) => [
+        coreWorkflowVersionContent.id,
+        coreWorkflowVersionContent,
+      ]),
+    );
+
+    return Object.fromEntries(
+      currentVersionEntries.map(
+        ([workspaceWorkflowId, { currentVersion, positionFromOldest }]) => [
+          workspaceWorkflowId,
+          {
+            id: currentVersion.id,
+            label: buildCoreWorkflowVersionLabel(positionFromOldest),
+            status: currentVersion.status,
+            workspaceWorkflowVersionId:
+              workspaceVersionIdByCoreVersionId[currentVersion.id] ?? null,
+            workspaceWorkflowId,
+            trigger:
+              coreWorkflowVersionContentById[currentVersion.id]
+                ?.triggers?.[0] ?? null,
+            steps:
+              coreWorkflowVersionContentById[currentVersion.id]?.steps ?? null,
+            createdAt: currentVersion.createdAt,
+            updatedAt: currentVersion.updatedAt,
+          },
+        ],
+      ),
+    );
+  }
 
   async findManyByWorkspaceWorkflowId({
     workspaceId,
@@ -39,7 +129,7 @@ export class CoreWorkflowVersionListService {
     const workspaceVersionIdByCoreVersionId =
       await this.findWorkspaceVersionIdByCoreVersionId({
         workspaceId,
-        workspaceWorkflowId,
+        workspaceWorkflowIds: [workspaceWorkflowId],
         coreWorkflowVersionIds: coreWorkflowVersions.map(
           (coreWorkflowVersion) => coreWorkflowVersion.id,
         ),
@@ -118,11 +208,11 @@ export class CoreWorkflowVersionListService {
 
   private async findWorkspaceVersionIdByCoreVersionId({
     workspaceId,
-    workspaceWorkflowId,
+    workspaceWorkflowIds,
     coreWorkflowVersionIds,
   }: {
     workspaceId: string;
-    workspaceWorkflowId: string;
+    workspaceWorkflowIds: string[];
     coreWorkflowVersionIds: string[];
   }): Promise<Record<string, string>> {
     if (coreWorkflowVersionIds.length === 0) {
@@ -138,7 +228,7 @@ export class CoreWorkflowVersionListService {
         })
         .find({
           where: {
-            workflowId: workspaceWorkflowId,
+            workflowId: In(workspaceWorkflowIds),
             coreWorkflowVersionId: In(coreWorkflowVersionIds),
           },
           select: { id: true, coreWorkflowVersionId: true },
