@@ -113,7 +113,9 @@ export const AddToNavigationDragHandle = ({
         />
       ) : showCustomContentWithoutWrapper ? (
         customIconContent
-      ) : payload.type === NavigationMenuItemType.OBJECT && ObjectIcon ? (
+      ) : (payload.type === NavigationMenuItemType.OBJECT ||
+          payload.type === NavigationMenuItemType.FOLDER) &&
+        ObjectIcon ? (
         <ObjectIcon
           size={16}
           stroke={theme.icon.stroke.md}

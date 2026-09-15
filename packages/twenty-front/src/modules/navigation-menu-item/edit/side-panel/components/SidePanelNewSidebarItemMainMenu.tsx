@@ -1,9 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, TintedIconTile } from 'twenty-ui/primitives/data-display';
+import {
+  Avatar,
+  getIconTileColorShades,
+} from 'twenty-ui/primitives/data-display';
 import { IconBox, IconFolder, IconLink, IconTable } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
@@ -36,6 +39,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
   onSelectRecord,
 }: SidePanelNewSidebarItemMainMenuProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const pendingInsertionNavigationMenuItem = useAtomStateValue(
     pendingInsertionNavigationMenuItemState,
   );
@@ -63,7 +67,13 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 onEnter={onSelectObject}
               >
                 <CommandMenuItem
-                  Icon={() => <TintedIconTile Icon={IconBox} color="blue" />}
+                  Icon={() => (
+                    <IconBox
+                      size={16}
+                      stroke={theme.icon.stroke.md}
+                      color={getIconTileColorShades('blue').iconColor}
+                    />
+                  )}
                   label={t`Object`}
                   id={NavigationMenuItemType.OBJECT}
                   hasSubMenu={true}
@@ -75,7 +85,13 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 onEnter={onSelectView}
               >
                 <CommandMenuItem
-                  Icon={() => <TintedIconTile Icon={IconTable} />}
+                  Icon={() => (
+                    <IconTable
+                      size={16}
+                      stroke={theme.icon.stroke.md}
+                      color={getIconTileColorShades('gray').iconColor}
+                    />
+                  )}
                   label={t`View`}
                   id={NavigationMenuItemType.VIEW}
                   hasSubMenu={true}

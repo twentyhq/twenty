@@ -1,8 +1,10 @@
+import { useTheme } from 'twenty-ui/theme-constants';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
+import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { useIcons } from 'twenty-ui/icon';
 
 import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
@@ -24,6 +26,7 @@ const StyledClickableIconWrapper = styled.div`
 
 export const SidePanelFolderInfo = () => {
   const { t } = useLingui();
+  const theme = useTheme();
   const { getIcon } = useIcons();
   const sidePanelPageInfo = useAtomStateValue(sidePanelPageInfoSelector);
   const [sidePanelShouldFocusTitleInput, setSidePanelShouldFocusTitleInput] =
@@ -75,9 +78,16 @@ export const SidePanelFolderInfo = () => {
           }
           clickableComponent={
             <StyledClickableIconWrapper>
-              <TintedIconTile
-                Icon={FolderIconComponent}
-                color={selectedItem.color}
+              <FolderIconComponent
+                size={16}
+                stroke={theme.icon.stroke.md}
+                color={
+                  getIconTileColorShades(
+                    selectedItem.color ??
+                      DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
+                  ).iconColor
+                }
+                style={{ flexShrink: 0 }}
               />
             </StyledClickableIconWrapper>
           }
