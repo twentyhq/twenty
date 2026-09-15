@@ -27,9 +27,6 @@ type SettingsApplicationDetailAboutTabProps = {
   onShare?: () => void;
 };
 
-// The content column keeps the design's fixed width and the sidebar takes the
-// rest; the sidebar wraps above the content when both cannot fit side by side
-// (side panel, mobile).
 const StyledContentContainer = styled.div`
   align-items: flex-start;
   display: flex;
