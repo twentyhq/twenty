@@ -3,6 +3,7 @@ import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-ite
 export const INBOX_ITEM_TYPE_KEY = {
   conversation: 'conversation',
   agentQuestion: 'agent_question',
+  agentRunFailed: 'agent_run_failed',
   workflowRunFailed: 'workflow_run_failed',
   approval: 'approval',
   agentPlan: 'agent_plan',
@@ -35,6 +36,13 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
     key: INBOX_ITEM_TYPE_KEY.agentQuestion,
     label: 'Question from an agent',
     icon: 'IconHelpCircle',
+    defaultPriority: InboxItemPriority.NEEDS_ACTION,
+  },
+  {
+    universalIdentifier: 'e91103ec-021e-4481-b609-6d4e9ae38422',
+    key: INBOX_ITEM_TYPE_KEY.agentRunFailed,
+    label: 'Agent run failed',
+    icon: 'IconAlertTriangle',
     defaultPriority: InboxItemPriority.NEEDS_ACTION,
   },
   {

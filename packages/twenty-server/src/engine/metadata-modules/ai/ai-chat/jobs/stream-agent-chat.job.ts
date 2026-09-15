@@ -221,6 +221,21 @@ export class StreamAgentChatJob {
           event: { type: 'queue-updated' },
         })
         .catch(() => {});
+
+      // Routed last and swallowed on its own failure: the stream error is what
+      // this job has to report, and losing the inbox item must not replace it.
+      await this.agentChatInboxService
+        .onTurnFailed({
+          threadId: data.threadId,
+          workspaceId: data.workspaceId,
+          userWorkspaceId: data.userWorkspaceId,
+          errorMessage: streamError.message,
+        })
+        .catch((inboxError) => {
+          this.logger.error(
+            `Failed to route the failed turn for thread ${data.threadId} to the inbox: ${inboxError instanceof Error ? inboxError.message : String(inboxError)}`,
+          );
+        });
       throw error;
     } finally {
       stopHeartbeat();

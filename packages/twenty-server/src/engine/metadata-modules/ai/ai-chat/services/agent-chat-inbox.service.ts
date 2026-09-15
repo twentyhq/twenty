@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
@@ -73,10 +74,37 @@ export class AgentChatInboxService {
     });
   }
 
+  // A failed turn is the only thing that ends a turn without reaching
+  // onTurnCompleted, so without this the item keeps whatever the last completed
+  // turn left behind: a resume that fails after its answer cleared
+  // pendingQuestionMessageId would still read "question from an agent" with no
+  // question pending, and an ordinary turn would fail with nothing in the inbox
+  // at all. The stream-error event only reaches someone already watching.
+  async onTurnFailed({
+    threadId,
+    workspaceId,
+    userWorkspaceId,
+    errorMessage,
+  }: ThreadContext & { errorMessage?: string }): Promise<void> {
+    await this.inboxRouterService.route({
+      workspaceId,
+      typeKey: INBOX_ITEM_TYPE_KEY.agentRunFailed,
+      ...(isNonEmptyString(errorMessage)
+        ? { context: { summary: errorMessage } }
+        : {}),
+      subject: {
+        kind: 'thread',
+        threadId,
+        ownerUserWorkspaceId: userWorkspaceId,
+      },
+    });
+  }
+
   // Answering a question is deliberately not reported here: the agent's next
   // turn is what says whether one is still pending. Reporting the answer as
   // well would race that turn and read as "no question pending" even when the
-  // resume never ran.
+  // resume never ran. Between them, onTurnCompleted and onTurnFailed cover
+  // every way that turn can end.
 
   async onThreadRemoved({
     threadId,

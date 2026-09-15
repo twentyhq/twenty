@@ -1,0 +1,99 @@
+import { Test, type TestingModule } from '@nestjs/testing';
+
+import { INBOX_ITEM_TYPE_KEY } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
+import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
+import { AgentChatInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox.service';
+
+const WORKSPACE_ID = 'workspace-id';
+const THREAD_ID = 'thread-id';
+const USER_WORKSPACE_ID = 'user-workspace-id';
+
+describe('AgentChatInboxService', () => {
+  let service: AgentChatInboxService;
+
+  const inboxRouterService = {
+    route: jest.fn(),
+    renameThreadItem: jest.fn(),
+    clearByThreadId: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        AgentChatInboxService,
+        { provide: InboxRouterService, useValue: inboxRouterService },
+      ],
+    }).compile();
+
+    service = module.get<AgentChatInboxService>(AgentChatInboxService);
+  });
+
+  describe('onTurnFailed', () => {
+    it('routes the failure onto the thread so a stale question does not outlive it', async () => {
+      await service.onTurnFailed({
+        threadId: THREAD_ID,
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+        errorMessage: 'The model stopped responding',
+      });
+
+      expect(inboxRouterService.route).toHaveBeenCalledWith({
+        workspaceId: WORKSPACE_ID,
+        typeKey: INBOX_ITEM_TYPE_KEY.agentRunFailed,
+        context: { summary: 'The model stopped responding' },
+        subject: {
+          kind: 'thread',
+          threadId: THREAD_ID,
+          ownerUserWorkspaceId: USER_WORKSPACE_ID,
+        },
+      });
+    });
+
+    it('omits the context when there is no message rather than storing an empty summary', async () => {
+      await service.onTurnFailed({
+        threadId: THREAD_ID,
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+        errorMessage: '',
+      });
+
+      expect(inboxRouterService.route).toHaveBeenCalledWith(
+        expect.not.objectContaining({ context: expect.anything() }),
+      );
+    });
+  });
+
+  describe('onTurnCompleted', () => {
+    it('reports a pending question so the item asks for an answer', async () => {
+      await service.onTurnCompleted({
+        threadId: THREAD_ID,
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+        hasPendingQuestion: true,
+      });
+
+      expect(inboxRouterService.route).toHaveBeenCalledWith(
+        expect.objectContaining({
+          typeKey: INBOX_ITEM_TYPE_KEY.agentQuestion,
+        }),
+      );
+    });
+
+    it('returns the item to a conversation once no question is pending', async () => {
+      await service.onTurnCompleted({
+        threadId: THREAD_ID,
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: USER_WORKSPACE_ID,
+        hasPendingQuestion: false,
+      });
+
+      expect(inboxRouterService.route).toHaveBeenCalledWith(
+        expect.objectContaining({
+          typeKey: INBOX_ITEM_TYPE_KEY.conversation,
+        }),
+      );
+    });
+  });
+});
