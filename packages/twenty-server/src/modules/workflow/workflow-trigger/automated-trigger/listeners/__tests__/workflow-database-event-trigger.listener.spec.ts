@@ -12,6 +12,7 @@ import {
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -118,6 +119,14 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           provide: RecordShareService,
           useValue: recordShareService,
+        },
+        {
+          provide: RecordAccessPolicyService,
+          useValue: {
+            resolveRecordIdsReadableThroughParents: jest
+              .fn()
+              .mockResolvedValue(new Set()),
+          },
         },
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',
@@ -314,6 +323,45 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           workspaceWorkflowVersionId: `workspace-version-${workflowId}`,
           payload: deletePayload.events[0],
         },
+        { retryLimit: 3 },
+      );
+    });
+
+    it('should not hand the child records captured with a deletion to the workflow', async () => {
+      const capturedEvent = {
+        ...mockPayload.events[0],
+        properties: {
+          before: { field1: 'old', field2: 'old' },
+          inheritedReadabilityChildRecords: {
+            noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
+          },
+        },
+      };
+
+      setTriggerMap([
+        {
+          type: AutomatedTriggerType.DATABASE_EVENT,
+          workflowId,
+          settings: {
+            eventName: 'deleteEvent',
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordDeleteEvent({
+        ...mockPayload,
+        name: 'deleteEvent',
+        events: [capturedEvent],
+      });
+
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        expect.objectContaining({
+          payload: {
+            ...capturedEvent,
+            properties: { before: { field1: 'old', field2: 'old' } },
+          },
+        }),
         { retryLimit: 3 },
       );
     });

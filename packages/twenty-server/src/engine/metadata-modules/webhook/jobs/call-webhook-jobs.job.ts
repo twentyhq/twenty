@@ -19,9 +19,12 @@ import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/typ
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/webhook/utils/compute-webhook-operations-to-match.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
+import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/record-share/constants/everyone-row-access-policy-subject.constant';
+import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
+import { resolveEventRecordSnapshots } from 'src/engine/record-share/utils/resolve-event-record-snapshots.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
@@ -34,6 +37,7 @@ export class CallWebhookJobsJob {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareService: RecordShareService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
   ) {}
 
@@ -104,6 +108,17 @@ export class CallWebhookJobsJob {
                     (event) => event.recordId,
                   ),
                 }),
+              ),
+            resolveRecordIdsReadableThroughParents: () =>
+              this.recordAccessPolicyService.resolveRecordIdsReadableThroughParents(
+                {
+                  workspaceId: workspaceEventBatch.workspaceId,
+                  objectMetadata: flatObjectMetadata,
+                  records: resolveEventRecordSnapshots(
+                    workspaceEventBatch.events,
+                  ),
+                  subject: EVERYONE_ROW_ACCESS_POLICY_SUBJECT,
+                },
               ),
           })
         : null;

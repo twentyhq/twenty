@@ -7,7 +7,7 @@ import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/typ
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { transformEventToWebhookEvent } from 'src/engine/metadata-modules/webhook/utils/transform-event-to-webhook-event';
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
-import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { isRecordAdmittedByRecordShareGate } from 'src/engine/record-share/utils/is-record-admitted-by-record-share-gate.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 
 export const transformEventBatchToWebhookEvents = ({
@@ -23,7 +23,7 @@ export const transformEventBatchToWebhookEvents = ({
 
   const events = isDefined(recordShareGate)
     ? workspaceEventBatch.events.filter((event) =>
-        isRecordSharedWithPrincipals({
+        isRecordAdmittedByRecordShareGate({
           recordShareGate,
           recordId: event.recordId,
           accessLevels: resolveRequiredRecordShareAccessLevels('select'),

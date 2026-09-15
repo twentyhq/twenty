@@ -29,6 +29,7 @@ export class TaskPostQueryHookService {
       const taskTargetRepository =
         this.workspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
           'taskTarget',
+          { shouldBypassPermissionChecks: true },
         );
 
       await taskTargetRepository.softDelete({
@@ -53,6 +54,7 @@ export class TaskPostQueryHookService {
       const taskTargetRepository =
         this.workspaceOrmManager.getRepository<TaskTargetWorkspaceEntity>(
           'taskTarget',
+          { shouldBypassPermissionChecks: true },
         );
 
       await taskTargetRepository.restore({
