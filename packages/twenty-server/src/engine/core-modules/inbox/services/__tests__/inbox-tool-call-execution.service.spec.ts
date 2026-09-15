@@ -115,4 +115,18 @@ describe('InboxToolCallExecutionService', () => {
       error: 'Could not reach the mailbox',
     });
   });
+
+  // A failed call the person cannot read anything off is one they cannot act
+  // on, so the row always carries something naming the tool.
+  it('names the tool when the failure reports no reason at all', async () => {
+    toolRegistryService.resolveAndExecute.mockResolvedValue({
+      success: false,
+      message: '',
+    });
+
+    await expect(execute()).resolves.toEqual({
+      status: 'FAILED',
+      error: 'Tool draft_email failed without reporting a reason',
+    });
+  });
 });

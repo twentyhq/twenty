@@ -61,11 +61,15 @@ export class InboxToolCallExecutionService {
     );
 
     if (toolOutput.success !== true) {
+      // A tool is free to fail with neither field filled in, and a FAILED row
+      // with nothing written on it is one the person cannot act on.
+      const error = [toolOutput.error, toolOutput.message].find(
+        isNonEmptyString,
+      );
+
       return {
         status: 'FAILED',
-        error: isNonEmptyString(toolOutput.error)
-          ? toolOutput.error
-          : toolOutput.message,
+        error: error ?? `Tool ${toolName} failed without reporting a reason`,
       };
     }
 
