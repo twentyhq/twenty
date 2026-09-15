@@ -1,7 +1,9 @@
 import { useLingui } from '@lingui/react/macro';
+import { styled } from '@linaria/react';
 import React from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconColumnInsertRight, IconPlus } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
@@ -11,6 +13,10 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
+const StyledContainer = styled.div`
+  padding-top: ${themeCssVariables.spacing['0.5']};
+`;
 
 export const WorkspaceSectionAddMenuItemButton = () => {
   const { t } = useLingui();
@@ -42,13 +48,15 @@ export const WorkspaceSectionAddMenuItemButton = () => {
     pendingInsertionNavigationMenuItem === null;
 
   return (
-    <NavigationDrawerItem
-      Icon={IconPlus}
-      label={t`Add menu item`}
-      onClick={handleClick}
-      triggerEvent="CLICK"
-      variant="tertiary"
-      isSelectedInEditMode={isSelected}
-    />
+    <StyledContainer>
+      <NavigationDrawerItem
+        Icon={IconPlus}
+        label={t`Add menu item`}
+        onClick={handleClick}
+        triggerEvent="CLICK"
+        variant="tertiary"
+        isSelectedInEditMode={isSelected}
+      />
+    </StyledContainer>
   );
 };
