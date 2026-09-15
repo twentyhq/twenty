@@ -125,7 +125,7 @@ export const FormRecordRichTextFieldInput = ({
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        readonly={readonly === true || hasUnreadableStoredValue}
+        readonly={readonly || hasUnreadableStoredValue}
       />
     </FormFieldInputContainer>
   );
