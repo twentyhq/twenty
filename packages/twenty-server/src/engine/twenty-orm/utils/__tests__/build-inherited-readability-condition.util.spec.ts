@@ -38,8 +38,16 @@ const findParameterValues = (
 describe('buildInheritedReadabilityCondition', () => {
   it('should accept a share row on the record itself or an OPEN parent present', () => {
     const condition = build([
-      { joinColumnName: 'targetPersonId', gate: { kind: 'open' } },
-      { joinColumnName: 'targetCompanyId', gate: { kind: 'open' } },
+      {
+        kind: 'column',
+        joinColumnName: 'targetPersonId',
+        gate: { kind: 'open' },
+      },
+      {
+        kind: 'column',
+        joinColumnName: 'targetCompanyId',
+        gate: { kind: 'open' },
+      },
     ]);
 
     expect(condition).toBeDefined();
@@ -58,8 +66,13 @@ describe('buildInheritedReadabilityCondition', () => {
 
   it('should gate a PRIVATE parent on one record share EXISTS keyed by the parent column', () => {
     const condition = build([
-      { joinColumnName: 'targetPersonId', gate: { kind: 'open' } },
       {
+        kind: 'column',
+        joinColumnName: 'targetPersonId',
+        gate: { kind: 'open' },
+      },
+      {
+        kind: 'column',
         joinColumnName: 'targetNoteId',
         gate: { kind: 'private', objectMetadataId: NOTE_OBJECT_METADATA_ID },
       },
@@ -81,7 +94,11 @@ describe('buildInheritedReadabilityCondition', () => {
 
   it('should only keep rows shared directly when every parent is denied', () => {
     const condition = build([
-      { joinColumnName: 'targetNoteId', gate: { kind: 'denied' } },
+      {
+        kind: 'column',
+        joinColumnName: 'targetNoteId',
+        gate: { kind: 'denied' },
+      },
     ]);
 
     expect(condition).toBeDefined();
@@ -96,6 +113,7 @@ describe('buildInheritedReadabilityCondition', () => {
   it('should correlate an INHERITED parent through its own condition', () => {
     const condition = build([
       {
+        kind: 'column',
         joinColumnName: 'targetNoteId',
         gate: {
           kind: 'inherited',
@@ -116,6 +134,59 @@ describe('buildInheritedReadabilityCondition', () => {
     expect(sql).toContain(
       ' OR ("attachment"."targetNoteId" IS NOT NULL AND EXISTS (SELECT 1 FROM "workspace_abc"."note" AS "attachment_targetNoteId" WHERE "attachment_targetNoteId"."id" = "attachment"."targetNoteId" AND "attachment_targetNoteId"."companyId" IS NOT NULL)))',
     );
+    expect(parameters.nested).toBe('value');
+  });
+
+  it('should accept any live child row of an OPEN child object', () => {
+    const condition = build([
+      {
+        kind: 'children',
+        childTableAlias: 'attachment_noteTarget',
+        childTableExpression: '"workspace_abc"."noteTarget"',
+        childJoinColumnName: 'noteId',
+        gate: { kind: 'open' },
+      },
+    ]);
+
+    expect(condition).toBeDefined();
+
+    expect(condition!.sql).toContain(
+      ' OR EXISTS (SELECT 1 FROM "workspace_abc"."noteTarget" AS "attachment_noteTarget" WHERE "attachment_noteTarget"."noteId" = "attachment"."id" AND "attachment_noteTarget"."deletedAt" IS NULL))',
+    );
+  });
+
+  it('should require a readable child row of a gated child object and skip a denied one', () => {
+    const condition = build([
+      {
+        kind: 'children',
+        childTableAlias: 'attachment_noteTarget',
+        childTableExpression: '"workspace_abc"."noteTarget"',
+        childJoinColumnName: 'noteId',
+        gate: {
+          kind: 'gated',
+          condition: {
+            sql: '"attachment_noteTarget"."targetPersonId" IS NOT NULL',
+            parameters: { nested: 'value' },
+          },
+        },
+      },
+      {
+        kind: 'children',
+        childTableAlias: 'attachment_secret',
+        childTableExpression: '"workspace_abc"."secret"',
+        childJoinColumnName: 'attachmentId',
+        gate: { kind: 'denied' },
+      },
+    ]);
+
+    expect(condition).toBeDefined();
+
+    const { sql, parameters } = condition!;
+
+    expect(sql).toContain(
+      ' OR EXISTS (SELECT 1 FROM "workspace_abc"."noteTarget" AS "attachment_noteTarget" WHERE "attachment_noteTarget"."noteId" = "attachment"."id" AND "attachment_noteTarget"."deletedAt" IS NULL AND "attachment_noteTarget"."targetPersonId" IS NOT NULL))',
+    );
+    expect(sql).not.toContain('secret');
     expect(parameters.nested).toBe('value');
   });
 });

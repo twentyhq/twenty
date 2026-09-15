@@ -6,7 +6,7 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { SeedObjectDefaultViewService } from 'src/engine/metadata-modules/view/services/seed-object-default-view.service';
 
-@RegisteredWorkspaceCommand('2.41.0', 1789396033066)
+@RegisteredWorkspaceCommand('2.41.0', 1789467778372)
 @Command({
   name: 'upgrade:2-41:seed-object-default-view',
   description:

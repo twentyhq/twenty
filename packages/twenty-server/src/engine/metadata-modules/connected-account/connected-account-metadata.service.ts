@@ -50,13 +50,11 @@ export class ConnectedAccountMetadataService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
-  async findMailboxesUsableByCaller({
+  async findWorkspaceMailboxes({
     workspaceId,
-    userWorkspaceId,
     operation,
   }: {
     workspaceId: string;
-    userWorkspaceId?: string;
     operation: EmailOperation;
   }): Promise<ConnectedAccountUsableByCaller[]> {
     const connectedAccounts = await this.repository.find({
@@ -78,21 +76,36 @@ export class ConnectedAccountMetadataService {
       },
     });
 
-    return connectedAccounts
-      .filter((connectedAccount) =>
-        canConnectedAccountPerformEmailOperation({
-          connectedAccount,
-          operation,
-        }),
-      )
-      .filter((connectedAccount) =>
-        isDefined(userWorkspaceId)
-          ? isConnectedAccountUsableByCaller({
-              connectedAccount,
-              userWorkspaceId,
-            })
-          : connectedAccount.visibility === 'workspace',
-      );
+    return connectedAccounts.filter((connectedAccount) =>
+      canConnectedAccountPerformEmailOperation({
+        connectedAccount,
+        operation,
+      }),
+    );
+  }
+
+  async findMailboxesUsableByCaller({
+    workspaceId,
+    userWorkspaceId,
+    operation,
+  }: {
+    workspaceId: string;
+    userWorkspaceId?: string;
+    operation: EmailOperation;
+  }): Promise<ConnectedAccountUsableByCaller[]> {
+    const mailboxes = await this.findWorkspaceMailboxes({
+      workspaceId,
+      operation,
+    });
+
+    return mailboxes.filter((connectedAccount) =>
+      isDefined(userWorkspaceId)
+        ? isConnectedAccountUsableByCaller({
+            connectedAccount,
+            userWorkspaceId,
+          })
+        : connectedAccount.visibility === 'workspace',
+    );
   }
 
   async findUsableByCaller({

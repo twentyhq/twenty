@@ -10,14 +10,13 @@ import {
 } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
-  getEmailProvidersForOperation,
   isDefined,
-  isNonEmptyArray,
   isValidUuid,
 } from 'twenty-shared/utils';
 import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
 
+import { type WorkspaceAuthContextType } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
@@ -32,6 +31,8 @@ import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-to
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
+import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
+import { isCallerBypassingAccountVisibility } from 'src/engine/metadata-modules/connected-account/utils/is-caller-bypassing-account-visibility.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -58,6 +59,7 @@ export class EmailComposerService {
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileService: FileService,
+    private readonly connectedAccountMetadataService: ConnectedAccountMetadataService,
   ) {}
 
   private async getConnectedAccountOrThrow({
@@ -115,55 +117,41 @@ export class EmailComposerService {
     workspaceId,
     userWorkspaceId,
     operation,
+    callerType,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
     operation: EmailOperation;
+    callerType?: WorkspaceAuthContextType;
   }): Promise<string> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const mailboxes = await this.connectedAccountRepository.find({
-        where: {
+    const usableMailboxes = isCallerBypassingAccountVisibility(callerType)
+      ? await this.connectedAccountMetadataService.findWorkspaceMailboxes({
           workspaceId,
-          archivedAt: IsNull(),
-          provider: In(getEmailProvidersForOperation(operation)),
-        },
-        order: { createdAt: 'ASC', id: 'ASC' },
-      });
-
-      const usableMailboxes = mailboxes.filter((connectedAccount) =>
-        canConnectedAccountPerformEmailOperation({
-          connectedAccount,
           operation,
-        }),
+        })
+      : await this.connectedAccountMetadataService.findMailboxesUsableByCaller({
+          workspaceId,
+          userWorkspaceId,
+          operation,
+        });
+
+    const connectedAccountId = isDefined(userWorkspaceId)
+      ? selectConnectedAccountIdForCaller({
+          connectedAccounts: usableMailboxes,
+          userWorkspaceId,
+        })
+      : usableMailboxes[0]?.id;
+
+    if (!isDefined(connectedAccountId)) {
+      throw new EmailToolException(
+        isDefined(userWorkspaceId)
+          ? `No connected account available for user workspace '${userWorkspaceId}' that can ${operation.toLowerCase()} email`
+          : `No connected account in this workspace can ${operation.toLowerCase()} email`,
+        EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
       );
+    }
 
-      if (!isNonEmptyArray(usableMailboxes)) {
-        throw new EmailToolException(
-          `No connected account in this workspace can ${operation.toLowerCase()} email`,
-          EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
-        );
-      }
-
-      if (!isDefined(userWorkspaceId)) {
-        return usableMailboxes[0].id;
-      }
-
-      const connectedAccountId = selectConnectedAccountIdForCaller({
-        connectedAccounts: usableMailboxes,
-        userWorkspaceId,
-      });
-
-      if (!isDefined(connectedAccountId)) {
-        throw new EmailToolException(
-          `No connected account available for user workspace '${userWorkspaceId}' that can ${operation.toLowerCase()} email`,
-          EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
-        );
-      }
-
-      return connectedAccountId;
-    }, authContext);
+    return connectedAccountId;
   }
 
   private normalizeRecipients(parameters: ComposeEmailParams): {
@@ -365,7 +353,7 @@ export class EmailComposerService {
     context: ToolExecutionContext;
     operation: EmailOperation;
   }): Promise<EmailComposerResult> {
-    const { workspaceId, userWorkspaceId } = context;
+    const { workspaceId, userWorkspaceId, callerType } = context;
     const { subject, body, files, inReplyTo, fromHandle } = parameters;
     let { connectedAccountId } = parameters;
 
@@ -408,6 +396,7 @@ export class EmailComposerService {
         workspaceId,
         userWorkspaceId,
         operation,
+        callerType,
       });
     }
 
