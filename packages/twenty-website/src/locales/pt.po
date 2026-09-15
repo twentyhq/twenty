@@ -8,7 +8,7 @@ msgstr ""
 "Language: pt\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-15 12:25\n"
+"PO-Revision-Date: 2026-09-15 14:21\n"
 "Last-Translator: \n"
 "Language-Team: Portuguese\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -5619,7 +5619,7 @@ msgstr "Abrir menu"
 #. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
-msgstr ""
+msgstr "Abra Settings → Admin Panel → Organization na sua instância self-hosted da Twenty."
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
