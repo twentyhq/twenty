@@ -22,6 +22,7 @@ import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/uti
 import { AGENT_CHAT_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
 import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 
 const inboxItemTypeTableName = 'inboxItemType';
@@ -38,6 +39,7 @@ export type InboxReferenceIds = {
   applicationId: string;
   adminRoleId: string;
   companyObjectMetadataId: string;
+  messageThreadObjectMetadataId: string;
 };
 
 type SeedInboxArgs = {
@@ -85,7 +87,8 @@ type SeededInboxItem = {
   assignee?: 'me' | 'colleague';
   subject?:
     | { kind: 'thread'; which: 'default' | 'review' }
-    | { kind: 'company'; companyId: string };
+    | { kind: 'company'; companyId: string }
+    | { kind: 'messageThread'; threadId: string };
   // How a seed author describes an item. The writer below turns it into what
   // the model actually stores: a summary column, provenance in context, and a
   // row per record.
@@ -94,6 +97,13 @@ type SeededInboxItem = {
   cleared?: { hoursAgo: number; outcome?: string; resurfaceInHours?: number };
 };
 
+type SeededEntityKind =
+  | 'person'
+  | 'company'
+  | 'opportunity'
+  | 'messageThread'
+  | 'other';
+
 type SeededInboxContent = {
   summary?: string;
   source?: InboxItemContextSource;
@@ -101,7 +111,7 @@ type SeededInboxContent = {
     key: string;
     label: string;
     subtitle?: string;
-    kind: 'person' | 'company' | 'opportunity' | 'other';
+    kind: SeededEntityKind;
     recordId?: string;
   }[];
   edges?: { from: string; to: string; label: string }[];
@@ -881,6 +891,345 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
 ];
 
+// The seed points at two kinds of real record: a company and a message thread.
+// Anything else is named without being clickable, which the model has to carry
+// anyway for a producer that knows a label but not a row.
+const resolveEntityObjectMetadataId = (
+  kind: SeededEntityKind,
+  inboxReferenceIds: InboxReferenceIds,
+): string | null => {
+  if (kind === 'company') {
+    return inboxReferenceIds.companyObjectMetadataId;
+  }
+
+  if (kind === 'messageThread') {
+    return inboxReferenceIds.messageThreadObjectMetadataId;
+  }
+
+  return null;
+};
+
+const resolveSubjectObjectMetadataId = (
+  subject: SeededInboxItem['subject'],
+  inboxReferenceIds: InboxReferenceIds,
+): string | null => {
+  if (subject?.kind === 'company') {
+    return inboxReferenceIds.companyObjectMetadataId;
+  }
+
+  if (subject?.kind === 'messageThread') {
+    return inboxReferenceIds.messageThreadObjectMetadataId;
+  }
+
+  return null;
+};
+
+const resolveSubjectRecordId = (
+  subject: SeededInboxItem['subject'],
+): string | null => {
+  if (subject?.kind === 'company') {
+    return subject.companyId;
+  }
+
+  if (subject?.kind === 'messageThread') {
+    return subject.threadId;
+  }
+
+  return null;
+};
+
+const TASK_INPUT_SCHEMA: InboxItemFieldSchema[] = [
+  {
+    key: 'title',
+    label: 'Title',
+    type: InboxItemFieldType.TEXT,
+    isRequired: true,
+  },
+  { key: 'dueDate', label: 'Due date', type: InboxItemFieldType.TEXT },
+];
+
+// The three cases the launch is judged on, each seeded in the state a person
+// would actually find it in: work waiting in a shared inbox that nobody has
+// taken, a notification about something the platform did, and a suggestion
+// drawn from something the person said or received.
+const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
+  // 1. A shared inbox. Nobody owns these until somebody takes them.
+  {
+    seedName: 'hello-refund-request',
+    typeName: INBOX_ITEM_TYPE_NAME.inboundMessage,
+    title: 'Refund for a duplicate charge',
+    hoursAgo: 1,
+    queueName: 'support',
+    subject: {
+      kind: 'messageThread',
+      threadId: MESSAGE_THREAD_DATA_SEED_IDS.ID_1,
+    },
+    content: {
+      summary:
+        'Priya was charged twice for September and is asking for one charge back. The second charge is on the same invoice.',
+      source: {
+        kind: 'email',
+        label: 'Duplicate charge on invoice 4482',
+        detail: 'priya@northwind.com to hello@ · 40 minutes ago',
+        excerpt:
+          'Hi, we seem to have been billed twice for September on invoice 4482. Could you refund one of them?',
+        messageCount: 1,
+      },
+      entities: [
+        {
+          key: 'priya',
+          label: 'Priya Raman',
+          subtitle: 'Northwind · billing contact',
+          kind: 'person',
+        },
+        {
+          key: 'thread',
+          label: 'Duplicate charge on invoice 4482',
+          subtitle: 'hello@ · 1 message',
+          kind: 'messageThread',
+          recordId: MESSAGE_THREAD_DATA_SEED_IDS.ID_1,
+        },
+      ],
+      edges: [{ from: 'priya', to: 'thread', label: 'wrote' }],
+    },
+    toolCalls: [
+      {
+        toolName: 'draft_email',
+        label: 'Reply to Priya',
+        description: 'Confirm the refund and say when it will land.',
+        icon: 'IconMail',
+        inputSchema: EMAIL_INPUT_SCHEMA,
+        proposedInput: {
+          recipients: { to: 'priya@northwind.com', cc: '' },
+          subject: 'Re: Duplicate charge on invoice 4482',
+          body: 'Hi Priya,\n\nYou are right, invoice 4482 was charged twice. I have refunded the second charge; it should reach your account in three to five working days.\n\nSorry for the trouble.',
+        },
+      },
+    ],
+  },
+  {
+    seedName: 'hello-sso-question',
+    typeName: INBOX_ITEM_TYPE_NAME.inboundMessage,
+    title: 'Does the plan include SAML?',
+    hoursAgo: 4,
+    isRead: true,
+    queueName: 'support',
+    assignee: 'colleague',
+    subject: {
+      kind: 'messageThread',
+      threadId: MESSAGE_THREAD_DATA_SEED_IDS.ID_2,
+    },
+    content: {
+      summary:
+        'Asked whether SAML is on the current plan or an upgrade. Jane picked this up and is checking with sales.',
+      source: {
+        kind: 'email',
+        label: 'SSO on our plan?',
+        detail: 'ops@fieldstone.io to hello@ · 4 hours ago',
+        excerpt:
+          'We are rolling out SSO company-wide next month. Is SAML included on our plan or does it need an upgrade?',
+        messageCount: 2,
+      },
+    },
+  },
+  {
+    seedName: 'hello-shipping-delay',
+    typeName: INBOX_ITEM_TYPE_NAME.inboundMessage,
+    title: 'Chasing an order that has not shipped',
+    hoursAgo: 1,
+    queueName: 'support',
+    subject: {
+      kind: 'messageThread',
+      threadId: MESSAGE_THREAD_DATA_SEED_IDS.ID_3,
+    },
+    // Answered yesterday and back this morning, which is the case a shared
+    // inbox has to get right: the reply reopens the item rather than starting
+    // a second one beside it.
+    cleared: { hoursAgo: 20, outcome: 'DONE' },
+    content: {
+      summary:
+        'Answered yesterday with a shipping date. They have written back to say it still has not arrived.',
+      source: {
+        kind: 'email',
+        label: 'Re: Order 10431 still not here',
+        detail: 'sam@bellweather.co to hello@ · 1 hour ago',
+        excerpt:
+          'Thanks for the update yesterday, but tracking still shows nothing. Can you check with the carrier?',
+        messageCount: 4,
+      },
+    },
+  },
+
+  // 2. Notifications about something the platform did or is asking for.
+  {
+    seedName: 'notify-inbox-access-request',
+    typeName: INBOX_ITEM_TYPE_NAME.systemNotification,
+    title: 'Jane asked for access to the Sales inbox',
+    hoursAgo: 2,
+    assignee: 'me',
+    content: {
+      summary:
+        'Jane is covering renewals this quarter and needs to see what lands in Sales.',
+    },
+    toolCalls: [
+      {
+        toolName: 'grant_inbox_access',
+        label: 'Grant access',
+        description:
+          'Give the Account Executive role access to the Sales inbox.',
+        icon: 'IconLock',
+        inputSchema: [
+          {
+            key: 'queueName',
+            label: 'Inbox',
+            type: InboxItemFieldType.TEXT,
+            isRequired: true,
+          },
+          {
+            key: 'roleName',
+            label: 'Role',
+            type: InboxItemFieldType.TEXT,
+            isRequired: true,
+          },
+        ],
+        proposedInput: { queueName: 'sales', roleName: 'Account Executive' },
+      },
+    ],
+  },
+  {
+    seedName: 'notify-mailbox-disconnected',
+    typeName: INBOX_ITEM_TYPE_NAME.systemNotification,
+    title: 'Your mailbox stopped syncing',
+    priority: InboxItemPriority.UPDATE,
+    hoursAgo: 9,
+    assignee: 'me',
+    // No plan at all. Reading it is the whole interaction, which is the case
+    // the primitive has to handle without inventing an action for it.
+    content: {
+      summary:
+        'Google stopped accepting the connection on 12 September. Messages since then have not been imported.',
+      source: {
+        kind: 'record',
+        label: 'Connected account · tim@apple.dev',
+        detail: 'Last successful sync 3 days ago',
+      },
+    },
+  },
+
+  // 3. Something read on the person's behalf, turned into a suggestion.
+  {
+    seedName: 'suggest-tasks-from-call',
+    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    title: 'Three follow-ups from your call with Sarah',
+    hoursAgo: 3,
+    assignee: 'me',
+    subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_3 },
+    content: {
+      summary:
+        'The recording mentions a security review, a seat count to confirm and a follow-up call in two weeks.',
+      source: {
+        kind: 'call',
+        label: 'Call with Sarah Chen',
+        detail: 'Yesterday · 32 minutes',
+        excerpt:
+          'We will need to run this past our security team before we can expand, and I want to revisit the seat count once that is done.',
+      },
+      entities: [
+        {
+          key: 'sarah',
+          label: 'Sarah Chen',
+          subtitle: 'Meta · VP Operations',
+          kind: 'person',
+        },
+        {
+          key: 'meta',
+          label: 'Meta',
+          subtitle: 'Expansion · 45 seats',
+          kind: 'company',
+          recordId: COMPANY_DATA_SEED_IDS.ID_3,
+        },
+      ],
+      edges: [{ from: 'sarah', to: 'meta', label: 'at' }],
+    },
+    toolCalls: [
+      {
+        toolName: 'create_task',
+        label: 'Create task',
+        description: 'Send the security questionnaire to Sarah.',
+        icon: 'IconCheckbox',
+        inputSchema: TASK_INPUT_SCHEMA,
+        proposedInput: {
+          title: 'Send Meta the security questionnaire',
+          dueDate: '2026-09-18',
+        },
+      },
+      {
+        toolName: 'create_task',
+        label: 'Create task',
+        description: 'Confirm the seat count after the security review.',
+        icon: 'IconCheckbox',
+        inputSchema: TASK_INPUT_SCHEMA,
+        proposedInput: {
+          title: 'Confirm seat count with Sarah',
+          dueDate: '2026-09-29',
+        },
+      },
+    ],
+  },
+  {
+    seedName: 'suggest-from-personal-email',
+    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    title: 'Linnea is asking for the updated deck',
+    hoursAgo: 6,
+    assignee: 'me',
+    subject: {
+      kind: 'messageThread',
+      threadId: MESSAGE_THREAD_DATA_SEED_IDS.ID_4,
+    },
+    content: {
+      summary:
+        'Came in on your own mailbox rather than a shared one. She needs the deck before Thursday.',
+      source: {
+        kind: 'email',
+        label: 'Deck for Thursday?',
+        detail: 'linnea@qonto.eu · 6 hours ago',
+        excerpt:
+          'Could you send over the updated deck before Thursday? I am presenting it internally on Friday morning.',
+        messageCount: 1,
+      },
+      entities: [
+        {
+          key: 'linnea',
+          label: 'Linnea Berg',
+          subtitle: 'Qonto · Head of Partnerships',
+          kind: 'person',
+        },
+        {
+          key: 'thread',
+          label: 'Deck for Thursday?',
+          subtitle: 'tim@apple.dev · 1 message',
+          kind: 'messageThread',
+          recordId: MESSAGE_THREAD_DATA_SEED_IDS.ID_4,
+        },
+      ],
+      edges: [{ from: 'linnea', to: 'thread', label: 'wrote' }],
+    },
+    toolCalls: [
+      {
+        toolName: 'create_task',
+        label: 'Create task',
+        description: 'Send Linnea the updated deck before Thursday.',
+        icon: 'IconCheckbox',
+        inputSchema: TASK_INPUT_SCHEMA,
+        proposedInput: {
+          title: 'Send Linnea the updated deck',
+          dueDate: '2026-09-17',
+        },
+      },
+    ],
+  },
+];
+
 type SeededQueue = {
   name: string;
   label: string;
@@ -1093,62 +1442,63 @@ export const seedInbox = async ({
     ])
     .orIgnore()
     .values(
-      [...SEEDED_PLAN_ITEMS, ...SEEDED_INBOX_ITEMS].map((item) => {
-        const lastEventAt = hoursAgo(now, item.hoursAgo);
-        const clearedAt = item.cleared
-          ? hoursAgo(now, item.cleared.hoursAgo)
-          : null;
-        const assigneeUserWorkspaceId = item.assignee
-          ? people[item.assignee]
-          : null;
-        const isCleared = isDefined(clearedAt);
+      [...SEEDED_PLAN_ITEMS, ...SEEDED_INBOX_ITEMS, ...SEEDED_LAUNCH_ITEMS].map(
+        (item) => {
+          const lastEventAt = hoursAgo(now, item.hoursAgo);
+          const clearedAt = item.cleared
+            ? hoursAgo(now, item.cleared.hoursAgo)
+            : null;
+          const assigneeUserWorkspaceId = item.assignee
+            ? people[item.assignee]
+            : null;
+          const isCleared = isDefined(clearedAt);
 
-        return {
-          id: generateSeedId(workspaceId, `inbox-item-${item.seedName}`),
-          workspaceId,
-          inboxItemTypeId: typeIdByName[item.typeName],
-          priority: item.priority ?? InboxItemPriority.NEEDS_ACTION,
-          title: item.title,
-          summary: item.content.summary ?? null,
-          context: {
-            version: INBOX_ITEM_CONTEXT_VERSION,
-            producer: 'seed',
-            ...(isDefined(item.content.source)
-              ? { source: item.content.source }
-              : {}),
-          },
-          lastEventAt,
-          clearedAt,
-          resurfaceAt:
-            isCleared && isDefined(item.cleared?.resurfaceInHours)
-              ? new Date(
-                  now.getTime() + item.cleared.resurfaceInHours * HOUR_IN_MS,
-                )
-              : null,
-          clearedByUserWorkspaceId: isCleared ? people.me : null,
-          outcome: item.cleared?.outcome ?? null,
-          // Read means seen since the last event; a cleared item was seen too.
-          readAt: item.isRead || isCleared ? lastEventAt : null,
-          threadId:
-            item.subject?.kind === 'thread'
-              ? threadIdByWhich[item.subject.which]
-              : null,
-          subjectObjectMetadataId:
-            item.subject?.kind === 'company'
-              ? inboxReferenceIds.companyObjectMetadataId
-              : null,
-          subjectRecordId:
-            item.subject?.kind === 'company' ? item.subject.companyId : null,
-          queueId: item.queueName ? queueIdByName[item.queueName] : null,
-          assigneeUserWorkspaceId,
-          slotKey: `${item.typeName}:${item.seedName}`,
-          createdAt: hoursAgo(
-            now,
-            Math.max(item.hoursAgo, item.cleared?.hoursAgo ?? 0),
-          ),
-          updatedAt: lastEventAt,
-        };
-      }),
+          return {
+            id: generateSeedId(workspaceId, `inbox-item-${item.seedName}`),
+            workspaceId,
+            inboxItemTypeId: typeIdByName[item.typeName],
+            priority: item.priority ?? InboxItemPriority.NEEDS_ACTION,
+            title: item.title,
+            summary: item.content.summary ?? null,
+            context: {
+              version: INBOX_ITEM_CONTEXT_VERSION,
+              producer: 'seed',
+              ...(isDefined(item.content.source)
+                ? { source: item.content.source }
+                : {}),
+            },
+            lastEventAt,
+            clearedAt,
+            resurfaceAt:
+              isCleared && isDefined(item.cleared?.resurfaceInHours)
+                ? new Date(
+                    now.getTime() + item.cleared.resurfaceInHours * HOUR_IN_MS,
+                  )
+                : null,
+            clearedByUserWorkspaceId: isCleared ? people.me : null,
+            outcome: item.cleared?.outcome ?? null,
+            // Read means seen since the last event; a cleared item was seen too.
+            readAt: item.isRead || isCleared ? lastEventAt : null,
+            threadId:
+              item.subject?.kind === 'thread'
+                ? threadIdByWhich[item.subject.which]
+                : null,
+            subjectObjectMetadataId: resolveSubjectObjectMetadataId(
+              item.subject,
+              inboxReferenceIds,
+            ),
+            subjectRecordId: resolveSubjectRecordId(item.subject),
+            queueId: item.queueName ? queueIdByName[item.queueName] : null,
+            assigneeUserWorkspaceId,
+            slotKey: `${item.typeName}:${item.seedName}`,
+            createdAt: hoursAgo(
+              now,
+              Math.max(item.hoursAgo, item.cleared?.hoursAgo ?? 0),
+            ),
+            updatedAt: lastEventAt,
+          };
+        },
+      ),
     )
     .execute();
 
@@ -1171,7 +1521,11 @@ export const seedInbox = async ({
     ])
     .orIgnore()
     .values(
-      [...SEEDED_PLAN_ITEMS, ...SEEDED_INBOX_ITEMS].flatMap((item) => {
+      [
+        ...SEEDED_PLAN_ITEMS,
+        ...SEEDED_INBOX_ITEMS,
+        ...SEEDED_LAUNCH_ITEMS,
+      ].flatMap((item) => {
         const entities = item.content.entities ?? [];
         const edges = item.content.edges ?? [];
 
@@ -1200,15 +1554,18 @@ export const seedInbox = async ({
             label: entity.label,
             subtitle: entity.subtitle ?? null,
             relationLabel: relationLabel ?? null,
-            // Only companies have a resolvable object in the seed, so the rest
-            // are named without being clickable, which is a state the model
-            // has to carry anyway.
-            objectMetadataId:
-              entity.kind === 'company'
-                ? inboxReferenceIds.companyObjectMetadataId
-                : null,
-            recordId:
-              entity.kind === 'company' ? (entity.recordId ?? null) : null,
+            // Only companies and message threads have a resolvable object in
+            // the seed, so the rest are named without being clickable, which
+            // is a state the model has to carry anyway.
+            objectMetadataId: resolveEntityObjectMetadataId(
+              entity.kind,
+              inboxReferenceIds,
+            ),
+            recordId: isDefined(
+              resolveEntityObjectMetadataId(entity.kind, inboxReferenceIds),
+            )
+              ? (entity.recordId ?? null)
+              : null,
           };
         });
       }),
@@ -1236,7 +1593,11 @@ export const seedInbox = async ({
     ])
     .orIgnore()
     .values(
-      [...SEEDED_PLAN_ITEMS, ...SEEDED_INBOX_ITEMS].flatMap((item) =>
+      [
+        ...SEEDED_PLAN_ITEMS,
+        ...SEEDED_INBOX_ITEMS,
+        ...SEEDED_LAUNCH_ITEMS,
+      ].flatMap((item) =>
         (item.toolCalls ?? []).map((toolCall, position) => {
           const isExecuted =
             toolCall.status === InboxItemToolCallStatus.EXECUTED;

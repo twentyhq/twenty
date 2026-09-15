@@ -7,6 +7,8 @@ export const INBOX_ITEM_TYPE_NAME = {
   workflowRunFailed: 'workflow_run_failed',
   approval: 'approval',
   agentPlan: 'agent_plan',
+  inboundMessage: 'inbound_message',
+  systemNotification: 'system_notification',
 } as const;
 
 export type StandardInboxItemTypeName =
@@ -65,5 +67,19 @@ export const STANDARD_INBOX_ITEM_TYPES: StandardInboxItemType[] = [
     label: 'Plan from an agent',
     icon: 'IconSparkles',
     defaultPriority: InboxItemPriority.NEEDS_ACTION,
+  },
+  {
+    universalIdentifier: 'a3d81f0e-58cc-4a52-9b3d-7e0c2f4b6a19',
+    name: INBOX_ITEM_TYPE_NAME.inboundMessage,
+    label: 'Message',
+    icon: 'IconMail',
+    defaultPriority: InboxItemPriority.NEEDS_ACTION,
+  },
+  {
+    universalIdentifier: 'c6e0b27d-9f41-4a8b-8c15-3d7a9e2f5b08',
+    name: INBOX_ITEM_TYPE_NAME.systemNotification,
+    label: 'Notification',
+    icon: 'IconBell',
+    defaultPriority: InboxItemPriority.UPDATE,
   },
 ];

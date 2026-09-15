@@ -183,6 +183,17 @@ export class DevSeederService {
       throw new Error('Company object metadata is required to seed AI chat');
     }
 
+    const messageThreadObjectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular === 'messageThread',
+    );
+
+    if (!isDefined(messageThreadObjectMetadataItem)) {
+      throw new Error(
+        'Message thread object metadata is required to seed the inbox',
+      );
+    }
+
     const [allCompaniesView, adminRole] = await Promise.all([
       this.coreDataSource.getRepository(ViewEntity).findOneByOrFail({
         workspaceId,
@@ -235,6 +246,7 @@ export class DevSeederService {
         applicationId: twentyStandardFlatApplication.id,
         adminRoleId: adminRole.id,
         companyObjectMetadataId: companyObjectMetadataItem.id,
+        messageThreadObjectMetadataId: messageThreadObjectMetadataItem.id,
       },
     });
 
