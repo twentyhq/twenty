@@ -84,6 +84,18 @@ export class InboxTransitionService {
       );
     }
 
+    const partialUpdate = this.buildPartialUpdate({
+      inboxItem,
+      actorUserWorkspaceId,
+      transition,
+    });
+
+    // A transition that changes nothing must not bump the version either:
+    // every client holding the item would have to reload to act on it again.
+    if (Object.keys(partialUpdate).length === 0) {
+      return this.readItemOrThrow(workspaceId, inboxItemId);
+    }
+
     // The version guard lives in the WHERE clause, so losing the race means
     // updating nothing rather than overwriting the winner.
     const updateResult = await this.inboxItemRepository.update(
@@ -97,11 +109,7 @@ export class InboxTransitionService {
         ...(isDefined(expectedVersion) ? { version: expectedVersion } : {}),
       },
       {
-        ...this.buildPartialUpdate({
-          inboxItem,
-          actorUserWorkspaceId,
-          transition,
-        }),
+        ...partialUpdate,
         version: () => '"version" + 1',
       },
     );
@@ -113,24 +121,28 @@ export class InboxTransitionService {
       );
     }
 
-    // Read back by id rather than through the actor's visibility: handing a
-    // personal item to someone else has just taken it out of the actor's view.
-    const updatedInboxItem = await this.inboxItemRepository.findOne(
-      workspaceId,
-      {
-        where: { id: inboxItemId },
-        relations: { inboxItemType: true, toolCalls: true, records: true },
-      },
-    );
+    return this.readItemOrThrow(workspaceId, inboxItemId);
+  }
 
-    if (!isDefined(updatedInboxItem)) {
+  // Read back by id rather than through the actor's visibility: handing a
+  // personal item to someone else has just taken it out of the actor's view.
+  private async readItemOrThrow(
+    workspaceId: string,
+    inboxItemId: string,
+  ): Promise<InboxItemEntity> {
+    const inboxItem = await this.inboxItemRepository.findOne(workspaceId, {
+      where: { id: inboxItemId },
+      relations: { inboxItemType: true, toolCalls: true, records: true },
+    });
+
+    if (!isDefined(inboxItem)) {
       throw new InboxException(
         `Inbox item ${inboxItemId} not found`,
         InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
       );
     }
 
-    return updatedInboxItem;
+    return inboxItem;
   }
 
   // The recipient is a user workspace id, which the caller could have copied

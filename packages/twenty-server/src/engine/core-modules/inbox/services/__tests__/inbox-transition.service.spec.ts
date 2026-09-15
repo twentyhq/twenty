@@ -547,7 +547,9 @@ describe('InboxTransitionService', () => {
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
 
-    it('writes nothing when the item is already in that inbox', async () => {
+    // A write would bump the version, and every client holding the item would
+    // then have to reload before it could act on it again.
+    it('writes nothing at all when the item is already in that inbox', async () => {
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({ queueId: QUEUE_ID }),
       );
@@ -560,10 +562,7 @@ describe('InboxTransitionService', () => {
         transition: { kind: 'MOVE', toQueueId: QUEUE_ID },
       });
 
-      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
-
-      expect(partialUpdate).not.toHaveProperty('queueId');
-      expect(partialUpdate).not.toHaveProperty('clearedAt');
+      expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
   });
 });
