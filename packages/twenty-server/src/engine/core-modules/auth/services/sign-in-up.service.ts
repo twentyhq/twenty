@@ -597,7 +597,7 @@ export class SignInUpService {
       `Cannot create more than ${MAX_WORKSPACES_WITHOUT_ENTERPRISE_KEY} workspaces without a valid enterprise key`,
       AuthExceptionCode.FORBIDDEN_EXCEPTION,
       {
-        userFriendlyMessage: msg`Workspace limit reached. A valid enterprise key is required to create more workspaces.`,
+        userFriendlyMessage: msg`Workspace limit reached. A valid Organization key is required to create more workspaces.`,
       },
     );
   }
