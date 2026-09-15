@@ -3,7 +3,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, within } from 'storybook/test';
 
+import { NotificationCounter } from '@ui/primitives/data-display/NotificationCounter/NotificationCounter';
 import { IconInfoCircle } from '@ui/icon';
+import { Input } from '@ui/primitives/input/Input/Input';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -44,7 +46,7 @@ const TabsExample = ({
       keepMounted={keepMounted}
     >
       {keepMounted ? (
-        <input aria-label="Draft note" placeholder="Write a note" />
+        <Input aria-label="Draft note" placeholder="Write a note" />
       ) : (
         'Record overview'
       )}
@@ -141,7 +143,7 @@ export const WithIconAndBadge: Story = {
   parameters: { container: { width: 360 } },
   args: {
     startIcon: <IconInfoCircle />,
-    badge: <span className={styles.count}>3</span>,
+    badge: <NotificationCounter count={3} variant="secondary" />,
   },
 };
 
@@ -223,7 +225,9 @@ const TABS_CATALOG_CONTENT_PROPS: Record<
 > = {
   plain: {},
   icon: { startIcon: <IconInfoCircle /> },
-  badge: { badge: <span className={styles.count}>3</span> },
+  badge: {
+    badge: <NotificationCounter count={3} variant="secondary" />,
+  },
 };
 
 export const Catalog: CatalogStory<Story, typeof Tabs.Tab> = {

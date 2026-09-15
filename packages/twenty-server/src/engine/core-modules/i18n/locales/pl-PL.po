@@ -177,7 +177,7 @@ msgstr "Pole o tej nazwie już istnieje."
 #. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "A free development instance requires an active production instance on this Organization subscription."
-msgstr ""
+msgstr "Bezpłatna instancja deweloperska wymaga aktywnej instancji produkcyjnej w ramach tej subskrypcji Organization."
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -495,7 +495,7 @@ msgstr "Członek przestrzeni roboczej"
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
-msgstr ""
+msgstr "Wpis na liście blokad obejmującej całą przestrzeń roboczą nie może dotyczyć członka przestrzeni roboczej."
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1327,7 +1327,7 @@ msgstr "Pozycja rekordu listy blokad"
 #. js-lingui-id: HSo0Xn
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Blocklist scope cannot be updated."
-msgstr ""
+msgstr "Zakres listy blokad nie może zostać zaktualizowany."
 
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1396,12 +1396,12 @@ msgstr "Zbudowana ścieżka handlera jest nieprawidłowa"
 #: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
 #: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
 msgid "Bulk deletion of blocklist entries is not allowed."
-msgstr ""
+msgstr "Zbiorcze usuwanie wpisów listy blokad nie jest dozwolone."
 
 #. js-lingui-id: Az75zM
 #: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
 msgid "Bulk restoration of blocklist entries is not allowed."
-msgstr ""
+msgstr "Zbiorcze przywracanie wpisów listy blokad nie jest dozwolone."
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Nie można ukończyć operacji z powodu powiązanych rekordów."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Nie można utworzyć wielu roboczych wersji dla tego samego workflow"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Nie można utworzyć wersji workflow o innym statusie niż roboczy"
 
@@ -1937,7 +1937,7 @@ msgstr "Nie można mieć więcej niż jednej aktywnej wersji workflow"
 #. js-lingui-id: 9hWalM
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Cannot manage a blocklist entry of another workspace member."
-msgstr ""
+msgstr "Nie można zarządzać wpisem na liście blokad innego członka przestrzeni roboczej."
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5407,7 +5407,7 @@ msgstr "Nieprawidłowe sortowanie z parametrem grupowania."
 #. js-lingui-id: 4rRyz1
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "Invalid Organization key."
-msgstr ""
+msgstr "Nieprawidłowy klucz Organization."
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6499,7 +6499,7 @@ msgstr "Scal {objectLabelPlural}"
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
 msgid "Merging blocklist entries is not allowed."
-msgstr ""
+msgstr "Scalanie wpisów listy blokad nie jest dozwolone."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -10374,7 +10374,7 @@ msgstr "Nie znaleziono domyślnej roli dla tego obszaru roboczego. Skontaktuj si
 #. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "The development instance slot for this Organization key is already in use on another server."
-msgstr ""
+msgstr "Miejsce na instancję deweloperską dla tego klucza Organization jest już używane na innym serwerze."
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10439,7 +10439,7 @@ msgstr "Pole happensAt używane przez ten typ aktywności osi czasu nie jest dos
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Początkowa wersja workflow nie może być usunięta"
 
@@ -10941,7 +10941,7 @@ msgstr "Nie znaleziono tego obiektu oceny."
 #. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
-msgstr ""
+msgstr "Ta funkcja jest bezpłatna dla maksymalnie {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} stanowisk. Twoja instancja przekracza ten limit, więc wymagany jest klucz Organization."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Tego pola nie można modyfikować."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "To pole nie może być aktualizowane bezpośrednio w wersji przepływu pracy"
 
@@ -11106,7 +11106,7 @@ msgstr "Ta operacja odnosi się do rekordu, który nie istnieje lub nie może zo
 #. js-lingui-id: 8TiDJj
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr ""
+msgstr "Ten klucz Organization jest już używany na innej instancji serwera. Zwolnij go z tamtego serwera lub przenieś go na ten."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11249,6 +11249,16 @@ msgstr "Ta wersja nie jest wyższa niż obecnie wdrożona wersja. Zwiększ numer
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Ta wersja aplikacji jest już zainstalowana w tym obszarze roboczym."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Ta wersja workflow zawiera nieprawidłowo sformatowane dane i nie może zostać zapisana."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Ta wersja workflow nie jest gotowa do aktywacji."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -12977,7 +12987,7 @@ msgstr "Obszar roboczy jest zawieszony."
 #. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
-msgstr ""
+msgstr "Osiągnięto limit przestrzeni roboczych. Aby utworzyć więcej przestrzeni roboczych, wymagany jest ważny klucz Organization."
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -13317,10 +13327,15 @@ msgstr "Nie masz uprawnień do podszywania się pod użytkowników w tej przestr
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Nie masz uprawnień do podszywania się pod użytkowników. Skontaktuj się z administratorem obszaru roboczego, aby uzyskać dostęp."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Nie masz uprawnień do zarządzania połączeniami udostępnionymi w obszarze roboczym. Skontaktuj się z administratorem obszaru roboczego, aby uzyskać dostęp."
+
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
 msgid "You do not have permission to manage the workspace blocklist."
-msgstr ""
+msgstr "Nie masz uprawnień do zarządzania listą blokad przestrzeni roboczej."
 
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
@@ -13383,17 +13398,17 @@ msgstr "Osiągnąłeś maksymalną liczbę zaproszeń dla tego kroku."
 #. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
-msgstr ""
+msgstr "Osiągnąłeś maksymalną liczbę odświeżeń licencji dozwoloną dzisiaj dla tego klucza Organization. Spróbuj ponownie później."
 
 #. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
-msgstr ""
+msgstr "Osiągnąłeś maksymalną liczbę transferów serwera dozwoloną w ciągu ostatnich 30 dni dla tego klucza Organization. Spróbuj ponownie później."
 
 #. js-lingui-id: GFlHFf
 #: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
 msgid "You must be authenticated to manage the blocklist."
-msgstr ""
+msgstr "Musisz być uwierzytelniony, aby zarządzać listą blokad."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

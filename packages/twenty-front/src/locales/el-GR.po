@@ -1052,7 +1052,7 @@ msgstr "Απαιτείται μέθοδος πληρωμής για να παρ�
 #. js-lingui-id: eU1E2J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
-msgstr ""
+msgstr "Μια πληρωμή της συνδρομής σας απέτυχε. Οι premium δυνατότητές σας παραμένουν ενεργές όσο προσπαθούμε ξανά."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1271,7 +1271,7 @@ msgstr "Ενεργοποίηση"
 #. js-lingui-id: 8xkU9e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Activate Organization Key"
-msgstr ""
+msgstr "Ενεργοποίηση κλειδιού οργανισμού"
 
 #. js-lingui-id: i7ur8L
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2136,12 +2136,12 @@ msgstr "Χρήση AI"
 #. js-lingui-id: jSHIk0
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "AI usage analytics across workspaces is available with an Organization key."
-msgstr ""
+msgstr "Τα αναλυτικά στοιχεία χρήσης AI σε όλους τους χώρους εργασίας είναι διαθέσιμα με κλειδί οργανισμού."
 
 #. js-lingui-id: 55MeVT
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics is available with an Organization key."
-msgstr ""
+msgstr "Τα αναλυτικά στοιχεία χρήσης AI είναι διαθέσιμα με κλειδί Οργανισμού."
 
 #. js-lingui-id: U2F/HK
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -2419,7 +2419,7 @@ msgstr "Όλα τα προσαρμοσμένα αντικείμενά σας"
 #. js-lingui-id: fWQJW/
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow developers to claim ownership of applications."
-msgstr ""
+msgstr "Να επιτρέπεται στους προγραμματιστές να διεκδικούν την κυριότητα εφαρμογών."
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2445,7 +2445,7 @@ msgstr "Επιτρέψτε την εξαγωγή δεδομένων σε αρχ�
 #. js-lingui-id: G1r3UJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow filtering records by values inside JSON fields."
-msgstr ""
+msgstr "Να επιτρέπεται το φιλτράρισμα εγγραφών βάσει τιμών μέσα σε πεδία JSON."
 
 #. js-lingui-id: q/pgyN
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2480,7 +2480,7 @@ msgstr "Επιτρέψτε τη σύνδεση μέσω Microsoft για χρή�
 #. js-lingui-id: cLzEjc
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow sharing individual records with workspace members."
-msgstr ""
+msgstr "Να επιτρέπεται η κοινή χρήση μεμονωμένων εγγραφών με μέλη του χώρου εργασίας."
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -2495,7 +2495,7 @@ msgstr "Επιτρέψτε την πρόσκληση νέων χρηστών μ�
 #. js-lingui-id: xfQ2i8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow unique indexes to prevent duplicate field values."
-msgstr ""
+msgstr "Να επιτρέπονται μοναδικά ευρετήρια για την αποτροπή διπλότυπων τιμών πεδίων."
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2755,7 +2755,7 @@ msgstr "Όνομα API (Ενικός)"
 #. js-lingui-id: FXWLlg
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "API rate limits v2"
-msgstr ""
+msgstr "Όρια ρυθμού API v2"
 
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -2784,7 +2784,7 @@ msgstr "Εφαρμογή"
 #. js-lingui-id: gA2ZGo
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App claiming"
-msgstr ""
+msgstr "Διεκδίκηση εφαρμογής"
 
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -4423,7 +4423,7 @@ msgstr "Επιλέξτε αν αυτός ο τύπος δραστηριότητ�
 #. js-lingui-id: PPf/RT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Choose which fields are used when searching for records."
-msgstr ""
+msgstr "Επιλέξτε ποια πεδία χρησιμοποιούνται κατά την αναζήτηση εγγραφών."
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4928,7 +4928,7 @@ msgstr "Μεταβλητές Διαμόρφωσης"
 #. js-lingui-id: 8/+vjg
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Configurable search fields"
-msgstr ""
+msgstr "Διαμορφώσιμα πεδία αναζήτησης"
 
 #. js-lingui-id: ywFj2D
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -5325,7 +5325,7 @@ msgstr "Συνέχεια με τη Microsoft"
 #. js-lingui-id: Rdhzdv
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Control what the workspace imports from connected mailboxes and calendars"
-msgstr ""
+msgstr "Ελέγξτε τι εισάγει ο χώρος εργασίας από συνδεδεμένα γραμματοκιβώτια και ημερολόγια"
 
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -5364,6 +5364,7 @@ msgid "Copied to clipboard"
 msgstr "Αντιγράφηκε στο πρόχειρο"
 
 #. js-lingui-id: he3ygx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -5553,7 +5554,7 @@ msgstr "Δεν ήταν δυνατή η φόρτωση των εκδόσεων."
 #. js-lingui-id: pd1EEy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not open billing portal. Please check your Organization key is present, or contact support."
-msgstr ""
+msgstr "Δεν ήταν δυνατό το άνοιγμα της πύλης χρέωσης. Ελέγξτε ότι υπάρχει το κλειδί Οργανισμού σας ή επικοινωνήστε με την υποστήριξη."
 
 #. js-lingui-id: ZuI4Sl
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -5604,7 +5605,7 @@ msgstr "Δεν ήταν δυνατός ο συγχρονισμός του κατ
 #. js-lingui-id: rGxoIq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not transfer the Organization key. Please contact support."
-msgstr ""
+msgstr "Δεν ήταν δυνατή η μεταφορά του κλειδιού Οργανισμού. Επικοινωνήστε με την υποστήριξη."
 
 #. js-lingui-id: xsKD3e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5976,7 +5977,7 @@ msgstr "Διαπιστευτήρια και πεδία πρόσβασης για
 #. js-lingui-id: NGOYJs
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Credit allowance quotas"
-msgstr ""
+msgstr "Ποσοστώσεις επιτρεπόμενων πιστώσεων"
 
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -7238,7 +7239,7 @@ msgstr "Η υπαγόρευση δεν υποστηρίζεται σε αυτό 
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
-msgstr ""
+msgstr "Άμεσες αποκρίσεις μεταδεδομένων REST"
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -7884,7 +7885,7 @@ msgstr "Email και Συνομιλία"
 #. js-lingui-id: snb/bC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Email campaigns"
-msgstr ""
+msgstr "Καμπάνιες email"
 
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -7898,9 +7899,9 @@ msgstr "Κατηγορίες email από τις οποίες οι παραλή�
 
 #. js-lingui-id: UZQ5eW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Email copied to clipboard"
 msgstr "Το email αντιγράφηκε στο πρόχειρο"
 
@@ -8101,7 +8102,7 @@ msgstr "Ενεργοποίηση επιλογών παράκαμψης"
 #. js-lingui-id: vs9cre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr ""
+msgstr "Ενεργοποιήστε τις καμπάνιες email, τις λίστες και τη διαχείριση διαγραφής."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -8464,7 +8465,7 @@ msgstr "Σφάλμα"
 #. js-lingui-id: MC9SGH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Error activating Organization license"
-msgstr ""
+msgstr "Σφάλμα κατά την ενεργοποίηση της άδειας Οργανισμού"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -8555,7 +8556,7 @@ msgstr "Σφάλμα κατά την περιστροφή του μυστικο�
 #. js-lingui-id: 2AvJlR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Error transferring the Organization key"
-msgstr ""
+msgstr "Σφάλμα μεταφοράς του κλειδιού Οργανισμού"
 
 #. js-lingui-id: 5Vy8D1
 #: src/modules/settings/applications/hooks/useUninstallApplication.ts
@@ -8762,7 +8763,7 @@ msgstr "Εξαιρέστε τα παρακάτω άτομα και τομείς 
 #. js-lingui-id: aCFYU+
 #: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
 msgid "Exclude the following people and domains from the email and calendar sync of every workspace member"
-msgstr ""
+msgstr "Εξαιρέστε τα παρακάτω άτομα και τομείς από τον συγχρονισμό ηλεκτρονικού ταχυδρομείου και ημερολογίου κάθε μέλους του χώρου εργασίας"
 
 #. js-lingui-id: g3jaWB
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -8995,7 +8996,7 @@ msgstr "Αποτυχία {translatedOperationType} του {translatedMetadataNam
 #. js-lingui-id: 0zoYr3
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Failed to activate Organization license. Please check your key or contact support."
-msgstr ""
+msgstr "Αποτυχία ενεργοποίησης της άδειας Οργανισμού. Ελέγξτε το κλειδί σας ή επικοινωνήστε με την υποστήριξη."
 
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -9794,12 +9795,12 @@ msgstr "Το μικρό όνομα δεν μπορεί να είναι κενό"
 #. js-lingui-id: tVgANq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to keep your premium features active."
-msgstr ""
+msgstr "Διορθώστε το πρόβλημα πληρωμής για να παραμείνουν ενεργές οι premium δυνατότητες."
 
 #. js-lingui-id: SdIdBz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to restore your premium features."
-msgstr ""
+msgstr "Διορθώστε το πρόβλημα πληρωμής για να επαναφέρετε τις premium δυνατότητές σας."
 
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -10119,7 +10120,7 @@ msgstr "Αποκτήστε περισσότερες πιστώσεις"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Get Organization"
-msgstr ""
+msgstr "Αποκτήστε Οργανισμό"
 
 #. js-lingui-id: MZe3+J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -10127,7 +10128,7 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Get Organization Key"
-msgstr ""
+msgstr "Αποκτήστε κλειδί Οργανισμού"
 
 #. js-lingui-id: wwPywk
 #: src/pages/onboarding/InstallAppsContent.tsx
@@ -11682,7 +11683,7 @@ msgstr ""
 #. js-lingui-id: klrZv0
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "JSON filters"
-msgstr ""
+msgstr "Φίλτρα JSON"
 
 #. js-lingui-id: KTaki5
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
@@ -12216,7 +12217,7 @@ msgstr ""
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Limit the rate of outgoing webhook deliveries."
-msgstr ""
+msgstr "Περιορισμός του ρυθμού εξερχόμενων παραδόσεων webhook."
 
 #. js-lingui-id: GrFbIR
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
@@ -12282,8 +12283,8 @@ msgstr "Περιεχόμενο συνδέσμου"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Link copied to clipboard"
@@ -12965,7 +12966,7 @@ msgstr "Μήνυμα"
 #. js-lingui-id: jBzu2R
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Message and calendar target reads"
-msgstr ""
+msgstr "Αναγνώσεις στόχων μηνυμάτων και ημερολογίου"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -15110,12 +15111,12 @@ msgstr "Ένα ή περισσότερα φίλτρα αναφέρονται σ�
 #. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
-msgstr ""
+msgstr "Μία συνδρομή παρέχει ένα κλειδί Οργανισμού που ενεργοποιεί ένα στιγμιότυπο παραγωγής και ένα πιθανό στιγμιότυπο staging ή δοκιμών. Για να εκτελέσετε ένα περιβάλλον staging ή δοκιμών, εγκαταστήστε το Twenty σε δεύτερο διακομιστή, ενεργοποιήστε το με το ίδιο κλειδί Οργανισμού και κατόπιν καταχωρίστε αυτόν τον διακομιστή ως στιγμιότυπο ανάπτυξης. Τα στιγμιότυπα ανάπτυξης ξεκλειδώνουν premium δυνατότητες χωρίς επιπλέον χρέωση και δεν υπολογίζονται στις θέσεις παραγωγής σας."
 
 #. js-lingui-id: JEtonz
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Only application logs are available on your current plan. Other log types require an Organization subscription."
-msgstr ""
+msgstr "Μόνο τα αρχεία καταγραφής εφαρμογών είναι διαθέσιμα στο τρέχον πλάνο σας. Άλλοι τύποι αρχείων καταγραφής απαιτούν συνδρομή Organization."
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -15224,6 +15225,7 @@ msgid "Open in"
 msgstr "Άνοιγμα με"
 
 #. js-lingui-id: noLjKT
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open in app"
 msgstr "Άνοιγμα στην εφαρμογή"
@@ -15237,6 +15239,11 @@ msgstr "Άνοιγμα σε πλήρη σελίδα"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "Άνοιγμα στους ρόλους"
+
+#. js-lingui-id: x57cJf
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
+msgid "Open link"
+msgstr "Άνοιγμα συνδέσμου"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -15383,7 +15390,7 @@ msgstr "Λειτουργία Οργανισμού"
 #. js-lingui-id: b8dX3V
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization key transferred to this server"
-msgstr ""
+msgstr "Το κλειδί Οργανισμού μεταφέρθηκε σε αυτόν τον διακομιστή"
 
 #. js-lingui-id: MoJjhq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -15394,12 +15401,12 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization License"
-msgstr ""
+msgstr "Άδεια Οργανισμού"
 
 #. js-lingui-id: 6alGoe
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization license activated successfully"
-msgstr ""
+msgstr "Η άδεια Οργανισμού ενεργοποιήθηκε με επιτυχία"
 
 #. js-lingui-id: cyDPQQ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15708,12 +15715,12 @@ msgstr "Επικολλήστε τον παρακάτω κωδικό"
 #. js-lingui-id: M01WeF
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Paste your Organization key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server."
-msgstr ""
+msgstr "Επικολλήστε το κλειδί Οργανισμού παρακάτω για ενεργοποίηση. Κρατήστε ένα αντίγραφο αυτού του κλειδιού σε ασφαλές σημείο: το ίδιο κλειδί χρησιμοποιείται ξανά για τη ρύθμιση ενός στιγμιότυπου ανάπτυξης ή για τη μεταφορά της άδειάς σας σε διακομιστή αντικατάστασης."
 
 #. js-lingui-id: Jkg0nj
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Paste your Organization key here"
-msgstr ""
+msgstr "Επικολλήστε εδώ το κλειδί Οργανισμού"
 
 #. js-lingui-id: I6gXOa
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -15875,8 +15882,8 @@ msgid "Phone Number"
 msgstr "Αριθμός τηλεφώνου"
 
 #. js-lingui-id: qlqT9z
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Phone number copied to clipboard"
 msgstr "Ο αριθμός τηλεφώνου αντιγράφηκε στο πρόχειρο"
 
@@ -16148,7 +16155,7 @@ msgstr "Μόνο προεγκατεστημένα"
 #. js-lingui-id: HslPhm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Prebuilt logic functions"
-msgstr ""
+msgstr "Προκατασκευασμένες συναρτήσεις λογικής"
 
 #. js-lingui-id: 0Lqxjs
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
@@ -16690,7 +16697,7 @@ msgstr "Εγγραφή (ID)"
 #. js-lingui-id: zod7Md
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record creation form"
-msgstr ""
+msgstr "Φόρμα δημιουργίας εγγραφής"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -16728,7 +16735,7 @@ msgstr "Σελίδα εγγραφής"
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record sharing"
-msgstr ""
+msgstr "Κοινή χρήση εγγραφών"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -16899,7 +16906,7 @@ msgstr "Αποδέσμευση & μεταφορά"
 #. js-lingui-id: KXrI7W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Release & transfer Organization key"
-msgstr ""
+msgstr "Αποδέσμευση & μεταφορά κλειδιού Οργανισμού"
 
 #. js-lingui-id: PYZeGT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -17359,7 +17366,7 @@ msgstr "Επανάληψη σε περίπτωση αποτυχίας"
 #. js-lingui-id: AF7Zfa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Return metadata directly instead of wrapping it in the legacy response envelope."
-msgstr ""
+msgstr "Επιστροφή μεταδεδομένων απευθείας αντί για την ενσωμάτωσή τους στον παλαιό φάκελο απόκρισης."
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
@@ -17578,7 +17585,7 @@ msgstr "Εκτελέστε τη Λειτουργία"
 #. js-lingui-id: 8KjW3W
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Run logic functions from prebuilt application bundles."
-msgstr ""
+msgstr "Εκτέλεση συναρτήσεων λογικής από προκατασκευασμένα πακέτα εφαρμογών."
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/build-generic-tool-status-message.util.ts
@@ -17662,6 +17669,11 @@ msgstr "Αποθήκευση ως νέα προβολή"
 #: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "Αποθηκεύστε ή ακυρώστε τις αλλαγές του πίνακα ελέγχου πριν επεξεργαστείτε τη διάταξη."
+
+#. js-lingui-id: bL2pm9
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Save the record before attaching a file"
+msgstr "Αποθηκεύστε την εγγραφή πριν επισυνάψετε ένα αρχείο"
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -19358,12 +19370,12 @@ msgstr "Τυπικά widget"
 #. js-lingui-id: TqGZ8Y
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new Organization subscription to re-enable premium features."
-msgstr ""
+msgstr "Ξεκινήστε μια νέα συνδρομή Οργανισμού για να ενεργοποιηθούν ξανά οι premium δυνατότητες."
 
 #. js-lingui-id: kqtVJH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new Organization subscription."
-msgstr ""
+msgstr "Ξεκινήστε μια νέα συνδρομή Οργανισμού."
 
 #. js-lingui-id: WAjFYI
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -19802,7 +19814,7 @@ msgstr "Έγινε εναλλαγή σε παραγωγικό instance."
 #. js-lingui-id: Nu4DdT
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync"
-msgstr ""
+msgstr "Συγχρονισμός"
 
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -20379,7 +20391,7 @@ msgstr "Υπάρχει πρόβλημα χρέωσης. Παρακαλώ επι�
 #. js-lingui-id: AYRXBE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Your premium features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr ""
+msgstr "Υπάρχει πρόβλημα πληρωμής με τη συνδρομή σας. Οι premium δυνατότητές σας είναι απενεργοποιημένες. Εξοφλήστε το ανεξόφλητο τιμολόγιο για να τις επαναφέρετε, πριν ακυρωθεί η συνδρομή: μια ακυρωμένη συνδρομή δεν μπορεί να επανενεργοποιηθεί και θα χρειαστεί να ξεκινήσετε νέα."
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20537,6 +20549,11 @@ msgstr "Αυτό το στοιχείο εκτελείται χωρίς διεπ�
 msgid "This connection does not exist or is not available for this application."
 msgstr "Αυτή η σύνδεση δεν υπάρχει ή δεν είναι διαθέσιμη για αυτή την εφαρμογή."
 
+#. js-lingui-id: 2bcQ5P
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "This content was saved in an older format and cannot be edited here"
+msgstr "Αυτό το περιεχόμενο αποθηκεύτηκε σε παλαιότερη μορφή και δεν μπορεί να επεξεργαστεί εδώ"
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
@@ -20550,7 +20567,7 @@ msgstr "Αυτή η συσκευή"
 #. js-lingui-id: i6mVT3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "This feature is part of the Organization plan"
-msgstr ""
+msgstr "Αυτή η δυνατότητα περιλαμβάνεται στο Πλάνο Οργανισμού"
 
 #. js-lingui-id: own57K
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -20620,12 +20637,12 @@ msgstr "Αυτόν τον μήνα"
 #. js-lingui-id: ThVMIW
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
-msgstr ""
+msgstr "Αυτό το κλειδί Οργανισμού είναι ήδη δεσμευμένο σε διαφορετικό στιγμιότυπο διακομιστή. Η αποδέσμευσή του εδώ θα μεταφέρει την άδεια σε αυτόν τον διακομιστή και θα σταματήσει την καταμέτρηση θέσεων στον προηγούμενο."
 
 #. js-lingui-id: CHf20W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
-msgstr ""
+msgstr "Αυτό το κλειδί Οργανισμού είναι προς το παρόν δεσμευμένο σε διαφορετικό στιγμιότυπο διακομιστή. Η μεταφορά του εδώ θα το αποδεσμεύσει από τον προηγούμενο διακομιστή και θα σταματήσει την καταμέτρηση θέσεων σε αυτόν. Είστε βέβαιοι ότι θέλετε να συνεχίσετε;"
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -20665,7 +20682,7 @@ msgstr ""
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This server has an Organization key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support."
-msgstr ""
+msgstr "Αυτός ο διακομιστής έχει διαμορφωμένο κλειδί Οργανισμού. Βεβαιωθείτε ότι κρατάτε ένα αντίγραφό του σε ασφαλές σημείο: χρειάζεστε το ίδιο κλειδί για να ενεργοποιήσετε ένα στιγμιότυπο ανάπτυξης ή για να μεταφέρετε την άδειά σας σε διακομιστή αντικατάστασης. Αν δεν έχετε πλέον πρόσβαση στο κλειδί σας, επικοινωνήστε με την υποστήριξη."
 
 #. js-lingui-id: Gzd97S
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -21358,6 +21375,11 @@ msgstr "Η εγκατάσταση δύο παραγοντικής ταυτοπο
 msgid "Type"
 msgstr "Τύπος"
 
+#. js-lingui-id: RS98db
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Type '/' for commands"
+msgstr "Πληκτρολογήστε '/' για εντολές"
+
 #. js-lingui-id: SKD2e4
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
 msgid "Type '/' for commands, '@' for mentions"
@@ -21500,7 +21522,7 @@ msgstr "Μοναδικά πεδία"
 #. js-lingui-id: NXfWhP
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Unique indexes"
-msgstr ""
+msgstr "Μοναδικά ευρετήρια"
 
 #. js-lingui-id: pRpC/r
 #: src/modules/side-panel/pages/page-layout/constants/settings/PrefixSetting.ts
@@ -21620,7 +21642,7 @@ msgstr "Μη καταχωρισμένο"
 #. js-lingui-id: 8vc1Dy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Unlock premium features like SSO, row-level security, and audit logs."
-msgstr ""
+msgstr "Ξεκλειδώστε premium δυνατότητες όπως SSO, ασφάλεια σε επίπεδο γραμμής και αρχεία ελέγχου."
 
 #. js-lingui-id: Te2H8x
 #: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
@@ -21967,7 +21989,7 @@ msgstr "Αναβαθμίστε για πρόσβαση στα αρχεία κα�
 #. js-lingui-id: q10MiT
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to access audit logs."
-msgstr ""
+msgstr "Αναβαθμίστε σε Organization για πρόσβαση στα αρχεία καταγραφής ελέγχου."
 
 #. js-lingui-id: yV3xLN
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -22156,7 +22178,7 @@ msgstr "Περίοδος χρήσης"
 #. js-lingui-id: MNOlLY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use a dedicated form when creating records."
-msgstr ""
+msgstr "Χρήση ειδικής φόρμας κατά τη δημιουργία εγγραφών."
 
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -22196,22 +22218,22 @@ msgstr "Χρησιμοποιήστε το API μας ή προσθέστε το 
 #. js-lingui-id: c2ES/s
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use target relations to find messages and calendar events linked to records."
-msgstr ""
+msgstr "Χρήση σχέσεων στόχου για την εύρεση μηνυμάτων και συμβάντων ημερολογίου που συνδέονται με εγγραφές."
 
 #. js-lingui-id: 40bRe+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the dedicated workflow index page to browse workflows and their versions."
-msgstr ""
+msgstr "Χρήση της ειδικής σελίδας ευρετηρίου ροών εργασίας για περιήγηση στις ροές εργασίας και στις εκδόσεις τους."
 
 #. js-lingui-id: +mx9eK
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the quota engine to enforce credit allowances."
-msgstr ""
+msgstr "Χρήση της μηχανής ποσοστώσεων για την επιβολή επιτρεπόμενων πιστώσεων."
 
 #. js-lingui-id: 0rr3iW
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the usage limit engine to enforce API request speed limits."
-msgstr ""
+msgstr "Χρήση της μηχανής ορίων χρήσης για την επιβολή ορίων ταχύτητας αιτημάτων API."
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -22922,7 +22944,7 @@ msgstr "Απαιτείται το Webhook ID για ενημερώσεις"
 #. js-lingui-id: 0HuWgM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Webhook rate limits"
-msgstr ""
+msgstr "Όρια ρυθμού webhook"
 
 #. js-lingui-id: v1kQyJ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -23147,7 +23169,7 @@ msgstr "Εκτέλεση ροής εργασίας"
 #. js-lingui-id: 91e2Af
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
-msgstr ""
+msgstr "Σελίδα ευρετηρίου ροών εργασίας"
 
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
@@ -23518,7 +23540,7 @@ msgstr "Δεν έχετε πρόσβαση σε αυτήν τη σελίδα ρ�
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later or contact support."
-msgstr ""
+msgstr "Έχετε φτάσει τον μέγιστο αριθμό μεταφορών διακομιστή που επιτρέπονται τις τελευταίες 30 ημέρες για αυτό το κλειδί Οργανισμού. Παρακαλούμε δοκιμάστε ξανά αργότερα ή επικοινωνήστε με την υποστήριξη."
 
 #. js-lingui-id: RDAH2t
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -23623,12 +23645,12 @@ msgstr "Το όνομά σας όπως θα εμφανίζεται"
 #. js-lingui-id: 91Ysnw
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your Organization key"
-msgstr ""
+msgstr "Το κλειδί Οργανισμού σας"
 
 #. js-lingui-id: eE08iE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your Organization subscription has been canceled."
-msgstr ""
+msgstr "Η συνδρομή Οργανισμού σας έχει ακυρωθεί."
 
 #. js-lingui-id: 8mfOAZ
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -23649,22 +23671,22 @@ msgstr "Το πλάνο σας θα αλλάξει άμεσα σε Pro και η
 #. js-lingui-id: iizYt1
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features are active"
-msgstr ""
+msgstr "Οι premium δυνατότητές σας είναι ενεργές"
 
 #. js-lingui-id: VRFEn9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support."
-msgstr ""
+msgstr "Οι premium δυνατότητές σας είναι ενεργές, αλλά το κλειδί Οργανισμού σας λείπει ή δεν είναι έγκυρο. Αυτό ενδέχεται να είναι αναμενόμενο, αλλά αν όχι, ορίστε ένα έγκυρο υπογεγραμμένο κλειδί Οργανισμού για να διαχειριστείτε τη συνδρομή σας ή επικοινωνήστε με την υποστήριξη."
 
 #. js-lingui-id: BkmgMC
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features will be disabled"
-msgstr ""
+msgstr "Οι premium δυνατότητές σας θα απενεργοποιηθούν"
 
 #. js-lingui-id: TI99Rh
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features will remain active until {cancelAtDate}."
-msgstr ""
+msgstr "Οι premium δυνατότητές σας θα παραμείνουν ενεργές έως {cancelAtDate}."
 
 #. js-lingui-id: MxZ8eH
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

@@ -2,6 +2,7 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconUser, IconX } from '@ui/icon';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
+import { Button } from '@ui/primitives/input/Button/Button';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -233,9 +234,7 @@ export const ContentAndSlots: Story = {
     children: <strong>Rich content</strong>,
     startElement: <IconUser />,
     endElement: (
-      <button type="button" onClick={fn()}>
-        Remove
-      </button>
+      <Button type="button" title="Remove" ariaLabel="Remove" onClick={fn()} />
     ),
     endElementDivider: true,
   },

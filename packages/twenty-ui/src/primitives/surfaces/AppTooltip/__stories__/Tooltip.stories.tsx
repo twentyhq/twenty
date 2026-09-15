@@ -2,6 +2,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconInfoCircle } from '@ui/icon';
+import { Button } from '@ui/primitives/input/Button/Button';
+import { Text } from '@ui/primitives/typography/Text/Text';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -16,9 +18,9 @@ import {
 } from '../AppTooltip';
 
 const CUSTOM_CONTENT = (
-  <span>
+  <Text render={<span />}>
     <strong>Custom</strong> formatted content
-  </span>
+  </Text>
 );
 
 const findTooltip = async (canvasElement: HTMLElement) => {
@@ -56,9 +58,12 @@ const meta: Meta<typeof Tooltip> = {
   },
   render: (args) => (
     <>
-      <button type="button" id={args.anchorSelect?.slice(1)}>
-        Hover or focus me
-      </button>
+      <Button
+        type="button"
+        id={args.anchorSelect?.slice(1)}
+        title="Hover or focus me"
+        ariaLabel="Hover or focus me"
+      />
       <Tooltip {...args} />
     </>
   ),
@@ -217,9 +222,12 @@ export const InteractiveCustomContent: Story = {
     description: undefined,
     interactive: true,
     children: (
-      <button type="button" onClick={onCustomActionClick}>
-        Show more
-      </button>
+      <Button
+        type="button"
+        title="Show more"
+        ariaLabel="Show more"
+        onClick={onCustomActionClick}
+      />
     ),
   },
   decorators: [ComponentDecorator],
