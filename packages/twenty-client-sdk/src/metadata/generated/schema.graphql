@@ -5229,6 +5229,8 @@ input AppMessageParticipantInput {
   role: MessageParticipantRole!
   handle: String!
   displayName: String
+  personId: UUID
+  workspaceMemberId: UUID
 }
 
 enum MessageParticipantRole {

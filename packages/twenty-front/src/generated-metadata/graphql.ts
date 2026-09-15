@@ -316,7 +316,9 @@ export type AppMessageInput = {
 export type AppMessageParticipantInput = {
   displayName?: InputMaybe<Scalars['String']['input']>;
   handle: Scalars['String']['input'];
+  personId?: InputMaybe<Scalars['UUID']['input']>;
   role: MessageParticipantRole;
+  workspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
 };
 
 export type Application = {

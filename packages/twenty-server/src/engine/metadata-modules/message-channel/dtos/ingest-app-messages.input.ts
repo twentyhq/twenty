@@ -48,6 +48,23 @@ export class AppMessageParticipantInput {
   @IsString()
   @MaxLength(255)
   displayName?: string;
+
+  // Nothing can derive a Person from a handle that is not an email address,
+  // so a caller that already knows who this is says so here. Without it the
+  // participant stays unlinked and the thread never reaches a record page.
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  personId?: string;
+
+  // Attribution only. Thread targets — what puts a conversation on a record
+  // page — are built from personId alone, exactly as they are for email, so a
+  // participant linked only to a workspace member is stored and shows in the
+  // thread but pulls the conversation onto nothing.
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  workspaceMemberId?: string;
 }
 
 @InputType('AppMessageInput')

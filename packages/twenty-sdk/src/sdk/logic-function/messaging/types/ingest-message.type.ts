@@ -7,7 +7,24 @@ export type IngestMessageParticipant = {
   // The participant's identity on the provider, in the same namespace as the
   // channel's own handle.
   handle: string;
+  // Omitting it on a later delivery keeps whatever name is already stored,
+  // so enriching a participant with an identity does not require resending
+  // the rest of the row.
   displayName?: string;
+  // Twenty resolves email participants to People by email address, which
+  // cannot match a provider handle. Supply the record yourself when you know
+  // it — look the handle up against `Person.linkedinLink` or an identity
+  // field your app added. Without it the participant stays unlinked and the
+  // thread never appears on anyone's record page.
+  //
+  // Ingesting the same message again with an identity you have since
+  // resolved links the existing participant, so a late match is not lost.
+  personId?: string;
+  // For a participant who is a member of this workspace rather than a contact.
+  // Attribution only: record-page placement is built from `personId` alone, so
+  // a participant linked only to a workspace member shows in the thread but
+  // pulls the conversation onto no record.
+  workspaceMemberId?: string;
 };
 
 export type IngestMessage = {

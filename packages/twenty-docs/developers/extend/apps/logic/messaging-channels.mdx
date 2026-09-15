@@ -128,9 +128,34 @@ A batch is all-or-nothing, and repeating one `externalId` inside a single batch 
 
 ### Linking participants to People
 
-Twenty matches email participants to People by email address. That will not match a LinkedIn URN or a phone number, so ingested participants start unlinked, and an unlinked thread does not appear on anyone's record page.
+Twenty matches email participants to People by email address. That cannot match a LinkedIn URN or a phone number, so **an app must say who a participant is** — an unlinked thread does not appear on anyone's record page.
 
-Until app-supplied identity linking lands, resolve contacts yourself: look the participant up by whatever field your provider's identity lives in (`Person.linkedinLink`, a custom field your app added), then attach the thread to that record. See [Extending objects](/developers/extend/apps/data/extending-objects) for adding an identity field of your own.
+Pass `personId` alongside the handle:
+
+```ts
+participants: [
+  {
+    role: MessageParticipantRole.FROM,
+    handle: event.sender.memberUrn,
+    displayName: event.sender.name,
+    personId: await resolvePersonIdFromLinkedinUrn(event.sender.memberUrn),
+  },
+]
+```
+
+Resolve the id however your provider's identity is stored — against `Person.linkedinLink`, or an identity field your app added with [`defineField`](/developers/extend/apps/data/extending-objects). Unknown ids are rejected up front rather than stored as dangling links.
+
+Once a participant is linked, Twenty builds the thread's targets, and the conversation appears on that Person's record page and on their company's, exactly as an email thread does.
+
+`workspaceMemberId` is also accepted, for a participant who is a member of this workspace rather than a contact. It is **attribution only**: thread targets are built from `personId` alone — the same as for email — so a participant linked only to a workspace member shows in the thread but pulls the conversation onto no record page. Pass `personId` when you want the thread to land somewhere.
+
+<Note>
+A late match is not lost. Re-ingesting a message with an identity you have since resolved links the participant that is already there — matched on the message, handle and role, so a display name that changed or was omitted in the meantime does not split it in two. An omitted name keeps the one already stored; a new one replaces it. Sending a different `personId` corrects an earlier link rather than adding a second one.
+
+There is no way to *clear* an identity yet: a null is treated as "leave it alone", not "unlink". Correcting a wrong link means supplying the right one.
+</Note>
+
+Participants you leave unlinked are still stored and still render in the thread — they simply do not pull the conversation onto a record.
 
 ## Listing and updating channels
 
@@ -186,5 +211,5 @@ Deleting a channel deletes the messages ingested through it, and any thread left
 
 - **It is not polled.** Twenty's import pipeline polls mailbox providers on a cron. App channels are push-only: nothing fetches on your behalf, so your app is responsible for getting messages in, via a webhook route or a cron logic function.
 - **It does not send.** Outbound delivery is not yet routed to apps; a reply composed in Twenty cannot reach your provider. Until it is, link out to the provider's own UI for replies.
-- **It does not resolve contacts.** Twenty matches email participants to People by email address, which will not match a LinkedIn URN. Link participants to People explicitly when you ingest them.
-- **It does not create contacts.** Twenty's auto-creation derives people and companies from email domains, which is meaningless for most providers, so it is off for app channels.
+- **It does not resolve contacts.** Twenty matches email participants to People by email address, which cannot match a LinkedIn URN, so app channels [link participants explicitly at ingestion](#linking-participants-to-people) instead.
+- **It does not create contacts.** Twenty's auto-creation derives people and companies from email domains, which is meaningless for most providers, so it is off for app channels. Create the Person yourself, then pass its `personId`.
