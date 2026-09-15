@@ -24,7 +24,7 @@ import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 
 @Injectable()
-export class WorkflowVersionValidationWorkspaceService {
+export class WorkflowVersionQueryValidationWorkspaceService {
   constructor(
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,

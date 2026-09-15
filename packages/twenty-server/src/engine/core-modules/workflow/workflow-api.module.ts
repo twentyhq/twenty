@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+
+import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
@@ -49,6 +51,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ConnectedAccountMetadataModule,
     WorkflowVersionCoreModule,
+    WorkflowVersionValidationModule,
   ],
   controllers: [WorkflowTriggerController],
   providers: [
