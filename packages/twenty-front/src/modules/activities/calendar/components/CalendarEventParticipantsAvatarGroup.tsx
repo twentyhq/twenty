@@ -64,16 +64,16 @@ export const CalendarEventParticipantsAvatarGroup = ({
             key={[participant.workspaceMemberId, participant.displayName]
               .filter(isDefined)
               .join('-')}
-            avatarUrl={getAbsoluteImageUrl(participant.avatarUrl)}
-            placeholder={
+            src={getAbsoluteImageUrl(participant.avatarUrl)}
+            name={
               participant.firstName && participant.lastName
                 ? `${participant.firstName} ${participant.lastName}`
                 : participant.displayName
             }
-            placeholderColorSeed={
+            colorSeed={
               participant.workspaceMemberId || participant.personId || ''
             }
-            type="rounded"
+            shape="circle"
           />
         )),
       ]}
