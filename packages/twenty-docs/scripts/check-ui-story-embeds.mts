@@ -2,11 +2,13 @@ import { globSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { checkStoryEmbeds } from './ui/check-story-embeds.mjs';
 
 const indexPath = process.argv[2];
 
-if (!indexPath) {
+if (!isNonEmptyString(indexPath)) {
   throw new Error('Pass the path to the generated Storybook index.json.');
 }
 
