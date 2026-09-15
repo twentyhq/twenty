@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Tabs } from 'twenty-ui/navigation';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 

@@ -18,7 +18,7 @@ import SliderReference from '/snippets/ui/generated/input/slider.mdx';
 ## Single value
 
 ```tsx
-import { Slider } from 'twenty-ui/input';
+import { Slider } from 'twenty-ui/primitives/input';
 
 export const VolumeSlider = () => (
   <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
@@ -39,7 +39,7 @@ Use `value` and `onValueChange` for controlled state. `onValueCommitted` handles
 ## Range
 
 ```tsx
-import { Slider } from 'twenty-ui/input';
+import { Slider } from 'twenty-ui/primitives/input';
 
 export const PriceRange = () => (
   <Slider.Root

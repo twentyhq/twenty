@@ -10,8 +10,8 @@ import { showHiddenGroupVariablesState } from '@/settings/admin-panel/config-var
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 import { useQuery } from '@apollo/client/react';
 import {
   ConfigSource,

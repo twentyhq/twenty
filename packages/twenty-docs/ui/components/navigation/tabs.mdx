@@ -18,7 +18,7 @@ import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
 ## Tab panels
 
 ```tsx
-import { Tabs } from 'twenty-ui/navigation';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 
 export const RecordTabs = () => (
   <Tabs.Root defaultValue="overview">
@@ -40,7 +40,7 @@ export const RecordTabs = () => (
 
 ```tsx
 import { useState } from 'react';
-import { Tabs } from 'twenty-ui/navigation';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 
 export const SettingsTabs = () => {
   const [tab, setTab] = useState<string | number | null>('profile');

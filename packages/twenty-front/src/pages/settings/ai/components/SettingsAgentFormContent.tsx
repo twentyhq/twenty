@@ -10,7 +10,7 @@ import {
   IconTerminal,
   useIcons,
 } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';

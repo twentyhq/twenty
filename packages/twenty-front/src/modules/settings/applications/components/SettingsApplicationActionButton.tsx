@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 const UNINSTALL_APPLICATION_MODAL_ID = 'uninstall-application-modal';
 

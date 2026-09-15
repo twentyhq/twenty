@@ -10,7 +10,7 @@ import { SettingsOptionIconCustomizer } from '@/settings/components/SettingsOpti
 import { styled } from '@linaria/react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { isDefined } from 'twenty-shared/utils';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsOptionCardContentSelectProps = {

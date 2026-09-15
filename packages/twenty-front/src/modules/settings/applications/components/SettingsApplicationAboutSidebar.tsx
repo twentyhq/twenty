@@ -17,7 +17,7 @@ import {
   IconVersions,
   IconWorld,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type DeveloperLinks = {

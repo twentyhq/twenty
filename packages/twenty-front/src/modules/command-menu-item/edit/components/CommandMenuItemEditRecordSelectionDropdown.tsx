@@ -13,7 +13,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconChevronDown, IconSquareCheck, IconSquareX } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const DROPDOWN_ID = 'command-menu-edit-record-selection-dropdown';

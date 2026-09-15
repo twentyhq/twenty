@@ -2,7 +2,11 @@ import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { AvatarOrIcon, Chip, LinkChip } from 'twenty-ui/data-display';
+import {
+  AvatarOrIcon,
+  LinkChip,
+  Chip,
+} from 'twenty-ui/primitives/data-display';
 
 type MentionRecordChipProps = {
   recordId: string;

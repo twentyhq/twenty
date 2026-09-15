@@ -17,7 +17,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useEffect } from 'react';
-import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/data-display';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainerContainer = styled.div`

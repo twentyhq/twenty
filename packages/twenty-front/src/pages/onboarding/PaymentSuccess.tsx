@@ -10,7 +10,7 @@ import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const SUBSCRIPTION_CONFIRMATION_POLL_INTERVAL_MS = 2000;

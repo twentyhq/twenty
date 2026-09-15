@@ -4,11 +4,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';

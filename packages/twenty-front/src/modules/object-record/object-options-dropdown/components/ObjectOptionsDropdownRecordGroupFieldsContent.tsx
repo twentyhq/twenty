@@ -28,7 +28,7 @@ import {
   MenuItem,
   MenuItemSelect,
   UndecoratedLink,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const ObjectOptionsDropdownRecordGroupFieldsContent = () => {

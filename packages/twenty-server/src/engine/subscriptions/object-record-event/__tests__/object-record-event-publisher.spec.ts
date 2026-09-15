@@ -26,6 +26,7 @@ import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-objec
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -112,8 +113,9 @@ describe('ObjectRecordEventPublisher', () => {
   const userWorkspaceId = 'test-user-workspace-id';
   const roleId = 'test-role-id';
 
-  let mockRecordAccessPolicyService: {
-    resolveRecordIdsReadableThroughParents: jest.Mock;
+  let mockWorkspaceOrmManager: {
+    executeInWorkspaceContext: jest.Mock;
+    getRepository: jest.Mock;
   };
 
   const companyObjectMetadata: FlatObjectMetadata = COMPANY_FLAT_OBJECT_MOCK;
@@ -276,10 +278,9 @@ describe('ObjectRecordEventPublisher', () => {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     };
 
-    mockRecordAccessPolicyService = {
-      resolveRecordIdsReadableThroughParents: jest
-        .fn()
-        .mockResolvedValue(new Set()),
+    mockWorkspaceOrmManager = {
+      executeInWorkspaceContext: jest.fn(),
+      getRepository: jest.fn(),
     };
 
     mockWorkspaceManyOrAllFlatEntityMapsCacheService = {
@@ -331,9 +332,10 @@ describe('ObjectRecordEventPublisher', () => {
           provide: RecordShareService,
           useValue: mockRecordShareService,
         },
+        RecordAccessPolicyService,
         {
-          provide: RecordAccessPolicyService,
-          useValue: mockRecordAccessPolicyService,
+          provide: WorkspaceOrmManager,
+          useValue: mockWorkspaceOrmManager,
         },
       ],
     }).compile();
@@ -459,7 +461,7 @@ describe('ObjectRecordEventPublisher', () => {
       ).not.toHaveBeenCalled();
     });
 
-    it('should not resolve the records readable through parents for a stream whose queries target another object', async () => {
+    it('should not evaluate the record share gate for a stream whose queries target another object', async () => {
       const inheritedObjectMetadata: FlatObjectMetadata = {
         ...companyObjectMetadata,
         readability: MetadataReadability.INHERITED,
@@ -491,9 +493,7 @@ describe('ObjectRecordEventPublisher', () => {
         events: [createMockEvent()],
       } as WorkspaceEventBatch<never>);
 
-      expect(
-        mockRecordAccessPolicyService.resolveRecordIdsReadableThroughParents,
-      ).not.toHaveBeenCalled();
+      expect(mockRecordShareService.findByRecordIds).not.toHaveBeenCalled();
       expect(
         mockSubscriptionService.publishToEventStream,
       ).not.toHaveBeenCalled();

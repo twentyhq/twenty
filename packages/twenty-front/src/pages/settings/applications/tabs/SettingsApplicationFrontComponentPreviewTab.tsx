@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Suspense, lazy } from 'react';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { FrontComponentSkeletonLoader } from '@/front-components/components/FrontComponentSkeletonLoader';

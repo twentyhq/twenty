@@ -2,7 +2,7 @@ import { useContext } from 'react';
 
 import { CalendarDayCardContent } from '@/activities/calendar/components/CalendarDayCardContent';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 
 type CalendarMonthCardProps = {
   dayTimes: number[];
