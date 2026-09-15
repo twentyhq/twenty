@@ -1034,13 +1034,13 @@ export const SettingsEnterprise = ({
 
   return (
     <SettingsPageLayout
-      title={t`Enterprise`}
+      title={t`Organization`}
       links={[
         {
           children: <Trans>Workspace</Trans>,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: <Trans>Enterprise</Trans> },
+        { children: <Trans>Organization</Trans> },
       ]}
     >
       <SettingsPageContainer>{innerContent}</SettingsPageContainer>

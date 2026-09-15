@@ -230,8 +230,8 @@ export const SettingsSecuritySettings = () => {
             </Card>
           ) : (
             <SettingsEnterpriseFeatureGateCard
-              title={t`Enterprise feature`}
-              description={t`Upgrade to Enterprise to access audit logs.`}
+              title={t`Organization feature`}
+              description={t`Upgrade to Organization to access audit logs.`}
               buttonTitle={t`Activate`}
             />
           )}
