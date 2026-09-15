@@ -5,7 +5,6 @@ import React, { Fragment, useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  IconChevronDown,
   IconChevronRight,
   IconFolder,
   IconHeartOff,
@@ -52,6 +51,16 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+
+const StyledFolderChevron = styled(IconChevronRight)<{ isOpen: boolean }>`
+  transform: rotate(${({ isOpen }) => (isOpen ? 90 : 0)}deg);
+  transition: transform
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
 
 const StyledFolderContainer = styled.div<{
   $isSelectedInEditMode: boolean;
@@ -198,19 +207,12 @@ export const NavigationMenuItemFolderDnd = ({
         handleToggle();
       }}
     >
-      {isOpen ? (
-        <IconChevronDown
-          size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.tertiary}
-        />
-      ) : (
-        <IconChevronRight
-          size={theme.icon.size.sm}
-          stroke={theme.icon.stroke.sm}
-          color={theme.font.color.tertiary}
-        />
-      )}
+      <StyledFolderChevron
+        isOpen={isOpen}
+        size={theme.icon.size.sm}
+        stroke={theme.icon.stroke.sm}
+        color={theme.font.color.tertiary}
+      />
     </div>
   );
 

@@ -1,6 +1,7 @@
+import { styled } from '@linaria/react';
 import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { Suspense, lazy, useContext } from 'react';
-import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/icon';
+import { IconChevronRight, useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -12,6 +13,16 @@ import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/
 import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+
+const StyledFolderChevron = styled(IconChevronRight)<{ isOpen: boolean }>`
+  transform: rotate(${({ isOpen }) => (isOpen ? 90 : 0)}deg);
+  transition: transform
+    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+`;
 
 const LazyNavigationMenuItemFolderDnd = lazy(() =>
   import('@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd').then(
@@ -146,19 +157,12 @@ const NavigationMenuItemFolderReadOnlyContent = ({
           preventCollapseOnMobile={isMobile}
           alwaysShowRightOptions
           rightOptions={
-            isOpen ? (
-              <IconChevronDown
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
-                color={themeCssVariables.font.color.tertiary}
-              />
-            ) : (
-              <IconChevronRight
-                size={theme.icon.size.sm}
-                stroke={theme.icon.stroke.sm}
-                color={themeCssVariables.font.color.tertiary}
-              />
-            )
+            <StyledFolderChevron
+              isOpen={isOpen}
+              size={theme.icon.size.sm}
+              stroke={theme.icon.stroke.sm}
+              color={themeCssVariables.font.color.tertiary}
+            />
           }
         />
       }
