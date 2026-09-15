@@ -1,9 +1,7 @@
 name: CI Twenty Apps
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
   pull_request:
   merge_group:
   workflow_dispatch:
@@ -18,7 +16,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-twenty-apps-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:

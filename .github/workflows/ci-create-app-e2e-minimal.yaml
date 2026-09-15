@@ -1,9 +1,7 @@
 name: CI Create App E2E minimal
 
 on:
-  push:
-    branches:
-      - main
+  workflow_call:
 
   pull_request:
 
@@ -11,7 +9,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ci-create-app-e2e-minimal-${{ github.ref }}
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:

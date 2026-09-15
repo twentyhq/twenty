@@ -1,8 +1,7 @@
 name: App Prod-Parity E2E Dispatch
 
 on:
-  push:
-    branches: [main]
+  workflow_call:
   pull_request:
     types: [labeled, synchronize, opened, reopened]
   workflow_dispatch:
@@ -10,7 +9,7 @@ on:
 permissions: {}
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: app-prod-parity-e2e-dispatch-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
