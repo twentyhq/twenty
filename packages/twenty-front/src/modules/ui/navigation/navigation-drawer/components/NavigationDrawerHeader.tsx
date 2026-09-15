@@ -65,7 +65,7 @@ const StyledWorkspaceDropdownContainer = styled.div<{ isExpanded: boolean }>`
   position: relative;
 
   &::after {
-    border-bottom: 1px solid ${themeCssVariables.border.color.light};
+    border-bottom: 1px solid ${themeCssVariables.border.color.medium};
     bottom: calc(-1 * ${themeCssVariables.spacing[1]});
     content: '';
     display: ${({ isExpanded }) => (isExpanded ? 'none' : 'block')};

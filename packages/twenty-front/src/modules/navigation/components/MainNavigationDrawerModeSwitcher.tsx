@@ -42,7 +42,7 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
 
   // Extend the divider through the drawer's horizontal content insets.
   &::before {
-    border-top: 1px solid ${themeCssVariables.border.color.light};
+    border-top: 1px solid ${themeCssVariables.border.color.medium};
     content: '';
     display: ${({ isExpanded }) => (isExpanded ? 'block' : 'none')};
     left: calc(-1 * ${themeCssVariables.spacing[2]});
