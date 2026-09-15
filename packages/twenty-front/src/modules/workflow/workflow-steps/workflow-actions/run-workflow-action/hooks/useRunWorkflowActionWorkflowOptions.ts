@@ -9,20 +9,18 @@ import { type Workflow } from '@/workflow/types/Workflow';
 export const useRunWorkflowActionWorkflowOptions = () => {
   const currentWorkflowId = useSidePanelWorkflowIdOrThrow();
 
-  const { records: workflows } = useFindManyRecords<Workflow>({
+  const { records: workflows, loading } = useFindManyRecords<Workflow>({
     objectNameSingular: CoreObjectNameSingular.Workflow,
     recordGqlFields: {
       id: true,
       name: true,
-      statuses: true,
       lastPublishedVersionId: true,
-      versions: {
-        id: true,
-        status: true,
-        name: true,
-        createdAt: true,
-      },
     },
+    orderBy: [{ name: 'AscNullsLast' }],
+    // Workspaces can have more than the default page size of workflows;
+    // this picker has no fetchMore/cursor pagination yet, so raise the
+    // cap well above the default rather than silently hiding options.
+    limit: 200,
   });
 
   const eligibleWorkflows = workflows.filter(
@@ -48,5 +46,5 @@ export const useRunWorkflowActionWorkflowOptions = () => {
     return !isDefined(workflow.lastPublishedVersionId);
   };
 
-  return { workflowOptions, getWorkflowHasNoActiveVersion };
+  return { workflowOptions, getWorkflowHasNoActiveVersion, loading };
 };
