@@ -15,7 +15,7 @@ import {
 } from '@/settings/enterprise/components/EnterprisePlanModal';
 import { REFRESH_ENTERPRISE_VALIDITY_TOKEN } from '@/settings/enterprise/graphql/mutations/refreshEnterpriseValidityToken';
 import { RELEASE_ENTERPRISE_SERVER_BINDING } from '@/settings/enterprise/graphql/mutations/releaseEnterpriseServerBinding';
-import { SET_ENTERPRISE_KEY } from '@/settings/enterprise/graphql/mutations/setEnterpriseKey';
+import { SET_ENTERPRISE_KEY } from '@/settings/enterprise/graphql/mutations/setOrganizationKey';
 import { ENTERPRISE_PORTAL_SESSION } from '@/settings/enterprise/graphql/queries/enterprisePortalSession';
 import { ENTERPRISE_SUBSCRIPTION_STATUS } from '@/settings/enterprise/graphql/queries/enterpriseSubscriptionStatus';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -538,7 +538,7 @@ export const SettingsEnterprise = ({
       <StyledInputContainer>
         <StyledInputWrapper>
           <SettingsTextInput
-            instanceId="enterprise-key-input"
+            instanceId="organization-key-input"
             value={enterpriseKey}
             onChange={(value) => setEnterpriseKey(value)}
             placeholder={t`Paste your Organization key here`}
