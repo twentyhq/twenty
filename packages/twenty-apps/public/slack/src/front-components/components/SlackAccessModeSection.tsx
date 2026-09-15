@@ -76,13 +76,13 @@ const StyledToggleContainer = styled.span`
 `;
 
 const RESTRICTED_DESCRIPTION =
-  'Only Slack accounts linked to a workspace member can use the assistant. Anyone else is asked to have an admin link them.';
+  'Only Slack accounts linked to a workspace member can use it.';
 
 const OPEN_DESCRIPTION =
-  'Anyone who can mention the assistant in Slack can use it, whether or not they are linked to a workspace member.';
+  'Anyone who can mention the assistant in Slack can use it.';
 
 const UNREADABLE_DESCRIPTION =
-  'The current setting could not be loaded, so this is not showing it. Reload to try again.';
+  'The current setting could not be loaded. Reload to try again.';
 
 const getDescription = ({
   hasAccessModeError,
@@ -154,7 +154,10 @@ export const SlackAccessModeSection = ({
               </label>
             </StyledTitle>
             <StyledDescription>
-              <OverflowingTextWithTooltip text={description} />
+              <OverflowingTextWithTooltip
+                text={description}
+                displayedMaxRows={2}
+              />
             </StyledDescription>
           </StyledTextContainer>
           <StyledToggleContainer>
