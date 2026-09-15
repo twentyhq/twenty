@@ -15,7 +15,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconReload, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/primitives/typography';
-import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -26,14 +26,10 @@ const StyledDomainFormWrapper = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledButtonGroupContainer = styled.div`
-  > * > :not(:first-of-type) > button {
-    border-left: none;
-  }
-`;
-
-const StyledButtonContainer = styled.div`
+const StyledButtonsContainer = styled.div`
   align-self: flex-start;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsCustomDomain = () => {
@@ -94,27 +90,21 @@ export const SettingsCustomDomain = () => {
               fullWidth
             />
             {currentWorkspace?.customDomain && (
-              <StyledButtonGroupContainer>
-                <ButtonGroup>
-                  <StyledButtonContainer>
-                    <Button
-                      isLoading={isRecordsLoading}
-                      Icon={IconReload}
-                      title={t`Reload`}
-                      variant="primary"
-                      onClick={() => checkCustomDomainRecords()}
-                      type="button"
-                    />
-                  </StyledButtonContainer>
-                  <StyledButtonContainer>
-                    <Button
-                      Icon={IconTrash}
-                      variant="primary"
-                      onClick={handleDelete}
-                    />
-                  </StyledButtonContainer>
-                </ButtonGroup>
-              </StyledButtonGroupContainer>
+              <StyledButtonsContainer>
+                <Button
+                  isLoading={isRecordsLoading}
+                  Icon={IconReload}
+                  title={t`Reload`}
+                  variant="primary"
+                  onClick={() => checkCustomDomainRecords()}
+                  type="button"
+                />
+                <Button
+                  Icon={IconTrash}
+                  variant="primary"
+                  onClick={handleDelete}
+                />
+              </StyledButtonsContainer>
             )}
           </StyledDomainFormWrapper>
         </Section>
