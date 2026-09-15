@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type ObjectsPermissions,
   type RestrictedFieldsPermissions,
