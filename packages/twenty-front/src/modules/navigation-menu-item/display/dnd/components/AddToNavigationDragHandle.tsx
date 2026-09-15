@@ -35,37 +35,6 @@ const StyledIconSlot = styled.div<{
   }
 `;
 
-type AddToNavigationDragHandleIconProps = {
-  icon?: IconComponent;
-  customIconContent?: ReactNode;
-  iconColor?: string;
-};
-
-const AddToNavigationDragHandleIcon = ({
-  icon,
-  customIconContent,
-  iconColor,
-}: AddToNavigationDragHandleIconProps) => {
-  const { theme } = useContext(ThemeContext);
-  const iconSize = theme.icon.size.md;
-  const iconStroke = theme.icon.stroke.sm;
-
-  if (isDefined(customIconContent)) {
-    return <>{customIconContent}</>;
-  }
-
-  if (isDefined(icon)) {
-    const Icon = icon;
-    return (
-      <Icon
-        size={iconSize}
-        stroke={iconStroke}
-        color={iconColor ?? theme.grayScale.gray1}
-      />
-    );
-  }
-};
-
 type AddToNavigationDragHandleProps = {
   icon?: IconComponent;
   customIconContent?: ReactNode;
@@ -94,42 +63,55 @@ export const AddToNavigationDragHandle = ({
         }
       : undefined,
   );
-  const hasBackgroundColor =
+  const hasFixedIconSize =
     payload.type !== NavigationMenuItemType.RECORD && !isHovered;
-  const showCustomContentWithoutWrapper = isDefined(customIconContent);
-  const ObjectIcon = icon;
-
-  return (
-    <StyledIconSlot
-      $hasFixedSize={hasBackgroundColor || showCustomContentWithoutWrapper}
-      $disabled={disabled}
-      $disableDrag={disableDrag}
-    >
-      {isHovered ? (
+  const renderIcon = () => {
+    if (isHovered) {
+      return (
         <IconGripVertical
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
           color={theme.font.color.tertiary}
         />
-      ) : showCustomContentWithoutWrapper ? (
-        customIconContent
-      ) : (payload.type === NavigationMenuItemType.OBJECT ||
-          payload.type === NavigationMenuItemType.LINK ||
-          payload.type === NavigationMenuItemType.FOLDER) &&
-        ObjectIcon ? (
-        <ObjectIcon
-          size={16}
-          stroke={theme.icon.stroke.md}
-          color={getIconTileColorShades(effectiveColor).iconColor}
-        />
-      ) : hasBackgroundColor && icon ? (
-        <TintedIconTile Icon={icon} color={effectiveColor} />
-      ) : (
-        <AddToNavigationDragHandleIcon
-          icon={icon}
-          customIconContent={customIconContent}
-        />
-      )}
+      );
+    }
+
+    if (isDefined(customIconContent)) {
+      return customIconContent;
+    }
+
+    if (!isDefined(icon)) {
+      return null;
+    }
+
+    const Icon = icon;
+
+    if (payload.type === NavigationMenuItemType.VIEW) {
+      return <TintedIconTile Icon={Icon} color={effectiveColor} />;
+    }
+
+    const isRecord = payload.type === NavigationMenuItemType.RECORD;
+
+    return (
+      <Icon
+        size={theme.icon.size.md}
+        stroke={isRecord ? theme.icon.stroke.sm : theme.icon.stroke.md}
+        color={
+          isRecord
+            ? theme.grayScale.gray1
+            : getIconTileColorShades(effectiveColor).iconColor
+        }
+      />
+    );
+  };
+
+  return (
+    <StyledIconSlot
+      $hasFixedSize={hasFixedIconSize || isDefined(customIconContent)}
+      $disabled={disabled}
+      $disableDrag={disableDrag}
+    >
+      {renderIcon()}
     </StyledIconSlot>
   );
 };

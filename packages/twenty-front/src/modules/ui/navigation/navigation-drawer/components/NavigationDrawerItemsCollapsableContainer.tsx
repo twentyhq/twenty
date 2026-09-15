@@ -40,8 +40,7 @@ export const NavigationDrawerItemsCollapsableContainer = ({
   children,
 }: NavigationDrawerItemsCollapsableContainerProps) => {
   const { theme } = useContext(ThemeContext);
-  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
-  const isExpanded = isNavigationDrawerExpanded;
+  const isExpanded = useIsNavigationDrawerContentExpanded();
 
   const animate: AnimationControls | TargetAndTransition = isExpanded
     ? { width: 'auto' }

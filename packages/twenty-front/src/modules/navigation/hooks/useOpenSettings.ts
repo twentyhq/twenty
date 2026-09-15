@@ -35,8 +35,8 @@ export const useOpenSettingsMenu = () => {
       return;
     }
 
-    setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
     if (isMobile) {
+      setNavigationDrawerExpandedMemorized(isNavigationDrawerExpanded);
       setIsNavigationDrawerExpanded(true);
     }
     setNavigationMemorizedUrl(location.pathname + location.search);
