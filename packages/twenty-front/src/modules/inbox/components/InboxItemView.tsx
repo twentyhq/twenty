@@ -3,9 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconCheck, IconClockHour8, IconX, useIcons } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
+import { Button, LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemSubjectChip } from '@/inbox/components/InboxItemSubjectChip';

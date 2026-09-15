@@ -13,7 +13,7 @@ import {
   IconShoppingBag,
   IconSparkle2,
 } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';

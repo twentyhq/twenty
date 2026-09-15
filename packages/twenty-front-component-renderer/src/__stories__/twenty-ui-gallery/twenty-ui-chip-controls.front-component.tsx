@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Chip } from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import { IconStar } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import 'twenty-ui/style.css';

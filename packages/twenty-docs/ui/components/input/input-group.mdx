@@ -18,7 +18,7 @@ import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
 ## Prefix and suffix
 
 ```tsx
-import { Field, Input, InputGroup } from 'twenty-ui/input';
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
 
 export const WebsiteField = () => (
   <Field.Root name="website">
@@ -37,7 +37,7 @@ export const WebsiteField = () => (
 
 ```tsx
 import { useState } from 'react';
-import { Field, Input, InputGroup } from 'twenty-ui/input';
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
 
 export const PasswordField = () => {
   const [visible, setVisible] = useState(false);

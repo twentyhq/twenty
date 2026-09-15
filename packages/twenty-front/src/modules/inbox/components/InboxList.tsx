@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { LightButton } from 'twenty-ui/input';
+import { LightButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxListRow } from '@/inbox/components/InboxListRow';

@@ -2,8 +2,8 @@ import { styled } from '@linaria/react';
 import { INBOX_QUEUE_NAME_MAX_LENGTH } from 'twenty-shared/constants';
 import { useLingui } from '@lingui/react/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 
 import { SettingsInboxQueueRolePicker } from '@/settings/inbox/components/SettingsInboxQueueRolePicker';
 import { IconPicker } from '@/ui/input/components/IconPicker';

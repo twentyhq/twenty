@@ -4,7 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMail } from 'twenty-ui/icon';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getInboxToolCallInputAsStrings } from '@/inbox/utils/getInboxToolCallInputAsStrings';

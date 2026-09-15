@@ -1,7 +1,7 @@
 import { AppChip } from '@/applications/components/AppChip';
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { type ReactNode } from 'react';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AppMenuItemProps = {
   applicationId?: string | null;

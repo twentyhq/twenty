@@ -1,0 +1,100 @@
+import { type IconComponent } from '@ui/icon';
+import { AppTooltip, TooltipDelay } from '@ui/primitives/surfaces';
+import {
+  StyledTabButton,
+  StyledTabContainer,
+} from '@ui/primitives/input/TabButton/parts/StyledTabBase';
+import {
+  TabContent,
+  type TabContentProps,
+} from '@ui/primitives/input/TabButton/parts/TabContent';
+import { type ReactElement } from 'react';
+import { type To } from 'react-router-dom';
+
+import styles from './TabButton.module.scss';
+
+export { StyledTabContainer, TabContent };
+export type { TabContentProps };
+
+type TabButtonProps = {
+  id: string;
+  active?: boolean;
+  disabled?: boolean;
+  to?: To;
+  state?: unknown;
+  replace?: boolean;
+  LeftIcon?: IconComponent;
+  className?: string;
+  title?: string;
+  onClick?: () => void;
+  logo?: string;
+  RightIcon?: IconComponent;
+  pill?: string | ReactElement;
+  contentSize?: 'sm' | 'md';
+  disableTestId?: boolean;
+  tooltipContent?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
+};
+
+export const TabButton = ({
+  id,
+  active,
+  disabled,
+  to,
+  state,
+  replace,
+  LeftIcon,
+  className,
+  title,
+  onClick,
+  logo,
+  RightIcon,
+  pill,
+  contentSize = 'sm',
+  disableTestId = false,
+  tooltipContent,
+  onMouseEnter,
+  onMouseLeave,
+}: TabButtonProps) => {
+  const tabElementId = `tab-${id}`;
+
+  return (
+    <div key={id} id={tabElementId} className={styles.tabTooltipWrapper}>
+      <StyledTabButton
+        data-testid={disableTestId ? undefined : `tab-${id}`}
+        active={active}
+        disabled={disabled}
+        to={to}
+        state={state}
+        replace={replace}
+        className={className}
+        onClick={onClick}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        <TabContent
+          id={id}
+          active={active}
+          disabled={disabled}
+          LeftIcon={LeftIcon}
+          title={title}
+          logo={logo}
+          RightIcon={RightIcon}
+          pill={pill}
+          contentSize={contentSize}
+        />
+      </StyledTabButton>
+      {tooltipContent && (
+        <AppTooltip
+          anchorSelect={`#${tabElementId}`}
+          title={tooltipContent}
+          noArrow
+          place="bottom"
+          positionStrategy="fixed"
+          delay={TooltipDelay.shortDelay}
+        />
+      )}
+    </div>
+  );
+};

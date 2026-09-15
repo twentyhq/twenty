@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { type JsonValue } from 'type-fest';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';

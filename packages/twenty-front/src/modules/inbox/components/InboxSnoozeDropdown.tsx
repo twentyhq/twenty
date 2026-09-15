@@ -9,7 +9,7 @@ import {
   IconChevronLeft,
   IconClockHour8,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
