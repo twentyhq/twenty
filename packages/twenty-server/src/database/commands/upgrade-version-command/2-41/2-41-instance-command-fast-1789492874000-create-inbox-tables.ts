@@ -3,7 +3,7 @@ import { type QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.41.0', 1789472130454)
+@RegisteredInstanceCommand('2.41.0', 1789492874000)
 export class CreateInboxTablesFastInstanceCommand
   implements FastInstanceCommand
 {
