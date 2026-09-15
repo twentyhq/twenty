@@ -1,3 +1,4 @@
+import { type ErrorLike } from '@apollo/client';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TimelineActivityContext } from '@/activities/timeline-activities/contexts/TimelineActivityContext';
@@ -24,7 +25,7 @@ type RecordShowPageShellProps = {
   objectRecordId: string;
   record: ObjectRecord | undefined;
   loading: boolean;
-  error?: unknown;
+  error?: ErrorLike;
 };
 
 export const RecordShowPageShell = ({

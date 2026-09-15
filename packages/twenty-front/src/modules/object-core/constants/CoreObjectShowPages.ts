@@ -3,10 +3,14 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { type CoreObjectShowPageProps } from '@/object-core/types/CoreObjectShowPageProps';
 
-export const CORE_OBJECT_SHOW_PAGES = new Map<
-  CoreObjectNameSingular,
-  LazyExoticComponent<ComponentType<CoreObjectShowPageProps>>
->([
+type CoreObjectShowPageComponent = LazyExoticComponent<
+  ComponentType<CoreObjectShowPageProps>
+>;
+
+export const CORE_OBJECT_SHOW_PAGES: ReadonlyMap<
+  string,
+  CoreObjectShowPageComponent
+> = new Map<CoreObjectNameSingular, CoreObjectShowPageComponent>([
   [
     CoreObjectNameSingular.Workflow,
     lazy(() =>
