@@ -6,16 +6,22 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useLingui } from '@lingui/react/macro';
+import { Navigate, useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
 export const SettingsAdmin = () => {
   const { t } = useLingui();
   const tabs = useSettingsAdminTabs();
+  const location = useLocation();
   const activeTabId = useSettingsActiveTabId(
     SETTINGS_ADMIN_TABS_ID,
     tabs.map((tab) => tab.id),
   );
+
+  if (location.hash === '#enterprise') {
+    return <Navigate to={{ ...location, hash: '#organization' }} replace />;
+  }
 
   return (
     <SettingsPageLayout

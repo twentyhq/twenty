@@ -83,7 +83,7 @@ export function resolveServerBinding({
         outcome: SERVER_BINDING_OUTCOME.REJECTED,
         code: SERVER_BINDING_REJECTION_CODE.MISSING_SERVER_ID,
         reason:
-          'This enterprise key is bound to a server instance, but this instance did not report a server identifier. Set SERVER_ID on this instance or release the binding to rebind it.',
+          'This Organization key is bound to a server instance, but this instance did not report a server identifier. Set SERVER_ID on this instance or release the binding to rebind it.',
       };
     }
 
@@ -111,7 +111,7 @@ export function resolveServerBinding({
         outcome: SERVER_BINDING_OUTCOME.REJECTED,
         code: SERVER_BINDING_REJECTION_CODE.DEV_REQUIRES_ACTIVE_PRODUCTION,
         reason:
-          'A free development instance requires an active production instance on this enterprise subscription.',
+          'A free development instance requires an active production instance on this Organization subscription.',
       };
     }
 
@@ -140,7 +140,7 @@ export function resolveServerBinding({
       outcome: SERVER_BINDING_OUTCOME.REJECTED,
       code: SERVER_BINDING_REJECTION_CODE.DEV_SLOT_IN_USE,
       reason:
-        'The development instance slot for this enterprise key is already in use on another server.',
+        'The development instance slot for this Organization key is already in use on another server.',
     };
   }
 
@@ -169,6 +169,6 @@ export function resolveServerBinding({
     outcome: SERVER_BINDING_OUTCOME.REJECTED,
     code: SERVER_BINDING_REJECTION_CODE.BOUND_TO_ANOTHER_SERVER,
     reason:
-      'This enterprise key is already in use on another server instance. Release it from that server or transfer it to this one.',
+      'This Organization key is already in use on another server instance. Release it from that server or transfer it to this one.',
   };
 }

@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconReload } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { GRAY_SCALE_LIGHT } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -3,14 +3,22 @@ title: Radio
 description: Render one option in a mutually exclusive radio group.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import RadioReference from '/snippets/ui/generated/input/radio.mdx';
 
 `Radio` represents one option inside [RadioGroup](/ui/components/input/radio-group). Give each option a distinct `value` and a visible label. The group owns the selected value.
 
+<StoryEmbed
+  storyId="ui-input-radio--documentation"
+  title="Radio example"
+  height={240}
+/>
+
 ## Labeled options
 
 ```tsx
-import { Radio, RadioGroup } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 
 export const ContactMethod = () => (
   <RadioGroup

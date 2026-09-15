@@ -6,7 +6,6 @@ import {
 } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
-  FeatureFlagKey,
   Nullable,
   ObjectRecord,
   type ObjectsPermissions,
@@ -39,13 +38,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
-import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
-import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
-import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
-import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
-import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
-import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
-import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
+import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
+import { type EventRecordShareGate } from 'src/engine/record-share/types/event-record-share-gate.type';
+import { omitInheritedReadabilityChildRecords } from 'src/engine/record-share/utils/omit-inherited-readability-child-records.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import {
@@ -54,10 +49,10 @@ import {
 } from 'src/engine/subscriptions/types/event-stream-data.type';
 import { type EventStreamPayload } from 'src/engine/subscriptions/types/event-stream-payload.type';
 import { ObjectRecordSubscriptionEvent } from 'src/engine/subscriptions/types/object-record-subscription-event.type';
-import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/build-row-level-permission-record-filter.util';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
+import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -71,7 +66,6 @@ type StreamPermissionsContext = {
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatApplicationMaps: FlatApplicationCacheMaps;
-  featureFlagsMap: Record<FeatureFlagKey, boolean>;
 };
 
 @Injectable()
@@ -85,7 +79,7 @@ export class ObjectRecordEventPublisher {
     private readonly processNestedRelationsHelper: ProcessNestedRelationsHelper,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly commonSelectFieldsHelper: CommonSelectFieldsHelper,
-    private readonly recordShareService: RecordShareService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
   async publish(
@@ -112,10 +106,8 @@ export class ObjectRecordEventPublisher {
       flatWorkspaceMemberMaps,
     );
 
-    const recordSharesByRecordId = await this.fetchRecordSharesByRecordId({
-      workspaceEventBatch: eventBatch,
-      featureFlagsMap: permissionsContext.featureFlagsMap,
-    });
+    const eventRecordShareGate =
+      this.recordAccessPolicyService.buildEventRecordShareGate(eventBatch);
 
     const streamIdsToRemove: string[] = [];
 
@@ -136,7 +128,7 @@ export class ObjectRecordEventPublisher {
         permissionsContext,
         flatWorkspaceMemberMaps,
         workspaceMemberIdByUserId,
-        recordSharesByRecordId,
+        eventRecordShareGate,
       });
     }
 
@@ -156,32 +148,6 @@ export class ObjectRecordEventPublisher {
     return { permissionsContext, flatWorkspaceMemberMaps };
   }
 
-  private async fetchRecordSharesByRecordId({
-    workspaceEventBatch,
-    featureFlagsMap,
-  }: {
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
-    featureFlagsMap: Record<FeatureFlagKey, boolean>;
-  }): Promise<Map<string, RecordShare[]>> {
-    if (
-      !featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ||
-      resolveRecordShareGateKind({
-        readability: workspaceEventBatch.objectMetadata.readability,
-        isOwningApplication: false,
-      }) !== 'private'
-    ) {
-      return new Map();
-    }
-
-    return indexRecordSharesByRecordId(
-      await this.recordShareService.findByRecordIds({
-        workspaceId: workspaceEventBatch.workspaceId,
-        objectMetadataId: workspaceEventBatch.objectMetadata.id,
-        recordIds: workspaceEventBatch.events.map((event) => event.recordId),
-      }),
-    );
-  }
-
   private async processObjectRecordStreamEvents({
     streamChannelId,
     streamData,
@@ -189,7 +155,7 @@ export class ObjectRecordEventPublisher {
     permissionsContext,
     flatWorkspaceMemberMaps,
     workspaceMemberIdByUserId,
-    recordSharesByRecordId,
+    eventRecordShareGate,
   }: {
     streamChannelId: string;
     streamData: EventStreamData;
@@ -197,7 +163,7 @@ export class ObjectRecordEventPublisher {
     permissionsContext: StreamPermissionsContext;
     flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
     workspaceMemberIdByUserId: Map<string, string>;
-    recordSharesByRecordId: Map<string, RecordShare[]>;
+    eventRecordShareGate: EventRecordShareGate;
   }): Promise<void> {
     const roleIds = this.resolveStreamRoleIds(
       streamData.authContext,
@@ -224,12 +190,22 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
+    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
+
+    if (
+      !Object.values(streamData.queries).some(
+        (operationSignature) =>
+          isRecordGqlOperationSignature(operationSignature) &&
+          operationSignature.objectNameSingular === objectNameSingular,
+      )
+    ) {
+      return;
+    }
+
     const matchedEvents: {
       queryIds: string[];
       objectRecordEvent: ObjectRecordSubscriptionEvent;
     }[] = [];
-
-    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
 
     const subscriberAuthContext: SerializableAuthContext = {
       ...streamData.authContext,
@@ -247,15 +223,16 @@ export class ObjectRecordEventPublisher {
       flatWorkspaceMemberMaps,
     );
 
-    const subscriberRecordShareGate = await this.buildSubscriberRecordShareGate(
-      {
-        subscriberAuthContext,
-        roleIds,
-        objectMetadata: workspaceEventBatch.objectMetadata,
-        featureFlagsMap: permissionsContext.featureFlagsMap,
-        recordSharesByRecordId,
-      },
-    );
+    const admittedRecordIds =
+      await eventRecordShareGate.resolveAdmittedRecordIds(
+        this.buildSubscriberRowAccessPolicySubject({
+          subscriberAuthContext,
+          roleIds,
+          objectsPermissions,
+          permissionsContext,
+          flatWorkspaceMemberMaps,
+        }),
+      );
 
     const restrictedFields = objectPermissions.restrictedFields;
 
@@ -265,7 +242,7 @@ export class ObjectRecordEventPublisher {
       const eventWithObjectName: ObjectRecordSubscriptionEvent = {
         action,
         objectNameSingular,
-        ...event,
+        ...omitInheritedReadabilityChildRecords(event),
       };
 
       const filteredEvent = this.filterRestrictedFieldsFromEvent(
@@ -285,14 +262,7 @@ export class ObjectRecordEventPublisher {
         continue;
       }
 
-      if (
-        isDefined(subscriberRecordShareGate) &&
-        !isRecordSharedWithPrincipals({
-          recordShareGate: subscriberRecordShareGate,
-          recordId: filteredEvent.recordId,
-          accessLevels: resolveRequiredRecordShareAccessLevels('select'),
-        })
-      ) {
+      if (!admittedRecordIds.has(filteredEvent.recordId)) {
         continue;
       }
 
@@ -556,35 +526,43 @@ export class ObjectRecordEventPublisher {
     return workspaceMemberIdByUserId.get(subscriberAuthContext.userId);
   }
 
-  private async buildSubscriberRecordShareGate({
+  private buildSubscriberRowAccessPolicySubject({
     subscriberAuthContext,
     roleIds,
-    objectMetadata,
-    featureFlagsMap,
-    recordSharesByRecordId,
+    objectsPermissions,
+    permissionsContext,
+    flatWorkspaceMemberMaps,
   }: {
     subscriberAuthContext: SerializableAuthContext;
     roleIds: string[];
-    objectMetadata: FlatObjectMetadata;
-    featureFlagsMap: Record<FeatureFlagKey, boolean>;
-    recordSharesByRecordId: Map<string, RecordShare[]>;
-  }): Promise<RecordShareGate | null> {
-    if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
-      return null;
-    }
-
-    return buildRecordShareGate({
-      readability: objectMetadata.readability,
-      isOwningApplication:
-        isDefined(objectMetadata.applicationId) &&
-        subscriberAuthContext.applicationId === objectMetadata.applicationId,
+    objectsPermissions: ObjectsPermissions;
+    permissionsContext: StreamPermissionsContext;
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+  }): RowAccessPolicySubject {
+    return {
+      objectsPermissions,
       principalIds: [
         EVERYONE_PRINCIPAL_ID,
         subscriberAuthContext.workspaceMemberId,
         ...roleIds,
-      ],
-      fetchRecordSharesByRecordId: async () => recordSharesByRecordId,
-    });
+      ].filter(isDefined),
+      isOwningApplication: (objectMetadata) =>
+        isDefined(objectMetadata.applicationId) &&
+        subscriberAuthContext.applicationId === objectMetadata.applicationId,
+      resolveRowLevelPermissionRecordFilter: (objectMetadata) => {
+        const recordFilter = this.buildSubscriberRLSFilter(
+          subscriberAuthContext,
+          roleIds,
+          objectMetadata,
+          permissionsContext,
+          flatWorkspaceMemberMaps,
+        );
+
+        return isDefined(recordFilter) && Object.keys(recordFilter).length > 0
+          ? recordFilter
+          : null;
+      },
+    };
   }
 
   private filterRestrictedFieldsFromEvent(
@@ -767,7 +745,6 @@ export class ObjectRecordEventPublisher {
       userWorkspaceRoleMap,
       rolesPermissions,
       flatApplicationMaps,
-      featureFlagsMap,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
@@ -775,7 +752,6 @@ export class ObjectRecordEventPublisher {
       'userWorkspaceRoleMap',
       'rolesPermissions',
       'flatApplicationMaps',
-      'featureFlagsMap',
     ]);
 
     return {
@@ -785,7 +761,6 @@ export class ObjectRecordEventPublisher {
       userWorkspaceRoleMap,
       rolesPermissions,
       flatApplicationMaps,
-      featureFlagsMap,
     };
   }
 }

@@ -3,14 +3,22 @@ title: Input
 description: A text input with native attributes, field integration, and two sizes.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import InputReference from '/snippets/ui/generated/input/input.mdx';
 
 `Input` renders a text input and accepts native input attributes such as `type`, `name`, `required`, `disabled`, and `autoComplete`.
 
+<StoryEmbed
+  storyId="ui-input-input--default"
+  title="Input example"
+  height={240}
+/>
+
 ## Label an input
 
 ```tsx
-import { Field, Input } from 'twenty-ui/input';
+import { Field, Input } from 'twenty-ui/primitives/input';
 
 export const EmailField = () => (
   <Field.Root>
@@ -27,7 +35,7 @@ export const EmailField = () => (
 
 ```tsx
 import { useState } from 'react';
-import { Input } from 'twenty-ui/input';
+import { Input } from 'twenty-ui/primitives/input';
 
 export const SearchField = () => {
   const [query, setQuery] = useState('');
@@ -48,7 +56,7 @@ export const SearchField = () => {
 
 ```tsx
 import { IconSearch } from 'twenty-ui/icon';
-import { Input, InputGroup } from 'twenty-ui/input';
+import { Input, InputGroup } from 'twenty-ui/primitives/input';
 
 export const CompactSearch = () => (
   <InputGroup size="sm" startElement={<IconSearch size={16} aria-hidden />}>

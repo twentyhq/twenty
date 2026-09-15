@@ -10,7 +10,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDialogOverlayBase = styled.div`

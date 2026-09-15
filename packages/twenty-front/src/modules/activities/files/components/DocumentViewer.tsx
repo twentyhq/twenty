@@ -14,7 +14,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useContext, useEffect, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { getFileNameAndExtension } from '~/utils/file/getFileNameAndExtension';
 

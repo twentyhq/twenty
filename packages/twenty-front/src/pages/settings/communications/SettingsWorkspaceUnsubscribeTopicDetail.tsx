@@ -19,10 +19,10 @@ import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { IconEye, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -38,8 +38,8 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
   const { updateUnsubscribeTopic } = useUpdateUnsubscribeTopic();
   const { deleteUnsubscribeTopic, loading: deleting } =
     useDeleteUnsubscribeTopic();
-  const isEmailGroupEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+  const isMessageCampaignEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
 
   const unsubscribeTopic = unsubscribeTopics.find(
@@ -62,7 +62,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
     return <SettingsSkeletonLoader />;
   }
 
-  if (!isEmailGroupEnabled || !isDefined(unsubscribeTopic)) {
+  if (!isMessageCampaignEnabled || !isDefined(unsubscribeTopic)) {
     return <NotFound />;
   }
 

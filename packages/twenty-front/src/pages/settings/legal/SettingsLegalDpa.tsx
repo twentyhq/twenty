@@ -3,10 +3,10 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { H2Title } from 'twenty-ui/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';

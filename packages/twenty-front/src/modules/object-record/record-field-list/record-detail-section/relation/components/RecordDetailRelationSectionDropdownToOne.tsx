@@ -27,7 +27,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guard
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconForbid, IconPencil } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 
 type RecordDetailRelationSectionDropdownToOneProps = {
   dropdownTriggerClickableComponent?: ReactNode;

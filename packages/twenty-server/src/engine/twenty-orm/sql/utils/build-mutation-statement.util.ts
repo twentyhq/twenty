@@ -24,6 +24,7 @@ export type MutationStatementState = {
   kind: MutationKind;
   setClauses: SetClause[];
   whereClauses: WhereClause[];
+  includeDeleted: boolean;
   returningColumns: string[];
 };
 
@@ -55,10 +56,28 @@ const buildSetClause = (state: MutationStatementState): string =>
     )
     .join(', ')}`;
 
+const buildWhereExpression = (state: MutationStatementState): string => {
+  const userExpression = renderUserWhereExpression(state.whereClauses);
+  const shouldSkipTrashedRows =
+    state.kind === 'soft-delete' &&
+    !state.includeDeleted &&
+    state.tableShape.hasDeletedAtColumn;
+
+  if (!shouldSkipTrashedRows) {
+    return userExpression;
+  }
+
+  const liveRowPredicate = `${quoteColumn(state.alias, 'deletedAt')} IS NULL`;
+
+  return userExpression.length > 0
+    ? `(${userExpression}) AND ${liveRowPredicate}`
+    : liveRowPredicate;
+};
+
 export const buildMutationStatement = (
   state: MutationStatementState,
 ): string => {
-  const whereExpression = renderUserWhereExpression(state.whereClauses);
+  const whereExpression = buildWhereExpression(state);
   const returningClause = buildReturningClause(state);
 
   if (state.kind === 'delete') {

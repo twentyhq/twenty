@@ -1049,10 +1049,10 @@ msgstr "該工作流程已有一份草案。您確定要刪除它嗎？"
 msgid "A payment method is needed to keep your workspace active."
 msgstr "需要付款方式以維持您的工作區處於啟用狀態。"
 
-#. js-lingui-id: 5WwDyx
+#. js-lingui-id: eU1E2J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "A payment on your subscription failed. Your enterprise features stay active while we retry it."
-msgstr "您的訂閱付款失敗。在我們重試期間，您的企業功能將保持啟用。"
+msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
+msgstr ""
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1268,10 +1268,10 @@ msgstr "用戶可以對此對象執行的操作"
 msgid "Activate"
 msgstr "啟用"
 
-#. js-lingui-id: eqeFkF
+#. js-lingui-id: 8xkU9e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Activate Enterprise Key"
-msgstr "啟用企業授權金鑰"
+msgid "Activate Organization Key"
+msgstr ""
 
 #. js-lingui-id: i7ur8L
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2133,15 +2133,15 @@ msgstr "AI 工具"
 msgid "AI Usage"
 msgstr "AI 使用情況"
 
-#. js-lingui-id: Ad11E9
+#. js-lingui-id: jSHIk0
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "AI usage analytics across workspaces is available with an Enterprise key."
-msgstr "擁有 Enterprise 金鑰即可使用跨工作區的 AI 使用分析功能。"
+msgid "AI usage analytics across workspaces is available with an Organization key."
+msgstr ""
 
-#. js-lingui-id: zkptxb
+#. js-lingui-id: 55MeVT
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
-msgid "AI usage analytics is available with an Enterprise key."
-msgstr "擁有 Enterprise 金鑰即可使用 AI 使用分析功能。"
+msgid "AI usage analytics is available with an Organization key."
+msgstr ""
 
 #. js-lingui-id: U2F/HK
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -2416,6 +2416,11 @@ msgstr "此使用者所屬的所有工作區"
 msgid "All your custom objects"
 msgstr "所有的自定義對象"
 
+#. js-lingui-id: fWQJW/
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Allow developers to claim ownership of applications."
+msgstr ""
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -2436,6 +2441,11 @@ msgstr "允許僅使用電子郵件和密碼登入，以繞過單一登錄（SSO
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow exporting data to CSV files"
 msgstr "允許導出資料至 CSV 檔案"
+
+#. js-lingui-id: G1r3UJ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Allow filtering records by values inside JSON fields."
+msgstr ""
 
 #. js-lingui-id: q/pgyN
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2467,6 +2477,11 @@ msgstr "允許通過 Microsoft 的單點登錄功能登錄。"
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "允許具有繞過 SSO 權限的用戶使用 Microsoft 登錄。"
 
+#. js-lingui-id: cLzEjc
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Allow sharing individual records with workspace members."
+msgstr ""
+
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -2476,6 +2491,11 @@ msgstr "允許支援團隊存取"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "允許通過共享邀請鏈接邀請新用戶。"
+
+#. js-lingui-id: xfQ2i8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Allow unique indexes to prevent duplicate field values."
+msgstr ""
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2732,6 +2752,11 @@ msgstr "API 名稱 (複數)"
 msgid "API Name (Singular)"
 msgstr "API 名稱（單數）"
 
+#. js-lingui-id: FXWLlg
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "API rate limits v2"
+msgstr ""
+
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "API Request"
@@ -2755,6 +2780,11 @@ msgstr "單引號與句點"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "App"
 msgstr "應用程式"
+
+#. js-lingui-id: gA2ZGo
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "App claiming"
+msgstr ""
 
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -3552,6 +3582,7 @@ msgstr "區塊設定"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "阻止列表"
 
@@ -4389,6 +4420,11 @@ msgstr "選擇記錄預設開啟的位置。某些物件可能會使用工作區
 msgid "Choose whether this activity type appears in record timelines"
 msgstr "選擇是否在記錄時間軸中顯示此活動類型"
 
+#. js-lingui-id: PPf/RT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Choose which fields are used when searching for records."
+msgstr ""
+
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -4889,6 +4925,11 @@ msgstr "設定"
 msgid "Config Variables"
 msgstr "配置變量"
 
+#. js-lingui-id: 8/+vjg
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Configurable search fields"
+msgstr ""
+
 #. js-lingui-id: ywFj2D
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
@@ -5281,6 +5322,11 @@ msgstr "繼續使用 Google"
 msgid "Continue with Microsoft"
 msgstr "繼續使用 Microsoft"
 
+#. js-lingui-id: Rdhzdv
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Control what the workspace imports from connected mailboxes and calendars"
+msgstr ""
+
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -5318,6 +5364,7 @@ msgid "Copied to clipboard"
 msgstr "已複製到剪貼板"
 
 #. js-lingui-id: he3ygx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -5504,10 +5551,10 @@ msgstr "無法產生已簽署的 DPA。請再試一次。"
 msgid "Could not load versions."
 msgstr "無法載入版本。"
 
-#. js-lingui-id: KqYYBp
+#. js-lingui-id: pd1EEy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Could not open billing portal. Please check your enterprise key is present, or contact support."
-msgstr "無法開啟帳單入口網站。請檢查是否已提供企業授權金鑰，或聯絡支援。"
+msgid "Could not open billing portal. Please check your Organization key is present, or contact support."
+msgstr ""
 
 #. js-lingui-id: ZuI4Sl
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -5555,10 +5602,10 @@ msgstr "無法啟動 GitHub 認領程序"
 msgid "Could not sync the catalog"
 msgstr "無法同步目錄"
 
-#. js-lingui-id: dIvwQK
+#. js-lingui-id: rGxoIq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Could not transfer the enterprise key. Please contact support."
-msgstr "無法轉移企業金鑰。請聯絡支援。"
+msgid "Could not transfer the Organization key. Please contact support."
+msgstr ""
 
 #. js-lingui-id: xsKD3e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5926,6 +5973,11 @@ msgstr "憑證"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr "OAuth 授權流程的憑證與範圍"
+
+#. js-lingui-id: NGOYJs
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Credit allowance quotas"
+msgstr ""
 
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -7064,6 +7116,7 @@ msgstr "描述您希望 AI 實現的功能..."
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -7182,6 +7235,11 @@ msgstr "聽寫失敗。請再試一次。"
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation is not supported in this browser."
 msgstr "此瀏覽器不支援聽寫功能。"
+
+#. js-lingui-id: 8n9Unw
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Direct REST metadata responses"
+msgstr ""
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -7824,6 +7882,11 @@ msgstr "將不再接收行銷活動電子郵件的電子郵件地址"
 msgid "Email and Chat"
 msgstr "電子郵件與聊天"
 
+#. js-lingui-id: snb/bC
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Email campaigns"
+msgstr ""
+
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -7836,9 +7899,9 @@ msgstr "收件人可選擇退訂的電子郵件類別"
 
 #. js-lingui-id: UZQ5eW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Email copied to clipboard"
 msgstr "電子郵件已複製到剪貼板"
 
@@ -8035,6 +8098,11 @@ msgstr "空白分頁"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "啟用繞過選項"
+
+#. js-lingui-id: vs9cre
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Enable email campaigns, lists, and unsubscribe management."
+msgstr ""
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -8351,41 +8419,6 @@ msgstr "輸入值，以逗號分隔"
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "請輸入您的雙重驗證程式碼以完成確認。"
 
-#. js-lingui-id: GpB8YV
-#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise"
-msgstr "企業"
-
-#. js-lingui-id: rmZVdg
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
-msgid "Enterprise feature"
-msgstr "Enterprise 功能"
-
-#. js-lingui-id: qKfd/C
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise key transferred to this server"
-msgstr "企業金鑰已轉移至此伺服器"
-
-#. js-lingui-id: S5c4pl
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise License"
-msgstr "企業授權"
-
-#. js-lingui-id: KGE5g0
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise license activated successfully"
-msgstr "企業授權已成功啟用"
-
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Entity ID"
@@ -8429,10 +8462,10 @@ msgstr "擦除已軟刪除的記錄"
 msgid "Error"
 msgstr "錯誤"
 
-#. js-lingui-id: VouTsQ
+#. js-lingui-id: MC9SGH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Error activating enterprise license"
-msgstr "啟用企業授權時發生錯誤"
+msgid "Error activating Organization license"
+msgstr ""
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -8520,10 +8553,10 @@ msgstr "重設變數時出錯"
 msgid "Error rotating client secret"
 msgstr "輪換用戶端密鑰時出錯"
 
-#. js-lingui-id: ZeIlj6
+#. js-lingui-id: 2AvJlR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Error transferring the enterprise key"
-msgstr "轉移企業金鑰時發生錯誤"
+msgid "Error transferring the Organization key"
+msgstr ""
 
 #. js-lingui-id: 5Vy8D1
 #: src/modules/settings/applications/hooks/useUninstallApplication.ts
@@ -8726,6 +8759,11 @@ msgstr "從我的電子郵件同步中排除以下人員與網域。"
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "排除以下人員和網域自我的電子郵件同步中。內部對話將不會被導入"
+
+#. js-lingui-id: aCFYU+
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
+msgid "Exclude the following people and domains from the email and calendar sync of every workspace member"
+msgstr ""
 
 #. js-lingui-id: g3jaWB
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -8955,10 +8993,10 @@ msgstr "無法{translatedOperationType}{translatedMetadataName}。請再試一�
 msgid "Failed to {translatedOperationType} {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
 msgstr "無法{translatedOperationType}{translatedMetadataName}。相關{relatedEntityNames}驗證失敗。請檢查您的配置並重試。"
 
-#. js-lingui-id: R1XJV1
+#. js-lingui-id: 0zoYr3
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Failed to activate enterprise license. Please check your key or contact support."
-msgstr "無法啟用企業授權。請檢查您的金鑰或聯絡支援。"
+msgid "Failed to activate Organization license. Please check your key or contact support."
+msgstr ""
 
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -9382,11 +9420,6 @@ msgstr "快速"
 msgid "Favorites"
 msgstr "收藏夾"
 
-#. js-lingui-id: YXjpZx
-#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-msgid "Feature Flag"
-msgstr "功能標誌"
-
 #. js-lingui-id: +ZqAYI
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -9759,15 +9792,15 @@ msgstr "名字"
 msgid "First name can not be empty"
 msgstr "名字不可為空"
 
-#. js-lingui-id: JREYkg
+#. js-lingui-id: tVgANq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Fix the payment issue to keep your enterprise features active."
-msgstr "請修正付款問題以維持您的企業功能啟用。"
+msgid "Fix the payment issue to keep your premium features active."
+msgstr ""
 
-#. js-lingui-id: UNHbhD
+#. js-lingui-id: SdIdBz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Fix the payment issue to restore your enterprise features."
-msgstr "請解決付款問題以恢復您的企業功能。"
+msgid "Fix the payment issue to restore your premium features."
+msgstr ""
 
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -10070,22 +10103,6 @@ msgstr "會依帳戶產生 Google Meet 或 Microsoft Teams 連結。"
 msgid "German"
 msgstr "德語"
 
-#. js-lingui-id: sqtljx
-#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Get Enterprise"
-msgstr "取得企業版"
-
-#. js-lingui-id: o2kSwB
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Get Enterprise Key"
-msgstr "取得企業授權金鑰"
-
 #. js-lingui-id: gRFvyL
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 msgid "Get last contact date with relations"
@@ -10096,6 +10113,22 @@ msgstr "取得包含關聯關係的最後聯絡日期"
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "購買更多點數"
+
+#. js-lingui-id: AvbPI1
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Get Organization"
+msgstr ""
+
+#. js-lingui-id: MZe3+J
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Get Organization Key"
+msgstr ""
 
 #. js-lingui-id: wwPywk
 #: src/pages/onboarding/InstallAppsContent.tsx
@@ -10957,7 +10990,7 @@ msgid "Inactive Skill Options"
 msgstr ""
 
 #. js-lingui-id: j8Bj7e
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Include emails where all participants share the same domain."
 msgstr "包含所有參與者使用相同網域的電子郵件。"
 
@@ -11624,6 +11657,11 @@ msgstr "加入中"
 msgid "JSON"
 msgstr ""
 
+#. js-lingui-id: klrZv0
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "JSON filters"
+msgstr ""
+
 #. js-lingui-id: KTaki5
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
@@ -12153,6 +12191,11 @@ msgstr "限制可添加到此欄位的值的數量"
 msgid "Limit must be greater than 0."
 msgstr ""
 
+#. js-lingui-id: OuYGr9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Limit the rate of outgoing webhook deliveries."
+msgstr ""
+
 #. js-lingui-id: GrFbIR
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Limit updated."
@@ -12217,8 +12260,8 @@ msgstr "連結內容"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Link copied to clipboard"
@@ -12897,6 +12940,11 @@ msgstr "正在合併..."
 msgid "Message"
 msgstr "訊息"
 
+#. js-lingui-id: jBzu2R
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Message and calendar target reads"
+msgstr ""
+
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -13318,6 +13366,7 @@ msgstr "N/A"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
@@ -15036,15 +15085,15 @@ msgstr "入門獎勵"
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "一或多個篩選器參照了已停用或已刪除的欄位，儲存時會自動移除。"
 
-#. js-lingui-id: 2l4SGU
+#. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
-msgstr "一份訂閱提供一組企業金鑰，可供一個正式環境執行個體與一個潛在的預備或測試執行個體使用。若要執行預備或測試環境，請在第二台伺服器上安裝 Twenty，使用相同的企業金鑰啟用，然後將該伺服器註冊為開發環境執行個體。開發環境執行個體可在不額外收費的情況下啟用企業功能，且不會計入您的正式環境席次數量。"
+msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
+msgstr ""
 
-#. js-lingui-id: oFTo3P
+#. js-lingui-id: JEtonz
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
-msgid "Only application logs are available on your current plan. Other log types require an Enterprise subscription."
-msgstr "您目前的方案僅提供應用程式日誌。其他日誌類型需要企業版訂閱。"
+msgid "Only application logs are available on your current plan. Other log types require an Organization subscription."
+msgstr ""
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -15153,6 +15202,7 @@ msgid "Open in"
 msgstr "打開"
 
 #. js-lingui-id: noLjKT
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open in app"
 msgstr "在應用程式中打開"
@@ -15166,6 +15216,11 @@ msgstr "在完整頁面中開啟"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "在角色中開啟"
+
+#. js-lingui-id: x57cJf
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
+msgid "Open link"
+msgstr ""
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -15289,19 +15344,46 @@ msgid "Ordered List"
 msgstr ""
 
 #. js-lingui-id: ucgZ0o
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 #: src/modules/settings/billing/hooks/useSwitchBillingPlan.ts
 #: src/pages/settings/enterprise/components/OrganizationAdornment.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization"
 msgstr "組織"
 
 #. js-lingui-id: 0Ogq/s
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "Organization feature"
 msgstr "組織功能"
+
+#. js-lingui-id: b8dX3V
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Organization key transferred to this server"
+msgstr ""
+
+#. js-lingui-id: MoJjhq
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Organization License"
+msgstr ""
+
+#. js-lingui-id: 6alGoe
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Organization license activated successfully"
+msgstr ""
 
 #. js-lingui-id: cyDPQQ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15607,15 +15689,15 @@ msgstr "貼上託管圖片的連結"
 msgid "Paste the code below"
 msgstr "在下方貼上代碼"
 
-#. js-lingui-id: CCNkDk
+#. js-lingui-id: M01WeF
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Paste your enterprise key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server."
-msgstr "在下方貼上您的企業金鑰以啟用。請將此金鑰的副本安全保存：同一組金鑰會重複用於設定開發環境執行個體，或將授權移轉到替換伺服器。"
+msgid "Paste your Organization key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server."
+msgstr ""
 
-#. js-lingui-id: dNdgvF
+#. js-lingui-id: Jkg0nj
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Paste your enterprise key here"
-msgstr "在此貼上您的企業授權金鑰"
+msgid "Paste your Organization key here"
+msgstr ""
 
 #. js-lingui-id: I6gXOa
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -15777,8 +15859,8 @@ msgid "Phone Number"
 msgstr "電話號碼"
 
 #. js-lingui-id: qlqT9z
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Phone number copied to clipboard"
 msgstr "電話號碼已複製到剪貼板"
 
@@ -16046,6 +16128,11 @@ msgstr "在新的工作區上預先安裝"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Pre-installed only"
 msgstr "僅限預裝"
+
+#. js-lingui-id: HslPhm
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Prebuilt logic functions"
+msgstr ""
 
 #. js-lingui-id: 0Lqxjs
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
@@ -16584,6 +16671,11 @@ msgstr "紀錄"
 msgid "Record (ID)"
 msgstr "記錄（ID）"
 
+#. js-lingui-id: zod7Md
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Record creation form"
+msgstr ""
+
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -16616,6 +16708,11 @@ msgstr "記錄標籤"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "記錄頁面"
+
+#. js-lingui-id: dmU8dH
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Record sharing"
+msgstr ""
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -16783,10 +16880,10 @@ msgstr "相對"
 msgid "Release & transfer"
 msgstr "釋出並轉移"
 
-#. js-lingui-id: nTAq7c
+#. js-lingui-id: KXrI7W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Release & transfer enterprise key"
-msgstr "釋出並轉移企業金鑰"
+msgid "Release & transfer Organization key"
+msgstr ""
 
 #. js-lingui-id: PYZeGT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -17243,6 +17340,11 @@ msgstr "重試所有失敗"
 msgid "Retry on failure"
 msgstr "失敗時重試"
 
+#. js-lingui-id: AF7Zfa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Return metadata directly instead of wrapping it in the legacy response envelope."
+msgstr ""
+
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Return Value"
@@ -17456,6 +17558,11 @@ msgstr "執行程式碼以分析檔案和資料"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "執行功能"
+
+#. js-lingui-id: 8KjW3W
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Run logic functions from prebuilt application bundles."
+msgstr ""
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/build-generic-tool-status-message.util.ts
@@ -19232,15 +19339,15 @@ msgstr "標準"
 msgid "Standard widgets"
 msgstr "標準小工具"
 
-#. js-lingui-id: ASqWQi
+#. js-lingui-id: TqGZ8Y
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Start a new enterprise subscription to re-enable enterprise features."
-msgstr "開始新的企業訂閱以重新啟用企業功能。"
+msgid "Start a new Organization subscription to re-enable premium features."
+msgstr ""
 
-#. js-lingui-id: OC6rnK
+#. js-lingui-id: kqtVJH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Start a new enterprise subscription."
-msgstr "開始新的企業訂閱。"
+msgid "Start a new Organization subscription."
+msgstr ""
 
 #. js-lingui-id: WAjFYI
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -19676,6 +19783,11 @@ msgstr "切換至年度方案"
 msgid "Switched to a production instance."
 msgstr "已切換為正式環境執行個體。"
 
+#. js-lingui-id: Nu4DdT
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Sync"
+msgstr ""
+
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync Account"
@@ -19702,7 +19814,7 @@ msgid "Sync failed"
 msgstr "同步失敗"
 
 #. js-lingui-id: tVKt7G
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync Internal Emails"
 msgstr "同步內部電子郵件"
 
@@ -20218,10 +20330,10 @@ msgstr "仍有一些行包含錯誤。提交時，包含錯誤的行將被忽略
 msgid "There is a billing issue. Please contact your admin."
 msgstr "帳單發生問題。請聯絡您的管理員。"
 
-#. js-lingui-id: ezuu4B
+#. js-lingui-id: AYRXBE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr "您的訂閱付款發生問題。您的企業功能已停用。請在訂閱取消前結清未付發票以恢復這些功能：已取消的訂閱無法重新啟用，您必須開始新的訂閱。"
+msgid "There is a payment issue with your subscription. Your premium features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
+msgstr ""
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20387,20 +20499,10 @@ msgstr "此資料庫值覆蓋環境設置。"
 msgid "This device"
 msgstr "此裝置"
 
-#. js-lingui-id: VQvoBA
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This enterprise key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
-msgstr "此企業金鑰已綁定到其他伺服器執行個體。在此處釋放將會把授權轉移到這台伺服器，並停止計算前一台伺服器的席位數。"
-
-#. js-lingui-id: kPBk2h
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This enterprise key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
-msgstr "此企業金鑰目前綁定到其他伺服器執行個體。將其轉移到此處會同時從先前的伺服器釋放，並停止在那裡計算席位數。您確定要繼續嗎？"
-
-#. js-lingui-id: 8IRnd6
+#. js-lingui-id: i6mVT3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "This feature is part of the Enterprise Plan"
-msgstr "此功能屬於「企業方案」的一部分"
+msgid "This feature is part of the Organization plan"
+msgstr ""
 
 #. js-lingui-id: own57K
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -20467,6 +20569,16 @@ msgstr "此模型將從該供應商中移除。您稍後可以重新新增。"
 msgid "This month"
 msgstr "本月"
 
+#. js-lingui-id: ThVMIW
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
+msgstr ""
+
+#. js-lingui-id: CHf20W
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
+msgstr ""
+
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
 msgid "This page has no content"
@@ -20502,10 +20614,10 @@ msgstr "此角色已指派給這些 {roleTargetDisplayName}。"
 msgid "This role is shared with other users or agents and cannot be edited here."
 msgstr ""
 
-#. js-lingui-id: 2iQQGR
+#. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This server has an enterprise key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support."
-msgstr "此伺服器已設定企業金鑰。請務必在安全的地方保留一份備份：您需要相同的金鑰來啟用開發執行個體，或將授權移轉到替代伺服器。如果您不再能存取此金鑰，請聯絡支援。"
+msgid "This server has an Organization key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support."
+msgstr ""
 
 #. js-lingui-id: Gzd97S
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -21337,6 +21449,11 @@ msgstr "唯一"
 msgid "Unique fields"
 msgstr "唯一欄位"
 
+#. js-lingui-id: NXfWhP
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Unique indexes"
+msgstr ""
+
 #. js-lingui-id: pRpC/r
 #: src/modules/side-panel/pages/page-layout/constants/settings/PrefixSetting.ts
 #: src/modules/side-panel/pages/page-layout/constants/settings/SuffixSetting.ts
@@ -21452,10 +21569,10 @@ msgstr "無限制"
 msgid "Unlisted"
 msgstr "未列出"
 
-#. js-lingui-id: Ep1uUU
+#. js-lingui-id: 8vc1Dy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Unlock enterprise features like SSO, row-level security, and audit logs."
-msgstr "解鎖企業功能，例如 SSO、資料列層級安全性與審計日誌。"
+msgid "Unlock premium features like SSO, row-level security, and audit logs."
+msgstr ""
 
 #. js-lingui-id: Te2H8x
 #: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
@@ -21799,10 +21916,10 @@ msgstr "升級以存取"
 msgid "Upgrade to access audit logs"
 msgstr "升級即可存取稽核日誌"
 
-#. js-lingui-id: Wurpq2
+#. js-lingui-id: q10MiT
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-msgid "Upgrade to Enterprise to access audit logs."
-msgstr "升級至 Enterprise 以存取稽核日誌."
+msgid "Upgrade to Organization to access audit logs."
+msgstr ""
 
 #. js-lingui-id: yV3xLN
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -21988,6 +22105,11 @@ msgstr "使用事件"
 msgid "Usage period"
 msgstr "使用期間"
 
+#. js-lingui-id: MNOlLY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use a dedicated form when creating records."
+msgstr ""
+
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
@@ -22022,6 +22144,26 @@ msgstr "僅可使用字母、數字、底線、點或連字號（最多 64 個�
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "使用我們的 API 或手動添加您的第一個 {objectLabel}"
+
+#. js-lingui-id: c2ES/s
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use target relations to find messages and calendar events linked to records."
+msgstr ""
+
+#. js-lingui-id: 40bRe+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use the dedicated workflow index page to browse workflows and their versions."
+msgstr ""
+
+#. js-lingui-id: +mx9eK
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use the quota engine to enforce credit allowances."
+msgstr ""
+
+#. js-lingui-id: 0rr3iW
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use the usage limit engine to enforce API request speed limits."
+msgstr ""
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -22729,6 +22871,11 @@ msgstr "刪除所需的 Webhook ID"
 msgid "Webhook ID is required for updates"
 msgstr "更新所需的 Webhook ID"
 
+#. js-lingui-id: 0HuWgM
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Webhook rate limits"
+msgstr ""
+
 #. js-lingui-id: v1kQyJ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
@@ -22948,6 +23095,11 @@ msgstr ""
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Workflow Execution"
 msgstr "工作流程執行"
+
+#. js-lingui-id: 91e2Af
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Workflow index page"
+msgstr ""
 
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
@@ -23315,10 +23467,10 @@ msgstr "您無權限存取此物件。"
 msgid "You don't have access to this settings page."
 msgstr "您沒有存取此設定頁面的權限。"
 
-#. js-lingui-id: /K45m9
+#. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later or contact support."
-msgstr "您已達到過去 30 天內此企業授權金鑰允許的最大伺服器轉移次數。請稍後再試或聯絡支援。"
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later or contact support."
+msgstr ""
 
 #. js-lingui-id: RDAH2t
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -23395,36 +23547,6 @@ msgstr "您的卡片已儲存，但付款仍需處理。"
 msgid "Your details"
 msgstr "您的詳細資料"
 
-#. js-lingui-id: ahEwS4
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise features are active"
-msgstr "您的企業功能已啟用"
-
-#. js-lingui-id: XMZLU/
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise features are active but your enterprise key is missing or invalid. This may be expected, but if not, please set a valid signed enterprise key to manage your subscription, or contact support."
-msgstr "您的企業功能已啟用，但缺少企業授權金鑰或金鑰無效。這可能是預期情況，但若非如此，請設定有效簽署的企業授權金鑰以管理您的訂閱，或聯絡支援。"
-
-#. js-lingui-id: AxcwNj
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise features will be disabled"
-msgstr "您的企業功能將被停用"
-
-#. js-lingui-id: PT137K
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise features will remain active until {cancelAtDate}."
-msgstr "您的企業功能將維持啟用至 {cancelAtDate}。"
-
-#. js-lingui-id: krHgj1
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise key"
-msgstr "您的企業授權金鑰"
-
-#. js-lingui-id: NTpA4U
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise subscription has been canceled."
-msgstr "您的企業訂閱已取消。"
-
 #. js-lingui-id: gUv6/H
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Your GitHub account does not own the organization that publishes this package. If you are an owner, grant this app access to the organization on GitHub's authorization screen (Organization access section)."
@@ -23450,6 +23572,16 @@ msgstr "您的處理常式會接收此物件。由於 GET 請求不包含有效�
 msgid "Your name as it will be displayed"
 msgstr "顯示您的姓名"
 
+#. js-lingui-id: 91Ysnw
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your Organization key"
+msgstr ""
+
+#. js-lingui-id: eE08iE
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your Organization subscription has been canceled."
+msgstr ""
+
 #. js-lingui-id: 8mfOAZ
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
 #: src/modules/settings/billing/hooks/useSubmitSubscriptionPayment.ts
@@ -23465,6 +23597,26 @@ msgstr "您的方案將立即切換為 Organization，且試用將會繼續。�
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your plan will switch to Pro immediately and your trial will continue. When it ends, you will be charged ${proPrice} per user per month{suffix}."
 msgstr "您的方案將立即切換為 Pro，且試用將會繼續。試用結束後，將按每位使用者每月 ${proPrice}{suffix} 向您收費。"
+
+#. js-lingui-id: iizYt1
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your premium features are active"
+msgstr ""
+
+#. js-lingui-id: VRFEn9
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support."
+msgstr ""
+
+#. js-lingui-id: BkmgMC
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your premium features will be disabled"
+msgstr ""
+
+#. js-lingui-id: TI99Rh
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your premium features will remain active until {cancelAtDate}."
+msgstr ""
 
 #. js-lingui-id: MxZ8eH
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

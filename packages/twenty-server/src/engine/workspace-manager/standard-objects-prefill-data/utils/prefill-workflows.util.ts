@@ -244,6 +244,7 @@ export const prefillWorkflows = async (
         name: 'Quick Lead',
         lastPublishedVersionId: quickLeadWorkflowVersionId,
         workspaceWorkflowId: quickLeadWorkflowId,
+        lastPublishedCoreWorkflowVersionId: coreQuickLeadWorkflowVersionId,
       },
       {
         id: coreCreateCompanyWorkflowId,
@@ -253,6 +254,7 @@ export const prefillWorkflows = async (
         name: 'Create company when adding a new person',
         lastPublishedVersionId: createCompanyWorkflowVersionId,
         workspaceWorkflowId: createCompanyWorkflowId,
+        lastPublishedCoreWorkflowVersionId: coreCreateCompanyWorkflowVersionId,
       },
     ])
     .execute();

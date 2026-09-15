@@ -3,7 +3,7 @@ import { NavigationDrawerSectionForObjectMetadataItems } from '@/object-metadata
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 
 export const NavigationDrawerOpenedSection = () => {
   const { t } = useLingui();

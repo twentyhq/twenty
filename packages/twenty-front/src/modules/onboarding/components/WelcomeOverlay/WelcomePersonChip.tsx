@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Avatar, type AvatarSize } from 'twenty-ui/data-display';
+import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -51,11 +51,11 @@ export const WelcomePersonChip = ({
   return (
     <StyledChip sizeVariant={sizeVariant}>
       <Avatar
-        type="rounded"
+        shape="circle"
         size={avatarSize}
-        placeholder={fullName}
-        placeholderColorSeed={currentWorkspaceMember?.id}
-        avatarUrl={getAbsoluteImageUrl(currentWorkspaceMember?.avatarUrl)}
+        name={fullName}
+        colorSeed={currentWorkspaceMember?.id}
+        src={getAbsoluteImageUrl(currentWorkspaceMember?.avatarUrl)}
       />
       <StyledPersonName>{fullName}</StyledPersonName>
     </StyledChip>

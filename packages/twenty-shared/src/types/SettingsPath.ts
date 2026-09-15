@@ -76,7 +76,7 @@ export enum SettingsPath {
   NewSsoIdentityProvider = 'security/sso/new',
 
   AdminPanel = 'admin-panel',
-  AdminPanelEnterprise = 'admin-panel#enterprise',
+  AdminPanelOrganization = 'admin-panel#organization',
   AdminPanelHealthStatus = 'admin-panel#health-status',
   AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
   AdminPanelInferredVersion = 'admin-panel/health-status/inferred-version',

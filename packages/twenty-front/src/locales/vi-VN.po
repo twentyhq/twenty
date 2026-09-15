@@ -1049,10 +1049,10 @@ msgstr "Một bản nháp đã tồn tại cho quy trình làm việc này. Bạ
 msgid "A payment method is needed to keep your workspace active."
 msgstr "Cần có phương thức thanh toán để duy trì không gian làm việc của bạn hoạt động."
 
-#. js-lingui-id: 5WwDyx
+#. js-lingui-id: eU1E2J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "A payment on your subscription failed. Your enterprise features stay active while we retry it."
-msgstr "Một khoản thanh toán cho gói đăng ký của bạn đã thất bại. Các tính năng Enterprise của bạn vẫn hoạt động trong khi chúng tôi thử lại."
+msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
+msgstr ""
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1268,10 +1268,10 @@ msgstr "Các hành động người dùng có thể thực hiện trên đối t
 msgid "Activate"
 msgstr "Kích hoạt"
 
-#. js-lingui-id: eqeFkF
+#. js-lingui-id: 8xkU9e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Activate Enterprise Key"
-msgstr "Kích hoạt khóa Enterprise"
+msgid "Activate Organization Key"
+msgstr ""
 
 #. js-lingui-id: i7ur8L
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2133,15 +2133,15 @@ msgstr "Công cụ AI"
 msgid "AI Usage"
 msgstr "Mức sử dụng AI"
 
-#. js-lingui-id: Ad11E9
+#. js-lingui-id: jSHIk0
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-msgid "AI usage analytics across workspaces is available with an Enterprise key."
-msgstr "Phân tích mức sử dụng AI trên các không gian làm việc có sẵn khi dùng khóa Enterprise."
+msgid "AI usage analytics across workspaces is available with an Organization key."
+msgstr ""
 
-#. js-lingui-id: zkptxb
+#. js-lingui-id: 55MeVT
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
-msgid "AI usage analytics is available with an Enterprise key."
-msgstr "Phân tích mức sử dụng AI có sẵn khi dùng khóa Enterprise."
+msgid "AI usage analytics is available with an Organization key."
+msgstr ""
 
 #. js-lingui-id: U2F/HK
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -2416,6 +2416,11 @@ msgstr "Tất cả không gian làm việc mà người dùng này là thành vi
 msgid "All your custom objects"
 msgstr "Tất cả các đối tượng tùy chỉnh của bạn"
 
+#. js-lingui-id: fWQJW/
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Allow developers to claim ownership of applications."
+msgstr ""
+
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow downloading files and attachments"
@@ -2436,6 +2441,11 @@ msgstr "Cho phép đăng nhập bằng email & mật khẩu cho người dùng b
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Allow exporting data to CSV files"
 msgstr "Cho phép xuất dữ liệu ra tập tin CSV"
+
+#. js-lingui-id: G1r3UJ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Allow filtering records by values inside JSON fields."
+msgstr ""
 
 #. js-lingui-id: q/pgyN
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2467,6 +2477,11 @@ msgstr "Cho phép đăng nhập thông qua chức năng đăng nhập một lầ
 msgid "Allow Microsoft-based login for users with SSO bypass permissions."
 msgstr "Cho phép đăng nhập dựa trên Microsoft cho người dùng có quyền bỏ qua SSO."
 
+#. js-lingui-id: cLzEjc
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Allow sharing individual records with workspace members."
+msgstr ""
+
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
 msgid "Allow Support Team Access"
@@ -2476,6 +2491,11 @@ msgstr "Cho phép nhóm hỗ trợ truy cập"
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 msgid "Allow the invitation of new users by sharing an invite link."
 msgstr "Cho phép mời người dùng mới bằng cách chia sẻ link mời."
+
+#. js-lingui-id: xfQ2i8
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Allow unique indexes to prevent duplicate field values."
+msgstr ""
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2732,6 +2752,11 @@ msgstr "Tên API (Số nhiều)"
 msgid "API Name (Singular)"
 msgstr "Tên API (Số ít)"
 
+#. js-lingui-id: FXWLlg
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "API rate limits v2"
+msgstr ""
+
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "API Request"
@@ -2755,6 +2780,11 @@ msgstr "Dấu nháy đơn và dấu chấm"
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 msgid "App"
 msgstr "Ứng dụng"
+
+#. js-lingui-id: gA2ZGo
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "App claiming"
+msgstr ""
 
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -3552,6 +3582,7 @@ msgstr "Cài đặt khối"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "Danh sách chặn"
 
@@ -4389,6 +4420,11 @@ msgstr "Chọn nơi bản ghi được mở theo mặc định. Một số đố
 msgid "Choose whether this activity type appears in record timelines"
 msgstr "Chọn xem loại hoạt động này có xuất hiện trong dòng thời gian của bản ghi hay không"
 
+#. js-lingui-id: PPf/RT
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Choose which fields are used when searching for records."
+msgstr ""
+
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
@@ -4889,6 +4925,11 @@ msgstr "Cấu hình"
 msgid "Config Variables"
 msgstr "Biến cấu hình"
 
+#. js-lingui-id: 8/+vjg
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Configurable search fields"
+msgstr ""
+
 #. js-lingui-id: ywFj2D
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
@@ -5281,6 +5322,11 @@ msgstr "Tiếp tục với Google"
 msgid "Continue with Microsoft"
 msgstr "Tiếp tục với Microsoft"
 
+#. js-lingui-id: Rdhzdv
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Control what the workspace imports from connected mailboxes and calendars"
+msgstr ""
+
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
 #: src/pages/settings/communications/SettingsWorkspaceUnsubscribeTopicDetail.tsx
@@ -5318,6 +5364,7 @@ msgid "Copied to clipboard"
 msgstr "Đã sao chép vào bảng tạm"
 
 #. js-lingui-id: he3ygx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -5504,10 +5551,10 @@ msgstr "Không thể tạo DPA đã ký. Vui lòng thử lại."
 msgid "Could not load versions."
 msgstr "Không thể tải các phiên bản."
 
-#. js-lingui-id: KqYYBp
+#. js-lingui-id: pd1EEy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Could not open billing portal. Please check your enterprise key is present, or contact support."
-msgstr "Không thể mở cổng thanh toán. Vui lòng kiểm tra khóa Enterprise của bạn đã được nhập, hoặc liên hệ bộ phận hỗ trợ."
+msgid "Could not open billing portal. Please check your Organization key is present, or contact support."
+msgstr ""
 
 #. js-lingui-id: ZuI4Sl
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -5555,10 +5602,10 @@ msgstr "Không thể bắt đầu yêu cầu quyền sở hữu qua GitHub"
 msgid "Could not sync the catalog"
 msgstr "Không thể đồng bộ danh mục"
 
-#. js-lingui-id: dIvwQK
+#. js-lingui-id: rGxoIq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Could not transfer the enterprise key. Please contact support."
-msgstr "Không thể chuyển khóa doanh nghiệp. Vui lòng liên hệ bộ phận hỗ trợ."
+msgid "Could not transfer the Organization key. Please contact support."
+msgstr ""
 
 #. js-lingui-id: xsKD3e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5926,6 +5973,11 @@ msgstr "Thông tin xác thực"
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 msgid "Credentials and scopes for OAuth authorization flows"
 msgstr "Thông tin xác thực và phạm vi cho các luồng ủy quyền OAuth"
+
+#. js-lingui-id: NGOYJs
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Credit allowance quotas"
+msgstr ""
 
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -7064,6 +7116,7 @@ msgstr "Mô tả điều bạn muốn AI làm gì..."
 #: src/modules/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader.tsx
 #: src/modules/settings/translations/components/SidePanelSettingsMetadataTranslationsPage.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -7182,6 +7235,11 @@ msgstr "Đọc chính tả thất bại. Hãy thử lại."
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
 msgid "Dictation is not supported in this browser."
 msgstr "Đọc chính tả không được hỗ trợ trong trình duyệt này."
+
+#. js-lingui-id: 8n9Unw
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Direct REST metadata responses"
+msgstr ""
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -7824,6 +7882,11 @@ msgstr "Các địa chỉ email sẽ không còn nhận email chiến dịch n�
 msgid "Email and Chat"
 msgstr "Email và Trò chuyện"
 
+#. js-lingui-id: snb/bC
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Email campaigns"
+msgstr ""
+
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 msgid "Email cannot be empty"
@@ -7836,9 +7899,9 @@ msgstr "Các danh mục email mà người nhận có thể chọn không nhận
 
 #. js-lingui-id: UZQ5eW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Email copied to clipboard"
 msgstr "Đã sao chép email vào bảng tạm"
 
@@ -8035,6 +8098,11 @@ msgstr "Tab trống"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Enable bypass options"
 msgstr "Kích hoạt tùy chọn bỏ qua"
+
+#. js-lingui-id: vs9cre
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Enable email campaigns, lists, and unsubscribe management."
+msgstr ""
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -8351,41 +8419,6 @@ msgstr "Nhập giá trị, phân tách bằng dấu phẩy"
 msgid "Enter your two-factor authentication code to confirm."
 msgstr "Nhập mã xác thực hai yếu tố của bạn để xác nhận."
 
-#. js-lingui-id: GpB8YV
-#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise"
-msgstr "Doanh nghiệp"
-
-#. js-lingui-id: rmZVdg
-#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
-msgid "Enterprise feature"
-msgstr "Tính năng Enterprise"
-
-#. js-lingui-id: qKfd/C
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise key transferred to this server"
-msgstr "Khóa Enterprise đã được chuyển đến máy chủ này"
-
-#. js-lingui-id: S5c4pl
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise License"
-msgstr "Giấy phép Enterprise"
-
-#. js-lingui-id: KGE5g0
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Enterprise license activated successfully"
-msgstr "Kích hoạt giấy phép Enterprise thành công"
-
 #. js-lingui-id: SLuq/l
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
 msgid "Entity ID"
@@ -8429,10 +8462,10 @@ msgstr "Xóa vĩnh viễn các bản ghi đã xóa mềm"
 msgid "Error"
 msgstr "Lỗi"
 
-#. js-lingui-id: VouTsQ
+#. js-lingui-id: MC9SGH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Error activating enterprise license"
-msgstr "Lỗi khi kích hoạt giấy phép Enterprise"
+msgid "Error activating Organization license"
+msgstr ""
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -8520,10 +8553,10 @@ msgstr "Lỗi khi đặt lại biến"
 msgid "Error rotating client secret"
 msgstr "Lỗi khi thay mới client secret"
 
-#. js-lingui-id: ZeIlj6
+#. js-lingui-id: 2AvJlR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Error transferring the enterprise key"
-msgstr "Lỗi khi chuyển khóa Enterprise"
+msgid "Error transferring the Organization key"
+msgstr ""
 
 #. js-lingui-id: 5Vy8D1
 #: src/modules/settings/applications/hooks/useUninstallApplication.ts
@@ -8726,6 +8759,11 @@ msgstr "Loại trừ những người và tên miền sau khỏi đồng bộ em
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "Loại trừ những người và miền sau từ đồng bộ email của tôi. Các cuộc trò chuyện nội bộ sẽ không được nhập khẩu"
+
+#. js-lingui-id: aCFYU+
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
+msgid "Exclude the following people and domains from the email and calendar sync of every workspace member"
+msgstr ""
 
 #. js-lingui-id: g3jaWB
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -8955,10 +8993,10 @@ msgstr "Không thể {translatedOperationType} {translatedMetadataName}. Vui lò
 msgid "Failed to {translatedOperationType} {translatedMetadataName}. Related {relatedEntityNames} validation failed. Please check your configuration and try again."
 msgstr "Không thể {translatedOperationType} {translatedMetadataName}. Xác thực {relatedEntityNames} liên quan không thành công. Vui lòng kiểm tra cấu hình của bạn và thử lại."
 
-#. js-lingui-id: R1XJV1
+#. js-lingui-id: 0zoYr3
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Failed to activate enterprise license. Please check your key or contact support."
-msgstr "Không thể kích hoạt giấy phép Enterprise. Vui lòng kiểm tra khóa của bạn hoặc liên hệ bộ phận hỗ trợ."
+msgid "Failed to activate Organization license. Please check your key or contact support."
+msgstr ""
 
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -9382,11 +9420,6 @@ msgstr "Nhanh"
 msgid "Favorites"
 msgstr "\"Ưa thích\""
 
-#. js-lingui-id: YXjpZx
-#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
-msgid "Feature Flag"
-msgstr "Dấu hiệu đặc trưng"
-
 #. js-lingui-id: +ZqAYI
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
@@ -9759,15 +9792,15 @@ msgstr "\"Tên riêng\""
 msgid "First name can not be empty"
 msgstr "Tên không được để trống"
 
-#. js-lingui-id: JREYkg
+#. js-lingui-id: tVgANq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Fix the payment issue to keep your enterprise features active."
-msgstr "Khắc phục sự cố thanh toán để giữ các tính năng Enterprise hoạt động."
+msgid "Fix the payment issue to keep your premium features active."
+msgstr ""
 
-#. js-lingui-id: UNHbhD
+#. js-lingui-id: SdIdBz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Fix the payment issue to restore your enterprise features."
-msgstr "Khắc phục sự cố thanh toán để khôi phục các tính năng Enterprise của bạn."
+msgid "Fix the payment issue to restore your premium features."
+msgstr ""
 
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -10070,22 +10103,6 @@ msgstr "Tạo một liên kết Google Meet hoặc Microsoft Teams tùy thuộc 
 msgid "German"
 msgstr ""
 
-#. js-lingui-id: sqtljx
-#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Get Enterprise"
-msgstr "Nâng cấp lên Enterprise"
-
-#. js-lingui-id: o2kSwB
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Get Enterprise Key"
-msgstr "Lấy khóa Enterprise"
-
 #. js-lingui-id: gRFvyL
 #: src/modules/onboarding/constants/OnboardingInstallableApps.ts
 msgid "Get last contact date with relations"
@@ -10096,6 +10113,22 @@ msgstr "Lấy ngày liên hệ cuối cùng với các mối quan hệ"
 #: src/modules/information-banner/components/billing/InformationBannerNoMoreCredits.tsx
 msgid "Get more credits"
 msgstr "Nhận thêm tín dụng"
+
+#. js-lingui-id: AvbPI1
+#: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Get Organization"
+msgstr ""
+
+#. js-lingui-id: MZe3+J
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Get Organization Key"
+msgstr ""
 
 #. js-lingui-id: wwPywk
 #: src/pages/onboarding/InstallAppsContent.tsx
@@ -10980,7 +11013,7 @@ msgid "Inactive Skill Options"
 msgstr "Tùy chọn kỹ năng không hoạt động"
 
 #. js-lingui-id: j8Bj7e
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Include emails where all participants share the same domain."
 msgstr "Bao gồm email mà tất cả người tham gia đều dùng cùng một tên miền."
 
@@ -11647,6 +11680,11 @@ msgstr "Đang tham gia"
 msgid "JSON"
 msgstr ""
 
+#. js-lingui-id: klrZv0
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "JSON filters"
+msgstr ""
+
 #. js-lingui-id: KTaki5
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
@@ -12176,6 +12214,11 @@ msgstr "Giới hạn số lượng giá trị có thể được thêm vào trư
 msgid "Limit must be greater than 0."
 msgstr ""
 
+#. js-lingui-id: OuYGr9
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Limit the rate of outgoing webhook deliveries."
+msgstr ""
+
 #. js-lingui-id: GrFbIR
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
 msgid "Limit updated."
@@ -12240,8 +12283,8 @@ msgstr "Nội dung liên kết"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Link copied to clipboard"
@@ -12920,6 +12963,11 @@ msgstr "Đang hợp nhất..."
 msgid "Message"
 msgstr "Thông điệp"
 
+#. js-lingui-id: jBzu2R
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Message and calendar target reads"
+msgstr ""
+
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
 msgid "Message not found"
@@ -13341,6 +13389,7 @@ msgstr "N/A"
 #: src/modules/settings/workspace/components/NameField.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
@@ -15059,15 +15108,15 @@ msgstr "Phần thưởng khi bắt đầu sử dụng"
 msgid "One or more filters reference deactivated or deleted fields and will be automatically removed on save."
 msgstr "Một hoặc nhiều bộ lọc tham chiếu đến các trường đã vô hiệu hóa hoặc đã xóa và sẽ được tự động xóa khi lưu."
 
-#. js-lingui-id: 2l4SGU
+#. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "One subscription provides one enterprise key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same enterprise key, then register that server as a development instance. Development instances unlock enterprise features without extra billing and do not count toward your production seats."
-msgstr "Mỗi gói đăng ký cung cấp một khóa enterprise để vận hành một môi trường sản xuất và một môi trường dàn dựng (staging) hoặc thử nghiệm tiềm năng. Để chạy môi trường dàn dựng hoặc thử nghiệm, hãy cài đặt Twenty trên máy chủ thứ hai, kích hoạt bằng cùng khóa enterprise này, sau đó đăng ký máy chủ đó là một môi trường phát triển. Các môi trường phát triển mở khóa các tính năng enterprise mà không phát sinh thêm chi phí và không được tính vào số suất môi trường sản xuất của bạn."
+msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
+msgstr ""
 
-#. js-lingui-id: oFTo3P
+#. js-lingui-id: JEtonz
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
-msgid "Only application logs are available on your current plan. Other log types require an Enterprise subscription."
-msgstr "Chỉ nhật ký ứng dụng khả dụng trong gói hiện tại của bạn. Các loại nhật ký khác yêu cầu gói đăng ký Enterprise."
+msgid "Only application logs are available on your current plan. Other log types require an Organization subscription."
+msgstr ""
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -15176,6 +15225,7 @@ msgid "Open in"
 msgstr "Mở trong"
 
 #. js-lingui-id: noLjKT
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open in app"
 msgstr "Mở trong ứng dụng"
@@ -15189,6 +15239,11 @@ msgstr "Mở ở trang đầy đủ"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "Mở trong mục Vai trò"
+
+#. js-lingui-id: x57cJf
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
+msgid "Open link"
+msgstr ""
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -15312,19 +15367,46 @@ msgid "Ordered List"
 msgstr ""
 
 #. js-lingui-id: ucgZ0o
+#: src/modules/settings/admin-panel/hooks/useSettingsAdminTabs.ts
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/internal/SettingsBillingPlanComparisonTable.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 #: src/modules/settings/billing/hooks/useSwitchBillingPlan.ts
 #: src/pages/settings/enterprise/components/OrganizationAdornment.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization"
 msgstr "Tổ chức"
 
 #. js-lingui-id: 0Ogq/s
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "Organization feature"
 msgstr "Tính năng Tổ chức"
+
+#. js-lingui-id: b8dX3V
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Organization key transferred to this server"
+msgstr ""
+
+#. js-lingui-id: MoJjhq
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Organization License"
+msgstr ""
+
+#. js-lingui-id: 6alGoe
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Organization license activated successfully"
+msgstr ""
 
 #. js-lingui-id: cyDPQQ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15630,15 +15712,15 @@ msgstr "Dán liên kết đến một hình ảnh được lưu trữ"
 msgid "Paste the code below"
 msgstr "Dán mã bên dưới"
 
-#. js-lingui-id: CCNkDk
+#. js-lingui-id: M01WeF
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Paste your enterprise key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server."
-msgstr "Dán khóa enterprise của bạn bên dưới để kích hoạt. Giữ một bản sao của khóa này ở nơi an toàn: cùng một khóa được sử dụng lại để thiết lập môi trường phát triển hoặc để chuyển giấy phép của bạn sang máy chủ thay thế."
+msgid "Paste your Organization key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server."
+msgstr ""
 
-#. js-lingui-id: dNdgvF
+#. js-lingui-id: Jkg0nj
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Paste your enterprise key here"
-msgstr "Dán khóa Enterprise của bạn vào đây"
+msgid "Paste your Organization key here"
+msgstr ""
 
 #. js-lingui-id: I6gXOa
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -15800,8 +15882,8 @@ msgid "Phone Number"
 msgstr "Số điện thoại"
 
 #. js-lingui-id: qlqT9z
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Phone number copied to clipboard"
 msgstr "Đã sao chép số điện thoại vào bảng tạm"
 
@@ -16069,6 +16151,11 @@ msgstr "Cài đặt trước trên các không gian làm việc mới"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Pre-installed only"
 msgstr "Chỉ ứng dụng cài sẵn"
+
+#. js-lingui-id: HslPhm
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Prebuilt logic functions"
+msgstr ""
 
 #. js-lingui-id: 0Lqxjs
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
@@ -16607,6 +16694,11 @@ msgstr "Ghi lại"
 msgid "Record (ID)"
 msgstr "Bản ghi (ID)"
 
+#. js-lingui-id: zod7Md
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Record creation form"
+msgstr ""
+
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -16639,6 +16731,11 @@ msgstr "Nhãn hồ sơ"
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 msgid "Record page"
 msgstr "Trang hồ sơ"
+
+#. js-lingui-id: dmU8dH
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Record sharing"
+msgstr ""
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -16806,10 +16903,10 @@ msgstr "Tương đối"
 msgid "Release & transfer"
 msgstr "Giải phóng & chuyển giao"
 
-#. js-lingui-id: nTAq7c
+#. js-lingui-id: KXrI7W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Release & transfer enterprise key"
-msgstr "Giải phóng & chuyển giao khóa enterprise"
+msgid "Release & transfer Organization key"
+msgstr ""
 
 #. js-lingui-id: PYZeGT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -17266,6 +17363,11 @@ msgstr "Thử lại Tất cả Thất bại"
 msgid "Retry on failure"
 msgstr "Thử lại khi thất bại"
 
+#. js-lingui-id: AF7Zfa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Return metadata directly instead of wrapping it in the legacy response envelope."
+msgstr ""
+
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
 msgid "Return Value"
@@ -17479,6 +17581,11 @@ msgstr "Chạy mã để phân tích tệp và dữ liệu"
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
 msgid "Run Function"
 msgstr "Chạy chức năng"
+
+#. js-lingui-id: 8KjW3W
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Run logic functions from prebuilt application bundles."
+msgstr ""
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/build-generic-tool-status-message.util.ts
@@ -19255,15 +19362,15 @@ msgstr "Tiêu chuẩn"
 msgid "Standard widgets"
 msgstr "Tiện ích tiêu chuẩn"
 
-#. js-lingui-id: ASqWQi
+#. js-lingui-id: TqGZ8Y
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Start a new enterprise subscription to re-enable enterprise features."
-msgstr "Bắt đầu một gói đăng ký Enterprise mới để kích hoạt lại các tính năng Enterprise."
+msgid "Start a new Organization subscription to re-enable premium features."
+msgstr ""
 
-#. js-lingui-id: OC6rnK
+#. js-lingui-id: kqtVJH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Start a new enterprise subscription."
-msgstr "Bắt đầu một gói đăng ký Enterprise mới."
+msgid "Start a new Organization subscription."
+msgstr ""
 
 #. js-lingui-id: WAjFYI
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -19699,6 +19806,11 @@ msgstr "Chuyển sang hàng năm"
 msgid "Switched to a production instance."
 msgstr "Đã chuyển sang instance sản xuất."
 
+#. js-lingui-id: Nu4DdT
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Sync"
+msgstr ""
+
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync Account"
@@ -19725,7 +19837,7 @@ msgid "Sync failed"
 msgstr "Đồng bộ hóa thất bại"
 
 #. js-lingui-id: tVKt7G
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync Internal Emails"
 msgstr "Đồng bộ email nội bộ"
 
@@ -20271,10 +20383,10 @@ msgstr "Vẫn còn một số hàng chứa lỗi. Các hàng chứa lỗi sẽ b
 msgid "There is a billing issue. Please contact your admin."
 msgstr "Có sự cố về thanh toán. Vui lòng liên hệ quản trị viên của bạn."
 
-#. js-lingui-id: ezuu4B
+#. js-lingui-id: AYRXBE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "There is a payment issue with your subscription. Your enterprise features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr "Có sự cố thanh toán với gói đăng ký của bạn. Các tính năng doanh nghiệp của bạn đã bị vô hiệu hóa. Hãy thanh toán hóa đơn còn tồn đọng để khôi phục chúng trước khi gói đăng ký bị hủy: gói đăng ký đã hủy không thể được kích hoạt lại và bạn sẽ cần bắt đầu một gói mới."
+msgid "There is a payment issue with your subscription. Your premium features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
+msgstr ""
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20440,20 +20552,10 @@ msgstr "Giá trị cơ sở dữ liệu này ghi đè các thiết lập môi tr
 msgid "This device"
 msgstr "Thiết bị này"
 
-#. js-lingui-id: VQvoBA
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This enterprise key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
-msgstr "Khóa doanh nghiệp này hiện đang được gắn với một instance máy chủ khác. Giải phóng nó tại đây sẽ chuyển giấy phép sang máy chủ này và dừng tính suất trên máy chủ trước."
-
-#. js-lingui-id: kPBk2h
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This enterprise key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
-msgstr "Khóa doanh nghiệp này hiện đang được gắn với một instance máy chủ khác. Chuyển nó sang đây sẽ giải phóng khỏi máy chủ trước và dừng tính suất trên đó. Bạn có chắc chắn muốn tiếp tục không?"
-
-#. js-lingui-id: 8IRnd6
+#. js-lingui-id: i6mVT3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
-msgid "This feature is part of the Enterprise Plan"
-msgstr "Tính năng này là một phần của Gói Enterprise"
+msgid "This feature is part of the Organization plan"
+msgstr ""
 
 #. js-lingui-id: own57K
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -20520,6 +20622,16 @@ msgstr "Mô hình này sẽ bị xóa khỏi nhà cung cấp. Bạn có thể th
 msgid "This month"
 msgstr "Tháng này"
 
+#. js-lingui-id: ThVMIW
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
+msgstr ""
+
+#. js-lingui-id: CHf20W
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
+msgstr ""
+
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
 msgid "This page has no content"
@@ -20555,10 +20667,10 @@ msgstr "Vai trò này được chỉ định cho {roleTargetDisplayName} này."
 msgid "This role is shared with other users or agents and cannot be edited here."
 msgstr ""
 
-#. js-lingui-id: 2iQQGR
+#. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "This server has an enterprise key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support."
-msgstr "Máy chủ này đã được cấu hình khóa doanh nghiệp. Hãy đảm bảo bạn lưu một bản sao ở nơi an toàn: bạn cần cùng một khóa để kích hoạt một instance phát triển hoặc để chuyển giấy phép sang máy chủ thay thế. Nếu bạn không còn truy cập được khóa của mình, hãy liên hệ bộ phận hỗ trợ."
+msgid "This server has an Organization key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support."
+msgstr ""
 
 #. js-lingui-id: Gzd97S
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -21390,6 +21502,11 @@ msgstr "Độc nhất"
 msgid "Unique fields"
 msgstr "Trường duy nhất"
 
+#. js-lingui-id: NXfWhP
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Unique indexes"
+msgstr ""
+
 #. js-lingui-id: pRpC/r
 #: src/modules/side-panel/pages/page-layout/constants/settings/PrefixSetting.ts
 #: src/modules/side-panel/pages/page-layout/constants/settings/SuffixSetting.ts
@@ -21505,10 +21622,10 @@ msgstr "Không giới hạn"
 msgid "Unlisted"
 msgstr "Không được liệt kê"
 
-#. js-lingui-id: Ep1uUU
+#. js-lingui-id: 8vc1Dy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Unlock enterprise features like SSO, row-level security, and audit logs."
-msgstr "Mở khóa các tính năng Enterprise như SSO, bảo mật cấp độ hàng và nhật ký kiểm toán."
+msgid "Unlock premium features like SSO, row-level security, and audit logs."
+msgstr ""
 
 #. js-lingui-id: Te2H8x
 #: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
@@ -21852,10 +21969,10 @@ msgstr "Nâng cấp để truy cập"
 msgid "Upgrade to access audit logs"
 msgstr "Nâng cấp để truy cập nhật ký kiểm toán"
 
-#. js-lingui-id: Wurpq2
+#. js-lingui-id: q10MiT
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
-msgid "Upgrade to Enterprise to access audit logs."
-msgstr "Nâng cấp lên gói Enterprise để truy cập nhật ký kiểm toán."
+msgid "Upgrade to Organization to access audit logs."
+msgstr ""
 
 #. js-lingui-id: yV3xLN
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -22041,6 +22158,11 @@ msgstr "Sự kiện sử dụng"
 msgid "Usage period"
 msgstr "Khoảng thời gian sử dụng"
 
+#. js-lingui-id: MNOlLY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use a dedicated form when creating records."
+msgstr ""
+
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Use authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator to generate one-time passwords"
@@ -22075,6 +22197,26 @@ msgstr "Chỉ sử dụng chữ cái, số, dấu gạch dưới, dấu chấm h
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Sử dụng API của chúng tôi hoặc thêm {objectLabel} của bạn bằng tay"
+
+#. js-lingui-id: c2ES/s
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use target relations to find messages and calendar events linked to records."
+msgstr ""
+
+#. js-lingui-id: 40bRe+
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use the dedicated workflow index page to browse workflows and their versions."
+msgstr ""
+
+#. js-lingui-id: +mx9eK
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use the quota engine to enforce credit allowances."
+msgstr ""
+
+#. js-lingui-id: 0rr3iW
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Use the usage limit engine to enforce API request speed limits."
+msgstr ""
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -22782,6 +22924,11 @@ msgstr "Webhook ID cần thiết để xóa"
 msgid "Webhook ID is required for updates"
 msgstr "Webhook ID cần thiết để cập nhật"
 
+#. js-lingui-id: 0HuWgM
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Webhook rate limits"
+msgstr ""
+
 #. js-lingui-id: v1kQyJ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
@@ -23001,6 +23148,11 @@ msgstr ""
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
 msgid "Workflow Execution"
 msgstr "Thực thi quy trình làm việc"
+
+#. js-lingui-id: 91e2Af
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Workflow index page"
+msgstr ""
 
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
@@ -23368,10 +23520,10 @@ msgstr "Bạn không có quyền truy cập vào đối tượng này."
 msgid "You don't have access to this settings page."
 msgstr "Bạn không có quyền truy cập vào trang cài đặt này."
 
-#. js-lingui-id: /K45m9
+#. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later or contact support."
-msgstr "Bạn đã đạt đến số lần chuyển máy chủ tối đa được phép trong 30 ngày qua cho khóa Enterprise này. Vui lòng thử lại sau hoặc liên hệ bộ phận hỗ trợ."
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later or contact support."
+msgstr ""
 
 #. js-lingui-id: RDAH2t
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -23448,36 +23600,6 @@ msgstr "Thẻ của bạn đã được lưu, nhưng khoản thanh toán vẫn c
 msgid "Your details"
 msgstr "Thông tin chi tiết của bạn"
 
-#. js-lingui-id: ahEwS4
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise features are active"
-msgstr "Các tính năng Enterprise của bạn đang hoạt động"
-
-#. js-lingui-id: XMZLU/
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise features are active but your enterprise key is missing or invalid. This may be expected, but if not, please set a valid signed enterprise key to manage your subscription, or contact support."
-msgstr "Các tính năng Enterprise của bạn đang hoạt động nhưng khóa Enterprise của bạn bị thiếu hoặc không hợp lệ. Điều này có thể là bình thường; nếu không, vui lòng đặt một khóa Enterprise đã ký hợp lệ để quản lý đăng ký của bạn, hoặc liên hệ bộ phận hỗ trợ."
-
-#. js-lingui-id: AxcwNj
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise features will be disabled"
-msgstr "Các tính năng Enterprise của bạn sẽ bị vô hiệu hóa"
-
-#. js-lingui-id: PT137K
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise features will remain active until {cancelAtDate}."
-msgstr "Các tính năng Enterprise của bạn sẽ vẫn hoạt động đến {cancelAtDate}."
-
-#. js-lingui-id: krHgj1
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise key"
-msgstr "Khóa Enterprise của bạn"
-
-#. js-lingui-id: NTpA4U
-#: src/pages/settings/enterprise/SettingsEnterprise.tsx
-msgid "Your enterprise subscription has been canceled."
-msgstr "Đăng ký Enterprise của bạn đã bị hủy."
-
 #. js-lingui-id: gUv6/H
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Your GitHub account does not own the organization that publishes this package. If you are an owner, grant this app access to the organization on GitHub's authorization screen (Organization access section)."
@@ -23503,6 +23625,16 @@ msgstr "Trình xử lý của bạn nhận đối tượng này. Phần body tr�
 msgid "Your name as it will be displayed"
 msgstr "Tên của bạn sẽ được hiển thị như thế nào"
 
+#. js-lingui-id: 91Ysnw
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your Organization key"
+msgstr ""
+
+#. js-lingui-id: eE08iE
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your Organization subscription has been canceled."
+msgstr ""
+
 #. js-lingui-id: 8mfOAZ
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
 #: src/modules/settings/billing/hooks/useSubmitSubscriptionPayment.ts
@@ -23518,6 +23650,26 @@ msgstr "Gói của bạn sẽ chuyển sang Organization ngay lập tức và b�
 #: src/modules/settings/billing/hooks/useBillingWording.ts
 msgid "Your plan will switch to Pro immediately and your trial will continue. When it ends, you will be charged ${proPrice} per user per month{suffix}."
 msgstr "Gói của bạn sẽ chuyển sang Pro ngay lập tức và bản dùng thử của bạn sẽ tiếp tục. Khi kết thúc, bạn sẽ bị tính phí ${proPrice} cho mỗi người dùng mỗi tháng{suffix}."
+
+#. js-lingui-id: iizYt1
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your premium features are active"
+msgstr ""
+
+#. js-lingui-id: VRFEn9
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support."
+msgstr ""
+
+#. js-lingui-id: BkmgMC
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your premium features will be disabled"
+msgstr ""
+
+#. js-lingui-id: TI99Rh
+#: src/pages/settings/enterprise/SettingsEnterprise.tsx
+msgid "Your premium features will remain active until {cancelAtDate}."
+msgstr ""
 
 #. js-lingui-id: MxZ8eH
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

@@ -10,10 +10,10 @@ import { parseUserAgentDescription } from '@/settings/profile/devices/utils/pars
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconDeviceDesktop, IconLogout } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import {
   CurrentUserSessionsDocument,
   type CurrentUserSessionsQuery,

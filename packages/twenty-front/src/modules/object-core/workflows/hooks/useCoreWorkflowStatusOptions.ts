@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 

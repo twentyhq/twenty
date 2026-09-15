@@ -1,4 +1,4 @@
-import { LinkType } from '@ui/navigation/SocialLink/LinkType';
+import { LinkType } from '@ui/primitives/navigation/SocialLink/LinkType';
 
 import { getDisplayValueByUrlType } from '../getDisplayValueByUrlType';
 
