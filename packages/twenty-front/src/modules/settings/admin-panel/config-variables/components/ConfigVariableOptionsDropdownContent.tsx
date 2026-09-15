@@ -11,7 +11,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconChevronLeft, IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelectTag } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelectTag } from 'twenty-ui/primitives/navigation';
 import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 type ConfigVariableOptionsDropdownContentProps = {

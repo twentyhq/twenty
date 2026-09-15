@@ -3,7 +3,7 @@ import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/f
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { Field } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/primitives/input';
 import { useLingui } from '@lingui/react/macro';
 
 type FormEmailsFieldInputProps = {

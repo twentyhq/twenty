@@ -1,6 +1,6 @@
 import { sidePanelWidgetFooterCommandMenuItemsState } from '@/ui/layout/side-panel/states/sidePanelWidgetFooterCommandMenuItemsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 export const RecordPageSidePanelWidgetCommandMenuItems = () => {
   const sidePanelWidgetFooterCommandMenuItems = useAtomStateValue(

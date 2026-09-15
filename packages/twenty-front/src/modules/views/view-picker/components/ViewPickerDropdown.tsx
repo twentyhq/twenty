@@ -17,7 +17,7 @@ import { useUpdateViewFromCurrentState } from '@/views/view-picker/hooks/useUpda
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconList, useIcons } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { useContext } from 'react';
 import {
   MOBILE_VIEWPORT,

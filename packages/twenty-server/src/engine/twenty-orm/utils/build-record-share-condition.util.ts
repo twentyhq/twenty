@@ -11,14 +11,12 @@ export const buildRecordShareCondition = ({
   objectMetadataId,
   principalIds,
   accessLevels,
-  recordIdExpression,
 }: {
   tableAlias: string;
   recordShareTableExpression: string;
   objectMetadataId: string;
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
-  recordIdExpression?: string;
 }): { sql: string; parameters: ObjectLiteral } => {
   const parameterSuffix = randomBytes(5).toString('hex');
   const objectMetadataIdParameterName = `recordShareObjectMetadataId_${parameterSuffix}`;
@@ -26,11 +24,9 @@ export const buildRecordShareCondition = ({
   const accessLevelsParameterName = `recordShareAccessLevels_${parameterSuffix}`;
 
   const recordShareAlias = escapeIdentifier(`${tableAlias}_recordShare`);
-  const recordIdSql =
-    recordIdExpression ?? `${escapeIdentifier(tableAlias)}."id"`;
 
   const conditions = [
-    `${recordShareAlias}."recordId" = ${recordIdSql}`,
+    `${recordShareAlias}."recordId" = ${escapeIdentifier(tableAlias)}."id"`,
     `${recordShareAlias}."objectMetadataId" = :${objectMetadataIdParameterName}`,
     `${recordShareAlias}."principalId" = ANY(:${principalIdsParameterName})`,
     `${recordShareAlias}."accessLevel" IN (:...${accessLevelsParameterName})`,

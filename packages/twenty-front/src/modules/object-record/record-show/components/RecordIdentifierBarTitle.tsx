@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { useRef, type ChangeEvent, type MouseEvent } from 'react';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

@@ -10,7 +10,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
+import { LightButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { StyledAppModal } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 

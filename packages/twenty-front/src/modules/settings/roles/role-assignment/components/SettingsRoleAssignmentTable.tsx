@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 
 import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';

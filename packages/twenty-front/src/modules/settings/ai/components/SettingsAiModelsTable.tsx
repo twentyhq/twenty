@@ -5,8 +5,8 @@ import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { Checkbox, IconButton } from 'twenty-ui/input';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Checkbox, IconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';

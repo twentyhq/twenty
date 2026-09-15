@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Avatar, type AvatarSize } from 'twenty-ui/data-display';
+import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
