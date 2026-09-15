@@ -174,7 +174,7 @@ export const InboxPage = () => {
           <StyledListPane isAlone={!isItemVisible}>
             <PageCardHeader
               icon={<SectionIcon size={theme.icon.size.md} />}
-              title={inboxQueue?.name ?? t(inboxSection.label)}
+              title={inboxQueue?.label ?? t(inboxSection.label)}
               actionButton={
                 isDefined(inboxQueueName) && (
                   <SegmentedControl
@@ -223,7 +223,7 @@ export const InboxPage = () => {
               key={inboxItemId}
               inboxItemId={inboxItemId}
               inboxListLocation={inboxListLocation}
-              listTitle={inboxQueue?.name ?? t(inboxSection.label)}
+              listTitle={inboxQueue?.label ?? t(inboxSection.label)}
               showBackToList={isMobile}
             />
           </StyledItemPane>

@@ -98,7 +98,7 @@ export const WorkflowEditActionCreateInboxItem = ({
   }));
 
   const queueOptions: SelectOption[] = inboxQueues.map((inboxQueue) => ({
-    label: inboxQueue.name,
+    label: inboxQueue.label,
     value: inboxQueue.id,
   }));
 
