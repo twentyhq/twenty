@@ -26,7 +26,7 @@ export const SettingsEnterpriseFeatureGateCard = ({
   const canDisplayUpgradeButton = isBillingEnabled || canAccessAdminPanel;
   const upgradeSettingsPath = isBillingEnabled
     ? SettingsPath.BillingPlans
-    : SettingsPath.AdminPanelEnterprise;
+    : SettingsPath.AdminPanelOrganization;
 
   return (
     <Card rounded>

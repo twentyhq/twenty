@@ -352,7 +352,7 @@ export const SettingsAdminNewAiModel = () => {
               accent="danger"
               text={customAiProviderGateDescription}
               buttonTitle={t`Activate`}
-              to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
+              to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
             />
           )}
 
