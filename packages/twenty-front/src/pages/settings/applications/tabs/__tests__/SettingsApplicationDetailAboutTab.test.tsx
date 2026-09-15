@@ -32,6 +32,7 @@ type RenderAboutTabOptions = {
   aboutDescription?: string | null;
   description?: string | null;
   developerLinks?: DeveloperLinks;
+  installCount?: number;
   onShare?: (() => void) | null;
 };
 
@@ -40,6 +41,7 @@ const renderAboutTab = ({
   aboutDescription = ABOUT_DESCRIPTION,
   description = SHORT_DESCRIPTION,
   developerLinks = DEVELOPER_LINKS,
+  installCount = 742,
   onShare = jest.fn(),
 }: RenderAboutTabOptions = {}) =>
   render(
@@ -54,7 +56,7 @@ const renderAboutTab = ({
         ]}
         author="Twenty"
         version="2.0"
-        installCount={1200}
+        installCount={installCount}
         category="Finance"
         pricingDescription="Free"
         developerLinks={developerLinks}
@@ -64,6 +66,25 @@ const renderAboutTab = ({
   );
 
 describe('SettingsApplicationDetailAboutTab', () => {
+  it('hides the install count when nobody installed the application', () => {
+    renderAboutTab({ installCount: 0 });
+
+    expect(screen.queryByText(/installs?$/)).not.toBeInTheDocument();
+  });
+
+  it('estimates large install counts and reveals the exact count on hover', async () => {
+    renderAboutTab({ installCount: 1098 });
+
+    const estimatedInstallCount = screen.getByText('+1,000 installs');
+
+    expect(estimatedInstallCount).toBeVisible();
+    expect(screen.queryByText('1,098 installs')).not.toBeInTheDocument();
+
+    await userEvent.setup().hover(estimatedInstallCount);
+
+    expect(await screen.findByText('1,098 installs')).toBeVisible();
+  });
+
   it('renders the application identity, metadata and resources', () => {
     renderAboutTab();
 
@@ -71,7 +92,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
     expect(screen.getByText(SHORT_DESCRIPTION)).toBeVisible();
     expect(screen.getByText('by Twenty')).toBeVisible();
     expect(screen.getByText('2.0')).toBeVisible();
-    expect(screen.getByText('1,200 installs')).toBeVisible();
+    expect(screen.getByText('742 installs')).toBeVisible();
     expect(screen.getByText('Finance')).toBeVisible();
     expect(screen.getByText('Free')).toBeVisible();
 

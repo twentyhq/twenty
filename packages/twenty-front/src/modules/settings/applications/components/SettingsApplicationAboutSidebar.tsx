@@ -1,4 +1,6 @@
 import { AppChip } from '@/applications/components/AppChip';
+import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
+import { getInstallCountEstimate } from '@/settings/applications/utils/getInstallCountEstimate';
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -19,7 +21,10 @@ import {
   IconWorld,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const INSTALL_COUNT_LABEL_ID = 'settings-application-install-count';
 
 export type DeveloperLinks = {
   websiteUrl?: string;
@@ -46,6 +51,8 @@ type SettingsApplicationAboutSidebarProps = {
 type AboutRow = {
   Icon: IconComponent;
   label: string;
+  id?: string;
+  tooltip?: string;
 };
 
 type ResourceLink = AboutRow & {
@@ -165,6 +172,34 @@ export const SettingsApplicationAboutSidebar = ({
   developerLinks,
 }: SettingsApplicationAboutSidebarProps) => {
   const { theme } = useContext(ThemeContext);
+  const { formatNumber } = useNumberFormat();
+
+  const getInstallCountRows = (): AboutRow[] => {
+    if (!isDefined(installCount) || installCount <= 0) {
+      return [];
+    }
+
+    const exactInstallCountLabel = plural(installCount, {
+      one: `${formatNumber(installCount)} install`,
+      other: `${formatNumber(installCount)} installs`,
+    });
+    const installCountEstimate = getInstallCountEstimate(installCount);
+
+    if (!isDefined(installCountEstimate)) {
+      return [{ Icon: IconDownload, label: exactInstallCountLabel }];
+    }
+
+    const estimatedInstallCount = formatNumber(installCountEstimate);
+
+    return [
+      {
+        Icon: IconDownload,
+        id: INSTALL_COUNT_LABEL_ID,
+        label: t`+${estimatedInstallCount} installs`,
+        tooltip: exactInstallCountLabel,
+      },
+    ];
+  };
 
   const aboutRows: AboutRow[] = [
     ...(isNonEmptyString(author)
@@ -173,17 +208,7 @@ export const SettingsApplicationAboutSidebar = ({
     ...(isNonEmptyString(version)
       ? [{ Icon: IconVersions, label: version }]
       : []),
-    ...(isDefined(installCount)
-      ? [
-          {
-            Icon: IconDownload,
-            label: plural(installCount, {
-              one: '# install',
-              other: '# installs',
-            }),
-          },
-        ]
-      : []),
+    ...getInstallCountRows(),
     ...(isNonEmptyString(category) ? [{ Icon: IconTag, label: category }] : []),
     ...(isNonEmptyString(pricingDescription)
       ? [{ Icon: IconCurrencyDollar, label: pricingDescription }]
@@ -258,12 +283,19 @@ export const SettingsApplicationAboutSidebar = ({
       {aboutRows.length > 0 && (
         <StyledSection>
           <StyledSectionLabel>{t`About`}</StyledSectionLabel>
-          {aboutRows.map(({ Icon, label }) => (
+          {aboutRows.map(({ Icon, label, id, tooltip }) => (
             <StyledRow key={label}>
               <StyledRowIcon>
                 <Icon size={theme.icon.size.sm} />
               </StyledRowIcon>
-              <StyledRowLabel>{label}</StyledRowLabel>
+              <StyledRowLabel id={id}>{label}</StyledRowLabel>
+              {isDefined(id) && isDefined(tooltip) && (
+                <AppTooltip
+                  anchorSelect={`#${id}`}
+                  title={tooltip}
+                  delay={TooltipDelay.shortDelay}
+                />
+              )}
             </StyledRow>
           ))}
         </StyledSection>
