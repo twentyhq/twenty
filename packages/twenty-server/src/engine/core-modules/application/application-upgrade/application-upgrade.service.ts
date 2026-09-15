@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import axios from 'axios';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
-import { z } from 'zod';
 
 import {
   WorkspaceIteratorService,
@@ -12,19 +10,13 @@ import {
 } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
-
-const npmPackageMetadataSchema = z.object({
-  version: z.string(),
-});
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -36,85 +28,9 @@ export class ApplicationUpgradeService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
-
-  async checkForUpdates(
-    appRegistration: ApplicationRegistrationEntity,
-  ): Promise<string | null> {
-    if (appRegistration.sourceType !== ApplicationRegistrationSourceType.NPM) {
-      return null;
-    }
-
-    const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
-
-    if (!appRegistration.sourcePackage) {
-      return null;
-    }
-
-    try {
-      const encodedPackage = encodeURIComponent(appRegistration.sourcePackage);
-
-      const { data } = await axios.get(
-        `${registryUrl}/${encodedPackage}/latest`,
-        {
-          headers: { 'User-Agent': 'Twenty-AppUpgrade' },
-          timeout: 10_000,
-        },
-      );
-
-      const parsed = npmPackageMetadataSchema.safeParse(data);
-
-      if (!parsed.success) {
-        this.logger.warn(
-          `Unexpected response shape from registry for ${appRegistration.sourcePackage}`,
-        );
-
-        return null;
-      }
-
-      const isNewVersion =
-        await this.applicationRegistrationService.setLatestAvailableVersionIfChanged(
-          appRegistration.id,
-          parsed.data.version,
-        );
-
-      if (isNewVersion) {
-        this.applicationRegistrationService.emitRegistrationPublishMetric({
-          isNewRegistration: false,
-          universalIdentifier: appRegistration.universalIdentifier,
-          name: appRegistration.name,
-          sourceType: appRegistration.sourceType,
-          version: parsed.data.version,
-        });
-
-        await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
-          appRegistration.id,
-        );
-      }
-
-      return parsed.data.version;
-    } catch (error) {
-      this.logger.warn(
-        `Failed to check updates for ${appRegistration.sourcePackage}: ${error}`,
-      );
-
-      return null;
-    }
-  }
-
-  async checkAllForUpdates(): Promise<void> {
-    const npmRegistrations = await this.appRegistrationRepository.find({
-      where: { sourceType: ApplicationRegistrationSourceType.NPM },
-    });
-
-    for (const registration of npmRegistrations) {
-      await this.checkForUpdates(registration);
-    }
-  }
 
   async findApplicationsToUpgrade({
     applicationRegistrationId,

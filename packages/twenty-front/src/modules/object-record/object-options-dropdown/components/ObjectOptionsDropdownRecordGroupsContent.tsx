@@ -37,7 +37,7 @@ import {
   MenuItem,
   MenuItemNavigate,
   MenuItemSwitch,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/navigation';
 
 export const ObjectOptionsDropdownRecordGroupsContent = () => {
   const { t } = useLingui();

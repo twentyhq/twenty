@@ -174,7 +174,7 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     description: msg`Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance.`,
     id: 'enterpriseActivate',
     indexed: false,
-    path: '/enterprise/activate',
+    path: '/organization/activate',
     priority: 0.3,
     title: msg`Organization Activation | Twenty`,
   },

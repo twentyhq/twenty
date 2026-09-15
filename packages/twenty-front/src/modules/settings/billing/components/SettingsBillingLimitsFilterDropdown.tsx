@@ -8,7 +8,7 @@ import {
   IconTrash,
   IconUsers,
 } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 import { USAGE_LIMIT_RESOURCE_TYPE_ICONS } from '@/settings/billing/constants/UsageLimitResourceTypeIcons';
 import { USAGE_LIMIT_RESOURCE_TYPE_LABELS } from '@/settings/billing/constants/UsageLimitResourceTypeLabels';

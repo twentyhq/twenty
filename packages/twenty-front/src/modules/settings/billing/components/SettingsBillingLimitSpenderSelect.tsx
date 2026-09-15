@@ -1,9 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect, MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import {
+  MenuItemSelect,
+  MenuItemSelectAvatar,
+} from 'twenty-ui/primitives/navigation';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';

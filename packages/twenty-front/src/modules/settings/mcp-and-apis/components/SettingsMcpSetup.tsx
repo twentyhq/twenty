@@ -11,10 +11,10 @@ import {
   buildMcpServerUrl,
   isHttpsUrl,
 } from '@/settings/mcp-and-apis/utils/mcpSetup';
-import { CodeEditor, CoreEditorHeader } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { CodeEditor, CoreEditorHeader } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledMcpEditorHeaderTitle = styled.div`
