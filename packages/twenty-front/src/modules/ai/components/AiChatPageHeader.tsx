@@ -12,7 +12,6 @@ import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByTh
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { currentAiChatThreadDataSelector } from '@/ai/states/selectors/currentAiChatThreadDataSelector';
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -24,7 +23,7 @@ const StyledHeader = styled.header`
   display: flex;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
+  height: ${themeCssVariables.spacing[12]};
   padding: 0 ${themeCssVariables.spacing[3]};
 `;
 
