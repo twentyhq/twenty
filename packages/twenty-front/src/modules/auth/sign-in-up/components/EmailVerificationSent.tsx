@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -11,6 +10,7 @@ import {
 import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingModalCircularIcon';
 import { t } from '@lingui/core/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { MainButton } from 'twenty-ui/components';
 import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';

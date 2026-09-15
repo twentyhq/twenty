@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -16,6 +15,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/primitives/input';

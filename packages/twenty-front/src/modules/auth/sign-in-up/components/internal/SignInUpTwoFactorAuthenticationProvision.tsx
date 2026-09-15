@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { TwoFactorAuthenticationSetupEffect } from '@/auth/components/TwoFactorAuthenticationProvisionEffect';
 import { qrCodeState } from '@/auth/states/qrCode';
 import {
@@ -15,6 +14,7 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import QRCodeModule from 'react-qr-code';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { MainButton } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { useContext } from 'react';

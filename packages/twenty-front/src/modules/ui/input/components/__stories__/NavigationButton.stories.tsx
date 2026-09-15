@@ -1,6 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { styled } from '@linaria/react';
 import { MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 import { expect, fn, userEvent, within } from 'storybook/test';
+import { LightButton, MainButton } from 'twenty-ui/components';
 
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 
@@ -11,6 +13,10 @@ const meta: Meta<typeof NavigationButton> = {
 
 export default meta;
 type Story = StoryObj<typeof NavigationButton>;
+
+const StyledMainButton = styled(MainButton)`
+  width: 200px;
+`;
 
 const CurrentLocation = () => {
   const { pathname, search, hash } = useLocation();
@@ -35,10 +41,15 @@ export const RouterNavigation: Story = {
           path="/settings/objects/:objectName/*"
           element={
             <>
-              <NavigationButton to="./new-field/select" onClick={args.onClick}>
+              <NavigationButton
+                buttonComponent={MainButton}
+                to="./new-field/select"
+                onClick={args.onClick}
+              >
                 Add field
               </NavigationButton>
               <NavigationButton
+                buttonComponent={LightButton}
                 to={{
                   pathname: '/settings/usage',
                   search: '?period=week',
@@ -67,6 +78,8 @@ export const RouterNavigation: Story = {
       'href',
       '/settings/objects/companies/new-field/select',
     );
+    await expect(addFieldLink).not.toHaveAttribute('type');
+    await expect(getComputedStyle(addFieldLink).fontWeight).toBe('600');
     addFieldLink.focus();
     await userEvent.keyboard('{Enter}');
     await expect(args.onClick).toHaveBeenCalledOnce();
@@ -74,7 +87,10 @@ export const RouterNavigation: Story = {
       '/settings/objects/companies/new-field/select',
     );
 
-    await userEvent.click(canvas.getByRole('link', { name: 'View usage' }));
+    const usageLink = canvas.getByRole('link', { name: 'View usage' });
+    await expect(usageLink).not.toHaveAttribute('type');
+    await expect(getComputedStyle(usageLink).fontWeight).toBe('400');
+    await userEvent.click(usageLink);
     await expect(args.onClick).toHaveBeenCalledTimes(2);
     await expect(currentLocation.textContent).toBe(
       '/settings/usage?period=week#credits',
@@ -88,6 +104,7 @@ export const Disabled: Story = {
   render: (args) => (
     <MemoryRouter initialEntries={['/settings']}>
       <NavigationButton
+        buttonComponent={LightButton}
         to="/settings/usage"
         disabled={args.disabled}
         onClick={args.onClick}
@@ -125,5 +142,30 @@ export const NativeButton: Story = {
     button.focus();
     await userEvent.keyboard('{Enter} ');
     await expect(args.onClick).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const NativePreset: Story = {
+  args: { onClick: fn() },
+  render: (args) => (
+    <NavigationButton
+      buttonComponent={StyledMainButton}
+      to={undefined}
+      onClick={args.onClick}
+    >
+      Save changes
+    </NavigationButton>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Save changes',
+    });
+
+    await expect(button).toHaveAttribute('type', 'button');
+    await expect(button).not.toHaveAttribute('href');
+    await expect(button.getBoundingClientRect().width).toBe(200);
+    await expect(getComputedStyle(button).fontWeight).toBe('600');
+    await userEvent.click(button);
+    await expect(args.onClick).toHaveBeenCalledOnce();
   },
 };

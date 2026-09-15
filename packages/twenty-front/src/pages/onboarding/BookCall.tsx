@@ -1,5 +1,4 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Navigate } from 'react-router-dom';
 
@@ -16,6 +15,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
+import { LightButton } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
@@ -85,11 +85,9 @@ export const BookCall = () => {
             <BookCallOnboardingStepActions />
           ) : (
             <NavigationButton
-              className={BUTTON_LIGHT_CLASS_NAME}
+              buttonComponent={LightButton}
               to={AppPath.PlanRequired}
               startIcon={<IconChevronLeft />}
-              size="sm"
-              variant="ghost"
             >{t`Back`}</NavigationButton>
           )}
         </StyledFooter>

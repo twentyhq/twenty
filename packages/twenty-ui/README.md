@@ -47,9 +47,9 @@ import { Button } from 'twenty-ui/primitives/input';
 | --- | --- |
 | `twenty-ui` | All components, icons, theme tokens, and utilities |
 | `twenty-ui/assets` | Logos and static assets |
-| `twenty-ui/components` | Reserved for reusable app building blocks |
+| `twenty-ui/components` | Shared design presets and reusable app building blocks |
 | `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/primitives` | All existing UI component families |
+| `twenty-ui/primitives` | Foundational UI controls and compound controls |
 | `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |
 | `twenty-ui/primitives/data-display` | Avatars, chips, tags, status indicators, and display helpers |
 | `twenty-ui/primitives/feedback` | Toasts, banners, progress bars, and loaders |

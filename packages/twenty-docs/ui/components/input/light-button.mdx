@@ -1,0 +1,43 @@
+---
+title: LightButton
+description: Present lightweight actions with standard or subtle emphasis.
+---
+
+import LightButtonReference from '/snippets/ui/generated/input/light-button.mdx';
+
+Use `LightButton` for a lightweight action. It composes
+[Button](/ui/components/input/button) with a ghost surface, small size, regular
+font weight, and no elevation.
+
+## Usage
+
+```tsx
+import { LightButton } from 'twenty-ui/components';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const FilterActions = () => (
+  <LightButton emphasis="subtle" startIcon={<IconPlus />}>
+    Add filter
+  </LightButton>
+);
+```
+
+The default `emphasis="standard"` uses secondary neutral text.
+`emphasis="subtle"` uses tertiary neutral text on ghost, outline, and soft
+surfaces. Semantic colors and solid surfaces retain their contrast treatment.
+
+Override `variant`, `color`, `size`, or `elevated` when needed.
+[ButtonGroup](/ui/components/input/button-group) can set a shared size, surface,
+and color; subtle emphasis does not replace the group's semantic color.
+
+## Interaction
+
+`LightButton` accepts Button's native attributes, refs, event handlers, icon
+slots, loading and disabled states, and render composition. Its native default
+is `type="button"`. Set `type="submit"` for submission or use `href` for a link.
+Router links use `render`, `nativeButton={false}`, and `role="link"` at the
+application routing seam. Consumer classes and state functions pass through.
+
+## Props
+
+<LightButtonReference />

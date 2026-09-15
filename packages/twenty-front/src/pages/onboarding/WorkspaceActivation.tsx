@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useRef } from 'react';
 
@@ -21,6 +20,7 @@ import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 

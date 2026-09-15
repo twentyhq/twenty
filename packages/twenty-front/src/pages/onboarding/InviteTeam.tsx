@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { onboardingConfigState } from '@/client-config/states/onboardingConfigState';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -19,6 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Controller } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';

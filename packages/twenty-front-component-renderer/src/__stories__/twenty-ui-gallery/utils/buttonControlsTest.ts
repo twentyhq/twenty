@@ -23,11 +23,14 @@ export const buttonControlsTest: TwentyUiGalleryPlayFunction = async (
     expect(canvas.getByLabelText('Activations')).toHaveTextContent('3'),
   );
   const save = canvas.getByRole('button', { name: 'Save changes' });
+  await expect(getComputedStyle(save).fontWeight).toBe('600');
+  await expect(getComputedStyle(save).paddingInlineStart).toBe('12px');
   await userEvent.click(save);
   await waitFor(() => expect(save).toBeDisabled());
-  await userEvent.click(
-    canvas.getByRole('button', { name: 'Complete request' }),
-  );
+  const complete = canvas.getByRole('button', { name: 'Complete request' });
+  await expect(getComputedStyle(complete).fontWeight).toBe('400');
+  await expect(complete.getBoundingClientRect().height).toBe(24);
+  await userEvent.click(complete);
   await waitFor(() => expect(save).toBeEnabled());
   await expect(
     canvas.getByRole('link', { name: 'Documentation' }),

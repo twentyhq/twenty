@@ -514,6 +514,8 @@
                     "group": "Forms",
                     "pages": [
                       "ui/components/input/button",
+                      "ui/components/input/main-button",
+                      "ui/components/input/light-button",
                       "ui/components/input/button-group",
                       "ui/components/input/field",
                       "ui/components/input/input",

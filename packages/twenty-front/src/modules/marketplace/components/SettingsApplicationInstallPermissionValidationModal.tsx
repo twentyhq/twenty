@@ -1,4 +1,3 @@
-import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import {
@@ -10,8 +9,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
+import { LightButton } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { StyledAppModal } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
@@ -35,7 +34,7 @@ const StyledFullscreenContainer = styled.div`
   width: 100%;
 `;
 
-const StyledLightButton = styled(Button)`
+const StyledLightButton = styled(LightButton)`
   left: ${themeCssVariables.spacing[4]};
   position: absolute;
   top: ${themeCssVariables.spacing[4]};
@@ -127,11 +126,8 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     >
       <StyledFullscreenContainer>
         <StyledLightButton
-          className={BUTTON_LIGHT_CLASS_NAME}
           startIcon={<IconChevronLeft />}
           onClick={handleClose}
-          size="sm"
-          variant="ghost"
         >{t`Back to settings`}</StyledLightButton>
 
         <StyledContent>

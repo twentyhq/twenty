@@ -1,5 +1,3 @@
-import { BUTTON_SUBTLE_CLASS_NAME } from '@/ui/input/styles/ButtonSubtleClassName';
-
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { useAddRecordGroup } from '@/object-record/record-group/hooks/useAddRecordGroup';
 import { canAddRecordGroupForFieldMetadataItem } from '@/object-record/record-group/utils/canAddRecordGroupForFieldMetadataItem';
@@ -12,8 +10,8 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { LightButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
 
 type AddRecordGroupButtonProps = {
   fieldMetadataItem: FieldMetadataItem;
@@ -60,12 +58,10 @@ export const AddRecordGroupButton = ({
       dropdownPlacement="bottom-start"
       dropdownOffset={dropdownOffset}
       clickableComponent={
-        <Button
-          className={BUTTON_SUBTLE_CLASS_NAME}
+        <LightButton
+          emphasis="subtle"
           startIcon={<IconPlus />}
-          size="sm"
-          variant="ghost"
-        >{t`New group`}</Button>
+        >{t`New group`}</LightButton>
       }
       dropdownComponents={
         <SingleRecordPicker

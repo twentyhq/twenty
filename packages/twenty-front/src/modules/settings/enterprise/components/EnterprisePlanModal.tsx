@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
@@ -10,6 +9,7 @@ import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { MainButton } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { CardPicker, RadioGroup } from 'twenty-ui/primitives/input';
 import { ModalContent } from 'twenty-ui/primitives/surfaces';

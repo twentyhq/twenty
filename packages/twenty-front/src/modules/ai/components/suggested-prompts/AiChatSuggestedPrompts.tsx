@@ -1,8 +1,8 @@
-import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
+import { LightButton } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -98,8 +98,7 @@ export const AiChatSuggestedPrompts = ({
               {resolveMessage(suggestedPrompt.label)}
             </Button>
           ) : (
-            <Button
-              className={BUTTON_LIGHT_CLASS_NAME}
+            <LightButton
               key={suggestedPrompt.id}
               startIcon={
                 isDefined(suggestedPrompt.Icon) ? (
@@ -107,11 +106,9 @@ export const AiChatSuggestedPrompts = ({
                 ) : undefined
               }
               onClick={() => handleClick(suggestedPrompt)}
-              size="sm"
-              variant="ghost"
             >
               {resolveMessage(suggestedPrompt.label)}
-            </Button>
+            </LightButton>
           ),
         )}
       </StyledPromptList>

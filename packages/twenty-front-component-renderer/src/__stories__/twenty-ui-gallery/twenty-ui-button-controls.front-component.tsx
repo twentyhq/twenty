@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
+import { LightButton, MainButton } from 'twenty-ui/components';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
@@ -22,12 +23,12 @@ const ButtonControls = () => {
       <Button disabled onClick={handleClick}>
         Disabled button
       </Button>
-      <Button loading={loading} onClick={() => setLoading(true)}>
+      <MainButton loading={loading} onClick={() => setLoading(true)}>
         Save changes
-      </Button>
-      <Button variant="ghost" onClick={() => setLoading(false)}>
+      </MainButton>
+      <LightButton onClick={() => setLoading(false)}>
         Complete request
-      </Button>
+      </LightButton>
       <Button href="https://twenty.com" target="_blank" rel="noreferrer">
         Documentation
       </Button>

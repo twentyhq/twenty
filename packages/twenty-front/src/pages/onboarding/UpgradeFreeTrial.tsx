@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
@@ -28,6 +27,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { Info, Loader } from 'twenty-ui/primitives/feedback';
 import { RadioGroup } from 'twenty-ui/primitives/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/primitives/navigation';

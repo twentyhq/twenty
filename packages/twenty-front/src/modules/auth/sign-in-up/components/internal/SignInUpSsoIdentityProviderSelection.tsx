@@ -1,5 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
-
 /* @license Enterprise */
 
 import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
@@ -9,6 +7,7 @@ import { guessSsoIdentityProviderIconByUrl } from '@/settings/security/utils/gue
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import React, { createElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 

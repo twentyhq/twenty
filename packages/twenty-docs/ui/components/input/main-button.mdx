@@ -1,0 +1,42 @@
+---
+title: MainButton
+description: Present prominent actions with shared design defaults.
+---
+
+import MainButtonReference from '/snippets/ui/generated/input/main-button.mdx';
+
+Use `MainButton` for a prominent action. It composes
+[Button](/ui/components/input/button) with a solid surface, elevation, semibold
+text, and 12px horizontal padding. Its default color is neutral and size is `md`.
+
+## Usage
+
+```tsx
+import { MainButton } from 'twenty-ui/components';
+
+export const SaveProfile = () => (
+  <MainButton type="submit" fullWidth>
+    Save profile
+  </MainButton>
+);
+```
+
+Width follows the content unless you set `fullWidth` or provide application
+layout styling. Override `variant`, `color`, `size`, and `elevated` as needed;
+for example, use `variant="outline"` and `elevated={false}` for an outlined action.
+Keep page layout in your application's styling.
+
+## Interaction
+
+`MainButton` accepts Button's native attributes, event handlers, refs, icon slots,
+`loading`, `disabled`, and `soon` props. Buttons default to `type="button"`;
+set `type="submit"` explicitly for form submission.
+
+Use `href` for a link or compose a router link through `render`,
+`nativeButton={false}`, and `role="link"`. Routing belongs to the application.
+[ButtonGroup](/ui/components/input/button-group) can set a shared size, surface,
+and color. Consumer classes, including state functions, pass through to the root.
+
+## Props
+
+<MainButtonReference />

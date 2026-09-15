@@ -1,4 +1,3 @@
-import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 import { styled } from '@linaria/react';
 import { type DraggableListDropResult } from '@/ui/layout/draggable-list/types/DraggableListDropResult';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -34,6 +33,7 @@ import { t } from '@lingui/core/macro';
 import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
+import { LightButton } from 'twenty-ui/components';
 import {
   IconDotsVertical,
   IconPencil,
@@ -41,7 +41,7 @@ import {
   IconPoint,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton, Button } from 'twenty-ui/primitives/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -529,13 +529,10 @@ export const SettingsDataModelFieldSelectForm = ({
               <StyledFooterContainer>
                 <CardFooter>
                   <StyledButtonContainer>
-                    <Button
-                      className={BUTTON_LIGHT_CLASS_NAME}
+                    <LightButton
                       startIcon={<IconPlus />}
                       onClick={handleAddOption}
-                      size="sm"
-                      variant="ghost"
-                    >{t`Add option`}</Button>
+                    >{t`Add option`}</LightButton>
                   </StyledButtonContainer>
                 </CardFooter>
               </StyledFooterContainer>

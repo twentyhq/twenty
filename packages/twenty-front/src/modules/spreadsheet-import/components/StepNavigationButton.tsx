@@ -1,5 +1,5 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
+import { MainButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { t } from '@lingui/core/macro';

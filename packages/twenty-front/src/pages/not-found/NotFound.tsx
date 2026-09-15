@@ -1,4 +1,4 @@
-import { MainButton } from '@/ui/input/components/MainButton';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { lazy, Suspense } from 'react';
 
@@ -12,6 +12,7 @@ import { AppPath } from 'twenty-shared/types';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
+import { MainButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AnimatedPlaceholder,
@@ -61,10 +62,11 @@ export const NotFound = () => {
             </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
-            <MainButton
+            <NavigationButton
+              buttonComponent={MainButton}
               to={AppPath.Index}
               fullWidth
-            >{t`Back to content`}</MainButton>
+            >{t`Back to content`}</NavigationButton>
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>

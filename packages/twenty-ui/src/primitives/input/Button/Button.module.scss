@@ -21,11 +21,11 @@
   flex-shrink: 0;
   font-family: var(--t-font-family);
   font-size: var(--t-font-size-md);
-  font-weight: var(--t-font-weight-medium);
+  font-weight: var(--tw-button-font-weight, var(--t-font-weight-medium));
   justify-content: center;
   max-inline-size: 100%;
   min-inline-size: 0;
-  padding: 0 var(--t-spacing-2);
+  padding: 0 var(--tw-button-padding-inline, var(--t-spacing-2));
   position: relative;
   text-decoration: none;
   transition: background 0.1s ease;

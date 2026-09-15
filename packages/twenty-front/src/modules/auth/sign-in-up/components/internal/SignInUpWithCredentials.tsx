@@ -1,5 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
-
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
@@ -23,6 +21,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { InputHint } from 'twenty-ui/primitives/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';

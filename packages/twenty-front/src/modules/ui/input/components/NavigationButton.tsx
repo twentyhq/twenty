@@ -1,60 +1,30 @@
+import { type ComponentType, createElement } from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Button, type ButtonProps } from 'twenty-ui/primitives/input';
 
-type NavigationButtonProps = Pick<
+type NavigationButtonProps = Omit<
   ButtonProps,
-  | 'aria-label'
-  | 'children'
-  | 'className'
-  | 'color'
-  | 'disabled'
-  | 'elevated'
-  | 'fullWidth'
-  | 'onClick'
-  | 'size'
-  | 'startIcon'
-  | 'type'
-  | 'variant'
+  'href' | 'render' | 'nativeButton'
 > & {
+  buttonComponent?: ComponentType<ButtonProps>;
   to?: LinkProps['to'];
 };
 
 export const NavigationButton = ({
-  'aria-label': ariaLabel,
-  children,
-  className,
-  color,
-  disabled,
-  elevated,
-  fullWidth,
-  onClick,
-  size,
-  startIcon,
+  buttonComponent: ButtonComponent = Button,
+  role,
   to,
   type,
-  variant,
+  ...props
 }: NavigationButtonProps) => {
   const isLink = isDefined(to);
 
-  return (
-    <Button
-      aria-label={ariaLabel}
-      className={className}
-      color={color}
-      disabled={disabled}
-      elevated={elevated}
-      fullWidth={fullWidth}
-      onClick={onClick}
-      size={size}
-      startIcon={startIcon}
-      type={isLink ? undefined : (type ?? 'button')}
-      variant={variant}
-      render={isLink ? <Link to={to} /> : undefined}
-      role={isLink ? 'link' : undefined}
-      nativeButton={!isLink}
-    >
-      {children}
-    </Button>
-  );
+  return createElement(ButtonComponent, {
+    ...props,
+    type: isLink ? undefined : (type ?? 'button'),
+    render: isLink ? <Link to={to} /> : undefined,
+    role: isLink ? 'link' : role,
+    nativeButton: !isLink,
+  });
 };

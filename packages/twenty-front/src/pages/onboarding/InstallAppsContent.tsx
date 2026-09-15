@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -12,6 +11,7 @@ import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInst
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/primitives/input';

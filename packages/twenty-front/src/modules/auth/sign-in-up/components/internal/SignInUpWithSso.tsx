@@ -1,5 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
-
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSso } from '@/auth/sign-in-up/hooks/useSso';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
@@ -14,6 +12,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { IconLock } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { LastUsedPill } from './LastUsedPill';

@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingContentBlock } from '@/onboarding/components/StyledOnboardingContentBlock';
@@ -8,6 +7,7 @@ import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnbo
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { MainButton } from 'twenty-ui/components';
 import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

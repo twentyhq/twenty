@@ -1,5 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
-
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
@@ -11,6 +9,7 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp.type';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { MainButton } from 'twenty-ui/components';
 import { IconMicrosoft } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';

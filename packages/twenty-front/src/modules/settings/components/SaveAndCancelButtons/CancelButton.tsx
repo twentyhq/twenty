@@ -1,6 +1,6 @@
-import { BUTTON_SUBTLE_CLASS_NAME } from '@/ui/input/styles/ButtonSubtleClassName';
 import { BUTTON_INVERTED_CLASS_NAME } from '@/ui/input/styles/ButtonInvertedClassName';
 import { useLingui } from '@lingui/react/macro';
+import { LightButton } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 
 type CancelButtonProps = {
@@ -29,12 +29,10 @@ export const CancelButton = ({
   }
 
   return (
-    <Button
-      className={BUTTON_SUBTLE_CLASS_NAME}
+    <LightButton
+      emphasis="subtle"
       onClick={onCancel}
       disabled={disabled}
-      size="sm"
-      variant="ghost"
-    >{t`Cancel`}</Button>
+    >{t`Cancel`}</LightButton>
   );
 };

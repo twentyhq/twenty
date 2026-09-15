@@ -1,4 +1,3 @@
-import { BUTTON_SUBTLE_CLASS_NAME } from '@/ui/input/styles/ButtonSubtleClassName';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -7,7 +6,7 @@ import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/primitives/input';
+import { LightButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiModelTierSlider } from '@/ai/components/AiModelTierSlider';
@@ -94,12 +93,10 @@ export const AiModelPicker = ({
               : t`Set for this agent only`}
         </StyledHint>
         {!isAdvancedOpen && !disabled && (
-          <Button
-            className={BUTTON_SUBTLE_CLASS_NAME}
+          <LightButton
+            emphasis="subtle"
             onClick={() => setIsAdvancedOpen(true)}
-            size="sm"
-            variant="ghost"
-          >{t`Advanced`}</Button>
+          >{t`Advanced`}</LightButton>
         )}
       </StyledFooter>
       {isAdvancedOpen && (

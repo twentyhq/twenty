@@ -1,4 +1,3 @@
-import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -24,6 +23,7 @@ import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
+import { MainButton } from 'twenty-ui/components';
 import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';

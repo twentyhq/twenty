@@ -1,4 +1,3 @@
-import { BUTTON_SUBTLE_CLASS_NAME } from '@/ui/input/styles/ButtonSubtleClassName';
 import { styled } from '@linaria/react';
 import { type ReactNode, useMemo } from 'react';
 
@@ -37,7 +36,7 @@ import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpande
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/primitives/input';
+import { LightButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ViewBarDetailsProps = {
@@ -281,13 +280,11 @@ export const ViewBarDetails = ({
       </StyledFilterContainer>
       <StyledActionButtonContainer>
         {canResetView && (
-          <Button
-            className={BUTTON_SUBTLE_CLASS_NAME}
+          <LightButton
+            emphasis="subtle"
             data-testid="cancel-button"
             onClick={handleCancelClick}
-            size="sm"
-            variant="ghost"
-          >{t`Reset`}</Button>
+          >{t`Reset`}</LightButton>
         )}
         {rightComponent}
       </StyledActionButtonContainer>

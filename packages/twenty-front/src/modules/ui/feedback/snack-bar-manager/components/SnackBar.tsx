@@ -1,13 +1,12 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 
 import { sanitizeMessageToRenderInSnackbar } from '@/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { LightButton } from 'twenty-ui/components';
 import { Toast } from 'twenty-ui/primitives/feedback';
-import { Button } from 'twenty-ui/primitives/input';
 
 export enum SnackBarVariant {
   Default = 'default',
@@ -70,23 +69,11 @@ export const SnackBar = ({
   const hasAction =
     isDefined(buttonLabel) && (isDefined(buttonOnClick) || isDefined(buttonTo));
   const action = isDefined(buttonTo) ? (
-    <NavigationButton
-      className={BUTTON_LIGHT_CLASS_NAME}
-      to={buttonTo}
-      size="sm"
-      variant="ghost"
-    >
+    <NavigationButton buttonComponent={LightButton} to={buttonTo}>
       {buttonLabel}
     </NavigationButton>
   ) : (
-    <Button
-      className={BUTTON_LIGHT_CLASS_NAME}
-      onClick={buttonOnClick}
-      size="sm"
-      variant="ghost"
-    >
-      {buttonLabel}
-    </Button>
+    <LightButton onClick={buttonOnClick}>{buttonLabel}</LightButton>
   );
 
   return (

@@ -1,5 +1,250 @@
 [
   {
+    "name": "MainButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/main-button",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": ""
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "hotkeys",
+        "type": "string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "soon",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "soonLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "solid",
+        "description": ""
+      }
+    ]
+  },
+  {
+    "name": "LightButton",
+    "entryPoint": "twenty-ui/components",
+    "slug": "input/light-button",
+    "props": [
+      {
+        "name": "className",
+        "type": "string | ((state: ButtonState) => string | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+      },
+      {
+        "name": "color",
+        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "elevated",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "emphasis",
+        "type": "\"standard\" | \"subtle\"",
+        "required": false,
+        "defaultValue": "standard",
+        "description": ""
+      },
+      {
+        "name": "endIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "focusableWhenDisabled",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "false",
+        "description": "Whether the button should be focusable when disabled."
+      },
+      {
+        "name": "fullWidth",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "hotkeys",
+        "type": "string[]",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "loading",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "nativeButton",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": "true",
+        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\"",
+        "required": false,
+        "defaultValue": "sm",
+        "description": ""
+      },
+      {
+        "name": "soon",
+        "type": "boolean",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "soonLabel",
+        "type": "string",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "startIcon",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": ""
+      },
+      {
+        "name": "style",
+        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
+        "required": false,
+        "defaultValue": null,
+        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+      },
+      {
+        "name": "variant",
+        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
+        "required": false,
+        "defaultValue": "ghost",
+        "description": ""
+      }
+    ]
+  },
+  {
     "name": "Button",
     "entryPoint": "twenty-ui/primitives/input",
     "slug": "input/button",

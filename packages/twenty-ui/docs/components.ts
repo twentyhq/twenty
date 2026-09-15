@@ -1,5 +1,17 @@
 export const DOCUMENTED_COMPONENTS = [
   {
+    name: 'MainButton',
+    source: 'components/MainButton/MainButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/main-button',
+  },
+  {
+    name: 'LightButton',
+    source: 'components/LightButton/LightButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/light-button',
+  },
+  {
     name: 'Button',
     source: 'primitives/input/Button/Button.tsx',
     entryPoint: 'twenty-ui/primitives/input',
