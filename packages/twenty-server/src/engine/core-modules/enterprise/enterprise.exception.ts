@@ -32,7 +32,7 @@ const getEnterpriseExceptionUserFriendlyMessage = (
     case EnterpriseExceptionCode.ENTERPRISE_MISSING_SERVER_ID:
       return msg`This instance did not report a server identifier. Set SERVER_ID on this instance, then try again.`;
     case EnterpriseExceptionCode.ENTERPRISE_DEV_REQUIRES_ACTIVE_PRODUCTION:
-      return msg`A free development instance requires an active production instance on this enterprise subscription.`;
+      return msg`A free development instance requires an active production instance on this Organization subscription.`;
     case EnterpriseExceptionCode.ENTERPRISE_DEV_SLOT_IN_USE:
       return msg`The development instance slot for this Organization key is already in use on another server.`;
     case EnterpriseExceptionCode.ENTERPRISE_RELEASE_RATE_LIMITED:
