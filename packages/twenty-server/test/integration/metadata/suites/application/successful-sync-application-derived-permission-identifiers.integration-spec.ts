@@ -162,10 +162,8 @@ describe('Sync application should derive the permission identifiers the metadata
 
       expect(dryRun.errors).toBeUndefined();
 
-      const permissionActions = (
-        dryRun.data.syncApplication.actions as { metadataName: string }[]
-      ).filter(({ metadataName }) =>
-        PERMISSION_METADATA_NAMES.includes(metadataName),
+      const permissionActions = dryRun.data.syncApplication.actions.filter(
+        ({ metadataName }) => PERMISSION_METADATA_NAMES.includes(metadataName),
       );
 
       expect(permissionActions).toEqual([]);

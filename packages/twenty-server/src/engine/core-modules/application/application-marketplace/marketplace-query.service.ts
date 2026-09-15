@@ -91,6 +91,7 @@ export class MarketplaceQueryService {
       this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
         registration,
       );
+    const manifest = registration.manifest;
 
     return {
       id: registration.id,
@@ -145,12 +146,16 @@ export class MarketplaceQueryService {
       galleryImages: galleryImageUrls,
       defaultRoleUniversalIdentifier:
         registration.manifest?.application?.defaultRoleUniversalIdentifier,
-      roles: registration.manifest?.roles?.map((role) =>
-        this.toMarketplaceAppRoleDTO({
-          role,
-          applicationUniversalIdentifier: registration.universalIdentifier,
-        }),
-      ),
+      roles: isDefined(manifest)
+        ? manifest.roles?.map((role) =>
+            this.toMarketplaceAppRoleDTO({
+              role,
+              applicationUniversalIdentifier:
+                manifest.application?.universalIdentifier ??
+                registration.universalIdentifier,
+            }),
+          )
+        : undefined,
       manifest: registration.manifest ?? undefined,
     };
   }
