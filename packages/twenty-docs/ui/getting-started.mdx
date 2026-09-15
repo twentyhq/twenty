@@ -19,7 +19,7 @@ For a standalone React application, install the library and its peer dependencie
 yarn add twenty-ui monaco-editor react@^19 react-dom@^19
 ```
 
-`monaco-editor` powers the code editor components, but install it even if you never render an editor: the `twenty-ui/input`, `twenty-ui/feedback`, and `twenty-ui/navigation` entry points reference it, and bundlers fail to resolve it otherwise.
+`monaco-editor` powers the code editor components, but install it even if you never render an editor: the `twenty-ui/primitives/input`, `twenty-ui/primitives/feedback`, and `twenty-ui/primitives/navigation` entry points reference it, and bundlers fail to resolve it otherwise.
 
 If you are building a Twenty app, follow [Using Twenty UI components](/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme and has a different setup from a standalone browser application.
 
@@ -28,7 +28,7 @@ If you are building a Twenty app, follow [Using Twenty UI components](/developer
 Import the component stylesheet and a theme stylesheet once at your application entry point. `ThemeProvider` applies the active theme class and makes theme values available to components.
 
 ```tsx
-import { Field, Input } from 'twenty-ui/input';
+import { Field, Input } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import 'twenty-ui/style.css';
@@ -51,16 +51,29 @@ The component stylesheet includes a global reset. Review its effect when adding 
 
 Import components from their public subpath to keep imports focused:
 
-| Import                      | Contents                                           |
-| --------------------------- | -------------------------------------------------- |
-| `twenty-ui/input`           | Form controls and buttons                          |
-| `twenty-ui/data-display`    | Avatars, chips, tags, and status indicators        |
-| `twenty-ui/feedback`        | Feedback and notifications                         |
-| `twenty-ui/navigation`      | List rows, tabs, and navigation components         |
-| `twenty-ui/surfaces`        | Menus, popovers, dialogs, and surfaces             |
-| `twenty-ui/typography`      | Text and typography                                |
-| `twenty-ui/icon`            | Icons                                              |
-| `twenty-ui/theme-constants` | Theme provider, hooks, and CSS variable references |
+Primitives are foundational controls, including compound controls such as Select,
+Menu, and AlertDialog. Higher-level components combine primitives into reusable
+app building blocks, such as tables, boards, and pickers. Both receive data and
+callbacks from the application.
+
+All existing UI components live in `primitives/`, including controls still being
+migrated to the new API. The `components/` folder is reserved for higher-level
+app building blocks. Each primitive family has a matching public entry point,
+such as `twenty-ui/primitives/input`.
+
+| Import                                 | Contents                                                     |
+| -------------------------------------- | ------------------------------------------------------------ |
+| `twenty-ui/primitives/accessibility`   | Hidden elements and keyboard interaction helpers             |
+| `twenty-ui/primitives/data-display`    | Avatars, chips, tags, status indicators, and display helpers |
+| `twenty-ui/primitives/feedback`        | Toasts, banners, progress bars, and loaders                  |
+| `twenty-ui/primitives/input`           | Buttons, form controls, pickers, and code editors            |
+| `twenty-ui/primitives/json-visualizer` | JSON tree viewer                                             |
+| `twenty-ui/primitives/layout`          | Layout, animation, resizing, and section components          |
+| `twenty-ui/primitives/navigation`      | Links, list items, menus, and tabs                           |
+| `twenty-ui/primitives/surfaces`        | Cards, dialogs, menus, popovers, and tooltips                |
+| `twenty-ui/primitives/typography`      | Text, headings, labels, and typography helpers               |
+| `twenty-ui/icon`                       | Icons                                                        |
+| `twenty-ui/theme-constants`            | Theme provider, hooks, and CSS variable references           |
 
 Import individual icons, such as `IconCheck`, from `twenty-ui/icon`. The dynamic icon provider includes the full icon catalog, so reserve it for interfaces that need to look up icons at runtime.
 

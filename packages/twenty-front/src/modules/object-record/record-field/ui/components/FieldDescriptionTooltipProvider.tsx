@@ -4,7 +4,7 @@ import {
   AppTooltip,
   type AppTooltipProps,
   TooltipDelay,
-} from 'twenty-ui/surfaces';
+} from 'twenty-ui/primitives/surfaces';
 
 type FieldDescriptionTooltipProviderProps = {
   children: ReactNode;

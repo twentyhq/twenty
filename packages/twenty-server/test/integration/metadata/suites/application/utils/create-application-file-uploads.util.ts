@@ -1,5 +1,8 @@
-import gql from 'graphql-tag';
+import { createApplicationFileUploadsQueryFactory } from 'test/integration/metadata/suites/application/utils/create-application-file-uploads-query-factory.util';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { type CommonResponseBody } from 'test/integration/metadata/types/common-response-body.type';
+import { warnIfErrorButNotExpectedToFail } from 'test/integration/metadata/utils/warn-if-error-but-not-expected-to-fail.util';
+import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/warn-if-no-error-but-expected-to-fail.util';
 
 export type ApplicationFileUploadTarget = {
   fileId: string;
@@ -21,91 +24,40 @@ export type CreateApplicationFileUploadsResult = {
   errors: ApplicationFileUploadError[];
 };
 
-export type CompleteApplicationFileUploadsResult = {
-  files: { id: string; path: string; size: number }[];
-  errors: { fileId: string; message: string }[];
-};
-
 export const createApplicationFileUploads = async ({
   applicationUniversalIdentifier,
   files,
+  expectToFail = false,
+  token,
 }: {
   applicationUniversalIdentifier: string;
   files: { fileFolder: string; filePath: string; size: number }[];
-}) => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
-      mutation CreateApplicationFileUploads(
-        $applicationUniversalIdentifier: String!
-        $files: [ApplicationFileUploadRequestInput!]!
-      ) {
-        createApplicationFileUploads(
-          applicationUniversalIdentifier: $applicationUniversalIdentifier
-          files: $files
-        ) {
-          targets {
-            fileId
-            fileFolder
-            filePath
-            uploadUrl
-            contentType
-            expiresAt
-          }
-          errors {
-            fileFolder
-            filePath
-            message
-          }
-        }
-      }
-    `,
-    variables: { applicationUniversalIdentifier, files },
+  expectToFail?: boolean;
+  token?: string;
+}): CommonResponseBody<{
+  createApplicationFileUploads: CreateApplicationFileUploadsResult;
+}> => {
+  const graphqlOperation = createApplicationFileUploadsQueryFactory({
+    applicationUniversalIdentifier,
+    files,
   });
 
-  return {
-    data: response.body.data as {
-      createApplicationFileUploads: CreateApplicationFileUploadsResult;
-    } | null,
-    errors: response.body.errors as { message: string }[] | undefined,
-  };
-};
+  const response = await makeMetadataAPIRequest(graphqlOperation, token);
 
-export const completeApplicationFileUploads = async ({
-  applicationUniversalIdentifier,
-  fileIds,
-}: {
-  applicationUniversalIdentifier: string;
-  fileIds: string[];
-}) => {
-  const response = await makeMetadataAPIRequest({
-    query: gql`
-      mutation CompleteApplicationFileUploads(
-        $applicationUniversalIdentifier: String!
-        $fileIds: [UUID!]!
-      ) {
-        completeApplicationFileUploads(
-          applicationUniversalIdentifier: $applicationUniversalIdentifier
-          fileIds: $fileIds
-        ) {
-          files {
-            id
-            path
-            size
-          }
-          errors {
-            fileId
-            message
-          }
-        }
-      }
-    `,
-    variables: { applicationUniversalIdentifier, fileIds },
-  });
+  if (expectToFail === true) {
+    warnIfNoErrorButExpectedToFail({
+      response,
+      errorMessage:
+        'Create application file uploads should have failed but did not',
+    });
+  }
 
-  return {
-    data: response.body.data as {
-      completeApplicationFileUploads: CompleteApplicationFileUploadsResult;
-    } | null,
-    errors: response.body.errors as { message: string }[] | undefined,
-  };
+  if (expectToFail === false) {
+    warnIfErrorButNotExpectedToFail({
+      response,
+      errorMessage: 'Create application file uploads has failed but should not',
+    });
+  }
+
+  return { data: response.body.data, errors: response.body.errors };
 };

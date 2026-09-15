@@ -23,7 +23,7 @@ describe('documentation defaults', () => {
   it('omits absent defaults and renders string defaults without display quotes', () => {
     const reference = renderComponentReference({
       name: 'Example',
-      entryPoint: 'twenty-ui/input',
+      entryPoint: 'twenty-ui/primitives/input',
       slug: 'input/example',
       props: [
         {

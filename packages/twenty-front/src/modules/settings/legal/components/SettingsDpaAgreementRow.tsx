@@ -1,7 +1,7 @@
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { IconDownload } from 'twenty-ui/icon';
 
 import { type DpaAgreement } from '@/settings/legal/types/Dpa';

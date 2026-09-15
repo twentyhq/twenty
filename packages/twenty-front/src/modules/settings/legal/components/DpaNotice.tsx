@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Info } from 'twenty-ui/feedback';
+import { Info } from 'twenty-ui/primitives/feedback';
 
 const StyledFullWidthInfo = styled.div`
   & > * {

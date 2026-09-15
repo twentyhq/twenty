@@ -11,7 +11,7 @@ import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/Up
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { MainButton } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   align-items: center;

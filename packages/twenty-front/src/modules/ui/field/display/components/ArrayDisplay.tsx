@@ -1,7 +1,7 @@
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { t } from '@lingui/core/macro';
-import { Chip } from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
 
 type ArrayDisplayProps = {
   value: FieldArrayValue;
