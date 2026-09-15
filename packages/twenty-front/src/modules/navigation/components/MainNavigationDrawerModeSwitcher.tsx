@@ -35,7 +35,9 @@ const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
       ? themeCssVariables.spacing['0.5']
       : themeCssVariables.betweenSiblingsGap};
   height: ${({ isExpanded }) =>
-    isExpanded ? themeCssVariables.spacing[10] : 'auto'};
+    isExpanded ? `calc(${themeCssVariables.spacing[10]} + 1px)` : 'auto'};
+  // Align the top border with the page header's inset bottom border.
+  margin-top: ${({ isExpanded }) => (isExpanded ? '-1px' : '0')};
   min-width: 0;
 `;
 
