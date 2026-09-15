@@ -36,14 +36,6 @@ const StyledButtonContainer = styled.div`
   align-self: flex-start;
 `;
 
-const StyledRecordsWrapper = styled.div`
-  margin-top: ${themeCssVariables.spacing[2]};
-
-  & > :not(:first-of-type) {
-    margin-top: ${themeCssVariables.spacing[4]};
-  }
-`;
-
 export const SettingsCustomDomain = () => {
   const navigate = useNavigateSettings();
   const { t } = useLingui();
@@ -125,14 +117,10 @@ export const SettingsCustomDomain = () => {
               </StyledButtonGroupContainer>
             )}
           </StyledDomainFormWrapper>
-          {currentWorkspace?.customDomain && (
-            <StyledRecordsWrapper>
-              {customDomainRecords && (
-                <SettingsDomainRecords records={customDomainRecords.records} />
-              )}
-            </StyledRecordsWrapper>
-          )}
         </Section>
+        {currentWorkspace?.customDomain && customDomainRecords && (
+          <SettingsDomainRecords records={customDomainRecords.records} />
+        )}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );
