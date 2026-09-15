@@ -45,6 +45,10 @@ import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-mo
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import {
   UPGRADE_APPLICATIONS_JOB_NAME,
   type UpgradeApplicationsJobData,
 } from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
@@ -441,6 +445,35 @@ export class ApplicationRegistrationService {
     }
 
     return registration;
+  }
+
+  async findOneOwnedByWorkspaceOrThrow({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const applicationRegistration =
+      await this.findOneByUniversalIdentifierGlobal(universalIdentifier);
+
+    if (!isDefined(applicationRegistration)) {
+      throw new ApplicationException(
+        `No registration found for "${universalIdentifier}". Create one first with createApplicationRegistration.`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (applicationRegistration.ownerWorkspaceId !== workspaceId) {
+      throw new ApplicationException(
+        !isDefined(applicationRegistration.ownerWorkspaceId)
+          ? `"${universalIdentifier}" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it.`
+          : `"${universalIdentifier}" is registered to another workspace. Change the universalIdentifier in your manifest, or transfer the registration from the owning workspace.`,
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    return applicationRegistration;
   }
 
   // Global lookup — used by OAuth flow (no workspace scoping)
