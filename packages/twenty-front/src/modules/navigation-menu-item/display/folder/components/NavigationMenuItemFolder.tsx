@@ -1,8 +1,7 @@
-import { styled } from '@linaria/react';
+import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
 import { TintedIconTile } from 'twenty-ui/primitives/data-display';
-import { Suspense, lazy, useContext } from 'react';
-import { IconChevronRight, useIcons } from 'twenty-ui/icon';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { Suspense, lazy } from 'react';
+import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -13,16 +12,6 @@ import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/
 import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemFolderOpenState';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-
-const StyledFolderChevron = styled(IconChevronRight)<{ isOpen: boolean }>`
-  transform: rotate(${({ isOpen }) => (isOpen ? 90 : 0)}deg);
-  transition: transform
-    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`;
 
 const LazyNavigationMenuItemFolderDnd = lazy(() =>
   import('@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd').then(
@@ -124,7 +113,6 @@ const NavigationMenuItemFolderReadOnlyContent = ({
 }: NavigationMenuItemFolderReadOnlyContentProps) => {
   const { getIcon } = useIcons();
   const isMobile = useIsMobile();
-  const { theme } = useContext(ThemeContext);
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
 
   const { isOpen, handleToggle, hasActiveChild, activeChildIndex } =
@@ -151,14 +139,7 @@ const NavigationMenuItemFolderReadOnlyContent = ({
           triggerEvent="CLICK"
           preventCollapseOnMobile={isMobile}
           alwaysShowRightOptions
-          rightOptions={
-            <StyledFolderChevron
-              isOpen={isOpen}
-              size={theme.icon.size.sm}
-              stroke={theme.icon.stroke.sm}
-              color={themeCssVariables.font.color.tertiary}
-            />
-          }
+          rightOptions={<NavigationMenuItemFolderChevron isOpen={isOpen} />}
         />
       }
       isOpen={isOpen}

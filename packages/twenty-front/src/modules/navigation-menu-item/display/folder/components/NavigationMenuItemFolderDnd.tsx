@@ -1,3 +1,4 @@
+import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { styled } from '@linaria/react';
@@ -5,15 +6,9 @@ import { useLingui } from '@lingui/react/macro';
 import React, { Fragment, useCallback, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronRight,
-  IconFolder,
-  IconHeartOff,
-  IconPlus,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconFolder, IconHeartOff, IconPlus, useIcons } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -52,16 +47,6 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-
-const StyledFolderChevron = styled(IconChevronRight)<{ isOpen: boolean }>`
-  transform: rotate(${({ isOpen }) => (isOpen ? 90 : 0)}deg);
-  transition: transform
-    calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
-
-  @media (prefers-reduced-motion: reduce) {
-    transition: none;
-  }
-`;
 
 const StyledFolderContainer = styled.div<{
   $isSelectedInEditMode: boolean;
@@ -115,7 +100,6 @@ export const NavigationMenuItemFolderDnd = ({
   orphanIndex,
 }: NavigationMenuItemFolderDndProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const isMobile = useIsMobile();
 
@@ -208,12 +192,7 @@ export const NavigationMenuItemFolderDnd = ({
         handleToggle();
       }}
     >
-      <StyledFolderChevron
-        isOpen={isOpen}
-        size={theme.icon.size.sm}
-        stroke={theme.icon.stroke.sm}
-        color={theme.font.color.tertiary}
-      />
+      <NavigationMenuItemFolderChevron isOpen={isOpen} />
     </div>
   );
 
