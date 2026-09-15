@@ -6,6 +6,7 @@ import {
   OBJECT_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
+  ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
   type EnumBinding,
@@ -21,11 +22,14 @@ import { stripGraphqlTypename } from '@/cli/utilities/pull/strip-graphql-typenam
 import { kebabCase } from '@/cli/utilities/string/kebab-case';
 import {
   type ApplicationManifest,
+  getFieldPermissionUniversalIdentifier,
+  getObjectPermissionUniversalIdentifier,
   getSystemRecordFormPageLayoutUniversalIdentifier,
   getSystemRecordPageLayoutUniversalIdentifier,
   getSystemViewUniversalIdentifier,
   type Manifest,
   type NavigationMenuItemManifest,
+  type RoleManifest,
   SYSTEM_VIEW_KEYS,
 } from 'twenty-shared/application';
 import {
@@ -39,6 +43,8 @@ export const PULL_ENTITY_KINDS = [
   'object',
   'field',
   'index',
+  'permissionFlag',
+  'role',
   'view',
   'viewField',
   'pageLayout',
@@ -103,12 +109,24 @@ const STANDARD_PAGE_LAYOUT_NAME_BY_UNIVERSAL_IDENTIFIER = new Map<
   ),
 );
 
+const isDefaultRoleExported = (manifest: Manifest): boolean =>
+  (manifest.roles ?? []).some(
+    ({ universalIdentifier }) =>
+      universalIdentifier ===
+      manifest.application.defaultRoleUniversalIdentifier,
+  );
+
 const buildApplicationConfig = (
   manifest: Manifest,
 ): Partial<ApplicationManifest> => {
   const applicationConfig = Object.fromEntries(
     Object.entries(manifest.application).filter(
-      ([property]) => !APPLICATION_PROPERTY_NAMES_TO_STRIP.has(property),
+      ([property]) =>
+        !APPLICATION_PROPERTY_NAMES_TO_STRIP.has(property) &&
+        !(
+          property === 'defaultRoleUniversalIdentifier' &&
+          isDefaultRoleExported(manifest)
+        ),
     ),
   ) as Partial<ApplicationManifest>;
 
@@ -126,6 +144,56 @@ const buildApplicationConfig = (
   }
 
   return applicationConfig;
+};
+
+const buildRoleConfig = ({
+  roleManifest,
+  applicationUniversalIdentifier,
+}: {
+  roleManifest: RoleManifest;
+  applicationUniversalIdentifier: string;
+}): RoleManifest => {
+  const {
+    universalIdentifier: roleUniversalIdentifier,
+    objectPermissions,
+    fieldPermissions,
+  } = roleManifest;
+
+  return {
+    ...roleManifest,
+    ...(isDefined(objectPermissions)
+      ? {
+          objectPermissions: objectPermissions.map(
+            ({ universalIdentifier, ...objectPermission }) =>
+              universalIdentifier ===
+              getObjectPermissionUniversalIdentifier({
+                applicationUniversalIdentifier,
+                roleUniversalIdentifier,
+                objectUniversalIdentifier:
+                  objectPermission.objectUniversalIdentifier,
+              })
+                ? objectPermission
+                : { universalIdentifier, ...objectPermission },
+          ),
+        }
+      : {}),
+    ...(isDefined(fieldPermissions)
+      ? {
+          fieldPermissions: fieldPermissions.map(
+            ({ universalIdentifier, ...fieldPermission }) =>
+              universalIdentifier ===
+              getFieldPermissionUniversalIdentifier({
+                applicationUniversalIdentifier,
+                roleUniversalIdentifier,
+                fieldUniversalIdentifier:
+                  fieldPermission.fieldUniversalIdentifier,
+              })
+                ? fieldPermission
+                : { universalIdentifier, ...fieldPermission },
+          ),
+        }
+      : {}),
+  };
 };
 
 const getObjectName = ({
@@ -385,6 +453,44 @@ export const buildPullEntities = (
         fieldLocationByUniversalIdentifier,
       }),
       parentName: objectName,
+    });
+  }
+
+  for (const permissionFlagManifest of manifest.permissionFlags ?? []) {
+    entities.push({
+      kind: 'permissionFlag',
+      universalIdentifier: permissionFlagManifest.universalIdentifier,
+      definer: 'definePermissionFlag',
+      config: permissionFlagManifest,
+      enumBindings: [],
+      defaultFolder: 'src/permission-flags',
+      fileSuffix: '.permission-flag.ts',
+      fileBaseName: toFileBaseName({
+        segments: [permissionFlagManifest.key],
+        universalIdentifier: permissionFlagManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const roleManifest of manifest.roles ?? []) {
+    entities.push({
+      kind: 'role',
+      universalIdentifier: roleManifest.universalIdentifier,
+      definer:
+        roleManifest.universalIdentifier ===
+        manifest.application.defaultRoleUniversalIdentifier
+          ? 'defineApplicationRole'
+          : 'defineRole',
+      config: buildRoleConfig({ roleManifest, applicationUniversalIdentifier }),
+      enumBindings: ROLE_ENUM_BINDINGS,
+      defaultFolder: 'src/roles',
+      fileSuffix: '.role.ts',
+      fileBaseName: toFileBaseName({
+        segments: [roleManifest.label],
+        universalIdentifier: roleManifest.universalIdentifier,
+      }),
+      parentName: null,
     });
   }
 

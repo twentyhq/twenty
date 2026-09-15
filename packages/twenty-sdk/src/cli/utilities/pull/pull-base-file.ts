@@ -45,6 +45,8 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
     objects,
     fields,
     indexes,
+    permissionFlags,
+    roles,
     views,
     viewFields,
     pageLayouts,
@@ -59,6 +61,8 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
     Array.isArray(fields) &&
     fields.every(hasUniversalIdentifier) &&
     (!isDefined(indexes) || isEntityListWithFields(indexes)) &&
+    (!isDefined(permissionFlags) || isEntityList(permissionFlags)) &&
+    (!isDefined(roles) || isEntityList(roles)) &&
     (!isDefined(views) || isEntityList(views)) &&
     (!isDefined(viewFields) || isEntityList(viewFields)) &&
     (!isDefined(pageLayouts) || isEntityList(pageLayouts)) &&
