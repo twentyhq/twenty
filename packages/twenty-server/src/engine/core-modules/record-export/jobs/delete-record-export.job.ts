@@ -1,7 +1,7 @@
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { RECORD_EXPORT_CONNECTION_TTL_MS } from 'src/engine/core-modules/record-export/constants/record-export.constants';
+import { RECORD_EXPORT_CLEANUP_JOB_OPTIONS } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { isDefined } from 'twenty-shared/utils';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -35,14 +35,9 @@ export class DeleteRecordExportJob {
         DeleteRecordExportJob.name,
         { workspaceId, recordExportId },
         {
+          ...RECORD_EXPORT_CLEANUP_JOB_OPTIONS,
           id: recordExportId,
           allowDuplicatedPrefixes: true,
-          delay: RECORD_EXPORT_CONNECTION_TTL_MS,
-          retryLimit: 10,
-          backoff: {
-            strategy: 'exponential',
-            initialDelayMilliseconds: 60_000,
-          },
         },
       );
       if (!isDefined(cleanupJobId)) {
