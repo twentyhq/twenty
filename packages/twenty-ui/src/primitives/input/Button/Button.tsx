@@ -41,7 +41,31 @@ export type ButtonProps = {
   ariaLabel?: string;
   ariaExpanded?: boolean;
   isLoading?: boolean;
-} & Omit<React.ComponentPropsWithRef<'button'>, 'children'> &
+  'data-base-ui-click-trigger'?: string;
+  'data-popup-open'?: string;
+  'data-pressed'?: string;
+} & Pick<
+  React.ComponentPropsWithRef<'button'>,
+  | 'ref'
+  | 'type'
+  | 'role'
+  | 'tabIndex'
+  | 'style'
+  | 'aria-label'
+  | 'aria-expanded'
+  | 'aria-controls'
+  | 'aria-haspopup'
+  | 'aria-disabled'
+  | 'onFocus'
+  | 'onBlur'
+  | 'onKeyDown'
+  | 'onKeyUp'
+  | 'onMouseDown'
+  | 'onMouseMove'
+  | 'onMouseLeave'
+  | 'onPointerDown'
+  | 'onPointerEnter'
+> &
   ClickOutsideAttributes;
 
 export const Button = ({
@@ -70,12 +94,27 @@ export const Button = ({
   'aria-label': nativeAriaLabel,
   ariaExpanded,
   'aria-expanded': nativeAriaExpanded,
+  'aria-controls': ariaControls,
+  'aria-haspopup': ariaHasPopup,
+  'aria-disabled': ariaDisabled,
+  'data-base-ui-click-trigger': dataBaseUiClickTrigger,
+  'data-popup-open': dataPopupOpen,
+  'data-pressed': dataPressed,
   onFocus,
   onBlur,
+  onKeyDown,
+  onKeyUp,
+  onMouseDown,
+  onMouseMove,
+  onMouseLeave,
+  onPointerDown,
+  onPointerEnter,
+  ref,
+  role,
+  tabIndex,
   style,
   type,
   isLoading = false,
-  ...buttonProps
 }: ButtonProps) => {
   const isMobile = useIsMobile();
 
@@ -97,8 +136,10 @@ export const Button = ({
       )}
     >
       <ButtonComponent
-        {...buttonProps}
+        ref={ref}
         id={id}
+        role={role}
+        tabIndex={tabIndex}
         className={clsx(
           styles.button,
           styles[size],
@@ -113,13 +154,26 @@ export const Button = ({
         data-focus={isFocused || undefined}
         disabled={isDisabled}
         onClick={onClick}
+        onKeyDown={onKeyDown}
+        onKeyUp={onKeyUp}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseLeave={onMouseLeave}
+        onPointerDown={onPointerDown}
+        onPointerEnter={onPointerEnter}
         to={to}
         target={target}
         data-testid={dataTestId}
         data-click-outside-id={dataClickOutsideId}
         data-globally-prevent-click-outside={dataGloballyPreventClickOutside}
+        data-base-ui-click-trigger={dataBaseUiClickTrigger}
+        data-popup-open={dataPopupOpen}
+        data-pressed={dataPressed}
         aria-label={ariaLabel ?? nativeAriaLabel}
         aria-expanded={ariaExpanded ?? nativeAriaExpanded}
+        aria-controls={ariaControls}
+        aria-haspopup={ariaHasPopup}
+        aria-disabled={ariaDisabled}
         type={type}
         onFocus={(event: React.FocusEvent<HTMLButtonElement>) => {
           setIsFocused(true);
