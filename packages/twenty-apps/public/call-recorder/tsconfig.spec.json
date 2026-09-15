@@ -4,11 +4,6 @@
     "composite": true,
     "types": ["vitest/globals", "node"]
   },
-  "include": [
-    "css.d.ts",
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "../../shared/recall/**/*.ts"
-  ],
+  "include": ["css.d.ts", "src/**/*.ts", "src/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }

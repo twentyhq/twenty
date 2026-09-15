@@ -1,1 +1,1 @@
-export { RECALL_API_MAX_RETRY_AFTER_MS } from '../../../../../shared/recall/recall-api-max-retry-after-ms';
+export const RECALL_API_MAX_RETRY_AFTER_MS = 60_000;
