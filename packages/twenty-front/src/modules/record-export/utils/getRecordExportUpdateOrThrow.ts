@@ -5,7 +5,7 @@ import {
   type ExportRecordsSubscription,
 } from '~/generated-metadata/graphql';
 
-export const getRecordExportUpdate = (
+export const getRecordExportUpdateOrThrow = (
   recordExport: ExportRecordsSubscription['exportRecords'],
 ): { progress: number; download?: { url: string; filename: string } } => {
   if (recordExport.status === RecordExportStatus.FAILED) {

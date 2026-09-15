@@ -1,4 +1,4 @@
-import { getRecordExportUpdate } from '@/record-export/utils/getRecordExportUpdate';
+import { getRecordExportUpdateOrThrow } from '@/record-export/utils/getRecordExportUpdateOrThrow';
 import { t } from '@lingui/core/macro';
 import { print } from 'graphql';
 import { createClient } from 'graphql-sse';
@@ -29,12 +29,12 @@ export const createRecordExportConnection = () => {
     });
 
     return new Promise<void>((resolve, reject) => {
-      let settled = false;
+      let isSettled = false;
       const finish = (error?: Error) => {
-        if (settled) {
+        if (isSettled) {
           return;
         }
-        settled = true;
+        isSettled = true;
         client.dispose();
         cancel = undefined;
         if (isDefined(error)) {
@@ -48,7 +48,7 @@ export const createRecordExportConnection = () => {
         { query: print(ExportRecordsDocument), variables: { input } },
         {
           next: ({ data, errors }) => {
-            if (settled) {
+            if (isSettled) {
               return;
             }
             if (isDefined(errors) && errors.length > 0) {
@@ -60,7 +60,7 @@ export const createRecordExportConnection = () => {
               return;
             }
             try {
-              const update = getRecordExportUpdate(recordExport);
+              const update = getRecordExportUpdateOrThrow(recordExport);
               onProgress?.(update.progress);
               if (isDefined(update.download)) {
                 const link = document.createElement('a');

@@ -106,7 +106,7 @@ export const useRecordIndexExportParameters = ({
             fieldMetadataItem.id === field.fieldMetadataItemId,
         );
 
-        if (!fieldMetadataItem) {
+        if (!isDefined(fieldMetadataItem)) {
           return null;
         }
 

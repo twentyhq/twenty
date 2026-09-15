@@ -1,4 +1,4 @@
-import { getRecordExportUpdate } from '@/record-export/utils/getRecordExportUpdate';
+import { getRecordExportUpdateOrThrow } from '@/record-export/utils/getRecordExportUpdateOrThrow';
 import { RecordExportStatus } from '~/generated-metadata/graphql';
 
 const recordExport = {
@@ -9,7 +9,7 @@ const recordExport = {
   totalRecordCount: 100,
 };
 
-describe('getRecordExportUpdate', () => {
+describe('getRecordExportUpdateOrThrow', () => {
   it.each([
     { totalRecordCount: null, processedRecordCount: 0, progress: 0 },
     { totalRecordCount: 0, processedRecordCount: 0, progress: 0 },
@@ -19,7 +19,9 @@ describe('getRecordExportUpdate', () => {
   ])(
     'reports $progress percent before the file is ready',
     ({ progress, ...counts }) => {
-      expect(getRecordExportUpdate({ ...recordExport, ...counts })).toEqual({
+      expect(
+        getRecordExportUpdateOrThrow({ ...recordExport, ...counts }),
+      ).toEqual({
         progress,
       });
     },
@@ -27,11 +29,11 @@ describe('getRecordExportUpdate', () => {
 
   it('downloads only a completed export with a URL', () => {
     const completed = { ...recordExport, status: RecordExportStatus.COMPLETED };
-    expect(() => getRecordExportUpdate(completed)).toThrow(
+    expect(() => getRecordExportUpdateOrThrow(completed)).toThrow(
       'could not be downloaded',
     );
     expect(
-      getRecordExportUpdate({ ...completed, downloadUrl: '/download' }),
+      getRecordExportUpdateOrThrow({ ...completed, downloadUrl: '/download' }),
     ).toEqual({
       progress: 100,
       download: { url: '/download', filename: 'person.csv' },
@@ -40,7 +42,7 @@ describe('getRecordExportUpdate', () => {
 
   it('surfaces the server failure', () => {
     expect(() =>
-      getRecordExportUpdate({
+      getRecordExportUpdateOrThrow({
         ...recordExport,
         status: RecordExportStatus.FAILED,
         errorMessage: 'Permission revoked',

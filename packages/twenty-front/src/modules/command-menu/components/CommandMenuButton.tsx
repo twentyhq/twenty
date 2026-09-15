@@ -45,11 +45,15 @@ export const CommandMenuButton = ({
 }: CommandMenuButtonProps) => {
   let resolvedShortLabel = command.shortLabel ?? undefined;
 
-  if (shouldHideLabel) resolvedShortLabel = undefined;
+  if (shouldHideLabel) {
+    resolvedShortLabel = undefined;
+  }
 
   if (loading) {
     resolvedShortLabel = t`Preparing…`;
-    if (isDefined(progress)) resolvedShortLabel = `${Math.round(progress)}%`;
+    if (isDefined(progress)) {
+      resolvedShortLabel = `${Math.round(progress)}%`;
+    }
   }
 
   const buttonAccent =

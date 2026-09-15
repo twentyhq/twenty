@@ -88,7 +88,9 @@ export const useCommandMenuItemClick = ({
           EngineComponentKey.EXPORT_FROM_RECORD_SHOW,
           EngineComponentKey.EXPORT_MULTIPLE_RECORDS,
         ].includes(item.engineComponentKey);
-      if (!isExport || !isAsyncCsvExportEnabled) closeCommandMenu();
+      if (!isExport || !isAsyncCsvExportEnabled) {
+        closeCommandMenu();
+      }
 
       await mountCommand({
         engineCommandId: item.id,
