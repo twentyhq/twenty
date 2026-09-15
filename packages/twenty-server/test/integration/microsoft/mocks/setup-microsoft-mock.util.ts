@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
 import {
-  MICROSOFT_TOKEN_URL,
+  MICROSOFT_TOKEN_URL_PATTERN,
   microsoftAuthHandlers,
 } from 'test/integration/microsoft/mocks/microsoft-auth-handlers.util';
 import { microsoftCalendarEventsHandlers } from 'test/integration/microsoft/mocks/microsoft-calendar-events-handlers.util';
@@ -33,6 +33,7 @@ export type MicrosoftMock = {
   createdAttachments: Array<Record<string, unknown>>;
   sentMessageIds: string[];
   createdCalendarEvents: Event[];
+  tokenRequestUrls: string[];
   serveCalendarEvents: (
     events: Event[],
     options?: { deltaToken?: string; removedEventIds?: string[] },
@@ -80,6 +81,7 @@ export const setupMicrosoftMock = ({
   const createdAttachments: Array<Record<string, unknown>> = [];
   const sentMessageIds: string[] = [];
   const createdCalendarEvents: Event[] = [];
+  const tokenRequestUrls: string[] = [];
   const removedMessageIdsByFolderId: Record<string, string[]> = {};
 
   const recordFolderRemoval = (messageId: string) => {
@@ -106,7 +108,7 @@ export const setupMicrosoftMock = ({
   };
 
   const httpMock = setupHttpMock(
-    ...microsoftAuthHandlers(handle, aliases),
+    ...microsoftAuthHandlers(handle, aliases, tokenRequestUrls),
     ...microsoftMailboxHandlers(
       folderStore,
       messages,
@@ -203,6 +205,7 @@ export const setupMicrosoftMock = ({
     createdAttachments,
     sentMessageIds,
     createdCalendarEvents,
+    tokenRequestUrls,
     serveCalendarEvents: (
       events,
       { deltaToken = 'mock-calendar-delta-token', removedEventIds = [] } = {},
@@ -258,7 +261,7 @@ export const setupMicrosoftMock = ({
       ),
     declineTokenRefresh: () =>
       httpMock.use(
-        http.post(MICROSOFT_TOKEN_URL, () =>
+        http.post(MICROSOFT_TOKEN_URL_PATTERN, () =>
           HttpResponse.json(
             {
               error: 'invalid_grant',

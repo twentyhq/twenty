@@ -300,6 +300,16 @@ export class ConfigVariables {
   @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
   AUTH_MICROSOFT_APIS_CALLBACK_URL: string;
 
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.MICROSOFT_AUTH,
+    isSensitive: false,
+    description:
+      "Microsoft Entra tenant used to build the OAuth endpoints: a tenant ID, a verified domain, or one of 'common', 'organizations' and 'consumers'",
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AUTH_MICROSOFT_TENANT_ID = 'common';
+
   /**
    * @deprecated Use is now GA - record page layouts are always seeded
    */

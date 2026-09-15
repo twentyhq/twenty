@@ -22,7 +22,9 @@ export class MicrosoftApiRefreshAccessTokenService {
       auth: {
         clientId: this.config.get('AUTH_MICROSOFT_CLIENT_ID'),
         clientSecret: this.config.get('AUTH_MICROSOFT_CLIENT_SECRET'),
-        authority: 'https://login.microsoftonline.com/common',
+        authority: `https://login.microsoftonline.com/${this.config.get(
+          'AUTH_MICROSOFT_TENANT_ID',
+        )}`,
       },
     });
 

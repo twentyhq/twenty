@@ -21,7 +21,7 @@ export abstract class MicrosoftAPIsOauthCommonStrategy extends PassportStrategy(
     super({
       clientID: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_ID'),
       clientSecret: twentyConfigService.get('AUTH_MICROSOFT_CLIENT_SECRET'),
-      tenant: 'common',
+      tenant: twentyConfigService.get('AUTH_MICROSOFT_TENANT_ID'),
       callbackURL: twentyConfigService.get('AUTH_MICROSOFT_APIS_CALLBACK_URL'),
       scope: scopes,
       passReqToCallback: true,

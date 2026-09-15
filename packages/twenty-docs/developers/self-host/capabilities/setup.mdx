@@ -214,6 +214,18 @@ You need to add the following redirect URIs to your project:
 - `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
 - `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
+### Supported account types
+
+Twenty talks to the shared `common` endpoint by default, which only accepts
+multi-tenant app registrations. If yours is single-tenant, Microsoft rejects
+every sign-in with `AADSTS50194` and you have two ways out:
+
+- set **Supported account types** to *Accounts in any organizational directory* in Azure, or
+- keep the app single-tenant and set `AUTH_MICROSOFT_TENANT_ID` to your tenant ID (or a verified domain).
+
+`organizations` and `consumers` also work if you want to accept one of those
+audiences instead.
+
 ### Configure in Twenty
 
 1. Go to **Settings → Admin Panel → Configuration Variables**
@@ -226,6 +238,7 @@ You need to add the following redirect URIs to your project:
    - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
    - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
    - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+   - `AUTH_MICROSOFT_TENANT_ID={tenant-id}` if your app registration is single-tenant (see below)
 
 <Warning>
 **Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
