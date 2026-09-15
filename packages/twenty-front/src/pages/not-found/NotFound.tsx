@@ -1,3 +1,4 @@
+import { MainButton } from '@/ui/input/components/MainButton';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { lazy, Suspense } from 'react';
 
@@ -11,7 +12,6 @@ import { AppPath } from 'twenty-shared/types';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
-import { MainButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AnimatedPlaceholder,
@@ -20,7 +20,6 @@ import {
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
 } from 'twenty-ui/primitives/feedback';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -62,9 +61,10 @@ export const NotFound = () => {
             </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
-            <UndecoratedLink to={AppPath.Index}>
-              <MainButton title={t`Back to content`} fullWidth />
-            </UndecoratedLink>
+            <MainButton
+              to={AppPath.Index}
+              fullWidth
+            >{t`Back to content`}</MainButton>
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>

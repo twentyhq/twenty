@@ -145,14 +145,13 @@ export const SettingsAgentEvalsTab = ({
             fullWidth
           />
           <Button
-            Icon={IconPlus}
-            variant="primary"
-            accent="blue"
-            size="small"
-            title={t`Add`}
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={handleAddInput}
             disabled={disabled || !newInput.trim()}
-          />
+            variant="solid"
+            color="accent"
+          >{t`Add`}</Button>
         </StyledInputContainer>
 
         {evalInputs.length > 0 ? (

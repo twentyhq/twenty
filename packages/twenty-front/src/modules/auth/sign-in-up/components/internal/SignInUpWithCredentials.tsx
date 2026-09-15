@@ -1,3 +1,5 @@
+import { MainButton } from '@/ui/input/components/MainButton';
+
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSignInUp } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { type Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
@@ -22,7 +24,7 @@ import { useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { MainButton, InputHint } from 'twenty-ui/primitives/input';
+import { InputHint } from 'twenty-ui/primitives/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -162,15 +164,14 @@ export const SignInUpWithCredentials = ({
           )}
           <StyledSsoButtonContainer>
             <MainButton
-              title={buttonTitle}
               type="submit"
-              variant={
-                signInUpStep === SignInUpStep.Init ? 'secondary' : 'primary'
-              }
-              Icon={() => (form.formState.isSubmitting ? <Loader /> : null)}
+              startIcon={form.formState.isSubmitting ? <Loader /> : null}
               disabled={isSubmitButtonDisabled}
               fullWidth
-            />
+              variant={signInUpStep === SignInUpStep.Init ? 'outline' : 'solid'}
+            >
+              {buttonTitle}
+            </MainButton>
             {isLastUsed && <LastUsedPill />}
             {isSignUpBlockedByDDLLock && (
               <InputHint>{t`Sign-up is temporarily unavailable during maintenance.`}</InputHint>

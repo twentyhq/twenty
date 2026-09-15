@@ -1,3 +1,4 @@
+import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -23,7 +24,6 @@ import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
-import { MainButton } from 'twenty-ui/primitives/input';
 import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -264,12 +264,10 @@ export const SignInUpTOTPVerification = () => {
         />
       </StyledTwoFactorMainContent>
       <MainButton
-        title={t`Submit`}
         type="submit"
-        variant="primary"
         fullWidth
         disabled={isLoading}
-      />
+      >{t`Submit`}</MainButton>
       <StyledActionBackLinkContainer>
         <ClickToActionLink onClick={handleBack}>
           <Trans>Back</Trans>

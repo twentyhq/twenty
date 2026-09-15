@@ -106,19 +106,19 @@ export const SettingsCustomDomain = () => {
                 <ButtonGroup>
                   <StyledButtonContainer>
                     <Button
-                      isLoading={isRecordsLoading}
-                      Icon={IconReload}
-                      title={t`Reload`}
-                      variant="primary"
+                      loading={isRecordsLoading}
+                      startIcon={<IconReload />}
                       onClick={() => checkCustomDomainRecords()}
                       type="button"
-                    />
+                      variant="outline"
+                    >{t`Reload`}</Button>
                   </StyledButtonContainer>
                   <StyledButtonContainer>
                     <Button
-                      Icon={IconTrash}
-                      variant="primary"
+                      startIcon={<IconTrash />}
+                      aria-label={t`Delete`}
                       onClick={handleDelete}
+                      variant="outline"
                     />
                   </StyledButtonContainer>
                 </ButtonGroup>

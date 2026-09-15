@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
@@ -8,7 +10,7 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/primitives/surfaces';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledWrapper = styled.div`
@@ -49,17 +51,18 @@ export const CommandMenuButton = ({
   return (
     <>
       {resolvedShortLabel !== undefined ? (
-        <Button
-          Icon={command.Icon}
-          size="small"
-          variant="primary"
-          accent={buttonAccent}
+        <NavigationButton
+          startIcon={isDefined(command.Icon) ? <command.Icon /> : undefined}
+          size="sm"
           to={to}
           onClick={onClick}
           disabled={disabled}
-          title={resolvedShortLabel}
-          ariaLabel={command.label}
-        />
+          aria-label={command.label}
+          variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
+          color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+        >
+          {resolvedShortLabel}
+        </NavigationButton>
       ) : (
         <div id={`command-menu-item-entry-${command.key}`} key={command.key}>
           <IconButton

@@ -1,3 +1,4 @@
+import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -11,7 +12,6 @@ import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingM
 import { t } from '@lingui/core/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
-import { MainButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
 
@@ -119,34 +119,32 @@ export const EmailVerificationSent = ({
   const mainButtons = isError ? (
     <>
       <MainButton
-        title={t`Try with another email`}
         onClick={handleChangeEmail}
-        variant="secondary"
         fullWidth
-      />
+        variant="outline"
+      >{t`Try with another email`}</MainButton>
       <MainButton
-        title={isLoading ? t`Sending...` : t`Resend email`}
         onClick={handleResendEmailVerificationToken(email)}
         disabled={isLoading}
         fullWidth
-      />
+      >
+        {isLoading ? t`Sending...` : t`Resend email`}
+      </MainButton>
     </>
   ) : (
     <>
       <MainButton
-        title={t`Open Gmail`}
         onClick={handleOpenGmail}
-        Icon={IconGmail}
-        variant="secondary"
+        startIcon={<IconGmail />}
         fullWidth
-      />
+        variant="outline"
+      >{t`Open Gmail`}</MainButton>
       <MainButton
-        title={t`Open Outlook`}
         onClick={handleOpenOutlook}
-        Icon={IconMicrosoft}
-        variant="secondary"
+        startIcon={<IconMicrosoft />}
         fullWidth
-      />
+        variant="outline"
+      >{t`Open Outlook`}</MainButton>
     </>
   );
 

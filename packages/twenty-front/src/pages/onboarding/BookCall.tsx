@@ -1,5 +1,7 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { BUTTON_LIGHT_CLASS_NAME } from '@/ui/input/styles/ButtonLightClassName';
 import { isNonEmptyString } from '@sniptt/guards';
-import { Link, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { BookCallEmbed } from '@/onboarding/components/BookCallEmbed';
@@ -15,7 +17,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { OnboardingStatus } from '~/generated-metadata/graphql';
 
@@ -83,9 +84,13 @@ export const BookCall = () => {
           {isOnboardingStep ? (
             <BookCallOnboardingStepActions />
           ) : (
-            <Link to={AppPath.PlanRequired}>
-              <LightButton Icon={IconChevronLeft} title={t`Back`} />
-            </Link>
+            <NavigationButton
+              className={BUTTON_LIGHT_CLASS_NAME}
+              to={AppPath.PlanRequired}
+              startIcon={<IconChevronLeft />}
+              size="sm"
+              variant="ghost"
+            >{t`Back`}</NavigationButton>
           )}
         </StyledFooter>
       </OnboardingStepAnimatedItem>

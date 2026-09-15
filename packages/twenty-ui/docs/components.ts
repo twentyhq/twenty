@@ -1,5 +1,17 @@
 export const DOCUMENTED_COMPONENTS = [
   {
+    name: 'Button',
+    source: 'primitives/input/Button/Button.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/button',
+  },
+  {
+    name: 'ButtonGroup',
+    source: 'primitives/input/ButtonGroup/ButtonGroup.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/button-group',
+  },
+  {
     name: 'Field',
     source: 'primitives/input/Field/Field.tsx',
     entryPoint: 'twenty-ui/primitives/input',

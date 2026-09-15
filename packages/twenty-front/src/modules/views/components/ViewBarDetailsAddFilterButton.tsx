@@ -1,3 +1,5 @@
+import { BUTTON_SUBTLE_CLASS_NAME } from '@/ui/input/styles/ButtonSubtleClassName';
+
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { getViewBarFilterDropdownId } from '@/views/utils/getViewBarFilterDropdownId';
 
@@ -5,7 +7,7 @@ import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/h
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 export const ViewBarDetailsAddFilterButton = () => {
   const { toggleDropdown } = useToggleDropdown();
@@ -22,11 +24,12 @@ export const ViewBarDetailsAddFilterButton = () => {
   };
 
   return (
-    <LightButton
+    <Button
+      className={BUTTON_SUBTLE_CLASS_NAME}
       onClick={handleClick}
-      Icon={IconPlus}
-      title={t`Add filter`}
-      accent="tertiary"
-    />
+      startIcon={<IconPlus />}
+      size="sm"
+      variant="ghost"
+    >{t`Add filter`}</Button>
   );
 };

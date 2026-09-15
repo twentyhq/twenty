@@ -102,19 +102,21 @@ export const RecordTableSettingsSortsContent = ({
               handleDirectionChange(sort.id, value as ViewSortDirection)
             }
           />
-          <Button onClick={() => handleRemoveSort(sort.id)} Icon={IconTrash} />
+          <Button
+            onClick={() => handleRemoveSort(sort.id)}
+            startIcon={<IconTrash />}
+            aria-label={t`Delete`}
+          />
         </StyledSortItemContainer>
       ))}
       <StyledAddButtonContainer>
         <Button
-          Icon={IconArrowsSort}
-          size="small"
-          variant="secondary"
-          accent="default"
+          startIcon={<IconArrowsSort />}
+          size="sm"
           onClick={handleAddSort}
-          ariaLabel={t`Add sort`}
-          title={t`Add sort`}
-        />
+          aria-label={t`Add sort`}
+          variant="outline"
+        >{t`Add sort`}</Button>
       </StyledAddButtonContainer>
     </>
   );

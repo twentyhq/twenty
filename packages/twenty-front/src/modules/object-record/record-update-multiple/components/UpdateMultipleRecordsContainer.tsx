@@ -125,7 +125,7 @@ export const UpdateMultipleRecordsContainer = ({
         subtitle={t`This will modify ${contextStoreNumberOfSelectedRecords} records. This action cannot be undone.`}
         onConfirmClick={handleConfirmedUpdate}
         confirmButtonText={t`Update records`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
     </SidePanelProvider>
   );

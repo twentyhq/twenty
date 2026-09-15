@@ -1,0 +1,45 @@
+---
+title: Button
+description: Trigger actions or navigate with styled buttons.
+---
+
+import ButtonReference from '/snippets/ui/generated/input/button.mdx';
+
+Use `Button` for an action. Supply its visible label as children, and give icon-only buttons an `aria-label`.
+
+## Appearance
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const CreateRecord = () => (
+  <Button variant="solid" color="accent" size="sm" startIcon={<IconPlus />}>
+    Create record
+  </Button>
+);
+```
+
+Choose `solid`, `outline`, `soft`, or `ghost` independently of the `neutral`, `accent`, `danger`, or `success` color. Sizes are `sm` and `md`; the defaults are `outline`, `neutral`, and `md`. `fullWidth` fills the available width. `startIcon` and `endIcon` accept elements and are decorative. `elevated` adds a shadow. `hotkeys` displays keyboard hints on larger screens; bind the shortcuts in your application.
+
+`disabled`, `loading`, and `soon` prevent activation. Loading keeps the label accessible and preserves the button's width while showing a spinner. Customize the upcoming-feature label with `soonLabel`.
+
+## Links and forms
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DocumentationLink = () => (
+  <Button href="https://twenty.com" target="_blank" rel="noreferrer">
+    Read documentation
+  </Button>
+);
+```
+
+`href` renders an anchor with link semantics. For a router link, use `render={<Link to="/settings" />}`, `nativeButton={false}`, and `role="link"`. Disabled links cannot activate.
+
+Buttons default to `type="button"`. Set `type="submit"` or `type="reset"` explicitly for forms. Native props, event handlers, refs, and Base UI's `render` prop pass through to the root.
+
+## Props
+
+<ButtonReference />

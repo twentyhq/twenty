@@ -399,17 +399,16 @@ export const SettingsAdminWorkspaceDetail = () => {
                           isDefined(currentUser?.id) &&
                           userId !== currentUser.id && (
                             <Button
-                              Icon={IconEyeShare}
-                              variant="secondary"
-                              size="small"
-                              title={t`Impersonate`}
+                              startIcon={<IconEyeShare />}
+                              size="sm"
                               onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
                                 handleImpersonate(userId, workspaceId!);
                               }}
                               disabled={impersonatingUserId === userId}
-                            />
+                              variant="outline"
+                            >{t`Impersonate`}</Button>
                           )}
                       </TableCell>
                     </TableRow>

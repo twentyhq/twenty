@@ -17,10 +17,8 @@ import {
   IconButtonGroup,
   IconListViewGrip,
   InsideButton,
-  LightButton,
   LightIconButton,
   LightIconButtonGroup,
-  MainButton,
   RoundedIconButton,
   SearchInput,
   SegmentedControl,
@@ -57,13 +55,13 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Button',
-    node: <Button title="Button" onClick={() => {}} />,
+    node: <Button onClick={() => {}}>{'Button'}</Button>,
   },
   {
     name: 'ButtonGroup',
     node: (
       <ButtonGroup>
-        {[<Button key="a" title="A" />, <Button key="b" title="B" />]}
+        {[<Button key="a">{'A'}</Button>, <Button key="b">{'B'}</Button>]}
       </ButtonGroup>
     ),
   },
@@ -157,8 +155,16 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     node: <InsideButton Icon={IconPlus} ariaLabel="Add" />,
   },
   {
-    name: 'LightButton',
-    node: <LightButton title="Light" />,
+    name: 'Ghost button',
+    node: (
+      <Button
+        size="sm"
+        variant="ghost"
+        style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+      >
+        {'Light'}
+      </Button>
+    ),
   },
   {
     name: 'LightIconButton',
@@ -173,8 +179,19 @@ const INPUT_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'MainButton',
-    node: <MainButton title="Main" />,
+    name: 'Solid button',
+    node: (
+      <Button
+        elevated
+        variant="solid"
+        style={{
+          fontWeight: 'var(--t-font-weight-semi-bold)',
+          paddingInline: 'var(--t-spacing-3)',
+        }}
+      >
+        {'Main'}
+      </Button>
+    ),
   },
   {
     name: 'Radio',

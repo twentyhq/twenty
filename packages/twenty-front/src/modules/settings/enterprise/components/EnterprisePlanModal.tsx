@@ -1,3 +1,4 @@
+import { MainButton } from '@/ui/input/components/MainButton';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
@@ -10,9 +11,13 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { CardPicker, RadioGroup, MainButton } from 'twenty-ui/primitives/input';
+import { CardPicker, RadioGroup } from 'twenty-ui/primitives/input';
 import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledCheckoutButton = styled(MainButton)`
+  width: 200px;
+`;
 
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';
 
@@ -183,13 +188,11 @@ export const EnterprisePlanModal = () => {
           </CardPicker>
         </RadioGroup>
 
-        <MainButton
-          title={t`Continue`}
+        <StyledCheckoutButton
           onClick={handleContinue}
-          width={200}
-          Icon={() => isLoading && <Loader />}
+          startIcon={isLoading && <Loader />}
           disabled={isLoading}
-        />
+        >{t`Continue`}</StyledCheckoutButton>
       </ModalContent>
     </ModalStatefulWrapper>
   );

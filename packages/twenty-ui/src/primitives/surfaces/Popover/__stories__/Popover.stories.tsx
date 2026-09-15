@@ -47,13 +47,17 @@ const PopoverStory = ({
       >
         <Popover.Title>Details</Popover.Title>
         <Popover.Description>More information</Popover.Description>
-        <Button type="button" title="First action" ariaLabel="First action" />
+        <Button type="button" aria-label="First action">
+          First action
+        </Button>
         <Popover.Close aria-label="Close" style={{ alignSelf: 'flex-start' }}>
           <IconX size={16} />
         </Popover.Close>
       </Popover.Popup>
     </Popover.Root>
-    <Button type="button" title="Outside" ariaLabel="Outside" />
+    <Button type="button" aria-label="Outside">
+      Outside
+    </Button>
   </>
 );
 
@@ -177,10 +181,11 @@ const ArrowPopoverStory = (props: PopoverStoryProps) => {
       <PopoverStory {...props} open arrow={arrow} />
       <Button
         type="button"
-        title="Toggle arrow"
-        ariaLabel="Toggle arrow"
+        aria-label="Toggle arrow"
         onClick={() => setArrow(!arrow)}
-      />
+      >
+        Toggle arrow
+      </Button>
     </div>
   );
 };
@@ -369,10 +374,11 @@ const ControlledPopoverStory = (props: PopoverStoryProps) => {
       <PopoverStory {...props} open={open} />
       <Button
         type="button"
-        title="Apply closed state"
-        ariaLabel="Apply closed state"
+        aria-label="Apply closed state"
         onClick={() => setOpen(false)}
-      />
+      >
+        Apply closed state
+      </Button>
     </>
   );
 };

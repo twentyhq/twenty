@@ -135,54 +135,53 @@ export const SettingsApplicationDetailAboutTab = ({
     if (!isInstalled || isInstalling) {
       return (
         <Button
-          Icon={IconDownload}
-          title={isInstalling ? t`Installing...` : t`Install`}
-          variant={'primary'}
-          accent={'blue'}
+          startIcon={<IconDownload />}
           onClick={onInstall}
           disabled={isInstalling}
-        />
+          variant="solid"
+          color="accent"
+        >
+          {isInstalling ? t`Installing...` : t`Install`}
+        </Button>
       );
     }
 
     if (hasUpdate) {
       return (
         <Button
-          Icon={IconUpload}
-          title={
-            isUpgrading
-              ? t`Upgrading...`
-              : t`Upgrade to ${latestAvailableVersion ?? ''}`
-          }
-          variant={'secondary'}
-          accent={'blue'}
+          startIcon={<IconUpload />}
           onClick={onUpgrade}
           disabled={isUpgrading}
-        />
+          variant="outline"
+          color="accent"
+        >
+          {isUpgrading
+            ? t`Upgrading...`
+            : t`Upgrade to ${latestAvailableVersion ?? ''}`}
+        </Button>
       );
     }
 
     if (canBeUninstalled) {
       return (
         <Button
-          Icon={IconTrash}
-          title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
-          variant={'secondary'}
-          accent={'danger'}
+          startIcon={<IconTrash />}
           onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
           disabled={isUninstalling}
-        />
+          variant="outline"
+          color="danger"
+        >
+          {isUninstalling ? t`Uninstalling...` : t`Uninstall`}
+        </Button>
       );
     }
 
     return (
       <Button
-        Icon={IconCheck}
-        title={t`Installed`}
-        variant={'secondary'}
-        accent={'default'}
+        startIcon={<IconCheck />}
         disabled={true}
-      />
+        variant="outline"
+      >{t`Installed`}</Button>
     );
   };
 

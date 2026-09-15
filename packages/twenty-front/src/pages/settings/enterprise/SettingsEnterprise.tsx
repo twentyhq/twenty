@@ -548,12 +548,14 @@ export const SettingsEnterprise = ({
         </StyledInputWrapper>
         <StyledActivateButtonWrapper>
           <Button
-            Icon={IconKey}
-            title={isActivating ? t`Activating...` : t`Activate`}
-            accent="blue"
+            startIcon={<IconKey />}
             onClick={handleActivate}
             disabled={isActivating || !enterpriseKey.trim()}
-          />
+            variant="solid"
+            color="accent"
+          >
+            {isActivating ? t`Activating...` : t`Activate`}
+          </Button>
         </StyledActivateButtonWrapper>
       </StyledInputContainer>
     </Section>
@@ -566,19 +568,18 @@ export const SettingsEnterprise = ({
         description={t`This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one.`}
       />
       <Button
-        Icon={IconKey}
-        title={
-          isReleasing
-            ? t`Transferring...`
-            : t`Release & transfer to this server`
-        }
-        variant="secondary"
-        accent="blue"
+        startIcon={<IconKey />}
         onClick={() =>
           openModal(RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID)
         }
         disabled={isReleasing}
-      />
+        variant="outline"
+        color="accent"
+      >
+        {isReleasing
+          ? t`Transferring...`
+          : t`Release & transfer to this server`}
+      </Button>
     </Section>
   );
 
@@ -603,30 +604,28 @@ export const SettingsEnterprise = ({
       />
       {instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT ? (
         <Button
-          title={
-            isUpdatingInstanceType
-              ? t`Updating...`
-              : t`Switch to production instance`
-          }
-          variant="secondary"
           onClick={() =>
             handleSetInstanceType(ENTERPRISE_INSTANCE_TYPE.PRODUCTION)
           }
           disabled={isUpdatingInstanceType}
-        />
+          variant="outline"
+        >
+          {isUpdatingInstanceType
+            ? t`Updating...`
+            : t`Switch to production instance`}
+        </Button>
       ) : (
         <Button
-          title={
-            isUpdatingInstanceType
-              ? t`Updating...`
-              : t`Register as development instance`
-          }
-          variant="secondary"
           onClick={() =>
             handleSetInstanceType(ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT)
           }
           disabled={isUpdatingInstanceType}
-        />
+          variant="outline"
+        >
+          {isUpdatingInstanceType
+            ? t`Updating...`
+            : t`Register as development instance`}
+        </Button>
       )}
     </Section>
   );
@@ -645,11 +644,10 @@ export const SettingsEnterprise = ({
               description={t`Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support.`}
             />
             <Button
-              Icon={IconKey}
-              title={t`Get Organization Key`}
-              variant="secondary"
+              startIcon={<IconKey />}
               onClick={openCheckoutModal}
-            />
+              variant="outline"
+            >{t`Get Organization Key`}</Button>
           </Section>
           {activateKeySection}
         </>
@@ -665,11 +663,10 @@ export const SettingsEnterprise = ({
               description={t`Unlock premium features like SSO, row-level security, and audit logs.`}
             />
             <Button
-              Icon={IconKey}
-              title={t`Get Organization Key`}
-              variant="secondary"
+              startIcon={<IconKey />}
               onClick={openCheckoutModal}
-            />
+              variant="outline"
+            >{t`Get Organization Key`}</Button>
           </Section>
           {activateKeySection}
         </>
@@ -685,15 +682,14 @@ export const SettingsEnterprise = ({
               description={t`Your subscription is active but your validity token is invalid or has expired. Try reloading it or contact support.`}
             />
             <Button
-              Icon={IconKey}
-              title={
-                isRefreshingToken ? t`Reloading...` : t`Reload validity token`
-              }
-              variant="secondary"
-              accent="blue"
+              startIcon={<IconKey />}
               onClick={handleRefreshValidityToken}
               disabled={isRefreshingToken}
-            />
+              variant="outline"
+              color="accent"
+            >
+              {isRefreshingToken ? t`Reloading...` : t`Reload validity token`}
+            </Button>
             <StyledSpacer />
             <SubscriptionInfoContainer>
               <SubscriptionInfoRowContainer
@@ -733,11 +729,10 @@ export const SettingsEnterprise = ({
               description={t`Edit payment method, see your invoices and more`}
             />
             <Button
-              Icon={IconCreditCard}
-              title={t`View billing details`}
-              variant="secondary"
+              startIcon={<IconCreditCard />}
               onClick={openBillingPortal}
-            />
+              variant="outline"
+            >{t`View billing details`}</Button>
           </Section>
         </>
       );
@@ -801,11 +796,10 @@ export const SettingsEnterprise = ({
               description={t`Edit payment method, see your invoices and more`}
             />
             <Button
-              Icon={IconCreditCard}
-              title={t`View billing details`}
-              variant="secondary"
+              startIcon={<IconCreditCard />}
               onClick={openBillingPortal}
-            />
+              variant="outline"
+            >{t`View billing details`}</Button>
           </Section>
           {!isCancelScheduled && (
             <Section>
@@ -814,12 +808,11 @@ export const SettingsEnterprise = ({
                 description={t`Your premium features will be disabled`}
               />
               <Button
-                Icon={IconCircleX}
-                title={t`Cancel Plan`}
-                variant="secondary"
-                accent="danger"
+                startIcon={<IconCircleX />}
                 onClick={openBillingPortal}
-              />
+                variant="outline"
+                color="danger"
+              >{t`Cancel Plan`}</Button>
             </Section>
           )}
         </>
@@ -850,11 +843,10 @@ export const SettingsEnterprise = ({
                 Icon={IconCreditCard}
                 currentValue={
                   <Button
-                    title={t`View invoices`}
-                    variant="secondary"
-                    size="small"
+                    size="sm"
                     onClick={openBillingPortal}
-                  />
+                    variant="outline"
+                  >{t`View invoices`}</Button>
                 }
               />
             </SubscriptionInfoContainer>
@@ -865,11 +857,10 @@ export const SettingsEnterprise = ({
               description={t`Start a new Organization subscription to re-enable premium features.`}
             />
             <Button
-              Icon={IconKey}
-              title={t`Get Organization Key`}
-              variant="secondary"
+              startIcon={<IconKey />}
               onClick={openCheckoutModal}
-            />
+              variant="outline"
+            >{t`Get Organization Key`}</Button>
           </Section>
           {activateKeySection}
         </>
@@ -913,11 +904,10 @@ export const SettingsEnterprise = ({
                 Icon={IconCreditCard}
                 currentValue={
                   <Button
-                    title={t`View invoices`}
-                    variant="secondary"
-                    size="small"
+                    size="sm"
                     onClick={openBillingPortal}
-                  />
+                    variant="outline"
+                  >{t`View invoices`}</Button>
                 }
               />
             </SubscriptionInfoContainer>
@@ -937,12 +927,11 @@ export const SettingsEnterprise = ({
               }
             />
             <Button
-              Icon={IconCreditCard}
-              title={t`Go to billing portal`}
-              variant="secondary"
-              accent="blue"
+              startIcon={<IconCreditCard />}
               onClick={openBillingPortal}
-            />
+              variant="outline"
+              color="accent"
+            >{t`Go to billing portal`}</Button>
           </Section>
         </>
       );
@@ -975,10 +964,9 @@ export const SettingsEnterprise = ({
               description={t`Start a new Organization subscription.`}
             />
             <Button
-              Icon={IconKey}
-              title={t`Get Organization Key`}
+              startIcon={<IconKey />}
               onClick={openCheckoutModal}
-            />
+            >{t`Get Organization Key`}</Button>
           </Section>
           {activateKeySection}
         </>
@@ -997,11 +985,10 @@ export const SettingsEnterprise = ({
             })()}
           />
           <Button
-            Icon={IconCreditCard}
-            title={t`Go to billing portal`}
-            variant="secondary"
+            startIcon={<IconCreditCard />}
             onClick={openBillingPortal}
-          />
+            variant="outline"
+          >{t`Go to billing portal`}</Button>
         </Section>
         {activateKeySection}
       </>
@@ -1018,7 +1005,7 @@ export const SettingsEnterprise = ({
         title={t`Release & transfer Organization key`}
         subtitle={t`This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?`}
         confirmButtonText={t`Release & transfer`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         loading={isReleasing}
         onConfirmClick={handleReleaseBinding}
       />

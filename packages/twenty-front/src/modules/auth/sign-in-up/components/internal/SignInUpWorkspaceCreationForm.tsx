@@ -1,3 +1,4 @@
+import { MainButton } from '@/ui/input/components/MainButton';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -17,11 +18,7 @@ import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconTrash, IconUpload } from 'twenty-ui/icon';
-import {
-  Button,
-  LightIconButton,
-  MainButton,
-} from 'twenty-ui/primitives/input';
+import { Button, LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContentContainer = styled.div`
@@ -275,11 +272,10 @@ export const SignInUpWorkspaceCreationForm = () => {
             />
             <StyledLogoButtons>
               <Button
-                Icon={IconUpload}
-                title={t`Upload logo`}
-                variant="secondary"
+                startIcon={<IconUpload />}
                 onClick={openFilePicker}
-              />
+                variant="outline"
+              >{t`Upload logo`}</Button>
               <LightIconButton
                 Icon={IconTrash}
                 accent="tertiary"
@@ -347,11 +343,10 @@ export const SignInUpWorkspaceCreationForm = () => {
       </StyledFormSection>
       <OnboardingStepAnimatedItem index={isMultiWorkspaceEnabled ? 5 : 4}>
         <MainButton
-          title={t`Create workspace`}
           onClick={handleSubmit}
           disabled={isContinueDisabled}
           fullWidth
-        />
+        >{t`Create workspace`}</MainButton>
       </OnboardingStepAnimatedItem>
     </StyledContentContainer>
   );

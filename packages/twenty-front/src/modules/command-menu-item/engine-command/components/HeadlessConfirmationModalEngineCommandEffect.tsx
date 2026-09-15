@@ -8,13 +8,13 @@ import { type CommandMenuConfirmationModalResultBrowserEventDetail } from 'twent
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { type ButtonAccent } from 'twenty-ui/primitives/input';
+import { type ButtonColor } from 'twenty-ui/primitives/input';
 
 export type HeadlessConfirmationModalEngineCommandEffectProps = {
   title: string;
   subtitle: ReactNode;
   confirmButtonText: string;
-  confirmButtonAccent?: ButtonAccent;
+  confirmButtonColor?: ButtonColor;
   linkButton?: CommandMenuItemConfirmationModalLinkButton;
   execute: () => void | Promise<unknown>;
 };
@@ -23,7 +23,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
   title,
   subtitle,
   confirmButtonText,
-  confirmButtonAccent = 'danger',
+  confirmButtonColor = 'danger',
   linkButton,
   execute,
 }: HeadlessConfirmationModalEngineCommandEffectProps) => {
@@ -48,7 +48,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
       title,
       subtitle,
       confirmButtonText,
-      confirmButtonAccent,
+      confirmButtonColor,
       linkButton,
     });
   }, [
@@ -59,7 +59,7 @@ export const HeadlessConfirmationModalEngineCommandEffect = ({
     title,
     subtitle,
     confirmButtonText,
-    confirmButtonAccent,
+    confirmButtonColor,
     linkButton,
   ]);
 
