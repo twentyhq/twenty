@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
-import { Avatar, AvatarGroup } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives';
+import { AvatarGroup } from 'twenty-ui/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';

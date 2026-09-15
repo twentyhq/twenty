@@ -27,7 +27,7 @@ import {
   EmailingDomainStatus,
   GetEmailingDomainsDocument,
 } from '~/generated-metadata/graphql';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives';
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';

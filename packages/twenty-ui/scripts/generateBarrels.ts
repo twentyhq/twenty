@@ -252,6 +252,7 @@ const computePackageJsonFilesAndExportsConfig = (
     typesVersions: { '*': typesVersionsEntries },
     files: [
       'dist',
+      'LICENSE',
       '!dist/individual',
       '!dist/individual/**',
       '!dist/**/*.map',

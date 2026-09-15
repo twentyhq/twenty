@@ -10,7 +10,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Loader } from 'twenty-ui/feedback';
-import { CardPicker, MainButton, RadioGroup } from 'twenty-ui/input';
+import { CardPicker, RadioGroup } from 'twenty-ui/primitives';
+import { MainButton } from 'twenty-ui/input';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

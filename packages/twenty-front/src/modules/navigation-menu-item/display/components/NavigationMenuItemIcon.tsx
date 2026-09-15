@@ -1,7 +1,7 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Avatar } from 'twenty-ui/primitives';
 import {
-  Avatar,
   StyledTintedIconTileContainer,
   getIconTileColorShades,
 } from 'twenty-ui/data-display';

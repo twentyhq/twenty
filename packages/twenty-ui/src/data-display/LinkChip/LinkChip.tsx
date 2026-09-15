@@ -1,9 +1,9 @@
 import { type ComponentPropsWithRef, type MouseEvent } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Chip } from '@ui/data-display/Chip/Chip';
-import { type ChipProps } from '@ui/data-display/Chip/types/ChipProps';
-import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@ui/data-display/Chip/constants/LinkChipClickOutsideId';
+import { Chip } from '@ui/primitives/Chip/Chip';
+import { type ChipProps } from '@ui/primitives/Chip/types/ChipProps';
+import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@ui/primitives/Chip/constants/LinkChipClickOutsideId';
 import { type TriggerEventType, useMouseDownNavigation } from '@ui/utilities';
 
 import styles from './LinkChip.module.scss';

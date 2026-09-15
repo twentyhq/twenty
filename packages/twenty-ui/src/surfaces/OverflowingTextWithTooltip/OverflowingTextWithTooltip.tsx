@@ -10,7 +10,7 @@ import { createPortal } from 'react-dom';
 import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { LinkifiedText } from '@ui/typography/LinkifiedText/LinkifiedText';
-import { Text } from '@ui/typography/Text/Text';
+import { Text } from '@ui/primitives/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 import {
   AppTooltip,

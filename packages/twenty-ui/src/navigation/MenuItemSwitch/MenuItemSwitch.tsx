@@ -1,5 +1,6 @@
 import { type IconComponent } from '@ui/icon';
-import { Switch, type SwitchSize } from '@ui/input';
+import { Switch } from '@ui/primitives/Switch/Switch';
+import { type SwitchSize } from '@ui/primitives/Switch/types/SwitchSize';
 import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftContent';
 import {
   StyledMenuItemBase,

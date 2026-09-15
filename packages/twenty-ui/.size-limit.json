@@ -16,6 +16,16 @@
     "limit": "10 kB"
   },
   {
+    "name": "components",
+    "path": "dist/components.mjs",
+    "limit": "1 kB"
+  },
+  {
+    "name": "primitives",
+    "path": "dist/primitives.mjs",
+    "limit": "170 kB"
+  },
+  {
     "name": "testing",
     "path": "dist/testing.mjs",
     "limit": "50 kB"

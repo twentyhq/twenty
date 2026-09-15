@@ -1,4 +1,4 @@
-import { Checkbox } from '@ui/input/Checkbox/Checkbox';
+import { Checkbox } from '@ui/primitives/Checkbox/Checkbox';
 
 import styles from './MenuItemMultiSelectCheckbox.module.scss';
 

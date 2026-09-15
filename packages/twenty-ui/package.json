@@ -113,6 +113,11 @@
       "import": "./dist/assets.mjs",
       "require": "./dist/assets.cjs"
     },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components.mjs",
+      "require": "./dist/components.cjs"
+    },
     "./data-display": {
       "types": "./dist/data-display/index.d.ts",
       "import": "./dist/data-display.mjs",
@@ -147,6 +152,11 @@
       "types": "./dist/navigation/index.d.ts",
       "import": "./dist/navigation.mjs",
       "require": "./dist/navigation.cjs"
+    },
+    "./primitives": {
+      "types": "./dist/primitives/index.d.ts",
+      "import": "./dist/primitives.mjs",
+      "require": "./dist/primitives.cjs"
     },
     "./styles": {
       "types": "./dist/styles/index.d.ts",
@@ -192,6 +202,9 @@
       "assets": [
         "dist/assets/index.d.ts"
       ],
+      "components": [
+        "dist/components/index.d.ts"
+      ],
       "data-display": [
         "dist/data-display/index.d.ts"
       ],
@@ -212,6 +225,9 @@
       ],
       "navigation": [
         "dist/navigation/index.d.ts"
+      ],
+      "primitives": [
+        "dist/primitives/index.d.ts"
       ],
       "styles": [
         "dist/styles/index.d.ts"

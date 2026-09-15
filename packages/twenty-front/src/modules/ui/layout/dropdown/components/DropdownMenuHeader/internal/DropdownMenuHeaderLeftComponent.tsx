@@ -1,6 +1,6 @@
 import { type MouseEvent, type ReactElement, useContext } from 'react';
 import { styled } from '@linaria/react';
-import { type Avatar, type AvatarProps } from 'twenty-ui/data-display';
+import { type Avatar, type AvatarProps } from 'twenty-ui/primitives';
 import { type IconComponent } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives';
 import { IconChevronLeft } from 'twenty-ui/icon';
 import { MenuItemSelect, MenuItemSelectAvatar } from 'twenty-ui/navigation';
 

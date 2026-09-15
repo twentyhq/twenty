@@ -1,21 +1,18 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   AnimatedCheckmark,
-  Avatar,
   AvatarGroup,
   AvatarOrIcon,
   Checkmark,
-  Chip,
   ColorSample,
   CommandBlock,
   LinkChip,
   NotificationCounter,
   Pill,
-  Status,
   StyledTintedIconTileContainer,
-  Tag,
   TintedIconTile,
 } from 'twenty-ui/data-display';
+import { Avatar, Chip, Status, Tag } from 'twenty-ui/primitives';
 import { IconStar } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 

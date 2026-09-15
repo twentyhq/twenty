@@ -1,5 +1,5 @@
 import { Pill } from '@ui/data-display/Pill/Pill';
-import { Avatar } from '@ui/data-display';
+import { Avatar } from '@ui/primitives/Avatar/Avatar';
 import { type IconComponent } from '@ui/icon';
 import { useTheme } from '@ui/theme-constants';
 import { type ReactElement } from 'react';

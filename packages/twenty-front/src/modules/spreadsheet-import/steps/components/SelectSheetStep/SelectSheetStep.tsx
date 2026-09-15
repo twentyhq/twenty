@@ -11,7 +11,7 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 
 import { ModalContent } from 'twenty-ui/surfaces';
 import { useLingui } from '@lingui/react/macro';
-import { Radio, RadioGroup } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WorkBook } from 'xlsx-ugnis';
 

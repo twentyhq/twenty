@@ -10,7 +10,7 @@ Use `Field` to group one control with its accessible label and helper text. Comp
 ## Labeled control
 
 ```tsx
-import { Field, Input } from 'twenty-ui/input';
+import { Field, Input } from 'twenty-ui/primitives';
 
 export const EmailField = () => (
   <Field.Root name="email" validationMode="onBlur">
@@ -32,7 +32,7 @@ export const EmailField = () => (
 Use `invalid` when your application owns the error state. An explicit `match` makes the error message visible.
 
 ```tsx
-import { Field, Input } from 'twenty-ui/input';
+import { Field, Input } from 'twenty-ui/primitives';
 
 type UsernameFieldProps = { error?: string };
 

@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives';
 import { AppTooltip } from 'twenty-ui/surfaces';
 import { type ThemeColor } from 'twenty-ui/theme';
 

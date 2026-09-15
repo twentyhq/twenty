@@ -11,7 +11,7 @@ import ToastReference from '/snippets/ui/generated/feedback/toast.mdx';
 
 ```tsx
 import { useState } from 'react';
-import { Toast } from 'twenty-ui/feedback';
+import { Toast } from 'twenty-ui/primitives';
 
 export const SaveNotification = () => {
   const [visible, setVisible] = useState(false);
@@ -41,7 +41,7 @@ export const SaveNotification = () => {
 ## Progress and cancellation
 
 ```tsx
-import { Toast } from 'twenty-ui/feedback';
+import { Toast } from 'twenty-ui/primitives';
 
 type ImportProgressProps = { progress: number; onCancel: () => void };
 

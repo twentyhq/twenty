@@ -69,6 +69,7 @@ const twentySharedAliases = Object.fromEntries(
 
 const TWENTY_UI_SUBMODULES = [
   'accessibility',
+  'components',
   'data-display',
   'feedback',
   'icon',
@@ -76,6 +77,7 @@ const TWENTY_UI_SUBMODULES = [
   'json-visualizer',
   'layout',
   'navigation',
+  'primitives',
   'surfaces',
   'theme-constants',
   'typography',

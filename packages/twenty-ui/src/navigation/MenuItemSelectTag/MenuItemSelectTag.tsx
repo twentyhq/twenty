@@ -3,7 +3,7 @@ import {
   StyledMenuItemLeftContent,
 } from '@ui/navigation/MenuItem/parts/StyledMenuItemBase';
 
-import { Tag } from '@ui/data-display';
+import { Tag } from '@ui/primitives/Tag/Tag';
 import { type IconComponent } from '@ui/icon';
 import { type ThemeColor } from '@ui/theme';
 import { useTheme } from '@ui/theme-constants';

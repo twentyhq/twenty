@@ -28,7 +28,8 @@ import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, Loader } from 'twenty-ui/feedback';
-import { MainButton, RadioGroup } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui/input';
+import { RadioGroup } from 'twenty-ui/primitives';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {

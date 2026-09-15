@@ -7,7 +7,7 @@ import {
   type UnsubscribeTopicsQuery,
   UnsubscribeTopicVisibility,
 } from '~/generated-metadata/graphql';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type UnsubscribeTopic = UnsubscribeTopicsQuery['unsubscribeTopics'][number];

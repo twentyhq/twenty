@@ -3,9 +3,9 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { getLogoUrlFromDomainName } from 'twenty-shared/utils';
-import { Avatar, Chip } from 'twenty-ui/data-display';
+import { Avatar, Chip, Checkbox } from 'twenty-ui/primitives';
 import { IconBuildingSkyscraper, IconPlus } from 'twenty-ui/icon';
-import { Checkbox } from 'twenty-ui/input';
+
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 const PREVIEW_ROW_HEIGHT = 32;

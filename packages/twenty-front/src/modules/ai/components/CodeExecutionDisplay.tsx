@@ -2,7 +2,7 @@ import { TerminalOutput } from '@/ai/components/TerminalOutput';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives';
 import {
   IconChevronDown,
   IconChevronUp,

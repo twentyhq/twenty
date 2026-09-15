@@ -1,6 +1,6 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
-import { Chip, Status, Tag } from 'twenty-ui/data-display';
+import { Chip, Status, Tag } from 'twenty-ui/primitives';
 import { Button } from 'twenty-ui/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';

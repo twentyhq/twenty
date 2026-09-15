@@ -26,7 +26,8 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { Button, Switch } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/primitives';
 import { generateColumns } from './components/columns';
 import { type ImportedStructuredRowMetadata } from './types';
 

@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useId } from 'react';
 import { CardContent } from 'twenty-ui/surfaces';
 import { type IconComponent } from 'twenty-ui/icon';
-import { Radio } from 'twenty-ui/input';
+import { Radio } from 'twenty-ui/primitives';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRadioCardContentContainer = styled.label`

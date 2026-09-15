@@ -6,7 +6,7 @@ import {
   SelectDisplay,
   TextDisplay,
 } from 'twenty-ui/data-display';
-import { Text } from 'twenty-ui/typography';
+import { Text } from 'twenty-ui/primitives';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 

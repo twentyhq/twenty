@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { handleClickableElementKeyDown } from '@ui/accessibility/utils/handleClickableElementKeyDown';
-import { Avatar } from '@ui/data-display/Avatar/Avatar';
+import { Avatar } from '@ui/primitives/Avatar/Avatar';
 import { useTheme } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 

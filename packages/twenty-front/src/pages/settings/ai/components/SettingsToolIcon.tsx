@@ -5,7 +5,8 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives';
+import { getIconTileColorShades } from 'twenty-ui/data-display';
 import {
   IconEdit,
   IconPlus,

@@ -1,4 +1,4 @@
-import { type AvatarShape } from 'twenty-ui/data-display';
+import { type AvatarShape } from 'twenty-ui/primitives';
 export type RecordChipData = {
   recordId: string;
   name: string;

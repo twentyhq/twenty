@@ -22,7 +22,7 @@ import { DragDropProvider } from '@dnd-kit/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Callout } from 'twenty-ui/feedback';
-import { Switch } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/primitives';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const COMPOSER_LABEL_MIN_WIDTH = '80px';

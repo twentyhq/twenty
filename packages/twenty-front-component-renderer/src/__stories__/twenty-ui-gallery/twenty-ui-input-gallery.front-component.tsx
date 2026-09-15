@@ -5,8 +5,6 @@ import {
   AnimatedLightIconButton,
   Button,
   ButtonGroup,
-  CardPicker,
-  Checkbox,
   ColorPickerButton,
   ColorSchemeCard,
   ColorSchemePicker,
@@ -23,17 +21,21 @@ import {
   LightIconButton,
   LightIconButtonGroup,
   MainButton,
-  Radio,
-  RadioGroup,
   RoundedIconButton,
   SearchInput,
   SegmentedControl,
-  Slider,
   StyledTabContainer,
   TabButton,
   TabContent,
-  Switch,
 } from 'twenty-ui/input';
+import {
+  CardPicker,
+  Checkbox,
+  Radio,
+  RadioGroup,
+  Slider,
+  Switch,
+} from 'twenty-ui/primitives';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import {

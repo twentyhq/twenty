@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 
 import { IconKey, IconLego, IconUsers } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives';
 import { Section } from 'twenty-ui/layout';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';

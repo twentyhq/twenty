@@ -12,7 +12,8 @@ import {
   IconRefreshDot,
   IconSparkles,
 } from 'twenty-ui/icon';
-import { Button, Slider } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/input';
+import { Slider } from 'twenty-ui/primitives';
 import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';

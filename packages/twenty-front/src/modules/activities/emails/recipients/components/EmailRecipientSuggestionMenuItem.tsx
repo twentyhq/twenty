@@ -1,4 +1,4 @@
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives';
 import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
 
 import { type EmailRecipientSuggestion } from '@/activities/emails/recipients/hooks/useEmailRecipientSuggestions';

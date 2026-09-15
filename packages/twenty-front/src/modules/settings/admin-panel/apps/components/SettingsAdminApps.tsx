@@ -34,7 +34,7 @@ import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemSwitch } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives';
 import {
   type ApplicationRegistrationFragmentFragment,
   ApplicationRegistrationSourceType,

@@ -19,7 +19,8 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Chip, LinkChip } from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/primitives';
+import { LinkChip } from 'twenty-ui/data-display';
 import { TooltipPosition } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

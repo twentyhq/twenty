@@ -11,7 +11,7 @@ import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
 
 ```tsx
 import { IconCopy } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives';
 
 type DuplicateActionProps = { onDuplicate: () => void };
 
@@ -33,7 +33,7 @@ The default element is a `div`. Use `render` to give an interactive row appropri
 
 ```tsx
 import { useState } from 'react';
-import { ListItem } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives';
 
 export const ShowArchivedToggle = () => {
   const [selected, setSelected] = useState(false);

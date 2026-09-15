@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
 
-import { Text } from '@ui/typography/Text/Text';
+import { Text } from '@ui/primitives/Text/Text';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './EllipsisDisplay.module.scss';

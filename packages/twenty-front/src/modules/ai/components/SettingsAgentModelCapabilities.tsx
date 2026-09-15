@@ -1,5 +1,6 @@
 import { useResolvedAiModel } from '@/ai/hooks/useResolvedAiModel';
-import { InputLabel, Checkbox } from 'twenty-ui/input';
+import { InputLabel } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';

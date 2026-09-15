@@ -1,7 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { Avatar } from '@ui/data-display';
+import { Avatar } from '@ui/primitives/Avatar/Avatar';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,

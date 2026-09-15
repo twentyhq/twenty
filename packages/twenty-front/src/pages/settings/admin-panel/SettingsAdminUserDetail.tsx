@@ -34,7 +34,7 @@ import {
   IconMail,
   IconUser,
 } from 'twenty-ui/icon';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';

@@ -11,7 +11,7 @@ Use `Menu` for actions opened from a trigger. Its items supply keyboard navigati
 
 ```tsx
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
-import { Menu } from 'twenty-ui/surfaces';
+import { Menu } from 'twenty-ui/primitives';
 
 type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
 
@@ -37,7 +37,7 @@ Action items close the menu when selected by default. `disabled` prevents select
 
 ```tsx
 import { useState } from 'react';
-import { Menu } from 'twenty-ui/surfaces';
+import { Menu } from 'twenty-ui/primitives';
 
 export const ViewMenu = () => {
   const [showArchived, setShowArchived] = useState(false);

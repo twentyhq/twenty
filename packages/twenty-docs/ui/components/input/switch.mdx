@@ -10,7 +10,7 @@ Use `Switch` for an on or off preference. Give the control a visible label or an
 ## Uncontrolled state
 
 ```tsx
-import { Switch } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/primitives';
 
 export const NotificationsPreference = () => (
   <label>
@@ -24,7 +24,7 @@ export const NotificationsPreference = () => (
 
 ```tsx
 import { useState } from 'react';
-import { Switch } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/primitives';
 
 export const NotificationsPreference = () => {
   const [checked, setChecked] = useState(false);

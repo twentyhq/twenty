@@ -1,5 +1,5 @@
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { Tag } from '@ui/data-display/Tag/Tag';
+import { Tag } from '@ui/primitives/Tag/Tag';
 import { type ThemeColor } from '@ui/theme';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 

@@ -4,7 +4,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 
 const StyledTagContainer = styled.div`

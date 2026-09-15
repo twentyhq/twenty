@@ -17,7 +17,8 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
-import { AvatarOrIcon, LinkChip, Status } from 'twenty-ui/data-display';
+import { AvatarOrIcon, LinkChip } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives';
 import {
   IconCalendar,
   IconHome,

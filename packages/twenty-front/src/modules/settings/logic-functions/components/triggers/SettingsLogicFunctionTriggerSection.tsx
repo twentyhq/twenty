@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { H2Title } from 'twenty-ui/typography';
-import { Switch } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/primitives';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

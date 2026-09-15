@@ -1,4 +1,5 @@
-import { Avatar, type AvatarProps } from '@ui/data-display';
+import { Avatar } from '@ui/primitives/Avatar/Avatar';
+import { type AvatarProps } from '@ui/primitives/Avatar/types/AvatarProps';
 import {
   type MenuItemIconButton,
   MenuItem,

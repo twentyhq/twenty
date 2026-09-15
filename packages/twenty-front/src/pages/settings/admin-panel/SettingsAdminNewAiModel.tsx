@@ -28,7 +28,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCustomAiProviderAccess';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
-import { Checkbox, Switch } from 'twenty-ui/input';
+import { Checkbox, Switch } from 'twenty-ui/primitives';
 
 const StyledComboInputContainer = styled.div`
   display: flex;

@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import {
-  Field,
-  Input,
-  InputGroup,
-  InputHint,
-  InputLabel,
-  Textarea,
-} from 'twenty-ui/input';
+import { Field, Input, InputGroup, Textarea } from 'twenty-ui/primitives';
+import { InputHint, InputLabel } from 'twenty-ui/input';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
