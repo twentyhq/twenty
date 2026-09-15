@@ -15,10 +15,10 @@ import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/re
 import { type WorkspaceRelationShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { type InheritedReadabilityParent } from 'src/engine/twenty-orm/types/inherited-readability-parent.type';
 import {
-  combineSqlConditions,
   type RowAccessPolicy,
   type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { combineSqlConditions } from 'src/engine/twenty-orm/utils/combine-sql-conditions.util';
 import {
   buildInheritedReadabilityCondition,
   type InheritedReadabilityParentCondition,
