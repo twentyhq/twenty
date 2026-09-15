@@ -1,6 +1,11 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
+const {
+  readText,
+  listFiles,
+} = require('../../twenty-codex-plugin/scripts/validators/lib');
+
 const PACKAGE_ROOT = path.resolve(__dirname, '..');
 const CODEX_PLUGIN_ROOT = path.resolve(
   PACKAGE_ROOT,
@@ -25,28 +30,6 @@ const SIBLING_REFERENCE_PATTERN =
   /\.\.\/([A-Za-z0-9._-]+)\/([A-Za-z0-9._-]+\.md)/g;
 const SAME_DIRECTORY_REFERENCE_PATTERN = /`([A-Za-z0-9._-]+\.md)`/g;
 
-const readText = (filePath) => fs.readFileSync(filePath, 'utf8');
-
-const listFiles = (directory) => {
-  const entries = fs.readdirSync(directory, { withFileTypes: true });
-  const files = [];
-
-  for (const entry of entries) {
-    const absolutePath = path.join(directory, entry.name);
-
-    if (entry.isDirectory()) {
-      files.push(...listFiles(absolutePath));
-    } else {
-      files.push(absolutePath);
-    }
-  }
-
-  return files.sort();
-};
-
-// Reference docs are mentioned in prose by bare filename. Generic names such as
-// README.md refer to the user's own files, so only basenames that exist in the
-// references tree count as doc references.
 const findReferenceByBasename = (referencesRoot, basename) => {
   for (const filePath of listFiles(referencesRoot)) {
     if (path.basename(filePath) === basename) {
