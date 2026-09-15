@@ -116,6 +116,12 @@ export function buildInboxItemPartialUpdate({
       return {
         queueId: transition.toQueueId,
         assigneeUserWorkspaceId: assignee,
+        // A slot is unique per inbox, so the destination may already hold one
+        // with this key. The item gives up its slot rather than its existence,
+        // as it does when the inbox it was in is deleted. Nothing is lost that
+        // worked: a fold looks in the address the router resolved, so a moved
+        // item was already out of reach of the events that fed it.
+        slotKey: null,
         readAt: null,
         clearedAt: null,
         clearedByUserWorkspaceId: null,

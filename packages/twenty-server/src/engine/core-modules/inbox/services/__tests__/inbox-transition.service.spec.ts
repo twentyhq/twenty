@@ -543,6 +543,28 @@ describe('InboxTransitionService', () => {
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
 
+    // The slot is unique per inbox, so keeping it would make the move fail
+    // whenever the destination already holds an item for the same subject.
+    it('gives up the slot so a move cannot collide with the destination', async () => {
+      inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
+        buildInboxItem({ queueId: null, slotKey: 'thread:abc' }),
+      );
+
+      await service.transition({
+        inboxItemId: INBOX_ITEM_ID,
+        workspaceId: WORKSPACE_ID,
+        actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        accessibleQueueIds: [QUEUE_ID],
+        transition: { kind: 'MOVE', toQueueId: QUEUE_ID },
+      });
+
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.anything(),
+        expect.objectContaining({ queueId: QUEUE_ID, slotKey: null }),
+      );
+    });
+
     // A write would bump the version, and every client holding the item would
     // then have to reload before it could act on it again.
     it('writes nothing at all when the item is already in that inbox', async () => {
