@@ -1,3 +1,4 @@
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { DeleteRecordExportJob } from 'src/engine/core-modules/record-export/jobs/delete-record-export.job';
 import { Module } from '@nestjs/common';
@@ -17,6 +18,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 @Module({
   imports: [
     CoreCommonApiModule,
+    FeatureFlagModule,
     JwtModule,
     UserWorkspaceModule,
     PermissionsModule,

@@ -1,12 +1,16 @@
 import { json2csv } from 'json-2-csv';
+import { useMemo } from 'react';
 
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
+import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useRecordIndexExportParameters } from '@/object-record/record-index/export/hooks/useRecordIndexExportParameters';
-import { useExportRecords } from '@/record-export/hooks/useExportRecords';
-import { type ViewType } from '@/views/types/ViewType';
+import {
+  useRecordIndexLazyFetchRecords,
+  type UseRecordDataOptions,
+} from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from 'twenty-shared/constants';
@@ -149,22 +153,48 @@ const downloader = (mimeType: string, generator: GenerateExport) => {
 
 export const csvDownloader = downloader('text/csv', generateCsv);
 
+type UseExportTableDataOptions = Omit<UseRecordDataOptions, 'callback'> & {
+  filename: string;
+};
+
 export const useRecordIndexExportRecords = ({
+  delayMs,
+  filename,
+  maximumRequests = 1000,
   objectMetadataItem,
+  pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   viewType,
-  onProgress,
-}: {
-  objectMetadataItem: EnrichedObjectMetadataItem;
-  recordIndexId: string;
-  viewType?: ViewType;
-  onProgress?: (progress: number) => void;
-}) => {
-  const parameters = useRecordIndexExportParameters({
+}: UseExportTableDataOptions) => {
+  const { processRecordsForCSVExport } = useExportProcessRecordsForCSV(
+    objectMetadataItem.nameSingular,
+  );
+
+  const downloadCsv = useMemo(
+    () =>
+      (
+        records: ObjectRecord[],
+        columns: Pick<
+          ColumnDefinition<FieldMetadata>,
+          'label' | 'type' | 'metadata'
+        >[],
+      ) => {
+        const recordsProcessedForExport = processRecordsForCSVExport(records);
+
+        csvDownloader(filename, { rows: recordsProcessedForExport, columns });
+      },
+    [filename, processRecordsForCSVExport],
+  );
+
+  const { getTableData: download, progress } = useRecordIndexLazyFetchRecords({
+    delayMs,
+    maximumRequests,
     objectMetadataItem,
+    pageSize,
     recordIndexId,
+    callback: downloadCsv,
     viewType,
   });
-  const { exportRecords } = useExportRecords({ onProgress });
-  return { download: () => exportRecords(parameters) };
+
+  return { progress, download };
 };

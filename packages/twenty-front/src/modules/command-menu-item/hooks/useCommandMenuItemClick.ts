@@ -1,3 +1,4 @@
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
 import { isPathCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isPathCommandMenuItemPayload';
@@ -14,6 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import {
   EngineComponentKey,
+  FeatureFlagKey,
   type CommandMenuItemFieldsFragment,
 } from '~/generated-metadata/graphql';
 
@@ -26,6 +28,9 @@ export const useCommandMenuItemClick = ({
   Icon: IconComponent;
   label: string;
 }) => {
+  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
+  );
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const mountCommand = useMountCommand();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
@@ -83,7 +88,7 @@ export const useCommandMenuItemClick = ({
           EngineComponentKey.EXPORT_FROM_RECORD_SHOW,
           EngineComponentKey.EXPORT_MULTIPLE_RECORDS,
         ].includes(item.engineComponentKey);
-      if (!isExport) closeCommandMenu();
+      if (!isExport || !isAsyncCsvExportEnabled) closeCommandMenu();
 
       await mountCommand({
         engineCommandId: item.id,
