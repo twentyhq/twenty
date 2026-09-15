@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Kan nie bewerking voltooi nie weens verwante rekords."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Kan nie meervoudige konsepweergawe vir dieselfde werkvloeiontwikke se weergawe nie"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Kan nie werkvloeiontwikke se weergawe skep met status, anders as konsep, nie"
 
@@ -10439,7 +10439,7 @@ msgstr "Die happensAt-veld wat deur hierdie tydlynaktiwiteitstipe gebruik word, 
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Die aanvanklike weergawe van 'n werkvloei kan nie uitgevee word nie"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Hierdie veld kan nie gewysig word nie."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Hierdie veld kan nie direk op 'n werkvloeiweergawe bygewerk word nie"
 
@@ -11249,6 +11249,16 @@ msgstr "Hierdie weergawe is nie hoër as die tans ontplooide weergawe nie. Verho
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Hierdie weergawe van die toepassing is reeds in hierdie werkruimte geïnstalleer."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr ""
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr ""
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
