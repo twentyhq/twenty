@@ -1,6 +1,7 @@
 import { type calendar_v3, type gmail_v1 } from 'googleapis';
 import { http, HttpResponse } from 'msw';
 
+import { gmailBatchMultipartResponse } from 'test/integration/google/mocks/gmail-batch-multipart-response.util';
 import { gmailHistoryHandler } from 'test/integration/google/mocks/gmail-history-handler.util';
 import { gmailMailboxHandlers } from 'test/integration/google/mocks/gmail-mailbox-handlers.util';
 import { gmailMessageListHandler } from 'test/integration/google/mocks/gmail-message-list-handler.util';
@@ -37,6 +38,7 @@ export type GoogleMock = {
   rateLimitMessageList: (retryAfterIso: string) => void;
   rateLimitCalendarEventList: () => void;
   failMessageList: (failure: GoogleApiFailure) => void;
+  failMessageFetch: (failure: GoogleApiFailure) => void;
   failCalendarEventList: (failure: GoogleApiFailure) => void;
   declineTokenRefresh: () => void;
 };
@@ -47,21 +49,16 @@ export type GoogleApiFailure = {
   message: string;
 };
 
-const googleApiErrorResponse = ({
-  status,
-  reason,
-  message,
-}: GoogleApiFailure) =>
-  HttpResponse.json(
-    {
-      error: {
-        code: status,
-        message,
-        errors: [{ reason, message }],
-      },
-    },
-    { status },
-  );
+const googleApiErrorBody = ({ status, reason, message }: GoogleApiFailure) => ({
+  error: {
+    code: status,
+    message,
+    errors: [{ reason, message }],
+  },
+});
+
+const googleApiErrorResponse = (failure: GoogleApiFailure) =>
+  HttpResponse.json(googleApiErrorBody(failure), { status: failure.status });
 
 export const setupGoogleMock = ({
   handle,
@@ -205,6 +202,22 @@ export const setupGoogleMock = ({
         ),
         http.get('*/gmail/v1/users/me/history', () =>
           googleApiErrorResponse(failure),
+        ),
+      ),
+    failMessageFetch: (failure) =>
+      httpMock.use(
+        http.get('*/gmail/v1/users/me/messages/:messageId', () =>
+          googleApiErrorResponse(failure),
+        ),
+        http.post('*/batch', async ({ request }) =>
+          gmailBatchMultipartResponse(
+            [...(await request.text()).matchAll(/messages\/([\w-]+)/g)].map(
+              () => ({
+                statusLine: `${failure.status} ${failure.reason}`,
+                body: googleApiErrorBody(failure),
+              }),
+            ),
+          ),
         ),
       ),
     failCalendarEventList: (failure) =>

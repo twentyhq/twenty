@@ -112,6 +112,10 @@ export class MessageChannelSyncStatusService {
       await this.cacheStorage.del(
         `messages-to-import:${workspaceId}:${messageChannelId}`,
       );
+
+      await this.cacheStorage.del(
+        `messages-import-failure-streak:${workspaceId}:${messageChannelId}`,
+      );
     }
 
     const authContext = buildSystemAuthContext(workspaceId);

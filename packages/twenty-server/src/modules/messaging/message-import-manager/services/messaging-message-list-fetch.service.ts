@@ -121,9 +121,7 @@ export class MessagingMessageListFetchService {
               messageFoldersToSync,
             );
 
-          await this.cacheStorage.del(
-            `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
-          );
+          const messagesToImportCacheKey = `messages-to-import:${workspaceId}:${freshMessageChannel.id}`;
 
           const messageExternalIds = [
             ...messageLists.flatMap(
@@ -188,7 +186,7 @@ export class MessagingMessageListFetchService {
               totalMessagesToImportCount += messageExternalIdsToImport.length;
 
               await this.cacheStorage.setAdd(
-                `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
+                messagesToImportCacheKey,
                 messageExternalIdsToImport,
                 ONE_WEEK_IN_MILLISECONDS,
               );
@@ -237,6 +235,11 @@ export class MessagingMessageListFetchService {
                 `messageChannelId: ${freshMessageChannel.id} Deleting ${toDeleteChunk.length} message channel message associations in batch ${index + 1}`,
               );
 
+              await this.cacheStorage.setRemove(
+                messagesToImportCacheKey,
+                toDeleteChunk,
+              );
+
               await this.messagingMessageCleanerService.deleteMessagesChannelMessageAssociationsAndRelatedOrphans(
                 {
                   workspaceId,
@@ -247,11 +250,14 @@ export class MessagingMessageListFetchService {
             }
           }
 
+          const pendingMessagesToImportCount =
+            await this.cacheStorage.getSetLength(messagesToImportCacheKey);
+
           this.logger.log(
-            `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Total messages to import count: ${totalMessagesToImportCount}`,
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${freshMessageChannel.id} - Total messages to import count: ${totalMessagesToImportCount}, pending messages to import count: ${pendingMessagesToImportCount}`,
           );
 
-          if (totalMessagesToImportCount === 0) {
+          if (pendingMessagesToImportCount === 0) {
             await this.messageChannelSyncStatusService.markAsMessageSyncCompleted(
               [freshMessageChannel.id],
               workspaceId,
