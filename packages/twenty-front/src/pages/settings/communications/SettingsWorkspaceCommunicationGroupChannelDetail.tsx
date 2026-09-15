@@ -23,32 +23,32 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isNonEmptyString } from '@sniptt/guards';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  EmailingDomainStatus,
-  GetEmailingDomainsDocument,
-} from '~/generated-metadata/graphql';
-import { Status } from 'twenty-ui/primitives/data-display';
+import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { NotFound } from '~/pages/not-found/NotFound';
-import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
-import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusText';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const DELETE_EMAIL_GROUP_MODAL_ID = 'delete-email-group-channel-modal';
 
-const StyledForwardingRow = styled.div`
+const StyledInputRow = styled.div`
   display: flex;
   flex-direction: row;
 `;
 
-const StyledForwardingInputContainer = styled.div`
+const StyledInputContainer = styled.div`
   flex: 1;
   margin-right: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledSendingDomainColumn = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
 `;
 
 export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
@@ -88,8 +88,6 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const emailingDomain = emailingDomainsData?.getEmailingDomains?.find(
     (domain) => domain.domain.toLowerCase() === channelDomain,
   );
-
-  const domainStatus = emailingDomain?.status ?? EmailingDomainStatus.PENDING;
 
   const displayName = channel.displayName ?? '';
 
@@ -184,15 +182,15 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             title={t`Forwarding address`}
             description={t`Set up forwarding from the source address to this destination.`}
           />
-          <StyledForwardingRow>
-            <StyledForwardingInputContainer>
+          <StyledInputRow>
+            <StyledInputContainer>
               <SettingsTextInput
                 instanceId="email-group-forwarding"
                 value={forwardingAddress}
                 disabled
                 fullWidth
               />
-            </StyledForwardingInputContainer>
+            </StyledInputContainer>
             <Button
               Icon={IconCopy}
               title={t`Copy`}
@@ -203,7 +201,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
                 )
               }
             />
-          </StyledForwardingRow>
+          </StyledInputRow>
         </Section>
         {isNonEmptyString(channel.displayName) && (
           <Section>
@@ -220,25 +218,30 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           </Section>
         )}
         {isDefined(emailingDomain) && (
-          <>
-            <Section>
-              <H2Title
-                title={t`Sending domain`}
-                description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
-                adornment={
-                  <Status color={getColorByEmailingDomainStatus(domainStatus)}>
-                    {getTextByEmailingDomainStatus(domainStatus)}
-                  </Status>
-                }
-              />
-              <SettingsEmailingDomainVerifyButton
-                emailingDomainId={emailingDomain.id}
-              />
-            </Section>
-            <SettingsEmailingDomainDnsRecords
-              verificationRecords={emailingDomain.verificationRecords ?? []}
+          <Section>
+            <H2Title
+              title={t`Sending domain`}
+              description={t`Add these records at your DNS provider. Twenty checks them automatically.`}
             />
-          </>
+            <StyledSendingDomainColumn>
+              <StyledInputRow>
+                <StyledInputContainer>
+                  <SettingsTextInput
+                    instanceId="email-group-sending-domain"
+                    value={emailingDomain.domain}
+                    disabled
+                    fullWidth
+                  />
+                </StyledInputContainer>
+                <SettingsEmailingDomainVerifyButton
+                  emailingDomainId={emailingDomain.id}
+                />
+              </StyledInputRow>
+              <SettingsEmailingDomainDnsRecords
+                verificationRecords={emailingDomain.verificationRecords ?? []}
+              />
+            </StyledSendingDomainColumn>
+          </Section>
         )}
       </SettingsPageContainer>
       <ConfirmationModal

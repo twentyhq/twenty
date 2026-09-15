@@ -1,15 +1,14 @@
-import { useLingui } from '@lingui/react/macro';
-import { Fragment } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { Section } from 'twenty-ui/primitives/layout';
-import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Status } from 'twenty-ui/primitives/data-display';
 
-import { Separator } from '@/settings/components/Separator';
-import { SettingsEmailingDomainDnsRecordGroup } from '@/settings/emailing-domains/components/SettingsEmailingDomainDnsRecordGroup';
+import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
+import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { VERIFICATION_RECORD_GROUP_DISPLAY_ORDER } from '@/settings/emailing-domains/constants/VerificationRecordGroupDisplayOrder';
 import { type SettingsEmailingDomainVerificationRecord } from '@/settings/emailing-domains/types/SettingsEmailingDomainVerificationRecord';
+import { getVerificationRecordGroupContent } from '@/settings/emailing-domains/utils/getVerificationRecordGroupContent';
 import { getVerificationRecordGroupKey } from '@/settings/emailing-domains/utils/getVerificationRecordGroupKey';
+import { getVerificationRecordGroupStatusDisplay } from '@/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type SettingsEmailingDomainDnsRecordsProps = {
@@ -19,7 +18,6 @@ type SettingsEmailingDomainDnsRecordsProps = {
 export const SettingsEmailingDomainDnsRecords = ({
   verificationRecords,
 }: SettingsEmailingDomainDnsRecordsProps) => {
-  const { t } = useLingui();
   const isMessageCampaignEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
@@ -27,35 +25,49 @@ export const SettingsEmailingDomainDnsRecords = ({
   const groups = VERIFICATION_RECORD_GROUP_DISPLAY_ORDER.filter(
     (groupKey) => groupKey !== 'UNSUBSCRIBE' || isMessageCampaignEnabled,
   )
-    .map((groupKey) => ({
-      groupKey,
-      records: verificationRecords.filter(
+    .map((groupKey) => {
+      const records = verificationRecords.filter(
         (record) => getVerificationRecordGroupKey(record) === groupKey,
-      ),
-    }))
+      );
+
+      return {
+        id: groupKey,
+        records,
+        status: getVerificationRecordGroupStatusDisplay({
+          records,
+          isRequired: records.some((record) => record.isRequired !== false),
+        }),
+        ...getVerificationRecordGroupContent(groupKey),
+      };
+    })
     .filter(({ records }) => records.length > 0);
 
   if (groups.length === 0) {
     return null;
   }
 
+  const tableRecords = groups.flatMap(({ records }) =>
+    records.map((record) => ({
+      type: record.type,
+      key: record.key,
+      value: isDefined(record.priority)
+        ? `${record.priority} ${record.value}`
+        : record.value,
+    })),
+  );
+
   return (
-    <Section>
-      <H2Title
-        title={t`DNS records`}
-        description={t`Add these records at your DNS provider. Twenty checks them automatically.`}
+    <>
+      <SettingsListCard
+        items={groups}
+        rounded
+        getItemLabel={(group) => group.title}
+        RowIconFn={(group) => group.Icon}
+        RowRightComponent={({ item: group }) => (
+          <Status color={group.status.color}>{group.status.label}</Status>
+        )}
       />
-      <Card rounded fullWidth>
-        {groups.map(({ groupKey, records }, index) => (
-          <Fragment key={groupKey}>
-            {index > 0 && <Separator />}
-            <SettingsEmailingDomainDnsRecordGroup
-              groupKey={groupKey}
-              records={records}
-            />
-          </Fragment>
-        ))}
-      </Card>
-    </Section>
+      <SettingsDnsRecordsTable records={tableRecords} />
+    </>
   );
 };

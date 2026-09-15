@@ -10,7 +10,6 @@ import { getTextByEmailingDomainStatus } from '~/pages/settings/emailing-domains
 type VerificationRecordGroupStatusDisplay = {
   label: string;
   color: ThemeColor;
-  isVerified: boolean;
 };
 
 export const getVerificationRecordGroupStatusDisplay = ({
@@ -29,7 +28,7 @@ export const getVerificationRecordGroupStatusDisplay = ({
   );
 
   if (!isRequired && !isVerified) {
-    return { label: t`Not set`, color: 'gray', isVerified };
+    return { label: t`Not set`, color: 'gray' };
   }
 
   const groupStatus = isVerified
@@ -41,6 +40,5 @@ export const getVerificationRecordGroupStatusDisplay = ({
   return {
     label: getTextByEmailingDomainStatus(groupStatus),
     color: getColorByEmailingDomainStatus(groupStatus),
-    isVerified,
   };
 };

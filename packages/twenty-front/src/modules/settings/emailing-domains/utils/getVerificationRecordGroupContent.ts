@@ -2,10 +2,10 @@ import { t } from '@lingui/core/macro';
 import {
   type IconComponent,
   IconInbox,
-  IconKey,
+  IconLogout,
   IconMail,
-  IconMailX,
   IconShield,
+  IconWorldWww,
 } from 'twenty-ui/icon';
 
 import { type VerificationRecordGroupKey } from '@/settings/emailing-domains/types/VerificationRecordGroupKey';
@@ -13,7 +13,6 @@ import { type VerificationRecordGroupKey } from '@/settings/emailing-domains/typ
 type VerificationRecordGroupContent = {
   Icon: IconComponent;
   title: string;
-  description: string;
 };
 
 export const getVerificationRecordGroupContent = (
@@ -21,34 +20,14 @@ export const getVerificationRecordGroupContent = (
 ): VerificationRecordGroupContent => {
   switch (groupKey) {
     case 'AUTHENTICATION':
-      return {
-        Icon: IconKey,
-        title: t`Domain authentication`,
-        description: t`Proves that emails from this domain come from you and routes bounces back to Twenty.`,
-      };
+      return { Icon: IconWorldWww, title: t`Domain authentication` };
     case 'DMARC':
-      return {
-        Icon: IconShield,
-        title: t`DMARC policy`,
-        description: t`Tells inboxes what to do with emails that fail these checks.`,
-      };
+      return { Icon: IconShield, title: t`DMARC policy` };
     case 'RECEIVING':
-      return {
-        Icon: IconInbox,
-        title: t`Receiving`,
-        description: t`Lets this domain receive emails through your provider.`,
-      };
+      return { Icon: IconInbox, title: t`Receiving` };
     case 'UNSUBSCRIBE':
-      return {
-        Icon: IconMailX,
-        title: t`Unsubscribe link`,
-        description: t`Hosts the unsubscribe link of your campaigns.`,
-      };
+      return { Icon: IconLogout, title: t`Unsubscribe link` };
     case 'OTHER':
-      return {
-        Icon: IconMail,
-        title: t`DNS records`,
-        description: t`Add these records at your DNS provider.`,
-      };
+      return { Icon: IconMail, title: t`DNS records` };
   }
 };
