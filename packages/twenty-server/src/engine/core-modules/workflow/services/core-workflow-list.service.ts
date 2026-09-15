@@ -198,6 +198,42 @@ export class CoreWorkflowListService {
     };
   }
 
+  async findOneById({
+    workspaceId,
+    coreWorkflowId,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+  }): Promise<CoreWorkflowDTO | null> {
+    const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
+
+    const rows: CoreWorkflowRow[] = await this.coreDataSource.query(
+      `SELECT
+         c.id,
+         null AS "cursorSortValue",
+         wf.id::text AS "workspaceWorkflowId",
+         ${CORE_WORKFLOW_AGGREGATE_COLUMNS}
+       FROM core."workflow" c
+       JOIN ${schemaName}."workflow" wf
+         ON wf."coreWorkflowId" = c.id
+         AND wf."deletedAt" IS NULL
+       LEFT JOIN core."workflowVersion" v
+         ON v."workflowId" = wf.id AND v."workspaceId" = $1
+       WHERE c."workspaceId" = $1
+         AND c.id = $2
+       GROUP BY ${GROUPED_WORKFLOW_COLUMNS}, c."lastPublishedVersionId", c."applicationId", wf.id`,
+      [workspaceId, coreWorkflowId],
+    );
+
+    const [row] = rows;
+
+    if (!isDefined(row)) {
+      return null;
+    }
+
+    return toCoreWorkflowDTO(row);
+  }
+
   async findOneByWorkspaceWorkflowId({
     workspaceId,
     workspaceWorkflowId,

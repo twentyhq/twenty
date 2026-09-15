@@ -1,6 +1,10 @@
 import { useCoreWorkflowForShowPage } from '@/object-core/workflows/hooks/useCoreWorkflowForShowPage';
 import { useCoreWorkflowVersionContent } from '@/object-core/workflows/hooks/useCoreWorkflowVersionContent';
+import { useQuery } from '@apollo/client/react';
+
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { GetCoreWorkflowByIdDocument } from '~/generated/graphql';
 import { useEffectiveDraftVersionId } from '@/workflow/hooks/useEffectiveDraftVersionId';
 import {
   type Workflow,
@@ -8,6 +12,7 @@ import {
   type WorkflowWithCurrentVersion,
 } from '@/workflow/types/Workflow';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular, FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -24,10 +29,26 @@ export const useWorkflowWithCurrentVersion = (
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
   );
 
+  const apolloCoreClient = useApolloCoreClient();
+
+  const { data: coreWorkflowByIdData } = useQuery(GetCoreWorkflowByIdDocument, {
+    client: apolloCoreClient,
+    fetchPolicy: 'cache-only',
+    variables: { coreWorkflowId: workflowId ?? '' },
+    skip: !isDefined(workflowId),
+  });
+
+  const workspaceWorkflowIdFromCore =
+    coreWorkflowByIdData?.coreWorkflowById?.workspaceWorkflowId;
+
+  const effectiveWorkflowId = isNonEmptyString(workspaceWorkflowIdFromCore)
+    ? workspaceWorkflowIdFromCore
+    : workflowId;
+
   const { record: workspaceWorkflow } =
     useFindOneRecord<WorkflowWithAllVersions>({
       objectNameSingular: CoreObjectNameSingular.Workflow,
-      objectRecordId: workflowId,
+      objectRecordId: effectiveWorkflowId,
       recordGqlFields: {
         id: true,
         name: true,
@@ -40,7 +61,7 @@ export const useWorkflowWithCurrentVersion = (
           createdAt: true,
         },
       },
-      skip: !isDefined(workflowId) || isWorkflowCoreIndexPageEnabled,
+      skip: !isDefined(effectiveWorkflowId) || isWorkflowCoreIndexPageEnabled,
     });
 
   const {
@@ -48,7 +69,7 @@ export const useWorkflowWithCurrentVersion = (
     versions: coreVersions,
     draftVersionIdFromServer,
   } = useCoreWorkflowForShowPage({
-    workspaceWorkflowId: workflowId,
+    workspaceWorkflowId: effectiveWorkflowId,
     skip: !isWorkflowCoreIndexPageEnabled,
   });
 
@@ -99,7 +120,7 @@ export const useWorkflowWithCurrentVersion = (
   );
 
   const coreCurrentVersion = useCoreWorkflowVersionContent({
-    workspaceWorkflowId: workflowId,
+    workspaceWorkflowId: effectiveWorkflowId,
     workspaceWorkflowVersionId: currentVersionId,
     skip: !isWorkflowCoreIndexPageEnabled,
   });

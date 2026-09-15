@@ -98,6 +98,11 @@ describe('workspace route objects', () => {
       ),
     ).toContain(AppPath.WorkflowCoreIndexPage);
     expect(
+      getWorkspaceRouteObjectsForSurface(routeObjects, 'side-panel').map(
+        ({ path }) => path,
+      ),
+    ).toContain(AppPath.WorkflowCoreShowPage);
+    expect(
       isWorkspaceLocationAvailableOnSurface(
         routeObjects,
         'side-panel',

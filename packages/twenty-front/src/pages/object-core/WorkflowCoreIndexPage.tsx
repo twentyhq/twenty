@@ -48,12 +48,9 @@ const StyledFetchMoreSentinel = styled.div`
 `;
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
-  isDefined(workflow.workspaceWorkflowId)
-    ? getAppPath(AppPath.RecordShowPage, {
-        objectNameSingular: CoreObjectNameSingular.Workflow,
-        objectRecordId: workflow.workspaceWorkflowId,
-      })
-    : undefined;
+  getAppPath(AppPath.WorkflowCoreShowPage, {
+    coreWorkflowId: workflow.id,
+  });
 
 export const WorkflowCoreIndexPage = () => {
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId(

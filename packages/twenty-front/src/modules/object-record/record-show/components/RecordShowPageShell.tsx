@@ -23,6 +23,7 @@ import { RecordShowPageTitle } from '~/pages/object-record/RecordShowPageTitle';
 type RecordShowPageShellProps = {
   objectNameSingular: string;
   objectRecordId: string;
+  sseRecordId?: string;
   record: ObjectRecord | undefined;
   loading: boolean;
   error?: ErrorLike;
@@ -31,6 +32,7 @@ type RecordShowPageShellProps = {
 export const RecordShowPageShell = ({
   objectNameSingular,
   objectRecordId,
+  sseRecordId,
   record,
   loading,
   error,
@@ -104,7 +106,7 @@ export const RecordShowPageShell = ({
             />
             <RecordShowPageSSESubscribeEffect
               objectNameSingular={objectNameSingular}
-              recordId={objectRecordId}
+              recordId={sseRecordId ?? objectRecordId}
             />
           </TimelineActivityContext.Provider>
         </PageCardLayout>
