@@ -41,10 +41,58 @@ describe('assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly', () => {
           },
         }),
       ).toThrow(
-        `Cannot update custom workspaceMember field via this endpoint: ${fieldName}`,
+        `Cannot update workspaceMember field via this endpoint: ${fieldName}`,
       );
     },
   );
+
+  it.each([
+    'deletedAt',
+    'createdAt',
+    'updatedAt',
+    'createdBy',
+    'updatedBy',
+    'position',
+    'searchVector',
+    'assignedTasks',
+    'ownedOpportunities',
+    'blocklist',
+  ] as const)(
+    'should throw when the update includes the system or relation field %s',
+    (fieldName) => {
+      expect(() =>
+        assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
+          update: {
+            [fieldName]: 'value',
+          },
+        }),
+      ).toThrow(UserInputError);
+    },
+  );
+
+  it('should throw when a system field is mixed with allowed settings fields', () => {
+    expect(() =>
+      assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
+        update: {
+          timeZone: 'Europe/Paris',
+          deletedAt: new Date().toISOString(),
+        },
+      }),
+    ).toThrow(UserInputError);
+  });
+
+  it('should not throw for editable settings fields', () => {
+    expect(() =>
+      assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly({
+        update: {
+          colorScheme: 'Dark',
+          locale: 'en',
+          dateFormat: 'MONTH_FIRST',
+          avatarUrl: 'https://example.com/a.png',
+        },
+      }),
+    ).not.toThrow();
+  });
 
   it('should throw when a top-level key is not in the standard field allowlist', () => {
     const unknownKey = 'notAWorkspaceMemberField';
@@ -64,7 +112,7 @@ describe('assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly', () => {
         },
       }),
     ).toThrow(
-      `Cannot update custom workspaceMember field via this endpoint: ${unknownKey}`,
+      `Cannot update workspaceMember field via this endpoint: ${unknownKey}`,
     );
   });
 
@@ -79,7 +127,7 @@ describe('assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly', () => {
         },
       }),
     ).toThrow(
-      `Cannot update custom workspaceMember field via this endpoint: ${unknownKey}`,
+      `Cannot update workspaceMember field via this endpoint: ${unknownKey}`,
     );
   });
 });
