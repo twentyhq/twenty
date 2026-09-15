@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { partitionTasks } from 'src/logic-functions/utils/build-sync-plan.util';
 import { type GoogleTask, TaskNode } from 'src/logic-functions/types/types';
 
+const LIST_ID = 'list-1';
+
 const googleTask = (overrides: Partial<GoogleTask> = {}): GoogleTask => ({
   id: 'google-1',
   title: 'Buy milk',
@@ -12,6 +14,7 @@ const googleTask = (overrides: Partial<GoogleTask> = {}): GoogleTask => ({
 const existingTask = (overrides: Partial<TaskNode> = {}): TaskNode => ({
   id: 'twenty-1',
   googleTasksId: 'google-1',
+  googleTasksListId: LIST_ID,
   title: 'Buy milk',
   status: 'TODO',
   dueAt: null,
@@ -21,14 +24,14 @@ const existingTask = (overrides: Partial<TaskNode> = {}): TaskNode => ({
 
 describe('partitionTasks', () => {
   it('creates tasks that have no counterpart in Twenty', () => {
-    const plan = partitionTasks([googleTask()], []);
+    const plan = partitionTasks([googleTask()], [], LIST_ID);
 
     expect(plan.tasksToCreate).toHaveLength(1);
     expect(plan.tasksToUpdate).toHaveLength(0);
   });
 
   it('does not create a task that is already deleted upstream', () => {
-    const plan = partitionTasks([googleTask({ deleted: true })], []);
+    const plan = partitionTasks([googleTask({ deleted: true })], [], LIST_ID);
 
     expect(plan.tasksToCreate).toHaveLength(0);
   });
@@ -37,6 +40,7 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask({ deleted: true, title: 'Renamed before deletion' })],
       [existingTask({ id: 'twenty-42' })],
+      LIST_ID,
     );
 
     expect(plan.tasksToCreate).toHaveLength(0);
@@ -44,7 +48,7 @@ describe('partitionTasks', () => {
   });
 
   it('leaves an unchanged task alone', () => {
-    const plan = partitionTasks([googleTask()], [existingTask()]);
+    const plan = partitionTasks([googleTask()], [existingTask()], LIST_ID);
 
     expect(plan.tasksToCreate).toHaveLength(0);
     expect(plan.tasksToUpdate).toHaveLength(0);
@@ -54,6 +58,7 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask({ title: 'Buy oat milk' })],
       [existingTask()],
+      LIST_ID,
     );
 
     expect(plan.tasksToUpdate).toHaveLength(1);
@@ -63,6 +68,7 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask({ title: 'Buy oat milk' })],
       [existingTask({ id: 'twenty-42' })],
+      LIST_ID,
     );
 
     expect(plan.tasksToUpdate[0]).toEqual({
@@ -82,6 +88,7 @@ describe('partitionTasks', () => {
         }),
       ],
       [existingTask()],
+      LIST_ID,
     );
 
     expect(plan.tasksToUpdate[0].fields).toEqual({
@@ -96,15 +103,19 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask()],
       [existingTask({ bodyV2: { markdown: 'stale note' } })],
+      LIST_ID,
     );
 
-    expect(plan.tasksToUpdate[0].fields).toEqual({ bodyV2: { markdown: null } });
+    expect(plan.tasksToUpdate[0].fields).toEqual({
+      bodyV2: { markdown: null },
+    });
   });
 
   it('updates a task whose notes changed', () => {
     const plan = partitionTasks(
       [googleTask({ notes: 'from the corner shop' })],
       [existingTask({ bodyV2: { markdown: undefined } })],
+      LIST_ID,
     );
 
     expect(plan.tasksToUpdate).toHaveLength(1);
@@ -114,6 +125,7 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask()],
       [existingTask({ status: 'IN_PROGRESS' })],
+      LIST_ID,
     );
 
     expect(plan.tasksToUpdate).toHaveLength(0);
@@ -123,13 +135,18 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask({ completed: '2026-08-30T11:00:00.000Z' })],
       [existingTask({ status: 'IN_PROGRESS' })],
+      LIST_ID,
     );
 
     expect(plan.tasksToUpdate).toHaveLength(1);
   });
 
   it('reopens a task that is DONE in Twenty but incomplete upstream', () => {
-    const plan = partitionTasks([googleTask()], [existingTask({ status: 'DONE' })]);
+    const plan = partitionTasks(
+      [googleTask()],
+      [existingTask({ status: 'DONE' })],
+      LIST_ID,
+    );
 
     expect(plan.tasksToUpdate).toHaveLength(1);
   });
@@ -138,6 +155,7 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask({ due: '2026-09-01T00:00:00.000Z' })],
       [existingTask({ dueAt: '2026-09-01T12:00:00Z' })],
+      LIST_ID,
     );
 
     expect(plan.tasksToUpdate).toHaveLength(0);
@@ -147,6 +165,7 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask({ due: '2026-09-02T00:00:00.000Z' })],
       [existingTask({ dueAt: '2026-09-01T12:00:00.000Z' })],
+      LIST_ID,
     );
 
     expect(plan.tasksToUpdate).toHaveLength(1);
@@ -156,6 +175,7 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask({ due: '2026-09-01T00:00:00.000Z' })],
       [existingTask({ dueAt: '2026-09-01T00:00:00.000Z' })],
+      LIST_ID,
     );
 
     expect(plan.tasksToUpdate[0].fields).toEqual({
@@ -167,16 +187,38 @@ describe('partitionTasks', () => {
     const plan = partitionTasks(
       [googleTask({ title: 'Buy oat milk' })],
       [existingTask({ deletedAt: '2026-08-29T10:00:00.000Z' })],
+      LIST_ID,
     );
 
     expect(plan.tasksToCreate).toHaveLength(0);
     expect(plan.tasksToUpdate).toHaveLength(0);
   });
 
+  it('records the list a task was found in', () => {
+    const plan = partitionTasks(
+      [googleTask()],
+      [existingTask({ googleTasksListId: null })],
+      LIST_ID,
+    );
+
+    expect(plan.tasksToUpdate[0].fields).toEqual({
+      googleTasksListId: LIST_ID,
+    });
+  });
+
+  it('follows a task that moved to another list', () => {
+    const plan = partitionTasks([googleTask()], [existingTask()], 'list-2');
+
+    expect(plan.tasksToUpdate[0].fields).toEqual({
+      googleTasksListId: 'list-2',
+    });
+  });
+
   it('ignores Twenty tasks carrying no googleTasksId', () => {
     const plan = partitionTasks(
       [googleTask()],
       [existingTask({ googleTasksId: null })],
+      LIST_ID,
     );
 
     expect(plan.tasksToCreate).toHaveLength(1);

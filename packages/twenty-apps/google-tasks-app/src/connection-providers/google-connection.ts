@@ -13,7 +13,6 @@ export default defineConnectionProvider({
     revokeEndpoint: 'https://oauth2.googleapis.com/revoke',
     scopes: [
       'https://www.googleapis.com/auth/tasks',
-      'https://www.googleapis.com/auth/tasks.readonly',
     ],
     clientIdVariable: 'GOOGLE_TASKS_CLIENT_ID',
     clientSecretVariable: 'GOOGLE_TASKS_CLIENT_SECRET',

@@ -15,8 +15,7 @@
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "typecheck": "tsc --noEmit -p tsconfig.spec.json",
     "test": "vitest run --config vitest.unit.config.ts",
-    "test:watch": "vitest --config vitest.unit.config.ts",
-    "test:integration": "vitest run"
+    "test:watch": "vitest --config vitest.unit.config.ts"
   },
   "devDependencies": {
     "@sniptt/guards": "^0.2.0",

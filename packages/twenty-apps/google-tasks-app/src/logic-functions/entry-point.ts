@@ -1,9 +1,15 @@
 import { defineLogicFunction } from 'twenty-sdk/define';
-import { listConnections } from 'twenty-sdk/logic-function';
+import { enqueueJobs, listConnections } from 'twenty-sdk/logic-function';
+import { chunk } from 'src/logic-functions/utils/chunk.util';
 import { executeWithRetry } from 'src/logic-functions/utils/execute-with-retry.util';
-import { ENTRY_POINT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from "src/constants/universal-identifiers";
-import { GOOGLE_TASKS_CONNECTION_PROVIDER_NAME, } from "src/constants/sync";
-import { RestApiClient } from 'twenty-client-sdk/rest';
+import {
+  ENTRY_POINT_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+  SYNC_TASKS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+import {
+  GOOGLE_TASKS_CONNECTION_PROVIDER_NAME,
+  MAX_JOBS_PER_ENQUEUE,
+} from 'src/constants/sync';
 
 const handler = async () => {
   const connections = await executeWithRetry(() =>
@@ -13,19 +19,18 @@ const handler = async () => {
     }),
   );
 
-  const payloads = connections
-  .filter(
-    (connection) =>
-      connection.authFailedAt === null,
-  );
+  const jobs = connections
+    .filter((connection) => connection.authFailedAt === null)
+    .map((connection) => ({ payload: { connectionId: connection.id } }));
 
-  if (payloads.length === 0) {
-    return;
-  }
-  const client = new RestApiClient();
-
-  for (const connection of payloads) {
-    await client.post('/s/sync-google-tasks', { connectionId: connection.id });
+  for (const batch of chunk(jobs, MAX_JOBS_PER_ENQUEUE)) {
+    await executeWithRetry(() =>
+      enqueueJobs({
+        logicFunctionUniversalIdentifier:
+          SYNC_TASKS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
+        jobs: batch,
+      }),
+    );
   }
 };
 

@@ -18,11 +18,6 @@ const getErrorMessage = (error: unknown): string =>
 const hasRetryableErrorMessage = (error: unknown): boolean =>
   RETRYABLE_ERROR_PATTERN.test(getErrorMessage(error));
 
-const parseRetryAfterMs = (error: unknown): number | undefined => {
-  const match = getErrorMessage(error).match(/"retry_after"\s*:\s*(\d+)/);
-  return match ? Number(match[1]) * 1_000 : undefined;
-};
-
 export const executeWithRetry = async <TResult>(
   execute: () => TResult,
   isRetryable: (error: unknown) => boolean = hasRetryableErrorMessage,
@@ -39,13 +34,9 @@ export const executeWithRetry = async <TResult>(
         INITIAL_RETRY_DELAY_MS * 2 ** (attempt - 1),
         MAX_RETRY_DELAY_MS,
       );
-      const retryAfterMs = Math.min(
-        parseRetryAfterMs(error) ?? 0,
-        MAX_RETRY_DELAY_MS,
-      );
       const jitterMs = Math.random() * MAX_JITTER_MS;
 
-      await sleep(Math.max(backoffMs, retryAfterMs) + jitterMs);
+      await sleep(backoffMs + jitterMs);
     }
   }
 };

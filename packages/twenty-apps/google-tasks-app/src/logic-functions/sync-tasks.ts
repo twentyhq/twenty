@@ -1,41 +1,32 @@
-import { defineLogicFunction, RoutePayload } from 'twenty-sdk/define';
-import axios, { type AxiosInstance, isAxiosError } from "axios";
-import { isNonEmptyString, isString } from "@sniptt/guards";
-import { getConnection, kv, RetryableLogicFunctionError, } from "twenty-sdk/logic-function";
-import { CoreApiClient } from "twenty-client-sdk/core";
-import { buildSyncPlan } from "src/logic-functions/utils/build-sync-plan.util";
-import { createTasks } from "src/logic-functions/utils/create-tasks.util";
-import { updateTasks } from "src/logic-functions/utils/update-tasks.util";
-import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
-import { SYNC_TASKS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from "src/constants/universal-identifiers";
-import { GOOGLE_TASKS_BASE_API_URL, GOOGLE_TASKS_PAGE_SIZE } from "src/constants/sync";
-import { TaskListsResponse, TasksResponse } from "src/logic-functions/types/types";
+import { defineLogicFunction } from 'twenty-sdk/define';
+import axios, { type AxiosInstance } from 'axios';
+import { isNonEmptyString, isString } from '@sniptt/guards';
+import {
+  getConnection,
+  kv,
+  RetryableLogicFunctionError,
+} from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+import { buildSyncPlan } from 'src/logic-functions/utils/build-sync-plan.util';
+import { createTasks } from 'src/logic-functions/utils/create-tasks.util';
+import { updateTasks } from 'src/logic-functions/utils/update-tasks.util';
+import { executeWithRetry } from 'src/logic-functions/utils/execute-with-retry.util';
+import {
+  isGoogleAuthorizationFailure,
+  isTransientGoogleError,
+} from 'src/logic-functions/utils/google-error.util';
+import { SYNC_TASKS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import {
+  GOOGLE_TASKS_BASE_API_URL,
+  GOOGLE_TASKS_PAGE_SIZE,
+} from 'src/constants/sync';
+import {
+  TaskListsResponse,
+  TasksResponse,
+} from 'src/logic-functions/types/types';
 
-const lastSyncedAtKey = (connectionId: string) => `sync:lastSyncedAt:${connectionId}`;
-
-const isTransient = (error: unknown) => {
-  if (!isAxiosError(error)) {
-    return false;
-  }
-
-  const status = error.response?.status;
-
-  return (
-    error.code === 'ECONNABORTED' ||
-    status === 429 ||
-    (status !== undefined && status >= 500)
-  );
-};
-
-const isAuthorizationFailure = (error: unknown) => {
-  if (!isAxiosError(error)) {
-    return false;
-  }
-
-  const status = error.response?.status;
-
-  return status === 401 || status === 403;
-};
+const lastSyncedAtKey = (connectionId: string) =>
+  `sync:lastSyncedAt:${connectionId}`;
 
 const syncTaskList = async (
   axiosInstance: AxiosInstance,
@@ -49,22 +40,23 @@ const syncTaskList = async (
 
   do {
     const response = await executeWithRetry(
-      () => axiosInstance.get<TasksResponse>(`/tasks/v1/lists/${listId}/tasks`, {
-        params: {
-          maxResults: GOOGLE_TASKS_PAGE_SIZE,
-          showHidden: true,
-          showCompleted: true,
-          ...(isString(updatedMin) ? { updatedMin } : {}),
-          ...(pageToken === undefined ? {} : { pageToken }),
-        },
-      }),
-      isTransient,
+      () =>
+        axiosInstance.get<TasksResponse>(`/tasks/v1/lists/${listId}/tasks`, {
+          params: {
+            maxResults: GOOGLE_TASKS_PAGE_SIZE,
+            showHidden: true,
+            showCompleted: true,
+            ...(isString(updatedMin) ? { updatedMin } : {}),
+            ...(pageToken === undefined ? {} : { pageToken }),
+          },
+        }),
+      isTransientGoogleError,
     );
 
     const googleTasks = response.data.items ?? [];
-    const plan = await buildSyncPlan(client, googleTasks);
+    const plan = await buildSyncPlan(client, googleTasks, listId);
 
-    await createTasks(client, assigneeId, plan.tasksToCreate);
+    await createTasks(client, assigneeId, listId, plan.tasksToCreate);
     await updateTasks(client, plan.tasksToUpdate);
 
     counts.created += plan.tasksToCreate.length;
@@ -76,8 +68,7 @@ const syncTaskList = async (
   return counts;
 };
 
-const handler = async (params: RoutePayload<{ connectionId: string }>) => {
-  const connectionId = params.body?.connectionId;
+const handler = async ({ connectionId }: { connectionId?: string }) => {
   if (isNonEmptyString(connectionId) === false) {
     return {
       success: false,
@@ -115,7 +106,7 @@ const handler = async (params: RoutePayload<{ connectionId: string }>) => {
   try {
     const listsResponse = await executeWithRetry(
       () => axiosInstance.get<TaskListsResponse>('/tasks/v1/users/@me/lists'),
-      isTransient,
+      isTransientGoogleError,
     );
 
     for (const list of listsResponse.data.items ?? []) {
@@ -131,13 +122,13 @@ const handler = async (params: RoutePayload<{ connectionId: string }>) => {
       totals.updated += counts.updated;
     }
   } catch (error) {
-    if (isTransient(error)) {
+    if (isTransientGoogleError(error)) {
       throw new RetryableLogicFunctionError(
         `Google Tasks is temporarily unavailable for connection ${connectionId}: ${(error as Error).message}`,
       );
     }
 
-    if (isAuthorizationFailure(error)) {
+    if (isGoogleAuthorizationFailure(error)) {
       return {
         success: false,
         error: `Google Tasks rejected the credentials for connection ${connectionId}; the user must reconnect`,
@@ -147,7 +138,9 @@ const handler = async (params: RoutePayload<{ connectionId: string }>) => {
     throw error;
   }
 
-  await executeWithRetry(() => kv.set(lastSyncedAtKey(connectionId), startedAt));
+  await executeWithRetry(() =>
+    kv.set(lastSyncedAtKey(connectionId), startedAt),
+  );
 
   return {
     success: true,
@@ -161,9 +154,4 @@ export default defineLogicFunction({
   description: 'Syncs Google Tasks into Twenty for one user connection',
   timeoutSeconds: 900,
   handler,
-  httpRouteTriggerSettings: {
-    path: '/sync-google-tasks',
-    httpMethod: 'POST',
-    isAuthRequired: true
-  }
 });

@@ -1,11 +1,19 @@
-import { type CoreApiClient } from "twenty-client-sdk/core";
-import { isNull, isString, isUndefined } from "@sniptt/guards";
-import { type GoogleTask, TaskFields, TaskNode, TasksSyncPlan } from "src/logic-functions/types/types";
-import { executeWithRetry } from "src/logic-functions/utils/execute-with-retry.util";
-import { normalizeDueDate } from "src/logic-functions/utils/normalize-due-date.util";
-import { TASKS_BATCH_SIZE } from "src/constants/sync";
+import { type CoreApiClient } from 'twenty-client-sdk/core';
+import { isNull, isString, isUndefined } from '@sniptt/guards';
+import {
+  type GoogleTask,
+  TaskFields,
+  TaskNode,
+  TasksSyncPlan,
+} from 'src/logic-functions/types/types';
+import { fetchTaskNodes } from 'src/logic-functions/utils/fetch-task-nodes.util';
+import { normalizeDueDate } from 'src/logic-functions/utils/normalize-due-date.util';
+import { normalizeNotes } from 'src/logic-functions/utils/normalize-notes.util';
 
-const isSameDueDate = (due: string | undefined, dueAt: string | null | undefined) => {
+const isSameDueDate = (
+  due: string | undefined,
+  dueAt: string | null | undefined,
+) => {
   const normalizedDue = normalizeDueDate(due);
 
   if (isNull(normalizedDue)) {
@@ -19,19 +27,25 @@ const isSameDueDate = (due: string | undefined, dueAt: string | null | undefined
   return new Date(normalizedDue).getTime() === new Date(dueAt).getTime();
 };
 
-const isSameStatus = (completed: string | undefined, status: string | null | undefined) =>
-  isUndefined(completed) ? status !== 'DONE' : status === 'DONE';
+const isSameStatus = (
+  completed: string | undefined,
+  status: string | null | undefined,
+) => (isUndefined(completed) ? status !== 'DONE' : status === 'DONE');
 
-const diffTask = (googleTask: GoogleTask, existingTask: TaskNode): TaskFields | null => {
+const diffTask = (
+  googleTask: GoogleTask,
+  existingTask: TaskNode,
+  listId: string,
+): TaskFields | null => {
   const fields: TaskFields = {};
 
   if (googleTask.title !== existingTask.title) {
     fields.title = googleTask.title;
   }
 
-  const markdown = googleTask.notes ?? null;
+  const markdown = normalizeNotes(googleTask.notes);
 
-  if (markdown !== (existingTask.bodyV2?.markdown ?? null)) {
+  if (markdown !== normalizeNotes(existingTask.bodyV2?.markdown)) {
     fields.bodyV2 = { markdown };
   }
 
@@ -43,12 +57,17 @@ const diffTask = (googleTask: GoogleTask, existingTask: TaskNode): TaskFields | 
     fields.status = googleTask.completed ? 'DONE' : 'TODO';
   }
 
+  if (listId !== existingTask.googleTasksListId) {
+    fields.googleTasksListId = listId;
+  }
+
   return Object.keys(fields).length === 0 ? null : fields;
 };
 
 export const partitionTasks = (
   googleTasks: GoogleTask[],
   existingTasks: TaskNode[],
+  listId: string,
 ): TasksSyncPlan => {
   const plan: TasksSyncPlan = {
     tasksToCreate: [],
@@ -78,7 +97,7 @@ export const partitionTasks = (
       continue;
     }
 
-    const fields = diffTask(googleTask, existingTask);
+    const fields = diffTask(googleTask, existingTask, listId);
 
     if (fields !== null) {
       plan.tasksToUpdate.push({ id: existingTask.id, fields });
@@ -91,71 +110,18 @@ export const partitionTasks = (
 export const buildSyncPlan = async (
   client: CoreApiClient,
   googleTasks: GoogleTask[],
+  listId: string,
 ): Promise<TasksSyncPlan> => {
   if (googleTasks.length === 0) {
     return { tasksToCreate: [], tasksToUpdate: [] };
   }
-  const googleTasksIds = googleTasks.map((googleTask) => googleTask.id);
 
-  let afterCursor: string | undefined;
-  let hasNextPage = true;
-  const nodes: TaskNode[] = [];
+  const nodes = await fetchTaskNodes(client, {
+    googleTasksId: {
+      in: googleTasks.map((googleTask) => googleTask.id),
+    },
+    or: [{ deletedAt: { is: 'NULL' } }, { deletedAt: { is: 'NOT_NULL' } }],
+  });
 
-  while (hasNextPage) {
-    const tasks = await executeWithRetry(() => client.query({
-      tasks: {
-        __args: {
-          first: TASKS_BATCH_SIZE,
-          ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
-          filter: {
-            googleTasksId: {
-              in: googleTasksIds,
-            },
-            or: [
-              { deletedAt: { is: 'NULL' } },
-              { deletedAt: { is: 'NOT_NULL' } },
-            ],
-          },
-        },
-        edges: {
-          node: {
-            id: true,
-            title: true,
-            bodyV2: {
-              markdown: true,
-            },
-            deletedAt: true,
-            dueAt: true,
-            status: true,
-            googleTasksId: true,
-          },
-        },
-        pageInfo: {
-          hasNextPage: true,
-          endCursor: true,
-        }
-      },
-    }));
-
-    if (tasks.tasks === undefined) {
-      throw new Error('Failed to fetch tasks from Twenty');
-    }
-
-    for (const edge of tasks.tasks.edges ?? []) {
-      nodes.push(edge.node);
-    }
-
-    hasNextPage = tasks.tasks.pageInfo.hasNextPage === true;
-    const endCursor = tasks.tasks.pageInfo.endCursor;
-
-    if (hasNextPage && !isString(endCursor)) {
-      throw new Error(
-        'Inconsistent pagination state: hasNextPage is true without an endCursor',
-      );
-    }
-
-    afterCursor = isString(endCursor) ? endCursor : undefined;
-  }
-
-  return partitionTasks(googleTasks, nodes);
-}
+  return partitionTasks(googleTasks, nodes, listId);
+};
