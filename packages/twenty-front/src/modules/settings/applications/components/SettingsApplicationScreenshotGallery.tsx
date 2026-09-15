@@ -26,7 +26,7 @@ const StyledHeroButton = styled.button`
   background-color: ${themeCssVariables.background.secondary};
   border: none;
   border-radius: ${themeCssVariables.border.radius.md};
-  cursor: zoom-in;
+  cursor: pointer;
   overflow: hidden;
   padding: 0;
   width: 100%;
