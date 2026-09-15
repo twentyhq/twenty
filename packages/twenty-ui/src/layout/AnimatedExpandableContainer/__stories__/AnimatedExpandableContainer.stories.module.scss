@@ -1,15 +1,5 @@
 .button {
-  padding: var(--t-spacing-2) var(--t-spacing-4);
-  background-color: var(--t-color-blue10);
-  color: var(--t-font-color-primary);
-  border: none;
-  border-radius: var(--t-spacing-1);
-  cursor: pointer;
   margin-bottom: var(--t-spacing-3);
-
-  &:hover {
-    background-color: var(--t-color-blue8);
-  }
 }
 
 .buttonWrapper {
