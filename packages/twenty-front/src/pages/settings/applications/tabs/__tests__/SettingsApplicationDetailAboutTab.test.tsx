@@ -41,7 +41,7 @@ const renderAboutTab = ({
   aboutDescription = ABOUT_DESCRIPTION,
   description = SHORT_DESCRIPTION,
   developerLinks = DEVELOPER_LINKS,
-  installCount = 742,
+  installCount = 7,
   onShare = jest.fn(),
 }: RenderAboutTabOptions = {}) =>
   render(
@@ -92,7 +92,7 @@ describe('SettingsApplicationDetailAboutTab', () => {
     expect(screen.getByText(SHORT_DESCRIPTION)).toBeVisible();
     expect(screen.getByText('by Twenty')).toBeVisible();
     expect(screen.getByText('2.0')).toBeVisible();
-    expect(screen.getByText('742 installs')).toBeVisible();
+    expect(screen.getByText('7 installs')).toBeVisible();
     expect(screen.getByText('Finance')).toBeVisible();
     expect(screen.getByText('Free')).toBeVisible();
 
