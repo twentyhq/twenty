@@ -1,4 +1,3 @@
-import { styled } from '@linaria/react';
 import { type MouseEvent, useId } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -9,11 +8,6 @@ import {
   TooltipPosition,
 } from 'twenty-ui/primitives/surfaces';
 import { Button, IconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledWrapper = styled.div`
-  font-size: ${themeCssVariables.font.size.md};
-`;
 
 export type CommandMenuButtonProps = {
   command: {
@@ -58,6 +52,7 @@ export const CommandMenuButton = ({
     <div data-tooltip-id={tooltipId}>
       {resolvedShortLabel !== undefined ? (
         <Button
+          id={tooltipId}
           Icon={command.Icon}
           size="small"
           variant="primary"
@@ -70,6 +65,7 @@ export const CommandMenuButton = ({
         />
       ) : (
         <IconButton
+          id={tooltipId}
           Icon={command.Icon}
           size="small"
           variant="primary"
@@ -81,20 +77,18 @@ export const CommandMenuButton = ({
         />
       )}
       {(hasHotKeys || !isDefined(resolvedShortLabel)) && (
-        <StyledWrapper>
-          <AppTooltip
-            anchorSelect={
-              disabled
-                ? `[data-tooltip-id='${tooltipId}']`
-                : `[data-tooltip-id='${tooltipId}'] > :first-child`
-            }
-            title={tooltipTitle}
-            delay={TooltipDelay.longDelay}
-            place={TooltipPosition.Bottom}
-            offset={5}
-            noArrow
-          />
-        </StyledWrapper>
+        <AppTooltip
+          anchorSelect={
+            disabled
+              ? `[data-tooltip-id='${tooltipId}']`
+              : `[id='${tooltipId}']`
+          }
+          title={tooltipTitle}
+          delay={TooltipDelay.longDelay}
+          place={TooltipPosition.Bottom}
+          offset={5}
+          noArrow
+        />
       )}
     </div>
   );
