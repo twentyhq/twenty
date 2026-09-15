@@ -889,13 +889,6 @@ export class StreamAgentChatJob {
           `"totalCacheReadTokens" + ${streamUsage.cacheReadTokens}`,
         totalCacheCreationTokens: () =>
           `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
-        lastMessageUsage: {
-          inputTokens: streamUsage.inputTokens,
-          outputTokens: streamUsage.outputTokens,
-          cachedInputTokens: streamUsage.cacheReadTokens,
-          inputCredits: toDisplayCredits(streamUsage.inputCredits),
-          outputCredits: toDisplayCredits(streamUsage.outputCredits),
-        },
         contextWindowTokens: modelConfig.contextWindowTokens,
         conversationSize: lastStepConversationSize,
         pendingQuestionMessageId: isDefined(pendingQuestionPart)

@@ -2924,19 +2924,9 @@ export interface AgentMessage {
     __typename: 'AgentMessage'
 }
 
-export interface AgentChatMessageUsage {
-    inputTokens: Scalars['Int']
-    outputTokens: Scalars['Int']
-    cachedInputTokens: Scalars['Int']
-    inputCredits: Scalars['Float']
-    outputCredits: Scalars['Float']
-    __typename: 'AgentChatMessageUsage'
-}
-
 export interface AgentChatThread {
     id: Scalars['ID']
     title?: Scalars['String']
-    lastMessageUsage?: AgentChatMessageUsage
     totalCacheReadTokens?: Scalars['Float']
     totalInputTokens: Scalars['Int']
     totalOutputTokens: Scalars['Int']
@@ -6637,20 +6627,9 @@ export interface AgentMessageGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface AgentChatMessageUsageGenqlSelection{
-    inputTokens?: boolean | number
-    outputTokens?: boolean | number
-    cachedInputTokens?: boolean | number
-    inputCredits?: boolean | number
-    outputCredits?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface AgentChatThreadGenqlSelection{
     id?: boolean | number
     title?: boolean | number
-    lastMessageUsage?: AgentChatMessageUsageGenqlSelection
     totalCacheReadTokens?: boolean | number
     totalInputTokens?: boolean | number
     totalOutputTokens?: boolean | number
@@ -9937,14 +9916,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isAgentMessage = (obj?: { __typename?: any } | null): obj is AgentMessage => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentMessage"')
       return AgentMessage_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const AgentChatMessageUsage_possibleTypes: string[] = ['AgentChatMessageUsage']
-    export const isAgentChatMessageUsage = (obj?: { __typename?: any } | null): obj is AgentChatMessageUsage => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isAgentChatMessageUsage"')
-      return AgentChatMessageUsage_possibleTypes.includes(obj.__typename)
     }
     
 

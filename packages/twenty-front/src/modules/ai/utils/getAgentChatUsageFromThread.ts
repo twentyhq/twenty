@@ -5,7 +5,6 @@ import { type AgentChatThread } from '~/generated-metadata/graphql';
 export const getAgentChatUsageFromThread = (
   thread: Pick<
     AgentChatThread,
-    | 'lastMessageUsage'
     | 'totalCacheReadTokens'
     | 'conversationSize'
     | 'contextWindowTokens'
@@ -22,7 +21,7 @@ export const getAgentChatUsageFromThread = (
     return null;
   }
   return {
-    lastMessage: thread.lastMessageUsage ?? null,
+    lastMessage: null,
     cachedInputTokens: Number(thread.totalCacheReadTokens ?? 0),
     conversationSize: thread.conversationSize ?? 0,
     contextWindowTokens: thread.contextWindowTokens,
