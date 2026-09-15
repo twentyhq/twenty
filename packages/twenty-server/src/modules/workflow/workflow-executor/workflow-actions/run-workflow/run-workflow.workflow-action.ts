@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 
-import { resolveInput } from 'twenty-shared/utils';
+import { isDefined, resolveInput } from 'twenty-shared/utils';
 
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -30,7 +31,7 @@ export class RunWorkflowWorkflowAction implements WorkflowAction {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly workflowRunnerWorkspaceService: WorkflowRunnerWorkspaceService,
+    private readonly moduleRef: ModuleRef,
   ) {}
 
   async execute({
@@ -59,9 +60,26 @@ export class RunWorkflowWorkflowAction implements WorkflowAction {
     // Only RUN_WORKFLOW itself writes runDepth onto the payload (D-10) — a
     // mapped `input` field can never spoof this counter, it is read from
     // context.trigger.metadata, which the runner populates on each hop.
-    const runDepth =
-      (context.trigger as { metadata?: { runDepth?: number } } | undefined)
-        ?.metadata?.runDepth ?? 0;
+    // context.trigger is the persisted trigger payload of the *current* run,
+    // which for a WEBHOOK-triggered workflow is entirely caller-controlled,
+    // so the value must be validated rather than trusted as a number.
+    const rawRunDepth = (
+      context.trigger as { metadata?: { runDepth?: unknown } } | undefined
+    )?.metadata?.runDepth;
+
+    const runDepth = isDefined(rawRunDepth) ? rawRunDepth : 0;
+
+    if (
+      typeof runDepth !== 'number' ||
+      !Number.isInteger(runDepth) ||
+      runDepth < 0
+    ) {
+      throw new WorkflowStepExecutorException(
+        'Invalid workflow run depth in trigger payload',
+        WorkflowStepExecutorExceptionCode.WORKFLOW_RUN_DEPTH_EXCEEDED,
+      );
+    }
+
     const nextRunDepth = runDepth + 1;
 
     const authContext = buildSystemAuthContext(runInfo.workspaceId);
@@ -151,7 +169,12 @@ export class RunWorkflowWorkflowAction implements WorkflowAction {
       metadata: { runDepth: nextRunDepth },
     };
 
-    const { workflowRunId } = await this.workflowRunnerWorkspaceService.run({
+    const workflowRunnerWorkspaceService = this.moduleRef.get(
+      WorkflowRunnerWorkspaceService,
+      { strict: false },
+    );
+
+    const { workflowRunId } = await workflowRunnerWorkspaceService.run({
       workspaceId: runInfo.workspaceId,
       workflowVersionId: calleeWorkflow.lastPublishedVersionId,
       payload,
