@@ -16,6 +16,7 @@ type SeedInputFlatObjectMetadata = Pick<
   | 'universalIdentifier'
   | 'labelPlural'
   | 'isRemote'
+  | 'isSystem'
   | 'viewUniversalIdentifiers'
 >;
 
@@ -65,7 +66,7 @@ export const computeMissingInitialObjectViewOperations = ({
   const createdAt = new Date().toISOString();
 
   for (const flatObjectMetadata of flatObjectMetadatas) {
-    if (flatObjectMetadata.isRemote) {
+    if (flatObjectMetadata.isRemote || flatObjectMetadata.isSystem) {
       continue;
     }
 
@@ -87,7 +88,7 @@ export const computeMissingInitialObjectViewOperations = ({
 
     const initialViewUniversalIdentifier =
       getInitialObjectViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier:
+        viewApplicationUniversalIdentifier:
           initialViewApplicationUniversalIdentifier,
         objectUniversalIdentifier: flatObjectMetadata.universalIdentifier,
       });

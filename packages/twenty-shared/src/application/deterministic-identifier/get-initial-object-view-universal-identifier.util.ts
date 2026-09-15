@@ -3,15 +3,14 @@ import { computeDeterministicUuid } from '@/application/deterministic-identifier
 const INITIAL_OBJECT_VIEW_KEY = 'INITIAL' as const;
 
 export const getInitialObjectViewUniversalIdentifier = ({
-  objectMetadataApplicationUniversalIdentifier,
+  viewApplicationUniversalIdentifier,
   objectUniversalIdentifier,
 }: {
-  objectMetadataApplicationUniversalIdentifier: string;
+  viewApplicationUniversalIdentifier: string;
   objectUniversalIdentifier: string;
 }): string =>
   computeDeterministicUuid({
     entityNamespace: 'view',
     value: `${objectUniversalIdentifier}:${INITIAL_OBJECT_VIEW_KEY}`,
-    applicationUniversalIdentifier:
-      objectMetadataApplicationUniversalIdentifier,
+    applicationUniversalIdentifier: viewApplicationUniversalIdentifier,
   });

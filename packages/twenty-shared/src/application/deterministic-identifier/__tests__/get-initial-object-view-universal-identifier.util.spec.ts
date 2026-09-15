@@ -2,19 +2,19 @@ import { getInitialObjectViewUniversalIdentifier } from '@/application/determini
 import { getSystemViewUniversalIdentifier } from '@/application/deterministic-identifier/get-system-view-universal-identifier.util';
 
 describe('getInitialObjectViewUniversalIdentifier', () => {
-  const objectMetadataApplicationUniversalIdentifier =
+  const viewApplicationUniversalIdentifier =
     '20202020-1c25-4d02-bf25-6aeccf7ea419';
   const objectUniversalIdentifier = '20202020-b374-4779-a561-80086cb2e17f';
 
   it('should be stable for the same object', () => {
     expect(
       getInitialObjectViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier,
+        viewApplicationUniversalIdentifier,
         objectUniversalIdentifier,
       }),
     ).toBe(
       getInitialObjectViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier,
+        viewApplicationUniversalIdentifier,
         objectUniversalIdentifier,
       }),
     );
@@ -23,12 +23,13 @@ describe('getInitialObjectViewUniversalIdentifier', () => {
   it('should differ from the INDEX view identifier of the same object', () => {
     expect(
       getInitialObjectViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier,
+        viewApplicationUniversalIdentifier,
         objectUniversalIdentifier,
       }),
     ).not.toBe(
       getSystemViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier,
+        objectMetadataApplicationUniversalIdentifier:
+          viewApplicationUniversalIdentifier,
         objectUniversalIdentifier,
         viewKey: 'INDEX',
       }),
@@ -38,12 +39,12 @@ describe('getInitialObjectViewUniversalIdentifier', () => {
   it('should differ across objects', () => {
     expect(
       getInitialObjectViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier,
+        viewApplicationUniversalIdentifier,
         objectUniversalIdentifier,
       }),
     ).not.toBe(
       getInitialObjectViewUniversalIdentifier({
-        objectMetadataApplicationUniversalIdentifier,
+        viewApplicationUniversalIdentifier,
         objectUniversalIdentifier: '20202020-e674-48e5-a542-72570eee7213',
       }),
     );

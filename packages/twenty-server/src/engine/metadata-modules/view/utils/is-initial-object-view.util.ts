@@ -12,7 +12,6 @@ export const isInitialObjectView = (
 ): boolean =>
   flatView.universalIdentifier ===
   getInitialObjectViewUniversalIdentifier({
-    objectMetadataApplicationUniversalIdentifier:
-      flatView.applicationUniversalIdentifier,
+    viewApplicationUniversalIdentifier: flatView.applicationUniversalIdentifier,
     objectUniversalIdentifier: flatView.objectMetadataUniversalIdentifier,
   });
