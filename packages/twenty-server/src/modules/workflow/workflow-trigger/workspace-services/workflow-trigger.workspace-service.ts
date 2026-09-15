@@ -141,6 +141,7 @@ export class WorkflowTriggerWorkspaceService {
       await this.workflowVersionValidationWorkspaceService.assertWorkflowVersionIsActivableOrThrow(
         {
           workspaceId,
+          workflowId: workflow.id,
           trigger: workflowVersion.trigger,
           steps: workflowVersion.steps,
         },
