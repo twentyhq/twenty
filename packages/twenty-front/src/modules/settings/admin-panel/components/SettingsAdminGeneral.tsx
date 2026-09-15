@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
@@ -145,22 +144,20 @@ export const SettingsAdminGeneral = () => {
                       gap={themeCssVariables.spacing[2]}
                       overflow="hidden"
                     >
-                      <SettingsTableFirstColumn
-                        label={
+                      <Avatar
+                        src={getAbsoluteImageUrl(user.avatarUrl)}
+                        name={
+                          `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                          user.email
+                        }
+                        colorSeed={user.id}
+                        size="md"
+                        shape="circle"
+                      />
+                      <OverflowingTextWithTooltip
+                        text={
                           `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                           '\u2014'
-                        }
-                        leadingContent={
-                          <Avatar
-                            src={getAbsoluteImageUrl(user.avatarUrl)}
-                            name={
-                              `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                              user.email
-                            }
-                            colorSeed={user.id}
-                            size="md"
-                            shape="circle"
-                          />
                         }
                       />
                     </TableCell>
@@ -245,16 +242,14 @@ export const SettingsAdminGeneral = () => {
                       gap={themeCssVariables.spacing[2]}
                       overflow="hidden"
                     >
-                      <SettingsTableFirstColumn
-                        label={workspace.name || '\u2014'}
-                        leadingContent={
-                          <Avatar
-                            src={getAbsoluteImageUrl(workspace.logoUrl)}
-                            name={workspace.name || ''}
-                            colorSeed={workspace.id}
-                            size="md"
-                          />
-                        }
+                      <Avatar
+                        src={getAbsoluteImageUrl(workspace.logoUrl)}
+                        name={workspace.name || ''}
+                        colorSeed={workspace.id}
+                        size="md"
+                      />
+                      <OverflowingTextWithTooltip
+                        text={workspace.name || '\u2014'}
                       />
                     </TableCell>
                     <TableCell align="right">

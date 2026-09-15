@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -97,9 +96,7 @@ export const SettingsLayoutViewDetail = () => {
           key: field.universalIdentifier,
           cells: [
             field.position,
-            <SettingsTableFirstColumn
-              label={resolveFieldLabel(field.fieldMetadataUniversalIdentifier)}
-            />,
+            resolveFieldLabel(field.fieldMetadataUniversalIdentifier),
             field.isVisible === false ? t`Hidden` : t`Yes`,
             field.size ?? '—',
           ],
@@ -116,9 +113,7 @@ export const SettingsLayoutViewDetail = () => {
         rows={(view?.filters ?? []).map((filter) => ({
           key: filter.universalIdentifier,
           cells: [
-            <SettingsTableFirstColumn
-              label={resolveFieldLabel(filter.fieldMetadataUniversalIdentifier)}
-            />,
+            resolveFieldLabel(filter.fieldMetadataUniversalIdentifier),
             filter.operand,
             formatFilterValue(filter.value),
           ],
@@ -134,9 +129,7 @@ export const SettingsLayoutViewDetail = () => {
         rows={(view?.sorts ?? []).map((sort) => ({
           key: sort.universalIdentifier,
           cells: [
-            <SettingsTableFirstColumn
-              label={resolveFieldLabel(sort.fieldMetadataUniversalIdentifier)}
-            />,
+            resolveFieldLabel(sort.fieldMetadataUniversalIdentifier),
             sort.direction,
           ],
         }))}

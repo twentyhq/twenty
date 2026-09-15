@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -146,10 +145,7 @@ export const SettingsUnsubscribersList = () => {
         columns={[
           {
             label: t`Email address`,
-            overflow: 'hidden',
-            Cell: ({ item }) => (
-              <SettingsTableFirstColumn label={item.emailAddress} />
-            ),
+            Cell: ({ item }) => <>{item.emailAddress}</>,
           },
           {
             label: t`Scope`,

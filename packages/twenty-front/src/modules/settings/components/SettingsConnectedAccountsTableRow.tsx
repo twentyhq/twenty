@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsConnectedAccountsRowRightContainer } from '@/settings/accounts/components/SettingsAccountsConnectedAccountsRowRightContainer';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
@@ -7,6 +6,13 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledNameCell = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  gap: ${themeCssVariables.spacing[1]};
+`;
 
 const StyledTableRowContainer = styled.div`
   > * {
@@ -31,15 +37,13 @@ export const SettingsConnectedAccountsTableRow = ({
     <StyledTableRowContainer>
       <TableRow key={account.id} gridTemplateColumns="minmax(0, 1fr) auto">
         <TableCell>
-          <SettingsTableFirstColumn
-            label={account.handle}
-            leadingContent={
-              <IconComponent
-                size={theme.icon.size.md}
-                stroke={theme.icon.stroke.sm}
-              />
-            }
-          />
+          <StyledNameCell>
+            <IconComponent
+              size={theme.icon.size.md}
+              stroke={theme.icon.stroke.sm}
+            />
+            {account.handle}
+          </StyledNameCell>
         </TableCell>
         <TableCell align="right">
           <SettingsAccountsConnectedAccountsRowRightContainer

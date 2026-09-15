@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import {
   StyledActionTableCell,
   StyledNameTableCell,
@@ -57,17 +56,10 @@ export const SettingsApplicationContentSubtable = ({
             to={row.link}
           >
             <StyledNameTableCell minWidth="0" overflow="hidden">
-              <SettingsTableFirstColumn
-                label={row.name}
-                leadingContent={
-                  isDefined(Icon) ? (
-                    <Icon
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                  ) : undefined
-                }
-              />
+              {isDefined(Icon) && (
+                <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+              )}
+              <OverflowingTextWithTooltip text={row.name} />
             </StyledNameTableCell>
             <StyledNameTableCell minWidth="0" overflow="hidden" align={'right'}>
               <AppChip

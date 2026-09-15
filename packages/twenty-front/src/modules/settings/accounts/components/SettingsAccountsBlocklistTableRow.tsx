@@ -1,10 +1,10 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
 import { IconButton } from 'twenty-ui/input';
 import { IconX } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 
 type SettingsAccountsBlocklistTableRowProps = {
   blocklistItem: BlocklistItem;
@@ -22,7 +22,7 @@ export const SettingsAccountsBlocklistTableRow = ({
       mobileGridAutoColumns="120px 1fr 20px"
     >
       <TableCell>
-        <SettingsTableFirstColumn label={blocklistItem.handle} />
+        <OverflowingTextWithTooltip text={blocklistItem.handle} />
       </TableCell>
       <TableCell>
         {blocklistItem.createdAt

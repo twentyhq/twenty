@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -54,7 +53,7 @@ export const ConfigVariableTable = ({
                 textOverflow="ellipsis"
                 clickable
               >
-                <SettingsTableFirstColumn label={variable.name} />
+                <OverflowingTextWithTooltip text={variable.name} />
               </TableCell>
               <TableCell
                 color={theme.font.color.secondary}

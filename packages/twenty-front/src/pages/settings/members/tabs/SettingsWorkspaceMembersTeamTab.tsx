@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -28,6 +27,7 @@ import {
   IconHierarchy,
   IconListDetails,
 } from 'twenty-ui/icon';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 import { Button, SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -48,6 +48,12 @@ const StyledTableContainer = styled.div<{ hasMoreRows?: boolean }>`
         ? 'none'
         : `1px solid ${themeCssVariables.border.color.light}`};
   }
+`;
+
+const StyledIconWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  margin-right: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTextContainerWithEllipsis = styled.div`
@@ -241,21 +247,29 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                   }}
                 >
                   <TableCell>
-                    <SettingsTableFirstColumn
-                      label={
-                        workspaceMember.name.firstName +
+                    <StyledIconWrapper>
+                      <Avatar
+                        src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                        colorSeed={workspaceMember.id}
+                        name={workspaceMember.name.firstName ?? ''}
+                        shape="circle"
+                        size="sm"
+                      />
+                    </StyledIconWrapper>
+                    <StyledTextContainerWithEllipsis
+                      id={`hover-text-${workspaceMember.id}`}
+                    >
+                      {workspaceMember.name.firstName +
                         ' ' +
-                        workspaceMember.name.lastName
-                      }
-                      leadingContent={
-                        <Avatar
-                          src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
-                          colorSeed={workspaceMember.id}
-                          name={workspaceMember.name.firstName ?? ''}
-                          shape="circle"
-                          size="sm"
-                        />
-                      }
+                        workspaceMember.name.lastName}
+                    </StyledTextContainerWithEllipsis>
+                    <AppTooltip
+                      anchorSelect={`#hover-text-${workspaceMember.id}`}
+                      title={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
+                      noArrow
+                      place="top"
+                      positionStrategy="fixed"
+                      delay={TooltipDelay.shortDelay}
                     />
                   </TableCell>
                   <TableCell>

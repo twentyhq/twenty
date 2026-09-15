@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
@@ -41,8 +40,8 @@ export const SettingsAdminChatsTableRow = ({
       isClickable
     >
       <TableCell minWidth="0" overflow="hidden">
-        <SettingsTableFirstColumn
-          label={
+        <OverflowingTextWithTooltip
+          text={
             isNonEmptyString(thread.workspaceDisplayName)
               ? thread.workspaceDisplayName
               : thread.workspaceId

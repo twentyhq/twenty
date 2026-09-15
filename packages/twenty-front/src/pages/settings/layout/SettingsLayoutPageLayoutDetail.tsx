@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { t } from '@lingui/core/macro';
@@ -97,7 +96,7 @@ export const SettingsLayoutPageLayoutDetail = () => {
             rows={widgets.map((widget) => ({
               key: widget.universalIdentifier,
               cells: [
-                <SettingsTableFirstColumn label={widget.title} />,
+                widget.title,
                 widget.type,
                 findObjectLabel(widget.objectUniversalIdentifier) ?? '—',
               ],

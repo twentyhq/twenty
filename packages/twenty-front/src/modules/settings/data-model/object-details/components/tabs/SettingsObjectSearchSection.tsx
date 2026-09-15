@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -52,6 +51,12 @@ const StyledSearchSectionContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledNameLabel = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledButtonContainer = styled.div`
@@ -220,7 +225,7 @@ export const SettingsObjectSearchSection = ({
                       size={theme.icon.size.md}
                       stroke={theme.icon.stroke.sm}
                     />
-                    <SettingsTableFirstColumn label={entry.label} />
+                    <StyledNameLabel>{entry.label}</StyledNameLabel>
                   </TableCell>
                   <TableCell>
                     <SettingsObjectFieldDataType

@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext } from 'react';
@@ -34,6 +33,12 @@ const StyledNameContainer = styled.div`
   min-width: 0;
 `;
 
+const StyledNameLabel = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 export const SettingsObjectMetadataItemTableRow = ({
   action,
   objectMetadataItem,
@@ -58,7 +63,9 @@ export const SettingsObjectMetadataItemTableRow = ({
             stroke={theme.icon.stroke.sm}
           />
           <StyledNameContainer>
-            <SettingsTableFirstColumn label={objectMetadataItem.labelPlural} />
+            <StyledNameLabel title={objectMetadataItem.labelPlural}>
+              {objectMetadataItem.labelPlural}
+            </StyledNameLabel>
             {!objectMetadataItem.isActive && (
               <SettingsNameCellSecondaryLabel>
                 {t`Deactivated`}

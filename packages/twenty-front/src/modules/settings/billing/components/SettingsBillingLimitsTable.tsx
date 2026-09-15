@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useContext, useState } from 'react';
@@ -34,12 +33,25 @@ const StyledCell = styled.div`
   min-width: 0;
 `;
 
+const StyledName = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
 const StyledNameContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
+`;
+
+const StyledNameIcon = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  display: flex;
+  flex-shrink: 0;
 `;
 
 const StyledUsed = styled.div`
@@ -77,16 +89,14 @@ const NameCell = ({ item }: { item: UsageLimitRow }) => {
 
   return (
     <StyledCell>
-      <StyledNameContainer>
-        <SettingsTableFirstColumn
-          label={item.name}
-          leadingContent={
-            <item.NameIcon
-              size={theme.icon.size.md}
-              stroke={theme.icon.stroke.sm}
-            />
-          }
+      <StyledNameIcon>
+        <item.NameIcon
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
         />
+      </StyledNameIcon>
+      <StyledNameContainer>
+        <StyledName>{item.name}</StyledName>
         {!item.isEnforced && (
           <>
             <SettingsNameCellSecondaryLabel id={deactivatedAnchorId}>

@@ -3,6 +3,8 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 
 import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
+import { Checkbox } from 'twenty-ui/input';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
 const LABEL = 'Documentation https://example.com';
@@ -63,5 +65,31 @@ describe('SettingsTableFirstColumn', () => {
 
     await user.tab();
     expect(screen.getByText('Record sharing')).toHaveFocus();
+  });
+  it('keeps selection outside the name and prevents selection clicks opening the row', async () => {
+    const user = userEvent.setup();
+    const onRowClick = jest.fn();
+    const onCheckedChange = jest.fn();
+
+    render(
+      <TableRow gridTemplateColumns="32px minmax(0, 1fr)" onClick={onRowClick}>
+        <TableCell onClick={(event) => event.stopPropagation()}>
+          <Checkbox aria-label="Select job" onCheckedChange={onCheckedChange} />
+        </TableCell>
+        <TableCell>
+          <SettingsTableFirstColumn label="Import contacts" />
+        </TableCell>
+      </TableRow>,
+    );
+
+    const checkbox = screen.getByRole('checkbox', { name: 'Select job' });
+    await user.tab();
+    expect(checkbox).toHaveFocus();
+    await user.click(checkbox);
+    expect(checkbox).toBeChecked();
+    expect(onCheckedChange).toHaveBeenCalled();
+    expect(onRowClick).not.toHaveBeenCalled();
+    await user.click(screen.getByText('Import contacts'));
+    expect(onRowClick).toHaveBeenCalledTimes(1);
   });
 });

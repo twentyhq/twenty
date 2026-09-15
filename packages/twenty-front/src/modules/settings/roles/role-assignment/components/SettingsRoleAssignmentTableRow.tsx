@@ -1,20 +1,40 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { UserContext } from '@/users/contexts/UserContext';
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
+import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconKey, useIcons } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { ThemeContext } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateString } from '~/utils/string/formatDateString';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+
+const StyledIconWrapper = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+`;
+
+const StyledNameCell = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  flex: 1;
+  min-width: 0;
+`;
+
+const StyledNameContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  overflow: hidden;
+  width: 100%;
+`;
 
 export type RoleTarget =
   | { type: 'member'; data: PartialWorkspaceMember }
@@ -96,10 +116,12 @@ export const SettingsRoleAssignmentTableRow = ({
   return (
     <TableRow gridAutoColumns="2fr 4fr">
       <TableCell overflow="hidden">
-        <SettingsTableFirstColumn
-          label={renderName()}
-          leadingContent={renderIcon()}
-        />
+        <StyledNameContainer>
+          <StyledIconWrapper>{renderIcon()}</StyledIconWrapper>
+          <StyledNameCell>
+            <OverflowingTextWithTooltip text={renderName()} />
+          </StyledNameCell>
+        </StyledNameContainer>
       </TableCell>
       <TableCell overflow="hidden">
         <OverflowingTextWithTooltip text={renderSecondaryInfo()} />

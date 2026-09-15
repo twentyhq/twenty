@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -283,7 +282,7 @@ export const SettingsAdminAI = () => {
                   })}
                 >
                   <TableCell color={themeCssVariables.font.color.primary}>
-                    <SettingsTableFirstColumn label={item.label ?? item.key} />
+                    {item.label ?? item.key}
                   </TableCell>
                   <TableCell align="right">
                     {formatUsageValue(item.creditsUsed)}

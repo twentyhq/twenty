@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useLingui } from '@lingui/react/macro';
 
 import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTopics';
@@ -29,10 +28,7 @@ export const SettingsWorkspaceUnsubscribeTopicSection = () => {
       columns={[
         {
           label: t`Topic`,
-          overflow: 'hidden',
-          Cell: ({ item }) => (
-            <SettingsTableFirstColumn label={item.name ?? t`Untitled topic`} />
-          ),
+          Cell: ({ item }) => <>{item.name ?? t`Untitled topic`}</>,
         },
         {
           label: t`Visibility`,

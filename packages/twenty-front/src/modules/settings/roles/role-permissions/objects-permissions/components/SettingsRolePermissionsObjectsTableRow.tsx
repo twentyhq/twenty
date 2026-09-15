@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permissions/components/PermissionIcon';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { type SettingsRolePermissionsObjectPermission } from '@/settings/roles/role-permissions/objects-permissions/types/SettingsRolePermissionsObjectPermission';
@@ -14,6 +13,10 @@ const StyledPermissionContent = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   white-space: nowrap;
+`;
+
+const StyledPermissionLabel = styled.span`
+  color: ${themeCssVariables.font.color.primary};
 `;
 
 const StyledOverrideInfo = styled.div`
@@ -57,7 +60,7 @@ export const SettingsRolePermissionsObjectsTableRow = ({
             permission={permission.key as SettingsRoleObjectPermissionKey}
             state={isRevoked ? 'revoked' : 'granted'}
           />
-          <SettingsTableFirstColumn label={label} />
+          <StyledPermissionLabel>{label}</StyledPermissionLabel>
         </StyledPermissionContent>
         <StyledOverrideInfo>
           {isRevoked && revokedBy > 0 ? (

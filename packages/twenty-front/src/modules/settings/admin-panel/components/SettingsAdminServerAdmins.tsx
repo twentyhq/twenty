@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -13,6 +12,7 @@ import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 import { Section } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -73,7 +73,7 @@ export const SettingsAdminServerAdmins = () => {
                     color={themeCssVariables.font.color.primary}
                     overflow="hidden"
                   >
-                    <SettingsTableFirstColumn label={adminLabel} />
+                    <OverflowingTextWithTooltip text={adminLabel} />
                   </TableCell>
                   <TableCell>
                     {admin.canAccessFullAdminPanel ? t`Yes` : '—'}

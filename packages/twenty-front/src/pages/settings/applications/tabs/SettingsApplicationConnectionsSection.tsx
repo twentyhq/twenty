@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
@@ -120,9 +119,7 @@ export const SettingsApplicationConnectionsSection = ({
                         textOverflow="ellipsis"
                         whiteSpace="nowrap"
                       >
-                        <SettingsTableFirstColumn
-                          label={connection.name ?? connection.handle}
-                        />
+                        {connection.name ?? connection.handle}
                       </TableCell>
                       <TableCell clickable>
                         {connection.authFailedAt ? (

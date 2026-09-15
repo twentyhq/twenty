@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { type SettingsRolePermissionsSettingPermission } from '@/settings/roles/role-permissions/permission-flags/types/SettingsRolePermissionsSettingPermission';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -10,6 +9,10 @@ import { Checkbox } from 'twenty-ui/input';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
+
+const StyledName = styled.span`
+  color: ${themeCssVariables.font.color.primary};
+`;
 
 const StyledDescription = styled.span`
   color: ${themeCssVariables.font.color.secondary};
@@ -105,7 +108,7 @@ export const SettingsRolePermissionsSettingsTableRow = ({
             stroke={theme.icon.stroke.sm}
           />
         </StyledIconContainer>
-        <SettingsTableFirstColumn label={permission.name} />
+        <StyledName>{permission.name}</StyledName>
       </TableCell>
       <TableCell gap={themeCssVariables.spacing[2]}>
         <StyledDescription>{permission.description}</StyledDescription>

@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { SortableTableHeader } from '@/ui/layout/table/components/SortableTableHeader';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
@@ -106,9 +105,7 @@ export const SettingsObjectIndexTable = ({
                 gridTemplateColumns={OBJECT_INDEX_TABLE_GRID_TEMPLATE_COLUMNS}
                 key={item.id}
               >
-                <TableCell>
-                  <SettingsTableFirstColumn label={item.indexFields} />
-                </TableCell>
+                <TableCell>{item.indexFields}</TableCell>
                 <TableCell>
                   {item.isUnique ? <IconSquareKey size={14} /> : ''}
                 </TableCell>

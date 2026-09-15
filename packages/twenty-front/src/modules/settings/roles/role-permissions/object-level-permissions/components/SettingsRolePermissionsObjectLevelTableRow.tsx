@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelOverrideCellContainer } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCellContainer';
@@ -8,10 +7,18 @@ import { SettingsRolePermissionsObjectLevelUpdateFieldsValueForObject } from '@/
 import { OBJECT_LEVEL_PERMISSION_TABLE_GRID_AUTO_COLUMNS } from '@/settings/roles/role-permissions/object-level-permissions/constants/ObjectLevelPermissionTableGridAutoColumns';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledNameLabel = styled.div`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
 
 type SettingsRolePermissionsObjectLevelTableRowProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -51,7 +58,9 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           size={theme.icon.size.md}
           stroke={theme.icon.stroke.sm}
         />
-        <SettingsTableFirstColumn label={objectLabelPlural} />
+        <StyledNameLabel title={objectLabelPlural}>
+          <OverflowingTextWithTooltip text={objectLabelPlural} />
+        </StyledNameLabel>
       </TableCell>
       <TableCell>
         <SettingsRolePermissionsObjectLevelOverrideCellContainer

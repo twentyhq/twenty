@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
@@ -116,19 +115,15 @@ export const UsageByUserTableSection = ({
               color={themeCssVariables.font.color.primary}
               gap={showAvatar ? themeCssVariables.spacing[2] : undefined}
             >
-              <SettingsTableFirstColumn
-                label={item.label ?? item.key}
-                leadingContent={
-                  showAvatar ? (
-                    <Avatar
-                      shape="circle"
-                      size="md"
-                      name={item.label ?? item.key}
-                      colorSeed={item.key}
-                    />
-                  ) : undefined
-                }
-              />
+              {showAvatar && (
+                <Avatar
+                  shape="circle"
+                  size="md"
+                  name={item.label ?? item.key}
+                  colorSeed={item.key}
+                />
+              )}
+              {item.label ?? item.key}
             </TableCell>
             <TableCell align="right">
               {formatUsageValue(item.creditsUsed)}

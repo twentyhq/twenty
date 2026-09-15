@@ -1,4 +1,3 @@
-import { SettingsTableFirstColumn } from '@/settings/components/SettingsTableFirstColumn';
 import { useParams } from 'react-router-dom';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -43,7 +42,7 @@ import {
   IconSettings2,
   IconUsers,
 } from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/surfaces';
+import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { H2Title } from 'twenty-ui/typography';
 import { Button, Switch } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
@@ -283,22 +282,20 @@ export const SettingsAdminWorkspaceDetail = () => {
                         gap={themeCssVariables.spacing[2]}
                         overflow="hidden"
                       >
-                        <SettingsTableFirstColumn
-                          label={
+                        <Avatar
+                          src={getAbsoluteImageUrl(user.avatarUrl)}
+                          name={
+                            `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
+                            user.email
+                          }
+                          colorSeed={user.id}
+                          size="md"
+                          shape="circle"
+                        />
+                        <OverflowingTextWithTooltip
+                          text={
                             `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
                             '\u2014'
-                          }
-                          leadingContent={
-                            <Avatar
-                              src={getAbsoluteImageUrl(user.avatarUrl)}
-                              name={
-                                `${user.firstName || ''} ${user.lastName || ''}`.trim() ||
-                                user.email
-                              }
-                              colorSeed={user.id}
-                              size="md"
-                              shape="circle"
-                            />
                           }
                         />
                       </TableCell>
