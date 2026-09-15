@@ -168,7 +168,7 @@ export const SettingsLogs = () => {
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
-        description={t`Only application logs are available on your current plan. Other log types require an Enterprise subscription.`}
+        description={t`Only application logs are available on your current plan. Other log types require an Organization subscription.`}
         Button={
           <Button
             title={t`Upgrade`}
@@ -180,7 +180,7 @@ export const SettingsLogs = () => {
               navigateSettings(
                 isBillingEnabled
                   ? SettingsPath.BillingPlans
-                  : SettingsPath.AdminPanelEnterprise,
+                  : SettingsPath.AdminPanelOrganization,
               )
             }
           />
