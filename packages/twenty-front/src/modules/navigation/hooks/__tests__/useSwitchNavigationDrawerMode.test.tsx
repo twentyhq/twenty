@@ -87,7 +87,8 @@ describe('useSwitchNavigationDrawerMode', () => {
     jest.mocked(useIsMobile).mockReturnValue(false);
   });
 
-  it('leaves settings for the memorized location and restores the drawer', () => {
+  it('leaves settings for the memorized location and restores the mobile drawer', () => {
+    jest.mocked(useIsMobile).mockReturnValue(true);
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: '/settings/profile',
       expandedMemorized: false,
@@ -216,22 +217,43 @@ describe('useSwitchNavigationDrawerMode', () => {
     },
   );
 
+  it.each([false, true])(
+    'keeps the latest desktop sidebar choice (%s) when leaving settings',
+    (isExpanded) => {
+      const { result, store } = renderSwitchNavigationDrawerMode({
+        pathname: DEFAULT_HOME_PAGE_PATH,
+      });
+      act(() => store.set(isNavigationDrawerExpandedState.atom, !isExpanded));
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.SETTINGS,
+        ),
+      );
+      expect(result.current.location.pathname).toBe('/settings/profile');
+
+      act(() => store.set(isNavigationDrawerExpandedState.atom, isExpanded));
+      act(() =>
+        result.current.switchNavigationDrawerMode(
+          NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
+        ),
+      );
+
+      expect(result.current.location.pathname).toBe(DEFAULT_HOME_PAGE_PATH);
+      expect(store.get(isNavigationDrawerExpandedState.atom)).toBe(isExpanded);
+    },
+  );
+
   it('stays collapsed through Home → Settings → AI → Home', () => {
-    jest
-      .mocked(useSwitchToNewAiChat)
-      .mockImplementation(
-        jest.requireActual<{
-          useSwitchToNewAiChat: typeof useSwitchToNewAiChat;
-        }>('@/ai/hooks/useSwitchToNewAiChat').useSwitchToNewAiChat,
-      );
-    jest
-      .mocked(useReturnFromExpandedAiChat)
-      .mockImplementation(
-        jest.requireActual<{
-          useReturnFromExpandedAiChat: typeof useReturnFromExpandedAiChat;
-        }>('@/ai/hooks/useReturnFromExpandedAiChat')
-          .useReturnFromExpandedAiChat,
-      );
+    jest.mocked(useSwitchToNewAiChat).mockImplementation(
+      jest.requireActual<{
+        useSwitchToNewAiChat: typeof useSwitchToNewAiChat;
+      }>('@/ai/hooks/useSwitchToNewAiChat').useSwitchToNewAiChat,
+    );
+    jest.mocked(useReturnFromExpandedAiChat).mockImplementation(
+      jest.requireActual<{
+        useReturnFromExpandedAiChat: typeof useReturnFromExpandedAiChat;
+      }>('@/ai/hooks/useReturnFromExpandedAiChat').useReturnFromExpandedAiChat,
+    );
     const { result, store } = renderSwitchNavigationDrawerMode({
       pathname: DEFAULT_HOME_PAGE_PATH,
     });
