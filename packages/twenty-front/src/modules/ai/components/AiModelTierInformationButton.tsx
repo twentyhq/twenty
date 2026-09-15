@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { isAiModelEffort } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import {
+  IconBrain,
   IconChartBar,
   IconCpu,
   IconCurrencyDollar,
@@ -81,8 +82,11 @@ export const AiModelTierInformationButton = ({
   resolvedTier,
 }: AiModelTierInformationButtonProps) => {
   const { t } = useLingui();
+
   const [isOpen, setIsOpen] = useState(false);
+
   const themeContainer = useThemeContainer();
+
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: setIsOpen,
@@ -90,11 +94,17 @@ export const AiModelTierInformationButton = ({
     middleware: [offset(8), flip(), shift({ padding: 8 })],
     whileElementsMounted: autoUpdate,
   });
+
   const hover = useHover(context, { handleClose: safePolygon() });
+
   const focus = useFocus(context);
+
   const click = useClick(context);
+
   const dismiss = useDismiss(context);
+
   const role = useRole(context, { role: 'tooltip' });
+
   const { getReferenceProps, getFloatingProps } = useInteractions([
     hover,
     focus,
@@ -102,12 +112,16 @@ export const AiModelTierInformationButton = ({
     dismiss,
     role,
   ]);
+
   const model = resolvedTier.model;
+
   const effort = model?.effort;
+
   const formatComparison = (delta: number | undefined) =>
     isDefined(delta)
       ? `${delta > 0 ? '+' : ''}${formatNumber(delta, { decimals: 1 })}%`
       : t`Not available`;
+
   const rows = [
     {
       label: t`Model`,
@@ -119,7 +133,7 @@ export const AiModelTierInformationButton = ({
     },
     {
       label: t`Effort`,
-      Icon: IconCpu,
+      Icon: IconBrain,
       value: !isDefined(model)
         ? t`Not available`
         : isDefined(effort) && isAiModelEffort(effort)
@@ -127,6 +141,7 @@ export const AiModelTierInformationButton = ({
           : t`Default`,
     },
   ];
+
   const comparisons = [
     {
       label: t`Intelligence`,
