@@ -146,6 +146,23 @@ const buildApplicationConfig = (
   return applicationConfig;
 };
 
+const omitDerivedUniversalIdentifiers = <
+  TPermission extends { universalIdentifier?: string },
+>({
+  permissions,
+  getDerivedUniversalIdentifier,
+}: {
+  permissions: TPermission[];
+  getDerivedUniversalIdentifier: (
+    permission: Omit<TPermission, 'universalIdentifier'>,
+  ) => string;
+}) =>
+  permissions.map(({ universalIdentifier, ...permission }) =>
+    universalIdentifier === getDerivedUniversalIdentifier(permission)
+      ? permission
+      : { universalIdentifier, ...permission },
+  );
+
 const buildRoleConfig = ({
   roleManifest,
   applicationUniversalIdentifier,
@@ -163,34 +180,28 @@ const buildRoleConfig = ({
     ...roleManifest,
     ...(isDefined(objectPermissions)
       ? {
-          objectPermissions: objectPermissions.map(
-            ({ universalIdentifier, ...objectPermission }) =>
-              universalIdentifier ===
+          objectPermissions: omitDerivedUniversalIdentifiers({
+            permissions: objectPermissions,
+            getDerivedUniversalIdentifier: ({ objectUniversalIdentifier }) =>
               getObjectPermissionUniversalIdentifier({
                 applicationUniversalIdentifier,
                 roleUniversalIdentifier,
-                objectUniversalIdentifier:
-                  objectPermission.objectUniversalIdentifier,
-              })
-                ? objectPermission
-                : { universalIdentifier, ...objectPermission },
-          ),
+                objectUniversalIdentifier,
+              }),
+          }),
         }
       : {}),
     ...(isDefined(fieldPermissions)
       ? {
-          fieldPermissions: fieldPermissions.map(
-            ({ universalIdentifier, ...fieldPermission }) =>
-              universalIdentifier ===
+          fieldPermissions: omitDerivedUniversalIdentifiers({
+            permissions: fieldPermissions,
+            getDerivedUniversalIdentifier: ({ fieldUniversalIdentifier }) =>
               getFieldPermissionUniversalIdentifier({
                 applicationUniversalIdentifier,
                 roleUniversalIdentifier,
-                fieldUniversalIdentifier:
-                  fieldPermission.fieldUniversalIdentifier,
-              })
-                ? fieldPermission
-                : { universalIdentifier, ...fieldPermission },
-          ),
+                fieldUniversalIdentifier,
+              }),
+          }),
         }
       : {}),
   };
