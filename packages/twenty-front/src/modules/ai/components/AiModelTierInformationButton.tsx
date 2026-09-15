@@ -34,6 +34,7 @@ import {
 import { type ResolvedAiModelTier } from '@/ai/types/ResolvedAiModelTier';
 import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
 import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
+import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
 import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
 import { formatNumber } from '~/utils/format/formatNumber';
 
@@ -57,31 +58,6 @@ const StyledTrigger = styled.button`
   &:focus-visible {
     outline: 2px solid ${themeCssVariables.color.blue};
   }
-`;
-
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[2]};
-  min-height: 24px;
-`;
-
-const StyledLabel = styled.span`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledValue = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  margin-left: auto;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  text-align: right;
 `;
 
 const StyledHeading = styled.div`
@@ -191,24 +167,24 @@ export const AiModelTierInformationButton = ({
             {...getFloatingProps()}
           >
             {rows.map(({ label, Icon, value }) => (
-              <StyledRow key={label}>
-                <StyledLabel>
-                  <Icon size={14} />
-                  {label}
-                </StyledLabel>
-                <StyledValue>{value}</StyledValue>
-              </StyledRow>
+              <UsageProgressRow
+                key={label}
+                Icon={Icon}
+                label={label}
+                value={null}
+                valueLabel={value}
+              />
             ))}
             <HorizontalSeparator noMargin />
             <StyledHeading>{t`Vs Balanced mode`}</StyledHeading>
             {comparisons.map(({ label, Icon, value }) => (
-              <StyledRow key={label}>
-                <StyledLabel>
-                  <Icon size={14} />
-                  {label}
-                </StyledLabel>
-                <StyledValue>{value}</StyledValue>
-              </StyledRow>
+              <UsageProgressRow
+                key={label}
+                Icon={Icon}
+                label={label}
+                value={null}
+                valueLabel={value}
+              />
             ))}
             {model?.isBenchmarkInherited === true && (
               <StyledNote>{t`Not measured at this effort yet, so these are the base model's readings.`}</StyledNote>
