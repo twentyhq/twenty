@@ -15,13 +15,11 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
-  IconBrandWhatsapp,
   IconInbox,
   IconMail,
   IconMailX,
   IconPhone,
   IconPlus,
-  IconArrowsSplit2,
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/typography';
 import { Button } from 'twenty-ui/input';
@@ -37,8 +35,7 @@ const COMMUNICATIONS_TABS_INSTANCE_ID = 'settings-communications-tabs';
 
 const COMMUNICATIONS_TAB_ID = {
   emails: 'emails',
-  sharedInboxes: 'shared-inboxes',
-  routing: 'routing',
+  inbox: 'inbox',
 } as const;
 
 const StyledCardsColumn = styled.div`
@@ -81,24 +78,12 @@ export const SettingsWorkspaceCommunications = () => {
     ...(isInboxFeatureEnabled
       ? [
           {
-            id: COMMUNICATIONS_TAB_ID.sharedInboxes,
-            title: t`Shared inboxes`,
+            id: COMMUNICATIONS_TAB_ID.inbox,
+            title: t`Inbox`,
             Icon: IconInbox,
-          },
-          {
-            id: COMMUNICATIONS_TAB_ID.routing,
-            title: t`Routing`,
-            Icon: IconArrowsSplit2,
           },
         ]
       : []),
-    {
-      id: 'whatsapp',
-      title: t`Whatsapp`,
-      Icon: IconBrandWhatsapp,
-      disabled: true,
-      pill: t`Soon`,
-    },
     {
       id: 'calls',
       title: t`Calls`,
@@ -108,8 +93,8 @@ export const SettingsWorkspaceCommunications = () => {
     },
   ];
 
-  // Only tabs that have content can be active, or a link to #whatsapp lands on
-  // an empty page instead of falling back to the first real tab.
+  // Only tabs that have content can be active, or a link to #calls lands on an
+  // empty page instead of falling back to the first real tab.
   const activeTabId = useSettingsActiveTabId(
     COMMUNICATIONS_TABS_INSTANCE_ID,
     tabs.filter(({ disabled }) => disabled !== true).map(({ id }) => id),
@@ -166,38 +151,38 @@ export const SettingsWorkspaceCommunications = () => {
             )}
           </>
         )}
-        {activeTabId === COMMUNICATIONS_TAB_ID.sharedInboxes && (
-          <Section>
-            <SettingsRolesQueryEffect />
-            <H2Title
-              title={t`Shared inboxes`}
-              description={t`An inbox a team watches together. Work sent here is nobody's until someone takes it.`}
-            />
-            <SettingsInboxQueuesTable inboxQueues={inboxQueues} />
-            <StyledButtonRow>
-              <Button
-                Icon={IconPlus}
-                title={t`New shared inbox`}
-                accent="blue"
-                size="small"
-                to={getSettingsPath(SettingsPath.InboxQueueNew)}
+        {activeTabId === COMMUNICATIONS_TAB_ID.inbox && (
+          <>
+            <Section>
+              <SettingsRolesQueryEffect />
+              <H2Title
+                title={t`Shared inboxes`}
+                description={t`An inbox a team watches together. Work sent here is nobody's until someone takes it.`}
               />
-            </StyledButtonRow>
-          </Section>
-        )}
-        {activeTabId === COMMUNICATIONS_TAB_ID.routing && (
-          <Section>
-            <H2Title
-              title={t`Routing`}
-              description={t`Where each kind of work goes when nothing named a recipient. Rules with conditions belong in a workflow.`}
-            />
-            {!isInboxSettingsLoading && (
-              <SettingsInboxRoutingTable
-                inboxItemTypes={inboxItemTypes}
-                inboxQueues={inboxQueues}
+              <SettingsInboxQueuesTable inboxQueues={inboxQueues} />
+              <StyledButtonRow>
+                <Button
+                  Icon={IconPlus}
+                  title={t`New shared inbox`}
+                  accent="blue"
+                  size="small"
+                  to={getSettingsPath(SettingsPath.InboxQueueNew)}
+                />
+              </StyledButtonRow>
+            </Section>
+            <Section>
+              <H2Title
+                title={t`Routing`}
+                description={t`Where each kind of work goes when nothing named a recipient. Rules with conditions belong in a workflow.`}
               />
-            )}
-          </Section>
+              {!isInboxSettingsLoading && (
+                <SettingsInboxRoutingTable
+                  inboxItemTypes={inboxItemTypes}
+                  inboxQueues={inboxQueues}
+                />
+              )}
+            </Section>
+          </>
         )}
       </SettingsPageContainer>
     </SettingsPageLayout>
