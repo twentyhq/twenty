@@ -4,6 +4,7 @@ import React from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconColumnInsertRight, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
@@ -48,15 +49,17 @@ export const WorkspaceSectionAddMenuItemButton = () => {
     pendingInsertionNavigationMenuItem === null;
 
   return (
-    <StyledContainer>
-      <NavigationDrawerItem
-        Icon={IconPlus}
-        label={t`Add menu item`}
-        onClick={handleClick}
-        triggerEvent="CLICK"
-        variant="tertiary"
-        isSelectedInEditMode={isSelected}
-      />
-    </StyledContainer>
+    <AnimatedEaseIn>
+      <StyledContainer>
+        <NavigationDrawerItem
+          Icon={IconPlus}
+          label={t`Add menu item`}
+          onClick={handleClick}
+          triggerEvent="CLICK"
+          variant="tertiary"
+          isSelectedInEditMode={isSelected}
+        />
+      </StyledContainer>
+    </AnimatedEaseIn>
   );
 };

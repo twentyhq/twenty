@@ -1,3 +1,4 @@
+import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
 import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -395,19 +396,21 @@ export const NavigationMenuItemFolderDnd = ({
                 )}
               />
               {isWorkspace && isLayoutCustomizationModeEnabled && (
-                <NavigationDrawerSubItem
-                  label={t`Add menu item`}
-                  Icon={IconPlus}
-                  onClick={handleAddMenuItemToFolder}
-                  triggerEvent="CLICK"
-                  variant="tertiary"
-                  isSelectedInEditMode={false}
-                  subItemState={getNavigationSubItemLeftAdornment({
-                    index: navigationMenuItems.length,
-                    arrayLength: folderContentLength,
-                    selectedIndex: -1,
-                  })}
-                />
+                <AnimatedEaseIn>
+                  <NavigationDrawerSubItem
+                    label={t`Add menu item`}
+                    Icon={IconPlus}
+                    onClick={handleAddMenuItemToFolder}
+                    triggerEvent="CLICK"
+                    variant="tertiary"
+                    isSelectedInEditMode={false}
+                    subItemState={getNavigationSubItemLeftAdornment({
+                      index: navigationMenuItems.length,
+                      arrayLength: folderContentLength,
+                      selectedIndex: -1,
+                    })}
+                  />
+                </AnimatedEaseIn>
               )}
             </NavigationMenuItemDroppableSlot>
           </StyledFolderDroppableContent>
