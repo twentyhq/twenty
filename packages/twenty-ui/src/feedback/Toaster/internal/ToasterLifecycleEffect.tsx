@@ -3,7 +3,7 @@ import { useLayoutEffect } from 'react';
 import { useToastContext } from '@ui/feedback/Toast/hooks/useToastContext';
 import { mountedToasterCountState } from '@ui/feedback/Toast/states/mountedToasterCountState';
 import { toastsState } from '@ui/feedback/Toast/states/toastsState';
-import { isVisibleToast } from '@ui/feedback/Toast/utils/isVisibleToast';
+import { isToastVisible } from '@ui/feedback/Toast/utils/isToastVisible';
 
 export const ToasterLifecycleEffect = () => {
   const store = useToastContext();
@@ -18,7 +18,7 @@ export const ToasterLifecycleEffect = () => {
         return;
       }
 
-      store.set(toastsState, (toasts) => toasts.filter(isVisibleToast));
+      store.set(toastsState, (toasts) => toasts.filter(isToastVisible));
     };
   }, [store]);
 

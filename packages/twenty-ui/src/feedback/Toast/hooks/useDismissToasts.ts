@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import { mountedToasterCountState } from '../states/mountedToasterCountState';
 import { toastsState } from '../states/toastsState';
 import { type ToastEntry } from '../types/ToastEntry';
-import { isVisibleToast } from '../utils/isVisibleToast';
+import { isToastVisible } from '../utils/isToastVisible';
 import { useToastContext } from './useToastContext';
 
 export const useDismissToasts = () => {
@@ -28,7 +28,7 @@ export const useDismissToasts = () => {
 
       store.set(
         toastsState,
-        isToasterMounted ? toasts : toasts.filter(isVisibleToast),
+        isToasterMounted ? toasts : toasts.filter(isToastVisible),
       );
 
       for (const toast of toastsToClose) {

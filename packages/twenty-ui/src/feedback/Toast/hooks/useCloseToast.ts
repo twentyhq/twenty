@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { toastsState } from '../states/toastsState';
-import { isVisibleToast } from '../utils/isVisibleToast';
+import { isToastVisible } from '../utils/isToastVisible';
 import { useDismissToasts } from './useDismissToasts';
 import { useToastContext } from './useToastContext';
 
@@ -18,7 +18,7 @@ export const useCloseToast = () => {
         .get(toastsState)
         .filter(
           (toast) =>
-            isVisibleToast(toast) &&
+            isToastVisible(toast) &&
             (!isDefined(id) || toast.notification.id === id),
         );
 

@@ -6,7 +6,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import { toastLimitState } from '../states/toastLimitState';
 import { toastsState } from '../states/toastsState';
 import { type ToastOptions } from '../types/ToastOptions';
-import { isVisibleToast } from '../utils/isVisibleToast';
+import { isToastVisible } from '../utils/isToastVisible';
 import { useDismissToasts } from './useDismissToasts';
 import { useToastContext } from './useToastContext';
 
@@ -25,7 +25,7 @@ export const useEnqueueToast = () => {
       }
 
       const toasts = store.get(toastsState);
-      const visibleToasts = toasts.filter(isVisibleToast);
+      const visibleToasts = toasts.filter(isToastVisible);
       const existingToast = visibleToasts.find(
         ({ notification }) =>
           isDefined(options.dedupeKey) &&
