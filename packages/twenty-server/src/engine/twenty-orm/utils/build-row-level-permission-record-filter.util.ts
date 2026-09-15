@@ -95,29 +95,28 @@ const buildRecordFilterForRole = ({
           );
         }
 
-        if (!isDefined(workspaceMember)) {
-          return null;
-        }
+        const resolvedWorkspaceMemberValue = isDefined(workspaceMember)
+          ? resolveWorkspaceMemberPredicateValue({
+              workspaceMember,
+              workspaceMemberFieldMetadata,
+              workspaceMemberSubFieldName:
+                predicate.workspaceMemberSubFieldName,
+            })
+          : undefined;
 
-        const resolvedWorkspaceMemberValue =
-          resolveWorkspaceMemberPredicateValue({
-            workspaceMember,
+        // An unresolved configured rule must not disappear from the role filter.
+        if (
+          !isDefined(resolvedWorkspaceMemberValue) ||
+          !validatePredicateValueCompatibility({
             workspaceMemberFieldMetadata,
-            workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
-          });
-
-        if (!isDefined(resolvedWorkspaceMemberValue)) {
-          return null;
-        }
-
-        const isPredicateValueCompatible = validatePredicateValueCompatibility({
-          workspaceMemberFieldMetadata,
-          targetFieldMetadata: fieldMetadata,
-          predicateValue: resolvedWorkspaceMemberValue,
-        });
-
-        if (!isPredicateValueCompatible) {
-          return null;
+            targetFieldMetadata: fieldMetadata,
+            predicateValue: resolvedWorkspaceMemberValue,
+          })
+        ) {
+          throw new PermissionsException(
+            `Cannot evaluate workspace member value for row level predicate ${predicate.id}`,
+            PermissionsExceptionCode.PERMISSION_DENIED,
+          );
         }
 
         predicateValue = resolvedWorkspaceMemberValue;
