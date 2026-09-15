@@ -14,7 +14,7 @@ Twenty's open-source React UI component library: components, icons, and design t
 npm install twenty-ui
 ```
 
-`react`, `react-dom`, and `monaco-editor` are peer dependencies (install them in your app). `monaco-editor` is only required if you use the code editor components.
+`react`, `react-dom`, and `monaco-editor` are peer dependencies (install them in your app). The `twenty-ui/primitives/input`, `twenty-ui/primitives/feedback`, and `twenty-ui/primitives/navigation` entry points reference `monaco-editor`.
 
 # Usage
 
