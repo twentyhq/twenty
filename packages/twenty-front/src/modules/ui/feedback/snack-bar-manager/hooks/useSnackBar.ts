@@ -44,6 +44,14 @@ export const useSnackBar = () => {
           instanceId: componentInstanceId,
         }),
         (prev) => {
+          if (prev.queue.some((snackBar) => snackBar.id === newValue.id)) {
+            return {
+              ...prev,
+              queue: prev.queue.map((snackBar) =>
+                snackBar.id === newValue.id ? newValue : snackBar,
+              ),
+            };
+          }
           if (
             isDefined(newValue.dedupeKey) &&
             prev.queue.some(
@@ -159,6 +167,7 @@ export const useSnackBar = () => {
 
   return {
     handleSnackBarClose,
+    upsertSnackBar: setSnackBarQueue,
     enqueueSuccessSnackBar,
     enqueueErrorSnackBar,
     enqueueInfoSnackBar,

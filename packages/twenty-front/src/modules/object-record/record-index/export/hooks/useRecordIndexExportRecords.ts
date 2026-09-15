@@ -1,16 +1,12 @@
 import { json2csv } from 'json-2-csv';
-import { useMemo } from 'react';
 
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
-import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
-import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import {
-  useRecordIndexLazyFetchRecords,
-  type UseRecordDataOptions,
-} from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { useRecordIndexExportParameters } from '@/object-record/record-index/export/hooks/useRecordIndexExportParameters';
+import { useCreateRecordExport } from '@/record-export/hooks/useCreateRecordExport';
+import { type ViewType } from '@/views/types/ViewType';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
 import { formatValueForCSV } from '@/spreadsheet-import/utils/formatValueForCSV';
 import { sanitizeValueForCSVExport } from '@/spreadsheet-import/utils/sanitizeValueForCSVExport';
@@ -151,48 +147,20 @@ const downloader = (mimeType: string, generator: GenerateExport) => {
 
 export const csvDownloader = downloader('text/csv', generateCsv);
 
-type UseExportTableDataOptions = Omit<UseRecordDataOptions, 'callback'> & {
-  filename: string;
-};
-
 export const useRecordIndexExportRecords = ({
-  delayMs,
-  filename,
-  maximumRequests = 1000,
   objectMetadataItem,
-  pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   viewType,
-}: UseExportTableDataOptions) => {
-  const { processRecordsForCSVExport } = useExportProcessRecordsForCSV(
-    objectMetadataItem.nameSingular,
-  );
-
-  const downloadCsv = useMemo(
-    () =>
-      (
-        records: ObjectRecord[],
-        columns: Pick<
-          ColumnDefinition<FieldMetadata>,
-          'label' | 'type' | 'metadata'
-        >[],
-      ) => {
-        const recordsProcessedForExport = processRecordsForCSVExport(records);
-
-        csvDownloader(filename, { rows: recordsProcessedForExport, columns });
-      },
-    [filename, processRecordsForCSVExport],
-  );
-
-  const { getTableData: download, progress } = useRecordIndexLazyFetchRecords({
-    delayMs,
-    maximumRequests,
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  recordIndexId: string;
+  viewType?: ViewType;
+}) => {
+  const parameters = useRecordIndexExportParameters({
     objectMetadataItem,
-    pageSize,
     recordIndexId,
-    callback: downloadCsv,
     viewType,
   });
-
-  return { progress, download };
+  const { createRecordExport } = useCreateRecordExport();
+  return { download: () => createRecordExport(parameters) };
 };

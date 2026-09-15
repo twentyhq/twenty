@@ -25,6 +25,7 @@ import { ApolloCoreProvider } from '@/object-metadata/components/ApolloCoreProvi
 import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WelcomeOverlay } from '@/onboarding/components/WelcomeOverlay/WelcomeOverlay';
 import { CompanyEnrichmentOnboardingEffect } from '@/onboarding/effect-components/CompanyEnrichmentOnboardingEffect';
+import { RecordExportManager } from '@/record-export/components/RecordExportManager';
 import { ApolloAdminProvider } from '@/settings/admin-panel/apollo/components/ApolloAdminProvider';
 import { EndTrialAfterPaymentMethodGater } from '@/settings/billing/components/EndTrialAfterPaymentMethodGater';
 import { SSEProvider } from '@/sse-db-event/components/SSEProvider';
@@ -65,6 +66,7 @@ export const WorkspaceAppProviders = () => {
                   >
                     <SnackBarProvider>
                       <ErrorMessageEffect />
+                      <RecordExportManager />
                       <AgentChatProvider>
                         <DialogComponentInstanceContext.Provider
                           value={{ instanceId: 'dialog-manager' }}

@@ -15,6 +15,7 @@ import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
+import { RecordExportCleanupCronCommand } from 'src/engine/core-modules/record-export/crons/record-export-cleanup.cron.command';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCleanupCronCommand } from 'src/engine/core-modules/user-session/crons/commands/user-session-cleanup.cron.command';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
@@ -83,6 +84,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly pendingFileCleanupCronCommand: PendingFileCleanupCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
     private readonly applicationRecurringChargeCronCommand: ApplicationRecurringChargeCronCommand,
+    private readonly recordExportCleanupCronCommand: RecordExportCleanupCronCommand,
     private readonly userSessionCleanupCronCommand: UserSessionCleanupCronCommand,
     private readonly twentyConfigService: TwentyConfigService,
   ) {
@@ -234,6 +236,10 @@ export class CronRegisterAllCommand extends CommandRunner {
         name: 'ApplicationRecurringCharge',
         command: this.applicationRecurringChargeCronCommand,
         isEnabled: isBillingEnabled,
+      },
+      {
+        name: 'RecordExportCleanup',
+        command: this.recordExportCleanupCronCommand,
       },
       {
         name: 'UserSessionCleanup',

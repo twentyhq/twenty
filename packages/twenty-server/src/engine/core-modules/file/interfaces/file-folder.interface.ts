@@ -25,6 +25,11 @@ export const PUBLIC_ASSET_CACHE_CONTROL = 'public, max-age=3600';
 export const PRESIGNED_URL_NO_STORE_CACHE_CONTROL = 'private, no-store';
 
 export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
+  [FileFolder.RecordExport]: {
+    ignoreExpirationToken: false,
+    cacheControl: 'private, no-store',
+    allowedMimeTypes: ['text/csv'],
+  },
   [FileFolder.CorePicture]: {
     ignoreExpirationToken: true,
     cacheControl: IMMUTABLE_FILE_CACHE_CONTROL,

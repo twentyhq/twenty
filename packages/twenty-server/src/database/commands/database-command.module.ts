@@ -32,6 +32,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { PublicDomainModule } from 'src/engine/core-modules/public-domain/public-domain.module';
+import { RecordExportModule } from 'src/engine/core-modules/record-export/record-export.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
 import { UpgradeStatusCommand } from 'src/engine/core-modules/upgrade/commands/upgrade-status.command';
@@ -104,6 +105,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     UpgradeModule,
     SecretEncryptionRotationModule,
     UserSessionModule,
+    RecordExportModule,
     EmailingDomainModule,
   ],
   providers: [

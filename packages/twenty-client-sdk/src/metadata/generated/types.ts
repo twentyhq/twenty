@@ -103,7 +103,8 @@ export default {
         425,
         545,
         549,
-        575
+        575,
+        587
     ],
     "types": {
         "BillingProductDTO": {
@@ -3249,6 +3250,9 @@ export default {
             ],
             "queueJobEvents": [
                 156
+            ],
+            "recordExportEvents": [
+                586
             ],
             "__typename": [
                 1
@@ -8033,6 +8037,9 @@ export default {
             "currentUserApplicationAuthorizations": [
                 296
             ],
+            "findManyRecordExports": [
+                586
+            ],
             "__typename": [
                 1
             ]
@@ -10839,6 +10846,33 @@ export default {
                     "applicationRefreshToken": [
                         1,
                         "String!"
+                    ]
+                }
+            ],
+            "createRecordExport": [
+                586,
+                {
+                    "input": [
+                        585,
+                        "CreateRecordExportInput!"
+                    ]
+                }
+            ],
+            "createRecordExportDownloadUrl": [
+                1,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
+                    ]
+                }
+            ],
+            "retryRecordExport": [
+                586,
+                {
+                    "id": [
+                        3,
+                        "UUID!"
                     ]
                 }
             ],
@@ -13925,6 +13959,59 @@ export default {
             "__typename": [
                 1
             ]
-        }
+        },
+        "CreateRecordExportInput": {
+            "fieldMetadataIds": [
+                3
+            ],
+            "filter": [
+                9
+            ],
+            "objectMetadataId": [
+                3
+            ],
+            "orderBy": [
+                9
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RecordExport": {
+            "createdAt": [
+                4
+            ],
+            "errorMessage": [
+                1
+            ],
+            "expiresAt": [
+                4
+            ],
+            "filename": [
+                1
+            ],
+            "id": [
+                3
+            ],
+            "processedRecordCount": [
+                28
+            ],
+            "status": [
+                587
+            ],
+            "updatedAt": [
+                4
+            ],
+            "workspaceId": [
+                3
+            ],
+            "workspaceMemberId": [
+                3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "RecordExportStatus": {}
     }
 }

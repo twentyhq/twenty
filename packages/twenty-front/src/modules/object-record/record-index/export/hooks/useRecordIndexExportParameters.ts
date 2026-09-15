@@ -1,6 +1,5 @@
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { contextStoreAnyFieldFilterValueComponentState } from '@/context-store/states/contextStoreAnyFieldFilterValueComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -9,8 +8,6 @@ import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/s
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { useLazyFetchAllRecords } from '@/object-record/hooks/useLazyFetchAllRecords';
-import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { type RecordField } from '@/object-record/record-field/types/RecordField';
@@ -23,38 +20,15 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { ViewType } from '@/views/types/ViewType';
 import { isDefined } from 'twenty-shared/utils';
 
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
-
-export const percentage = (part: number, whole: number): number => {
-  return Math.round((part / whole) * 100);
-};
-
-export type UseRecordDataOptions = {
-  delayMs: number;
-  maximumRequests?: number;
-  objectMetadataItem: EnrichedObjectMetadataItem;
-  pageSize?: number;
-  recordIndexId: string;
-  callback: (
-    rows: ObjectRecord[],
-    columns: Pick<
-      ColumnDefinition<FieldMetadata>,
-      'label' | 'type' | 'metadata'
-    >[],
-  ) => void | Promise<void>;
-  viewType?: ViewType;
-};
-
-export const useRecordIndexLazyFetchRecords = ({
+export const useRecordIndexExportParameters = ({
   objectMetadataItem,
-  delayMs,
-  maximumRequests = 100,
-  pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
-  callback,
   viewType = ViewType.TABLE,
-}: UseRecordDataOptions) => {
+}: {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  recordIndexId: string;
+  viewType?: ViewType;
+}) => {
   const { hiddenBoardFields } = useObjectOptionsForBoard({
     objectNameSingular: objectMetadataItem.nameSingular,
     recordBoardId: recordIndexId,
@@ -151,24 +125,17 @@ export const useRecordIndexLazyFetchRecords = ({
       : []),
   ];
 
-  const { progress, isDownloading, fetchAllRecords } = useLazyFetchAllRecords({
-    ...findManyRecordsParams,
-    filter: queryFilter,
-    limit: pageSize,
-    delayMs,
-    maximumRequests,
-  });
-
-  const getTableData = async () => {
-    const result = await fetchAllRecords();
-    if (result.length > 0) {
-      callback(result, finalColumns);
-    }
-  };
-
   return {
-    progress,
-    isDownloading,
-    getTableData: getTableData,
+    objectMetadataId: objectMetadataItem.id,
+    filter: queryFilter,
+    orderBy: findManyRecordsParams.orderBy,
+    fieldMetadataIds: finalColumns
+      .map(
+        (column) =>
+          objectMetadataItem.fields.find(
+            (field) => field.name === column.metadata.fieldName,
+          )?.id,
+      )
+      .filter(isDefined),
   };
 };

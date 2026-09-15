@@ -1698,6 +1698,7 @@ type EventSubscription {
   objectRecordEventsWithQueryIds: [ObjectRecordEventWithQueryIds!]!
   metadataEvents: [MetadataEvent!]!
   queueJobEvents: [JobStatus!]!
+  recordExportEvents: [RecordExport!]!
 }
 
 type UserSession {
@@ -3766,6 +3767,7 @@ type Query {
   findManyPublicDomains: [PublicDomain!]!
   exportApplication(universalIdentifier: UUID!): ApplicationExport!
   currentUserApplicationAuthorizations: [ApplicationAuthorization!]!
+  findManyRecordExports: [RecordExport!]!
 }
 
 input UsageAnalyticsInput {
@@ -4141,6 +4143,9 @@ type Mutation {
   revokeApplicationAuthorization(applicationAuthorizationId: UUID!): Boolean!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!
   renewApplicationToken(applicationRefreshToken: String!): ApplicationTokenPair!
+  createRecordExport(input: CreateRecordExportInput!): RecordExport!
+  createRecordExportDownloadUrl(id: UUID!): String!
+  retryRecordExport(id: UUID!): RecordExport!
 }
 
 input AddQuerySubscriptionInput {
@@ -5497,4 +5502,31 @@ input LogicFunctionLogsInput {
   name: String
   id: UUID
   universalIdentifier: UUID
+}
+
+input CreateRecordExportInput {
+  fieldMetadataIds: [UUID!]!
+  filter: JSON
+  objectMetadataId: UUID!
+  orderBy: JSON
+}
+
+type RecordExport {
+  createdAt: DateTime!
+  errorMessage: String
+  expiresAt: DateTime!
+  filename: String!
+  id: UUID!
+  processedRecordCount: Int!
+  status: RecordExportStatus!
+  updatedAt: DateTime!
+  workspaceId: UUID!
+  workspaceMemberId: UUID!
+}
+
+enum RecordExportStatus {
+  COMPLETED
+  FAILED
+  PROCESSING
+  QUEUED
 }

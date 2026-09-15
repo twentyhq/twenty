@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
@@ -81,6 +82,51 @@ export class WorkspaceEventBroadcaster {
             objectRecordEventsWithQueryIds: [],
             metadataEvents: [],
             queueJobEvents: [queueJobEvent],
+          }
+        : undefined,
+    );
+  }
+
+  async broadcastRecordExportEvent({
+    workspaceId,
+    userWorkspaceId,
+    recordExport,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    recordExport: RecordExportDTO;
+  }): Promise<void> {
+    const {
+      id,
+      workspaceMemberId,
+      filename,
+      status,
+      processedRecordCount,
+      errorMessage,
+      createdAt,
+      updatedAt,
+      expiresAt,
+    } = recordExport;
+    await this.publishToActiveStreams(workspaceId, (streamData) =>
+      streamData.authContext.userWorkspaceId === userWorkspaceId &&
+      !isDefined(streamData.authContext.applicationId)
+        ? {
+            objectRecordEventsWithQueryIds: [],
+            metadataEvents: [],
+            recordExportEvents: [
+              {
+                id,
+                workspaceId,
+                workspaceMemberId,
+                filename,
+                status,
+                processedRecordCount,
+                errorMessage,
+                createdAt,
+                updatedAt,
+                expiresAt,
+              },
+            ],
           }
         : undefined,
     );
