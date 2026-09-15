@@ -4,15 +4,16 @@ import { useId } from 'react';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledContainer = styled.label`
+const StyledContainer = styled.label<{ compact: boolean }>`
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  height: ${themeCssVariables.spacing[5]};
-  justify-content: space-between;
-  padding: ${themeCssVariables.spacing[1]};
-  width: 100%;
+  height: ${({ compact }) =>
+    compact ? themeCssVariables.spacing[8] : themeCssVariables.spacing[5]};
+  justify-content: ${({ compact }) => (compact ? 'center' : 'space-between')};
+  padding: ${({ compact }) => (compact ? '0' : themeCssVariables.spacing[1])};
+  width: ${({ compact }) => (compact ? themeCssVariables.spacing[8] : '100%')};
 `;
 
 const StyledText = styled.div`
@@ -23,6 +24,7 @@ const StyledText = styled.div`
 
 const StyledSwitch = styled(Switch)`
   ${StyledContainer} & {
+    align-self: center;
     color: ${themeCssVariables.color.yellow};
   }
 `;
@@ -32,6 +34,7 @@ type AdvancedSettingsSwitchProps = {
   setIsAdvancedModeEnabled: (enabled: boolean) => void;
   label?: string;
   className?: string;
+  compact?: boolean;
 };
 
 export const AdvancedSettingsSwitch = ({
@@ -39,18 +42,26 @@ export const AdvancedSettingsSwitch = ({
   setIsAdvancedModeEnabled,
   label,
   className,
+  compact = false,
 }: AdvancedSettingsSwitchProps) => {
   const { t } = useLingui();
   const onChange = (newValue: boolean) => {
     setIsAdvancedModeEnabled(newValue);
   };
   const instanceId = useId();
+  const switchLabel = label ?? t`Advanced`;
 
   return (
-    <StyledContainer className={className} htmlFor={instanceId}>
-      <StyledText>{label ?? t`Advanced`}</StyledText>
+    <StyledContainer
+      className={className}
+      htmlFor={instanceId}
+      compact={compact}
+      title={compact ? switchLabel : undefined}
+    >
+      {!compact && <StyledText>{switchLabel}</StyledText>}
       <StyledSwitch
         id={instanceId}
+        aria-label={switchLabel}
         onCheckedChange={onChange}
         checked={isAdvancedModeEnabled}
       />

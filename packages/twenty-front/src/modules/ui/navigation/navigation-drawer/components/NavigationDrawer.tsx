@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { type ReactNode, useState } from 'react';
 
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
-import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { tableWidthResizeIsActiveState } from '@/object-record/record-table/states/tableWidthResizeIsActivedState';
 import { ResizablePanelEdge } from '@/ui/layout/resizable-panel/components/ResizablePanelEdge';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
@@ -89,7 +88,6 @@ export const NavigationDrawer = ({
 }: NavigationDrawerProps) => {
   const [isResizing, setIsResizing] = useState(false);
   const isMobile = useIsMobile();
-  const isSettingsDrawer = useIsSettingsDrawer();
   const isExpanded = useNavigationDrawerExpanded();
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
@@ -132,13 +130,11 @@ export const NavigationDrawer = ({
         isResizing={isResizing}
       >
         <StyledContainer isExpanded={isExpanded}>
-          <NavigationDrawerHeader
-            showCollapseButton={isMobile || !isSettingsDrawer}
-          />
+          <NavigationDrawerHeader showCollapseButton />
           <StyledContent>{children}</StyledContent>
         </StyledContainer>
 
-        {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (
+        {isNavigationDrawerExpanded && !isMobile && (
           <ResizablePanelEdge
             side="right"
             constraints={NAVIGATION_DRAWER_CONSTRAINTS}
