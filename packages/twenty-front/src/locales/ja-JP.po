@@ -3582,6 +3582,7 @@ msgstr "ブロック設定"
 
 #. js-lingui-id: K1172m
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistSection.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
 msgid "Blocklist"
 msgstr "ブロックリスト"
 
@@ -5320,6 +5321,11 @@ msgstr "Googleで続行"
 #: src/pages/onboarding/ImportContacts.tsx
 msgid "Continue with Microsoft"
 msgstr "Microsoftで続行"
+
+#. js-lingui-id: Rdhzdv
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Control what the workspace imports from connected mailboxes and calendars"
+msgstr ""
 
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -8788,6 +8794,11 @@ msgstr "以下の人とドメインをメール同期から除外する."
 msgid "Exclude the following people and domains from my email sync. Internal conversations will not be imported"
 msgstr "以下の人物とドメインをメール同期から除外します。内部の会話はインポートされません"
 
+#. js-lingui-id: aCFYU+
+#: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
+msgid "Exclude the following people and domains from the email and calendar sync of every workspace member"
+msgstr ""
+
 #. js-lingui-id: g3jaWB
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
 msgid "Executed copies"
@@ -11036,7 +11047,7 @@ msgid "Inactive Skill Options"
 msgstr "非アクティブなスキルのオプション"
 
 #. js-lingui-id: j8Bj7e
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Include emails where all participants share the same domain."
 msgstr "すべての参加者が同じドメインを共有しているメールを含めます。"
 
@@ -19796,6 +19807,11 @@ msgstr "年払いに切り替える"
 msgid "Switched to a production instance."
 msgstr "本番インスタンスに切り替えました。"
 
+#. js-lingui-id: Nu4DdT
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
+msgid "Sync"
+msgstr ""
+
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Sync Account"
@@ -19822,7 +19838,7 @@ msgid "Sync failed"
 msgstr "同期に失敗しました"
 
 #. js-lingui-id: tVKt7G
-#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync Internal Emails"
 msgstr "社内メールを同期"
 
