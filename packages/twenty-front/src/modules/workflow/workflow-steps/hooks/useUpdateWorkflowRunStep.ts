@@ -1,15 +1,16 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { UPDATE_WORKFLOW_RUN_STEP } from '@/workflow/graphql/mutations/updateWorkflowRunStep';
-import { type WorkflowStep, type WorkflowRun } from '@/workflow/types/Workflow';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { type WorkflowRun, type WorkflowStep } from '@/workflow/types/Workflow';
 import { useMutation } from '@apollo/client/react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   type UpdateWorkflowRunStepInput,
   type UpdateWorkflowRunStepMutation,
@@ -33,7 +34,7 @@ export const useUpdateWorkflowRunStep = () => {
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.WorkflowRun,
   });
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const updateWorkflowRunStep = async (input: UpdateWorkflowRunStepInput) => {
     const result = await mutate({
@@ -41,7 +42,7 @@ export const useUpdateWorkflowRunStep = () => {
         input: { workflowRunId: input.workflowRunId, step: input.step },
       },
       onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
     const updatedStep = result?.data?.updateWorkflowRunStep;

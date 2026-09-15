@@ -14,7 +14,7 @@ import { RecordInlineCellDisplayMode } from '@/object-record/record-inline-cell/
 import { IconPencil } from 'twenty-ui/icon';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 
 const getInlineCellContextDecorator =
@@ -47,7 +47,7 @@ const meta: Meta<typeof RecordInlineCellDisplayMode> = {
     }),
     getInlineCellContextDecorator({}),
     ComponentDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   args: {
     isHovered: true,

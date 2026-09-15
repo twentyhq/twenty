@@ -1,6 +1,8 @@
-import { styled } from '@linaria/react';
-
 import { useAuth } from '@/auth/hooks/useAuth';
+import {
+  StyledTwoFactorInstructions,
+  StyledTwoFactorMainContent,
+} from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationStyles';
 import {
   type OTPFormValues,
   useTwoFactorAuthenticationForm,
@@ -10,14 +12,12 @@ import {
   SignInUpStep,
   signInUpStepState,
 } from '@/auth/states/signInUpStepState';
-import {
-  StyledTwoFactorInstructions,
-  StyledTwoFactorMainContent,
-} from '@/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationStyles';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
-import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
@@ -27,8 +27,8 @@ import { MainButton } from 'twenty-ui/primitives/input';
 import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -170,7 +170,7 @@ export const SignInUpTOTPVerification = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const { getAuthTokensFromOTP } = useAuth();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const navigate = useNavigateApp();
   const { readCaptchaToken } = useReadCaptchaToken();
@@ -185,8 +185,9 @@ export const SignInUpTOTPVerification = () => {
     setIsLoading(true);
     try {
       if (!isCaptchaReady) {
-        enqueueErrorSnackBar({
-          message: t`Captcha (anti-bot check) is still loading, try again`,
+        enqueueToast({
+          variant: 'error',
+          children: t`Captcha (anti-bot check) is still loading, try again`,
         });
         setIsLoading(false);
         return;
@@ -202,11 +203,10 @@ export const SignInUpTOTPVerification = () => {
     } catch {
       form.setValue('otp', '');
 
-      enqueueErrorSnackBar({
-        message: t`Invalid verification code. Please try again.`,
-        options: {
-          dedupeKey: 'invalid-otp-dedupe-key',
-        },
+      enqueueToast({
+        variant: 'error',
+        children: t`Invalid verification code. Please try again.`,
+        dedupeKey: 'invalid-otp-dedupe-key',
       });
     } finally {
       setIsLoading(false);

@@ -1,15 +1,15 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
+import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import {
   MessageChannelContactAutoCreationPolicy,
   MessageChannelType,
   MessageFolderImportPolicy,
 } from 'twenty-shared/types';
-import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MessageChannelVisibility } from '~/generated/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
   title:
@@ -18,7 +18,7 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   args: {
     messageChannel: {

@@ -1,16 +1,16 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/primitives/typography';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import {
@@ -39,7 +39,7 @@ export const SettingsSkillDangerZone = ({
   skill,
 }: SettingsSkillDangerZoneProps) => {
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { openModal, closeModal } = useModal();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -53,9 +53,7 @@ export const SettingsSkillDangerZone = ({
       await mutation();
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsSubmitting(false);
     }

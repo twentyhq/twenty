@@ -5,7 +5,7 @@ import { SettingsDevelopersWebhookForm } from '@/settings/developers/components/
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
@@ -16,7 +16,7 @@ const meta: Meta<typeof SettingsDevelopersWebhookForm> = {
     ComponentDecorator,
     RouterDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   parameters: {
     msw: graphqlMocks,
