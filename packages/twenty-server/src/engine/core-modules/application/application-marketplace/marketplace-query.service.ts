@@ -15,6 +15,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 
 @Injectable()
 export class MarketplaceQueryService {
@@ -22,6 +23,7 @@ export class MarketplaceQueryService {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   async findManyMarketplaceApps({
@@ -80,12 +82,17 @@ export class MarketplaceQueryService {
     return registration;
   }
 
-  private toMarketplaceAppDetailDTO(
+  private async toMarketplaceAppDetailDTO(
     registration: ApplicationRegistrationEntity,
-  ): MarketplaceAppDetailDTO {
+  ): Promise<MarketplaceAppDetailDTO> {
     const galleryImageUrls =
       this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
         registration,
+      );
+
+    const installCount =
+      await this.applicationService.countInstalledWorkspacesForApplication(
+        registration.universalIdentifier,
       );
 
     return {
@@ -139,6 +146,7 @@ export class MarketplaceQueryService {
         undefined,
       screenshots: galleryImageUrls,
       galleryImages: galleryImageUrls,
+      installCount,
       defaultRoleUniversalIdentifier:
         registration.manifest?.application?.defaultRoleUniversalIdentifier,
       roles: registration.manifest?.roles?.map((role) =>
