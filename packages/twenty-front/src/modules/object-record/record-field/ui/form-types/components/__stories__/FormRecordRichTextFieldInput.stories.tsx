@@ -102,10 +102,23 @@ export const WritesBlockNoteBlocks: Story = {
       expect(args.onChange).toHaveBeenCalled();
     });
 
-    expect(args.onChange).toHaveBeenLastCalledWith(
+    const [{ blocknote }] = (args.onChange as jest.Mock).mock.calls.at(-1) as [
+      { blocknote: string },
+    ];
+
+    const blocks = JSON.parse(blocknote);
+
+    expect(blocks[0]).toEqual(
       expect.objectContaining({
-        blocknote: expect.stringContaining('"type":"paragraph"'),
-        markdown: null,
+        type: 'paragraph',
+        props: expect.any(Object),
+        content: [
+          expect.objectContaining({
+            type: 'text',
+            text: 'Hello',
+            styles: expect.any(Object),
+          }),
+        ],
       }),
     );
   },

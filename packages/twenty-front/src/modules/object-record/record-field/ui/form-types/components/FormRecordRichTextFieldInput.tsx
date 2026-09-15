@@ -1,6 +1,6 @@
 import { useCreateBlockNote } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect, useId } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Field } from 'twenty-ui/input';
 
@@ -10,6 +10,7 @@ import { BLOCK_EDITOR_GLOBAL_HOTKEYS_CONFIG } from '@/blocknote-editor/constants
 import { filterBlocksSupportedBySchema } from '@/blocknote-editor/utils/filterBlocksSupportedBySchema';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -41,16 +42,37 @@ export const FormRecordRichTextFieldInput = ({
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const supportedBlocks = filterBlocksSupportedBySchema(
-    parseInitialBlocknote(defaultValue?.blocknote),
-    BLOCK_SCHEMA.blockSchema,
-  );
+  const { enqueueErrorSnackBar } = useSnackBar();
 
-  const initialBlocks = isNonEmptyArray(supportedBlocks)
-    ? supportedBlocks
-    : undefined;
+  const [{ initialBlocks, hasUnreadableStoredValue }] = useState(() => {
+    const parsedBlocks = parseInitialBlocknote(
+      defaultValue?.blocknote ?? defaultValue?.markdown,
+    );
+
+    const supportedBlocks = filterBlocksSupportedBySchema(
+      parsedBlocks,
+      BLOCK_SCHEMA.blockSchema,
+    );
+
+    return {
+      initialBlocks: isNonEmptyArray(supportedBlocks)
+        ? supportedBlocks
+        : undefined,
+      hasUnreadableStoredValue:
+        isNonEmptyArray(parsedBlocks) && !isNonEmptyArray(supportedBlocks),
+    };
+  });
+
+  const handleUploadFile = async (): Promise<string> => {
+    enqueueErrorSnackBar({
+      message: t`Save the record before attaching a file`,
+    });
+
+    throw new Error('Cannot attach a file before the record exists');
+  };
 
   const editor = useCreateBlockNote({
+    uploadFile: handleUploadFile,
     initialContent: initialBlocks,
     domAttributes: { editor: { class: 'editor' } },
     schema: BLOCK_SCHEMA,
@@ -87,6 +109,14 @@ export const FormRecordRichTextFieldInput = ({
     };
   }, [focusId, removeFocusItemFromFocusStackById]);
 
+  useEffect(() => {
+    if (hasUnreadableStoredValue) {
+      enqueueErrorSnackBar({
+        message: t`This content was saved in an older format and cannot be edited here`,
+      });
+    }
+  }, [hasUnreadableStoredValue, enqueueErrorSnackBar, t]);
+
   return (
     <FormFieldInputContainer>
       {label ? <Field.Label>{label}</Field.Label> : null}
@@ -95,7 +125,7 @@ export const FormRecordRichTextFieldInput = ({
         onChange={handleChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        readonly={readonly}
+        readonly={readonly === true || hasUnreadableStoredValue}
       />
     </FormFieldInputContainer>
   );
