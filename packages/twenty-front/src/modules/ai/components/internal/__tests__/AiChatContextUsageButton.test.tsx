@@ -94,10 +94,10 @@ describe('AiChatContextUsageButton', () => {
     await user.click(screen.getByRole('button', { name: /^More/ }));
     expect(screen.getByText('Last message')).toBeVisible();
     expect(screen.getByText('Conversation')).toBeVisible();
-    expect(screen.getByText('100k (10%)')).toBeVisible();
-    expect(screen.getByText('20k (2%)')).toBeVisible();
-    expect(screen.getByText('200k (20%)')).toBeVisible();
-    expect(screen.getByText('40k (4%)')).toBeVisible();
+    expect(screen.getByText('100k')).toBeVisible();
+    expect(screen.getByText('20k')).toBeVisible();
+    expect(screen.getByText('200k')).toBeVisible();
+    expect(screen.getByText('40k')).toBeVisible();
     expect(screen.getByText('100')).toBeVisible();
     expect(screen.getByText('50')).toBeVisible();
     expect(screen.getAllByText('Credits')).toHaveLength(2);
@@ -114,7 +114,7 @@ describe('AiChatContextUsageButton', () => {
     expect(screen.getByRole('button', { name: /^More/ })).toBeVisible();
   });
 
-  it('omits percentages without a context capacity and hides an absent last message', async () => {
+  it('shows token counts without a context capacity and hides an absent last message', async () => {
     mockUsage = {
       conversationSize: 0,
       contextWindowTokens: 0,

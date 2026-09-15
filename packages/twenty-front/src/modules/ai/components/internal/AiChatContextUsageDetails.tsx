@@ -36,15 +36,8 @@ export const AiChatContextUsageDetails = () => {
   );
   if (!agentChatUsage) return null;
 
-  const formatTokens = (tokens: number) => {
-    const amount = formatNumber(tokens, { abbreviate: true, decimals: 1 });
-    if (agentChatUsage.contextWindowTokens <= 0) return amount;
-    const percentage = formatNumber(
-      (tokens / agentChatUsage.contextWindowTokens) * 100,
-      { decimals: 1 },
-    );
-    return `${amount} (${percentage}%)`;
-  };
+  const formatTokens = (tokens: number) =>
+    formatNumber(tokens, { abbreviate: true, decimals: 1 });
   const lastMessage = agentChatUsage.lastMessage;
   const cachedLabel =
     isDefined(lastMessage) && lastMessage.inputTokens > 0
