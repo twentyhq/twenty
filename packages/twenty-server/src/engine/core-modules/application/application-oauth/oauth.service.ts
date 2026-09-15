@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import crypto from 'crypto';
 
 import ms from 'ms';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
 
 import {
@@ -191,9 +191,25 @@ export class OAuthService {
       );
     }
 
-    await this.appTokenRepository.update(authCodeToken.id, {
-      revokedAt: new Date(),
-    });
+    // Atomically consume the single-use code: only the request that flips
+    // revokedAt away from null proceeds. This closes the check-then-use race
+    // where two concurrent redemptions of the same code both pass the
+    // revokedAt check above and each receive a token pair.
+    const consumeResult = await this.appTokenRepository.update(
+      { id: authCodeToken.id, revokedAt: IsNull() },
+      { revokedAt: new Date() },
+    );
+
+    if (!consumeResult.affected) {
+      this.logger.warn(
+        `Authorization code replay detected for client ${clientId} (concurrent redemption).`,
+      );
+
+      return this.errorResponse(
+        'invalid_grant',
+        'Authorization code has already been used',
+      );
+    }
 
     if (!authCodeToken.userId || !authCodeToken.workspaceId) {
       return this.errorResponse(
