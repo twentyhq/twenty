@@ -5,8 +5,8 @@ import {
   writeJson,
 } from '@/cli/utilities/file/fs-utils';
 import { dirname, join } from 'node:path';
-import { type Manifest } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { type Manifest, type RoleManifest } from 'twenty-shared/application';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 export const PULL_BASE_FILE_PATH = '.twenty/pull-base.json';
 
@@ -33,6 +33,17 @@ const isEntityListWithFields = (value: unknown): boolean =>
     (entry) =>
       hasUniversalIdentifier(entry) &&
       Array.isArray((entry as { fields?: unknown }).fields),
+  );
+
+const isOptionalObjectList = (value: unknown): boolean =>
+  !isDefined(value) || (Array.isArray(value) && value.every(isPlainObject));
+
+const isRoleList = (value: unknown): boolean =>
+  isEntityList(value) &&
+  (value as Partial<RoleManifest>[]).every(
+    ({ objectPermissions, fieldPermissions }) =>
+      isOptionalObjectList(objectPermissions) &&
+      isOptionalObjectList(fieldPermissions),
   );
 
 const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
@@ -62,7 +73,7 @@ const isUsableBaseManifest = (manifest: unknown): manifest is Manifest => {
     fields.every(hasUniversalIdentifier) &&
     (!isDefined(indexes) || isEntityListWithFields(indexes)) &&
     (!isDefined(permissionFlags) || isEntityList(permissionFlags)) &&
-    (!isDefined(roles) || isEntityList(roles)) &&
+    (!isDefined(roles) || isRoleList(roles)) &&
     (!isDefined(views) || isEntityList(views)) &&
     (!isDefined(viewFields) || isEntityList(viewFields)) &&
     (!isDefined(pageLayouts) || isEntityList(pageLayouts)) &&
