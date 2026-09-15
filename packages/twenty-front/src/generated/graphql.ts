@@ -330,9 +330,11 @@ export type InboxItem = {
   outcome?: Maybe<InboxItemOutcome>;
   priority: InboxItemPriority;
   queueId?: Maybe<Scalars['UUID']['output']>;
+  records: Array<InboxItemRecord>;
   scope: InboxItemScope;
   subjectObjectMetadataId?: Maybe<Scalars['UUID']['output']>;
   subjectRecordId?: Maybe<Scalars['UUID']['output']>;
+  summary?: Maybe<Scalars['String']['output']>;
   threadId?: Maybe<Scalars['UUID']['output']>;
   title: Scalars['String']['output'];
   toolCalls: Array<InboxItemToolCall>;
@@ -341,35 +343,10 @@ export type InboxItem = {
 
 export type InboxItemContext = {
   __typename?: 'InboxItemContext';
-  edges: Array<InboxItemContextEdge>;
-  entities: Array<InboxItemContextEntity>;
+  producer: Scalars['String']['output'];
   source?: Maybe<InboxItemContextSource>;
-  summary?: Maybe<Scalars['String']['output']>;
+  version: Scalars['Int']['output'];
 };
-
-export type InboxItemContextEdge = {
-  __typename?: 'InboxItemContextEdge';
-  from: Scalars['String']['output'];
-  label: Scalars['String']['output'];
-  to: Scalars['String']['output'];
-};
-
-export type InboxItemContextEntity = {
-  __typename?: 'InboxItemContextEntity';
-  key: Scalars['String']['output'];
-  kind: InboxItemContextEntityKind;
-  label: Scalars['String']['output'];
-  objectMetadataId?: Maybe<Scalars['String']['output']>;
-  recordId?: Maybe<Scalars['String']['output']>;
-  subtitle?: Maybe<Scalars['String']['output']>;
-};
-
-export enum InboxItemContextEntityKind {
-  COMPANY = 'COMPANY',
-  OPPORTUNITY = 'OPPORTUNITY',
-  OTHER = 'OTHER',
-  PERSON = 'PERSON'
-}
 
 export type InboxItemContextSource = {
   __typename?: 'InboxItemContextSource';
@@ -413,6 +390,17 @@ export enum InboxItemPriority {
   NEEDS_ACTION = 'NEEDS_ACTION',
   UPDATE = 'UPDATE'
 }
+
+export type InboxItemRecord = {
+  __typename?: 'InboxItemRecord';
+  id: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  objectMetadataId?: Maybe<Scalars['String']['output']>;
+  position: Scalars['Int']['output'];
+  recordId?: Maybe<Scalars['String']['output']>;
+  relationLabel?: Maybe<Scalars['String']['output']>;
+  subtitle?: Maybe<Scalars['String']['output']>;
+};
 
 export enum InboxItemScope {
   DONE = 'DONE',

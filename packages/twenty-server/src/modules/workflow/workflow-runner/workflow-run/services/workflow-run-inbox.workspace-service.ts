@@ -86,9 +86,10 @@ export class WorkflowRunInboxWorkspaceService {
 
     await this.inboxRouterService.route({
       workspaceId,
+      producer: 'workflowRun',
       typeKey: INBOX_ITEM_TYPE_KEY.workflowRunFailed,
       title: `${workflowName ?? 'Workflow'} run failed`,
-      ...(isDefined(error) ? { context: { summary: error } } : {}),
+      ...(isDefined(error) ? { summary: error } : {}),
       target: { kind: 'userWorkspace', userWorkspaceId },
       slotKey: `${INBOX_ITEM_TYPE_KEY.workflowRunFailed}:${workflowRun.id}`,
       ...(isDefined(workflowRunObjectMetadataId)

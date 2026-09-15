@@ -1,29 +1,26 @@
-import {
-  InboxItemContextEntityKind,
-  InboxItemContextSourceKind,
-} from 'src/engine/core-modules/inbox/dtos/inbox-item-context.dto';
+import { InboxItemContextSourceKind } from 'src/engine/core-modules/inbox/dtos/inbox-item-context.dto';
 import { toInboxItemContextDto } from 'src/engine/core-modules/inbox/utils/to-inbox-item-context-dto.util';
 
 describe('toInboxItemContextDto', () => {
-  it('returns an empty context rather than throwing on anything that is not an object', () => {
-    const empty = {
-      summary: null,
-      source: null,
-      entities: [],
-      edges: [],
-    };
+  it('returns an unknown provenance rather than throwing on anything that is not an object', () => {
+    const unknown = { version: 0, producer: 'unknown', source: null };
 
-    expect(toInboxItemContextDto(null)).toEqual(empty);
-    expect(toInboxItemContextDto('a string')).toEqual(empty);
-    expect(toInboxItemContextDto([])).toEqual(empty);
+    expect(toInboxItemContextDto(null)).toEqual(unknown);
+    expect(toInboxItemContextDto('a string')).toEqual(unknown);
+    expect(toInboxItemContextDto([])).toEqual(unknown);
   });
 
-  it('reads the kinds producers already wrote in lower case', () => {
+  it('keeps the producer and version a row was written with', () => {
+    expect(
+      toInboxItemContextDto({ version: 1, producer: 'agentChat' }),
+    ).toEqual({ version: 1, producer: 'agentChat', source: null });
+  });
+
+  it('reads a source kind written in lower case', () => {
     const context = toInboxItemContextDto({
-      summary: 'Marie asked about the renewal',
+      version: 1,
+      producer: 'seed',
       source: { kind: 'email', label: 'Re: Renewal', messageCount: 3 },
-      entities: [{ key: 'marie', label: 'Marie', kind: 'person' }],
-      edges: [{ from: 'marie', to: 'google', label: 'works at' }],
     });
 
     expect(context.source).toEqual({
@@ -33,37 +30,22 @@ describe('toInboxItemContextDto', () => {
       excerpt: null,
       messageCount: 3,
     });
-    expect(context.entities[0].kind).toBe(InboxItemContextEntityKind.PERSON);
   });
 
   it('drops a source with no label instead of returning a half built one', () => {
     expect(
-      toInboxItemContextDto({ source: { kind: 'email' } }).source,
+      toInboxItemContextDto({ version: 1, producer: 'seed', source: {} })
+        .source,
     ).toBeNull();
   });
 
-  it('drops entities and edges that do not hold up, keeping the rest', () => {
-    const context = toInboxItemContextDto({
-      entities: [
-        { key: 'marie', label: 'Marie', kind: 'person' },
-        { key: 'no-label' },
-        'not an entity',
-      ],
-      edges: [
-        { from: 'marie', to: 'google', label: 'works at' },
-        { from: 'marie' },
-      ],
-    });
-
-    expect(context.entities).toHaveLength(1);
-    expect(context.edges).toHaveLength(1);
-  });
-
-  it('falls back to OTHER for an entity kind nothing recognises', () => {
-    const context = toInboxItemContextDto({
-      entities: [{ key: 'x', label: 'X', kind: 'spaceship' }],
-    });
-
-    expect(context.entities[0].kind).toBe(InboxItemContextEntityKind.OTHER);
+  it('drops a source whose kind nothing recognises', () => {
+    expect(
+      toInboxItemContextDto({
+        version: 1,
+        producer: 'seed',
+        source: { kind: 'carrier pigeon', label: 'A note' },
+      }).source,
+    ).toBeNull();
   });
 });

@@ -1,17 +1,12 @@
 import { styled } from '@linaria/react';
 import { Fragment } from 'react';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  type InboxItemContextEdge,
-  type InboxItemContextEntity,
-  InboxItemContextEntityKind,
-} from '~/generated/graphql';
+import { type InboxItemRecord } from '~/generated/graphql';
 
 const StyledGraph = styled.div`
   align-items: stretch;
@@ -88,63 +83,48 @@ const StyledLine = styled.div`
   width: 20px;
 `;
 
-// An entity names a standard object by kind; a producer that knows the exact
-// object says so explicitly.
-const OBJECT_NAME_SINGULAR_BY_ENTITY_KIND: Partial<
-  Record<InboxItemContextEntityKind, string>
-> = {
-  [InboxItemContextEntityKind.PERSON]: CoreObjectNameSingular.Person,
-  [InboxItemContextEntityKind.COMPANY]: CoreObjectNameSingular.Company,
-  [InboxItemContextEntityKind.OPPORTUNITY]: CoreObjectNameSingular.Opportunity,
-};
-
 type InboxPlanEntityGraphProps = {
-  entities: InboxItemContextEntity[];
-  edges: InboxItemContextEdge[];
+  records: InboxItemRecord[];
 };
 
-// Producers lay a plan's entities out as a chain, so only the relation between
-// neighbours is drawn. An entity backed by a record opens beside the inbox
-// rather than navigating away from it.
+// The rows are already in the order they read in, each naming how it relates to
+// the one before it, so the chain is the row order rather than a graph to walk.
+// A row backed by a record opens beside the inbox rather than navigating away.
 export const InboxPlanEntityGraph = ({
-  entities,
-  edges,
+  records,
 }: InboxPlanEntityGraphProps) => {
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
-  if (entities.length === 0) {
+  if (records.length === 0) {
     return null;
   }
 
-  const findEdgeLabel = (leftKey: string, rightKey: string) =>
-    edges.find(
-      (edge) =>
-        (edge.from === leftKey && edge.to === rightKey) ||
-        (edge.from === rightKey && edge.to === leftKey),
-    )?.label;
-
-  const getObjectNameSingular = (entity: InboxItemContextEntity) =>
-    isDefined(entity.objectMetadataId)
-      ? objectMetadataItemsByIdMap.get(entity.objectMetadataId)?.nameSingular
-      : OBJECT_NAME_SINGULAR_BY_ENTITY_KIND[entity.kind];
-
   return (
     <StyledGraph>
-      {entities.map((entity, index) => {
-        const nextEntity = entities[index + 1];
-        const edgeLabel = isDefined(nextEntity)
-          ? findEdgeLabel(entity.key, nextEntity.key)
+      {records.map((record, index) => {
+        const objectNameSingular = isDefined(record.objectMetadataId)
+          ? objectMetadataItemsByIdMap.get(record.objectMetadataId)
+              ?.nameSingular
           : undefined;
-        const objectNameSingular = getObjectNameSingular(entity);
-        const recordId = entity.recordId;
+        const recordId = record.recordId;
         const isClickable =
           isDefined(recordId) && isDefined(objectNameSingular);
+        // The relation belongs to the row that names it, so it is drawn before
+        // that row rather than after the one it points back at.
+        const relationLabel = index > 0 ? record.relationLabel : undefined;
 
         return (
-          <Fragment key={entity.key}>
+          <Fragment key={record.id}>
+            {isDefined(relationLabel) && (
+              <StyledConnector>
+                <StyledLine />
+                {relationLabel}
+                <StyledLine />
+              </StyledConnector>
+            )}
             <StyledEntity
               role={isClickable ? 'button' : undefined}
               tabIndex={isClickable ? 0 : undefined}
@@ -167,24 +147,15 @@ export const InboxPlanEntityGraph = ({
               }
             >
               <StyledEntityHeader>
-                <StyledAvatar
-                  isSquare={entity.kind !== InboxItemContextEntityKind.PERSON}
-                >
-                  {entity.label.charAt(0).toUpperCase()}
+                <StyledAvatar isSquare={!isDefined(record.subtitle)}>
+                  {record.label.charAt(0).toUpperCase()}
                 </StyledAvatar>
-                {entity.label}
+                {record.label}
               </StyledEntityHeader>
-              {isDefined(entity.subtitle) && (
-                <StyledSubtitle>{entity.subtitle}</StyledSubtitle>
+              {isDefined(record.subtitle) && (
+                <StyledSubtitle>{record.subtitle}</StyledSubtitle>
               )}
             </StyledEntity>
-            {isDefined(edgeLabel) && (
-              <StyledConnector>
-                <StyledLine />
-                {edgeLabel}
-                <StyledLine />
-              </StyledConnector>
-            )}
           </Fragment>
         );
       })}

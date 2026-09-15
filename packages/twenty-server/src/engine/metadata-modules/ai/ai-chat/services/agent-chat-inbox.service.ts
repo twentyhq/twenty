@@ -26,6 +26,7 @@ export class AgentChatInboxService {
   }: ThreadContext & { title?: string }): Promise<void> {
     await this.inboxRouterService.route({
       workspaceId,
+      producer: 'agentChat',
       typeKey: INBOX_ITEM_TYPE_KEY.conversation,
       title,
       subject: {
@@ -48,10 +49,11 @@ export class AgentChatInboxService {
   }): Promise<void> {
     await this.inboxRouterService.route({
       workspaceId,
+      producer: 'agentChat',
       typeKey: hasPendingQuestion
         ? INBOX_ITEM_TYPE_KEY.agentQuestion
         : INBOX_ITEM_TYPE_KEY.conversation,
-      ...(isDefined(summary) ? { context: { summary } } : {}),
+      ...(isDefined(summary) ? { summary } : {}),
       subject: {
         kind: 'thread',
         threadId,
@@ -88,10 +90,9 @@ export class AgentChatInboxService {
   }: ThreadContext & { errorMessage?: string }): Promise<void> {
     await this.inboxRouterService.route({
       workspaceId,
+      producer: 'agentChat',
       typeKey: INBOX_ITEM_TYPE_KEY.agentRunFailed,
-      ...(isNonEmptyString(errorMessage)
-        ? { context: { summary: errorMessage } }
-        : {}),
+      ...(isNonEmptyString(errorMessage) ? { summary: errorMessage } : {}),
       subject: {
         kind: 'thread',
         threadId,

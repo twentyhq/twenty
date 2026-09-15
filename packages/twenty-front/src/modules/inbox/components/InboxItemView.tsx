@@ -123,6 +123,7 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
   } = useInboxItemActions();
 
   const context = inboxItem.context;
+  const summary = inboxItem.summary;
   const toolCalls = inboxItem.toolCalls;
   const pendingToolCalls = toolCalls.filter(
     (toolCall) => toolCall.status === InboxItemToolCallStatus.PROPOSED,
@@ -130,11 +131,11 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
   const isDone = inboxItem.scope === InboxItemScope.DONE;
   const InboxItemTypeIcon = getIcon(inboxItem.inboxItemType.icon);
   const hasContext =
-    isNonEmptyString(context.summary) ||
+    isNonEmptyString(summary) ||
     isDefined(context.source) ||
     isDefined(inboxItem.threadId) ||
     isDefined(inboxItem.subjectRecordId) ||
-    context.entities.length > 0;
+    inboxItem.records.length > 0;
 
   // Every call starts folded; the person opens the ones they want to change.
   const [expandedToolCallIds, setExpandedToolCallIds] = useState<string[]>([]);
@@ -242,17 +243,14 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
 
         {hasContext && (
           <StyledContextCard>
-            {isNonEmptyString(context.summary) && (
-              <StyledSummary>{context.summary}</StyledSummary>
+            {isNonEmptyString(summary) && (
+              <StyledSummary>{summary}</StyledSummary>
             )}
             <InboxItemSubjectChip
               inboxItem={inboxItem}
               source={context.source ?? undefined}
             />
-            <InboxPlanEntityGraph
-              entities={context.entities}
-              edges={context.edges}
-            />
+            <InboxPlanEntityGraph records={inboxItem.records} />
           </StyledContextCard>
         )}
 

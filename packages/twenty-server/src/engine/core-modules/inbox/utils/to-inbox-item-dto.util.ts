@@ -5,6 +5,7 @@ import {
 } from 'src/engine/core-modules/inbox/dtos/inbox-item.dto';
 import { type InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { type InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-field-schema.type';
 import { toInboxItemContextDto } from 'src/engine/core-modules/inbox/utils/to-inbox-item-context-dto.util';
@@ -42,10 +43,11 @@ export const toInboxItemToolCallDto = (
 // a producer's freshly inserted row has none to show.
 export type InboxItemWithType = Omit<
   InboxItemEntity,
-  'inboxItemType' | 'toolCalls'
+  'inboxItemType' | 'toolCalls' | 'records'
 > & {
   inboxItemType: InboxItemTypeEntity;
   toolCalls?: InboxItemToolCallEntity[];
+  records?: InboxItemRecordEntity[];
 };
 
 // `now` comes from the request rather than from here, so every item in one
@@ -70,7 +72,19 @@ export const toInboxItemDto = (
     priority: inboxItem.priority,
     version: inboxItem.version,
     title: inboxItem.title,
+    summary: inboxItem.summary,
     context: toInboxItemContextDto(inboxItem.context),
+    records: [...(inboxItem.records ?? [])]
+      .sort((left, right) => left.position - right.position)
+      .map((record) => ({
+        id: record.id,
+        position: record.position,
+        label: record.label,
+        subtitle: record.subtitle,
+        relationLabel: record.relationLabel,
+        objectMetadataId: record.objectMetadataId,
+        recordId: record.recordId,
+      })),
     toolCalls: [...(inboxItem.toolCalls ?? [])]
       .sort((left, right) => left.position - right.position)
       .map(toInboxItemToolCallDto),

@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
+import { InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
@@ -32,6 +33,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   imports: [
     TypeOrmModule.forFeature([
       InboxItemEntity,
+      InboxItemRecordEntity,
       InboxItemToolCallEntity,
       InboxItemTypeEntity,
       InboxQueueEntity,
@@ -57,6 +59,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     InboxItemResolver,
     InboxSettingsResolver,
     provideWorkspaceScopedRepository(InboxItemEntity),
+    provideWorkspaceScopedRepository(InboxItemRecordEntity),
     provideWorkspaceScopedRepository(InboxItemToolCallEntity),
     provideWorkspaceScopedRepository(InboxItemTypeEntity),
     provideWorkspaceScopedRepository(InboxQueueEntity),

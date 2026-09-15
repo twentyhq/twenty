@@ -6,6 +6,7 @@ import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
@@ -96,6 +97,12 @@ describe('InboxRouterService', () => {
     withManager: jest.fn(),
   };
 
+  const inboxItemRecordRepository = {
+    insert: jest.fn(),
+    delete: jest.fn(),
+    withManager: jest.fn(),
+  };
+
   // Transactions run their body against the same mocks, so a test reads the
   // writes back the same way whether or not they were wrapped
   const coreDataSource = {
@@ -138,6 +145,9 @@ describe('InboxRouterService', () => {
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
     inboxItemToolCallRepository.find.mockResolvedValue([]);
     inboxItemRepository.withManager.mockReturnValue(inboxItemRepository);
+    inboxItemRecordRepository.withManager.mockReturnValue(
+      inboxItemRecordRepository,
+    );
     inboxItemToolCallRepository.withManager.mockReturnValue(
       inboxItemToolCallRepository,
     );
@@ -156,6 +166,10 @@ describe('InboxRouterService', () => {
         {
           provide: getWorkspaceScopedRepositoryToken(InboxItemToolCallEntity),
           useValue: inboxItemToolCallRepository,
+        },
+        {
+          provide: getWorkspaceScopedRepositoryToken(InboxItemRecordEntity),
+          useValue: inboxItemRecordRepository,
         },
         {
           provide: getDataSourceToken(),
@@ -198,6 +212,7 @@ describe('InboxRouterService', () => {
 
       const result = await service.route({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
@@ -244,6 +259,7 @@ describe('InboxRouterService', () => {
 
       const routeOrThrow = service.routeOrThrow({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'approval',
         title: 'Approve the discount',
       });
@@ -260,6 +276,7 @@ describe('InboxRouterService', () => {
 
       const routeOrThrow = service.routeOrThrow({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
@@ -273,6 +290,7 @@ describe('InboxRouterService', () => {
     it('should return the item when routing succeeds', async () => {
       const inboxItem = await service.routeOrThrow({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
@@ -286,9 +304,10 @@ describe('InboxRouterService', () => {
     it('should insert an item keyed on the subject and assigned to the thread owner when no item exists yet', async () => {
       const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message from Alice',
-        context: { summary: 'Hello there' },
+        summary: 'Hello there',
         subject: threadSubject,
       });
 
@@ -301,7 +320,8 @@ describe('InboxRouterService', () => {
           inboxItemTypeId: CONVERSATION_TYPE_ID,
           priority: InboxItemPriority.UPDATE,
           title: 'A message from Alice',
-          context: { summary: 'Hello there' },
+          summary: 'Hello there',
+          context: { version: 1, producer: 'agentChat' },
           queueId: null,
           assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
           slotKey: THREAD_SLOT_KEY,
@@ -317,6 +337,7 @@ describe('InboxRouterService', () => {
     it('should derive the slot from a record subject when the subject is a record', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A record needs attention',
         target: {
@@ -347,6 +368,7 @@ describe('InboxRouterService', () => {
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'workflow_run_failed',
         title: 'A workflow run failed',
         slotKey: RUN_SLOT_KEY,
@@ -372,6 +394,7 @@ describe('InboxRouterService', () => {
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'workflow_run_failed',
         title: 'A workflow run failed',
         target: {
@@ -396,6 +419,7 @@ describe('InboxRouterService', () => {
 
       const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A newer message',
         subject: threadSubject,
@@ -442,6 +466,7 @@ describe('InboxRouterService', () => {
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A reply on a conversation that was done',
         subject: threadSubject,
@@ -459,6 +484,7 @@ describe('InboxRouterService', () => {
     it('should fall back to the type label when the producer sends no title', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         subject: threadSubject,
       });
@@ -469,16 +495,17 @@ describe('InboxRouterService', () => {
       );
     });
 
-    it('should leave the title and context untouched when folding without them', async () => {
+    it('should leave the title and summary untouched when folding without them', async () => {
       inboxItemRepository.findOne.mockResolvedValue(
         buildInboxItem({
           title: 'An older message',
-          context: { summary: 'Hello there' },
+          summary: 'Hello there',
         }),
       );
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         subject: threadSubject,
       });
@@ -486,13 +513,35 @@ describe('InboxRouterService', () => {
       const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
 
       expect(partialUpdate).not.toHaveProperty('title');
-      expect(partialUpdate).not.toHaveProperty('context');
+      expect(partialUpdate).not.toHaveProperty('summary');
       expect(inboxItemToolCallRepository.delete).not.toHaveBeenCalled();
+      expect(inboxItemRecordRepository.delete).not.toHaveBeenCalled();
+    });
+
+    it('should rewrite provenance on a fold, since the item now reports the latest event', async () => {
+      inboxItemRepository.findOne.mockResolvedValue(
+        buildInboxItem({ title: 'An older message' }),
+      );
+
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'workflowRun',
+        typeKey: 'conversation',
+        subject: threadSubject,
+      });
+
+      const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
+
+      expect(partialUpdate.context).toEqual({
+        version: 1,
+        producer: 'workflowRun',
+      });
     });
 
     it('should insert the proposed calls in order under a new item', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A plan',
         subject: threadSubject,
@@ -527,6 +576,7 @@ describe('InboxRouterService', () => {
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         subject: threadSubject,
         toolCalls: [
@@ -556,6 +606,7 @@ describe('InboxRouterService', () => {
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'An urgent message',
         priority: InboxItemPriority.NEEDS_ACTION,
@@ -584,6 +635,7 @@ describe('InboxRouterService', () => {
 
       const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
@@ -606,6 +658,7 @@ describe('InboxRouterService', () => {
       await expect(
         service.routeItem({
           workspaceId: WORKSPACE_ID,
+          producer: 'agentChat',
           typeKey: 'conversation',
           title: 'A message from Alice',
           subject: threadSubject,
@@ -622,6 +675,7 @@ describe('InboxRouterService', () => {
       await expect(
         service.routeItem({
           workspaceId: WORKSPACE_ID,
+          producer: 'agentChat',
           typeKey: 'conversation',
           title: 'A message from Alice',
           subject: threadSubject,
@@ -638,6 +692,7 @@ describe('InboxRouterService', () => {
       await expect(
         service.routeItem({
           workspaceId: WORKSPACE_ID,
+          producer: 'agentChat',
           typeKey: 'not_a_type',
           title: 'A message from Alice',
           subject: threadSubject,
@@ -651,6 +706,7 @@ describe('InboxRouterService', () => {
     it('should send work nobody can be found for to the triage queue', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message nobody owns',
       });
@@ -674,6 +730,7 @@ describe('InboxRouterService', () => {
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message nobody owns',
       });
@@ -693,6 +750,7 @@ describe('InboxRouterService', () => {
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A support request',
         target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
@@ -707,6 +765,7 @@ describe('InboxRouterService', () => {
     it('should address work to the queue a producer named, with nobody holding it', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A support request',
         target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
@@ -727,6 +786,7 @@ describe('InboxRouterService', () => {
     it('should look a queue slot up by the queue rather than by who holds it', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A second message on the same request',
         slotKey: RUN_SLOT_KEY,
@@ -741,6 +801,7 @@ describe('InboxRouterService', () => {
     it('should prefer the thread owner over the fallback assignee when both are available', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
@@ -763,6 +824,7 @@ describe('InboxRouterService', () => {
     it('should return the routed item when routing succeeds', async () => {
       const result = await service.route({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
@@ -779,6 +841,7 @@ describe('InboxRouterService', () => {
 
       const result = await service.route({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
@@ -796,6 +859,7 @@ describe('InboxRouterService', () => {
 
       const args = {
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat' as const,
         typeKey: 'not_a_type',
         title: 'A message from Alice',
         subject: threadSubject,

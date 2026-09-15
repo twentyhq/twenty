@@ -41,8 +41,9 @@ describe('AgentChatInboxService', () => {
 
       expect(inboxRouterService.route).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
         typeKey: INBOX_ITEM_TYPE_KEY.agentRunFailed,
-        context: { summary: 'The model stopped responding' },
+        summary: 'The model stopped responding',
         subject: {
           kind: 'thread',
           threadId: THREAD_ID,
@@ -60,7 +61,7 @@ describe('AgentChatInboxService', () => {
       });
 
       expect(inboxRouterService.route).toHaveBeenCalledWith(
-        expect.not.objectContaining({ context: expect.anything() }),
+        expect.not.objectContaining({ summary: expect.anything() }),
       );
     });
   });

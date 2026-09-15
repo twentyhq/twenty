@@ -3,37 +3,38 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import {
   type InboxItemContextDTO,
-  type InboxItemContextEdgeDTO,
-  type InboxItemContextEntityDTO,
-  InboxItemContextEntityKind,
   type InboxItemContextSourceDTO,
   InboxItemContextSourceKind,
 } from 'src/engine/core-modules/inbox/dtos/inbox-item-context.dto';
+import { INBOX_ITEM_CONTEXT_VERSION } from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
 
-const toEnumMember = <TEnum extends Record<string, string>>(
-  enumType: TEnum,
+const UNKNOWN_PRODUCER = 'unknown';
+
+const toOptionalString = (value: unknown): string | null =>
+  isNonEmptyString(value) ? value : null;
+
+const toSourceKind = (
   value: unknown,
-): TEnum[keyof TEnum] | undefined => {
+): InboxItemContextSourceKind | undefined => {
   if (!isNonEmptyString(value)) {
     return undefined;
   }
 
-  const member = value.toUpperCase();
+  const kind = value.toUpperCase();
 
-  return Object.values(enumType).includes(member)
-    ? (member as TEnum[keyof TEnum])
+  return Object.values(InboxItemContextSourceKind).includes(
+    kind as InboxItemContextSourceKind,
+  )
+    ? (kind as InboxItemContextSourceKind)
     : undefined;
 };
-
-const toOptionalString = (value: unknown): string | null =>
-  isNonEmptyString(value) ? value : null;
 
 const toSource = (value: unknown): InboxItemContextSourceDTO | null => {
   if (!isPlainObject(value)) {
     return null;
   }
 
-  const kind = toEnumMember(InboxItemContextSourceKind, value.kind);
+  const kind = toSourceKind(value.kind);
 
   if (!isDefined(kind) || !isNonEmptyString(value.label)) {
     return null;
@@ -49,54 +50,23 @@ const toSource = (value: unknown): InboxItemContextSourceDTO | null => {
   };
 };
 
-const toEntities = (value: unknown): InboxItemContextEntityDTO[] =>
-  Array.isArray(value)
-    ? value.flatMap((item) =>
-        isPlainObject(item) &&
-        isNonEmptyString(item.key) &&
-        isNonEmptyString(item.label)
-          ? [
-              {
-                key: item.key,
-                label: item.label,
-                subtitle: toOptionalString(item.subtitle),
-                kind:
-                  toEnumMember(InboxItemContextEntityKind, item.kind) ??
-                  InboxItemContextEntityKind.OTHER,
-                recordId: toOptionalString(item.recordId),
-                objectMetadataId: toOptionalString(item.objectMetadataId),
-              },
-            ]
-          : [],
-      )
-    : [];
-
-const toEdges = (value: unknown): InboxItemContextEdgeDTO[] =>
-  Array.isArray(value)
-    ? value.flatMap((item) =>
-        isPlainObject(item) &&
-        isNonEmptyString(item.from) &&
-        isNonEmptyString(item.to) &&
-        typeof item.label === 'string'
-          ? [{ from: item.from, to: item.to, label: item.label }]
-          : [],
-      )
-    : [];
-
-// Producers write this column with no schema behind them, so every nested
-// shape is checked here rather than trusted. A field that does not hold up is
-// dropped, which is why nothing in the returned type is a lie.
+// A row written before this shape existed has no version and no producer, so
+// it reads as version 0 from an unknown producer rather than as a lie.
 export const toInboxItemContextDto = (
   context: unknown,
 ): InboxItemContextDTO => {
   if (!isPlainObject(context)) {
-    return { summary: null, source: null, entities: [], edges: [] };
+    return { version: 0, producer: UNKNOWN_PRODUCER, source: null };
   }
 
   return {
-    summary: toOptionalString(context.summary),
+    version:
+      typeof context.version === 'number'
+        ? context.version
+        : isDefined(context.producer)
+          ? INBOX_ITEM_CONTEXT_VERSION
+          : 0,
+    producer: toOptionalString(context.producer) ?? UNKNOWN_PRODUCER,
     source: toSource(context.source),
-    entities: toEntities(context.entities),
-    edges: toEdges(context.edges),
   };
 };

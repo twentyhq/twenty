@@ -3,11 +3,12 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type DataSource, type EntityManager, IsNull } from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import {
@@ -16,6 +17,11 @@ import {
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
+import {
+  INBOX_ITEM_CONTEXT_VERSION,
+  type InboxItemContext,
+} from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
+import { type InboxItemRecordDraft } from 'src/engine/core-modules/inbox/types/inbox-item-record-draft.type';
 import { type InboxItemToolCallDraft } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-draft.type';
 import {
   type InboxSubject,
@@ -37,6 +43,8 @@ export class InboxRouterService {
     private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
     @InjectWorkspaceScopedRepository(InboxItemToolCallEntity)
     private readonly inboxItemToolCallRepository: WorkspaceScopedRepository<InboxItemToolCallEntity>,
+    @InjectWorkspaceScopedRepository(InboxItemRecordEntity)
+    private readonly inboxItemRecordRepository: WorkspaceScopedRepository<InboxItemRecordEntity>,
     private readonly inboxItemTypeService: InboxItemTypeService,
     private readonly inboxQueueService: InboxQueueService,
     private readonly featureFlagService: FeatureFlagService,
@@ -262,11 +270,21 @@ export class InboxRouterService {
           inboxItemTypeId: inboxItemType.id,
           priority: args.priority ?? inboxItemType.defaultPriority,
           ...(isDefined(args.title) ? { title: args.title } : {}),
-          ...(isDefined(args.context) ? { context: args.context } : {}),
+          ...(isDefined(args.summary) ? { summary: args.summary } : {}),
+          context: buildContext(args),
           lastEventAt: () => 'clock_timestamp()',
           version: () => '"version" + 1',
         },
       );
+
+      if (isDefined(args.records)) {
+        await this.replaceRecords({
+          manager,
+          workspaceId: args.workspaceId,
+          inboxItemId: existingItem.id,
+          records: args.records,
+        });
+      }
 
       if (isDefined(args.toolCalls)) {
         await this.replaceProposedToolCalls({
@@ -326,6 +344,55 @@ export class InboxRouterService {
     });
   }
 
+  // Replaced rather than merged: what an item is about is what the latest event
+  // says it is about, and a producer that names fewer records now means fewer.
+  private async replaceRecords({
+    manager,
+    workspaceId,
+    inboxItemId,
+    records,
+  }: {
+    manager: EntityManager;
+    workspaceId: string;
+    inboxItemId: string;
+    records: InboxItemRecordDraft[];
+  }): Promise<void> {
+    await this.inboxItemRecordRepository
+      .withManager(manager)
+      .delete(workspaceId, { inboxItemId });
+
+    await this.insertRecords({ manager, workspaceId, inboxItemId, records });
+  }
+
+  private async insertRecords({
+    manager,
+    workspaceId,
+    inboxItemId,
+    records,
+  }: {
+    manager: EntityManager;
+    workspaceId: string;
+    inboxItemId: string;
+    records: InboxItemRecordDraft[];
+  }): Promise<void> {
+    if (!isNonEmptyArray(records)) {
+      return;
+    }
+
+    await this.inboxItemRecordRepository.withManager(manager).insert(
+      workspaceId,
+      records.map((record, index) => ({
+        inboxItemId,
+        position: index,
+        label: record.label,
+        subtitle: record.subtitle ?? null,
+        relationLabel: record.relationLabel ?? null,
+        objectMetadataId: record.objectMetadataId ?? null,
+        recordId: record.recordId ?? null,
+      })),
+    );
+  }
+
   private async insertToolCalls({
     manager,
     workspaceId,
@@ -378,7 +445,8 @@ export class InboxRouterService {
           inboxItemTypeId: inboxItemType.id,
           priority: args.priority ?? inboxItemType.defaultPriority,
           title: args.title ?? inboxItemType.label,
-          context: args.context ?? {},
+          summary: args.summary ?? null,
+          context: buildContext(args),
           queueId: address.kind === 'queue' ? address.queueId : null,
           assigneeUserWorkspaceId:
             address.kind === 'person' ? address.assigneeUserWorkspaceId : null,
@@ -399,6 +467,13 @@ export class InboxRouterService {
         inboxItemId: inboxItem.id,
         toolCalls: args.toolCalls ?? [],
         firstPosition: 0,
+      });
+
+      await this.insertRecords({
+        manager,
+        workspaceId: args.workspaceId,
+        inboxItemId: inboxItem.id,
+        records: args.records ?? [],
       });
 
       return inboxItem;
@@ -506,3 +581,12 @@ export const buildSubjectKey = (subject: InboxSubject): string =>
   subject.kind === 'thread'
     ? `thread:${subject.threadId}`
     : `record:${subject.objectMetadataId}:${subject.recordId}`;
+
+// A fold rewrites provenance because the latest event is what the item now
+// reports coming from; omitting the source keeps the item honest rather than
+// carrying a stale one.
+const buildContext = (args: RouteInboxItemArgs): InboxItemContext => ({
+  version: INBOX_ITEM_CONTEXT_VERSION,
+  producer: args.producer,
+  ...(isDefined(args.source) ? { source: args.source } : {}),
+});

@@ -8,7 +8,10 @@ import {
 } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
-import { type InboxItemContext } from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
+import {
+  INBOX_ITEM_CONTEXT_VERSION,
+  type InboxItemContextSource,
+} from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
 import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-field-schema.type';
 import { DEFAULT_INBOX_QUEUE_SLUG } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import {
@@ -26,6 +29,7 @@ const inboxQueueTableName = 'inboxQueue';
 const inboxQueueRoleTableName = 'inboxQueueRole';
 const inboxItemTableName = 'inboxItem';
 const inboxItemToolCallTableName = 'inboxItemToolCall';
+const inboxItemRecordTableName = 'inboxItemRecord';
 const agentChatThreadTableName = 'agentChatThread';
 
 const HOUR_IN_MS = 60 * 60 * 1000;
@@ -82,9 +86,25 @@ type SeededInboxItem = {
   subject?:
     | { kind: 'thread'; which: 'default' | 'review' }
     | { kind: 'company'; companyId: string };
-  context: InboxItemContext;
+  // How a seed author describes an item. The writer below turns it into what
+  // the model actually stores: a summary column, provenance in context, and a
+  // row per record.
+  content: SeededInboxContent;
   toolCalls?: SeededToolCall[];
   cleared?: { hoursAgo: number; outcome?: string; resurfaceInHours?: number };
+};
+
+type SeededInboxContent = {
+  summary?: string;
+  source?: InboxItemContextSource;
+  entities?: {
+    key: string;
+    label: string;
+    subtitle?: string;
+    kind: 'person' | 'company' | 'opportunity' | 'other';
+    recordId?: string;
+  }[];
+  edges?: { from: string; to: string; label: string }[];
 };
 
 type SeededToolCall = {
@@ -134,7 +154,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     hoursAgo: 1,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_1 },
-    context: {
+    content: {
       summary:
         "Marie asked to confirm Google's renewal terms and introduced Paul as the new operations lead. The proposed steps keep the renewal moving and bring the new stakeholder into the CRM.",
       source: {
@@ -281,7 +301,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     hoursAgo: 1.5,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_2 },
-    context: {
+    content: {
       summary:
         "Microsoft's renewal was signed last week. Billing asked for the invoice before the end of the month so it lands in this quarter.",
       source: {
@@ -355,7 +375,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     hoursAgo: 2,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_3 },
-    context: {
+    content: {
       summary:
         'On the call, Sarah said the ads team wants 45 more seats next quarter. Nothing tracks it yet.',
       source: {
@@ -438,7 +458,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     hoursAgo: 3,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_4 },
-    context: {
+    content: {
       summary:
         'Three people from SLB asked for a demo next week. The agent found a slot that works for everyone in the thread.',
       source: {
@@ -529,7 +549,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     isRead: true,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_5 },
-    context: {
+    content: {
       summary:
         "Cisco's annual report was published this week. Three fields on the company record are out of date.",
       source: {
@@ -584,7 +604,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     isRead: true,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_6 },
-    context: {
+    content: {
       summary:
         'A 30 minute call with Uber covered pricing and the security questionnaire. Both are recorded in the notes below.',
       source: {
@@ -667,7 +687,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'approve-google-renewal',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Approve Google's renewal quote",
-    context: {
+    content: {
       summary:
         'Send Marie the $24,000 invoice and confirm the tier-2 volume at the same rate.',
     },
@@ -696,7 +716,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'question-microsoft-tier',
     typeKey: INBOX_ITEM_TYPE_KEY.agentQuestion,
     title: 'Which pricing tier should I quote Microsoft?',
-    context: {
+    content: {
       summary:
         'Two plans match. The expansion opportunity mentions 45 seats, which sits between them.',
     },
@@ -708,7 +728,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'sync-invoices-run-failed',
     typeKey: INBOX_ITEM_TYPE_KEY.workflowRunFailed,
     title: 'Sync invoices to Stripe failed',
-    context: {
+    content: {
       summary:
         "Step 'Create invoice' failed: the Stripe API key has expired. 3 invoices were not sent.",
     },
@@ -719,7 +739,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'meta-buying-committee',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: "Add Meta's buying committee",
-    context: {
+    content: {
       summary: 'New reply: Sarah added two more stakeholders to the thread.',
     },
     priority: InboxItemPriority.UPDATE,
@@ -732,7 +752,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'q4-pipeline-review',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Prepare the Q4 pipeline review',
-    context: {
+    content: {
       summary:
         'Draft ready: three opportunities moved, two close dates pushed to November.',
     },
@@ -746,7 +766,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'review-cisco-onboarding-fee',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Review Cisco's onboarding fee",
-    context: {
+    content: {
       summary:
         'A $5,000 onboarding invoice is ready to send once the fee is confirmed.',
     },
@@ -760,7 +780,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'approve-uber-invoice',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Approve Uber's onboarding invoice",
-    context: { summary: 'Invoice #1042 for $5,000, due in 30 days.' },
+    content: { summary: 'Invoice #1042 for $5,000, due in 30 days.' },
     hoursAgo: 50,
     isRead: true,
     assignee: 'me',
@@ -771,7 +791,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'salesforce-profile-update',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: "Update Salesforce's company profile",
-    context: {
+    content: {
       summary:
         'Industry, headcount and website were refreshed from the latest filing.',
     },
@@ -786,7 +806,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'move-google-renewal-forward',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Move Google's renewal forward",
-    context: {
+    content: {
       summary:
         'Reply to Marie in Gmail, update the opportunity and add Paul as the new operations lead.',
     },
@@ -798,7 +818,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'create-microsoft-opportunity',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Create an opportunity for Microsoft',
-    context: {
+    content: {
       summary:
         'A $45,000 expansion opportunity is drafted from the call notes.',
     },
@@ -811,7 +831,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'follow-up-slb-buyer',
     typeKey: INBOX_ITEM_TYPE_KEY.approval,
     title: "Follow up with SLB's buyer",
-    context: {
+    content: {
       summary:
         'Send the proposal and create a follow-up task for next Tuesday.',
     },
@@ -824,7 +844,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'log-call-with-sarah',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Log the call with Sarah',
-    context: {
+    content: {
       summary: 'Save the call notes and update the opportunity stage.',
     },
     priority: InboxItemPriority.UPDATE,
@@ -836,7 +856,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'amdocs-ticket-closed',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: "Amdocs' import ticket was closed",
-    context: {
+    content: {
       summary: 'The duplicate contacts were merged and the customer confirmed.',
     },
     priority: InboxItemPriority.UPDATE,
@@ -850,7 +870,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     seedName: 'update-q4-pipeline',
     typeKey: INBOX_ITEM_TYPE_KEY.conversation,
     title: 'Update the Q4 pipeline',
-    context: {
+    content: {
       summary:
         'Three opportunity close dates and two amounts changed since the last review.',
     },
@@ -1058,6 +1078,7 @@ export const seedInbox = async ({
       'inboxItemTypeId',
       'priority',
       'title',
+      'summary',
       'context',
       'lastEventAt',
       'clearedAt',
@@ -1092,7 +1113,14 @@ export const seedInbox = async ({
           inboxItemTypeId: typeIdByKey[item.typeKey],
           priority: item.priority ?? InboxItemPriority.NEEDS_ACTION,
           title: item.title,
-          context: item.context,
+          summary: item.content.summary ?? null,
+          context: {
+            version: INBOX_ITEM_CONTEXT_VERSION,
+            producer: 'seed',
+            ...(isDefined(item.content.source)
+              ? { source: item.content.source }
+              : {}),
+          },
           lastEventAt,
           clearedAt,
           resurfaceAt:
@@ -1126,6 +1154,69 @@ export const seedInbox = async ({
           ),
           updatedAt: lastEventAt,
         };
+      }),
+    )
+    .execute();
+
+  // The authoring shape names entities and the edges between them; what is
+  // stored is one row per record in the order the pane draws them, each
+  // carrying how it relates to the row before it.
+  await queryRunner.manager
+    .createQueryBuilder()
+    .insert()
+    .into(`${schemaName}.${inboxItemRecordTableName}`, [
+      'id',
+      'workspaceId',
+      'inboxItemId',
+      'position',
+      'label',
+      'subtitle',
+      'relationLabel',
+      'objectMetadataId',
+      'recordId',
+    ])
+    .orIgnore()
+    .values(
+      [...SEEDED_PLAN_ITEMS, ...SEEDED_INBOX_ITEMS].flatMap((item) => {
+        const entities = item.content.entities ?? [];
+        const edges = item.content.edges ?? [];
+
+        return entities.map((entity, position) => {
+          const previousEntity = entities[position - 1];
+          const relationLabel = isDefined(previousEntity)
+            ? edges.find(
+                (edge) =>
+                  (edge.from === previousEntity.key &&
+                    edge.to === entity.key) ||
+                  (edge.from === entity.key && edge.to === previousEntity.key),
+              )?.label
+            : undefined;
+
+          return {
+            id: generateSeedId(
+              workspaceId,
+              `inbox-item-record-${item.seedName}-${position}`,
+            ),
+            workspaceId,
+            inboxItemId: generateSeedId(
+              workspaceId,
+              `inbox-item-${item.seedName}`,
+            ),
+            position,
+            label: entity.label,
+            subtitle: entity.subtitle ?? null,
+            relationLabel: relationLabel ?? null,
+            // Only companies have a resolvable object in the seed, so the rest
+            // are named without being clickable, which is a state the model
+            // has to carry anyway.
+            objectMetadataId:
+              entity.kind === 'company'
+                ? inboxReferenceIds.companyObjectMetadataId
+                : null,
+            recordId:
+              entity.kind === 'company' ? (entity.recordId ?? null) : null,
+          };
+        });
       }),
     )
     .execute();

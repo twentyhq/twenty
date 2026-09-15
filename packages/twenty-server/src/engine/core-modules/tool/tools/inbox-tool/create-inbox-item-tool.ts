@@ -51,10 +51,11 @@ export class CreateInboxItemTool implements Tool {
     try {
       const inboxItem = await this.inboxRouterService.routeOrThrow({
         workspaceId: context.workspaceId,
+        producer: 'inboxTool',
         typeKey: parameters.typeKey,
         title: parameters.title,
         ...(isDefined(parameters.summary)
-          ? { context: { summary: parameters.summary } }
+          ? { summary: parameters.summary }
           : {}),
         // An empty list from the model means it proposed nothing, not that the
         // plan of an item this folds into should be wiped.

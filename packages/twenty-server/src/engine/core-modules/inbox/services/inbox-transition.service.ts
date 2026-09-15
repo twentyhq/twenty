@@ -105,7 +105,7 @@ export class InboxTransitionService {
       workspaceId,
       {
         where: { id: inboxItemId },
-        relations: { inboxItemType: true, toolCalls: true },
+        relations: { inboxItemType: true, toolCalls: true, records: true },
       },
     );
 

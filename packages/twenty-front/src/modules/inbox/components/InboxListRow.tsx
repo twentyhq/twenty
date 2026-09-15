@@ -157,7 +157,7 @@ export const InboxListRow = ({
   const toolIcons = inboxItem.toolCalls
     .slice(0, MAX_ROW_TOOL_ICONS)
     .map((toolCall) => ({ id: toolCall.id, Icon: getIcon(toolCall.icon) }));
-  const { summary } = inboxItem.context;
+  const summary = inboxItem.summary;
   const hasSecondLine = toolIcons.length > 0 || isNonEmptyString(summary);
 
   return (

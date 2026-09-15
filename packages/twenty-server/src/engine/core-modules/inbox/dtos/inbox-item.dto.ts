@@ -2,7 +2,10 @@ import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
 
-import { InboxItemContextDTO } from 'src/engine/core-modules/inbox/dtos/inbox-item-context.dto';
+import {
+  InboxItemContextDTO,
+  InboxItemRecordDTO,
+} from 'src/engine/core-modules/inbox/dtos/inbox-item-context.dto';
 import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
@@ -127,8 +130,17 @@ export class InboxItemDTO {
   @Field(() => String)
   title: string;
 
+  // The list row's second line, a column like the title rather than a lookup
+  // into a blob.
+  @Field(() => String, { nullable: true })
+  summary: string | null;
+
   @Field(() => InboxItemContextDTO)
   context: InboxItemContextDTO;
+
+  // What the item is about, in the order the pane draws it.
+  @Field(() => [InboxItemRecordDTO])
+  records: InboxItemRecordDTO[];
 
   // Empty is a valid plan: doing it just marks the item done.
   @Field(() => [InboxItemToolCallDTO])

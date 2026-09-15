@@ -22,6 +22,7 @@ import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
+import { InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { type InboxItemContext } from 'src/engine/core-modules/inbox/types/inbox-item-context.type';
 
@@ -97,10 +98,18 @@ export class InboxItemEntity {
   @Column({ nullable: false, type: 'varchar' })
   title: string;
 
-  // The one payload an item carries, so every producer fills the same shape and
-  // every surface reads the same one.
+  // The second line of the list row, so it is a column like the first rather
+  // than a lookup into a blob.
+  @Column({ nullable: true, type: 'varchar' })
+  summary: string | null;
+
+  // Provenance only: where this came from, written by a producer that names
+  // itself and the shape it wrote. What the item is about lives in records.
   @Column({ type: 'jsonb', nullable: false, default: {} })
   context: JsonbProperty<InboxItemContext>;
+
+  @OneToMany(() => InboxItemRecordEntity, (record) => record.inboxItem)
+  records: EntityRelation<InboxItemRecordEntity[]>;
 
   @OneToMany(() => InboxItemToolCallEntity, (toolCall) => toolCall.inboxItem)
   toolCalls: EntityRelation<InboxItemToolCallEntity[]>;

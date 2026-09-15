@@ -112,6 +112,7 @@ export class CreateInboxTablesFastInstanceCommand
         "inboxItemTypeId" uuid NOT NULL,
         "priority" "core"."inboxItem_priority_enum" NOT NULL DEFAULT 'UPDATE',
         "title" character varying NOT NULL,
+        "summary" character varying,
         "context" jsonb NOT NULL DEFAULT '{}',
         "lastEventAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT clock_timestamp(),
         "clearedAt" TIMESTAMP WITH TIME ZONE,
@@ -194,6 +195,41 @@ export class CreateInboxTablesFastInstanceCommand
       `DO $$ BEGIN CREATE TYPE "core"."inboxItemToolCall_status_enum" AS ENUM ('PROPOSED', 'REJECTED', 'EXECUTED', 'FAILED'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
     );
 
+    // What an item is about, as rows rather than as a blob inside context: the
+    // records are queryable, a deleted record is one DELETE away from being
+    // cleaned up, and the chain the pane draws is the row order with the
+    // relation to the previous row on each entry.
+    await queryRunner.query(
+      `CREATE TABLE IF NOT EXISTS "core"."inboxItemRecord" (
+        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
+        "workspaceId" uuid NOT NULL,
+        "inboxItemId" uuid NOT NULL,
+        "position" integer NOT NULL,
+        "label" character varying NOT NULL,
+        "subtitle" character varying,
+        "relationLabel" character varying,
+        "objectMetadataId" uuid,
+        "recordId" uuid,
+        "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+        CONSTRAINT "PK_inboxItemRecord_id" PRIMARY KEY ("id"),
+        CONSTRAINT "FK_INBOX_ITEM_RECORD_WORKSPACE_ID" FOREIGN KEY ("workspaceId")
+          REFERENCES "core"."workspace"("id") ON DELETE CASCADE,
+        CONSTRAINT "FK_INBOX_ITEM_RECORD_INBOX_ITEM_ID" FOREIGN KEY ("inboxItemId")
+          REFERENCES "core"."inboxItem"("id") ON DELETE CASCADE
+      )`,
+    );
+
+    await queryRunner.query(
+      `CREATE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_RECORD_INBOX_ITEM_ID_POSITION"
+        ON "core"."inboxItemRecord" ("inboxItemId", "position")`,
+    );
+
+    await queryRunner.query(
+      `CREATE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_RECORD_RECORD_ID"
+        ON "core"."inboxItemRecord" ("workspaceId", "recordId")`,
+    );
+
     await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "core"."inboxItemToolCall" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
@@ -236,6 +272,7 @@ export class CreateInboxTablesFastInstanceCommand
     await queryRunner.query(
       `DROP TYPE IF EXISTS "core"."inboxItemToolCall_status_enum"`,
     );
+    await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItemRecord"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItem"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxQueueRole"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItemType"`);
