@@ -3,6 +3,8 @@ import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 import { AnimatedExpandableContainer } from '@ui/primitives/layout/AnimatedExpandableContainer/AnimatedExpandableContainer';
+import { Button } from '@ui/primitives/input/Button/Button';
+import { Text } from '@ui/primitives/typography/Text/Text';
 
 import styles from './AnimatedExpandableContainer.stories.module.scss';
 
@@ -33,12 +35,13 @@ const AnimatedExpandableContainerWithButton = ({
           : styles.buttonWrapperHeight,
       )}
     >
-      <button
+      <Button
+        type="button"
         className={styles.button}
+        title={isExpanded ? 'Collapse' : 'Expand'}
+        ariaLabel={isExpanded ? 'Collapse' : 'Expand'}
         onClick={() => setIsExpanded(!isExpanded)}
-      >
-        {isExpanded ? 'Collapse' : 'Expand'}
-      </button>
+      />
       <AnimatedExpandableContainer
         isExpanded={isExpanded}
         dimension={args.dimension}
@@ -55,18 +58,18 @@ const AnimatedExpandableContainerWithButton = ({
               args.dimension === 'width' && styles.contentFixedWidth,
             )}
           >
-            <p>
+            <Text render={<p />}>
               This is some content inside the AnimatedExpandableContainer. It
               will animate smoothly when expanding or collapsing.
-            </p>
-            <p>
+            </Text>
+            <Text render={<p />}>
               You can control the animation duration, dimension, and mode
               through the Storybook controls.
-            </p>
-            <p>
+            </Text>
+            <Text render={<p />}>
               Try different combinations to see how the container behaves with
               different settings!
-            </p>
+            </Text>
           </div>
         </div>
       </AnimatedExpandableContainer>

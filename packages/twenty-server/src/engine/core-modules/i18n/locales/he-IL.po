@@ -177,7 +177,7 @@ msgstr "שדה בשם זה כבר קיים."
 #. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "A free development instance requires an active production instance on this Organization subscription."
-msgstr ""
+msgstr "מופע פיתוח חינמי דורש מופע ייצור פעיל במנוי הארגוני הזה."
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -495,7 +495,7 @@ msgstr "חבר בסביבת עבודה"
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
-msgstr ""
+msgstr "רשומה ברשימת החסימה ברמת סביבת העבודה אינה יכולה לכוון לחבר סביבת עבודה."
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1327,7 +1327,7 @@ msgstr "מיקום רשומת רשימת החסימה"
 #. js-lingui-id: HSo0Xn
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Blocklist scope cannot be updated."
-msgstr ""
+msgstr "לא ניתן לעדכן את ההיקף של רשימת החסימה."
 
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1396,12 +1396,12 @@ msgstr "נתיב מטפל שנבנה אינו חוקי"
 #: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
 #: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
 msgid "Bulk deletion of blocklist entries is not allowed."
-msgstr ""
+msgstr "מחיקה גורפת של רשומות ברשימת החסימה אסורה."
 
 #. js-lingui-id: Az75zM
 #: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
 msgid "Bulk restoration of blocklist entries is not allowed."
-msgstr ""
+msgstr "שחזור גורף של רשומות ברשימת החסימה אסור."
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "לא ניתן להשלים את הפעולה בשל רשומות קשורות."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "לא ניתן ליצור מספר גרסאות טיוטה לאותו תהליך עבודה"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "לא ניתן ליצור גרסת תהליך עבודה במצב שאינו טיוטה"
 
@@ -1937,7 +1937,7 @@ msgstr "לא ניתן להחזיק ביותר מגרסת תהליך עבודה �
 #. js-lingui-id: 9hWalM
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Cannot manage a blocklist entry of another workspace member."
-msgstr ""
+msgstr "לא ניתן לנהל רשומה ברשימת החסימה של חבר סביבת עבודה אחר."
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5407,7 +5407,7 @@ msgstr "פרמטר order by עם group by לא תקין."
 #. js-lingui-id: 4rRyz1
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "Invalid Organization key."
-msgstr ""
+msgstr "מפתח ארגון לא תקין."
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6499,7 +6499,7 @@ msgstr "מיזוג {objectLabelPlural}"
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
 msgid "Merging blocklist entries is not allowed."
-msgstr ""
+msgstr "מיזוג של רשומות ברשימת החסימה אסור."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -10374,7 +10374,7 @@ msgstr "לא נמצא התפקיד המוגדר כברירת מחדל עבור �
 #. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "The development instance slot for this Organization key is already in use on another server."
-msgstr ""
+msgstr "משבצת מופע הפיתוח למפתח הארגון הזה כבר בשימוש בשרת אחר."
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10439,7 +10439,7 @@ msgstr "השדה happensAt המשמש את סוג פעילות ציר הזמן �
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "לא ניתן למחוק את גרסת המוצא של תהליך עבודה."
 
@@ -10941,7 +10941,7 @@ msgstr "יעד ההערכה הזה לא נמצא."
 #. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
-msgstr ""
+msgstr "תכונה זו ניתנת ללא עלות עבור עד {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} מקומות. המופע שלך חורג מכך, לכן נדרש מפתח ארגון."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "לא ניתן לשנות שדה זה."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "לא ניתן לעדכן שדה זה ישירות בגרסת תהליך עבודה"
 
@@ -11106,7 +11106,7 @@ msgstr "פעולה זו מתייחסת לרשומה שאינה קיימת או �
 #. js-lingui-id: 8TiDJj
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr ""
+msgstr "מפתח ארגון זה כבר נמצא בשימוש במופע שרת אחר. שחרר אותו מאותו שרת, או העבר אותו לשרת זה."
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11249,6 +11249,16 @@ msgstr "גרסה זו אינה חדשה יותר מהגרסה שפרוסה כר�
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "גרסה זו של היישום כבר מותקנת במרחב עבודה זה."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr ""
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr ""
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -12977,7 +12987,7 @@ msgstr "סביבת העבודה מושעת."
 #. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
-msgstr ""
+msgstr "הגעת למגבלת סביבות העבודה. נדרש מפתח ארגון תקין כדי ליצור סביבות עבודה נוספות."
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -13320,7 +13330,7 @@ msgstr "אין לך הרשאה להיכנס למשתמשים אחרים. אנא 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
 msgid "You do not have permission to manage the workspace blocklist."
-msgstr ""
+msgstr "אין לך הרשאה לנהל את רשימת החסימה של סביבת העבודה."
 
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
@@ -13383,17 +13393,17 @@ msgstr "הגעת למספר המרבי של ההזמנות עבור שלב זה.
 #. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
-msgstr ""
+msgstr "הגעת למספר המרבי של רענוני רישיון המותרים היום עבור מפתח ארגון זה. אנא נסה שוב מאוחר יותר."
 
 #. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
-msgstr ""
+msgstr "הגעת למספר המרבי של העברות שרת המותרות ב-30 הימים האחרונים עבור מפתח ארגון זה. אנא נסה שוב מאוחר יותר."
 
 #. js-lingui-id: GFlHFf
 #: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
 msgid "You must be authenticated to manage the blocklist."
-msgstr ""
+msgstr "עליך להזדהות כדי לנהל את רשימת החסימה."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts
