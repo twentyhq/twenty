@@ -132,7 +132,8 @@ const { result, error, success } = await runAgent({
 
 Key points:
 - Provide **exactly one** of `prompt` (string) or `messages` (1 to 100 entries
-  of `{ role: 'user' | 'assistant', content: string }`).
+  of `{ role: 'user' | 'assistant', content: string }`). A `user` message can
+  also carry file attachments — see below.
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
 - An app can only run its own agents.
@@ -163,6 +164,35 @@ export default defineApplicationRole({
   `updatedFields` to a field the agent never writes (e.g. the source URL), or
   guard on whether any target field is still empty before calling `runAgent()`.
 </Warning>
+
+### Sending files with a message
+
+A `user` message can carry `attachments`, so the agent sees a screenshot or a
+PDF instead of only its name. Each entry references a file your app has already
+uploaded into the `agent-chat` folder:
+
+```ts src/logic-functions/describe-screenshot.ts
+const { result } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  messages: [
+    {
+      role: 'user',
+      content: 'What does this error screen say?',
+      attachments: [{ fileId: uploadedFileId, filename: 'error.png' }],
+    },
+  ],
+});
+```
+
+Uploading requires the `UPLOAD_FILE` permission flag on the app's default role,
+alongside `AI`. `filename` is optional and only labels the file for the model.
+
+- Only `user` messages may carry attachments. They cannot be represented on an
+  assistant turn, so `runAgent()` rejects them there rather than dropping them.
+- At most **10** attachments per message.
+- The `fileId` must name a fully uploaded file in the same workspace, under the
+  `agent-chat` folder. Anything else fails the call instead of quietly
+  answering without the file.
 
 ### Running on behalf of a workspace member
 
