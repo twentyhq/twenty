@@ -22,6 +22,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { DEFAULT_TIMEZONE } from 'src/engine/metadata-modules/view/constants/default-timezone.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -45,6 +46,7 @@ export class ViewQueryParamsService {
     viewId: string,
     workspaceId: string,
     currentWorkspaceMemberId?: string,
+    currentUserWorkspaceId?: string,
   ): Promise<ViewQueryParams> {
     const view = await this.viewService.findByIdWithRelations(
       viewId,
@@ -52,6 +54,11 @@ export class ViewQueryParamsService {
     );
 
     if (!view) {
+      throw new Error(`View with id ${viewId} not found`);
+    }
+
+    // Same error as a missing view so a non-owner cannot probe whether an UNLISTED view exists.
+    if (!isViewVisibleToUser(view, currentUserWorkspaceId)) {
       throw new Error(`View with id ${viewId} not found`);
     }
 
