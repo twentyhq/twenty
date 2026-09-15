@@ -80,7 +80,7 @@ export const AiChatContextUsageDetails = () => {
               value={null}
               valueLabel={formatNumber(
                 lastMessage.inputCredits + lastMessage.outputCredits,
-                { decimals: 7 },
+                { decimals: 3 },
               )}
             />
           </StyledSection>
@@ -107,7 +107,7 @@ export const AiChatContextUsageDetails = () => {
           value={null}
           valueLabel={formatNumber(
             agentChatUsage.inputCredits + agentChatUsage.outputCredits,
-            { decimals: 7 },
+            { decimals: 3 },
           )}
         />
       </StyledSection>
