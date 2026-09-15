@@ -1,3 +1,4 @@
+import { RecordExportStreamWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-stream.workspace-service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
@@ -12,7 +13,6 @@ import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/wo
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreateRecordExportInput } from 'src/engine/core-modules/record-export/dtos/create-record-export.input';
 import { RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
-import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
@@ -27,7 +27,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UseFilters(PreventNestToAutoLogGraphqlErrorsFilter)
 export class RecordExportResolver {
   constructor(
-    private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
+    private readonly recordExportStreamService: RecordExportStreamWorkspaceService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -48,7 +48,7 @@ export class RecordExportResolver {
         'Asynchronous CSV export is not enabled for this workspace',
       );
     }
-    return this.recordExportWorkspaceService.stream({
+    return this.recordExportStreamService.stream({
       parameters: input,
       authContext,
     });

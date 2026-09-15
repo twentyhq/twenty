@@ -70,7 +70,9 @@ export class GenerateRecordExportJob {
       },
     });
 
-    if (!claimed) return;
+    if (!claimed) {
+      return;
+    }
 
     let processedRecordCount = 0;
     let stream: Readable | undefined;
@@ -80,7 +82,7 @@ export class GenerateRecordExportJob {
       const remainingTime =
         RECORD_EXPORT_MAX_DURATION_MS -
         (Date.now() - recordExport.createdAt.getTime());
-      if (remainingTime <= 0)
+      if (remainingTime <= 0) {
         throw new RecordExportException(
           'Export duration limit exceeded',
           'DURATION_LIMIT_EXCEEDED',
@@ -88,6 +90,7 @@ export class GenerateRecordExportJob {
             userFriendlyMessage: msg`The export took too long. Please try exporting fewer records.`,
           },
         );
+      }
 
       const requester =
         await this.recordExportQueryWorkspaceService.resolveRequester(
@@ -95,8 +98,7 @@ export class GenerateRecordExportJob {
         );
       locale = requester.workspaceMember.locale;
       const context = await this.recordExportQueryWorkspaceService.buildContext(
-        recordExport.parameters,
-        requester,
+        { parameters: recordExport.parameters, authContext: requester },
       );
       const recordExportQueryWorkspaceService =
         this.recordExportQueryWorkspaceService;
@@ -115,19 +117,20 @@ export class GenerateRecordExportJob {
           },
           changes: { processedRecordCount },
         });
-        if (!result)
+        if (!result) {
           throw new RecordExportException(
             'Export attempt was superseded',
             'ATTEMPT_SUPERSEDED',
           );
+        }
         lastProgressAt = Date.now();
       };
 
       const totalRecordCount =
-        await recordExportQueryWorkspaceService.countRecords(
-          recordExport.parameters,
+        await recordExportQueryWorkspaceService.countRecords({
+          parameters: recordExport.parameters,
           context,
-        );
+        });
       if (
         !(await recordExportCacheService.update({
           workspaceId,
@@ -135,11 +138,12 @@ export class GenerateRecordExportJob {
           condition: { attemptId, statuses: [RecordExportStatus.PROCESSING] },
           changes: { totalRecordCount },
         }))
-      )
+      ) {
         throw new RecordExportException(
           'Export attempt was superseded',
           'ATTEMPT_SUPERSEDED',
         );
+      }
       await updateProgress();
 
       async function* generateCsv() {
@@ -171,16 +175,16 @@ export class GenerateRecordExportJob {
               context.queryRunnerContext.authContext,
             );
           }
-          const { results } = await recordExportQueryWorkspaceService.readPage(
-            recordExport.parameters,
+          const { results } = await recordExportQueryWorkspaceService.readPage({
+            parameters: recordExport.parameters,
             context,
             after,
-          );
+          });
 
           for (const record of results.records) {
             const row = formatRecordExportRow(context.columns, record);
             bytes += Buffer.byteLength(row);
-            if (bytes > RECORD_EXPORT_MAX_FILE_BYTES)
+            if (bytes > RECORD_EXPORT_MAX_FILE_BYTES) {
               throw new RecordExportException(
                 'Export file size limit exceeded',
                 'FILE_SIZE_LIMIT_EXCEEDED',
@@ -188,20 +192,28 @@ export class GenerateRecordExportJob {
                   userFriendlyMessage: msg`The export file is too large. Please export fewer records.`,
                 },
               );
+            }
             yield row;
             processedRecordCount++;
           }
 
-          if (Date.now() - lastProgressAt >= RECORD_EXPORT_PROGRESS_INTERVAL_MS)
+          if (
+            Date.now() - lastProgressAt >=
+            RECORD_EXPORT_PROGRESS_INTERVAL_MS
+          ) {
             await updateProgress();
-          if (!results.pageInfo.hasNextPage) break;
+          }
+          if (!results.pageInfo.hasNextPage) {
+            break;
+          }
 
           const endCursor = results.pageInfo.endCursor;
-          if (!isDefined(endCursor) || endCursor === after)
+          if (!isDefined(endCursor) || endCursor === after) {
             throw new RecordExportException(
               'Export pagination did not advance',
               'PAGINATION_FAILED',
             );
+          }
           after = endCursor;
         } while (true);
       }
@@ -238,11 +250,12 @@ export class GenerateRecordExportJob {
         },
       });
 
-      if (!completed)
+      if (!completed) {
         throw new RecordExportException(
           'Export attempt was superseded',
           'ATTEMPT_SUPERSEDED',
         );
+      }
     } catch (error) {
       stream?.destroy();
       await this.fileStorageService

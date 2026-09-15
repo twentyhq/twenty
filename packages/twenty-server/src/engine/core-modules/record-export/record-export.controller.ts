@@ -1,5 +1,8 @@
+import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
+import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
 import {
   Controller,
+  ConflictException,
   ForbiddenException,
   Get,
   Param,
@@ -29,6 +32,7 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
 @UseFilters(PermissionsRestApiExceptionFilter)
 export class RecordExportController {
   constructor(
+    private readonly recordExportCacheService: RecordExportCacheService,
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
     private readonly recordExportQueryWorkspaceService: RecordExportQueryWorkspaceService,
     private readonly fileStorageService: FileStorageService,
@@ -48,10 +52,11 @@ export class RecordExportController {
         payload.type !== JwtTokenTypeEnum.FILE ||
         payload.fileId !== id ||
         !isDefined(payload.workspaceId)
-      )
+      ) {
         throw new ForbiddenException(
           t`Invalid or expired export download link.`,
         );
+      }
     } catch {
       throw new ForbiddenException(t`Invalid or expired export download link.`);
     }
@@ -65,16 +70,30 @@ export class RecordExportController {
       await this.recordExportQueryWorkspaceService.resolveRequester(
         recordExport,
       );
-    const context = await this.recordExportQueryWorkspaceService.buildContext(
-      recordExport.parameters,
-      requester,
-    );
-    await this.recordExportQueryWorkspaceService.readPage(
-      recordExport.parameters,
+    const context = await this.recordExportQueryWorkspaceService.buildContext({
+      parameters: recordExport.parameters,
+      authContext: requester,
+    });
+    await this.recordExportQueryWorkspaceService.readPage({
+      parameters: recordExport.parameters,
       context,
-      undefined,
-      0,
-    );
+      first: 0,
+    });
+
+    const claimed = await this.recordExportCacheService.update({
+      workspaceId: recordExport.workspaceId,
+      id: recordExport.id,
+      condition: {
+        statuses: [RecordExportStatus.COMPLETED],
+        downloadStarted: false,
+      },
+      changes: { downloadStarted: true },
+    });
+    if (!claimed) {
+      throw new ConflictException(
+        t`This export download has already started or expired.`,
+      );
+    }
 
     const resource = this.recordExportWorkspaceService.getFileResource({
       workspaceId: recordExport.workspaceId,
@@ -82,10 +101,10 @@ export class RecordExportController {
     });
     response.setHeader('Cache-Control', 'private, no-store');
     const contentDisposition = `attachment; filename="${recordExport.filename.replace(/["\r\n\\]/g, '_')}"`;
-    const stream = await this.fileStorageService.readFile(resource);
-    response.setHeader('Content-Type', 'text/csv; charset=utf-8');
-    response.setHeader('Content-Disposition', contentDisposition);
     try {
+      const stream = await this.fileStorageService.readFile(resource);
+      response.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      response.setHeader('Content-Disposition', contentDisposition);
       await pipeline(stream, response);
     } finally {
       await this.recordExportWorkspaceService.cancel({

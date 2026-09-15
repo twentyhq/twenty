@@ -195,7 +195,9 @@ describe('record export Redis lifetime', () => {
     let updates = 0;
     jest.spyOn(cache, 'runScript').mockImplementation(async (options) => {
       if (options.script.name === 'record-export:update' && ++updates <= 2) {
-        if (updates === 2) releaseUpdates();
+        if (updates === 2) {
+          releaseUpdates();
+        }
         await updatesReady;
       }
       return runScript(options);

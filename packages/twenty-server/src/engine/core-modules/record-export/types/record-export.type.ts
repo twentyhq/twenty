@@ -14,6 +14,7 @@ export type RecordExport = {
   jobId: string | null;
   attemptId: string | null;
   filePath: string | null;
+  downloadStarted: boolean;
   errorMessage: string | null;
   createdAt: Date;
   updatedAt: Date;

@@ -1,3 +1,4 @@
+import { RecordExportStreamWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-stream.workspace-service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { DeleteRecordExportJob } from 'src/engine/core-modules/record-export/jobs/delete-record-export.job';
@@ -28,6 +29,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   controllers: [RecordExportController],
   providers: [
     RecordExportResolver,
+    RecordExportStreamWorkspaceService,
     RecordExportCacheService,
     DeleteRecordExportJob,
     RecordExportWorkspaceService,
