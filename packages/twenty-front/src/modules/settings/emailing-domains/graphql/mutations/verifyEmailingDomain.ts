@@ -6,6 +6,7 @@ export const VERIFY_EMAILING_DOMAIN = gql`
       id
       domain
       status
+      unsubscribeHostnameStatus
       verifiedAt
       verificationRecords {
         type
@@ -13,8 +14,6 @@ export const VERIFY_EMAILING_DOMAIN = gql`
         value
         priority
         status
-        purpose
-        isRequired
       }
       createdAt
       updatedAt

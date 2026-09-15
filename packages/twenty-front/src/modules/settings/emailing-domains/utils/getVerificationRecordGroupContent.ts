@@ -1,9 +1,7 @@
 import { t } from '@lingui/core/macro';
 import {
   type IconComponent,
-  IconInbox,
   IconLogout,
-  IconMail,
   IconShield,
   IconWorldWww,
 } from 'twenty-ui/icon';
@@ -23,11 +21,7 @@ export const getVerificationRecordGroupContent = (
       return { Icon: IconWorldWww, title: t`Domain authentication` };
     case 'DMARC':
       return { Icon: IconShield, title: t`DMARC policy` };
-    case 'RECEIVING':
-      return { Icon: IconInbox, title: t`Receiving` };
     case 'UNSUBSCRIBE':
       return { Icon: IconLogout, title: t`Unsubscribe link` };
-    case 'OTHER':
-      return { Icon: IconMail, title: t`DNS records` };
   }
 };

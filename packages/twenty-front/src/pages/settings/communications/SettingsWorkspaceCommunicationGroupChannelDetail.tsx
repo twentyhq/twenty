@@ -238,7 +238,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
                 />
               </StyledInputRow>
               <SettingsEmailingDomainDnsRecords
-                verificationRecords={emailingDomain.verificationRecords ?? []}
+                emailingDomain={emailingDomain}
               />
             </StyledSendingDomainColumn>
           </Section>
