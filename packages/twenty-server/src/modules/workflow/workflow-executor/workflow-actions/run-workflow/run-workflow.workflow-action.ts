@@ -20,6 +20,7 @@ import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/fi
 import { isWorkflowRunWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/run-workflow/guards/is-workflow-run-workflow-action.guard';
 import { type WorkflowRunWorkflowActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/run-workflow/types/workflow-run-workflow-action-input.type';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
+import { WorkflowTriggerException } from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
 
 // Nesting cap for RUN_WORKFLOW chains, D-04/D-05: chains at or below this depth
@@ -163,14 +164,21 @@ export class RunWorkflowWorkflowAction implements WorkflowAction {
         });
 
       calleeWorkflowVersionStatus = calleeWorkflowVersion.status;
-    } catch {
+    } catch (error) {
       // getWorkflowVersionOrFail throws WorkflowTriggerException on a missing
-      // version row — RUN_WORKFLOW must never let a non-WorkflowStepExecutorException
-      // escape execute() (D-07), so any failure here collapses to the same guard.
-      throw new WorkflowStepExecutorException(
-        `Cannot start workflow run: '${calleeWorkflow.name}' has no active version`,
-        WorkflowStepExecutorExceptionCode.NO_ACTIVE_WORKFLOW_VERSION,
-      );
+      // version row; only that expected case collapses to the "no active
+      // version" guard. Infrastructure failures (DB outage, permission
+      // errors, unexpected TypeORM errors) must propagate so the executor
+      // records them as a real system error instead of a misleading
+      // user-facing message.
+      if (error instanceof WorkflowTriggerException) {
+        throw new WorkflowStepExecutorException(
+          `Cannot start workflow run: '${calleeWorkflow.name}' has no active version`,
+          WorkflowStepExecutorExceptionCode.NO_ACTIVE_WORKFLOW_VERSION,
+        );
+      }
+
+      throw error;
     }
 
     if (calleeWorkflowVersionStatus !== WorkflowVersionStatus.ACTIVE) {
