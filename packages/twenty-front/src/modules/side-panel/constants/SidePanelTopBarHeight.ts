@@ -1,1 +1,1 @@
-export const SIDE_PANEL_TOP_BAR_HEIGHT = 40;
+export const SIDE_PANEL_TOP_BAR_HEIGHT = 48;

@@ -79,7 +79,8 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${({ isActive, isExpanded }) =>
     isActive && isExpanded ? themeCssVariables.spacing[1] : '0'};
-  height: ${themeCssVariables.spacing[7]};
+  height: ${({ isExpanded }) =>
+    isExpanded ? themeCssVariables.spacing[7] : themeCssVariables.spacing[8]};
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   // A flex item will not shrink past its content without this, so flex-shrink
@@ -92,7 +93,7 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   width: ${({ isExpanded }) =>
-    isExpanded ? 'auto' : themeCssVariables.spacing[6]};
+    isExpanded ? 'auto' : themeCssVariables.spacing[8]};
 
   &[aria-disabled='true'] {
     color: ${themeCssVariables.font.color.light};

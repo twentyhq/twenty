@@ -1,3 +1,4 @@
+import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/icon';
@@ -24,6 +25,17 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     padding-left: ${themeCssVariables.spacing[5]};
     padding-right: ${themeCssVariables.spacing[5]};
+  }
+`;
+
+const StyledSearchButtonContainer = styled.div<{ isExpanded: boolean }>`
+  display: flex;
+
+  > button {
+    height: ${({ isExpanded }) =>
+      isExpanded ? themeCssVariables.spacing[6] : themeCssVariables.spacing[8]};
+    width: ${({ isExpanded }) =>
+      isExpanded ? themeCssVariables.spacing[6] : themeCssVariables.spacing[8]};
   }
 `;
 
@@ -84,6 +96,7 @@ export const NavigationDrawerHeader = ({
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
+  const isSettingsDrawer = useIsSettingsDrawer();
   const { openRecordsSearchPage } = useOpenRecordsSearchPageInSidePanel();
   const isExpanded = useIsNavigationDrawerContentExpanded();
 
@@ -93,14 +106,16 @@ export const NavigationDrawerHeader = ({
         <MultiWorkspaceDropdownButton />
       </StyledWorkspaceDropdownContainer>
       <StyledRightActions isExpanded={isExpanded}>
-        {!isMobile && (
-          <LightIconButton
-            Icon={IconSearch}
-            accent="secondary"
-            size="small"
-            onClick={openRecordsSearchPage}
-            aria-label={t`Search`}
-          />
+        {!isMobile && !isSettingsDrawer && (
+          <StyledSearchButtonContainer isExpanded={isExpanded}>
+            <LightIconButton
+              Icon={IconSearch}
+              accent="secondary"
+              size="small"
+              onClick={openRecordsSearchPage}
+              aria-label={t`Search`}
+            />
+          </StyledSearchButtonContainer>
         )}
         {isExpanded && showCollapseButton && (
           <StyledNavigationDrawerCollapseButtonContainer>

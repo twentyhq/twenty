@@ -107,12 +107,18 @@ const StyledItem = styled.button<StyledItemProps>`
   display: flex;
   font-family: ${themeCssVariables.font.family};
   font-size: ${themeCssVariables.font.size.md};
-  height: ${themeCssVariables.spacing[7]};
+  height: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded
+      ? themeCssVariables.spacing[7]
+      : themeCssVariables.spacing[8]};
   margin-top: ${({ indentationLevel }) =>
     indentationLevel === 2 ? '2px' : '0'};
   min-width: 0;
   padding-bottom: ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[1]};
+  padding-left: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded
+      ? themeCssVariables.spacing[1]
+      : `calc(${themeCssVariables.spacing[2]} - 1px)`};
   padding-right: ${({ hasRightOptions, isNavigationDrawerExpanded }) =>
     hasRightOptions && isNavigationDrawerExpanded
       ? themeCssVariables.spacing['0.5']
