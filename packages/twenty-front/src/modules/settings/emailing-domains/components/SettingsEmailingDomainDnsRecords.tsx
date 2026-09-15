@@ -33,10 +33,7 @@ export const SettingsEmailingDomainDnsRecords = ({
       return {
         id: groupKey,
         records,
-        status: getVerificationRecordGroupStatusDisplay({
-          records,
-          isRequired: records.some((record) => record.isRequired !== false),
-        }),
+        status: getVerificationRecordGroupStatusDisplay({ groupKey, records }),
         ...getVerificationRecordGroupContent(groupKey),
       };
     })
