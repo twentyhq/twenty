@@ -14,6 +14,7 @@ import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
+import { SlackChannelRulesSection } from 'src/front-components/components/SlackChannelRulesSection';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
@@ -215,6 +216,10 @@ const SlackUserLinksSettingsContent = () => {
         />
       )}
       <SlackAccessModeSection canManage={canManage} />
+      <SlackChannelRulesSection
+        canManage={canManage}
+        installedSlackTeamId={installedSlackTeamId}
+      />
       {canManage && (
         <Section>
           <H2Title
