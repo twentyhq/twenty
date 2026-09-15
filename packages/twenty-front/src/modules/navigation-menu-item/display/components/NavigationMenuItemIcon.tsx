@@ -2,11 +2,10 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
-  StyledTintedIconTileContainer,
   getIconTileColorShades,
 } from 'twenty-ui/primitives/data-display';
 import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
@@ -29,6 +28,7 @@ export const NavigationMenuItemIcon = ({
   navigationMenuItem: NavigationMenuItem;
 }) => {
   const { getIcon } = useIcons();
+  const theme = useTheme();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
@@ -81,22 +81,25 @@ export const NavigationMenuItemIcon = ({
     const pageLayoutColor = getNavigationMenuItemColor(navigationMenuItem);
     const pageLayoutIconStyle = getIconTileColorShades(pageLayoutColor);
 
-    return (
-      <StyledTintedIconTileContainer
-        $backgroundColor={pageLayoutIconStyle.backgroundColor}
-        $borderColor={pageLayoutIconStyle.borderColor}
-      >
-        <Avatar
-          size="sm"
-          shape="rounded-square"
-          icon={
-            isDefined(PageLayoutIcon) ? (
-              <PageLayoutIcon color={pageLayoutIconStyle.iconColor} />
-            ) : undefined
-          }
-          name={navigationMenuItem.name ?? ''}
+    if (isDefined(PageLayoutIcon)) {
+      return (
+        <PageLayoutIcon
+          size={16}
+          stroke={theme.icon.stroke.md}
+          color={pageLayoutIconStyle.iconColor}
+          style={{ flexShrink: 0 }}
         />
-      </StyledTintedIconTileContainer>
+      );
+    }
+
+    return (
+      <Avatar
+        size="md"
+        shape="rounded-square"
+        name={navigationMenuItem.name ?? ''}
+        color={pageLayoutIconStyle.iconColor}
+        backgroundColor={pageLayoutIconStyle.backgroundColor}
+      />
     );
   }
 

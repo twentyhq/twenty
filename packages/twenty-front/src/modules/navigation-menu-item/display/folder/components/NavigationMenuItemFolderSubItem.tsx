@@ -145,7 +145,8 @@ export const NavigationMenuItemFolderSubItem = ({
       )}
       iconColor={
         navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
-        navigationMenuItem.type === NavigationMenuItemType.VIEW
+        navigationMenuItem.type === NavigationMenuItemType.VIEW ||
+        navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT
           ? undefined
           : getNavigationMenuItemColor(
               navigationMenuItem,
