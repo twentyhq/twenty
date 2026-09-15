@@ -17,7 +17,7 @@
     "start": "yarn native:setup && electron .",
     "preview": "yarn lingui:compile && vite --host 127.0.0.1 --port 4317",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "package": "yarn native:setup && yarn lingui:compile && node scripts/package.mjs",
     "package:archive": "yarn native:setup && yarn lingui:compile && node scripts/archive.mjs",
     "lingui:extract": "lingui extract",
