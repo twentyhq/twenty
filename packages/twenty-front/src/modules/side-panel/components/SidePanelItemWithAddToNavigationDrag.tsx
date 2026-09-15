@@ -78,17 +78,6 @@ export const SidePanelItemWithAddToNavigationDrag = ({
     ? t`Drag to add to navbar`
     : description;
 
-  const DragHandleIcon = () => (
-    <AddToNavigationDragHandle
-      icon={icon}
-      customIconContent={customIconContent}
-      payload={payload}
-      isHovered={showDragAffordance}
-      disabled={disabled}
-      disableDrag={effectiveDisableDrag}
-    />
-  );
-
   const registerPayload = () => {
     if (!disabled && !effectiveDisableDrag && isDefined(dragIndex)) {
       setAddToNavPayloadRegistry((prev) => new Map(prev).set(id, payload));
@@ -111,7 +100,16 @@ export const SidePanelItemWithAddToNavigationDrag = ({
       onMouseDown={registerPayload}
     >
       <CommandMenuItem
-        Icon={DragHandleIcon}
+        LeftComponent={
+          <AddToNavigationDragHandle
+            icon={icon}
+            customIconContent={customIconContent}
+            payload={payload}
+            isHovered={showDragAffordance}
+            disabled={disabled}
+            disableDrag={effectiveDisableDrag}
+          />
+        }
         label={label}
         description={contextualDescription}
         id={id}
