@@ -157,10 +157,13 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
         'responseText' in error &&
         isNonEmptyString((error as { responseText?: unknown }).responseText)
       ) {
-        throw new Error(
+        const draftError = new Error(
           `Failed to create draft: ${(error as { responseText: string }).responseText}`,
-          { cause: error },
         );
+
+        Object.assign(draftError, { cause: error });
+
+        throw draftError;
       }
 
       throw error;
