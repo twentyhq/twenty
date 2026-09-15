@@ -21,6 +21,10 @@ export const useEvictDiscardedDraftFromWorkflowCache = () => {
     useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Workflow,
     });
+  const { objectMetadataItem: objectMetadataItemWorkflowVersion } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
+    });
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const evictDiscardedDraftFromWorkflowCache = useCallback(
@@ -37,6 +41,21 @@ export const useEvictDiscardedDraftFromWorkflowCache = () => {
       if (!isDefined(cachedWorkflowVersion)) {
         return;
       }
+
+      const discardedAt = new Date().toISOString();
+
+      modifyRecordFromCache({
+        objectMetadataItem: objectMetadataItemWorkflowVersion,
+        cache,
+        recordId: workflowVersionId,
+        fieldModifiers: {
+          deletedAt: () => discardedAt,
+        },
+      });
+
+      upsertRecordsInStore({
+        partialRecords: [{ ...cachedWorkflowVersion, deletedAt: discardedAt }],
+      });
 
       const cachedWorkflow = getWorkflowFromCache<Workflow>(
         cachedWorkflowVersion.workflowId,
@@ -84,6 +103,7 @@ export const useEvictDiscardedDraftFromWorkflowCache = () => {
       getWorkflowFromCache,
       getWorkflowVersionFromCache,
       objectMetadataItemWorkflow,
+      objectMetadataItemWorkflowVersion,
       upsertRecordsInStore,
     ],
   );

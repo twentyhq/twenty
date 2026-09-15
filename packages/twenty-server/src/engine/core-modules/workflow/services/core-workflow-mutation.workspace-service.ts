@@ -33,6 +33,11 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
+type DiscardDraftVersionOutcome =
+  | { status: 'versionNotFound' }
+  | { status: 'alreadyDiscarded' }
+  | { status: 'discarded'; workflowId: string };
+
 @Injectable()
 export class CoreWorkflowMutationWorkspaceService {
   private readonly logger = new Logger(
@@ -214,7 +219,7 @@ export class CoreWorkflowMutationWorkspaceService {
   ): Promise<string | null> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    const draftVersion =
+    const outcome: DiscardDraftVersionOutcome =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workflowVersionRepository =
           this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
@@ -227,8 +232,12 @@ export class CoreWorkflowMutationWorkspaceService {
           withDeleted: true,
         });
 
-        if (!isDefined(version) || isDefined(version.deletedAt)) {
-          return version ?? null;
+        if (!isDefined(version)) {
+          return { status: 'versionNotFound' };
+        }
+
+        if (isDefined(version.deletedAt)) {
+          return { status: 'alreadyDiscarded' };
         }
 
         assertWorkflowVersionIsDraft(version);
@@ -251,15 +260,25 @@ export class CoreWorkflowMutationWorkspaceService {
           );
         }
 
-        await workflowVersionRepository.softDelete({
+        const softDeleteResult = await workflowVersionRepository.softDelete({
           id: workspaceWorkflowVersionId,
           status: WorkflowVersionStatus.DRAFT,
         });
 
-        return version;
+        if (softDeleteResult.affected === 0) {
+          throw new WorkflowQueryValidationException(
+            'Workflow version is not in draft status',
+            WorkflowQueryValidationExceptionCode.FORBIDDEN,
+            {
+              userFriendlyMessage: msg`Workflow version is not in draft status`,
+            },
+          );
+        }
+
+        return { status: 'discarded', workflowId: version.workflowId };
       }, authContext);
 
-    if (!isDefined(draftVersion)) {
+    if (outcome.status === 'versionNotFound') {
       return null;
     }
 
@@ -268,11 +287,11 @@ export class CoreWorkflowMutationWorkspaceService {
       [workspaceWorkflowVersionId],
     );
 
-    if (isDefined(draftVersion.deletedAt)) {
+    if (outcome.status === 'alreadyDiscarded') {
       return null;
     }
 
-    return draftVersion.workflowId;
+    return outcome.workflowId;
   }
 
   private async rollbackCreatedWorkflow(
