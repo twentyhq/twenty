@@ -117,10 +117,13 @@ export class RecordExportQueryWorkspaceService {
     );
   }
 
-  async buildContext(
-    parameters: RecordExportParameters,
-    authContext: UserWorkspaceAuthContext,
-  ): Promise<RecordExportQueryContext> {
+  async buildContext({
+    parameters,
+    authContext,
+  }: {
+    parameters: RecordExportParameters;
+    authContext: UserWorkspaceAuthContext;
+  }): Promise<RecordExportQueryContext> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(
         authContext.workspace.id,
@@ -191,10 +194,13 @@ export class RecordExportQueryWorkspaceService {
     };
   }
 
-  async countRecords(
-    parameters: RecordExportParameters,
-    context: RecordExportQueryContext,
-  ): Promise<number> {
+  async countRecords({
+    parameters,
+    context,
+  }: {
+    parameters: Pick<RecordExportParameters, 'filter'>;
+    context: RecordExportQueryContext;
+  }): Promise<number> {
     const { results } = await withWorkspaceAuthContext(
       context.queryRunnerContext.authContext,
       () =>
@@ -207,20 +213,26 @@ export class RecordExportQueryWorkspaceService {
           context.queryRunnerContext,
         ),
     );
-    if (!isDefined(results.totalCount))
+    if (!isDefined(results.totalCount)) {
       throw new RecordExportException(
         'Export record count is unavailable',
         'RECORD_COUNT_UNAVAILABLE',
       );
+    }
     return Number(results.totalCount);
   }
 
-  async readPage(
-    parameters: RecordExportParameters,
-    context: RecordExportQueryContext,
-    after?: string,
+  async readPage({
+    parameters,
+    context,
+    after,
     first = RECORD_EXPORT_PAGE_SIZE,
-  ) {
+  }: {
+    parameters: Pick<RecordExportParameters, 'filter' | 'orderBy'>;
+    context: RecordExportQueryContext;
+    after?: string;
+    first?: number;
+  }) {
     return withWorkspaceAuthContext(
       context.queryRunnerContext.authContext,
       () =>

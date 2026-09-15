@@ -45,11 +45,12 @@ export class DeleteRecordExportJob {
           },
         },
       );
-      if (!isDefined(cleanupJobId))
+      if (!isDefined(cleanupJobId)) {
         throw new RecordExportException(
           'Export cleanup could not be queued',
           'QUEUE_UNAVAILABLE',
         );
+      }
       return;
     }
     await this.recordExportWorkspaceService.cancel({

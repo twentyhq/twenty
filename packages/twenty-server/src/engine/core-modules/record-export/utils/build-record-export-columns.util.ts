@@ -1,3 +1,4 @@
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from 'twenty-shared/constants';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
@@ -30,10 +31,9 @@ export const buildRecordExportColumns = (
           : [];
       }
 
-      const subFields =
-        COMPOSITE_FIELD_SUB_FIELD_LABELS[
-          field.type as keyof typeof COMPOSITE_FIELD_SUB_FIELD_LABELS
-        ];
+      const subFields = isCompositeFieldMetadataType(field.type)
+        ? COMPOSITE_FIELD_SUB_FIELD_LABELS[field.type]
+        : undefined;
 
       return subFields
         ? Object.entries(subFields).map(([subFieldName, label]) => ({

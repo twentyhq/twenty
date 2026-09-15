@@ -24,6 +24,7 @@ type RecordExportChanges = Partial<
     | 'jobId'
     | 'attemptId'
     | 'filePath'
+    | 'downloadStarted'
     | 'errorMessage'
     | 'totalRecordCount'
   >
@@ -31,6 +32,7 @@ type RecordExportChanges = Partial<
 type RecordExportCondition = {
   statuses?: RecordExportStatus[];
   attemptId?: string | null;
+  downloadStarted?: boolean;
 };
 
 @Injectable()
@@ -58,6 +60,7 @@ export class RecordExportCacheService {
       jobId: null,
       attemptId: null,
       filePath: null,
+      downloadStarted: false,
       errorMessage: null,
       updatedAt: now,
     };
@@ -73,10 +76,11 @@ export class RecordExportCacheService {
       recordExport.id,
       RECORD_EXPORT_CONNECTION_TTL_MS,
     );
-    if (!created)
+    if (!created) {
       throw new ConflictException(
         t`An export is already running in this workspace. Please wait for it to finish.`,
       );
+    }
     try {
       await this.cacheStorageService.set(
         this.getRecordKey(recordExport),
@@ -111,8 +115,12 @@ export class RecordExportCacheService {
     const recordExport = await this.cacheStorageService.get<RecordExport>(
       this.getRecordKey({ workspaceId, id }),
     );
-    if (!isDefined(recordExport)) return undefined;
-    if (!connected && this.isRunning(recordExport)) return undefined;
+    if (!isDefined(recordExport)) {
+      return undefined;
+    }
+    if (!connected && this.isRunning(recordExport)) {
+      return undefined;
+    }
     return {
       ...recordExport,
       createdAt: new Date(recordExport.createdAt),
@@ -139,7 +147,9 @@ export class RecordExportCacheService {
         (isDefined(condition.statuses) &&
           !condition.statuses.includes(recordExport.status)) ||
         (condition.attemptId !== undefined &&
-          condition.attemptId !== recordExport.attemptId)
+          condition.attemptId !== recordExport.attemptId) ||
+        (isDefined(condition.downloadStarted) &&
+          condition.downloadStarted !== recordExport.downloadStarted)
       ) {
         return false;
       }
@@ -157,7 +167,9 @@ export class RecordExportCacheService {
         expiresAt,
       };
       const ttl = updated.expiresAt.getTime() - Date.now();
-      if (ttl <= 0) return false;
+      if (ttl <= 0) {
+        return false;
+      }
       const updatedRecord = await this.cacheStorageService.runScript<number>({
         script: UPDATE_RECORD_EXPORT_SCRIPT,
         keys: [
@@ -172,8 +184,12 @@ export class RecordExportCacheService {
           this.isRunning(updated) ? '0' : '1',
         ],
       });
-      if (updatedRecord === 0) return false;
-      if (updatedRecord === -1) continue;
+      if (updatedRecord === 0) {
+        return false;
+      }
+      if (updatedRecord === -1) {
+        continue;
+      }
       return true;
     }
   }

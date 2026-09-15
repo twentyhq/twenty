@@ -1,3 +1,6 @@
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { type RecordExportStreamWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-stream.workspace-service';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { createClient } from 'graphql-sse';
@@ -44,7 +47,9 @@ const companies = Array.from({ length: 1005 }, (_, index) => ({
 const waitUntil = async (condition: () => Promise<boolean>) => {
   const deadline = Date.now() + 10_000;
   while (!(await condition())) {
-    if (Date.now() > deadline) throw new Error('Export did not settle');
+    if (Date.now() > deadline) {
+      throw new Error('Export did not settle');
+    }
     await setTimeout(25);
   }
 };
@@ -85,8 +90,9 @@ describe('record export lifecycle (integration)', () => {
 
   const nextExport = async (events: ReturnType<typeof subscribe>['events']) => {
     const event = await events.next();
-    if (event.done || !isDefined(event.value.data?.exportRecords))
+    if (event.done || !isDefined(event.value.data?.exportRecords)) {
       throw new Error(JSON.stringify(event.value?.errors ?? 'Export ended'));
+    }
     const recordExport = event.value.data.exportRecords;
     exportIds.add(recordExport.id);
     return recordExport;
@@ -100,8 +106,9 @@ describe('record export lifecycle (integration)', () => {
     try {
       while (true) {
         const recordExport = await nextExport(events);
-        if (recordExport.status === RecordExportStatus.FAILED)
+        if (recordExport.status === RecordExportStatus.FAILED) {
           throw new Error(recordExport.errorMessage ?? 'Export failed');
+        }
         if (recordExport.status === RecordExportStatus.COMPLETED) {
           expect(recordExport.downloadUrl).toBeDefined();
           return recordExport;
@@ -201,11 +208,12 @@ describe('record export lifecycle (integration)', () => {
     for (const id of exportIds)
       await exports.cancel({ workspaceId: SEED_APPLE_WORKSPACE_ID, id });
     exportIds.clear();
-    if (isDefined(roleId))
+    if (isDefined(roleId)) {
       await changeRole({
         canAccessAllTools: true,
         canReadAllObjectRecords: true,
       });
+    }
   });
 
   afterAll(async () => {
@@ -214,15 +222,17 @@ describe('record export lifecycle (integration)', () => {
       value: wasAsyncCsvExportEnabled,
       expectToFail: false,
     });
-    if (isDefined(originalRoleId))
+    if (isDefined(originalRoleId)) {
       await updateWorkspaceMemberRole({
         input: {
           roleId: originalRoleId,
           workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
         },
       });
-    if (isDefined(roleId))
+    }
+    if (isDefined(roleId)) {
       await deleteOneRole({ input: { idToDelete: roleId } });
+    }
     for (let offset = 0; offset < companies.length; offset += 100) {
       await makeGraphqlAPIRequest(
         destroyManyOperationFactory({
@@ -330,14 +340,17 @@ describe('record export lifecycle (integration)', () => {
       releasePage = resolve;
     });
     jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
-      if (isDefined(args[2])) await pageGate;
+      if (isDefined(args[0].after)) {
+        await pageGate;
+      }
       return readPage(...args);
     });
     const first = subscribe();
     try {
       let progress = await nextExport(first.events);
-      while (progress.processedRecordCount < 1000)
+      while (progress.processedRecordCount < 1000) {
         progress = await nextExport(first.events);
+      }
       expect(progress.status).toBe(RecordExportStatus.PROCESSING);
       expect(progress.totalRecordCount).toBe(companies.length);
       const second = subscribe();
@@ -369,7 +382,9 @@ describe('record export lifecycle (integration)', () => {
         .spyOn(queue, 'add')
         .mockRejectedValueOnce(new Error('Queue unavailable'));
       await expect(
-        exports.create({ parameters: input, authContext: requester }),
+        exports.enqueue(
+          await exports.create({ parameters: input, authContext: requester }),
+        ),
       ).rejects.toThrow('Queue unavailable');
       expect((await getExport(failed!.id)).status).toBe(
         RecordExportStatus.FAILED,
@@ -378,6 +393,117 @@ describe('record export lifecycle (integration)', () => {
       await download(next).expect(200);
     },
   );
+
+  it('renews the lease during queue handoff and paused event consumption', async () => {
+    const ready = await exportToCompletion();
+    const requester = await query.resolveRequester(await getExport(ready.id));
+    const streams =
+      getAppProviderByClassName<RecordExportStreamWorkspaceService>(
+        'RecordExportStreamWorkspaceService',
+      );
+    const storageCache = global.app.get<CacheStorageService>(
+      CacheStorageNamespace.EngineRecordExport,
+    );
+    const enqueue = exports.enqueue.bind(exports);
+    let releaseEnqueue = () => {};
+    let notifyEnqueue = (recordExport: RecordExport) => {
+      void recordExport;
+    };
+    const enqueueGate = new Promise<void>((resolve) => {
+      releaseEnqueue = resolve;
+    });
+    const enqueueStarted = new Promise<RecordExport>((resolve) => {
+      notifyEnqueue = resolve;
+    });
+    jest.spyOn(exports, 'enqueue').mockImplementation(async (recordExport) => {
+      exportIds.add(recordExport.id);
+      notifyEnqueue(recordExport);
+      await enqueueGate;
+      await enqueue(recordExport);
+    });
+    const readPage = query.readPage.bind(query);
+    let releasePage = () => {};
+    const pageGate = new Promise<void>((resolve) => {
+      releasePage = resolve;
+    });
+    jest.spyOn(query, 'readPage').mockImplementation(async (args) => {
+      await pageGate;
+      return readPage(args);
+    });
+    const subscription = streams.stream({
+      parameters: input,
+      authContext: requester,
+    });
+    try {
+      const recordExport = await enqueueStarted;
+      const assertLeaseSurvives = async () => {
+        await storageCache.runScript({
+          script: {
+            name: 'shorten-export-test-lease',
+            source: "return redis.call('PEXPIRE', KEYS[1], 2000)",
+          },
+          keys: [`{${SEED_APPLE_WORKSPACE_ID}}:active`],
+          args: [],
+        });
+        await setTimeout(2500);
+        expect(await cache.findOne(recordExport)).toBeDefined();
+      };
+      await assertLeaseSurvives();
+      releaseEnqueue();
+      const events = await subscription;
+      expect((await events.next()).done).toBe(false);
+      await assertLeaseSurvives();
+      await events.return?.();
+      expect(await cache.findOne(recordExport)).toBeUndefined();
+    } finally {
+      releaseEnqueue();
+      releasePage();
+      const events = await subscription;
+      await events.return?.();
+    }
+  });
+
+  it('allows only one download while the file is being opened', async () => {
+    const recordExport = await exportToCompletion();
+    const stored = await getExport(recordExport.id);
+    const readFile = storage.readFile.bind(storage);
+    let releaseRead = () => {};
+    let notifyRead = () => {};
+    const readGate = new Promise<void>((resolve) => {
+      releaseRead = resolve;
+    });
+    const readStarted = new Promise<void>((resolve) => {
+      notifyRead = resolve;
+    });
+    jest.spyOn(storage, 'readFile').mockImplementationOnce(async (resource) => {
+      notifyRead();
+      await readGate;
+      return readFile(resource);
+    });
+    const first = download(recordExport)
+      .expect(200)
+      .then((response) => response);
+    try {
+      await readStarted;
+      await download(recordExport).expect(409);
+      expect(await fileExists(stored)).toBe(true);
+    } finally {
+      releaseRead();
+      expect((await first).text).toContain(companies[0].name);
+    }
+    await waitUntil(async () => !(await fileExists(stored)));
+  });
+
+  it('cleans up when storage cannot open the download', async () => {
+    const recordExport = await exportToCompletion();
+    const stored = await getExport(recordExport.id);
+    jest
+      .spyOn(storage, 'readFile')
+      .mockRejectedValueOnce(new Error('Storage unavailable'));
+    await download(recordExport).expect(500);
+    expect(await cache.findOne(stored)).toBeUndefined();
+    expect(await fileExists(stored)).toBe(false);
+  });
 
   it('rejects a download token used for another export and an invalid signature', async () => {
     const recordExport = await exportToCompletion();
@@ -450,7 +576,7 @@ describe('record export lifecycle (integration)', () => {
       notifyPage = resolve;
     });
     jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
-      if (!isDefined(args[2]) && !isDefined(args[3])) {
+      if (!isDefined(args[0].after) && !isDefined(args[0].first)) {
         notifyPage();
         await pageGate;
       }
@@ -462,8 +588,9 @@ describe('record export lifecycle (integration)', () => {
       await pageStarted;
       await changeRole({ canAccessAllTools: false });
       releasePage();
-      while (recordExport.status !== RecordExportStatus.FAILED)
+      while (recordExport.status !== RecordExportStatus.FAILED) {
         recordExport = await nextExport(events);
+      }
       expect(recordExport.downloadUrl).toBeNull();
       expect(recordExport.processedRecordCount).toBeLessThan(companies.length);
     } finally {
@@ -501,13 +628,16 @@ describe('record export lifecycle (integration)', () => {
       });
     const readPage = query.readPage.bind(query);
     jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
-      if (isDefined(args[2])) throw new Error('Interrupted database read');
+      if (isDefined(args[0].after)) {
+        throw new Error('Interrupted database read');
+      }
       return readPage(...args);
     });
     const { events } = subscribe();
     let recordExport = await nextExport(events);
-    while (recordExport.status !== RecordExportStatus.FAILED)
+    while (recordExport.status !== RecordExportStatus.FAILED) {
       recordExport = await nextExport(events);
+    }
     expect(recordExport.downloadUrl).toBeNull();
     expect(partialFilePath).toBeDefined();
     expect(

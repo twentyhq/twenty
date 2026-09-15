@@ -5,10 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { setTimeout } from 'node:timers/promises';
-
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
-import { RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { t } from '@lingui/core/macro';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
@@ -23,7 +20,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import {
   RECORD_EXPORT_MAX_DURATION_MS,
   RECORD_EXPORT_CONNECTION_TTL_MS,
-  RECORD_EXPORT_PROGRESS_INTERVAL_MS,
   RECORD_EXPORT_MISSING_JOB_TIMEOUT_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
@@ -56,10 +52,10 @@ export class RecordExportWorkspaceService {
   }): Promise<RecordExport> {
     const requester =
       await this.recordExportQueryWorkspaceService.assertCanExport(authContext);
-    const context = await this.recordExportQueryWorkspaceService.buildContext(
+    const context = await this.recordExportQueryWorkspaceService.buildContext({
       parameters,
-      requester,
-    );
+      authContext: requester,
+    });
     const workspaceId = requester.workspace.id;
 
     const recordExport = await this.recordExportCacheService.create({
@@ -70,6 +66,11 @@ export class RecordExportWorkspaceService {
       filename: `${context.queryRunnerContext.flatObjectMetadata.nameSingular}.csv`,
     });
 
+    return recordExport;
+  }
+
+  async enqueue(recordExport: RecordExport): Promise<void> {
+    const workspaceId = recordExport.workspaceId;
     try {
       const cleanupJobId = await this.cleanupQueueService.add(
         'DeleteRecordExportJob',
@@ -84,11 +85,12 @@ export class RecordExportWorkspaceService {
           },
         },
       );
-      if (!isDefined(cleanupJobId))
+      if (!isDefined(cleanupJobId)) {
         throw new RecordExportException(
           'Export cleanup could not be queued',
           'QUEUE_UNAVAILABLE',
         );
+      }
 
       const jobId = await this.messageQueueService.add(
         'GenerateRecordExportJob',
@@ -121,89 +123,6 @@ export class RecordExportWorkspaceService {
       });
       throw error;
     }
-
-    return this.findOrThrow({ workspaceId, id: recordExport.id });
-  }
-
-  async stream({
-    parameters,
-    authContext,
-  }: {
-    parameters: RecordExportParameters;
-    authContext: WorkspaceAuthContext;
-  }): Promise<AsyncIterableIterator<RecordExportDTO>> {
-    const recordExport = await this.create({ parameters, authContext });
-    const workspaceId = recordExport.workspaceId;
-    const abortController = new AbortController();
-    const service = this;
-    let downloadReady = false;
-    let cleanup: Promise<void> | undefined;
-    const close = () => {
-      abortController.abort();
-      if (!downloadReady)
-        cleanup ??= service.cancel({ workspaceId, id: recordExport.id });
-      return cleanup ?? Promise.resolve();
-    };
-
-    async function* events(): AsyncGenerator<RecordExportDTO> {
-      try {
-        while (!abortController.signal.aborted) {
-          const current = await service.recordExportCacheService.findOne({
-            workspaceId,
-            id: recordExport.id,
-            keepAlive: true,
-          });
-          if (!isDefined(current))
-            throw new BadRequestException(
-              t`The export was interrupted. Please try again.`,
-            );
-          const updated = await service.reconcile(current);
-          if (abortController.signal.aborted) return;
-          if (updated.status === RecordExportStatus.COMPLETED) {
-            const downloadUrl = await service.getDownloadUrl({
-              id: updated.id,
-              authContext,
-            });
-            if (abortController.signal.aborted) return;
-            downloadReady = true;
-            yield { ...updated, downloadUrl };
-            return;
-          }
-          yield updated;
-          if (updated.status === RecordExportStatus.FAILED) return;
-          await setTimeout(RECORD_EXPORT_PROGRESS_INTERVAL_MS, undefined, {
-            signal: abortController.signal,
-          });
-        }
-      } catch (error) {
-        if (!abortController.signal.aborted) throw error;
-      } finally {
-        await close();
-      }
-    }
-    const iterator = events();
-    return {
-      next: () => iterator.next(),
-      return: async () => {
-        try {
-          await close();
-        } finally {
-          await iterator.return(undefined);
-        }
-        return { done: true, value: undefined };
-      },
-      throw: async (error: unknown) => {
-        try {
-          await close();
-        } finally {
-          await iterator.return(undefined);
-        }
-        throw error;
-      },
-      [Symbol.asyncIterator]() {
-        return this;
-      },
-    };
   }
 
   async cancel({
@@ -303,16 +222,15 @@ export class RecordExportWorkspaceService {
     }
 
     this.assertDownloadable(recordExport);
-    const context = await this.recordExportQueryWorkspaceService.buildContext(
-      recordExport.parameters,
-      requester,
-    );
-    await this.recordExportQueryWorkspaceService.readPage(
-      recordExport.parameters,
+    const context = await this.recordExportQueryWorkspaceService.buildContext({
+      parameters: recordExport.parameters,
+      authContext: requester,
+    });
+    await this.recordExportQueryWorkspaceService.readPage({
+      parameters: recordExport.parameters,
       context,
-      undefined,
-      0,
-    );
+      first: 0,
+    });
     const token = await this.jwtWrapperService.signAsyncOrThrow(
       {
         type: JwtTokenTypeEnum.FILE,
