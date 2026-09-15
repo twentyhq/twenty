@@ -8087,9 +8087,9 @@ msgstr ""
 msgid "Enable bypass options"
 msgstr ""
 
-#. js-lingui-id: Fecpp6
+#. js-lingui-id: vs9cre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Enable email campaigns and sending domain management."
+msgid "Enable email campaigns, lists, and unsubscribe management."
 msgstr ""
 
 #. js-lingui-id: Tt0V8j
