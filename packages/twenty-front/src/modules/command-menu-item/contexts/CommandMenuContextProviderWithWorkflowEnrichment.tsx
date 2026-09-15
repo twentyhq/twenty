@@ -2,6 +2,7 @@ import { type CommandMenuContextApi } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
+import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions';
 import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWorkflowsWithCurrentVersions';
 
 import { CommandMenuContextProviderContent } from './CommandMenuContextProviderContent';
@@ -23,9 +24,16 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
   selectedWorkflowRecordIds,
   isInPreviewMode,
 }: CommandMenuContextProviderWithWorkflowEnrichmentProps) => {
-  const workflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
-    selectedWorkflowRecordIds,
+  const { workflows: coreWorkflowsWithCurrentVersions, isCoreDataComplete } =
+    useCoreWorkflowsWithCurrentVersions(selectedWorkflowRecordIds);
+
+  const workspaceWorkflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
+    isCoreDataComplete ? [] : selectedWorkflowRecordIds,
   );
+
+  const workflowsWithCurrentVersions = isCoreDataComplete
+    ? coreWorkflowsWithCurrentVersions
+    : workspaceWorkflowsWithCurrentVersions;
 
   const enrichedSelectedRecords = commandMenuContextApi.selectedRecords.map(
     (record) => {

@@ -16,6 +16,9 @@ import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/cor
 import { CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { CoreWorkflowVersionArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.input';
 import { CoreWorkflowVersionsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions.input';
+import { CoreWorkflowVersionsByIdsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions-by-ids.input';
+import { CoreWorkflowWithVersionsDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-with-versions.dto';
+import { CoreWorkflowsWithVersionsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows-with-versions.input';
 import { CoreWorkflowArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow.input';
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
@@ -104,6 +107,46 @@ export class CoreWorkflowResolver {
     return this.coreWorkflowListService.findManyByWorkspaceId(
       workspaceId,
       coreWorkflowsArgs,
+    );
+  }
+
+  @Query(() => [CoreWorkflowWithVersionsDTO])
+  async coreWorkflowsWithVersions(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args() { workspaceWorkflowIds }: CoreWorkflowsWithVersionsArgs,
+  ): Promise<CoreWorkflowWithVersionsDTO[]> {
+    const [coreWorkflows, coreWorkflowVersionsByWorkspaceWorkflowId] =
+      await Promise.all([
+        this.coreWorkflowListService.findManyByWorkspaceWorkflowIds({
+          workspaceId,
+          workspaceWorkflowIds,
+        }),
+        this.coreWorkflowVersionListService.findManyByWorkspaceWorkflowIds({
+          workspaceId,
+          workspaceWorkflowIds,
+        }),
+      ]);
+
+    return coreWorkflows.map((coreWorkflow) => ({
+      ...coreWorkflow,
+      versions: isDefined(coreWorkflow.workspaceWorkflowId)
+        ? (coreWorkflowVersionsByWorkspaceWorkflowId[
+            coreWorkflow.workspaceWorkflowId
+          ] ?? [])
+        : [],
+    }));
+  }
+
+  @Query(() => [CoreWorkflowVersionDTO])
+  async coreWorkflowVersionsByIds(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args() { workspaceWorkflowVersionIds }: CoreWorkflowVersionsByIdsArgs,
+  ): Promise<CoreWorkflowVersionDTO[]> {
+    return this.coreWorkflowVersionListService.findManyByWorkspaceWorkflowVersionIds(
+      {
+        workspaceId,
+        workspaceWorkflowVersionIds,
+      },
     );
   }
 
