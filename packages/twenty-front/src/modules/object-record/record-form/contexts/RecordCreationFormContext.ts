@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { createContext } from 'react';
+import { createRequiredContext } from '~/utils/createRequiredContext';
 
 export type RecordCreationFormContextValue = {
   requestRecordCreation: (params: {
@@ -14,5 +14,9 @@ export type RecordCreationFormContextValue = {
   }) => void;
 };
 
-export const RecordCreationFormContext =
-  createContext<RecordCreationFormContextValue | null>(null);
+export const [
+  RecordCreationFormContextProvider,
+  useRecordCreationFormContextOrThrow,
+] = createRequiredContext<RecordCreationFormContextValue>(
+  'RecordCreationFormContext',
+);

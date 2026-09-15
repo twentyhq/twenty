@@ -1,31 +1,15 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { RecordCreationFormContext } from '@/object-record/record-form/contexts/RecordCreationFormContext';
-import { useRecordFormFieldMetadataItems } from '@/object-record/record-form/hooks/useRecordFormFieldMetadataItems';
+import { useRecordCreationFormContextOrThrow } from '@/object-record/record-form/contexts/RecordCreationFormContext';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useCallback, useContext } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { useCallback } from 'react';
 
 export const useRecordCreationForm = ({
   objectMetadataItem,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
 }) => {
-  const recordCreationFormContext = useContext(RecordCreationFormContext);
-
-  const isRecordCreationFormEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-  );
-
-  const { recordFormFieldMetadataItems } = useRecordFormFieldMetadataItems({
-    objectMetadataItem,
-  });
-
-  const shouldOpenRecordCreationForm =
-    isRecordCreationFormEnabled &&
-    isDefined(recordCreationFormContext) &&
-    isNonEmptyArray(recordFormFieldMetadataItems);
+  const { requestRecordCreation: requestRecordCreationInContext } =
+    useRecordCreationFormContextOrThrow();
 
   const requestRecordCreation = useCallback(
     ({
@@ -37,15 +21,13 @@ export const useRecordCreationForm = ({
         draftRecord: Partial<ObjectRecord>,
       ) => Promise<ObjectRecord>;
     }) =>
-      isDefined(recordCreationFormContext)
-        ? recordCreationFormContext.requestRecordCreation({
-            objectMetadataItem,
-            initialDraftRecord,
-            createRecord,
-          })
-        : createRecord(initialDraftRecord ?? {}),
-    [recordCreationFormContext, objectMetadataItem],
+      requestRecordCreationInContext({
+        objectMetadataItem,
+        initialDraftRecord,
+        createRecord,
+      }),
+    [requestRecordCreationInContext, objectMetadataItem],
   );
 
-  return { shouldOpenRecordCreationForm, requestRecordCreation };
+  return { requestRecordCreation };
 };

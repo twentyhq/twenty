@@ -65,8 +65,9 @@ export const useCreateNewIndexRecord = ({
 
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
-  const { shouldOpenRecordCreationForm, requestRecordCreation } =
-    useRecordCreationForm({ objectMetadataItem });
+  const { requestRecordCreation } = useRecordCreationForm({
+    objectMetadataItem,
+  });
 
   const navigate = useNavigateApp();
 
@@ -198,10 +199,6 @@ export const useCreateNewIndexRecord = ({
 
   const createNewIndexRecord = useCallback(
     async (recordInput?: Partial<ObjectRecord>) => {
-      if (!shouldOpenRecordCreationForm) {
-        return createIndexRecord(recordInput);
-      }
-
       const createdRecord = await requestRecordCreation({
         initialDraftRecord: recordInput,
         createRecord: (draftRecord) =>
@@ -210,7 +207,7 @@ export const useCreateNewIndexRecord = ({
 
       return createdRecord ?? undefined;
     },
-    [createIndexRecord, requestRecordCreation, shouldOpenRecordCreationForm],
+    [createIndexRecord, requestRecordCreation],
   );
 
   return {
