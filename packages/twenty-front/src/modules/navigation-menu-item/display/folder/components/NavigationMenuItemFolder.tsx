@@ -1,5 +1,5 @@
+import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { Suspense, lazy, useContext } from 'react';
-import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconChevronRight, useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -127,12 +127,18 @@ const NavigationMenuItemFolderReadOnlyContent = ({
       header={
         <NavigationDrawerItem
           label={folderName}
-          Icon={FolderIcon}
-          iconColor={
-            isDefined(folderColor)
-              ? folderColor
-              : DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER
-          }
+          Icon={() => (
+            <FolderIcon
+              size={16}
+              stroke={theme.icon.stroke.md}
+              color={
+                getIconTileColorShades(
+                  folderColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
+                ).iconColor
+              }
+              style={{ flexShrink: 0 }}
+            />
+          )}
           active={!isOpen && hasActiveChild}
           onClick={handleToggle}
           className="navigation-drawer-item"

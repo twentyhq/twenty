@@ -1,3 +1,4 @@
+import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import React, { Fragment, useCallback, useContext } from 'react';
@@ -228,8 +229,14 @@ export const NavigationMenuItemFolderDnd = ({
   const header = headerOverride ?? (
     <NavigationDrawerItem
       label={folderName}
-      Icon={FolderIcon}
-      iconColor={iconColor}
+      Icon={() => (
+        <FolderIcon
+          size={16}
+          stroke={theme.icon.stroke.md}
+          color={getIconTileColorShades(iconColor).iconColor}
+          style={{ flexShrink: 0 }}
+        />
+      )}
       active={
         (!isOpen && hasActiveChild) ||
         (isWorkspace && isSelectedInEditMode && !isOpen)
