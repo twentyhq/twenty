@@ -48,6 +48,7 @@ import {
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
+import { isChildRecordBoundAtDeletion } from 'src/engine/twenty-orm/utils/is-child-record-bound-at-deletion.util';
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
 import { resolveInheritedReadabilityChildLinks } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-child-links.util';
@@ -1603,7 +1604,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return undefined;
     }
 
-    const recordIds = records.map((record) => String(record.id));
+    const recordById = new Map(
+      records.map((record) => [String(record.id), record]),
+    );
+    const recordIds = [...recordById.keys()];
     const childRecordsByRecordId = new Map(
       recordIds.map((recordId): [string, InheritedReadabilityChildRecords] => [
         recordId,
@@ -1629,8 +1633,18 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         .getMany<ObjectRecord>();
 
       for (const childRecord of childRecords) {
+        const recordId = String(childRecord[parent.childJoinColumnName]);
+        const record = recordById.get(recordId);
+
+        if (
+          !isDefined(record) ||
+          !isChildRecordBoundAtDeletion({ childRecord, record })
+        ) {
+          continue;
+        }
+
         childRecordsByRecordId
-          .get(String(childRecord[parent.childJoinColumnName]))
+          .get(recordId)
           ?.[parent.childFlatObjectMetadata.nameSingular].push(childRecord);
       }
     }

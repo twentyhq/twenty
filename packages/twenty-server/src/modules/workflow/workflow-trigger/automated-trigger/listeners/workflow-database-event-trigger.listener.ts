@@ -32,6 +32,7 @@ import { RecordAccessPolicyService } from 'src/engine/record-share/services/reco
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
 import { isRecordAdmittedByRecordShareGate } from 'src/engine/record-share/utils/is-record-admitted-by-record-share-gate.util';
+import { omitInheritedReadabilityChildRecords } from 'src/engine/record-share/utils/omit-inherited-readability-child-records.util';
 import { resolveEventRecordSnapshots } from 'src/engine/record-share/utils/resolve-event-record-snapshots.util';
 import { buildRoleRowAccessPolicySubject } from 'src/engine/record-share/utils/build-role-row-access-policy-subject.util';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
@@ -393,7 +394,7 @@ export class WorkflowDatabaseEventTriggerListener {
               coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
               workspaceWorkflowVersionId:
                 eventListener.workspaceWorkflowVersionId,
-              payload: eventPayload,
+              payload: omitInheritedReadabilityChildRecords(eventPayload),
             },
             { retryLimit: 3 },
           );

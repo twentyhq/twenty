@@ -327,6 +327,45 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       );
     });
 
+    it('should not hand the child records captured with a deletion to the workflow', async () => {
+      const capturedEvent = {
+        ...mockPayload.events[0],
+        properties: {
+          before: { field1: 'old', field2: 'old' },
+          inheritedReadabilityChildRecords: {
+            noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
+          },
+        },
+      };
+
+      setTriggerMap([
+        {
+          type: AutomatedTriggerType.DATABASE_EVENT,
+          workflowId,
+          settings: {
+            eventName: 'deleteEvent',
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordDeleteEvent({
+        ...mockPayload,
+        name: 'deleteEvent',
+        events: [capturedEvent],
+      });
+
+      expect(messageQueueService.add).toHaveBeenCalledWith(
+        WorkflowTriggerJob.name,
+        expect.objectContaining({
+          payload: {
+            ...capturedEvent,
+            properties: { before: { field1: 'old', field2: 'old' } },
+          },
+        }),
+        { retryLimit: 3 },
+      );
+    });
+
     it('should handle destroy events correctly', async () => {
       const destroyPayload: WorkspaceEventBatch<any> = {
         ...mockPayload,
