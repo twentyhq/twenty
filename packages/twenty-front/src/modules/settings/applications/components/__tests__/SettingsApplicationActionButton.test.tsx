@@ -103,7 +103,9 @@ describe('SettingsApplicationActionButton', () => {
       onUpgrade,
     });
 
-    await user.click(screen.getByRole('button', { name: /^Upgrade to 2\.0\.0\b/ }));
+    await user.click(
+      screen.getByRole('button', { name: /^Upgrade to 2\.0\.0\b/ }),
+    );
 
     expect(onUpgrade).toHaveBeenCalledTimes(1);
   });
@@ -123,7 +125,9 @@ describe('SettingsApplicationActionButton', () => {
     expect(mockOpenModal).toHaveBeenCalledWith('uninstall-application-modal');
     expect(onUninstall).not.toHaveBeenCalled();
 
-    await user.click(screen.getByRole('button', { name: /^Confirm Uninstall\b/ }));
+    await user.click(
+      screen.getByRole('button', { name: /^Confirm Uninstall\b/ }),
+    );
 
     expect(onUninstall).toHaveBeenCalledTimes(1);
   });
