@@ -553,6 +553,9 @@ export default {
             "readability": [
                 25
             ],
+            "readabilityParentFieldUniversalIdentifiers": [
+                3
+            ],
             "writability": [
                 26
             ],
@@ -12167,6 +12170,9 @@ export default {
         },
         "CreateCommandMenuItemInput": {
             "workflowVersionId": [
+                3
+            ],
+            "coreWorkflowVersionId": [
                 3
             ],
             "frontComponentId": [

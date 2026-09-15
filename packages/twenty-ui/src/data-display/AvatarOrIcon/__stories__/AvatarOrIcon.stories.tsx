@@ -14,16 +14,16 @@ type Story = StoryObj<typeof AvatarOrIcon>;
 
 export const Default: Story = {
   args: {
-    placeholder: 'JD',
-    placeholderColorSeed: 'John Doe',
+    name: 'JD',
+    colorSeed: 'John Doe',
   },
 };
 
 export const WithAvatar: Story = {
   args: {
-    avatarUrl: AVATAR_URL_MOCK,
-    placeholder: 'JD',
-    placeholderColorSeed: 'John Doe',
+    src: AVATAR_URL_MOCK,
+    name: 'JD',
+    colorSeed: 'John Doe',
   },
 };
 
@@ -49,8 +49,8 @@ export const WithInvertedIcon: Story = {
 
 export const Clickable: Story = {
   args: {
-    placeholder: 'JD',
-    placeholderColorSeed: 'John Doe',
+    name: 'JD',
+    colorSeed: 'John Doe',
     onClick: () => alert('AvatarOrIcon clicked'),
   },
 };
@@ -59,7 +59,7 @@ export const ClickableIcon: Story = {
   args: {
     Icon: IconBuildingSkyscraper,
     isIconInverted: true,
-    placeholder: 'Company',
+    name: 'Company',
     onClick: () => alert('Icon AvatarOrIcon clicked'),
   },
 };

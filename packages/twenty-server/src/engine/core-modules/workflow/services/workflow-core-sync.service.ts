@@ -14,6 +14,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @Injectable()
@@ -45,6 +46,12 @@ export class WorkflowCoreSyncService {
 
     const workspaceWorkflowIdByOwnedCoreWorkflowId =
       await this.resolveWorkspaceWorkflowIdByOwnedCoreWorkflowId(
+        workspaceId,
+        liveWorkflows,
+      );
+
+    const coreVersionIdByWorkspaceVersionId =
+      await this.resolveCoreVersionIdByWorkspaceVersionId(
         workspaceId,
         liveWorkflows,
       );
@@ -81,6 +88,13 @@ export class WorkflowCoreSyncService {
         )
           ? workflow.lastPublishedVersionId
           : null,
+        lastPublishedCoreWorkflowVersionId: isNonEmptyString(
+          workflow.lastPublishedVersionId,
+        )
+          ? (coreVersionIdByWorkspaceVersionId.get(
+              workflow.lastPublishedVersionId,
+            ) ?? null)
+          : null,
         createdAt: isDefined(workflow.createdAt)
           ? new Date(workflow.createdAt)
           : undefined,
@@ -95,6 +109,40 @@ export class WorkflowCoreSyncService {
       workspaceId,
       coreWorkflowIdByWorkspaceRecordId,
     );
+  }
+
+  private async resolveCoreVersionIdByWorkspaceVersionId(
+    workspaceId: string,
+    workflows: WorkflowWorkspaceEntity[],
+  ): Promise<Map<string, string>> {
+    const publishedVersionIds = workflows
+      .map((workflow) => workflow.lastPublishedVersionId)
+      .filter(isNonEmptyString);
+
+    if (publishedVersionIds.length === 0) {
+      return new Map();
+    }
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workflowVersionRepository =
+        this.workspaceOrmManager.getRepository<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const rows = await workflowVersionRepository.find({
+        where: { id: In(publishedVersionIds) },
+        select: { id: true, coreWorkflowVersionId: true },
+      });
+
+      return new Map(
+        rows.flatMap((row) =>
+          isNonEmptyString(row.coreWorkflowVersionId)
+            ? [[row.id, row.coreWorkflowVersionId] as const]
+            : [],
+        ),
+      );
+    }, buildSystemAuthContext(workspaceId));
   }
 
   // coreWorkflowId is a writable column on the workspace record, so a caller

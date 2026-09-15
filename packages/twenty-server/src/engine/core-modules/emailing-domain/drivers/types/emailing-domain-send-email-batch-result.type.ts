@@ -6,6 +6,7 @@ export type EmailingDomainSendEmailBatchResult = {
   entries: {
     recipientIndex: number;
     messageId: string | null;
+    headerMessageId: string | null;
     errorMessage: string | null;
   }[];
 };

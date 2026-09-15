@@ -7755,6 +7755,11 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Estágio da Oportunidade"
 
+#. js-lingui-id: znHKeT
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
+msgid "Option \"{optionLabel}\" has an unsupported color"
+msgstr "A opção \"{optionLabel}\" tem uma cor não compatível"
+
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10779,6 +10784,11 @@ msgstr "Este endereço não pode ser removido da lista de supressão."
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Esta chave API foi revogada e não pode mais ser usada."
+
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr "Esta chave de API foi revogada e não pode ser reativada. Crie uma nova chave de API."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts

@@ -7755,6 +7755,11 @@ msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
 msgstr "Fırsat aşaması"
 
+#. js-lingui-id: znHKeT
+#: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
+msgid "Option \"{optionLabel}\" has an unsupported color"
+msgstr "\"{optionLabel}\" seçeneği desteklenmeyen bir renge sahip"
+
 #. js-lingui-id: 2mFkfl
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
@@ -10779,6 +10784,11 @@ msgstr "Bu adres engelleme listesinden kaldırılamıyor."
 #: src/engine/core-modules/api-key/services/api-key.service.ts
 msgid "This API Key has been revoked and can no longer be used."
 msgstr "Bu API Anahtarı iptal edilmiştir ve artık kullanılamaz."
+
+#. js-lingui-id: SbhNwj
+#: src/engine/core-modules/api-key/services/api-key.service.ts
+msgid "This API key has been revoked and cannot be reactivated. Please create a new API key."
+msgstr "Bu API anahtarı iptal edildi ve yeniden etkinleştirilemez. Lütfen yeni bir API anahtarı oluşturun."
 
 #. js-lingui-id: K02c+I
 #: src/engine/core-modules/api-key/exceptions/api-key.exception.ts
