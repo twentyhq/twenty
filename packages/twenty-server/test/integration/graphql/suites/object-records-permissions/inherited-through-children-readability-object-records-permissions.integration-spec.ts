@@ -1,6 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
+import {
+  type ObjectRecordDeleteEvent,
+  type ObjectRecordEvent,
+} from 'twenty-shared/database-events';
 
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
 import { deleteManyOperationFactory } from 'test/integration/graphql/utils/delete-many-operation-factory.util';
@@ -466,14 +470,20 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
 
       expect(noteObjectMetadata).toBeDefined();
 
-      const recordIdsReadableThroughParents =
+      const recordIdsAdmittedByEventGate =
         await getAppProviderByClassName<RecordAccessPolicyService>(
           'RecordAccessPolicyService',
-        ).resolveRecordIdsReadableThroughParents({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          objectMetadata: noteObjectMetadata!,
-          records: NOTE_IDS.map((id) => ({ id })),
-          subject: {
+        )
+          .buildEventRecordShareGate({
+            name: 'note.created',
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            objectMetadata: noteObjectMetadata!,
+            events: NOTE_IDS.map((id) => ({
+              recordId: id,
+              properties: { after: { id } },
+            })),
+          })
+          .resolveAdmittedRecordIds({
             objectsPermissions: rolesPermissions[memberRole.id],
             principalIds: [
               EVERYONE_PRINCIPAL_ID,
@@ -482,12 +492,11 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
             ],
             isOwningApplication: () => false,
             resolveRowLevelPermissionRecordFilter: () => null,
-          },
-        });
+          });
       const notesResponse =
         await makeGraphqlAPIRequestWithMemberRole(findNotesOperation);
 
-      expect([...recordIdsReadableThroughParents].sort()).toEqual(
+      expect([...recordIdsAdmittedByEventGate].sort()).toEqual(
         collectIds(notesResponse.body.data.notes.edges),
       );
     });
@@ -628,18 +637,17 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         flatEntityId: noteObjectMetadataId,
         flatEntityMaps: flatObjectMetadataMaps,
       });
-      const resolveReadableNoteIds = (
-        records: Parameters<
-          RecordAccessPolicyService['resolveRecordIdsReadableThroughParents']
-        >[0]['records'],
-      ) =>
+      const resolveReadableNoteIds = (events: ObjectRecordEvent[]) =>
         getAppProviderByClassName<RecordAccessPolicyService>(
           'RecordAccessPolicyService',
-        ).resolveRecordIdsReadableThroughParents({
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          objectMetadata: noteObjectMetadata!,
-          records,
-          subject: {
+        )
+          .buildEventRecordShareGate({
+            name: 'note.deleted',
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            objectMetadata: noteObjectMetadata!,
+            events,
+          })
+          .resolveAdmittedRecordIds({
             objectsPermissions: rolesPermissions[memberRole.id],
             principalIds: [
               EVERYONE_PRINCIPAL_ID,
@@ -648,8 +656,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
             ],
             isOwningApplication: () => false,
             resolveRowLevelPermissionRecordFilter: () => null,
-          },
-        });
+          });
       const noteOnPersonFilter = { id: { eq: NOTE_ON_PERSON_ID } };
 
       const deleteResponse = await makeGraphqlAPIRequest(
@@ -660,21 +667,30 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
           filter: noteOnPersonFilter,
         }),
       );
+      const deletedNoteEventProperties = {
+        before: { id: NOTE_ON_PERSON_ID },
+        after: { id: NOTE_ON_PERSON_ID },
+        updatedFields: ['deletedAt'],
+        diff: {},
+      };
       const readableThroughLiveLinks = await resolveReadableNoteIds([
-        { id: NOTE_ON_PERSON_ID },
+        { recordId: NOTE_ON_PERSON_ID, properties: deletedNoteEventProperties },
       ]);
       const readableThroughCapturedLinks = await resolveReadableNoteIds([
         {
-          id: NOTE_ON_PERSON_ID,
-          inheritedReadabilityChildRecords: {
-            noteTarget: [
-              {
-                id: PERSON_NOTE_TARGET_ID,
-                noteId: NOTE_ON_PERSON_ID,
-                targetPersonId: PERSON_ID,
-              },
-            ],
-          },
+          recordId: NOTE_ON_PERSON_ID,
+          properties: {
+            ...deletedNoteEventProperties,
+            inheritedReadabilityChildRecords: {
+              noteTarget: [
+                {
+                  id: PERSON_NOTE_TARGET_ID,
+                  noteId: NOTE_ON_PERSON_ID,
+                  targetPersonId: PERSON_ID,
+                },
+              ],
+            },
+          } as ObjectRecordDeleteEvent['properties'],
         },
       ]);
       const restoreResponse = await makeGraphqlAPIRequest(
