@@ -522,6 +522,16 @@ export class FileStorageService {
     });
   }
 
+  async deleteFolderObjects(
+    params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
+  ): Promise<void> {
+    const { onStorageFolderPath } =
+      this.validateAndBuildFolderStoragePathOrThrow(params);
+    await this.fileStorageDriverFactory
+      .getCurrentDriver()
+      .delete({ folderPath: onStorageFolderPath });
+  }
+
   async deleteFolder(
     params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
   ): Promise<void> {
