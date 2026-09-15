@@ -13,10 +13,12 @@ import {
   useHover,
   useInteractions,
   useRole,
+  useTransitionStyles,
 } from '@floating-ui/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/input';
 import { IconWindow, IconGauge } from 'twenty-ui/icon';
@@ -85,6 +87,7 @@ const StyledFooter = styled.div`
 
 export const AiChatContextUsageButton = () => {
   const { t } = useLingui();
+  const shouldReduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
@@ -138,11 +141,15 @@ export const AiChatContextUsageButton = () => {
     open: isOpen,
     onOpenChange: (open) => {
       setIsOpen(open);
-      if (!open) setShowDetails(false);
+      if (open) setShowDetails(false);
     },
     placement: 'top-start',
     middleware: [offset(8), flip(), shift({ padding: 8 })],
     whileElementsMounted: autoUpdate,
+  });
+  const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
+    duration: shouldReduceMotion ? 0 : { open: 150, close: 100 },
+    initial: { opacity: 0 },
   });
   const hover = useHover(context, { handleClose: safePolygon() });
   const focus = useFocus(context);
@@ -170,11 +177,11 @@ export const AiChatContextUsageButton = () => {
       >
         <ContextUsageProgressRing percentage={percentage} />
       </StyledTrigger>
-      {isOpen && (
+      {isMounted && (
         <FloatingPortal>
           <StyledHoverCard
             ref={refs.setFloating}
-            style={floatingStyles}
+            style={{ ...floatingStyles, ...transitionStyles }}
             aria-label={t`Context and usage`}
             // oxlint-disable-next-line react/jsx-props-no-spreading
             {...getFloatingProps()}

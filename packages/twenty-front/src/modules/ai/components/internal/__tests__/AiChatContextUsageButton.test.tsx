@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
@@ -55,6 +55,7 @@ describe('AiChatContextUsageButton', () => {
       </I18nProvider>,
     );
     await user.click(screen.getByRole('button', { name: 'Context and usage' }));
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
     expect(
       screen.getByRole('dialog', { name: 'Context and usage' }),
     ).toBeVisible();
@@ -64,7 +65,9 @@ describe('AiChatContextUsageButton', () => {
       screen.queryByRole('button', { name: /^More/ }),
     ).not.toBeInTheDocument();
     await user.keyboard('{Escape}');
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
   });
 
   it('opens from the keyboard and reveals existing conversation details', async () => {
@@ -91,6 +94,7 @@ describe('AiChatContextUsageButton', () => {
       </I18nProvider>,
     );
     await user.tab();
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
     expect(screen.getByText('(200k/1M) 20%')).toBeVisible();
     await user.click(screen.getByRole('button', { name: /^More/ }));
     expect(screen.getByText('Last message')).toBeVisible();
@@ -134,6 +138,7 @@ describe('AiChatContextUsageButton', () => {
       </I18nProvider>,
     );
     await user.click(screen.getByRole('button', { name: 'Context and usage' }));
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
     await user.click(screen.getByRole('button', { name: /^More/ }));
     expect(screen.getByText('1.2k')).toBeVisible();
     expect(screen.getByText('300')).toBeVisible();
@@ -154,6 +159,7 @@ describe('AiChatContextUsageButton', () => {
       </I18nProvider>,
     );
     await user.click(screen.getByRole('button', { name: 'Context and usage' }));
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
     expect(screen.getByText('—')).toBeVisible();
     expect(screen.queryByText('0%')).not.toBeInTheDocument();
   });
@@ -167,6 +173,7 @@ describe('AiChatContextUsageButton', () => {
       </I18nProvider>,
     );
     await user.click(screen.getByRole('button', { name: 'Context and usage' }));
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
     expect(screen.getByText('No limit')).toBeVisible();
     expect(
       screen.queryByRole('button', { name: /^More/ }),
@@ -188,6 +195,7 @@ describe('AiChatContextUsageButton', () => {
       </I18nProvider>,
     );
     await user.click(screen.getByRole('button', { name: 'Context and usage' }));
+    await waitFor(() => expect(screen.getByRole('dialog')).toBeVisible());
     expect(screen.getByText('100%')).toBeVisible();
   });
 });
