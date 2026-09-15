@@ -99,6 +99,9 @@ const CommandMenuItemSelectableRenderer = ({
 }: CommandMenuItemRendererProps & {
   displayType: 'listItem' | 'dropdownItem';
 }) => {
+  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
+  );
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const { getIcon } = useIcons();
 
@@ -132,7 +135,7 @@ const CommandMenuItemSelectableRenderer = ({
   };
 
   const loaderComponent =
-    disabled && showDisabledLoader ? (
+    isAsyncCsvExportEnabled && disabled && showDisabledLoader ? (
       isDefined(progress) ? (
         <CommandListItemLoader progress={progress} />
       ) : (

@@ -1,4 +1,4 @@
-import { t } from '@lingui/core/macro';
+import { getCommandMenuButtonLabel } from '@/command-menu/utils/getCommandMenuButtonLabel';
 import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
@@ -43,18 +43,12 @@ export const CommandMenuButton = ({
   isPrimaryAction = false,
   shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
-  let resolvedShortLabel = command.shortLabel ?? undefined;
-
-  if (shouldHideLabel) {
-    resolvedShortLabel = undefined;
-  }
-
-  if (loading) {
-    resolvedShortLabel = t`Preparing…`;
-    if (isDefined(progress)) {
-      resolvedShortLabel = `${Math.round(progress)}%`;
-    }
-  }
+  const resolvedShortLabel = getCommandMenuButtonLabel({
+    shortLabel: command.shortLabel,
+    isLoading: loading,
+    progress,
+    shouldHideLabel,
+  });
 
   const buttonAccent =
     isPrimaryAction || command.isPrimaryCTA === true ? 'blue' : 'default';
