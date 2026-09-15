@@ -40,6 +40,13 @@
         "{workspaceRoot}/packages/twenty-codex-plugin/scripts/validators/lib.js"
       ]
     },
+    "verify:install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node ./scripts/verify-install.js"
+      }
+    },
     "fmt": {
       "executor": "nx:run-commands",
       "cache": true,
