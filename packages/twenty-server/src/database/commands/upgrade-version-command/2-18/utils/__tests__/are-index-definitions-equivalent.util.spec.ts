@@ -64,4 +64,16 @@ describe('areIndexDefinitionsEquivalent', () => {
       }),
     ).toBe(false);
   });
+
+  it('should return true when indexes match with varied whitespace or casing', () => {
+    expect(
+      areIndexDefinitionsEquivalent({
+        indexDefinitionA:
+          'CREATE INDEX idx_1 ON workspace_test.company USING btree ("createdAt" ASC)',
+        indexDefinitionB:
+          'CREATE INDEX idx_2 ON workspace_test.company USING btree ("createdAt" ASC)',
+      }),
+    ).toBe(true);
+  });
 });
+
