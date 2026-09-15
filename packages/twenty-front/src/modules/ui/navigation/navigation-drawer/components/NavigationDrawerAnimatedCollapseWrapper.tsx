@@ -38,6 +38,7 @@ export const NavigationDrawerAnimatedCollapseWrapper = ({
 
   return (
     <StyledAnimatedContainer
+      inert={!isNavigationDrawerExpanded || undefined}
       initial={false}
       animate={animate}
       transition={{

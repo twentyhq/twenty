@@ -6,7 +6,6 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { useNavigateToNavigationMenuItemLink } from '@/navigation-menu-item/common/hooks/useNavigateToNavigationMenuItemLink';
-import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
 import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
@@ -136,17 +135,6 @@ export const NavigationMenuItemFolderSubItem = ({
     ? t`System`
     : viewSecondaryLabel;
 
-  const hasSelfColoredIcon =
-    navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
-    navigationMenuItem.type === NavigationMenuItemType.VIEW ||
-    navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT;
-  const iconColor = hasSelfColoredIcon
-    ? undefined
-    : getNavigationMenuItemColor(
-        navigationMenuItem,
-        objectMetadataItem ?? undefined,
-      );
-
   return (
     <NavigationDrawerSubItem
       secondaryLabel={secondaryLabel}
@@ -154,7 +142,6 @@ export const NavigationMenuItemFolderSubItem = ({
       Icon={() => (
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
       )}
-      iconColor={iconColor}
       to={isDragging || isEditable ? undefined : computedLink}
       onClick={handleClick}
       active={isActive}

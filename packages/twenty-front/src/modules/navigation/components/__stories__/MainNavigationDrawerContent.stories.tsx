@@ -94,17 +94,26 @@ export const KeepsAiContentWhenCollapsed: Story = {
     await expect(
       await canvas.findByRole('button', { name: /Pipeline summary/ }),
     ).toBeVisible();
+    const chatActions = await canvas.findByLabelText('Chat actions', {
+      selector: 'button',
+    });
+    chatActions.focus();
+    await expect(chatActions).toHaveFocus();
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Collapse sidebar' }),
     );
     await expect(
       await canvas.findByRole('button', { name: /Pipeline summary/ }),
     ).toBeVisible();
+    chatActions.focus();
+    await expect(chatActions).not.toHaveFocus();
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Expand sidebar' }),
     );
     await expect(
       await canvas.findByRole('button', { name: /Pipeline summary/ }),
     ).toBeVisible();
+    chatActions.focus();
+    await expect(chatActions).toHaveFocus();
   },
 };
