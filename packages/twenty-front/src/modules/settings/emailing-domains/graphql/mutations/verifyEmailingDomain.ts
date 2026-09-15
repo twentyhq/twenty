@@ -13,6 +13,8 @@ export const VERIFY_EMAILING_DOMAIN = gql`
         value
         priority
         status
+        purpose
+        isRequired
       }
       createdAt
       updatedAt

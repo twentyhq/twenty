@@ -10,8 +10,8 @@ import { useUpdateEmailGroupChannel } from '@/settings/accounts/hooks/useUpdateE
 import { SettingsEditableTitle } from '@/settings/components/SettingsEditableTitle';
 
 import { getEmailChannelDomain } from '@/settings/accounts/utils/getEmailChannelDomain';
-import { SettingsDnsRecordsTable } from '@/settings/components/SettingsDnsRecordsTable';
 
+import { SettingsEmailingDomainDnsRecords } from '@/settings/emailing-domains/components/SettingsEmailingDomainDnsRecords';
 import { SettingsEmailingDomainVerifyButton } from '@/settings/emailing-domains/components/SettingsEmailingDomainVerifyButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -32,7 +32,6 @@ import { IconCopy, IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { getColorByEmailingDomainStatus } from '~/pages/settings/emailing-domains/utils/getEmailingDomainStatusColor';
@@ -51,18 +50,6 @@ const StyledForwardingInputContainer = styled.div`
   flex: 1;
   margin-right: ${themeCssVariables.spacing[2]};
 `;
-
-const StyledSendingDomainAdornment = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const RECORD_STATUS_TO_COLOR: Partial<Record<string, ThemeColor>> = {
-  success: 'green',
-  pending: 'yellow',
-  error: 'red',
-};
 
 export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
   const { t } = useLingui();
@@ -102,19 +89,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
     (domain) => domain.domain.toLowerCase() === channelDomain,
   );
 
-  const verificationRecords = (emailingDomain?.verificationRecords ?? []).map(
-    (record) => ({
-      ...record,
-      status: record.status ?? undefined,
-      statusColor: isDefined(record.status)
-        ? (RECORD_STATUS_TO_COLOR[record.status] ?? 'gray')
-        : undefined,
-    }),
-  );
-
   const domainStatus = emailingDomain?.status ?? EmailingDomainStatus.PENDING;
-
-  const isDomainVerified = domainStatus === EmailingDomainStatus.VERIFIED;
 
   const displayName = channel.displayName ?? '';
 
@@ -245,27 +220,25 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           </Section>
         )}
         {isDefined(emailingDomain) && (
-          <Section>
-            <H2Title
-              title={t`Sending domain`}
-              description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
-              adornment={
-                <StyledSendingDomainAdornment>
+          <>
+            <Section>
+              <H2Title
+                title={t`Sending domain`}
+                description={t`Outbound mail from this channel is sent through this domain. It must be verified before email can be delivered.`}
+                adornment={
                   <Status color={getColorByEmailingDomainStatus(domainStatus)}>
                     {getTextByEmailingDomainStatus(domainStatus)}
                   </Status>
-                  {!isDomainVerified && (
-                    <SettingsEmailingDomainVerifyButton
-                      emailingDomainId={emailingDomain.id}
-                    />
-                  )}
-                </StyledSendingDomainAdornment>
-              }
+                }
+              />
+              <SettingsEmailingDomainVerifyButton
+                emailingDomainId={emailingDomain.id}
+              />
+            </Section>
+            <SettingsEmailingDomainDnsRecords
+              verificationRecords={emailingDomain.verificationRecords ?? []}
             />
-            {!isDomainVerified && (
-              <SettingsDnsRecordsTable records={verificationRecords} />
-            )}
-          </Section>
+          </>
         )}
       </SettingsPageContainer>
       <ConfirmationModal
