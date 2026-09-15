@@ -1,6 +1,7 @@
 import { MessageChannelType } from 'twenty-shared/types';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type MessageChannelDTO } from 'src/engine/metadata-modules/message-channel/dtos/message-channel.dto';
 import { MessageChannelResolver } from 'src/engine/metadata-modules/message-channel/resolvers/message-channel.resolver';
@@ -24,7 +25,7 @@ describe('MessageChannelResolver connectedAccount', () => {
   const buildResolver = ({
     reachableConnectedAccount = null,
   }: {
-    reachableConnectedAccount?: unknown;
+    reachableConnectedAccount?: Partial<ConnectedAccountEntity> | null;
   } = {}) => {
     const connectedAccountMetadataService = {
       findById: jest.fn().mockResolvedValue({ id: CONNECTED_ACCOUNT_ID }),
@@ -72,6 +73,9 @@ describe('MessageChannelResolver connectedAccount', () => {
     expect(account).toMatchObject({ id: CONNECTED_ACCOUNT_ID });
     expect(
       applicationMessageChannelsService.findReachableConnectedAccount,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      applicationMessageChannelsService.findReachableConnectedAccount,
     ).toHaveBeenCalledWith({
       applicationId: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
@@ -112,9 +116,42 @@ describe('MessageChannelResolver connectedAccount', () => {
 
     expect(
       applicationMessageChannelsService.findReachableConnectedAccount,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      applicationMessageChannelsService.findReachableConnectedAccount,
     ).toHaveBeenCalledWith(
       expect.objectContaining({ requestUserWorkspaceId: USER_WORKSPACE_ID }),
     );
+  });
+
+  // An APPLICATION_ACCESS token can carry a user, and such a request can be
+  // handed an EMAIL channel. Claiming those here sent the member's own mailbox
+  // through a predicate that only matches APP connections, so a connection
+  // they are entitled to see came back null.
+  it('leaves an email channel on user ownership even in an application context', async () => {
+    const {
+      resolver,
+      connectedAccountMetadataService,
+      applicationMessageChannelsService,
+    } = buildResolver();
+
+    const account = await resolver.connectedAccount(
+      {
+        ...anAppChannel(),
+        type: MessageChannelType.EMAIL,
+      } as MessageChannelDTO,
+      workspace,
+      USER_WORKSPACE_ID,
+      application,
+    );
+
+    expect(account).toMatchObject({ id: CONNECTED_ACCOUNT_ID });
+    expect(
+      applicationMessageChannelsService.findReachableConnectedAccount,
+    ).not.toHaveBeenCalled();
+    expect(
+      connectedAccountMetadataService.findByIdAndUserWorkspaceId,
+    ).toHaveBeenCalledTimes(1);
   });
 
   it('leaves the email path on user ownership when no application is calling', async () => {
@@ -134,6 +171,9 @@ describe('MessageChannelResolver connectedAccount', () => {
       undefined,
     );
 
+    expect(
+      connectedAccountMetadataService.findByIdAndUserWorkspaceId,
+    ).toHaveBeenCalledTimes(1);
     expect(
       connectedAccountMetadataService.findByIdAndUserWorkspaceId,
     ).toHaveBeenCalledWith({
@@ -159,6 +199,7 @@ describe('MessageChannelResolver connectedAccount', () => {
       undefined,
     );
 
+    expect(connectedAccountMetadataService.findById).toHaveBeenCalledTimes(1);
     expect(connectedAccountMetadataService.findById).toHaveBeenCalledWith({
       id: CONNECTED_ACCOUNT_ID,
       workspaceId: WORKSPACE_ID,

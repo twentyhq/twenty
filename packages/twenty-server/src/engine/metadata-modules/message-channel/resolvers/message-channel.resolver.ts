@@ -80,7 +80,10 @@ export class MessageChannelResolver {
     // same predicate the app-facing channel API gates on also decides this,
     // including the boundary that stops one member reaching another's private
     // connection through the app.
-    if (isDefined(application)) {
+    if (
+      isDefined(application) &&
+      messageChannel.type === MessageChannelType.APP
+    ) {
       const account =
         await this.applicationMessageChannelsService.findReachableConnectedAccount(
           {
@@ -94,8 +97,6 @@ export class MessageChannelResolver {
       return isDefined(account) ? buildPublicConnectedAccount(account) : null;
     }
 
-    // Reached only by a user session, where the decorator above guarantees a
-    // user. An application-less call without one has no connection to resolve.
     if (!isDefined(userWorkspaceId)) {
       return null;
     }
