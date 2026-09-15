@@ -1,4 +1,4 @@
-import { type EnterpriseKeyPayload } from './enterprise-key-payload';
+import { type EnterpriseKeyPayload } from './organization-key-payload';
 import { verifyJwt } from './verify-jwt';
 
 export function verifyEnterpriseKey(

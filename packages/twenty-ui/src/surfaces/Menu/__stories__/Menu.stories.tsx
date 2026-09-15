@@ -149,6 +149,12 @@ export const Default: Story = {
     await waitFor(() => expect(item).toHaveAttribute('data-highlighted'));
   },
 };
+
+export const Documentation: Story = {
+  ...Default,
+  args: { defaultOpen: false },
+  play: undefined,
+};
 export const Selection: Story = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 240, height: 320 } },

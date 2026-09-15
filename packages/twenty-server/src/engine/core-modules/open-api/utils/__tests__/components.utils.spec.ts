@@ -79,11 +79,11 @@ describe('computeSchemaComponents', () => {
       },
       "fieldEmails": {
         "additionalEmails": null,
-        "primaryEmail": "clair.runte69@yahoo.com",
+        "primaryEmail": "nola.considine15@yahoo.com",
       },
       "fieldFullName": {
-        "firstName": "Maxie",
-        "lastName": "Davis",
+        "firstName": "Clint",
+        "lastName": "Bradtke",
       },
       "fieldLinks": {
         "primaryLinkLabel": "",
@@ -594,11 +594,11 @@ describe('computeSchemaComponents', () => {
       },
       "fieldEmails": {
         "additionalEmails": null,
-        "primaryEmail": "clair.runte69@yahoo.com",
+        "primaryEmail": "nola.considine15@yahoo.com",
       },
       "fieldFullName": {
-        "firstName": "Maxie",
-        "lastName": "Davis",
+        "firstName": "Clint",
+        "lastName": "Bradtke",
       },
       "fieldLinks": {
         "primaryLinkLabel": "",

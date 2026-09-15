@@ -80,6 +80,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
 
     return {
       workspaceId: runInfo.workspaceId,
+      callerType: authContext.type,
       ...getUserFromAuthContext(authContext),
     };
   }
