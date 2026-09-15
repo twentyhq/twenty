@@ -3,6 +3,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { isCoreWorkflowEnrichmentConsistent } from '@/command-menu-item/utils/isCoreWorkflowEnrichmentConsistent';
+
 import { type CommandMenuContextType } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useCoreWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions';
 import { useWorkflowsWithCurrentVersions } from '@/command-menu-item/hooks/useWorkflowsWithCurrentVersions';
@@ -42,9 +44,17 @@ export const CommandMenuContextProviderWithWorkflowEnrichment = ({
     isCorePointerAvailableForEveryWorkflow ? selectedCoreWorkflowIds : [],
   );
 
+  const isCoreEnrichmentConsistent = isCoreWorkflowEnrichmentConsistent({
+    selectedWorkflowRecords: commandMenuContextApi.selectedRecords.filter(
+      (record) => selectedWorkflowRecordIds.includes(record.id),
+    ),
+    coreWorkflows: coreWorkflowsWithCurrentVersions,
+  });
+
   const shouldFallBackToWorkspaceWorkflows =
     !isCorePointerAvailableForEveryWorkflow ||
-    (!isCoreEnrichmentLoading && !isCoreEnrichmentComplete);
+    (!isCoreEnrichmentLoading &&
+      (!isCoreEnrichmentComplete || !isCoreEnrichmentConsistent));
 
   const workspaceWorkflowsWithCurrentVersions = useWorkflowsWithCurrentVersions(
     shouldFallBackToWorkspaceWorkflows ? selectedWorkflowRecordIds : [],

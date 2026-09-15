@@ -1,11 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CommandMenuWorkflow } from '@/command-menu-item/types/CommandMenuWorkflow';
+import { type CommandMenuWorkflowFromCore } from '@/command-menu-item/types/CommandMenuWorkflow';
 import { type CoreWorkflowWithCurrentVersion } from '@/object-core/workflows/types/CoreWorkflowEnrichmentTypes';
 
 export const buildCommandMenuWorkflowsFromCore = (
   coreWorkflows: CoreWorkflowWithCurrentVersion[],
-): CommandMenuWorkflow[] =>
+): CommandMenuWorkflowFromCore[] =>
   coreWorkflows.flatMap((coreWorkflow) => {
     const { currentVersion } = coreWorkflow;
 
@@ -19,6 +19,7 @@ export const buildCommandMenuWorkflowsFromCore = (
     return [
       {
         id: coreWorkflow.id,
+        workspaceWorkflowId: coreWorkflow.workspaceWorkflowId ?? null,
         statuses: coreWorkflow.statuses,
         lastPublishedVersionId: coreWorkflow.lastPublishedVersionId ?? null,
         currentVersion: {

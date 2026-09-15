@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type CommandMenuWorkflow } from '@/command-menu-item/types/CommandMenuWorkflow';
+import { type CommandMenuWorkflowFromCore } from '@/command-menu-item/types/CommandMenuWorkflow';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { buildCommandMenuWorkflowsFromCore } from '@/object-core/workflows/utils/buildCommandMenuWorkflowsFromCore';
 import { GetCoreWorkflowsWithCurrentVersionDocument } from '~/generated/graphql';
@@ -10,7 +10,7 @@ import { GetCoreWorkflowsWithCurrentVersionDocument } from '~/generated/graphql'
 export const useCoreWorkflowsWithCurrentVersions = (
   coreWorkflowIds: string[],
 ): {
-  workflows: CommandMenuWorkflow[];
+  workflows: CommandMenuWorkflowFromCore[];
   isCoreEnrichmentLoading: boolean;
   isCoreEnrichmentComplete: boolean;
 } => {
