@@ -1,8 +1,8 @@
-import { Avatar } from '@ui/data-display/Avatar/Avatar';
-import { H1Title, H1TitleFontColor } from '@ui/typography/H1Title/H1Title';
-import { Card } from '@ui/surfaces/Card/Card';
+import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
+import { H1Title, H1TitleFontColor } from '@ui/primitives/typography/H1Title/H1Title';
+import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { i18n } from '@lingui/core';
-import { Button } from '@ui/input/Button/Button';
+import { Button } from '@ui/primitives/input/Button/Button';
 import {
   IconPlayerPause,
   IconPlayerPlay,

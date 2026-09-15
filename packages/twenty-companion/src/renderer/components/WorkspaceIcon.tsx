@@ -1,4 +1,4 @@
-import { Avatar } from '@ui/data-display/Avatar/Avatar';
+import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import { type Agenda } from '../../shared/types/Agenda';
 
 export const WorkspaceIcon = ({

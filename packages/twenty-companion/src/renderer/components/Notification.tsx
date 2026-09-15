@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { IconInfoCircle, IconX } from '@ui/icon';
-import { IconButton } from '@ui/input/IconButton/IconButton';
-import { ProgressBar } from '@ui/feedback/ProgressBar/ProgressBar';
+import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { ProgressBar } from '@ui/primitives/feedback/ProgressBar/ProgressBar';
 import { useTheme } from '@ui/theme-constants';
 import styles from './Notification.module.scss';
 

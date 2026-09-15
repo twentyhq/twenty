@@ -2,9 +2,9 @@ import { useNow } from '../hooks/useNow';
 import { MeetingRow } from './MeetingRow';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
-import { H2Title } from '@ui/typography/H2Title/H2Title';
+import { H2Title } from '@ui/primitives/typography/H2Title/H2Title';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { Card } from '@ui/surfaces/Card/Card';
+import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { CalendarDayLabel } from './CalendarDayLabel';
 import { useState } from 'react';
 import {
@@ -13,7 +13,7 @@ import {
   IconChevronRight,
 } from 'twenty-ui/icon';
 import { getUpcomingMeetings } from '../../shared/utils/getUpcomingMeetings';
-import { Button } from '@ui/input/Button/Button';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { type ActionProps } from '../types/ActionProps';
 import { RecordingList } from './RecordingList';
 

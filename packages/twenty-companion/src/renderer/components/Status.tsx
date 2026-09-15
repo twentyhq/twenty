@@ -1,4 +1,4 @@
-import { Tag as StatusChip } from '@ui/data-display/Tag/Tag';
+import { Tag as StatusChip } from '@ui/primitives/data-display/Tag/Tag';
 import { recordingLabel } from '../utils/recordingLabel';
 
 export const Status = ({ status }: { status: string }) => (

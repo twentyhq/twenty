@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { Card } from '@ui/surfaces/Card/Card';
-import { MainButton } from '@ui/input/MainButton/MainButton';
+import { Card } from '@ui/primitives/surfaces/Card/Card';
+import { MainButton } from '@ui/primitives/input/MainButton/MainButton';
 import {
   IconMicrophone,
   IconHeadphones,
@@ -9,10 +9,10 @@ import {
   IconArrowUpRight,
   IconCircleDot,
 } from 'twenty-ui/icon';
-import { Button } from '@ui/input/Button/Button';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { type ActionProps } from '../types/ActionProps';
 import { SetupHeading } from './SetupHeading';
-import { Status } from '@ui/data-display/Status/Status';
+import { Status } from '@ui/primitives/data-display/Status/Status';
 
 const PermissionChecklist = ({ state, isPending, command }: ActionProps) => (
   <Card

@@ -4,10 +4,10 @@ import { formatShortcut } from '../utils/formatShortcut';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
 import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { IconButton } from '@ui/input/IconButton/IconButton';
+import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
 import { useState } from 'react';
 import { IconCommand, IconRestore } from 'twenty-ui/icon';
-import { Button } from '@ui/input/Button/Button';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { type ActionProps } from '../types/ActionProps';
 
 export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
