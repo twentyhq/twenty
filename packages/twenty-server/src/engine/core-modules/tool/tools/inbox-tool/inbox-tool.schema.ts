@@ -23,6 +23,12 @@ export const InboxItemToolCallDraftZodSchema = z.object({
       'The input keys the tool cannot run without. The person is not allowed to clear these, and one you left out of the input is asked for.',
     )
     .optional(),
+  inputFieldTypes: z
+    .record(z.string(), z.enum(['TEXT', 'LONG_TEXT', 'NUMBER', 'BOOLEAN']))
+    .describe(
+      'The type of any key you left out of the input, so the person gets the editor the tool expects rather than a text box. Keys you did give a value for are read off that value.',
+    )
+    .optional(),
 });
 
 export const CreateInboxItemToolInputZodSchema = z.object({

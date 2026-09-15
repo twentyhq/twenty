@@ -38,7 +38,8 @@ const toFieldLabel = (key: string): string => {
 // An agent describes a call by its input alone, so the field schema is read off
 // the values and a producer that knows nothing about field types still gets an
 // editable plan. A null is the agent saying it has no value, so the key is left
-// out; a required key it left out is shown empty for the person to fill.
+// out; a required key it left out is shown empty for the person to fill, typed
+// from inputFieldTypes since there is no value to read it off.
 export const toInboxItemToolCallDrafts = (
   toolCalls: z.infer<typeof InboxItemToolCallDraftZodSchema>[],
 ): InboxItemToolCallDraft[] =>
@@ -61,7 +62,9 @@ export const toInboxItemToolCallDrafts = (
       inputSchema: keys.map((key) => ({
         key,
         label: toFieldLabel(key),
-        type: toFieldType(proposedInput[key]),
+        type: proposedKeys.includes(key)
+          ? toFieldType(proposedInput[key])
+          : (toolCall.inputFieldTypes?.[key] ?? 'TEXT'),
         ...(requiredKeys.includes(key) ? { isRequired: true } : {}),
       })),
       proposedInput,

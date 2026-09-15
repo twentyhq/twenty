@@ -47,4 +47,32 @@ describe('toInboxItemToolCallDrafts', () => {
     ]);
     expect(draft.proposedInput).toEqual({ to: 'marie@google.com' });
   });
+
+  it('should type a key the agent left out from the types it declared', () => {
+    const [draft] = toInboxItemToolCallDrafts([
+      {
+        toolName: 'create_invoice',
+        label: 'Create invoice',
+        input: { companyName: 'Google' },
+        requiredInputKeys: ['companyName', 'amount', 'isPaid', 'terms'],
+        inputFieldTypes: {
+          amount: 'NUMBER',
+          isPaid: 'BOOLEAN',
+          terms: 'LONG_TEXT',
+        },
+      },
+    ]);
+
+    expect(draft.inputSchema).toEqual([
+      {
+        key: 'companyName',
+        label: 'Company name',
+        type: 'TEXT',
+        isRequired: true,
+      },
+      { key: 'amount', label: 'Amount', type: 'NUMBER', isRequired: true },
+      { key: 'isPaid', label: 'Is paid', type: 'BOOLEAN', isRequired: true },
+      { key: 'terms', label: 'Terms', type: 'LONG_TEXT', isRequired: true },
+    ]);
+  });
 });

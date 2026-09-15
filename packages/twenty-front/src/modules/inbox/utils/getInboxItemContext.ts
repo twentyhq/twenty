@@ -1,5 +1,5 @@
 import { isNonEmptyString, isNumber, isString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import {
   type InboxItemContext,
@@ -23,9 +23,6 @@ const ENTITY_KINDS: InboxItemContextEntity['kind'][] = [
   'other',
 ];
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
 const isOneOf = <TValue extends string>(
   values: TValue[],
   value: unknown,
@@ -36,7 +33,7 @@ const optionalString = (value: unknown) =>
 
 const toSource = (value: unknown): InboxItemContextSource | undefined => {
   if (
-    !isRecord(value) ||
+    !isPlainObject(value) ||
     !isOneOf(SOURCE_KINDS, value.kind) ||
     !isNonEmptyString(value.label)
   ) {
@@ -55,7 +52,7 @@ const toSource = (value: unknown): InboxItemContextSource | undefined => {
 const toEntities = (value: unknown): InboxItemContextEntity[] =>
   Array.isArray(value)
     ? value.flatMap((item) =>
-        isRecord(item) &&
+        isPlainObject(item) &&
         isNonEmptyString(item.key) &&
         isNonEmptyString(item.label)
           ? [
@@ -75,7 +72,7 @@ const toEntities = (value: unknown): InboxItemContextEntity[] =>
 const toEdges = (value: unknown): InboxItemContextEdge[] =>
   Array.isArray(value)
     ? value.flatMap((item) =>
-        isRecord(item) &&
+        isPlainObject(item) &&
         isNonEmptyString(item.from) &&
         isNonEmptyString(item.to) &&
         isString(item.label)
@@ -91,7 +88,7 @@ export const getInboxItemContext = (
 ): InboxItemContext => {
   const context: unknown = inboxItem.context;
 
-  if (!isRecord(context)) {
+  if (!isPlainObject(context)) {
     return { entities: [], edges: [] };
   }
 
