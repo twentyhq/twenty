@@ -1052,7 +1052,7 @@ msgstr "Начин плаћања је потребан да би ваш рад�
 #. js-lingui-id: eU1E2J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
-msgstr ""
+msgstr "Плаћање ваше претплате није успело. Ваше премијум функције остају активне док поново покушавамо да извршимо плаћање."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1271,7 +1271,7 @@ msgstr "Активирајте"
 #. js-lingui-id: 8xkU9e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Activate Organization Key"
-msgstr ""
+msgstr "Активирајте кључ организације"
 
 #. js-lingui-id: i7ur8L
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2136,12 +2136,12 @@ msgstr "Коришћење AI"
 #. js-lingui-id: jSHIk0
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "AI usage analytics across workspaces is available with an Organization key."
-msgstr ""
+msgstr "Аналитика коришћења AI за све радне просторе доступна је уз кључ организације."
 
 #. js-lingui-id: 55MeVT
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics is available with an Organization key."
-msgstr ""
+msgstr "Аналитика коришћења AI доступна је уз кључ организације."
 
 #. js-lingui-id: U2F/HK
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -2419,7 +2419,7 @@ msgstr "Сви ваши прилагођени објекти"
 #. js-lingui-id: fWQJW/
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow developers to claim ownership of applications."
-msgstr ""
+msgstr "Дозволите програмерима да преузму власништво над апликацијама."
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2445,7 +2445,7 @@ msgstr "Дозволи извоз података у CSV датотеке"
 #. js-lingui-id: G1r3UJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow filtering records by values inside JSON fields."
-msgstr ""
+msgstr "Дозволите филтрирање записа према вредностима унутар JSON поља."
 
 #. js-lingui-id: q/pgyN
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2480,7 +2480,7 @@ msgstr "Дозволи пријаву преко Мајкрософта за к�
 #. js-lingui-id: cLzEjc
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow sharing individual records with workspace members."
-msgstr ""
+msgstr "Дозволите дељење појединачних записа са члановима радног простора."
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -2495,7 +2495,7 @@ msgstr "Омогућите позивање нових корисника дељ
 #. js-lingui-id: xfQ2i8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow unique indexes to prevent duplicate field values."
-msgstr ""
+msgstr "Дозволите јединствене индексе да бисте спречили дуплиране вредности поља."
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2755,7 +2755,7 @@ msgstr "Назив API-а (једнина)"
 #. js-lingui-id: FXWLlg
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "API rate limits v2"
-msgstr ""
+msgstr "Ограничења брзине API позива v2"
 
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -2784,7 +2784,7 @@ msgstr "Апликација"
 #. js-lingui-id: gA2ZGo
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App claiming"
-msgstr ""
+msgstr "Преузимање апликације"
 
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -4423,7 +4423,7 @@ msgstr "Изаберите да ли се ова врста активности
 #. js-lingui-id: PPf/RT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Choose which fields are used when searching for records."
-msgstr ""
+msgstr "Изаберите која поља се користе при претраживању записа."
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4928,7 +4928,7 @@ msgstr "Конфигурационе променљиве"
 #. js-lingui-id: 8/+vjg
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Configurable search fields"
-msgstr ""
+msgstr "Конфигурабилна поља за претрагу"
 
 #. js-lingui-id: ywFj2D
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -5325,7 +5325,7 @@ msgstr "Настави са Microsoft"
 #. js-lingui-id: Rdhzdv
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Control what the workspace imports from connected mailboxes and calendars"
-msgstr ""
+msgstr "Контролишите шта радни простор увози из повезаних поштанских сандучића и календара"
 
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -5554,7 +5554,7 @@ msgstr "Није могуће учитати верзије."
 #. js-lingui-id: pd1EEy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not open billing portal. Please check your Organization key is present, or contact support."
-msgstr ""
+msgstr "Није могуће отворити портал за наплату. Проверите да ли је ваш кључ организације присутан или контактирајте подршку."
 
 #. js-lingui-id: ZuI4Sl
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -5605,7 +5605,7 @@ msgstr "Није било могуће синхронизовати катало
 #. js-lingui-id: rGxoIq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not transfer the Organization key. Please contact support."
-msgstr ""
+msgstr "Није могуће пренети кључ организације. Контактирајте подршку."
 
 #. js-lingui-id: xsKD3e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5977,7 +5977,7 @@ msgstr "Акредитиви и опсези за OAuth токове аутор�
 #. js-lingui-id: NGOYJs
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Credit allowance quotas"
-msgstr ""
+msgstr "Квоте кредитних одобрења"
 
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -7239,7 +7239,7 @@ msgstr "Диктирање није подржано у овом преглед�
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
-msgstr ""
+msgstr "Директни REST одговори са метаподацима"
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -7885,7 +7885,7 @@ msgstr "Имејл и чет"
 #. js-lingui-id: snb/bC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Email campaigns"
-msgstr ""
+msgstr "Кампање путем е-поште"
 
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -8102,7 +8102,7 @@ msgstr "Активирајте опције заобилажења"
 #. js-lingui-id: vs9cre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr ""
+msgstr "Омогућите кампање е-поштом, листе и управљање одјављивањем."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -8465,7 +8465,7 @@ msgstr "Грешка"
 #. js-lingui-id: MC9SGH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Error activating Organization license"
-msgstr ""
+msgstr "Грешка при активирању лиценце организације"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -8556,7 +8556,7 @@ msgstr "Грешка приликом ротирања тајне клијент
 #. js-lingui-id: 2AvJlR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Error transferring the Organization key"
-msgstr ""
+msgstr "Грешка при преносу кључа организације"
 
 #. js-lingui-id: 5Vy8D1
 #: src/modules/settings/applications/hooks/useUninstallApplication.ts
@@ -8763,7 +8763,7 @@ msgstr "Искључи следеће особе и домене из моје �
 #. js-lingui-id: aCFYU+
 #: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
 msgid "Exclude the following people and domains from the email and calendar sync of every workspace member"
-msgstr ""
+msgstr "Искључите следеће особе и домене из синхронизације е-поште и календара сваког члана радног простора"
 
 #. js-lingui-id: g3jaWB
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -8996,7 +8996,7 @@ msgstr "Неуспешно {translatedOperationType} {translatedMetadataName}. �
 #. js-lingui-id: 0zoYr3
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Failed to activate Organization license. Please check your key or contact support."
-msgstr ""
+msgstr "Активирање лиценце организације није успело. Проверите свој кључ или контактирајте подршку."
 
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -9795,12 +9795,12 @@ msgstr "Име не може бити празно"
 #. js-lingui-id: tVgANq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to keep your premium features active."
-msgstr ""
+msgstr "Решите проблем са плаћањем да би ваше премијум функције остале активне."
 
 #. js-lingui-id: SdIdBz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to restore your premium features."
-msgstr ""
+msgstr "Решите проблем са плаћањем да бисте вратили премијум функције."
 
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -10120,7 +10120,7 @@ msgstr "Купите још кредита"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Get Organization"
-msgstr ""
+msgstr "Набавите Организацију"
 
 #. js-lingui-id: MZe3+J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -10128,7 +10128,7 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Get Organization Key"
-msgstr ""
+msgstr "Набавите кључ организације"
 
 #. js-lingui-id: wwPywk
 #: src/pages/onboarding/InstallAppsContent.tsx
@@ -11683,7 +11683,7 @@ msgstr ""
 #. js-lingui-id: klrZv0
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "JSON filters"
-msgstr ""
+msgstr "JSON филтери"
 
 #. js-lingui-id: KTaki5
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
@@ -12217,7 +12217,7 @@ msgstr ""
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Limit the rate of outgoing webhook deliveries."
-msgstr ""
+msgstr "Ограничите брзину испоруке одлазних вебхукова."
 
 #. js-lingui-id: GrFbIR
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
@@ -12966,7 +12966,7 @@ msgstr "Порука"
 #. js-lingui-id: jBzu2R
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Message and calendar target reads"
-msgstr ""
+msgstr "Читања циљева порука и календара"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -15111,12 +15111,12 @@ msgstr "Један или више филтера референцирају д�
 #. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
-msgstr ""
+msgstr "Једна претплата обезбеђује један кључ организације који покреће једну продукциону инстанцу и једну могућу припремну или тестну инстанцу. Да бисте покренули припремно или тестно окружење, инсталирајте Twenty на други сервер, активирајте га истим кључем организације, а затим региструјте тај сервер као развојну инстанцу. Развојне инстанце откључавају премијум функције без додатне наплате и не рачунају се у ваша продукциона места."
 
 #. js-lingui-id: JEtonz
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Only application logs are available on your current plan. Other log types require an Organization subscription."
-msgstr ""
+msgstr "У вашем тренутном пакету доступни су само апликациони дневници. Остали типови дневника захтевају претплату за организацију."
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -15243,7 +15243,7 @@ msgstr "Отворите у Улогама"
 #. js-lingui-id: x57cJf
 #: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 msgid "Open link"
-msgstr ""
+msgstr "Отвори везу"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -15390,7 +15390,7 @@ msgstr "Функција за организације"
 #. js-lingui-id: b8dX3V
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization key transferred to this server"
-msgstr ""
+msgstr "Кључ организације је пренет на овај сервер"
 
 #. js-lingui-id: MoJjhq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -15401,12 +15401,12 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization License"
-msgstr ""
+msgstr "Лиценца организације"
 
 #. js-lingui-id: 6alGoe
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization license activated successfully"
-msgstr ""
+msgstr "Лиценца организације је успешно активирана"
 
 #. js-lingui-id: cyDPQQ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15715,12 +15715,12 @@ msgstr "Залепите код испод"
 #. js-lingui-id: M01WeF
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Paste your Organization key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server."
-msgstr ""
+msgstr "Налепите свој кључ организације испод да бисте га активирали. Сачувајте копију овог кључа на безбедном месту: исти кључ се поново користи за подешавање развојне инстанце или за пренос лиценце на заменски сервер."
 
 #. js-lingui-id: Jkg0nj
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Paste your Organization key here"
-msgstr ""
+msgstr "Налепите овде свој кључ организације"
 
 #. js-lingui-id: I6gXOa
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -16155,7 +16155,7 @@ msgstr "Само прединсталиране апликације"
 #. js-lingui-id: HslPhm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Prebuilt logic functions"
-msgstr ""
+msgstr "Унапред изграђене логичке функције"
 
 #. js-lingui-id: 0Lqxjs
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
@@ -16697,7 +16697,7 @@ msgstr "Запис (ИД)"
 #. js-lingui-id: zod7Md
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record creation form"
-msgstr ""
+msgstr "Образац за креирање записа"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -16735,7 +16735,7 @@ msgstr "Страница записа"
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record sharing"
-msgstr ""
+msgstr "Дељење записа"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -16906,7 +16906,7 @@ msgstr "Отпусти и пренеси"
 #. js-lingui-id: KXrI7W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Release & transfer Organization key"
-msgstr ""
+msgstr "Ослободите и пренесите кључ организације"
 
 #. js-lingui-id: PYZeGT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -17366,7 +17366,7 @@ msgstr "Покушај поново у случају неуспеха"
 #. js-lingui-id: AF7Zfa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Return metadata directly instead of wrapping it in the legacy response envelope."
-msgstr ""
+msgstr "Вратите метаподатке директно уместо да их умотавате у застарели омотач одговора."
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
@@ -17585,7 +17585,7 @@ msgstr "Изврши функцију"
 #. js-lingui-id: 8KjW3W
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Run logic functions from prebuilt application bundles."
-msgstr ""
+msgstr "Покрените логичке функције из унапред изграђених пакета апликације."
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/build-generic-tool-status-message.util.ts
@@ -17669,6 +17669,11 @@ msgstr "Сачувај као ново приказ"
 #: src/modules/layout-customization/hooks/useEnterLayoutCustomizationMode.ts
 msgid "Save or cancel dashboard changes before editing the layout."
 msgstr "Сачувајте или откажите измене на контролној табли пре уређивања распореда."
+
+#. js-lingui-id: bL2pm9
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Save the record before attaching a file"
+msgstr "Сачувајте запис пре прилагања датотеке"
 
 #. js-lingui-id: bifv6N
 #: src/modules/settings/experience/components/UiScalePicker.tsx
@@ -19365,12 +19370,12 @@ msgstr "Стандардни виџети"
 #. js-lingui-id: TqGZ8Y
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new Organization subscription to re-enable premium features."
-msgstr ""
+msgstr "Покрените нову претплату за организацију да бисте поново омогућили премијум функције."
 
 #. js-lingui-id: kqtVJH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new Organization subscription."
-msgstr ""
+msgstr "Покрените нову претплату за организацију."
 
 #. js-lingui-id: WAjFYI
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -19809,7 +19814,7 @@ msgstr "Пребачено на продукциону инстанцу."
 #. js-lingui-id: Nu4DdT
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync"
-msgstr ""
+msgstr "Синхронизовати"
 
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -20386,7 +20391,7 @@ msgstr "Постоји проблем са наплатом. Контактир�
 #. js-lingui-id: AYRXBE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Your premium features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr ""
+msgstr "Постоји проблем са плаћањем ваше претплате. Ваше премијум функције су онемогућене. Платите неплаћени рачун да бисте их вратили пре отказивања претплате: отказана претплата не може се поново активирати и мораћете да покренете нову."
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20542,6 +20547,11 @@ msgstr "Ова компонента се извршава без корисни�
 msgid "This connection does not exist or is not available for this application."
 msgstr "Ова веза не постоји или није доступна за ову апликацију."
 
+#. js-lingui-id: 2bcQ5P
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "This content was saved in an older format and cannot be edited here"
+msgstr "Овај садржај је сачуван у старијем формату и овде се не може уређивати"
+
 #. js-lingui-id: SLIRqz
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableHelpText.tsx
 msgid "This database value overrides environment settings. "
@@ -20555,7 +20565,7 @@ msgstr "Овај уређај"
 #. js-lingui-id: i6mVT3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "This feature is part of the Organization plan"
-msgstr ""
+msgstr "Ова функција је део Organization плана"
 
 #. js-lingui-id: own57K
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -20625,12 +20635,12 @@ msgstr "Овај месец"
 #. js-lingui-id: ThVMIW
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
-msgstr ""
+msgstr "Овај кључ организације је већ повезан са другом серверском инстанцом. Његовим ослобађањем овде лиценца ће бити пренета на овај сервер и престаће бројање места на претходном серверу."
 
 #. js-lingui-id: CHf20W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
-msgstr ""
+msgstr "Овај кључ организације је тренутно повезан са другом серверском инстанцом. Његовим преносом овде биће ослобођен са претходног сервера и престаће бројање места на њему. Да ли сте сигурни да желите да наставите?"
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -20670,7 +20680,7 @@ msgstr ""
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This server has an Organization key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support."
-msgstr ""
+msgstr "На овом серверу је конфигурисан кључ организације. Обавезно сачувајте његову копију на безбедном месту: исти кључ вам је потребан да активирате развојну инстанцу или да пренесете лиценцу на заменски сервер. Ако више немате приступ кључу, контактирајте подршку."
 
 #. js-lingui-id: Gzd97S
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -21363,6 +21373,11 @@ msgstr "Подешавање двофакторске аутентификаци
 msgid "Type"
 msgstr "Тип"
 
+#. js-lingui-id: RS98db
+#: src/modules/object-record/record-field/ui/form-types/components/FormRecordRichTextFieldInput.tsx
+msgid "Type '/' for commands"
+msgstr "Унесите „/“ за команде"
+
 #. js-lingui-id: SKD2e4
 #: src/modules/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor.tsx
 msgid "Type '/' for commands, '@' for mentions"
@@ -21505,7 +21520,7 @@ msgstr "Јединствена поља"
 #. js-lingui-id: NXfWhP
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Unique indexes"
-msgstr ""
+msgstr "Јединствени индекси"
 
 #. js-lingui-id: pRpC/r
 #: src/modules/side-panel/pages/page-layout/constants/settings/PrefixSetting.ts
@@ -21625,7 +21640,7 @@ msgstr "Непостед"
 #. js-lingui-id: 8vc1Dy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Unlock premium features like SSO, row-level security, and audit logs."
-msgstr ""
+msgstr "Откључајте премијум функције као што су SSO, безбедност на нивоу реда и дневници ревизије."
 
 #. js-lingui-id: Te2H8x
 #: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
@@ -21972,7 +21987,7 @@ msgstr "Надоградите да бисте приступили ревизи
 #. js-lingui-id: q10MiT
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to access audit logs."
-msgstr ""
+msgstr "Надоградите на Organization да бисте приступили ревизијским дневницима."
 
 #. js-lingui-id: yV3xLN
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -22161,7 +22176,7 @@ msgstr "Период коришћења"
 #. js-lingui-id: MNOlLY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use a dedicated form when creating records."
-msgstr ""
+msgstr "Користите наменски образац приликом креирања записа."
 
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -22201,22 +22216,22 @@ msgstr "Користите наш API или ручно додајте први 
 #. js-lingui-id: c2ES/s
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use target relations to find messages and calendar events linked to records."
-msgstr ""
+msgstr "Користите циљне релације да бисте пронашли поруке и догађаје календара повезане са записима."
 
 #. js-lingui-id: 40bRe+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the dedicated workflow index page to browse workflows and their versions."
-msgstr ""
+msgstr "Користите наменску индексну страницу токова рада за преглед токова рада и њихових верзија."
 
 #. js-lingui-id: +mx9eK
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the quota engine to enforce credit allowances."
-msgstr ""
+msgstr "Користите механизам квота за примену кредитних одобрења."
 
 #. js-lingui-id: 0rr3iW
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the usage limit engine to enforce API request speed limits."
-msgstr ""
+msgstr "Користите механизам ограничења коришћења за примену ограничења брзине API захтева."
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -22927,7 +22942,7 @@ msgstr "Webhook ID је обавезан за ажурирање"
 #. js-lingui-id: 0HuWgM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Webhook rate limits"
-msgstr ""
+msgstr "Ограничења брзине вебхукова"
 
 #. js-lingui-id: v1kQyJ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -23152,7 +23167,7 @@ msgstr "Извршавање тока рада"
 #. js-lingui-id: 91e2Af
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
-msgstr ""
+msgstr "Индексна страница тока рада"
 
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
@@ -23523,7 +23538,7 @@ msgstr "Немате приступ овој страници подешавањ
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later or contact support."
-msgstr ""
+msgstr "Достигли сте максималан број преноса сервера дозвољен у последњих 30 дана за овај кључ организације. Покушајте поново касније или контактирајте подршку."
 
 #. js-lingui-id: RDAH2t
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -23628,12 +23643,12 @@ msgstr "Ваше име како ће бити приказано"
 #. js-lingui-id: 91Ysnw
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your Organization key"
-msgstr ""
+msgstr "Ваш кључ организације"
 
 #. js-lingui-id: eE08iE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your Organization subscription has been canceled."
-msgstr ""
+msgstr "Ваша претплата за организацију је отказана."
 
 #. js-lingui-id: 8mfOAZ
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -23654,22 +23669,22 @@ msgstr "Ваш план ће одмах бити пребачен на Pro и в
 #. js-lingui-id: iizYt1
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features are active"
-msgstr ""
+msgstr "Ваше премијум функције су активне"
 
 #. js-lingui-id: VRFEn9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support."
-msgstr ""
+msgstr "Ваше премијум функције су активне, али ваш кључ организације недостаје или није важећи. Ово може бити очекивано, али ако није, поставите важећи потписани кључ организације да бисте управљали претплатом или контактирајте подршку."
 
 #. js-lingui-id: BkmgMC
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features will be disabled"
-msgstr ""
+msgstr "Ваше премијум функције ће бити онемогућене"
 
 #. js-lingui-id: TI99Rh
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features will remain active until {cancelAtDate}."
-msgstr ""
+msgstr "Ваше премијум функције ће остати активне до {cancelAtDate}."
 
 #. js-lingui-id: MxZ8eH
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
