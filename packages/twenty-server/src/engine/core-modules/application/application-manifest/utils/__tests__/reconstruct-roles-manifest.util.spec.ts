@@ -37,6 +37,7 @@ const PET_UID = '20000000-0000-4000-8000-000000000001';
 const TOY_UID = '20000000-0000-4000-8000-000000000002';
 const PERSON_UID = '20000000-0000-4000-8000-000000000003';
 const MISSING_UID = '20000000-0000-4000-8000-000000000004';
+const OWNER_UID = '20000000-0000-4000-8000-000000000005';
 const PET_NAME_FIELD_UID = '30000000-0000-4000-8000-000000000001';
 const PET_SECRET_FIELD_UID = '30000000-0000-4000-8000-000000000002';
 const TOY_NAME_FIELD_UID = '30000000-0000-4000-8000-000000000003';
@@ -66,6 +67,9 @@ const DELETED_PREDICATE_GROUP_UID = '90000000-0000-4000-8000-000000000006';
 const FIRST_CYCLIC_PREDICATE_GROUP_UID = '90000000-0000-4000-8000-000000000007';
 const SECOND_CYCLIC_PREDICATE_GROUP_UID =
   '90000000-0000-4000-8000-000000000008';
+const OWNER_PREDICATE_GROUP_UID = '90000000-0000-4000-8000-000000000009';
+const CROSS_OBJECT_CHILD_PREDICATE_GROUP_UID =
+  '90000000-0000-4000-8000-00000000000a';
 const CHILD_GROUP_PREDICATE_UID = 'a0000000-0000-4000-8000-000000000001';
 const PET_SECRET_PREDICATE_UID = 'a0000000-0000-4000-8000-000000000002';
 const PET_SECRET_WORKSPACE_MEMBER_PREDICATE_UID =
@@ -74,6 +78,7 @@ const TOY_CHILD_GROUP_PREDICATE_UID = 'a0000000-0000-4000-8000-000000000004';
 const DELETED_GROUP_PREDICATE_UID = 'a0000000-0000-4000-8000-000000000005';
 const ADMIN_PREDICATE_UID = 'a0000000-0000-4000-8000-000000000006';
 const DELETED_PREDICATE_UID = 'a0000000-0000-4000-8000-000000000007';
+const CROSS_OBJECT_GROUP_PREDICATE_UID = 'a0000000-0000-4000-8000-000000000008';
 
 const withIds = <TUniversalFlatEntity extends { universalIdentifier: string }>(
   universalFlatEntity: TUniversalFlatEntity,
@@ -334,6 +339,7 @@ const buildMaps = ({
 const applicationObjects = [
   buildFlatObject(PET_UID, 'pet'),
   buildFlatObject(TOY_UID, 'toy'),
+  buildFlatObject(OWNER_UID, 'owner'),
 ];
 const applicationFields = [
   buildFlatField(PET_NAME_FIELD_UID, PET_UID),
@@ -425,6 +431,14 @@ const applicationPredicateGroups = [
     universalIdentifier: SECOND_CYCLIC_PREDICATE_GROUP_UID,
     parentPredicateGroupUniversalIdentifier: FIRST_CYCLIC_PREDICATE_GROUP_UID,
   }),
+  buildFlatPredicateGroup({
+    universalIdentifier: OWNER_PREDICATE_GROUP_UID,
+    objectUniversalIdentifier: OWNER_UID,
+  }),
+  buildFlatPredicateGroup({
+    universalIdentifier: CROSS_OBJECT_CHILD_PREDICATE_GROUP_UID,
+    parentPredicateGroupUniversalIdentifier: OWNER_PREDICATE_GROUP_UID,
+  }),
 ];
 const applicationPredicates = [
   buildFlatPredicate({
@@ -454,6 +468,10 @@ const applicationPredicates = [
   buildFlatPredicate({
     universalIdentifier: DELETED_PREDICATE_UID,
     deletedAt: NOW,
+  }),
+  buildFlatPredicate({
+    universalIdentifier: CROSS_OBJECT_GROUP_PREDICATE_UID,
+    predicateGroupUniversalIdentifier: OWNER_PREDICATE_GROUP_UID,
   }),
 ];
 
@@ -494,7 +512,7 @@ const reconstruct = () =>
   reconstructRolesManifest({
     applicationAllFlatEntityMaps,
     allFlatEntityMaps,
-    exportedObjectUniversalIdentifiers: new Set([PET_UID]),
+    exportedObjectUniversalIdentifiers: new Set([PET_UID, OWNER_UID]),
     resolvableFieldUniversalIdentifiers: new Set([PET_NAME_FIELD_UID]),
   });
 
@@ -563,6 +581,12 @@ describe('reconstructRolesManifest', () => {
             logicalOperator:
               RowLevelPermissionPredicateGroupLogicalOperator.AND,
             parentPredicateGroupUniversalIdentifier: ROOT_PREDICATE_GROUP_UID,
+          },
+          {
+            universalIdentifier: OWNER_PREDICATE_GROUP_UID,
+            objectUniversalIdentifier: OWNER_UID,
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
           },
         ],
         rowLevelPermissionPredicates: [
@@ -692,6 +716,27 @@ describe('reconstructRolesManifest', () => {
           status: ApplicationExportCoverageStatus.UNSUPPORTED,
           reason:
             'row-level permission predicate on a role outside the application',
+        },
+      ]),
+    );
+  });
+
+  it('should not export a predicate group or a predicate attached to an exported group on another object', () => {
+    expect(reconstruct().coverage).toEqual(
+      expect.arrayContaining([
+        {
+          metadataName: 'rowLevelPermissionPredicateGroup',
+          universalIdentifier: CROSS_OBJECT_CHILD_PREDICATE_GROUP_UID,
+          status: ApplicationExportCoverageStatus.UNSUPPORTED,
+          reason:
+            'row-level permission predicate group in a row-level permission predicate group that is not exported',
+        },
+        {
+          metadataName: 'rowLevelPermissionPredicate',
+          universalIdentifier: CROSS_OBJECT_GROUP_PREDICATE_UID,
+          status: ApplicationExportCoverageStatus.UNSUPPORTED,
+          reason:
+            'row-level permission predicate in a row-level permission predicate group that is not exported',
         },
       ]),
     );
