@@ -271,7 +271,10 @@ describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
       fieldIds: ['name-id', 'deleted-at-id'],
     } as FlatObjectMetadata;
     const inheritedReadabilityChildRecordsByRecordId = new Map([
-      ['record-1', { noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }] }],
+      [
+        'record-1',
+        { noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }] },
+      ],
     ]);
 
     it('should carry the child records captured for a record on its deleted event only', () => {

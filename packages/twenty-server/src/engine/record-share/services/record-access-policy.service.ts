@@ -194,7 +194,9 @@ export class RecordAccessPolicyService {
       }),
     );
     const liveSnapshotIds = snapshots
-      .filter((snapshot) => !capturedChildSnapshotsBySnapshotId.has(snapshot.id))
+      .filter(
+        (snapshot) => !capturedChildSnapshotsBySnapshotId.has(snapshot.id),
+      )
       .map((snapshot) => snapshot.id);
 
     const readableSnapshotIds = new Set<string>();
