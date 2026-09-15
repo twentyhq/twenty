@@ -25,6 +25,9 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
   UsageLimitGraphqlApiExceptionFilter,
   BillingGraphqlApiExceptionFilter,
 )
+// TODO(@abdulrahmancodes): install ResolverValidationPipe here; without it every
+// class-validator decorator on RunAgentInputDTO is inert. Enabling it rejects the
+// empty assistant turns the Slack app replays, so those callers go first.
 @MetadataResolver()
 export class AgentRunResolver {
   constructor(private readonly agentRunService: AgentRunService) {}
