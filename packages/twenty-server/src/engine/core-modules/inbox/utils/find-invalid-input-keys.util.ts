@@ -1,23 +1,25 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
+import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 import { type InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
-import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-field-schema.type';
 
-const isTextFieldType = (type: InboxItemFieldSchema['type']) =>
-  type === 'TEXT' || type === 'LONG_TEXT';
+const isTextFieldType = (type: InboxItemFieldType) =>
+  type === InboxItemFieldType.TEXT || type === InboxItemFieldType.LONG_TEXT;
 
 const isValueOfFieldType = (
-  type: InboxItemFieldSchema['type'],
+  type: InboxItemFieldType,
   value: unknown,
 ): boolean => {
   switch (type) {
-    case 'NUMBER':
+    case InboxItemFieldType.NUMBER:
       return typeof value === 'number' && Number.isFinite(value);
-    case 'BOOLEAN':
+    case InboxItemFieldType.BOOLEAN:
       return typeof value === 'boolean';
-    case 'TEXT':
-    case 'LONG_TEXT':
+    case InboxItemFieldType.TEXT:
+    case InboxItemFieldType.LONG_TEXT:
       return typeof value === 'string';
+    case InboxItemFieldType.OBJECT:
+      return isPlainObject(value) || Array.isArray(value);
     default:
       return false;
   }

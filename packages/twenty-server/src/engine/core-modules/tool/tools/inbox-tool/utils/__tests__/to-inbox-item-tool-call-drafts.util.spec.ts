@@ -1,4 +1,5 @@
 import { toInboxItemToolCallDrafts } from 'src/engine/core-modules/tool/tools/inbox-tool/utils/to-inbox-item-tool-call-drafts.util';
+import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 
 describe('toInboxItemToolCallDrafts', () => {
   it('should read a field per input key off the values', () => {
@@ -17,10 +18,18 @@ describe('toInboxItemToolCallDrafts', () => {
     ]);
 
     expect(draft.inputSchema).toEqual([
-      { key: 'stage', label: 'Stage', type: 'TEXT' },
-      { key: 'amount', label: 'Amount', type: 'NUMBER' },
-      { key: 'isRenewal', label: 'Is renewal', type: 'BOOLEAN' },
-      { key: 'closingNotes', label: 'Closing notes', type: 'LONG_TEXT' },
+      { key: 'stage', label: 'Stage', type: InboxItemFieldType.TEXT },
+      { key: 'amount', label: 'Amount', type: InboxItemFieldType.NUMBER },
+      {
+        key: 'isRenewal',
+        label: 'Is renewal',
+        type: InboxItemFieldType.BOOLEAN,
+      },
+      {
+        key: 'closingNotes',
+        label: 'Closing notes',
+        type: InboxItemFieldType.LONG_TEXT,
+      },
     ]);
     expect(draft.proposedInput).toEqual({
       stage: 'PROPOSAL',
@@ -42,8 +51,18 @@ describe('toInboxItemToolCallDrafts', () => {
     ]);
 
     expect(draft.inputSchema).toEqual([
-      { key: 'to', label: 'To', type: 'TEXT', isRequired: true },
-      { key: 'body', label: 'Body', type: 'TEXT', isRequired: true },
+      {
+        key: 'to',
+        label: 'To',
+        type: InboxItemFieldType.TEXT,
+        isRequired: true,
+      },
+      {
+        key: 'body',
+        label: 'Body',
+        type: InboxItemFieldType.TEXT,
+        isRequired: true,
+      },
     ]);
     expect(draft.proposedInput).toEqual({ to: 'marie@google.com' });
   });
@@ -56,9 +75,9 @@ describe('toInboxItemToolCallDrafts', () => {
         input: { companyName: 'Google' },
         requiredInputKeys: ['companyName', 'amount', 'isPaid', 'terms'],
         inputFieldTypes: {
-          amount: 'NUMBER',
-          isPaid: 'BOOLEAN',
-          terms: 'LONG_TEXT',
+          amount: InboxItemFieldType.NUMBER,
+          isPaid: InboxItemFieldType.BOOLEAN,
+          terms: InboxItemFieldType.LONG_TEXT,
         },
       },
     ]);
@@ -67,12 +86,27 @@ describe('toInboxItemToolCallDrafts', () => {
       {
         key: 'companyName',
         label: 'Company name',
-        type: 'TEXT',
+        type: InboxItemFieldType.TEXT,
         isRequired: true,
       },
-      { key: 'amount', label: 'Amount', type: 'NUMBER', isRequired: true },
-      { key: 'isPaid', label: 'Is paid', type: 'BOOLEAN', isRequired: true },
-      { key: 'terms', label: 'Terms', type: 'LONG_TEXT', isRequired: true },
+      {
+        key: 'amount',
+        label: 'Amount',
+        type: InboxItemFieldType.NUMBER,
+        isRequired: true,
+      },
+      {
+        key: 'isPaid',
+        label: 'Is paid',
+        type: InboxItemFieldType.BOOLEAN,
+        isRequired: true,
+      },
+      {
+        key: 'terms',
+        label: 'Terms',
+        type: InboxItemFieldType.LONG_TEXT,
+        isRequired: true,
+      },
     ]);
   });
 });

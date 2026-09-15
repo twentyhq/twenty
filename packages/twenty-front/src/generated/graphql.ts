@@ -321,7 +321,7 @@ export type InboxCounts = {
 export type InboxItem = {
   __typename?: 'InboxItem';
   assigneeUserWorkspaceId?: Maybe<Scalars['UUID']['output']>;
-  context: Scalars['JSON']['output'];
+  context: InboxItemContext;
   id: Scalars['UUID']['output'];
   inboxItemType: InboxItemType;
   isAssignedToMe: Scalars['Boolean']['output'];
@@ -339,13 +339,69 @@ export type InboxItem = {
   version: Scalars['Int']['output'];
 };
 
+export type InboxItemContext = {
+  __typename?: 'InboxItemContext';
+  edges: Array<InboxItemContextEdge>;
+  entities: Array<InboxItemContextEntity>;
+  source?: Maybe<InboxItemContextSource>;
+  summary?: Maybe<Scalars['String']['output']>;
+};
+
+export type InboxItemContextEdge = {
+  __typename?: 'InboxItemContextEdge';
+  from: Scalars['String']['output'];
+  label: Scalars['String']['output'];
+  to: Scalars['String']['output'];
+};
+
+export type InboxItemContextEntity = {
+  __typename?: 'InboxItemContextEntity';
+  key: Scalars['String']['output'];
+  kind: InboxItemContextEntityKind;
+  label: Scalars['String']['output'];
+  objectMetadataId?: Maybe<Scalars['String']['output']>;
+  recordId?: Maybe<Scalars['String']['output']>;
+  subtitle?: Maybe<Scalars['String']['output']>;
+};
+
+export enum InboxItemContextEntityKind {
+  COMPANY = 'COMPANY',
+  OPPORTUNITY = 'OPPORTUNITY',
+  OTHER = 'OTHER',
+  PERSON = 'PERSON'
+}
+
+export type InboxItemContextSource = {
+  __typename?: 'InboxItemContextSource';
+  detail?: Maybe<Scalars['String']['output']>;
+  excerpt?: Maybe<Scalars['String']['output']>;
+  kind: InboxItemContextSourceKind;
+  label: Scalars['String']['output'];
+  messageCount?: Maybe<Scalars['Int']['output']>;
+};
+
+export enum InboxItemContextSourceKind {
+  CALL = 'CALL',
+  EMAIL = 'EMAIL',
+  RECORD = 'RECORD',
+  THREAD = 'THREAD'
+}
+
 export type InboxItemField = {
   __typename?: 'InboxItemField';
   isRequired: Scalars['Boolean']['output'];
   key: Scalars['String']['output'];
   label: Scalars['String']['output'];
-  type: Scalars['String']['output'];
+  type: InboxItemFieldType;
 };
+
+export enum InboxItemFieldType {
+  BOOLEAN = 'BOOLEAN',
+  LONG_TEXT = 'LONG_TEXT',
+  NUMBER = 'NUMBER',
+  OBJECT = 'OBJECT',
+  TEXT = 'TEXT'
+}
 
 export enum InboxItemOutcome {
   DISMISSED = 'DISMISSED',

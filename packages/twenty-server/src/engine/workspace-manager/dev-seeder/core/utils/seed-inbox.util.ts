@@ -19,6 +19,7 @@ import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/uti
 import { AGENT_CHAT_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 
 const inboxItemTypeTableName = 'inboxItemType';
 const inboxQueueTableName = 'inboxQueue';
@@ -96,15 +97,35 @@ type SeededToolCall = {
   status?: InboxItemToolCallStatus;
 };
 
+// The real tool takes recipients as one nested object, so the seeds carry the
+// shape it actually runs with rather than a flattened stand-in.
 const EMAIL_INPUT_SCHEMA: InboxItemFieldSchema[] = [
-  { key: 'to', label: 'To', type: 'TEXT', isRequired: true },
-  { key: 'cc', label: 'Cc', type: 'TEXT' },
-  { key: 'subject', label: 'Subject', type: 'TEXT', isRequired: true },
-  { key: 'body', label: 'Body', type: 'LONG_TEXT', isRequired: true },
+  {
+    key: 'recipients',
+    label: 'Recipients',
+    type: InboxItemFieldType.OBJECT,
+    isRequired: true,
+  },
+  {
+    key: 'subject',
+    label: 'Subject',
+    type: InboxItemFieldType.TEXT,
+    isRequired: true,
+  },
+  {
+    key: 'body',
+    label: 'Body',
+    type: InboxItemFieldType.LONG_TEXT,
+    isRequired: true,
+  },
 ];
 
 // Plans an agent proposed from incoming mail, each carrying the context it was
-// drawn from and the calls it wants to make.
+// drawn from and the calls it wants to make. Running a plan now dispatches for
+// real, so the email calls name draft_email rather than send_email: seeding a
+// workspace must not arm something that leaves the building. The record-writing
+// names here stay illustrative and report as unknown tools until each is
+// mapped to its create_one_/update_one_ equivalent.
 const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
   {
     seedName: 'plan-move-google-renewal-forward',
@@ -152,14 +173,16 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     },
     toolCalls: [
       {
-        toolName: 'send_email',
+        toolName: 'draft_email',
         label: 'Send email',
         description: 'Send Marie a reply confirming the renewal pricing.',
         icon: 'IconMail',
         inputSchema: EMAIL_INPUT_SCHEMA,
         proposedInput: {
-          to: 'marie.dubois@google.com',
-          cc: 'joe.gebbia@google.com',
+          recipients: {
+            to: 'marie.dubois@google.com',
+            cc: 'joe.gebbia@google.com',
+          },
           subject: 'Re: Renewal terms + intro to Paul',
           body: 'Hi Marie,\n\nThanks for the quick follow-up. The renewal keeps your current terms for another 12 months, with the tier-2 volume you asked about billed at the same rate.\n\nGreat to have Paul in the loop, I have added him here.\n\nBest,\nTim',
         },
@@ -171,9 +194,18 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
           "Google's opportunity should reflect Marie's willingness to renew at tier-2.",
         icon: 'IconTargetArrow',
         inputSchema: [
-          { key: 'stage', label: 'Stage', type: 'TEXT', isRequired: true },
-          { key: 'amount', label: 'Amount', type: 'NUMBER' },
-          { key: 'closeDate', label: 'Close date', type: 'TEXT' },
+          {
+            key: 'stage',
+            label: 'Stage',
+            type: InboxItemFieldType.TEXT,
+            isRequired: true,
+          },
+          { key: 'amount', label: 'Amount', type: InboxItemFieldType.NUMBER },
+          {
+            key: 'closeDate',
+            label: 'Close date',
+            type: InboxItemFieldType.TEXT,
+          },
         ],
         proposedInput: {
           stage: 'PROPOSAL',
@@ -191,17 +223,21 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
           {
             key: 'firstName',
             label: 'First name',
-            type: 'TEXT',
+            type: InboxItemFieldType.TEXT,
             isRequired: true,
           },
           {
             key: 'lastName',
             label: 'Last name',
-            type: 'TEXT',
+            type: InboxItemFieldType.TEXT,
             isRequired: true,
           },
-          { key: 'email', label: 'Email', type: 'TEXT' },
-          { key: 'jobTitle', label: 'Job title', type: 'TEXT' },
+          { key: 'email', label: 'Email', type: InboxItemFieldType.TEXT },
+          {
+            key: 'jobTitle',
+            label: 'Job title',
+            type: InboxItemFieldType.TEXT,
+          },
         ],
         proposedInput: {
           firstName: 'Paul',
@@ -217,11 +253,16 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
           'Julien is in charge of pricing, he is the one making the final decision.',
         icon: 'IconMessageCircle',
         inputSchema: [
-          { key: 'to', label: 'To', type: 'TEXT', isRequired: true },
+          {
+            key: 'to',
+            label: 'To',
+            type: InboxItemFieldType.TEXT,
+            isRequired: true,
+          },
           {
             key: 'message',
             label: 'Message',
-            type: 'LONG_TEXT',
+            type: InboxItemFieldType.LONG_TEXT,
             isRequired: true,
           },
         ],
@@ -275,21 +316,32 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
         description: 'A $24,000 invoice for the 12-month renewal.',
         icon: 'IconCurrencyDollar',
         inputSchema: [
-          { key: 'amount', label: 'Amount', type: 'NUMBER', isRequired: true },
-          { key: 'currency', label: 'Currency', type: 'TEXT' },
-          { key: 'dueInDays', label: 'Due in days', type: 'NUMBER' },
+          {
+            key: 'amount',
+            label: 'Amount',
+            type: InboxItemFieldType.NUMBER,
+            isRequired: true,
+          },
+          { key: 'currency', label: 'Currency', type: InboxItemFieldType.TEXT },
+          {
+            key: 'dueInDays',
+            label: 'Due in days',
+            type: InboxItemFieldType.NUMBER,
+          },
         ],
         proposedInput: { amount: 24000, currency: 'USD', dueInDays: 30 },
       },
       {
-        toolName: 'send_email',
+        toolName: 'draft_email',
         label: 'Send email',
         description: 'Send the invoice to accounts payable with Anna in copy.',
         icon: 'IconMail',
         inputSchema: EMAIL_INPUT_SCHEMA,
         proposedInput: {
-          to: 'ap@microsoft.com',
-          cc: 'anna.lee@microsoft.com',
+          recipients: {
+            to: 'ap@microsoft.com',
+            cc: 'anna.lee@microsoft.com',
+          },
           subject: 'Invoice for the 2027 renewal',
           body: 'Hello,\n\nPlease find attached the invoice for the annual renewal, due in 30 days.\n\nThanks,\nTim',
         },
@@ -337,10 +389,19 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
         description: 'A $45,000 expansion for 45 seats, closing next quarter.',
         icon: 'IconTargetArrow',
         inputSchema: [
-          { key: 'name', label: 'Name', type: 'TEXT', isRequired: true },
-          { key: 'amount', label: 'Amount', type: 'NUMBER' },
-          { key: 'stage', label: 'Stage', type: 'TEXT' },
-          { key: 'closeDate', label: 'Close date', type: 'TEXT' },
+          {
+            key: 'name',
+            label: 'Name',
+            type: InboxItemFieldType.TEXT,
+            isRequired: true,
+          },
+          { key: 'amount', label: 'Amount', type: InboxItemFieldType.NUMBER },
+          { key: 'stage', label: 'Stage', type: InboxItemFieldType.TEXT },
+          {
+            key: 'closeDate',
+            label: 'Close date',
+            type: InboxItemFieldType.TEXT,
+          },
         ],
         proposedInput: {
           name: 'Meta ads team expansion',
@@ -355,8 +416,13 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
         description: 'Follow up with Sarah once the seat count is confirmed.',
         icon: 'IconCheckbox',
         inputSchema: [
-          { key: 'title', label: 'Title', type: 'TEXT', isRequired: true },
-          { key: 'dueDate', label: 'Due date', type: 'TEXT' },
+          {
+            key: 'title',
+            label: 'Title',
+            type: InboxItemFieldType.TEXT,
+            isRequired: true,
+          },
+          { key: 'dueDate', label: 'Due date', type: InboxItemFieldType.TEXT },
         ],
         proposedInput: {
           title: 'Confirm seat count with Sarah',
@@ -407,19 +473,28 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
         description: 'Wednesday 3pm, 45 minutes, with the three SLB attendees.',
         icon: 'IconCalendarEvent',
         inputSchema: [
-          { key: 'title', label: 'Title', type: 'TEXT', isRequired: true },
+          {
+            key: 'title',
+            label: 'Title',
+            type: InboxItemFieldType.TEXT,
+            isRequired: true,
+          },
           {
             key: 'startsAt',
             label: 'Starts at',
-            type: 'TEXT',
+            type: InboxItemFieldType.TEXT,
             isRequired: true,
           },
           {
             key: 'durationMinutes',
             label: 'Duration (minutes)',
-            type: 'NUMBER',
+            type: InboxItemFieldType.NUMBER,
           },
-          { key: 'attendees', label: 'Attendees', type: 'TEXT' },
+          {
+            key: 'attendees',
+            label: 'Attendees',
+            type: InboxItemFieldType.TEXT,
+          },
         ],
         proposedInput: {
           title: 'Twenty demo for SLB',
@@ -429,14 +504,16 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
         },
       },
       {
-        toolName: 'send_email',
+        toolName: 'draft_email',
         label: 'Send email',
         description: 'Confirm the slot and share the agenda.',
         icon: 'IconMail',
         inputSchema: EMAIL_INPUT_SCHEMA,
         proposedInput: {
-          to: 'omar.haddad@slb.com',
-          cc: 'lea.martin@slb.com, k.osei@slb.com',
+          recipients: {
+            to: 'omar.haddad@slb.com',
+            cc: 'lea.martin@slb.com, k.osei@slb.com',
+          },
           subject: 'Re: Demo next week?',
           body: 'Hi Omar,\n\nWednesday at 3pm works on our side, invite is on its way. We will cover pipeline, automations and the API in 45 minutes.\n\nTalk soon,\nTim',
         },
@@ -478,9 +555,17 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
           'Headcount 84,900, industry Networking, website cisco.com.',
         icon: 'IconBuildingSkyscraper',
         inputSchema: [
-          { key: 'employees', label: 'Employees', type: 'NUMBER' },
-          { key: 'industry', label: 'Industry', type: 'TEXT' },
-          { key: 'domainName', label: 'Website', type: 'TEXT' },
+          {
+            key: 'employees',
+            label: 'Employees',
+            type: InboxItemFieldType.NUMBER,
+          },
+          { key: 'industry', label: 'Industry', type: InboxItemFieldType.TEXT },
+          {
+            key: 'domainName',
+            label: 'Website',
+            type: InboxItemFieldType.TEXT,
+          },
         ],
         proposedInput: {
           employees: 84900,
@@ -534,8 +619,18 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
           'Call notes with the pricing agreement and the SOC 2 request.',
         icon: 'IconNotes',
         inputSchema: [
-          { key: 'title', label: 'Title', type: 'TEXT', isRequired: true },
-          { key: 'body', label: 'Body', type: 'LONG_TEXT', isRequired: true },
+          {
+            key: 'title',
+            label: 'Title',
+            type: InboxItemFieldType.TEXT,
+            isRequired: true,
+          },
+          {
+            key: 'body',
+            label: 'Body',
+            type: InboxItemFieldType.LONG_TEXT,
+            isRequired: true,
+          },
         ],
         proposedInput: {
           title: 'Call with Dana Ruiz',
@@ -549,7 +644,12 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
         description: 'Move the Uber opportunity to negotiation.',
         icon: 'IconTargetArrow',
         inputSchema: [
-          { key: 'stage', label: 'Stage', type: 'TEXT', isRequired: true },
+          {
+            key: 'stage',
+            label: 'Stage',
+            type: InboxItemFieldType.TEXT,
+            isRequired: true,
+          },
         ],
         proposedInput: { stage: 'NEGOTIATION' },
         status: InboxItemToolCallStatus.EXECUTED,
@@ -576,14 +676,16 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_1 },
     toolCalls: [
       {
-        toolName: 'send_email',
+        toolName: 'draft_email',
         label: 'Send the renewal quote',
         description: 'Email Marie the quote with the invoice attached.',
         icon: 'IconMail',
         inputSchema: EMAIL_INPUT_SCHEMA,
         proposedInput: {
-          to: 'marie.dubois@google.com',
-          cc: '',
+          recipients: {
+            to: 'marie.dubois@google.com',
+            cc: '',
+          },
           subject: 'Your renewal quote',
           body: 'Hi Marie,\n\nPlease find the renewal quote attached: $24,000 for 12 months at the tier-2 rate.\n\nBest,\nTim',
         },

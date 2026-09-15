@@ -6,10 +6,10 @@ import { LightIconButton } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxPlanToolCallEditor } from '@/inbox/components/InboxPlanToolCallEditor';
-import { type InboxItemContextSource } from '@/inbox/types/InboxItemContext';
 import {
   type InboxItemToolCall,
   InboxItemToolCallStatus,
+  type InboxItemContextSource,
 } from '~/generated/graphql';
 
 const StyledRow = styled.div`

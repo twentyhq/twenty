@@ -1,28 +1,32 @@
 import { type z } from 'zod';
 
-import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-field-schema.type';
+import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 import { type InboxItemToolCallDraft } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-draft.type';
 import { type InboxItemToolCallInput } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-input.type';
 import { type InboxItemToolCallDraftZodSchema } from 'src/engine/core-modules/tool/tools/inbox-tool/inbox-tool.schema';
 
 const LONG_TEXT_THRESHOLD = 80;
 
-const toFieldType = (value: unknown): InboxItemFieldSchema['type'] => {
+const toFieldType = (value: unknown): InboxItemFieldType => {
   if (typeof value === 'number') {
-    return 'NUMBER';
+    return InboxItemFieldType.NUMBER;
   }
 
   if (typeof value === 'boolean') {
-    return 'BOOLEAN';
+    return InboxItemFieldType.BOOLEAN;
+  }
+
+  if (typeof value === 'object') {
+    return InboxItemFieldType.OBJECT;
   }
 
   if (typeof value === 'string') {
     return value.includes('\n') || value.length > LONG_TEXT_THRESHOLD
-      ? 'LONG_TEXT'
-      : 'TEXT';
+      ? InboxItemFieldType.LONG_TEXT
+      : InboxItemFieldType.TEXT;
   }
 
-  return 'TEXT';
+  return InboxItemFieldType.TEXT;
 };
 
 const toFieldLabel = (key: string): string => {
@@ -45,9 +49,9 @@ export const toInboxItemToolCallDrafts = (
 ): InboxItemToolCallDraft[] =>
   toolCalls.map((toolCall) => {
     const requiredKeys = toolCall.requiredInputKeys ?? [];
-    const proposedInput: InboxItemToolCallInput = Object.fromEntries(
+    const proposedInput = Object.fromEntries(
       Object.entries(toolCall.input).filter(([, value]) => value !== null),
-    );
+    ) as InboxItemToolCallInput;
     const proposedKeys = Object.keys(proposedInput);
     const keys = [
       ...proposedKeys,
@@ -64,7 +68,7 @@ export const toInboxItemToolCallDrafts = (
         label: toFieldLabel(key),
         type: proposedKeys.includes(key)
           ? toFieldType(proposedInput[key])
-          : (toolCall.inputFieldTypes?.[key] ?? 'TEXT'),
+          : (toolCall.inputFieldTypes?.[key] ?? InboxItemFieldType.TEXT),
         ...(requiredKeys.includes(key) ? { isRequired: true } : {}),
       })),
       proposedInput,

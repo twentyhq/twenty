@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -17,14 +17,17 @@ import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-i
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
+import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
+import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
-// Leaf module: producers import it, it imports none of them. That keeps the
-// inbox free of cycles with the subsystems that feed it.
+// Producers import the inbox and it imports none of them, except the tool
+// registry it has to reach back into to run an approved plan. That one edge is
+// the cycle forwardRef exists for.
 @Module({
   imports: [
     TypeOrmModule.forFeature([
@@ -40,6 +43,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     PermissionsModule,
     UserRoleModule,
     UserWorkspaceModule,
+    AiAgentExecutionModule,
+    forwardRef(() => ToolProviderModule),
   ],
   providers: [
     InboxItemService,

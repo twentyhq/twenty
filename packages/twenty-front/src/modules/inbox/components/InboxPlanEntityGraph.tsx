@@ -4,13 +4,14 @@ import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import {
-  type InboxItemContextEdge,
-  type InboxItemContextEntity,
-} from '@/inbox/types/InboxItemContext';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import {
+  type InboxItemContextEdge,
+  type InboxItemContextEntity,
+  InboxItemContextEntityKind,
+} from '~/generated/graphql';
 
 const StyledGraph = styled.div`
   align-items: stretch;
@@ -90,11 +91,11 @@ const StyledLine = styled.div`
 // An entity names a standard object by kind; a producer that knows the exact
 // object says so explicitly.
 const OBJECT_NAME_SINGULAR_BY_ENTITY_KIND: Partial<
-  Record<InboxItemContextEntity['kind'], string>
+  Record<InboxItemContextEntityKind, string>
 > = {
-  person: CoreObjectNameSingular.Person,
-  company: CoreObjectNameSingular.Company,
-  opportunity: CoreObjectNameSingular.Opportunity,
+  [InboxItemContextEntityKind.PERSON]: CoreObjectNameSingular.Person,
+  [InboxItemContextEntityKind.COMPANY]: CoreObjectNameSingular.Company,
+  [InboxItemContextEntityKind.OPPORTUNITY]: CoreObjectNameSingular.Opportunity,
 };
 
 type InboxPlanEntityGraphProps = {
@@ -166,7 +167,9 @@ export const InboxPlanEntityGraph = ({
               }
             >
               <StyledEntityHeader>
-                <StyledAvatar isSquare={entity.kind !== 'person'}>
+                <StyledAvatar
+                  isSquare={entity.kind !== InboxItemContextEntityKind.PERSON}
+                >
                   {entity.label.charAt(0).toUpperCase()}
                 </StyledAvatar>
                 {entity.label}

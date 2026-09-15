@@ -15,6 +15,7 @@ import { InboxToolCallExecutionService } from 'src/engine/core-modules/inbox/ser
 import { TOOL_CALL_CLAIM_TIMEOUT_MS } from 'src/engine/core-modules/inbox/utils/inbox-tool-call-claim.util';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 
 const WORKSPACE_ID = 'workspace-id';
 const ACTOR_USER_WORKSPACE_ID = 'actor-user-workspace-id';
@@ -220,7 +221,7 @@ describe('InboxItemToolCallService', () => {
             {
               key: 'amount',
               label: 'Amount',
-              type: 'NUMBER',
+              type: InboxItemFieldType.NUMBER,
               isRequired: false,
             },
           ],
@@ -483,7 +484,12 @@ describe('InboxItemToolCallService', () => {
       inboxItemToolCallRepository.find.mockResolvedValueOnce([
         buildToolCall({
           inputSchema: [
-            { key: 'to', label: 'To', type: 'TEXT', isRequired: true },
+            {
+              key: 'to',
+              label: 'To',
+              type: InboxItemFieldType.TEXT,
+              isRequired: true,
+            },
           ],
           editedInput: { subject: 'Hello' },
         }),
@@ -504,7 +510,7 @@ describe('InboxItemToolCallService', () => {
             {
               key: 'amount',
               label: 'Amount',
-              type: 'NUMBER',
+              type: InboxItemFieldType.NUMBER,
               isRequired: true,
             },
           ],

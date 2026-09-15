@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -43,7 +43,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationModule,
     FeatureFlagModule,
     FileModule,
-    InboxModule,
+    forwardRef(() => InboxModule),
     JwtModule,
     SecureHttpClientModule,
     ObjectMetadataModule,

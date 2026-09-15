@@ -16,7 +16,6 @@ import { InboxPlanEntityGraph } from '@/inbox/components/InboxPlanEntityGraph';
 import { InboxPlanToolCallRow } from '@/inbox/components/InboxPlanToolCallRow';
 import { InboxSnoozeDropdown } from '@/inbox/components/InboxSnoozeDropdown';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
-import { getInboxItemContext } from '@/inbox/utils/getInboxItemContext';
 import { getInboxItemOutcomeLabel } from '@/inbox/utils/getInboxItemOutcomeLabel';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -123,7 +122,7 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
     setInboxItemToolCallRejected,
   } = useInboxItemActions();
 
-  const context = getInboxItemContext(inboxItem);
+  const context = inboxItem.context;
   const toolCalls = inboxItem.toolCalls;
   const pendingToolCalls = toolCalls.filter(
     (toolCall) => toolCall.status === InboxItemToolCallStatus.PROPOSED,
@@ -248,7 +247,7 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
             )}
             <InboxItemSubjectChip
               inboxItem={inboxItem}
-              source={context.source}
+              source={context.source ?? undefined}
             />
             <InboxPlanEntityGraph
               entities={context.entities}
@@ -269,7 +268,7 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
                 <InboxPlanToolCallRow
                   key={toolCall.id}
                   toolCall={toolCall}
-                  source={context.source}
+                  source={context.source ?? undefined}
                   isExpanded={expandedToolCallIds.includes(toolCall.id)}
                   onToggleExpanded={() => toggleToolCall(toolCall.id)}
                   onSave={(editedInput) =>

@@ -7,12 +7,14 @@ import { IconMail } from 'twenty-ui/icon';
 import { Checkbox } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { type InboxItemContextSource } from '@/inbox/types/InboxItemContext';
 import { getInboxToolCallInputAsStrings } from '@/inbox/utils/getInboxToolCallInputAsStrings';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { TextInput } from '@/ui/input/components/TextInput';
 import {
+  type InboxItemContextSource,
   type InboxItemField,
+  InboxItemContextSourceKind,
+  InboxItemFieldType,
   type InboxItemToolCall,
   InboxItemToolCallStatus,
 } from '~/generated/graphql';
@@ -143,7 +145,7 @@ export const InboxPlanToolCallEditor = ({
       : Object.keys(draft).map((key) => ({
           key,
           label: key,
-          type: 'TEXT',
+          type: InboxItemFieldType.TEXT,
           isRequired: false,
         }));
 
@@ -154,15 +156,27 @@ export const InboxPlanToolCallEditor = ({
   // dropped, so what runs is the same shape the agent proposed.
   const toInputValue = (field: InboxItemField, value: string) => {
     if (value === '') {
-      return field.type === 'BOOLEAN' && field.isRequired ? false : undefined;
+      return field.type === InboxItemFieldType.BOOLEAN && field.isRequired
+        ? false
+        : undefined;
     }
 
-    if (field.type === 'NUMBER') {
+    if (field.type === InboxItemFieldType.NUMBER) {
       return Number(value);
     }
 
-    if (field.type === 'BOOLEAN') {
+    if (field.type === InboxItemFieldType.BOOLEAN) {
       return value === 'true';
+    }
+
+    // Left as the text it is when it does not parse, so the run reports the
+    // field rather than the editor silently discarding what was typed.
+    if (field.type === InboxItemFieldType.OBJECT) {
+      try {
+        return JSON.parse(value) as unknown;
+      } catch {
+        return value;
+      }
     }
 
     return value;
@@ -197,7 +211,7 @@ export const InboxPlanToolCallEditor = ({
       );
     }
 
-    if (field.type === 'BOOLEAN') {
+    if (field.type === InboxItemFieldType.BOOLEAN) {
       return (
         <StyledCheckboxField key={field.key}>
           <Checkbox
@@ -209,7 +223,10 @@ export const InboxPlanToolCallEditor = ({
       );
     }
 
-    if (field.type === 'LONG_TEXT') {
+    if (
+      field.type === InboxItemFieldType.LONG_TEXT ||
+      field.type === InboxItemFieldType.OBJECT
+    ) {
       return (
         <TextArea
           key={field.key}
@@ -227,7 +244,7 @@ export const InboxPlanToolCallEditor = ({
       <TextInput
         key={field.key}
         label={field.label}
-        type={field.type === 'NUMBER' ? 'number' : 'text'}
+        type={field.type === InboxItemFieldType.NUMBER ? 'number' : 'text'}
         value={draft[field.key] ?? ''}
         onChange={(value) => setFieldValue(field.key, value)}
         onBlur={save}
@@ -238,30 +255,35 @@ export const InboxPlanToolCallEditor = ({
   };
 
   const isEmail = toolCall.toolName === EMAIL_TOOL_NAME;
-  const shortFields = fields.filter((field) => field.type !== 'LONG_TEXT');
-  const longFields = fields.filter((field) => field.type === 'LONG_TEXT');
+  const isWideField = (field: InboxItemField) =>
+    field.type === InboxItemFieldType.LONG_TEXT ||
+    field.type === InboxItemFieldType.OBJECT;
+  const shortFields = fields.filter((field) => !isWideField(field));
+  const longFields = fields.filter(isWideField);
 
   return (
     <StyledCard>
-      {isEmail && isDefined(source) && source.kind === 'email' && (
-        <StyledSource>
-          <StyledSourceLabel>
-            <IconMail size={theme.icon.size.md} />
-            {source.label}
-          </StyledSourceLabel>
-          {isNonEmptyString(source.detail) && (
-            <StyledSourceDetail>{source.detail}</StyledSourceDetail>
-          )}
-          {isNonEmptyString(source.excerpt) && (
-            <StyledSourceExcerpt>{source.excerpt}</StyledSourceExcerpt>
-          )}
-          {isDefined(source.messageCount) && source.messageCount > 1 && (
-            <StyledMessageCount>
-              {t`${source.messageCount} emails`}
-            </StyledMessageCount>
-          )}
-        </StyledSource>
-      )}
+      {isEmail &&
+        isDefined(source) &&
+        source.kind === InboxItemContextSourceKind.EMAIL && (
+          <StyledSource>
+            <StyledSourceLabel>
+              <IconMail size={theme.icon.size.md} />
+              {source.label}
+            </StyledSourceLabel>
+            {isNonEmptyString(source.detail) && (
+              <StyledSourceDetail>{source.detail}</StyledSourceDetail>
+            )}
+            {isNonEmptyString(source.excerpt) && (
+              <StyledSourceExcerpt>{source.excerpt}</StyledSourceExcerpt>
+            )}
+            {isDefined(source.messageCount) && source.messageCount > 1 && (
+              <StyledMessageCount>
+                {t`${source.messageCount} emails`}
+              </StyledMessageCount>
+            )}
+          </StyledSource>
+        )}
       <StyledFields>
         {isEmail && shortFields.length > 1 ? (
           <>

@@ -1,8 +1,21 @@
 import { z } from 'zod';
 
+import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 
-const scalarSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
+// A tool's input nests more often than not, so a value is any JSON rather
+// than a scalar.
+const inputValueSchema: z.ZodType<unknown> = z.union([
+  z.string(),
+  z.number(),
+  z.boolean(),
+  z.null(),
+  z.record(
+    z.string(),
+    z.lazy(() => inputValueSchema),
+  ),
+  z.array(z.lazy(() => inputValueSchema)),
+]);
 
 export const InboxItemToolCallDraftZodSchema = z.object({
   toolName: z.string().describe('The tool to call once the person agrees'),
@@ -13,7 +26,7 @@ export const InboxItemToolCallDraftZodSchema = z.object({
     .optional(),
   icon: z.string().describe('A Tabler icon name, like IconMail').optional(),
   input: z
-    .record(z.string(), scalarSchema)
+    .record(z.string(), inputValueSchema)
     .describe(
       'The input the call would run with. The person can edit every field before it runs.',
     ),
@@ -24,7 +37,7 @@ export const InboxItemToolCallDraftZodSchema = z.object({
     )
     .optional(),
   inputFieldTypes: z
-    .record(z.string(), z.enum(['TEXT', 'LONG_TEXT', 'NUMBER', 'BOOLEAN']))
+    .record(z.string(), z.nativeEnum(InboxItemFieldType))
     .describe(
       'The type of any key you left out of the input, so the person gets the editor the tool expects rather than a text box. Keys you did give a value for are read off that value.',
     )

@@ -6,12 +6,15 @@ import { type IconComponent, useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useSwitchAgentChatThreadWithDraft } from '@/ai/hooks/useSwitchAgentChatThreadWithDraft';
-import { type InboxItemContextSource } from '@/inbox/types/InboxItemContext';
 import { objectMetadataItemsByIdMapSelector } from '@/object-metadata/states/objectMetadataItemsByIdMapSelector';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type InboxItem } from '~/generated/graphql';
+import {
+  type InboxItem,
+  type InboxItemContextSource,
+  InboxItemContextSourceKind,
+} from '~/generated/graphql';
 
 const StyledChipBadge = styled.span`
   align-items: center;
@@ -54,11 +57,11 @@ const StyledLabel = styled.span`
   white-space: nowrap;
 `;
 
-const SOURCE_ICON_BY_KIND: Record<InboxItemContextSource['kind'], string> = {
-  email: 'IconMail',
-  thread: 'IconMessageCircle',
-  record: 'IconBuildingSkyscraper',
-  call: 'IconPhone',
+const SOURCE_ICON_BY_KIND: Record<InboxItemContextSourceKind, string> = {
+  [InboxItemContextSourceKind.EMAIL]: 'IconMail',
+  [InboxItemContextSourceKind.THREAD]: 'IconMessageCircle',
+  [InboxItemContextSourceKind.RECORD]: 'IconBuildingSkyscraper',
+  [InboxItemContextSourceKind.CALL]: 'IconPhone',
 };
 
 type InboxItemSubjectChipProps = {
@@ -94,8 +97,11 @@ export const InboxItemSubjectChip = ({
 
     if (isDefined(threadId)) {
       return {
-        Icon: getIcon(SOURCE_ICON_BY_KIND.thread),
-        label: source?.kind === 'thread' ? source.label : t`Conversation`,
+        Icon: getIcon(SOURCE_ICON_BY_KIND[InboxItemContextSourceKind.THREAD]),
+        label:
+          source?.kind === InboxItemContextSourceKind.THREAD
+            ? source.label
+            : t`Conversation`,
         onClick: () => {
           switchThreadWithDraft(threadId);
           openAskAiPage();
@@ -111,7 +117,7 @@ export const InboxItemSubjectChip = ({
       return {
         Icon: getIcon(objectMetadataItem.icon),
         label:
-          source?.kind === 'record'
+          source?.kind === InboxItemContextSourceKind.RECORD
             ? source.label
             : objectMetadataItem.labelSingular,
         onClick: () =>

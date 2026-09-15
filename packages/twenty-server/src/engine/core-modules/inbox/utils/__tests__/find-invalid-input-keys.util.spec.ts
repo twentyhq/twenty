@@ -1,10 +1,16 @@
 import { findInvalidInputKeys } from 'src/engine/core-modules/inbox/utils/find-invalid-input-keys.util';
+import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 
 const inputSchema = [
-  { key: 'title', type: 'TEXT' as const, label: 'Title', isRequired: true },
-  { key: 'amount', type: 'NUMBER' as const, label: 'Amount' },
-  { key: 'notes', type: 'LONG_TEXT' as const, label: 'Notes' },
-  { key: 'urgent', type: 'BOOLEAN' as const, label: 'Urgent' },
+  {
+    key: 'title',
+    type: InboxItemFieldType.TEXT as const,
+    label: 'Title',
+    isRequired: true,
+  },
+  { key: 'amount', type: InboxItemFieldType.NUMBER as const, label: 'Amount' },
+  { key: 'notes', type: InboxItemFieldType.LONG_TEXT as const, label: 'Notes' },
+  { key: 'urgent', type: InboxItemFieldType.BOOLEAN as const, label: 'Urgent' },
 ];
 
 describe('findInvalidInputKeys', () => {

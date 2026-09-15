@@ -7,6 +7,7 @@ import { type InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/enti
 import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-field-schema.type';
+import { toInboxItemContextDto } from 'src/engine/core-modules/inbox/utils/to-inbox-item-context-dto.util';
 import {
   getInboxItemScope,
   isInboxItemUnread,
@@ -69,7 +70,7 @@ export const toInboxItemDto = (
     priority: inboxItem.priority,
     version: inboxItem.version,
     title: inboxItem.title,
-    context: inboxItem.context,
+    context: toInboxItemContextDto(inboxItem.context),
     toolCalls: [...(inboxItem.toolCalls ?? [])]
       .sort((left, right) => left.position - right.position)
       .map(toInboxItemToolCallDto),

@@ -7,7 +7,6 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemAssignee } from '@/inbox/components/InboxItemAssignee';
 import { InboxListRowButtons } from '@/inbox/components/InboxListRowButtons';
-import { getInboxItemContext } from '@/inbox/utils/getInboxItemContext';
 import { type InboxItem, InboxItemPriority } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
@@ -158,7 +157,7 @@ export const InboxListRow = ({
   const toolIcons = inboxItem.toolCalls
     .slice(0, MAX_ROW_TOOL_ICONS)
     .map((toolCall) => ({ id: toolCall.id, Icon: getIcon(toolCall.icon) }));
-  const { summary } = getInboxItemContext(inboxItem);
+  const { summary } = inboxItem.context;
   const hasSecondLine = toolIcons.length > 0 || isNonEmptyString(summary);
 
   return (
