@@ -1,4 +1,5 @@
 import type { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import type { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import type { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import type { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import type { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
@@ -28,6 +29,7 @@ export type WorkflowToolDependencies = {
   agentService: AgentService;
   workflowCommonService: WorkflowCommonWorkspaceService;
   workflowVersionCoreSyncService: WorkflowVersionCoreSyncService;
+  workflowCoreSyncService: WorkflowCoreSyncService;
 };
 
 export type WorkflowToolContext = {
