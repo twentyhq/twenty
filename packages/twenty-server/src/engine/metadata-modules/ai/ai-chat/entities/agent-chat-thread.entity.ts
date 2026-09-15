@@ -13,6 +13,7 @@ import {
 import { ADD_LAST_STREAM_ERROR_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-last-stream-error-to-agent-chat-thread-upgrade-command-name.constant';
 import { ADD_PENDING_QUESTION_MESSAGE_ID_TO_AGENT_CHAT_THREAD_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-pending-question-message-id-to-agent-chat-thread-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { nullableBigintColumnTransformer } from 'src/engine/core-modules/usage-limit/utils/nullable-bigint-column-transformer.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
@@ -59,16 +60,32 @@ export class AgentChatThreadEntity {
   @Column({ type: 'int', default: 0 })
   conversationSize: number;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({
+    type: 'bigint',
+    default: 0,
+    transformer: nullableBigintColumnTransformer,
+  })
   totalInputCredits: number;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({
+    type: 'bigint',
+    default: 0,
+    transformer: nullableBigintColumnTransformer,
+  })
   totalOutputCredits: number;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({
+    type: 'bigint',
+    default: 0,
+    transformer: nullableBigintColumnTransformer,
+  })
   totalCacheReadTokens: number;
 
-  @Column({ type: 'bigint', default: 0 })
+  @Column({
+    type: 'bigint',
+    default: 0,
+    transformer: nullableBigintColumnTransformer,
+  })
   totalCacheCreationTokens: number;
 
   @Column({ type: 'varchar', nullable: true })
