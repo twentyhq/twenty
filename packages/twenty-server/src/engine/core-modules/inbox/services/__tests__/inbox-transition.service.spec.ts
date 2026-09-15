@@ -452,7 +452,7 @@ describe('InboxTransitionService', () => {
       );
     });
 
-    it('leaves the clear alone when the assignee is not actually changing', async () => {
+    it('writes nothing at all when the assignee is not actually changing', async () => {
       const clearedItem = buildInboxItem({
         assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
         queueId: QUEUE_ID,
@@ -470,11 +470,7 @@ describe('InboxTransitionService', () => {
         transition: { kind: 'ASSIGN', toUserWorkspaceId: SELF_ASSIGNMENT },
       });
 
-      expect(inboxItemRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        expect.anything(),
-        expect.not.objectContaining({ clearedAt: null }),
-      );
+      expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
   });
 
