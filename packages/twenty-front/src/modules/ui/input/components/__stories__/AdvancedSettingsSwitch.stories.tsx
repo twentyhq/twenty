@@ -67,3 +67,17 @@ export const Dark: Story = {
     ),
   ],
 };
+
+export const Compact: Story = {
+  args: { isCompact: true },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const control = await canvas.findByRole('switch', { name: 'Advanced' });
+
+    await expect(control).not.toBeChecked();
+    await userEvent.click(control);
+    await expect(control).toBeChecked();
+    await userEvent.keyboard(' ');
+    await expect(control).not.toBeChecked();
+  },
+};

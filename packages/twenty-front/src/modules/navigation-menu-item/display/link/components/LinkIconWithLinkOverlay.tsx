@@ -1,7 +1,7 @@
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { getLinkFaviconUrl, isDefined } from 'twenty-shared/utils';
-import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -72,10 +72,6 @@ export const LinkIconWithLinkOverlay = ({
   const showFavicon =
     isDefined(faviconUrl) && !isKnownFailed && localFailedLink !== linkKey;
 
-  const linkStyle = getIconTileColorShades(
-    navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
-  );
-
   return (
     <StyledCompositeContainer>
       <StyledMainIconWrapper>
@@ -89,10 +85,9 @@ export const LinkIconWithLinkOverlay = ({
             }}
           />
         ) : (
-          <DefaultIcon
-            size={16}
-            stroke={theme.icon.stroke.md}
-            color={linkStyle.iconColor}
+          <ColoredIcon
+            Icon={DefaultIcon}
+            color={navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK}
           />
         )}
       </StyledMainIconWrapper>

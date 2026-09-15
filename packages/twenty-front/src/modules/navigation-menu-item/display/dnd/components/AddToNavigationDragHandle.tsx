@@ -1,11 +1,9 @@
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  getIconTileColorShades,
-  TintedIconTile,
-} from 'twenty-ui/primitives/data-display';
+import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconGripVertical, type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -90,19 +88,17 @@ export const AddToNavigationDragHandle = ({
       return <TintedIconTile Icon={Icon} color={effectiveColor} />;
     }
 
-    const isRecord = payload.type === NavigationMenuItemType.RECORD;
+    if (payload.type === NavigationMenuItemType.RECORD) {
+      return (
+        <Icon
+          size={theme.icon.size.md}
+          stroke={theme.icon.stroke.sm}
+          color={theme.grayScale.gray1}
+        />
+      );
+    }
 
-    return (
-      <Icon
-        size={theme.icon.size.md}
-        stroke={isRecord ? theme.icon.stroke.sm : theme.icon.stroke.md}
-        color={
-          isRecord
-            ? theme.grayScale.gray1
-            : getIconTileColorShades(effectiveColor).iconColor
-        }
-      />
-    );
+    return <ColoredIcon Icon={Icon} color={effectiveColor} />;
   };
 
   return (

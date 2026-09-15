@@ -1,6 +1,5 @@
-import { useTheme } from 'twenty-ui/theme-constants';
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
-import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { Suspense, lazy } from 'react';
 import { useIcons } from 'twenty-ui/icon';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -112,7 +111,6 @@ const NavigationMenuItemFolderReadOnlyContent = ({
   navigationMenuItems,
   isGroup,
 }: NavigationMenuItemFolderReadOnlyContentProps) => {
-  const theme = useTheme();
   const { getIcon } = useIcons();
   const isMobile = useIsMobile();
   const FolderIcon = getIcon(folderIconKey ?? FOLDER_ICON_DEFAULT);
@@ -129,14 +127,9 @@ const NavigationMenuItemFolderReadOnlyContent = ({
         <NavigationDrawerItem
           label={folderName}
           Icon={() => (
-            <FolderIcon
-              size={16}
-              stroke={theme.icon.stroke.md}
-              color={
-                getIconTileColorShades(
-                  folderColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
-                ).iconColor
-              }
+            <ColoredIcon
+              Icon={FolderIcon}
+              color={folderColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
             />
           )}
           active={!isOpen && hasActiveChild}

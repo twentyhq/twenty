@@ -5,19 +5,21 @@ import { useId } from 'react';
 import { Switch } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledContainer = styled.label<{ compact: boolean }>`
+const StyledContainer = styled.label<{ isCompact: boolean }>`
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
   display: flex;
-  height: ${({ compact }) =>
-    compact
+  height: ${({ isCompact }) =>
+    isCompact
       ? `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`
       : themeCssVariables.spacing[5]};
-  justify-content: ${({ compact }) => (compact ? 'center' : 'space-between')};
-  padding: ${({ compact }) => (compact ? '0' : themeCssVariables.spacing[1])};
-  width: ${({ compact }) =>
-    compact ? `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px` : '100%'};
+  justify-content: ${({ isCompact }) =>
+    isCompact ? 'center' : 'space-between'};
+  padding: ${({ isCompact }) =>
+    isCompact ? '0' : themeCssVariables.spacing[1]};
+  width: ${({ isCompact }) =>
+    isCompact ? `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px` : '100%'};
 `;
 
 const StyledText = styled.div`
@@ -38,7 +40,7 @@ type AdvancedSettingsSwitchProps = {
   setIsAdvancedModeEnabled: (enabled: boolean) => void;
   label?: string;
   className?: string;
-  compact?: boolean;
+  isCompact?: boolean;
 };
 
 export const AdvancedSettingsSwitch = ({
@@ -46,7 +48,7 @@ export const AdvancedSettingsSwitch = ({
   setIsAdvancedModeEnabled,
   label,
   className,
-  compact = false,
+  isCompact = false,
 }: AdvancedSettingsSwitchProps) => {
   const { t } = useLingui();
   const onChange = (newValue: boolean) => {
@@ -59,10 +61,10 @@ export const AdvancedSettingsSwitch = ({
     <StyledContainer
       className={className}
       htmlFor={instanceId}
-      compact={compact}
-      title={compact ? switchLabel : undefined}
+      isCompact={isCompact}
+      title={isCompact ? switchLabel : undefined}
     >
-      {!compact && <StyledText>{switchLabel}</StyledText>}
+      {!isCompact && <StyledText>{switchLabel}</StyledText>}
       <StyledSwitch
         id={instanceId}
         aria-label={switchLabel}

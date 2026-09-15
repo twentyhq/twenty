@@ -48,7 +48,7 @@ export const SettingsNavigationDrawerContent = () => {
             isAdvancedModeEnabled={isAdvancedModeEnabled}
             setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
             label={t`Advanced`}
-            compact={!isNavigationDrawerExpanded}
+            isCompact={!isNavigationDrawerExpanded}
           />
         </NavigationDrawerSection>
       </StyledAdvancedSwitchFixedContent>

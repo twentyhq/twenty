@@ -136,6 +136,17 @@ export const NavigationMenuItemFolderSubItem = ({
     ? t`System`
     : viewSecondaryLabel;
 
+  const hasSelfColoredIcon =
+    navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
+    navigationMenuItem.type === NavigationMenuItemType.VIEW ||
+    navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT;
+  const iconColor = hasSelfColoredIcon
+    ? undefined
+    : getNavigationMenuItemColor(
+        navigationMenuItem,
+        objectMetadataItem ?? undefined,
+      );
+
   return (
     <NavigationDrawerSubItem
       secondaryLabel={secondaryLabel}
@@ -143,16 +154,7 @@ export const NavigationMenuItemFolderSubItem = ({
       Icon={() => (
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
       )}
-      iconColor={
-        navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
-        navigationMenuItem.type === NavigationMenuItemType.VIEW ||
-        navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT
-          ? undefined
-          : getNavigationMenuItemColor(
-              navigationMenuItem,
-              objectMetadataItem ?? undefined,
-            )
-      }
+      iconColor={iconColor}
       to={isDragging || isEditable ? undefined : computedLink}
       onClick={handleClick}
       active={isActive}
