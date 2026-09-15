@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "لا يمكن إكمال العملية بسبب سجلات ذات صلة."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "لا يمكن إنشاء نسخ مسودة متعددة لنفس سير العمل"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "لا يمكن إنشاء إصدار سير العمل بحالة غير المسودة"
 
@@ -10439,7 +10439,7 @@ msgstr "حقل happensAt المستخدم بواسطة نوع نشاط المخ�
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "لا يمكن حذف الإصدار الأولي من سير العمل"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "لا يمكن تعديل هذا الحقل."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "لا يمكن تحديث هذا الحقل مباشرةً في إصدار سير العمل"
 
@@ -11249,6 +11249,16 @@ msgstr "هذا الإصدار ليس أعلى من الإصدار المنشور
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "هذا الإصدار من التطبيق مثبت بالفعل في مساحة العمل هذه."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr ""
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr ""
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts

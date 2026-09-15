@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Nie można ukończyć operacji z powodu powiązanych rekordów."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Nie można utworzyć wielu roboczych wersji dla tego samego workflow"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Nie można utworzyć wersji workflow o innym statusie niż roboczy"
 
@@ -10439,7 +10439,7 @@ msgstr "Pole happensAt używane przez ten typ aktywności osi czasu nie jest dos
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Początkowa wersja workflow nie może być usunięta"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Tego pola nie można modyfikować."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "To pole nie może być aktualizowane bezpośrednio w wersji przepływu pracy"
 
@@ -11249,6 +11249,16 @@ msgstr "Ta wersja nie jest wyższa niż obecnie wdrożona wersja. Zwiększ numer
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Ta wersja aplikacji jest już zainstalowana w tym obszarze roboczym."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr ""
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr ""
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
