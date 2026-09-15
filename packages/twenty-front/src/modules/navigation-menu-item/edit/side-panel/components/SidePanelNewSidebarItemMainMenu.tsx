@@ -1,4 +1,3 @@
-import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -64,7 +63,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 onEnter={onSelectObject}
               >
                 <CommandMenuItem
-                  LeftComponent={<ColoredIcon Icon={IconBox} color="gray" />}
+                  Icon={IconBox}
                   label={t`Object`}
                   id={NavigationMenuItemType.OBJECT}
                   hasSubMenu={true}
@@ -76,7 +75,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                 onEnter={onSelectView}
               >
                 <CommandMenuItem
-                  LeftComponent={<ColoredIcon Icon={IconTable} color="gray" />}
+                  Icon={IconTable}
                   label={t`View`}
                   id={NavigationMenuItemType.VIEW}
                   hasSubMenu={true}
