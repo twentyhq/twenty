@@ -11538,6 +11538,9 @@ export default {
             "isVisible": [
                 8
             ],
+            "deletedAt": [
+                1
+            ],
             "__typename": [
                 1
             ]

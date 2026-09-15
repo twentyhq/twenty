@@ -278,6 +278,7 @@ describe('View REST API', () => {
 
       assertRestApiSuccessfulResponse(deleteResponse);
       expect(deleteResponse.body.success).toBe(true);
+      testViewId = undefined;
 
       const getResponse = await makeRestAPIRequest({
         method: 'get',

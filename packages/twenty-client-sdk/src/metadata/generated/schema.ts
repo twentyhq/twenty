@@ -7459,7 +7459,7 @@ id: Scalars['UUID'],
 /** The view field group to update */
 update: UpdateViewFieldGroupInputUpdates}
 
-export interface UpdateViewFieldGroupInputUpdates {name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isVisible?: (Scalars['Boolean'] | null)}
+export interface UpdateViewFieldGroupInputUpdates {name?: (Scalars['String'] | null),position?: (Scalars['Float'] | null),isVisible?: (Scalars['Boolean'] | null),deletedAt?: (Scalars['String'] | null)}
 
 export interface CreateViewFieldGroupInput {id?: (Scalars['UUID'] | null),name: Scalars['String'],viewId: Scalars['UUID'],position?: (Scalars['Float'] | null),isVisible?: (Scalars['Boolean'] | null)}
 
