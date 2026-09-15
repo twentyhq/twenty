@@ -7,12 +7,14 @@ import { useRecordIndexExportParameters } from '@/object-record/record-index/exp
 import { useExportRecords } from '@/record-export/hooks/useExportRecords';
 import { type ViewType } from '@/views/types/ViewType';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
-import { formatValueForCSV } from '@/spreadsheet-import/utils/formatValueForCSV';
-import { sanitizeValueForCSVExport } from '@/spreadsheet-import/utils/sanitizeValueForCSVExport';
 import { t } from '@lingui/core/macro';
 import { saveAs } from 'file-saver';
-import { isDefined } from 'twenty-shared/utils';
+import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from 'twenty-shared/constants';
+import {
+  formatValueForCSV,
+  isDefined,
+  sanitizeValueForCSVExport,
+} from 'twenty-shared/utils';
 import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
