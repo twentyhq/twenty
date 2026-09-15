@@ -5,7 +5,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { VerifyEmailingDomainDocument } from '~/generated-metadata/graphql';
 import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsEmailingDomainVerifyButtonProps = {
   emailingDomainId: string;

@@ -14,7 +14,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { useLingui } from '@lingui/react/macro';
 import { IconEyeX, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
+import { AppTooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_TAB_TO_DEFAULT_MODAL_ID =
   'reset-single-widget-tab-to-default-modal';

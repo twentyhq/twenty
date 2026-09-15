@@ -9,7 +9,7 @@ describe('renderComponentReference', () => {
   it('escapes attributes and prose while keeping markdown and code intact', () => {
     const reference = renderComponentReference({
       name: 'Example',
-      entryPoint: 'twenty-ui/input',
+      entryPoint: 'twenty-ui/primitives/input',
       slug: 'input/example',
       props: [
         {
@@ -44,7 +44,7 @@ describe('compound component references', () => {
   it('distinguishes identically named props on different parts and retains defaults', () => {
     const reference = renderComponentReference({
       name: 'Menu',
-      entryPoint: 'twenty-ui/surfaces',
+      entryPoint: 'twenty-ui/primitives/surfaces',
       slug: 'surfaces/menu',
       props: [],
       parts: [

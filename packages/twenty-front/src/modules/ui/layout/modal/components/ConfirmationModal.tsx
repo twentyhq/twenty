@@ -10,8 +10,12 @@ import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStateful
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCenteredTitle = styled.div`

@@ -41,9 +41,9 @@ import {
   IconPoint,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightIconButton, Button } from 'twenty-ui/input';
-import { CardContent, CardFooter } from 'twenty-ui/surfaces';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton, Button } from 'twenty-ui/primitives/input';
+import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 

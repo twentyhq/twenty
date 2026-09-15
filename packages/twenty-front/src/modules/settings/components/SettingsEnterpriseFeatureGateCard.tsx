@@ -4,8 +4,8 @@ import { SettingsOptionCardContentButton } from '@/settings/components/SettingsO
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconArrowUp, IconLock } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Card } from 'twenty-ui/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsEnterpriseFeatureGateCard = ({

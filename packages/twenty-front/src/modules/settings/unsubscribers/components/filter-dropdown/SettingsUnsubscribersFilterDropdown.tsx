@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { IconFilter } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { SettingsUnsubscribersFilterMenuContent } from '@/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterMenuContent';
 import { SettingsUnsubscribersFilterOptionsContent } from '@/settings/unsubscribers/components/filter-dropdown/SettingsUnsubscribersFilterOptionsContent';

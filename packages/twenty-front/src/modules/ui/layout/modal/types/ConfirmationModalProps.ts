@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react';
-import { type ButtonColor } from 'twenty-ui/input';
-import { type ModalOverlay } from 'twenty-ui/surfaces';
+import { type ButtonColor } from 'twenty-ui/primitives/input';
+import { type ModalOverlay } from 'twenty-ui/primitives/surfaces';
 
 export type ConfirmationModalProps = {
   modalInstanceId: string;

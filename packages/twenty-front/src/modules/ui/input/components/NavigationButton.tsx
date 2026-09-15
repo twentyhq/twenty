@@ -1,6 +1,6 @@
 import { Link, type LinkProps } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Button, type ButtonProps } from 'twenty-ui/input';
+import { Button, type ButtonProps } from 'twenty-ui/primitives/input';
 
 type NavigationButtonProps = Pick<
   ButtonProps,

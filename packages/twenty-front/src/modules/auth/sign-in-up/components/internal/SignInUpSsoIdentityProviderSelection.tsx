@@ -9,7 +9,7 @@ import { guessSsoIdentityProviderIconByUrl } from '@/settings/security/utils/gue
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
 import React, { createElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui/layout';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const SignInUpSsoIdentityProviderSelection = () => {

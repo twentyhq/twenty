@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { In } from 'typeorm';
@@ -9,9 +10,13 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
-import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
-import { isRecordAdmittedByRecordShareGate } from 'src/engine/record-share/utils/is-record-admitted-by-record-share-gate.util';
-import { type EventRecordSnapshot } from 'src/engine/record-share/utils/resolve-event-record-snapshots.util';
+import { type EventRecordShareGate } from 'src/engine/record-share/types/event-record-share-gate.type';
+import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+import {
+  type EventRecordSnapshot,
+  resolveEventRecordSnapshots,
+} from 'src/engine/record-share/utils/resolve-event-record-snapshots.util';
+import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/record-share/utils/resolve-record-ids-shared-with-principals.util';
 import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/twenty-orm/constants/max-inherited-readability-depth.constant';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
@@ -24,6 +29,7 @@ import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twent
 import { resolveInheritedReadabilityParents } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 type ReadabilityMaps = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -36,8 +42,14 @@ type SnapshotEvaluation = {
   snapshots: EventRecordSnapshot[];
   subject: RowAccessPolicySubject;
   depth: number;
+  maps?: ReadabilityMaps;
+};
+
+type SnapshotEvaluationInContext = SnapshotEvaluation & {
   maps: ReadabilityMaps;
 };
+
+type FetchRecordShares = () => Promise<RecordShare[]>;
 
 @Injectable()
 export class RecordAccessPolicyService {
@@ -47,47 +59,118 @@ export class RecordAccessPolicyService {
     private readonly recordShareService: RecordShareService,
   ) {}
 
-  async resolveRecordIdsReadableThroughParents({
+  buildEventRecordShareGate({
     workspaceId,
     objectMetadata,
-    records,
-    subject,
-  }: {
-    workspaceId: string;
-    objectMetadata: FlatObjectMetadata;
-    records: EventRecordSnapshot[];
-    subject: RowAccessPolicySubject;
-  }): Promise<Set<string>> {
-    if (records.length === 0) {
-      return new Set();
+    events,
+  }: WorkspaceEventBatch<ObjectRecordEvent>): EventRecordShareGate {
+    let recordSharesPromise: Promise<RecordShare[]> | undefined;
+    const fetchRecordShares: FetchRecordShares = () =>
+      (recordSharesPromise ??= this.recordShareService.findByRecordIds({
+        workspaceId,
+        objectMetadataId: objectMetadata.id,
+        recordIds: events.map((event) => event.recordId),
+      }));
+
+    return {
+      resolveAdmittedRecordIds: async (subject) => {
+        const { featureFlagsMap } =
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'featureFlagsMap',
+          ]);
+        const snapshots = resolveEventRecordSnapshots(events);
+
+        if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
+          return new Set(snapshots.map((snapshot) => snapshot.id));
+        }
+
+        return this.resolveSnapshotIdsAdmittedByRecordShareGate(
+          { workspaceId, objectMetadata, snapshots, subject, depth: 0 },
+          fetchRecordShares,
+        );
+      },
+    };
+  }
+
+  private async resolveSnapshotIdsAdmittedByRecordShareGate(
+    evaluation: SnapshotEvaluation,
+    fetchRecordShares: FetchRecordShares,
+  ): Promise<Set<string>> {
+    const { objectMetadata, snapshots, subject } = evaluation;
+    const gateKind = resolveRecordShareGateKind({
+      readability: objectMetadata.readability,
+      isOwningApplication: subject.isOwningApplication(objectMetadata),
+    });
+
+    switch (gateKind) {
+      case 'open':
+        return new Set(snapshots.map((snapshot) => snapshot.id));
+      case 'deny':
+        return new Set();
+      case 'private':
+        return this.resolveSnapshotIdsSharedWithSubject(
+          evaluation,
+          fetchRecordShares,
+        );
+      case 'inherited':
+        return new Set([
+          ...(await this.resolveSnapshotIdsSharedWithSubject(
+            evaluation,
+            fetchRecordShares,
+          )),
+          ...(await this.resolveSnapshotIdsReadableThroughParents(evaluation)),
+        ]);
+      default:
+        return assertUnreachable(gateKind);
+    }
+  }
+
+  private async resolveSnapshotIdsSharedWithSubject(
+    { snapshots, subject }: SnapshotEvaluation,
+    fetchRecordShares: FetchRecordShares,
+  ): Promise<Set<string>> {
+    const snapshotIds = snapshots.map((snapshot) => snapshot.id);
+
+    if (!isDefined(subject.principalIds) || snapshotIds.length === 0) {
+      return new Set(snapshotIds);
     }
 
-    const maps = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'flatObjectMetadataMaps',
-      'flatFieldMetadataMapsOrm',
-    ]);
+    const sharedRecordIds = resolveRecordIdsSharedWithPrincipals({
+      recordShares: await fetchRecordShares(),
+      principalIds: subject.principalIds,
+      accessLevels: resolveRequiredRecordShareAccessLevels('select'),
+    });
 
-    return this.workspaceOrmManager.executeInWorkspaceContext(
-      () =>
-        this.resolveSnapshotIdsReadableThroughParents({
-          workspaceId,
-          objectMetadata,
-          snapshots: records,
-          subject,
-          depth: 0,
-          maps,
-        }),
-      buildSystemAuthContext(workspaceId),
+    return new Set(
+      snapshotIds.filter((snapshotId) => sharedRecordIds.has(snapshotId)),
     );
   }
 
   private async resolveSnapshotIdsReadableThroughParents(
     evaluation: SnapshotEvaluation,
   ): Promise<Set<string>> {
+    const { workspaceId, objectMetadata, maps } = evaluation;
+
+    if (!isDefined(maps)) {
+      const loadedMaps = await this.workspaceCacheService.getOrRecompute(
+        workspaceId,
+        ['flatObjectMetadataMaps', 'flatFieldMetadataMapsOrm'],
+      );
+
+      return this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.resolveSnapshotIdsReadableThroughParents({
+            ...evaluation,
+            maps: loadedMaps,
+          }),
+        buildSystemAuthContext(workspaceId),
+      );
+    }
+
     const parents = resolveInheritedReadabilityParents({
-      flatObjectMetadata: evaluation.objectMetadata,
-      flatFieldMetadataMaps: evaluation.maps.flatFieldMetadataMapsOrm,
-      flatObjectMetadataMaps: evaluation.maps.flatObjectMetadataMaps,
+      flatObjectMetadata: objectMetadata,
+      flatFieldMetadataMaps: maps.flatFieldMetadataMapsOrm,
+      flatObjectMetadataMaps: maps.flatObjectMetadataMaps,
     });
     const readableSnapshotIds = new Set<string>();
 
@@ -96,10 +179,12 @@ export class RecordAccessPolicyService {
         parent.kind === 'column'
           ? await this.resolveSnapshotIdsReadableThroughColumnParent({
               ...evaluation,
+              maps,
               parent,
             })
           : await this.resolveSnapshotIdsReadableThroughChildren({
               ...evaluation,
+              maps,
               parent,
             });
 
@@ -116,7 +201,7 @@ export class RecordAccessPolicyService {
     subject,
     depth,
     parent,
-  }: SnapshotEvaluation & {
+  }: SnapshotEvaluationInContext & {
     parent: InheritedReadabilityColumnParent;
   }): Promise<Set<string>> {
     const parentIdBySnapshotId = new Map(
@@ -147,7 +232,7 @@ export class RecordAccessPolicyService {
     depth,
     maps,
     parent,
-  }: SnapshotEvaluation & {
+  }: SnapshotEvaluationInContext & {
     parent: InheritedReadabilityChildrenParent;
   }): Promise<Set<string>> {
     const childNameSingular = parent.childFlatObjectMetadata.nameSingular;
@@ -228,9 +313,10 @@ export class RecordAccessPolicyService {
   }
 
   private async resolveReadableSnapshotIds(
-    evaluation: SnapshotEvaluation,
+    evaluation: SnapshotEvaluationInContext,
   ): Promise<Set<string>> {
-    const { objectMetadata, snapshots, subject, depth, maps } = evaluation;
+    const { workspaceId, objectMetadata, snapshots, subject, depth, maps } =
+      evaluation;
 
     if (snapshots.length === 0 || depth > MAX_INHERITED_READABILITY_DEPTH) {
       return new Set();
@@ -262,69 +348,15 @@ export class RecordAccessPolicyService {
             }),
           )
         : snapshots;
-    const gateKind = resolveRecordShareGateKind({
-      readability: objectMetadata.readability,
-      isOwningApplication: subject.isOwningApplication(objectMetadata),
-    });
 
-    switch (gateKind) {
-      case 'open':
-        return new Set(candidateSnapshots.map((snapshot) => snapshot.id));
-      case 'deny':
-        return new Set();
-      case 'private':
-        return this.resolveSnapshotIdsSharedWithSubject({
-          ...evaluation,
-          snapshots: candidateSnapshots,
-        });
-      case 'inherited':
-        return new Set([
-          ...(await this.resolveSnapshotIdsSharedWithSubject({
-            ...evaluation,
-            snapshots: candidateSnapshots,
-          })),
-          ...(await this.resolveSnapshotIdsReadableThroughParents({
-            ...evaluation,
-            snapshots: candidateSnapshots,
-          })),
-        ]);
-      default:
-        return assertUnreachable(gateKind);
-    }
-  }
-
-  private async resolveSnapshotIdsSharedWithSubject({
-    workspaceId,
-    objectMetadata,
-    snapshots,
-    subject,
-  }: SnapshotEvaluation): Promise<Set<string>> {
-    const snapshotIds = snapshots.map((snapshot) => snapshot.id);
-
-    if (!isDefined(subject.principalIds) || snapshotIds.length === 0) {
-      return new Set(snapshotIds);
-    }
-
-    const recordShareGate = {
-      recordSharesByRecordId: indexRecordSharesByRecordId(
-        await this.recordShareService.findByRecordIds({
+    return this.resolveSnapshotIdsAdmittedByRecordShareGate(
+      { ...evaluation, snapshots: candidateSnapshots },
+      () =>
+        this.recordShareService.findByRecordIds({
           workspaceId,
           objectMetadataId: objectMetadata.id,
-          recordIds: snapshotIds,
+          recordIds: candidateSnapshots.map((snapshot) => snapshot.id),
         }),
-      ),
-      principalIds: subject.principalIds,
-      recordIdsReadableThroughParents: new Set<string>(),
-    };
-
-    return new Set(
-      snapshotIds.filter((recordId) =>
-        isRecordAdmittedByRecordShareGate({
-          recordShareGate,
-          recordId,
-          accessLevels: resolveRequiredRecordShareAccessLevels('select'),
-        }),
-      ),
     );
   }
 
@@ -332,12 +364,12 @@ export class RecordAccessPolicyService {
     objectMetadata,
     recordIds,
     subject,
-    depth = 0,
+    depth,
   }: {
     objectMetadata: FlatObjectMetadata;
     recordIds: string[];
     subject: RowAccessPolicySubject;
-    depth?: number;
+    depth: number;
   }): Promise<Set<string>> {
     if (recordIds.length === 0) {
       return new Set();

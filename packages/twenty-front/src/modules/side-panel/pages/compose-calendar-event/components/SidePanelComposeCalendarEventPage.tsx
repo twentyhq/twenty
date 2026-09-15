@@ -14,7 +14,7 @@ import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCalendarEvent, IconTrash } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
+import { Button, IconButton } from 'twenty-ui/primitives/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

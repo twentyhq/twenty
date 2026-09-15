@@ -3,8 +3,8 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { t } from '@lingui/core/macro';
-import { CircularProgressBar } from 'twenty-ui/feedback';
-import { ModalFooter } from 'twenty-ui/surfaces';
+import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
+import { ModalFooter } from 'twenty-ui/primitives/surfaces';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledFooterContainer = styled.div`

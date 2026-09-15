@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, ButtonGroup } from 'twenty-ui/input';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { IconPlus } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 import 'twenty-ui/style.css';
