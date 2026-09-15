@@ -6,9 +6,7 @@ import { v4 } from 'uuid';
 
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { CREATE_RECORD_EXPORT_SCRIPT } from 'src/engine/core-modules/record-export/constants/create-record-export-script.constant';
-import { DELETE_RECORD_EXPORT_SCRIPT } from 'src/engine/core-modules/record-export/constants/delete-record-export-script.constant';
-import { READ_RECORD_EXPORT_SCRIPT } from 'src/engine/core-modules/record-export/constants/read-record-export-script.constant';
+import { UPDATE_RECORD_EXPORT_LEASE_SCRIPT } from 'src/engine/core-modules/record-export/constants/update-record-export-lease-script.constant';
 import {
   RECORD_EXPORT_MAX_DURATION_MS,
   RECORD_EXPORT_DOWNLOAD_TTL_MS,
@@ -28,7 +26,6 @@ type RecordExportChanges = Partial<
     | 'filePath'
     | 'errorMessage'
     | 'totalRecordCount'
-    | 'expiresAt'
   >
 >;
 type RecordExportCondition = {
@@ -71,26 +68,25 @@ export class RecordExportCacheService {
       createdAt: now,
       expiresAt: new Date(now.getTime() + RECORD_EXPORT_MAX_DURATION_MS),
     };
-    const created = await this.cacheStorageService.runScript<number>({
-      script: CREATE_RECORD_EXPORT_SCRIPT,
-      keys: [
-        this.getRecordKey({
-          workspaceId: input.workspaceId,
-          id: recordExport.id,
-        }),
-        this.getActiveKey(input.workspaceId),
-      ],
-      args: [
-        recordExport.id,
-        JSON.stringify(recordExport),
-        JSON.stringify(state),
-        String(RECORD_EXPORT_CONNECTION_TTL_MS),
-      ],
-    });
+    const created = await this.cacheStorageService.setIfAbsent(
+      this.getActiveKey(input.workspaceId),
+      recordExport.id,
+      RECORD_EXPORT_CONNECTION_TTL_MS,
+    );
     if (!created)
       throw new ConflictException(
         t`An export is already running in this workspace. Please wait for it to finish.`,
       );
+    try {
+      await this.cacheStorageService.set(
+        this.getRecordKey(recordExport),
+        recordExport,
+        RECORD_EXPORT_MAX_DURATION_MS,
+      );
+    } catch (error) {
+      await this.delete(recordExport);
+      throw error;
+    }
     return recordExport;
   }
 
@@ -103,21 +99,20 @@ export class RecordExportCacheService {
     id: string;
     keepAlive?: boolean;
   }): Promise<RecordExport | undefined> {
-    const [data, state] = await this.cacheStorageService.runScript<
-      (string | null)[]
-    >({
-      script: READ_RECORD_EXPORT_SCRIPT,
-      keys: [
-        this.getRecordKey({ workspaceId, id }),
-        this.getActiveKey(workspaceId),
-      ],
-      args: [id, String(keepAlive ? RECORD_EXPORT_CONNECTION_TTL_MS : 0)],
-    });
-    if (!isDefined(data) || !isDefined(state)) return undefined;
-    const recordExport = {
-      ...JSON.parse(data),
-      ...JSON.parse(state),
-    } as RecordExport;
+    const connected = keepAlive
+      ? await this.updateLease({
+          workspaceId,
+          id,
+          ttl: RECORD_EXPORT_CONNECTION_TTL_MS,
+        })
+      : (await this.cacheStorageService.get<string>(
+          this.getActiveKey(workspaceId),
+        )) === id;
+    const recordExport = await this.cacheStorageService.get<RecordExport>(
+      this.getRecordKey({ workspaceId, id }),
+    );
+    if (!isDefined(recordExport)) return undefined;
+    if (!connected && this.isRunning(recordExport)) return undefined;
     return {
       ...recordExport,
       createdAt: new Date(recordExport.createdAt),
@@ -137,23 +132,72 @@ export class RecordExportCacheService {
     condition: RecordExportCondition;
     changes: RecordExportChanges;
   }): Promise<boolean> {
-    return (
-      (await this.cacheStorageService.runScript<number>({
+    while (true) {
+      const recordExport = await this.findOne({ workspaceId, id });
+      if (
+        !isDefined(recordExport) ||
+        (isDefined(condition.statuses) &&
+          !condition.statuses.includes(recordExport.status)) ||
+        (condition.attemptId !== undefined &&
+          condition.attemptId !== recordExport.attemptId)
+      ) {
+        return false;
+      }
+      let expiresAt = recordExport.expiresAt;
+      if (changes.status === RecordExportStatus.COMPLETED) {
+        expiresAt = new Date(Date.now() + RECORD_EXPORT_DOWNLOAD_TTL_MS);
+      }
+      if (changes.status === RecordExportStatus.FAILED) {
+        expiresAt = new Date(Date.now() + RECORD_EXPORT_CONNECTION_TTL_MS);
+      }
+      const updated = {
+        ...recordExport,
+        ...changes,
+        updatedAt: new Date(),
+        expiresAt,
+      };
+      const ttl = updated.expiresAt.getTime() - Date.now();
+      if (ttl <= 0) return false;
+      const updatedRecord = await this.cacheStorageService.runScript<number>({
         script: UPDATE_RECORD_EXPORT_SCRIPT,
         keys: [
           this.getRecordKey({ workspaceId, id }),
           this.getActiveKey(workspaceId),
         ],
         args: [
-          id,
-          JSON.stringify(condition),
-          JSON.stringify({ ...changes, updatedAt: new Date() }),
-          String(
-            changes.status === RecordExportStatus.COMPLETED
-              ? RECORD_EXPORT_DOWNLOAD_TTL_MS
-              : 0,
-          ),
+          JSON.stringify(recordExport),
+          JSON.stringify(updated),
+          String(ttl),
+          this.isRunning(recordExport) ? JSON.stringify(id) : '',
+          this.isRunning(updated) ? '0' : '1',
         ],
+      });
+      if (updatedRecord === 0) return false;
+      if (updatedRecord === -1) continue;
+      return true;
+    }
+  }
+
+  private isRunning(recordExport: RecordExport): boolean {
+    return [RecordExportStatus.QUEUED, RecordExportStatus.PROCESSING].includes(
+      recordExport.status,
+    );
+  }
+
+  private async updateLease({
+    workspaceId,
+    id,
+    ttl,
+  }: {
+    workspaceId: string;
+    id: string;
+    ttl: number;
+  }): Promise<boolean> {
+    return (
+      (await this.cacheStorageService.runScript<number>({
+        script: UPDATE_RECORD_EXPORT_LEASE_SCRIPT,
+        keys: [this.getActiveKey(workspaceId)],
+        args: [JSON.stringify(id), String(ttl)],
       })) === 1
     );
   }
@@ -179,13 +223,7 @@ export class RecordExportCacheService {
     workspaceId: string;
     id: string;
   }): Promise<void> {
-    await this.cacheStorageService.runScript({
-      script: DELETE_RECORD_EXPORT_SCRIPT,
-      keys: [
-        this.getRecordKey({ workspaceId, id }),
-        this.getActiveKey(workspaceId),
-      ],
-      args: [id],
-    });
+    await this.cacheStorageService.del(this.getRecordKey({ workspaceId, id }));
+    await this.updateLease({ workspaceId, id, ttl: 0 });
   }
 }

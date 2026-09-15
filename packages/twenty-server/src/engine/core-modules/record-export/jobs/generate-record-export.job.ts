@@ -18,7 +18,6 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import {
   RECORD_EXPORT_MAX_DURATION_MS,
-  RECORD_EXPORT_DOWNLOAD_TTL_MS,
   RECORD_EXPORT_MAX_FILE_BYTES,
   RECORD_EXPORT_PROGRESS_INTERVAL_MS,
   RECORD_EXPORT_REQUESTER_REFRESH_INTERVAL_MS,
@@ -236,7 +235,6 @@ export class GenerateRecordExportJob {
           status: RecordExportStatus.COMPLETED,
           processedRecordCount,
           filePath,
-          expiresAt: new Date(Date.now() + RECORD_EXPORT_DOWNLOAD_TTL_MS),
         },
       });
 

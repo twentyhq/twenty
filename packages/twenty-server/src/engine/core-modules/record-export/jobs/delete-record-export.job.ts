@@ -4,7 +4,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { RECORD_EXPORT_CONNECTION_TTL_MS } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { isDefined } from 'twenty-shared/utils';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -17,7 +16,6 @@ export class DeleteRecordExportJob {
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
-    private readonly fileStorageService: FileStorageService,
   ) {}
 
   @Process(DeleteRecordExportJob.name)
@@ -54,12 +52,9 @@ export class DeleteRecordExportJob {
         );
       return;
     }
-    await this.fileStorageService.deleteFolderObjects({
-      ...this.recordExportWorkspaceService.getFileResource({
-        workspaceId,
-        resourcePath: recordExportId,
-      }),
-      folderPath: recordExportId,
+    await this.recordExportWorkspaceService.cancel({
+      workspaceId,
+      id: recordExportId,
     });
   }
 }
