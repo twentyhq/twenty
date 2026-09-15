@@ -7,9 +7,9 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { Tag } from 'twenty-ui/data-display';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { FindAdminApplicationRegistrationClaimsDocument } from '~/generated-admin/graphql';
 
 const CLAIMS_TABLE_GRID = '1fr 140px';

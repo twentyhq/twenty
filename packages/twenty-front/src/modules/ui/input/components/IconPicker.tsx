@@ -10,14 +10,14 @@ import React, {
   useState,
 } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { ColorSample } from 'twenty-ui/data-display';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
 import {
   IconButton,
   type IconButtonSize,
   type IconButtonVariant,
   LightIconButton,
-} from 'twenty-ui/input';
+} from 'twenty-ui/primitives/input';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -7,8 +7,8 @@ import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectTo
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
 import { useMutation } from '@apollo/client/react';
 import { DeleteCurrentWorkspaceDocument } from '~/generated-metadata/graphql';
 

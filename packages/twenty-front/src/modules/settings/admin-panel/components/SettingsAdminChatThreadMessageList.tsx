@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { isNonEmptyArray } from 'twenty-shared/utils';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AgentMessageRole } from '~/generated-admin/graphql';
 

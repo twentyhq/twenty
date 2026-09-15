@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { getIconTileColorShades } from 'twenty-ui/data-display';
+import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

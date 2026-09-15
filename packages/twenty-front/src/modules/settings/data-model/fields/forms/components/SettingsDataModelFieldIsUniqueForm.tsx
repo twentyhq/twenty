@@ -7,7 +7,7 @@ import { canBeUnique } from '@/settings/data-model/fields/forms/utils/canBeUniqu
 import { t } from '@lingui/core/macro';
 import { type FieldMetadataType } from 'twenty-shared/types';
 import { IconKey } from 'twenty-ui/icon';
-import { Switch } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/primitives/input';
 
 type SettingsDataModelFieldIsUniqueFormValues = {
   isUnique: boolean;

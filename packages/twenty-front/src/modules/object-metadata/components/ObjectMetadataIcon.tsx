@@ -1,6 +1,6 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { getIconTileColorShades } from 'twenty-ui/data-display';
+import { getIconTileColorShades } from 'twenty-ui/primitives/data-display';
 import { useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme-constants';
 

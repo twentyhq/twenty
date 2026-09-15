@@ -4,7 +4,7 @@ import {
   Avatar,
   StyledTintedIconTileContainer,
   getIconTileColorShades,
-} from 'twenty-ui/data-display';
+} from 'twenty-ui/primitives/data-display';
 import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';

@@ -14,10 +14,10 @@ import {
   AnimatedPlaceholderEmptySubTitle,
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
-} from 'twenty-ui/feedback';
-import { Section } from 'twenty-ui/layout';
+} from 'twenty-ui/primitives/feedback';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H3Title } from 'twenty-ui/typography';
+import { H3Title } from 'twenty-ui/primitives/typography';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 

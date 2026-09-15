@@ -4,7 +4,11 @@ import { t } from '@lingui/core/macro';
 import { useId } from 'react';
 import { createPortal } from 'react-dom';
 import { assertUnreachable } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/primitives/surfaces';
 import { CallRecordingStatus } from '~/generated/graphql';
 
 const IN_PROGRESS_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [

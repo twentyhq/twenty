@@ -27,7 +27,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { styled } from '@linaria/react';
-import { AnimatedEaseInOut } from 'twenty-ui/layout';
+import { AnimatedEaseInOut } from 'twenty-ui/primitives/layout';
 
 const StyledContainer = styled.div`
   display: flex;

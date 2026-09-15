@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { Chip } from 'twenty-ui/data-display';
+import { Chip } from 'twenty-ui/primitives/data-display';
 import {
   IconBolt,
   IconBuildingSkyscraper,
