@@ -13,7 +13,12 @@ export const SettingsBillingPlansContent = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { formatPrices: planPrices } = useFormatPrices();
   const [billingInterval, setBillingInterval] =
-    useState<SettingsBillingPlanInterval>(SubscriptionInterval.Year);
+    useState<SettingsBillingPlanInterval>(
+      currentWorkspace?.currentBillingSubscription?.interval ===
+        SubscriptionInterval.Month
+        ? SubscriptionInterval.Month
+        : SubscriptionInterval.Year,
+    );
 
   const currentPlanKey = getSubscriptionPlanKey(
     currentWorkspace?.currentBillingSubscription,
