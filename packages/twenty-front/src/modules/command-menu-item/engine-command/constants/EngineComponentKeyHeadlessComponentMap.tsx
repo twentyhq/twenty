@@ -47,7 +47,6 @@ import { AddNodeWorkflowSingleRecordCommand } from '@/command-menu-item/engine-c
 import { DeactivateWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/DeactivateWorkflowSingleRecordCommand';
 import { DiscardDraftWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/DiscardDraftWorkflowSingleRecordCommand';
 import { DuplicateWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/DuplicateWorkflowSingleRecordCommand';
-import { SeeActiveVersionWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/SeeActiveVersionWorkflowSingleRecordCommand';
 import { SeeRunsWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/SeeRunsWorkflowSingleRecordCommand';
 import { SeeVersionsWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/SeeVersionsWorkflowSingleRecordCommand';
 import { TestWorkflowSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/workflow/components/TestWorkflowSingleRecordCommand';
@@ -221,9 +220,6 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   ),
   [EngineComponentKey.VIEW_PREVIOUS_AI_CHATS]: (
     <HeadlessOpenAiChatHistoryTabEngineCommand />
-  ),
-  [EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW]: (
-    <SeeActiveVersionWorkflowSingleRecordCommand />
   ),
   [EngineComponentKey.SEE_RUNS_WORKFLOW]: (
     <SeeRunsWorkflowSingleRecordCommand />
