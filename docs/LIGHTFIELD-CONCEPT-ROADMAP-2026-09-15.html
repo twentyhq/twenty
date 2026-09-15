@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>Lightfield → Crove: Phân tích Concept &amp; Lộ trình Customer Memory</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0f1113;
+    --bg-card: #16181b;
+    --bg-card-2: #1c1f23;
+    --border: #2a2e33;
+    --text: #e8e8e6;
+    --text-muted: #9aa0a6;
+    --brand: #FF2E29;
+    --brand-dim: #b81f1b;
+    --green: #3fb950;
+    --amber: #d29922;
+    --blue: #58a6ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.65;
+    padding: 0;
+  }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 80px; }
+  header { border-bottom: 1px solid var(--border); padding: 40px 0 28px; margin-bottom: 36px; }
+  h1 { font-size: 30px; font-weight: 700; line-height: 1.3; margin-bottom: 8px; }
+  h1 .accent { color: var(--brand); }
+  .meta { color: var(--text-muted); font-size: 14px; }
+  .meta span { margin-right: 16px; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; border: 1px solid var(--border); }
+  .badge.proposal { color: var(--amber); border-color: var(--amber); }
+  h2 { font-size: 22px; margin: 44px 0 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+  h2:first-of-type { border-top: none; padding-top: 0; }
+  h3 { font-size: 17px; margin: 26px 0 10px; color: #fff; }
+  p { margin: 10px 0; }
+  ul, ol { margin: 10px 0 10px 24px; }
+  li { margin: 6px 0; }
+  strong { color: #fff; }
+  em { color: var(--text-muted); }
+  a { color: var(--blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  code {
+    background: var(--bg-card-2); border: 1px solid var(--border); border-radius: 5px;
+    padding: 1px 6px; font-size: 13px; font-family: "Cascadia Code", Consolas, monospace; color: #f0c674;
+  }
+  pre {
+    background: var(--bg-card-2); border: 1px solid var(--border); border-radius: 8px;
+    padding: 14px 16px; overflow-x: auto; margin: 12px 0; font-size: 13px; line-height: 1.5;
+  }
+  pre code { background: none; border: none; padding: 0; }
+  .card {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px;
+    padding: 18px 20px; margin: 14px 0;
+  }
+  .card.hl { border-left: 3px solid var(--brand); }
+  .callout {
+    background: rgba(255, 46, 41, 0.07); border: 1px solid rgba(255, 46, 41, 0.35);
+    border-radius: 10px; padding: 14px 18px; margin: 16px 0;
+  }
+  .callout.green { background: rgba(63,185,80,0.08); border-color: rgba(63,185,80,0.4); }
+  .callout.blue { background: rgba(88,166,255,0.07); border-color: rgba(88,166,255,0.35); }
+  table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 14px; }
+  th, td { border: 1px solid var(--border); padding: 9px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--bg-card-2); color: #fff; font-weight: 600; }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+  .yes { color: var(--green); font-weight: 600; }
+  .no { color: var(--brand); font-weight: 600; }
+  .part { color: var(--amber); font-weight: 600; }
+  .phase {
+    background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 22px 24px; margin: 20px 0;
+  }
+  .phase-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; flex-wrap: wrap; }
+  .phase-tag {
+    background: var(--brand); color: #fff; font-weight: 700; font-size: 13px;
+    padding: 3px 12px; border-radius: 6px; white-space: nowrap;
+  }
+  .phase-title { font-size: 18px; font-weight: 700; color: #fff; }
+  .phase-effort { color: var(--text-muted); font-size: 13px; margin-left: auto; }
+  .kv { margin: 8px 0; }
+  .kv b { color: var(--brand); }
+  .footer { margin-top: 56px; padding-top: 20px; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 13px; }
+  .toc { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 16px 22px; margin-bottom: 8px; }
+  .toc b { color: #fff; }
+  .toc ol { margin: 8px 0 4px 22px; }
+  .toc a { color: var(--text); }
+  .toc a:hover { color: var(--brand); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>Lightfield <span class="accent">→</span> Crove<br>Phân tích Concept &amp; Lộ trình "Customer Memory"</h1>
+  <div class="meta">
+    <span>📅 2026-09-15</span>
+    <span>📝 Trạng thái: <span class="badge proposal">ĐỀ XUẤT</span></span>
+    <span>🎯 Đối tượng: JOY review</span>
+  </div>
+</header>
+
+<div class="toc">
+  <b>Mục lục</b>
+  <ol>
+    <li><a href="#tldr">Tóm tắt điều hành</a></li>
+    <li><a href="#lightfield">Lightfield là gì - bối cảnh</a></li>
+    <li><a href="#pillars">Bóc tách 5 trụ cột concept - học được gì</a></li>
+    <li><a href="#inventory">Đối chiếu hạ tầng Crove đang có</a></li>
+    <li><a href="#principles">Nguyên tắc khi học Lightfield</a></li>
+    <li><a href="#roadmap">Lộ trình đề xuất 4 giai đoạn</a></li>
+    <li><a href="#order">Thứ tự ưu tiên &amp; điều kiện go/no-go</a></li>
+  </ol>
+</div>
+
+<!-- ============ 1. TLDR ============ -->
+<h2 id="tldr">1. Tóm tắt điều hành</h2>
+<div class="card hl">
+  <p><strong>Ý tưởng gốc đáng học:</strong> Lightfield không bán "CRM + chatbot AI". Nó đảo ngược mô hình dữ liệu: CRM <strong>tự cập nhật</strong> từ mọi tương tác (email, lịch, họp, Slack, ticket) thay vì bắt sales nhập tay, rồi dùng dữ liệu luôn-tươi đó làm nhiên liệu cho AI agent chạy outbound, flag deal rủi ro, tư vấn focus.</p>
+  <p><strong>Với Crove:</strong> khung agent platform Twenty v2.38 đã có sẵn (AI Agents, Skills, Tools, Workflows, MCP). Thiếu đúng 2 lớp: <strong>synthesis</strong> (biến log thô thành model sống của khách) và <strong>proactive signals</strong> (tự báo động thay vì chờ hỏi). Lộ trình dưới đây bổ sung 2 lớp đó bằng 4 giai đoạn, ưu tiên làm bằng metadata fields / Twenty Apps để không đụng core.</p>
+  <p><strong>Kick-off điều kiện:</strong> phải có dữ liệu tương tác trước (Giai đoạn 0 - Google/Microsoft sync trong ROADMAP.md) + merge upstream v2.40.0 xong. Không có nguyên liệu thì synthesis không có gì tổng hợp.</p>
+</div>
+
+<!-- ============ 2. LIGHTFIELD ============ -->
+<h2 id="lightfield">2. Lightfield là gì - bối cảnh</h2>
+<p>Lightfield là AI-native CRM của 2 founder ex-Meta (Keith Peiris, Henri Liriani), vừa raise <strong>$47M Series A do a16z dẫn đầu</strong> (09/2026). Đáng chú ý: đây là cú pivot bỏ burning-ground từ Tome - app thuyết trình AI từng đạt 25 triệu user, raise $81M, nhưng retention kém. Họ cắt team từ 70 xuống 7 người, mất 1 năm stealth, làm lại từ đầu.</p>
+<div class="callout blue">
+  <strong>Bài học kinh doanh số 0 (trước cả kỹ thuật):</strong> Tome có 25M user nhưng "viral mà không sống trong quy trình hàng ngày". CRM thì ngược lại - là <em>system of record</em>, chậm chọn nhưng không rời. Lightfield báo cáo net dollar retention ~400% ở cohort đầu. Với Crove: đừng chạy theo user count, hãy tối ưu cho "không thể rời" - dữ liệu khách hàng tích tụ chính là locking chân thật nhất.
+</div>
+<p>Định vị của họ: CRM không phải database tĩnh mà là <strong>"world model of your business"</strong> - một temporal context graph ghi lại mọi tương tác VÀ cách dữ liệu thay đổi theo thời gian.</p>
+
+<!-- ============ 3. PILLARS ============ -->
+<h2 id="pillars">3. Bóc tách 5 trụ cột concept - học được gì</h2>
+
+<h3>Trụ cột 1 - Self-updating record (CRM tự cập nhật)</h3>
+<p><strong>Cơ chế:</strong> hook vào email, calendar, meeting transcription, Slack, ticket, product telemetry → tự tạo/cập nhật account, contact, deal mà không cần rep gõ. Backfill được tới 2 năm lịch sử ngay lúc connect.</p>
+<p><strong>Bài học:</strong> pain thật của CRM không phải "nhập liệu mệt" mà là <strong>dữ liệu cũ/sai/trống làm mọi report vô dụng</strong>. Mọi tính năng AI đắt tiền đều vô nghĩa nếu đầu vào là pipeline mà rep lười update 3 tuần.</p>
+
+<h3>Trụ cột 2 - Customer memory sống (narrative, không phải field tĩnh)</h3>
+<p><strong>Cơ chế:</strong> thay vì nén mọi thứ vào 1 note subjectively ("deal stall, khách muốn giảm giá"), họ giữ nguyên ngữ cảnh: <em>tại sao</em> ưu tiên đổi, <em>ai</em> là champion thật, <em>objection</em> cụ thể nào được nêu. Truy vấn trả về câu chuyện quan hệ tiến hoá, không chỉ stage hiện tại.</p>
+<p><strong>Bài học:</strong> dữ liệu thô (raw events) phải được giữ nguyên vĩnh viễn - đó là tài sản. Phần "tổng hợp" là lớp chiếu (view) có thể tính lại bất cứ lúc nào.</p>
+
+<h3>Trụ cột 3 - Versioned synthesis (điểm kỹ thuật độc nhất)</h3>
+<p><strong>Cơ chế:</strong> schema động + tổng hợp theo version. Ví dụ: hôm nay muốn track "khách enterprise đang on-prem hay cloud" - CRM cũ phải tạo field mới rồi thủ công backfill hàng nghìn account. Lightfield <strong>re-synthesize dữ liệu lịch sử theo lens mới</strong>: duyệt lại toàn bộ call/email/note cũ, trích ra field mới cho cả quá khứ. Kèm theo đó là <strong>traceable grounding</strong>: mọi câu trả lời của agent đều có citation trỏ về đúng khoảnh khắc hội thoại.</p>
+<div class="callout">
+  <strong>Đây là moat thật của họ.</strong> Chuẩn CRM đổi ICP/GTM 2 lần/năm; khả năng "nhìn lại 2 năm dữ liệu bằng cặp mắt mới trong 5 phút" là thứ Salesforce không thể retrofit. Crove nên để mục tiêu dài hạn nhưng KHÔNG làm đầu tiên - Phase A-C dưới đây là tiền đề.
+</div>
+
+<h3>Trụ cột 4 - Agent infrastructure có trust loop</h3>
+<p><strong>Cơ chế:</strong> agent chạy trên SDK chuẩn + code sandbox deterministic + continuous evals. Quan trọng nhất: mọi agent action nhạy cảm (gửi outbound email, follow-up meeting, qualify deal) đều vào hàng đợi <strong>"For review"</strong> - người chỉ cần Approve/Dismiss.</p>
+<p><strong>Bài học:</strong> agent không cần tự chủ 100% để có giá trị. 90% tự động + 1 nút duyệt của người = đủ tin để triển khai thật. Crove đã có workflows + channels (Brevo, Zalo OA) - thiếu đúng cái hàng đợi duyệt này.</p>
+
+<h3>Trụ cột 5 - Proactive intelligence</h3>
+<p><strong>Cơ chế:</strong> deal review <strong>phán trên nội dung hội thoại chứ không phải field stage</strong> - ví dụ: "close date Q3 không được bất kỳ gì trong thread hỗ trợ, budget authority chưa verify". Thêm: ICP-fit score, buying signals (executive hire, funding round, job change), weekly lookalike discovery, forecast.</p>
+<p><strong>Bài học:</strong> giá trị cảm nhận cao nhất không phải "viết hộ email" mà là <strong>"nói cho tôi biết đâu là chỗ nguy hiểm / đâu là chỗ đáng bỏ công" </strong>. Đây là feature kể chuyện được (demo được cho khách VN ngay).</p>
+
+<!-- ============ 4. INVENTORY ============ -->
+<h2 id="inventory">4. Đối chiếu hạ tầng Crove đang có (Twenty v2.38)</h2>
+<p>Đã verify trực tiếp trong repo <code>D:\Projects\Crove-CRM</code>:</p>
+<table>
+  <tr><th>Thành phần</th><th>Trạng thái</th><th>Ghi chú</th></tr>
+  <tr><td>Email/Calendar 2-way sync → timeline</td><td class="yes">Có sẵn</td><td>Google + Microsoft drivers nguyên bản trong core; ROADMAP.md Giai đoạn 0 chỉ cần bật env + OAuth app</td></tr>
+  <tr><td>Timeline activities (raw events)</td><td class="yes">Có sẵn</td><td><code>timelineActivity</code> với <code>happensAt</code>, loại event đầy đủ - nguyên liệu synthesis đã nằm sẵn</td></tr>
+  <tr><td>AI Agents + Skills + Tools</td><td class="yes">Có sẵn</td><td><code>engine/metadata-modules/ai/</code>: ai-agent, ai-agent-execution, ai-agent-monitor, ai-chat, skill (syncable metadata) + Settings UI</td></tr>
+  <tr><td>Workflows (BullMQ + Redis)</td><td class="yes">Có sẵn</td><td>Automation engine + background job infra</td></tr>
+  <tr><td>MCP server + REST/GraphQL API</td><td class="yes">Có sẵn</td><td>Agent access channel chuẩn mở</td></tr>
+  <tr><td>Custom objects/fields (metadata-driven)</td><td class="yes">Có sẵn</td><td>Lợi thế kiến trúc Twenty: thêm field <code>aiBrief</code> không phải sửa schema core</td></tr>
+  <tr><td>Kênh VN (Zalo OA, SMS, Brevo, Slack)</td><td class="yes">Crove độc có</td><td>Lightfield KHÔNG có Zalo - đây là khoảng trống thị trường của mình</td></tr>
+  <tr><td><strong>Synthesis layer</strong> (brief sống per account)</td><td class="no">Chưa có</td><td>Timeline chỉ là log thô, không ai tổng hợp</td></tr>
+  <tr><td><strong>Proactive signals</strong> (deal-at-risk, digest)</td><td class="no">Chưa có</td><td>Chờ user mở record / tự hỏi AI</td></tr>
+  <tr><td><strong>Versioned memory + citation</strong></td><td class="no">Chưa có</td><td>Không re-synthesize được, trả lời không có grounding</td></tr>
+  <tr><td><strong>Human-review queue cho agent actions</strong></td><td class="part">Một phần</td><td>Có workflow execution log nhưng chưa có hàng đợi Approve/Dismiss kiểu "For review"</td></tr>
+</table>
+<div class="callout green">
+  <strong>Kết luận inventory:</strong> mình không cần xây agent platform từ đầu như Lightfield phải làm. Cần bổ sung đúng 3-4 mảnh ở tầng dữ liệu và tầng trải nghiệm - lợi thế lớn về thời gian.
+</div>
+
+<!-- ============ 5. PRINCIPLES ============ -->
+<h2 id="principles">5. Nguyên tắc khi học Lightfield (không copy mù)</h2>
+<ol>
+  <li><strong>Fork Minimal Modification</strong> (nguyên tắc số 1 của repo): mọi tính năng mới đóng gói qua metadata fields, Twenty Apps, logic functions, BullMQ jobs. Chỉ sửa core khi bế tắc tuyệt đối - tránh upstream drift vì mình còn merge upstream định kỳ (v2.40.0 đang chờ).</li>
+  <li><strong>Data moat của Crove là kênh VN:</strong> Lightfield capture email/Slack/LinkedIn - thị trường Mỹ. Ở VN, kênh tương tác thật của SME là <strong>Zalo OA, SMS, tổng đài VOIP, Facebook/Pancake</strong>. Capture từ các kênh này vào timeline là việc Lightfield không làm được và không làm - đó là khoảng trống cạnh tranh của mình, ưu tiên hơn chạy theo Slack integration.</li>
+  <li><strong>Token cost là thiết kế, không phải chi phí phụ:</strong> SME VN trả subscription thấp. Brief phải chạy model flash-class, skip account không có event mới, cache kết quả, rate-limit per workspace. Tính chi phí LLM/month/workspace ngay từ design.</li>
+  <li><strong>Compliance VN:</strong> Nghị định 13/2023/NĐ-CP về dữ liệu cá nhân - dữ liệu email/Zalo của khách hàng đưa vào LLM provider bên thứ 3 phải có DPA; với khách bank/finance (năng lực SF2 doc-forgery + on-prem còn giữ được từ Shinan) cần option self-host model.</li>
+  <li><strong>Không đuổi theo 1:1:</strong> Lightfield nhắm tech-forward US companies với Salesforce migration. Crove nhắm SME VN chưa có CRM - bài toán khác: họ chưa có dữ liệu lịch sử để backfill, nhưng cũng không có thói quen nhập liệu để "hỏng". Self-updating với họ là mặc định tự nhiên.</li>
+</ol>
+
+<!-- ============ 6. ROADMAP ============ -->
+<h2 id="roadmap">6. Lộ trình đề xuất - 4 giai đoạn</h2>
+<p>Thứ tự sắp theo <em>giá trị thấy được / công sức</em>, mỗi giai đoạn dùng đầu ra của giai đoạn trước làm nguyên liệu.</p>
+
+<div class="phase">
+  <div class="phase-head"><span class="phase-tag">PHASE A</span><span class="phase-title">Account Brief sống (synthesis v1)</span><span class="phase-effort">⏱ 2-3 tuần dev</span></div>
+  <p class="kv"><b>Mục tiêu:</b> mở bất kỳ record Company/Person nào cũng thấy ngay "bối cảnh hiện tại" - tình hình, sentiment, việc đang chờ, next step - kèm timestamp "cập nhật lúc X".</p>
+  <p class="kv"><b>Cách làm:</b></p>
+  <ul>
+    <li>BullMQ job chạy định kỳ (mặc định: hàng ngày 2h sáng, theo batch workspace) quét <code>timelineActivity</code> 90 ngày gần nhất của mỗi company/contact.</li>
+    <li>Skip account không có event mới kể từ lần synthesis trước (cache theo <code>lastActivityAt</code>) - đây là valve tiết kiệm token chính.</li>
+    <li>Gọi LLM flash-class (tận dụng hạ tầng AI settings + provider keys sẵn có) với prompt template version hoá, output JSON: <code>{ summary, sentiment, openThreads, nextStep, riskHint }</code>.</li>
+    <li>Ghi vào 2-3 metadata fields trên object Company/Person (tạo bằng UI Data model, không đụng core): <code>AI Brief</code> (richtext), <code>AI Brief Updated At</code> (datetime), <code>AI Sentiment</code> (select).</li>
+    <li>UI: block "Brief" đầu trang record page (component mới nằm trong Twenty App của Crove, không sửa record page core nếu có extension point; nếu bắt buộc mới đụng core - đánh dấu TODO upstream-rebase).</li>
+  </ul>
+  <p class="kv"><b>Phụ thuộc:</b> Giai đoạn 0 (email/calendar sync) đã bật trên workspace thật; merge v2.40.0 xong.</p>
+  <p class="kv"><b>Tiêu chí xong:</b> workspace demo có ≥50 account; brief tự cập nhật trong 24h sau khi có email mới; chi phí token ≤ mục tiêu đã tính; sales đọc brief thay vì mở 10 email.</p>
+  <p class="kv"><b>Rủi ro:</b> prompt trôi theo tuần (giữ version + regression test với bộ hội thoại mẫu); đúng sóng lệch múi giờ VN khi batch.</p>
+</div>
+
+<div class="phase">
+  <div class="phase-head"><span class="phase-tag">PHASE B</span><span class="phase-title">Deal health &amp; signals v1</span><span class="phase-effort">⏱ 2 tuần (sau A)</span></div>
+  <p class="kv"><b>Mục tiêu:</b> hệ thống tự nói cho sales biết đâu là chỗ nguy hiểm và đâu đáng bỏ công - không chờ hỏi.</p>
+  <p class="kv"><b>Cách làm:</b></p>
+  <ul>
+    <li><strong>Heuristic trước, LLM sau</strong> (rẻ, dễ test): flag deal khi (a) không có activity N ngày (mặc định 14), (b) activity cuối là email đi ra không được trả lời, (c) sentiment từ Brief của Phase A âm tính, (d) stage giữ nguyên &gt; 2× cycle time trung bình.</li>
+    <li>Ghi flag vào field <code>Health</code> (select: At risk / Stalled / Healthy) +reason ngắn trên deal view; kanban/filter theo health.</li>
+    <li><strong>Weekly digest</strong> gửi qua email (Brevo đã có) hoặc Zalo OA: "3 deal sắp chết - X đã 21 ngày không phản hồi; 2 cơ hội nóng - Y vừa reply tích cực". Đây là feature demo khoẻ nhất cho khách VN.</li>
+  </ul>
+  <p class="kv"><b>Tiêu chí xong:</b> với dataset demo, ≥80% flag at-risk mà sales gật gù "chuẩn"; digest tới được Zalo OA.</p>
+</div>
+
+<div class="phase">
+  <div class="phase-head"><span class="phase-tag">PHASE C</span><span class="phase-title">Agent follow-up với hàng đợi "For review"</span><span class="phase-effort">⏱ 3-4 tuần (sau B)</span></div>
+  <p class="kv"><b>Mục tiêu:</b> agent tự nháp follow-up/outbound dựa trên Brief, người bấm Approve mới gửi - trust loop kiểu Lightfield.</p>
+  <p class="kv"><b>Cách làm:</b></p>
+  <ul>
+    <li>Mỗi sáng, agent (dùng AI Agents + Skills sẵn có của Twenty) quét: deal có signal từ Phase B + Brief từ Phase A → nháp email/Zalo follow-up cá nhân hoá theo ngữ cảnh hội thoại.</li>
+    <li>Build hàng đợi review đơn giản: bảng proposed actions (draft, citation về activity nguồn, nút Approve/Dismiss) - có thể là custom object <code>AgentSuggestion</code> + view, tránh sửa core.</li>
+    <li>Approve → gửi qua channel tương ứng (Brevo email / Zalo OA template); Dismiss → học tín hiệu (log để tune prompt sau).</li>
+    <li>Eval v1: so sánh draft của agent với follow-up thật của sales trong quá khứ (có sẵn trong timeline) - điểm khớp làm chỉ số chất lượng.</li>
+  </ul>
+  <p class="kv"><b>Phụ thuộc:</b> Phase A+B; channel Brevo/Zalo OA đã active.</p>
+</div>
+
+<div class="phase">
+  <div class="phase-head"><span class="phase-tag">PHASE D</span><span class="phase-title">Versioned synthesis + citation grounding (moat dài hạn)</span><span class="phase-effort">⏱ 1-2 quý (làm sau khi A-C chứng minh giá trị)</span></div>
+  <p class="kv"><b>Mục tiêu:</b> khả năng định nghĩa lại của Crove: "đổi cách nhìn dữ liệu → nhìn lại toàn bộ quá khứ trong vài phút", mọi câu trả lời AI truy vết được về đúng sự kiện gốc.</p>
+  <p class="kv"><b>Cách làm (thiết kế ở mức cao):</b></p>
+  <ul>
+    <li>Bảng <code>synthesisRun</code>: (target record, prompt version, schema version, input window, output JSON, cost, cited activity ids) - lịch sử synthesis thành dữ liệu first-class.</li>
+    <li>Re-synthesis on demand: chọn schema mới (VD: thêm trục "ngân sách on-prem/cloud") → job duyệt lại raw activities + chạy extraction mới, ghi version mới cạnh version cũ (không ghi đè).</li>
+    <li>Citation: mọi brief/agent answer kèm mảng activity id → UI click nhảy đúng email/meeting trong timeline (timeline đã có deep-link sẵn).</li>
+    <li>Vector index cho hội thoại (pgvector trên Postgres hiện có, chưa cần lakehouse riêng ở quy mô SME VN).</li>
+  </ul>
+  <p class="kv"><b>Cảnh báo:</b> đây là phần tốn kém nhất và dễ over-engineer. Chỉ khởi động khi Phase A-C đã có user thật và chi phí LLM thực đo được.</p>
+</div>
+
+<!-- ============ 7. ORDER ============ -->
+<h2 id="order">7. Thứ tự ưu tiên &amp; điều kiện go/no-go</h2>
+<pre><code>Giai đoạn 0: Google/Microsoft sync (ROADMAP.md, đã sẵn sàng) ──┐
+Upstream v2.40.0 merge (đang chờ, tag đã fetch) ───────────────┤
+                                                               ▼
+                                                     [PHASE A] Brief sống
+                                                               ▼
+                                                     [PHASE B] Deal health + digest
+                                                               ▼
+                                                     [PHASE C] Agent + For review
+                                                               ▼
+                                                     [PHASE D] Versioned synthesis</code></pre>
+<ul>
+  <li><strong>Go điều kiện cho Phase A:</strong> (1) merge v2.40.0 xong + regression test OK; (2) ít nhất 1 workspace thật bật email sync và có &gt;500 activities; (3) budget LLM chốt (~đặt trần $X/month/workspace, đo Phase A tuần đầu rồi mới mở rộng).</li>
+  <li><strong>No-go / đổi hướng nếu:</strong> brief generated mà sales không đọc (đo open rate block) → chuyển giá trị sang digest thô (Phase B) sớm hơn.</li>
+  <li><strong>Việc song song không tốn dev:</strong> bắt đầu log <em>token cost per workspace</em> từ Phase A ngày đầu - không log thì Phase C-D không ước giá được.</li>
+</ul>
+
+<div class="callout">
+  <strong>One-liner positioning khi bán (tiếng Việt):</strong> "Crove là CRM tự đọc email, Zalo, lịch họp của bạn và tự cập nhật - sales chỉ việc bán, không phải làm chuyện giấy tờ. Sáng thứ Hai nó nói cho bạn biết tuần này cần lo gì."
+</div>
+
+<div class="footer">
+  Nguồn: <a href="https://lightfield.app/">lightfield.app</a> · <a href="https://a16z.com/announcement/investing-in-lightfield/">a16z announcement</a> · <a href="https://www.saastr.com/saastr-ai-app-of-the-week-lightfield-the-ai-native-crm-that-killed-tomes-25-million-users-to-build-something-better/">SaaStr analysis</a> · <a href="https://research.contrary.com/company/lightfield">Contrary Research</a> · <a href="https://lightfield.app/blog/why-we-built-lightfield">Why we built Lightfield</a><br>
+  Verify hạ tầng: trực tiếp trong repo Crove-CRM (nhánh dev, Twenty v2.38) ngày 2026-09-15. File này là bản trình bày cho JOY đọc; nội dung đã tóm lược trong ROADMAP.md (Giai đoạn 6).
+</div>
+
+</div>
+</body>
+</html>

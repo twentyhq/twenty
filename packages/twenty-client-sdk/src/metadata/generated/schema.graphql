@@ -2025,12 +2025,14 @@ type AuthProviders {
   magicLink: Boolean!
   password: Boolean!
   microsoft: Boolean!
+  dosId: Boolean
 }
 
 type AuthBypassProviders {
   google: Boolean!
   password: Boolean!
   microsoft: Boolean!
+  dosId: Boolean
 }
 
 type PublicWorkspaceData {
@@ -2153,6 +2155,7 @@ type ClientConfig {
   aiModelTiers: [ClientAiModelTierConfig!]!
   signInPrefilled: Boolean!
   isMultiWorkspaceEnabled: Boolean!
+  isMultiWorkspaceSubdomainEnabled: Boolean!
   isEmailVerificationRequired: Boolean!
   defaultSubdomain: String
   frontDomain: String!

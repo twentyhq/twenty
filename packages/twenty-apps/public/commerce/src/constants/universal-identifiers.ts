@@ -12,17 +12,17 @@ export const ORDER_OBJECT_UNIVERSAL_IDENTIFIER =
   'd4e5f6a1-b2c3-4d4e-bf5a-6b7c8d9e0f1a';
 
 export const ORDER_ITEM_OBJECT_UNIVERSAL_IDENTIFIER =
-  'e5f6a1b2-c3d4-4e5f-c06b-7c8d9e0f1a2b';
+  'e5f6a1b2-c3d4-4e5f-806b-7c8d9e0f1a2b';
 
 // Product Fields
 export const PRODUCT_NAME_FIELD_UNIVERSAL_IDENTIFIER =
-  'f6a1b2c3-d4e5-4f6a-d17c-8d9e0f1a2b3c';
+  'f6a1b2c3-d4e5-4f6a-917c-8d9e0f1a2b3c';
 
 export const PRODUCT_SKU_FIELD_UNIVERSAL_IDENTIFIER =
-  'a7b2c3d4-e5f6-4a7b-e28d-9e0f1a2b3c4d';
+  'a7b2c3d4-e5f6-4a7b-a28d-9e0f1a2b3c4d';
 
 export const PRODUCT_TYPE_FIELD_UNIVERSAL_IDENTIFIER =
-  'b8c3d4e5-f6a1-4b8c-f39e-0f1a2b3c4d5e';
+  'b8c3d4e5-f6a1-4b8c-b39e-0f1a2b3c4d5e';
 
 export const PRODUCT_PRICE_FIELD_UNIVERSAL_IDENTIFIER =
   'c9d4e5f6-a1b2-4c9d-a40f-1a2b3c4d5e6f';
@@ -31,16 +31,16 @@ export const PRODUCT_DURATION_MINUTES_FIELD_UNIVERSAL_IDENTIFIER =
   'dae5f6a1-b2c3-4dae-b51a-2b3c4d5e6f7a';
 
 export const PRODUCT_STOCK_QUANTITY_FIELD_UNIVERSAL_IDENTIFIER =
-  'ebf6a1b2-c3d4-4ebf-c62b-3c4d5e6f7a8b';
+  'ebf6a1b2-c3d4-4ebf-862b-3c4d5e6f7a8b';
 
 export const PRODUCT_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
-  'fca1b2c3-d4e5-4fca-d73c-4d5e6f7a8b9c';
+  'fca1b2c3-d4e5-4fca-973c-4d5e6f7a8b9c';
 
 export const PRODUCT_DESCRIPTION_FIELD_UNIVERSAL_IDENTIFIER =
-  'adb2c3d4-e5f6-4adb-e84d-5e6f7a8b9c0d';
+  'adb2c3d4-e5f6-4adb-a84d-5e6f7a8b9c0d';
 
 export const PRODUCT_IMAGES_FIELD_UNIVERSAL_IDENTIFIER =
-  'bec3d4e5-f6a1-4bec-f95e-6f7a8b9c0d1e';
+  'bec3d4e5-f6a1-4bec-b95e-6f7a8b9c0d1e';
 
 // Order Fields
 export const ORDER_NAME_FIELD_UNIVERSAL_IDENTIFIER =
@@ -50,16 +50,16 @@ export const ORDER_TOTAL_AMOUNT_FIELD_UNIVERSAL_IDENTIFIER =
   'd0e5f6a1-b2c3-4d0e-bb7a-8a8b9c0d1e2f';
 
 export const ORDER_DISCOUNT_AMOUNT_FIELD_UNIVERSAL_IDENTIFIER =
-  'e1f6a1b2-c3d4-4e1f-cc8b-9b0c1d2e3f4a';
+  'e1f6a1b2-c3d4-4e1f-8c8b-9b0c1d2e3f4a';
 
 export const ORDER_REMAINING_AMOUNT_FIELD_UNIVERSAL_IDENTIFIER =
-  'f2a1b2c3-d4e5-4f2a-dd9c-0c1d2e3f4a5b';
+  'f2a1b2c3-d4e5-4f2a-9d9c-0c1d2e3f4a5b';
 
 export const ORDER_SOURCE_FIELD_UNIVERSAL_IDENTIFIER =
-  'a3b2c3d4-e5f6-4a3b-eead-1d2e3f4a5b6c';
+  'a3b2c3d4-e5f6-4a3b-aead-1d2e3f4a5b6c';
 
 export const ORDER_STATUS_FIELD_UNIVERSAL_IDENTIFIER =
-  'b4c3d4e5-f6a1-4b4c-ffbe-2e3f4a5b6c7d';
+  'b4c3d4e5-f6a1-4b4c-bfbe-2e3f4a5b6c7d';
 
 export const ORDER_NOTES_FIELD_UNIVERSAL_IDENTIFIER =
   'c5d4e5f6-a1b2-4c5d-aac0-3f4a5b6c7d8e';
@@ -69,17 +69,17 @@ export const ORDER_ITEM_NAME_FIELD_UNIVERSAL_IDENTIFIER =
   'd6e5f6a1-b2c3-4d6e-bbd1-4a5b6c7d8e9f';
 
 export const ORDER_ITEM_QUANTITY_FIELD_UNIVERSAL_IDENTIFIER =
-  'e7f6a1b2-c3d4-4e7f-cce2-5b6c7d8e9f0a';
+  'e7f6a1b2-c3d4-4e7f-8ce2-5b6c7d8e9f0a';
 
 export const ORDER_ITEM_UNIT_PRICE_FIELD_UNIVERSAL_IDENTIFIER =
-  'f8a1b2c3-d4e5-4f8a-ddf3-6c7d8e9f0a1b';
+  'f8a1b2c3-d4e5-4f8a-9df3-6c7d8e9f0a1b';
 
 export const ORDER_ITEM_AMOUNT_FIELD_UNIVERSAL_IDENTIFIER =
-  'a9b2c3d4-e5f6-4a9b-ee04-7d8e9f0a1b2c';
+  'a9b2c3d4-e5f6-4a9b-ae04-7d8e9f0a1b2c';
 
 // Relations
 export const CUSTOMER_ON_ORDER_FIELD_UNIVERSAL_IDENTIFIER =
-  'b0c3d4e5-f6a1-4b0c-ff15-8e9f0a1b2c3d';
+  'b0c3d4e5-f6a1-4b0c-bf15-8e9f0a1b2c3d';
 
 export const ORDERS_ON_PERSON_FIELD_UNIVERSAL_IDENTIFIER =
   'c1d4e5f6-a1b2-4c1d-aa26-9f0a1b2c3d4e';
@@ -88,16 +88,16 @@ export const ASSIGNED_TO_ON_ORDER_FIELD_UNIVERSAL_IDENTIFIER =
   'd2e5f6a1-b2c3-4d2e-bb37-0a1b2c3d4e5f';
 
 export const ORDERS_AS_ASSIGNED_ON_WORKSPACE_MEMBER_FIELD_UNIVERSAL_IDENTIFIER =
-  'e3f6a1b2-c3d4-4e3f-cc48-1b2c3d4e5f6a';
+  'e3f6a1b2-c3d4-4e3f-8c48-1b2c3d4e5f6a';
 
 export const ORDER_ITEMS_ON_ORDER_FIELD_UNIVERSAL_IDENTIFIER =
-  'f4a1b2c3-d4e5-4f4a-dd59-2c3d4e5f6a7b';
+  'f4a1b2c3-d4e5-4f4a-9d59-2c3d4e5f6a7b';
 
 export const ORDER_ON_ORDER_ITEM_FIELD_UNIVERSAL_IDENTIFIER =
-  'a5b2c3d4-e5f6-4a5b-ee6a-3d4e5f6a7b8c';
+  'a5b2c3d4-e5f6-4a5b-ae6a-3d4e5f6a7b8c';
 
 export const PRODUCT_ON_ORDER_ITEM_FIELD_UNIVERSAL_IDENTIFIER =
-  'b6c3d4e5-f6a1-4b6c-ff7b-4e5f6a7b8c9d';
+  'b6c3d4e5-f6a1-4b6c-bf7b-4e5f6a7b8c9d';
 
 export const ORDER_ITEMS_ON_PRODUCT_FIELD_UNIVERSAL_IDENTIFIER =
   'c7d4e5f6-a1b2-4c7d-aa8c-5f6a7b8c9d0e';
@@ -107,16 +107,16 @@ export const ALL_PRODUCTS_VIEW_UNIVERSAL_IDENTIFIER =
   'd8e5f6a1-b2c3-4d8e-bb9d-6a7b8c9d0e1f';
 
 export const ALL_ORDERS_VIEW_UNIVERSAL_IDENTIFIER =
-  'e9f6a1b2-c3d4-4e9f-cca0-7b8c9d0e1f2a';
+  'e9f6a1b2-c3d4-4e9f-8ca0-7b8c9d0e1f2a';
 
 export const ORDERS_BOARD_VIEW_UNIVERSAL_IDENTIFIER =
-  'faa1b2c3-d4e5-4faa-ddb1-8c9d0e1f2a3b';
+  'faa1b2c3-d4e5-4faa-9db1-8c9d0e1f2a3b';
 
 export const PRODUCTS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
-  'abb2c3d4-e5f6-4abb-eec2-9d0e1f2a3b4c';
+  'abb2c3d4-e5f6-4abb-aec2-9d0e1f2a3b4c';
 
 export const ORDERS_NAVIGATION_MENU_ITEM_UNIVERSAL_IDENTIFIER =
-  'bcc3d4e5-f6a1-4bcc-ffd3-0e1f2a3b4c5d';
+  'bcc3d4e5-f6a1-4bcc-bfd3-0e1f2a3b4c5d';
 
 // Logic Functions
 export const RECALCULATE_ORDER_TOTALS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER =

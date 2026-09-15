@@ -120,6 +120,19 @@
 
 ---
 
+### 🧠 Giai đoạn 6: AI Customer Memory (Lightfield-inspired Synthesis Layer)
+* **Trạng thái:** 📋 Đề xuất — chi tiết đầy đủ tại [`docs/LIGHTFIELD-CONCEPT-ROADMAP-2026-09-15.html`](./docs/LIGHTFIELD-CONCEPT-ROADMAP-2026-09-15.html)
+* **Mục tiêu:** Học concept của Lightfield (AI-native CRM, $47M Series A a16z): CRM tự tổng hợp mọi tương tác (email, lịch, Zalo, ghi chú) thành "brief sống" per record, tự flag deal rủi ro, và cho phép agent chạy follow-up có người duyệt. Bổ sung lớp **synthesis** + **proactive signals** mà Twenty core chưa có, tận dụng sẵn AI Agents/Skills/Workflows/MCP của v2.38.
+* **Điều kiện khởi động:** Giai đoạn 0 (email/calendar sync) đã bật trên workspace thật + merge upstream v2.40.0.
+* **Hạng mục kỹ thuật:**
+  - [ ] **Phase A — Account Brief sống (2-3 tuần):** BullMQ job quét `timelineActivity` 90 ngày per record → LLM flash-class tổng hợp (`summary`, `sentiment`, `nextStep`, `riskHint`) → ghi vào metadata fields (`AI Brief`, `AI Brief Updated At`, `AI Sentiment`), hiển thị block đầu record page. Skip record không có event mới để tiết kiệm token.
+  - [ ] **Phase B — Deal health & signals (2 tuần):** heuristic flag at-risk (không activity 14 ngày, email cuối chưa được trả lời, sentiment âm) + weekly digest qua email/Zalo OA.
+  - [ ] **Phase C — Agent follow-up + hàng đợi "For review" (3-4 tuần):** agent nháp follow-up từ Brief → custom object `AgentSuggestion` làm hàng đợi Approve/Dismiss → gửi qua Brevo/Zalo OA. Eval so draft agent vs follow-up thật trong quá khứ.
+  - [ ] **Phase D — Versioned synthesis + citation (1-2 quý):** bảng `synthesisRun` (prompt/schema version, cited activity ids), re-synthesis lịch sử theo lens mới, pgvector cho hội thoại — moat dài hạn, chỉ làm khi A-C có user thật.
+* **Nguyên tắc:** Fork Minimal Modification (metadata fields / Twenty App / BullMQ, không sửa core); token cost per workspace phải log từ ngày đầu; tuân thủ NĐ 13/2023/NĐ-CP (DPA với LLM provider, option self-host cho khách finance).
+
+---
+
 ## 📊 Bảng Theo dõi Tiến độ (Progress Tracker)
 
 | Phân hệ / Tính năng | Phương thức Triển khai | Mức độ ưu tiên | Độ khó | Trạng thái |
@@ -135,3 +148,4 @@
 | **Facebook & TikTok CAPI** | Logic Function Trigger | P2 (Trung bình) | Dễ (2 ngày) | 📋 Dự kiến |
 | **Tổng đài Click-to-call** | WebRTC + CallRecording Sync | P2 (Trung bình) | Khá (4-6 ngày) | 📋 Dự kiến |
 | **Crove OS Full Suite Sync** | Webhook Micro-services | P3 (Dài hạn) | Khá (1-2 tuần) | 📋 Định hướng |
+| **AI Customer Memory (Brief sống + Deal health)** | BullMQ Job + Metadata Fields + LLM | P1 (Cao) | Khá (2-3 tuần/phase) | 📋 Đề xuất (Giai đoạn 6) |

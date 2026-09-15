@@ -160,6 +160,7 @@ export default defineObject({
       description: 'Product photos or service illustration images',
       icon: 'IconPhoto',
       isNullable: true,
+      universalSettings: { maxNumberOfValues: 30 },
     },
   ],
 });

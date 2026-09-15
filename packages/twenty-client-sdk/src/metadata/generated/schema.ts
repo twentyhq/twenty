@@ -1628,6 +1628,7 @@ export interface AuthProviders {
     magicLink: Scalars['Boolean']
     password: Scalars['Boolean']
     microsoft: Scalars['Boolean']
+    dosId?: Scalars['Boolean']
     __typename: 'AuthProviders'
 }
 
@@ -1635,6 +1636,7 @@ export interface AuthBypassProviders {
     google: Scalars['Boolean']
     password: Scalars['Boolean']
     microsoft: Scalars['Boolean']
+    dosId?: Scalars['Boolean']
     __typename: 'AuthBypassProviders'
 }
 
@@ -1759,6 +1761,7 @@ export interface ClientConfig {
     aiModelTiers: ClientAiModelTierConfig[]
     signInPrefilled: Scalars['Boolean']
     isMultiWorkspaceEnabled: Scalars['Boolean']
+    isMultiWorkspaceSubdomainEnabled: Scalars['Boolean']
     isEmailVerificationRequired: Scalars['Boolean']
     defaultSubdomain?: Scalars['String']
     frontDomain: Scalars['String']
@@ -5191,6 +5194,7 @@ export interface AuthProvidersGenqlSelection{
     magicLink?: boolean | number
     password?: boolean | number
     microsoft?: boolean | number
+    dosId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5199,6 +5203,7 @@ export interface AuthBypassProvidersGenqlSelection{
     google?: boolean | number
     password?: boolean | number
     microsoft?: boolean | number
+    dosId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5331,6 +5336,7 @@ export interface ClientConfigGenqlSelection{
     aiModelTiers?: ClientAiModelTierConfigGenqlSelection
     signInPrefilled?: boolean | number
     isMultiWorkspaceEnabled?: boolean | number
+    isMultiWorkspaceSubdomainEnabled?: boolean | number
     isEmailVerificationRequired?: boolean | number
     defaultSubdomain?: boolean | number
     frontDomain?: boolean | number

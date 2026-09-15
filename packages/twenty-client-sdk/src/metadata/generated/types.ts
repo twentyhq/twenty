@@ -3865,6 +3865,9 @@ export default {
             "microsoft": [
                 8
             ],
+            "dosId": [
+                8
+            ],
             "__typename": [
                 1
             ]
@@ -3877,6 +3880,9 @@ export default {
                 8
             ],
             "microsoft": [
+                8
+            ],
+            "dosId": [
                 8
             ],
             "__typename": [
@@ -4136,6 +4142,9 @@ export default {
                 8
             ],
             "isMultiWorkspaceEnabled": [
+                8
+            ],
+            "isMultiWorkspaceSubdomainEnabled": [
                 8
             ],
             "isEmailVerificationRequired": [
