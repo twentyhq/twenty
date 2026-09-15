@@ -1,19 +1,3 @@
-import { useMemo, useState } from 'react';
-
-import { useMutation, useQuery } from '@apollo/client/react';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { Controller, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Info, useToast } from 'twenty-ui/feedback';
-import { IconPlus } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
-
 import { ADD_MODEL_TO_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addModelToProvider';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
@@ -26,8 +10,21 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-
-import { Checkbox, Switch } from 'twenty-ui/input';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
+import { Info, useToast } from 'twenty-ui/primitives/feedback';
+import { Checkbox, Switch } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 const StyledComboInputContainer = styled.div`
@@ -351,7 +348,7 @@ export const SettingsAdminNewAiModel = () => {
               accent="danger"
               text={customAiProviderGateDescription}
               buttonTitle={t`Activate`}
-              to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
+              to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
             />
           )}
 

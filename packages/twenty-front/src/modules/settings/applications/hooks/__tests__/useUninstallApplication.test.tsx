@@ -18,8 +18,8 @@ const JOB_ID = `uninstall-application.workspace-id.${UNIVERSAL_IDENTIFIER}-5c98b
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/feedback', () => ({
-  ...jest.requireActual('twenty-ui/feedback'),
+jest.mock('twenty-ui/primitives/feedback', () => ({
+  ...jest.requireActual('twenty-ui/primitives/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 

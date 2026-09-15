@@ -2,7 +2,7 @@ import { CommandComponentInstanceContext } from '@/command-menu-item/engine-comm
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { type ReactNode } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 type CommandMenuItemErrorBoundaryProps = {
   children: ReactNode;

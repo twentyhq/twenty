@@ -1,12 +1,10 @@
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
-import { useCallback, useContext, useState } from 'react';
-import { useToast, CircularProgressBar } from 'twenty-ui/feedback';
-import { ModalContent } from 'twenty-ui/surfaces';
-
 import { ImportDataStep } from '@/spreadsheet-import/steps/components/ImportDataStep';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
-
+import { useCallback, useContext, useState } from 'react';
+import { CircularProgressBar, useToast } from 'twenty-ui/primitives/feedback';
+import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';

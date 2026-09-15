@@ -8,7 +8,7 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 type UseMergeRecordsActionsProps = {

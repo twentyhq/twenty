@@ -9,7 +9,7 @@ import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ErrorLike } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 type UseMergePreviewProps = {
   objectNameSingular: string;

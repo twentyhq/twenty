@@ -1,6 +1,5 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SettingsBillingSubscriptionInfoCard } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard';
 import { SettingsBillingSubscriptionInfoCardHeaderActions } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions';
@@ -28,10 +27,9 @@ import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import {
   BillingPlanKey,
   CancelSwitchBillingIntervalDocument,
@@ -43,6 +41,8 @@ import {
   SwitchSubscriptionIntervalDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const SettingsBillingSubscriptionInfo = ({
   currentWorkspace,

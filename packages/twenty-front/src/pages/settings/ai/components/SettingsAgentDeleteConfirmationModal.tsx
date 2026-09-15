@@ -7,7 +7,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
 import { useMutation } from '@apollo/client/react';
 import { SettingsPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { DeleteOneAgentDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 

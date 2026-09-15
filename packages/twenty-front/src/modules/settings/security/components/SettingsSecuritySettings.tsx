@@ -1,12 +1,7 @@
-import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
-import { useDebouncedCallback } from 'use-debounce';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
@@ -19,19 +14,24 @@ import { SettingsSecurityEditableProfileFields } from '@/settings/security/compo
 import { SettingsSsoIdentitiesProvidersListCard } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCard';
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { ImpersonationSwitch } from '@/settings/workspace/components/ImpersonationSwitch';
-
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
-import { useToast } from 'twenty-ui/feedback';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
 import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { Section } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { useDebouncedCallback } from 'use-debounce';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -236,8 +236,8 @@ export const SettingsSecuritySettings = () => {
             </Card>
           ) : (
             <SettingsEnterpriseFeatureGateCard
-              title={t`Enterprise feature`}
-              description={t`Upgrade to Enterprise to access audit logs.`}
+              title={t`Organization feature`}
+              description={t`Upgrade to Organization to access audit logs.`}
               buttonTitle={t`Activate`}
             />
           )}

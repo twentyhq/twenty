@@ -21,19 +21,19 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
-import { useToast } from 'twenty-ui/feedback';
 import {
   IconChevronRight,
   IconDotsVertical,
   IconPinned,
   IconRefresh,
 } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { MenuItemSwitch } from 'twenty-ui/navigation';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 import { useDebounce } from 'use-debounce';
 import {
   type ApplicationRegistrationFragmentFragment,

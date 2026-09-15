@@ -11,7 +11,7 @@ import { I18nProvider } from '@lingui/react';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
 import { HelmetProvider } from '@dr.pogodin/react-helmet';
-import { ToastProvider } from 'twenty-ui/feedback';
+import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import { IconsProvider } from 'twenty-ui/icon';
 import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
 

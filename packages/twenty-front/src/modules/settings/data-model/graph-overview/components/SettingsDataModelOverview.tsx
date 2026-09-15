@@ -30,7 +30,7 @@ import {
   IconPlus,
   IconX,
 } from 'twenty-ui/icon';
-import { Button, IconButtonGroup } from 'twenty-ui/input';
+import { Button, IconButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const nodeTypes: NodeTypes = {

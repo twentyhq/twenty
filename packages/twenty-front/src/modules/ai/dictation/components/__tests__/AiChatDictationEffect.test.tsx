@@ -12,8 +12,8 @@ type SpeechRecognitionTestWindow = {
 
 const mockEnqueueToast = jest.fn();
 
-jest.mock('twenty-ui/feedback', () => ({
-  ...jest.requireActual('twenty-ui/feedback'),
+jest.mock('twenty-ui/primitives/feedback', () => ({
+  ...jest.requireActual('twenty-ui/primitives/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 

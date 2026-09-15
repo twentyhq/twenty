@@ -3,7 +3,7 @@ import { type ErrorLike } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 // Apollo v4 queries no longer support an onError callback.
 export const useToastOnQueryError = ({

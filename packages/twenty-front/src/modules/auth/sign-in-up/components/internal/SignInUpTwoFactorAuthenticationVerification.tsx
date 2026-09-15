@@ -1,5 +1,3 @@
-import { styled } from '@linaria/react';
-
 import { useAuth } from '@/auth/hooks/useAuth';
 import {
   StyledTwoFactorInstructions,
@@ -19,16 +17,18 @@ import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { ONBOARDING_CONTENT_BLOCK_WIDTH } from '@/onboarding/constants/OnboardingContentBlockWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
-import { ClickToActionLink } from 'twenty-ui/navigation';
+import { MainButton } from 'twenty-ui/primitives/input';
+import { ClickToActionLink } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledForm = styled.form`
   align-items: center;

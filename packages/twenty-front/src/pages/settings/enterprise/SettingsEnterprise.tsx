@@ -32,7 +32,7 @@ import {
 } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   IconCalendarRepeat,
   IconCheck,
@@ -41,10 +41,10 @@ import {
   IconKey,
   IconUser,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
@@ -330,7 +330,7 @@ export const SettingsEnterprise = ({
   ]);
 
   const returnUrlPath = isAdminPanelTab
-    ? getSettingsPath(SettingsPath.AdminPanelEnterprise)
+    ? getSettingsPath(SettingsPath.AdminPanelOrganization)
     : getSettingsPath(SettingsPath.Enterprise);
 
   const openBillingPortal = useCallback(async () => {
@@ -1030,13 +1030,13 @@ export const SettingsEnterprise = ({
 
   return (
     <SettingsPageLayout
-      title={t`Enterprise`}
+      title={t`Organization`}
       links={[
         {
           children: <Trans>Workspace</Trans>,
           href: getSettingsPath(SettingsPath.General),
         },
-        { children: <Trans>Enterprise</Trans> },
+        { children: <Trans>Organization</Trans> },
       ]}
     >
       <SettingsPageContainer>{innerContent}</SettingsPageContainer>

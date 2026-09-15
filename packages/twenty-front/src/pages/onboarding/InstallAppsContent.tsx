@@ -11,10 +11,10 @@ import { type OnboardingInstallableApp } from '@/onboarding/types/OnboardingInst
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { IconButton, MainButton } from 'twenty-ui/input';
-import { AnimatedIconCrossfade } from 'twenty-ui/layout';
+import { IconButton, MainButton } from 'twenty-ui/primitives/input';
+import { AnimatedIconCrossfade } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

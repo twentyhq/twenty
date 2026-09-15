@@ -6,7 +6,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const useCreateTool = () => {
   const navigate = useNavigate();

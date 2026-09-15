@@ -8,9 +8,9 @@ import { useApolloClient } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { Loader, useToast } from 'twenty-ui/feedback';
-import { CardPicker, MainButton, RadioGroup } from 'twenty-ui/input';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { Loader, useToast } from 'twenty-ui/primitives/feedback';
+import { CardPicker, MainButton, RadioGroup } from 'twenty-ui/primitives/input';
+import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';

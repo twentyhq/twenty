@@ -6,8 +6,8 @@ import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { ToastProvider, useToast } from 'twenty-ui/feedback';
-import { Button } from 'twenty-ui/input';
+import { ToastProvider, useToast } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';

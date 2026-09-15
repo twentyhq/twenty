@@ -14,7 +14,7 @@ import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/uti
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export type NewNavigationMenuItemInput = {
   type: NavigationMenuItemType;

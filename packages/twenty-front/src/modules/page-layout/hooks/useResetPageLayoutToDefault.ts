@@ -10,7 +10,7 @@ import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetad
 import { useInvalidateMetadataStore } from '@/metadata-store/hooks/useInvalidateMetadataStore';
 import { RESET_PAGE_LAYOUT_TO_DEFAULT } from '@/page-layout/graphql/mutations/resetPageLayoutToDefault';
 import { pageLayoutIsInitializedComponentState } from '@/page-layout/states/pageLayoutIsInitializedComponentState';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const useResetPageLayoutToDefault = () => {
   const [resetMutation] = useMutation(RESET_PAGE_LAYOUT_TO_DEFAULT);

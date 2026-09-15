@@ -1,16 +1,3 @@
-import { useMutation } from '@apollo/client/react';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
-import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
-import { IconLink, IconTool } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
-import { Card, CardContent } from 'twenty-ui/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
-
 import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CLEAR_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maintenance-mode/graphql/mutations/clearMaintenanceMode';
@@ -18,14 +5,26 @@ import { SET_MAINTENANCE_MODE } from '@/settings/admin-panel/health-status/maint
 import { adminPanelMaintenanceModeState } from '@/settings/admin-panel/health-status/maintenance-mode/states/adminPanelMaintenanceModeState';
 import { SettingsDatePickerInput } from '@/settings/components/SettingsDatePickerInput';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
-
-import { InputHint } from 'twenty-ui/input';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useToast } from 'twenty-ui/feedback';
+import { useMutation } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useCallback } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { IconLink, IconTool } from 'twenty-ui/icon';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { InputHint } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledFormContainer = styled.div`
   display: flex;

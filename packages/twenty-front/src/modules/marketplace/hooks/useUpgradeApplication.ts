@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { UpgradeApplicationDocument } from '~/generated-metadata/graphql';
 
 export const useUpgradeApplication = () => {

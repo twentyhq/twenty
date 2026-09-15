@@ -1,30 +1,6 @@
-import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
-import { useMutation, useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-
+import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
-import {
-  type IconComponent,
-  IconFlag,
-  IconKey,
-  IconPlug,
-  IconPlus,
-  IconServer,
-  IconTag,
-  IconTrash,
-  IconWorld,
-} from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { RoundedLink, UndecoratedLink } from 'twenty-ui/navigation';
-import { H2Title } from 'twenty-ui/typography';
-
-import { useClientConfig } from '@/client-config/hooks/useClientConfig';
 import { REMOVE_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeAiProvider';
 import { REMOVE_MODEL_FROM_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/removeModelFromProvider';
 import { SET_ADMIN_AI_MODELS_ENABLED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsEnabled';
@@ -40,11 +16,33 @@ import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useToast } from 'twenty-ui/feedback';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { useMemo, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  type IconComponent,
+  IconFlag,
+  IconKey,
+  IconPlug,
+  IconPlus,
+  IconServer,
+  IconTag,
+  IconTrash,
+  IconWorld,
+} from 'twenty-ui/icon';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { RoundedLink, UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import {
   type AdminAiModelConfig,
   SetAdminAiModelEnabledDocument,
 } from '~/generated-admin/graphql';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const REMOVE_PROVIDER_MODAL_ID = 'settings-ai-provider-remove';
 const REMOVE_MODEL_MODAL_ID = 'settings-ai-model-remove';

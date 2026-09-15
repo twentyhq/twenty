@@ -12,12 +12,12 @@ import { t } from '@lingui/core/macro';
 import { Fragment, useContext, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
 import { IconBook, IconMessage, IconSparkles, IconTool } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { Section } from 'twenty-ui/primitives/layout';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 import { useDebouncedCallback } from 'use-debounce';
 import {
   FindWorkspaceAiStatsDocument,

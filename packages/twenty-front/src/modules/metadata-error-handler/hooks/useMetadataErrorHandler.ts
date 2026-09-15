@@ -8,7 +8,7 @@ import {
   WorkspaceMigrationV2ExceptionCode,
 } from 'twenty-shared/metadata';
 import { CrudOperationType } from 'twenty-shared/types';
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const useMetadataErrorHandler = () => {
   const { enqueueToast } = useToast();

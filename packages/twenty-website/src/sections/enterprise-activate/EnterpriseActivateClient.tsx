@@ -223,7 +223,7 @@ export function EnterpriseActivateClient() {
               <li>
                 <Body size="sm">
                   {i18n._(
-                    msg`Open your Twenty self-hosted instance Settings → Admin Panel → Enterprise.`,
+                    msg`Open your Twenty self-hosted instance Settings → Admin Panel → Organization.`,
                   )}
                 </Body>
               </li>

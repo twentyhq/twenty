@@ -13,7 +13,7 @@ import {
 import { currentUserState } from '@/auth/states/currentUserState';
 import { billingState } from '@/client-config/states/billingState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { ToastProvider } from 'twenty-ui/feedback';
+import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import {
   jotaiStore,
   resetJotaiStore,

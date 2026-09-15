@@ -1,13 +1,6 @@
-import { useQuery } from '@apollo/client/react';
-import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useNavigate, useParams } from 'react-router-dom';
-
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useGetOneLogicFunction } from '@/logic-functions/hooks/useGetOneLogicFunction';
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
-
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsLogicFunctionLabelContainer } from '@/settings/logic-functions/components/SettingsLogicFunctionLabelContainer';
@@ -15,14 +8,17 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useQuery } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { useContext, useState } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
 import { IconTrash } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
-
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -31,6 +27,8 @@ import {
 } from '~/generated-metadata/graphql';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import { SettingsToolParameterTable } from '~/pages/settings/ai/components/SettingsToolParameterTable';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const DELETE_TOOL_MODAL_ID = 'delete-tool-modal';
 

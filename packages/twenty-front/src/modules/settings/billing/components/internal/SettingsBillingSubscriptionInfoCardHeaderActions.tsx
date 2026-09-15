@@ -7,7 +7,7 @@ import {
   IconColorSwatch,
   IconCreditCard,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 export type SettingsBillingSubscriptionInfoCardHeaderActionsProps = {
   canCancelIntervalSwitch: boolean;

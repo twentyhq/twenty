@@ -12,15 +12,15 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
-import { useToast } from 'twenty-ui/feedback';
-import { Checkbox } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { Label } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { Label } from 'twenty-ui/typography';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledTreeList = styled.ul`
   list-style: none;

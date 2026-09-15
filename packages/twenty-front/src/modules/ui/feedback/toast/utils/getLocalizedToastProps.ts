@@ -1,6 +1,9 @@
 import { type I18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { type ToastProps, type ToastVariant } from 'twenty-ui/feedback';
+import {
+  type ToastProps,
+  type ToastVariant,
+} from 'twenty-ui/primitives/feedback';
 
 const DEFAULT_ARIA_LABEL_BY_VARIANT: Record<
   ToastVariant,

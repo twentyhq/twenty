@@ -20,7 +20,7 @@ import {
   currentWorkspaceState,
 } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
-import { ToastProvider } from 'twenty-ui/feedback';
+import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import { renderHook } from '@testing-library/react';
 import { getDefaultStore } from 'jotai';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';

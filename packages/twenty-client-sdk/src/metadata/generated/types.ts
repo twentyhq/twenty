@@ -12511,15 +12511,6 @@ export default {
             "oAuthScopes": [
                 1
             ],
-            "isListed": [
-                8
-            ],
-            "isPreInstalled": [
-                8
-            ],
-            "isVetted": [
-                8
-            ],
             "__typename": [
                 1
             ]

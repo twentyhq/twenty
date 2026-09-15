@@ -8,13 +8,21 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
 import { IconShare, IconTrash, IconUserPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui/primitives/layout';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import {
+  H1Title,
+  H1TitleFontColor,
+  H2Title,
+} from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H1Title, H1TitleFontColor, H2Title } from 'twenty-ui/typography';
 import {
   type ApplicationRegistration,
   ClaimApplicationRegistrationOwnershipDocument,

@@ -32,6 +32,7 @@ import {
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import { type InheritedReadabilityChildRecords } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
 import { type InheritedReadabilityChildrenParent } from 'src/engine/twenty-orm/types/inherited-readability-children-parent.type';
+import { type InheritedReadabilityColumnParent } from 'src/engine/twenty-orm/types/inherited-readability-column-parent.type';
 import { type InheritedReadabilityParent } from 'src/engine/twenty-orm/types/inherited-readability-parent.type';
 import { type InheritedReadabilityParentLink } from 'src/engine/twenty-orm/types/inherited-readability-parent-link.type';
 import { type RowAccessPolicy } from 'src/engine/twenty-orm/types/row-access-policy.type';
@@ -184,12 +185,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         onBeforeExecute: (queryBuilder) => this.onBeforeExecute(queryBuilder),
         formatResult: (records) => this.formatResult(records),
       },
-    );
-  }
-
-  private createPermissionBypassingQueryBuilder(): WorkspaceSelectQueryBuilder {
-    return this.buildBypassingEventSelectQueryBuilder(
-      this.options.tableShape.nameSingular,
     );
   }
 
@@ -844,7 +839,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
 
       const existingRecords = await applyFindOptionsToQueryBuilder(
-        repository.createPermissionBypassingQueryBuilder(),
+        repository.buildBypassingEventSelectQueryBuilder(
+          repository.options.tableShape.nameSingular,
+        ),
         { where: conflictWhere, withDeleted: true },
       ).getMany<ObjectRecord>();
 
@@ -1369,16 +1366,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return [];
     }
 
-    return this.resolveInheritedReadabilityParents(flatObjectMetadata).flatMap(
-      (parent) =>
-        parent.kind === 'column'
-          ? [
-              {
-                joinColumnName: parent.joinColumnName,
-                parentFlatObjectMetadata: parent.parentFlatObjectMetadata,
-              },
-            ]
-          : [],
+    return this.resolveInheritedReadabilityParents(flatObjectMetadata).filter(
+      (parent): parent is InheritedReadabilityColumnParent =>
+        parent.kind === 'column',
     );
   }
 
@@ -1964,7 +1954,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,
-      recordShareTableExpression: this.getRecordShareTableExpression(),
+      recordShareTableExpression: this.getTableExpression(
+        this.options.internalContext.objectIdByNameSingular.recordShare,
+      ),
       resolveTableExpression: (objectMetadataId) =>
         this.getTableExpression(objectMetadataId),
     };
@@ -1988,16 +1980,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return `${escapeIdentifier(tableShape.schemaName)}.${escapeIdentifier(
       tableShape.tableName,
     )}`;
-  }
-
-  private getRecordShareTableExpression(): string {
-    const recordShareTableShape = this.options.tableShapeByObjectMetadataId(
-      this.options.internalContext.objectIdByNameSingular.recordShare,
-    );
-
-    return `${escapeIdentifier(
-      recordShareTableShape.schemaName,
-    )}.${escapeIdentifier(recordShareTableShape.tableName)}`;
   }
 
   private denyAccessForAlias({

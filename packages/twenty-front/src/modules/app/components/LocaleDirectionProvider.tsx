@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react';
 import { type ReactNode } from 'react';
 import { getLocaleTextDirection } from 'twenty-shared/translations';
-import { TextDirectionProvider } from 'twenty-ui/layout';
+import { TextDirectionProvider } from 'twenty-ui/primitives/layout';
 
 type LocaleDirectionProviderProps = {
   children: ReactNode;

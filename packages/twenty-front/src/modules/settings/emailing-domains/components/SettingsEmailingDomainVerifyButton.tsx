@@ -1,11 +1,11 @@
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
+import { IconRefresh } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { VerifyEmailingDomainDocument } from '~/generated-metadata/graphql';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { useToast } from 'twenty-ui/feedback';
-import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { VerifyEmailingDomainDocument } from '~/generated-metadata/graphql';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 type SettingsEmailingDomainVerifyButtonProps = {
   emailingDomainId: string;

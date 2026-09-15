@@ -1,5 +1,3 @@
-/* @license Enterprise */
-
 import { parseSamlMetadataFromXmlFile } from '@/settings/security/utils/parseSamlMetadataFromXmlFile';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
@@ -7,14 +5,16 @@ import { useLingui } from '@lingui/react/macro';
 import { type ChangeEvent, useContext, useRef } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
 import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { HorizontalSeparator, Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { HorizontalSeparator, Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+/* @license Enterprise */
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledUploadFileContainer = styled.div`
   align-items: center;

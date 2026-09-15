@@ -34,6 +34,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   ) => {
     workspaceCacheService.getOrRecompute.mockResolvedValue({
       featureFlagsMap: {},
+      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+      flatRoleMaps: { byUniversalIdentifier: {} },
       workflowAutomatedTriggerMaps: {
         byWorkflowId: Object.fromEntries(
           listeners.map((listener) => [
@@ -93,6 +95,8 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
     workspaceCacheService = {
       getOrRecompute: jest.fn().mockResolvedValue({
         featureFlagsMap: {},
+        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
+        flatRoleMaps: { byUniversalIdentifier: {} },
         workflowAutomatedTriggerMaps: { byWorkflowId: {} },
       } as never),
     } as any;
@@ -120,14 +124,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
           provide: RecordShareService,
           useValue: recordShareService,
         },
-        {
-          provide: RecordAccessPolicyService,
-          useValue: {
-            resolveRecordIdsReadableThroughParents: jest
-              .fn()
-              .mockResolvedValue(new Set()),
-          },
-        },
+        RecordAccessPolicyService,
         {
           provide: 'MESSAGE_QUEUE_workflow-queue',
           useValue: messageQueueService,
@@ -425,7 +422,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         keys: string[],
       ) =>
         Promise.resolve(
-          keys.includes('featureFlagsMap')
+          !keys.includes('workflowAutomatedTriggerMaps')
             ? {
                 featureFlagsMap: {
                   [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true,
@@ -443,6 +440,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                   },
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
+                rolesPermissions: {},
               }
             : {
                 workflowAutomatedTriggerMaps: {
@@ -500,13 +498,14 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         keys: string[],
       ) =>
         Promise.resolve(
-          keys.includes('featureFlagsMap')
+          !keys.includes('workflowAutomatedTriggerMaps')
             ? {
                 featureFlagsMap: {
                   [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true,
                 },
                 flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
                 flatRoleMaps: { byUniversalIdentifier: {} },
+                rolesPermissions: {},
               }
             : {
                 workflowAutomatedTriggerMaps: {

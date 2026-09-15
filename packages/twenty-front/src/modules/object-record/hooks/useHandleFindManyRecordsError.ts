@@ -4,7 +4,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useCallback } from 'react';
 
-import { useToast } from 'twenty-ui/feedback';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { logError } from '~/utils/logError';
 
 export const useHandleFindManyRecordsError = ({

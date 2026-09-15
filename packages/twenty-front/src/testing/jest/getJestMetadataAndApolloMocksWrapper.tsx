@@ -7,7 +7,7 @@ import { ContextStoreComponentInstanceContext } from '@/context-store/states/con
 
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { ToastProvider } from 'twenty-ui/feedback';
+import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import {
   jotaiStore,
   resetJotaiStore,

@@ -15,7 +15,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconAt, IconMailCog } from 'twenty-ui/icon';
 import { GetApprovedAccessDomainsDocument } from '~/generated-metadata/graphql';
 

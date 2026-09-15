@@ -10,7 +10,7 @@ import { onboardingConfigState } from '@/client-config/states/onboardingConfigSt
 import { type OnboardingConfig } from '@/client-config/types/OnboardingConfig';
 import { OnboardingStepLayout } from '@/onboarding/components/OnboardingStepLayout';
 import { onboardingFreeCreditsState } from '@/onboarding/states/onboardingFreeCreditsState';
-import { ToastProvider } from 'twenty-ui/feedback';
+import { ToastProvider } from 'twenty-ui/primitives/feedback';
 import {
   jotaiStore,
   resetJotaiStore,

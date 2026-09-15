@@ -1,17 +1,17 @@
-import { styled } from '@linaria/react';
-import { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { read, type WorkBook } from 'xlsx-ugnis';
-
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SPREADSHEET_MAX_RECORD_IMPORT_CAPACITY } from '@/spreadsheet-import/constants/SpreadsheetMaxRecordImportCapacity';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { useDownloadFakeRecords } from '@/spreadsheet-import/steps/components/UploadStep/hooks/useDownloadFakeRecords';
 import { readFileAsync } from '@/spreadsheet-import/utils/readFilesAsync';
+import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useToast } from 'twenty-ui/feedback';
-import { MainButton } from 'twenty-ui/input';
+import { useState } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { MainButton } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { read, type WorkBook } from 'xlsx-ugnis';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledContainer = styled.div`
   align-items: center;

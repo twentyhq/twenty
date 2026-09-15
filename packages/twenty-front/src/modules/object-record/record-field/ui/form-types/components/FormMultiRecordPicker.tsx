@@ -24,9 +24,9 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useContext, useId, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { useToast } from 'twenty-ui/feedback';
 import { IconChevronDown } from 'twenty-ui/icon';
-import { Field } from 'twenty-ui/input';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { Field } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 

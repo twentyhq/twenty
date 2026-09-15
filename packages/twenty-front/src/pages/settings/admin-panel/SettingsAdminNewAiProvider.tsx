@@ -1,19 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
-
-import { useMemo, useState } from 'react';
-
-import { useMutation, useQuery } from '@apollo/client/react';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
-import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
-import { Info, useToast } from 'twenty-ui/feedback';
-import { IconPlus } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
-
 import { AI_ADMIN_PATH } from '@/settings/admin-panel/ai/constants/AiAdminPath';
 import { DATA_RESIDENCY_OPTIONS } from '@/settings/admin-panel/ai/constants/DataResidencyOptions';
 import { ADD_AI_PROVIDER } from '@/settings/admin-panel/ai/graphql/mutations/addAiProvider';
@@ -29,8 +13,20 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { useMutation, useQuery } from '@apollo/client/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import { slugify } from 'transliteration';
-
+import { type AiSdkPackage, isDataResidency } from 'twenty-shared/ai';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { IconPlus } from 'twenty-ui/icon';
+import { Info, useToast } from 'twenty-ui/primitives/feedback';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
@@ -281,7 +277,7 @@ export const SettingsAdminNewAiProvider = () => {
               accent="danger"
               text={customAiProviderGateDescription}
               buttonTitle={t`Activate`}
-              to={getSettingsPath(SettingsPath.AdminPanelEnterprise)}
+              to={getSettingsPath(SettingsPath.AdminPanelOrganization)}
             />
           )}
 
