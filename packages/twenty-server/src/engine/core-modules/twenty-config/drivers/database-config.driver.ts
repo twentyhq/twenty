@@ -53,7 +53,14 @@ export class DatabaseConfigDriver
   }
 
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] | undefined {
-    return this.configCache.get(key);
+    const value = this.configCache.get(key);
+
+    // Existing installations may still store their license under the old name.
+    if (key === 'ORGANIZATION_KEY' && value === undefined) {
+      return this.configCache.get('ENTERPRISE_KEY') as ConfigVariables[T];
+    }
+
+    return value;
   }
 
   async set<T extends keyof ConfigVariables>(
@@ -112,6 +119,11 @@ export class DatabaseConfigDriver
         `Cannot delete environment-only variable: ${key as string}`,
       );
     }
+    // Resetting the new name must not reactivate a stale legacy license.
+    if (key === 'ORGANIZATION_KEY') {
+      await this.delete('ENTERPRISE_KEY');
+    }
+
     await this.configStorage.delete(key);
     this.configCache.markKeyAsMissing(key);
   }

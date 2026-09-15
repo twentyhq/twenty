@@ -15,7 +15,12 @@ export class EnvironmentConfigDriver {
   get<T extends keyof ConfigVariables>(key: T): ConfigVariables[T] {
     return this.configService.get<ConfigVariables[T]>(
       key,
-      this.defaultConfigVariables[key],
+      key === 'ORGANIZATION_KEY'
+        ? this.configService.get<ConfigVariables[T]>(
+            'ENTERPRISE_KEY',
+            this.defaultConfigVariables[key],
+          )
+        : this.defaultConfigVariables[key],
     );
   }
 }

@@ -88,3 +88,7 @@ To use the Organization (Self-Hosted) plan, you need to obtain an Organization k
 3. When you are redirected to Stripe, enter your payment details and confirm
 4. When your Organization key is displayed, paste it into the Enterprise settings page and activate the Organization license
 
+
+### Configure the key with an environment variable
+
+If database configuration is disabled, set `ORGANIZATION_KEY` in your server environment and restart Twenty. The legacy `ENTERPRISE_KEY` name remains supported for existing installations. When both names are set in the same configuration source, `ORGANIZATION_KEY` takes precedence. Database configuration continues to take precedence over environment variables.

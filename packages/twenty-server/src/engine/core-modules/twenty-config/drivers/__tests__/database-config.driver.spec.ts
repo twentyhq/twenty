@@ -72,6 +72,7 @@ describe('DatabaseConfigDriver', () => {
             get: jest.fn(),
             set: jest.fn(),
             loadAll: jest.fn(),
+            delete: jest.fn(),
           },
         },
       ],
@@ -89,6 +90,35 @@ describe('DatabaseConfigDriver', () => {
   afterEach(() => {
     jest.clearAllMocks();
     jest.useRealTimers();
+  });
+
+  it.each([
+    [undefined, 'legacy-key', 'legacy-key'],
+    ['new-key', 'legacy-key', 'new-key'],
+    ['', 'legacy-key', ''],
+    [undefined, undefined, undefined],
+  ])(
+    'resolves Organization key %p with legacy key %p to %p',
+    (organizationKey, enterpriseKey, expected) => {
+      jest
+        .spyOn(configCache, 'get')
+        .mockImplementation((key) =>
+          key === 'ORGANIZATION_KEY' ? organizationKey : enterpriseKey,
+        );
+
+      expect(driver.get('ORGANIZATION_KEY')).toBe(expected);
+    },
+  );
+
+  it('removes both stored keys when resetting the Organization key', async () => {
+    await driver.delete('ORGANIZATION_KEY');
+
+    expect(configStorage.delete).toHaveBeenCalledWith('ORGANIZATION_KEY');
+    expect(configStorage.delete).toHaveBeenCalledWith('ENTERPRISE_KEY');
+    expect(configCache.markKeyAsMissing).toHaveBeenCalledWith(
+      'ORGANIZATION_KEY',
+    );
+    expect(configCache.markKeyAsMissing).toHaveBeenCalledWith('ENTERPRISE_KEY');
   });
 
   it('should be defined', () => {

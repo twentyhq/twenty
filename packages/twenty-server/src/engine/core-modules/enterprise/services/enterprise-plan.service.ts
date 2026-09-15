@@ -70,7 +70,7 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   private refreshKeyPayload(): void {
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
+    const enterpriseKey = this.twentyConfigService.get('ORGANIZATION_KEY');
 
     if (!enterpriseKey) {
       this.cachedKeyPayload = null;
@@ -199,7 +199,7 @@ export class EnterprisePlanService implements OnModuleInit {
 
   async setEnterpriseKey(enterpriseKey: string): Promise<void> {
     try {
-      await this.twentyConfigService.set('ENTERPRISE_KEY', enterpriseKey);
+      await this.twentyConfigService.set('ORGANIZATION_KEY', enterpriseKey);
     } catch (error) {
       if (
         error instanceof ConfigVariableException &&
@@ -207,7 +207,7 @@ export class EnterprisePlanService implements OnModuleInit {
       ) {
         throw new ConfigVariableException(
           'IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. ' +
-            'Please add ENTERPRISE_KEY to your .env file manually.',
+            'Please add ORGANIZATION_KEY to your .env file manually.',
           ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED,
         );
       }
@@ -243,10 +243,10 @@ export class EnterprisePlanService implements OnModuleInit {
   async refreshValidityToken(): Promise<boolean> {
     this.lastRefreshRejectionCode = null;
 
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
+    const enterpriseKey = this.twentyConfigService.get('ORGANIZATION_KEY');
 
     if (!enterpriseKey) {
-      this.logger.warn('No ENTERPRISE_KEY configured, skipping refresh');
+      this.logger.warn('No ORGANIZATION_KEY configured, skipping refresh');
 
       return false;
     }
@@ -255,7 +255,7 @@ export class EnterprisePlanService implements OnModuleInit {
 
     if (!isDefined(this.cachedKeyPayload)) {
       this.logger.warn(
-        'ENTERPRISE_KEY is not a valid signed JWT, skipping refresh',
+        'ORGANIZATION_KEY is not a valid signed JWT, skipping refresh',
       );
 
       return false;
@@ -350,7 +350,7 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   async reportSeats(seatCount: number): Promise<boolean> {
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
+    const enterpriseKey = this.twentyConfigService.get('ORGANIZATION_KEY');
 
     if (!enterpriseKey) {
       return false;
@@ -393,7 +393,7 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   async releaseServerBinding(): Promise<boolean> {
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
+    const enterpriseKey = this.twentyConfigService.get('ORGANIZATION_KEY');
 
     if (!enterpriseKey) {
       return false;
@@ -463,7 +463,7 @@ export class EnterprisePlanService implements OnModuleInit {
   } | null> {
     this.refreshKeyPayload();
 
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
+    const enterpriseKey = this.twentyConfigService.get('ORGANIZATION_KEY');
 
     if (!enterpriseKey || !isDefined(this.cachedKeyPayload)) {
       return null;
@@ -517,7 +517,7 @@ export class EnterprisePlanService implements OnModuleInit {
     }
 
     this.refreshKeyPayload();
-    const enterpriseKey = this.twentyConfigService.get('ENTERPRISE_KEY');
+    const enterpriseKey = this.twentyConfigService.get('ORGANIZATION_KEY');
 
     if (enterpriseKey && isDefined(this.cachedKeyPayload)) {
       return this.requestPortalUrlWithKey(apiUrl, enterpriseKey, returnUrl);

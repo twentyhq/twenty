@@ -26,7 +26,7 @@ const getEnterpriseExceptionUserFriendlyMessage = (
     case EnterpriseExceptionCode.INVALID_ENTERPRISE_KEY:
       return msg`Invalid Organization key.`;
     case EnterpriseExceptionCode.CONFIG_VARIABLES_IN_DB_DISABLED:
-      return msg`IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ENTERPRISE_KEY to your .env file manually.`;
+      return msg`IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on your server. Please add ORGANIZATION_KEY to your .env file manually.`;
     case EnterpriseExceptionCode.ENTERPRISE_KEY_BOUND_TO_ANOTHER_SERVER:
       return msg`This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one.`;
     case EnterpriseExceptionCode.ENTERPRISE_MISSING_SERVER_ID:

@@ -39,6 +39,25 @@ describe('EnvironmentConfigDriver', () => {
   });
 
   describe('get', () => {
+    it.each([
+      [undefined, 'legacy-key', 'legacy-key'],
+      ['new-key', 'legacy-key', 'new-key'],
+      ['', 'legacy-key', ''],
+      [undefined, undefined, undefined],
+    ])(
+      'resolves Organization key %p with legacy key %p to %p',
+      (organizationKey, enterpriseKey, expected) => {
+        jest.spyOn(configService, 'get').mockImplementation((key, fallback) => {
+          const value =
+            key === 'ORGANIZATION_KEY' ? organizationKey : enterpriseKey;
+
+          return value === undefined ? fallback : value;
+        });
+
+        expect(driver.get('ORGANIZATION_KEY')).toBe(expected);
+      },
+    );
+
     it('should return value from config service when available', () => {
       const key = 'AUTH_PASSWORD_ENABLED' as keyof ConfigVariables;
       const expectedValue = true;

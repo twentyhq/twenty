@@ -2112,7 +2112,17 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     isSensitive: true,
-    description: 'License key for the Enterprise version',
+    description: 'License key for the self-hosted Organization plan',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  ORGANIZATION_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    isSensitive: true,
+    isHiddenInAdminPanel: true,
+    description: 'Deprecated license key name. Use ORGANIZATION_KEY instead.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()

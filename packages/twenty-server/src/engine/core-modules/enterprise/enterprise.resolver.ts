@@ -174,7 +174,7 @@ export class EnterpriseResolver {
         error.code === ConfigVariableExceptionCode.DATABASE_CONFIG_DISABLED
       ) {
         throw new EnterpriseException(
-          'IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on the server. Please add ENTERPRISE_KEY to your .env file manually.',
+          'IS_CONFIG_VARIABLES_IN_DB_ENABLED is false on the server. Please add ORGANIZATION_KEY to your .env file manually.',
           EnterpriseExceptionCode.CONFIG_VARIABLES_IN_DB_DISABLED,
         );
       }
