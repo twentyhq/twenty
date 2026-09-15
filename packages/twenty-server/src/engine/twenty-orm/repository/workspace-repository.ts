@@ -32,8 +32,13 @@ import {
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type InheritedReadabilityChildrenParent } from 'src/engine/twenty-orm/types/inherited-readability-children-parent.type';
+import { type InheritedReadabilityParent } from 'src/engine/twenty-orm/types/inherited-readability-parent.type';
+import { type InheritedReadabilityParentLink } from 'src/engine/twenty-orm/types/inherited-readability-parent-link.type';
 import {
   buildInheritedReadabilityCondition,
+  type InheritedReadabilityChildGate,
+  type InheritedReadabilityParentCondition,
   type InheritedReadabilityParentGate,
 } from 'src/engine/twenty-orm/utils/build-inherited-readability-condition.util';
 import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
@@ -47,10 +52,8 @@ import {
 import { isOwningApplicationAuthContext } from 'src/engine/twenty-orm/utils/is-owning-application-auth-context.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-principal-ids-from-auth-context.util';
-import {
-  type InheritedReadabilityParent,
-  resolveInheritedReadabilityParents,
-} from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
+import { resolveInheritedReadabilityChildLinks } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-child-links.util';
+import { resolveInheritedReadabilityParents } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/twenty-orm/utils/validate-rls-predicates-for-records.util';
 import {
@@ -963,7 +966,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       this.formatResult<ObjectRecord[]>(formattedRecords),
     );
 
-    await this.validateInheritedParentsAreWritableOrThrow(formattedRecords);
+    await this.validateInheritedParentsAreWritableOrThrow({
+      writtenRecords: formattedRecords,
+      affectedRecords: formattedRecords,
+    });
 
     const sql = buildInsertStatement({
       tableShape: this.options.tableShape,
@@ -1063,9 +1069,19 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       dataByInputIndex = enriched.entities as Partial<ObjectRecord>[];
     }
 
-    await this.validateInheritedParentsAreWritableOrThrow(
-      dataByInputIndex.map((data) => this.formatWriteData(data)),
+    const writtenRecords = dataByInputIndex.map((data) =>
+      this.formatWriteData(data),
     );
+
+    await this.validateInheritedParentsAreWritableOrThrow({
+      writtenRecords,
+      affectedRecords: writtenRecords.flatMap((writtenRecord, index) =>
+        rawBeforeByInputIndex[index].flatMap((rawBefore) => [
+          rawBefore,
+          { ...rawBefore, ...writtenRecord },
+        ]),
+      ),
+    });
 
     for (const [index, input] of writableInputs.entries()) {
       const { id: _id, ...setColumns } = this.formatWriteData(
@@ -1257,60 +1273,125 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   // Re-parenting a child, or creating one under a parent, is a write on that
-  // parent: the destination must grant the caller at least READ_WRITE
-  private async validateInheritedParentsAreWritableOrThrow(
-    records: Record<string, unknown>[],
-  ): Promise<void> {
-    if (
-      this.options.shouldBypassPermissionChecks ||
-      !this.isRecordSharingEnabled() ||
-      this.options.flatObjectMetadata.readability !==
-        MetadataReadability.INHERITED ||
-      isOwningApplicationAuthContext({
-        authContext: this.options.authContext,
-        owningApplicationId: this.options.flatObjectMetadata.applicationId,
-      })
-    ) {
+  // parent: the destination must grant the caller at least READ_WRITE. The
+  // records inheriting through a row are checked on the row before and after
+  // the write, whatever the write is, since creating, changing, deleting or
+  // restoring the row changes what they expose
+  private async validateInheritedParentsAreWritableOrThrow({
+    writtenRecords,
+    affectedRecords,
+  }: {
+    writtenRecords: Record<string, unknown>[];
+    affectedRecords: Record<string, unknown>[];
+  }): Promise<void> {
+    if (!this.shouldValidateInheritedParents()) {
       return;
     }
 
-    for (const parent of this.resolveInheritedReadabilityParents(
-      this.options.flatObjectMetadata,
-    )) {
-      const parentIds = [
-        ...new Set(
-          records
-            .map((record) => record[parent.joinColumnName])
-            .filter(isNonEmptyString),
-        ),
-      ];
-
-      if (parentIds.length === 0) {
-        continue;
-      }
-
-      const parentRepository = this.options.getRepositoryForObjectMetadataId(
-        parent.parentFlatObjectMetadata.id,
-      );
-      const queryBuilder = parentRepository
-        .createQueryBuilder()
-        .where({ id: In(parentIds) })
-        .withDeleted();
-
-      parentRepository.applyWriteRowLevelPermissions(queryBuilder, 'update');
-      queryBuilder.select(['id']);
-
-      const writableParentRows = await queryBuilder.getMany<ObjectRecord>({
-        noFormatting: true,
+    for (const parent of this.resolveOwnParentLinks()) {
+      await this.validateParentRecordsAreWritableOrThrow({
+        parent,
+        records: writtenRecords,
       });
-
-      if (writableParentRows.length !== parentIds.length) {
-        throw new PermissionsException(
-          `${PermissionsExceptionMessage.PERMISSION_DENIED}: the "${parent.parentFlatObjectMetadata.nameSingular}" record a "${this.options.flatObjectMetadata.nameSingular}" is attached to is not writable`,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
     }
+
+    for (const parent of this.resolveInheritingRecordLinks()) {
+      await this.validateParentRecordsAreWritableOrThrow({
+        parent,
+        records: affectedRecords,
+      });
+    }
+  }
+
+  private shouldValidateInheritedParents(): boolean {
+    return (
+      !this.options.shouldBypassPermissionChecks &&
+      this.isRecordSharingEnabled()
+    );
+  }
+
+  private hasInheritingRecordLinks(): boolean {
+    return (
+      this.shouldValidateInheritedParents() &&
+      this.resolveInheritingRecordLinks().length > 0
+    );
+  }
+
+  private async validateParentRecordsAreWritableOrThrow({
+    parent,
+    records,
+  }: {
+    parent: InheritedReadabilityParentLink;
+    records: Record<string, unknown>[];
+  }): Promise<void> {
+    const parentIds = [
+      ...new Set(
+        records
+          .map((record) => record[parent.joinColumnName])
+          .filter(isNonEmptyString),
+      ),
+    ];
+
+    if (parentIds.length === 0) {
+      return;
+    }
+
+    const parentRepository = this.options.getRepositoryForObjectMetadataId(
+      parent.parentFlatObjectMetadata.id,
+    );
+    const queryBuilder = parentRepository
+      .createQueryBuilder()
+      .where({ id: In(parentIds) })
+      .withDeleted();
+
+    parentRepository.applyWriteRowLevelPermissions(queryBuilder, 'update');
+    queryBuilder.select(['id']);
+
+    const writableParentRows = await queryBuilder.getMany<ObjectRecord>({
+      noFormatting: true,
+    });
+
+    if (writableParentRows.length !== parentIds.length) {
+      throw new PermissionsException(
+        `${PermissionsExceptionMessage.PERMISSION_DENIED}: the "${parent.parentFlatObjectMetadata.nameSingular}" record a "${this.options.flatObjectMetadata.nameSingular}" is attached to is not writable`,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+  }
+
+  private resolveOwnParentLinks(): InheritedReadabilityParentLink[] {
+    const { flatObjectMetadata } = this.options;
+
+    if (
+      flatObjectMetadata.readability !== MetadataReadability.INHERITED ||
+      isOwningApplicationAuthContext({
+        authContext: this.options.authContext,
+        owningApplicationId: flatObjectMetadata.applicationId,
+      })
+    ) {
+      return [];
+    }
+
+    return this.resolveInheritedReadabilityParents(flatObjectMetadata).flatMap(
+      (parent) =>
+        parent.kind === 'column'
+          ? [
+              {
+                joinColumnName: parent.joinColumnName,
+                parentFlatObjectMetadata: parent.parentFlatObjectMetadata,
+              },
+            ]
+          : [],
+    );
+  }
+
+  private resolveInheritingRecordLinks(): InheritedReadabilityParentLink[] {
+    return resolveInheritedReadabilityChildLinks({
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
+      flatObjectMetadataMaps:
+        this.options.internalContext.flatObjectMetadataMaps,
+    });
   }
 
   private isRecordSharingEnabled(): boolean {
@@ -1431,9 +1512,26 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         ),
         'Updated record does not satisfy row-level security constraints of your current role',
       );
-
-      await this.validateInheritedParentsAreWritableOrThrow([setColumns]);
     }
+
+    // The delete snapshot keeps a single row for the event while every deleted
+    // row may be one some record inherits through
+    const recordsBeforeInheritanceCheck =
+      kind === 'delete' && this.hasInheritingRecordLinks()
+        ? await eventSelectQueryBuilder.getMany<ObjectRecord>({
+            noFormatting: true,
+          })
+        : recordsBefore;
+
+    await this.validateInheritedParentsAreWritableOrThrow({
+      writtenRecords: isDefined(setColumns) ? [setColumns] : [],
+      affectedRecords: isDefined(setColumns)
+        ? recordsBeforeInheritanceCheck.flatMap((record) => [
+            record,
+            { ...record, ...setColumns },
+          ])
+        : recordsBeforeInheritanceCheck,
+    });
 
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
@@ -1874,8 +1972,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       isDefined(joinParentRelationShape) &&
       parents.some(
         (parent) =>
+          parent.kind === 'column' &&
           parent.fieldMetadataId ===
-          joinParentRelationShape.targetFieldMetadataId,
+            joinParentRelationShape.targetFieldMetadataId,
       )
     ) {
       return;
@@ -1941,18 +2040,141 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       recordShareTableExpression: this.getRecordShareTableExpression(),
       principalIds,
       accessLevels,
-      parents: parents.map(({ joinColumnName, parentFlatObjectMetadata }) => ({
-        joinColumnName,
-        gate: this.resolveInheritedReadabilityParentGate({
-          tableAlias,
-          joinColumnName,
-          parentFlatObjectMetadata,
+      parents: parents.map((parent) =>
+        parent.kind === 'column'
+          ? {
+              kind: 'column',
+              joinColumnName: parent.joinColumnName,
+              gate: this.resolveInheritedReadabilityParentGate({
+                tableAlias,
+                joinColumnName: parent.joinColumnName,
+                parentFlatObjectMetadata: parent.parentFlatObjectMetadata,
+                principalIds,
+                accessLevels,
+                depth,
+              }),
+            }
+          : this.buildInheritedReadabilityChildrenCondition({
+              tableAlias,
+              parent,
+              principalIds,
+              accessLevels,
+              depth,
+            }),
+      ),
+    });
+  }
+
+  private buildInheritedReadabilityChildrenCondition({
+    tableAlias,
+    parent,
+    principalIds,
+    accessLevels,
+    depth,
+  }: {
+    tableAlias: string;
+    parent: InheritedReadabilityChildrenParent;
+    principalIds: string[];
+    accessLevels: RecordShareAccessLevel[];
+    depth: number;
+  }): InheritedReadabilityParentCondition {
+    const { childFlatObjectMetadata, childJoinColumnName } = parent;
+    const childTableAlias = `${tableAlias}_${childFlatObjectMetadata.nameSingular}`;
+    const childTableShape = this.options.tableShapeByObjectMetadataId(
+      childFlatObjectMetadata.id,
+    );
+
+    return {
+      kind: 'children',
+      childTableAlias,
+      childTableExpression: `${escapeIdentifier(
+        childTableShape.schemaName,
+      )}.${escapeIdentifier(childTableShape.tableName)}`,
+      childJoinColumnName,
+      gate: this.resolveInheritedReadabilityChildGate({
+        childTableAlias,
+        childFlatObjectMetadata,
+        principalIds,
+        accessLevels,
+        depth,
+      }),
+    };
+  }
+
+  // A child row grants access when the child object's own gate lets the caller
+  // read it: OPEN needs the row alone, PRIVATE a share row on it, INHERITED its
+  // own parents evaluated one level deeper, or a share row on it when it has
+  // no usable parent, as a root INHERITED record without one
+  private resolveInheritedReadabilityChildGate({
+    childTableAlias,
+    childFlatObjectMetadata,
+    principalIds,
+    accessLevels,
+    depth,
+  }: {
+    childTableAlias: string;
+    childFlatObjectMetadata: FlatObjectMetadata;
+    principalIds: string[];
+    accessLevels: RecordShareAccessLevel[];
+    depth: number;
+  }): InheritedReadabilityChildGate {
+    if (
+      isOwningApplicationAuthContext({
+        authContext: this.options.authContext,
+        owningApplicationId: childFlatObjectMetadata.applicationId,
+      })
+    ) {
+      return { kind: 'open' };
+    }
+
+    const ownRecordShareGate: InheritedReadabilityChildGate = {
+      kind: 'gated',
+      condition: buildRecordShareCondition({
+        tableAlias: childTableAlias,
+        recordShareTableExpression: this.getRecordShareTableExpression(),
+        objectMetadataId: childFlatObjectMetadata.id,
+        principalIds,
+        accessLevels,
+      }),
+    };
+
+    switch (childFlatObjectMetadata.readability) {
+      case MetadataReadability.OPEN:
+        return { kind: 'open' };
+      case MetadataReadability.SYSTEM:
+      case MetadataReadability.APPLICATION:
+        return { kind: 'denied' };
+      case MetadataReadability.PRIVATE:
+        return ownRecordShareGate;
+      case MetadataReadability.INHERITED: {
+        if (depth >= MAX_INHERITED_READABILITY_DEPTH) {
+          return { kind: 'denied' };
+        }
+
+        const childParents = this.resolveInheritedReadabilityParents(
+          childFlatObjectMetadata,
+        );
+
+        if (childParents.length === 0) {
+          return ownRecordShareGate;
+        }
+
+        const condition = this.buildInheritedReadabilityConditionForAlias({
+          tableAlias: childTableAlias,
+          objectMetadataId: childFlatObjectMetadata.id,
+          parents: childParents,
           principalIds,
           accessLevels,
-          depth,
-        }),
-      })),
-    });
+          depth: depth + 1,
+        });
+
+        return isDefined(condition)
+          ? { kind: 'gated', condition }
+          : { kind: 'open' };
+      }
+      default:
+        assertUnreachable(childFlatObjectMetadata.readability);
+    }
   }
 
   private resolveInheritedReadabilityParentGate({
