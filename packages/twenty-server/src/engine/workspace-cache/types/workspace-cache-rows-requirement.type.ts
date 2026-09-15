@@ -1,4 +1,8 @@
-import { type FindOptionsWhere, type ObjectLiteral } from 'typeorm';
+import {
+  type FindOptionsOrder,
+  type FindOptionsWhere,
+  type ObjectLiteral,
+} from 'typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
 
@@ -26,6 +30,7 @@ export type EntityRowsRequirement<TName extends CacheFetchableEntityName> =
       columns: EntityColumns<TName> | true;
       groupBy?: GroupByColumns<TName>;
       where?: FindOptionsWhere<CacheFetchableEntity<TName>>;
+      order?: FindOptionsOrder<CacheFetchableEntity<TName>>;
     };
 
 export type WorkspaceCacheRowsRequirement = {
@@ -36,6 +41,7 @@ export type ObjectEntityRowsRequirement = {
   columns: readonly string[] | true;
   groupBy?: readonly string[];
   where?: FindOptionsWhere<ObjectLiteral>;
+  order?: FindOptionsOrder<ObjectLiteral>;
 };
 
 export type WidenedEntityRowsRequirement =

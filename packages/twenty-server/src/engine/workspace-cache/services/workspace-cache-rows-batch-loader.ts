@@ -1,6 +1,7 @@
 import {
   type EntityTarget,
   type FindManyOptions,
+  type FindOptionsOrder,
   type FindOptionsWhere,
   type ObjectLiteral,
   type Repository,
@@ -24,6 +25,7 @@ import { isObjectEntityRowsRequirement } from 'src/engine/workspace-cache/utils/
 import { serializeWhereClause } from 'src/engine/workspace-cache/utils/serialize-where-clause.util';
 
 type WhereClause = FindOptionsWhere<ObjectLiteral>;
+type OrderClause = FindOptionsOrder<ObjectLiteral>;
 
 export type WorkspaceCacheRowsSource = {
   getRepository: (
@@ -35,6 +37,7 @@ type NormalizedEntityRowsRequirement = {
   columns: readonly string[] | true;
   groupBy: readonly string[];
   where?: WhereClause;
+  order?: OrderClause;
 };
 
 const normalizeEntityRowsRequirement = (
@@ -45,6 +48,7 @@ const normalizeEntityRowsRequirement = (
         columns: entityRowsRequirement.columns,
         groupBy: entityRowsRequirement.groupBy ?? [],
         where: entityRowsRequirement.where,
+        order: entityRowsRequirement.order,
       }
     : { columns: entityRowsRequirement, groupBy: [] };
 
@@ -59,7 +63,35 @@ const buildFetchKey = (
 type PlannedFetch = {
   entityName: CacheFetchableEntityName;
   where?: WhereClause;
+  order?: OrderClause;
   columns: Set<string> | null;
+};
+
+const resolveMergedOrder = ({
+  entityName,
+  plannedOrder,
+  requiredOrder,
+}: {
+  entityName: CacheFetchableEntityName;
+  plannedOrder: OrderClause | undefined;
+  requiredOrder: OrderClause | undefined;
+}): OrderClause | undefined => {
+  if (!isDefined(requiredOrder)) {
+    return plannedOrder;
+  }
+
+  if (!isDefined(plannedOrder)) {
+    return requiredOrder;
+  }
+
+  if (JSON.stringify(plannedOrder) !== JSON.stringify(requiredOrder)) {
+    throw new WorkspaceCacheException(
+      `Conflicting order clauses declared for entity "${entityName}" in the same recompute batch: requirements sharing a fetch must declare the same order`,
+      WorkspaceCacheExceptionCode.INVALID_PARAMETERS,
+    );
+  }
+
+  return plannedOrder;
 };
 
 export class WorkspaceCacheRowsBatchLoader {
@@ -101,16 +133,22 @@ export class WorkspaceCacheRowsBatchLoader {
           continue;
         }
 
-        const { columns, groupBy, where } = normalizeEntityRowsRequirement(
-          entityRowsRequirement,
-        );
+        const { columns, groupBy, where, order } =
+          normalizeEntityRowsRequirement(entityRowsRequirement);
         const fetchKey = buildFetchKey(entityName, where);
         const plannedFetch = plannedFetchByFetchKey.get(fetchKey);
+
+        const mergedOrder = resolveMergedOrder({
+          entityName,
+          plannedOrder: plannedFetch?.order,
+          requiredOrder: order,
+        });
 
         if (columns === true) {
           plannedFetchByFetchKey.set(fetchKey, {
             entityName,
             where,
+            order: mergedOrder,
             columns: null,
           });
           continue;
@@ -122,10 +160,13 @@ export class WorkspaceCacheRowsBatchLoader {
           plannedFetchByFetchKey.set(fetchKey, {
             entityName,
             where,
+            order: mergedOrder,
             columns: new Set(columnsWithGroupByKeys),
           });
           continue;
         }
+
+        plannedFetch.order = mergedOrder;
 
         if (plannedFetch.columns === null) {
           continue;
@@ -233,6 +274,7 @@ export class WorkspaceCacheRowsBatchLoader {
   private runFetch({
     entityName,
     where,
+    order,
     columns,
   }: PlannedFetch): Promise<ObjectLiteral[]> {
     const findOptions: FindManyOptions<ObjectLiteral> = {
@@ -245,6 +287,10 @@ export class WorkspaceCacheRowsBatchLoader {
 
     if (columns !== null) {
       findOptions.select = [...columns];
+    }
+
+    if (isDefined(order)) {
+      findOptions.order = order;
     }
 
     return this.coreDataSource

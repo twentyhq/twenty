@@ -31,9 +31,14 @@ const FLAT_VIEW_ROWS_REQUIREMENT = {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['viewId'],
   },
+  // `flatView.viewSortIds` is positional: the frontend maps it straight into
+  // `orderBy`, so index 0 is the primary sort. Without an explicit order the
+  // rows come back in physical heap order and multi-sort priority silently
+  // changes whenever the cache is recomputed.
   viewSort: {
     columns: ['id', 'universalIdentifier'],
     groupBy: ['viewId'],
+    order: { createdAt: 'ASC', id: 'ASC' },
   },
   viewFieldGroup: {
     columns: ['id', 'universalIdentifier'],

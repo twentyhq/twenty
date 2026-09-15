@@ -311,4 +311,89 @@ describe('WorkspaceCacheRowsBatchLoader', () => {
 
     expect(findMock).toHaveBeenCalledTimes(2);
   });
+  it('passes a declared order through to the query', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+
+    await rowsBatchLoader.loadRows([
+      {
+        viewField: {
+          columns: ['id'],
+          order: { createdAt: 'ASC', id: 'ASC' },
+        },
+      },
+    ]);
+
+    const findMock = findMocksByEntity.get(ViewFieldEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(1);
+    expect(findMock.mock.calls[0][0].order).toEqual({
+      createdAt: 'ASC',
+      id: 'ASC',
+    });
+  });
+
+  it('leaves the query unordered when no requirement declares an order', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+
+    await rowsBatchLoader.loadRows([{ viewField: ['id'] }]);
+
+    expect(
+      findMocksByEntity.get(ViewFieldEntity)!.mock.calls[0][0].order,
+    ).toBeUndefined();
+  });
+
+  it('keeps the declared order when another requirement merges into the same fetch', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+
+    await rowsBatchLoader.loadRows([
+      { viewField: ['id'] },
+      {
+        viewField: {
+          columns: ['fieldMetadataId'],
+          order: { createdAt: 'ASC', id: 'ASC' },
+        },
+      },
+      { viewField: true },
+    ]);
+
+    const findMock = findMocksByEntity.get(ViewFieldEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(1);
+    expect(findMock.mock.calls[0][0].order).toEqual({
+      createdAt: 'ASC',
+      id: 'ASC',
+    });
+  });
+
+  it('throws when two requirements sharing a fetch declare conflicting orders', async () => {
+    const { rowsBatchLoader } = setup();
+
+    await expect(
+      rowsBatchLoader.loadRows([
+        { viewField: { columns: ['id'], order: { createdAt: 'ASC' } } },
+        { viewField: { columns: ['id'], order: { createdAt: 'DESC' } } },
+      ]),
+    ).rejects.toThrow(/Conflicting order clauses/);
+  });
+
+  it('scopes the order to its own fetch when where clauses differ', async () => {
+    const { rowsBatchLoader, findMocksByEntity } = setup();
+
+    await rowsBatchLoader.loadRows([
+      { viewField: { columns: ['id'], where: { isVisible: true } } },
+      {
+        viewField: {
+          columns: ['id'],
+          where: { isVisible: false },
+          order: { createdAt: 'ASC' },
+        },
+      },
+    ]);
+
+    const findMock = findMocksByEntity.get(ViewFieldEntity)!;
+
+    expect(findMock).toHaveBeenCalledTimes(2);
+    expect(findMock.mock.calls[0][0].order).toBeUndefined();
+    expect(findMock.mock.calls[1][0].order).toEqual({ createdAt: 'ASC' });
+  });
 });
