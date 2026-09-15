@@ -7,7 +7,7 @@ import {
 
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
-import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { isRecordAdmittedByRecordShareGate } from 'src/engine/record-share/utils/is-record-admitted-by-record-share-gate.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 
 const OBJECT_METADATA_ID = 'object-metadata-1';
@@ -86,17 +86,18 @@ const sharedRecordIds = ({
   accessLevels: RecordShareAccessLevel[];
 }) =>
   Object.values(RECORD_IDS).filter((recordId) =>
-    isRecordSharedWithPrincipals({
+    isRecordAdmittedByRecordShareGate({
       recordShareGate: {
         recordSharesByRecordId: indexRecordSharesByRecordId(recordShares),
         principalIds,
+        recordIdsReadableThroughParents: new Set(),
       },
       recordId,
       accessLevels,
     }),
   );
 
-describe('isRecordSharedWithPrincipals', () => {
+describe('isRecordAdmittedByRecordShareGate', () => {
   it.each([
     {
       principals: 'the member, their role and everyone',
@@ -158,10 +159,11 @@ describe('isRecordSharedWithPrincipals', () => {
 
   it('should ignore rows of another record with the same principal', () => {
     expect(
-      isRecordSharedWithPrincipals({
+      isRecordAdmittedByRecordShareGate({
         recordShareGate: {
           recordSharesByRecordId: indexRecordSharesByRecordId(recordShares),
           principalIds: [WORKSPACE_MEMBER_ID],
+          recordIdsReadableThroughParents: new Set(),
         },
         recordId: RECORD_IDS.UNSHARED,
         accessLevels: [RecordShareAccessLevel.READ],

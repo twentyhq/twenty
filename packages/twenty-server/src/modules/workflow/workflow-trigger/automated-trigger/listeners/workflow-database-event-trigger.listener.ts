@@ -28,9 +28,13 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
 import { type RecordShareGate } from 'src/engine/record-share/types/record-share-gate.type';
-import { isRecordSharedWithPrincipals } from 'src/engine/record-share/utils/is-record-shared-with-principals.util';
+import { isRecordAdmittedByRecordShareGate } from 'src/engine/record-share/utils/is-record-admitted-by-record-share-gate.util';
+import { omitInheritedReadabilityChildRecords } from 'src/engine/record-share/utils/omit-inherited-readability-child-records.util';
+import { resolveEventRecordSnapshots } from 'src/engine/record-share/utils/resolve-event-record-snapshots.util';
+import { buildRoleRowAccessPolicySubject } from 'src/engine/record-share/utils/build-role-row-access-policy-subject.util';
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
@@ -77,6 +81,7 @@ export class WorkflowDatabaseEventTriggerListener {
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareService: RecordShareService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -389,7 +394,7 @@ export class WorkflowDatabaseEventTriggerListener {
               coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
               workspaceWorkflowVersionId:
                 eventListener.workspaceWorkflowVersionId,
-              payload: eventPayload,
+              payload: omitInheritedReadabilityChildRecords(eventPayload),
             },
             { retryLimit: 3 },
           );
@@ -417,12 +422,23 @@ export class WorkflowDatabaseEventTriggerListener {
   private async buildRecordShareGate(
     payload: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<RecordShareGate | null> {
-    const { featureFlagsMap, flatApplicationMaps, flatRoleMaps } =
-      await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
-        'featureFlagsMap',
-        'flatApplicationMaps',
-        'flatRoleMaps',
-      ]);
+    const {
+      featureFlagsMap,
+      flatApplicationMaps,
+      flatRoleMaps,
+      rolesPermissions,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
+      'featureFlagsMap',
+      'flatApplicationMaps',
+      'flatRoleMaps',
+      'rolesPermissions',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
+      'flatFieldMetadataMaps',
+    ]);
 
     if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
       return null;
@@ -433,19 +449,19 @@ export class WorkflowDatabaseEventTriggerListener {
       TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
     );
 
+    const roleId =
+      standardApplication?.defaultRoleId ??
+      findFlatEntityByUniversalIdentifier({
+        flatEntityMaps: flatRoleMaps,
+        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
+      })?.id;
+
     return buildRecordShareGate({
       readability: payload.objectMetadata.readability,
       isOwningApplication:
         isDefined(standardApplication) &&
         payload.objectMetadata.applicationId === standardApplication.id,
-      principalIds: [
-        EVERYONE_PRINCIPAL_ID,
-        standardApplication?.defaultRoleId ??
-          findFlatEntityByUniversalIdentifier({
-            flatEntityMaps: flatRoleMaps,
-            universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-          })?.id,
-      ],
+      principalIds: [EVERYONE_PRINCIPAL_ID, roleId],
       fetchRecordSharesByRecordId: async () =>
         indexRecordSharesByRecordId(
           await this.recordShareService.findByRecordIds({
@@ -454,6 +470,20 @@ export class WorkflowDatabaseEventTriggerListener {
             recordIds: payload.events.map((event) => event.recordId),
           }),
         ),
+      resolveRecordIdsReadableThroughParents: () =>
+        this.recordAccessPolicyService.resolveRecordIdsReadableThroughParents({
+          workspaceId: payload.workspaceId,
+          objectMetadata: payload.objectMetadata,
+          records: resolveEventRecordSnapshots(payload.events),
+          subject: buildRoleRowAccessPolicySubject({
+            roleId,
+            owningApplicationId: standardApplication?.id,
+            rolesPermissions,
+            flatRowLevelPermissionPredicateMaps,
+            flatRowLevelPermissionPredicateGroupMaps,
+            flatFieldMetadataMaps,
+          }),
+        }),
     });
   }
 
@@ -480,7 +510,7 @@ export class WorkflowDatabaseEventTriggerListener {
       return true;
     }
 
-    return isRecordSharedWithPrincipals({
+    return isRecordAdmittedByRecordShareGate({
       recordShareGate,
       recordId: eventPayload.recordId,
       accessLevels: resolveRequiredRecordShareAccessLevels('select'),

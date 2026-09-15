@@ -3,4 +3,5 @@ import { type RecordShare } from 'src/engine/record-share/types/record-share.typ
 export type RecordShareGate = {
   recordSharesByRecordId: Map<string, RecordShare[]>;
   principalIds: string[];
+  recordIdsReadableThroughParents: Set<string>;
 };
