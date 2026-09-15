@@ -6,14 +6,20 @@
   "license": "AGPL-3.0",
   "scripts": {
     "build": "node ./scripts/build.js",
-    "validate": "node ./scripts/build.js --check && node ./scripts/validate.js",
+    "validate": "node ./scripts/validate-source.js && node ./scripts/build.js && node ./scripts/validate-distribution.js",
     "test": "node --test ./scripts/__tests__/*.spec.js",
-    "verify:install": "node ./scripts/verify-install.js"
+    "verify:install": "node ./scripts/verify-install.js",
+    "setup:mcp": "bash ./scripts/setup-mcp.sh"
   },
   "files": [
+    ".codex-plugin",
+    ".mcp.json",
+    "AGENTS.md",
     "README.md",
-    "SMOKE-TEST.md",
-    "skills"
+    "assets",
+    "references",
+    "skills",
+    "scripts/setup-mcp.sh"
   ],
   "engines": {
     "node": "^24.5.0",

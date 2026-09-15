@@ -9,7 +9,9 @@ const {
   collectSkillSeedReferences,
   resolveReferenceClosure,
   buildPortableSkills,
-  diffDirectories,
+  buildDistribution,
+  PORTABLE_SKILLS,
+  listFiles,
 } = require('../lib');
 const { writeFixtureFile } = require('./fixtures');
 
@@ -136,7 +138,7 @@ describe('buildPortableSkills', () => {
     fs.rmSync(outputRoot, { recursive: true, force: true });
   });
 
-  it('should emit a self-contained skill without codex-specific files', () => {
+  it('should emit a self-contained skill including optional Codex display metadata', () => {
     buildPortableSkills({ sourceRoot, outputRoot, skillNames: ['demo-skill'] });
 
     const skillMarkdown = fs.readFileSync(
@@ -155,7 +157,13 @@ describe('buildPortableSkills', () => {
         path.join(outputRoot, 'demo-skill', 'references/deep/detail.md'),
       ),
     );
-    assert.ok(!fs.existsSync(path.join(outputRoot, 'demo-skill', 'agents')));
+    assert.equal(
+      fs.readFileSync(
+        path.join(outputRoot, 'demo-skill', 'agents/openai.yaml'),
+        'utf8',
+      ),
+      'interface: {}\n',
+    );
   });
 
   it('should remove stale files from a previous build', () => {
@@ -176,45 +184,6 @@ describe('buildPortableSkills', () => {
         }),
       /canonical skill is missing: skills\/absent-skill\/SKILL\.md/,
     );
-  });
-});
-
-describe('diffDirectories', () => {
-  let expectedRoot;
-  let actualRoot;
-
-  beforeEach(() => {
-    expectedRoot = fs.mkdtempSync(
-      path.join(os.tmpdir(), 'agent-skills-expected-'),
-    );
-    actualRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'agent-skills-actual-'));
-  });
-
-  afterEach(() => {
-    fs.rmSync(expectedRoot, { recursive: true, force: true });
-    fs.rmSync(actualRoot, { recursive: true, force: true });
-  });
-
-  it('should report missing, outdated, and unexpected files', () => {
-    writeFixtureFile(expectedRoot, 'a.md', 'same');
-    writeFixtureFile(actualRoot, 'a.md', 'same');
-    writeFixtureFile(expectedRoot, 'missing.md', 'expected');
-    writeFixtureFile(expectedRoot, 'outdated.md', 'new content');
-    writeFixtureFile(actualRoot, 'outdated.md', 'old content');
-    writeFixtureFile(actualRoot, 'unexpected.md', 'extra');
-
-    assert.deepEqual(diffDirectories({ expectedRoot, actualRoot }).sort(), [
-      'missing file: missing.md',
-      'outdated file: outdated.md',
-      'unexpected file: unexpected.md',
-    ]);
-  });
-
-  it('should report no differences for identical trees', () => {
-    writeFixtureFile(expectedRoot, 'nested/a.md', 'same');
-    writeFixtureFile(actualRoot, 'nested/a.md', 'same');
-
-    assert.deepEqual(diffDirectories({ expectedRoot, actualRoot }), []);
   });
 });
 
@@ -264,5 +233,123 @@ describe('resolveReferenceClosure cross-scope mentions', () => {
     ]);
 
     assert.deepEqual([...closure], ['publish-app/prepare-for-app-store.md']);
+  });
+});
+
+describe('buildDistribution', () => {
+  let fixtureRoot;
+
+  beforeEach(() => {
+    fixtureRoot = fs.mkdtempSync(
+      path.join(os.tmpdir(), 'twenty-distribution-'),
+    );
+  });
+
+  afterEach(() => {
+    fs.rmSync(fixtureRoot, { recursive: true, force: true });
+  });
+
+  it('builds one standalone plugin and skill collection without modifying source', () => {
+    const sourceRoot = path.join(fixtureRoot, 'source');
+    const outputRoot = path.join(fixtureRoot, 'dist');
+    const files = [
+      '.codex-plugin',
+      '.mcp.json',
+      'assets',
+      'skills',
+      'scripts/setup-mcp.sh',
+    ];
+
+    writeFixtureFile(
+      sourceRoot,
+      'package.json',
+      JSON.stringify({
+        name: 'twenty-agent-skills',
+        version: '0.1.0',
+        license: 'AGPL-3.0',
+        files,
+        scripts: { build: 'node scripts/build.js' },
+      }),
+    );
+    writeFixtureFile(
+      sourceRoot,
+      '.codex-plugin/plugin.json',
+      '{"name":"twenty","skills":"./skills/"}',
+    );
+    writeFixtureFile(sourceRoot, '.mcp.json', '{"mcpServers":{}}');
+    writeFixtureFile(sourceRoot, 'assets/logo.png', 'binary-asset');
+    writeFixtureFile(sourceRoot, 'scripts/setup-mcp.sh', '#!/bin/sh\nexit 0\n');
+    fs.chmodSync(path.join(sourceRoot, 'scripts/setup-mcp.sh'), 0o755);
+    writeFixtureFile(sourceRoot, 'scripts/build.js', 'build-only');
+    writeFixtureFile(
+      sourceRoot,
+      'references/concepts/basics.md',
+      'Shared concept.',
+    );
+
+    for (const skillName of PORTABLE_SKILLS) {
+      writeFixtureFile(
+        sourceRoot,
+        `skills/${skillName}/SKILL.md`,
+        'Read `../../references/concepts/basics.md`.',
+      );
+      writeFixtureFile(
+        sourceRoot,
+        `skills/${skillName}/agents/openai.yaml`,
+        'interface: {}\n',
+      );
+    }
+
+    const snapshot = (root) =>
+      listFiles(root).map((file) => [
+        path.relative(root, file),
+        fs.readFileSync(file),
+      ]);
+    const sourceBefore = snapshot(sourceRoot);
+    buildDistribution({ sourceRoot, outputRoot });
+    const distributionBefore = snapshot(outputRoot);
+    writeFixtureFile(outputRoot, 'removed-skill/SKILL.md', 'stale');
+    buildDistribution({ sourceRoot, outputRoot });
+
+    assert.deepEqual(snapshot(sourceRoot), sourceBefore);
+    assert.deepEqual(snapshot(outputRoot), distributionBefore);
+    assert.ok(
+      fs.existsSync(path.join(outputRoot, '.codex-plugin/plugin.json')),
+    );
+    assert.ok(fs.existsSync(path.join(outputRoot, '.mcp.json')));
+    assert.ok(fs.existsSync(path.join(outputRoot, 'assets/logo.png')));
+    assert.ok(!fs.existsSync(path.join(outputRoot, 'scripts/build.js')));
+    assert.equal(
+      fs.statSync(path.join(outputRoot, 'scripts/setup-mcp.sh')).mode & 0o777,
+      0o755,
+    );
+    assert.equal(
+      JSON.parse(fs.readFileSync(path.join(outputRoot, 'package.json'), 'utf8'))
+        .scripts,
+      undefined,
+    );
+
+    fs.rmSync(sourceRoot, { recursive: true });
+    for (const skillName of PORTABLE_SKILLS) {
+      const skillRoot = path.join(outputRoot, 'skills', skillName);
+      assert.equal(
+        fs.readFileSync(path.join(skillRoot, 'SKILL.md'), 'utf8'),
+        'Read `references/concepts/basics.md`.',
+      );
+      assert.equal(
+        fs.readFileSync(
+          path.join(skillRoot, 'references/concepts/basics.md'),
+          'utf8',
+        ),
+        'Shared concept.',
+      );
+      assert.equal(
+        fs.readFileSync(path.join(skillRoot, 'agents/openai.yaml'), 'utf8'),
+        'interface: {}\n',
+      );
+      assert.ok(
+        listFiles(skillRoot).every((file) => fs.lstatSync(file).isFile()),
+      );
+    }
   });
 });

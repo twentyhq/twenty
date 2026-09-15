@@ -3,11 +3,16 @@
 const fs = require('node:fs');
 const path = require('node:path');
 
-const { PACKAGE_ROOT, PORTABLE_SKILLS, listFiles, readText } = require('./lib');
+const {
+  DISTRIBUTION_ROOT,
+  PORTABLE_SKILLS,
+  listFiles,
+  readText,
+} = require('./lib');
 const {
   assertSelfContainedReferences,
   assertSkillFrontmatter,
-} = require('./validate');
+} = require('./validate-distribution');
 
 const [installRoot, ...requestedSkills] = process.argv.slice(2);
 
@@ -68,7 +73,7 @@ const failures = [];
 const fail = (message) => failures.push(message);
 
 for (const skillName of skillNames) {
-  const sourceRoot = path.join(PACKAGE_ROOT, 'skills', skillName);
+  const sourceRoot = path.join(DISTRIBUTION_ROOT, 'skills', skillName);
   const installedRoots = findInstalledSkillRoots({
     root: absoluteInstallRoot,
     skillName,

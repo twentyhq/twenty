@@ -4,6 +4,17 @@ The portable skills claim that a user can scaffold and develop a Twenty app agai
 
 Run it when `create-app`, `develop-app`, or `manage-app` guidance changes in a way that affects the scaffold or sync flow.
 
+## Install the Distribution
+
+Build from a checkout and install the skills into the agent used for this run:
+
+```bash
+npx nx run twenty-agent-skills:build
+npx skills add ./packages/twenty-agent-skills/dist --skill create-app develop-app manage-app
+```
+
+After the first successful publish from `main`, the same distribution is available at `https://github.com/twentyhq/twenty/tree/agent-skills`. Record the source revision and installation method with each new run. The recorded run below predates the distribution migration and documents the app workflow only.
+
 ## 1. Bring up a self-hosted instance
 
 Any instance works. For a local one from a checkout of this repository:
