@@ -4,7 +4,7 @@ import { useId } from 'react';
 import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { IconLock } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/layout';
-import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/surfaces';
 import { THEME_COMMON } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
@@ -59,7 +59,7 @@ const StyledDescription = styled.div`
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
   line-height: ${() => themeCssVariables.text.lineHeight.lg};
-  overflow: hidden;
+  overflow-wrap: break-word;
 `;
 
 const StyledCover = styled.span`
@@ -153,12 +153,7 @@ export const SlackAccessModeSection = ({
                 <StyledCover />
               </label>
             </StyledTitle>
-            <StyledDescription>
-              <OverflowingTextWithTooltip
-                text={description}
-                displayedMaxRows={2}
-              />
-            </StyledDescription>
+            <StyledDescription>{description}</StyledDescription>
           </StyledTextContainer>
           <StyledToggleContainer>
             <Toggle
