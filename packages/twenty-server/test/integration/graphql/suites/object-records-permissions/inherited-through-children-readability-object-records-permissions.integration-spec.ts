@@ -697,5 +697,76 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
       expect([...readableThroughLiveLinks]).toEqual([]);
       expect([...readableThroughCapturedLinks]).toEqual([NOTE_ON_PERSON_ID]);
     });
+
+    it('should not show a deleted note in the trash through a target detached before its deletion', async () => {
+      const noteOnCompanyFilter = { id: { eq: NOTE_ON_COMPANY_ID } };
+      const companyNoteTargetFilter = { id: { eq: COMPANY_NOTE_TARGET_ID } };
+
+      const detachResponse = await makeGraphqlAPIRequest(
+        deleteManyOperationFactory({
+          objectMetadataSingularName: 'noteTarget',
+          objectMetadataPluralName: 'noteTargets',
+          gqlFields: 'id',
+          filter: companyNoteTargetFilter,
+        }),
+      );
+
+      await setRecordSharingEnabled(false);
+
+      const deleteResponse = await makeGraphqlAPIRequest(
+        deleteManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: noteOnCompanyFilter,
+        }),
+      );
+
+      await setRecordSharingEnabled(true);
+
+      const trashedNotesResponse = await makeGraphqlAPIRequestWithMemberRole(
+        findManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: {
+            ...noteOnCompanyFilter,
+            not: { deletedAt: { is: 'NULL' } },
+          },
+        }),
+      );
+
+      await setRecordSharingEnabled(false);
+
+      const restoreNoteResponse = await makeGraphqlAPIRequest(
+        restoreManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: noteOnCompanyFilter,
+        }),
+      );
+      const restoreTargetResponse = await makeGraphqlAPIRequest(
+        restoreManyOperationFactory({
+          objectMetadataSingularName: 'noteTarget',
+          objectMetadataPluralName: 'noteTargets',
+          gqlFields: 'id',
+          filter: companyNoteTargetFilter,
+        }),
+      );
+
+      await setRecordSharingEnabled(true);
+
+      expect(detachResponse.body.data.deleteNoteTargets).toEqual([
+        { id: COMPANY_NOTE_TARGET_ID },
+      ]);
+      expect(deleteResponse.body.data.deleteNotes).toEqual([
+        { id: NOTE_ON_COMPANY_ID },
+      ]);
+      expect(trashedNotesResponse.body.errors).toBeUndefined();
+      expect(trashedNotesResponse.body.data.notes.edges).toEqual([]);
+      expect(restoreNoteResponse.body.errors).toBeUndefined();
+      expect(restoreTargetResponse.body.errors).toBeUndefined();
+    });
   });
 });
