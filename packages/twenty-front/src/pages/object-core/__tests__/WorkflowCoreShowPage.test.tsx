@@ -14,10 +14,13 @@ jest.mock(
   }),
 );
 
-jest.mock('@/object-record/record-show/hooks/useRecordShowPageResource', () => ({
-  useRecordShowPageResource: (...args: unknown[]) =>
-    mockUseRecordShowPageResource(...args),
-}));
+jest.mock(
+  '@/object-record/record-show/hooks/useRecordShowPageResource',
+  () => ({
+    useRecordShowPageResource: (...args: unknown[]) =>
+      mockUseRecordShowPageResource(...args),
+  }),
+);
 
 jest.mock('@/object-record/record-show/components/RecordShowPageShell', () => ({
   RecordShowPageShell: (props: unknown) => {

@@ -6,9 +6,11 @@ import { type CoreObjectShowPageProps } from '@/object-core/types/CoreObjectShow
 import { RecordShowPageShell } from '@/object-record/record-show/components/RecordShowPageShell';
 import { useRecordShowPageResource } from '@/object-record/record-show/hooks/useRecordShowPageResource';
 
+type WorkflowCoreShowPageProps = CoreObjectShowPageProps;
+
 export const WorkflowCoreShowPage = ({
   objectRecordId,
-}: CoreObjectShowPageProps) => {
+}: WorkflowCoreShowPageProps) => {
   const coreWorkflowResult = useCoreWorkflowShowPageResource({
     workspaceWorkflowId: objectRecordId,
   });
