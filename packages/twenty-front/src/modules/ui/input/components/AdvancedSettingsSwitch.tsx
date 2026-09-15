@@ -1,3 +1,4 @@
+import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
@@ -10,10 +11,13 @@ const StyledContainer = styled.label<{ compact: boolean }>`
   cursor: pointer;
   display: flex;
   height: ${({ compact }) =>
-    compact ? themeCssVariables.spacing[8] : themeCssVariables.spacing[5]};
+    compact
+      ? `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`
+      : themeCssVariables.spacing[5]};
   justify-content: ${({ compact }) => (compact ? 'center' : 'space-between')};
   padding: ${({ compact }) => (compact ? '0' : themeCssVariables.spacing[1])};
-  width: ${({ compact }) => (compact ? themeCssVariables.spacing[8] : '100%')};
+  width: ${({ compact }) =>
+    compact ? `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px` : '100%'};
 `;
 
 const StyledText = styled.div`

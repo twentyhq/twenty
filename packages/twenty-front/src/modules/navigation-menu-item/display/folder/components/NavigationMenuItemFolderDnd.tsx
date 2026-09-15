@@ -1,4 +1,4 @@
-import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
+import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -396,7 +396,7 @@ export const NavigationMenuItemFolderDnd = ({
                 )}
               />
               {isWorkspace && isLayoutCustomizationModeEnabled && (
-                <AnimatedEaseIn>
+                <NavigationMenuItemEntrance>
                   <NavigationDrawerSubItem
                     label={t`Add menu item`}
                     Icon={IconPlus}
@@ -410,7 +410,7 @@ export const NavigationMenuItemFolderDnd = ({
                       selectedIndex: -1,
                     })}
                   />
-                </AnimatedEaseIn>
+                </NavigationMenuItemEntrance>
               )}
             </NavigationMenuItemDroppableSlot>
           </StyledFolderDroppableContent>

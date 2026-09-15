@@ -57,6 +57,7 @@ export type { TablerIconsProps } from './components/TablerIcons';
 export {
   Icon123,
   IconAdjustments,
+  IconAdjustmentsHorizontal,
   IconAlertCircle,
   IconAlertTriangle,
   IconAlignBoxLeftTop,

@@ -1,3 +1,4 @@
+import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { motion, useReducedMotion } from 'framer-motion';
@@ -80,7 +81,9 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
   gap: ${({ isActive, isExpanded }) =>
     isActive && isExpanded ? themeCssVariables.spacing[1] : '0'};
   height: ${({ isExpanded }) =>
-    isExpanded ? themeCssVariables.spacing[7] : themeCssVariables.spacing[8]};
+    isExpanded
+      ? themeCssVariables.spacing[7]
+      : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
   justify-content: ${({ isExpanded }) =>
     isExpanded ? 'flex-start' : 'center'};
   // A flex item will not shrink past its content without this, so flex-shrink
@@ -93,7 +96,7 @@ const StyledMode = styled.button<{ isActive: boolean; isExpanded: boolean }>`
     color calc(${themeCssVariables.animation.duration.fast} * 1s) ease,
     gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   width: ${({ isExpanded }) =>
-    isExpanded ? 'auto' : themeCssVariables.spacing[8]};
+    isExpanded ? 'auto' : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
 
   &[aria-disabled='true'] {
     color: ${themeCssVariables.font.color.light};

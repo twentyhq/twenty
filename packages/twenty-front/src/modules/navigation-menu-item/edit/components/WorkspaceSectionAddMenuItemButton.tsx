@@ -4,7 +4,7 @@ import React from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconColumnInsertRight, IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
+import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
@@ -49,7 +49,7 @@ export const WorkspaceSectionAddMenuItemButton = () => {
     pendingInsertionNavigationMenuItem === null;
 
   return (
-    <AnimatedEaseIn>
+    <NavigationMenuItemEntrance>
       <StyledContainer>
         <NavigationDrawerItem
           Icon={IconPlus}
@@ -60,6 +60,6 @@ export const WorkspaceSectionAddMenuItemButton = () => {
           isSelectedInEditMode={isSelected}
         />
       </StyledContainer>
-    </AnimatedEaseIn>
+    </NavigationMenuItemEntrance>
   );
 };

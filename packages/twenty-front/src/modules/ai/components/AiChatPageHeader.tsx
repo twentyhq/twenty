@@ -1,3 +1,4 @@
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,7 +24,7 @@ const StyledHeader = styled.header`
   display: flex;
   flex-shrink: 0;
   gap: ${themeCssVariables.spacing[2]};
-  height: ${themeCssVariables.spacing[12]};
+  height: ${APP_HEADER_HEIGHT}px;
   padding: 0 ${themeCssVariables.spacing[3]};
 `;
 

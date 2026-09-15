@@ -1,3 +1,4 @@
+import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { styled } from '@linaria/react';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -18,7 +19,7 @@ export const StyledContainer = styled.div<{
   height: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded
       ? themeCssVariables.spacing[7]
-      : themeCssVariables.spacing[8]};
+      : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
   max-width: 100%;
   min-width: 0;
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
@@ -28,7 +29,9 @@ export const StyledContainer = styled.div<{
       : `calc(${themeCssVariables.spacing[2]} - 1px)`};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
   width: ${({ isNavigationDrawerExpanded }) =>
-    isNavigationDrawerExpanded ? 'fit-content' : themeCssVariables.spacing[8]};
+    isNavigationDrawerExpanded
+      ? 'fit-content'
+      : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
 
   &:hover {
     background-color: ${({ disabled }) =>

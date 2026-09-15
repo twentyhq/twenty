@@ -2,6 +2,7 @@
 export {
   IconNumber123 as Icon123,
   IconAdjustments,
+  IconAdjustmentsHorizontal,
   IconAlertCircle,
   IconAlertTriangle,
   IconAlignBoxLeftTop,

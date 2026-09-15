@@ -1,3 +1,5 @@
+import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
+import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSearch } from 'twenty-ui/icon';
@@ -16,7 +18,7 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   flex-shrink: 0;
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[4])};
-  min-height: ${themeCssVariables.spacing[10]};
+  min-height: calc(${APP_HEADER_HEIGHT}px - ${themeCssVariables.spacing[2]});
   padding-right: ${themeCssVariables.spacing[2]};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   user-select: none;
@@ -32,9 +34,13 @@ const StyledSearchButtonContainer = styled.div<{ isExpanded: boolean }>`
 
   > button {
     height: ${({ isExpanded }) =>
-      isExpanded ? themeCssVariables.spacing[6] : themeCssVariables.spacing[8]};
+      isExpanded
+        ? themeCssVariables.spacing[6]
+        : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
     width: ${({ isExpanded }) =>
-      isExpanded ? themeCssVariables.spacing[6] : themeCssVariables.spacing[8]};
+      isExpanded
+        ? themeCssVariables.spacing[6]
+        : `${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px`};
   }
 `;
 
@@ -59,9 +65,9 @@ const StyledNavigationDrawerCollapseButtonContainer = styled.div`
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     > * {
-      height: ${themeCssVariables.spacing[8]};
+      height: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
       padding-right: 0;
-      width: ${themeCssVariables.spacing[8]};
+      width: ${NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE}px;
     }
   }
 `;
@@ -71,7 +77,7 @@ const StyledWorkspaceDropdownContainer = styled.div<{ isExpanded: boolean }>`
   align-self: stretch;
   display: flex;
   flex: 1 1 auto;
-  min-height: ${themeCssVariables.spacing[10]};
+  min-height: calc(${APP_HEADER_HEIGHT}px - ${themeCssVariables.spacing[2]});
   min-width: 0;
   position: relative;
 
