@@ -75,7 +75,7 @@ const StyledContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+  gap: ${themeCssVariables.spacing[2]};
   min-height: 0;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
