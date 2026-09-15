@@ -14,7 +14,7 @@ const objectMetadata = {
 };
 
 describe('computeSystemViewToCreate', () => {
-  it.each([ViewKey.INDEX, SYSTEM_VIEW_KEYS.FIELDS_WIDGET])(
+  it.each([SYSTEM_VIEW_KEYS.INDEX, SYSTEM_VIEW_KEYS.FIELDS_WIDGET])(
     'should derive the %s view universal identifier from the object',
     (viewKey) => {
       const result = computeSystemViewToCreate({
