@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 21:09\n"
+"PO-Revision-Date: 2026-09-15 12:25\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -824,12 +824,12 @@ msgstr "アクション"
 #. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
 msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
-msgstr ""
+msgstr "決済後にTwenty Organizationライセンスをアクティベートし、キーをセルフホスト型インスタンスにコピーしてください。"
 
 #. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Activating your Organization license…"
-msgstr ""
+msgstr "Organizationライセンスを有効化しています…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2160,7 +2160,7 @@ msgstr "レコードページから直接、通話録音の文字起こしまた
 #. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Copy the Organization key above."
-msgstr ""
+msgstr "上のOrganizationキーをコピーしてください。"
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -3320,7 +3320,7 @@ msgstr "追加の Dataverse ストレージ (10 GB)"
 #. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Failed to activate Organization key. Please try again."
-msgstr ""
+msgstr "Organizationキーのアクティベーションに失敗しました。もう一度お試しください。"
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -3760,11 +3760,6 @@ msgstr "ドイツ語"
 #: src/partner-application/data/partner-country-options.ts
 msgid "Germany 🇩🇪"
 msgstr "Germany 🇩🇪"
-
-#. js-lingui-id: W85I60
-#: src/sections/pricing-plans/plans-data.ts
-msgid "Get a license"
-msgstr ""
 
 #. js-lingui-id: WoPlNk
 #: src/sections/partner-hero/PartnerHero.tsx
@@ -5621,9 +5616,9 @@ msgstr "導入事例を開く: {0}"
 msgid "Open menu"
 msgstr "メニューを開く"
 
-#. js-lingui-id: xxpabu
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Enterprise."
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
 msgstr ""
 
 #. js-lingui-id: r2NnGk
@@ -5660,12 +5655,12 @@ msgstr "Organization"
 #. js-lingui-id: hjEu3O
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 msgid "Organization *activation*"
-msgstr ""
+msgstr "組織の*アクティベーション*"
 
 #. js-lingui-id: CKppYD
 #: src/platform/routing/static-website-routes.ts
 msgid "Organization Activation | Twenty"
-msgstr ""
+msgstr "組織のアクティベーション | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -7181,6 +7176,7 @@ msgid "Start automating at huge scale!"
 msgstr "大規模自動化を始めましょう！"
 
 #. js-lingui-id: XO628f
+#: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -9170,12 +9166,12 @@ msgstr "ネットワーク全体を完全に可視化。"
 #. js-lingui-id: 91Ysnw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your Organization key"
-msgstr ""
+msgstr "組織キー"
 
 #. js-lingui-id: sarabV
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
 msgid "Your Organization license has been activated successfully."
-msgstr ""
+msgstr "組織ライセンスが正常にアクティベートされました。"
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

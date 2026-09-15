@@ -4,7 +4,10 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { Card, OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import {
+  Card,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type TableItem = {

@@ -18,8 +18,11 @@ import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconEyeOff, IconPlus } from 'twenty-ui/icon';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { MenuItemSwitch, UndecoratedLink } from 'twenty-ui/navigation';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
+import {
+  MenuItemSwitch,
+  UndecoratedLink,
+} from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';

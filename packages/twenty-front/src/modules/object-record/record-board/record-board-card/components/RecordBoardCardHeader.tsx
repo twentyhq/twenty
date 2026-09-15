@@ -22,7 +22,7 @@ import { useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isDefined } from 'twenty-shared/utils';
 import { IconEye, IconEyeOff } from 'twenty-ui/icon';
-import { Checkbox, LightIconButton } from 'twenty-ui/input';
+import { Checkbox, LightIconButton } from 'twenty-ui/primitives/input';
 import { useIsMobile, useIsTouchDevice } from 'twenty-ui/utilities';
 
 const StyledCompactIconContainer = styled.div`

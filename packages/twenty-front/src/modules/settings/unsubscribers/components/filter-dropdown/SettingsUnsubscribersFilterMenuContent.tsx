@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconMailCog, IconStatusChange, IconTrash } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { type SettingsUnsubscribersFilterContentId } from '@/settings/unsubscribers/components/filter-dropdown/types/SettingsUnsubscribersFilterContentId';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';

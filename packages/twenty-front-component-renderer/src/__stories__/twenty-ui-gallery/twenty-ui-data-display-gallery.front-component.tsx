@@ -1,21 +1,21 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   AnimatedCheckmark,
-  Avatar,
   AvatarGroup,
   AvatarOrIcon,
   Checkmark,
-  Chip,
   ColorSample,
   CommandBlock,
   LinkChip,
   NotificationCounter,
   Pill,
-  Status,
   StyledTintedIconTileContainer,
-  Tag,
   TintedIconTile,
-} from 'twenty-ui/data-display';
+  Avatar,
+  Chip,
+  Status,
+  Tag,
+} from 'twenty-ui/primitives/data-display';
 import { IconStar } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -104,7 +104,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
 const DataDisplayGallery = () => (
   <ThemeProvider colorScheme="light">
     <ComponentGallery
-      title="twenty-ui/data-display"
+      title="twenty-ui/primitives/data-display"
       entries={DATA_DISPLAY_ENTRIES}
     />
   </ThemeProvider>
@@ -113,6 +113,7 @@ const DataDisplayGallery = () => (
 export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000101',
   name: 'twenty-ui-data-display-gallery',
-  description: 'Renders every twenty-ui/data-display component in the sandbox',
+  description:
+    'Renders every twenty-ui/primitives/data-display component in the sandbox',
   component: DataDisplayGallery,
 });

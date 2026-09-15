@@ -19,7 +19,7 @@ import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
 
 ```tsx
 import { useId } from 'react';
-import { Radio, RadioGroup } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 
 export const BillingFrequency = () => {
   const labelId = useId();
@@ -52,7 +52,7 @@ Use `defaultValue` for an uncontrolled group. Its `name` identifies the selected
 
 ```tsx
 import { useState } from 'react';
-import { Radio, RadioGroup } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 
 export const DisplayDensity = () => {
   const [density, setDensity] = useState('comfortable');

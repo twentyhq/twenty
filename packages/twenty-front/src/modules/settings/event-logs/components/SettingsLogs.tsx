@@ -23,8 +23,8 @@ import {
   IconPlayerPause,
   IconPlayerPlay,
 } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
-import { Card } from 'twenty-ui/surfaces';
+import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import {
@@ -168,7 +168,7 @@ export const SettingsLogs = () => {
       <SettingsOptionCardContentButton
         Icon={IconLock}
         title={t`Upgrade to access audit logs`}
-        description={t`Only application logs are available on your current plan. Other log types require an Enterprise subscription.`}
+        description={t`Only application logs are available on your current plan. Other log types require an Organization subscription.`}
         Button={
           <Button
             title={t`Upgrade`}
@@ -180,7 +180,7 @@ export const SettingsLogs = () => {
               navigateSettings(
                 isBillingEnabled
                   ? SettingsPath.BillingPlans
-                  : SettingsPath.AdminPanelEnterprise,
+                  : SettingsPath.AdminPanelOrganization,
               )
             }
           />

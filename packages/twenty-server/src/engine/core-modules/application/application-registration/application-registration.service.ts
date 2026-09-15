@@ -25,6 +25,10 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import {
+  type AdminUpdateApplicationRegistrationInput,
+  type AdminUpdateApplicationRegistrationPayload,
+} from 'src/engine/core-modules/application/application-registration/dtos/admin-update-application-registration.input';
 import { type ApplicationRegistrationInstalledWorkspacesDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-installed-workspaces.dto';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type ClaimableApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/claimable-application-registration.dto';
@@ -40,6 +44,10 @@ import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/a
 import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import {
   UPGRADE_APPLICATIONS_JOB_NAME,
   type UpgradeApplicationsJobData,
@@ -439,6 +447,35 @@ export class ApplicationRegistrationService {
     return registration;
   }
 
+  async findOneOwnedByWorkspaceOrThrow({
+    universalIdentifier,
+    workspaceId,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+  }): Promise<ApplicationRegistrationEntity> {
+    const applicationRegistration =
+      await this.findOneByUniversalIdentifierGlobal(universalIdentifier);
+
+    if (!isDefined(applicationRegistration)) {
+      throw new ApplicationException(
+        `No registration found for "${universalIdentifier}". Create one first with createApplicationRegistration.`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    if (applicationRegistration.ownerWorkspaceId !== workspaceId) {
+      throw new ApplicationException(
+        !isDefined(applicationRegistration.ownerWorkspaceId)
+          ? `"${universalIdentifier}" is registered on this instance but claimed by no workspace. Claim its ownership before developing on it.`
+          : `"${universalIdentifier}" is registered to another workspace. Change the universalIdentifier in your manifest, or transfer the registration from the owning workspace.`,
+        ApplicationExceptionCode.FORBIDDEN,
+      );
+    }
+
+    return applicationRegistration;
+  }
+
   // Global lookup — used by OAuth flow (no workspace scoping)
   async findOneByClientId(
     clientId: string,
@@ -555,7 +592,7 @@ export class ApplicationRegistrationService {
 
     const existingRegistration = await this.findOneById(id, ownerWorkspaceId);
 
-    await this.applyUpdate(id, update);
+    await this.applyUpdate({ id, update });
 
     await this.broadcastApplicationRegistrationUpdatedById(
       id,
@@ -566,20 +603,37 @@ export class ApplicationRegistrationService {
   }
 
   async updateGlobal(
-    input: UpdateApplicationRegistrationInput,
+    input: AdminUpdateApplicationRegistrationInput,
   ): Promise<ApplicationRegistrationEntity> {
-    const { id, update } = input;
+    const {
+      id,
+      update: { isListed, isPreInstalled, isVetted, ...update },
+    } = input;
 
     await this.findOneByIdGlobal(id);
-    await this.applyUpdate(id, update);
+    await this.applyUpdate({
+      id,
+      update,
+      instanceFlags: { isListed, isPreInstalled, isVetted },
+    });
 
     return this.findOneByIdGlobal(id);
   }
 
-  private async applyUpdate(
-    id: string,
-    update: UpdateApplicationRegistrationPayload,
-  ): Promise<void> {
+  // Instance-wide flags travel apart from the payload so the
+  // workspace-scoped update has no way to set them.
+  private async applyUpdate({
+    id,
+    update,
+    instanceFlags = {},
+  }: {
+    id: string;
+    update: UpdateApplicationRegistrationPayload;
+    instanceFlags?: Pick<
+      AdminUpdateApplicationRegistrationPayload,
+      'isListed' | 'isPreInstalled' | 'isVetted'
+    >;
+  }): Promise<void> {
     if (isDefined(update.oAuthRedirectUris)) {
       this.validateRedirectUris(update.oAuthRedirectUris);
     }
@@ -595,10 +649,12 @@ export class ApplicationRegistrationService {
       updateData.oAuthRedirectUris = update.oAuthRedirectUris;
     if (isDefined(update.oAuthScopes))
       updateData.oAuthScopes = update.oAuthScopes;
-    if (isDefined(update.isListed)) updateData.isListed = update.isListed;
-    if (isDefined(update.isPreInstalled))
-      updateData.isPreInstalled = update.isPreInstalled;
-    if (isDefined(update.isVetted)) updateData.isVetted = update.isVetted;
+    if (isDefined(instanceFlags.isListed))
+      updateData.isListed = instanceFlags.isListed;
+    if (isDefined(instanceFlags.isPreInstalled))
+      updateData.isPreInstalled = instanceFlags.isPreInstalled;
+    if (isDefined(instanceFlags.isVetted))
+      updateData.isVetted = instanceFlags.isVetted;
 
     if (Object.keys(updateData).length === 0) {
       return;
