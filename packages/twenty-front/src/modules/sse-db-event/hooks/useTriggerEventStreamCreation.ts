@@ -1,4 +1,3 @@
-import { RECORD_EXPORT_UPDATED_EVENT } from '@/record-export/constants/RecordExportUpdatedEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { dispatchQueueJobEventsFromSseToBrowserEvents } from '@/sse-db-event/utils/dispatchQueueJobEventsFromSseToBrowserEvents';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
@@ -147,10 +146,6 @@ export const useTriggerEventStreamCreation = () => {
             dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
 
             dispatchQueueJobEventsFromSseToBrowserEvents(queueJobEvents);
-            for (const recordExport of eventSubscription?.recordExportEvents ??
-              []) {
-              dispatchBrowserEvent(RECORD_EXPORT_UPDATED_EVENT, recordExport);
-            }
 
             triggerOptimisticEffectFromSseEvents({
               objectRecordEvents,

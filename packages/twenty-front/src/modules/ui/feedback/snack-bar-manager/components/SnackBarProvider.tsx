@@ -53,7 +53,6 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
           {snackBarInternal.queue.map(
             ({
               duration,
-              progress,
               icon,
               id,
               message,
@@ -62,7 +61,6 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
               buttonLabel,
               buttonOnClick,
               buttonTo,
-              onClose,
             }) => (
               <motion.div
                 key={id}
@@ -76,7 +74,6 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
                 <SnackBar
                   {...{
                     duration,
-                    progress,
                     icon,
                     message,
                     detailedMessage,
@@ -85,10 +82,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
                     buttonOnClick,
                     buttonTo,
                   }}
-                  onClose={() => {
-                    handleSnackBarClose(id);
-                    onClose?.();
-                  }}
+                  onClose={() => handleSnackBarClose(id)}
                 />
               </motion.div>
             ),

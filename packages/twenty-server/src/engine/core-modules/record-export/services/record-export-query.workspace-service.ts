@@ -19,7 +19,7 @@ import {
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { RECORD_EXPORT_PAGE_SIZE } from 'src/engine/core-modules/record-export/constants/record-export.constants';
-import { type RecordExportEntity } from 'src/engine/core-modules/record-export/record-export.entity';
+import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { type RecordExportColumn } from 'src/engine/core-modules/record-export/types/record-export-column.type';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { buildRecordExportColumns } from 'src/engine/core-modules/record-export/utils/build-record-export-columns.util';
@@ -76,7 +76,7 @@ export class RecordExportQueryWorkspaceService {
   }
 
   async resolveRequester(
-    recordExport: RecordExportEntity,
+    recordExport: RecordExport,
   ): Promise<UserWorkspaceAuthContext> {
     const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
       workspaceId: recordExport.workspaceId,
@@ -188,6 +188,27 @@ export class RecordExportQueryWorkspaceService {
           .idByNameSingular,
       },
     };
+  }
+
+  async countRecords(
+    parameters: RecordExportParameters,
+    context: RecordExportQueryContext,
+  ): Promise<number> {
+    const { results } = await withWorkspaceAuthContext(
+      context.queryRunnerContext.authContext,
+      () =>
+        this.commonFindManyQueryRunnerService.execute(
+          {
+            filter: parameters.filter,
+            selectedFields: { ...context.selectedFields, totalCount: true },
+            first: 0,
+          },
+          context.queryRunnerContext,
+        ),
+    );
+    if (!isDefined(results.totalCount))
+      throw new Error('Export record count is unavailable');
+    return Number(results.totalCount);
   }
 
   async readPage(

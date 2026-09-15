@@ -1,9 +1,9 @@
+import { getRecordExportMock } from 'src/engine/core-modules/record-export/mocks/record-export.mock';
 import { ForbiddenException } from '@nestjs/common';
 
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { RecordExportEntity } from 'src/engine/core-modules/record-export/record-export.entity';
 import {
   RecordExportQueryWorkspaceService,
   type RecordExportQueryContext,
@@ -56,7 +56,7 @@ describe('RecordExportQueryWorkspaceService', () => {
     membership.getWorkspaceMember.mockResolvedValue(null);
     await expect(
       service.resolveRequester(
-        Object.assign(new RecordExportEntity(), {
+        getRecordExportMock({
           workspaceId: 'workspace',
           workspaceMemberId: 'member',
         }),
@@ -74,7 +74,7 @@ describe('RecordExportQueryWorkspaceService', () => {
     });
     await expect(
       service.resolveRequester(
-        Object.assign(new RecordExportEntity(), {
+        getRecordExportMock({
           workspaceId: 'workspace',
           workspaceMemberId: 'member',
           userWorkspaceId: 'old-membership',
@@ -106,6 +106,30 @@ describe('RecordExportQueryWorkspaceService', () => {
         selectedFields: context.selectedFields,
         first: 500,
         after: 'cursor',
+      },
+      context.queryRunnerContext,
+    );
+  });
+  it('counts the same selection through the permission-aware runner', async () => {
+    const parameters = {
+      objectMetadataId: 'person',
+      fieldMetadataIds: ['name'],
+      filter: { id: { in: ['selected-record'] } },
+    };
+    const context = {
+      queryRunnerContext: { authContext: requester },
+      selectedFields: { edges: { node: { id: true } } },
+    } as unknown as RecordExportQueryContext;
+    runner.execute.mockImplementation(async () => {
+      expect(getWorkspaceAuthContext()).toBe(requester);
+      return { results: { totalCount: 1234 } };
+    });
+    await expect(service.countRecords(parameters, context)).resolves.toBe(1234);
+    expect(runner.execute).toHaveBeenCalledWith(
+      {
+        filter: parameters.filter,
+        selectedFields: { ...context.selectedFields, totalCount: true },
+        first: 0,
       },
       context.queryRunnerContext,
     );

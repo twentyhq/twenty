@@ -8,12 +8,6 @@ export class RecordExportDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
-  @Field(() => UUIDScalarType)
-  workspaceId: string;
-
-  @Field(() => UUIDScalarType)
-  workspaceMemberId: string;
-
   @Field(() => String)
   filename: string;
 
@@ -23,15 +17,12 @@ export class RecordExportDTO {
   @Field(() => Int)
   processedRecordCount: number;
 
+  @Field(() => Int, { nullable: true })
+  totalRecordCount: number | null;
+
   @Field(() => String, { nullable: true })
   errorMessage: string | null;
 
-  @Field(() => Date)
-  createdAt: Date;
-
-  @Field(() => Date)
-  updatedAt: Date;
-
-  @Field(() => Date)
-  expiresAt: Date;
+  @Field(() => String, { nullable: true })
+  downloadUrl?: string;
 }

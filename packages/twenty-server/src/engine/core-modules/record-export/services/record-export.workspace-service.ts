@@ -1,49 +1,45 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
-  Logger,
   NotFoundException,
 } from '@nestjs/common';
 
+import { setTimeout } from 'node:timers/promises';
+
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 import { t } from '@lingui/core/macro';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, MoreThan, QueryFailedError } from 'typeorm';
-import { v4 } from 'uuid';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import {
   RECORD_EXPORT_MAX_DURATION_MS,
-  RECORD_EXPORT_RETENTION_MS,
+  RECORD_EXPORT_CONNECTION_TTL_MS,
+  RECORD_EXPORT_PROGRESS_INTERVAL_MS,
 } from 'src/engine/core-modules/record-export/constants/record-export.constants';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
-import { RecordExportEntity } from 'src/engine/core-modules/record-export/record-export.entity';
+import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
+import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { RecordExportQueryWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-query.workspace-service';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class RecordExportWorkspaceService {
-  private readonly logger = new Logger(RecordExportWorkspaceService.name);
-
   constructor(
-    @InjectWorkspaceScopedRepository(RecordExportEntity)
-    private readonly recordExportRepository: WorkspaceScopedRepository<RecordExportEntity>,
+    private readonly recordExportCacheService: RecordExportCacheService,
     @InjectMessageQueue(MessageQueue.recordExportQueue)
     private readonly messageQueueService: MessageQueueService,
+    @InjectMessageQueue(MessageQueue.cronQueue)
+    private readonly cleanupQueueService: MessageQueueService,
     private readonly recordExportQueryWorkspaceService: RecordExportQueryWorkspaceService,
-    private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
     private readonly fileStorageService: FileStorageService,
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -52,7 +48,7 @@ export class RecordExportWorkspaceService {
   async create(
     parameters: RecordExportParameters,
     authContext: WorkspaceAuthContext,
-  ): Promise<RecordExportEntity> {
+  ): Promise<RecordExport> {
     const requester =
       await this.recordExportQueryWorkspaceService.assertCanExport(authContext);
     const context = await this.recordExportQueryWorkspaceService.buildContext(
@@ -61,33 +57,31 @@ export class RecordExportWorkspaceService {
     );
     const workspaceId = requester.workspace.id;
 
-    let recordExport: RecordExportEntity;
+    const recordExport = await this.recordExportCacheService.create({
+      workspaceId,
+      userWorkspaceId: requester.userWorkspaceId,
+      workspaceMemberId: requester.workspaceMemberId,
+      parameters,
+      filename: `${context.queryRunnerContext.flatObjectMetadata.nameSingular}.csv`,
+    });
 
     try {
-      recordExport = await this.recordExportRepository.insertAndReturnOne(
-        workspaceId,
+      const cleanupJobId = await this.cleanupQueueService.add(
+        'DeleteRecordExportJob',
+        { workspaceId, recordExportId: recordExport.id },
         {
-          id: v4(),
-          userWorkspaceId: requester.userWorkspaceId,
-          workspaceMemberId: requester.workspaceMemberId,
-          parameters,
-          filename: `${context.queryRunnerContext.flatObjectMetadata.nameSingular}.csv`,
-          expiresAt: new Date(Date.now() + RECORD_EXPORT_RETENTION_MS),
+          id: recordExport.id,
+          delay: RECORD_EXPORT_CONNECTION_TTL_MS,
+          retryLimit: 10,
+          backoff: {
+            strategy: 'exponential',
+            initialDelayMilliseconds: 60_000,
+          },
         },
       );
-    } catch (error) {
-      if (
-        error instanceof QueryFailedError &&
-        error.driverError.code === '23505'
-      ) {
-        throw new ConflictException(
-          t`An export is already running in this workspace. Please wait for it to finish.`,
-        );
-      }
-      throw error;
-    }
+      if (!isDefined(cleanupJobId))
+        throw new Error('Export cleanup could not be queued');
 
-    try {
       const jobId = await this.messageQueueService.add(
         'GenerateRecordExportJob',
         { workspaceId, recordExportId: recordExport.id },
@@ -98,15 +92,17 @@ export class RecordExportWorkspaceService {
         throw new Error('The export could not be queued');
       }
 
-      await this.recordExportRepository.update(
+      await this.recordExportCacheService.update(
         workspaceId,
-        { id: recordExport.id },
+        recordExport.id,
+        {},
         { jobId },
       );
     } catch (error) {
-      await this.recordExportRepository.update(
+      await this.recordExportCacheService.update(
         workspaceId,
-        { id: recordExport.id, status: RecordExportStatus.QUEUED },
+        recordExport.id,
+        { statuses: [RecordExportStatus.QUEUED] },
         {
           status: RecordExportStatus.FAILED,
           errorMessage: t`The export could not be queued. Please try again.`,
@@ -118,27 +114,96 @@ export class RecordExportWorkspaceService {
     return this.findOrThrow(workspaceId, recordExport.id);
   }
 
-  async retry(
-    id: string,
+  async stream(
+    parameters: RecordExportParameters,
     authContext: WorkspaceAuthContext,
-  ): Promise<RecordExportEntity> {
-    const requester =
-      await this.recordExportQueryWorkspaceService.assertCanExport(authContext);
-    const recordExport = await this.findOrThrow(requester.workspace.id, id);
-    if (recordExport.userWorkspaceId !== requester.userWorkspaceId)
-      throw new NotFoundException(t`Export not found.`);
-    if (recordExport.status !== RecordExportStatus.FAILED)
-      throw new BadRequestException(t`Only failed exports can be retried.`);
-    return this.create(recordExport.parameters, requester);
+  ): Promise<AsyncIterableIterator<RecordExportDTO>> {
+    const recordExport = await this.create(parameters, authContext);
+    const workspaceId = recordExport.workspaceId;
+    const abortController = new AbortController();
+    const service = this;
+    let downloadReady = false;
+    let cleanup: Promise<void> | undefined;
+    const close = () => {
+      abortController.abort();
+      if (!downloadReady)
+        cleanup ??= service.cancel(workspaceId, recordExport.id);
+      return cleanup ?? Promise.resolve();
+    };
+
+    async function* events(): AsyncGenerator<RecordExportDTO> {
+      try {
+        while (!abortController.signal.aborted) {
+          const current = await service.recordExportCacheService.findOne(
+            workspaceId,
+            recordExport.id,
+            true,
+          );
+          if (!isDefined(current))
+            throw new BadRequestException(
+              t`The export was interrupted. Please try again.`,
+            );
+          const updated = await service.reconcile(current);
+          if (abortController.signal.aborted) return;
+          if (updated.status === RecordExportStatus.COMPLETED) {
+            const downloadUrl = await service.getDownloadUrl(
+              updated.id,
+              authContext,
+            );
+            if (abortController.signal.aborted) return;
+            downloadReady = true;
+            yield { ...updated, downloadUrl };
+            return;
+          }
+          yield updated;
+          if (updated.status === RecordExportStatus.FAILED) return;
+          await setTimeout(RECORD_EXPORT_PROGRESS_INTERVAL_MS, undefined, {
+            signal: abortController.signal,
+          });
+        }
+      } catch (error) {
+        if (!abortController.signal.aborted) throw error;
+      } finally {
+        await close();
+      }
+    }
+    const iterator = events();
+    return {
+      next: () => iterator.next(),
+      return: async () => {
+        try {
+          await close();
+        } finally {
+          await iterator.return(undefined);
+        }
+        return { done: true, value: undefined };
+      },
+      throw: async (error: unknown) => {
+        try {
+          await close();
+        } finally {
+          await iterator.return(undefined);
+        }
+        throw error;
+      },
+      [Symbol.asyncIterator]() {
+        return this;
+      },
+    };
   }
 
-  async findOrThrow(
-    workspaceId: string,
-    id: string,
-  ): Promise<RecordExportEntity> {
-    const recordExport = await this.recordExportRepository.findOne(
+  async cancel(workspaceId: string, id: string): Promise<void> {
+    await this.recordExportCacheService.delete(workspaceId, id);
+    await this.fileStorageService.deleteFolderObjects({
+      ...this.getFileResource(workspaceId, id),
+      folderPath: id,
+    });
+  }
+
+  async findOrThrow(workspaceId: string, id: string): Promise<RecordExport> {
+    const recordExport = await this.recordExportCacheService.findOne(
       workspaceId,
-      { where: { id } },
+      id,
     );
 
     if (!isDefined(recordExport)) {
@@ -148,31 +213,7 @@ export class RecordExportWorkspaceService {
     return recordExport;
   }
 
-  async findMine(
-    authContext: WorkspaceAuthContext,
-  ): Promise<RecordExportEntity[]> {
-    const requester =
-      await this.recordExportQueryWorkspaceService.assertCanExport(authContext);
-    const exports = await this.recordExportRepository.find(
-      requester.workspace.id,
-      {
-        where: {
-          userWorkspaceId: requester.userWorkspaceId,
-          expiresAt: MoreThan(new Date()),
-        },
-        order: { createdAt: 'DESC' },
-        take: 10,
-      },
-    );
-
-    return Promise.all(
-      exports.map((recordExport) => this.reconcile(recordExport)),
-    );
-  }
-
-  async reconcile(
-    recordExport: RecordExportEntity,
-  ): Promise<RecordExportEntity> {
+  async reconcile(recordExport: RecordExport): Promise<RecordExport> {
     if (
       ![RecordExportStatus.QUEUED, RecordExportStatus.PROCESSING].includes(
         recordExport.status,
@@ -195,15 +236,12 @@ export class RecordExportWorkspaceService {
       (!isDefined(job) && age > 60_000) ||
       age > RECORD_EXPORT_MAX_DURATION_MS
     ) {
-      await this.recordExportRepository.update(
+      await this.recordExportCacheService.update(
         recordExport.workspaceId,
+        recordExport.id,
         {
-          id: recordExport.id,
-          status: In([
-            RecordExportStatus.QUEUED,
-            RecordExportStatus.PROCESSING,
-          ]),
-          attemptId: recordExport.attemptId ?? IsNull(),
+          statuses: [RecordExportStatus.QUEUED, RecordExportStatus.PROCESSING],
+          attemptId: recordExport.attemptId,
         },
         {
           status: RecordExportStatus.FAILED,
@@ -214,7 +252,6 @@ export class RecordExportWorkspaceService {
         recordExport.workspaceId,
         recordExport.id,
       );
-      await this.publish(updated);
       return updated;
     }
 
@@ -257,7 +294,7 @@ export class RecordExportWorkspaceService {
     return `${this.twentyConfigService.get('SERVER_URL')}/record-exports/${recordExport.id}/download?token=${token}`;
   }
 
-  assertDownloadable(recordExport: RecordExportEntity): void {
+  assertDownloadable(recordExport: RecordExport): void {
     if (recordExport.expiresAt.getTime() <= Date.now()) {
       throw new BadRequestException(
         t`This export has expired. Please create a new export.`,
@@ -271,20 +308,6 @@ export class RecordExportWorkspaceService {
     }
   }
 
-  async publish(recordExport: RecordExportEntity): Promise<void> {
-    try {
-      await this.workspaceEventBroadcaster.broadcastRecordExportEvent({
-        workspaceId: recordExport.workspaceId,
-        userWorkspaceId: recordExport.userWorkspaceId,
-        recordExport,
-      });
-    } catch {
-      this.logger.warn(
-        `Failed to publish export status for ${recordExport.id}`,
-      );
-    }
-  }
-
   getFileResource(workspaceId: string, resourcePath: string) {
     return {
       workspaceId,
@@ -293,12 +316,5 @@ export class RecordExportWorkspaceService {
       fileFolder: FileFolder.RecordExport,
       resourcePath,
     };
-  }
-
-  async deleteFiles(recordExport: RecordExportEntity): Promise<void> {
-    await this.fileStorageService.deleteFolder({
-      ...this.getFileResource(recordExport.workspaceId, recordExport.id),
-      folderPath: recordExport.id,
-    });
   }
 }

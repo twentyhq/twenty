@@ -52,11 +52,12 @@ const CommandMenuItemButtonRenderer = ({
 
   const Icon = getIcon(iconKey, COMMAND_MENU_DEFAULT_ICON);
 
-  const { handleClick, disabled } = useCommandMenuItemClick({
-    item,
-    Icon,
-    label,
-  });
+  const { handleClick, disabled, progress, showDisabledLoader } =
+    useCommandMenuItemClick({
+      item,
+      Icon,
+      label,
+    });
 
   const command = { key: item.id, label, shortLabel, Icon };
 
@@ -77,6 +78,8 @@ const CommandMenuItemButtonRenderer = ({
       command={command}
       onClick={disabled ? undefined : handleClick}
       disabled={disabled}
+      progress={progress}
+      loading={showDisabledLoader}
       isPrimaryAction={isPrimaryAction}
       shouldHideLabel={shouldHideLabel}
     />
@@ -168,6 +171,7 @@ const CommandMenuItemSelectableRenderer = ({
         LeftIcon={Icon}
         onClick={onItemClick}
         text={label}
+        RightComponent={loaderComponent}
         disabled={disabled}
       />
     </SelectableListItem>

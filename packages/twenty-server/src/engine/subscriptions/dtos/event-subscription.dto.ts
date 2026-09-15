@@ -4,7 +4,6 @@ import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-sta
 
 import { MetadataEventDTO } from './metadata-event.dto';
 import { ObjectRecordEventDTO } from './object-record-event.dto';
-import { RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
 
 @ObjectType('ObjectRecordEventWithQueryIds')
 export class ObjectRecordEventWithQueryIdsDTO {
@@ -17,9 +16,6 @@ export class ObjectRecordEventWithQueryIdsDTO {
 
 @ObjectType('EventSubscription')
 export class EventSubscriptionDTO {
-  @Field(() => [RecordExportDTO])
-  recordExportEvents: RecordExportDTO[];
-
   @Field(() => String)
   eventStreamId: string;
 

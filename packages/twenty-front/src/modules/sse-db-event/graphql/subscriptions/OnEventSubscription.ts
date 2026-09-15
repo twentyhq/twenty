@@ -32,18 +32,6 @@ export const ON_EVENT_SUBSCRIPTION = gql`
           diff
         }
       }
-      recordExportEvents {
-        workspaceId
-        workspaceMemberId
-        id
-        filename
-        status
-        processedRecordCount
-        errorMessage
-        createdAt
-        updatedAt
-        expiresAt
-      }
       queueJobEvents {
         jobId
         state

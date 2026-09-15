@@ -1,3 +1,7 @@
+import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
+import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
+import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -9,13 +13,16 @@ import { isDefined } from 'twenty-shared/utils';
 const ExportIndexRecordsContent = ({
   objectMetadataItem,
   recordIndexId,
+  onProgress,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   recordIndexId: string;
+  onProgress: (progress: number) => void;
 }) => {
   const { download } = useRecordIndexExportRecords({
     objectMetadataItem,
     recordIndexId,
+    onProgress,
   });
 
   return <HeadlessEngineCommandWrapperEffect execute={download} />;
@@ -41,6 +48,14 @@ const ExportShowRecordContent = ({
 export const ExportRecordsCommand = () => {
   const { objectMetadataItem, recordIndexId, selectedRecords } =
     useHeadlessCommandContextApi();
+
+  const engineCommandId = useAvailableComponentInstanceIdOrThrow(
+    CommandComponentInstanceContext,
+  );
+  const setCommandMenuItemProgress = useSetAtomFamilyState(
+    commandMenuItemProgressFamilyState,
+    engineCommandId,
+  );
 
   if (!isDefined(objectMetadataItem)) {
     throw new Error('Object metadata item is required to export records');
@@ -71,6 +86,7 @@ export const ExportRecordsCommand = () => {
       <ExportIndexRecordsContent
         objectMetadataItem={objectMetadataItem}
         recordIndexId={recordIndexId}
+        onProgress={setCommandMenuItemProgress}
       />
     </ViewComponentInstanceContext.Provider>
   );

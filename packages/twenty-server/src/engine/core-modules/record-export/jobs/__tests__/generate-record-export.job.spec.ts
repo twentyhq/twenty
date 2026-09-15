@@ -1,31 +1,32 @@
+import { getRecordExportMock } from 'src/engine/core-modules/record-export/mocks/record-export.mock';
 import { Readable } from 'stream';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/record-export-status.enum';
 import { GenerateRecordExportJob } from 'src/engine/core-modules/record-export/jobs/generate-record-export.job';
-import { RecordExportEntity } from 'src/engine/core-modules/record-export/record-export.entity';
+import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { RecordExportQueryWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-query.workspace-service';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 
 describe('GenerateRecordExportJob', () => {
-  let recordExport: RecordExportEntity;
+  let recordExport: RecordExport;
   let output: string;
-  const repository = { update: jest.fn() };
+  const cache = { update: jest.fn() };
   const exportService = {
     findOrThrow: jest.fn(),
-    publish: jest.fn(),
     getFileResource: jest.fn(),
   };
   const queryService = {
     resolveRequester: jest.fn(),
     buildContext: jest.fn(),
     readPage: jest.fn(),
+    countRecords: jest.fn(),
   };
   const storage = { writeFileStream: jest.fn(), deleteFileObject: jest.fn() };
   const job = new GenerateRecordExportJob(
-    repository as unknown as WorkspaceScopedRepository<RecordExportEntity>,
+    cache as unknown as RecordExportCacheService,
     exportService as unknown as RecordExportWorkspaceService,
     queryService as unknown as RecordExportQueryWorkspaceService,
     storage as unknown as FileStorageService,
@@ -35,7 +36,8 @@ describe('GenerateRecordExportJob', () => {
     jest.useRealTimers();
     jest.resetAllMocks();
     output = '';
-    recordExport = Object.assign(new RecordExportEntity(), {
+    queryService.countRecords.mockResolvedValue(1002);
+    recordExport = getRecordExportMock({
       id: 'export',
       workspaceId: 'workspace',
       userWorkspaceId: 'requester',
@@ -43,14 +45,18 @@ describe('GenerateRecordExportJob', () => {
       createdAt: new Date(),
       parameters: { objectMetadataId: 'object', fieldMetadataIds: ['name'] },
     });
-    repository.update.mockImplementation(
-      async (_workspaceId: string, _criteria: object, values: object) => {
+    cache.update.mockImplementation(
+      async (
+        _workspaceId: string,
+        _id: string,
+        _criteria: object,
+        values: object,
+      ) => {
         Object.assign(recordExport, values);
-        return { affected: 1 };
+        return true;
       },
     );
     exportService.findOrThrow.mockImplementation(async () => recordExport);
-    exportService.publish.mockResolvedValue(undefined);
     exportService.getFileResource.mockImplementation(
       (workspaceId: string, resourcePath: string) => ({
         workspaceId,
@@ -117,7 +123,7 @@ describe('GenerateRecordExportJob', () => {
       job.handle({ workspaceId: 'workspace', recordExportId: 'export' }),
     ).rejects.toThrow('Storage unavailable');
     expect(recordExport.status).toBe(RecordExportStatus.FAILED);
-    expect(recordExport.filePath).toBeUndefined();
+    expect(recordExport.filePath).toBeNull();
     expect(storage.deleteFileObject).toHaveBeenCalledTimes(1);
   });
 
@@ -135,7 +141,7 @@ describe('GenerateRecordExportJob', () => {
   });
 
   it('does not rerun a completed or failed export', async () => {
-    repository.update.mockResolvedValue({ affected: 0 });
+    cache.update.mockResolvedValue(false);
     await job.handle({ workspaceId: 'workspace', recordExportId: 'export' });
     expect(storage.writeFileStream).not.toHaveBeenCalled();
   });
@@ -144,14 +150,11 @@ describe('GenerateRecordExportJob', () => {
     queryService.readPage.mockResolvedValue({
       results: { records: [], pageInfo: { hasNextPage: false } },
     });
-    repository.update
-      .mockResolvedValueOnce({ affected: 1 })
-      .mockResolvedValue({ affected: 0 });
+    cache.update.mockResolvedValueOnce(true).mockResolvedValue(false);
     await expect(
       job.handle({ workspaceId: 'workspace', recordExportId: 'export' }),
     ).rejects.toThrow('superseded');
     expect(storage.writeFileStream).not.toHaveBeenCalled();
-    expect(exportService.publish).not.toHaveBeenCalled();
   });
   it('removes partial output if requester access is revoked between pages', async () => {
     queryService.readPage.mockResolvedValue({
@@ -169,7 +172,7 @@ describe('GenerateRecordExportJob', () => {
     ).rejects.toThrow('Access revoked');
     expect(queryService.readPage).toHaveBeenCalledTimes(1);
     expect(recordExport.status).toBe(RecordExportStatus.FAILED);
-    expect(recordExport.filePath).toBeUndefined();
+    expect(recordExport.filePath).toBeNull();
     expect(storage.deleteFileObject).toHaveBeenCalledTimes(1);
   });
 

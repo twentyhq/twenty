@@ -1,3 +1,4 @@
+import { Readable, Writable } from 'node:stream';
 import { ForbiddenException } from '@nestjs/common';
 import { type Response } from 'express';
 
@@ -13,15 +14,18 @@ describe('RecordExportController', () => {
     findOrThrow: jest.fn(),
     assertDownloadable: jest.fn(),
     getFileResource: jest.fn(),
+    cancel: jest.fn(),
   };
   const query = {
     resolveRequester: jest.fn(),
     buildContext: jest.fn(),
     readPage: jest.fn(),
   };
-  const storage = { getPresignedUrl: jest.fn() };
+  const storage = { readFile: jest.fn() };
   const jwt = { verifyJwtToken: jest.fn() };
-  const response = { setHeader: jest.fn(), redirect: jest.fn() };
+  let output: string;
+  let response: Writable & { setHeader: jest.Mock };
+
   const controller = new RecordExportController(
     exports as unknown as RecordExportWorkspaceService,
     query as unknown as RecordExportQueryWorkspaceService,
@@ -31,6 +35,17 @@ describe('RecordExportController', () => {
 
   beforeEach(() => {
     jest.resetAllMocks();
+    jest.useRealTimers();
+    output = '';
+    response = Object.assign(
+      new Writable({
+        write(chunk, _encoding, callback) {
+          output += chunk.toString();
+          callback();
+        },
+      }),
+      { setHeader: jest.fn() },
+    );
     jwt.verifyJwtToken.mockResolvedValue({
       type: JwtTokenTypeEnum.FILE,
       workspaceId: 'workspace',
@@ -49,7 +64,10 @@ describe('RecordExportController', () => {
     });
     query.resolveRequester.mockResolvedValue({ type: 'user' });
     query.buildContext.mockResolvedValue({});
-    storage.getPresignedUrl.mockResolvedValue('https://storage.example/file');
+    storage.readFile.mockImplementation(async () =>
+      Readable.from(['Id,Name\n1,Ada\n']),
+    );
+    exports.cancel.mockResolvedValue(undefined);
   });
 
   it.each([
@@ -70,7 +88,7 @@ describe('RecordExportController', () => {
       controller.download('export', 'token', response as unknown as Response),
     ).rejects.toThrow(ForbiddenException);
     expect(exports.findOrThrow).not.toHaveBeenCalled();
-    expect(storage.getPresignedUrl).not.toHaveBeenCalled();
+    expect(storage.readFile).not.toHaveBeenCalled();
   });
 
   it('rejects an expired or invalid signature before accessing the file', async () => {
@@ -86,27 +104,36 @@ describe('RecordExportController', () => {
     await expect(
       controller.download('export', 'token', response as unknown as Response),
     ).rejects.toThrow(ForbiddenException);
-    expect(storage.getPresignedUrl).not.toHaveBeenCalled();
+    expect(storage.readFile).not.toHaveBeenCalled();
   });
 
-  it('serves completed files using an expiring attachment URL after checking access', async () => {
+  it('streams the file as an attachment and deletes it after transfer', async () => {
     await controller.download(
       'export',
       'token',
       response as unknown as Response,
     );
-    expect(exports.findOrThrow).toHaveBeenCalledWith('workspace', 'export');
-    expect(query.resolveRequester).toHaveBeenCalled();
     expect(query.readPage).toHaveBeenCalledWith({}, {}, undefined, 0);
-    expect(storage.getPresignedUrl).toHaveBeenCalledWith(
-      expect.objectContaining({
-        expiresInSeconds: 60,
-        responseContentDisposition: 'attachment; filename="person.csv"',
-        responseCacheControl: 'private, no-store',
-      }),
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Content-Disposition',
+      'attachment; filename="person.csv"',
     );
-    expect(response.redirect).toHaveBeenCalledWith(
-      'https://storage.example/file',
+    expect(output).toBe('Id,Name\n1,Ada\n');
+    expect(exports.cancel).toHaveBeenCalledWith('workspace', 'export');
+  });
+
+  it('cleans up when the file transfer fails', async () => {
+    storage.readFile.mockResolvedValue(
+      Readable.from(
+        (async function* () {
+          yield 'Id,Name\n';
+          throw new Error('Storage disconnected');
+        })(),
+      ),
     );
+    await expect(
+      controller.download('export', 'token', response as unknown as Response),
+    ).rejects.toThrow('Storage disconnected');
+    expect(exports.cancel).toHaveBeenCalledWith('workspace', 'export');
   });
 });

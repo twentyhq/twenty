@@ -12,7 +12,10 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
+import {
+  EngineComponentKey,
+  type CommandMenuItemFieldsFragment,
+} from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
   item,
@@ -71,7 +74,16 @@ export const useCommandMenuItemClick = ({
         return;
       }
 
-      closeCommandMenu();
+      const isExport =
+        isDefined(item.engineComponentKey) &&
+        [
+          EngineComponentKey.EXPORT_RECORDS,
+          EngineComponentKey.EXPORT_VIEW,
+          EngineComponentKey.EXPORT_FROM_RECORD_INDEX,
+          EngineComponentKey.EXPORT_FROM_RECORD_SHOW,
+          EngineComponentKey.EXPORT_MULTIPLE_RECORDS,
+        ].includes(item.engineComponentKey);
+      if (!isExport) closeCommandMenu();
 
       await mountCommand({
         engineCommandId: item.id,

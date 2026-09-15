@@ -77,22 +77,16 @@ export class RecordExportController {
     );
     response.setHeader('Cache-Control', 'private, no-store');
     const contentDisposition = `attachment; filename="${recordExport.filename.replace(/["\r\n\\]/g, '_')}"`;
-    const url = await this.fileStorageService.getPresignedUrl({
-      ...resource,
-      expiresInSeconds: 60,
-      responseContentType: 'text/csv; charset=utf-8',
-      responseContentDisposition: contentDisposition,
-      responseCacheControl: 'private, no-store',
-    });
-
-    if (isDefined(url)) {
-      response.redirect(url);
-      return;
-    }
-
     const stream = await this.fileStorageService.readFile(resource);
     response.setHeader('Content-Type', 'text/csv; charset=utf-8');
     response.setHeader('Content-Disposition', contentDisposition);
-    await pipeline(stream, response);
+    try {
+      await pipeline(stream, response);
+    } finally {
+      await this.recordExportWorkspaceService.cancel(
+        recordExport.workspaceId,
+        recordExport.id,
+      );
+    }
   }
 }

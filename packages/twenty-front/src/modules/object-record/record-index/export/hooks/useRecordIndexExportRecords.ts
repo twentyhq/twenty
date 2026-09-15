@@ -4,7 +4,7 @@ import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/uti
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useRecordIndexExportParameters } from '@/object-record/record-index/export/hooks/useRecordIndexExportParameters';
-import { useCreateRecordExport } from '@/record-export/hooks/useCreateRecordExport';
+import { useExportRecords } from '@/record-export/hooks/useExportRecords';
 import { type ViewType } from '@/views/types/ViewType';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from '@/settings/data-model/constants/CompositeFieldSubFieldLabel';
@@ -151,16 +151,18 @@ export const useRecordIndexExportRecords = ({
   objectMetadataItem,
   recordIndexId,
   viewType,
+  onProgress,
 }: {
   objectMetadataItem: EnrichedObjectMetadataItem;
   recordIndexId: string;
   viewType?: ViewType;
+  onProgress?: (progress: number) => void;
 }) => {
   const parameters = useRecordIndexExportParameters({
     objectMetadataItem,
     recordIndexId,
     viewType,
   });
-  const { createRecordExport } = useCreateRecordExport();
-  return { download: () => createRecordExport(parameters) };
+  const { exportRecords } = useExportRecords({ onProgress });
+  return { download: () => exportRecords(parameters) };
 };

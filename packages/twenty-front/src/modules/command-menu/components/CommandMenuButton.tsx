@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
@@ -22,6 +23,8 @@ export type CommandMenuButtonProps = {
   onClick?: (event?: MouseEvent<HTMLElement>) => void;
   to?: string;
   disabled?: boolean;
+  progress?: number;
+  loading?: boolean;
   isPrimaryAction?: boolean;
   shouldHideLabel?: boolean;
 };
@@ -31,11 +34,16 @@ export const CommandMenuButton = ({
   onClick,
   to,
   disabled = false,
+  progress,
+  loading = false,
   isPrimaryAction = false,
   shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
-  const resolvedShortLabel =
-    isDefined(command.shortLabel) && !shouldHideLabel
+  const resolvedShortLabel = loading
+    ? isDefined(progress)
+      ? `${Math.round(progress)}%`
+      : t`Preparing…`
+    : isDefined(command.shortLabel) && !shouldHideLabel
       ? command.shortLabel
       : undefined;
 
@@ -53,6 +61,7 @@ export const CommandMenuButton = ({
           to={to}
           onClick={onClick}
           disabled={disabled}
+          isLoading={loading && !isDefined(progress)}
           title={resolvedShortLabel}
           ariaLabel={command.label}
         />

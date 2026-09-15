@@ -3251,9 +3251,6 @@ export default {
             "queueJobEvents": [
                 156
             ],
-            "recordExportEvents": [
-                586
-            ],
             "__typename": [
                 1
             ]
@@ -8037,9 +8034,6 @@ export default {
             "currentUserApplicationAuthorizations": [
                 296
             ],
-            "findManyRecordExports": [
-                586
-            ],
             "__typename": [
                 1
             ]
@@ -10846,33 +10840,6 @@ export default {
                     "applicationRefreshToken": [
                         1,
                         "String!"
-                    ]
-                }
-            ],
-            "createRecordExport": [
-                586,
-                {
-                    "input": [
-                        585,
-                        "CreateRecordExportInput!"
-                    ]
-                }
-            ],
-            "createRecordExportDownloadUrl": [
-                1,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "retryRecordExport": [
-                586,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
                     ]
                 }
             ],
@@ -13936,6 +13903,15 @@ export default {
                     ]
                 }
             ],
+            "exportRecords": [
+                586,
+                {
+                    "input": [
+                        585,
+                        "CreateRecordExportInput!"
+                    ]
+                }
+            ],
             "__typename": [
                 1
             ]
@@ -13978,14 +13954,11 @@ export default {
             ]
         },
         "RecordExport": {
-            "createdAt": [
-                4
+            "downloadUrl": [
+                1
             ],
             "errorMessage": [
                 1
-            ],
-            "expiresAt": [
-                4
             ],
             "filename": [
                 1
@@ -13999,14 +13972,8 @@ export default {
             "status": [
                 587
             ],
-            "updatedAt": [
-                4
-            ],
-            "workspaceId": [
-                3
-            ],
-            "workspaceMemberId": [
-                3
+            "totalRecordCount": [
+                28
             ],
             "__typename": [
                 1

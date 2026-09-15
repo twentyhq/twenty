@@ -1,10 +1,9 @@
 import { UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Mutation, Query } from '@nestjs/graphql';
+import { Args, Subscription } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { CreateRecordExportInput } from 'src/engine/core-modules/record-export/dtos/create-record-export.input';
@@ -26,39 +25,14 @@ export class RecordExportResolver {
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
   ) {}
 
-  @Mutation(() => RecordExportDTO)
-  createRecordExport(
+  @Subscription(() => RecordExportDTO, {
+    resolve: (payload: RecordExportDTO) => payload,
+  })
+  exportRecords(
     @Args('input') input: CreateRecordExportInput,
-  ): Promise<RecordExportDTO> {
-    return this.recordExportWorkspaceService.create(
+  ): Promise<AsyncIterableIterator<RecordExportDTO>> {
+    return this.recordExportWorkspaceService.stream(
       input,
-      getWorkspaceAuthContext(),
-    );
-  }
-
-  @Mutation(() => RecordExportDTO)
-  retryRecordExport(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-  ): Promise<RecordExportDTO> {
-    return this.recordExportWorkspaceService.retry(
-      id,
-      getWorkspaceAuthContext(),
-    );
-  }
-
-  @Query(() => [RecordExportDTO])
-  findManyRecordExports(): Promise<RecordExportDTO[]> {
-    return this.recordExportWorkspaceService.findMine(
-      getWorkspaceAuthContext(),
-    );
-  }
-
-  @Mutation(() => String)
-  createRecordExportDownloadUrl(
-    @Args('id', { type: () => UUIDScalarType }) id: string,
-  ): Promise<string> {
-    return this.recordExportWorkspaceService.getDownloadUrl(
-      id,
       getWorkspaceAuthContext(),
     );
   }
