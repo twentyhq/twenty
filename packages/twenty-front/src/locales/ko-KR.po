@@ -1052,7 +1052,7 @@ msgstr "워크스페이스를 활성 상태로 유지하려면 결제 수단이 
 #. js-lingui-id: eU1E2J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
-msgstr ""
+msgstr "구독 결제에 실패했습니다. 재시도하는 동안 프리미엄 기능은 계속 활성 상태로 유지됩니다."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1271,7 +1271,7 @@ msgstr "활성화"
 #. js-lingui-id: 8xkU9e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Activate Organization Key"
-msgstr ""
+msgstr "조직 키 활성화"
 
 #. js-lingui-id: i7ur8L
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2136,12 +2136,12 @@ msgstr "AI 사용량"
 #. js-lingui-id: jSHIk0
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "AI usage analytics across workspaces is available with an Organization key."
-msgstr ""
+msgstr "워크스페이스 간 AI 사용량 분석은 조직 키로 이용할 수 있습니다."
 
 #. js-lingui-id: 55MeVT
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics is available with an Organization key."
-msgstr ""
+msgstr "AI 사용량 분석은 조직 키로 이용할 수 있습니다."
 
 #. js-lingui-id: U2F/HK
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -2419,7 +2419,7 @@ msgstr "모든 사용자 정의 객체"
 #. js-lingui-id: fWQJW/
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow developers to claim ownership of applications."
-msgstr ""
+msgstr "개발자가 애플리케이션의 소유권을 주장할 수 있도록 허용합니다."
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2445,7 +2445,7 @@ msgstr "데이터를 CSV 파일로 내보내기 허용"
 #. js-lingui-id: G1r3UJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow filtering records by values inside JSON fields."
-msgstr ""
+msgstr "JSON 필드 내의 값으로 레코드를 필터링할 수 있도록 허용합니다."
 
 #. js-lingui-id: q/pgyN
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2480,7 +2480,7 @@ msgstr "SSO 우회 권한을 가진 사용자를 위한 Microsoft 기반 로그�
 #. js-lingui-id: cLzEjc
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow sharing individual records with workspace members."
-msgstr ""
+msgstr "개별 레코드를 워크스페이스 멤버와 공유할 수 있도록 허용합니다."
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -2495,7 +2495,7 @@ msgstr "초대 링크 공유를 통한 새 사용자 초대 허용."
 #. js-lingui-id: xfQ2i8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow unique indexes to prevent duplicate field values."
-msgstr ""
+msgstr "중복된 필드 값을 방지하기 위해 고유 인덱스를 허용합니다."
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2755,7 +2755,7 @@ msgstr "API 이름 (단수)"
 #. js-lingui-id: FXWLlg
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "API rate limits v2"
-msgstr ""
+msgstr "API 속도 제한 v2"
 
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -2784,7 +2784,7 @@ msgstr "앱"
 #. js-lingui-id: gA2ZGo
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App claiming"
-msgstr ""
+msgstr "앱 클레임"
 
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -4423,7 +4423,7 @@ msgstr "이 활동 유형을 레코드 타임라인에 표시할지 선택하세
 #. js-lingui-id: PPf/RT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Choose which fields are used when searching for records."
-msgstr ""
+msgstr "레코드 검색 시 사용할 필드를 선택합니다."
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4928,7 +4928,7 @@ msgstr "설정 변수"
 #. js-lingui-id: 8/+vjg
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Configurable search fields"
-msgstr ""
+msgstr "구성 가능한 검색 필드"
 
 #. js-lingui-id: ywFj2D
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -5325,7 +5325,7 @@ msgstr "Microsoft로 계속"
 #. js-lingui-id: Rdhzdv
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Control what the workspace imports from connected mailboxes and calendars"
-msgstr ""
+msgstr "연결된 메일함과 캘린더에서 워크스페이스로 가져올 항목을 제어합니다"
 
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -5364,6 +5364,7 @@ msgid "Copied to clipboard"
 msgstr "클립보드에 복사되었습니다"
 
 #. js-lingui-id: he3ygx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -5553,7 +5554,7 @@ msgstr "버전을 불러올 수 없습니다."
 #. js-lingui-id: pd1EEy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not open billing portal. Please check your Organization key is present, or contact support."
-msgstr ""
+msgstr "청구 포털을 열 수 없습니다. 조직 키가 있는지 확인하거나 지원팀에 문의하세요."
 
 #. js-lingui-id: ZuI4Sl
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -5604,7 +5605,7 @@ msgstr "카탈로그를 동기화할 수 없습니다."
 #. js-lingui-id: rGxoIq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not transfer the Organization key. Please contact support."
-msgstr ""
+msgstr "조직 키를 전송할 수 없습니다. 지원팀에 문의하세요."
 
 #. js-lingui-id: xsKD3e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5976,7 +5977,7 @@ msgstr "OAuth 인증 플로우용 자격 증명 및 스코프"
 #. js-lingui-id: NGOYJs
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Credit allowance quotas"
-msgstr ""
+msgstr "크레딧 할당량 쿼터"
 
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -7238,7 +7239,7 @@ msgstr "이 브라우저는 받아쓰기를 지원하지 않습니다."
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
-msgstr ""
+msgstr "직접 REST 메타데이터 응답"
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -7884,7 +7885,7 @@ msgstr "이메일 및 채팅"
 #. js-lingui-id: snb/bC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Email campaigns"
-msgstr ""
+msgstr "이메일 캠페인"
 
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -7898,9 +7899,9 @@ msgstr "수신자가 수신 거부를 선택할 수 있는 이메일 범주"
 
 #. js-lingui-id: UZQ5eW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Email copied to clipboard"
 msgstr "이메일이 클립보드에 복사되었습니다"
 
@@ -8101,7 +8102,7 @@ msgstr "우회 옵션 활성화"
 #. js-lingui-id: vs9cre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr ""
+msgstr "이메일 캠페인, 목록 및 구독 취소 관리를 활성화합니다."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -8464,7 +8465,7 @@ msgstr "오류"
 #. js-lingui-id: MC9SGH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Error activating Organization license"
-msgstr ""
+msgstr "조직 라이선스를 활성화하는 중 오류가 발생했습니다"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -8555,7 +8556,7 @@ msgstr "클라이언트 시크릿 재발급 오류"
 #. js-lingui-id: 2AvJlR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Error transferring the Organization key"
-msgstr ""
+msgstr "조직 키 전송 오류"
 
 #. js-lingui-id: 5Vy8D1
 #: src/modules/settings/applications/hooks/useUninstallApplication.ts
@@ -8762,7 +8763,7 @@ msgstr "다음 사람들과 도메인을 이메일 동기화에서 제외합니�
 #. js-lingui-id: aCFYU+
 #: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
 msgid "Exclude the following people and domains from the email and calendar sync of every workspace member"
-msgstr ""
+msgstr "모든 워크스페이스 구성원의 이메일 및 캘린더 동기화에서 다음 사람들과 도메인을 제외합니다"
 
 #. js-lingui-id: g3jaWB
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -8995,7 +8996,7 @@ msgstr "{translatedMetadataName} {translatedOperationType}에 실패하였습니
 #. js-lingui-id: 0zoYr3
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Failed to activate Organization license. Please check your key or contact support."
-msgstr ""
+msgstr "조직 라이선스를 활성화하지 못했습니다. 키를 확인하거나 지원팀에 문의하세요."
 
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -9794,12 +9795,12 @@ msgstr "이름은 비워 둘 수 없습니다"
 #. js-lingui-id: tVgANq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to keep your premium features active."
-msgstr ""
+msgstr "프리미엄 기능을 계속 사용하려면 결제 문제를 해결하세요."
 
 #. js-lingui-id: SdIdBz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to restore your premium features."
-msgstr ""
+msgstr "프리미엄 기능을 복원하려면 결제 문제를 해결하세요."
 
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -10119,7 +10120,7 @@ msgstr "크레딧 추가하기"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Get Organization"
-msgstr ""
+msgstr "조직 이용하기"
 
 #. js-lingui-id: MZe3+J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -10127,7 +10128,7 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Get Organization Key"
-msgstr ""
+msgstr "조직 키 받기"
 
 #. js-lingui-id: wwPywk
 #: src/pages/onboarding/InstallAppsContent.tsx
@@ -11682,7 +11683,7 @@ msgstr ""
 #. js-lingui-id: klrZv0
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "JSON filters"
-msgstr ""
+msgstr "JSON 필터"
 
 #. js-lingui-id: KTaki5
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
@@ -12216,7 +12217,7 @@ msgstr ""
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Limit the rate of outgoing webhook deliveries."
-msgstr ""
+msgstr "발신 웹훅 전송의 속도를 제한합니다."
 
 #. js-lingui-id: GrFbIR
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
@@ -12282,8 +12283,8 @@ msgstr "링크 콘텐츠"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Link copied to clipboard"
@@ -12965,7 +12966,7 @@ msgstr "메시지"
 #. js-lingui-id: jBzu2R
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Message and calendar target reads"
-msgstr ""
+msgstr "메시지 및 캘린더 대상 읽기"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -15110,12 +15111,12 @@ msgstr "하나 이상의 필터가 비활성화되었거나 삭제된 필드를 
 #. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
-msgstr ""
+msgstr "하나의 구독은 하나의 프로덕션 인스턴스와 하나의 스테이징 또는 테스트 인스턴스를 구동하는 조직 키 한 개를 제공합니다. 스테이징 또는 테스트 환경을 실행하려면 두 번째 서버에 Twenty를 설치하고, 동일한 조직 키로 활성화한 다음 해당 서버를 개발 인스턴스로 등록하세요. 개발 인스턴스는 추가 청구 없이 프리미엄 기능을 활성화하며 프로덕션 좌석 수에 포함되지 않습니다."
 
 #. js-lingui-id: JEtonz
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Only application logs are available on your current plan. Other log types require an Organization subscription."
-msgstr ""
+msgstr "현재 플랜에서는 애플리케이션 로그만 사용할 수 있습니다. 다른 로그 유형에는 Organization 구독이 필요합니다."
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -15224,6 +15225,7 @@ msgid "Open in"
 msgstr "열기"
 
 #. js-lingui-id: noLjKT
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open in app"
 msgstr "앱에서 열기"
@@ -15237,6 +15239,11 @@ msgstr "전체 페이지로 열기"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "역할에서 열기"
+
+#. js-lingui-id: x57cJf
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
+msgid "Open link"
+msgstr "링크 열기"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -15383,7 +15390,7 @@ msgstr "조직 기능"
 #. js-lingui-id: b8dX3V
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization key transferred to this server"
-msgstr ""
+msgstr "조직 키가 이 서버로 전송되었습니다"
 
 #. js-lingui-id: MoJjhq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -15394,12 +15401,12 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization License"
-msgstr ""
+msgstr "조직 라이선스"
 
 #. js-lingui-id: 6alGoe
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization license activated successfully"
-msgstr ""
+msgstr "조직 라이선스가 성공적으로 활성화되었습니다"
 
 #. js-lingui-id: cyDPQQ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15708,12 +15715,12 @@ msgstr "아래 코드를 붙여넣기"
 #. js-lingui-id: M01WeF
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Paste your Organization key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server."
-msgstr ""
+msgstr "아래에 조직 키를 붙여넣어 활성화하세요. 이 키 사본을 안전한 곳에 보관하세요. 동일한 키를 사용해 개발 인스턴스를 설정하거나 라이선스를 교체 서버로 이전할 수 있습니다."
 
 #. js-lingui-id: Jkg0nj
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Paste your Organization key here"
-msgstr ""
+msgstr "여기에 조직 키를 붙여넣으세요"
 
 #. js-lingui-id: I6gXOa
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -15875,8 +15882,8 @@ msgid "Phone Number"
 msgstr "전화번호"
 
 #. js-lingui-id: qlqT9z
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Phone number copied to clipboard"
 msgstr "전화번호가 클립보드에 복사되었습니다"
 
@@ -16148,7 +16155,7 @@ msgstr "사전 설치된 항목만"
 #. js-lingui-id: HslPhm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Prebuilt logic functions"
-msgstr ""
+msgstr "사전 구축된 logic function"
 
 #. js-lingui-id: 0Lqxjs
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
@@ -16690,7 +16697,7 @@ msgstr "레코드(ID)"
 #. js-lingui-id: zod7Md
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record creation form"
-msgstr ""
+msgstr "레코드 생성 양식"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -16728,7 +16735,7 @@ msgstr "레코드 페이지"
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record sharing"
-msgstr ""
+msgstr "레코드 공유"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -16899,7 +16906,7 @@ msgstr "해제 및 이전"
 #. js-lingui-id: KXrI7W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Release & transfer Organization key"
-msgstr ""
+msgstr "조직 키 해제 및 이전"
 
 #. js-lingui-id: PYZeGT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -17359,7 +17366,7 @@ msgstr "실패 시 재시도"
 #. js-lingui-id: AF7Zfa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Return metadata directly instead of wrapping it in the legacy response envelope."
-msgstr ""
+msgstr "메타데이터를 레거시 응답 엔벨로프로 감싸지 않고 직접 반환합니다."
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
@@ -17578,7 +17585,7 @@ msgstr "기능 실행"
 #. js-lingui-id: 8KjW3W
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Run logic functions from prebuilt application bundles."
-msgstr ""
+msgstr "사전 구축된 애플리케이션 번들에서 logic function을 실행합니다."
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/build-generic-tool-status-message.util.ts
@@ -19358,12 +19365,12 @@ msgstr "표준 위젯"
 #. js-lingui-id: TqGZ8Y
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new Organization subscription to re-enable premium features."
-msgstr ""
+msgstr "프리미엄 기능을 다시 사용하려면 새 조직 구독을 시작하세요."
 
 #. js-lingui-id: kqtVJH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new Organization subscription."
-msgstr ""
+msgstr "새 조직 구독을 시작하세요."
 
 #. js-lingui-id: WAjFYI
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -19802,7 +19809,7 @@ msgstr "프로덕션 인스턴스로 전환되었습니다."
 #. js-lingui-id: Nu4DdT
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync"
-msgstr ""
+msgstr "동기화"
 
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -20379,7 +20386,7 @@ msgstr "청구 문제가 있습니다. 관리자에게 문의하세요."
 #. js-lingui-id: AYRXBE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Your premium features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr ""
+msgstr "구독에 결제 문제가 있습니다. 프리미엄 기능이 비활성화되었습니다. 구독이 취소되기 전에 미결제 청구서를 정산하여 기능을 복원하세요. 취소된 구독은 다시 활성화할 수 없으며 새 구독을 시작해야 합니다."
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20548,7 +20555,7 @@ msgstr "이 기기"
 #. js-lingui-id: i6mVT3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "This feature is part of the Organization plan"
-msgstr ""
+msgstr "이 기능은 Organization 요금제에 포함되어 있습니다."
 
 #. js-lingui-id: own57K
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -20618,12 +20625,12 @@ msgstr "이번 달"
 #. js-lingui-id: ThVMIW
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
-msgstr ""
+msgstr "이 조직 키는 이미 다른 서버 인스턴스에 연결되어 있습니다. 여기에서 해제하면 라이선스가 이 서버로 이전되며, 이전 서버에서는 좌석 수가 더 이상 계산되지 않습니다."
 
 #. js-lingui-id: CHf20W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
-msgstr ""
+msgstr "이 조직 키는 현재 다른 서버 인스턴스에 연결되어 있습니다. 여기로 이전하면 이전 서버에서 키가 해제되며, 해당 서버에서는 좌석 수가 더 이상 계산되지 않습니다. 계속하시겠습니까?"
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -20663,7 +20670,7 @@ msgstr ""
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This server has an Organization key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support."
-msgstr ""
+msgstr "이 서버에는 조직 키가 구성되어 있습니다. 안전한 곳에 키 사본을 반드시 보관하세요. 동일한 키가 있어야 개발 인스턴스를 활성화하거나 라이선스를 교체 서버로 이전할 수 있습니다. 키에 더 이상 액세스할 수 없다면 지원팀에 문의하세요."
 
 #. js-lingui-id: Gzd97S
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -21498,7 +21505,7 @@ msgstr "고유 필드"
 #. js-lingui-id: NXfWhP
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Unique indexes"
-msgstr ""
+msgstr "고유 색인"
 
 #. js-lingui-id: pRpC/r
 #: src/modules/side-panel/pages/page-layout/constants/settings/PrefixSetting.ts
@@ -21618,7 +21625,7 @@ msgstr "비공개"
 #. js-lingui-id: 8vc1Dy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Unlock premium features like SSO, row-level security, and audit logs."
-msgstr ""
+msgstr "SSO, 행 수준 보안, 감사 로그 등의 프리미엄 기능을 이용해 보세요."
 
 #. js-lingui-id: Te2H8x
 #: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
@@ -21965,7 +21972,7 @@ msgstr "감사 로그에 액세스하려면 업그레이드하세요"
 #. js-lingui-id: q10MiT
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to access audit logs."
-msgstr ""
+msgstr "감사 로그에 액세스하려면 Organization으로 업그레이드하세요."
 
 #. js-lingui-id: yV3xLN
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -22154,7 +22161,7 @@ msgstr "사용 기간"
 #. js-lingui-id: MNOlLY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use a dedicated form when creating records."
-msgstr ""
+msgstr "레코드를 생성할 때 전용 양식을 사용합니다."
 
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -22194,22 +22201,22 @@ msgstr "API를 사용하거나 첫 번째 {objectLabel}을 수동으로 추가�
 #. js-lingui-id: c2ES/s
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use target relations to find messages and calendar events linked to records."
-msgstr ""
+msgstr "대상 관계를 사용하여 레코드에 연결된 메시지와 캘린더 이벤트를 찾습니다."
 
 #. js-lingui-id: 40bRe+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the dedicated workflow index page to browse workflows and their versions."
-msgstr ""
+msgstr "전용 워크플로 인덱스 페이지를 사용하여 워크플로와 해당 버전을 탐색합니다."
 
 #. js-lingui-id: +mx9eK
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the quota engine to enforce credit allowances."
-msgstr ""
+msgstr "쿼터 엔진을 사용하여 크레딧 할당량을 적용합니다."
 
 #. js-lingui-id: 0rr3iW
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the usage limit engine to enforce API request speed limits."
-msgstr ""
+msgstr "사용량 제한 엔진을 사용하여 API 요청 속도 제한을 적용합니다."
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -22920,7 +22927,7 @@ msgstr "업데이트를 위해서는 웹훅 ID가 필요합니다"
 #. js-lingui-id: 0HuWgM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Webhook rate limits"
-msgstr ""
+msgstr "웹훅 속도 제한"
 
 #. js-lingui-id: v1kQyJ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -23145,7 +23152,7 @@ msgstr "워크플로우 실행"
 #. js-lingui-id: 91e2Af
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
-msgstr ""
+msgstr "워크플로 인덱스 페이지"
 
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
@@ -23516,7 +23523,7 @@ msgstr "이 설정 페이지에 접근할 수 없습니다."
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later or contact support."
-msgstr ""
+msgstr "이 조직 키에 대해 지난 30일 동안 허용된 최대 서버 이전 횟수에 도달했습니다. 나중에 다시 시도하시거나 지원팀에 문의하세요."
 
 #. js-lingui-id: RDAH2t
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -23621,12 +23628,12 @@ msgstr "표시될 이름"
 #. js-lingui-id: 91Ysnw
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your Organization key"
-msgstr ""
+msgstr "내 조직 키"
 
 #. js-lingui-id: eE08iE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your Organization subscription has been canceled."
-msgstr ""
+msgstr "조직 구독이 취소되었습니다."
 
 #. js-lingui-id: 8mfOAZ
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -23647,22 +23654,22 @@ msgstr "플랜이 즉시 Pro로 전환되며 체험판은 계속됩니다. 체�
 #. js-lingui-id: iizYt1
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features are active"
-msgstr ""
+msgstr "프리미엄 기능이 활성화되어 있습니다"
 
 #. js-lingui-id: VRFEn9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support."
-msgstr ""
+msgstr "프리미엄 기능은 활성화되어 있지만 조직 키가 없거나 유효하지 않습니다. 이러한 상태가 의도된 것일 수 있지만, 그렇지 않다면 구독을 관리할 수 있도록 서명된 유효한 조직 키를 설정하거나 지원팀에 문의하세요."
 
 #. js-lingui-id: BkmgMC
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features will be disabled"
-msgstr ""
+msgstr "프리미엄 기능이 비활성화됩니다"
 
 #. js-lingui-id: TI99Rh
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features will remain active until {cancelAtDate}."
-msgstr ""
+msgstr "프리미엄 기능은 {cancelAtDate}까지 계속 활성화됩니다."
 
 #. js-lingui-id: MxZ8eH
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx

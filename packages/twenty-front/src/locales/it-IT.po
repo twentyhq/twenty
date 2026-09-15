@@ -1052,7 +1052,7 @@ msgstr "È necessario un metodo di pagamento per mantenere attivo il tuo spazio 
 #. js-lingui-id: eU1E2J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "A payment on your subscription failed. Your premium features stay active while we retry it."
-msgstr ""
+msgstr "Un pagamento per il tuo abbonamento non è riuscito. Le tue funzionalità premium restano attive mentre riproviamo."
 
 #. js-lingui-id: oO3ZQX
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
@@ -1271,7 +1271,7 @@ msgstr "Attiva"
 #. js-lingui-id: 8xkU9e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Activate Organization Key"
-msgstr ""
+msgstr "Attiva la chiave dell'organizzazione"
 
 #. js-lingui-id: i7ur8L
 #: src/modules/settings/billing/hooks/useEndSubscriptionTrialPeriod.ts
@@ -2136,12 +2136,12 @@ msgstr "Utilizzo dell'IA"
 #. js-lingui-id: jSHIk0
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "AI usage analytics across workspaces is available with an Organization key."
-msgstr ""
+msgstr "Le analisi di utilizzo dell'IA tra gli spazi di lavoro sono disponibili con una chiave dell'organizzazione."
 
 #. js-lingui-id: 55MeVT
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
 msgid "AI usage analytics is available with an Organization key."
-msgstr ""
+msgstr "Le analisi di utilizzo dell'IA sono disponibili con una chiave Organizzazione."
 
 #. js-lingui-id: U2F/HK
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
@@ -2419,7 +2419,7 @@ msgstr "Tutti i tuoi oggetti personalizzati"
 #. js-lingui-id: fWQJW/
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow developers to claim ownership of applications."
-msgstr ""
+msgstr "Consenti agli sviluppatori di rivendicare la proprietà delle applicazioni."
 
 #. js-lingui-id: 2M5OF+
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2445,7 +2445,7 @@ msgstr "Consenti l'esportazione dei dati in file CSV"
 #. js-lingui-id: G1r3UJ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow filtering records by values inside JSON fields."
-msgstr ""
+msgstr "Consenti il filtraggio dei record in base ai valori all'interno dei campi JSON."
 
 #. js-lingui-id: q/pgyN
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -2480,7 +2480,7 @@ msgstr "Consenti login basato su Microsoft per utenti con autorizzazione a evita
 #. js-lingui-id: cLzEjc
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow sharing individual records with workspace members."
-msgstr ""
+msgstr "Consenti la condivisione di singoli record con i membri dello spazio di lavoro."
 
 #. js-lingui-id: U6bnfj
 #: src/modules/settings/workspace/components/ImpersonationSwitch.tsx
@@ -2495,7 +2495,7 @@ msgstr "Consenti l'invito di nuovi utenti condividendo un link di invito."
 #. js-lingui-id: xfQ2i8
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Allow unique indexes to prevent duplicate field values."
-msgstr ""
+msgstr "Consenti indici univoci per impedire valori di campo duplicati."
 
 #. js-lingui-id: JBjv4v
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -2755,7 +2755,7 @@ msgstr "Nome dell'API (Singolare)"
 #. js-lingui-id: FXWLlg
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "API rate limits v2"
-msgstr ""
+msgstr "Limiti di frequenza delle API v2"
 
 #. js-lingui-id: /eZE05
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -2784,7 +2784,7 @@ msgstr "App"
 #. js-lingui-id: gA2ZGo
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App claiming"
-msgstr ""
+msgstr "Rivendicazione dell'app"
 
 #. js-lingui-id: qKnSyT
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
@@ -4423,7 +4423,7 @@ msgstr "Scegli se questo tipo di attività appare nelle timeline dei record"
 #. js-lingui-id: PPf/RT
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Choose which fields are used when searching for records."
-msgstr ""
+msgstr "Scegli quali campi utilizzare durante la ricerca dei record."
 
 #. js-lingui-id: 02EFne
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -4928,7 +4928,7 @@ msgstr "Variabili di configurazione"
 #. js-lingui-id: 8/+vjg
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Configurable search fields"
-msgstr ""
+msgstr "Campi di ricerca configurabili"
 
 #. js-lingui-id: ywFj2D
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowEditActionHttpRequest.tsx
@@ -5325,7 +5325,7 @@ msgstr "Continua con Microsoft"
 #. js-lingui-id: Rdhzdv
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Control what the workspace imports from connected mailboxes and calendars"
-msgstr ""
+msgstr "Controlla ciò che lo spazio di lavoro importa dalle caselle di posta e dai calendari connessi"
 
 #. js-lingui-id: XBRyA1
 #: src/pages/settings/communications/SettingsWorkspaceNewUnsubscribeTopic.tsx
@@ -5364,6 +5364,7 @@ msgid "Copied to clipboard"
 msgstr "Copiato negli appunti"
 
 #. js-lingui-id: he3ygx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/input/components/MultiItemFieldMenuItem.tsx
 #: src/modules/settings/developers/components/ApiKeyInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoOidcForm.tsx
@@ -5553,7 +5554,7 @@ msgstr "Impossibile caricare le versioni."
 #. js-lingui-id: pd1EEy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not open billing portal. Please check your Organization key is present, or contact support."
-msgstr ""
+msgstr "Impossibile aprire il portale di fatturazione. Verifica che la tua chiave Organizzazione sia presente oppure contatta l'assistenza."
 
 #. js-lingui-id: ZuI4Sl
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
@@ -5604,7 +5605,7 @@ msgstr "Impossibile sincronizzare il catalogo"
 #. js-lingui-id: rGxoIq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not transfer the Organization key. Please contact support."
-msgstr ""
+msgstr "Impossibile trasferire la chiave Organizzazione. Contatta l'assistenza."
 
 #. js-lingui-id: xsKD3e
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5976,7 +5977,7 @@ msgstr "Credenziali e ambiti per i flussi di autorizzazione OAuth"
 #. js-lingui-id: NGOYJs
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Credit allowance quotas"
-msgstr ""
+msgstr "Quote di assegnazione dei crediti"
 
 #. js-lingui-id: 3hkXRB
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceBillingContent.tsx
@@ -7238,7 +7239,7 @@ msgstr "La dettatura non è supportata in questo browser."
 #. js-lingui-id: 8n9Unw
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Direct REST metadata responses"
-msgstr ""
+msgstr "Risposte dirette dei metadati REST"
 
 #. js-lingui-id: MRB7nI
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
@@ -7884,7 +7885,7 @@ msgstr "Email e chat"
 #. js-lingui-id: snb/bC
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Email campaigns"
-msgstr ""
+msgstr "Campagne email"
 
 #. js-lingui-id: unEEog
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
@@ -7898,9 +7899,9 @@ msgstr "Categorie email da cui i destinatari possono annullare l’iscrizione"
 
 #. js-lingui-id: UZQ5eW
 #: src/modules/activities/emails/recipients/components/EmailRecipientChipMenuContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Email copied to clipboard"
 msgstr "Email copiata negli appunti"
 
@@ -8101,7 +8102,7 @@ msgstr "Abilita opzioni di bypass"
 #. js-lingui-id: vs9cre
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Enable email campaigns, lists, and unsubscribe management."
-msgstr ""
+msgstr "Abilita campagne email, elenchi e gestione delle disiscrizioni."
 
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
@@ -8464,7 +8465,7 @@ msgstr "Errore"
 #. js-lingui-id: MC9SGH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Error activating Organization license"
-msgstr ""
+msgstr "Errore durante l'attivazione della licenza Organizzazione"
 
 #. js-lingui-id: GHKxvg
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -8555,7 +8556,7 @@ msgstr "Errore durante la rotazione del segreto client"
 #. js-lingui-id: 2AvJlR
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Error transferring the Organization key"
-msgstr ""
+msgstr "Errore nel trasferimento della chiave Organizzazione"
 
 #. js-lingui-id: 5Vy8D1
 #: src/modules/settings/applications/hooks/useUninstallApplication.ts
@@ -8762,7 +8763,7 @@ msgstr "Escludi le seguenti persone e domini dalla mia sincronizzazione email. L
 #. js-lingui-id: aCFYU+
 #: src/modules/settings/workspace/components/SettingsWorkspaceBlocklistSection.tsx
 msgid "Exclude the following people and domains from the email and calendar sync of every workspace member"
-msgstr ""
+msgstr "Escludi le seguenti persone e domini dalla sincronizzazione email e calendario di ogni membro dello spazio di lavoro"
 
 #. js-lingui-id: g3jaWB
 #: src/pages/settings/legal/SettingsLegalDpa.tsx
@@ -8995,7 +8996,7 @@ msgstr "Impossibile {translatedOperationType} {translatedMetadataName}. La conva
 #. js-lingui-id: 0zoYr3
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Failed to activate Organization license. Please check your key or contact support."
-msgstr ""
+msgstr "Impossibile attivare la licenza Organizzazione. Verifica la tua chiave oppure contatta l'assistenza."
 
 #. js-lingui-id: vJiM7T
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -9794,12 +9795,12 @@ msgstr "Il nome non può essere vuoto"
 #. js-lingui-id: tVgANq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to keep your premium features active."
-msgstr ""
+msgstr "Risolvi il problema di pagamento per mantenere attive le funzionalità premium."
 
 #. js-lingui-id: SdIdBz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Fix the payment issue to restore your premium features."
-msgstr ""
+msgstr "Risolvi il problema di pagamento per ripristinare le funzionalità premium."
 
 #. js-lingui-id: Xgkhyj
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTable.tsx
@@ -10119,7 +10120,7 @@ msgstr "Ottieni più crediti"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Get Organization"
-msgstr ""
+msgstr "Ottieni Organizzazione"
 
 #. js-lingui-id: MZe3+J
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -10127,7 +10128,7 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Get Organization Key"
-msgstr ""
+msgstr "Ottieni la chiave Organizzazione"
 
 #. js-lingui-id: wwPywk
 #: src/pages/onboarding/InstallAppsContent.tsx
@@ -11682,7 +11683,7 @@ msgstr ""
 #. js-lingui-id: klrZv0
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "JSON filters"
-msgstr ""
+msgstr "Filtri JSON"
 
 #. js-lingui-id: KTaki5
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptEntryList.tsx
@@ -12216,7 +12217,7 @@ msgstr ""
 #. js-lingui-id: OuYGr9
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Limit the rate of outgoing webhook deliveries."
-msgstr ""
+msgstr "Limita la frequenza delle consegne di webhook in uscita."
 
 #. js-lingui-id: GrFbIR
 #: src/modules/settings/billing/components/SettingsBillingLimitEditForm.tsx
@@ -12282,8 +12283,8 @@ msgstr "Contenuto del link"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 #: src/modules/page-layout/widgets/call-recording-transcript/components/WidgetActionCallRecordingTranscript.tsx
 #: src/modules/workspace/components/WorkspaceInviteLink.tsx
 msgid "Link copied to clipboard"
@@ -12965,7 +12966,7 @@ msgstr "Messaggio"
 #. js-lingui-id: jBzu2R
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Message and calendar target reads"
-msgstr ""
+msgstr "Letture target di messaggi e calendario"
 
 #. js-lingui-id: U15XwX
 #: src/modules/activities/timeline-activities/rows/message/components/EventCardMessage.tsx
@@ -15110,12 +15111,12 @@ msgstr "Uno o più filtri fanno riferimento a campi disattivati o eliminati e ve
 #. js-lingui-id: 1WZTTl
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
-msgstr ""
+msgstr "Un abbonamento fornisce una chiave Organizzazione che alimenta un'istanza di produzione e una possibile istanza di staging o test. Per eseguire un ambiente di staging o test, installa Twenty su un secondo server, attivalo con la stessa chiave Organizzazione, quindi registra quel server come istanza di sviluppo. Le istanze di sviluppo sbloccano le funzionalità premium senza costi aggiuntivi e non sono conteggiate nei posti in produzione."
 
 #. js-lingui-id: JEtonz
 #: src/modules/settings/event-logs/components/SettingsLogs.tsx
 msgid "Only application logs are available on your current plan. Other log types require an Organization subscription."
-msgstr ""
+msgstr "Solo i log dell’applicazione sono disponibili nel tuo piano attuale. Altri tipi di log richiedono un abbonamento Organization."
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -15224,6 +15225,7 @@ msgid "Open in"
 msgstr "Aprire in"
 
 #. js-lingui-id: noLjKT
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldOnClickActionForm.tsx
 msgid "Open in app"
 msgstr "Apri nell'app"
@@ -15237,6 +15239,11 @@ msgstr "Apri a pagina intera"
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 msgid "Open in Roles"
 msgstr "Apri in Ruoli"
+
+#. js-lingui-id: x57cJf
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
+msgid "Open link"
+msgstr "Apri link"
 
 #. js-lingui-id: xGd6Ih
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -15383,7 +15390,7 @@ msgstr "Funzionalità Organizzazione"
 #. js-lingui-id: b8dX3V
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization key transferred to this server"
-msgstr ""
+msgstr "Chiave Organizzazione trasferita a questo server"
 
 #. js-lingui-id: MoJjhq
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -15394,12 +15401,12 @@ msgstr ""
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization License"
-msgstr ""
+msgstr "Licenza Organizzazione"
 
 #. js-lingui-id: 6alGoe
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Organization license activated successfully"
-msgstr ""
+msgstr "Licenza Organizzazione attivata correttamente"
 
 #. js-lingui-id: cyDPQQ
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -15708,12 +15715,12 @@ msgstr "Incolla il codice qui sotto"
 #. js-lingui-id: M01WeF
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Paste your Organization key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server."
-msgstr ""
+msgstr "Incolla qui sotto la tua chiave Organizzazione per attivare. Conserva una copia di questa chiave in un luogo sicuro: la stessa chiave viene riutilizzata per impostare un'istanza di sviluppo o per spostare la licenza su un server sostitutivo."
 
 #. js-lingui-id: Jkg0nj
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Paste your Organization key here"
-msgstr ""
+msgstr "Incolla qui la tua chiave Organizzazione"
 
 #. js-lingui-id: I6gXOa
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionHttpTriggerSection.tsx
@@ -15875,8 +15882,8 @@ msgid "Phone Number"
 msgstr "Numero di telefono"
 
 #. js-lingui-id: qlqT9z
+#: src/modules/object-record/record-field/ui/hooks/useGetSecondaryFieldButton.ts
 #: src/modules/object-record/record-field/ui/meta-types/display/components/PhonesFieldDisplay.tsx
-#: src/modules/object-record/record-table/record-table-cell/hooks/useGetSecondaryRecordTableCellButton.ts
 msgid "Phone number copied to clipboard"
 msgstr "Numero di telefono copiato negli appunti"
 
@@ -16148,7 +16155,7 @@ msgstr "Solo preinstallate"
 #. js-lingui-id: HslPhm
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Prebuilt logic functions"
-msgstr ""
+msgstr "Funzioni logiche predefinite"
 
 #. js-lingui-id: 0Lqxjs
 #: src/modules/auth/sign-in-up/constants/WorkspaceActivationMessages.tsx
@@ -16690,7 +16697,7 @@ msgstr "Record (ID)"
 #. js-lingui-id: zod7Md
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record creation form"
-msgstr ""
+msgstr "Modulo di creazione dei record"
 
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
@@ -16728,7 +16735,7 @@ msgstr "Pagina del record"
 #. js-lingui-id: dmU8dH
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record sharing"
-msgstr ""
+msgstr "Condivisione dei record"
 
 #. js-lingui-id: NxW0+c
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
@@ -16899,7 +16906,7 @@ msgstr "Rilascia e trasferisci"
 #. js-lingui-id: KXrI7W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Release & transfer Organization key"
-msgstr ""
+msgstr "Rilascia e trasferisci la chiave Organizzazione"
 
 #. js-lingui-id: PYZeGT
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -17359,7 +17366,7 @@ msgstr "Riprova in caso di errore"
 #. js-lingui-id: AF7Zfa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Return metadata directly instead of wrapping it in the legacy response envelope."
-msgstr ""
+msgstr "Restituisci i metadati direttamente invece di racchiuderli nell'involucro di risposta legacy."
 
 #. js-lingui-id: ZbpKL+
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminJobDetailsExpandable.tsx
@@ -17578,7 +17585,7 @@ msgstr "Esegui Funzione"
 #. js-lingui-id: 8KjW3W
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Run logic functions from prebuilt application bundles."
-msgstr ""
+msgstr "Esegui funzioni logiche da pacchetti di applicazioni predefiniti."
 
 #. js-lingui-id: n6uObz
 #: src/modules/ai/utils/tool-display/build-generic-tool-status-message.util.ts
@@ -19358,12 +19365,12 @@ msgstr "Widget standard"
 #. js-lingui-id: TqGZ8Y
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new Organization subscription to re-enable premium features."
-msgstr ""
+msgstr "Avvia un nuovo abbonamento Organizzazione per riattivare le funzionalità premium."
 
 #. js-lingui-id: kqtVJH
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Start a new Organization subscription."
-msgstr ""
+msgstr "Avvia un nuovo abbonamento Organizzazione."
 
 #. js-lingui-id: WAjFYI
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
@@ -19802,7 +19809,7 @@ msgstr "Passato a un'istanza di produzione."
 #. js-lingui-id: Nu4DdT
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailSyncSection.tsx
 msgid "Sync"
-msgstr ""
+msgstr "Sincronizza"
 
 #. js-lingui-id: avDJC3
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -20379,7 +20386,7 @@ msgstr "Si è verificato un problema di fatturazione. Contatta il tuo amministra
 #. js-lingui-id: AYRXBE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "There is a payment issue with your subscription. Your premium features are disabled. Settle the outstanding invoice to restore them, before the subscription is cancelled: a cancelled subscription cannot be reactivated and you would need to start a new one."
-msgstr ""
+msgstr "C'è un problema di pagamento con il tuo abbonamento. Le tue funzionalità premium sono disabilitate. Salda la fattura in sospeso per ripristinarle prima che l'abbonamento venga annullato: un abbonamento annullato non può essere riattivato e dovresti avviarne uno nuovo."
 
 #. js-lingui-id: WQk7Cf
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
@@ -20550,7 +20557,7 @@ msgstr "Questo dispositivo"
 #. js-lingui-id: i6mVT3
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 msgid "This feature is part of the Organization plan"
-msgstr ""
+msgstr "Questa funzionalità è inclusa nel piano Organization"
 
 #. js-lingui-id: own57K
 #: src/modules/activities/files/components/DocumentViewer.tsx
@@ -20620,12 +20627,12 @@ msgstr "Questo mese"
 #. js-lingui-id: ThVMIW
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one."
-msgstr ""
+msgstr "Questa chiave Organizzazione è già associata a un'altra istanza del server. Rilasciarla qui trasferirà la licenza a questo server e interromperà il conteggio dei posti sul precedente."
 
 #. js-lingui-id: CHf20W
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
-msgstr ""
+msgstr "Questa chiave Organizzazione è attualmente associata a un'altra istanza del server. Trasferirla qui la rilascerà dal server precedente e interromperà il conteggio dei posti su di esso. Sei sicuro di voler continuare?"
 
 #. js-lingui-id: NCA55L
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
@@ -20665,7 +20672,7 @@ msgstr ""
 #. js-lingui-id: IBWuXb
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "This server has an Organization key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support."
-msgstr ""
+msgstr "Su questo server è configurata una chiave Organizzazione. Assicurati di conservarne una copia in un luogo sicuro: hai bisogno della stessa chiave per attivare un'istanza di sviluppo o per spostare la licenza su un server sostitutivo. Se non hai più accesso alla tua chiave, contatta l'assistenza."
 
 #. js-lingui-id: Gzd97S
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -21500,7 +21507,7 @@ msgstr "Campi unici"
 #. js-lingui-id: NXfWhP
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Unique indexes"
-msgstr ""
+msgstr "Indici univoci"
 
 #. js-lingui-id: pRpC/r
 #: src/modules/side-panel/pages/page-layout/constants/settings/PrefixSetting.ts
@@ -21620,7 +21627,7 @@ msgstr "Non in elenco"
 #. js-lingui-id: 8vc1Dy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Unlock premium features like SSO, row-level security, and audit logs."
-msgstr ""
+msgstr "Sblocca funzionalità premium come SSO, sicurezza a livello di riga e registri di controllo."
 
 #. js-lingui-id: Te2H8x
 #: src/modules/settings/developers/components/SettingsApiKeysFieldItemTableRow.tsx
@@ -21967,7 +21974,7 @@ msgstr "Esegui l'upgrade per accedere ai log di audit"
 #. js-lingui-id: q10MiT
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Organization to access audit logs."
-msgstr ""
+msgstr "Esegui l'upgrade a Organization per accedere ai log di audit."
 
 #. js-lingui-id: yV3xLN
 #: src/pages/onboarding/UpgradeFreeTrial.tsx
@@ -22156,7 +22163,7 @@ msgstr "Periodo di utilizzo"
 #. js-lingui-id: MNOlLY
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use a dedicated form when creating records."
-msgstr ""
+msgstr "Utilizza un modulo dedicato durante la creazione dei record."
 
 #. js-lingui-id: 6kLyt5
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
@@ -22196,22 +22203,22 @@ msgstr "Usa la nostra API o aggiungi manualmente il tuo primo {objectLabel}"
 #. js-lingui-id: c2ES/s
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use target relations to find messages and calendar events linked to records."
-msgstr ""
+msgstr "Utilizza le relazioni target per trovare messaggi ed eventi del calendario collegati ai record."
 
 #. js-lingui-id: 40bRe+
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the dedicated workflow index page to browse workflows and their versions."
-msgstr ""
+msgstr "Utilizza la pagina di indice dedicata dei workflow per esplorare i workflow e le relative versioni."
 
 #. js-lingui-id: +mx9eK
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the quota engine to enforce credit allowances."
-msgstr ""
+msgstr "Utilizza il motore delle quote per applicare le assegnazioni di crediti."
 
 #. js-lingui-id: 0rr3iW
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Use the usage limit engine to enforce API request speed limits."
-msgstr ""
+msgstr "Utilizza il motore dei limiti di utilizzo per applicare limiti di velocità alle richieste API."
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -22922,7 +22929,7 @@ msgstr "L'ID del webhook è necessario per gli aggiornamenti"
 #. js-lingui-id: 0HuWgM
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Webhook rate limits"
-msgstr ""
+msgstr "Limiti di frequenza dei webhook"
 
 #. js-lingui-id: v1kQyJ
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -23147,7 +23154,7 @@ msgstr "Esecuzione del workflow"
 #. js-lingui-id: 91e2Af
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Workflow index page"
-msgstr ""
+msgstr "Pagina di indice dei workflow"
 
 #. js-lingui-id: QHAMlE
 #: src/modules/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel.ts
@@ -23518,7 +23525,7 @@ msgstr "Non hai accesso a questa pagina delle impostazioni."
 #. js-lingui-id: tzk0bz
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later or contact support."
-msgstr ""
+msgstr "Hai raggiunto il numero massimo di trasferimenti di server consentiti negli ultimi 30 giorni per questa chiave Organizzazione. Riprova più tardi o contatta l'assistenza."
 
 #. js-lingui-id: RDAH2t
 #: src/modules/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals.tsx
@@ -23623,12 +23630,12 @@ msgstr "Il tuo nome come verrà visualizzato"
 #. js-lingui-id: 91Ysnw
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your Organization key"
-msgstr ""
+msgstr "La tua chiave Organizzazione"
 
 #. js-lingui-id: eE08iE
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your Organization subscription has been canceled."
-msgstr ""
+msgstr "Il tuo abbonamento Organizzazione è stato annullato."
 
 #. js-lingui-id: 8mfOAZ
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -23649,22 +23656,22 @@ msgstr "Il tuo piano passerà immediatamente a Pro e la tua prova continuerà. A
 #. js-lingui-id: iizYt1
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features are active"
-msgstr ""
+msgstr "Le tue funzionalità premium sono attive"
 
 #. js-lingui-id: VRFEn9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support."
-msgstr ""
+msgstr "Le tue funzionalità premium sono attive ma la tua chiave Organizzazione manca o non è valida. Questo potrebbe essere normale; in caso contrario, imposta una chiave Organizzazione firmata valida per gestire il tuo abbonamento oppure contatta l'assistenza."
 
 #. js-lingui-id: BkmgMC
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features will be disabled"
-msgstr ""
+msgstr "Le tue funzionalità premium verranno disabilitate"
 
 #. js-lingui-id: TI99Rh
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your premium features will remain active until {cancelAtDate}."
-msgstr ""
+msgstr "Le tue funzionalità premium rimarranno attive fino al {cancelAtDate}."
 
 #. js-lingui-id: MxZ8eH
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
