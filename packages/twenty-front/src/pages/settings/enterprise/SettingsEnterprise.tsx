@@ -333,7 +333,7 @@ export const SettingsEnterprise = ({
   ]);
 
   const returnUrlPath = isAdminPanelTab
-    ? getSettingsPath(SettingsPath.AdminPanelEnterprise)
+    ? getSettingsPath(SettingsPath.AdminPanelOrganization)
     : getSettingsPath(SettingsPath.Enterprise);
 
   const openBillingPortal = useCallback(async () => {
