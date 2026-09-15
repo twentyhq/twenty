@@ -1,7 +1,8 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { getIconTileColorShades } from 'twenty-ui/data-display';
 import { useIcons } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme-constants';
 
 export type ObjectMetadataIconInput = Pick<
   EnrichedObjectMetadataItem,
@@ -16,18 +17,22 @@ export type ObjectMetadataIconProps = {
 
 export const ObjectMetadataIcon = ({
   objectMetadataItem,
-  size,
+  size = 16,
   stroke,
 }: ObjectMetadataIconProps) => {
   const { getIcon } = useIcons();
+  const theme = useTheme();
   const Icon = getIcon(objectMetadataItem?.icon);
 
   return (
-    <TintedIconTile
-      Icon={Icon}
-      color={getObjectColorWithFallback(objectMetadataItem)}
+    <Icon
+      color={
+        getIconTileColorShades(getObjectColorWithFallback(objectMetadataItem))
+          .iconColor
+      }
       size={size}
-      stroke={stroke}
+      stroke={stroke ?? theme.icon.stroke.md}
+      style={{ flexShrink: 0 }}
     />
   );
 };

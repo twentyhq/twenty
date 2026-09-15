@@ -11,6 +11,7 @@ import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils
 import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
@@ -167,9 +168,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
             objectColor={objectNavItemColor}
           />
         )
-      : getIcon(objectMetadataItem.icon);
-
-  const iconThemeColor = !isRecord ? objectNavItemColor : undefined;
+      : () => <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />;
 
   const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
@@ -206,7 +205,6 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
       }
       onClick={handleClick}
       Icon={Icon}
-      iconColor={iconThemeColor}
       active={isActive}
       isSelectedInEditMode={isSelectedInEditMode}
       isDragging={isDragging}

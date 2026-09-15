@@ -143,10 +143,15 @@ export const NavigationMenuItemFolderSubItem = ({
       Icon={() => (
         <NavigationMenuItemIcon navigationMenuItem={navigationMenuItem} />
       )}
-      iconColor={getNavigationMenuItemColor(
-        navigationMenuItem,
-        objectMetadataItem ?? undefined,
-      )}
+      iconColor={
+        navigationMenuItem.type === NavigationMenuItemType.OBJECT ||
+        navigationMenuItem.type === NavigationMenuItemType.VIEW
+          ? undefined
+          : getNavigationMenuItemColor(
+              navigationMenuItem,
+              objectMetadataItem ?? undefined,
+            )
+      }
       to={isDragging || isEditable ? undefined : computedLink}
       onClick={handleClick}
       active={isActive}

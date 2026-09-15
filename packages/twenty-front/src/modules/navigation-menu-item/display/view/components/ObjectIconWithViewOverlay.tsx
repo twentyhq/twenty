@@ -16,22 +16,6 @@ const StyledCompositeContainer = styled.div`
   width: 16px;
 `;
 
-const StyledObjectIconWrapper = styled.div<{
-  $backgroundColor: string;
-  $borderColor?: string;
-}>`
-  align-items: center;
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
-  border: ${({ $borderColor }) =>
-    $borderColor ? `1px solid ${$borderColor}` : 'none'};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  position: absolute;
-`;
-
 const StyledViewOverlay = styled.div<{ $backgroundColor: string }>`
   align-items: center;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
@@ -61,16 +45,11 @@ export const ObjectIconWithViewOverlay = ({
 
   return (
     <StyledCompositeContainer>
-      <StyledObjectIconWrapper
-        $backgroundColor={objectStyle.backgroundColor}
-        $borderColor={objectStyle.borderColor}
-      >
-        <ObjectIcon
-          size="14px"
-          stroke={theme.icon.stroke.md}
-          color={objectStyle.iconColor}
-        />
-      </StyledObjectIconWrapper>
+      <ObjectIcon
+        size={16}
+        stroke={theme.icon.stroke.md}
+        color={objectStyle.iconColor}
+      />
       <StyledViewOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <ViewIcon
           size="12px"

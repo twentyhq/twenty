@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { useContext, type ReactNode } from 'react';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { getIconTileColorShades, TintedIconTile } from 'twenty-ui/data-display';
 import { IconGripVertical, type IconComponent } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -94,6 +94,7 @@ export const AddToNavigationDragHandle = ({
   const hasBackgroundColor =
     payload.type !== NavigationMenuItemType.RECORD && !isHovered;
   const showCustomContentWithoutWrapper = isDefined(customIconContent);
+  const ObjectIcon = icon;
 
   return (
     <StyledIconSlot
@@ -109,6 +110,12 @@ export const AddToNavigationDragHandle = ({
         />
       ) : showCustomContentWithoutWrapper ? (
         customIconContent
+      ) : payload.type === NavigationMenuItemType.OBJECT && ObjectIcon ? (
+        <ObjectIcon
+          size={16}
+          stroke={theme.icon.stroke.md}
+          color={getIconTileColorShades(effectiveColor).iconColor}
+        />
       ) : hasBackgroundColor && icon ? (
         <TintedIconTile Icon={icon} color={effectiveColor} />
       ) : (
