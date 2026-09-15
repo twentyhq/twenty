@@ -13,13 +13,13 @@ import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-
 export const WorkflowCard = () => {
   const targetRecord = useTargetRecord();
 
-  const record = useAtomFamilyStateValue(
+  const recordStore = useAtomFamilyStateValue(
     recordStoreFamilyState,
     targetRecord.id,
   );
 
-  const workflowId = isNonEmptyString(record?.workspaceWorkflowId)
-    ? record.workspaceWorkflowId
+  const workflowId = isNonEmptyString(recordStore?.workspaceWorkflowId)
+    ? recordStore.workspaceWorkflowId
     : targetRecord.id;
 
   return (
