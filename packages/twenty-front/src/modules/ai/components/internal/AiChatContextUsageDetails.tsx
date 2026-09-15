@@ -6,7 +6,7 @@ import {
   IconArrowUp,
   IconArrowDown,
   IconCoins,
-  IconDatabase,
+  IconHistory,
 } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -59,7 +59,7 @@ export const AiChatContextUsageDetails = () => {
               valueLabel={formatTokens(lastMessage.inputTokens)}
             />
             <UsageProgressRow
-              Icon={IconDatabase}
+              Icon={IconHistory}
               label={t`Cached input`}
               value={null}
               valueLabel={formatTokens(lastMessage.cachedInputTokens ?? 0)}
@@ -92,7 +92,7 @@ export const AiChatContextUsageDetails = () => {
           valueLabel={formatTokens(agentChatUsage.inputTokens)}
         />
         <UsageProgressRow
-          Icon={IconDatabase}
+          Icon={IconHistory}
           label={t`Cached input`}
           value={null}
           valueLabel={formatTokens(agentChatUsage.cachedInputTokens ?? 0)}
