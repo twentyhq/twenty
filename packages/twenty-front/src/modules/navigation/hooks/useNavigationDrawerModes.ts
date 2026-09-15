@@ -4,9 +4,11 @@ import {
   type IconComponent,
   IconComment,
   IconHome,
+  IconInbox,
   IconSettings,
 } from 'twenty-ui/icon';
 
+import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   type NavigationDrawerActiveTab,
@@ -25,6 +27,7 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
   const { t } = useLingui();
 
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+  const isInboxEnabled = useIsInboxEnabled();
   const isWorkspaceSuspended = useIsWorkspaceActivationStatusEqualsTo(
     WorkspaceActivationStatus.SUSPENDED,
   );
@@ -42,6 +45,15 @@ export const useNavigationDrawerModes = (): NavigationDrawerMode[] => {
       label: t`Home`,
       mode: NAVIGATION_DRAWER_TABS.NAVIGATION_MENU,
     },
+    ...(isInboxEnabled
+      ? [
+          {
+            Icon: IconInbox,
+            label: t`Inbox`,
+            mode: NAVIGATION_DRAWER_TABS.INBOX,
+          },
+        ]
+      : []),
     ...(hasAiPermission
       ? [
           {

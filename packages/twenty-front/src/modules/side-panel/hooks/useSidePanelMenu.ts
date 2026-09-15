@@ -8,6 +8,7 @@ import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingS
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { sidePanelSearchState } from '@/side-panel/states/sidePanelSearchState';
+import { restoreNavigationDrawerAfterInboxPanel } from '@/inbox/utils/restoreNavigationDrawerAfterInboxPanel';
 import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { emitSidePanelOpenEvent } from '@/ui/layout/side-panel/utils/emitSidePanelOpenEvent';
 import { waitForSidePanelClose } from '@/ui/layout/side-panel/utils/waitForSidePanelClose';
@@ -47,6 +48,7 @@ export const useSidePanelMenu = () => {
 
     store.set(isSidePanelOpenedState.atom, false);
     store.set(isSidePanelClosingState.atom, true);
+    restoreNavigationDrawerAfterInboxPanel(store);
     closeAnyOpenDropdown();
     removeFocusItemFromFocusStackById({
       focusId: SIDE_PANEL_FOCUS_ID,

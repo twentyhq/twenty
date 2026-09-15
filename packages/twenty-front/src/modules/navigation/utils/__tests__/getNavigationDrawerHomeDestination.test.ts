@@ -30,6 +30,15 @@ describe('getNavigationDrawerHomeDestination', () => {
     ).toBe(defaultHomePagePath);
   });
 
+  it('falls back to the default home page when the memorized url is the inbox', () => {
+    expect(
+      getNavigationDrawerHomeDestination({
+        memorizedUrl: '/inbox/open',
+        defaultHomePagePath,
+      }),
+    ).toBe(defaultHomePagePath);
+  });
+
   it.each([null, undefined, ''])(
     'falls back to the default home page when the memorized url is %p',
     (memorizedUrl) => {

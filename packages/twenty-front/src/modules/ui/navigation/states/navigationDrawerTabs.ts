@@ -1,5 +1,6 @@
 export const NAVIGATION_DRAWER_TABS = {
   NAVIGATION_MENU: 'home',
+  INBOX: 'inbox',
   AI_CHAT_HISTORY: 'chat',
   SETTINGS: 'settings',
 } as const;

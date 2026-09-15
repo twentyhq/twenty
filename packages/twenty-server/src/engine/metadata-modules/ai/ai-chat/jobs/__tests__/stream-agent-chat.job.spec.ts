@@ -255,6 +255,12 @@ describe('StreamAgentChatJob', () => {
         .fn()
         .mockReturnValue({ modelId: 'openai/gpt-5.6-luna' }),
     };
+    const agentChatInboxService = {
+      onThreadCreated: jest.fn().mockResolvedValue(undefined),
+      onTurnCompleted: jest.fn().mockResolvedValue(undefined),
+      onTurnFailed: jest.fn().mockResolvedValue(undefined),
+      onThreadRemoved: jest.fn().mockResolvedValue(undefined),
+    };
     const job = new StreamAgentChatJob(
       threadRepository as never,
       workspaceRepository as never,
@@ -266,6 +272,7 @@ describe('StreamAgentChatJob', () => {
       streamHeartbeatService as never,
       metricsService as never,
       aiModelRegistryService as never,
+      agentChatInboxService as never,
     );
 
     const turnCounts = (key: string) =>
@@ -280,6 +287,7 @@ describe('StreamAgentChatJob', () => {
       agentChatService,
       eventPublisherService,
       agentChatStreamingService,
+      agentChatInboxService,
       cancelCallbacks,
       metricsService,
       aiModelRegistryService,
@@ -374,11 +382,12 @@ describe('StreamAgentChatJob', () => {
   });
 
   it('rejects, persists the error, and unblocks the thread when the model stream fails mid-stream', async () => {
-    const { job, publishedEvents, threadRepository } = buildJob({
-      chatStream: createFakeChatStream({
-        midStreamError: new Error('provider exploded'),
-      }),
-    });
+    const { job, publishedEvents, threadRepository, agentChatInboxService } =
+      buildJob({
+        chatStream: createFakeChatStream({
+          midStreamError: new Error('provider exploded'),
+        }),
+      });
 
     await expect(job.handle(jobData)).rejects.toThrow('provider exploded');
 
@@ -408,6 +417,15 @@ describe('StreamAgentChatJob', () => {
         }),
       },
     );
+    // Nothing else reports a failed turn, so a thread whose owner is not
+    // watching would otherwise keep whatever the last completed turn left.
+    expect(agentChatInboxService.onTurnFailed).toHaveBeenCalledWith({
+      threadId: 'thread-id',
+      workspaceId: 'workspace-id',
+      userWorkspaceId: 'user-workspace-id',
+      errorMessage: 'provider exploded',
+    });
+    expect(agentChatInboxService.onTurnCompleted).not.toHaveBeenCalled();
     expect(threadRepository.update).toHaveBeenCalledWith(
       'workspace-id',
       { id: 'thread-id', activeStreamId: 'stream-id' },

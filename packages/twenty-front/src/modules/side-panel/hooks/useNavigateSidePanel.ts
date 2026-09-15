@@ -4,6 +4,8 @@ import { useSidePanelCloseAnimationCompleteCleanup } from '@/side-panel/hooks/us
 import { hasUserSelectedSidePanelListItemState } from '@/side-panel/states/hasUserSelectedSidePanelListItemState';
 import { isSidePanelClosingState } from '@/side-panel/states/isSidePanelClosingState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { isInboxSplitViewOpenState } from '@/inbox/states/isInboxSplitViewOpenState';
+import { collapseNavigationDrawerForInboxPanel } from '@/inbox/utils/collapseNavigationDrawerForInboxPanel';
 import { sidePanelNavigationMorphItemsByPageState } from '@/side-panel/states/sidePanelNavigationMorphItemsByPageState';
 import {
   type SidePanelNavigationStackItem,
@@ -53,6 +55,10 @@ export const useNavigateSidePanel = () => {
 
     store.set(isSidePanelOpenedState.atom, true);
     store.set(hasUserSelectedSidePanelListItemState.atom, false);
+
+    if (store.get(isInboxSplitViewOpenState.atom)) {
+      collapseNavigationDrawerForInboxPanel(store);
+    }
   }, [
     sidePanelCloseAnimationCompleteCleanup,
     pushFocusItemToFocusStack,

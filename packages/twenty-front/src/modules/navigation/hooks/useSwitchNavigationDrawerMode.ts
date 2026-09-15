@@ -2,6 +2,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
+import { DEFAULT_INBOX_SECTION } from '@/inbox/constants/DefaultInboxSection';
+import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { getExpandedAiChatReturnLocation } from '@/ai/utils/getExpandedAiChatReturnLocation';
 import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavigationDrawerMode';
@@ -22,6 +24,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { isAiChatPath } from '~/utils/isAiChatPath';
+import { isInboxPath } from '~/utils/isInboxPath';
 
 export const useSwitchNavigationDrawerMode = () => {
   const location = useLocation();
@@ -32,6 +35,7 @@ export const useSwitchNavigationDrawerMode = () => {
   const isSettingsDrawer = useIsSettingsDrawer();
   const isSettingsPage = useIsSettingsPage();
   const isAiChatPage = isAiChatPath(location.pathname);
+  const isInboxPage = isInboxPath(location.pathname);
 
   const navigationMemorizedUrl = useAtomStateValue(navigationMemorizedUrlState);
   const navigationDrawerExpandedMemorized = useAtomStateValue(
@@ -77,6 +81,22 @@ export const useSwitchNavigationDrawerMode = () => {
 
     if (isAiChatPage) {
       returnFromExpandedAiChat();
+      return;
+    }
+
+    if (isInboxPage) {
+      navigate(defaultHomePagePath);
+    }
+  };
+
+  // The inbox mode lists the inbox beside whatever page is open, so leaving
+  // the inbox page for a record keeps it in the drawer until Home is chosen.
+  const switchToInbox = () => {
+    setCurrentMobileNavigationDrawer('main');
+    setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.INBOX);
+
+    if (!isInboxPage) {
+      navigate(getInboxSectionPath(DEFAULT_INBOX_SECTION));
     }
   };
 
@@ -97,6 +117,12 @@ export const useSwitchNavigationDrawerMode = () => {
           return;
         }
         switchToNavigationMenu();
+        break;
+      case NAVIGATION_DRAWER_TABS.INBOX:
+        if (isInboxPage) {
+          return;
+        }
+        switchToInbox();
         break;
       case NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY:
         if (isAiChatPage) {
