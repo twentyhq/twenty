@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { useSignUpInNewWorkspace } from '@/auth/sign-in-up/hooks/useSignUpInNewWorkspace';
 import { OnboardingAnimatedReveal } from '@/onboarding/components/OnboardingAnimatedReveal';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
@@ -342,14 +342,11 @@ export const SignInUpWorkspaceCreationForm = () => {
         )}
       </StyledFormSection>
       <OnboardingStepAnimatedItem index={isMultiWorkspaceEnabled ? 5 : 4}>
-        <Button
-          className={BUTTON_ACTION_CLASS_NAME}
+        <MainButton
           onClick={handleSubmit}
           disabled={isContinueDisabled}
           fullWidth
-          elevated
-          variant="solid"
-        >{t`Create workspace`}</Button>
+        >{t`Create workspace`}</MainButton>
       </OnboardingStepAnimatedItem>
     </StyledContentContainer>
   );

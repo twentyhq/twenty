@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -12,7 +12,6 @@ import { OnboardingModalCircularIcon } from '@/onboarding/components/OnboardingM
 import { t } from '@lingui/core/macro';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconGmail, IconMail, IconMailX, IconMicrosoft } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/layout';
 
@@ -119,42 +118,33 @@ export const EmailVerificationSent = ({
 
   const mainButtons = isError ? (
     <>
-      <Button
-        className={BUTTON_ACTION_CLASS_NAME}
+      <MainButton
         onClick={handleChangeEmail}
         fullWidth
-        elevated
         variant="outline"
-      >{t`Try with another email`}</Button>
-      <Button
-        className={BUTTON_ACTION_CLASS_NAME}
+      >{t`Try with another email`}</MainButton>
+      <MainButton
         onClick={handleResendEmailVerificationToken(email)}
         disabled={isLoading}
         fullWidth
-        elevated
-        variant="solid"
       >
         {isLoading ? t`Sending...` : t`Resend email`}
-      </Button>
+      </MainButton>
     </>
   ) : (
     <>
-      <Button
-        className={BUTTON_ACTION_CLASS_NAME}
+      <MainButton
         onClick={handleOpenGmail}
         startIcon={<IconGmail />}
         fullWidth
-        elevated
         variant="outline"
-      >{t`Open Gmail`}</Button>
-      <Button
-        className={BUTTON_ACTION_CLASS_NAME}
+      >{t`Open Gmail`}</MainButton>
+      <MainButton
         onClick={handleOpenOutlook}
         startIcon={<IconMicrosoft />}
         fullWidth
-        elevated
         variant="outline"
-      >{t`Open Outlook`}</Button>
+      >{t`Open Outlook`}</MainButton>
     </>
   );
 

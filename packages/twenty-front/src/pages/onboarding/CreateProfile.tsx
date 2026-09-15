@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
@@ -28,7 +28,6 @@ import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 
@@ -286,14 +285,11 @@ export const CreateProfile = () => {
 
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <Button
-            className={BUTTON_ACTION_CLASS_NAME}
+          <MainButton
             onClick={handleSubmit(onSubmit)}
             disabled={!isValid || isSubmitting || isNavigating}
             fullWidth
-            elevated
-            variant="solid"
-          >{t`Continue`}</Button>
+          >{t`Continue`}</MainButton>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledOnboardingStepPage>

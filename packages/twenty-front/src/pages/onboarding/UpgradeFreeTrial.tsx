@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { verifyEmailRedirectPathState } from '@/app/states/verifyEmailRedirectPathState';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
@@ -29,7 +29,7 @@ import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Info, Loader } from 'twenty-ui/feedback';
-import { RadioGroup, Button } from 'twenty-ui/input';
+import { RadioGroup } from 'twenty-ui/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -102,15 +102,12 @@ const UpgradeFreeTrialSubmitButton = ({
   };
 
   return (
-    <Button
-      className={BUTTON_ACTION_CLASS_NAME}
+    <MainButton
       onClick={handleSubmit}
       fullWidth
       startIcon={isSubmitting ? <Loader /> : null}
       disabled={!isStripeReady || isSubmitting}
-      elevated
-      variant="solid"
-    >{t`Continue`}</Button>
+    >{t`Continue`}</MainButton>
   );
 };
 
@@ -234,24 +231,15 @@ const UpgradeFreeTrialContent = ({
                 recurringInterval={billingCheckoutSession.interval}
               />
             ) : (
-              <Button
-                className={BUTTON_ACTION_CLASS_NAME}
-                fullWidth
-                disabled
-                elevated
-                variant="solid"
-              >{t`Continue`}</Button>
+              <MainButton fullWidth disabled>{t`Continue`}</MainButton>
             )
           ) : (
-            <Button
-              className={BUTTON_ACTION_CLASS_NAME}
+            <MainButton
               onClick={handleCheckoutSessionClick}
               fullWidth
               startIcon={isCheckoutSubmitting ? <Loader /> : null}
               disabled={isCheckoutSubmitting}
-              elevated
-              variant="solid"
-            >{t`Continue`}</Button>
+            >{t`Continue`}</MainButton>
           )}
           <StyledLinkGroup>
             <ClickToActionLink onClick={signOut}>

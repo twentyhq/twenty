@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 
 import { isDefined } from 'twenty-shared/utils';
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
@@ -14,7 +14,6 @@ import { useLingui } from '@lingui/react/macro';
 import { memo, useContext } from 'react';
 import { IconGoogle } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
@@ -51,14 +50,12 @@ export const SignInUpWithGoogle = ({
   return (
     <>
       <StyledSsoButtonContainer>
-        <Button
-          className={BUTTON_ACTION_CLASS_NAME}
+        <MainButton
           startIcon={isDefined(GoogleIcon) ? <GoogleIcon /> : undefined}
           onClick={handleClick}
           fullWidth
-          elevated
           variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
-        >{t`Continue with Google`}</Button>
+        >{t`Continue with Google`}</MainButton>
         {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
           <LastUsedPill />
         )}

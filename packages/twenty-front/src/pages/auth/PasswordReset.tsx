@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { SKELETON_LOADER_HEIGHT_SIZES } from '@/activities/components/SkeletonLoader';
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
@@ -30,7 +30,6 @@ import { useParams } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { AppPath } from 'twenty-shared/types';
-import { Button } from 'twenty-ui/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { AnimatedEaseIn } from 'twenty-ui/layout';
 import { z } from 'zod';
@@ -297,16 +296,14 @@ export const PasswordReset = () => {
                 </StyledFullWidthContainer>
 
                 <StyledMainButtonContainer>
-                  <Button
-                    className={BUTTON_ACTION_CLASS_NAME}
+                  <MainButton
                     type="submit"
                     fullWidth
                     disabled={isUpdatingPassword}
-                    elevated
                     variant="outline"
                   >
                     {passwordActionLabel}
-                  </Button>
+                  </MainButton>
                 </StyledMainButtonContainer>
               </StyledForm>
             )}

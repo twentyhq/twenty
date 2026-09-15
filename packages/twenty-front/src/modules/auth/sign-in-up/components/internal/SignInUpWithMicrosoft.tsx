@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
@@ -13,7 +13,6 @@ import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconMicrosoft } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
@@ -47,14 +46,12 @@ export const SignInUpWithMicrosoft = ({
   return (
     <>
       <StyledSsoButtonContainer>
-        <Button
-          className={BUTTON_ACTION_CLASS_NAME}
+        <MainButton
           startIcon={<IconMicrosoft size={theme.icon.size.md} />}
           onClick={handleClick}
           fullWidth
-          elevated
           variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
-        >{t`Continue with Microsoft`}</Button>
+        >{t`Continue with Microsoft`}</MainButton>
         {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
           <LastUsedPill />
         )}

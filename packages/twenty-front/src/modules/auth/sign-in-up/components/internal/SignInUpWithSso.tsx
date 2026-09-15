@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSso } from '@/auth/sign-in-up/hooks/useSso';
@@ -16,7 +16,6 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/layout';
-import { Button } from 'twenty-ui/input';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useContext } from 'react';
@@ -52,14 +51,12 @@ export const SignInUpWithSso = () => {
   return (
     <>
       <StyledSsoButtonContainer>
-        <Button
-          className={BUTTON_ACTION_CLASS_NAME}
+        <MainButton
           startIcon={<IconLock size={theme.icon.size.md} />}
           onClick={signInWithSso}
           fullWidth
-          elevated
           variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
-        >{t`Single sign-on (SSO)`}</Button>
+        >{t`Single sign-on (SSO)`}</MainButton>
         {isLastUsed && hasMultipleAuthMethods && <LastUsedPill />}
       </StyledSsoButtonContainer>
       <HorizontalSeparator visible={false} />

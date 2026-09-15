@@ -1,5 +1,4 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { lazy, Suspense } from 'react';
 
@@ -62,13 +61,10 @@ export const NotFound = () => {
             </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
-            <NavigationButton
-              className={BUTTON_ACTION_CLASS_NAME}
+            <MainButton
               to={AppPath.Index}
               fullWidth
-              elevated
-              variant="solid"
-            >{t`Back to content`}</NavigationButton>
+            >{t`Back to content`}</MainButton>
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>

@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
@@ -11,11 +11,11 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Loader } from 'twenty-ui/feedback';
-import { CardPicker, RadioGroup, Button } from 'twenty-ui/input';
+import { CardPicker, RadioGroup } from 'twenty-ui/input';
 import { ModalContent } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledCheckoutButton = styled(Button)`
+const StyledCheckoutButton = styled(MainButton)`
   width: 200px;
 `;
 
@@ -189,12 +189,9 @@ export const EnterprisePlanModal = () => {
         </RadioGroup>
 
         <StyledCheckoutButton
-          className={BUTTON_ACTION_CLASS_NAME}
           onClick={handleContinue}
           startIcon={isLoading && <Loader />}
           disabled={isLoading}
-          elevated
-          variant="solid"
         >{t`Continue`}</StyledCheckoutButton>
       </ModalContent>
     </ModalStatefulWrapper>

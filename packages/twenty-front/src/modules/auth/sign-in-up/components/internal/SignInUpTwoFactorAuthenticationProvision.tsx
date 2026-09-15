@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { TwoFactorAuthenticationSetupEffect } from '@/auth/components/TwoFactorAuthenticationProvisionEffect';
 import { qrCodeState } from '@/auth/states/qrCode';
 import {
@@ -17,7 +17,6 @@ import QRCodeModule from 'react-qr-code';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconCopy } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/feedback';
-import { Button } from 'twenty-ui/input';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -91,13 +90,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
             </StyledCopySetupKeyLink>
           )}
         </StyledTwoFactorMainContent>
-        <Button
-          className={BUTTON_ACTION_CLASS_NAME}
-          onClick={handleClick}
-          fullWidth
-          elevated
-          variant="solid"
-        >{t`Next`}</Button>
+        <MainButton onClick={handleClick} fullWidth>{t`Next`}</MainButton>
       </StyledForm>
     </>
   );

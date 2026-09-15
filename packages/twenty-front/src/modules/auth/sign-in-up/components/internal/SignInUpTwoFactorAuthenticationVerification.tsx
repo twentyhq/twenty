@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 
 import { useAuth } from '@/auth/hooks/useAuth';
@@ -24,7 +24,6 @@ import { OTPInput, type SlotProps } from 'input-otp';
 import { useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { AppPath } from 'twenty-shared/types';
-import { Button } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -264,14 +263,11 @@ export const SignInUpTOTPVerification = () => {
           )}
         />
       </StyledTwoFactorMainContent>
-      <Button
-        className={BUTTON_ACTION_CLASS_NAME}
+      <MainButton
         type="submit"
         fullWidth
         disabled={isLoading}
-        elevated
-        variant="solid"
-      >{t`Submit`}</Button>
+      >{t`Submit`}</MainButton>
       <StyledActionBackLinkContainer>
         <ClickToActionLink onClick={handleBack}>
           <Trans>Back</Trans>

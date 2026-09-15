@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { OnboardingSkipButton } from '@/onboarding/components/OnboardingSkipButton';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingStepHeading } from '@/onboarding/components/StyledOnboardingStepHeading';
@@ -14,7 +14,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/data-display';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
-import { IconButton, Button } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/input';
 import { AnimatedIconCrossfade } from 'twenty-ui/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -202,16 +202,13 @@ export const InstallAppsContent = ({
         <StyledFooter>
           {hasApps && (
             <StyledInstallButton>
-              <Button
-                className={BUTTON_ACTION_CLASS_NAME}
+              <MainButton
                 onClick={onInstall}
                 disabled={
                   isCompleting || !isNonEmptyArray(selectedUniversalIdentifiers)
                 }
                 fullWidth
-                elevated
-                variant="solid"
-              >{t`Install`}</Button>
+              >{t`Install`}</MainButton>
             </StyledInstallButton>
           )}
           <OnboardingSkipButton onClick={onSkip} disabled={isCompleting} />

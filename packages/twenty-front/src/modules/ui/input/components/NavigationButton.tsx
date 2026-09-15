@@ -14,6 +14,7 @@ type NavigationButtonProps = Pick<
   | 'onClick'
   | 'size'
   | 'startIcon'
+  | 'type'
   | 'variant'
 > & {
   to?: LinkProps['to'];
@@ -31,6 +32,7 @@ export const NavigationButton = ({
   size,
   startIcon,
   to,
+  type,
   variant,
 }: NavigationButtonProps) => {
   const isLink = isDefined(to);
@@ -46,6 +48,7 @@ export const NavigationButton = ({
       onClick={onClick}
       size={size}
       startIcon={startIcon}
+      type={isLink ? undefined : (type ?? 'button')}
       variant={variant}
       render={isLink ? <Link to={to} /> : undefined}
       role={isLink ? 'link' : undefined}

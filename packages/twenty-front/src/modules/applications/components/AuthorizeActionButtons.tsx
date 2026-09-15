@@ -1,7 +1,6 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AuthorizeActionButtonsProps = {
@@ -30,22 +29,21 @@ export const AuthorizeActionButtons = ({
 
   return (
     <StyledButtonContainer>
-      <Button
-        className={BUTTON_ACTION_CLASS_NAME}
+      <MainButton
+        elevated={false}
         onClick={onCancel}
         fullWidth
         disabled={isLoading}
         variant="outline"
-      >{t`Cancel`}</Button>
-      <Button
-        className={BUTTON_ACTION_CLASS_NAME}
+      >{t`Cancel`}</MainButton>
+      <MainButton
+        elevated={false}
         onClick={onAuthorize}
         disabled={isLoading}
         fullWidth
-        variant="solid"
       >
         {isLoading ? t`Authorizing...` : t`Authorize`}
-      </Button>
+      </MainButton>
     </StyledButtonContainer>
   );
 };

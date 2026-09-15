@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 import { useCallback, useEffect, useRef } from 'react';
 
@@ -21,7 +21,6 @@ import { useMutation } from '@apollo/client/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
@@ -149,16 +148,13 @@ export const WorkspaceActivation = () => {
       </OnboardingStepAnimatedItem>
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
-          <Button
-            className={BUTTON_ACTION_CLASS_NAME}
+          <MainButton
             onClick={() => {
               void activate();
             }}
             disabled={isActivating}
             fullWidth
-            elevated
-            variant="solid"
-          >{t`Retry`}</Button>
+          >{t`Retry`}</MainButton>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledContainer>

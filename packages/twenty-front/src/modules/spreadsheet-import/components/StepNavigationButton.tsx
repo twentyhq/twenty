@@ -1,10 +1,9 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/feedback';
-import { Button } from 'twenty-ui/input';
 import { ModalFooter } from 'twenty-ui/surfaces';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -37,27 +36,22 @@ export const StepNavigationButton = ({
     <StyledFooterContainer>
       <ModalFooter autoHeight>
         {!isUndefinedOrNull(onBack) && (
-          <Button
-            className={BUTTON_ACTION_CLASS_NAME}
+          <MainButton
             startIcon={isLoading ? <CircularProgressBar /> : undefined}
             onClick={!isLoading ? onBack : undefined}
-            elevated
             variant="outline"
           >
             {backTitle}
-          </Button>
+          </MainButton>
         )}
         {!isUndefinedOrNull(onContinue) && (
-          <Button
-            className={BUTTON_ACTION_CLASS_NAME}
+          <MainButton
             startIcon={isLoading ? <CircularProgressBar /> : undefined}
             onClick={!isLoading ? onContinue : undefined}
             disabled={isContinueDisabled}
-            elevated
-            variant="solid"
           >
             {continueTitle}
-          </Button>
+          </MainButton>
         )}
       </ModalFooter>
     </StyledFooterContainer>

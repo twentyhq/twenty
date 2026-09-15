@@ -1,4 +1,4 @@
-import { BUTTON_ACTION_CLASS_NAME } from '@/ui/input/styles/ButtonActionClassName';
+import { MainButton } from '@/ui/input/components/MainButton';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { OnboardingStepAnimatedItem } from '@/onboarding/components/OnboardingStepAnimatedItem';
 import { StyledOnboardingContentBlock } from '@/onboarding/components/StyledOnboardingContentBlock';
@@ -8,7 +8,6 @@ import { StyledOnboardingStepSubtitle } from '@/onboarding/components/StyledOnbo
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
 import { ClickToActionLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -44,13 +43,7 @@ export const ChooseYourPlanErrorState = ({
 
       <OnboardingStepAnimatedItem index={2}>
         <StyledFooter>
-          <Button
-            className={BUTTON_ACTION_CLASS_NAME}
-            onClick={onRetry}
-            fullWidth
-            elevated
-            variant="solid"
-          >{t`Try again`}</Button>
+          <MainButton onClick={onRetry} fullWidth>{t`Try again`}</MainButton>
           <ClickToActionLink onClick={signOut}>
             <Trans>Log out</Trans>
           </ClickToActionLink>
