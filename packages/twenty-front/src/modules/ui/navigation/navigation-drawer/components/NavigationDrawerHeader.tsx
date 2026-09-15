@@ -56,12 +56,25 @@ const StyledNavigationDrawerCollapseButtonContainer = styled.div`
   }
 `;
 
-const StyledWorkspaceDropdownContainer = styled.div`
+const StyledWorkspaceDropdownContainer = styled.div<{ isExpanded: boolean }>`
   align-items: center;
+  align-self: stretch;
   display: flex;
   flex: 1 1 auto;
   min-height: ${themeCssVariables.spacing[8]};
   min-width: 0;
+  position: relative;
+
+  &::after {
+    border-bottom: 1px solid ${themeCssVariables.border.color.light};
+    bottom: calc(-1 * ${themeCssVariables.spacing[1]});
+    content: '';
+    display: ${({ isExpanded }) => (isExpanded ? 'none' : 'block')};
+    left: calc(-1 * ${themeCssVariables.spacing[2]});
+    pointer-events: none;
+    position: absolute;
+    right: calc(-1 * ${themeCssVariables.spacing[2]});
+  }
 `;
 
 type NavigationDrawerHeaderProps = {
@@ -77,7 +90,7 @@ export const NavigationDrawerHeader = ({
 
   return (
     <StyledContainer isExpanded={isExpanded}>
-      <StyledWorkspaceDropdownContainer>
+      <StyledWorkspaceDropdownContainer isExpanded={isExpanded}>
         <MultiWorkspaceDropdownButton />
       </StyledWorkspaceDropdownContainer>
       <StyledRightActions isExpanded={isExpanded}>

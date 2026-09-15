@@ -22,7 +22,8 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 // read as one line across both columns.
 const StyledSwitcher = styled.div<{ isExpanded: boolean }>`
   align-items: ${({ isExpanded }) => (isExpanded ? 'center' : 'flex-start')};
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  border-bottom: ${({ isExpanded }) =>
+    isExpanded ? `1px solid ${themeCssVariables.border.color.light}` : 'none'};
   border-top: ${({ isExpanded }) =>
     isExpanded ? '1px solid transparent' : 'none'};
   box-sizing: border-box;
