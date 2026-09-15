@@ -1754,7 +1754,7 @@ msgstr "LM Studio のインストールリンクを使って Twenty リモート
 #. js-lingui-id: BTFMKE
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Add these records at your DNS provider. Twenty checks them automatically."
-msgstr ""
+msgstr "DNSプロバイダーでこれらのレコードを追加してください。Twentyが自動的に確認します。"
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7359,7 +7359,7 @@ msgstr "区切り線"
 #. js-lingui-id: Sj0IaL
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "DMARC policy"
-msgstr ""
+msgstr "DMARCポリシー"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -7417,7 +7417,7 @@ msgstr "ドメインは既に使用されています"
 #. js-lingui-id: Vt7Dh/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Domain authentication"
-msgstr ""
+msgstr "ドメイン認証"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -21730,7 +21730,7 @@ msgstr "すべてを配信停止"
 #. js-lingui-id: 6jHg0/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Unsubscribe link"
-msgstr ""
+msgstr "配信停止リンク"
 
 #. js-lingui-id: fOBEjB
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx

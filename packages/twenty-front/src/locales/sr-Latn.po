@@ -1754,7 +1754,7 @@ msgstr "Dodaj Twenty udaljeni server pomoću LM Studio linka za instalaciju."
 #. js-lingui-id: BTFMKE
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Add these records at your DNS provider. Twenty checks them automatically."
-msgstr ""
+msgstr "Dodajte ove zapise kod svog DNS provajdera. Twenty ih automatski proverava."
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7359,7 +7359,7 @@ msgstr "Razdvajač"
 #. js-lingui-id: Sj0IaL
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "DMARC policy"
-msgstr ""
+msgstr "DMARC politika"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -7417,7 +7417,7 @@ msgstr "Domen je već zauzet"
 #. js-lingui-id: Vt7Dh/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Domain authentication"
-msgstr ""
+msgstr "Autentifikacija domena"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -21730,7 +21730,7 @@ msgstr "Odjavite sve"
 #. js-lingui-id: 6jHg0/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Unsubscribe link"
-msgstr ""
+msgstr "Veza za odjavu"
 
 #. js-lingui-id: fOBEjB
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx

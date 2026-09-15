@@ -1754,7 +1754,7 @@ msgstr "Lägg till Twenty-fjärrservern med LM Studios installationslänk."
 #. js-lingui-id: BTFMKE
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Add these records at your DNS provider. Twenty checks them automatically."
-msgstr ""
+msgstr "Lägg till dessa poster hos din DNS-leverantör. Twenty kontrollerar dem automatiskt."
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7359,7 +7359,7 @@ msgstr "Avdelare"
 #. js-lingui-id: Sj0IaL
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "DMARC policy"
-msgstr ""
+msgstr "DMARC-policy"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -7417,7 +7417,7 @@ msgstr "Domänen är redan tagen"
 #. js-lingui-id: Vt7Dh/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Domain authentication"
-msgstr ""
+msgstr "Domänautentisering"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -21738,7 +21738,7 @@ msgstr "Avsluta alla prenumerationer"
 #. js-lingui-id: 6jHg0/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Unsubscribe link"
-msgstr ""
+msgstr "Länk för att avsluta prenumeration"
 
 #. js-lingui-id: fOBEjB
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx

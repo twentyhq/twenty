@@ -1754,7 +1754,7 @@ msgstr "LM Studio의 설치 링크로 Twenty 원격 서버를 추가하세요."
 #. js-lingui-id: BTFMKE
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Add these records at your DNS provider. Twenty checks them automatically."
-msgstr ""
+msgstr "DNS 제공업체에 이 레코드를 추가하세요. Twenty가 자동으로 확인합니다."
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7359,7 +7359,7 @@ msgstr "구분선"
 #. js-lingui-id: Sj0IaL
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "DMARC policy"
-msgstr ""
+msgstr "DMARC 정책"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -7417,7 +7417,7 @@ msgstr "이미 사용 중인 도메인"
 #. js-lingui-id: Vt7Dh/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Domain authentication"
-msgstr ""
+msgstr "도메인 인증"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -21730,7 +21730,7 @@ msgstr "전체 수신 거부"
 #. js-lingui-id: 6jHg0/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Unsubscribe link"
-msgstr ""
+msgstr "수신 거부 링크"
 
 #. js-lingui-id: fOBEjB
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx

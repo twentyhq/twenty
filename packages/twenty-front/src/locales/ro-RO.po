@@ -1754,7 +1754,7 @@ msgstr "Adăugați serverul Twenty la distanță cu linkul de instalare al LM St
 #. js-lingui-id: BTFMKE
 #: src/pages/settings/communications/SettingsWorkspaceCommunicationGroupChannelDetail.tsx
 msgid "Add these records at your DNS provider. Twenty checks them automatically."
-msgstr ""
+msgstr "Adăugați aceste înregistrări la furnizorul dvs. DNS. Twenty le verifică automat."
 
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
@@ -7359,7 +7359,7 @@ msgstr "Separator"
 #. js-lingui-id: Sj0IaL
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "DMARC policy"
-msgstr ""
+msgstr "Politică DMARC"
 
 #. js-lingui-id: ji7sqw
 #: src/modules/spreadsheet-import/components/MatchColumnSelectFieldSelectDropdownContent.tsx
@@ -7417,7 +7417,7 @@ msgstr "Domeniul este deja luat"
 #. js-lingui-id: Vt7Dh/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Domain authentication"
-msgstr ""
+msgstr "Autentificarea domeniului"
 
 #. js-lingui-id: XoBD/+
 #: src/modules/settings/domains/components/SettingsDomainRecords.tsx
@@ -21730,7 +21730,7 @@ msgstr "Dezabonare de la toate"
 #. js-lingui-id: 6jHg0/
 #: src/modules/settings/emailing-domains/utils/getVerificationRecordGroupContent.ts
 msgid "Unsubscribe link"
-msgstr ""
+msgstr "Link de dezabonare"
 
 #. js-lingui-id: fOBEjB
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
