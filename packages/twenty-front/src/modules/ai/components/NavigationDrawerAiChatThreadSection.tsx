@@ -1,3 +1,4 @@
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
@@ -35,6 +36,7 @@ export const NavigationDrawerAiChatThreadSection = ({
   rightIcon,
   alwaysShowRightIcon = false,
 }: NavigationDrawerAiChatThreadSectionProps) => {
+  const isExpanded = useIsNavigationDrawerContentExpanded();
   const { isNavigationSectionOpen, toggleNavigationSection } =
     useNavigationSection(sectionId);
 
@@ -51,7 +53,7 @@ export const NavigationDrawerAiChatThreadSection = ({
       </NavigationDrawerAnimatedCollapseWrapper>
       {threads.length > 0 ? (
         <AnimatedExpandableContainer
-          isExpanded={isNavigationSectionOpen}
+          isExpanded={!isExpanded || isNavigationSectionOpen}
           dimension="height"
           mode="fit-content"
           containAnimation

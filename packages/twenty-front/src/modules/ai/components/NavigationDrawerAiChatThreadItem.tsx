@@ -1,3 +1,5 @@
+import { IconMessage } from 'twenty-ui/icon';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useLingui } from '@lingui/react/macro';
 
 import { AiChatThreadItemMenu } from '@/ai/components/AiChatThreadItemMenu';
@@ -22,6 +24,7 @@ export const NavigationDrawerAiChatThreadItem = ({
   onClick,
 }: NavigationDrawerAiChatThreadItemProps) => {
   const { t } = useLingui();
+  const isExpanded = useIsNavigationDrawerContentExpanded();
   const {
     isRenaming,
     draftTitle,
@@ -42,7 +45,7 @@ export const NavigationDrawerAiChatThreadItem = ({
     itemMenuDropdownId,
   );
 
-  if (isRenaming) {
+  if (isRenaming && isExpanded) {
     return (
       <NavigationDrawerInput
         value={draftTitle}
@@ -57,6 +60,7 @@ export const NavigationDrawerAiChatThreadItem = ({
 
   return (
     <NavigationDrawerItem
+      Icon={isExpanded ? undefined : IconMessage}
       label={displayLabel}
       active={isActive}
       onClick={() => onClick(thread)}
