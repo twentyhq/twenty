@@ -213,4 +213,49 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect('onClick' in result).toBe(false);
     expect(result['data-state']).toBe('open');
   });
+
+  it('should keep preventDefaultOn out of the DOM props', () => {
+    const result = buildHostReactPropsFromRemoteProps(
+      { preventDefaultOn: ['keydown:Enter'], id: 'keep' },
+      'textarea',
+    );
+
+    expect(result).toEqual({ id: 'keep' });
+  });
+
+  it('should apply preventDefaultOn to the element handlers', () => {
+    const onKeyDown = jest.fn();
+    const preventDefault = jest.fn();
+
+    const result = buildHostReactPropsFromRemoteProps(
+      { onKeyDown, preventDefaultOn: ['keydown:Enter'] },
+      'textarea',
+    );
+
+    (result.onKeyDown as (event: unknown) => void)({
+      type: 'keydown',
+      key: 'Enter',
+      preventDefault,
+    });
+
+    expect(preventDefault).toHaveBeenCalledTimes(1);
+    expect(onKeyDown).toHaveBeenCalledWith({ type: 'keydown', key: 'Enter' });
+  });
+
+  it('should ignore a preventDefaultOn that is not a list of strings', () => {
+    const preventDefault = jest.fn();
+
+    const result = buildHostReactPropsFromRemoteProps(
+      { onKeyDown: jest.fn(), preventDefaultOn: 'keydown:Enter' },
+      'textarea',
+    );
+
+    (result.onKeyDown as (event: unknown) => void)({
+      type: 'keydown',
+      key: 'Enter',
+      preventDefault,
+    });
+
+    expect(preventDefault).not.toHaveBeenCalled();
+  });
 });
