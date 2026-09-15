@@ -2,6 +2,7 @@ import {
   type FieldPhonesValue,
   type PhoneRecord,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 // Records migrated from older versions can carry additional phones whose
@@ -16,7 +17,7 @@ const toPhoneRecord = (phone: unknown): PhoneRecord | null => {
 
   const { number, callingCode, countryCode } = phone as Partial<PhoneRecord>;
 
-  if (typeof number !== 'string' || number === '') {
+  if (!isNonEmptyString(number)) {
     return null;
   }
 
