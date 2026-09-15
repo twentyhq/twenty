@@ -1,9 +1,9 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { Avatar } from '@ui/primitives/Avatar/Avatar';
-import { type AvatarProps } from '@ui/primitives/Avatar/types/AvatarProps';
-import { type AvatarSize } from '@ui/primitives/Avatar/types/AvatarSize';
-import { type AvatarShape } from '@ui/primitives/Avatar/types/AvatarShape';
+import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
+import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
+import { type AvatarSize } from '@ui/primitives/data-display/Avatar/types/AvatarSize';
+import { type AvatarShape } from '@ui/primitives/data-display/Avatar/types/AvatarShape';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,

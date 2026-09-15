@@ -1,5 +1,5 @@
-import { Avatar } from '@ui/primitives/Avatar/Avatar';
-import { type AvatarProps } from '@ui/primitives/Avatar/types/AvatarProps';
+import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
+import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
 import {
   type MenuItemIconButton,
   MenuItem,

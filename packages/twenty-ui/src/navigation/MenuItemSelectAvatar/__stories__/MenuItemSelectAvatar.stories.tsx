@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { Avatar } from '@ui/primitives/Avatar/Avatar';
+import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   AVATAR_URL_MOCK,

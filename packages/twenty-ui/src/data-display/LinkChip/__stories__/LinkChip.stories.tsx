@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconUser, IconX } from '@ui/icon';
-import { Avatar } from '@ui/primitives/Avatar/Avatar';
+import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -9,8 +9,8 @@ import {
 } from '@ui/testing';
 import { MemoryRouter } from 'react-router-dom';
 
-import { type ChipSize } from '@ui/primitives/Chip/types/ChipSize';
-import { type ChipVariant } from '@ui/primitives/Chip/types/ChipVariant';
+import { type ChipSize } from '@ui/primitives/data-display/Chip/types/ChipSize';
+import { type ChipVariant } from '@ui/primitives/data-display/Chip/types/ChipVariant';
 import { LinkChip } from '@ui/data-display/LinkChip/LinkChip';
 
 const meta: Meta<typeof LinkChip> = {

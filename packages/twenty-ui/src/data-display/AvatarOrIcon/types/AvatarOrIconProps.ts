@@ -1,5 +1,5 @@
-import { type AvatarProps } from '@ui/primitives/Avatar/types/AvatarProps';
-import { type AvatarShape } from '@ui/primitives/Avatar/types/AvatarShape';
+import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
+import { type AvatarShape } from '@ui/primitives/data-display/Avatar/types/AvatarShape';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 import { type Nullable } from '@ui/utilities';
 

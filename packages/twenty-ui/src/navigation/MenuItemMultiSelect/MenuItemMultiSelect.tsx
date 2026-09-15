@@ -1,4 +1,4 @@
-import { Tag } from '@ui/primitives/Tag/Tag';
+import { Tag } from '@ui/primitives/data-display/Tag/Tag';
 import { type IconComponent } from '@ui/icon';
 import { MenuItemLeftContent } from '@ui/navigation/MenuItem/parts/MenuItemLeftContent';
 import { MenuItemMultiSelectCheckbox } from '@ui/navigation/MenuItem/parts/MenuItemMultiSelectCheckbox';

@@ -52,7 +52,7 @@ describe('documentation imports', () => {
   });
 
   it.each([
-    "import { Checkbox } from '@ui/primitives/Checkbox/Checkbox';",
+    "import { Checkbox } from '@ui/primitives/input/Checkbox/Checkbox';",
     "import { Input } from '../../twenty-ui/src/input';",
     "import { vi } from 'vitest';",
   ])('rejects a module outside the public surface in %s', (content) => {
