@@ -1,9 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
-import {
-  type CompanionBridge,
-  type CompanionState,
-  type CompanionPage,
-} from '../shared/types';
+import { type CompanionBridge } from '../shared/types/CompanionBridge';
+import { type CompanionState } from '../shared/types/CompanionState';
+import { type CompanionPage } from '../shared/types/CompanionPage';
 
 const bridge: CompanionBridge = {
   getState: () => ipcRenderer.invoke('companion:state'),

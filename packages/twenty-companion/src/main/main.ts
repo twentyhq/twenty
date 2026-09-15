@@ -14,11 +14,13 @@ import {
   dialog,
   ipcMain,
 } from 'electron';
-import { getUpcomingMeetings } from '../shared/meetings';
-import { Companion } from './companion';
-import { createDevelopmentRestart } from './development-restart';
-import { createTrayMenuTemplate, getTrayTitle } from './tray-menu';
-import { commandSchema, type CompanionPage } from '../shared/types';
+import { getUpcomingMeetings } from '../shared/utils/getUpcomingMeetings';
+import { Companion } from './services/Companion';
+import { createDevelopmentRestart } from './utils/createDevelopmentRestart';
+import { createTrayMenuTemplate } from './utils/createTrayMenuTemplate';
+import { getTrayTitle } from './utils/getTrayTitle';
+import { commandSchema } from '../shared/validation-schemas/commandSchema';
+import { type CompanionPage } from '../shared/types/CompanionPage';
 
 let mainWindow: BrowserWindow;
 let tray: Tray;
