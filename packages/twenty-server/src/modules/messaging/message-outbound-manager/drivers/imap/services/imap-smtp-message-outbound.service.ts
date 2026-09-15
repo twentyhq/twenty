@@ -197,7 +197,12 @@ export class ImapSmtpMessageOutboundService implements MessageOutboundDriver {
       toMailComposerOptions(from, sendMessageInput),
     );
 
-    return mail.compile().build();
+    const built = await mail.compile().build();
+
+    return Buffer.from(
+      built.toString('utf8').replace(/\r?\n/g, '\r\n'),
+      'utf8',
+    );
   }
 
   private assertHandleIsDefined(
