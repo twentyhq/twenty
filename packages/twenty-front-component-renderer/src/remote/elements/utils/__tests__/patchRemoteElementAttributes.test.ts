@@ -188,6 +188,7 @@ describe('patchRemoteElementAttributes', () => {
 
       element.setAttribute('className', 'from-react-18');
 
+      expect(updateRemoteProperty).toHaveBeenCalledTimes(1);
       expect(updateRemoteProperty).toHaveBeenCalledWith(
         'className',
         'from-react-18',
@@ -206,6 +207,7 @@ describe('patchRemoteElementAttributes', () => {
 
       expect(element.getAttribute('class')).toBeNull();
       expect(element.hasAttribute('className')).toBe(false);
+      expect(updateRemoteProperty).toHaveBeenCalledTimes(1);
       expect(updateRemoteProperty).toHaveBeenCalledWith('className', undefined);
     });
   });
