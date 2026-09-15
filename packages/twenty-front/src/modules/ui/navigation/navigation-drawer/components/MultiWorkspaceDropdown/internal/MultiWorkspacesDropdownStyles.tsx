@@ -7,8 +7,7 @@ export const StyledContainer = styled.div<{
   disabled?: boolean;
 }>`
   align-items: center;
-  border: ${({ isNavigationDrawerExpanded }) =>
-    isNavigationDrawerExpanded ? '1px solid transparent' : 'none'};
+  border: 1px solid transparent;
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${themeCssVariables.font.color.primary};
@@ -26,9 +25,10 @@ export const StyledContainer = styled.div<{
   padding: ${({ isNavigationDrawerExpanded }) =>
     isNavigationDrawerExpanded
       ? `calc(${themeCssVariables.spacing[1]} - 1px)`
-      : '0'};
+      : `calc(${themeCssVariables.spacing[2]} - 1px)`};
   pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
-  width: fit-content;
+  width: ${({ isNavigationDrawerExpanded }) =>
+    isNavigationDrawerExpanded ? 'fit-content' : themeCssVariables.spacing[8]};
 
   &:hover {
     background-color: ${({ disabled }) =>
