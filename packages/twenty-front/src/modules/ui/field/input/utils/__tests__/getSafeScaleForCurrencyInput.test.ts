@@ -1,40 +1,56 @@
 import { IMask } from 'react-imask';
 
 import { NumberFormat } from '@/localization/constants/NumberFormat';
-import { getSafeScaleForCurrencyInput } from '@/ui/field/input/utils/getSafeScaleForCurrencyInput';
+import {
+  CURRENCY_INPUT_MAX_SCALE,
+  CURRENCY_INPUT_MIN_SCALE,
+  getSafeScaleForCurrencyInput,
+} from '@/ui/field/input/utils/getSafeScaleForCurrencyInput';
 import { getSeparatorsForNumberFormat } from '~/utils/format/getSeparatorsForNumberFormat';
 
 describe('getSafeScaleForCurrencyInput', () => {
-  it('should keep the field decimals when the value has no decimal part', () => {
-    expect(getSafeScaleForCurrencyInput({ value: '458', decimals: 2 })).toBe(2);
+  it('should guarantee a minimum scale of CURRENCY_INPUT_MIN_SCALE to support stored precision without dropping decimals', () => {
+    expect(getSafeScaleForCurrencyInput({ value: '458', decimals: 0 })).toBe(
+      CURRENCY_INPUT_MIN_SCALE,
+    );
+    expect(getSafeScaleForCurrencyInput({ value: '458', decimals: 2 })).toBe(
+      CURRENCY_INPUT_MIN_SCALE,
+    );
+    expect(getSafeScaleForCurrencyInput({ value: '' })).toBe(
+      CURRENCY_INPUT_MIN_SCALE,
+    );
   });
 
-  it('should keep the field decimals when the value fits in it', () => {
+  it('should keep the scale at CURRENCY_INPUT_MIN_SCALE when the value fits in it', () => {
     expect(getSafeScaleForCurrencyInput({ value: '458.6', decimals: 2 })).toBe(
-      2,
+      CURRENCY_INPUT_MIN_SCALE,
     );
   });
 
-  it('should widen the scale to the decimals present in the value', () => {
-    expect(getSafeScaleForCurrencyInput({ value: '458.64', decimals: 0 })).toBe(
-      2,
-    );
-  });
-
-  it('should handle negative values', () => {
+  it('should widen the scale when the value has more decimals than CURRENCY_INPUT_MIN_SCALE', () => {
     expect(
-      getSafeScaleForCurrencyInput({ value: '-458.64', decimals: 0 }),
-    ).toBe(2);
+      getSafeScaleForCurrencyInput({ value: '458.1234567', decimals: 0 }),
+    ).toBe(7);
   });
 
-  it('should default to no decimals when neither decimals nor value provide any', () => {
-    expect(getSafeScaleForCurrencyInput({ value: '' })).toBe(0);
+  it('should widen the scale when field decimals exceeds CURRENCY_INPUT_MIN_SCALE', () => {
+    expect(getSafeScaleForCurrencyInput({ value: '458', decimals: 8 })).toBe(8);
   });
 
-  it('should ignore a value that is not a plain unmasked number', () => {
+  it('should handle negative values with high precision', () => {
+    expect(
+      getSafeScaleForCurrencyInput({ value: '-458.12345678', decimals: 0 }),
+    ).toBe(8);
+  });
+
+  it('should fallback to CURRENCY_INPUT_MIN_SCALE when value is not a plain unmasked number', () => {
     expect(
       getSafeScaleForCurrencyInput({ value: '1.234,56', decimals: 1 }),
-    ).toBe(1);
+    ).toBe(CURRENCY_INPUT_MIN_SCALE);
+  });
+
+  it('should export CURRENCY_INPUT_MAX_SCALE as alias for backwards compatibility', () => {
+    expect(CURRENCY_INPUT_MAX_SCALE).toBe(CURRENCY_INPUT_MIN_SCALE);
   });
 });
 
@@ -63,4 +79,47 @@ describe('currency mask round trip with the safe scale', () => {
       expect(mask.unmaskedValue).toBe('458.64');
     },
   );
+});
+
+describe('currency mask typing with 0-decimal default field (issue 25870)', () => {
+  it('should accept typing decimals into a 0-decimal currency field without dropping the separator or multiplying the amount', () => {
+    const { thousandsSeparator, radix } = getSeparatorsForNumberFormat(
+      NumberFormat.COMMAS_AND_DOT,
+    );
+
+    const mask = IMask.createMask({
+      mask: Number,
+      thousandsSeparator,
+      radix,
+      scale: getSafeScaleForCurrencyInput({ value: '', decimals: 0 }),
+    });
+
+    for (const char of '1234.5678') {
+      mask.append(char, { input: true });
+    }
+
+    expect(mask.value).toBe('1,234.5678');
+    expect(mask.unmaskedValue).toBe('1234.5678');
+    expect(mask.unmaskedValue).not.toBe('12345678');
+  });
+
+  it('should accept comma radix under DOTS_AND_COMMA format without multiplying amount', () => {
+    const { thousandsSeparator, radix } = getSeparatorsForNumberFormat(
+      NumberFormat.DOTS_AND_COMMA,
+    );
+
+    const mask = IMask.createMask({
+      mask: Number,
+      thousandsSeparator,
+      radix,
+      scale: getSafeScaleForCurrencyInput({ value: '', decimals: 0 }),
+    });
+
+    for (const char of '1234,56') {
+      mask.append(char, { input: true });
+    }
+
+    expect(mask.value).toBe('1.234,56');
+    expect(mask.unmaskedValue).toBe('1234.56');
+  });
 });
