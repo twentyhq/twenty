@@ -3,6 +3,7 @@ import { type CSSProperties, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconX } from '@ui/icon';
+import { Button } from '@ui/primitives/input/Button/Button';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -46,13 +47,13 @@ const PopoverStory = ({
       >
         <Popover.Title>Details</Popover.Title>
         <Popover.Description>More information</Popover.Description>
-        <button type="button">First action</button>
+        <Button type="button" title="First action" ariaLabel="First action" />
         <Popover.Close aria-label="Close" style={{ alignSelf: 'flex-start' }}>
           <IconX size={16} />
         </Popover.Close>
       </Popover.Popup>
     </Popover.Root>
-    <button type="button">Outside</button>
+    <Button type="button" title="Outside" ariaLabel="Outside" />
   </>
 );
 
@@ -174,9 +175,12 @@ const ArrowPopoverStory = (props: PopoverStoryProps) => {
   return (
     <div style={{ paddingTop: 160, paddingInlineStart: 160 }}>
       <PopoverStory {...props} open arrow={arrow} />
-      <button type="button" onClick={() => setArrow(!arrow)}>
-        Toggle arrow
-      </button>
+      <Button
+        type="button"
+        title="Toggle arrow"
+        ariaLabel="Toggle arrow"
+        onClick={() => setArrow(!arrow)}
+      />
     </div>
   );
 };
@@ -363,9 +367,12 @@ const ControlledPopoverStory = (props: PopoverStoryProps) => {
   return (
     <>
       <PopoverStory {...props} open={open} />
-      <button type="button" onClick={() => setOpen(false)}>
-        Apply closed state
-      </button>
+      <Button
+        type="button"
+        title="Apply closed state"
+        ariaLabel="Apply closed state"
+        onClick={() => setOpen(false)}
+      />
     </>
   );
 };

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Checkbox } from '@ui/primitives/input/Checkbox/Checkbox';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { type CheckboxColor } from '@ui/primitives/input/Checkbox/types/CheckboxColor';
 import { type CheckboxProps } from '@ui/primitives/input/Checkbox/types/CheckboxProps';
 import { type CheckboxSize } from '@ui/primitives/input/Checkbox/types/CheckboxSize';
@@ -27,9 +28,12 @@ const ControlledExample = (props: CheckboxProps) => {
   return (
     <>
       <Checkbox {...props} checked={checked} />
-      <button type="button" onClick={() => setChecked(true)}>
-        Apply selection
-      </button>
+      <Button
+        type="button"
+        title="Apply selection"
+        ariaLabel="Apply selection"
+        onClick={() => setChecked(true)}
+      />
     </>
   );
 };
