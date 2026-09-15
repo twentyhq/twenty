@@ -73,6 +73,14 @@
         ],
         "parallel": false
       }
+    },
+    "check:ui-stories": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["twenty-ui:storybook:index"],
+      "options": {
+        "command": "tsx packages/twenty-docs/scripts/check-ui-story-embeds.mts .cache/ui-docs/storybook-index.json"
+      }
     }
   }
 }
