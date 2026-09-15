@@ -5,5 +5,6 @@ export class ObjectRecordDestroyEvent<
 > extends ObjectRecordBaseEvent<T> {
   declare properties: {
     before: T;
+    inheritedReadabilityChildRecords?: Record<string, Record<string, unknown>[]>;
   };
 }

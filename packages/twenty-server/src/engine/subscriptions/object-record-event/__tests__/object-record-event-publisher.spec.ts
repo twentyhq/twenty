@@ -64,6 +64,7 @@ type MockObjectRecordEvent = {
     after?: object;
     updatedFields?: string[];
     diff?: object;
+    inheritedReadabilityChildRecords?: object;
   };
 };
 
@@ -110,6 +111,10 @@ describe('ObjectRecordEventPublisher', () => {
   const streamChannelId = 'test-stream-channel-id';
   const userWorkspaceId = 'test-user-workspace-id';
   const roleId = 'test-role-id';
+
+  let mockRecordAccessPolicyService: {
+    resolveRecordIdsReadableThroughParents: jest.Mock;
+  };
 
   const companyObjectMetadata: FlatObjectMetadata = COMPANY_FLAT_OBJECT_MOCK;
 
@@ -271,6 +276,12 @@ describe('ObjectRecordEventPublisher', () => {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     };
 
+    mockRecordAccessPolicyService = {
+      resolveRecordIdsReadableThroughParents: jest
+        .fn()
+        .mockResolvedValue(new Set()),
+    };
+
     mockWorkspaceManyOrAllFlatEntityMapsCacheService = {
       getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
         flatFieldMetadataMaps: mockFlatFieldMetadataMaps,
@@ -322,11 +333,7 @@ describe('ObjectRecordEventPublisher', () => {
         },
         {
           provide: RecordAccessPolicyService,
-          useValue: {
-            resolveRecordIdsReadableThroughParents: jest
-              .fn()
-              .mockResolvedValue(new Set()),
-          },
+          useValue: mockRecordAccessPolicyService,
         },
       ],
     }).compile();
@@ -450,6 +457,89 @@ describe('ObjectRecordEventPublisher', () => {
       expect(
         mockSubscriptionService.publishToEventStream,
       ).not.toHaveBeenCalled();
+    });
+
+    it('should not resolve the records readable through parents for a stream whose queries target another object', async () => {
+      const inheritedObjectMetadata: FlatObjectMetadata = {
+        ...companyObjectMetadata,
+        readability: MetadataReadability.INHERITED,
+      };
+
+      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
+        createCacheMock({
+          featureFlagsMap: { [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true },
+        }),
+      );
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([
+          [
+            streamChannelId,
+            {
+              ...mockStreamData,
+              queries: {
+                'query-1': { objectNameSingular: 'person', variables: {} },
+              },
+            },
+          ],
+        ]) as Map<string, EventStreamData | undefined>,
+      );
+
+      await service.publish({
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: inheritedObjectMetadata,
+        events: [createMockEvent()],
+      } as WorkspaceEventBatch<never>);
+
+      expect(
+        mockRecordAccessPolicyService.resolveRecordIdsReadableThroughParents,
+      ).not.toHaveBeenCalled();
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should not forward the child records captured with a deletion to the stream', async () => {
+      await service.publish({
+        name: 'company.deleted',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [
+          createMockEvent({
+            properties: {
+              before: { id: 'record-1', name: 'Test Company' },
+              after: {
+                id: 'record-1',
+                name: 'Test Company',
+                deletedAt: '2026-09-15T00:00:00.000Z',
+              },
+              updatedFields: ['deletedAt'],
+              diff: {},
+              inheritedReadabilityChildRecords: {
+                noteTarget: [{ id: 'note-target-1', noteId: 'record-1' }],
+              },
+            },
+          }),
+        ],
+      } as WorkspaceEventBatch<never>);
+
+      const publishCall = (
+        mockSubscriptionService.publishToEventStream as jest.Mock
+      ).mock.calls[0][0];
+
+      expect(
+        publishCall.payload.objectRecordEventsWithQueryIds[0].objectRecordEvent
+          .properties,
+      ).toEqual({
+        before: { id: 'record-1', name: 'Test Company' },
+        after: {
+          id: 'record-1',
+          name: 'Test Company',
+          deletedAt: '2026-09-15T00:00:00.000Z',
+        },
+        updatedFields: ['deletedAt'],
+        diff: {},
+      });
     });
 
     it('should only publish events of a private object for records shared with the subscriber', async () => {

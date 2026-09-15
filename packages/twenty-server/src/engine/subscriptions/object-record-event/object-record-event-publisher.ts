@@ -46,6 +46,7 @@ import { type RecordShare } from 'src/engine/record-share/types/record-share.typ
 import { buildRecordShareGate } from 'src/engine/record-share/utils/build-record-share-gate.util';
 import { indexRecordSharesByRecordId } from 'src/engine/record-share/utils/index-record-shares-by-record-id.util';
 import { isRecordAdmittedByRecordShareGate } from 'src/engine/record-share/utils/is-record-admitted-by-record-share-gate.util';
+import { omitInheritedReadabilityChildRecords } from 'src/engine/record-share/utils/omit-inherited-readability-child-records.util';
 import { resolveEventRecordSnapshots } from 'src/engine/record-share/utils/resolve-event-record-snapshots.util';
 import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
@@ -230,12 +231,22 @@ export class ObjectRecordEventPublisher {
       return;
     }
 
+    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
+
+    if (
+      !Object.values(streamData.queries).some(
+        (operationSignature) =>
+          isRecordGqlOperationSignature(operationSignature) &&
+          operationSignature.objectNameSingular === objectNameSingular,
+      )
+    ) {
+      return;
+    }
+
     const matchedEvents: {
       queryIds: string[];
       objectRecordEvent: ObjectRecordSubscriptionEvent;
     }[] = [];
-
-    const objectNameSingular = workspaceEventBatch.objectMetadata.nameSingular;
 
     const subscriberAuthContext: SerializableAuthContext = {
       ...streamData.authContext,
@@ -273,7 +284,7 @@ export class ObjectRecordEventPublisher {
       const eventWithObjectName: ObjectRecordSubscriptionEvent = {
         action,
         objectNameSingular,
-        ...event,
+        ...omitInheritedReadabilityChildRecords(event),
       };
 
       const filteredEvent = this.filterRestrictedFieldsFromEvent(

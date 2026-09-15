@@ -614,5 +614,82 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         ].sort(),
       );
     });
+
+    it('should keep a deleted note readable through the links captured with its deletion', async () => {
+      const memberRole = await findOneRoleByLabel({ label: 'Member' });
+      const { rolesPermissions, flatObjectMetadataMaps } =
+        await getAppProviderByClassName<WorkspaceCacheService>(
+          'WorkspaceCacheService',
+        ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
+          'rolesPermissions',
+          'flatObjectMetadataMaps',
+        ]);
+      const noteObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: noteObjectMetadataId,
+        flatEntityMaps: flatObjectMetadataMaps,
+      });
+      const resolveReadableNoteIds = (
+        records: Parameters<
+          RecordAccessPolicyService['resolveRecordIdsReadableThroughParents']
+        >[0]['records'],
+      ) =>
+        getAppProviderByClassName<RecordAccessPolicyService>(
+          'RecordAccessPolicyService',
+        ).resolveRecordIdsReadableThroughParents({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          objectMetadata: noteObjectMetadata!,
+          records,
+          subject: {
+            objectsPermissions: rolesPermissions[memberRole.id],
+            principalIds: [
+              EVERYONE_PRINCIPAL_ID,
+              WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+              memberRole.id,
+            ],
+            isOwningApplication: () => false,
+            resolveRowLevelPermissionRecordFilter: () => null,
+          },
+        });
+      const noteOnPersonFilter = { id: { eq: NOTE_ON_PERSON_ID } };
+
+      const deleteResponse = await makeGraphqlAPIRequest(
+        deleteManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: noteOnPersonFilter,
+        }),
+      );
+      const readableThroughLiveLinks = await resolveReadableNoteIds([
+        { id: NOTE_ON_PERSON_ID },
+      ]);
+      const readableThroughCapturedLinks = await resolveReadableNoteIds([
+        {
+          id: NOTE_ON_PERSON_ID,
+          inheritedReadabilityChildRecords: {
+            noteTarget: [
+              {
+                id: PERSON_NOTE_TARGET_ID,
+                noteId: NOTE_ON_PERSON_ID,
+                targetPersonId: PERSON_ID,
+              },
+            ],
+          },
+        },
+      ]);
+      const restoreResponse = await makeGraphqlAPIRequest(
+        restoreManyOperationFactory({
+          objectMetadataSingularName: 'note',
+          objectMetadataPluralName: 'notes',
+          gqlFields: 'id',
+          filter: noteOnPersonFilter,
+        }),
+      );
+
+      expect(deleteResponse.body.errors).toBeUndefined();
+      expect(restoreResponse.body.errors).toBeUndefined();
+      expect(readableThroughLiveLinks).toEqual(new Set());
+      expect(readableThroughCapturedLinks).toEqual(new Set([NOTE_ON_PERSON_ID]));
+    });
   });
 });

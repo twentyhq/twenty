@@ -9,6 +9,7 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/twenty-orm/constants/max-inherited-readability-depth.constant';
 import { type OperationType } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { type WorkspaceRelationShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
@@ -26,8 +27,6 @@ import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-rec
 import { isObjectOperationPermitted } from 'src/engine/twenty-orm/utils/is-object-operation-permitted.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveInheritedReadabilityParents } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
-
-const MAX_INHERITED_READABILITY_DEPTH = 3;
 
 export type RowAccessPolicySubject = {
   objectsPermissions: ObjectsPermissions | undefined;

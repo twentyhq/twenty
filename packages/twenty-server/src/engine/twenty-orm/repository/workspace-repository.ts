@@ -30,6 +30,8 @@ import {
   validateOperationIsPermittedOrThrow,
 } from 'src/engine/twenty-orm/repository/permissions.utils';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
+import { type InheritedReadabilityChildRecords } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
+import { type InheritedReadabilityChildrenParent } from 'src/engine/twenty-orm/types/inherited-readability-children-parent.type';
 import { type InheritedReadabilityParent } from 'src/engine/twenty-orm/types/inherited-readability-parent.type';
 import { type InheritedReadabilityParentLink } from 'src/engine/twenty-orm/types/inherited-readability-parent-link.type';
 import { type RowAccessPolicy } from 'src/engine/twenty-orm/types/row-access-policy.type';
@@ -1527,6 +1529,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         : recordsBeforeInheritanceCheck,
     });
 
+    const inheritedReadabilityChildRecordsByRecordId =
+      kind === 'delete' || kind === 'soft-delete'
+        ? await this.fetchInheritedReadabilityChildRecords(recordsBefore)
+        : undefined;
+
     const mutationResult = await this.morphAndExecute({
       selectQueryBuilder,
       kind,
@@ -1562,9 +1569,73 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           )
         : recordsAfterWrite;
 
-    this.emitMutationEvent({ kind, recordsBefore, recordsAfter });
+    this.emitMutationEvent({
+      kind,
+      recordsBefore,
+      recordsAfter,
+      inheritedReadabilityChildRecordsByRecordId,
+    });
 
     return mutationResult.generatedMaps;
+  }
+
+  private async fetchInheritedReadabilityChildRecords(
+    records: ObjectRecord[],
+  ): Promise<Map<string, InheritedReadabilityChildRecords> | undefined> {
+    const { flatObjectMetadata } = this.options;
+
+    if (
+      records.length === 0 ||
+      flatObjectMetadata.readability !== MetadataReadability.INHERITED ||
+      !this.isRecordSharingEnabled()
+    ) {
+      return undefined;
+    }
+
+    const childrenParents = this.resolveInheritedReadabilityParents(
+      flatObjectMetadata,
+    ).filter(
+      (parent): parent is InheritedReadabilityChildrenParent =>
+        parent.kind === 'children',
+    );
+
+    if (childrenParents.length === 0) {
+      return undefined;
+    }
+
+    const recordIds = records.map((record) => String(record.id));
+    const childRecordsByRecordId = new Map(
+      recordIds.map((recordId): [string, InheritedReadabilityChildRecords] => [
+        recordId,
+        Object.fromEntries(
+          childrenParents.map((parent) => [
+            parent.childFlatObjectMetadata.nameSingular,
+            [],
+          ]),
+        ),
+      ]),
+    );
+
+    for (const parent of childrenParents) {
+      const childRepository = this.options.getRepositoryForObjectMetadataId(
+        parent.childFlatObjectMetadata.id,
+      );
+      const childRecords = await childRepository
+        .buildBypassingEventSelectQueryBuilder(
+          parent.childFlatObjectMetadata.nameSingular,
+        )
+        .where({ [parent.childJoinColumnName]: In(recordIds) })
+        .withDeleted()
+        .getMany<ObjectRecord>();
+
+      for (const childRecord of childRecords) {
+        childRecordsByRecordId
+          .get(String(childRecord[parent.childJoinColumnName]))
+          ?.[parent.childFlatObjectMetadata.nameSingular].push(childRecord);
+      }
+    }
+
+    return childRecordsByRecordId;
   }
 
   private async morphAndExecute({
@@ -1651,10 +1722,15 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     kind,
     recordsBefore,
     recordsAfter,
+    inheritedReadabilityChildRecordsByRecordId,
   }: {
     kind: MutationKind;
     recordsBefore: ObjectRecord[];
     recordsAfter?: ObjectRecord[];
+    inheritedReadabilityChildRecordsByRecordId?: Map<
+      string,
+      InheritedReadabilityChildRecords
+    >;
   }): void {
     if (this.options.shouldSkipEventEmission) {
       return;
@@ -1677,6 +1753,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         recordsBefore: formattedBefore,
         recordsAfter: formattedAfter,
         authContext: this.options.authContext,
+        inheritedReadabilityChildRecordsByRecordId,
       });
 
       if (isDefined(event)) {

@@ -816,3 +816,33 @@ describe('transformEventBatchToEventPayloads', () => {
     });
   });
 });
+
+describe('transformEventBatchToEventPayloads with a deletion capture', () => {
+  it('should not hand the child records captured with a deletion to the function', () => {
+    const [jobData] = transformEventBatchToEventPayloads({
+      workspaceEventBatch: createMockWorkspaceEventBatch({
+        name: 'company.deleted',
+        events: [
+          createMockEvent({
+            properties: {
+              before: { id: 'record-1' },
+              after: { id: 'record-1', deletedAt: '2026-09-15T00:00:00Z' },
+              updatedFields: ['deletedAt'],
+              diff: {},
+              inheritedReadabilityChildRecords: { noteTarget: [] },
+            },
+          }),
+        ],
+      }),
+      logicFunctions: [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: { eventName: 'company.deleted' },
+        }),
+      ],
+    });
+
+    expect(
+      (jobData.payload as { properties: object }).properties,
+    ).not.toHaveProperty('inheritedReadabilityChildRecords');
+  });
+});
