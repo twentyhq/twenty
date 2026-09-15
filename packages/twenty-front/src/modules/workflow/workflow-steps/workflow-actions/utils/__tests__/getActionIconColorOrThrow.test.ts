@@ -39,13 +39,14 @@ describe('getActionIconColorOrThrow', () => {
     );
   });
 
-  it('returns green12 for ITERATOR, EMPTY, FILTER, IF_ELSE, DELAY', () => {
+  it('returns green12 for ITERATOR, EMPTY, FILTER, IF_ELSE, DELAY, RUN_WORKFLOW', () => {
     const greenActions: WorkflowActionType[] = [
       'ITERATOR',
       'EMPTY',
       'FILTER',
       'IF_ELSE',
       'DELAY',
+      'RUN_WORKFLOW',
     ];
     greenActions.forEach((actionType) => {
       expect(getActionIconColorOrThrow(actionType)).toBe(

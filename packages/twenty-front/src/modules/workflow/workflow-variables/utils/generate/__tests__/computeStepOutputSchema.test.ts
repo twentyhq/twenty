@@ -478,6 +478,24 @@ describe('computeStepOutputSchema', () => {
     });
   });
 
+  describe('RUN_WORKFLOW step', () => {
+    it('should return workflowRunId text schema', () => {
+      const result = computeStepOutputSchema({
+        step: { type: 'RUN_WORKFLOW', settings: {} } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(result).toEqual({
+        workflowRunId: {
+          isLeaf: true,
+          type: FieldMetadataType.TEXT,
+          label: 'Workflow Run ID',
+          value: '',
+        },
+      });
+    });
+  });
+
   describe('AI_AGENT step', () => {
     it('should return undefined for AI_AGENT step type', () => {
       const result = computeStepOutputSchema({
