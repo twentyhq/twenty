@@ -1,6 +1,7 @@
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useRecordIndexExportParameters } from '@/object-record/record-index/export/hooks/useRecordIndexExportParameters';
-import { useExportRecords } from '@/record-export/hooks/useExportRecords';
+import { createRecordExportConnection } from '@/record-export/utils/createRecordExportConnection';
+import { useState } from 'react';
 import { type ViewType } from '@/views/types/ViewType';
 
 export const useRecordIndexAsyncExportRecords = ({
@@ -19,6 +20,9 @@ export const useRecordIndexAsyncExportRecords = ({
     recordIndexId,
     viewType,
   });
-  const { exportRecords } = useExportRecords({ onProgress });
-  return { download: () => exportRecords(parameters) };
+  const [connection] = useState(createRecordExportConnection);
+  return {
+    download: () => connection.exportRecords({ input: parameters, onProgress }),
+    cancel: connection.cancel,
+  };
 };

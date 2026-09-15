@@ -10,6 +10,7 @@ import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectM
 
 const mockSynchronousDownload = jest.fn().mockResolvedValue(undefined);
 const mockAsyncDownload = jest.fn().mockResolvedValue(undefined);
+const mockCancelAsyncDownload = jest.fn();
 const mockSingleRecordDownload = jest.fn().mockResolvedValue(undefined);
 const mockObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
 let mockRecordIndexId: string | undefined;
@@ -36,7 +37,10 @@ jest.mock(
 jest.mock(
   '@/object-record/record-index/export/hooks/useRecordIndexAsyncExportRecords',
   () => ({
-    useRecordIndexAsyncExportRecords: () => ({ download: mockAsyncDownload }),
+    useRecordIndexAsyncExportRecords: () => ({
+      download: mockAsyncDownload,
+      cancel: mockCancelAsyncDownload,
+    }),
   }),
 );
 jest.mock('@/object-record/record-show/hooks/useExportSingleRecord', () => ({

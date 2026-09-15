@@ -1,3 +1,4 @@
+import { RecordExportConnectionEffect } from '@/record-export/components/RecordExportConnectionEffect';
 import { useRecordIndexAsyncExportRecords } from '@/object-record/record-index/export/hooks/useRecordIndexAsyncExportRecords';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -55,12 +56,17 @@ const ExportAsyncIndexRecordsContent = ({
   recordIndexId: string;
   onProgress: (progress: number) => void;
 }) => {
-  const { download } = useRecordIndexAsyncExportRecords({
+  const { download, cancel } = useRecordIndexAsyncExportRecords({
     objectMetadataItem,
     recordIndexId,
     onProgress,
   });
-  return <HeadlessEngineCommandWrapperEffect execute={download} />;
+  return (
+    <>
+      <RecordExportConnectionEffect cancel={cancel} />
+      <HeadlessEngineCommandWrapperEffect execute={download} />
+    </>
+  );
 };
 
 const ExportShowRecordContent = ({
