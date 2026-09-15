@@ -110,11 +110,12 @@ export class WorkflowTriggerController {
         );
       }
 
-      const coreWorkflowVersion = await this.findActivatedCoreWorkflowVersion({
-        workspaceId,
-        workflowId,
-        coreWorkflow,
-      });
+      const coreWorkflowVersion =
+        await this.findActivatedCoreWorkflowVersionOrThrow({
+          workspaceId,
+          workflowId,
+          coreWorkflow,
+        });
 
       if (
         !coreWorkflowVersion.triggers?.some(
@@ -178,14 +179,14 @@ export class WorkflowTriggerController {
     });
   }
 
-  private async findActivatedCoreWorkflowVersion({
+  private async findActivatedCoreWorkflowVersionOrThrow({
     workspaceId,
     workflowId,
     coreWorkflow,
   }: {
     workspaceId: string;
     workflowId: string;
-    coreWorkflow: WorkflowEntity;
+    coreWorkflow: Pick<WorkflowEntity, 'lastPublishedCoreWorkflowVersionId'>;
   }): Promise<WorkflowVersionEntity> {
     if (!isNonEmptyString(coreWorkflow.lastPublishedCoreWorkflowVersionId)) {
       throw new WorkflowTriggerException(
