@@ -82,7 +82,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const billing = useAtomStateValue(billingState);
-  const publicFeatureFlags = useAtomStateValue(labPublicFeatureFlagsState);
+  const labPublicFeatureFlags = useAtomStateValue(labPublicFeatureFlagsState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -343,7 +343,7 @@ export const SettingsAdminWorkspaceDetail = () => {
                 }
 
                 const metadata = SETTINGS_ADMIN_FEATURE_FLAG_METADATA[flag.key];
-                const publicMetadata = publicFeatureFlags.find(
+                const publicMetadata = labPublicFeatureFlags.find(
                   (publicFeatureFlag) => publicFeatureFlag.key === flag.key,
                 )?.metadata;
                 const currentWorkspaceValue =
