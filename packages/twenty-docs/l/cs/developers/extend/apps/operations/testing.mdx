@@ -8,7 +8,7 @@ SDK poskytuje programová rozhraní, která vám umožní z testovacího kódu a
 
 ## Používání balíčků npm
 
-Ve své aplikaci můžete nainstalovat a používat libovolný balíček npm. Logické funkce i frontendové komponenty se bundlují pomocí [esbuild](https://esbuild.github.io/), který vloží všechny závislosti přímo do výstupu — za běhu nejsou potřeba žádné `node_modules`.
+Ve své aplikaci můžete nainstalovat a používat libovolný balíček npm. Logické funkce i frontendové komponenty se bundlují pomocí [esbuild](https://esbuild.github.io/), který vloží jejich závislosti přímo do výstupu — za běhu nejsou potřeba žádné `node_modules`.
 
 ### Instalace balíčku
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### Jak funguje bundlování
 
-Krok sestavení používá esbuild k vytvoření jediného samostatného souboru pro každou logickou funkci a každou frontendovou komponentu. Všechny importované balíčky jsou vloženy přímo do bundlu.
+Krok sestavení používá esbuild k vytvoření jediného samostatného souboru pro každou logickou funkci a každou frontendovou komponentu. Importované balíčky jsou vloženy přímo do bundlu, s výjimkou těch, které jsou uvedeny níže.
 
 **Logické funkce** běží v prostředí Node.js. Vestavěné moduly Node (`fs`, `path`, `crypto`, `http` atd.) jsou k dispozici a není je třeba instalovat.
 
 **Frontendové komponenty** běží ve Web Workeru. Vestavěné moduly Node nejsou k dispozici — pouze balíčky npm, které fungují v prohlížečovém prostředí. Všimněte si, že sandbox implementuje *částečné* DOM, takže balíček se může bez problémů sestavit, ale přesto selhat za běhu; viz [Aktuální omezení](/l/cs/developers/extend/apps/layout/front-components#current-limitations).
 
 V obou prostředích jsou jako předpřipravené moduly k dispozici `twenty-client-sdk/core` a `twenty-client-sdk/metadata` — nejsou součástí bundlu, ale server je za běhu načítá.
+
+Frontendové komponenty mohou také sdílet závislosti prostřednictvím [balíčku sdílených závislostí](/l/cs/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). Balíčky uvedené v poli `frontComponentSharedDependencies` souboru package.json aplikace jsou sestaveny jednou do samostatného souboru a za běhu se načítají z něj, místo aby byly vloženy do každé komponenty. Komponenta, která importuje pouze sdílené balíčky, tak v sobě nese téměř žádný vlastní kód závislostí.
 
 ## Nastavení
 

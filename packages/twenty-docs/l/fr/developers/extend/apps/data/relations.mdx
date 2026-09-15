@@ -84,6 +84,29 @@ export default defineField({
 **Imports circulaires :** les deux champs de relation se référencent l'un l'autre via leur `universalIdentifier`. Pour éviter les problèmes d'import circulaire, exportez les ID de vos champs en tant que constantes nommées depuis chaque fichier, puis importez-les dans l'autre. Le système de build les résout au moment de la compilation.
 </Note>
 
+## Relations de jonction
+
+Un objet de jonction connecte un enregistrement source à un ou plusieurs enregistrements cibles. Par exemple, `PostCardRecipient` peut contenir à la fois une relation `postCard` et une relation `recipient`. Dans le champ `ONE_TO_MANY` de l'objet source, définissez `junctionTargetFieldUniversalIdentifier` sur le champ de relation de l'objet de jonction qui pointe vers la cible :
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID` doit identifier une relation `MANY_TO_ONE` ou une relation morph sur l'objet de jonction. Il indique à Twenty quel enregistrement associé est la cible lorsqu'une fonctionnalité telle que la [diffusion des activités de chronologie](/l/fr/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events) parcourt la jonction.
+
 ## Relation avec des objets standard
 
 Pour créer une relation avec un objet Twenty intégré (Person, Company, etc.), utilisez `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` :
@@ -122,14 +145,15 @@ export default defineField({
 
 ## Propriétés des champs de relation
 
-| Propriété                                         | Obligatoire            | Description                                                                                                        |
-| ------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `type`                                            | Oui                    | Doit être `FieldType.RELATION`                                                                                     |
-| `relationTargetObjectMetadataUniversalIdentifier` | Oui                    | Le `universalIdentifier` de l'objet cible                                                                          |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Oui                    | Le `universalIdentifier` du champ correspondant sur l'objet cible                                                  |
-| `universalSettings.relationType`                  | Oui                    | `RelationType.MANY_TO_ONE` ou `RelationType.ONE_TO_MANY`                                                           |
-| `universalSettings.onDelete`                      | MANY_TO_ONE uniquement | Ce qui se passe lorsque l'enregistrement référencé est supprimé : `CASCADE`, `SET_NULL`, `RESTRICT` ou `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE uniquement | Nom de la colonne de base de données pour la clé étrangère (p. ex., `postCardId`)                                  |
+| Propriété                                                  | Obligatoire                       | Description                                                                                                        |
+| ---------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `type`                                                     | Oui                               | Doit être `FieldType.RELATION`                                                                                     |
+| `relationTargetObjectMetadataUniversalIdentifier`          | Oui                               | Le `universalIdentifier` de l'objet cible                                                                          |
+| `relationTargetFieldMetadataUniversalIdentifier`           | Oui                               | Le `universalIdentifier` du champ correspondant sur l'objet cible                                                  |
+| `universalSettings.relationType`                           | Oui                               | `RelationType.MANY_TO_ONE` ou `RelationType.ONE_TO_MANY`                                                           |
+| `universalSettings.onDelete`                               | MANY_TO_ONE uniquement            | Ce qui se passe lorsque l'enregistrement référencé est supprimé : `CASCADE`, `SET_NULL`, `RESTRICT` ou `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | MANY_TO_ONE uniquement            | Nom de la colonne de base de données pour la clé étrangère (p. ex., `postCardId`)                                  |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | Jonction `ONE_TO_MANY` uniquement | Champ de relation de l'objet de jonction qui pointe vers la cible de diffusion                                     |
 
 ## Champs de relation en ligne
 

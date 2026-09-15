@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { preserveApplicationLocalMetadataState } from 'src/engine/core-modules/application/application-manifest/utils/preserve-application-local-metadata-state.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import {
   type AllFlatEntityOperationRecordByMetadataName,
@@ -12,8 +13,10 @@ import {
 import { type MetadataUniversalFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-universal-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { isSystemSideEffectFlatEntity } from 'src/engine/metadata-modules/flat-entity/utils/is-system-side-effect-flat-entity.util';
+import { keepWorkspaceOwnedProperties } from 'src/engine/metadata-modules/flat-entity/utils/keep-workspace-owned-properties.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { compareTwoFlatEntity } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/compare-two-universal-flat-entity.util';
+import { canManifestExpressFlatEntity } from 'src/engine/core-modules/application/application-manifest/utils/can-manifest-express-flat-entity.util';
 import { shouldInferDeletionFromMissingEntities } from 'src/engine/workspace-manager/workspace-migration/utils/should-infer-deletion-from-missing-entities.util';
 import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 
@@ -39,7 +42,12 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
   buildOptions: WorkspaceMigrationBuilderOptions;
 }): FlatEntityOperationRecord<T> => {
   const fromByUniversalIdentifier = fromFlatEntityMaps.byUniversalIdentifier;
-  const toByUniversalIdentifier = toFlatEntityMaps.byUniversalIdentifier;
+  const { byUniversalIdentifier: toByUniversalIdentifier } =
+    keepWorkspaceOwnedProperties({
+      metadataName,
+      fromFlatEntityMaps,
+      toFlatEntityMaps,
+    });
 
   const flatEntityToCreate = Object.values(toByUniversalIdentifier)
     .filter(isDefined)
@@ -61,10 +69,13 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
             ),
         )
         .filter(
-          (fromFlatEntity) =>
-            !isSystemSideEffectFlatEntity(
-              fromFlatEntity as unknown as MetadataUniversalFlatEntity<AllMetadataName>,
-            ),
+          (fromFlatEntity) => !isSystemSideEffectFlatEntity(fromFlatEntity),
+        )
+        .filter((fromFlatEntity) =>
+          canManifestExpressFlatEntity({
+            metadataName,
+            flatEntity: fromFlatEntity,
+          }),
         )
     : [];
 
@@ -78,13 +89,17 @@ const buildFlatEntityOperationRecordForMetadata = <T extends AllMetadataName>({
         return undefined;
       }
 
+      const toFlatEntityWithLocalState = preserveApplicationLocalMetadataState({
+        existingEntity: fromFlatEntity,
+        manifestEntity: toFlatEntity,
+      });
       const update = compareTwoFlatEntity({
         fromUniversalFlatEntity: fromFlatEntity,
-        toUniversalFlatEntity: toFlatEntity,
+        toUniversalFlatEntity: toFlatEntityWithLocalState,
         metadataName,
       });
 
-      return isDefined(update) ? toFlatEntity : undefined;
+      return isDefined(update) ? toFlatEntityWithLocalState : undefined;
     })
     .filter(isDefined);
 

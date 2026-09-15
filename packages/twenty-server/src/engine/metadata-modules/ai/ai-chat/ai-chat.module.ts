@@ -1,3 +1,6 @@
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
+import { AiChatUsageService } from 'src/engine/metadata-modules/ai/ai-chat/services/ai-chat-usage.service';
+import { AiChatUsageResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/ai-chat-usage.resolver';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -20,7 +23,6 @@ import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-bi
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -45,6 +47,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 @Module({
   imports: [
+    UsageLimitModule,
     TypeOrmModule.forFeature([
       AgentChatThreadEntity,
       FileEntity,
@@ -60,7 +63,6 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     WorkspaceCacheStorageModule,
     WorkspaceCacheModule,
     WorkspaceDomainsModule,
-    TwentyORMModule,
     TokenModule,
     UserWorkspaceModule,
     AiBillingModule,
@@ -70,6 +72,8 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     WorkflowToolsModule,
   ],
   providers: [
+    AiChatUsageService,
+    AiChatUsageResolver,
     AgentChatCancelSubscriberService,
     AgentChatEventPublisherService,
     AgentChatStreamHeartbeatService,

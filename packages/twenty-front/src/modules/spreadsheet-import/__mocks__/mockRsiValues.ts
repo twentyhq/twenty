@@ -157,7 +157,6 @@ export const mockRsiValues = mockComponentBehaviourForTypes({
       importedRows: data,
     };
   },
-  // Runs after column matching and on entry change, more performant
   matchColumnsStepHook: async (data) => {
     await sleep(4000, (resolve) => resolve(data));
     return data;

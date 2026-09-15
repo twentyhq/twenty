@@ -172,6 +172,10 @@ const handler = async (event: RoutePayload) => {
 状态码必须是有效的 HTTP 状态码（介于 100 和 599 之间）。 响应头名称的匹配不区分大小写。
 </Note>
 
+#### 平台错误响应
+
+除了处理程序自身的响应之外，在某些情况下，平台会直接对路由调用做出响应：当路由或函数不存在时返回 `404`，当应用停止时返回 `403`，当触发执行速率限制时返回 `429`，以及当应用的生产环境 `dependencies` 过大而无法安装时返回 `422`——请参见[依赖项大小限制](/l/zh/developers/extend/apps/getting-started/project-structure#dependencies)。
+
 #### 服务端路由触发器
 
 `httpRouteTriggerSettings` 在 `/s/` 下暴露一个函数，并根据请求主机解析 workspace——这在每个 workspace 都有自己域名时有效。 然而，第三方服务商会将每个租户的事件发送到**同一个** URL。 在这种情况下，请使用 `serverRouteTriggerSettings`。
@@ -278,6 +282,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 ```
 
 该标识符是清单（manifest）中 resolver 的 `universalIdentifier`。 在服务商处注册该 URL。
+
+**响应验证 GET 请求。** 某些提供商会在向端点传递内容之前对其进行验证，方法是向其稍后将 `POST` 事件到的同一 URL 发送携带质询的 `GET` 请求——Meta 的 WhatsApp Cloud API 就是其中之一。 除非另有指定，否则服务器路由仅响应 `POST`，因此请声明两种方法：
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+质询会在 `event.queryStringParameters` 中到达，返回 `Response` 会在同一请求中将其回传给提供商。 字符串主体会以 `text/plain` 发送，这正是这些提供商所期望的：
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+`httpMethods` 会替换默认值，而不是在其基础上添加，因此仅使用 `['GET']` 会使路由拒绝 `POST`。 仅支持 `GET` 和 `POST`。 除非提供商需要第二种方法，否则请将其留空：声明 `GET` 的路由会让任何未经身份验证的调用方执行其解析器，包括会在未提示的情况下发送 `GET` 的爬虫和链接展开器。 对于平台没有对应方法的任何请求，都会返回 `405`，且解析器不会运行。
 
 <Note>
 **应用程序必须在其所属工作区中被认领并安装。** 由于 resolver 在**所属工作区**中运行（即拥有应用程序注册的工作区），服务器路由触发器只有在应用程序已被*认领*——也就是说它已有一个所属工作区——**并且**该应用程序**已安装在所属工作区**之后才会生效。 在这两个条件都满足之前，resolver 无处可运行，因此无法分发该路由。 因此，暴露 `serverRouteTriggerSettings` 逻辑函数的应用程序在被认领并安装到其所属工作区之前，不能在 marketplace 中列出。
@@ -421,6 +447,78 @@ const handler = async (event: PersonDestroyedEvent) => {
   };
 };
 ```
+
+#### 执行上下文
+
+每个处理程序都会收到第二个参数，用于描述运行本身，无论是什么触发了它。 第一个参数会因触发器而具有不同的结构，而这个参数不会：
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| 字段                  | 类型               | 描述                                                                    |
+| ------------------- | ---------------- | --------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | 该运行所属的工作区。                                                            |
+| `userWorkspaceId`   | `string \| null` | 触发该运行的人员，以其作为此工作区成员的身份。                                               |
+| `workspaceMemberId` | `string \| null` | 同一人员的工作区成员记录，也就是你链接记录时使用的对象。                                          |
+| `retryCount`        | `number`         | 首次尝试时为 `0`。 请参阅[后台作业](/l/zh/developers/extend/apps/logic/background-jobs)。 |
+| `maxRetries`        | `number`         | 应用程序请求重试次数的上限。                                                        |
+
+当没有人触发运行时，`userWorkspaceId` 和 `workspaceMemberId` 为 `null`：cron 计划、安装钩子和未经身份验证的 Webhook 背后没有人员。 当该人员没有工作区成员记录，或者其记录已被删除时，它们也为 `null`。
+
+<Note>
+**上下文会告诉你是谁触发了运行。** 运行可以*执行*什么操作则是下面单独的声明。
+</Note>
+
+#### 调用使用谁的访问权限
+
+每个客户端 — `CoreApiClient`、`MetadataApiClient` 和 `RestApiClient` — 都会以触发运行的人员身份执行操作：其角色与你的应用程序角色相交，因此调用所能执行的操作绝不会超过你们任一方的权限。 这是默认行为，意味着人员绝不能使用你的应用超出其自身权限。
+
+当没有人触发运行时，没有可代为执行操作的人员，因此同一客户端会回退到使用你的应用程序自身访问权限：cron 计划、安装钩子和未经身份验证的 Webhook 无需特殊处理。
+
+即使运行背后*有*人员，某些调用也确实需要应用程序自身的访问权限 — 例如读取应用的配置记录，或执行该人员自己无法完成的工作。 为这些情况构建第二个客户端：
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+在模块作用域中一次性构建两个客户端，之后每个调用位置都会通过所调用的客户端表明其使用的访问权限。 `RestApiClient` 接受相同的选项：
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**无人触发的运行会以你的应用程序身份执行。** Cron 计划、安装钩子和未经身份验证的 Webhook 背后没有人员，因此默认客户端会回退到使用你的应用程序自身访问权限，并继续正常工作。 仅当你希望在由人员*触发*的运行中使用该访问权限时，才需要 `runAs: 'application'`。
+
+当函数的行为取决于其背后是否有人员时，请检查 `context.workspaceMemberId`，例如用于为记录归属。
+</Note>
+
+用于访问你的应用程序自身资源的 SDK 辅助工具始终使用其访问权限，并忽略 `runAs`：包括[键值存储](/l/zh/developers/extend/apps/logic/key-value-store)、[连接](/l/zh/developers/extend/apps/logic/connections)、`runAgent`、`getPublicAssetUrl` 和积分扣费。
 
 #### 将函数公开为 AI 工具或工作流操作
 
@@ -616,6 +714,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **安装 hooks**——预安装、后安装和卸载处理程序——共享此运行时，但使用它们自己的 define 函数进行声明，并且不接受触发器设置。 有关 `definePreInstallLogicFunction`、`definePostInstallLogicFunction` 和 `defineUninstallLogicFunction`，请参阅 [Install Hooks](/l/zh/developers/extend/apps/config/install-hooks)。
 </Note>
 
+## 创建时间线活动
+
+使用 `createTimelineActivity()` 从逻辑函数发布显式领域事件。 先将事件定义为一种[时间线活动类型](/l/zh/developers/extend/apps/data/timeline-activity-types)，然后通过其稳定的通用标识符来指定该类型和对象：
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+Twenty 会将通用标识符解析为特定于安装的元数据 ID，验证时间线活动类型属于调用应用，并在新活动上对其展示元数据创建快照。
+
+必需的输入为 `timelineActivityTypeUniversalIdentifier`、`targetObjectUniversalIdentifier` 和 `targetRecordId`。 您还可以提供 `happensAt`、`properties` 和 `workspaceMemberId`。 `happensAt` 控制事件在时间线中的位置和显示时间；默认值为创建时间。
+
+要将另一条记录与事件关联，请同时提供 `linkedRecordId` 和 `linkedObjectMetadataUniversalIdentifier`。 您还可以提供 `linkedRecordCachedName` 作为历史显示回退值：
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+逻辑函数的角色需要对标准 `timelineActivity` 对象具有写入权限。 保持显式事件类型不绑定 `action`；绑定操作的类型已接收自动审计事件，否则会产生重复行。
+
 ## 类型化 API 客户端（`twenty-client-sdk`）
 
 `twenty-client-sdk` 包提供了两个类型化的 GraphQL 客户端，供你的逻辑函数和前端组件与 Twenty API 交互。
@@ -697,7 +834,7 @@ setCompany(result.company);
 </Accordion>
 <Accordion title="MetadataApiClient" description="工作区配置、应用和文件上传">
 
-`MetadataApiClient` 随 SDK 一并提供，已预构建（无需生成）。 它会查询 `/metadata` 端点以获取工作区配置、应用和文件上传。
+`MetadataApiClient` 随 SDK 一并提供，已预构建（无需生成）。 它会查询 `/metadata` 端点以获取工作区配置、应用和文件上传。 它接受与 `CoreApiClient` 相同的 `runAs` 选项 — 请参阅[调用使用谁的访问权限](#whose-access-a-call-uses)。
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -765,7 +902,8 @@ console.log(uploadedFile);
   当你的代码在 Twenty 上运行（逻辑函数或前端组件）时，平台会以环境变量的形式注入凭据：
 
   * `TWENTY_API_URL`——Twenty API 的基础 URL
-  * `TWENTY_APP_ACCESS_TOKEN`——作用域限定为你的应用默认函数角色的短期密钥
+  * `TWENTY_APP_ACCESS_TOKEN` — 用于默认访问权限的短期密钥：当运行背后有人员时，使用该人员角色与你的应用程序角色的交集；当没有人员时，使用你的应用程序自身角色。 在逻辑函数中，该人员是触发运行的人；在前端组件中，则是正在查看页面的人。
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — 仅限定于你的应用程序自身角色的短期密钥。 仅用于逻辑函数，始终会在其中注入，并由 `runAs: 'application'` 使用。
 
-  你无需将这些值传递给客户端——它们会自动从 `process.env` 读取。 API 密钥的权限由使用 `defineApplicationRole()` 声明的角色（或在 `application-config.ts` 中通过 `defaultRoleUniversalIdentifier` 引用的角色）决定。
+  你**不**需要将这些传递给客户端 — 它们会自动从 `process.env` 读取，而[调用使用谁的访问权限](#whose-access-a-call-uses)介绍了如何在它们之间进行选择。 你的应用程序自身权限由通过 `defineApplicationRole()` 声明的角色（或在 `application-config.ts` 中通过 `defaultRoleUniversalIdentifier` 引用的角色）决定；以人员身份执行的运行绝不能超出该角色或该人员角色的权限。
 </Note>

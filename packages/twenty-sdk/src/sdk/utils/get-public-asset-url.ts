@@ -1,7 +1,6 @@
-import {
-  DEFAULT_API_URL_NAME,
-  DEFAULT_APP_ACCESS_TOKEN_NAME,
-} from 'twenty-shared/application';
+import { DEFAULT_API_URL_NAME } from 'twenty-shared/application';
+
+import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
 
 const decodeTokenPayload = (
   token: string,
@@ -19,7 +18,7 @@ const decodeTokenPayload = (
 // The path is relative to the public/ folder (e.g. "images/logo.png").
 export const getPublicAssetUrl = (path: string): string => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
-  const token = process.env[DEFAULT_APP_ACCESS_TOKEN_NAME];
+  const token = getApplicationAccessToken();
 
   if (!apiUrl || !token) {
     throw new Error(

@@ -3,10 +3,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type SSOConfiguration } from 'src/engine/core-modules/sso/types/SSOConfigurations.type';
+import { type SsoConfiguration } from 'src/engine/core-modules/sso/types/sso-configurations.type';
 import {
   IdentityProviderType,
-  SSOIdentityProviderStatus,
+  SsoIdentityProviderStatus,
 } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 
 @ObjectType('EditSso')
@@ -23,6 +23,6 @@ export class EditSsoDTO {
   @Field(() => String)
   name: string;
 
-  @Field(() => SSOIdentityProviderStatus)
-  status: SSOConfiguration['status'];
+  @Field(() => SsoIdentityProviderStatus)
+  status: SsoConfiguration['status'];
 }

@@ -81,6 +81,7 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
     ),
     fieldPermissionIds:
       objectMetadataEntity.fieldPermissions?.map(({ id }) => id) ?? [],
+    pageLayoutIds: objectMetadataEntity.pageLayouts.map(({ id }) => id),
     fieldUniversalIdentifiers: objectMetadataEntity.fields.map(
       ({ universalIdentifier }) => universalIdentifier,
     ),
@@ -100,6 +101,15 @@ export const fromObjectMetadataEntityToFlatObjectMetadata = (
       ),
     fieldPermissionUniversalIdentifiers:
       objectMetadataEntity.fieldPermissions?.map(
+        ({ universalIdentifier }) => universalIdentifier,
+      ) ?? [],
+    pageLayoutUniversalIdentifiers: objectMetadataEntity.pageLayouts.map(
+      ({ universalIdentifier }) => universalIdentifier,
+    ),
+    commandMenuItemIds:
+      objectMetadataEntity.commandMenuItems?.map(({ id }) => id) ?? [],
+    commandMenuItemUniversalIdentifiers:
+      objectMetadataEntity.commandMenuItems?.map(
         ({ universalIdentifier }) => universalIdentifier,
       ) ?? [],
   };

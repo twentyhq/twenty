@@ -29,7 +29,7 @@ const DEFAULT_ACTION: WorkflowHttpRequestAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: false,
+        value: 0,
       },
       continueOnFailure: {
         value: false,
@@ -59,7 +59,7 @@ const CONFIGURED_ACTION: WorkflowHttpRequestAction = {
     outputSchema: {},
     errorHandlingOptions: {
       retryOnFailure: {
-        value: true,
+        value: 3,
       },
       continueOnFailure: {
         value: false,
@@ -170,7 +170,7 @@ export const WithArrayStringBody: Story = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -220,7 +220,7 @@ export const WithObjectStringBody: Story = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -276,7 +276,7 @@ export const WithArrayContainingNonStringVariablesBody: Story = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -323,7 +323,7 @@ export const WithObjectContainingNonStringVariablesBody: Story = {
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,

@@ -2,16 +2,19 @@ import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import { type WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import {
+  PageLayoutType,
+  type PageLayoutWidgetGridPosition,
+  type WidgetType,
+} from 'twenty-shared/types';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import {
-  gridPositionSchema,
+  widgetPositionSchema,
   widgetConfigurationSchema,
   widgetTypeSchema,
 } from 'src/modules/dashboard/tools/schemas/widget.schema';
 import {
-  type DashboardToolContext,
+  type DashboardToolContextWithPermissions,
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
@@ -21,7 +24,7 @@ import { resolveWidgetFieldNamesToIds } from 'src/modules/dashboard/tools/utils/
 const widgetSchema = z.object({
   title: z.string().describe('Widget title displayed in the header'),
   type: widgetTypeSchema.describe('Widget type'),
-  gridPosition: gridPositionSchema.describe('Position in 12-column grid'),
+  position: widgetPositionSchema.describe('Position in 12-column grid'),
   objectMetadataId: z
     .uuid()
     .optional()
@@ -53,7 +56,7 @@ const createCompleteDashboardSchema = z.object({
 
 export const createCreateCompleteDashboardTool = (
   deps: DashboardToolDependencies,
-  context: DashboardToolContext,
+  context: DashboardToolContextWithPermissions,
 ) => ({
   name: 'create_complete_dashboard' as const,
   description: `Create a dashboard with layout, tab, and widgets.
@@ -102,8 +105,8 @@ CHART FILTERS (AGGREGATE_CHART, BAR_CHART, LINE_CHART, PIE_CHART):
    - Requires: objectMetadataId (top-level, UUID of the object to display) AND configuration.viewId (UUID of the dedicated view you just created)
    - configuration.configurationType must be "RECORD_TABLE"
    - Recommended size: rowSpan 8-10, columnSpan 12 (full width)
-   - Workflow: (1) call create_view with the appropriate *_WIDGET type (TABLE_WIDGET for a table, KANBAN_WIDGET for a board, CALENDAR_WIDGET for a calendar — kanban requires mainGroupByFieldName, calendar requires calendarFieldName) → get the viewId, (2) call create_many_view_fields to add visible columns to that view, (3) create the widget with that viewId
-   - The widget renders according to its view type: TABLE_WIDGET renders a table, KANBAN_WIDGET a board (requires mainGroupByFieldName pointing at a SELECT or many-to-one relation field), CALENDAR_WIDGET a calendar (requires a date calendar field)
+   - Workflow: (1) call create_view with the appropriate *_WIDGET type (TABLE_WIDGET for a table, KANBAN_WIDGET for a board, LIST_WIDGET for a list, CALENDAR_WIDGET for a calendar — kanban requires mainGroupByFieldName, calendar requires calendarFieldName) → get the viewId, (2) call create_many_view_fields to add visible columns to that view, (3) create the widget with that viewId
+   - The widget renders according to its view type: TABLE_WIDGET renders a table, KANBAN_WIDGET a board (requires mainGroupByFieldName pointing at a SELECT or many-to-one relation field), LIST_WIDGET a list, CALENDAR_WIDGET a calendar (requires a date calendar field)
    - Example: { type: "RECORD_TABLE", objectMetadataId: "<object-uuid>", configuration: { configurationType: "RECORD_TABLE", viewId: "<dedicated-view-uuid>" } }
 
 AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`,
@@ -114,12 +117,7 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
     widgets?: Array<{
       title: string;
       type: WidgetType;
-      gridPosition: {
-        row: number;
-        column: number;
-        rowSpan: number;
-        columnSpan: number;
-      };
+      position: PageLayoutWidgetGridPosition;
       objectMetadataId?: string;
       objectName?: string;
       configuration?: WidgetConfigurationInput;
@@ -179,12 +177,12 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
         }
       }
 
-      const dashboardId = await createDashboardRecord(
+      const dashboardId = await createDashboardRecordOrRollBackLayout({
         deps,
         context,
-        parameters.title,
-        pageLayout.id,
-      );
+        title: parameters.title,
+        pageLayoutId: pageLayout.id,
+      });
 
       const result = {
         dashboardId,
@@ -232,21 +230,44 @@ AGGREGATION OPERATIONS: COUNT, SUM, AVG, MIN, MAX, COUNT_EMPTY, COUNT_NOT_EMPTY`
   },
 });
 
-const createDashboardRecord = async (
-  deps: DashboardToolDependencies,
-  context: DashboardToolContext,
-  title: string,
-  pageLayoutId: string,
+type CreateDashboardRecordParams = {
+  deps: DashboardToolDependencies;
+  context: DashboardToolContextWithPermissions;
+  title: string;
+  pageLayoutId: string;
+};
+
+const createDashboardRecordOrRollBackLayout = async (
+  params: CreateDashboardRecordParams,
 ): Promise<string> => {
+  try {
+    return await createDashboardRecord(params);
+  } catch (error) {
+    await params.deps.pageLayoutService
+      .destroy({
+        id: params.pageLayoutId,
+        workspaceId: params.context.workspaceId,
+        isLinkedDashboardAlreadyDestroyed: true,
+      })
+      .catch(() => undefined);
+
+    throw error;
+  }
+};
+
+const createDashboardRecord = async ({
+  deps,
+  context,
+  title,
+  pageLayoutId,
+}: CreateDashboardRecordParams): Promise<string> => {
   const authContext = buildSystemAuthContext(context.workspaceId);
 
-  return deps.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-    const dashboardRepository =
-      await deps.globalWorkspaceOrmManager.getRepository(
-        context.workspaceId,
-        'dashboard',
-        { shouldBypassPermissionChecks: true },
-      );
+  return deps.workspaceOrmManager.executeInWorkspaceContext(async () => {
+    const dashboardRepository = deps.workspaceOrmManager.getRepository(
+      'dashboard',
+      context.rolePermissionConfig,
+    );
 
     const position = await deps.recordPositionService.buildRecordPosition({
       value: 'first',

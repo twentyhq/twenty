@@ -141,23 +141,26 @@ const attachmentTargetRocketFieldId =
   `getSystemViewUniversalIdentifier` と `getSystemViewFieldUniversalIdentifier` は `twenty-sdk` 2.26 以降で利用可能であり、バージョン 2.26 以降の Twenty サーバーが必要です。
 </Note>
 
-サーバーは、すべてのオブジェクトに対して **システムビュー** もプロビジョニングします。つまり、表示可能なフィールドごとに 1 つのカラムを持つメインのリストビュー（`ViewKey.INDEX` をキーとし、`All {objectLabelPlural}`）です。 システムリレーションフィールドと同様に、それらの識別子は **名前に依存しない** 形で導出されるため、オブジェクトやフィールドの名前を変更しても識別子は変わりません。
+サーバーは、すべてのオブジェクトに対して **システムビュー** もプロビジョニングします。つまり、表示可能なフィールドごとに 1 つのカラムを持つメインのリストビュー（`All {objectLabelPlural}`、キーは `ViewKey.INDEX`（`SYSTEM_VIEW_KEYS.INDEX` から導出））です。 システムリレーションフィールドと同様に、それらの識別子は **名前に依存しない** 形で導出されるため、オブジェクトやフィールドの名前を変更しても識別子は変わりません。
 
 ビューを解決するには、`getSystemViewUniversalIdentifier` を使用します。
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier` は **オブジェクト** を所有しているアプリケーションであり、ビューが名前空間分割されている単位です。
 * `objectUniversalIdentifier` は、そのビューがリストするオブジェクトです。
-* `viewKey` はシステムビューのキーで、現時点では `ViewKey.INDEX` です。
+* `viewKey` はシステムビューを識別するための判別子です。メインのリストビューには `SYSTEM_VIEW_KEYS.INDEX`、レコードページのフィールドウィジェットのビューには `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` を使用します。 これは導出のキーとなる値であり、ビューの行に保存されるのは `INDEX` のみです。
 
 解決された ID は、[`NavigationMenuItemType.VIEW`](/l/ja/developers/extend/apps/layout/navigation-menu-items) のサイドバーエントリなど、`viewUniversalIdentifier` が必要とされるあらゆる場所で使用できます。 オブジェクトのメインリストを単に開くだけであれば、導出が不要な `NavigationMenuItemType.OBJECT` と `targetObjectUniversalIdentifier` を優先して使用してください。
 

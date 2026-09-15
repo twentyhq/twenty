@@ -7,6 +7,7 @@ import { type SettingsBillingPlanAction } from '@/settings/billing/types/setting
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -42,9 +43,7 @@ export const useBillingPlanActions = ({
   const hasPermissionToManageBilling =
     permissionMap[PermissionFlagType.BILLING] ?? false;
 
-  const shouldUpdatePayment =
-    subscriptionStatus === SubscriptionStatus.PastDue ||
-    subscriptionStatus === SubscriptionStatus.Unpaid;
+  const shouldUpdatePayment = isSubscriptionPaymentOverdue(subscriptionStatus);
   const isSubscriptionCanceled =
     currentBillingSubscription?.status === SubscriptionStatus.Canceled ||
     subscriptionStatus === SubscriptionStatus.Canceled;

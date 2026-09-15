@@ -142,23 +142,26 @@ const attachmentTargetRocketFieldId =
   `getSystemViewUniversalIdentifier` 和 `getSystemViewFieldUniversalIdentifier` 可在 `twenty-sdk` 2.26 及更高版本中使用，并且需要 Twenty 服务器版本为 2.26 或更高。
 </Note>
 
-服务器还会在每个对象上预配置一个**系统视图**：主列表视图（`All {objectLabelPlural}`，以 `ViewKey.INDEX` 作为键），其中每个可显示字段对应一列。 与系统关联字段类似，它们的标识符是以**与名称无关**的方式派生的，因此重命名对象或字段都不会改变这些标识符。
+服务器还会在每个对象上预配置一个**系统视图**：主列表视图（`All {objectLabelPlural}`，以 `ViewKey.INDEX`（由 `SYSTEM_VIEW_KEYS.INDEX` 派生）作为键），其中每个可显示字段对应一列。 与系统关联字段类似，它们的标识符是以**与名称无关**的方式派生的，因此重命名对象或字段都不会改变这些标识符。
 
 使用 `getSystemViewUniversalIdentifier` 来解析该视图：
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier` 是拥有该**对象**的应用程序，也是视图命名空间所基于的应用。
 * `objectUniversalIdentifier` 是该视图所列出的对象。
-* `viewKey` 是系统视图键，目前为 `ViewKey.INDEX`。
+* `viewKey` 是系统视图的区分符：主列表视图使用 `SYSTEM_VIEW_KEYS.INDEX`，记录页面字段小部件视图使用 `SYSTEM_VIEW_KEYS.FIELDS_WIDGET`。 它作为派生的键；只有 `INDEX` 同时会存储在视图行中。
 
 解析得到的 id 可用于任何需要 `viewUniversalIdentifier` 的地方，例如侧边栏中的 [`NavigationMenuItemType.VIEW`](/l/zh/developers/extend/apps/layout/navigation-menu-items) 条目。 如果只是要打开某个对象的主列表，优先使用带有 `targetObjectUniversalIdentifier` 的 `NavigationMenuItemType.OBJECT`：它不需要派生。
 

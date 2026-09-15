@@ -88,6 +88,7 @@ const emailStepLogDetailsSchema = z.object({
   bodyBytes: z.number().optional(),
   bodyTruncated: z.boolean().optional(),
   connectedAccountId: z.string().optional(),
+  fromHandle: z.string().optional(),
   attachmentCount: z.number().optional(),
   inReplyTo: z.string().optional(),
   error: z.string().optional(),

@@ -164,7 +164,7 @@ const { result } = await runAgent({
 });
 ```
 
-La ejecución queda entonces restringida a lo que **tanto** el rol del agente como el rol del miembro permiten, los registros que crea se atribuyen a ese miembro y se aplican los permisos a nivel de fila de ese miembro. Omite el campo para ejecuciones autónomas (trabajos programados, disparadores de eventos de base de datos): esos conservan el rol propio del agente.
+La ejecución entonces actúa con **el propio rol del miembro**: puede hacer todo lo que ese miembro puede hacer y nada más, los registros que crea se le atribuyen a él, y se aplican sus permisos a nivel de fila. El rol del agente no participa: es el valor predeterminado de la aplicación para ejecuciones sin nadie detrás de ellas. Omite el campo para ejecuciones autónomas (trabajos programados, disparadores de eventos de base de datos): esos conservan el rol propio del agente. La aplicación que actúa permanece asociada al contexto de la ejecución para fines de trazabilidad, sin restringir los permisos del miembro.
 
 Tu aplicación es responsable de asociar a la persona que activó la ejecución con un miembro del espacio de trabajo. Para poder designar uno se requiere un token de acceso de la aplicación, y a quién puede
 designar un token depende de si lleva asociado un usuario:

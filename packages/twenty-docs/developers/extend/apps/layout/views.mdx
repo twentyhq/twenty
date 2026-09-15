@@ -17,7 +17,7 @@ export default defineView({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -43,7 +43,7 @@ export default defineView({
 
 | Property | Values | Description |
 |----------|--------|-------------|
-| `type` | `ViewType.TABLE` (default), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
+| `type` | `ViewType.TABLE` (default), `ViewType.LIST`, `ViewType.KANBAN`, `ViewType.CALENDAR` | How records are laid out. (`FIELDS_WIDGET`, `TABLE_WIDGET`, `KANBAN_WIDGET`, `LIST_WIDGET`, and `CALENDAR_WIDGET` also exist but are used internally by page-layout widgets.) |
 | `visibility` | `ViewVisibility.WORKSPACE` (default), `ViewVisibility.UNLISTED` | Whether the view is listed for the whole workspace or hidden from pickers. |
 | `openRecordIn` | deprecated | No longer read: where records open is now a property of the [object](/developers/extend/apps/data/objects) (`openRecordIn` on `defineObject()`), falling back to each member's own preference. |
 | `sorts` | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]` | Default sort order. |
@@ -70,6 +70,16 @@ filters: [
   },
 ],
 ```
+
+Three optional properties refine a filter:
+
+| Property | Description |
+|----------|-------------|
+| `subFieldName` | Targets one part of a composite field, such as `amountMicros` on a `CURRENCY` field or `primaryLinkUrl` on a `LINKS` field. |
+| `relationTargetFieldMetadataUniversalIdentifier` | On a filter over a `RELATION` field, the field of the related object the value is compared against, as the advanced filter sets it when you pick a field of the related record. Leave it out to filter on the related record itself. |
+| `viewFilterGroupUniversalIdentifier` + `positionInViewFilterGroup` | Place the filter in one of the view's `filterGroups` (each with a `logicalOperator` of `AND`, `OR` or `NOT` and an optional `parentViewFilterGroupUniversalIdentifier`) and order it within that group. |
+
+`yarn twenty pull` writes all three back exactly as the workspace stored them.
 
 ### Supported operands per field type
 

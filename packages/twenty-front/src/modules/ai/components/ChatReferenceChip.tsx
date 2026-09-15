@@ -1,46 +1,45 @@
-import { FieldMetadataLink } from '@/ai/components/FieldMetadataLink';
-import { ObjectMetadataLink } from '@/ai/components/ObjectMetadataLink';
-import { RecordLink } from '@/ai/components/RecordLink';
-import { ViewLink } from '@/ai/components/ViewLink';
+import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
+import { Chip, LinkChip } from 'twenty-ui/primitives/data-display';
+
+import { ChatReferenceNavigationEnabledContext } from '@/ai/contexts/ChatReferenceNavigationEnabledContext';
+import { useChatReferenceTarget } from '@/ai/hooks/useChatReferenceTarget';
 import { type ChatReferenceMatch } from '@/ai/types/ChatReferenceMatch';
-import { assertUnreachable } from 'twenty-shared/utils';
 
 type ChatReferenceChipProps = {
   reference: ChatReferenceMatch;
 };
 
 export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
-  switch (reference.kind) {
-    case 'record':
-      return (
-        <RecordLink
-          objectNameSingular={reference.objectNameSingular}
-          recordId={reference.recordId}
-          displayName={reference.displayName}
-        />
-      );
-    case 'object':
-      return (
-        <ObjectMetadataLink
-          objectNameSingular={reference.objectNameSingular}
-          displayName={reference.displayName}
-        />
-      );
-    case 'field':
-      return (
-        <FieldMetadataLink
-          fieldMetadataItemId={reference.fieldMetadataItemId}
-          displayName={reference.displayName}
-        />
-      );
-    case 'view':
-      return (
-        <ViewLink
-          viewId={reference.viewId}
-          displayName={reference.displayName}
-        />
-      );
-    default:
-      return assertUnreachable(reference);
+  const isNavigationEnabled = useContext(ChatReferenceNavigationEnabledContext);
+  const target = useChatReferenceTarget(reference);
+
+  if (!isDefined(target)) {
+    return <span>{reference.displayName}</span>;
   }
+
+  if (!isDefined(target.to) || !isNavigationEnabled) {
+    return (
+      <Chip
+        emptyLabel={t`Untitled`}
+        variant="soft"
+        startElement={target.leftComponent}
+      >
+        {reference.displayName}
+      </Chip>
+    );
+  }
+
+  return (
+    <LinkChip
+      emptyLabel={t`Untitled`}
+      to={target.to}
+      onClick={target.onClick}
+      variant="soft"
+      startElement={target.leftComponent}
+    >
+      {reference.displayName}
+    </LinkChip>
+  );
 };

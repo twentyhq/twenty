@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { type Counter, type Histogram } from '@opentelemetry/api';
-import { type Pool } from 'pg';
+import { type Pool, type PoolClient } from 'pg';
 import { type DataSource } from 'typeorm';
 import { type PostgresDriver } from 'typeorm/driver/postgres/PostgresDriver';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 
@@ -11,7 +12,15 @@ export enum DatabasePoolName {
   Core = 'core',
   WorkspacePrimary = 'workspace_primary',
   WorkspaceReplica = 'workspace_replica',
+  WorkspaceV2Primary = 'workspace_v2_primary',
+  WorkspaceV2Replica = 'workspace_v2_replica',
 }
+
+type PoolConnectCallback = (
+  error: Error | undefined,
+  client: PoolClient | undefined,
+  release: (release?: unknown) => void,
+) => void;
 
 const ACQUISITION_DURATION_BUCKETS_SECONDS = [
   0.001, 0.0025, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10,
@@ -45,6 +54,7 @@ const POOL_GAUGES = [
 export class DatabasePoolMetricsService {
   private readonly pools = new Map<DatabasePoolName, Pool>();
   private readonly instrumentedDrivers = new WeakSet<PostgresDriver>();
+  private readonly instrumentedPools = new WeakSet<Pool>();
   private readonly acquisitionDurationHistogram: Histogram;
   private readonly acquisitionFailureCounter: Counter;
 
@@ -84,6 +94,66 @@ export class DatabasePoolMetricsService {
           })),
       });
     }
+  }
+
+  registerPool({
+    poolName,
+    pool,
+  }: {
+    poolName: DatabasePoolName;
+    pool: Pool;
+  }): void {
+    this.pools.set(poolName, pool);
+
+    if (this.instrumentedPools.has(pool)) {
+      return;
+    }
+
+    const connect = pool.connect.bind(pool) as {
+      (): Promise<PoolClient>;
+      (callback: PoolConnectCallback): void;
+    };
+
+    const recordAcquisition = (startedAt: number, error?: unknown) => {
+      if (isDefined(error)) {
+        this.acquisitionFailureCounter.add(1, { pool: poolName });
+      }
+
+      this.acquisitionDurationHistogram.record(
+        (performance.now() - startedAt) / 1000,
+        { pool: poolName },
+      );
+    };
+
+    pool.connect = ((callback?: PoolConnectCallback) => {
+      const startedAt = performance.now();
+
+      if (isDefined(callback)) {
+        return connect((error, client, release) => {
+          recordAcquisition(startedAt, error);
+          callback(error, client, release);
+        });
+      }
+
+      return connect().then(
+        (client) => {
+          recordAcquisition(startedAt);
+
+          return client;
+        },
+        (error) => {
+          recordAcquisition(startedAt, error);
+
+          throw error;
+        },
+      );
+    }) as Pool['connect'];
+
+    this.instrumentedPools.add(pool);
+  }
+
+  unregisterPool(poolName: DatabasePoolName): void {
+    this.pools.delete(poolName);
   }
 
   registerDataSource({

@@ -2,9 +2,10 @@ import { FrontComponentApplicationTokenPairEffect } from '@/front-components/com
 import { FrontComponentLoadErrorSnackBarEffect } from '@/front-components/components/FrontComponentLoadErrorSnackBarEffect';
 import { FrontComponentRendererProvider } from '@/front-components/components/FrontComponentRendererProvider';
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
+import { useFrontComponentMediaSession } from '@/front-components/media-session/hooks/useFrontComponentMediaSession';
 import { useOnApplicationSdkClientChecksumsUpdated } from '@/front-components/hooks/useOnApplicationSdkClientChecksumsUpdated';
 import { useOnFrontComponentUpdated } from '@/front-components/hooks/useOnFrontComponentUpdated';
-import { getFrontComponentUrl } from '@/front-components/utils/getFrontComponentUrl';
+import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 import { getSdkClientUrls } from '@/front-components/utils/getSdkClientUrls';
 import { useGetLogicFunctionHttpUrl } from '@/settings/logic-functions/hooks/useGetLogicFunctionHttpUrl';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -25,7 +26,9 @@ type FrontComponentRendererProps = {
   frontComponentId: string;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  timelineActivityId?: string;
   loadingFallback?: ReactNode;
+  unavailableFallback?: ReactNode;
 };
 
 type ResolvedFrontComponent = NonNullable<
@@ -36,6 +39,7 @@ type FrontComponentRendererContentProps = {
   frontComponent: ResolvedFrontComponent;
   commandMenuItemId?: string;
   selectedRecordIds?: string[];
+  timelineActivityId?: string;
   loadingFallback?: ReactNode;
 };
 
@@ -43,7 +47,9 @@ export const FrontComponentRenderer = ({
   frontComponentId,
   commandMenuItemId,
   selectedRecordIds,
+  timelineActivityId,
   loadingFallback,
+  unavailableFallback,
 }: FrontComponentRendererProps) => {
   const { data, loading, error } = useQuery(FindOneFrontComponentDocument, {
     variables: { id: frontComponentId },
@@ -59,11 +65,15 @@ export const FrontComponentRenderer = ({
     <>
       <FrontComponentLoadErrorSnackBarEffect errorMessage={error?.message} />
       {loading && loadingFallback}
-      {!loading && isDefined(frontComponent) && (
+      {!loading &&
+        (!isDefined(frontComponent) || isDefined(error)) &&
+        unavailableFallback}
+      {!loading && isDefined(frontComponent) && !isDefined(error) && (
         <FrontComponentRendererContent
           frontComponent={frontComponent}
           commandMenuItemId={commandMenuItemId}
           selectedRecordIds={selectedRecordIds}
+          timelineActivityId={timelineActivityId}
           loadingFallback={loadingFallback}
         />
       )}
@@ -75,21 +85,34 @@ const FrontComponentRendererContent = ({
   frontComponent,
   commandMenuItemId,
   selectedRecordIds,
+  timelineActivityId,
   loadingFallback,
 }: FrontComponentRendererContentProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
   const { functionsBaseUrl } = useGetLogicFunctionHttpUrl();
 
-  const { id: frontComponentId, applicationId, usesSdkClient } = frontComponent;
+  const {
+    id: frontComponentId,
+    applicationId,
+    usesSdkClient,
+    frontComponentSharedDependenciesChecksum,
+  } = frontComponent;
 
-  const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext({
-      frontComponentId,
-      commandMenuItemId,
-      selectedRecordIds,
-      colorScheme,
-    });
+  const {
+    executionContext,
+    frontComponentHostCommunicationApi,
+    storageNamespace,
+  } = useFrontComponentExecutionContext({
+    frontComponentId,
+    applicationId,
+    commandMenuItemId,
+    selectedRecordIds,
+    timelineActivityId,
+    colorScheme,
+  });
+
+  const { mediaSessionHost } = useFrontComponentMediaSession();
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -125,8 +148,15 @@ const FrontComponentRendererContent = ({
     [applicationId, sdkClientChecksums],
   );
 
-  const componentUrl = getFrontComponentUrl({
-    frontComponentId,
+  const sharedDependenciesUrl = getFingerprintedRestUrl({
+    resource: 'front-component-shared-dependencies',
+    id: applicationId,
+    checksum: frontComponentSharedDependenciesChecksum ?? undefined,
+  });
+
+  const componentUrl = getFingerprintedRestUrl({
+    resource: 'front-components',
+    id: frontComponentId,
     checksum: frontComponent.builtComponentChecksum,
   });
 
@@ -153,11 +183,14 @@ const FrontComponentRendererContent = ({
             apiUrl={REACT_APP_SERVER_BASE_URL}
             functionsBaseUrl={functionsBaseUrl}
             sdkClientUrls={sdkClientUrls}
+            sharedDependenciesUrl={sharedDependenciesUrl}
             executionContext={executionContext}
             frontComponentHostCommunicationApi={
               frontComponentHostCommunicationApi
             }
+            mediaSessionHost={mediaSessionHost}
             applicationVariables={applicationVariables}
+            storageNamespace={storageNamespace}
             onError={handleError}
             loadingFallback={loadingFallback}
           />

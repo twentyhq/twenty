@@ -62,6 +62,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
   "fieldPermission",
   "view",
   "searchFieldMetadata",
+  "pageLayout",
+  "commandMenuItem",
 ]
 `;
 
@@ -150,6 +152,8 @@ exports[`getMetadataRelatedMetadataNames should return related metadata names fo
 `;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for skill 1`] = `[]`;
+
+exports[`getMetadataRelatedMetadataNames should return related metadata names for timelineActivityType 1`] = `[]`;
 
 exports[`getMetadataRelatedMetadataNames should return related metadata names for view 1`] = `
 [

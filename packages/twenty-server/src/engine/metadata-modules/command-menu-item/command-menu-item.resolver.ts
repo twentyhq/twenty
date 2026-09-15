@@ -46,14 +46,11 @@ export class CommandMenuItemResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string> {
     return (
-      (await this.commandMenuItemService.resolveNavigationField({
+      (await this.commandMenuItemService.resolveTranslatedField({
         commandMenuItem,
         fieldName: 'label',
         objectMetadataLoader: context.loaders.objectMetadataLoader,
-        standardApplicationIdLoader:
-          context.loaders.standardApplicationIdLoader,
-        applicationTranslationCatalogLoader:
-          context.loaders.applicationTranslationCatalogLoader,
+        loaders: context.loaders,
         workspaceId: workspace.id,
         locale: context.req.locale,
       })) ?? ''
@@ -66,13 +63,11 @@ export class CommandMenuItemResolver {
     @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | undefined> {
-    return this.commandMenuItemService.resolveNavigationField({
+    return this.commandMenuItemService.resolveTranslatedField({
       commandMenuItem,
       fieldName: 'shortLabel',
       objectMetadataLoader: context.loaders.objectMetadataLoader,
-      standardApplicationIdLoader: context.loaders.standardApplicationIdLoader,
-      applicationTranslationCatalogLoader:
-        context.loaders.applicationTranslationCatalogLoader,
+      loaders: context.loaders,
       workspaceId: workspace.id,
       locale: context.req.locale,
     });
@@ -84,13 +79,11 @@ export class CommandMenuItemResolver {
     @Context() context: { loaders: IDataloaders } & I18nContext,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<string | undefined> {
-    return this.commandMenuItemService.resolveNavigationField({
+    return this.commandMenuItemService.resolveTranslatedField({
       commandMenuItem,
       fieldName: 'icon',
       objectMetadataLoader: context.loaders.objectMetadataLoader,
-      standardApplicationIdLoader: context.loaders.standardApplicationIdLoader,
-      applicationTranslationCatalogLoader:
-        context.loaders.applicationTranslationCatalogLoader,
+      loaders: context.loaders,
       workspaceId: workspace.id,
       locale: context.req.locale,
     });

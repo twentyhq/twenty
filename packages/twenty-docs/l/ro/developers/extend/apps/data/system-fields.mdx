@@ -145,23 +145,26 @@ Ca și în cazul câmpurilor de sistem scalare, id-ul rezolvat funcționează or
   versiunea 2.26 sau o versiune ulterioară.
 </Note>
 
-Serverul provizionează, de asemenea, o **vizualizare de sistem** pe fiecare obiect: vizualizarea principală de listă (`All {objectLabelPlural}`, indexată prin `ViewKey.INDEX`), cu câte o coloană pentru fiecare câmp afișabil. La fel ca în cazul câmpurilor de relație de sistem, identificatorii lor sunt derivați **fără nume**, astfel încât redenumirea unui obiect sau a unui câmp nu îi schimbă niciodată.
+Serverul provizionează, de asemenea, o **vizualizare de sistem** pentru fiecare obiect: vizualizarea principală de listă (`All {objectLabelPlural}`, indexată prin `ViewKey.INDEX` (derivată cu `SYSTEM_VIEW_KEYS.INDEX`)), cu câte o coloană pentru fiecare câmp afișabil. La fel ca în cazul câmpurilor de relație de sistem, identificatorii lor sunt derivați **fără nume**, astfel încât redenumirea unui obiect sau a unui câmp nu îi schimbă niciodată.
 
 Folosește `getSystemViewUniversalIdentifier` pentru a rezolva vizualizarea:
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier` este aplicația care deține **obiectul**, ceea ce reprezintă spațiul de nume pentru vizualizare.
 * `objectUniversalIdentifier` este obiectul pe care îl listează vizualizarea.
-* `viewKey` este cheia vizualizării de sistem, astăzi `ViewKey.INDEX`.
+* `viewKey` este discriminatorul de vizualizare de sistem: `SYSTEM_VIEW_KEYS.INDEX` pentru vizualizarea principală de listă, `SYSTEM_VIEW_KEYS.FIELDS_WIDGET` pentru vizualizarea widgetului de câmpuri de pe pagina de înregistrare. Acesta stabilește derivarea; numai `INDEX` este, de asemenea, stocat pe rândul vizualizării.
 
 ID-ul rezolvat funcționează oriunde este așteptat un `viewUniversalIdentifier`, cum ar fi o intrare în bara laterală [`NavigationMenuItemType.VIEW`](/l/ro/developers/extend/apps/layout/navigation-menu-items). Pentru a deschide pur și simplu lista principală a unui obiect, preferă `NavigationMenuItemType.OBJECT` cu `targetObjectUniversalIdentifier`: nu are nevoie de derivare.
 

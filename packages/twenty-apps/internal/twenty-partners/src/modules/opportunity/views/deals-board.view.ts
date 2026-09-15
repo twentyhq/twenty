@@ -1,6 +1,5 @@
 import {
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
-  ViewFilterOperand,
   ViewType,
   defineView,
 } from 'twenty-sdk/define';
@@ -96,14 +95,6 @@ export default defineView({
       fieldMetadataUniversalIdentifier: OPPORTUNITY_IS_LISTED_FIELD_ID,
       position: 5,
       isVisible: true,
-    },
-  ],
-  filters: [
-    {
-      universalIdentifier: 'a536f770-ecc2-4046-822d-5b414ff1a7de',
-      fieldMetadataUniversalIdentifier: PARTNER_ON_OPPORTUNITY_FIELD_ID,
-      operand: ViewFilterOperand.IS_NOT_EMPTY,
-      value: '',
     },
   ],
 });

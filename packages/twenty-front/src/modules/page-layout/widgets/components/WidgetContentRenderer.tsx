@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
+import { CallRecordingWidget } from '@/page-layout/widgets/call-recording/components/CallRecordingWidget';
 import { EmailThreadWidget } from '@/page-layout/widgets/email-thread/components/EmailThreadWidget';
 import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
 import { FieldRichTextWidgetRenderer } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidgetRenderer';
@@ -10,7 +11,6 @@ import { FrontComponentWidgetRenderer } from '@/page-layout/widgets/front-compon
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
 import { MessageCampaignBodyWidget } from '@/page-layout/widgets/message-campaign/components/MessageCampaignBodyWidget';
-import { MessageCampaignDetailsWidget } from '@/page-layout/widgets/message-campaign/components/MessageCampaignDetailsWidget';
 import { NoteWidget } from '@/page-layout/widgets/notes/components/NoteWidget';
 import { StandaloneRichTextWidgetRenderer } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidgetRenderer';
 import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
@@ -86,8 +86,11 @@ export const WidgetContentRenderer = ({
     case WidgetType.MESSAGE_CAMPAIGN_BODY:
       return <MessageCampaignBodyWidget />;
 
-    case WidgetType.MESSAGE_CAMPAIGN_DETAILS:
-      return <MessageCampaignDetailsWidget />;
+    case WidgetType.CALL_RECORDING_SUMMARY:
+      return <CallRecordingWidget kind="summary" />;
+
+    case WidgetType.CALL_RECORDING_TRANSCRIPT:
+      return <CallRecordingWidget kind="transcript" />;
 
     default:
       return null;

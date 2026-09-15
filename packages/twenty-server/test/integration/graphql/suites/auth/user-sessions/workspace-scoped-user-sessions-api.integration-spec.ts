@@ -11,7 +11,6 @@ import {
 } from 'test/integration/graphql/suites/auth/user-sessions/utils/user-session-operations.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
-import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 type UserSessionApiEntry = { id: string; isCurrent: boolean };
 
@@ -20,8 +19,6 @@ type UserSessionApiEntry = { id: string; isCurrent: boolean };
 // workspace must not surface, or be able to revoke, the sessions this person
 // holds in another workspace.
 describe('workspace-scoped user sessions API (integration)', () => {
-  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
-
   let appleCookieHeader: string;
   let ycCookieHeader: string;
 

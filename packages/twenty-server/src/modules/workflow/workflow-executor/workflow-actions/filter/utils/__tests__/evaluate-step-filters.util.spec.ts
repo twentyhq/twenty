@@ -14,6 +14,8 @@ describe('evaluateStepFilters', () => {
         after: {
           createdBy: { source: 'EMAIL' },
           name: 'Acme',
+          companyId: null,
+          jobTitle: '',
         },
       },
     },
@@ -136,6 +138,80 @@ describe('evaluateStepFilters', () => {
       evaluateStepFilters({
         stepFilterGroups: [],
         stepFilters: [nameContains, sourceIsCalendar],
+        context,
+      }),
+    ).toBe(false);
+  });
+  const companyFilter = (
+    operand: ViewFilterOperand,
+    stepOutputKey: string,
+  ): StepFilter => ({
+    id: 'filter-company',
+    type: 'TEXT',
+    operand,
+    value: '{{trigger.properties.after.companyId}}',
+    stepOutputKey,
+    stepFilterGroupId: group.id,
+  });
+
+  it('matches an empty field when the filter variable resolves to null', () => {
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [
+          companyFilter(
+            ViewFilterOperand.IS,
+            '{{trigger.properties.after.jobTitle}}',
+          ),
+        ],
+        context,
+      }),
+    ).toBe(true);
+  });
+
+  it('does not match a field that has a value when the filter variable resolves to null', () => {
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [
+          companyFilter(
+            ViewFilterOperand.IS,
+            '{{trigger.properties.after.name}}',
+          ),
+        ],
+        context,
+      }),
+    ).toBe(false);
+  });
+
+  it('inverts that for IS_NOT when the filter variable resolves to null', () => {
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [
+          companyFilter(
+            ViewFilterOperand.IS_NOT,
+            '{{trigger.properties.after.name}}',
+          ),
+        ],
+        context,
+      }),
+    ).toBe(true);
+  });
+
+  it('leaves a filter the user never filled in alone, so an empty field is not treated as a match', () => {
+    expect(
+      evaluateStepFilters({
+        stepFilterGroups: [group],
+        stepFilters: [
+          {
+            ...companyFilter(
+              ViewFilterOperand.IS,
+              '{{trigger.properties.after.companyId}}',
+            ),
+            value: '',
+          },
+        ],
         context,
       }),
     ).toBe(false);

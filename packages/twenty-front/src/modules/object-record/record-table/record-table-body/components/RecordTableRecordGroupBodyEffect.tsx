@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
 import { lastShowPageRecordIdState } from '@/object-record/record-field/ui/states/lastShowPageRecordId';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCurrentRecordGroupId } from '@/object-record/record-group/hooks/useCurrentRecordGroupId';
 import { useRecordIndexTableQuery } from '@/object-record/record-index/hooks/useRecordIndexTableQuery';
 import { recordIndexHasFetchedAllRecordsByGroupComponentState } from '@/object-record/record-index/states/recordIndexHasFetchedAllRecordsByGroupComponentState';
@@ -38,7 +38,9 @@ export const RecordTableRecordGroupBodyEffect = () => {
       recordGroupId,
     );
 
-  const lastShowPageRecordId = useAtomStateValue(lastShowPageRecordIdState);
+  const lastShowPageRecordId = useAtomComponentStateValue(
+    lastShowPageRecordIdState,
+  );
 
   const { scrollToPosition } = useScrollToPosition();
 

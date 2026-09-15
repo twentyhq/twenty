@@ -109,7 +109,7 @@ curl http://localhost:3000
 
 ### Twenty'yi Dış Erişime Açma
 
-Varsayılan olarak, Twenty `localhost` üzerinde `3000` portunda çalışır. Harici bir alan adı veya IP adresi aracılığıyla erişim sağlamak için `.env` dosyanızda `SERVER_URL`'i yapılandırmanız gerekir.
+Varsayılan olarak, Twenty `localhost` üzerinde `3000` portunda çalışır. UI, API'ye tarayıcının kendi origin'inden erişir; bu nedenle konteynere ulaşan herhangi bir ana bilgisayar adından yüklenir — ancak yine de `SERVER_URL` değerini herkese açık URL'nize ayarlayın: sunucu bunu oluşturulan bağlantılar (e-postalar, OAuth geri çağrıları) ve güvenli çerezler için HTTPS'i saptamak amacıyla kullanır.
 
 #### `SERVER_URL`'a Genel Bakış
 
@@ -229,7 +229,7 @@ crontab'ınıza ekleyin (`crontab -e`):
 1. Uygulamayı durdurun:
 
 ```bash
-docker compose stop twenty-server twenty-front
+docker compose stop server worker
 ```
 
 2. Veritabanını geri yükleyin:

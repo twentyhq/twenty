@@ -6,8 +6,15 @@ import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
   ConnectedAccountProvider,
   type EmailAttachment,
+  EmailOperation,
 } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
+import {
+  canConnectedAccountPerformEmailOperation,
+  getEmailProvidersForOperation,
+  isDefined,
+  isNonEmptyArray,
+  isValidUuid,
+} from 'twenty-shared/utils';
 import { In, IsNull, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
 
@@ -26,7 +33,7 @@ import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/em
 import { selectConnectedAccountIdForCaller } from 'src/engine/core-modules/tool/tools/email-tool/utils/select-connected-account-id-for-caller.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -45,7 +52,7 @@ export class EmailComposerService {
   private readonly logger = new Logger(EmailComposerService.name);
 
   constructor(
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectWorkspaceScopedRepository(FileEntity)
@@ -56,9 +63,11 @@ export class EmailComposerService {
   private async getConnectedAccountOrThrow({
     connectedAccountId,
     workspaceId,
+    operation,
   }: {
     connectedAccountId: string;
     workspaceId: string;
+    operation: EmailOperation;
   }): Promise<ConnectedAccountEntity> {
     if (!isValidUuid(connectedAccountId)) {
       throw new EmailToolException(
@@ -69,73 +78,92 @@ export class EmailComposerService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const connectedAccount = await this.connectedAccountRepository.findOne({
-          where: { id: connectedAccountId, workspaceId },
-          relations: {
-            messageChannels: {
-              messageFolders: true,
-            },
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const connectedAccount = await this.connectedAccountRepository.findOne({
+        where: { id: connectedAccountId, workspaceId, archivedAt: IsNull() },
+        relations: {
+          messageChannels: {
+            messageFolders: true,
           },
-        });
+        },
+      });
 
-        if (!isDefined(connectedAccount)) {
-          throw new EmailToolException(
-            `No connected account found for id '${connectedAccountId}'`,
-            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-          );
-        }
+      if (!isDefined(connectedAccount)) {
+        throw new EmailToolException(
+          `No connected account found for id '${connectedAccountId}'`,
+          EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
+        );
+      }
 
-        return connectedAccount;
-      },
-      authContext,
-    );
+      if (
+        !canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation,
+        })
+      ) {
+        throw new EmailToolException(
+          `Connected account '${connectedAccount.handle}' (${connectedAccount.provider}) cannot ${operation.toLowerCase()} email`,
+          EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_EMAIL_CAPABLE,
+        );
+      }
+
+      return connectedAccount;
+    }, authContext);
   }
 
   private async getDefaultConnectedAccountIdOrThrow({
     workspaceId,
     userWorkspaceId,
+    operation,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
+    operation: EmailOperation;
   }): Promise<string> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const allAccounts = await this.connectedAccountRepository.find({
-          where: { workspaceId, archivedAt: IsNull() },
-          order: { createdAt: 'ASC', id: 'ASC' },
-        });
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const mailboxes = await this.connectedAccountRepository.find({
+        where: {
+          workspaceId,
+          archivedAt: IsNull(),
+          provider: In(getEmailProvidersForOperation(operation)),
+        },
+        order: { createdAt: 'ASC', id: 'ASC' },
+      });
 
-        if (!isNonEmptyArray(allAccounts)) {
-          throw new EmailToolException(
-            'No connected accounts found for this workspace',
-            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-          );
-        }
+      const usableMailboxes = mailboxes.filter((connectedAccount) =>
+        canConnectedAccountPerformEmailOperation({
+          connectedAccount,
+          operation,
+        }),
+      );
 
-        if (!isDefined(userWorkspaceId)) {
-          return allAccounts[0].id;
-        }
+      if (!isNonEmptyArray(usableMailboxes)) {
+        throw new EmailToolException(
+          `No connected account in this workspace can ${operation.toLowerCase()} email`,
+          EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
+        );
+      }
 
-        const connectedAccountId = selectConnectedAccountIdForCaller({
-          connectedAccounts: allAccounts,
-          userWorkspaceId,
-        });
+      if (!isDefined(userWorkspaceId)) {
+        return usableMailboxes[0].id;
+      }
 
-        if (!isDefined(connectedAccountId)) {
-          throw new EmailToolException(
-            `No connected account available for user workspace '${userWorkspaceId}'`,
-            EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-          );
-        }
+      const connectedAccountId = selectConnectedAccountIdForCaller({
+        connectedAccounts: usableMailboxes,
+        userWorkspaceId,
+      });
 
-        return connectedAccountId;
-      },
-      authContext,
-    );
+      if (!isDefined(connectedAccountId)) {
+        throw new EmailToolException(
+          `No connected account available for user workspace '${userWorkspaceId}' that can ${operation.toLowerCase()} email`,
+          EmailToolExceptionCode.NO_EMAIL_CAPABLE_CONNECTED_ACCOUNT,
+        );
+      }
+
+      return connectedAccountId;
+    }, authContext);
   }
 
   private normalizeRecipients(parameters: ComposeEmailParams): {
@@ -279,66 +307,66 @@ export class EmailComposerService {
   ): Promise<ParentThreadContext> {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const messageRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageWorkspaceEntity>(
-            workspaceId,
-            'message',
-          );
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const messageRepository =
+        this.workspaceOrmManager.getRepository<MessageWorkspaceEntity>(
+          'message',
+        );
 
-        const parentMessage = await messageRepository.findOne({
-          where: { headerMessageId: inReplyTo },
-        });
+      const parentMessage = await messageRepository.findOne({
+        where: { headerMessageId: inReplyTo },
+      });
 
-        if (
-          !isDefined(parentMessage) ||
-          !isDefined(parentMessage.messageThreadId) ||
-          !isDefined(parentMessage.receivedAt)
-        ) {
-          return {};
-        }
+      if (
+        !isDefined(parentMessage) ||
+        !isDefined(parentMessage.messageThreadId) ||
+        !isDefined(parentMessage.receivedAt)
+      ) {
+        return {};
+      }
 
-        const associationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
-            workspaceId,
-            'messageChannelMessageAssociation',
-          );
+      const associationRepository =
+        this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          'messageChannelMessageAssociation',
+        );
 
-        const [association, ancestorMessages] = await Promise.all([
-          associationRepository.findOne({
-            where: { messageId: parentMessage.id, messageChannelId },
-            select: { messageThreadExternalId: true },
-          }),
-          messageRepository.find({
-            where: {
-              messageThreadId: parentMessage.messageThreadId,
-              receivedAt: LessThanOrEqual(parentMessage.receivedAt),
-            },
-            select: { headerMessageId: true },
-            order: { receivedAt: 'ASC' },
-          }),
-        ]);
+      const [association, ancestorMessages] = await Promise.all([
+        associationRepository.findOne({
+          where: { messageId: parentMessage.id, messageChannelId },
+          select: { messageThreadExternalId: true },
+        }),
+        messageRepository.find({
+          where: {
+            messageThreadId: parentMessage.messageThreadId,
+            receivedAt: LessThanOrEqual(parentMessage.receivedAt),
+          },
+          select: { headerMessageId: true },
+          order: { receivedAt: 'ASC' },
+        }),
+      ]);
 
-        const references = ancestorMessages
-          .map((message) => message.headerMessageId)
-          .filter(isNonEmptyString);
+      const references = ancestorMessages
+        .map((message) => message.headerMessageId)
+        .filter(isNonEmptyString);
 
-        return {
-          threadExternalId: association?.messageThreadExternalId ?? undefined,
-          references: references.length > 0 ? references : undefined,
-        };
-      },
-      authContext,
-    );
+      return {
+        threadExternalId: association?.messageThreadExternalId ?? undefined,
+        references: references.length > 0 ? references : undefined,
+      };
+    }, authContext);
   }
 
-  async composeEmail(
-    parameters: ComposeEmailParams,
-    context: ToolExecutionContext,
-  ): Promise<EmailComposerResult> {
+  async composeEmail({
+    parameters,
+    context,
+    operation,
+  }: {
+    parameters: ComposeEmailParams;
+    context: ToolExecutionContext;
+    operation: EmailOperation;
+  }): Promise<EmailComposerResult> {
     const { workspaceId, userWorkspaceId } = context;
-    const { subject, body, files, inReplyTo } = parameters;
+    const { subject, body, files, inReplyTo, fromHandle } = parameters;
     let { connectedAccountId } = parameters;
 
     let recipients: { to: string[]; cc: string[]; bcc: string[] };
@@ -379,12 +407,14 @@ export class EmailComposerService {
       connectedAccountId = await this.getDefaultConnectedAccountIdOrThrow({
         workspaceId,
         userWorkspaceId,
+        operation,
       });
     }
 
     const connectedAccount = await this.getConnectedAccountOrThrow({
       connectedAccountId,
       workspaceId,
+      operation,
     });
 
     const messageChannel =
@@ -397,16 +427,6 @@ export class EmailComposerService {
     const isSmtpOnlyAccount =
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&
       !isDefined(connectedAccount.connectionParameters?.IMAP);
-
-    if (
-      isSmtpOnlyAccount &&
-      !isDefined(connectedAccount.connectionParameters?.SMTP)
-    ) {
-      throw new EmailToolException(
-        `SMTP is not configured for connected account '${connectedAccountId}'`,
-        EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
-      );
-    }
 
     if (!isSmtpOnlyAccount && !isDefined(messageChannel)) {
       throw new EmailToolException(
@@ -440,6 +460,7 @@ export class EmailComposerService {
         sanitizedHtmlBody,
         attachments,
         connectedAccount,
+        fromHandle,
         messageChannelId: messageChannel?.id,
         shouldPersistMessage: isDefined(messageChannel),
         inReplyTo,

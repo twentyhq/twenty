@@ -19,11 +19,11 @@ import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/use
 import {
   IconArrowLeft,
   IconArrowRight,
+  IconArrowsSort,
   IconEyeOff,
   IconFilter,
-  IconSortDescending,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 export type RecordTableColumnHeadDropdownMenuProps = {
   recordField: RecordField;
@@ -143,7 +143,7 @@ export const RecordTableColumnHeadDropdownMenu = ({
           )}
           {isSortable && (
             <MenuItem
-              LeftIcon={IconSortDescending}
+              LeftIcon={IconArrowsSort}
               onClick={handleSortClick}
               text={t`Sort`}
             />

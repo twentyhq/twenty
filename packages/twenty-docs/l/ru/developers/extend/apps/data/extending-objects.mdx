@@ -43,6 +43,8 @@ export default defineField({
 
 * Расположение файла зависит от вас. Принятое соглашение — `src/fields/\<name>.field.ts`, но SDK обнаруживает поля в любом месте внутри `src/`.
 
+* `writability` также может задаваться для каждого поля: `MetadataWritability.APPLICATION` ограничивает запись логическими функциями только вашего приложения, `MetadataWritability.SYSTEM` зарезервирован для данных, управляемых платформой. Изменяемость поля может быть только более строгой, чем уровень его объекта, и чтение при этом не затрагивается. Смотрите раздел [Objects](/l/ru/developers/extend/apps/data/objects) для полного описания семантики.
+
 * Чтобы добавить вкладку в стандартную компоновку страницы (например, на страницу сведений о задаче или компании), используйте [`definePageLayoutTab`](/l/ru/developers/extend/apps/layout/page-layouts#definepagelayouttab) с `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` из `twenty-sdk/define`.
 
 ## Добавление связи к существующему объекту

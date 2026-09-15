@@ -2,8 +2,13 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
+  DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
   DEFAULT_FUNCTIONS_URL_NAME,
 } from 'twenty-shared/application';
+
+import { type TwentyClientRunAs } from '../shared/twenty-client-run-as.type';
+
+export type { TwentyClientRunAs };
 
 const isDefined = <T>(value: T): value is NonNullable<T> =>
   value !== null && value !== undefined;
@@ -13,6 +18,7 @@ export type RestApiClientOptions = {
   token?: string;
   fetch?: typeof globalThis.fetch;
   defaultHeaders?: HeadersInit;
+  runAs?: TwentyClientRunAs;
 };
 
 export type RestApiRequestOptions = {
@@ -97,6 +103,7 @@ export class RestApiClient {
   private defaultHeaders: HeadersInit | undefined;
   private fetchImplementation: typeof globalThis.fetch | null;
   private authorizationToken: string | null;
+  private runAs: TwentyClientRunAs | undefined;
   private refreshAccessTokenPromise: Promise<string | null> | null = null;
 
   constructor(options?: RestApiClientOptions) {
@@ -105,6 +112,7 @@ export class RestApiClient {
     this.defaultHeaders = options?.defaultHeaders;
     this.fetchImplementation = options?.fetch ?? globalThis.fetch ?? null;
     this.authorizationToken = options?.token ?? null;
+    this.runAs = options?.runAs;
   }
 
   request<TResponse = unknown>(
@@ -195,12 +203,17 @@ export class RestApiClient {
   }
 
   private resolveToken(): string {
+    const tokenEnvironmentKey =
+      this.runAs === 'application'
+        ? DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME
+        : DEFAULT_APP_ACCESS_TOKEN_NAME;
+
     if (!isDefined(this.authorizationToken)) {
       const processEnvironment = getProcessEnvironment();
 
       this.authorizationToken =
         this.token ??
-        processEnvironment[DEFAULT_APP_ACCESS_TOKEN_NAME] ??
+        processEnvironment[tokenEnvironmentKey] ??
         processEnvironment[DEFAULT_API_KEY_NAME] ??
         null;
     }
@@ -210,7 +223,7 @@ export class RestApiClient {
       this.authorizationToken.length === 0
     ) {
       throw new RestApiClientError(
-        `Missing application access token. Set the \`${DEFAULT_APP_ACCESS_TOKEN_NAME}\` environment variable or pass \`token\` to \`RestApiClient\`.`,
+        `Missing application access token. Set the \`${tokenEnvironmentKey}\` environment variable or pass \`token\` to \`RestApiClient\`.`,
       );
     }
 

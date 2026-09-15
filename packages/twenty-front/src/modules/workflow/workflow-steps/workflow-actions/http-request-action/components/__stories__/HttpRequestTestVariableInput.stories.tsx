@@ -76,7 +76,6 @@ export const WithVariables: Story = {
     expect(await canvas.findByText('user.name')).toBeVisible();
     expect(await canvas.findByText('contact.email')).toBeVisible();
 
-    // Should have 4 input fields
     const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(4);
   },
@@ -92,11 +91,9 @@ export const WithManyVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Should have 11 input fields
     const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(11);
 
-    // Check some of the variable labels
     expect(await canvas.findByText('api.host')).toBeVisible();
     expect(await canvas.findByText('user.name')).toBeVisible();
     expect(await canvas.findByText('current.timestamp')).toBeVisible();
@@ -130,7 +127,6 @@ export const ReadonlyMode: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // In readonly mode, variables should still be displayed
     expect(await canvas.findByText('user.id')).toBeVisible();
     expect(await canvas.findByText('auth.token')).toBeVisible();
   },
@@ -175,7 +171,6 @@ export const SingleVariable: Story = {
 
     expect(await canvas.findByText('user.id')).toBeVisible();
 
-    // Should have only 1 input field
     const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(1);
   },
@@ -215,11 +210,9 @@ export const ComplexNestedVariables: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    // Should have 10 input fields for all the nested variables
     const inputs = canvas.getAllByRole('textbox');
     expect(inputs).toHaveLength(10);
 
-    // Check some complex variable paths
     expect(await canvas.findByText('user.profile.firstName')).toBeVisible();
     expect(await canvas.findByText('user.preferences.theme')).toBeVisible();
     expect(await canvas.findByText('current.timestamp')).toBeVisible();

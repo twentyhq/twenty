@@ -11,7 +11,7 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
+import { LightButton } from 'twenty-ui/primitives/input';
 
 type AddRecordGroupButtonProps = {
   fieldMetadataItem: FieldMetadataItem;

@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { type Manifest } from 'twenty-shared/application';
+
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
@@ -14,6 +16,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
 describe('ApplicationRegistrationService - upsertFromCatalog', () => {
   let service: ApplicationRegistrationService;
@@ -21,7 +24,6 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     findOne: jest.Mock;
     save: jest.Mock;
     create: jest.Mock;
-    createQueryBuilder: jest.Mock;
   };
 
   const catalogParams = {
@@ -30,7 +32,11 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     sourceType: ApplicationRegistrationSourceType.NPM,
     sourcePackage: 'twenty-app-my-app',
     latestAvailableVersion: '0.2.0',
-    manifest: null,
+    manifest: {
+      application: {
+        universalIdentifier: '97141c95-2870-5662-8992-44fb6536be9a',
+      },
+    } as unknown as Manifest,
   };
 
   const buildExistingRegistration = (
@@ -49,13 +55,6 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
       findOne: jest.fn(),
       save: jest.fn(),
       create: jest.fn((entity) => entity),
-      createQueryBuilder: jest.fn(() => ({
-        update: jest.fn().mockReturnThis(),
-        set: jest.fn().mockReturnThis(),
-        where: jest.fn().mockReturnThis(),
-        andWhere: jest.fn().mockReturnThis(),
-        execute: jest.fn().mockResolvedValue({ affected: 0 }),
-      })),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -101,6 +100,10 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
           provide: getQueueToken(MessageQueue.workspaceQueue),
           useValue: { add: jest.fn() },
         },
+        {
+          provide: WorkspaceEventBroadcaster,
+          useValue: { broadcast: jest.fn() },
+        },
       ],
     }).compile();
 
@@ -113,52 +116,125 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     jest.clearAllMocks();
   });
 
-  it('should re-list a registration first created by a local install when the catalog serves it', async () => {
-    applicationRegistrationRepository.findOne.mockResolvedValue(
-      buildExistingRegistration({
-        sourceType: ApplicationRegistrationSourceType.TARBALL,
+  it.each([
+    ApplicationRegistrationSourceType.LOCAL,
+    ApplicationRegistrationSourceType.TARBALL,
+    ApplicationRegistrationSourceType.OAUTH_ONLY,
+  ])(
+    'should not attach the catalog to a registration created from source %s',
+    async (sourceType) => {
+      const existingRegistration = buildExistingRegistration({
+        sourceType,
         isListed: false,
-      }),
+      });
+
+      applicationRegistrationRepository.findOne.mockResolvedValue(
+        existingRegistration,
+      );
+
+      const updateFromManifestSpy = jest
+        .spyOn(service, 'updateFromManifest')
+        .mockResolvedValue({
+          registration: existingRegistration,
+          isNewerVersion: false,
+        });
+
+      await service.upsertFromCatalog(catalogParams);
+
+      expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
+      expect(updateFromManifestSpy).not.toHaveBeenCalled();
+    },
+  );
+
+  it('should leave the operator listing and vetting choices untouched on update', async () => {
+    const existingRegistration = buildExistingRegistration({
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      isListed: false,
+    });
+
+    applicationRegistrationRepository.findOne.mockResolvedValue(
+      existingRegistration,
     );
+    const updateFromManifestSpy = jest
+      .spyOn(service, 'updateFromManifest')
+      .mockResolvedValue({
+        registration: existingRegistration,
+        isNewerVersion: false,
+      });
 
-    await service.upsertFromCatalog(catalogParams);
+    const result = await service.upsertFromCatalog(catalogParams);
 
-    expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
+    expect(result).toBe(existingRegistration);
+    expect(updateFromManifestSpy).toHaveBeenCalledWith(
       expect.objectContaining({
-        isListed: true,
-        sourceType: ApplicationRegistrationSourceType.NPM,
+        preventVersionDowngrade: true,
+        additionalFields: {
+          name: catalogParams.name,
+          sourcePackage: catalogParams.sourcePackage,
+        },
       }),
     );
   });
 
-  it('should preserve an operator delisting of a registry-sourced registration', async () => {
+  it.each([true, false])(
+    'should enqueue auto-upgrades only when the manifest update reports a newer version (%s)',
+    async (isNewerVersion) => {
+      const existingRegistration = buildExistingRegistration({
+        sourceType: ApplicationRegistrationSourceType.NPM,
+      });
+
+      applicationRegistrationRepository.findOne.mockResolvedValue(
+        existingRegistration,
+      );
+      jest.spyOn(service, 'updateFromManifest').mockResolvedValue({
+        registration: existingRegistration,
+        isNewerVersion,
+      });
+      const enqueueAutoUpgradeApplicationsSpy = jest
+        .spyOn(service, 'enqueueAutoUpgradeApplications')
+        .mockResolvedValue();
+
+      await service.upsertFromCatalog(catalogParams);
+
+      expect(enqueueAutoUpgradeApplicationsSpy).toHaveBeenCalledTimes(
+        isNewerVersion ? 1 : 0,
+      );
+    },
+  );
+
+  it('should skip the catalog entry when the manifest update refuses a downgrade', async () => {
     applicationRegistrationRepository.findOne.mockResolvedValue(
       buildExistingRegistration({
         sourceType: ApplicationRegistrationSourceType.NPM,
-        isListed: false,
+        latestAvailableVersion: '1.0.0',
       }),
     );
+    jest.spyOn(service, 'updateFromManifest').mockResolvedValue(null);
 
-    await service.upsertFromCatalog(catalogParams);
+    const result = await service.upsertFromCatalog({
+      ...catalogParams,
+      latestAvailableVersion: '0.9.0',
+    });
 
-    expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining({ isListed: false }),
-    );
+    expect(result).toBeNull();
   });
 
-  it('should keep an already listed registration listed', async () => {
+  it('should not erase a known version when the catalog entry has none', async () => {
     applicationRegistrationRepository.findOne.mockResolvedValue(
       buildExistingRegistration({
         sourceType: ApplicationRegistrationSourceType.NPM,
-        isListed: true,
+        latestAvailableVersion: '1.0.0',
       }),
     );
+    const updateFromManifestSpy = jest.spyOn(service, 'updateFromManifest');
 
-    await service.upsertFromCatalog(catalogParams);
+    const result = await service.upsertFromCatalog({
+      ...catalogParams,
+      latestAvailableVersion: null,
+    });
 
-    expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
-      expect.objectContaining({ isListed: true }),
-    );
+    expect(result).toBeNull();
+    expect(updateFromManifestSpy).not.toHaveBeenCalled();
   });
 
   it('should create new catalog registrations as listed', async () => {

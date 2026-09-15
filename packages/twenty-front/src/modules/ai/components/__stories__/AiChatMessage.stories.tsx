@@ -3,12 +3,13 @@ import {
   type Meta,
   type StoryObj,
 } from '@storybook/react-vite';
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { userEvent, within } from 'storybook/test';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatMessage } from '@/ai/components/AiChatMessage';
+import { MarkdownLoadingSkeleton } from '@/ai/components/LazyMarkdownRenderer';
 
 import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
@@ -31,7 +32,6 @@ const StyledConversationContainer = styled.div`
 
 const INSTANCE_ID = 'agentChatStoryInstance';
 
-// Mock messages for the conversation showcase
 const mockUserMessage: ExtendedUIMessage = {
   id: 'msg-user-1',
   role: 'user',
@@ -289,7 +289,9 @@ const AgentChatInstanceDecorator: Decorator = (Story) => (
     value={{ instanceId: INSTANCE_ID }}
   >
     <AgentChatMessagesSetterEffect messages={allMockMessages} />
-    <Story />
+    <Suspense fallback={<MarkdownLoadingSkeleton />}>
+      <Story />
+    </Suspense>
   </AgentChatComponentInstanceContext.Provider>
 );
 
@@ -310,7 +312,6 @@ const meta: Meta<typeof AiChatMessage> = {
 export default meta;
 type Story = StoryObj<typeof AiChatMessage>;
 
-// Conversation showcase - demonstrates a full AI chat flow
 export const ConversationWithCodeExecution: Story = {
   render: () => (
     <StyledConversationContainer>

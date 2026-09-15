@@ -1,13 +1,13 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type IndexManifest } from 'twenty-shared/application';
 import {
-  compositeTypeDefinitions,
   type FieldMetadataType,
+  IndexType,
+  compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { validateIndexTypeAgainstFieldsOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -43,7 +43,8 @@ export const fromIndexManifestToUniversalFlatIndex = ({
     );
   }
 
-  const resolvedIndexType = (indexManifest.indexType ?? 'BTREE') as IndexType;
+  const resolvedIndexType = (indexManifest.indexType ??
+    IndexType.BTREE) as IndexType;
   const resolvedFieldsForValidation: Array<{
     type: FieldMetadataType;
     name: string;

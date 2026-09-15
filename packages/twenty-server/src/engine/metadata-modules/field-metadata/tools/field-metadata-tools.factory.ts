@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ToolSet } from 'ai';
-import { FIELD_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
+import {
+  DEFAULT_SELECT_OPTION_COLOR,
+  FIELD_TYPE_DEFAULT_ICONS,
+  TAG_COLORS,
+} from 'twenty-shared/constants';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { z } from 'zod';
 
@@ -28,6 +32,29 @@ const FIELD_STRIP_WHEN_FALSE = ['isLabelSyncedWithName'];
 
 // isUIEditable defaults to true, so only the non-default false value is informative
 const FIELD_STRIP_WHEN_TRUE = ['isUIEditable'];
+
+const RELATION_TYPE_DESCRIPTION =
+  'Relation direction from the perspective of the object the field is created on. ' +
+  "MANY_TO_ONE: the field points to a single target record; this object owns the foreign key and gets a writable '<fieldName>Id' on its create/update inputs. Use it for 'belongs to one' fields. " +
+  "ONE_TO_MANY: the field is a read-only collection of target records; records are linked by writing the inverse '<fieldName>Id' on the target object.";
+
+const SELECT_OPTIONS_DESCRIPTION = `SELECT/MULTI_SELECT options: [{ label, value, position, color }]. color is one of ${TAG_COLORS.join(', ')}; defaults to ${DEFAULT_SELECT_OPTION_COLOR} when omitted.`;
+
+const RelationCreationPayloadSchema = z.object({
+  type: z.nativeEnum(RelationType).describe(RELATION_TYPE_DESCRIPTION),
+  targetObjectMetadataId: z.string().uuid().describe('Target object ID'),
+  targetFieldLabel: z
+    .string()
+    .describe(
+      'Display label of the inverse relation field created on the target object',
+    ),
+  targetFieldIcon: z
+    .string()
+    .optional()
+    .describe(
+      'Tabler icon name for the inverse field (e.g. IconBuildingSkyscraper). Falls back to the relation default.',
+    ),
+});
 
 const GetFieldMetadataInputSchema = z.object({
   id: z.uuid().optional().describe('Field ID. Returns one field if set.'),
@@ -68,17 +95,16 @@ const CreateFieldMetadataInputSchema = z.object({
   isNullable: z.boolean().optional().describe('Nullable'),
   isUnique: z.boolean().optional().describe('Unique constraint'),
   defaultValue: z.unknown().optional().describe('Default value'),
-  options: z.unknown().optional().describe('SELECT/MULTI_SELECT options'),
+  options: z.unknown().optional().describe(SELECT_OPTIONS_DESCRIPTION),
   settings: z.unknown().optional().describe('Field settings'),
   isLabelSyncedWithName: z
     .boolean()
     .optional()
     .describe('Sync label with name'),
   isRemoteCreation: z.boolean().optional().describe('Remote field creation'),
-  relationCreationPayload: z
-    .unknown()
-    .optional()
-    .describe('Relation creation payload'),
+  relationCreationPayload: RelationCreationPayloadSchema.optional().describe(
+    'Required when type is RELATION. Defines the relation direction and the inverse field created on the target object.',
+  ),
 });
 
 const UpdateFieldMetadataInputSchema = z.object({
@@ -94,7 +120,7 @@ const UpdateFieldMetadataInputSchema = z.object({
   isNullable: z.boolean().optional().describe('Nullable'),
   isUnique: z.boolean().optional().describe('Unique constraint'),
   defaultValue: z.unknown().optional().describe('Default value'),
-  options: z.unknown().optional().describe('SELECT/MULTI_SELECT options'),
+  options: z.unknown().optional().describe(SELECT_OPTIONS_DESCRIPTION),
   settings: z.unknown().optional().describe('Field settings'),
   isLabelSyncedWithName: z
     .boolean()
@@ -134,7 +160,7 @@ const CreateManyRelationFieldsInputSchema = z.object({
           .string()
           .optional()
           .describe('Tabler icon name for the relation field (e.g. IconUsers)'),
-        type: z.nativeEnum(RelationType).describe('MANY_TO_ONE or ONE_TO_MANY'),
+        type: z.nativeEnum(RelationType).describe(RELATION_TYPE_DESCRIPTION),
         targetObjectMetadataId: z.string().uuid().describe('Target object ID'),
         targetFieldLabel: z.string().describe('Inverse field label'),
         targetFieldIcon: z
@@ -227,18 +253,13 @@ export class FieldMetadataToolsFactory {
                 )
               : undefined);
 
-          const rawResults = await this.fieldMetadataService.query({
-            filter: {
-              workspaceId: { eq: workspaceId },
-              ...(parameters.id ? { id: { eq: parameters.id } } : {}),
-              ...(isDefined(objectMetadataId)
-                ? {
-                    objectMetadataId: { eq: objectMetadataId },
-                  }
-                : {}),
-            },
-            paging: { limit: parameters.limit ?? 100 },
-          });
+          const rawResults =
+            await this.fieldMetadataService.findManyWithinWorkspace({
+              workspaceId,
+              fieldMetadataId: parameters.id,
+              objectMetadataId,
+              limit: parameters.limit ?? 100,
+            });
 
           const compactedFields = (
             rawResults as unknown as Record<string, unknown>[]

@@ -4,7 +4,7 @@ import {
   getRecordTableColumnWidthInlineStyles,
   RecordTableStyleWrapper,
 } from '@/object-record/record-table/components/RecordTableStyleWrapper';
-import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
+import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { RecordTableWidthEffect } from '@/object-record/record-table/components/RecordTableWidthEffect';
 import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
@@ -77,8 +77,6 @@ export const RecordTableContent = ({
     [isRowSelectedFamilyState, store],
   );
 
-  const recordTableScrollWrapperId = `record-table-scroll-${recordTableId}`;
-
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const recordTableHoverPositionCallbackState =
@@ -129,9 +127,8 @@ export const RecordTableContent = ({
     isRecordTableDragColumnHiddenComponentState,
   );
 
-  const isRecordTableCheckboxColumnHidden = useAtomComponentStateValue(
-    isRecordTableCheckboxColumnHiddenComponentState,
-  );
+  const isRecordTableCheckboxColumnHidden =
+    useIsRecordTableCheckboxColumnHidden();
 
   const columnWidthStyles = useMemo(
     () =>
@@ -172,7 +169,6 @@ export const RecordTableContent = ({
         onDragSelectionStart={handleDragStart}
         onDragSelectionChange={handleDragSelectionChange}
         onDragSelectionEnd={handleDragEnd}
-        scrollWrapperComponentInstanceId={recordTableScrollWrapperId}
         selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}
       />
     </StyledTableContainer>

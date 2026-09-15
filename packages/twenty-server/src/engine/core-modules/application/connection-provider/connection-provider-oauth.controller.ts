@@ -15,6 +15,7 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
+import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -203,13 +204,16 @@ export class ConnectionProviderOAuthController {
         );
       }
 
-      const pathname =
+      const { pathname, searchParams, hash } = parseRelativeUrl(
         redirectLocation ||
-        getSettingsPath(SettingsPath.ApplicationDetail, { applicationId });
+          getSettingsPath(SettingsPath.ApplicationDetail, { applicationId }),
+      );
 
       const url = this.workspaceDomainsService.buildWorkspaceURL({
         workspace,
         pathname,
+        searchParams,
+        hash,
       });
 
       // Frontend tab list reads the URL hash to pick the active tab.

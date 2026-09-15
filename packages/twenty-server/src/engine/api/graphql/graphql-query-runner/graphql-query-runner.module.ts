@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ProcessNestedRelationsV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-v2.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { ProcessAggregateHelper } from 'src/engine/api/graphql/graphql-query-runner/helpers/process-aggregate.helper';
 import { WorkspaceQueryHookModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/workspace-query-hook.module';
@@ -26,10 +25,6 @@ import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
     ViewFilterModule,
     ViewFilterGroupModule,
   ],
-  providers: [
-    ProcessNestedRelationsHelper,
-    ProcessNestedRelationsV2Helper,
-    ProcessAggregateHelper,
-  ],
+  providers: [ProcessNestedRelationsHelper, ProcessAggregateHelper],
 })
 export class GraphqlQueryRunnerModule {}

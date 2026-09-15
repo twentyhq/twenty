@@ -1,11 +1,11 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
+import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { EventCardCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent';
-import { ComponentDecorator } from 'twenty-ui/testing';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 const meta: Meta<typeof EventCardCalendarEvent> = {
   title: 'Modules/TimelineActivities/Rows/CalendarEvent/EventCardCalendarEvent',
@@ -28,8 +28,8 @@ export const Default: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('FindOneCalendarEvent', () => {
-          return HttpResponse.json({
+        graphql.query('FindOneCalendarEvent', () =>
+          HttpResponse.json({
             data: {
               calendarEvent: {
                 id: '1',
@@ -38,8 +38,8 @@ export const Default: Story = {
                 endsAt: '2022-01-01T01:00:00Z',
               },
             },
-          });
-        }),
+          }),
+        ),
       ],
     },
   },
@@ -52,18 +52,16 @@ export const NotShared: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('FindOneCalendarEvent', () => {
-          return HttpResponse.json({
+        graphql.query('FindOneCalendarEvent', () =>
+          HttpResponse.json({
             errors: [
               {
                 message: 'Forbidden',
-                extensions: {
-                  code: 'FORBIDDEN',
-                },
+                extensions: { code: 'FORBIDDEN' },
               },
             ],
-          });
-        }),
+          }),
+        ),
       ],
     },
   },

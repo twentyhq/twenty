@@ -1,4 +1,3 @@
-import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -20,12 +19,13 @@ import {
   IconLock,
   useIcons,
 } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownDefaultView = () => {
   const { t } = useLingui();
-  const { recordIndexId, onContentChange } = useObjectOptionsDropdown();
+  const { recordIndexId, onContentChange, dropdownId } =
+    useObjectOptionsDropdown();
 
   const { currentView } = useGetCurrentViewOnly();
 
@@ -44,14 +44,14 @@ export const ObjectOptionsDropdownDefaultView = () => {
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    dropdownId,
   );
 
   const { openCreateViewDropdown } = useOpenCreateViewDropdown(recordIndexId);
   const { closeDropdown } = useCloseDropdown();
 
   const handleCreateCustomView = () => {
-    closeDropdown(OBJECT_OPTIONS_DROPDOWN_ID);
+    closeDropdown(dropdownId);
 
     openCreateViewDropdown(currentView);
   };
@@ -73,8 +73,8 @@ export const ObjectOptionsDropdownDefaultView = () => {
       </DropdownMenuItemsContainer>
       <DropdownMenuSeparator />
       <SelectableList
-        selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-        focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+        selectableListInstanceId={dropdownId}
+        focusId={dropdownId}
         selectableItemIdArray={selectableItemIdArray}
       >
         <DropdownMenuItemsContainer scrollable={false}>
@@ -87,7 +87,7 @@ export const ObjectOptionsDropdownDefaultView = () => {
               onClick={() => onContentChange('fields')}
               LeftIcon={IconListDetails}
               text={t`Fields`}
-              contextualText={t`${visibleFieldsCount} shown`}
+              contextualText={t`${visibleFieldsCount} selected`}
               contextualTextPosition="right"
               hasSubMenu
             />

@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useState } from 'react';
-import { useDebouncedCallback } from 'use-debounce';
 
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 
@@ -8,10 +8,14 @@ import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStateful
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
-import { Button, type ButtonAccent } from 'twenty-ui/input';
-import { Section, SectionAlignment, SectionFontColor } from 'twenty-ui/layout';
-import { type ModalOverlay } from 'twenty-ui/surfaces';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { Button, type ButtonAccent } from 'twenty-ui/primitives/input';
+import {
+  Section,
+  SectionAlignment,
+  SectionFontColor,
+} from 'twenty-ui/primitives/layout';
+import { type ModalOverlay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ConfirmationModalProps = {
@@ -26,6 +30,7 @@ export type ConfirmationModalProps = {
   confirmationValue?: string;
   confirmButtonAccent?: ButtonAccent;
   AdditionalButtons?: React.ReactNode;
+  hideCancelButton?: boolean;
   overlay?: ModalOverlay;
 };
 
@@ -89,6 +94,7 @@ export const ConfirmationModal = ({
   confirmationPlaceholder,
   confirmButtonAccent = 'danger',
   AdditionalButtons,
+  hideCancelButton = false,
   overlay = 'dark',
 }: ConfirmationModalProps) => {
   const { i18n, t } = useLingui();
@@ -96,29 +102,25 @@ export const ConfirmationModal = ({
     confirmButtonText ?? i18n._(defaultConfirmButtonText);
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
-  const [isValidValue, setIsValidValue] = useState(!confirmationValue);
 
-  const handleInputConfimrationValueChange = (value: string) => {
-    setInputConfirmationValue(value);
-    isValueMatchingInput(confirmationValue, value);
-  };
-
-  const isValueMatchingInput = useDebouncedCallback(
-    (value?: string, inputValue?: string) => {
-      setIsValidValue(Boolean(value && inputValue && value === inputValue));
-    },
-    250,
-  );
+  const isValidValue =
+    !isNonEmptyString(confirmationValue) ||
+    inputConfirmationValue === confirmationValue;
 
   const { closeModal } = useModal();
 
-  const handleConfirmClick = () => {
+  const handleClose = () => {
+    setInputConfirmationValue('');
     closeModal(modalInstanceId);
+  };
+
+  const handleConfirmClick = () => {
+    handleClose();
     onConfirmClick();
   };
 
   const handleCancelClick = () => {
-    closeModal(modalInstanceId);
+    handleClose();
     onClose?.();
   };
 
@@ -132,6 +134,7 @@ export const ConfirmationModal = ({
     <ModalStatefulWrapper
       modalInstanceId={modalInstanceId}
       onClose={() => {
+        setInputConfirmationValue('');
         onClose?.();
       }}
       onEnter={handleEnter}
@@ -161,7 +164,7 @@ export const ConfirmationModal = ({
             instanceId="confirmation-modal-input"
             dataTestId="confirmation-modal-input"
             value={inputConfirmationValue}
-            onChange={handleInputConfimrationValueChange}
+            onChange={setInputConfirmationValue}
             placeholder={confirmationPlaceholder}
             fullWidth
             disableHotkeys
@@ -169,14 +172,16 @@ export const ConfirmationModal = ({
           />
         </Section>
       )}
-      <StyledCenteredButton
-        onClick={handleCancelClick}
-        variant="secondary"
-        title={t`Cancel`}
-        fullWidth
-        justify="center"
-        dataTestId="confirmation-modal-cancel-button"
-      />
+      {!hideCancelButton && (
+        <StyledCenteredButton
+          onClick={handleCancelClick}
+          variant="secondary"
+          title={t`Cancel`}
+          fullWidth
+          justify="center"
+          dataTestId="confirmation-modal-cancel-button"
+        />
+      )}
 
       {AdditionalButtons}
 

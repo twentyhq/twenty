@@ -12,39 +12,47 @@ import {
 } from 'src/engine/core-modules/dpa/utils/resolve-dpa.util';
 
 describe('resolveDpa', () => {
-  it('defaults to EU and resolves the EU Processor entity, law and dormant SCC state', () => {
+  it('defaults to EU hosting without changing the Processor entity or governing law', () => {
     const resolved = resolveDpa({
       region: DEFAULT_DPA_REGION,
       mode: 'preview',
     });
 
     expect(resolved.region).toBe('EU');
-    expect(resolved.values.PROCESSOR_ENTITY).toBe('Twenty.com SAS');
-    expect(resolved.values.PROCESSOR_LEGAL_FORM).toContain('France');
+    expect(resolved.values.PROCESSOR_ENTITY).toBe('Twenty.com PBC');
+    expect(resolved.values.PROCESSOR_LEGAL_FORM).toContain('Delaware');
+    expect(resolved.values.EU_AFFILIATE_ENTITY).toBe('Twenty.com SAS');
+    expect(resolved.values.EU_AFFILIATE_LEGAL_FORM).toContain('France');
     expect(resolved.values.HOSTING_REGION).toContain('Frankfurt');
-    expect(resolved.values.GOVERNING_LAW).toBe('France');
-    expect(resolved.sccSectionActive).toBe(false);
+    expect(resolved.values.GOVERNING_LAW).toBe('the State of Delaware, USA');
+    expect(resolved.sccSectionActive).toBe(true);
     expect(resolved.templateVersion).toBe(DPA_TEMPLATE_VERSION);
   });
 
-  it('resolves the US Processor entity, hosting and active SCC state', () => {
+  it('resolves US hosting with the same Processor and EU Affiliate', () => {
     const resolved = resolveDpa({ region: DpaRegion.US, mode: 'preview' });
 
     expect(resolved.region).toBe('US');
     expect(resolved.values.PROCESSOR_ENTITY).toBe('Twenty.com PBC');
     expect(resolved.values.PROCESSOR_LEGAL_FORM).toContain('Delaware');
+    expect(resolved.values.EU_AFFILIATE_ENTITY).toBe('Twenty.com SAS');
     expect(resolved.values.HOSTING_REGION).toBe('United States');
     expect(resolved.sccSectionActive).toBe(true);
   });
 
-  it('substitutes the Processor entity into the contracting clause per region', () => {
+  it('keeps both Twenty entities and their roles independent of hosting region', () => {
     const eu = resolveDpa({ region: DpaRegion.EU, mode: 'preview' });
     const us = resolveDpa({ region: DpaRegion.US, mode: 'preview' });
 
-    // Assert on the contracting clause (block 0), not the whole doc: "Twenty.com PBC"
-    // also appears verbatim in Annex A's "for US deployments" note.
-    expect(eu.blocks[0].text).toContain('between Twenty.com SAS (');
-    expect(us.blocks[0].text).toContain('between Twenty.com PBC (');
+    for (const resolved of [eu, us]) {
+      expect(resolved.blocks[0].text).toContain('between Twenty.com PBC (');
+      expect(resolved.blocks[0].text).toContain(
+        'Twenty.com SAS (“Twenty SAS” or “EU Affiliate”) joins this DPA',
+      );
+      expect(resolved.blocks[0].text).toContain(
+        'Twenty SAS does not replace Twenty PBC as the Processor',
+      );
+    }
   });
 
   it('keeps the SCC/transfer sections (7.2–7.5) in the document for BOTH regions (document is not branched)', () => {
@@ -99,6 +107,23 @@ describe('resolveDpa', () => {
         (b) => b.kind === 'signatureField' && b.label === 'Execution Date',
       ),
     ).toBe(true);
+
+    const processorField = signed.blocks.find(
+      (b) =>
+        b.kind === 'signatureField' && b.label === 'Processor — Twenty.com PBC',
+    );
+    const euAffiliateField = signed.blocks.find(
+      (b) =>
+        b.kind === 'signatureField' &&
+        b.label === 'EU Affiliate — Twenty.com SAS',
+    );
+
+    expect(processorField?.value).toContain(
+      'Signed on behalf of Twenty.com PBC',
+    );
+    expect(euAffiliateField?.value).toContain(
+      'Signed on behalf of Twenty.com SAS',
+    );
   });
 
   it('marks self-hosted deployments as not a valid agreement', () => {
@@ -198,6 +223,18 @@ describe('resolveDpa', () => {
     expect(us).not.toContain(
       'stored in data centers located in the European Union (Frankfurt, Germany)',
     );
+  });
+
+  it('identifies PBC as Processor and data importer and SAS as EU Affiliate in Annex A', () => {
+    for (const region of [DpaRegion.EU, DpaRegion.US]) {
+      const text = resolvedText(region, 'signed');
+
+      expect(text).toContain('Data Importer (Processor): Twenty.com PBC');
+      expect(text).toContain('EU Affiliate: Twenty.com SAS');
+      expect(text).toContain(
+        'without replacing Twenty.com PBC as Processor or data importer',
+      );
+    }
   });
 
   it('includes a government / law enforcement request clause for both regions', () => {

@@ -7,12 +7,20 @@ export const getChatReferenceIdentitySegment = (
   switch (identity.kind) {
     case 'record':
       return `${identity.objectNameSingular}:${identity.recordId}`;
+    case 'records':
+      return identity.objectMetadataId;
     case 'object':
       return identity.objectNameSingular;
     case 'field':
-      return identity.fieldMetadataItemId;
+      return `${identity.objectNameSingular}:${identity.fieldName}`;
     case 'view':
       return identity.viewId;
+    case 'role':
+      return identity.roleId;
+    case 'app':
+      return identity.applicationId;
+    case 'skill':
+      return identity.skillId;
     default:
       return assertUnreachable(identity);
   }

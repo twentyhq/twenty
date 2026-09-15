@@ -283,13 +283,18 @@ const createPageLayoutWithWidget = (
   widget: PageLayoutWidget,
   objectMetadataId: string,
 ): PageLayout => ({
+  applicationId: 'application-id-mock',
   id: PAGE_LAYOUT_TEST_INSTANCE_ID,
   name: 'Mock Page Layout',
   type: PageLayoutType.RECORD_PAGE,
+  isFirstTabPinned: true,
+  isSystemSideEffect: true,
   objectMetadataId,
   universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [
     {
+      isSystemSideEffect: false,
+      universalIdentifier: 'universal-identifier-mock',
       __typename: 'PageLayoutTab' as const,
       isActive: true,
       applicationId: '',
@@ -323,6 +328,8 @@ const buildFieldWidget = ({
   fieldMetadataId,
   fieldDisplayMode,
 }: BuildFieldWidgetArgs): PageLayoutWidget => ({
+  isSystemSideEffect: false,
+  universalIdentifier: 'universal-identifier-mock',
   __typename: 'PageLayoutWidget',
   applicationId: '',
   isActive: true,
@@ -331,8 +338,9 @@ const buildFieldWidget = ({
   type: WidgetType.FIELD,
   title,
   objectMetadataId,
-  gridPosition: {
-    __typename: 'GridPosition',
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.GRID,
+    __typename: 'PageLayoutWidgetGridPosition',
     row: 0,
     column: 0,
     rowSpan: 1,
@@ -389,7 +397,6 @@ const renderFieldWidgetStory = ({
           <PageLayoutTestWrapper store={jotaiStore}>
             <LayoutRenderingProvider
               value={{
-                isInSidePanel: false,
                 layoutType: PageLayoutType.RECORD_PAGE,
                 targetRecordIdentifier: {
                   id: targetRecord.id,

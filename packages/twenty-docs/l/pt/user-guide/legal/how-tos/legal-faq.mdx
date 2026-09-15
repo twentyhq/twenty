@@ -44,7 +44,7 @@ A IA pode ser totalmente desativada desligando todos os modelos de IA em Setting
 Todos os dados são criptografados em trânsito e em repouso. Os dados dos locatários são isolados por meio de uma configuração de esquema por locatário, e as chaves de criptografia são periodicamente rotacionadas.
 </Accordion>
 <Accordion title="Que vinte funcionários ou subprocessadores podem acessar os espaços de trabalho do cliente, para que fins, e como o acesso é aprovado e registrado?">
-As equipes de engenharia e suporte da Twenty podem acessar os workspaces dos clientes somente após o cliente relatar um problema e conceder acesso em Settings → General → Security.
+As equipas de engenharia e de apoio da Twenty podem aceder aos espaços de trabalho dos clientes para investigar e resolver problemas. Os proprietários dos espaços de trabalho controlam isto: o acesso da equipa de apoio pode ser desativado a qualquer momento em Definições → Geral → Segurança e permanece desativado até que volte a ativá-lo.
 </Accordion>
 <Accordion title="Qual é o seu processo de notificação de incidente e período de notificação alvo após um incidente de segurança confirmado que afeta nossos dados?">
 No caso de uma violação de dados pessoais confirmada afetando seus dados, notificaremos você sem um atraso indevido e em qualquer evento dentro de 48 horas após tomar conhecimento dele. Nossa notificação incluirá, na medida conhecida no momento: a natureza da violação, as categorias e o volume aproximado de dados e indivíduos afectados, consequências prováveis, e as medidas de reparação e mitigação tomadas ou planeadas. Iremos apresentar atualizações à medida que a investigação for avançando.
@@ -64,7 +64,7 @@ Por padrão, os registros excluídos logicamente são mantidos por 14 dias, apó
 Um registro removido permanece nos backups por 30 dias, após os quais é excluído permanentemente.
 </Accordion>
 <Accordion title="Quando um espaço de trabalho é fechado ou a exclusão completa é solicitada, qual linha do tempo exata se aplica aos dados de produção, anexos, logs e backups?">
-Quando um workspace é excluído, seus dados são imediatamente removidos dos sistemas ativos. Os backups são retidos por 7 dias, após os quais todos os dados são excluídos permanentemente.
+Quando um espaço de trabalho é eliminado, os respetivos dados são removidos dos sistemas em produção no prazo de aproximadamente 90 dias após a cessação do serviço, e geralmente muito antes. As cópias de segurança e de arquivo são então substituídas ou eliminadas num prazo adicional de 90 dias, após o qual todos os dados são permanentemente apagados. Durante ambos os períodos, os dados ficam isolados de qualquer utilização operacional. Mediante pedido, podemos fornecer uma certificação por escrito assim que a purga estiver concluída. Consulte a cláusula 4.9 do seu Acordo de Tratamento de Dados para conhecer todos os termos.
 </Accordion>
 <Accordion title="Durante qualquer período de retenção de back-retention, são excluídos dados isolados do acesso operacional e usados?">
 Sim, durante qualquer período de retenção de back-retention, dados excluídos são isolados de uso operacional.
@@ -105,6 +105,20 @@ Sim, vinte é [compatível com o SOC 2](https://trust.twenty.com/?tab=securityCo
 </Accordion>
 <Accordion title="Vinte HIPAA é conforme?">
 Não, estão em vias de se tornar conformes com a iniciativa HIPAA.
+</Accordion>
+</AccordionGroup>
+
+## Licenciamento
+
+<AccordionGroup>
+<Accordion title="Se eu alterar o código para adicionar funcionalidades apenas para uso interno da minha equipa, tenho de publicar essas alterações?">
+Não. Executar uma versão modificada para a sua própria equipa não é distribuição, portanto não surge qualquer obrigação de publicação. A cláusula de rede da AGPL aplica-se quando pessoas fora da sua organização interagem com a sua instância modificada através da rede.
+</Accordion>
+<Accordion title="Se eu criar um front end separado e usar Twenty como backend tal como está, tenho de publicar essas alterações?">
+Não. O seu front end é um trabalho próprio e separado, e comunicar com o Twenty através das suas APIs não altera isso. Como o próprio Twenty não é modificado, não há nada a publicar.
+</Accordion>
+<Accordion title="Se eu alterar o código para adicionar funcionalidades para o revender, tenho de publicar essas alterações?">
+Sim, como está a modificar código para o distribuir a terceiros, é obrigado a publicar essas alterações. Se não quiser publicar as suas alterações, pode obter uma licença Organization.
 </Accordion>
 </AccordionGroup>
 

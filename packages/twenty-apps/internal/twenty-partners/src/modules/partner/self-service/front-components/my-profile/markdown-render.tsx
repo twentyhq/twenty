@@ -1,6 +1,6 @@
 import Markdown from 'react-markdown';
 
-import { COLORS, FONT } from './form-fields';
+import { COLORS, FONT } from 'src/modules/shared/front-components/palette';
 
 // Mirrors the public website renderer (partners-marketplace/RichText.tsx): same allow-list,
 // unwrapDisallowed, and h1/h2 demoted to h3 — so the in-app preview renders exactly what a

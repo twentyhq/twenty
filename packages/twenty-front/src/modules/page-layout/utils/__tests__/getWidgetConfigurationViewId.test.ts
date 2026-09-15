@@ -41,4 +41,14 @@ describe('getWidgetConfigurationViewId', () => {
 
     expect(getWidgetConfigurationViewId(configuration)).toBeNull();
   });
+
+  it('should return null when viewId is an empty string', () => {
+    const configuration = {
+      __typename: 'RecordTableConfiguration',
+      configurationType: 'RECORD_TABLE',
+      viewId: '',
+    } as unknown as PageLayoutWidget['configuration'];
+
+    expect(getWidgetConfigurationViewId(configuration)).toBeNull();
+  });
 });

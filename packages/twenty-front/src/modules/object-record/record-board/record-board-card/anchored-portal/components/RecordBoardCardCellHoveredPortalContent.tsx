@@ -1,5 +1,6 @@
 import { RECORD_BOARD_CARD_INPUT_ID_PREFIX } from '@/object-record/record-board/record-board-card/constants/RecordBoardCardInputIdPrefix';
 import { recordBoardCardEditModePositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardEditModePositionComponentState';
+import { isRecordBoardCellsNonEditableComponentState } from '@/object-record/record-board/states/isRecordBoardCellsNonEditableComponentState';
 import { recordBoardCardHoverPositionComponentState } from '@/object-record/record-board/record-board-card/states/recordBoardCardHoverPositionComponentState';
 import { FieldDisplay } from '@/object-record/record-field/ui/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/ui/components/FieldInput';
@@ -11,14 +12,25 @@ import { RecordInlineCellHoveredPortalContent } from '@/object-record/record-inl
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useContext } from 'react';
 
 export const RecordBoardCardCellHoveredPortalContent = () => {
   const { editModeContentOnly, isCentered } = useRecordInlineCellContext();
 
-  const { isRecordFieldReadOnly, recordId, fieldDefinition } =
-    useContext(FieldContext);
+  const {
+    isRecordFieldReadOnly: isRecordFieldReadOnlyFromFieldContext,
+    recordId,
+    fieldDefinition,
+  } = useContext(FieldContext);
+
+  const isRecordBoardCellsNonEditable = useAtomComponentStateValue(
+    isRecordBoardCellsNonEditableComponentState,
+  );
+
+  const isRecordFieldReadOnly =
+    isRecordFieldReadOnlyFromFieldContext || isRecordBoardCellsNonEditable;
 
   const { openInlineCell } = useInlineCell(
     getRecordFieldInputInstanceId({

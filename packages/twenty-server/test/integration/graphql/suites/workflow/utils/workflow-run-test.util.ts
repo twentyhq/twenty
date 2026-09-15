@@ -18,6 +18,8 @@ export type WorkflowRunState = {
     {
       status: string;
       result?: Record<string, unknown>;
+      error?: string;
+      history?: Array<{ status: string; error?: string }>;
     }
   >;
   flow?: {

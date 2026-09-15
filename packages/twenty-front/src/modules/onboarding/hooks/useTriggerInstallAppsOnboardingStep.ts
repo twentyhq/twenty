@@ -1,4 +1,5 @@
 import { useSetNextOnboardingStatus } from '@/onboarding/hooks/useSetNextOnboardingStatus';
+import { getInstallAppsStepHistoryEffect } from '@/onboarding/utils/getInstallAppsStepHistoryEffect';
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
 import { TriggerInstallAppsOnboardingStepDocument } from '~/generated-metadata/graphql';
@@ -10,11 +11,22 @@ export const useTriggerInstallAppsOnboardingStep = () => {
   );
 
   return useCallback(
-    async (universalIdentifiers: string[]) => {
+    async ({
+      universalIdentifiers,
+      isAutoSkipped,
+    }: {
+      universalIdentifiers: string[];
+      isAutoSkipped: boolean;
+    }) => {
       await triggerInstallAppsOnboardingStep({
-        variables: { universalIdentifiers },
+        variables: { universalIdentifiers, isAutoSkipped },
       });
-      setNextOnboardingStatus();
+      setNextOnboardingStatus({
+        stepHistoryEffect: getInstallAppsStepHistoryEffect({
+          universalIdentifiers,
+          isAutoSkipped,
+        }),
+      });
     },
     [triggerInstallAppsOnboardingStep, setNextOnboardingStatus],
   );

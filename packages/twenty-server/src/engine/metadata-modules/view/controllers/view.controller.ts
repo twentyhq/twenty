@@ -7,15 +7,18 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
 import { ApiPath } from 'twenty-shared/types';
+import { hasObjectMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
+import { parseMetadataRestPagination } from 'src/engine/api/rest/metadata/utils/parse-metadata-rest-pagination.util';
+import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -25,11 +28,10 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/utils/resolve-effective-entity-property.util';
+import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
+import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
+import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
-import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
-import { DeleteViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/delete-view-permission.guard';
-import { UpdateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/update-view-permission.guard';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { type ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
@@ -45,6 +47,8 @@ import { ViewService } from 'src/engine/metadata-modules/view/services/view.serv
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
+import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
+import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
 
 @Controller(`${ApiPath.Rest}/metadata/views`)
 @UseGuards(WorkspaceAuthGuard)
@@ -58,30 +62,35 @@ export class ViewController {
   constructor(
     private readonly viewService: ViewService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly i18nService: I18nService,
+    private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
   ) {}
 
   @Get()
   @UseGuards(CustomPermissionGuard)
   async findMany(
+    @Req() request: AuthenticatedRequest,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true })
     userWorkspaceId: string | undefined,
     @Query('objectMetadataId') objectMetadataId?: string,
-  ): Promise<ViewDTO[]> {
-    const views = objectMetadataId
-      ? await this.viewService.findByObjectMetadataIdWithRelations(
-          workspace.id,
-          objectMetadataId,
-          userWorkspaceId,
-        )
-      : await this.viewService.findByWorkspaceIdWithRelations(
-          workspace.id,
-          userWorkspaceId,
-        );
+  ) {
+    const page = await this.viewService.findManyWithRelationsPaginated({
+      workspaceId: workspace.id,
+      objectMetadataId,
+      userWorkspaceId,
+      pagination: parseMetadataRestPagination(request),
+    });
 
-    return this.processViewsWithTemplates(views, workspace.id, locale);
+    return {
+      pageInfo: page.pageInfo,
+      totalCount: page.totalCount,
+      data: await this.processViewsWithTemplates(
+        page.items,
+        workspace.id,
+        locale,
+      ),
+    };
   }
 
   @Get(':id')
@@ -139,7 +148,7 @@ export class ViewController {
   }
 
   @Patch(':id')
-  @UseGuards(UpdateViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewInput,
@@ -167,7 +176,7 @@ export class ViewController {
   }
 
   @Delete(':id')
-  @UseGuards(DeleteViewPermissionGuard)
+  @UseGuards(ViewPermissionGuard)
   async delete(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -186,7 +195,7 @@ export class ViewController {
     locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO[]> {
     const hasTemplates = views.some((view) =>
-      view.name.includes('{objectLabelPlural}'),
+      hasObjectMetadataLabelPlaceholder(view.name),
     );
 
     if (!hasTemplates && views.every((view) => view.isCustom)) {
@@ -201,48 +210,41 @@ export class ViewController {
         },
       );
 
+    const getI18nContext =
+      await this.applicationTranslationCatalogService.getI18nContextByApplicationId(
+        {
+          applicationIds: views.map((view) => view.applicationId),
+          locale,
+          workspaceId,
+        },
+      );
+
     return views.map((view) => {
-      let processedName = view.name;
+      const objectMetadata = hasObjectMetadataLabelPlaceholder(view.name)
+        ? findFlatEntityByIdInFlatEntityMaps({
+            flatEntityId: view.objectMetadataId,
+            flatEntityMaps: flatObjectMetadataMaps,
+          })
+        : undefined;
 
-      if (view.name.includes('{objectLabelPlural}')) {
-        const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: view.objectMetadataId,
-          flatEntityMaps: flatObjectMetadataMaps,
-        });
-
-        if (objectMetadata) {
-          const i18n = this.i18nService.getI18nInstance(locale ?? 'en');
-          const translatedObjectLabel = resolveEffectiveEntityProperty({
-            metadataName: 'objectMetadata',
-            baseValue: objectMetadata.labelPlural,
-            overrides: objectMetadata.overrides ?? undefined,
-            property: 'labelPlural',
+      const objectLabelPlaceholderValues = isDefined(objectMetadata)
+        ? buildViewNameObjectLabels({
+            viewName: view.name,
+            objectMetadata,
             i18nContext: {
-              locale,
-              i18nInstance: i18n,
+              ...getI18nContext(objectMetadata.applicationId ?? undefined),
               isStandardApp: belongsToTwentyStandardApp(objectMetadata),
             },
-          });
-
-          processedName = this.viewService.processViewNameWithTemplate(
-            view.name,
-            view.isCustom,
-            translatedObjectLabel,
-            locale,
-          );
-        }
-      } else {
-        processedName = this.viewService.processViewNameWithTemplate(
-          view.name,
-          view.isCustom,
-          undefined,
-          locale,
-        );
-      }
+          })
+        : undefined;
 
       return {
         ...view,
-        name: processedName,
+        name: resolveViewName({
+          view,
+          objectLabelPlaceholderValues,
+          i18nContext: getI18nContext(view.applicationId),
+        }),
       };
     });
   }

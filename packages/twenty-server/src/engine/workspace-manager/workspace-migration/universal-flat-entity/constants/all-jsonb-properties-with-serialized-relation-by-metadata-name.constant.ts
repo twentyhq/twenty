@@ -49,6 +49,7 @@ export const ALL_JSONB_PROPERTIES_WITH_SERIALIZED_RELATION_BY_METADATA_NAME = {
   frontComponent: {},
   applicationVariable: {},
   connectionProvider: {},
+  timelineActivityType: {},
   searchFieldMetadata: {},
 } as const satisfies {
   [P in AllMetadataName]: Partial<{

@@ -1,29 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import axios from 'axios';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
-import { z } from 'zod';
 
 import {
   WorkspaceIteratorService,
   type WorkspaceIteratorReport,
 } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-
-const npmPackageMetadataSchema = z.object({
-  version: z.string(),
-});
+import { WorkspaceVersionService } from 'src/engine/workspace-manager/workspace-version/services/workspace-version.service';
 
 @Injectable()
 export class ApplicationUpgradeService {
@@ -35,84 +28,9 @@ export class ApplicationUpgradeService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly applicationInstallService: ApplicationInstallService,
-    private readonly applicationRegistrationService: ApplicationRegistrationService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceVersionService: WorkspaceVersionService,
   ) {}
-
-  async checkForUpdates(
-    appRegistration: ApplicationRegistrationEntity,
-  ): Promise<string | null> {
-    if (appRegistration.sourceType !== ApplicationRegistrationSourceType.NPM) {
-      return null;
-    }
-
-    const registryUrl = this.twentyConfigService.get('APP_REGISTRY_URL');
-
-    if (!appRegistration.sourcePackage) {
-      return null;
-    }
-
-    try {
-      const encodedPackage = encodeURIComponent(appRegistration.sourcePackage);
-
-      const { data } = await axios.get(
-        `${registryUrl}/${encodedPackage}/latest`,
-        {
-          headers: { 'User-Agent': 'Twenty-AppUpgrade' },
-          timeout: 10_000,
-        },
-      );
-
-      const parsed = npmPackageMetadataSchema.safeParse(data);
-
-      if (!parsed.success) {
-        this.logger.warn(
-          `Unexpected response shape from registry for ${appRegistration.sourcePackage}`,
-        );
-
-        return null;
-      }
-
-      const isNewVersion =
-        await this.applicationRegistrationService.setLatestAvailableVersionIfChanged(
-          appRegistration.id,
-          parsed.data.version,
-        );
-
-      if (isNewVersion) {
-        this.applicationRegistrationService.emitRegistrationPublishMetric({
-          isNewRegistration: false,
-          universalIdentifier: appRegistration.universalIdentifier,
-          name: appRegistration.name,
-          sourceType: appRegistration.sourceType,
-          version: parsed.data.version,
-        });
-
-        await this.applicationRegistrationService.enqueueAutoUpgradeApplications(
-          appRegistration.id,
-        );
-      }
-
-      return parsed.data.version;
-    } catch (error) {
-      this.logger.warn(
-        `Failed to check updates for ${appRegistration.sourcePackage}: ${error}`,
-      );
-
-      return null;
-    }
-  }
-
-  async checkAllForUpdates(): Promise<void> {
-    const npmRegistrations = await this.appRegistrationRepository.find({
-      where: { sourceType: ApplicationRegistrationSourceType.NPM },
-    });
-
-    for (const registration of npmRegistrations) {
-      await this.checkForUpdates(registration);
-    }
-  }
 
   async findApplicationsToUpgrade({
     applicationRegistrationId,
@@ -128,6 +46,7 @@ export class ApplicationUpgradeService {
     appRegistration: ApplicationRegistrationEntity;
     targetVersion: string | null;
     applicationsToUpgrade: ApplicationEntity[];
+    skippedNonProvisionedWorkspaceIds: string[];
   }> {
     const appRegistration = await this.appRegistrationRepository.findOneOrFail({
       where: { id: applicationRegistrationId },
@@ -140,6 +59,7 @@ export class ApplicationUpgradeService {
         appRegistration,
         targetVersion: null,
         applicationsToUpgrade: [],
+        skippedNonProvisionedWorkspaceIds: [],
       };
     }
 
@@ -153,18 +73,34 @@ export class ApplicationUpgradeService {
       },
     });
 
-    let applicationsToUpgrade = applications.filter(
+    const outdatedApplications = applications.filter(
       (application) => application.version !== targetVersion,
     );
 
-    if (isDefined(workspaceCountLimit)) {
-      applicationsToUpgrade = applicationsToUpgrade.slice(
-        0,
-        workspaceCountLimit,
-      );
-    }
+    const provisionedWorkspaceIds = new Set(
+      await this.workspaceVersionService.getProvisionedWorkspaceIds(),
+    );
 
-    return { appRegistration, targetVersion, applicationsToUpgrade };
+    const provisionedApplications = outdatedApplications.filter((application) =>
+      provisionedWorkspaceIds.has(application.workspaceId),
+    );
+
+    const skippedNonProvisionedWorkspaceIds = outdatedApplications
+      .filter(
+        (application) => !provisionedWorkspaceIds.has(application.workspaceId),
+      )
+      .map((application) => application.workspaceId);
+
+    const applicationsToUpgrade = isDefined(workspaceCountLimit)
+      ? provisionedApplications.slice(0, workspaceCountLimit)
+      : provisionedApplications;
+
+    return {
+      appRegistration,
+      targetVersion,
+      applicationsToUpgrade,
+      skippedNonProvisionedWorkspaceIds,
+    };
   }
 
   async upgradeApplications({

@@ -8,4 +8,5 @@ type CallRecordingTranscriptArtifactUpdateFields = Pick<
 export type ImportCallRecordingTranscriptResult = {
   updateData: CallRecordingTranscriptArtifactUpdateFields;
   requestedTranscript: boolean;
+  hasRetryableFailure: boolean;
 };

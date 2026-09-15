@@ -11,6 +11,7 @@ import {
   IsOptional,
   IsString,
   IsUrl,
+  Max,
   ValidateIf,
   type ValidationError,
   validateSync,
@@ -58,12 +59,11 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
+import { type OnboardingEnrichmentCreditRewardTier } from 'src/engine/core-modules/onboarding/types/onboarding-enrichment-credit-reward-tier.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import {
   DEFAULT_DISABLED_MODELS,
-  DEFAULT_FAST_MODELS,
-  DEFAULT_RECOMMENDED_MODELS,
-  DEFAULT_SMART_MODELS,
+  DEFAULT_MODELS_BY_TIER,
 } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 
 export class ConfigVariables {
@@ -96,7 +96,16 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Enable safe mode for outbound requests (prevents private IPs and other security risks). Applies to HTTP workflow actions, webhooks, and IMAP/SMTP/CalDAV connections.',
+      'Hostnames or IP literals on a private network that outbound connections may reach, e.g. an on-premise mail server or identity provider (keycloak, mail.internal, 192.168.1.10). Exact hostname match, no patterns; a full URL is reduced to its hostname. Every other private address is blocked (SSRF protection) for HTTP workflow actions, webhooks, SSO and IMAP/SMTP/CalDAV connections. Set to * to allow all.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Deprecated: set OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS to * instead. While this is false every private address is reachable and OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS is ignored.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -363,15 +372,6 @@ export class ConfigVariables {
   REFRESH_TOKEN_REUSE_GRACE_PERIOD = '1m';
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
-    description:
-      'Enable cookie-based user sessions for the web app (dual-stack with token pairs during the migration)',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  AUTH_COOKIE_SESSIONS_ENABLED = false;
-
-  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.TOKENS_DURATION,
     description:
       'Absolute lifetime of a cookie-based user session, set at sign-in and never extended',
@@ -547,7 +547,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'When enabled, only server admins can create new workspaces. Ignored during initial setup when no workspace exists.',
+      'When enabled, only server admins can create new workspaces, and signing up without a pending invitation or an approved access domain is refused. Ignored during initial setup when no workspace exists.',
     type: ConfigVariableType.BOOLEAN,
   })
   @IsOptional()
@@ -565,12 +565,14 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
-      'Deployment region that determines the contracting DPA Processor entity, hosting region and governing law. EU (default) = Twenty.com SAS / Frankfurt / France; US = Twenty, Inc. / United States. Must match where Customer Personal Data actually lives.',
+      'Deployment region that determines the DPA hosting location shown to customers. The Processor entity (Twenty.com PBC) and governing law (Delaware, USA) are the same for all regions. EU (default) = Frankfurt, Germany; US = United States. Must match where Customer Personal Data actually lives.',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.ENUM,
     options: Object.values(DpaRegion),
     // Deployment-fixed: must mirror where data actually lives. Allowing a
-    // runtime DB/admin override could produce a legally incorrect Processor
-    // entity, so this is only configurable via environment variable.
+    // runtime DB/admin override could advertise a hosting location that does
+    // not match where data resides, so this is only configurable via
+    // environment variable.
     isEnvOnly: true,
   })
   @IsOptional()
@@ -874,6 +876,16 @@ export class ConfigVariables {
   CLICKHOUSE_URL: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ANALYTICS_CONFIG,
+    description:
+      'Interval in milliseconds between two flushes of the buffered usage rollups',
+    type: ConfigVariableType.NUMBER,
+  })
+  @IsOptional()
+  @CastToPositiveNumber()
+  USAGE_ROLLUP_FLUSH_INTERVAL_MS = 60_000;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description: 'Enable or disable telemetry logging',
     type: ConfigVariableType.BOOLEAN,
@@ -1020,6 +1032,27 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
+      'Cap on the credits available in a period, as a multiple of the plan allowance. 2 means a workspace can hold at most its allowance plus one full allowance rolled over',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  BILLING_ROLLOVER_TOTAL_CAP_MULTIPLIER = 2;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Largest credit amount a single admin panel grant can hand out (in microCredits)',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsInt()
+  @IsOptional()
+  BILLING_MAX_ADMIN_CREDIT_GRANT_MICRO = 1_000_000_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
       'Free credits granted for completing the import-contacts onboarding step (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
@@ -1060,6 +1093,19 @@ export class ConfigVariables {
   @IsInt()
   @IsOptional()
   ONBOARDING_INSTALL_APPS_CREDITS_REWARD_PER_APP = 500_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'Credit reward tiers for workspaces enrichment matched to a real company, keyed by tier name, as {"midMarket":{"minEmployeeCount":20,"amountMicro":5000000}} (amounts in microCredits). The most generous matching tier wins; no tiers disables the reward. Independent of ONBOARDING_BOOK_CALL_MIN_EMPLOYEE_COUNT, so credits and the book-a-call offer can target different companies.',
+    isHiddenInAdminPanel: true,
+    type: ConfigVariableType.JSON,
+  })
+  @IsOptional()
+  ONBOARDING_ENRICHMENT_CREDIT_REWARD_TIERS: Record<
+    string,
+    OnboardingEnrichmentCreditRewardTier
+  > = {};
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
@@ -1185,6 +1231,39 @@ export class ConfigVariables {
   )
   @IsOptional()
   SENTRY_ENVIRONMENT: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Share of front-end traces sent to Sentry, between 0 and 1. Front-end traces propagate their sampling decision to the server, so this also drives the rate for browser-originated server traces.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @Max(1)
+  @IsOptional()
+  SENTRY_FRONT_TRACES_SAMPLE_RATE = 0.1;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Share of server traces sent to Sentry, between 0 and 1. Browser-originated traces inherit the front-end decision instead, and AI traces are always sampled at 1. Read before the config store is available, so it cannot be overridden from the database.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SENTRY_TRACES_SAMPLE_RATE = 0.1;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LOGGING,
+    description:
+      'Share of sampled server traces that are also profiled, between 0 and 1. Read before the config store is available, so it cannot be overridden from the database.',
+    type: ConfigVariableType.NUMBER,
+    isEnvOnly: true,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SENTRY_PROFILES_SAMPLE_RATE = 0.01;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
@@ -1369,7 +1448,6 @@ export class ConfigVariables {
     options: Object.values(NodeEnvironment),
     isEnvOnly: true,
   })
-  // @CastToUpperSnakeCase()
   NODE_ENV: NodeEnvironment = NodeEnvironment.PRODUCTION;
 
   @ConfigVariablesMetadata({
@@ -1416,23 +1494,6 @@ export class ConfigVariables {
   @IsUrl({ require_tld: false, require_protocol: true })
   @IsOptional()
   SERVER_URL = 'http://localhost:3000';
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
-    description:
-      'When enabled, the served frontend resolves the API base URL from ' +
-      "the browser's current origin (window.location) instead of the " +
-      'baked-in SERVER_URL. Useful for self-hosted deployments reachable ' +
-      'from multiple hostnames (Tailscale IP, LAN DNS, SSH tunnel, public ' +
-      'DNS), where pinning a single SERVER_URL would break every other ' +
-      'host with CORS or unreachable-host errors. Read at startup by ' +
-      'generate-front-config; SERVER_URL is still used for all server-side ' +
-      'URL generation.',
-    type: ConfigVariableType.BOOLEAN,
-    isEnvOnly: true,
-  })
-  @IsOptional()
-  FRONT_AUTO_BASE_URL = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
@@ -1485,6 +1546,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
       'ISO date from which HTTP logic functions are no longer served on the legacy /s/ route. Functions created on or after this date are only reachable on the isolated public domain (*.withtwenty.com). Only enforced when PUBLIC_DOMAIN_URL is set; leave empty to keep serving every function on /s/ (default for self-hosting).',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsDateString()
@@ -1601,6 +1663,60 @@ export class ConfigVariables {
   })
   @CastToPositiveNumber()
   APPLICATION_API_RATE_LIMITING_LIMIT = 500;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time-to-live for outbound email send rate limiting in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_RATE_LIMITING_TTL_IN_MS = 10_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of emails sent across all workspaces in the rate limiting window. Set it below the send rate the email provider publishes for the account, so transactional mail sharing that account keeps headroom during a campaign',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_RATE_LIMITING_LIMIT = 100;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time-to-live for the per-workspace outbound email send rate limiting window, in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_WORKSPACE_RATE_LIMITING_TTL_IN_MS = 10_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of emails a single workspace may send in the rate limiting window. Applies on top of the server-wide limit, so set it below that one to stop a single workspace consuming the whole instance budget with one campaign. Left equal to the server-wide limit it never binds first',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  EMAIL_SEND_WORKSPACE_RATE_LIMITING_LIMIT = 100;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Time-to-live for the outbound webhook call rate limiting window, in milliseconds',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RATE_LIMITING_TTL_IN_MS = 60_000;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RATE_LIMITING,
+    description:
+      'Maximum number of outbound webhook calls a single workspace may make in the rate limiting window. Calls above it are never enqueued and are recorded as a failed webhook response',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  WEBHOOK_CALL_RATE_LIMITING_LIMIT = 60;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
@@ -1827,29 +1943,47 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of fast model IDs to use as defaults. Managed via admin panel or env.',
+      'Ordered list of model IDs backing the Extra Fast tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_FAST_MODELS;
+  AI_MODELS_DEFAULT_EXTRA_FAST: string[] = DEFAULT_MODELS_BY_TIER.extraFast;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Ordered list of smart model IDs to use as defaults. Managed via admin panel or env.',
+      'Ordered list of model IDs backing the Fast tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_SMART_MODELS;
+  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_MODELS_BY_TIER.fast;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'List of recommended model IDs shown to workspaces using curated model selection. Managed via admin panel or env.',
+      'Ordered list of model IDs backing the Balanced tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
     type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODELS_DEFAULT_RECOMMENDED: string[] = DEFAULT_RECOMMENDED_MODELS;
+  AI_MODELS_DEFAULT_BALANCED: string[] = DEFAULT_MODELS_BY_TIER.balanced;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ordered list of model IDs backing the Smart tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_MODELS_BY_TIER.smart;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Ordered list of model IDs backing the Extra Smart tier; the first available one is used. An ID may pin an effort level as provider/model@effort. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_EXTRA_SMART: string[] = DEFAULT_MODELS_BY_TIER.extraSmart;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
@@ -2092,9 +2226,10 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description:
-      'Driver used for the emailing domain feature — AWS_SES for production (requires AWS credentials), LOG fakes registration/verification/sends locally',
+      'Driver used for the emailing domain feature — AWS_SES (requires AWS credentials), RESEND (requires a Resend API key), LOG fakes registration/verification/sends locally',
     type: ConfigVariableType.ENUM,
     options: Object.values(EmailingDomainDriver),
+    isEnvOnly: true,
   })
   @CastToUpperSnakeCase()
   EMAILING_DOMAIN_DRIVER: EmailingDomainDriver = EmailingDomainDriver.LOG;
@@ -2104,8 +2239,11 @@ export class ConfigVariables {
     description: 'AWS region',
     type: ConfigVariableType.STRING,
   })
+  @ValidateIf(
+    (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
+  )
   @IsAWSRegion()
-  @IsOptional()
+  @IsNotEmpty()
   AWS_SES_REGION: AwsRegion;
 
   @ConfigVariablesMetadata({
@@ -2140,7 +2278,11 @@ export class ConfigVariables {
     description: 'AWS Account ID for SES ARN construction',
     type: ConfigVariableType.STRING,
   })
-  @IsOptional()
+  @ValidateIf(
+    (env) => env.EMAILING_DOMAIN_DRIVER === EmailingDomainDriver.AWS_SES,
+  )
+  @IsString()
+  @IsNotEmpty()
   AWS_SES_ACCOUNT_ID: string;
 
   @ConfigVariablesMetadata({
@@ -2155,11 +2297,22 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
     description:
-      'Comma-separated list of SNS topic ARNs accepted by the inbound-email webhook (e.g. arn:aws:sns:us-east-1:123:my-inbound).',
+      'Comma-separated list of SNS topic ARNs accepted by the inbound-email and outbound-event webhooks (e.g. arn:aws:sns:us-east-1:123:my-inbound). Every SNS payload whose topic is absent from this list is rejected.',
     type: ConfigVariableType.STRING,
   })
   @IsOptional()
+  @IsString()
   SES_SNS_TOPIC_ARN_ALLOWLIST: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.AWS_SES_SETTINGS,
+    description:
+      'SNS topic ARN that receives SES DELIVERY, BOUNCE, COMPLAINT, REJECT and RENDERING_FAILURE events. An SNS event destination pointing at it is added to each workspace SES configuration set, and the topic must be subscribed to /webhooks/messaging/ses/outbound. Bounces and complaints also arrive through the pre-existing EventBridge destination, so those two are delivered twice and deduplicated downstream.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  @IsString()
+  SES_OUTBOUND_SNS_TOPIC_ARN: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.AWS_SES_SETTINGS,
@@ -2179,6 +2332,34 @@ export class ConfigVariables {
   })
   @IsOptional()
   TATAMI_SNS_TOPIC_ARN: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RESEND_SETTINGS,
+    isSensitive: true,
+    description: 'Resend API key used when EMAILING_DOMAIN_DRIVER is RESEND',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  RESEND_API_KEY: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RESEND_SETTINGS,
+    isSensitive: true,
+    description:
+      'Signing secret of the Resend webhook endpoint that targets /webhooks/messaging/resend (whsec_...)',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  RESEND_WEBHOOK_SIGNING_SECRET: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.RESEND_SETTINGS,
+    description:
+      'Region Resend provisions new emailing domains in (us-east-1, eu-west-1, sa-east-1 or ap-northeast-1). Leave empty for the Resend default.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  RESEND_DOMAIN_REGION: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -2235,6 +2416,7 @@ export class ConfigVariables {
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
       'Client ID of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsString()
@@ -2246,6 +2428,7 @@ export class ConfigVariables {
     isSensitive: true,
     description:
       'Client secret of the GitHub OAuth app used to verify app ownership when claiming a marketplace application',
+    isHiddenInAdminPanel: true,
     type: ConfigVariableType.STRING,
   })
   @IsString()

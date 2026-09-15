@@ -9,7 +9,7 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 import { processGroupDrop } from '@/object-record/record-drag/utils/processGroupDrop';
 import { recordGroupDefinitionFamilyState } from '@/object-record/record-group/states/recordGroupDefinitionFamilyState';
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
-import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
+import { getRecordIndexRemoveSortingModalId } from '@/object-record/record-index/utils/getRecordIndexRemoveSortingModalId';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
@@ -95,7 +95,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
       const existingRecordSorts = store.get(currentRecordSorts);
 
       if (existingRecordSorts.length > 0) {
-        openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+        openModal(getRecordIndexRemoveSortingModalId(recordIndexId));
         return;
       }
 
@@ -120,6 +120,7 @@ export const useProcessTableWithGroupRecordDrop = () => {
     },
     [
       currentRecordSorts,
+      recordIndexId,
       store,
       objectNameSingular,
       objectMetadataItem.fields,

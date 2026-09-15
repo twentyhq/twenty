@@ -7,12 +7,17 @@ import { type InputSchemaPropertyType } from 'twenty-shared/workflow';
 
 import { useAvailableVariablesInWorkflowStep } from '@/workflow/workflow-variables/hooks/useAvailableVariablesInWorkflowStep';
 import { type StepOutputSchemaV2 } from '@/workflow/workflow-variables/types/StepOutputSchemaV2';
+import { type WorkflowVariableStepSelection } from '@/workflow/workflow-variables/types/WorkflowVariableSelection';
 import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconVariablePlus } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDropdownVariableButtonContainer = styled.div<{
@@ -68,8 +73,13 @@ export const WorkflowVariablesDropdown = ({
   const [selectedStep, setSelectedStep] = useState<
     StepOutputSchemaV2 | undefined
   >(initialStep);
+  const [selectedPath, setSelectedPath] = useState<string[]>([]);
 
-  const handleStepSelect = (stepId: string) => {
+  const handleStepSelect = ({
+    stepId,
+    path = [],
+  }: WorkflowVariableStepSelection) => {
+    setSelectedPath(path);
     setSelectedStep(
       availableVariablesInWorkflowStep.find((step) => step.id === stepId),
     );
@@ -78,6 +88,7 @@ export const WorkflowVariablesDropdown = ({
   const handleSubItemSelect = (subItem: string) => {
     onVariableSelect(subItem);
     setSelectedStep(initialStep);
+    setSelectedPath([]);
     closeDropdown(dropdownId);
   };
 
@@ -99,7 +110,7 @@ export const WorkflowVariablesDropdown = ({
         </StyledDropdownVariableButtonContainer>
         <AppTooltip
           anchorSelect={`[data-variable-picker-disabled-anchor="${dropdownId}"]`}
-          content={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
+          title={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
           place={TooltipPosition.Top}
           delay={TooltipDelay.mediumDelay}
           offset={5}
@@ -126,10 +137,16 @@ export const WorkflowVariablesDropdown = ({
             dropdownId={dropdownId}
             steps={availableVariablesInWorkflowStep}
             onSelect={handleStepSelect}
+            onVariableSelect={({ rawVariableName }) =>
+              handleSubItemSelect(rawVariableName)
+            }
+            shouldDisplayRecordObjects={shouldDisplayRecordObjects}
+            objectNameSingularsToSelect={objectNameSingularsToSelect}
           />
         ) : (
           <WorkflowVariablesDropdownStepItems
             step={selectedStep}
+            initialPath={selectedPath}
             onSelect={handleSubItemSelect}
             onBack={handleBack}
             shouldDisplayRecordObjects={shouldDisplayRecordObjects}

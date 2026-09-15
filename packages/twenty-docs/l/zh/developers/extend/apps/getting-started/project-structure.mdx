@@ -76,4 +76,4 @@ my-twenty-app/
 
 把任意一个软件包放在 `dependencies` 下，都会把它拉入已安装应用的运行时 bundle 中，在那里只是累赘。 当任一软件包仍然列在 `dependencies` 下时，`twenty dev:build` 会发出警告。
 
-像往常一样，把你的应用自身的运行时依赖项（逻辑函数在运行时实际导入的库）添加到 `dependencies` 下。
+像往常一样，把你的应用自身的运行时依赖项（逻辑函数在运行时实际导入的库）添加到 `dependencies` 下。 保持依赖树精简：`dependencies` 会被安装到一个解压后上限为 250MB 的运行时层中，如果超过该依赖大小限制，同步或安装就会失败并报依赖大小错误——UI 库和开发工具应放在 `devDependencies` 中。

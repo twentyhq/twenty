@@ -16,11 +16,12 @@ import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
-import { type ColorScheme } from 'twenty-ui/input';
+import { type ColorScheme } from 'twenty-ui/primitives/input';
 import { useApolloClient } from '@apollo/client/react';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { dynamicActivate } from '~/utils/i18n/dynamicActivate';
+import { type UiScale } from '@/workspace-member/types/WorkspaceMember';
 
 export const useLoadCurrentUser = () => {
   const setCurrentUser = useSetAtomState(currentUserState);
@@ -90,6 +91,7 @@ export const useLoadCurrentUser = () => {
       workspaceMember = {
         ...user.workspaceMember,
         colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
+        uiScale: user.workspaceMember?.uiScale as UiScale,
         openRecordIn: toOpenRecordInPreference(
           user.workspaceMember?.openRecordIn,
         ),
@@ -98,7 +100,6 @@ export const useLoadCurrentUser = () => {
 
       setCurrentWorkspaceMember(workspaceMember);
 
-      // Initialize unified format preferences state
       initializeFormatPreferences(workspaceMember);
       dynamicActivate(
         (workspaceMember.locale as keyof typeof APP_LOCALES) ?? SOURCE_LOCALE,

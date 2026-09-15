@@ -1,4 +1,4 @@
-import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/utils/paginate-by-id-cursor.util';
+import { type RestCursorPageInfo } from 'src/engine/api/rest/metadata/types/rest-cursor-page-info.type';
 import { type ObjectMetadataWithFieldsDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata-with-fields.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 

@@ -8,18 +8,20 @@ import { getSettingsPath } from 'twenty-shared/utils';
 
 import { t } from '@lingui/core/macro';
 import {
+  IconBook,
   IconChartBar,
   IconCpu,
   IconLayoutDashboard,
   IconPlus,
-  IconSparkles,
+  IconSparkle2,
   IconTool,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
+import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
 import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
 import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
 import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
@@ -48,7 +50,7 @@ export const SettingsAI = () => {
     {
       id: SETTINGS_AI_TABS.TABS_IDS.SKILLS,
       title: t`Skills`,
-      Icon: IconSparkles,
+      Icon: IconBook,
     },
     {
       id: SETTINGS_AI_TABS.TABS_IDS.TOOLS,
@@ -112,35 +114,31 @@ export const SettingsAI = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <SettingsDiscoveryHeroCard
-            lightSrc={AI_HERO_LIGHT}
-            darkSrc={AI_HERO_DARK}
-            instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
-            tabs={[
-              {
-                id: 'skills',
-                title: t`Skills`,
-                Icon: IconSparkles,
-                vimeoId: '1185511734',
-              },
-              {
-                id: 'tools',
-                title: t`Tools`,
-                Icon: IconTool,
-                vimeoId: '1185511734',
-              },
-              {
-                id: 'models',
-                title: t`Models`,
-                Icon: IconCpu,
-                vimeoId: '1185511734',
-              },
-            ]}
-            playButtonAriaLabel={t`Watch AI demo`}
-          />
-        </Section>
-        {isOverviewTab && <SettingsAiOverviewTab />}
+        {!isModelsTab && (
+          <Section>
+            <SettingsDiscoveryHeroCard
+              lightSrc={AI_HERO_LIGHT}
+              darkSrc={AI_HERO_DARK}
+              instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
+              tabs={[
+                {
+                  id: 'ai_walkthrough',
+                  title: t`Walkthrough`,
+                  Icon: IconSparkle2,
+                  vimeoId: '1217964358',
+                  hasSound: true,
+                },
+              ]}
+              playButtonAriaLabel={t`Watch AI demo`}
+            />
+          </Section>
+        )}
+        {isOverviewTab && (
+          <>
+            <SettingsAiOverviewTab />
+            <SettingsAiSystemPromptsSection />
+          </>
+        )}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkillsTab />}
         {isToolsTab && <SettingsAgentToolsTab />}

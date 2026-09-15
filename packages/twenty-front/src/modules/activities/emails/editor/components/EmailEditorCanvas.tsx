@@ -1,7 +1,7 @@
 import { AdvancedTextEditor } from '@/advanced-text-editor/components/AdvancedTextEditor';
+import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { type AdvancedTextEditorComponentProps } from '@/advanced-text-editor/types/AdvancedTextEditorComponentProps';
 import { styled } from '@linaria/react';
-import { useEditorState } from '@tiptap/react';
 import { CANVAS_THEME_DEFAULTS, resolveCanvasTheme } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -37,11 +37,9 @@ export const EmailEditorCanvas = ({
   readonly,
   minHeight,
 }: EmailEditorCanvasProps) => {
-  const storedCanvasTheme = useEditorState({
-    editor,
-    selector: ({ editor: currentEditor }) =>
-      resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
-  });
+  const storedCanvasTheme = useLiveEditorState(editor, (currentEditor) =>
+    resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
+  );
   const canvasTheme = storedCanvasTheme ?? CANVAS_THEME_DEFAULTS;
 
   return (

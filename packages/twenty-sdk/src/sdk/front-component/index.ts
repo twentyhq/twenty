@@ -9,6 +9,7 @@ export { openCommandConfirmationModal } from './functions/openCommandConfirmatio
 export { openSidePanelPage } from './functions/openSidePanelPage';
 export { unmountFrontComponent } from './functions/unmountFrontComponent';
 export { updateProgress } from './functions/updateProgress';
+export { uploadFile } from './functions/uploadFile';
 export { useColorScheme } from './hooks/useColorScheme';
 export { useFrontComponentExecutionContext } from './hooks/useFrontComponentExecutionContext';
 export { useFrontComponentId } from './hooks/useFrontComponentId';
@@ -17,6 +18,7 @@ export type { UseTranslateResult } from './hooks/useTranslate';
 export { useLocale } from './hooks/useLocale';
 export { useRecordId } from './hooks/useRecordId';
 export { useSelectedRecordIds } from './hooks/useSelectedRecordIds';
+export { useTimelineActivityId } from './hooks/useTimelineActivityId';
 export { useUserId } from './hooks/useUserId';
 export { msg } from './translations/msg';
 export { t } from './translations/t';
@@ -25,6 +27,7 @@ export type {
   TranslationValues,
 } from './translations/message';
 export type { FrontComponentExecutionContext } from './types/FrontComponentExecutionContext';
+export type { FrontComponentStorageType } from './types/FrontComponentStorageType';
 export { getFrontComponentCommandErrorDedupeKey } from './utils/getFrontComponentCommandErrorDedupeKey';
 export type {
   CloseSidePanelFunction,
@@ -38,8 +41,16 @@ export type {
   OpenSidePanelPageFunction,
   OpenSidePanelPageParams,
   RequestAccessTokenRefreshFunction,
+  StorageClearFunction,
+  StorageDeleteFunction,
+  StorageSetFunction,
   UnmountFrontComponentFunction,
   UpdateProgressFunction,
+  UploadedFrontComponentFile,
+  UploadFileFailureReason,
+  UploadFileFunction,
+  UploadFileParams,
+  UploadFileResult,
 } from './globals/frontComponentHostCommunicationApi';
 
 export {

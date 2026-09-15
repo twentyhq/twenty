@@ -1,6 +1,9 @@
 import gql from 'graphql-tag';
 
-import { type MessageFolderImportPolicy } from 'twenty-shared/types';
+import {
+  type CalendarChannelContactAutoCreationPolicy,
+  type MessageFolderImportPolicy,
+} from 'twenty-shared/types';
 
 import { type CalendarChannelDTO } from 'src/engine/metadata-modules/calendar-channel/dtos/calendar-channel.dto';
 import { type ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
@@ -28,7 +31,7 @@ export const getDataOrThrow = (response: MetadataAPIResponse) => {
 
 export type MessageFolderDto = Pick<
   MessageFolderDTO,
-  'id' | 'name' | 'isSynced'
+  'id' | 'name' | 'isSynced' | 'isSentFolder' | 'pendingSyncAction'
 >;
 
 export type MessageChannelDto = Pick<
@@ -41,6 +44,7 @@ export type MessageChannelDto = Pick<
   | 'syncStageStartedAt'
   | 'throttleFailureCount'
   | 'throttleRetryAfter'
+  | 'visibility'
 >;
 
 export type CalendarChannelDto = Pick<
@@ -52,6 +56,9 @@ export type CalendarChannelDto = Pick<
   | 'syncStage'
   | 'syncStageStartedAt'
   | 'throttleFailureCount'
+  | 'isContactAutoCreationEnabled'
+  | 'contactAutoCreationPolicy'
+  | 'visibility'
 >;
 
 export type ConnectedAccountDto = Pick<
@@ -68,6 +75,7 @@ type MessageChannelUpdate = {
 type CalendarChannelUpdate = {
   isSyncEnabled?: boolean;
   isContactAutoCreationEnabled?: boolean;
+  contactAutoCreationPolicy?: CalendarChannelContactAutoCreationPolicy;
 };
 
 const MESSAGE_CHANNEL_FIELDS = gql`
@@ -80,6 +88,7 @@ const MESSAGE_CHANNEL_FIELDS = gql`
     syncStageStartedAt
     throttleFailureCount
     throttleRetryAfter
+    visibility
   }
 `;
 
@@ -138,6 +147,8 @@ export const queryMessageFolders = async (
           id
           name
           isSynced
+          isSentFolder
+          pendingSyncAction
         }
       }
     `,
@@ -161,6 +172,9 @@ export const queryCalendarChannels = async (
           syncStage
           syncStageStartedAt
           throttleFailureCount
+          isContactAutoCreationEnabled
+          contactAutoCreationPolicy
+          visibility
         }
       }
     `,

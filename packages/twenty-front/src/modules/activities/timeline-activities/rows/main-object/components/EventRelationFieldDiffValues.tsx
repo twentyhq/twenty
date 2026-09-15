@@ -8,7 +8,11 @@ import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectReco
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type EventRelationFieldDiffValuesProps = {
@@ -152,7 +156,7 @@ const RelationFieldDiffValue = ({
       )}
       <AppTooltip
         anchorSelect={`#${tooltipAnchorId}`}
-        content={tooltipContent}
+        title={tooltipContent}
         delay={TooltipDelay.shortDelay}
         place={TooltipPosition.Bottom}
         positionStrategy="fixed"

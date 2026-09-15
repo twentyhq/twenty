@@ -55,3 +55,5 @@ A **camada de layout** de um app do Twenty é tudo o que o usuário vê: onde o 
 | **Menu de comandos (Cmd+K)**                | Uma ação rápida fixada ou comando oculto                                                                            | `defineCommandMenuItem`                   |
 
 Os componentes de front-end são executados dentro de um Web Worker isolado usando Remote DOM — eles são renderizados *nativamente* na página (não dentro de um iframe), mas não podem acessar diretamente a página host ou o DOM. A comunicação com o Twenty acontece por meio de uma API de host com passagem de mensagens.
+
+Eles ainda estão em desenvolvimento ativo: o sandbox implementa um DOM parcial, portanto usos avançados podem falhar. Veja as [limitações atuais](/l/pt/developers/extend/apps/layout/front-components#current-limitations).

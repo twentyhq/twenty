@@ -1,13 +1,13 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Parent, Query, ResolveField } from '@nestjs/graphql';
 
-import { ApiPath } from 'twenty-shared/types';
-import { isAbsoluteUrl, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
+import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
 import { SdkClientChecksumsDTO } from 'src/engine/core-modules/sdk-client/dtos/sdk-client-checksums.dto';
 import { getInstalledSdkMetadataModule } from 'src/engine/core-modules/sdk-client/utils/get-installed-sdk-metadata-module.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -69,18 +69,11 @@ export class ApplicationResolver {
     @Parent() application: Pick<ApplicationDTO, 'id' | 'logo'>,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): string | null {
-    const logo = application.logo;
-
-    if (!isDefined(logo) || logo.length === 0) {
-      return null;
-    }
-
-    if (isAbsoluteUrl(logo)) {
-      return logo;
-    }
-
-    const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-    return `${serverUrl}/${ApiPath.PublicAssets}/${workspace.id}/${application.id}/${logo}`;
+    return buildPublicAssetLogoUrl({
+      logo: application.logo,
+      serverUrl: this.twentyConfigService.get('SERVER_URL'),
+      workspaceId: workspace.id,
+      applicationId: application.id,
+    });
   }
 }

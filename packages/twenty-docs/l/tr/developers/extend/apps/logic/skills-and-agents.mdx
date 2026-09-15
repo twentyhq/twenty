@@ -163,7 +163,7 @@ const { result } = await runAgent({
 });
 ```
 
-Ardından çalıştırma, **hem** ajanın rolünün hem de üyenin rolünün izin verdiğiyle sınırlandırılır, oluşturduğu kayıtlar o üyeye atfedilir ve üyenin satır düzeyi izinleri uygulanır. Otonom çalıştırmalar (zamanlanmış işler, veritabanı olayı tetikleyicileri) için alanı atlayın: bunlar ajanın kendi rolünü korur.
+Ardından çalıştırma **üyenin kendi rolüyle** hareket eder: yalnızca o üyenin yapabildiklerini yapabilir, daha fazlasını yapamaz; oluşturduğu kayıtlar ona atfedilir ve üyenin satır düzeyi izinleri uygulanır. Ajanın rolü buna dahil olmaz — bu rol, arkalarında kimse olmayan çalıştırmalar için uygulamanın varsayılanıdır. Otonom çalıştırmalar (zamanlanmış işler, veritabanı olayı tetikleyicileri) için alanı atlayın: bunlar ajanın kendi rolünü korur. Hareket eden uygulama, üyenin izinlerini daraltmadan, kaynak bilgisini korumak için çalıştırmanın bağlamına bağlı kalır.
 
 Çalıştırmayı tetikleyen kişiyi bir çalışma alanı üyesiyle eşleştirmekten uygulamanız sorumludur. Birini belirtmek bir uygulama erişim belirteci gerektirir ve bir belirtecin neyi
 belirtebileceği, bir kullanıcı içerip içermediğine bağlıdır:

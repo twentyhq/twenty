@@ -6,6 +6,8 @@ export const PAGE_LAYOUT_TAB_FRAGMENT = gql`
   fragment PageLayoutTabFragment on PageLayoutTab {
     id
     applicationId
+    universalIdentifier
+    isSystemSideEffect
     title
     icon
     position

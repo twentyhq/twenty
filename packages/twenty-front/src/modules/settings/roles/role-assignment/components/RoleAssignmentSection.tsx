@@ -5,9 +5,9 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import {
@@ -79,7 +79,7 @@ export const RoleAssignmentSection = ({
               {config.tooltip && (
                 <AppTooltip
                   anchorSelect={`#${config.tooltip.anchorId}`}
-                  content={config.tooltip.content()}
+                  title={config.tooltip.content()}
                   delay={TooltipDelay.noDelay}
                   hidden={
                     !config.tooltip.shouldShow(allWorkspaceMembersHaveThisRole)

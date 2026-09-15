@@ -10,11 +10,13 @@ export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   blocklist: '20202020-0408-4f38-b8a8-4d5e3e26e24d',
   calendarChannelEventAssociation: '20202020-491b-4aaa-9825-afd1bae6ae00',
   calendarEvent: '20202020-8f1d-4eef-9f85-0d1965e27221',
+  calendarEventTarget: '6a9b9656-3e23-4234-94a4-b913c5dde668',
   calendarEventParticipant: '20202020-a1c3-47a6-9732-27e5b1e8436d',
   callRecording: 'ce19efb9-710f-45b2-b141-473abbeea60b',
   noteTarget: '20202020-fff0-4b44-be82-bda313884400',
   taskTarget: '20202020-5a9a-44e8-95df-771cd06d0fb1',
   person: '20202020-e674-48e5-a542-72570eee7213',
+  recordShare: 'fecdb92c-d150-4544-81f8-f1158d18a7a2',
   company: '20202020-b374-4779-a561-80086cb2e17f',
   opportunity: '20202020-9549-49dd-b2b2-883999db8938',
   note: '20202020-0b00-45cd-b6f6-6cd806fc6804',
@@ -34,6 +36,7 @@ export const STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = {
   messageCampaign: '238acb94-dd4c-4036-bc55-19b99d821efd',
   messageParticipant: '20202020-a433-4456-aa2d-fd9cb26b774a',
   messageThread: '20202020-849a-4c3e-84f5-a25a7d802271',
+  messageThreadTarget: '378ad1b0-592d-4084-80ee-86fef44725b9',
 } as const;
 
 export type StandardObjectWithUniversalIdentifierName =

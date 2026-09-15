@@ -1,7 +1,7 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Command, useSelectedRecordIds } from 'twenty-sdk/front-component';
 
-import { GENERATE_CALL_RECORDING_SUMMARY_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/generate-call-recording-summary-front-component-universal-identifier';
+import { GENERATE_CALL_RECORDING_SUMMARY_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { requestCallRecordingSummaryGeneration } from 'src/front-components/utils/request-call-recording-summary-generation.util';
 
 const GenerateCallRecordingSummary = () => {

@@ -25,11 +25,23 @@ export class ApplicationManifestApplyService {
     manifest,
     applicationRegistrationId,
     application,
+    forceSdkClientGeneration = false,
+    inferDeletionFromMissingEntities = true,
+    persistVersion,
   }: {
     workspaceId: string;
     manifest: Manifest;
     applicationRegistrationId?: string;
-    application: ApplicationEntity;
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'version'
+    >;
+    inferDeletionFromMissingEntities?: boolean;
+    // Installs and upgrades force regeneration so function-only upgrades pick
+    // up SDK-level changes; dev sync relies on first-apply/schema-change to
+    // avoid regenerating on every save.
+    forceSdkClientGeneration?: boolean;
+    persistVersion?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -44,9 +56,11 @@ export class ApplicationManifestApplyService {
         workspaceId,
         manifest,
         applicationRegistrationId,
+        inferDeletionFromMissingEntities,
+        persistVersion,
       });
 
-    if (isFirstApply || hasSchemaMetadataChanged) {
+    if (forceSdkClientGeneration || isFirstApply || hasSchemaMetadataChanged) {
       await this.sdkClientGenerationService.generateSdkClientForApplication({
         workspaceId,
         applicationId: application.id,
@@ -92,12 +106,15 @@ export class ApplicationManifestApplyService {
       }
     }
 
-    return this.applicationRegistrationService.updateFromManifest({
-      applicationRegistrationId,
-      manifest,
-      sourceType,
-      latestAvailableVersion,
-      preventVersionDowngrade,
-    });
+    const manifestUpdate =
+      await this.applicationRegistrationService.updateFromManifest({
+        applicationRegistrationId,
+        manifest,
+        sourceType,
+        latestAvailableVersion,
+        preventVersionDowngrade,
+      });
+
+    return isDefined(manifestUpdate);
   }
 }

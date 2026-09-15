@@ -53,9 +53,10 @@ export default definePageLayout({
 
 * `type` は `'RECORD_INDEX'`、`'RECORD_PAGE'`、`'DASHBOARD'`、`'STANDALONE_PAGE'` のいずれかです。 特定のオブジェクトの詳細ビューをカスタマイズするには `'RECORD_PAGE'` を使用します。
 * `objectUniversalIdentifier` は、このレイアウトを適用するオブジェクトを指定します。
-* 各 `tab` は、`title`、`position`、`layoutMode` を持つページのセクションを定義します。レコードページおよびスタンドアロンページには `VERTICAL_LIST`、ダッシュボードには `GRID` を使用します。 `VERTICAL_LIST` タブでは、1 つのウィジェットのみの場合はそのウィジェットがフルブリードでタブ全体に表示され、複数のウィジェットがある場合はカードとして積み重なります。 `GRID` タブでは、ウィジェットの数に関係なく、常に 12 列グリッド上でカードとして配置されます。そのため、1 つのウィジェットにページ全体を使わせたい場合は `VERTICAL_LIST` を選択します。
+* 各 `tab` は、`title`、`position`、`layoutMode` を持つページのセクションを定義します。レコードページおよびスタンドアロンページには `VERTICAL_LIST`、ダッシュボードには `GRID`、タブのビューポートを埋める単一のウィジェットには `CANVAS` を使用します。 `VERTICAL_LIST` タブでは、ウィジェットが縦方向に積み重ねられます。 タイムライン、ファイル、メモ、タスク、ワークフローなど、独自のスクロールを管理する組み込みウィジェットは 1 つのビューポートを埋めます。フィールド、フロントコンポーネント、グラフ、その他のコンテンツに合わせたウィジェットは、そのコンテンツの高さまたは設定された高さでレンダリングされます。 `GRID` タブでは、ウィジェットは常に 12 列グリッド上のカードとして配置されます。 `CANVAS` ウィジェットには明示的な位置がありません。キャンバスタブに複数のウィジェットが含まれる場合、それらはビューポート全体を埋めるのではなく、コンテンツの高さでレンダリングされます。
 * `layoutMode` を明示的に設定します。 `layoutMode` を省略すると、`STANDALONE_PAGE` では `VERTICAL_LIST`、それ以外では `GRID` が適用されますが、これはレコードページで望ましい動作であることはほとんどありません。
 * タブ内の各 `widget` は、[front component](/l/ja/developers/extend/apps/layout/front-components)、リレーションリスト、その他のビルトインウィジェットタイプをレンダリングできます。
+* `FRONT_COMPONENT` ウィジェットでは、同じアプリのコマンドメニュー項目ユニバーサル識別子を順序付き配列として `headerCommandMenuItemUniversalIdentifiers` に設定できます。 これらのアクションはウィジェットカードヘッダーにアイコンボタンとして表示され、コマンドレベルの可用性チェックと権限チェックが維持されます。 識別子は一意である必要があり、アプリのインストール時に解決される必要があります。
 * タブの `position` は表示順を制御します。 組み込みタブの後にカスタムタブを配置するには、より大きな値（例：50）を使用します。
 
 ### フィールド ウィジェット
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   各レイアウトエントリは、その `tabs` とその `widgets` も公開しているため、任意の階層を参照できます:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   短いエイリアス `STANDARD_PAGE_LAYOUT` も利用できます:

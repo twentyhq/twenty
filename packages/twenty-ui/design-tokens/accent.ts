@@ -1,0 +1,21 @@
+import { COLOR_TOKENS } from './color';
+export const ACCENT_TOKENS = {
+  primary: COLOR_TOKENS.blue5,
+  secondary: COLOR_TOKENS.blue5,
+  tertiary: COLOR_TOKENS.blue3,
+  quaternary: COLOR_TOKENS.blue2,
+  accent3570: COLOR_TOKENS.blue8,
+  accent4060: COLOR_TOKENS.blue8,
+  accent1: COLOR_TOKENS.blue1,
+  accent2: COLOR_TOKENS.blue2,
+  accent3: COLOR_TOKENS.blue3,
+  accent4: COLOR_TOKENS.blue4,
+  accent5: COLOR_TOKENS.blue5,
+  accent6: COLOR_TOKENS.blue6,
+  accent7: COLOR_TOKENS.blue7,
+  accent8: COLOR_TOKENS.blue8,
+  accent9: COLOR_TOKENS.blue9,
+  accent10: COLOR_TOKENS.blue10,
+  accent11: COLOR_TOKENS.blue11,
+  accent12: COLOR_TOKENS.blue12,
+};

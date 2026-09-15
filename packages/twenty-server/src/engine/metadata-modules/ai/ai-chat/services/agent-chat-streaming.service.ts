@@ -536,6 +536,7 @@ export class AgentChatStreamingService {
     userWorkspaceId,
     workspace,
     modelId,
+    fileAttachments,
   }: {
     threadId: string;
     messageId: string;
@@ -543,7 +544,17 @@ export class AgentChatStreamingService {
     userWorkspaceId: string;
     workspace: WorkspaceEntity;
     modelId?: string;
+    fileAttachments?: AiChatFileAttachment[];
   }): Promise<{ streamId: string; turnId: string | null }> {
+    const thread = await this.threadRepository.findOne(workspace.id, {
+      where: { id: threadId },
+      select: ['id', 'activeStreamId'],
+    });
+
+    if (isDefined(thread)) {
+      await this.reapDeadStream({ thread, workspaceId: workspace.id });
+    }
+
     const streamId = generateId();
 
     await this.streamHeartbeatService.markClaimed(streamId);
@@ -566,7 +577,28 @@ export class AgentChatStreamingService {
       throw error;
     }
 
+    let attachmentMessageId: string | null = null;
+
     try {
+      const fileParts = await this.buildFilePartsFromAttachments(
+        fileAttachments,
+        workspace.id,
+      );
+
+      if (isNonEmptyArray(fileParts)) {
+        const attachmentMessage = await this.agentChatService.addMessage({
+          threadId,
+          uiMessage: {
+            role: AgentMessageRole.USER,
+            parts: fileParts,
+          },
+          turnId: resolved.turnId ?? undefined,
+          workspaceId: workspace.id,
+        });
+
+        attachmentMessageId = attachmentMessage.id;
+      }
+
       await this.enqueueResumeStream({
         threadId,
         userWorkspaceId,
@@ -576,6 +608,14 @@ export class AgentChatStreamingService {
         modelId,
       });
     } catch (error) {
+      if (isDefined(attachmentMessageId)) {
+        await this.agentChatService
+          .deleteMessage({
+            messageId: attachmentMessageId,
+            workspaceId: workspace.id,
+          })
+          .catch(() => {});
+      }
       await this.agentChatService.restorePendingQuestion({
         threadId,
         messageId,

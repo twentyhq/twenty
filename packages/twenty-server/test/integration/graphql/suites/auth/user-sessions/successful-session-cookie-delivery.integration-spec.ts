@@ -18,7 +18,6 @@ import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/su
 // secure-deployment-session-cookie.integration-spec.ts under a dedicated app
 // boot.
 describe('successful session cookie delivery on a secure deployment (integration)', () => {
-  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
   setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SAME_SITE', 'none');
 
   it('should deliver the host-locked secure cookie variant', async () => {

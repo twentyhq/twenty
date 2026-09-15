@@ -16,7 +16,7 @@ describe('getAdminChatsSortVariables', () => {
     expect(
       getAdminChatsSortVariables({
         fieldName: 'unknownField',
-        orderBy: 'AscNullsLast',
+        direction: 'asc',
       }),
     ).toEqual({
       sortBy: AdminChatThreadSortField.CREATED_AT,
@@ -28,7 +28,7 @@ describe('getAdminChatsSortVariables', () => {
     expect(
       getAdminChatsSortVariables({
         fieldName: AdminChatThreadSortField.MESSAGE_COUNT,
-        orderBy: 'AscNullsLast',
+        direction: 'asc',
       }),
     ).toEqual({
       sortBy: AdminChatThreadSortField.MESSAGE_COUNT,
@@ -40,7 +40,7 @@ describe('getAdminChatsSortVariables', () => {
     expect(
       getAdminChatsSortVariables({
         fieldName: AdminChatThreadSortField.UPDATED_AT,
-        orderBy: 'DescNullsLast',
+        direction: 'desc',
       }),
     ).toEqual({
       sortBy: AdminChatThreadSortField.UPDATED_AT,

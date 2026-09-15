@@ -10,18 +10,17 @@ import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   AvatarOrIcon,
+  LinkChip,
   Chip,
   type ChipSize,
-  ChipVariant,
-  LinkChip,
-} from 'twenty-ui/data-display';
+} from 'twenty-ui/primitives/data-display';
 import { type TriggerEventType } from 'twenty-ui/utilities';
 
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
   className?: string;
-  variant?: ChipVariant.Highlighted | ChipVariant.Transparent;
+  variant?: 'soft' | 'ghost';
   forceDisableClick?: boolean;
   isBold?: boolean;
   maxWidth?: number;
@@ -76,24 +75,26 @@ export const RecordChip = ({
   ) {
     return (
       <Chip
-        label={recordChipData.name}
         emptyLabel={t`Untitled`}
-        isBold={isBold}
+        weight={isBold ? 'medium' : 'regular'}
         size={size}
         maxWidth={maxWidth}
         className={className}
-        variant={ChipVariant.Transparent}
-        leftComponent={
+        variant="ghost"
+        startElement={
           isIconHidden ? null : (
             <AvatarOrIcon
-              placeholder={recordChipData.name}
-              placeholderColorSeed={record.id}
-              avatarType={recordChipData.avatarType}
-              avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
+              name={recordChipData.name}
+              colorSeed={record.id}
+              shape={recordChipData.avatarShape}
+              src={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
             />
           )
         }
-      />
+        style={{ paddingInlineStart: 0 }}
+      >
+        {recordChipData.name}
+      </Chip>
     );
   }
 
@@ -101,28 +102,28 @@ export const RecordChip = ({
     <LinkChip
       size={size}
       maxWidth={maxWidth}
-      label={recordChipData.name}
       emptyLabel={t`Untitled`}
-      isBold={isBold}
+      weight={isBold ? 'medium' : 'regular'}
       isLabelHidden={isLabelHidden}
-      leftComponent={
+      startElement={
         isIconHidden ? null : (
           <AvatarOrIcon
-            placeholder={recordChipData.name}
-            placeholderColorSeed={record.id}
-            avatarType={recordChipData.avatarType}
-            avatarUrl={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
+            name={recordChipData.name}
+            colorSeed={record.id}
+            shape={recordChipData.avatarShape}
+            src={getAbsoluteImageUrl(recordChipData.avatarUrl ?? '')}
           />
         )
       }
       className={className}
-      variant={
-        variant ??
-        (!forceDisableClick ? ChipVariant.Highlighted : ChipVariant.Transparent)
-      }
+      variant={variant ?? 'soft'}
+      clickable={variant !== 'ghost'}
+      style={variant === 'ghost' ? { paddingInlineStart: 0 } : undefined}
       to={to ?? getLinkToShowPage(objectNameSingular, record)}
       onClick={handleCustomClick}
       triggerEvent={triggerEvent}
-    />
+    >
+      {recordChipData.name}
+    </LinkChip>
   );
 };

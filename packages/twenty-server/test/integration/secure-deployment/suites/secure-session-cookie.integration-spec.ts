@@ -15,7 +15,6 @@ import {
   DISALLOWED_ORIGIN,
 } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
 import { IS_SECURE_DEPLOYMENT } from 'test/integration/graphql/suites/auth/user-sessions/constants/is-secure-deployment.constant';
-import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
@@ -27,8 +26,6 @@ import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-se
 // `nx run twenty-server:test:integration:secure`. It exercises the exact
 // production combination: __Host- name, Secure, and the SameSite=Lax default.
 describe('session cookie on a production-like secure deployment (integration)', () => {
-  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
-
   let sessionToken: string;
 
   beforeAll(() => {

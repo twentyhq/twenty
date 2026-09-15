@@ -11,8 +11,11 @@ import { ToolCategory } from 'twenty-shared/ai';
  * Contract tests for the MCP tool catalog.
  *
  * 1. Catalog contract: every category advertised by get_tool_catalog must be
- *    dispatchable end to end through execute_tool. Scales automatically: a
- *    newly registered provider is covered the moment it appears in the
+ *    dispatchable end to end through execute_tool. Dispatchable means the
+ *    registry resolves and executes the tool: a structured business failure
+ *    (e.g. a search tool rejecting empty arguments) still proves dispatch,
+ *    only "not found" / "not available" outputs do not. Scales automatically:
+ *    a newly registered provider is covered the moment it appears in the
  *    catalog, with no new test code.
  * 2. Permission gating: the catalog is role-dependent. An API key bound to a
  *    role without settings permissions must not see settings-gated tools
@@ -61,6 +64,31 @@ const getToolCatalog = async (
 };
 
 const READ_ONLY_TOOL_NAME_PATTERN = /^(find_|list_|get_|search_)/;
+
+// Dispatch-layer failures come from execute_tool gating or the registry
+// (unknown or unavailable tool), not from the executed tool itself. Their
+// exact wording is pinned by the "should report unknown tools as dispatch
+// failures" control test below, so drift fails loudly instead of silently
+// weakening the catalog contract.
+const DISPATCH_FAILURE_MESSAGE_PATTERN =
+  /^Tool ".+" (not found|is not available)$/;
+
+const isDispatchFailure = (result: {
+  content: { type: string; text: string }[];
+}): boolean => {
+  let output: { success?: boolean; message?: string };
+
+  try {
+    output = JSON.parse(result.content[0].text);
+  } catch {
+    return false;
+  }
+
+  return (
+    output.success === false &&
+    DISPATCH_FAILURE_MESSAGE_PATTERN.test(output.message ?? '')
+  );
+};
 
 // Deliberate exceptions to the "every advertised category is dispatchable
 // through a read-only tool" contract. Currently none: every category the MCP
@@ -197,7 +225,11 @@ describe('MCP tool catalog (integration)', () => {
             arguments: {},
           });
 
-          if (!result.isError) {
+          // Called with empty arguments, a resolved tool may legitimately
+          // return a structured failure (isError true since the MCP layer
+          // surfaces success: false); only a dispatch-layer failure means the
+          // category is advertised but not actually wired up.
+          if (!isDispatchFailure(result)) {
             dispatched = true;
             break;
           }
@@ -214,6 +246,16 @@ describe('MCP tool catalog (integration)', () => {
       expect([...categoriesWithoutReadOnlyTool].sort()).toEqual(
         EXPECTED_CATEGORIES_WITHOUT_READ_ONLY_TOOLS,
       );
+    });
+
+    it('should report unknown tools as dispatch failures', async () => {
+      const result = await callMcpTool(adminApiKeyToken, 'execute_tool', {
+        toolName: 'definitely_not_a_registered_tool',
+        arguments: {},
+      });
+
+      expect(result.isError).toBe(true);
+      expect(isDispatchFailure(result)).toBe(true);
     });
   });
 

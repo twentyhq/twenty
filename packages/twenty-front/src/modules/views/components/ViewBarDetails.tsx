@@ -23,7 +23,8 @@ import { anyFieldFilterValueComponentState } from '@/object-record/record-filter
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { AnyFieldSearchDropdownButton } from '@/views/components/AnyFieldSearchDropdownButton';
-import { ANY_FIELD_SEARCH_DROPDOWN_ID } from '@/views/constants/AnyFieldSearchDropdownId';
+import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
+import { getAnyFieldSearchDropdownId } from '@/views/utils/getAnyFieldSearchDropdownId';
 import { EditableFilterDropdownButton } from '@/views/editable-chip/components/EditableFilterDropdownButton';
 import { getEditableChipObjectFilterDropdownComponentInstanceId } from '@/views/editable-chip/utils/getEditableChipObjectFilterDropdownComponentInstanceId';
 import { useHasFiltersInQueryParams } from '@/views/hooks/internal/useHasFiltersInQueryParams';
@@ -35,7 +36,7 @@ import { isViewBarExpandedComponentState } from '@/views/states/isViewBarExpande
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { LightButton } from 'twenty-ui/input';
+import { LightButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ViewBarDetailsProps = {
@@ -105,6 +106,8 @@ export const ViewBarDetails = ({
   viewBarId,
   objectNamePlural,
 }: ViewBarDetailsProps) => {
+  const { recordIndexId } = useRecordIndexContextOrThrow();
+
   const isViewBarExpanded = useAtomComponentStateValue(
     isViewBarExpandedComponentState,
   );
@@ -190,7 +193,7 @@ export const ViewBarDetails = ({
 
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
-    ANY_FIELD_SEARCH_DROPDOWN_ID,
+    getAnyFieldSearchDropdownId(recordIndexId),
   );
 
   const canResetView =

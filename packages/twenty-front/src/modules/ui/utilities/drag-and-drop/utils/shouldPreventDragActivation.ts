@@ -9,7 +9,10 @@ const NON_DRAGGABLE_TARGET_SELECTOR = [
   'textarea:not([disabled])',
   'button:not([disabled])',
   '[contenteditable]:not([contenteditable="false"])',
+  '[data-dnd-drag-disable]',
 ].join(', ');
+
+type DragActivationEvent = Pick<PointerEvent, 'target'>;
 
 type DragActivationSource = {
   element?: Element | null;
@@ -17,7 +20,7 @@ type DragActivationSource = {
 };
 
 export const shouldPreventDragActivation = (
-  event: PointerEvent,
+  event: DragActivationEvent,
   source: DragActivationSource,
 ): boolean => {
   const target = event.target;

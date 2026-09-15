@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 Um App-HTTP-Routen aufzurufen oder Twenty-Datensätze aus einer Front-Komponente zu lesen und zu schreiben, verwende `RestApiClient` aus `twenty-client-sdk/rest`. Es sendet `/s/...`-Pfade an die Funktions-Basis-URL deines Arbeitsbereichs und alle anderen Pfade, einschließlich `/rest/...`, an `TWENTY_API_URL`.
 
+Es handelt immer als die Person, die die Seite betrachtet. `runAs: 'application'` ist nur eine Option für Logikfunktionen: Eine Komponente erhält niemals das eigene Token Ihrer Anwendung. Wenn Sie es hier anfordern, wird ein Fehler ausgelöst. Lagern Sie Arbeiten, die den eigenen Zugriff der Anwendung benötigen, hinter eine Logikfunktion aus und rufen Sie stattdessen diese auf.
+
 | Methode                           | Beschreibung                                                                             |
 | --------------------------------- | ---------------------------------------------------------------------------------------- |
 | `get(path, options?)`             | Sendet eine `GET`-Anfrage                                                                |
@@ -407,14 +409,15 @@ export default defineFrontComponent({
 
 Verfügbare Hooks:
 
-| Hook                                          | Gibt zurück             | Beschreibung                                                                |
-| --------------------------------------------- | ----------------------- | --------------------------------------------------------------------------- |
-| `useUserId()`                                 | `string` oder `null`    | Die ID des aktuellen Benutzers                                              |
-| `useSelectedRecordIds()`                      | `string[]`              | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)  |
-| `useRecordId()`                               | `string` oder `null`    | **Veraltet.** Verwenden Sie stattdessen `useSelectedRecordIds()`            |
-| `useFrontComponentId()`                       | `string`                | Die ID dieser Komponenteninstanz                                            |
-| `useColorScheme()`                            | `'light'` oder `'dark'` | Das aktive Farbschema der Host-UI (`System` ist bereits aufgelöst)          |
-| `useFrontComponentExecutionContext(selector)` | variiert                | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion |
+| Hook                                          | Gibt zurück             | Beschreibung                                                                              |
+| --------------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` oder `null`    | Die ID des aktuellen Benutzers                                                            |
+| `useSelectedRecordIds()`                      | `string[]`              | Alle ausgewählten Datensatz-IDs (leeres Array, wenn keine ausgewählt sind)                |
+| `useRecordId()`                               | `string` oder `null`    | **Veraltet.** Verwenden Sie stattdessen `useSelectedRecordIds()`                          |
+| `useFrontComponentId()`                       | `string`                | Die ID dieser Komponenteninstanz                                                          |
+| `useTimelineActivityId()`                     | `string` oder `null`    | Die aktuelle Timeline-Aktivitäts-ID beim Rendern einer benutzerdefinierten Timeline-Zeile |
+| `useColorScheme()`                            | `'light'` oder `'dark'` | Das aktive Farbschema der Host-UI (`System` ist bereits aufgelöst)                        |
+| `useFrontComponentExecutionContext(selector)` | variiert                | Zugriff auf den vollständigen Ausführungskontext mit einer Selektorfunktion               |
 
 ## Anwendungsvariablen
 
@@ -445,10 +448,10 @@ Geheime Variablen (`isSecret: true`) werden **nicht** in Front-Komponenten offen
 
 Die folgenden Systemvariablen sind immer über `process.env` verfügbar:
 
-| Variable                  | Beschreibung                                                  |
-| ------------------------- | ------------------------------------------------------------- |
-| `TWENTY_API_URL`          | Basis-URL der Twenty-Core-API                                 |
-| `TWENTY_APP_ACCESS_TOKEN` | Kurzlebiges Token mit dem Geltungsbereich der Rolle Ihrer App |
+| Variable                  | Beschreibung                                                                                                                                                                                                |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | Basis-URL der Twenty-Core-API                                                                                                                                                                               |
+| `TWENTY_APP_ACCESS_TOKEN` | Kurzlebiges Token, das auf die Schnittmenge der Rolle der angemeldeten Person und der Rolle Ihrer Anwendung beschränkt ist, sodass eine Komponente niemals mehr tun kann als die Person, die sie betrachtet |
 
 ### `TWENTY_FUNCTIONS_URL`
 
@@ -466,15 +469,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 Front-Komponenten können Navigation, Modals und Benachrichtigungen mittels Funktionen aus `twenty-sdk` auslösen:
 
-| Funktion                                        | Beschreibung                              |
-| ----------------------------------------------- | ----------------------------------------- |
-| `navigate(to, params?, queryParams?, options?)` | Zu einer Seite in der App navigieren      |
-| `openSidePanelPage(params)`                     | Ein Seitenpanel öffnen                    |
-| `closeSidePanel()`                              | Seitenpanel schließen                     |
-| `openCommandConfirmationModal(params)`          | Einen Bestätigungsdialog anzeigen         |
-| `enqueueSnackbar(params)`                       | Eine Toast-Benachrichtigung anzeigen      |
-| `unmountFrontComponent()`                       | Die Komponente entfernen                  |
-| `updateProgress(progress)`                      | Einen Fortschrittsindikator aktualisieren |
+| Funktion                                           | Beschreibung                                                                                                                                                                                                |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | Zu einer Seite in der App navigieren                                                                                                                                                                        |
+| `openSidePanelPage(params)`                        | Ein Seitenpanel öffnen                                                                                                                                                                                      |
+| `closeSidePanel()`                                 | Seitenpanel schließen                                                                                                                                                                                       |
+| `openCommandConfirmationModal(params)`             | Einen Bestätigungsdialog anzeigen                                                                                                                                                                           |
+| `enqueueSnackbar(params)`                          | Eine Toast-Benachrichtigung anzeigen                                                                                                                                                                        |
+| `unmountFrontComponent()`                          | Die Komponente entfernen                                                                                                                                                                                    |
+| `updateProgress(progress)`                         | Einen Fortschrittsindikator aktualisieren                                                                                                                                                                   |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | Lädt ein `Blob` in ein FILES-Feld hoch; gibt entweder `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` oder `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` zurück |
 
 Hier ist ein Beispiel, das die Host-API verwendet, um nach Abschluss einer Aktion eine Snackbar anzuzeigen und das Seitenpanel zu schließen:
 
@@ -519,6 +523,39 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
+
+### Speicher
+
+`localStorage` und `sessionStorage` funktionieren wie auf einer normalen Seite mit der standardmäßigen synchronen API. Deine Schlüssel sind auf die Installation deiner App und die angemeldete Benutzerin bzw. den angemeldeten Benutzer beschränkt: Keine andere App kann sie lesen, und wenn sich eine andere Benutzerin oder ein anderer Benutzer im selben Browser anmeldet, beginnt diese Person mit einem leeren Speicher. In `localStorage` geschriebene Werte bleiben geräteweit über Neuladungen hinweg erhalten; `sessionStorage` besteht für die Dauer der Browsersitzung.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty speichert die Werte im Namen deiner App, sodass ein Schreibvorgang lokal sofort angewendet und im Hintergrund gespeichert wird. Lesevorgänge warten niemals auf den Host. Es wird nichts synchronisiert: Die Werte folgen der Benutzerin oder dem Benutzer nicht in einen anderen Browser oder auf eine andere Maschine. Verwende daher den [Key-Value Store](/l/de/developers/extend/apps/logic/key-value-store) einer Logic Function für alles, was einen Gerätewechsel überstehen muss.
+
+Schreibvorgänge sind begrenzt, und alle Limits zählen Zeichen statt Bytes: Schlüssel sind höchstens 512 Zeichen lang, ein einzelner Wert höchstens 262.144 Zeichen, und jeder Speicher höchstens 1.048.576 Zeichen pro App und Benutzerin oder Benutzer. Ein Schreibvorgang, der ein Limit überschreitet, löst einen `QuotaExceededError` aus, wie bei der Browser-API.
 
 ### Mit mehreren Datensätzen arbeiten
 
@@ -600,6 +637,43 @@ export default defineFrontComponent({
 ```
 
 Details finden Sie im Abschnitt [Öffentliche Assets](/l/de/developers/extend/apps/config/public-assets).
+
+## Freigabe von Abhängigkeiten über die Front-Komponenten
+
+Standardmäßig bündelt jede Front-Komponente ihre eigene Kopie der von ihr importierten Bibliotheken, so dass eine App mit fünf Komponenten fünf Mal React verschickt. Erklären Sie geteilte Abhängigkeiten im Paket Ihrer App. son\`, um diese Bibliotheken einmal zu erstellen und jede Komponente der App aus einer einzigen zwischengespeicherten Datei laden zu lassen:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+Jede Komponente importiert dann ihre Abhängigkeiten genau wie zuvor — nichts ändert sich im Komponentencode:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+Ein paar Dinge, die Sie wissen sollten:
+
+* **Ein freigegebenes Abhängigkeitsbündel pro App.** Das Paket wird aus den eigenen Abhängigkeiten deiner App aufgebaut, so dass du die volle Kontrolle über die von dir ausgelieferten Versionen behalten kannst.
+* **Listet die exakten Angaben, die du importierst, auf.** `twenty-ui/input` und `twenty-ui/display` sind zwei Einträge; ein Paketname allein deckt seine Unterpfade nicht ab. Das Auflisten von `react` deckt automatisch `react/jsx-runtime` ab.
+* **Teile `react-dom/client` neben `react`.** Jede Komponente wird durch `createRoot` erzeugt, so dass es herauskommt, dass jede Komponente noch React DOM-Pakete enthält.
+* \*\*Das Bundle wird zwischengespeichert. \* Es wird unter einer Content-Hash-URL mit einem langlebigen unveränderlichen Cache versorgt so dass es einmal heruntergeladen und über alle Komponenten der App wiederverwendet wird, bis sich eine seiner Abhängigkeiten ändert.
+* **Komponenten, die keines der gemeinsam genutzten Pakete importieren, laden sie nie herunter.**
 
 ## Styling
 
@@ -703,24 +777,24 @@ Um explizit nach dem aktiven Schema zu verzweigen, lesen Sie es mit `useColorSch
 
 ## Aktuelle Einschränkungen
 
-Front-Komponenten befinden sich in aktiver Entwicklung. Rendern, Styling und das Behandeln von Ereignissen funktionieren gut. Alles, was *über* das Rendern hinausgeht (Messen eines Elements, Aufrufen einer DOM-Methode auf einem Ref, Portaling außerhalb deines Baums, Zugriff auf den Browser-Speicher), fehlt heute noch oder ist unvollständig, und das meiste davon schlägt stillschweigend fehl: keine Exception und auch kein TypeScript-Fehler, da das Gerüst gegen das vollständige Browser-DOM typisiert ist.
+Front-Komponenten befinden sich in aktiver Entwicklung. Rendern, Styling, Ereignisbehandlung, Messen von Elementen und Browser-Speicher funktionieren gut. Alles, was *über* diese Aspekte hinausgeht (Aufrufen einer DOM-Methode auf einem Ref, Beobachten von Größenänderungen eines Elements, Portaling außerhalb deines Baums), fehlt heute noch oder ist unvollständig, und das meiste davon schlägt stillschweigend fehl: keine Exception und auch kein TypeScript-Fehler, da das Gerüst gegen das vollständige Browser-DOM typisiert ist.
 
 Wenn dich eines dieser Probleme blockiert, [eröffne ein Issue](https://github.com/twentyhq/twenty/issues/new/choose), damit es priorisiert wird.
 
 ### Layout und Messung
 
-Noch kann sich nichts selbst messen.
+Elemente können sich selbst messen: Der Host spiegelt die Geometrie in die Sandbox, sodass Lesezugriffe lokal beantwortet werden, aber bis zu einem Frame veraltet sein können, und der erste Lesezugriff auf ein noch nie gemessenes Element gibt Nullen zurück. Nach dem Schreiben erneut in einem `requestAnimationFrame`-Callback oder in einem Effekt lesen.
 
-| API                                                           | Was passiert                                                                                           |
-| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `getBoundingClientRect()`, `getClientRects()`                 | Löst eine Exception aus                                                                                |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Stillschweigend `undefined`, daher ergibt `width ?? 0` den Wert `0` und `width > 600` ist immer falsch |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof`-Guards funktionieren)                                                       |
-| `window.matchMedia()`, `window.getComputedStyle()`            | Löst eine Exception aus                                                                                |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | Stillschweigend `undefined`                                                                            |
-| `new MutationObserver(fn)`                                    | Wird konstruiert, dann löst `.observe()` eine Exception aus                                            |
+| API                                                                                      | Was passiert                                                                                                                        |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | Funktionieren über den Spiegel; das Zuweisen von `scrollTop` / `scrollLeft` ist ein No-Op                                           |
+| `getClientRects()`, `window.matchMedia()`                                                | Löst eine Exception aus                                                                                                             |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | Funktionieren und melden den **Browser-Viewport**; die eigene Größe deines Widgets ist `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | Gibt nur die Inline-Styles des Elements zurück, niemals die vom Host berechnete Kaskade                                             |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (`typeof`-Guards funktionieren)                                                                                    |
+| `MutationObserver`                                                                       | Funktioniert, einschließlich `subtree`, `attributeFilter`, alter Werte und `takeRecords()`                                          |
 
-Daher funktionieren recharts `ResponsiveContainer`, Floating UI / Popper, Listen-Virtualisierung und Drag-to-Resize noch nicht. Führe das Layout stattdessen in CSS aus: Dein Stylesheet erreicht die echte Seite, daher verhalten sich Flexbox, Grid, `aspect-ratio`, `clamp()` und `@container` alle normal.
+Positionierung über `getBoundingClientRect` funktioniert jetzt, aber alles, was Größenänderungen über `ResizeObserver` beobachtet (Recharts `ResponsiveContainer`, Floating UIs `autoUpdate`), funktioniert weiterhin nicht. Verwende ohnehin CSS für das Layout: dein Stylesheet erreicht die echte Seite, daher verhalten sich Flexbox, Grid, `aspect-ratio`, `clamp()` und `@container` normal, ohne Frame-Lag.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` und `queueMicrotask` funktionieren ohne das Präfix `window.`. Nur `window.requestAnimationFrame(...)` und ähnliche Aufrufe lösen eine Exception aus.
@@ -730,32 +804,32 @@ Daher funktionieren recharts `ResponsiveContainer`, Floating UI / Popper, Listen
 
 Ein `ref` gibt dir ein Sandbox-Element, kein `HTMLElement`.
 
-| Was du schreibst                                                                                            | Was passiert                                          | Stattdessen verwenden                                                                                 |
-| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Löst eine Exception aus                               | Gesteuerte Komponenten; Werte aus `event.target` auslesen                                             |
-| `element.classList.add(...)`                                                                                | Löst eine Exception aus (`classList` ist `undefined`) | Erstelle den `className`-String selbst                                                                |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | Löst eine Exception aus                               | `querySelector()` / `querySelectorAll()`, die funktionieren                                           |
-| `document.activeElement`                                                                                    | Immer `undefined`                                     | Fokus mit `onFocus` / `onBlur` verfolgen                                                              |
-| `\<canvas>`                                                                                | Rendert nichts, keine Fehlermeldung                   | SVG verwenden oder Offscreen zeichnen und ein `<img src={dataUrl}>` anzeigen                          |
-| `createPortal(node, document.body)`                                                                         | Rendert nichts, während `isConnected` Erfolg meldet   | Overlays inline mit `position: absolute` oder der Bibliothek dein eigenes Container-Element übergeben |
+| Was du schreibst                                                                                            | Was passiert                                          | Stattdessen verwenden                                                                                                                                                                                     |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | Löst eine Exception aus                               | Gesteuerte Komponenten; Werte aus `event.target` auslesen                                                                                                                                                 |
+| `element.classList.add(...)`                                                                                | Löst eine Exception aus (`classList` ist `undefined`) | Erstelle den `className`-String selbst                                                                                                                                                                    |
+| `document.createTreeWalker()`                                                                               | Löst eine Exception aus                               | `querySelector()` / `querySelectorAll()` und `getElementById()` funktionieren; `getElementsByClassName()` funktioniert ebenfalls, gibt aber eine statische Collection zurück, keine Live-`HTMLCollection` |
+| `document.activeElement`                                                                                    | Immer `undefined`                                     | Fokus mit `onFocus` / `onBlur` verfolgen                                                                                                                                                                  |
+| `canvas`                                                                                                    | Rendert nichts, keine Fehlermeldung                   | SVG oder außerhalb des Bildschirms zeichnen und das Ergebnis in einem `img`-Element anzeigen                                                                                                              |
+| `createPortal(node, document.body)`                                                                         | Rendert nichts, während `isConnected` Erfolg meldet   | Overlays inline mit `position: absolute` oder der Bibliothek dein eigenes Container-Element übergeben                                                                                                     |
 
 Diese Portal-Lücke ist der Grund, warum Radix-, Headless-UI-, MUI- und react-select-Popover standardmäßig nichts rendern. Die meisten akzeptieren eine Container-Prop; verweise sie auf ein Element, das du gerendert hast.
 
 ### Ereignisse
 
-Maus, Zeiger, Touch, Drag, Tastatur, Fokus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` und `animationend`/`transitionend` werden an den Host durchgereicht, plus ein paar pro Element: `load`/`error` auf `<img>`, Zwischenablage und Composition auf `<input>`/`\<textarea>`, Medien auf `\<video>`/`\<audio>`, `toggle` auf `\<details>`/`\<dialog>`. Alles andere (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, Pointer-Capture, `onLoad` von `<img>`) wird ohne Warnung verworfen.
+Maus, Zeiger, Touch, Drag, Tastatur, Fokus, `input`/`change`/`submit`, `scroll`/`wheel`/`contextmenu` und `animationend`/`transitionend` werden an den Host durchgereicht, plus ein paar pro Element: `load`/`error` auf `img`, Zwischenablage und Komposition auf `input`/`textarea`, Medien auf `video`/`audio`, `toggle` auf `details`/`dialog`. Alles andere (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, Pointer-Capture, `onLoad` von `img`) wird ohne Warnung verworfen.
 
 `document.addEventListener()` und `window.addEventListener()` werden ohne Fehler registriert und feuern nie, weshalb ein Drag aufhört, sobald der Zeiger das Element verlässt, auf dem er begonnen hat. `event.preventDefault()` wird ebenfalls nicht durchgereicht; Formularübermittlung, `dragover`/`drop` und Link-Klicks sind bereits für dich abgesichert.
 
 ### Attribute und Styling
 
-Jedes Element leitet seine eigenen Eigenschaften an den Host-DOM weiter (`href` auf `\<a>`, `src`/`alt` auf `<img>`, `value`/`placeholder`/`disabled` auf `<input>` usw.), plus einen gemeinsamen Satz auf jedem Element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` und jedes `aria-*`-/`data-*`-Attribut (mit Bindestrich, daher wird `ariaLabel` verworfen). Alles außerhalb davon wird stillschweigend verworfen, daher solltest du benutzerdefinierte Zustände als `data-*` ausdrücken.
+Jedes Element leitet seine eigenen Eigenschaften an den Host-DOM weiter (`href` auf `a`, `src`/`alt` auf `img`, `value`/`placeholder`/`disabled` auf `input` usw.), plus einen gemeinsamen Satz auf jedem Element: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` und jedes `aria-*`-/`data-*`-Attribut (mit Bindestrich, daher wird `ariaLabel` verworfen). Alles außerhalb davon wird stillschweigend verworfen, daher solltest du benutzerdefinierte Zustände als `data-*` ausdrücken.
 
-Component-CSS, egal ob aus `import './styles.css'`, CSS-in-JS oder einem `\<style>`-Element, wird **unscoped** in den `\<head>` der Host-Seite injiziert. Dadurch kollidieren Klassennamen mit denen von Twenty (präfixe sie und schreibe niemals nacktes `div { ... }`-Selektoren), und `@media` bezieht sich auf das Browserfenster statt auf dein Widget (verwende `@container` mit deinem eigenen `container-type`). Inline-`style`-Props sind nicht betroffen.
+Component-CSS, egal ob aus `import './styles.css'`, CSS-in-JS oder einem `style`-Element, wird **unscoped** in den `head` der Host-Seite injiziert. Dadurch kollidieren Klassennamen mit denen von Twenty (präfixe sie und schreibe niemals nacktes `div { ... }`-Selektoren), und `@media` bezieht sich auf das Browserfenster statt auf dein Widget (verwende `@container` mit deinem eigenen `container-type`). Inline-`style`-Props sind nicht betroffen.
 
 ### Speicher und Netzwerk
 
-`localStorage`, `sessionStorage`, IndexedDB, Cookies, die Cache-API und `BroadcastChannel` sind alle nicht verfügbar, da die Komponente in einem Worker unter einem undurchsichtigen Origin läuft. Um Zustand zu persistieren, rufe eine [Logic Function](/l/de/developers/extend/apps/logic/logic-functions) auf und verwende deren [Key-Value Store](/l/de/developers/extend/apps/logic/key-value-store).
+`localStorage` und `sessionStorage` werden von Twenty statt vom Browser bereitgestellt: Die Komponente läuft in einem Worker mit einem intransparenten Ursprung, daher speichert der Host die Werte im Namen deiner App. Siehe [Speicher](#storage) für ihren Geltungsbereich und ihre Limits. IndexedDB, Cookies, die Cache API und `BroadcastChannel` sind weiterhin nicht verfügbar. Um Zustand geräteübergreifend zu persistieren, rufe eine [Logic Function](/l/de/developers/extend/apps/logic/logic-functions) auf und verwende deren [Key-Value Store](/l/de/developers/extend/apps/logic/key-value-store).
 
 `fetch` funktioniert, mit Einschränkungen:
 
@@ -763,9 +837,13 @@ Component-CSS, egal ob aus `import './styles.css'`, CSS-in-JS oder einem `\<styl
 * Andere Origins verlassen die Sandbox mit `Origin: null`, sodass eine Drittanbieter-API nur antwortet, wenn sie `Access-Control-Allow-Origin: *` sendet. Rufe sie stattdessen aus einer Logic Function auf.
 * `fetch('/rest/people')` wird niemals der Twenty-API zugeordnet, weil die Sandbox keine Seiten-URL hat, gegen die ein relativer Pfad aufgelöst werden könnte.
 
+### Medienerfassung
+
+`navigator.mediaDevices.getUserMedia()` und `MediaRecorder` funktionieren innerhalb von Front-Komponenten über Sandbox-Polyfills, sodass Standard-Aufnahmecode unverändert ausgeführt wird und `MediaRecorder.isTypeSupported` Auskunft darüber gibt, ob gängige Container-/Codec-Kombinationen unterstützt werden. Detaillierte `getUserMedia`-Constraint-Objekte werden akzeptiert, aber nicht weitergereicht – der Host erfasst mit seinen Standardwerten für die angeforderten Typen – und es kann immer nur eine Aufnahme gleichzeitig über Anwendungen hinweg aktiv sein. Speichere ein aufgezeichnetes `Blob` mit der Host-Funktion `uploadFile`.
+
 ### Weitere Lücken
 
-* **Dateiinhalt.** `<input type="file">` gibt deinem Handler nur Dateimetadaten, nicht die Bytes, daher sind `FileReader` und Uploads noch nicht möglich.
+* **Dateiinhalt.** Ein `input` des Typs `file` gibt deinem Handler nur Dateimetadaten, nicht die Bytes, daher ist `FileReader` nicht verfügbar. Um ein `Blob` hochzuladen, das dein Code bereits besitzt – z. B. eines, das von `MediaRecorder` erzeugt wurde – verwende die Host-Funktion `uploadFile`.
 * **Drag-and-drop-Nutzlasten.** Drag-Events werden ausgelöst, aber `event.dataTransfer` ist `undefined`.
 * **Node-Built-ins.** `fs`, `path` und `node:crypto` führen zu einem Build-Fehler, daher solltest du diese Arbeit in eine [Logic Function](/l/de/developers/extend/apps/logic/logic-functions) auslagern. Web Crypto, `fetch`, `TextEncoder` und `URL` sind verfügbar.
-* **`\<iframe>`** wird immer erneut ohne `allow-same-origin` sandboxed, sodass ein Embed, das von seiner eigenen Session abhängt, als ausgeloggt gerendert wird. Es hat auch kein `onLoad`.
+* **`iframe`** wird immer erneut ohne `allow-same-origin` in einer Sandbox ausgeführt, sodass eine Einbettung, die auf ihre eigene Sitzung angewiesen ist, als abgemeldet gerendert wird. Es hat auch kein `onLoad`.

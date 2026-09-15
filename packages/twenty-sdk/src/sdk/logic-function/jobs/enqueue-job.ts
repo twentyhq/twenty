@@ -4,6 +4,9 @@ import {
   type EnqueueJobResult,
 } from 'twenty-shared/application';
 
+/**
+ * @deprecated Use `enqueueJobs` instead.
+ */
 export const enqueueJob = async (
   input: EnqueueJobInput,
 ): Promise<EnqueueJobResult> => {
@@ -14,6 +17,7 @@ export const enqueueJob = async (
       __args: { input },
       enqueued: true,
       logicFunctionUniversalIdentifier: true,
+      jobId: true,
     },
   });
 

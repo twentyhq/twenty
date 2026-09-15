@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import React from 'react';
-import { CardContent } from 'twenty-ui/surfaces';
+import { CardContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContentContainer = styled.div`
@@ -15,6 +15,10 @@ const StyledRowContentContainer = styled.div`
 
   > div[data-clickable='false'] {
     cursor: default;
+  }
+
+  > div[data-hover-highlight]:hover {
+    background: ${themeCssVariables.background.transparent.lighter};
   }
 `;
 
@@ -34,7 +38,11 @@ export const ActivityRow = ({
 
   return (
     <StyledRowContentContainer>
-      <CardContent onClick={handleClick} isClickable={disabled !== true}>
+      <CardContent
+        onClick={handleClick}
+        isClickable={disabled !== true}
+        hasHoverHighlight={disabled !== true}
+      >
         {children}
       </CardContent>
     </StyledRowContentContainer>

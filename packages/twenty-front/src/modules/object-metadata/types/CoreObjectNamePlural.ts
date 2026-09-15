@@ -1,6 +1,4 @@
 export enum CoreObjectNamePlural {
-  Activity = 'activities',
-  ActivityTarget = 'activityTargets',
   ApiKey = 'apiKeys',
   Attachment = 'attachments',
   Blocklist = 'blocklists',
@@ -13,11 +11,9 @@ export enum CoreObjectNamePlural {
   MessageParticipant = 'messageParticipants',
   MessageThread = 'messageThreads',
   Note = 'notes',
-  NoteTarget = 'noteTargets',
   Opportunity = 'opportunities',
   Person = 'people',
   Task = 'tasks',
-  TaskTarget = 'taskTargets',
   View = 'views',
   ViewField = 'viewFields',
   ViewFilter = 'viewFilters',

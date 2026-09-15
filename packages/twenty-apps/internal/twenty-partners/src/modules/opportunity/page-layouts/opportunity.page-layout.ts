@@ -4,6 +4,9 @@ import {
   definePageLayout,
 } from 'twenty-sdk/define';
 
+import { APPLICATIONS_ON_OPPORTUNITY_FIELD_ID } from 'src/modules/application/objects/application.object';
+import { APPLICATIONS_WIDGET_VIEW_UNIVERSAL_IDENTIFIER } from 'src/modules/application/views/applications-widget.view';
+
 const OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID =
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.opportunity.views
     .opportunityRecordPageFields.universalIdentifier;
@@ -34,6 +37,22 @@ export default definePageLayout({
             viewUniversalIdentifier: OPPORTUNITY_RECORD_PAGE_FIELDS_VIEW_ID,
           },
         },
+        {
+          universalIdentifier: '6d634c81-c1a5-4c8d-9e96-c4bd049327f1',
+          title: 'Partners',
+          type: 'FIELD',
+          configuration: {
+            configurationType: 'FIELD',
+            // FIELD + TABLE is scoped only when the bound view filters the inverse
+            // relation with isCurrentRecordSelected. A RECORD_TABLE widget has no
+            // parent-record filter and lists every Application in the workspace.
+            // fieldMetadataId and viewId are typed `string`; sync resolves them
+            // as universal identifiers.
+            fieldMetadataId: APPLICATIONS_ON_OPPORTUNITY_FIELD_ID,
+            fieldDisplayMode: 'TABLE',
+            viewId: APPLICATIONS_WIDGET_VIEW_UNIVERSAL_IDENTIFIER,
+          },
+        },
       ],
     },
     {
@@ -41,7 +60,7 @@ export default definePageLayout({
       title: 'Timeline',
       position: 20,
       icon: 'IconTimelineEvent',
-      layoutMode: PageLayoutTabLayoutMode.CANVAS,
+      layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
       widgets: [
         {
           universalIdentifier: '98c9aac6-5a93-4725-84c7-15c5db445ea3',

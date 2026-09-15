@@ -14,9 +14,7 @@ export const validateFlatObjectMetadataLabel = ({
   ObjectMetadataMinimalInformation): FlatObjectMetadataValidationError[] => {
   const errors: FlatObjectMetadataValidationError[] = [];
 
-  // Validate both labelSingular and labelPlural
   for (const label of [labelSingular, labelPlural]) {
-    // Length too short check
     if (label.length < IDENTIFIER_MIN_CHAR_LENGTH) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,
@@ -26,7 +24,6 @@ export const validateFlatObjectMetadataLabel = ({
       });
     }
 
-    // Length too long check
     if (label.length > IDENTIFIER_MAX_CHAR_LENGTH) {
       errors.push({
         code: ObjectMetadataExceptionCode.INVALID_OBJECT_INPUT,

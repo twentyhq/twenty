@@ -1,9 +1,11 @@
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { IF_ELSE_BRANCH_POSITION_OFFSETS } from 'twenty-shared/workflow';
 import { type EntityManager } from 'typeorm';
 import { v5 } from 'uuid';
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
+import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -231,14 +233,7 @@ export const prefillWorkflows = async (
   await entityManager
     .createQueryBuilder()
     .insert()
-    .into('core.workflow', [
-      'id',
-      'workspaceId',
-      'universalIdentifier',
-      'applicationId',
-      'name',
-      'lastPublishedVersionId',
-    ])
+    .into(WorkflowEntity)
     .orIgnore()
     .values([
       {
@@ -248,6 +243,8 @@ export const prefillWorkflows = async (
         applicationId,
         name: 'Quick Lead',
         lastPublishedVersionId: quickLeadWorkflowVersionId,
+        workspaceWorkflowId: quickLeadWorkflowId,
+        lastPublishedCoreWorkflowVersionId: coreQuickLeadWorkflowVersionId,
       },
       {
         id: coreCreateCompanyWorkflowId,
@@ -256,6 +253,8 @@ export const prefillWorkflows = async (
         applicationId,
         name: 'Create company when adding a new person',
         lastPublishedVersionId: createCompanyWorkflowVersionId,
+        workspaceWorkflowId: createCompanyWorkflowId,
+        lastPublishedCoreWorkflowVersionId: coreCreateCompanyWorkflowVersionId,
       },
     ])
     .execute();
@@ -380,7 +379,7 @@ export const prefillWorkflows = async (
           },
         },
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -423,7 +422,7 @@ export const prefillWorkflows = async (
           }),
         },
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -460,7 +459,7 @@ export const prefillWorkflows = async (
           }),
         },
         errorHandlingOptions: {
-          retryOnFailure: { value: false },
+          retryOnFailure: { value: 0 },
           continueOnFailure: { value: false },
         },
       },
@@ -476,7 +475,7 @@ export const prefillWorkflows = async (
       type: 'CODE',
       valid: false,
       position: {
-        x: 227.25,
+        x: 0,
         y: 130,
       },
       settings: {
@@ -496,7 +495,7 @@ export const prefillWorkflows = async (
         },
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -512,7 +511,7 @@ export const prefillWorkflows = async (
       type: 'FILTER',
       valid: false,
       position: {
-        x: 249.25,
+        x: 0,
         y: 260,
       },
       settings: {
@@ -540,7 +539,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -556,7 +555,7 @@ export const prefillWorkflows = async (
       type: 'CODE',
       valid: false,
       position: {
-        x: 219.75,
+        x: 0,
         y: 390,
       },
       settings: {
@@ -584,7 +583,7 @@ export const prefillWorkflows = async (
         },
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -600,7 +599,7 @@ export const prefillWorkflows = async (
       type: 'FIND_RECORDS',
       valid: false,
       position: {
-        x: 247.75,
+        x: 0,
         y: 520,
       },
       settings: {
@@ -632,7 +631,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -648,7 +647,7 @@ export const prefillWorkflows = async (
       type: 'CODE',
       valid: false,
       position: {
-        x: 247.75,
+        x: 0,
         y: 650,
       },
       settings: {
@@ -675,7 +674,7 @@ export const prefillWorkflows = async (
         },
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -691,7 +690,7 @@ export const prefillWorkflows = async (
       type: 'IF_ELSE',
       valid: false,
       position: {
-        x: 216.25,
+        x: 0,
         y: 780,
       },
       settings: {
@@ -730,7 +729,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -745,7 +744,7 @@ export const prefillWorkflows = async (
       type: 'UPDATE_RECORD',
       valid: false,
       position: {
-        x: 0,
+        x: IF_ELSE_BRANCH_POSITION_OFFSETS.IF.x,
         y: 910,
       },
       settings: {
@@ -760,7 +759,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -775,7 +774,7 @@ export const prefillWorkflows = async (
       type: 'CREATE_RECORD',
       valid: false,
       position: {
-        x: 440,
+        x: IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
         y: 910,
       },
       settings: {
@@ -793,7 +792,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -809,7 +808,7 @@ export const prefillWorkflows = async (
       type: 'UPDATE_RECORD',
       valid: false,
       position: {
-        x: 420.5,
+        x: IF_ELSE_BRANCH_POSITION_OFFSETS.ELSE.x,
         y: 1040,
       },
       settings: {
@@ -824,7 +823,7 @@ export const prefillWorkflows = async (
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: {
-            value: false,
+            value: 0,
           },
           continueOnFailure: {
             value: false,
@@ -886,6 +885,7 @@ export const prefillWorkflows = async (
       'steps',
       'status',
       'workflowId',
+      'coreWorkflowId',
     ])
     .orIgnore()
     .values([
@@ -898,6 +898,7 @@ export const prefillWorkflows = async (
         steps: JSON.parse(quickLeadSteps),
         status: 'ACTIVE',
         workflowId: quickLeadWorkflowId,
+        coreWorkflowId: coreQuickLeadWorkflowId,
       },
       {
         id: coreCreateCompanyWorkflowVersionId,
@@ -908,6 +909,7 @@ export const prefillWorkflows = async (
         steps: JSON.parse(createCompanySteps),
         status: 'ACTIVE',
         workflowId: createCompanyWorkflowId,
+        coreWorkflowId: coreCreateCompanyWorkflowId,
       },
     ])
     .execute();

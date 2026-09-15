@@ -1,15 +1,15 @@
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
-import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { t } from '@lingui/core/macro';
+import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
+import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
+import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
+import { useId } from 'react';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import {
-  IconLayoutSidebarLeftCollapse,
-  IconLayoutSidebarRightCollapse,
-} from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCollapseButton = styled.div`
@@ -31,34 +31,35 @@ export const NavigationDrawerCollapseButton = ({
   className,
   direction = 'left',
 }: NavigationDrawerCollapseButtonProps) => {
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useAtomState(isNavigationDrawerExpandedState);
-  const setNavigationDrawerActiveTab = useSetAtomState(
-    navigationDrawerActiveTabState,
+  const isMobile = useIsMobile();
+  const isSettingsDrawer = useIsSettingsDrawer();
+  const { toggleNavigationDrawer } = useToggleNavigationDrawer();
+  const tooltipId = useId();
+  const { label, Icon } = useNavigationDrawerTogglePresentation(
+    direction === 'left',
   );
 
-  const handleClick = () => {
-    if (isNavigationDrawerExpanded) {
-      setNavigationDrawerActiveTab(NAVIGATION_DRAWER_TABS.NAVIGATION_MENU);
-    }
-    setIsNavigationDrawerExpanded((previousIsExpanded) => !previousIsExpanded);
-  };
+  // The main navigation is a page on mobile, so there is no drawer to toggle.
+  if (isMobile && !isSettingsDrawer) {
+    return null;
+  }
 
   return (
-    <StyledCollapseButton className={className} onClick={handleClick}>
+    <StyledCollapseButton className={className} data-tooltip-id={tooltipId}>
       <LightIconButton
-        Icon={
-          direction === 'left'
-            ? IconLayoutSidebarLeftCollapse
-            : IconLayoutSidebarRightCollapse
-        }
+        Icon={Icon}
         accent="secondary"
         size="small"
-        aria-label={
-          direction === 'left'
-            ? t`Collapse navigation panel`
-            : t`Expand navigation panel`
-        }
+        onClick={toggleNavigationDrawer}
+        aria-label={label}
+      />
+      <AppTooltip
+        anchorSelect={`[data-tooltip-id='${tooltipId}'] > button`}
+        title={label}
+        delay={TooltipDelay.longDelay}
+        place={TooltipPosition.Bottom}
+        offset={5}
+        noArrow
       />
     </StyledCollapseButton>
   );

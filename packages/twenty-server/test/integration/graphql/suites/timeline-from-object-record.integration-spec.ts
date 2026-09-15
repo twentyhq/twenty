@@ -1,11 +1,14 @@
 import gql from 'graphql-tag';
 import { type DocumentNode } from 'graphql';
 import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete-one-operation-factory.util';
 import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 const PAGE_SIZE = 50;
 
@@ -72,10 +75,12 @@ const requestTimeline = (
   query: DocumentNode,
   objectNameSingular: string,
   recordId: string,
+  page = 1,
+  pageSize = PAGE_SIZE,
 ) =>
   makeGraphqlAPIRequest({
     query,
-    variables: { objectNameSingular, recordId, page: 1, pageSize: PAGE_SIZE },
+    variables: { objectNameSingular, recordId, page, pageSize },
   });
 
 const TIMELINE_COMPANY_ID = '20202020-7e57-4000-8000-000000000001';
@@ -86,10 +91,66 @@ const TIMELINE_MESSAGE_PARTICIPANT_ID = '20202020-7e57-4000-8000-000000000005';
 const TIMELINE_CALENDAR_EVENT_ID = '20202020-7e57-4000-8000-000000000006';
 const TIMELINE_CALENDAR_EVENT_PARTICIPANT_ID =
   '20202020-7e57-4000-8000-000000000007';
+const TIMELINE_MESSAGE_THREAD_PERSON_TARGET_ID =
+  '20202020-7e57-4000-8000-000000000008';
+const TIMELINE_MESSAGE_THREAD_COMPANY_TARGET_ID =
+  '20202020-7e57-4000-8000-000000000009';
+const TIMELINE_CALENDAR_EVENT_PERSON_TARGET_ID =
+  '20202020-7e57-4000-8000-00000000000a';
+const TIMELINE_CALENDAR_EVENT_COMPANY_TARGET_ID =
+  '20202020-7e57-4000-8000-00000000000b';
+const TIMELINE_MANUAL_COMPANY_ID = '20202020-7e57-4000-8000-00000000000c';
+const TIMELINE_MESSAGE_THREAD_MANUAL_COMPANY_TARGET_ID =
+  '20202020-7e57-4000-8000-00000000000d';
+const TIMELINE_CALENDAR_EVENT_MANUAL_COMPANY_TARGET_ID =
+  '20202020-7e57-4000-8000-00000000000e';
+const TIMELINE_SECOND_MESSAGE_THREAD_ID =
+  '20202020-7e57-4000-8000-00000000000f';
+const TIMELINE_SECOND_MESSAGE_ID = '20202020-7e57-4000-8000-000000000010';
+const TIMELINE_SECOND_MESSAGE_THREAD_TARGET_ID =
+  '20202020-7e57-4000-8000-000000000011';
+const TIMELINE_SECOND_CALENDAR_EVENT_ID =
+  '20202020-7e57-4000-8000-000000000012';
+const TIMELINE_SECOND_CALENDAR_EVENT_TARGET_ID =
+  '20202020-7e57-4000-8000-000000000013';
+const TIMELINE_SECOND_MESSAGE_PARTICIPANT_ID =
+  '20202020-7e57-4000-8000-000000000014';
 
 // Destroyed in afterAll in child-before-parent order to satisfy foreign keys.
 const TIMELINE_FIXTURES: { objectMetadataSingularName: string; id: string }[] =
   [
+    {
+      objectMetadataSingularName: 'calendarEventTarget',
+      id: TIMELINE_SECOND_CALENDAR_EVENT_TARGET_ID,
+    },
+    {
+      objectMetadataSingularName: 'messageThreadTarget',
+      id: TIMELINE_SECOND_MESSAGE_THREAD_TARGET_ID,
+    },
+    {
+      objectMetadataSingularName: 'calendarEventTarget',
+      id: TIMELINE_CALENDAR_EVENT_MANUAL_COMPANY_TARGET_ID,
+    },
+    {
+      objectMetadataSingularName: 'messageThreadTarget',
+      id: TIMELINE_MESSAGE_THREAD_MANUAL_COMPANY_TARGET_ID,
+    },
+    {
+      objectMetadataSingularName: 'calendarEventTarget',
+      id: TIMELINE_CALENDAR_EVENT_COMPANY_TARGET_ID,
+    },
+    {
+      objectMetadataSingularName: 'calendarEventTarget',
+      id: TIMELINE_CALENDAR_EVENT_PERSON_TARGET_ID,
+    },
+    {
+      objectMetadataSingularName: 'messageThreadTarget',
+      id: TIMELINE_MESSAGE_THREAD_COMPANY_TARGET_ID,
+    },
+    {
+      objectMetadataSingularName: 'messageThreadTarget',
+      id: TIMELINE_MESSAGE_THREAD_PERSON_TARGET_ID,
+    },
     {
       objectMetadataSingularName: 'calendarEventParticipant',
       id: TIMELINE_CALENDAR_EVENT_PARTICIPANT_ID,
@@ -99,15 +160,32 @@ const TIMELINE_FIXTURES: { objectMetadataSingularName: string; id: string }[] =
       id: TIMELINE_CALENDAR_EVENT_ID,
     },
     {
+      objectMetadataSingularName: 'calendarEvent',
+      id: TIMELINE_SECOND_CALENDAR_EVENT_ID,
+    },
+    {
       objectMetadataSingularName: 'messageParticipant',
       id: TIMELINE_MESSAGE_PARTICIPANT_ID,
     },
+    {
+      objectMetadataSingularName: 'messageParticipant',
+      id: TIMELINE_SECOND_MESSAGE_PARTICIPANT_ID,
+    },
     { objectMetadataSingularName: 'message', id: TIMELINE_MESSAGE_ID },
+    {
+      objectMetadataSingularName: 'message',
+      id: TIMELINE_SECOND_MESSAGE_ID,
+    },
     {
       objectMetadataSingularName: 'messageThread',
       id: TIMELINE_MESSAGE_THREAD_ID,
     },
+    {
+      objectMetadataSingularName: 'messageThread',
+      id: TIMELINE_SECOND_MESSAGE_THREAD_ID,
+    },
     { objectMetadataSingularName: 'person', id: TIMELINE_PERSON_ID },
+    { objectMetadataSingularName: 'company', id: TIMELINE_MANUAL_COMPANY_ID },
     { objectMetadataSingularName: 'company', id: TIMELINE_COMPANY_ID },
   ];
 
@@ -131,6 +209,12 @@ describe('timeline from object record resolvers (integration)', () => {
   let personWithEvents: { id: string; companyId: string };
 
   beforeAll(async () => {
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
     await createTimelineRecord('company', {
       id: TIMELINE_COMPANY_ID,
       name: 'Timeline Source Company',
@@ -140,6 +224,11 @@ describe('timeline from object record resolvers (integration)', () => {
       id: TIMELINE_PERSON_ID,
       name: { firstName: 'Timeline', lastName: 'Source' },
       companyId: TIMELINE_COMPANY_ID,
+    });
+
+    await createTimelineRecord('company', {
+      id: TIMELINE_MANUAL_COMPANY_ID,
+      name: 'Timeline Manual Company',
     });
 
     await createTimelineRecord('messageThread', {
@@ -163,6 +252,51 @@ describe('timeline from object record resolvers (integration)', () => {
       displayName: 'Timeline Source',
     });
 
+    await createTimelineRecord('messageThreadTarget', {
+      id: TIMELINE_MESSAGE_THREAD_PERSON_TARGET_ID,
+      messageThreadId: TIMELINE_MESSAGE_THREAD_ID,
+      targetPersonId: TIMELINE_PERSON_ID,
+    });
+
+    await createTimelineRecord('messageThreadTarget', {
+      id: TIMELINE_MESSAGE_THREAD_COMPANY_TARGET_ID,
+      messageThreadId: TIMELINE_MESSAGE_THREAD_ID,
+      targetCompanyId: TIMELINE_COMPANY_ID,
+    });
+
+    await createTimelineRecord('messageThreadTarget', {
+      id: TIMELINE_MESSAGE_THREAD_MANUAL_COMPANY_TARGET_ID,
+      messageThreadId: TIMELINE_MESSAGE_THREAD_ID,
+      targetCompanyId: TIMELINE_MANUAL_COMPANY_ID,
+    });
+
+    await createTimelineRecord('messageThread', {
+      id: TIMELINE_SECOND_MESSAGE_THREAD_ID,
+    });
+
+    await createTimelineRecord('message', {
+      id: TIMELINE_SECOND_MESSAGE_ID,
+      messageThreadId: TIMELINE_SECOND_MESSAGE_THREAD_ID,
+      subject: 'Second timeline target thread',
+      text: 'Second timeline target message body',
+      receivedAt: new Date(Date.now() + 60_000).toISOString(),
+    });
+
+    await createTimelineRecord('messageParticipant', {
+      id: TIMELINE_SECOND_MESSAGE_PARTICIPANT_ID,
+      messageId: TIMELINE_SECOND_MESSAGE_ID,
+      personId: TIMELINE_PERSON_ID,
+      role: 'FROM',
+      handle: 'timeline.source@example.com',
+      displayName: 'Timeline Source',
+    });
+
+    await createTimelineRecord('messageThreadTarget', {
+      id: TIMELINE_SECOND_MESSAGE_THREAD_TARGET_ID,
+      messageThreadId: TIMELINE_SECOND_MESSAGE_THREAD_ID,
+      targetCompanyId: TIMELINE_MANUAL_COMPANY_ID,
+    });
+
     await createTimelineRecord('calendarEvent', {
       id: TIMELINE_CALENDAR_EVENT_ID,
       title: 'Timeline source event',
@@ -179,6 +313,38 @@ describe('timeline from object record resolvers (integration)', () => {
       displayName: 'Timeline Source',
       responseStatus: 'ACCEPTED',
       isOrganizer: true,
+    });
+
+    await createTimelineRecord('calendarEventTarget', {
+      id: TIMELINE_CALENDAR_EVENT_PERSON_TARGET_ID,
+      calendarEventId: TIMELINE_CALENDAR_EVENT_ID,
+      targetPersonId: TIMELINE_PERSON_ID,
+    });
+
+    await createTimelineRecord('calendarEventTarget', {
+      id: TIMELINE_CALENDAR_EVENT_COMPANY_TARGET_ID,
+      calendarEventId: TIMELINE_CALENDAR_EVENT_ID,
+      targetCompanyId: TIMELINE_COMPANY_ID,
+    });
+
+    await createTimelineRecord('calendarEventTarget', {
+      id: TIMELINE_CALENDAR_EVENT_MANUAL_COMPANY_TARGET_ID,
+      calendarEventId: TIMELINE_CALENDAR_EVENT_ID,
+      targetCompanyId: TIMELINE_MANUAL_COMPANY_ID,
+    });
+
+    await createTimelineRecord('calendarEvent', {
+      id: TIMELINE_SECOND_CALENDAR_EVENT_ID,
+      title: 'Second timeline target event',
+      isFullDay: false,
+      startsAt: new Date(Date.now() + 60_000).toISOString(),
+      endsAt: new Date(Date.now() + 120_000).toISOString(),
+    });
+
+    await createTimelineRecord('calendarEventTarget', {
+      id: TIMELINE_SECOND_CALENDAR_EVENT_TARGET_ID,
+      calendarEventId: TIMELINE_SECOND_CALENDAR_EVENT_ID,
+      targetCompanyId: TIMELINE_MANUAL_COMPANY_ID,
     });
 
     personWithThreads = {
@@ -253,6 +419,124 @@ describe('timeline from object record resolvers (integration)', () => {
 
     expect(personEventCount).toBeGreaterThan(0);
     expect(companyEventCount).toBeGreaterThanOrEqual(personEventCount);
+  });
+
+  it('should expose manual company targets without a related person', async () => {
+    const [threadResponse, calendarResponse] = await Promise.all([
+      requestTimeline(
+        GET_TIMELINE_THREADS,
+        'company',
+        TIMELINE_MANUAL_COMPANY_ID,
+      ),
+      requestTimeline(
+        GET_TIMELINE_CALENDAR_EVENTS,
+        'company',
+        TIMELINE_MANUAL_COMPANY_ID,
+      ),
+    ]);
+
+    expect(threadResponse.body.errors).toBeUndefined();
+    expect(calendarResponse.body.errors).toBeUndefined();
+    expect(
+      threadResponse.body.data.getTimelineThreadsFromObjectRecord.timelineThreads.map(
+        ({ id }: { id: string }) => id,
+      ),
+    ).toContain(TIMELINE_MESSAGE_THREAD_ID);
+    expect(
+      calendarResponse.body.data.getTimelineCalendarEventsFromObjectRecord.timelineCalendarEvents.map(
+        ({ id }: { id: string }) => id,
+      ),
+    ).toContain(TIMELINE_CALENDAR_EVENT_ID);
+  });
+
+  it.each([
+    {
+      query: GET_TIMELINE_THREADS,
+      resultField: 'getTimelineThreadsFromObjectRecord',
+      recordsField: 'timelineThreads',
+      totalField: 'totalNumberOfThreads',
+      expectedIds: [
+        TIMELINE_MESSAGE_THREAD_ID,
+        TIMELINE_SECOND_MESSAGE_THREAD_ID,
+      ],
+    },
+    {
+      query: GET_TIMELINE_CALENDAR_EVENTS,
+      resultField: 'getTimelineCalendarEventsFromObjectRecord',
+      recordsField: 'timelineCalendarEvents',
+      totalField: 'totalNumberOfCalendarEvents',
+      expectedIds: [
+        TIMELINE_CALENDAR_EVENT_ID,
+        TIMELINE_SECOND_CALENDAR_EVENT_ID,
+      ],
+    },
+  ])(
+    'should paginate target-backed $recordsField without changing the total',
+    async ({ query, resultField, recordsField, totalField, expectedIds }) => {
+      const [firstPageResponse, secondPageResponse] = await Promise.all([
+        requestTimeline(query, 'company', TIMELINE_MANUAL_COMPANY_ID, 1, 1),
+        requestTimeline(query, 'company', TIMELINE_MANUAL_COMPANY_ID, 2, 1),
+      ]);
+
+      expect(firstPageResponse.body.errors).toBeUndefined();
+      expect(secondPageResponse.body.errors).toBeUndefined();
+
+      const firstPage = firstPageResponse.body.data[resultField];
+      const secondPage = secondPageResponse.body.data[resultField];
+      const pageIds = [...firstPage[recordsField], ...secondPage[recordsField]]
+        .map(({ id }: { id: string }) => id)
+        .sort();
+
+      expect(firstPage[totalField]).toBe(2);
+      expect(secondPage[totalField]).toBe(2);
+      expect(firstPage[recordsField]).toHaveLength(1);
+      expect(secondPage[recordsField]).toHaveLength(1);
+      expect(pageIds).toEqual([...expectedIds].sort());
+    },
+  );
+
+  it('should exclude soft-deleted target tombstones', async () => {
+    for (const [objectMetadataSingularName, recordId] of [
+      ['messageThreadTarget', TIMELINE_MESSAGE_THREAD_MANUAL_COMPANY_TARGET_ID],
+      ['calendarEventTarget', TIMELINE_CALENDAR_EVENT_MANUAL_COMPANY_TARGET_ID],
+      ['messageThreadTarget', TIMELINE_SECOND_MESSAGE_THREAD_TARGET_ID],
+      ['calendarEventTarget', TIMELINE_SECOND_CALENDAR_EVENT_TARGET_ID],
+    ] as const) {
+      const response = await makeGraphqlAPIRequest(
+        deleteOneOperationFactory({
+          objectMetadataSingularName,
+          gqlFields: 'id',
+          recordId,
+        }),
+      );
+
+      expect(response.body.errors).toBeUndefined();
+    }
+
+    const [threadResponse, calendarResponse] = await Promise.all([
+      requestTimeline(
+        GET_TIMELINE_THREADS,
+        'company',
+        TIMELINE_MANUAL_COMPANY_ID,
+      ),
+      requestTimeline(
+        GET_TIMELINE_CALENDAR_EVENTS,
+        'company',
+        TIMELINE_MANUAL_COMPANY_ID,
+      ),
+    ]);
+
+    expect(threadResponse.body.errors).toBeUndefined();
+    expect(calendarResponse.body.errors).toBeUndefined();
+
+    expect(
+      threadResponse.body.data.getTimelineThreadsFromObjectRecord
+        .totalNumberOfThreads,
+    ).toBe(0);
+    expect(
+      calendarResponse.body.data.getTimelineCalendarEventsFromObjectRecord
+        .totalNumberOfCalendarEvents,
+    ).toBe(0);
   });
 
   it('should serve getTimelineThreadsFromPersonId identically to the object-record resolver', async () => {

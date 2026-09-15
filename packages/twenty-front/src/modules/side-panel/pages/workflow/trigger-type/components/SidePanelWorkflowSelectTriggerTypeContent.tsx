@@ -19,7 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
 import { useContext } from 'react';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SidePanelWorkflowSelectTriggerTypeContent = () => {
@@ -65,12 +65,12 @@ export const SidePanelWorkflowSelectTriggerTypeContent = () => {
 
       setWorkflowSelectedNode(TRIGGER_STEP_ID);
 
-      openWorkflowEditStepInSidePanel(
+      openWorkflowEditStepInSidePanel({
         workflowId,
-        defaultLabel,
-        getIcon(icon),
-        TRIGGER_STEP_ID,
-      );
+        title: defaultLabel,
+        icon: getIcon(icon),
+        stepId: TRIGGER_STEP_ID,
+      });
     };
   };
 

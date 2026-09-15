@@ -1,4 +1,5 @@
 import { type DraftPageLayout } from '@/page-layout/types/DraftPageLayout';
+import { canVerticalListAcceptWidget } from '@/page-layout/utils/canVerticalListAcceptWidget';
 import { reindexWidgetsToVerticalListPositions } from '@/page-layout/utils/reindexWidgetsToVerticalListPositions';
 import { sortWidgetsByVerticalListPosition } from '@/page-layout/utils/sortWidgetsByVerticalListPosition';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,6 +43,15 @@ export const moveWidgetToTabInDraft = (
   );
 
   if (!isDefined(widget)) {
+    return draft;
+  }
+
+  if (
+    !canVerticalListAcceptWidget({
+      destinationWidgets: destinationTab.widgets,
+      widget,
+    })
+  ) {
     return draft;
   }
 

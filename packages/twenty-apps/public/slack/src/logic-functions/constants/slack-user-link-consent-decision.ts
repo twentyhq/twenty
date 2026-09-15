@@ -1,0 +1,4 @@
+export const SLACK_USER_LINK_CONSENT_DECISION = {
+  APPROVE: 'APPROVE',
+  DECLINE: 'DECLINE',
+} as const;

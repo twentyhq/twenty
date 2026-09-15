@@ -1,9 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 
 import { WorkspaceCompanyEnrichmentOutcome } from 'src/engine/core-modules/company-enrichment/enums/workspace-company-enrichment-outcome.enum';
+import { WorkspacePersonEnrichmentOutcome } from 'src/engine/core-modules/company-enrichment/enums/workspace-person-enrichment-outcome.enum';
 
 @ObjectType('WorkspaceCompanyEnrichmentResult')
 export class WorkspaceCompanyEnrichmentResultDTO {
@@ -12,6 +16,12 @@ export class WorkspaceCompanyEnrichmentResultDTO {
 
   @Field(() => GraphQLJSON, { nullable: true })
   enrichment: WorkspaceCompanyEnrichment | null;
+
+  @Field(() => WorkspacePersonEnrichmentOutcome)
+  personOutcome: WorkspacePersonEnrichmentOutcome;
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  personEnrichment: WorkspacePersonEnrichment | null;
 
   @Field(() => Boolean)
   isBookCallOnboardingStepPending: boolean;

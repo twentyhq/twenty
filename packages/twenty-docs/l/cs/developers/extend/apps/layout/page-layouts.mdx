@@ -53,9 +53,10 @@ export default definePageLayout({
 
 * `type` je jedním z `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` nebo `'STANDALONE_PAGE'`. Použijte `'RECORD_PAGE'` k přizpůsobení detailního zobrazení konkrétního objektu.
 * `objectUniversalIdentifier` určuje, na který objekt se toto rozvržení vztahuje.
-* Každá `tab` definuje sekci stránky s `title`, `position` a `layoutMode`: `VERTICAL_LIST` pro stránky záznamů a samostatné stránky, `GRID` pro řídicí panely. V `VERTICAL_LIST` záložce se jediný widget vykreslí přes celou šířku a zabere celou záložku; pokud je widgetů více, řadí se pod sebe jako karty. `GRID` záložka vždy rozmístí své widgety jako karty v dvanáctisloupcové mřížce, bez ohledu na jejich počet, takže `VERTICAL_LIST` zvolte tehdy, když chcete, aby jeden widget vyplnil celou stránku.
+* Každá `tab` definuje sekci stránky s `title`, `position` a `layoutMode`: `VERTICAL_LIST` pro stránky záznamů a samostatné stránky, `GRID` pro řídicí panely a `CANVAS` pro jeden widget, který by měl vyplnit zobrazovací oblast karty. Karta `VERTICAL_LIST` řadí widgety svisle. Vestavěné widgety, které spravují vlastní posouvání, jako jsou časové osy, soubory, poznámky, úkoly a pracovní postupy, vyplní jednu zobrazovací oblast; pole, frontové komponenty, grafy a další widgety přizpůsobené obsahu se vykreslí ve výšce obsahu nebo nakonfigurované výšce. Karta `GRID` vždy rozvrhne své widgety jako karty v mřížce s 12 sloupci. Widget `CANVAS` nemá explicitní pozici; pokud karta plátna obsahuje více widgetů, vykreslí se ve výšce svého obsahu místo toho, aby vyplnily oblast zobrazení.
 * Nastavte `layoutMode` explicitně. Pokud jej vynecháte, získáte `VERTICAL_LIST` na `STANDALONE_PAGE` a `GRID` všude jinde, což je na stránce záznamu jen zřídka to, co chcete.
 * Každý `widget` uvnitř karty může vykreslit [front component](/l/cs/developers/extend/apps/layout/front-components), seznam relací nebo jiné vestavěné typy widgetů.
+* Widget `FRONT_COMPONENT` může nastavit `headerCommandMenuItemUniversalIdentifiers` na seřazené pole univerzálních identifikátorů položek nabídky příkazů ze stejné aplikace. Tyto akce se v záhlaví karty widgetu zobrazují jako tlačítka s ikonami a zachovávají svou dostupnost na úrovni příkazů i kontroly oprávnění. Identifikátory musí být jedinečné a při instalaci aplikace musí být vyřešitelné.
 * `position` na kartách určuje jejich pořadí. Použijte vyšší hodnoty (např. 50) pro umístění vlastních karet za vestavěné.
 
 ### Widgety polí
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   Každá položka rozvržení také zpřístupňuje své `tabs` a jejich `widgets`, takže můžete odkazovat na libovolnou úroveň:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   K dispozici je také krátký alias `STANDARD_PAGE_LAYOUT`:

@@ -13,7 +13,7 @@ import { parseGoogleOAuthError } from 'src/modules/connected-account/refresh-tok
 import { type ConnectedAccountPlaintextTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 @Injectable()
-export class GoogleAPIRefreshAccessTokenService {
+export class GoogleApiRefreshAccessTokenService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   async refreshTokens(

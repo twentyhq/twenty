@@ -84,6 +84,29 @@ export default defineField({
 **循環インポート:** 両方のリレーションフィールドは互いの `universalIdentifier` を参照します。 循環インポートの問題を避けるため、各ファイルからフィールド ID を名前付き定数としてエクスポートし、相手のファイルでインポートしてください。 ビルドシステムがコンパイル時にこれらを解決します。
 </Note>
 
+## 中間リレーション
+
+中間オブジェクトは、1つのソースレコードを1つ以上のターゲットレコードに接続します。 たとえば、`PostCardRecipient` は `postCard` リレーションと `recipient` リレーションの両方を保持できます。 ソースオブジェクトの `ONE_TO_MANY` フィールドで、`junctionTargetFieldUniversalIdentifier` を、ターゲットを指す中間オブジェクト上のリレーションフィールドに設定します:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID` は、中間オブジェクト上の `MANY_TO_ONE` または morph リレーションを識別する必要があります。 これにより、[タイムラインアクティビティのファンアウト](/l/ja/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events)などの機能が中間オブジェクトをたどる際に、どの関連レコードがターゲットであるかをTwentyに伝えます。
+
 ## 標準オブジェクトとのリレーション
 
 組み込みの Twenty オブジェクト（Person、Company など）とリレーションを作成するには、`STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` を使用します:
@@ -122,14 +145,15 @@ export default defineField({
 
 ## リレーションフィールドのプロパティ
 
-| プロパティ                                             | 必須             | 説明                                                                  |
-| ------------------------------------------------- | -------------- | ------------------------------------------------------------------- |
-| `type`                                            | はい             | `FieldType.RELATION` でなければなりません                                     |
-| `relationTargetObjectMetadataUniversalIdentifier` | はい             | 対象オブジェクトの `universalIdentifier`                                     |
-| `relationTargetFieldMetadataUniversalIdentifier`  | はい             | 対象オブジェクト上の対応するフィールドの `universalIdentifier`                          |
-| `universalSettings.relationType`                  | はい             | `RelationType.MANY_TO_ONE` または `RelationType.ONE_TO_MANY`           |
-| `universalSettings.onDelete`                      | MANY_TO_ONE のみ | 参照先レコードが削除されたときの動作: `CASCADE`、`SET_NULL`、`RESTRICT`、または `NO_ACTION` |
-| `universalSettings.joinColumnName`                | MANY_TO_ONE のみ | 外部キーのデータベース列名（例: `postCardId`）                                      |
+| プロパティ                                                      | 必須                  | 説明                                                                  |
+| ---------------------------------------------------------- | ------------------- | ------------------------------------------------------------------- |
+| `type`                                                     | はい                  | `FieldType.RELATION` でなければなりません                                     |
+| `relationTargetObjectMetadataUniversalIdentifier`          | はい                  | 対象オブジェクトの `universalIdentifier`                                     |
+| `relationTargetFieldMetadataUniversalIdentifier`           | はい                  | 対象オブジェクト上の対応するフィールドの `universalIdentifier`                          |
+| `universalSettings.relationType`                           | はい                  | `RelationType.MANY_TO_ONE` または `RelationType.ONE_TO_MANY`           |
+| `universalSettings.onDelete`                               | MANY_TO_ONE のみ      | 参照先レコードが削除されたときの動作: `CASCADE`、`SET_NULL`、`RESTRICT`、または `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | MANY_TO_ONE のみ      | 外部キーのデータベース列名（例: `postCardId`）                                      |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | 中間 `ONE_TO_MANY` のみ | ファンアウトターゲットを指す、中間オブジェクト上のリレーションフィールド                                |
 
 ## インラインのリレーションフィールド
 

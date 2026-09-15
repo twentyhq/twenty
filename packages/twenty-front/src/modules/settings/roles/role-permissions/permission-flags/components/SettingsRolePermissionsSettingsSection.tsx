@@ -1,4 +1,4 @@
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
 import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
@@ -8,9 +8,12 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSettings } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import {
+  AnimatedExpandableContainer,
+  Section,
+} from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`
@@ -62,7 +65,7 @@ export const SettingsRolePermissionsSettingsSection = ({
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
           <Card rounded>
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={IconSettings}
               title={t`Settings All Access`}
               description={t`Ability to edit all settings`}

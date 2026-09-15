@@ -1,10 +1,13 @@
+import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
+import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
+import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
+import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { type DragEvent, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DropZone } from '@/activities/files/components/DropZone';
 import { AgentChatHasBeenOpenedEffect } from '@/ai/components/AgentChatHasBeenOpenedEffect';
-import { AgentChatStreamingAutoScrollEffect } from '@/ai/components/AgentChatStreamingAutoScrollEffect';
 import { AgentChatStreamingPartsDiffSyncEffect } from '@/ai/components/AgentChatStreamingPartsDiffSyncEffect';
 import { AiChatEditorSection } from '@/ai/components/AiChatEditorSection';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
@@ -27,6 +30,7 @@ const StyledContainer = styled.div<{ isDraggingFile: boolean }>`
 `;
 
 export const AiChatTab = () => {
+  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
   const [isDraggingFile, setIsDraggingFile] = useState(false);
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const threadIdCreatedFromDraft = useAtomStateValue(
@@ -41,15 +45,33 @@ export const AiChatTab = () => {
 
   const { uploadFiles } = useAiChatFileUpload();
 
+  const handleDragLeave = (event: DragEvent<HTMLDivElement>) => {
+    if (
+      event.relatedTarget instanceof Node &&
+      event.currentTarget.contains(event.relatedTarget)
+    ) {
+      return;
+    }
+
+    setIsDraggingFile(false);
+  };
+
+  const handleDrop = (event: DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDraggingFile(false);
+  };
+
   return (
     <StyledContainer
       isDraggingFile={isDraggingFile}
       onDragEnter={() => setIsDraggingFile(true)}
-      onDragLeave={() => setIsDraggingFile(false)}
+      onDragLeave={handleDragLeave}
+      onDragOver={(event) => event.preventDefault()}
+      onDrop={handleDrop}
     >
+      {isWorkspaceSetupChat && <WorkspaceSetupChatKickoffEffect />}
       <AgentChatHasBeenOpenedEffect />
       <AgentChatStreamingPartsDiffSyncEffect />
-      <AgentChatStreamingAutoScrollEffect />
       {isDraggingFile && (
         <DropZone
           setIsDraggingFile={setIsDraggingFile}
@@ -57,11 +79,13 @@ export const AiChatTab = () => {
         />
       )}
       {!isDraggingFile && (
-        <>
+        <AiChatMessageListPreambleContext.Provider
+          value={isWorkspaceSetupChat ? <WorkspaceSetupChatPreamble /> : null}
+        >
           <AiChatTabMessageList />
           <AiChatQueuedMessages />
           <AiChatEditorSection key={editorSectionKey} />
-        </>
+        </AiChatMessageListPreambleContext.Provider>
       )}
     </StyledContainer>
   );

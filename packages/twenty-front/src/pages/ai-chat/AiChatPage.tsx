@@ -1,5 +1,4 @@
 import { styled } from '@linaria/react';
-import { Navigate } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatPageCloseAskAiPanelEffect } from '@/ai/components/AiChatPageCloseAskAiPanelEffect';
@@ -7,14 +6,8 @@ import { AiChatPageContinueInSidePanelEffect } from '@/ai/components/AiChatPageC
 import { AiChatPageHeader } from '@/ai/components/AiChatPageHeader';
 import { AiChatPageThreadUrlSyncEffect } from '@/ai/components/AiChatPageThreadUrlSyncEffect';
 import { AiChatTab } from '@/ai/components/AiChatTab';
-import { AiChatMessageListPreambleContext } from '@/ai/contexts/AiChatMessageListPreambleContext';
-import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
-import { WorkspaceSetupChatPreamble } from '@/onboarding/components/WorkspaceSetupChatPreamble';
-import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
-import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
+import { AiChatSurfaceContext } from '@/ai/contexts/AiChatSurfaceContext';
 
 const PANEL_CORNER_RADIUS_DERIVED_FROM_THEME_SCALE = `calc(${themeCssVariables.border.radius.md} + ${themeCssVariables.spacing[1]})`;
 
@@ -30,47 +23,28 @@ const StyledPanel = styled.div`
   overflow: hidden;
 `;
 
-const StyledCenteredChatContainer = styled.div`
+const StyledChatContainer = styled.div`
+  --ai-chat-content-max-width: 768px;
+
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin: 0 auto;
-  max-width: 768px;
   min-height: 0;
   width: 100%;
 `;
 
 export const AiChatPage = () => {
-  const { defaultHomePagePath } = useDefaultHomePagePath();
-  const isAiChatPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_AI_CHAT_PAGE_ENABLED,
-  );
-  const shouldOpenAiChatAfterOnboarding = useAtomStateValue(
-    shouldOpenAiChatAfterOnboardingState,
-  );
-
-  if (!isAiChatPageEnabled && !shouldOpenAiChatAfterOnboarding) {
-    return <Navigate to={defaultHomePagePath} replace />;
-  }
-
   return (
     <StyledPanel>
       <AiChatPageThreadUrlSyncEffect />
       <AiChatPageCloseAskAiPanelEffect />
       <AiChatPageContinueInSidePanelEffect />
-      {shouldOpenAiChatAfterOnboarding && <WorkspaceSetupChatKickoffEffect />}
-      <AiChatPageHeader isOnboarding={shouldOpenAiChatAfterOnboarding} />
-      <StyledCenteredChatContainer>
-        <AiChatMessageListPreambleContext.Provider
-          value={
-            shouldOpenAiChatAfterOnboarding ? (
-              <WorkspaceSetupChatPreamble />
-            ) : null
-          }
-        >
+      <AiChatPageHeader />
+      <StyledChatContainer>
+        <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
           <AiChatTab />
-        </AiChatMessageListPreambleContext.Provider>
-      </StyledCenteredChatContainer>
+        </AiChatSurfaceContext.Provider>
+      </StyledChatContainer>
     </StyledPanel>
   );
 };

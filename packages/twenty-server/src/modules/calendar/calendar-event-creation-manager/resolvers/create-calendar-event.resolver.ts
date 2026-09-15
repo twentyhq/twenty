@@ -46,7 +46,7 @@ export class CreateCalendarEventResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<CreateCalendarEventOutputDTO> {
     try {
-      await this.connectedAccountMetadataService.verifyOwnership({
+      await this.connectedAccountMetadataService.verifyUsableByCaller({
         id: input.connectedAccountId,
         userWorkspaceId,
         workspaceId: workspace.id,
@@ -82,16 +82,18 @@ export class CreateCalendarEventResolver {
           result.data,
         );
 
-      await this.createCalendarEventService.persistCalendarEvent(
-        createdEvent,
-        result.data,
-        workspace.id,
-      );
+      const calendarEventId =
+        await this.createCalendarEventService.persistCalendarEvent(
+          createdEvent,
+          result.data,
+          workspace.id,
+        );
 
       return {
         success: true,
         iCalUid: createdEvent.iCalUid || undefined,
         conferenceLink: createdEvent.conferenceLinkUrl || undefined,
+        calendarEventId: calendarEventId ?? undefined,
       };
     } catch (error) {
       if (error instanceof ForbiddenException) {

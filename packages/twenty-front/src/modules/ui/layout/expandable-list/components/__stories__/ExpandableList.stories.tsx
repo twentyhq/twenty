@@ -3,7 +3,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MAIN_COLOR_NAMES } from 'twenty-ui/theme';
 
@@ -22,9 +22,8 @@ const meta: Meta<typeof ExpandableList> = {
     children: Array.from({ length: 7 }, (_, index) => (
       <Tag
         key={index}
-        text={`Option ${index + 1}`}
         color={MAIN_COLOR_NAMES[index]}
-      />
+      >{`Option ${index + 1}`}</Tag>
     )),
     isChipCountDisplayed: false,
   },
@@ -62,11 +61,7 @@ const OPTIONS_COUNT = 7;
 const COLLAPSED_WIDTH_PX = 96;
 
 const optionTags = Array.from({ length: OPTIONS_COUNT }, (_, index) => (
-  <Tag
-    key={index}
-    text={`Option ${index + 1}`}
-    color={MAIN_COLOR_NAMES[index]}
-  />
+  <Tag key={index} color={MAIN_COLOR_NAMES[index]}>{`Option ${index + 1}`}</Tag>
 ));
 
 const countRenderedOptions = (canvas: ReturnType<typeof within>) =>

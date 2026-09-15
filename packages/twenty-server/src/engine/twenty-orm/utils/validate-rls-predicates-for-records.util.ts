@@ -9,8 +9,8 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  TwentyORMException,
-  TwentyORMExceptionCode,
+  TwentyOrmException,
+  TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
@@ -55,9 +55,9 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     });
 
     if (!matchesRLS) {
-      throw new TwentyORMException(
+      throw new TwentyOrmException(
         errorMessage,
-        TwentyORMExceptionCode.RLS_VALIDATION_FAILED,
+        TwentyOrmExceptionCode.RLS_VALIDATION_FAILED,
       );
     }
   }

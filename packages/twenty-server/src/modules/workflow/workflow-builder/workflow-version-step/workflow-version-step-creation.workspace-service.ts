@@ -75,14 +75,11 @@ export class WorkflowVersionStepCreationWorkspaceService {
       existingSteps: existingSteps ?? [],
       existingTrigger,
       insertedStep: enrichedNewStep,
+      additionalCreatedSteps,
       parentStepId,
       nextStepId,
       parentStepConnectionOptions,
     });
-
-    if (isDefined(additionalCreatedSteps)) {
-      updatedSteps.push(...additionalCreatedSteps);
-    }
 
     await this.workflowVersionStepHelpersWorkspaceService.updateWorkflowVersionStepsAndTrigger(
       {

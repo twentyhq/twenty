@@ -6,6 +6,10 @@ icon: window-maximize
 
 前端组件是直接在 Twenty 的 UI 内渲染的 React 组件。 它们在使用 Remote DOM 的**隔离 Web Worker**中运行——你的代码在沙盒化的、不透明来源的 iframe 中执行，但其 UI 仍然原生渲染在页面中，而不是被限制在该 iframe 内。
 
+<Warning>
+前台组件仍在开发中。 您的代码与部分DOM相反，而不是一个真正的浏览器页面，所以高级的使用可能失败，常常是静默。 请参阅[当前限制](#current-limitations)。
+</Warning>
+
 ## 前端组件可用位置
 
 在 Twenty 中，前端组件可以在三个位置进行渲染：
@@ -69,7 +73,7 @@ export default defineCommandMenuItem({
 
 | 字段                    | 必填 | 描述                           |
 | --------------------- | -- | ---------------------------- |
-| `universalIdentifier` | 是  | 该组件的稳定唯一 ID                  |
+| `universalIdentifier` | 否  | 该组件的稳定唯一 ID                  |
 | `component`           | 是  | 一个 React 组件函数                |
 | `name`                | 否  | 显示名称                         |
 | `description`         | 否  | 组件的功能描述                      |
@@ -329,6 +333,8 @@ export default defineLogicFunction({
 
 要在前端组件中调用应用 HTTP 路由或读取、写入 Twenty 记录，请使用来自 `twenty-client-sdk/rest` 的 `RestApiClient`。 它会将 `/s/...` 路径发送到你工作区的函数基础 URL，而将包括 `/rest/...` 在内的其他所有路径发送到 `TWENTY_API_URL`。
 
+它始终以查看页面的人的身份行事。 `runAs: 'application'` 仅是逻辑函数选项：组件永远不会收到你自己的应用令牌，因此在此请求它会抛出错误。 将需要访问应用自身资源的工作放在逻辑函数后面，并改为调用该函数。
+
 | 方法                                | 描述                            |
 | --------------------------------- | ----------------------------- |
 | `get(path, options?)`             | 发送一个 `GET` 请求                 |
@@ -409,6 +415,7 @@ export default defineFrontComponent({
 | `useSelectedRecordIds()`                      | `字符串[]`              | 所有已选择的记录 ID（如果未选择，则为空数组）              |
 | `useRecordId()`                               | `string` 或 `null`    | **已弃用。** 请改用 `useSelectedRecordIds()` |
 | `useFrontComponentId()`                       | `string`             | 此组件实例的 ID                             |
+| `useTimelineActivityId()`                     | `string` 或 `null`    | 渲染自定义时间线行时的当前时间线活动 ID                 |
 | `useColorScheme()`                            | `'light'` 或 `'dark'` | 宿主 UI 当前的配色方案（`System` 已解析）           |
 | `useFrontComponentExecutionContext(selector)` | 因情况而异                | 使用选择器函数访问完整的执行上下文                     |
 
@@ -441,10 +448,10 @@ export default defineFrontComponent({
 
 以下系统变量始终可以通过 `process.env` 获取：
 
-| 变量                        | 描述                    |
-| ------------------------- | --------------------- |
-| `TWENTY_API_URL`          | Twenty 核心 API 的基础 URL |
-| `TWENTY_APP_ACCESS_TOKEN` | 限定在你的应用角色范围内的短期令牌     |
+| 变量                        | 描述                                                  |
+| ------------------------- | --------------------------------------------------- |
+| `TWENTY_API_URL`          | Twenty 核心 API 的基础 URL                               |
+| `TWENTY_APP_ACCESS_TOKEN` | 短期令牌，其作用域是登录人员的角色与应用角色的交集，因此组件永远无法执行超出查看它的人员权限范围的操作 |
 
 ### `TWENTY_FUNCTIONS_URL`
 
@@ -462,15 +469,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 前端组件可以使用来自 `twenty-sdk` 的函数触发导航、模态框和通知：
 
-| 函数                                              | 描述            |
-| ----------------------------------------------- | ------------- |
-| `navigate(to, params?, queryParams?, options?)` | 在应用中导航到某个页面   |
-| `openSidePanelPage(params)`                     | 打开侧边栏         |
-| `closeSidePanel()`                              | 关闭侧边栏         |
-| `openCommandConfirmationModal(params)`          | 显示确认对话框       |
-| `enqueueSnackbar(params)`                       | 显示一条 Toast 通知 |
-| `unmountFrontComponent()`                       | 卸载该组件         |
-| `updateProgress(progress)`                      | 更新进度指示器       |
+| 函数                                                 | 描述                                                                                                                                                                     |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | 在应用中导航到某个页面                                                                                                                                                            |
+| `openSidePanelPage(params)`                        | 打开侧边栏                                                                                                                                                                  |
+| `closeSidePanel()`                                 | 关闭侧边栏                                                                                                                                                                  |
+| `openCommandConfirmationModal(params)`             | 显示确认对话框                                                                                                                                                                |
+| `enqueueSnackbar(params)`                          | 显示一条 Toast 通知                                                                                                                                                          |
+| `unmountFrontComponent()`                          | 卸载该组件                                                                                                                                                                  |
+| `updateProgress(progress)`                         | 更新进度指示器                                                                                                                                                                |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | 将一个 `Blob` 上传到 FILES 字段；返回 `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` 或 `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 下面是一个示例，使用宿主 API 在操作完成后显示一条 snackbar 并关闭侧边栏：
 
@@ -515,6 +523,39 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
+
+### 存储
+
+`localStorage` 和 `sessionStorage` 的工作方式与在普通页面中相同，使用标准的同步 API。 你的键会限定在你的应用安装和已登录用户范围内：其他应用无法读取它们，且当另一位用户在同一浏览器中登录时，将从一个空的存储开始。 写入 `localStorage` 的值在重新加载后仍会保留在设备上；`sessionStorage` 在整个浏览器会话期间有效。
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty 会代表你的应用存储这些值，因此写入会立即在本地生效，并在后台保存。 读取操作永不在主机上等待。 不会进行任何同步：这些值不会随着用户切换到其他浏览器或设备而迁移，因此对于任何必须在设备更换后仍然保留的数据，请使用逻辑函数的[key-value store](/l/zh/developers/extend/apps/logic/key-value-store)。
+
+写入都有上限，并且所有限制都按字符而不是字节计算：键最多 512 个字符，单个值最多 262,144 个字符，每个存储区在每个应用和用户下最多 1,048,576 个字符。 违反任一限制的写入会抛出一个 `QuotaExceededError`，与浏览器 API 的行为相同。
 
 ### 处理多个记录
 
@@ -596,6 +637,43 @@ export default defineFrontComponent({
 ```
 
 详情请参见[公共资源部分](/l/zh/developers/extend/apps/config/public-assets)。
+
+## 在前端组件之间共享依赖项
+
+默认情况下，每个前端组件都会打包自己导入的库的副本，所以如果一个应用有五个组件，就会随应用一起打包五份 React。 在应用的 `package.json` 中声明共享依赖项，只构建这些库一次，让应用的每个组件都从单个缓存文件中加载它们：
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+之后每个组件仍然与之前完全相同地导入其依赖项——你的组件代码无需做任何更改：
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+有几点需要了解：
+
+* **每个应用一个共享依赖项 bundle。** 该 bundle 由应用自身的依赖项构建而成，因此你可以完全掌控要发布的版本。
+* **列出你导入的精确说明符（specifier）。** `twenty-ui/input` 和 `twenty-ui/display` 是两个条目；仅有包名并不能涵盖其子路径。 列出 `react` 会自动涵盖 `react/jsx-runtime`。
+* **将 `react-dom/client` 与 `react` 一起共享。** 每个组件都通过 `createRoot` 进行渲染，因此如果将其省略，每个组件仍会各自打包 React DOM。
+* **bundle 会被缓存。** 它通过带有内容哈希的 URL 提供，并使用长期有效且不可变的缓存策略，因此只会被下载一次，并在应用的所有组件之间复用，直到其中某个依赖发生变化。
+* **未导入任何共享包的组件永远不会下载该 bundle。**
 
 ## 样式
 
@@ -696,3 +774,76 @@ const Card = () => {
 由于 `useTheme()` 是一个 hook，你需要在组件主体内部读取令牌，因此这些值始终能反映实时的主题。 同一份令牌映射也作为常量 `themeCssVariables` 导出，但在前端组件中更推荐使用 `useTheme()`——在应用清单被抽取时，解引用 `themeCssVariables` 的模块级常量可能会是 undefined。
 
 如果需要显式地根据当前配色方案做分支判断，可从 `twenty-sdk/front-component` 中使用 `useColorScheme()` 读取，它会返回 `'light'` 或 `'dark'`。
+
+## 目前的限制
+
+正在开发前台组件。 渲染、样式处理、事件处理、元素测量以及浏览器存储都运行良好。 任何 *超出* 这些范围的操作（在 ref 上调用 DOM 方法、监听元素尺寸变化、在组件树之外进行传送）目前都缺失或不完整，并且其中大多数都会静默失败：既不会抛出异常，也不会有 TypeScript 错误，因为脚手架是基于完整的浏览器 DOM 进行类型定义的。
+
+如果其中任何一项阻碍了你，[打开一个 issue](https://github.com/twentyhq/twenty/issues/new/choose)，以便它能被优先处理。
+
+### 布局和测量
+
+元素可以自行测量：宿主会将几何信息镜像到沙箱中，因此读取在本地完成，但可能会滞后一帧；而首次读取一个从未被测量过的元素时会返回零值。 写入之后，在 `requestAnimationFrame` 回调或 effect 中重新读取。
+
+| API                                                                                      | 发生了什么                                                                    |
+| ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | 可用，来自镜像；给 `scrollTop` / `scrollLeft` 赋值不会产生任何效果（no-op）                   |
+| `getClientRects()`, `window.matchMedia()`                                                | 投出                                                                       |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | 可用，报告的是**浏览器视口**；你的组件自身的尺寸是 `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | 仅返回元素的行内样式，而不会返回宿主计算得到的级联样式                                              |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (`typeof`警卫干工作)                                         |
+| `MutationObserver`                                                                       | 可用，包括 `subtree`、`attributeFilter`、旧值和 `takeRecords()`                    |
+
+基于 `getBoundingClientRect` 的定位现在可用了，但任何通过 `ResizeObserver` 监测尺寸变化的东西（recharts 的 `ResponsiveContainer`、Floating UI 的 `autoUpdate`）仍然不可用。 无论如何都应优先使用 CSS 进行布局：你的样式表可以作用到真实页面，因此 flexbox、grid、`aspect-ratio`、`clamp()` 和 `@container` 都会正常工作，没有帧延迟。
+
+<Note>
+`requestAnimationFramework`, `fetch`, `setTimeout` 和 `queueMicrotask` 在没有窗口前缀的情况下工作。 只有`window.requestAnimationFramework(...)`和朋友投掷.
+</Note>
+
+### DOM access
+
+一个 `ref` 给予你一个沙盒元素，而不是一个 `HTMLEment` 。
+
+| 您写的内容                                                                                                       | 发生了什么                         | 改用                                                                                                                                  |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | 投出                            | 受控组件；从 `event.target` 读取值                                                                                                           |
+| `element.classList.add(...)`                                                                                | 抛出(`classList` 是 `undefined`) | 构建您自己的 `className` 字符串                                                                                                              |
+| `document.createTreeWalker()`                                                                               | 投出                            | `querySelector()` / `querySelectorAll()` 和 `getElementById()` 可用；`getElementsByClassName()` 也可用，但返回的是静态集合，而不是实时更新的 `HTMLCollection` |
+| `document.activeElement`                                                                                    | 总是`未定义`                       | 使用 `onFocus` / `onBlur` 跟踪重点                                                                                                        |
+| `canvas`                                                                                                    | 渲染无任何东西，没有错误                  | SVG，或者在离屏位置绘制并在 `img` 元素中显示结果                                                                                                       |
+| `createPortal(node, document.body)`                                                                         | 渲染无处不在，而`isConnected`报告成功     | 覆盖“位置：绝对位置”，或传递您自己的容器元素                                                                                                             |
+
+Portal间隙是为什么Radix、Headless UI、MUI和react-selected popover默认不会渲染任何内容。 大多数人接受一个容器prop；指向一个你渲染的元素。
+
+### 事件
+
+鼠标、指针、触摸、拖拽、键盘、焦点，`input`/`change`/`submit`，`scroll`/`wheel`/`contextmenu` 以及 `animationend`/`transitionend` 会传递到宿主元素，另外还有一些按元素区分的事件：`load`/`error` 在 `img` 上，剪贴板和输入法合成事件在 `input`/`textarea` 上，媒体事件在 `video`/`audio` 上，`toggle` 在 `details`/`dialog` 上。 其他任何事件（`onAuxClick`、`onSelect`、`onInvalid`、`onReset`、`onAnimationStart`、指针捕获、非 `img` 上的 `onLoad`）都会在没有任何警告的情况下被丢弃。
+
+`document.addEventListener()` 和 `window ddEventListener()`注册时没有错误，永远不发生火灾，这就是为什么当指针离开开始的元素时拖动停止。 `event.preventDefault()`也没有跨过；表单提交、`draego`/`drop`和链接点击已经是你的守卫。
+
+### 属性和样式
+
+每个元素都会将其自身的属性转发到宿主 DOM（`a` 上的 `href`，`img` 上的 `src`/`alt`，`input` 上的 `value`/`placeholder`/`disabled` 等），并且在每个元素上都有一组通用属性：`id`、`className`、`style`、`title`、`tabIndex`、`role`、`draggable` 以及任何 `aria-*` / `data-*` 属性（使用连字符形式，因此会丢弃 `ariaLabel`）。 外面的任何东西都被静默丢弃了，因此表达了自定义为 `data *` 。
+
+组件的 CSS（无论来自 `import './styles.css'`、CSS-in-JS 还是 `style` 元素）都会被注入到宿主页面的 `head` 中，且是**未作用域化的（unscoped）**。 所以类名称与 Twenty 自己碰撞(前缀它们，永远不会写上`div ● v.... }`选择器'和`@media`匹配浏览器窗口而不是你的小部件 (使用 `@container` 和你自己的 `container-type`)。 内联 `style` props 不受影响。
+
+### 存储和网络
+
+`localStorage` 和 `sessionStorage` 由 Twenty 提供，而不是由浏览器提供：组件在一个不透明来源的 worker 中运行，因此主机会代表你的应用存储这些值。 有关它们的作用域和限制，请参见[storage](#storage)。 IndexedDB、cookies、Cache API 和 `BroadcastChannel` 仍然不可用。 要在多设备之间持久化状态，请调用[logic function](/l/zh/developers/extend/apps/logic/logic-functions)并使用其[key-value store](/l/zh/developers/extend/apps/logic/key-value-store)。
+
+`fetch` 工作, 附有警告:
+
+* 调用20API和您的应用路由由主机代理，所以偏好[`RestApiClient`](#calling-the-twenty-rest-api)。 在代理来电时，`AbortSignal` 和另一个 `RequestInit` 选项被丢弃，只支持 `string` 和 `URLSearchParams`。
+* 其它来源将沙盒留给`原始：null`，所以第三方API只有在发送`Access-Control-Allow-ource：*`时才能解答。 从逻辑函数调用它。
+* `fetch('/rest/people)`永远不匹配20个API，因为沙盒没有页面URL解决相对路径。
+
+### 媒体捕获
+
+`navigator.mediaDevices.getUserMedia()` 和 `MediaRecorder` 通过 sandbox polyfill 在 front 组件中运行，因此标准录制代码可以不做修改地运行，并且 `MediaRecorder.isTypeSupported` 会对常见的容器/编解码器组合给出支持情况。 详细的 `getUserMedia` 约束对象会被接受但不会被转发 —— 宿主会使用其针对所请求媒体类型的默认设置进行捕获 —— 并且在应用之间同一时间只能有一个捕获处于活动状态。 使用 `uploadFile` 宿主函数存储已录制的 `Blob`。
+
+### 其他差距
+
+* **文件内容。** 类型为 `file` 的 `input` 只会向你的处理函数提供文件的元数据，而不是字节本身，因此无法使用 `FileReader`。 要上传你的代码已经持有的 `Blob`（例如由 `MediaRecorder` 生成的 `Blob`），请使用 `uploadFile` 宿主函数。
+* **拖放payloads.** 拖动事件触发，但`event.dataTransfer` 是未定义的。
+* **Node 内置。** `fs`、`path` 和 `node:crypto` 失败，所以将其移动到一个[逻辑函数](/l/zh/developers/extend/apps/logic/logic-functions)。 Web Crypto, `fetch`, `TextEncoder` 和 `URL` 都是可用的。
+* **`iframe`** 始终会在没有 `allow-same-origin` 的情况下重新沙箱化，因此依赖其自身会话的嵌入内容会呈现为未登录状态。 它也没有`onLoad`文件。

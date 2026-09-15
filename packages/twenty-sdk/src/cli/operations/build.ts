@@ -98,10 +98,7 @@ const innerAppBuild = async (
     builtFileInfos: buildResult.builtFileInfos,
   });
 
-  await writeManifestToOutput(
-    appPath,
-    translations ? { ...updatedManifest, translations } : updatedManifest,
-  );
+  await writeManifestToOutput(appPath, { ...updatedManifest, translations });
 
   const outputDir = path.join(appPath, '.twenty', 'output');
 

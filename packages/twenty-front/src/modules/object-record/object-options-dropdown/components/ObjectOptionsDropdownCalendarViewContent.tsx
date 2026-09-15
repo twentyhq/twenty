@@ -1,7 +1,5 @@
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
-import { getSupportedRecordCalendarLayout } from '@/object-record/record-calendar/utils/getSupportedRecordCalendarLayout';
 import { recordIndexCalendarLayoutComponentState } from '@/object-record/record-index/states/recordIndexCalendarLayoutComponentState';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -12,9 +10,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
-import { Pill } from 'twenty-ui/data-display';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import {
   IconCalendarEvent,
   IconCalendarMonth,
@@ -22,26 +19,16 @@ import {
   IconChevronLeft,
   IconTimelineEvent,
 } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
-import {
-  FeatureFlagKey,
-  ViewCalendarLayout,
-} from '~/generated-metadata/graphql';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
+import { ViewCalendarLayout } from '~/generated-metadata/graphql';
 
 const RECORD_CALENDAR_TIMELINE_VIEW_ID = 'record-calendar-timeline-view';
 
 export const ObjectOptionsDropdownCalendarViewContent = () => {
-  const { resetContent } = useObjectOptionsDropdown();
+  const { resetContent, dropdownId } = useObjectOptionsDropdown();
   const recordIndexCalendarLayout = useAtomComponentStateValue(
     recordIndexCalendarLayoutComponentState,
   );
-  const isCalendarWeekViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_CALENDAR_WEEK_VIEW_ENABLED,
-  );
-  const supportedCalendarLayout = getSupportedRecordCalendarLayout({
-    calendarLayout: recordIndexCalendarLayout,
-    isCalendarWeekViewEnabled,
-  });
   const setRecordIndexCalendarLayout = useSetAtomComponentState(
     recordIndexCalendarLayoutComponentState,
   );
@@ -49,7 +36,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    dropdownId,
   );
 
   const { closeDropdown } = useObjectOptionsDropdown();
@@ -62,15 +49,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
   ];
 
   const handleCalendarViewChange = async (calendarView: ViewCalendarLayout) => {
-    const isTimeGridLayout =
-      calendarView === ViewCalendarLayout.DAY ||
-      calendarView === ViewCalendarLayout.WEEK;
-
-    if (isTimeGridLayout && !isCalendarWeekViewEnabled) {
-      return;
-    }
-
-    if (calendarView === supportedCalendarLayout) {
+    if (calendarView === recordIndexCalendarLayout) {
       closeDropdown();
       return;
     }
@@ -96,58 +75,32 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
-          selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+          selectableListInstanceId={dropdownId}
+          focusId={dropdownId}
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem
             itemId={ViewCalendarLayout.DAY}
-            onEnter={() => {
-              if (isCalendarWeekViewEnabled) {
-                handleCalendarViewChange(ViewCalendarLayout.DAY);
-              }
-            }}
+            onEnter={() => handleCalendarViewChange(ViewCalendarLayout.DAY)}
           >
             <MenuItemSelect
               LeftIcon={IconCalendarEvent}
               text={t`Day`}
-              selected={supportedCalendarLayout === ViewCalendarLayout.DAY}
-              onClick={
-                isCalendarWeekViewEnabled
-                  ? () => handleCalendarViewChange(ViewCalendarLayout.DAY)
-                  : undefined
-              }
+              selected={recordIndexCalendarLayout === ViewCalendarLayout.DAY}
+              onClick={() => handleCalendarViewChange(ViewCalendarLayout.DAY)}
               focused={selectedItemId === ViewCalendarLayout.DAY}
-              contextualText={
-                isCalendarWeekViewEnabled ? undefined : <Pill label={t`Soon`} />
-              }
-              contextualTextPosition="right"
-              disabled={!isCalendarWeekViewEnabled}
             />
           </SelectableListItem>
           <SelectableListItem
             itemId={ViewCalendarLayout.WEEK}
-            onEnter={() => {
-              if (isCalendarWeekViewEnabled) {
-                handleCalendarViewChange(ViewCalendarLayout.WEEK);
-              }
-            }}
+            onEnter={() => handleCalendarViewChange(ViewCalendarLayout.WEEK)}
           >
             <MenuItemSelect
               LeftIcon={IconCalendarWeek}
               text={t`Week`}
-              selected={supportedCalendarLayout === ViewCalendarLayout.WEEK}
-              onClick={
-                isCalendarWeekViewEnabled
-                  ? () => handleCalendarViewChange(ViewCalendarLayout.WEEK)
-                  : undefined
-              }
+              selected={recordIndexCalendarLayout === ViewCalendarLayout.WEEK}
+              onClick={() => handleCalendarViewChange(ViewCalendarLayout.WEEK)}
               focused={selectedItemId === ViewCalendarLayout.WEEK}
-              contextualText={
-                isCalendarWeekViewEnabled ? undefined : <Pill label={t`Soon`} />
-              }
-              contextualTextPosition="right"
-              disabled={!isCalendarWeekViewEnabled}
             />
           </SelectableListItem>
           <SelectableListItem
@@ -157,7 +110,7 @@ export const ObjectOptionsDropdownCalendarViewContent = () => {
             <MenuItemSelect
               LeftIcon={IconCalendarMonth}
               text={t`Month`}
-              selected={supportedCalendarLayout === ViewCalendarLayout.MONTH}
+              selected={recordIndexCalendarLayout === ViewCalendarLayout.MONTH}
               onClick={() => handleCalendarViewChange(ViewCalendarLayout.MONTH)}
               focused={selectedItemId === ViewCalendarLayout.MONTH}
             />

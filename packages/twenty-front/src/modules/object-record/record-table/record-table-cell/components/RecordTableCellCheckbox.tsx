@@ -11,7 +11,7 @@ import { useRecordTableRowDraggableContextOrThrow } from '@/object-record/record
 import { RecordTableCellStyleWrapper } from '@/object-record/record-table/record-table-cell/components/RecordTableCellStyleWrapper';
 import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
 import { isDefined } from 'twenty-shared/utils';
-import { Checkbox } from 'twenty-ui/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
 
 const StyledContainer = styled.div`
   align-items: center;

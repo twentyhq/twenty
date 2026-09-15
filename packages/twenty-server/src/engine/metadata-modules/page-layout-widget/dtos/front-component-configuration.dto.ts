@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-import { IsIn, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsIn, IsNotEmpty, IsOptional, IsUUID } from 'class-validator';
 import {
   type FrontComponentConfiguration,
   type SerializedRelation,
@@ -20,4 +20,9 @@ export class FrontComponentConfigurationDTO implements FrontComponentConfigurati
   @IsNotEmpty()
   @IsUUID()
   frontComponentId: SerializedRelation;
+
+  @Field(() => [UUIDScalarType], { nullable: true })
+  @IsOptional()
+  @IsUUID(undefined, { each: true })
+  headerCommandMenuItemUniversalIdentifiers?: string[];
 }

@@ -78,6 +78,11 @@ export class MarketplaceAppDetailDTO {
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
+  pricingDescription?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
   termsUrl?: string;
 
   @IsOptional()

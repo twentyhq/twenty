@@ -6,6 +6,8 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { formatDistanceToNow } from 'date-fns';
 import { useContext, useMemo } from 'react';
 
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
@@ -20,12 +22,12 @@ import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useRe
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { H2Title } from 'twenty-ui/typography';
-import { IconButton } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { IconButton } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -123,6 +125,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
 
   return (
     <>
+      <SettingsRolesQueryEffect />
       {currentWorkspace?.inviteHash &&
         currentWorkspace?.isPublicInviteLinkEnabled && (
           <Section>
@@ -168,7 +171,11 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     mobileGridAutoColumns="2fr 1fr 1fr 72px"
                     key={workspaceInvitation.id}
                   >
-                    <TableCell minWidth="0" overflow="hidden">
+                    <TableCell
+                      color={themeCssVariables.font.color.primary}
+                      minWidth="0"
+                      overflow="hidden"
+                    >
                       <StyledIconWrapper>
                         <IconMail
                           size={theme.icon.size.md}
@@ -182,7 +189,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                       </StyledTextContainerWithEllipsis>
                       <AppTooltip
                         anchorSelect={`#invitation-email-${workspaceInvitation.id}`}
-                        content={workspaceInvitation.email}
+                        title={workspaceInvitation.email}
                         noArrow
                         place="top"
                         positionStrategy="fixed"
@@ -196,10 +203,9 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                       </StyledTextContainerWithEllipsis>
                     </TableCell>
                     <TableCell align="center">
-                      <Status
-                        color="gray"
-                        text={getExpiresAtText(workspaceInvitation.expiresAt)}
-                      />
+                      <Status color="gray">
+                        {getExpiresAtText(workspaceInvitation.expiresAt)}
+                      </Status>
                     </TableCell>
                     <TableCell align="right">
                       <StyledButtonContainer>

@@ -18,7 +18,7 @@ import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-me
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import {
   buildFieldMapsFromFlatObjectMetadata,
   type FieldMapsForObject,
@@ -29,7 +29,7 @@ import { getCompositeFieldMetadataCollection } from 'src/engine/twenty-orm/utils
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
 type CompositeFieldMetadataWithRequiredProperties = {
-  fieldMetadata: FlatFieldMetadata;
+  fieldMetadata: OrmFlatFieldMetadata;
   requiredPropertyNames: string[];
 };
 
@@ -39,12 +39,12 @@ type FormatResultObjectCache = {
     typeof getCompositeFieldMetadataMapFromCollection
   >;
   compositeFieldMetadataWithRequiredProperties: CompositeFieldMetadataWithRequiredProperties[];
-  dateTimeFieldMetadataItems: FlatFieldMetadata[];
+  dateTimeFieldMetadataItems: OrmFlatFieldMetadata[];
 };
 
 type FormatResultCache = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   objectCacheByObjectMetadataId: Map<string, FormatResultObjectCache>;
 };
 
@@ -53,7 +53,7 @@ export function formatResult<T>(
   data: any,
   flatObjectMetadata: FlatObjectMetadata | undefined,
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
   fieldMapsForObject?: FieldMapsForObject,
 ): T {
   return formatResultRecursively(
@@ -190,7 +190,6 @@ function formatResultRecursively<T>(
     newData[key] = formattedFieldValue;
   }
 
-  // After assembling composite fields, handle those with missing required subfields
   handleEmptyCompositeFields(
     newData,
     objectCache.compositeFieldMetadataWithRequiredProperties,
@@ -287,7 +286,7 @@ function getOrCreateFormatResultObjectCache({
 
 export function getCompositeFieldMetadataMap(
   flatObjectMetadata: FlatObjectMetadata,
-  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
 ) {
   const compositeFieldMetadataCollection = getCompositeFieldMetadataCollection(
     flatObjectMetadata,
@@ -300,7 +299,7 @@ export function getCompositeFieldMetadataMap(
 }
 
 function getCompositeFieldMetadataMapFromCollection(
-  compositeFieldMetadataCollection: FlatFieldMetadata[],
+  compositeFieldMetadataCollection: OrmFlatFieldMetadata[],
 ) {
   return new Map(
     compositeFieldMetadataCollection.flatMap((fieldMetadata) => {
@@ -308,7 +307,6 @@ function getCompositeFieldMetadataMapFromCollection(
 
       if (!compositeType) return [];
 
-      // Map each composite property to a [key, value] pair
       return compositeType.properties.map((compositeProperty) => [
         computeCompositeColumnName(fieldMetadata.name, compositeProperty),
         {
@@ -356,7 +354,7 @@ function formatFieldMetadataValue(
 function transformCompositeFieldNullValue(
   value: unknown,
   compositePropertyName: string,
-  fieldMetadata: FlatFieldMetadata,
+  fieldMetadata: OrmFlatFieldMetadata,
 ) {
   if (!isNull(value)) return value;
 
@@ -401,10 +399,8 @@ function handleEmptyCompositeFields(
 
     if (allRequiredPropertiesAreNull && requiredPropertyNames.length > 0) {
       if (fieldMetadata.isNullable) {
-        // Field is nullable, set to null
         data[fieldMetadata.name] = null;
       } else {
-        // Field is non-nullable, provide a default value
         data[fieldMetadata.name] = getDefaultCompositeFieldValue(
           fieldMetadata.type,
         );
@@ -413,9 +409,6 @@ function handleEmptyCompositeFields(
   }
 }
 
-/**
- * Returns a default value for non-nullable composite fields.
- */
 function getDefaultCompositeFieldValue(
   fieldType: FieldMetadataType,
   // oxlint-disable-next-line typescript/no-explicit-any

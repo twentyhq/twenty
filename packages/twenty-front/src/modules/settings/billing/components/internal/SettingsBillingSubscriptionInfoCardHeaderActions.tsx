@@ -7,7 +7,7 @@ import {
   IconColorSwatch,
   IconCreditCard,
 } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 export type SettingsBillingSubscriptionInfoCardHeaderActionsProps = {
   canCancelIntervalSwitch: boolean;
@@ -18,10 +18,12 @@ export type SettingsBillingSubscriptionInfoCardHeaderActionsProps = {
   isCancellationScheduled: boolean;
   isEndTrialPeriodDisabled: boolean;
   isSubscriptionActionDisabled: boolean;
+  isManageBillingDisabled: boolean;
   isUpdatePaymentDisabled: boolean;
   onCancelIntervalSwitch: () => void;
   onCancelPlanSwitch: () => void;
   onEndTrialPeriod: () => void;
+  onManageBilling: () => void;
   onUpdatePayment: () => void;
   shouldUpdatePayment: boolean;
 };
@@ -35,10 +37,12 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
   isCancellationScheduled,
   isEndTrialPeriodDisabled,
   isSubscriptionActionDisabled,
+  isManageBillingDisabled,
   isUpdatePaymentDisabled,
   onCancelIntervalSwitch,
   onCancelPlanSwitch,
   onEndTrialPeriod,
+  onManageBilling,
   onUpdatePayment,
   shouldUpdatePayment,
 }: SettingsBillingSubscriptionInfoCardHeaderActionsProps) => {
@@ -52,8 +56,8 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
         variant="primary"
         accent="blue"
         size="small"
-        onClick={onUpdatePayment}
-        disabled={isUpdatePaymentDisabled}
+        onClick={onManageBilling}
+        disabled={isManageBillingDisabled}
       />
     );
   }

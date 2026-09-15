@@ -333,6 +333,8 @@ export default defineLogicFunction({
 
 لاستدعاء مسارات HTTP الخاصة بالتطبيق أو لقراءة سجلات Twenty وكتابتها من مكوِّن واجهة أمامية، استخدم `RestApiClient` من `twenty-client-sdk/rest`. يُرسل المسارات من نوع `/s/...` إلى عنوان URL الأساسي للدوال في مساحة العمل الخاصة بك، ويُرسل أي مسار آخر، بما في ذلك `/rest/...`، إلى `TWENTY_API_URL`.
 
+يتصرف دائمًا بصفته الشخص الذي ينظر إلى الصفحة. `runAs: 'application'` هو خيار لدالة منطقية فقط: لا يتلقى المكوّن أبدًا الرمز المميز الخاص بتطبيقك، لذا فإن طلبه هنا يؤدي إلى طرح استثناء. ضع العمل الذي يحتاج إلى وصول التطبيق الخاص خلف دالة منطقية واستدعها بدلًا من ذلك.
+
 | طريقة                             | الوصف                                                                   |
 | --------------------------------- | ----------------------------------------------------------------------- |
 | `get(path, options?)`             | يرسل طلبًا من نوع `GET`                                                 |
@@ -413,6 +415,7 @@ export default defineFrontComponent({
 | `useSelectedRecordIds()`                      | `string[]`            | جميع معرّفات السجلات المحددة (مصفوفة فارغة إذا لم يتم تحديد أي منها)   |
 | `useRecordId()`                               | `string` أو `null`    | **مهمل.** استخدم `useSelectedRecordIds()` بدلاً من ذلك                 |
 | `useFrontComponentId()`                       | `string`              | معرّف مثيل هذا المكوّن                                                 |
+| `useTimelineActivityId()`                     | `string` أو `null`    | معرّف نشاط المخطط الزمني الحالي عند عرض صف مخصص في المخطط الزمني       |
 | `useColorScheme()`                            | `'light'` أو `'dark'` | نظام الألوان النشط لواجهة المستخدم المضيفة (`System` تم تحديده بالفعل) |
 | `useFrontComponentExecutionContext(selector)` | يختلف                 | الوصول إلى سياق التنفيذ الكامل عبر دالة محدِّد                         |
 
@@ -445,10 +448,10 @@ export default defineFrontComponent({
 
 متغيرات النظام التالية تكون متاحة دائمًا عبر `process.env`:
 
-| المتغيّر                  | الوصف                                   |
-| ------------------------- | --------------------------------------- |
-| `TWENTY_API_URL`          | عنوان URL الأساسي لـ Twenty Core API    |
-| `TWENTY_APP_ACCESS_TOKEN` | رمز مميز قصير العمر مُقيَّد بدور تطبيقك |
+| المتغيّر                  | الوصف                                                                                                                                                            |
+| ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `TWENTY_API_URL`          | عنوان URL الأساسي لـ Twenty Core API                                                                                                                             |
+| `TWENTY_APP_ACCESS_TOKEN` | رمز مميز قصير العمر يقتصر نطاقه على دور الشخص المسجّل دخوله والمتقاطع مع دور تطبيقك، لذا لا يمكن للمكوّن أبدًا أن يفعل أكثر مما يستطيع الشخص الذي ينظر إليه فعله |
 
 ### `TWENTY_FUNCTIONS_URL`
 
@@ -466,15 +469,16 @@ const routeUrl = `${process.env.TWENTY_FUNCTIONS_URL || `${process.env.TWENTY_AP
 
 يمكن للمكوّنات الأمامية تشغيل التنقّل والنوافذ المنبثقة والإشعارات باستخدام دوال من `twenty-sdk`:
 
-| دالة                                            | الوصف                          |
-| ----------------------------------------------- | ------------------------------ |
-| `navigate(to, params?, queryParams?, options?)` | الانتقال إلى صفحة داخل التطبيق |
-| `openSidePanelPage(params)`                     | فتح لوحة جانبية                |
-| `closeSidePanel()`                              | إغلاق اللوحة الجانبية          |
-| `openCommandConfirmationModal(params)`          | عرض مربع حوار تأكيد            |
-| `enqueueSnackbar(params)`                       | عرض إشعار توست                 |
-| `unmountFrontComponent()`                       | إلغاء تركيب المكوّن            |
-| `updateProgress(progress)`                      | تحديث مؤشّر التقدّم            |
+| دالة                                               | الوصف                                                                                                                                                                                                    |
+| -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)`    | الانتقال إلى صفحة داخل التطبيق                                                                                                                                                                           |
+| `openSidePanelPage(params)`                        | فتح لوحة جانبية                                                                                                                                                                                          |
+| `closeSidePanel()`                                 | إغلاق اللوحة الجانبية                                                                                                                                                                                    |
+| `openCommandConfirmationModal(params)`             | عرض مربع حوار تأكيد                                                                                                                                                                                      |
+| `enqueueSnackbar(params)`                          | عرض إشعار توست                                                                                                                                                                                           |
+| `unmountFrontComponent()`                          | إلغاء تركيب المكوّن                                                                                                                                                                                      |
+| `updateProgress(progress)`                         | تحديث مؤشّر التقدّم                                                                                                                                                                                      |
+| `uploadFile(file, { fieldMetadataId, fileName? })` | تحميل كائن `Blob` إلى حقل من نوع FILES؛ تُعاد نتيجة على شكل `{ status: 'uploaded', file: { fileId, path, url, size, mimeType } }` أو `{ status: 'failed', reason: 'invalid-params' \| 'upload-failed' }` |
 
 فيما يلي مثال يستخدم واجهة برمجة تطبيقات المضيف لعرض Snackbar وإغلاق اللوحة الجانبية بعد اكتمال الإجراء:
 
@@ -519,6 +523,39 @@ export default defineFrontComponent({
   component: ArchiveRecord,
 });
 ```
+
+### التخزين
+
+`localStorage` و`sessionStorage` يعملان كما يعملان في صفحة عادية، باستخدام واجهة برمجة التطبيقات المتزامنة القياسية. مفاتيحك يُحدَّد نطاقها بتثبيت تطبيقك والمستخدم المسجَّل دخوله: لا يمكن لأي تطبيق آخر قراءتها، وأي مستخدم آخر يسجّل الدخول في المتصفح نفسه يبدأ من مخزن فارغ. القيم المكتوبة في `localStorage` تبقى على الجهاز عبر عمليات إعادة التحميل؛ أمّا `sessionStorage` فيستمر طوال جلسة المتصفح.
+
+```tsx src/front-components/note-draft.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const NoteDraft = () => {
+  const [draft, setDraft] = useState(() => localStorage.getItem('draft') ?? '');
+
+  const handleChange = (nextDraft: string) => {
+    setDraft(nextDraft);
+    localStorage.setItem('draft', nextDraft);
+  };
+
+  return (
+    <textarea value={draft} onChange={(event) => handleChange(event.target.value)} />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-def0-890123456789',
+  name: 'note-draft',
+  description: 'Keeps an unsaved note on this device',
+  component: NoteDraft,
+});
+```
+
+Twenty تخزّن القيم نيابةً عن تطبيقك، لذا تُطبَّق عملية الكتابة محليًا فورًا ويتم حفظها في الخلفية. لا تنتظر عمليات القراءة أبدًا على المضيف. لا تتم مزامنة أي شيء: لا تنتقل القيم مع المستخدم إلى متصفح أو جهاز آخر، لذا استخدم [مخزن القيم المفتاحية](/l/ar/developers/extend/apps/logic/key-value-store) لدالة منطقية لأي شيء يجب أن يظل قائمًا بعد تغيير الجهاز.
+
+يتم تقييد عمليات الكتابة، ويُحتسب كل حد بعدد الأحرف بدلاً من البايتات: لا يزيد طول المفاتيح عن 512 حرفًا، ولا تزيد قيمة واحدة عن 262,144 حرفًا، ولا تزيد سعة كل مساحة تخزين عن 1,048,576 حرفًا لكل تطبيق ومستخدم. تؤدي عملية كتابة تتجاوز حدًا معينًا إلى طرح استثناء `QuotaExceededError`، مثل واجهة برمجة تطبيقات المتصفح.
 
 ### العمل مع سجلات متعددة
 
@@ -600,6 +637,43 @@ export default defineFrontComponent({
 ```
 
 راجع [قسم الأصول العامة](/l/ar/developers/extend/apps/config/public-assets) للتفاصيل.
+
+## مشاركة التبعيات عبر مكوّنات الواجهة الأمامية
+
+افتراضيًا، يضمّن كل مكوّن واجهة أمامية نسخته الخاصة من المكتبات التي يستوردها، لذا فإن تطبيقًا يحتوي على خمسة مكوّنات سيتضمّن React خمس مرات. صرّح بالتبعيات المشتركة في ملف `package.json` الخاص بتطبيقك لبناء تلك المكتبات مرة واحدة وجعل كل مكوّن في التطبيق يحمّلها من ملف واحد مخزَّن في الذاكرة المخبئية:
+
+```json package.json
+{
+  "frontComponentSharedDependencies": ["react", "react-dom/client", "twenty-ui/input"]
+}
+```
+
+بعد ذلك، يستورد كل مكوّن تبعياته تمامًا كما كان من قبل — دون أي تغيير في كود المكوّن الخاص بك:
+
+```tsx src/front-components/counter.tsx
+import { useState } from 'react';
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return <button onClick={() => setCount(count + 1)}>{count}</button>;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'counter',
+  component: Counter,
+});
+```
+
+بعض الأمور التي يجب معرفتها:
+
+* **حزمة تبعيات مشتركة واحدة لكل تطبيق.** يتم إنشاء الحزمة من تبعيات تطبيقك نفسه، بحيث تحتفظ بالتحكم الكامل في الإصدارات التي تُصدِرها.
+* **اسرد المعرّفات (specifiers) الدقيقة التي تستوردها.** يُعَدّ `twenty-ui/input` و `twenty-ui/display` مدخلين منفصلين؛ اسم الحزمة وحده لا يشمل المسارات الفرعية. إدراج `react` يغطي تلقائيًا `react/jsx-runtime`.
+* **شارك `react-dom/client` جنبًا إلى جنب مع `react`.** كل مكوّن يقوم بعملية التصيير من خلال `createRoot`، لذا فإن تركه خارجًا يعني أن كل مكوّن ما زال يضمّن React DOM داخل حزمتِه الخاصة.
+* **الحزمة مُخزَّنة في الذاكرة المخبئية.** يتم تقديمها عبر عنوان URL يعتمد على قيمة تجزئة المحتوى (content-hash) مع ذاكرة مخبئية ثابتة طويلة الأجل، لذا يتم تنزيلها مرة واحدة وإعادة استخدامها عبر جميع مكوّنات التطبيق حتى تتغيّر إحدى تبعياتها.
+* **المكوّنات التي لا تستورد أيًا من الحزم المشتركة لا تقوم بتنزيلها أبدًا.**
 
 ## التنسيق
 
@@ -703,24 +777,24 @@ const Card = () => {
 
 ## القيود الحالية
 
-مكوّنات Front قيد التطوير النشط. الترسيم والتنسيق والتعامل مع الأحداث تعمل بشكل جيد. أي شيء يتجاوز *مرحلة* الترسيم (قياس عنصر، استدعاء دالة DOM على ref، إنشاء portal خارج الشجرة الخاصة بك، أو لمس تخزين المتصفح) مفقود أو غير مكتمل حاليًا، ومعظم هذه الحالات تفشل بصمت: لا يتم رمي استثناء، ولا يظهر خطأ TypeScript أيضًا، لأن القالب مكتوب استنادًا إلى DOM الكامل للمتصفح.
+مكوّنات Front قيد التطوير النشط. الترسيم، والتنسيق، والتعامل مع الأحداث، وقياس العناصر، وتخزين المتصفح تعمل جميعها بشكل جيد. أي شيء يتجاوز *تلك* الحدود (استدعاء دالة DOM على ref، مراقبة تغيير أحجام العناصر، إنشاء portal خارج الشجرة الخاصة بك) مفقود أو غير مكتمل حاليًا، ومعظم هذه الحالات تفشل بصمت: لا يتم رمي استثناء، ولا يظهر خطأ TypeScript أيضًا، لأن القالب مكتوب استنادًا إلى DOM الكامل للمتصفح.
 
 إذا كان أحد هذه الأمور يعيقك، [افتح تذكرة](https://github.com/twentyhq/twenty/issues/new/choose) ليتم إعطاؤه أولوية.
 
 ### التخطيط والقياس
 
-لا يوجد أي شيء يمكنه قياس نفسه بعد.
+يمكن للعناصر قياس نفسها: المضيف يعكس الإحداثيات الهندسية داخل وضع الحماية، بحيث تتم الإجابة عن عمليات القراءة محليًا ولكن يمكن أن تتأخر حتى إطار واحد، وتعيد أول عملية قراءة لعنصر لم يُقَس من قبل قيمًا صفرية. بعد الكتابة، أعد القراءة داخل استدعاء `requestAnimationFrame` أو داخل تأثير.
 
-| واجهة برمجة التطبيقات                                         | ما الذي يحدث                                                                           |
-| ------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `getBoundingClientRect()`, `getClientRects()`                 | يرمي استثناء                                                                           |
-| `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | قيمة `undefined` بصمت، لذا فإن `width ?? 0` تعطي `0` و `width > 600` تكون دائمًا خاطئة |
-| `ResizeObserver`, `IntersectionObserver`                      | `ReferenceError` (`typeof` guards تعمل)                                                |
-| `window.matchMedia()`, `window.getComputedStyle()`            | يرمي استثناء                                                                           |
-| `window.innerWidth`, `innerHeight`, `devicePixelRatio`        | قيمة `undefined` بصمت                                                                  |
-| `new MutationObserver(fn)`                                    | يتم الإنشاء، ثم ترمي `.observe()` استثناء                                              |
+| واجهة برمجة التطبيقات                                                                    | ما الذي يحدث                                                                                          |
+| ---------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `getBoundingClientRect()`, `offsetWidth`, `clientWidth`, `scrollWidth`, `offsetTop`, ... | يعمل، من المرآة؛ تعيين `scrollTop` / `scrollLeft` بلا تأثير                                           |
+| `getClientRects()`, `window.matchMedia()`                                                | يرمي استثناء                                                                                          |
+| `window.innerWidth`, `innerHeight`, `devicePixelRatio`, `scrollX`, `scrollY`             | يعمل، مع الإبلاغ عن منفذ عرض المتصفح؛ حجم أداتك نفسها هو `document.body.clientWidth` / `clientHeight` |
+| `window.getComputedStyle()`                                                              | يُرجع أنماط العنصر المضمّنة فقط، وليس سلسلة الأنماط المحسوبة من المضيف مطلقًا                         |
+| `ResizeObserver`, `IntersectionObserver`                                                 | `ReferenceError` (`typeof` guards تعمل)                                                               |
+| `MutationObserver`                                                                       | يعمل، بما في ذلك `subtree` و `attributeFilter` والقيم القديمة و `takeRecords()`                       |
 
-لذلك فإن recharts `ResponsiveContainer`، و Floating UI / Popper، وvirtualization للقوائم، والسحب لتغيير الحجم لا تعمل بعد. قم بتنفيذ التخطيط في CSS بدلًا من ذلك: ورقة الأنماط الخاصة بك تصل إلى الصفحة الحقيقية، لذا فإن flexbox و grid و `aspect-ratio` و `clamp()` و ‎`@container` كلها تتصرف بشكل طبيعي.
+أصبح التموضع باستخدام `getBoundingClientRect` يعمل الآن، ولكن أي شيء يراقب تغيّر الأحجام عبر `ResizeObserver` (مثل `ResponsiveContainer` في recharts و `autoUpdate` في Floating UI) ما زال لا يعمل. يفضَّل استخدام CSS للتخطيط على أي حال: ورقة الأنماط الخاصة بك تصل إلى الصفحة الحقيقية، لذا فإن flexbox و grid و `aspect-ratio` و `clamp()` و ‎`@container` تعمل بشكل طبيعي، بدون أي تأخير في الإطار.
 
 <Note>
 `requestAnimationFrame`, `fetch`, `setTimeout` و `queueMicrotask` تعمل بدون بادئة `window.`. فقط `window.requestAnimationFrame(...)` وما شابهها ترمي استثناء.
@@ -730,32 +804,32 @@ const Card = () => {
 
 يعطيك `ref` عنصرًا في sandbox، وليس `HTMLElement`.
 
-| ما الذي تكتبه                                                                                               | ما الذي يحدث                                          | استخدم بدلًا من ذلك                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | يرمي استثناء                                          | مكوّنات مضبوطة (Controlled components)؛ اقرأ القيم من `event.target`                                                   |
-| `element.classList.add(...)`                                                                                | يرمي استثناء (`classList` هو `undefined`)             | قم ببناء سلسلة `className` بنفسك                                                                                       |
-| `document.getElementById()`, `getElementsByClassName()`, `createTreeWalker()`                               | يرمي استثناء                                          | `querySelector()` / `querySelectorAll()`, والتي تعمل                                                                   |
-| `document.activeElement`                                                                                    | دائمًا `undefined`                                    | تتبّع التركيز باستخدام `onFocus` / `onBlur`                                                                            |
-| `\<canvas>`                                                                                | لا يَرسُم أي شيء، بدون خطأ                            | استخدم SVG، أو ارسم خارج الشاشة ثم اعرض `<img src={dataUrl}>`                                                          |
-| `createPortal(node, document.body)`                                                                         | لا يَرسُم أي شيء، بينما `isConnected` يُبلغ عن النجاح | استخدم الطبقات العائمة (overlays) داخل التخطيط نفسه مع `position: absolute`، أو مرّر إلى المكتبة عنصر الحاوية الخاص بك |
+| ما الذي تكتبه                                                                                               | ما الذي يحدث                                          | استخدم بدلًا من ذلك                                                                                                                                                |
+| ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `ref.current.focus()`, `.click()`, `.select()`, `.setSelectionRange()`, `.scrollIntoView()`, `video.play()` | يرمي استثناء                                          | مكوّنات مضبوطة (Controlled components)؛ اقرأ القيم من `event.target`                                                                                               |
+| `element.classList.add(...)`                                                                                | يرمي استثناء (`classList` هو `undefined`)             | قم ببناء سلسلة `className` بنفسك                                                                                                                                   |
+| `document.createTreeWalker()`                                                                               | يرمي استثناء                                          | تعمل `querySelector()` / `querySelectorAll()` و `getElementById()`؛ تعمل `getElementsByClassName()` أيضًا، ولكنها تُرجِع مجموعة ثابتة، وليس `HTMLCollection` حيًّا |
+| `document.activeElement`                                                                                    | دائمًا `undefined`                                    | تتبّع التركيز باستخدام `onFocus` / `onBlur`                                                                                                                        |
+| `canvas`                                                                                                    | لا يَرسُم أي شيء، بدون خطأ                            | SVG، أو الرسم خارج الشاشة وعرض النتيجة في عنصر `img`                                                                                                               |
+| `createPortal(node, document.body)`                                                                         | لا يَرسُم أي شيء، بينما `isConnected` يُبلغ عن النجاح | استخدم الطبقات العائمة (overlays) داخل التخطيط نفسه مع `position: absolute`، أو مرّر إلى المكتبة عنصر الحاوية الخاص بك                                             |
 
 فجوة الـ portal هي السبب في أن عناصر popover في Radix و Headless UI و MUI و react-select لا ترسُم أي شيء بشكل افتراضي. معظمها يقبل خاصية container؛ وجّهها إلى عنصر قمت بترسيمه.
 
 ### الأحداث
 
-أحداث الماوس، والمؤشر، واللمس، والسحب، ولوحة المفاتيح، والتركيز، و`input`/`change`/`submit`، و`scroll`/`wheel`/`contextmenu` و`animationend`/`transitionend` تمر إلى المضيف، بالإضافة إلى عدد قليل لكل عنصر: `load`/`error` على `<img>`، والحافظة والتكوين على `<input>`/`\<textarea>`، والوسائط على `\<video>`/`\<audio>`، و`toggle` على `\<details>`/`\<dialog>`. أي شيء آخر (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, التقاط المؤشر، `onLoad` خارج `<img>`) يتم إسقاطه دون تحذير.
+أحداث الماوس، والمؤشر، واللمس، والسحب، ولوحة المفاتيح، والتركيز، و`input`/`change`/`submit`، و`scroll`/`wheel`/`contextmenu` و`animationend`/`transitionend` تُمرَّر إلى المضيف، بالإضافة إلى بعض الأحداث الخاصة بكل عنصر: `load`/`error` على `img`، والحافظة والتركيب على `input`/`textarea`، والوسائط على `video`/`audio`، و`toggle` على `details`/`dialog`. أي شيء آخر (`onAuxClick`, `onSelect`, `onInvalid`, `onReset`, `onAnimationStart`, التقاط المؤشر، `onLoad` خارج `img`) يتم إسقاطه دون تحذير.
 
 `document.addEventListener()` و `window.addEventListener()` تُسجِّلان بدون خطأ لكن لا تُطلقان أبدًا، وهذا هو السبب في أن السحب يتوقف بمجرد أن يغادر المؤشر العنصر الذي بدأ عليه. `event.preventDefault()` لا يعبر أيضًا؛ إرسال النماذج، و`dragover`/`drop` ونقرات الروابط محمية مسبقًا من أجلك.
 
 ### السمات والأنماط
 
-كل عنصر يمرّر خصائصه الخاصة إلى DOM المضيف (`href` على `\<a>`, و `src`/`alt` على `<img>`, و `value`/`placeholder`/`disabled` على `<input>`, وهكذا)، بالإضافة إلى مجموعة مشتركة على كل عنصر: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` وأي سمة `aria-*` / `data-*` (مفصولة بشرطات، لذا يتم إسقاط `ariaLabel`). أي شيء خارج ذلك يتم تجاهله بصمت، لذا عبّر عن الحالة المخصّصة كـ `data-*`.
+كل عنصر يمرّر خصائصه الخاصة إلى DOM المضيف (`href` على `a`، و`src`/`alt` على `img`، و`value`/`placeholder`/`disabled` على `input`، وهكذا)، بالإضافة إلى مجموعة مشتركة على كل عنصر: `id`, `className`, `style`, `title`, `tabIndex`, `role`, `draggable` وأي سمة `aria-*` / `data-*` (مفصولة بشرطات، لذا يتم إسقاط `ariaLabel`). أي شيء خارج ذلك يتم تجاهله بصمت، لذا عبّر عن الحالة المخصّصة كـ `data-*`.
 
-يتم حقن CSS الخاص بالمكوّن، سواءً من `import './styles.css'` أو CSS-in-JS أو عنصر `\<style>`، في وسم `\<head>` لصفحة المضيف **بدون نطاق**. لذا تتصادم أسماء الأصناف مع أسماء Twenty نفسها (قم بإضافة بادئة لها، ولا تكتب أبدًا محددًا مثل `div { ... }`)، و `@media` تطابِق نافذة المتصفح بدلاً من الودجت الخاص بك (استخدم `@container` مع `container-type` الخاص بك). خصائص `style` المضمنة لا تتأثر.
+يتم حقن CSS الخاص بالمكوّن، سواءً من `import './styles.css'` أو CSS-in-JS أو عنصر `style`، في وسم `head` لصفحة المضيف **بدون نطاق**. لذا تتصادم أسماء الأصناف مع أسماء Twenty نفسها (قم بإضافة بادئة لها، ولا تكتب أبدًا محددًا مثل `div { ... }`)، و `@media` تطابِق نافذة المتصفح بدلاً من الودجت الخاص بك (استخدم `@container` مع `container-type` الخاص بك). خصائص `style` المضمنة لا تتأثر.
 
 ### التخزين والشبكة
 
-`localStorage` و`sessionStorage` وIndexedDB وملفات تعريف الارتباط وواجهة برمجة تطبيقات Cache و`BroadcastChannel` كلها غير متاحة، لأن المكوّن يعمل في عامل (worker) بأصل غير شفاف. للاحتفاظ بالحالة، استدعِ [دالة منطقية](/l/ar/developers/extend/apps/logic/logic-functions) واستخدم [مخزن القيم المفتاحية](/l/ar/developers/extend/apps/logic/key-value-store) الخاص بها.
+يتم توفير `localStorage` و`sessionStorage` بواسطة Twenty وليس بواسطة المتصفح: حيث يعمل المكون في عامل (worker) ضمن أصل غير شفاف، لذلك يقوم المضيف بتخزين القيم نيابةً عن تطبيقك. راجع قسم [التخزين](#storage) للاطلاع على نطاقاتها وحدودها. لا تزال IndexedDB وملفات تعريف الارتباط (cookies) وواجهة برمجة تطبيقات Cache و`BroadcastChannel` غير متاحة. للاحتفاظ بالحالة عبر الأجهزة، استدعِ [دالة منطقية](/l/ar/developers/extend/apps/logic/logic-functions) واستخدم [مخزن القيم المفتاحية](/l/ar/developers/extend/apps/logic/key-value-store) الخاص بها.
 
 `fetch` يعمل، مع بعض التحفّظات:
 
@@ -763,9 +837,13 @@ const Card = () => {
 * تغادر النطاقات (origins) الأخرى صندوق العزل مع `Origin: null`، لذلك يجيب طرف ثالث لواجهة برمجة التطبيقات فقط إذا أرسل `Access-Control-Allow-Origin: *`. استدعِها من دالة منطقية بدلًا من ذلك.
 * `fetch('/rest/people')` لا يتطابق أبدًا مع Twenty API، لأن صندوق العزل ليس لديه عنوان URL للصفحة لحساب مسار نسبي بناءً عليه.
 
+### التقاط الوسائط
+
+تعمل `navigator.mediaDevices.getUserMedia()` و`MediaRecorder` داخل مكوّنات الواجهة الأمامية من خلال sandbox polyfills، لذا يعمل كود التسجيل القياسي دون تغيير، وتُرجِع `MediaRecorder.isTypeSupported` إجابات لأنواع حاويات/ترميزات شائعة. يتم قبول كائنات قيود `getUserMedia` التفصيلية ولكن لا يتم تمريرها إلى المضيف — حيث يقوم المضيف بالالتقاط باستخدام الإعدادات الافتراضية لأنواع الوسائط المطلوبة — ولا يمكن أن يكون هناك أكثر من عملية التقاط واحدة نشطة في الوقت نفسه عبر التطبيقات. خزِّن كائن `Blob` المسجَّل باستخدام دالة المضيف `uploadFile`.
+
 ### فجوات أخرى
 
-* **محتويات الملفات.** يُرجِع `<input type="file">` إلى معالجك بيانات تعريف الملف فقط، وليس البايتات، لذلك فإن `FileReader` وعمليات الرفع غير ممكنة بعد.
+* **محتويات الملفات.** يُرجِع `input` من النوع `file` إلى معالجك بيانات تعريف الملف فقط، وليس البايتات، لذا فإن `FileReader` غير متاح. لرفع كائن `Blob` الذي يملكه كودك بالفعل — على سبيل المثال كائن تم إنتاجه بواسطة `MediaRecorder` — استخدم دالة المضيف `uploadFile`.
 * **حمولات السحب والإفلات.** أحداث السحب تُطلق، لكن `event.dataTransfer` هي `undefined`.
 * **الوحدات المدمجة في Node.** `fs` و`path` و`node:crypto` تفشل في عملية البناء، لذا انقل ذلك العمل إلى [دالة منطقية](/l/ar/developers/extend/apps/logic/logic-functions). Web Crypto و `fetch` و `TextEncoder` و `URL` متوفرة.
-* يتم دائمًا إعادة عزل **`\<iframe>`** دون `allow-same-origin`، لذلك يعمل التضمين الذي يعتمد على جلسته الخاصة في وضع "تسجيل الخروج". ليس لديه `onLoad` أيضًا.
+* يتم دائمًا إعادة عزل **`iframe`** دون `allow-same-origin`، لذلك يعمل التضمين الذي يعتمد على جلسته الخاصة في وضع "تسجيل الخروج". ليس لديه `onLoad` أيضًا.

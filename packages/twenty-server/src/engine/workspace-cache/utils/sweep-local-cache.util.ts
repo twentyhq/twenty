@@ -1,51 +1,15 @@
 import { type WorkspaceLocalCacheEntry } from 'src/engine/workspace-cache/types/workspace-local-cache-entry.type';
+import { evictLeastRecentlyUsed } from 'src/utils/lru-map.util';
 
 export type LocalCacheSweepConfig = {
   ttlMs: number;
-  maxEntriesByPrefix: ReadonlyMap<string, number>;
+  maxEntriesByKeyName: ReadonlyMap<string, number>;
   globalMaxEntries: number;
   minEvict: number;
 };
 
 const lastReadAtOf = <T>(entry: WorkspaceLocalCacheEntry<T>): number =>
   entry.versions.get(entry.latestHash)?.lastReadAt ?? 0;
-
-const evictLeastRecentlyRead = <T>({
-  localCache,
-  matches,
-  maxEntries,
-  minEvict,
-}: {
-  localCache: Map<string, WorkspaceLocalCacheEntry<T>>;
-  matches: (key: string) => boolean;
-  maxEntries: number;
-  minEvict: number;
-}): number => {
-  const matching: [string, WorkspaceLocalCacheEntry<T>][] = [];
-
-  for (const keyEntry of localCache) {
-    if (matches(keyEntry[0])) {
-      matching.push(keyEntry);
-    }
-  }
-
-  if (matching.length <= maxEntries) {
-    return 0;
-  }
-
-  matching.sort((a, b) => lastReadAtOf(a[1]) - lastReadAtOf(b[1]));
-
-  const evictCount = Math.min(
-    matching.length,
-    Math.max(minEvict, matching.length - maxEntries),
-  );
-
-  for (let index = 0; index < evictCount; index += 1) {
-    localCache.delete(matching[index][0]);
-  }
-
-  return evictCount;
-};
 
 // Mutates the cache: expire versions idle past the TTL (dropping any entry left without a current
 // version), then trim each capped provider and the global total to budget by least-recently-read.
@@ -70,21 +34,22 @@ export const sweepLocalCache = <T>(
     }
   }
 
-  for (const [prefix, maxEntries] of config.maxEntriesByPrefix) {
-    evicted += evictLeastRecentlyRead({
-      localCache,
-      matches: (key) => key.startsWith(`${prefix}:`),
+  for (const [keyName, maxEntries] of config.maxEntriesByKeyName) {
+    evicted += evictLeastRecentlyUsed({
+      map: localCache,
       maxEntries,
-      minEvict: 0,
+      recencyOf: lastReadAtOf,
+      matches: (key) => key.startsWith(`${keyName}:`),
     });
   }
 
-  evicted += evictLeastRecentlyRead({
-    localCache,
-    matches: () => true,
-    maxEntries: config.globalMaxEntries,
-    minEvict: config.minEvict,
-  });
-
-  return evicted;
+  return (
+    evicted +
+    evictLeastRecentlyUsed({
+      map: localCache,
+      maxEntries: config.globalMaxEntries,
+      minEvict: config.minEvict,
+      recencyOf: lastReadAtOf,
+    })
+  );
 };

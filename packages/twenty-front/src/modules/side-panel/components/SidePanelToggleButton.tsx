@@ -3,16 +3,20 @@ import { COMMAND_MENU_SIDE_PANEL_PAGES } from '@/side-panel/constants/CommandMen
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
-import { AppTooltip, TooltipDelay, TooltipPosition } from 'twenty-ui/surfaces';
+import { IconButton } from 'twenty-ui/primitives/input';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/primitives/surfaces';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -35,10 +39,11 @@ const StyledTooltipWrapper = styled.div`
 export const SidePanelToggleButton = () => {
   const { openSidePanelMenu } = useSidePanelMenu();
   const isSidePanelOpened = useAtomStateValue(isSidePanelOpenedState);
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
   const sidePanelNavigationStack = useAtomStateValue(
     sidePanelNavigationStackState,
   );
+  const sidePanelPage =
+    sidePanelNavigationStack.at(-1)?.page ?? SidePanelPages.CommandMenuDisplay;
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -79,7 +84,7 @@ export const SidePanelToggleButton = () => {
         <IconButton
           Icon={IconDotsVertical}
           dataTestId="page-header-side-panel-button"
-          size={isMobile ? 'medium' : 'small'}
+          size="small"
           variant="primary"
           accent="default"
           ariaLabel={ariaLabel}
@@ -90,7 +95,7 @@ export const SidePanelToggleButton = () => {
       <StyledTooltipWrapper>
         <AppTooltip
           anchorSelect="#toggle-side-panel-button"
-          content={tooltipContent}
+          title={tooltipContent}
           delay={TooltipDelay.longDelay}
           place={TooltipPosition.Bottom}
           offset={5}

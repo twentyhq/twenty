@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   type ClickHouseInsertOptions,
   ClickHouseService,
-} from 'src/database/clickHouse/clickHouse.service';
+} from 'src/database/clickhouse/clickhouse.service';
 import { type EventSink } from 'src/engine/core-modules/event-logs/ingest/event-sink';
 import {
   type WorkspaceEventEnvelope,
@@ -48,8 +48,11 @@ export class ClickHouseEventSink implements EventSink {
         );
 
         if (!result.success) {
-          throw new Error(
-            `Failed to insert ${rows.length} ${table} row(s) into ClickHouse`,
+          throw Object.assign(
+            new Error(
+              `Failed to insert ${rows.length} ${table} row(s) into ClickHouse: ${result.error.message}`,
+            ),
+            { cause: result.error },
           );
         }
       }),

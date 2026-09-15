@@ -392,17 +392,23 @@ Rilevante solo se il back-end non serve il front-end. Le distribuzioni con la st
 non richiedono nulla qui.
 
 Dichiara tutte le origini del browser che comunicano con l'API, separate da virgole. `SERVER_URL`
-e `FRONTEND_URL` sono già considerate attendibili.
+e `FRONTEND_URL` sono già considerate attendibili. Il server registra un avviso quando un browser
+lo chiama da origine non dichiarata.
 
 ```bash
 AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 ```
 
 <Warning>
-L'aggiornamento a una versione con sessioni tramite cookie rende questo obbligatorio. Il front-end
-ora invia le credenziali con ogni richiesta e i browser rifiutano una risposta con credenziali
-proveniente da un'origine non dichiarata, quindi l'app non riesce a caricarsi finché non imposti questo valore.
+Il front-end invia le credenziali su ogni richiesta, e i browser rifiutano una risposta credenziale
+da un'origine non dichiarata, quindi l'applicazione non riesce a caricare fino a quando
+hai impostato questo.
 </Warning>
 
 Se i due host si trovano su domini registrabili diversi (non solo sottodomini
 diversi), imposta anche `AUTH_COOKIE_SAME_SITE=none`, che richiede HTTPS.
+
+Con multi-workspace abilitato, non elencare ogni sottodominio workspace qui.
+Invece, percorsi percorsi API (`/graphql`, `/metadata`, `/rest`, `/auth/`,
+`/client-config`, `/file`) al back-end su ogni hostname di workspace, quindi ogni workspace
+rimane la stessa origine — così funziona Twenty Cloud.

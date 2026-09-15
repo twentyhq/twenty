@@ -1,4 +1,3 @@
-import { OBJECT_OPTIONS_DROPDOWN_ID } from '@/object-record/object-options-dropdown/constants/ObjectOptionsDropdownId';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -16,14 +15,15 @@ import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { useUpdateCurrentView } from '@/views/hooks/useUpdateCurrentView';
 import { useLingui } from '@lingui/react/macro';
 import { createPortal } from 'react-dom';
+import { createPath, useLocation } from 'react-router-dom';
 import {
   IconChevronLeft,
   IconCircle,
   IconCircleDashed,
   IconCopy,
 } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/surfaces';
-import { MenuItem, MenuItemSelect } from 'twenty-ui/navigation';
+import { AppTooltip } from 'twenty-ui/primitives/surfaces';
+import { MenuItem, MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import {
   ViewVisibility,
   PermissionFlagType,
@@ -32,7 +32,8 @@ import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 export const ObjectOptionsDropdownVisibilityContent = () => {
   const { t } = useLingui();
-  const { resetContent } = useObjectOptionsDropdown();
+  const location = useLocation();
+  const { resetContent, dropdownId } = useObjectOptionsDropdown();
   const { currentView } = useGetCurrentViewOnly();
   const { updateCurrentView } = useUpdateCurrentView();
   const { copyToClipboard } = useCopyToClipboard();
@@ -41,7 +42,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
 
   const selectedItemId = useAtomComponentStateValue(
     selectedItemIdComponentState,
-    OBJECT_OPTIONS_DROPDOWN_ID,
+    dropdownId,
   );
 
   const selectableItemIdArray = [
@@ -58,8 +59,11 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
   };
 
   const handleCopyLink = async () => {
-    const currentUrl = window.location.href;
-    await copyToClipboard(currentUrl, t`Link copied to clipboard`);
+    const canonicalViewUrl = new URL(
+      createPath(location),
+      window.location.origin,
+    ).toString();
+    await copyToClipboard(canonicalViewUrl, t`Link copied to clipboard`);
   };
 
   const currentVisibility = currentView?.visibility ?? ViewVisibility.WORKSPACE;
@@ -78,8 +82,8 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
       </DropdownMenuHeader>
       <DropdownMenuItemsContainer>
         <SelectableList
-          selectableListInstanceId={OBJECT_OPTIONS_DROPDOWN_ID}
-          focusId={OBJECT_OPTIONS_DROPDOWN_ID}
+          selectableListInstanceId={dropdownId}
+          focusId={dropdownId}
           selectableItemIdArray={selectableItemIdArray}
         >
           <SelectableListItem
@@ -108,7 +112,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
                 createPortal(
                   <AppTooltip
                     anchorSelect="#workspace-visibility-option"
-                    content={t`Workspace views require manage views permission`}
+                    title={t`Workspace views require manage views permission`}
                     positionStrategy="fixed"
                   />,
                   document.body,

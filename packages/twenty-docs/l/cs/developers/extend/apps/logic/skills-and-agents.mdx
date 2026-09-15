@@ -163,7 +163,7 @@ const { result } = await runAgent({
 });
 ```
 
-Spuštění je pak omezeno na to, co povolují jak role agenta, tak role člena, záznamy, které vytvoří, jsou připsány tomuto členovi a uplatní se jeho oprávnění na úrovni řádků. Toto pole vynechejte u autonomních spuštění (plánované úlohy, spouštěče databázových událostí): ta si ponechají vlastní roli agenta.
+Spuštění pak jedná s **vlastní rolí člena**: může dělat vše, co může tento člen a nic navíc, záznamy, které vytváří, jsou mu připsány a uplatňují se na něj jeho oprávnění na úrovni řádků. Role agenta se toho neúčastní — je výchozí rolí aplikace pro spuštění, za nimiž nestojí žádný uživatel. Toto pole vynechejte u autonomních spuštění (plánované úlohy, spouštěče databázových událostí): ta si ponechají vlastní roli agenta. Aplikace, která jedná, zůstává kvůli doložení původu navázaná na kontext spuštění, aniž by zužovala oprávnění člena.
 
 Vaše aplikace je zodpovědná za mapování osoby, která spuštění vyvolala, na člena pracovního prostoru. Pojmenování člena vyžaduje přístupový token aplikace a to, koho může token
 pojmenovat, závisí na tom, zda je navázán na uživatele:

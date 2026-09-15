@@ -242,7 +242,6 @@ describe('shouldSkipStepExecution', () => {
       createMockCodeStep('step-4', []),
     ];
 
-    // Test case 1: All skipped - should return true
     expect(
       shouldSkipStepExecution({
         step: steps[3],
@@ -256,7 +255,6 @@ describe('shouldSkipStepExecution', () => {
       }),
     ).toBe(true);
 
-    // Test case 2: Mixed skipped/stopped - should return true
     expect(
       shouldSkipStepExecution({
         step: steps[3],
@@ -270,7 +268,6 @@ describe('shouldSkipStepExecution', () => {
       }),
     ).toBe(true);
 
-    // Test case 3: One success among skipped - should return false
     expect(
       shouldSkipStepExecution({
         step: steps[3],
@@ -284,7 +281,6 @@ describe('shouldSkipStepExecution', () => {
       }),
     ).toBe(false);
 
-    // Test case 4: One failed among skipped - should return false
     expect(
       shouldSkipStepExecution({
         step: steps[3],
@@ -336,6 +332,29 @@ describe('shouldSkipStepExecution', () => {
         'if-else': { status: StepStatus.SUCCESS },
         'step-a': { status: StepStatus.NOT_STARTED },
       },
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return false when a parent failed and continues on failure', () => {
+    const steps = [
+      createMockCodeStep('step-1', ['step-3'], {
+        continueOnFailure: true,
+      }),
+      createMockCodeStep('step-2', ['step-3']),
+      createMockCodeStep('step-3', []),
+    ];
+    const stepInfos = {
+      'step-1': { status: StepStatus.FAILED_SAFELY, error: 'some error' },
+      'step-2': { status: StepStatus.SKIPPED },
+      'step-3': { status: StepStatus.NOT_STARTED },
+    };
+
+    const result = shouldSkipStepExecution({
+      step: steps[2],
+      steps,
+      stepInfos,
     });
 
     expect(result).toBe(false);

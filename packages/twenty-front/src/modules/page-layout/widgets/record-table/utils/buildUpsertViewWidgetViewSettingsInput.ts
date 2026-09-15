@@ -7,7 +7,6 @@ export const buildUpsertViewWidgetViewSettingsInput = (
   type: view.type,
   mainGroupByFieldMetadataId: view.mainGroupByFieldMetadataId ?? null,
   shouldHideEmptyGroups: view.shouldHideEmptyGroups,
-  openRecordIn: view.openRecordIn,
   kanbanAggregateOperation: view.kanbanAggregateOperation ?? null,
   kanbanAggregateOperationFieldMetadataId:
     view.kanbanAggregateOperationFieldMetadataId ?? null,

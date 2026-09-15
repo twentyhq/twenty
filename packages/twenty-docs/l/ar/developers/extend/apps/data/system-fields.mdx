@@ -144,23 +144,26 @@ const attachmentTargetRocketFieldId =
   بالإصدار 2.26 أو أحدث.
 </Note>
 
-يقوم الخادم أيضًا بتوفير **عرض نظامي** على كل كائن: عرض القائمة الرئيسي (`All {objectLabelPlural}`، ذو المفتاح `ViewKey.INDEX`)، مع عمود واحد لكل حقل قابل للعرض. تمامًا مثل حقول العلاقات النظامية، تُشتق معرّفاتها **من دون أسماء**، لذلك لن يؤدي تغيير اسم كائن أو حقل إلى تغييرها مطلقًا.
+يقوم الخادم أيضًا بتوفير **عرض نظامي** على كل كائن: عرض القائمة الرئيسي (`All {objectLabelPlural}`، ذو المفتاح `ViewKey.INDEX` (المُشتق باستخدام `SYSTEM_VIEW_KEYS.INDEX`))، مع عمود واحد لكل حقل قابل للعرض. تمامًا مثل حقول العلاقات النظامية، تُشتق معرّفاتها **من دون أسماء**، لذلك لن يؤدي تغيير اسم كائن أو حقل إلى تغييرها مطلقًا.
 
 استخدم `getSystemViewUniversalIdentifier` لحلّ العرض:
 
 ```ts
-import { getSystemViewUniversalIdentifier, ViewKey } from 'twenty-sdk/define';
+import {
+  getSystemViewUniversalIdentifier,
+  SYSTEM_VIEW_KEYS,
+} from 'twenty-sdk/define';
 
 const rocketIndexViewId = getSystemViewUniversalIdentifier({
   objectMetadataApplicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
   objectUniversalIdentifier: ROCKET_OBJECT_UNIVERSAL_IDENTIFIER,
-  viewKey: ViewKey.INDEX,
+  viewKey: SYSTEM_VIEW_KEYS.INDEX,
 });
 ```
 
 * `objectMetadataApplicationUniversalIdentifier` هو التطبيق الذي يملك **الكائن**، وهو ما يتم بناء نطاق الاسم (namespace) للعرض على أساسه.
 * `objectUniversalIdentifier` هو الكائن الذي يعرضه (يسردُه) هذا العرض.
-* `viewKey` هو مفتاح العرض النظامي، وهو `ViewKey.INDEX` حاليًا.
+* `viewKey` هو مميِّز عرض النظام: `SYSTEM_VIEW_KEYS.INDEX` لعرض القائمة الرئيسي، و`SYSTEM_VIEW_KEYS.FIELDS_WIDGET` لعرض أداة حقول صفحة السجل. إنه يحدِّد الاشتقاق؛ يُخزَّن أيضًا في صف العرض `INDEX` فقط.
 
 يعمل المعرّف المحلول في أي مكان يُتوقَّع فيه `viewUniversalIdentifier`، مثل إدخال الشريط الجانبي من النوع [`NavigationMenuItemType.VIEW`](/l/ar/developers/extend/apps/layout/navigation-menu-items). لفتح القائمة الرئيسية لكائن ما ببساطة، يُفضَّل استخدام `NavigationMenuItemType.OBJECT` مع `targetObjectUniversalIdentifier`، إذ لا يحتاج ذلك إلى أي اشتقاق.
 

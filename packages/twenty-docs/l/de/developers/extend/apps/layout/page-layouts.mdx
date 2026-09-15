@@ -53,9 +53,10 @@ export default definePageLayout({
 
 * `type` ist eines von `'RECORD_INDEX'`, `'RECORD_PAGE'`, `'DASHBOARD'` oder `'STANDALONE_PAGE'`. Verwenden Sie `'RECORD_PAGE'`, um die Detailansicht eines bestimmten Objekts anzupassen.
 * `objectUniversalIdentifier` gibt an, auf welches Objekt dieses Layout angewendet wird.
-* Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode`: `VERTICAL_LIST` für Datensatzseiten und eigenständige Seiten, `GRID` für Dashboards. In einem `VERTICAL_LIST`-Tab rendert ein einzelnes Widget in voller Breite und belegt den gesamten Tab; bei mehreren Widgets werden diese als Karten gestapelt. Ein `GRID`-Tab ordnet seine Widgets immer als Karten in einem 12-spaltigen Raster an, unabhängig von ihrer Anzahl. Wähle daher `VERTICAL_LIST`, wenn du möchtest, dass ein Widget die gesamte Seite ausfüllt.
+* Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode`: `VERTICAL_LIST` für Datensatzseiten und eigenständige Seiten, `GRID` für Dashboards und `CANVAS` für ein einzelnes Widget, das den Ansichtsbereich des Tabs ausfüllen soll. Ein `VERTICAL_LIST`-Tab ordnet Widgets vertikal an. Integrierte Widgets, die ihr eigenes Scrollen verwalten, wie etwa Timelines, Dateien, Notizen, Aufgaben und Workflows, füllen einen Ansichtsbereich aus; Felder, Front-Komponenten, Diagramme und andere Widgets mit `fit-content` werden mit ihrer Inhalts- oder konfigurierten Höhe dargestellt. Ein `GRID`-Tab ordnet seine Widgets immer als Karten in einem Raster mit 12 Spalten an. Ein `CANVAS`-Widget hat keine explizite Position; wenn ein Canvas-Tab mehrere Widgets enthält, werden sie in ihrer Inhaltshöhe gerendert, anstatt den Viewport auszufüllen.
 * Setze `layoutMode` explizit. Wenn du es weglässt, erhältst du `VERTICAL_LIST` auf einer `STANDALONE_PAGE` und `GRID` überall sonst, was auf einer Datensatzseite selten gewünscht ist.
 * Jedes `widget` innerhalb eines Tabs kann eine [Frontend-Komponente](/l/de/developers/extend/apps/layout/front-components), eine Relationenliste oder andere eingebaute Widget-Typen rendern.
+* Ein `FRONT_COMPONENT`-Widget kann `headerCommandMenuItemUniversalIdentifiers` auf ein geordnetes Array universeller Kennungen von Befehlsmenüelementen aus derselben App festlegen. Diese Aktionen werden als Symbolschaltflächen im Kopf der Widget-Karte angezeigt und behalten ihre Verfügbarkeits- und Berechtigungsprüfungen auf Befehlsebene bei. Kennungen müssen eindeutig sein und bei installierter App aufgelöst werden können.
 * `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
 
 ### Feld-Widgets
@@ -136,8 +137,10 @@ export default definePageLayoutTab({
   Jeder Layout-Eintrag stellt außerdem seine `tabs` und deren `widgets` zur Verfügung, sodass Sie auf jede Ebene verweisen können:
 
   ```ts
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
-  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home
+    .universalIdentifier;
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets
+    .fields.universalIdentifier;
   ```
 
   Eine kurze Alias-Variable `STANDARD_PAGE_LAYOUT` ist ebenfalls verfügbar:

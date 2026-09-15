@@ -27,6 +27,7 @@ export const computeRecordTableWidgetViewLoadContentSignature = (
       logicalOperator: group.logicalOperator,
       parentViewFilterGroupId: group.parentViewFilterGroupId,
     })),
+    anyFieldFilterValue: view.anyFieldFilterValue,
     sorts: view.viewSorts.map((sort) => ({
       id: sort.id,
       fieldMetadataId: sort.fieldMetadataId,

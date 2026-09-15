@@ -28,4 +28,18 @@ describe('computeRecordTableWidgetViewLoadContentSignature', () => {
       computeRecordTableWidgetViewLoadContentSignature(makeView(null)),
     );
   });
+
+  it('should include the any-field filter in the record table widget view load signature', () => {
+    expect(
+      computeRecordTableWidgetViewLoadContentSignature({
+        ...makeView(null),
+        anyFieldFilterValue: 'Acme',
+      }),
+    ).not.toEqual(
+      computeRecordTableWidgetViewLoadContentSignature({
+        ...makeView(null),
+        anyFieldFilterValue: '',
+      }),
+    );
+  });
 });

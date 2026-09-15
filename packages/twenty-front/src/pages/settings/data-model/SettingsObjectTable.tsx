@@ -31,13 +31,14 @@ import { type ReactNode, useContext, useMemo, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconArchive, IconChevronRight, IconSettings } from 'twenty-ui/icon';
-import { SearchInput } from 'twenty-ui/input';
-import { MenuItemToggle } from 'twenty-ui/navigation';
+import { SearchInput } from 'twenty-ui/primitives/input';
+import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GET_SETTINGS_OBJECT_TABLE_METADATA } from '~/pages/settings/data-model/constants/SettingsObjectTableMetadata';
 import type { SettingsObjectTableItem } from '~/pages/settings/data-model/types/SettingsObjectTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
@@ -73,6 +74,7 @@ export const SettingsObjectTable = ({
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const navigate = useNavigateSettings();
 
   const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
@@ -174,24 +176,24 @@ export const SettingsObjectTable = ({
                 dropdownComponents={
                   <DropdownContent>
                     <DropdownMenuItemsContainer>
-                      <MenuItemToggle
+                      <MenuItemSwitch
                         LeftIcon={IconArchive}
-                        onToggleChange={() =>
+                        onCheckedChange={() =>
                           setShowDeactivated(!showDeactivated)
                         }
-                        toggled={showDeactivated}
+                        checked={showDeactivated}
                         text={t`Deactivated`}
-                        toggleSize="small"
+                        size="sm"
                       />
                       {isAdvancedModeEnabled && (
-                        <MenuItemToggle
+                        <MenuItemSwitch
                           LeftIcon={IconSettings}
-                          onToggleChange={() =>
+                          onCheckedChange={() =>
                             setShowSystemObjects(!showSystemObjects)
                           }
-                          toggled={showSystemObjects}
+                          checked={showSystemObjects}
                           text={t`System objects`}
-                          toggleSize="small"
+                          size="sm"
                         />
                       )}
                     </DropdownMenuItemsContainer>
@@ -261,13 +263,21 @@ export const SettingsObjectTable = ({
                               stroke={theme.icon.stroke.sm}
                             />
                           </StyledIconChevronRightContainer>
-                        ) : isDDLLocked ? null : (
+                        ) : (
                           <SettingsObjectInactiveMenuDropDown
                             isCustomObject={getIsMetadataItemCustom(
                               objectSettingsItem.objectMetadataItem,
                             )}
+                            isReadOnly={isDDLLocked}
                             objectMetadataItemNamePlural={
                               objectSettingsItem.objectMetadataItem.namePlural
+                            }
+                            onEdit={() =>
+                              navigate(SettingsPath.ObjectDetail, {
+                                objectNamePlural:
+                                  objectSettingsItem.objectMetadataItem
+                                    .namePlural,
+                              })
                             }
                             onActivate={() =>
                               updateOneObjectMetadataItem({

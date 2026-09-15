@@ -15,12 +15,10 @@ export const getDayOfMonthDescription = (
     return '';
   }
 
-  // Every day
   if (dayOfMonth === '*') {
     return t`every day`;
   }
 
-  // Last day of month
   if (dayOfMonth === 'L') {
     return t`on the last day of the month`;
   }
@@ -72,7 +70,6 @@ export const getDayOfMonthDescription = (
     return t`between the ${startOrdinal} and ${endOrdinal} of the month`;
   }
 
-  // List values (e.g., "1,15,30")
   if (isListValue(dayOfMonth)) {
     const values = dayOfMonth.split(',').map((v) => v.trim());
     const ordinalDays = values.map((day) => {
@@ -90,7 +87,6 @@ export const getDayOfMonthDescription = (
     return t`on the ${remainingDays} and ${lastDay ?? ''} of the month`;
   }
 
-  // Single day value
   const dayNum = parseInt(dayOfMonth, 10);
   if (!isNaN(dayNum)) {
     const ordinalDay = getOrdinalNumber(dayNum);

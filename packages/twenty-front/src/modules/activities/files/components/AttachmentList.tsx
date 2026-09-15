@@ -11,7 +11,7 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ModalContent, ModalHeader } from 'twenty-ui/surfaces';
+import { ModalContent, ModalHeader } from 'twenty-ui/primitives/surfaces';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import {
@@ -24,7 +24,7 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { AttachmentRow } from './AttachmentRow';
@@ -44,17 +44,17 @@ const StyledContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   display: flex;
+  flex: 1;
   flex-direction: column;
   height: 100%;
-  justify-content: center;
-  padding: ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[6]}
-    ${themeCssVariables.spacing[6]};
-  width: calc(100% - ${themeCssVariables.spacing[12]});
+  min-height: 0;
+  width: 100%;
 `;
 
 const StyledDropZoneContainer = styled.div`
+  flex: 1;
   height: 100%;
-  overflow: auto;
+  min-height: 0;
   width: 100%;
 `;
 
@@ -62,7 +62,7 @@ const StyledLoadingContainer = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.primary};
   display: flex;
-  height: 80vh;
+  height: calc(80vh / var(--t-zoom, 1));
   justify-content: center;
   width: 100%;
 `;

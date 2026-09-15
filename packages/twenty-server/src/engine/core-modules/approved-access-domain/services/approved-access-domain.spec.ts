@@ -58,7 +58,8 @@ describe('ApprovedAccessDomainService', () => {
             delete: jest.fn(),
             findOne: jest.fn(),
             find: jest.fn(),
-            save: jest.fn(),
+            update: jest.fn(),
+            insertAndReturnOne: jest.fn(),
           },
         },
         {
@@ -142,7 +143,7 @@ describe('ApprovedAccessDomainService', () => {
       };
 
       jest
-        .spyOn(approvedAccessDomainRepository, 'save')
+        .spyOn(approvedAccessDomainRepository, 'insertAndReturnOne')
         .mockResolvedValue(
           expectedApprovedAccessDomain as unknown as ApprovedAccessDomainEntity,
         );
@@ -158,7 +159,9 @@ describe('ApprovedAccessDomainService', () => {
         'validator@custom-domain.com',
       );
 
-      expect(approvedAccessDomainRepository.save).toHaveBeenCalledWith(
+      expect(
+        approvedAccessDomainRepository.insertAndReturnOne,
+      ).toHaveBeenCalledWith(
         'workspace-id',
         expect.objectContaining({ domain }),
       );
@@ -180,7 +183,9 @@ describe('ApprovedAccessDomainService', () => {
           ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_MUST_BE_A_COMPANY_DOMAIN,
         ),
       );
-      expect(approvedAccessDomainRepository.save).not.toHaveBeenCalled();
+      expect(
+        approvedAccessDomainRepository.insertAndReturnOne,
+      ).not.toHaveBeenCalled();
     });
   });
 
@@ -390,7 +395,7 @@ describe('ApprovedAccessDomainService', () => {
       jest
         .spyOn(approvedAccessDomainRepositoryUnscoped, 'findOneBy')
         .mockResolvedValue(approvedAccessDomain);
-      const saveSpy = jest.spyOn(approvedAccessDomainRepository, 'save');
+      const updateSpy = jest.spyOn(approvedAccessDomainRepository, 'update');
 
       await service.validateApprovedAccessDomain({
         validationToken,
@@ -403,9 +408,10 @@ describe('ApprovedAccessDomainService', () => {
       expect(
         approvedAccessDomainRepositoryUnscoped.findOneBy,
       ).toHaveBeenCalledWith({ id: approvedAccessDomainId });
-      expect(saveSpy).toHaveBeenCalledWith(
+      expect(updateSpy).toHaveBeenCalledWith(
         workspaceId,
-        expect.objectContaining({ isValidated: true }),
+        { id: approvedAccessDomainId },
+        { isValidated: true },
       );
     });
 

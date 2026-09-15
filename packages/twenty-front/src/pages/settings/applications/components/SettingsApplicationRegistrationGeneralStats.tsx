@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/layout';
-import { H2Title } from 'twenty-ui/typography';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { SettingsApplicationRegistrationInstalledWorkspaces } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces';
 import { SettingsApplicationRegistrationInstallStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats';
@@ -16,7 +16,7 @@ export const SettingsApplicationRegistrationGeneralStats = ({
     <Section>
       <H2Title
         title={t`Install Stats`}
-        description={t`Usage across all workspaces on this server`}
+        description={t`Usage across all non-deleted workspaces on this server`}
       />
       <SettingsApplicationRegistrationInstallStats
         registration={registration}

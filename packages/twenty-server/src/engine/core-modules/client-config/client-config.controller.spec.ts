@@ -47,6 +47,7 @@ describe('ClientConfigController', () => {
             },
           ],
         },
+        aiModelTiers: [],
         aiModels: [
           {
             modelId: 'openai/gpt-4o' as ModelId,
@@ -68,7 +69,6 @@ describe('ClientConfigController', () => {
         isMultiWorkspaceEnabled: true,
         isEmailVerificationRequired: false,
         defaultSubdomain: 'app',
-        subdomainMinLength: 1,
         frontDomain: 'localhost',
         publicFunctionDomain: null,
         support: {
@@ -79,6 +79,7 @@ describe('ClientConfigController', () => {
           environment: 'development',
           release: '1.0.0',
           dsn: undefined,
+          tracesSampleRate: 0.1,
         },
         captcha: {
           provider: undefined,
@@ -97,7 +98,7 @@ describe('ClientConfigController', () => {
         analyticsEnabled: false,
         canManageFeatureFlags: true,
         publicFeatureFlags: [],
-        isCookieSessionEnabled: false,
+        isCookieSessionEnabled: true,
         isMicrosoftMessagingEnabled: false,
         isMicrosoftCalendarEnabled: false,
         isGoogleMessagingEnabled: false,

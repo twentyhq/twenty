@@ -59,6 +59,29 @@ describe('Failing manifest update - standalone view fields on existing views', (
     });
   });
 
+  it('rejects a standalone view field claiming the pair the engine emits for the created field', async () => {
+    const { errors } = await syncApplication({
+      manifest: buildManifest({
+        fields: [personFieldManifest],
+        viewFields: [
+          {
+            universalIdentifier: TEST_VIEW_FIELD_ID,
+            viewUniversalIdentifier:
+              PERSON_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER,
+            viewFieldGroupUniversalIdentifier:
+              PERSON_RECORD_PAGE_GENERAL_GROUP_UNIVERSAL_IDENTIFIER,
+            fieldMetadataUniversalIdentifier: TEST_FIELD_ID,
+            position: 10,
+            isVisible: true,
+          },
+        ],
+      }),
+      expectToFail: true,
+    });
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  }, 60000);
+
   it('rejects two standalone view fields targeting the same field on the same view', async () => {
     const { errors } = await syncApplication({
       manifest: buildManifest({

@@ -87,4 +87,43 @@ describe('requestCallRecordingSummaryGeneration', () => {
       variant: 'error',
     });
   });
+
+  it('reports when the call recording has no usable transcript', async () => {
+    postMock.mockResolvedValue({
+      outcome: 'processed',
+      generatedCallRecordingIds: [],
+      failedCallRecordingIds: [],
+      erroredCallRecordingIds: [],
+      skippedCallRecordingIds: ['call-recording-1'],
+    });
+
+    await requestCallRecordingSummaryGeneration({
+      calendarEventIds: ['calendar-event-1'],
+    });
+
+    expect(enqueueSnackbarMock).toHaveBeenCalledWith({
+      message: 'No usable call recording transcript found for this event.',
+      variant: 'error',
+    });
+  });
+
+  it('reports when the transcript has nothing substantive to summarize', async () => {
+    postMock.mockResolvedValue({
+      outcome: 'processed',
+      generatedCallRecordingIds: [],
+      failedCallRecordingIds: [],
+      erroredCallRecordingIds: [],
+      skippedCallRecordingIds: [],
+      unavailableCallRecordingIds: ['call-recording-1'],
+    });
+
+    await requestCallRecordingSummaryGeneration({
+      calendarEventIds: ['calendar-event-1'],
+    });
+
+    expect(enqueueSnackbarMock).toHaveBeenCalledWith({
+      message: 'Summary unavailable for this event.',
+      variant: 'error',
+    });
+  });
 });

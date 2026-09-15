@@ -1,4 +1,4 @@
-import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
+import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { SettingsRolePermissionsSettingsTableHeader } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableHeader';
 import { SettingsRolePermissionsSettingsTableRow } from '@/settings/roles/role-permissions/permission-flags/components/SettingsRolePermissionsSettingsTableRow';
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
@@ -9,9 +9,12 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { AnimatedExpandableContainer, Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import {
+  AnimatedExpandableContainer,
+  Section,
+} from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledTable = styled.div`
@@ -63,7 +66,7 @@ export const SettingsRolePermissionsToolSection = ({
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
           <Card rounded>
-            <SettingsOptionCardContentToggle
+            <SettingsOptionCardContentSwitch
               Icon={IconTool}
               title={t`All Actions Access`}
               description={t`Grants permission to perform all available actions without restriction`}

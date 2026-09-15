@@ -53,11 +53,17 @@ const StyledCustomPhoneInputWrapper = styled.div`
   height: 100%;
   width: calc(100% - ${themeCssVariables.spacing[8]});
 
+  .PhoneInput {
+    height: 100%;
+  }
+
   .PhoneInputInput {
     background: none;
     border: none;
+    box-sizing: border-box;
     color: ${themeCssVariables.font.color.primary};
-    margin-left: ${themeCssVariables.spacing[2]};
+    height: 100%;
+    padding-left: ${themeCssVariables.spacing[2]};
 
     &::placeholder,
     &::-webkit-input-placeholder {
@@ -66,7 +72,7 @@ const StyledCustomPhoneInputWrapper = styled.div`
       font-weight: ${themeCssVariables.font.weight.medium};
     }
 
-    :focus {
+    &:focus {
       outline: none;
     }
   }
@@ -80,7 +86,7 @@ const StyledCustomPhoneInputWrapper = styled.div`
 export const PhonesFieldInput = () => {
   const { fieldDefinition, setDraftValue, draftValue } = usePhonesField();
 
-  const { onEscape, onClickOutside, onEnter } = useContext(
+  const { onEscape, onClickOutside, onEnter, onSubmit } = useContext(
     FieldInputEventContext,
   );
 
@@ -152,6 +158,13 @@ export const PhonesFieldInput = () => {
     onEnter?.({ newValue: parseArrayToPhonesValue(updatedPhones) });
   };
 
+  const handleSubmit = (updatedPhones: PhoneRecord[]) => {
+    onSubmit?.({
+      newValue: parseArrayToPhonesValue(updatedPhones),
+      skipClose: true,
+    });
+  };
+
   return (
     <MultiItemFieldInput
       items={phones}
@@ -159,6 +172,7 @@ export const PhonesFieldInput = () => {
       onClickOutside={handleClickOutside}
       onEscape={handleEscape}
       onEnter={handleEnter}
+      onSubmit={handleSubmit}
       placeholder={t`Phone`}
       fieldMetadataType={FieldMetadataType.PHONES}
       validateInput={validateInput}

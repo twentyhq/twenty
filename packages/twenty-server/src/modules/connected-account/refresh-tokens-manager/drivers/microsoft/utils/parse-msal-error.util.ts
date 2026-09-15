@@ -13,6 +13,7 @@ export const parseMsalError = (
     return new ConnectedAccountRefreshAccessTokenException(
       `Microsoft token refresh requires re-authentication: ${error.errorCode}`,
       ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+      { cause: error },
     );
   }
 
@@ -23,6 +24,7 @@ export const parseMsalError = (
     return new ConnectedAccountRefreshAccessTokenException(
       `Microsoft auth error: ${error.errorCode} - ${error.errorMessage}`,
       ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN,
+      { cause: error },
     );
   }
 
@@ -31,5 +33,6 @@ export const parseMsalError = (
   return new ConnectedAccountRefreshAccessTokenException(
     `Microsoft token refresh failed: ${message}`,
     ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
+    { cause: error },
   );
 };

@@ -7,6 +7,7 @@ type GetTabsByDisplayModeParams = {
   pageLayoutType: PageLayoutType;
   isMobile: boolean;
   isInSidePanel: boolean;
+  isFirstTabPinned: boolean;
 };
 
 export const getTabsByDisplayMode = ({
@@ -14,19 +15,15 @@ export const getTabsByDisplayMode = ({
   pageLayoutType,
   isMobile,
   isInSidePanel,
+  isFirstTabPinned,
 }: GetTabsByDisplayModeParams) => {
   if (
     isMobile ||
     isInSidePanel ||
-    pageLayoutType !== PageLayoutType.RECORD_PAGE
+    !isFirstTabPinned ||
+    pageLayoutType !== PageLayoutType.RECORD_PAGE ||
+    tabs.length === 1
   ) {
-    return {
-      tabsToRenderInTabList: tabs,
-      pinnedLeftTab: undefined,
-    };
-  }
-
-  if (tabs.length === 1) {
     return {
       tabsToRenderInTabList: tabs,
       pinnedLeftTab: undefined,

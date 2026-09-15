@@ -35,6 +35,9 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
   <Card title="Relations" icon="diagram-project" href="/developers/extend/apps/data/relations">
     Bidirectional `MANY_TO_ONE` / `ONE_TO_MANY` connections between objects.
   </Card>
+  <Card title="Timeline Activity Types" icon="clock-rotate-left" href="/developers/extend/apps/data/timeline-activity-types">
+    Define automatic audit events and explicit app events for record timelines.
+  </Card>
 </CardGroup>
 
 ## Entities at a glance
@@ -45,8 +48,9 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
 | **Field** | A column on an object. Standalone fields can extend objects you didn't create (e.g. add `loyaltyTier` to Company) | `defineField()` |
 | **Relation** | A bidirectional link between two objects — both sides declared as fields | `defineField()` with `FieldType.RELATION` |
 | **Index** | A database index to speed up a recurring query on one of your objects | `defineIndex()` |
+| **Timeline activity type** | An automatic audit event or explicit domain event shown in record timelines | `defineTimelineActivityType()` |
 
-The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, and `src/indexes/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, `src/indexes/`, and `src/timeline-activity-types/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
 
 ## Indexes (optional)
 

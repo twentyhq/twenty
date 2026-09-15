@@ -33,8 +33,9 @@ export const getAdminChatsSortVariables = (
 
   return {
     sortBy: sortValue.fieldName,
-    sortDirection: sortValue.orderBy.startsWith('Asc')
-      ? AdminChatThreadSortDirection.ASC
-      : AdminChatThreadSortDirection.DESC,
+    sortDirection:
+      sortValue.direction === 'asc'
+        ? AdminChatThreadSortDirection.ASC
+        : AdminChatThreadSortDirection.DESC,
   };
 };

@@ -1,3 +1,4 @@
+import { useRefetchOnApplicationRegistrationChange } from '@/applications/hooks/useRefetchOnApplicationRegistrationChange';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -11,11 +12,11 @@ import { useContext, useState } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { CommandBlock } from 'twenty-ui/data-display';
+import { CommandBlock } from 'twenty-ui/primitives/data-display';
 import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button, SearchInput } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button, SearchInput } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import {
   type ApplicationRegistrationListItemFragment,
   FeatureFlagKey,
@@ -53,7 +54,9 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const { copyToClipboard } = useCopyToClipboard();
 
-  const { data } = useQuery(FindManyApplicationRegistrationsDocument);
+  const { data, refetch } = useQuery(FindManyApplicationRegistrationsDocument);
+
+  useRefetchOnApplicationRegistrationChange({ refetch });
 
   const canClaimApplications = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,

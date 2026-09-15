@@ -16,8 +16,8 @@ import {
   IconDatabase,
   IconUserCircle,
 } from 'twenty-ui/icon';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AuthorizeAppDocument,
@@ -152,6 +152,7 @@ export const Authorize = () => {
   const redirectUrl =
     searchParam.get('redirect_uri') ?? searchParam.get('redirectUrl');
   const state = searchParam.get('state');
+  const issuer = searchParam.get('iss');
 
   const {
     data,
@@ -199,6 +200,7 @@ export const Authorize = () => {
           codeChallenge: codeChallenge ?? undefined,
           redirectUrl,
           state: state ?? undefined,
+          issuer: issuer ?? undefined,
         },
         onCompleted: (responseData) => {
           redirect(appendThemeToUrl(responseData.authorizeApp.redirectUrl));

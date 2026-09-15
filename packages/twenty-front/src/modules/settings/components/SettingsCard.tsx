@@ -2,9 +2,9 @@ import { styled } from '@linaria/react';
 
 import { type ReactNode, useContext } from 'react';
 import { t } from '@lingui/core/macro';
-import { Card, CardContent } from 'twenty-ui/surfaces';
+import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { Pill } from 'twenty-ui/data-display';
+import { Pill } from 'twenty-ui/primitives/data-display';
 import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -32,13 +32,13 @@ const StyledCardWrapper = styled.div<{
     disabled ? 'not-allowed' : clickable ? 'pointer' : 'default'};
   width: 100%;
 
-  > * {
+  > div {
     color: inherit;
   }
 `;
 
 const StyledCardContentContainer = styled.div`
-  > * {
+  > div {
     display: flex;
     flex-direction: column;
     gap: ${themeCssVariables.spacing[2]};

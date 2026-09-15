@@ -1,4 +1,5 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ErrorCode } from '@slack/web-api';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { slackPostMessageHandler } from 'src/logic-functions/handlers/slack-post-message-handler';
 
@@ -20,6 +21,10 @@ describe('slackPostMessageHandler', () => {
       success: true,
       client: { chat: { postMessage: postMessageMock } },
     });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('should return a failure result and skip posting when Slack is not connected', async () => {
@@ -61,6 +66,38 @@ describe('slackPostMessageHandler', () => {
       slackTs: '1700000000.000100',
       channel: CHANNEL_ID,
     });
+  });
+
+  it('should leave Slack link previews alone when the caller does not ask for them to be turned off', async () => {
+    postMessageMock.mockResolvedValue({ ts: '1700000000.000600' });
+
+    await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'hello',
+    });
+
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
+    expect(postMessageMock.mock.calls[0][0]).toStrictEqual({
+      channel: CHANNEL_ID,
+      thread_ts: undefined,
+      text: 'hello',
+    });
+  });
+
+  it('should turn off link and media previews when asked', async () => {
+    postMessageMock.mockResolvedValue({ ts: '1700000000.000700' });
+
+    await slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'hello',
+      unfurlLinks: false,
+      unfurlMedia: false,
+    });
+
+    expect(postMessageMock).toHaveBeenCalledTimes(1);
+    expect(postMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({ unfurl_links: false, unfurl_media: false }),
+    );
   });
 
   it('should reply inside a thread with a trimmed parent timestamp', async () => {
@@ -121,6 +158,33 @@ describe('slackPostMessageHandler', () => {
       expect.objectContaining({ thread_ts: undefined }),
     );
     expect(result.success).toBe(true);
+  });
+
+  it('should wait out a short Retry-After so a rate limit does not cost the member the answer', async () => {
+    vi.useFakeTimers();
+    postMessageMock
+      .mockRejectedValueOnce(
+        Object.assign(new Error('A rate-limit has been reached'), {
+          code: ErrorCode.RateLimitedError,
+          retryAfter: 1,
+        }),
+      )
+      .mockResolvedValue({ ts: '1700000000.000800', channel: CHANNEL_ID });
+
+    const resultPromise = slackPostMessageHandler({
+      slackChannelId: CHANNEL_ID,
+      messageText: 'hello',
+    });
+
+    await vi.advanceTimersByTimeAsync(1000);
+
+    expect(await resultPromise).toEqual({
+      success: true,
+      message: 'Message posted to Slack (ts=1700000000.000800).',
+      slackTs: '1700000000.000800',
+      channel: CHANNEL_ID,
+    });
+    expect(postMessageMock).toHaveBeenCalledTimes(2);
   });
 
   it('should return a failure result when the Slack API throws', async () => {

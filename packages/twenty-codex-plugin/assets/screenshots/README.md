@@ -7,7 +7,7 @@ The Codex marketplace listing for the Twenty plugin requires ≥ 1 screenshot sh
 Three screenshots, all PNG, at marketplace resolution (preferably 1600×1000 or higher, 16:10):
 
 1. **`01-create-app.png`** — `create-app` mid-flow: user prompt asking to scaffold a new Twenty app, the agent asking for the instance URL, and the `create-twenty-app` output visible.
-2. **`02-develop-and-sync.png`** — `develop-app` adding an entity through `yarn twenty dev:add`, followed by `yarn twenty dev --once` syncing successfully.
+2. **`02-develop-and-sync.png`** — `develop-app` adding an entity through `yarn twenty dev:add`, followed by `yarn twenty apply` syncing successfully.
 3. **`03-use-twenty-mcp.png`** — `use-twenty-mcp` retrieving a workspace records table where the record-name column is rendered as a linked Markdown table.
 
 ## After Adding the Files

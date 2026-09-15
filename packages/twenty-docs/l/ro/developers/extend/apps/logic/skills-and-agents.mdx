@@ -165,7 +165,10 @@ const { result } = await runAgent({
 });
 ```
 
-Rularea este apoi limitată la ceea ce permit **atât** rolul agentului, cât și rolul membrului, înregistrările pe care le creează sunt atribuite acelui membru, iar permisiunile la nivel de rând ale membrului se aplică. Omite câmpul pentru rulările autonome (joburi programate, declanșatoare de evenimente din baza de date): acelea păstrează propriul rol al agentului.
+Rularea acționează apoi cu **propriul rol al membrului**: poate face orice
+poate face acel membru și nimic mai mult, înregistrările pe care le creează sunt atribuite lui, iar permisiunile lui la nivel de rând se aplică. Rolul agentului nu participă — este valoarea implicită a aplicației pentru rulările fără nicio persoană în spatele lor. Omite câmpul pentru
+rulările autonome (joburi programate, declanșatoare de evenimente din baza de date): acelea păstrează propriul rol al agentului. Aplicația care acționează rămâne atașată la contextul rulării
+pentru proveniență, fără a restrânge permisiunile membrului.
 
 Aplicația ta este responsabilă să facă asocierea dintre persoana care a declanșat rularea și un membru al spațiului de lucru. A denumi unul necesită un token de acces al aplicației, iar ceea ce poate denumi un token depinde dacă acesta are sau nu un utilizator asociat:
 

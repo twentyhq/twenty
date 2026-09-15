@@ -1,3 +1,4 @@
+import { TEST_AI_MODEL_ID } from 'test/integration/constants/test-ai-model-ids.constants';
 import { faker } from '@faker-js/faker';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
@@ -40,7 +41,7 @@ describe('Agent update should fail', () => {
       input: {
         label: globalTestContext.existingAgentLabelForDuplicate,
         prompt: 'Existing agent for duplicate test',
-        modelId: 'openai/gpt-4.1',
+        modelId: TEST_AI_MODEL_ID,
       },
     });
 
@@ -55,7 +56,7 @@ describe('Agent update should fail', () => {
         description: 'Original description',
         icon: 'IconRobot',
         prompt: 'Original prompt',
-        modelId: 'openai/gpt-4.1',
+        modelId: TEST_AI_MODEL_ID,
       },
     });
 

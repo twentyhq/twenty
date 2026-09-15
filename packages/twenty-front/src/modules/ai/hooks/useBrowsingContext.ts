@@ -3,7 +3,8 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type BrowsingContext } from '@/ai/types/BrowsingContext';
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
+import { getAiChatBrowsingContextType } from '@/ai/utils/getAiChatBrowsingContextType';
+import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStoreInstanceId';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
@@ -13,8 +14,6 @@ import { contextStoreCurrentPageTypeComponentState } from '@/context-store/state
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ContextStorePageType } from 'twenty-shared/types';
-import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getTabListInstanceIdFromPageLayoutId } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutId';
@@ -31,12 +30,11 @@ export const useGetBrowsingContext = () => {
       .get(sidePanelNavigationStackState.atom)
       .at(-1);
 
-    const instanceId =
-      isCurrentPathAiChatPage() &&
-      isSidePanelOpened &&
-      isDefined(currentSidePanelPage)
-        ? currentSidePanelPage.pageId
-        : MAIN_CONTEXT_STORE_INSTANCE_ID;
+    const instanceId = getAiChatContextStoreInstanceId({
+      isOnAiChatPage: isCurrentPathAiChatPage(),
+      isSidePanelOpened,
+      currentSidePanelPageId: currentSidePanelPage?.pageId,
+    });
 
     const pageType = store.get(
       contextStoreCurrentPageTypeComponentState.atomFamily({
@@ -66,7 +64,12 @@ export const useGetBrowsingContext = () => {
       return null;
     }
 
-    if (pageType === ContextStorePageType.Record) {
+    const browsingContextType = getAiChatBrowsingContextType({
+      pageType,
+      viewType,
+    });
+
+    if (browsingContextType === 'recordPage') {
       const targetedRecordsRule = store.get(
         contextStoreTargetedRecordsRuleComponentState.atomFamily({
           instanceId,
@@ -112,10 +115,7 @@ export const useGetBrowsingContext = () => {
       return recordContext;
     }
 
-    if (
-      viewType === ContextStoreViewType.Table ||
-      viewType === ContextStoreViewType.Kanban
-    ) {
+    if (browsingContextType === 'listView') {
       const currentViewId = store.get(
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId,

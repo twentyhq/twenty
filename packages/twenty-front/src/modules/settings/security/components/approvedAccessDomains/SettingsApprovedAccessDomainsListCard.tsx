@@ -14,7 +14,7 @@ import { useEffect } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconAt, IconMailCog } from 'twenty-ui/icon';
 import { useQuery } from '@apollo/client/react';
 import { GetApprovedAccessDomainsDocument } from '~/generated-metadata/graphql';
@@ -73,7 +73,7 @@ export const SettingsApprovedAccessDomainsListCard = () => {
         RowRightComponent={({ item: approvedAccessDomain }) => (
           <>
             {!approvedAccessDomain.isValidated && (
-              <Status color="orange" text={t`Pending`} />
+              <Status color="orange">{t`Pending`}</Status>
             )}
             <SettingsSecurityApprovedAccessDomainRowDropdownMenu
               approvedAccessDomain={approvedAccessDomain}

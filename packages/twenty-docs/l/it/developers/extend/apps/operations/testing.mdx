@@ -8,7 +8,7 @@ L'SDK fornisce API programmatiche che ti consentono di compilare, distribuire, i
 
 ## Uso dei pacchetti npm
 
-Puoi installare e usare qualsiasi pacchetto npm nella tua app. Sia le funzioni logiche sia i componenti front-end vengono impacchettati con [esbuild](https://esbuild.github.io/), che incorpora tutte le dipendenze nell'output — non sono necessari i `node_modules` a runtime.
+Puoi installare e usare qualsiasi pacchetto npm nella tua app. Sia le funzioni logiche sia i componenti front-end vengono impacchettati con [esbuild](https://esbuild.github.io/), che incorpora le loro dipendenze nell'output — non sono necessari i `node_modules` a runtime.
 
 ### Installazione di un pacchetto
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### Come funziona il bundling
 
-La fase di build usa esbuild per produrre un singolo file autonomo per ogni funzione logica e per ogni componente front-end. Tutti i pacchetti importati sono incorporati nel bundle.
+La fase di build usa esbuild per produrre un singolo file autonomo per ogni funzione logica e per ogni componente front-end. I pacchetti importati vengono incorporati nel bundle, ad eccezione di quelli elencati di seguito.
 
 **Le funzioni logiche** vengono eseguite in un ambiente Node.js. I moduli integrati di Node (`fs`, `path`, `crypto`, `http`, ecc.) sono disponibili e non necessitano di essere installati.
 
 **I componenti front-end** vengono eseguiti in un Web Worker. I moduli integrati di Node **non** sono disponibili — solo i pacchetti npm che funzionano in un ambiente browser. Nota che la sandbox implementa un DOM *parziale*, quindi un pacchetto può compilarsi correttamente e comunque fallire in fase di esecuzione; vedi [Limitazioni attuali](/l/it/developers/extend/apps/layout/front-components#current-limitations).
 
 Entrambi gli ambienti hanno `twenty-client-sdk/core` e `twenty-client-sdk/metadata` disponibili come moduli preforniti — questi non vengono inclusi nel bundle ma vengono risolti a runtime dal server.
+
+I componenti front-end possono anche condividere dipendenze tramite un [bundle di dipendenze condivise](/l/it/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). I pacchetti elencati nel campo `frontComponentSharedDependencies` del package.json dell'app vengono compilati una sola volta in un file separato e caricati da lì a runtime invece di essere incorporati in ogni componente, quindi un componente che importa solo pacchetti condivisi contiene quasi nessun codice di dipendenza proprio.
 
 ## Impostazione
 

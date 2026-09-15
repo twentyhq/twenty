@@ -137,7 +137,6 @@ function evaluateFilterGroup(
 }
 
 function contains(leftValue: unknown, rightValue: unknown): boolean {
-  // if two arrays, check if any item is in the other array
   if (Array.isArray(leftValue) && Array.isArray(rightValue)) {
     return leftValue.some((item) => rightValue.includes(item));
   }

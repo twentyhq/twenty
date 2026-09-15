@@ -43,6 +43,8 @@ export default defineField({
 
 * A localização do arquivo fica a seu critério. A convenção é `src/fields/\<name>.field.ts`, mas o SDK detecta campos em qualquer lugar dentro de `src/`.
 
+* A `writability` também pode ser definida por campo: `MetadataWritability.APPLICATION` restringe as gravações às funções de lógica do seu próprio aplicativo, e `MetadataWritability.SYSTEM` é reservado para dados gerenciados pela plataforma. A capacidade de gravação de um campo só pode ser mais restrita do que o nível do seu objeto, e as leituras não são afetadas. Consulte [Objects](/l/pt/developers/extend/apps/data/objects) para a semântica completa.
+
 * Para adicionar uma aba a um layout de página padrão (por exemplo, a página de detalhes de Task ou Company), use [`definePageLayoutTab`](/l/pt/developers/extend/apps/layout/page-layouts#definepagelayouttab) com `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` de `twenty-sdk/define`.
 
 ## Adicionando uma relação a um objeto existente

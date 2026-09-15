@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import {
   IconAlertTriangle,
   IconBrandNpm,
@@ -31,6 +31,7 @@ export type DeveloperLinks = {
 
 type SettingsApplicationAboutSidebarProps = {
   actionButton?: ReactNode;
+  pricingDescription?: string;
   author?: string;
   category?: string;
   contentEntries?: ContentEntry[];
@@ -64,6 +65,14 @@ const StyledSidebarValue = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
+// Prose rather than a datum: it wraps, and stays regular weight so a sentence
+// does not shout next to the short sidebar values.
+const StyledPricingValue = styled.div`
+  color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  overflow-wrap: anywhere;
+`;
+
 const StyledContentList = styled.div`
   align-items: flex-start;
   display: flex;
@@ -91,6 +100,7 @@ const StyledLink = styled.a`
 
 export const SettingsApplicationAboutSidebar = ({
   actionButton,
+  pricingDescription,
   author,
   category,
   contentEntries,
@@ -128,6 +138,13 @@ export const SettingsApplicationAboutSidebar = ({
         <StyledSidebarSection>{actionButton}</StyledSidebarSection>
       )}
 
+      {isNonEmptyString(pricingDescription) && (
+        <StyledSidebarSection>
+          <StyledSidebarLabel>{t`Pricing`}</StyledSidebarLabel>
+          <StyledPricingValue>{pricingDescription}</StyledPricingValue>
+        </StyledSidebarSection>
+      )}
+
       {isDefined(author) && (
         <StyledSidebarSection>
           <StyledSidebarLabel>{t`Created by`}</StyledSidebarLabel>
@@ -150,11 +167,10 @@ export const SettingsApplicationAboutSidebar = ({
               <Tag
                 key={entry.one}
                 color="gray"
-                Icon={entry.icon}
-                text={`${entry.count} ${
-                  entry.count === 1 ? entry.one : entry.many
-                }`}
-              />
+                startIcon={<entry.icon />}
+              >{`${entry.count} ${
+                entry.count === 1 ? entry.one : entry.many
+              }`}</Tag>
             ))}
           </StyledContentList>
         </StyledSidebarSection>

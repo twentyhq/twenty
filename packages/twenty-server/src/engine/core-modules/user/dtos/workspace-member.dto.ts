@@ -36,6 +36,9 @@ export class WorkspaceMemberDTO {
   @Field({ nullable: false })
   colorScheme: string;
 
+  @Field({ nullable: false })
+  uiScale: string;
+
   @Field(() => OpenRecordIn, { nullable: false })
   openRecordIn: OpenRecordIn;
 

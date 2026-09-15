@@ -1,4 +1,4 @@
-import { AiChatBanner } from '@/ai/components/AiChatBanner';
+import { AiChatInlineBanner } from '@/ai/components/AiChatInlineBanner';
 import { useAiChatEndTrialPeriod } from '@/ai/hooks/useAiChatEndTrialPeriod';
 import { AddCreditCardModal } from '@/settings/billing/components/AddCreditCardModal';
 import { StartSubscriptionConfirmationModal } from '@/settings/billing/components/StartSubscriptionConfirmationModal';
@@ -48,18 +48,11 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   if (!hasPermissionToManageBilling) {
     return (
-      <AiChatBanner
-        message={t`Your workspace hit its AI usage limit. Ask an admin to upgrade the plan.`}
-        variant="warning"
+      <AiChatInlineBanner
+        message={t`AI usage limit reached. Ask an admin to upgrade the plan.`}
       />
     );
   }
-
-  const message = isTrialing
-    ? t`You've hit your usage limit. Subscribe for more usage.`
-    : isDefined(nextPrice)
-      ? t`You've hit your usage limit. \nUpgrade to ${nextResourceCreditsAmount ?? ''} credits for $${nextResourceCreditPrice ?? ''}/${nextTierInterval ?? ''}.`
-      : t`You've hit your usage limit. \nReach to our support team to upgrade.`;
 
   const buttonTitle = isTrialing
     ? hasPaymentMethod === false
@@ -77,13 +70,22 @@ export const AIChatNoMoreBillingCreditsBanner = () => {
 
   return (
     <>
-      <AiChatBanner
-        message={message}
-        variant="warning"
-        buttonTitle={buttonTitle}
-        buttonOnClick={handleButtonClick}
-        isButtonLoading={
-          (isTrialing && isEndTrialLoading) || (!isTrialing && isUpgrading)
+      <AiChatInlineBanner
+        message={
+          isTrialing || isDefined(nextPrice)
+            ? t`You’ve reached your AI usage limit.`
+            : t`AI usage limit reached. Contact support to upgrade.`
+        }
+        button={
+          isDefined(buttonTitle) && isDefined(handleButtonClick)
+            ? {
+                title: buttonTitle,
+                onClick: handleButtonClick,
+                disabled:
+                  (isTrialing && isEndTrialLoading) ||
+                  (!isTrialing && isUpgrading),
+              }
+            : undefined
         }
       />
       {isTrialing &&

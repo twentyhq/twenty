@@ -26,7 +26,6 @@ export const useSidePanelSearchRecordPreviewFields = (
     const readableActiveFields = objectMetadataItem.readableFields.filter(
       (fieldMetadata) =>
         isActiveFieldMetadataItem({
-          objectNameSingular: objectMetadataItem.nameSingular,
           fieldMetadata,
         }),
     );

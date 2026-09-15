@@ -3,7 +3,7 @@ import { useLogicFunctionThirdPartyApplicationInformation } from '@/logic-functi
 import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
 import { sidePanelWorkflowStepIdComponentState } from '@/side-panel/pages/workflow/states/sidePanelWorkflowStepIdComponentState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -27,7 +27,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
-import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
+import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 
 export const SidePanelWorkflowStepInfo = ({
@@ -38,7 +38,7 @@ export const SidePanelWorkflowStepInfo = ({
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageInfoSelector).page;
 
   const workflowId = useSidePanelWorkflowIdOrThrow();
 
@@ -177,7 +177,7 @@ export const SidePanelWorkflowStepInfo = ({
   };
 
   return (
-    <SidePanelPageInfoLayout
+    <HeaderIdentifier
       icon={
         isDefined(thirdPartyApplicationInformation) ? (
           <AppChip

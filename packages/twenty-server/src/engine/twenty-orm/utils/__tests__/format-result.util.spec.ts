@@ -125,11 +125,20 @@ describe('formatResult', () => {
     expect(firstInvocationMetadataLookupCount).toBeGreaterThan(0);
     expect(firstInvocationMetadataLookupCount).toBeLessThanOrEqual(4);
 
+    // Field maps derived from a metadata snapshot are memoized by object
+    // identity, so a second invocation only re-runs the lookups when it receives
+    // fresh snapshot objects
+    const rebuiltFlatFieldMetadataMaps = buildFlatEntityMaps([
+      companyNameFieldMetadata,
+      companyPeopleFieldMetadata,
+      personNameFieldMetadata,
+    ]);
+
     formatResult(
       records,
       companyObjectMetadata,
       flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+      rebuiltFlatFieldMetadataMaps,
     );
 
     expect(

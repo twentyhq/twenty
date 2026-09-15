@@ -43,6 +43,8 @@ export default defineField({
 
 * ファイルの配置場所は任意です。 慣例としては `src/fields/\<name>.field.ts` ですが、SDK は `src/` 内の任意の場所にあるフィールドを検出します。
 
+* `writability` はフィールド単位でも設定できます。`MetadataWritability.APPLICATION` は書き込みをアプリ自身のロジック関数に制限し、`MetadataWritability.SYSTEM` はプラットフォームによって管理されるデータ専用に予約されています。 フィールドの書き込み可能性は、そのフィールドが属するオブジェクトのレベルよりも厳しくすることしかできず、読み取りには影響しません。 詳細な仕様については [Objects](/l/ja/developers/extend/apps/data/objects) を参照してください。
+
 * 標準ページレイアウト（例：Task や Company の詳細ページ）にタブを追加するには、`twenty-sdk/define` の `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` とともに [`definePageLayoutTab`](/l/ja/developers/extend/apps/layout/page-layouts#definepagelayouttab) を使用します。
 
 ## 既存のオブジェクトへのリレーションの追加

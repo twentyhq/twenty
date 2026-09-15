@@ -21,7 +21,7 @@ const Wrapper = styled.div`
   text-align: center;
 `;
 
-const Title = styled.h2`
+const Title = styled.h3`
   color: ${semanticColor.ink};
   font-family: ${fontFamily('sans')};
   font-size: ${fontSize(4.5)};

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.4
+
+- Limit the app role to reading synced messages, calendar events, and their participants, and to reading and updating people, companies, and opportunities. The app no longer requests read and edit access to every record type.
+
 ## 1.2.3
 
 - Rework the last-contact backfill into a single fan-out instead of a logic function that called its own HTTP route in a loop with blocking sleeps. On install it counts people, opportunities and companies and enqueues one job per record batch via `enqueueJob`. Each job receives its batch id and processes the matching record window (offset pagination). Jobs are staggered with `delayMs` to stay under the hosted API rate limiting.

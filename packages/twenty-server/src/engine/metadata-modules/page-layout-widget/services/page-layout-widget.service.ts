@@ -18,7 +18,7 @@ import {
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
-import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
+import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import {
   PageLayoutWidgetException,
@@ -171,14 +171,19 @@ export class PageLayoutWidgetService {
       .filter(isDefined)
       .filter(
         (widget) =>
-          resolveOverridableEntityProperty(widget, 'pageLayoutTabId') ===
-            pageLayoutTabId && !isDefined(widget.deletedAt),
+          resolveEffectiveFlatEntityProperty({
+            metadataName: 'pageLayoutWidget',
+            flatEntity: widget,
+            property: 'pageLayoutTabId',
+          }) === pageLayoutTabId && !isDefined(widget.deletedAt),
       )
-      .sort(
-        (widgetA, widgetB) =>
+      .sort((widgetA, widgetB) => {
+        const createdAtComparison =
           new Date(widgetA.createdAt).getTime() -
-          new Date(widgetB.createdAt).getTime(),
-      )
+          new Date(widgetB.createdAt).getTime();
+
+        return createdAtComparison || widgetA.id.localeCompare(widgetB.id);
+      })
       .map(fromFlatPageLayoutWidgetToPageLayoutWidgetDto);
   }
 

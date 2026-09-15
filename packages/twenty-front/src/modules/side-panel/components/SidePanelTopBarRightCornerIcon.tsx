@@ -1,6 +1,6 @@
 import { useSwitchToNewAiChat } from '@/ai/hooks/useSwitchToNewAiChat';
 import { SidePanelObjectFilterDropdown } from '@/side-panel/components/SidePanelObjectFilterDropdown';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { sidePanelSearchObjectFilterState } from '@/side-panel/states/sidePanelSearchObjectFilterState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -8,7 +8,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconEdit } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/input';
+import { IconButton } from 'twenty-ui/primitives/input';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -18,7 +18,7 @@ const StyledIconButtonContainer = styled.div`
 
 export const SidePanelTopBarRightCornerIcon = () => {
   const isMobile = useIsMobile();
-  const sidePanelPage = useAtomStateValue(sidePanelPageState);
+  const sidePanelPage = useAtomStateValue(sidePanelPageInfoSelector).page;
   const { switchToNewChat } = useSwitchToNewAiChat();
   const [sidePanelSearchObjectFilter, setSidePanelSearchObjectFilter] =
     useAtomState(sidePanelSearchObjectFilterState);

@@ -1,5 +1,5 @@
 import { type FilterOperator } from 'src/engine/api/common/common-args-processors/filter-arg-processor/types/filter-operator.type';
-import type { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 
 import { validateAndTransformArrayItems } from './validate-and-transform-array-items.util';
 import { validateAndTransformValueByFieldType } from './validate-and-transform-value-by-field-type.util';
@@ -11,7 +11,7 @@ import { validateStringOperatorValueOrThrow } from './validate-string-operator-v
 export const validateAndTransformValueOrThrow = (
   operator: FilterOperator,
   value: unknown,
-  fieldMetadata: FlatFieldMetadata,
+  fieldMetadata: OrmFlatFieldMetadata,
   fieldName: string,
 ): unknown => {
   switch (operator) {

@@ -5,6 +5,7 @@ import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-r
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { cancelOrEjectRecallBot } from 'src/logic-functions/recall-api/cancel-or-eject-recall-bot.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
+import { getClaimedWorkspaceId } from 'src/logic-functions/recall-api/get-claimed-workspace-id.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
 import { getUniqueSortedIds } from 'src/logic-functions/utils/get-unique-sorted-ids.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
@@ -117,12 +118,6 @@ const getClaimedCallRecordingId = (
   const claimedCallRecordingId = bot.metadata.twentyCallRecordingId;
 
   return normalizeOptionalString(claimedCallRecordingId);
-};
-
-const getClaimedWorkspaceId = (bot: RecallScheduledBot): string | undefined => {
-  const claimedWorkspaceId = bot.metadata.twentyWorkspaceId;
-
-  return normalizeOptionalString(claimedWorkspaceId);
 };
 
 const isCurrentWorkspaceManagedBot = ({

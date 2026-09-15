@@ -1,5 +1,5 @@
-import { normalizeCssPropertyName } from '@/utils/normalizeCssPropertyName';
-import { parseCssDeclarations } from '@/utils/parseCssDeclarations';
+import { normalizeCssPropertyName } from '@/utils/css/normalizeCssPropertyName';
+import { parseCssDeclarations } from '@/utils/css/parseCssDeclarations';
 
 export const parseCssTextIntoStyleDeclarations = (
   cssText: string,

@@ -3,10 +3,10 @@ import { useLingui } from '@lingui/react/macro';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconAddressBook, IconPencil, IconReload } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -69,10 +69,17 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       return;
     }
 
-    navigateApp(AppPath.RecordShowPage, {
-      objectNameSingular: objectMetadataItem.nameSingular,
-      objectRecordId: firstRecord.id,
-    });
+    // Customizing a layout takes over the whole page, so it is the main outlet
+    // that has to move even when this settings page is hosted in the panel.
+    navigateApp(
+      AppPath.RecordShowPage,
+      {
+        objectNameSingular: objectMetadataItem.nameSingular,
+        objectRecordId: firstRecord.id,
+      },
+      undefined,
+      { surface: 'main' },
+    );
   };
 
   const handleResetPageLayout = () => {

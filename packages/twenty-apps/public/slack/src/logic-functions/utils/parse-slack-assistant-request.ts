@@ -5,9 +5,12 @@ import { type SlackAssistantRequestDraft } from 'src/logic-functions/types/slack
 import { type SlackEventsRequestBody } from 'src/logic-functions/types/slack-events-request-body.type';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
 import { getSlackBotUserIdFromEventBody } from 'src/logic-functions/utils/get-slack-bot-user-id-from-event-body';
-import { stripSlackBotMention } from 'src/logic-functions/utils/strip-slack-bot-mention';
+import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
+import { normalizeSlackRequestText } from 'src/logic-functions/utils/normalize-slack-request-text';
 
 const LEADING_MENTION_PATTERN = /^<@([A-Z0-9]+)(\|[^>]*)?>/;
+
+const SUPPORTED_MESSAGE_SUBTYPE = 'file_share';
 
 type SlackInboundEvent = NonNullable<SlackEventsRequestBody['event']>;
 
@@ -52,7 +55,7 @@ const classifySlackAssistantEvent = (
 const getBotUserIdFromLeadingMention = (text: string): string | undefined =>
   text.trimStart().match(LEADING_MENTION_PATTERN)?.[1];
 
-const normalizeSlackRequestText = ({
+const resolveRequestBotUserId = ({
   text,
   kind,
   botUserId,
@@ -60,17 +63,9 @@ const normalizeSlackRequestText = ({
   text: string;
   kind: SlackAssistantEventKind;
   botUserId: string | undefined;
-}): string => {
-  const resolvedBotUserId =
-    botUserId ??
-    (kind === 'mention' ? getBotUserIdFromLeadingMention(text) : undefined);
-
-  const strippedText = isNonEmptyString(resolvedBotUserId)
-    ? stripSlackBotMention({ text, botUserId: resolvedBotUserId })
-    : text;
-
-  return strippedText.replace(/\s+/g, ' ').trim();
-};
+}): string | undefined =>
+  botUserId ??
+  (kind === 'mention' ? getBotUserIdFromLeadingMention(text) : undefined);
 
 export const parseSlackAssistantRequest = (
   body: SlackEventsRequestBody,
@@ -91,7 +86,11 @@ export const parseSlackAssistantRequest = (
     return { request: null, skipReason: `Unhandled event type: ${event.type}` };
   }
 
-  if (isNonEmptyString(event.bot_id) || isNonEmptyString(event.subtype)) {
+  const hasUnsupportedSubtype =
+    isNonEmptyString(event.subtype) &&
+    event.subtype !== SUPPORTED_MESSAGE_SUBTYPE;
+
+  if (isNonEmptyString(event.bot_id) || hasUnsupportedSubtype) {
     return { request: null, skipReason: 'Not a plain user message' };
   }
 
@@ -106,8 +105,11 @@ export const parseSlackAssistantRequest = (
 
   const requestText = normalizeSlackRequestText({
     text: event.text ?? '',
-    kind,
-    botUserId: getSlackBotUserIdFromEventBody(body),
+    botUserId: resolveRequestBotUserId({
+      text: event.text ?? '',
+      kind,
+      botUserId: getSlackBotUserIdFromEventBody(body),
+    }),
   });
 
   if (!isNonEmptyString(requestText)) {
@@ -124,9 +126,9 @@ export const parseSlackAssistantRequest = (
         parentMessageTimestamp: getSlackAssistantParentMessageTimestamp({
           slackThreadTimestamp: event.thread_ts,
           slackMessageTimestamp: event.ts,
-          isDirectMessage: kind === 'directMessage',
         }),
         isInExistingThread: isNonEmptyString(event.thread_ts),
+        sharedFileNames: getSlackMessageFileNames(event.files),
       },
     };
   }

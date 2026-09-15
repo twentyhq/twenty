@@ -2,7 +2,10 @@ import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { StrictMode } from 'react';
-import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
+import {
+  type WorkspaceCompanyEnrichment,
+  type WorkspacePersonEnrichment,
+} from 'twenty-shared/workspace';
 
 import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { agentChatIsAwaitingFirstChunkComponentFamilyState } from '@/ai/states/agentChatIsAwaitingFirstChunkComponentFamilyState';
@@ -11,8 +14,10 @@ import { currentAiChatThreadTitleComponentFamilyState } from '@/ai/states/curren
 import { hasInitializedAgentChatThreadsState } from '@/ai/states/hasInitializedAgentChatThreadsState';
 import { skipMessagesSkeletonUntilLoadedState } from '@/ai/states/skipMessagesSkeletonUntilLoadedState';
 import { WorkspaceSetupChatKickoffEffect } from '@/onboarding/effect-components/WorkspaceSetupChatKickoffEffect';
+import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { companyEnrichmentState } from '@/onboarding/states/companyEnrichmentState';
 import { isCompanyEnrichmentFetchInFlightState } from '@/onboarding/states/isCompanyEnrichmentFetchInFlightState';
+import { personEnrichmentState } from '@/onboarding/states/personEnrichmentState';
 import {
   jotaiStore,
   resetJotaiStore,
@@ -110,10 +115,37 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
     resetJotaiStore();
     sessionStorage.clear();
     localStorage.clear();
+    jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, true);
   });
 
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  it('preserves the selected conversation when setup finishes after leaving onboarding', async () => {
+    const mocks = [{ ...buildKickoffMock({ outcome: 'STARTED' }), delay: 50 }];
+    const tree = (showSetup: boolean) => (
+      <MockedProvider mocks={mocks as never}>
+        <JotaiProvider store={jotaiStore}>
+          {showSetup && <WorkspaceSetupChatKickoffEffect />}
+        </JotaiProvider>
+      </MockedProvider>
+    );
+    const { rerender } = render(tree(true));
+
+    act(() => {
+      jotaiStore.set(shouldOpenAiChatAfterOnboardingState.atom, false);
+      jotaiStore.set(currentAiChatThreadState.atom, 'new-conversation');
+    });
+    rerender(tree(false));
+    await flushMutation();
+
+    expect(jotaiStore.get(currentAiChatThreadState.atom)).toBe(
+      'new-conversation',
+    );
+    expect(jotaiStore.get(skipMessagesSkeletonUntilLoadedState.atom)).toBe(
+      false,
+    );
   });
 
   it('should wait for an in-flight company enrichment before starting the chat', async () => {
@@ -252,6 +284,41 @@ describe('WorkspaceSetupChatKickoffEffect', () => {
 
     expect(capturedVariablesList.length).toBeGreaterThan(0);
     expect(capturedVariablesList[0].companyContext).toBeUndefined();
+    expect(capturedVariablesList[0].personContext).toBeUndefined();
+  });
+
+  it('should pass the stored person enrichment as the personContext variable when one is stored', async () => {
+    const personEnrichment: WorkspacePersonEnrichment = {
+      email: 'ada@acme.com',
+      enrichedAt: '2026-07-21T10:00:00.000Z',
+      fullName: 'Ada Lovelace',
+      jobTitle: 'Head of Sales',
+      jobTitleLevels: [],
+      jobCompanyName: null,
+      industry: null,
+      headline: null,
+      linkedinUrl: null,
+      skills: [],
+      locality: null,
+      region: null,
+      country: null,
+    };
+
+    jotaiStore.set(personEnrichmentState.atom, personEnrichment);
+
+    const capturedVariablesList: Record<string, unknown>[] = [];
+    renderKickoffEffect([
+      buildKickoffMock({
+        outcome: 'STARTED',
+        captureVariables: (variables) => {
+          capturedVariablesList.push(variables);
+        },
+      }),
+    ]);
+
+    await flushMutation();
+
+    expect(capturedVariablesList[0].personContext).toEqual(personEnrichment);
   });
 
   it('should not touch the chat state when the chat is unavailable', async () => {

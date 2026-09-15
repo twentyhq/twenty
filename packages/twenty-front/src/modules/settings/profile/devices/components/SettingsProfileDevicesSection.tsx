@@ -5,17 +5,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { SettingsDeviceSessionRowDropdownMenu } from '@/settings/profile/devices/components/SettingsDeviceSessionRowDropdownMenu';
+import { SettingsDeviceSessionRowRightComponent } from '@/settings/profile/devices/components/SettingsDeviceSessionRowRightComponent';
 import { parseUserAgentDescription } from '@/settings/profile/devices/utils/parseUserAgentDescription';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { isCookieSessionEnabledState } from '@/client-config/states/isCookieSessionEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { Status } from 'twenty-ui/data-display';
 import { IconDeviceDesktop, IconLogout } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import {
   CurrentUserSessionsDocument,
   type CurrentUserSessionsQuery,
@@ -44,11 +42,9 @@ export const SettingsProfileDevicesSection = () => {
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
 
-  const isCookieSessionEnabled = useAtomStateValue(isCookieSessionEnabledState);
-
   const { data, loading, error, refetch } = useQuery(
     CurrentUserSessionsDocument,
-    { fetchPolicy: 'network-only', skip: !isCookieSessionEnabled },
+    { fetchPolicy: 'network-only' },
   );
 
   useSnackBarOnQueryError(error);
@@ -113,21 +109,7 @@ export const SettingsProfileDevicesSection = () => {
           getItemLabel={getSessionLabel}
           getItemDescription={getSessionDescription}
           RowIcon={IconDeviceDesktop}
-          RowRightComponent={({ item: session }) => (
-            <>
-              {session.isImpersonating && (
-                <Status color="orange" text={t`Impersonation`} />
-              )}
-              {session.isCurrent ? (
-                <Status color="turquoise" text={t`This device`} />
-              ) : (
-                <SettingsDeviceSessionRowDropdownMenu
-                  userSessionId={session.id}
-                  onRevoked={() => void refetch()}
-                />
-              )}
-            </>
-          )}
+          RowRightComponent={SettingsDeviceSessionRowRightComponent}
         />
         {hasOtherSessions && (
           <StyledButtonContainer>

@@ -163,7 +163,7 @@ const { result } = await runAgent({
 });
 ```
 
-Die Ausführung ist dann auf das beschränkt, was sowohl die Rolle des Agenten als auch die des Mitglieds erlauben; die dabei erstellten Datensätze werden diesem Mitglied zugeordnet, und die Berechtigungen auf Zeilenebene des Mitglieds gelten. Lassen Sie das Feld bei autonomen Ausführungen weg (geplante Jobs, Datenbankereignis-Trigger): Diese behalten die eigene Rolle des Agenten bei.
+Der Durchlauf agiert dann mit der **eigenen Rolle des Mitglieds**: Er kann alles tun, was dieses Mitglied tun kann, und nichts darüber hinaus; von ihm erstellte Datensätze werden diesem Mitglied zugeschrieben, und die zeilenbasierten Berechtigungen des Mitglieds gelten. Die Rolle des Agenten nimmt daran nicht teil – sie ist der Standard der App für Durchläufe, hinter denen keine Person steht. Lassen Sie das Feld bei autonomen Ausführungen weg (geplante Jobs, Datenbankereignis-Trigger): Diese behalten die eigene Rolle des Agenten bei. Die ausführende Anwendung bleibt aus Gründen der Herkunftssicherung mit dem Kontext des Durchlaufs verknüpft, ohne die Berechtigungen des Mitglieds einzuengen.
 
 Ihre App ist dafür verantwortlich, die Person, die die Ausführung ausgelöst hat, einem Arbeitsbereichsmitglied zuzuordnen. Das Benennen eines Mitglieds erfordert ein App-Zugriffstoken, und was ein Token benennen darf, hängt davon ab, ob ihm ein Benutzer zugeordnet ist:
 

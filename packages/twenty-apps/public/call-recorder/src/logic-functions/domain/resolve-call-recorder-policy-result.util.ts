@@ -18,6 +18,10 @@ export const resolveCallRecorderPolicyResult = ({
   input,
   now,
 }: ResolveCallRecorderPolicyResultArgs): CallRecorderPolicyResult => {
+  if (!input.isCalendarBotSchedulingEnabled) {
+    return botNotRequired('CALENDAR_BOT_SCHEDULING_DISABLED');
+  }
+
   if (input.isCanceled) {
     return botNotRequired('EVENT_CANCELED');
   }

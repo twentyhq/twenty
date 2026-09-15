@@ -27,7 +27,7 @@ import { useCallback, useState } from 'react';
 import { Controller, type SubmitHandler, useForm } from 'react-hook-form';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { z } from 'zod';
 
@@ -157,7 +157,7 @@ export const CreateProfile = () => {
           return current;
         });
 
-        setNextOnboardingStatus();
+        setNextOnboardingStatus({ stepHistoryEffect: 'recordAsReversible' });
         setIsNavigating(true);
       } catch (error: any) {
         setIsNavigating(false);

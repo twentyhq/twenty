@@ -14,13 +14,13 @@ export default defineApplication({
     PARTNER_APPLICATION_SECRET: {
       universalIdentifier: '2026a052-9f01-4d18-b6a7-31c3a5b1c7d2',
       description:
-        'Shared secret required in the X-Application-Secret header on POST /partner-applications. Must match the website route\'s PARTNER_APPLICATION_SECRET env var. Set per-workspace in Settings → Apps → Twenty Partners → Variables.',
+        "Shared secret required in the X-Application-Secret header on POST /partner-applications. Must match the website route's PARTNER_APPLICATION_SECRET env var. Set per-workspace in Settings → Apps → Twenty Partners → Variables.",
       isSecret: true,
     },
     DISCORD_WEBHOOK_URL: {
       universalIdentifier: '7056c98a-e7e1-4dba-8a40-b578f30b3479',
       description:
-        'Discord incoming webhook URL. When set, a notification is posted to this channel each time the application form creates a new Partner, and each time the public marketplace form submits a client brief (brief details, contact name and company, and the referring partner). Leave empty to disable both. Set per-workspace in Settings → Apps → Twenty Partners → Variables.',
+        'Discord incoming webhook URL. When set, a notification is posted to this channel each time the application form creates a new Partner, each time the public marketplace form submits a client brief (brief details, contact name and company, and the referring partner), and each time a brief is hand-listed on the marketplace. Leave empty to disable all three. Set per-workspace in Settings → Apps → Twenty Partners → Variables.',
       isSecret: true,
     },
     PARTNER_APP_FRONTEND_URL: {

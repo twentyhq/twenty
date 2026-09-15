@@ -1,7 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Editor } from '@tiptap/core';
-import { useEditorState } from '@tiptap/react';
 import {
   type CanvasTheme,
   isDefined,
@@ -9,6 +8,7 @@ import {
 } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { useLiveEditorState } from '@/advanced-text-editor/hooks/useLiveEditorState';
 import { EmailBlockSettingsFieldInput } from '@/side-panel/pages/email-block-settings/components/EmailBlockSettingsFieldInput';
 import {
   EmailBoxSidesInput,
@@ -88,11 +88,9 @@ export const EmailPageStyleSection = ({
 }: EmailPageStyleSectionProps) => {
   const { t, i18n } = useLingui();
 
-  const canvasTheme = useEditorState({
-    editor,
-    selector: ({ editor: currentEditor }) =>
-      resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
-  });
+  const canvasTheme = useLiveEditorState(editor, (currentEditor) =>
+    resolveCanvasTheme(currentEditor.state.doc.attrs.canvasTheme),
+  );
 
   if (!isDefined(canvasTheme)) {
     return (

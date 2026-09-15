@@ -1,21 +1,21 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   AnimatedCheckmark,
-  Avatar,
   AvatarGroup,
   AvatarOrIcon,
   Checkmark,
-  Chip,
   ColorSample,
   CommandBlock,
   LinkChip,
   NotificationCounter,
   Pill,
-  Status,
   StyledTintedIconTileContainer,
-  Tag,
   TintedIconTile,
-} from 'twenty-ui/data-display';
+  Avatar,
+  Chip,
+  Status,
+  Tag,
+} from 'twenty-ui/primitives/data-display';
 import { IconStar } from 'twenty-ui/icon';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
@@ -31,22 +31,22 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Avatar',
-    node: <Avatar placeholder="John Doe" size="md" type="rounded" />,
+    node: <Avatar name="John Doe" size="md" shape="circle" />,
   },
   {
     name: 'AvatarGroup',
     node: (
       <AvatarGroup
         avatars={[
-          <Avatar key="a" placeholder="Alice" />,
-          <Avatar key="b" placeholder="Bob" />,
+          <Avatar key="a" name="Alice" />,
+          <Avatar key="b" name="Bob" />,
         ]}
       />
     ),
   },
   {
     name: 'AvatarOrIcon',
-    node: <AvatarOrIcon placeholder="Jane" Icon={IconStar} />,
+    node: <AvatarOrIcon name="Jane" Icon={IconStar} />,
   },
   {
     name: 'Checkmark',
@@ -54,7 +54,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Chip',
-    node: <Chip label="Chip label" />,
+    node: <Chip>Chip label</Chip>,
   },
   {
     name: 'ColorSample',
@@ -69,7 +69,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   // Router whose navigator bridges to the host navigate API.
   {
     name: 'LinkChip',
-    node: <LinkChip to="/example" label="Link chip" />,
+    node: <LinkChip to="/example">Link chip</LinkChip>,
   },
   {
     name: 'NotificationCounter',
@@ -81,7 +81,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Status',
-    node: <Status color="green" text="Active" />,
+    node: <Status color="green">Active</Status>,
   },
   {
     name: 'StyledTintedIconTileContainer',
@@ -93,7 +93,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Tag',
-    node: <Tag color="blue" text="Tag" />,
+    node: <Tag color="blue">Tag</Tag>,
   },
   {
     name: 'TintedIconTile',
@@ -104,7 +104,7 @@ const DATA_DISPLAY_ENTRIES: GalleryEntry[] = [
 const DataDisplayGallery = () => (
   <ThemeProvider colorScheme="light">
     <ComponentGallery
-      title="twenty-ui/data-display"
+      title="twenty-ui/primitives/data-display"
       entries={DATA_DISPLAY_ENTRIES}
     />
   </ThemeProvider>
@@ -113,6 +113,7 @@ const DataDisplayGallery = () => (
 export default defineFrontComponent({
   universalIdentifier: 'test-20ui0-0000-0000-0000-000000000101',
   name: 'twenty-ui-data-display-gallery',
-  description: 'Renders every twenty-ui/data-display component in the sandbox',
+  description:
+    'Renders every twenty-ui/primitives/data-display component in the sandbox',
   component: DataDisplayGallery,
 });

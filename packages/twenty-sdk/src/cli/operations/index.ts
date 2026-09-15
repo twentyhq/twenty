@@ -16,6 +16,8 @@ export type { AppDevOnceOptions, AppDevOnceResult } from './dev-once';
 export { appInstall } from './install';
 export type { AppInstallOptions } from './install';
 export { appPublish } from './publish';
+export { appPull } from './pull';
+export type { AppPullOptions, AppPullResult } from './pull';
 export type { AppPublishOptions, AppPublishResult } from './publish';
 export { appUninstall } from './uninstall';
 export type { AppUninstallOptions } from './uninstall';

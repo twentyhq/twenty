@@ -25,6 +25,10 @@ If you use Docker Compose, follow these steps:
 
 The server runs all required upgrade migrations automatically on startup. No manual command is needed.
 
+## Upgrading to v2.34+ — PostgreSQL 15 minimum
+
+Twenty v2.34 requires PostgreSQL 15 or newer. The official Docker Compose configuration uses PostgreSQL 16. If your instance connects to an externally managed database, upgrade it before starting the v2.34 server.
+
 ## Cross-version upgrades (v1.23+)
 
 Starting from **v1.23**, Twenty supports cross-version upgrades. You can jump directly from any supported version to the latest release without stepping through each intermediate version.

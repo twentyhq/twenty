@@ -53,6 +53,15 @@ describe('resolveRoleIdsFromAuthContext', () => {
     ]);
   });
 
+  it('should ignore viaApplication: run-as provenance never narrows permissions', () => {
+    const runAsContext = {
+      ...buildUserContext(),
+      viaApplication: { defaultRoleId: APPLICATION_ROLE_ID },
+    } as WorkspaceAuthContext;
+
+    expect(resolve(runAsContext)).toEqual([USER_ROLE_ID]);
+  });
+
   it('should resolve nothing when the user has no role, even with an application', () => {
     const contextWithUnknownUserWorkspace = {
       ...buildUserContext({ defaultRoleId: APPLICATION_ROLE_ID }),

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   FieldActorSource,
   MessageChannelContactAutoCreationPolicy,
+  MessageChannelType,
   MessageParticipantRole,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,8 +12,7 @@ import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-c
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { type WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/workspace-entity-manager';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -23,11 +23,9 @@ import {
   type Participant,
   type ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message.type';
-import {
-  type MessageChannelMessageAssociationFolderAssociation,
-  MessagingMessageFolderAssociationService,
-} from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
+import { MessagingMessageFolderAssociationService } from 'src/modules/messaging/message-import-manager/services/messaging-message-folder-association.service';
 import { MessagingMessageService } from 'src/modules/messaging/message-import-manager/services/messaging-message.service';
+import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { isGroupEmail } from 'src/modules/messaging/message-import-manager/utils/is-group-email';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/message-participant-manager/services/messaging-message-participant.service';
@@ -41,7 +39,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly messageFolderAssociationService: MessagingMessageFolderAssociationService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async saveMessagesAndEnqueueContactCreation(
@@ -60,13 +58,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     const savedMessagesResult =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
-          const workspaceDataSource =
-            await this.globalWorkspaceOrmManager.getGlobalWorkspaceDataSource();
-
-          return workspaceDataSource?.transaction(
-            async (transactionManager: WorkspaceEntityManager) => {
+          return this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
               const {
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageChannelMessageAssociationIdMap,
@@ -74,7 +69,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               } = await this.messageService.saveMessagesWithinTransaction(
                 messagesToSave,
                 messageChannel.id,
-                transactionManager,
+                transactionScope,
                 workspaceId,
               );
 
@@ -131,11 +126,12 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   : [];
               });
 
-              await this.messageParticipantService.saveMessageParticipants(
-                participantsWithMessageId,
-                workspaceId,
-                transactionManager,
-              );
+              const savedMessageParticipants =
+                await this.messageParticipantService.saveMessageParticipants(
+                  participantsWithMessageId,
+                  workspaceId,
+                  transactionScope,
+                );
 
               const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
                 messagesToSave.flatMap((message) => {
@@ -165,11 +161,12 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
               await this.messageFolderAssociationService.saveMessageFolderAssociations(
                 folderAssociations,
                 workspaceId,
-                transactionManager,
+                transactionScope,
               );
 
               return {
                 participantsWithMessageId,
+                savedMessageParticipants,
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageThreadIdMap,
               };
@@ -200,6 +197,28 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     if (!isDefined(savedMessagesResult)) {
       return undefined;
     }
+
+    const messageIds = [
+      ...new Set(
+        savedMessagesResult.participantsWithMessageId.map(
+          ({ messageId }) => messageId,
+        ),
+      ),
+    ];
+
+    // The matcher resolves a participant by looking its handle up as an email
+    // address. On a channel whose handles are not email addresses that finds
+    // nothing and writes personId back to null, discarding the identities the
+    // caller supplied at save time, so those channels only reconcile targets.
+    await this.messageParticipantService.matchMessageParticipants({
+      participants: savedMessagesResult.savedMessageParticipants,
+      messageIds,
+      workspaceId,
+      matchWith:
+        messageChannel.type === MessageChannelType.APP
+          ? 'targetsOnly'
+          : 'workspaceMemberAndPerson',
+    });
 
     return {
       messageExternalIdsAndIdsMap:

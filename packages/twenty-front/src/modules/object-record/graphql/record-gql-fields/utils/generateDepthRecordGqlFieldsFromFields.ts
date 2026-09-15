@@ -1,41 +1,17 @@
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import {
-  CoreObjectNameSingular,
-  FieldMetadataType,
-  RelationType,
-} from 'twenty-shared/types';
-import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { type GenerateDepthRecordGqlFieldsFromFields } from '@/object-record/graphql/record-gql-fields/types/GenerateDepthRecordGqlFieldsFromFields';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
-import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
-import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
+import { resolveJunctionConfig } from '@/object-record/record-field/ui/utils/junction/resolveJunctionConfig';
 import {
   computeMorphRelationGqlFieldName,
   isDefined,
 } from 'twenty-shared/utils';
 
-export type GenerateDepthRecordGqlFieldsFromFields = {
-  objectMetadataItems: Pick<
-    EnrichedObjectMetadataItem,
-    | 'id'
-    | 'fields'
-    | 'labelIdentifierFieldMetadataId'
-    | 'imageIdentifierFieldMetadataId'
-    | 'nameSingular'
-    | 'namePlural'
-  >[];
-  fields: Pick<
-    FieldMetadataItem,
-    'id' | 'name' | 'type' | 'settings' | 'morphRelations' | 'relation'
-  >[];
-  depth: 0 | 1;
-  shouldOnlyLoadRelationIdentifiers?: boolean;
-};
-
 export const generateDepthRecordGqlFieldsFromFields = ({
   objectMetadataItems,
+  sourceObjectMetadataItem,
   fields,
   depth,
   shouldOnlyLoadRelationIdentifiers = true,
@@ -62,40 +38,29 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           );
         }
 
-        const isActivityTargetField =
-          fieldMetadata.name === CoreObjectNamePlural.NoteTarget ||
-          fieldMetadata.name === CoreObjectNamePlural.TaskTarget;
+        const junctionConfig = resolveJunctionConfig({
+          settings: fieldMetadata.settings,
+          relationObjectMetadataId: targetObjectMetadataItem.id,
+          relationTargetFieldMetadataId:
+            fieldMetadata.relation?.targetFieldMetadata.id,
+          sourceObjectMetadataId:
+            sourceObjectMetadataItem?.id ??
+            fieldMetadata.relation?.sourceObjectMetadata.id,
+          objectMetadataItems,
+        });
 
-        if (isActivityTargetField && depth === 1) {
-          const activityTargetObjectNameSingular =
-            fieldMetadata.name === CoreObjectNamePlural.NoteTarget
-              ? CoreObjectNameSingular.Note
-              : CoreObjectNameSingular.Task;
-
-          const activityTargetGqlFields = generateActivityTargetGqlFields({
-            activityObjectNameSingular: activityTargetObjectNameSingular,
-            objectMetadataItems,
-            loadRelations: 'activity',
-          });
-
-          return {
-            ...recordGqlFields,
-            [fieldMetadata.name]: activityTargetGqlFields,
-          };
+        if (isDefined(junctionConfig) && !junctionConfig.isValid) {
+          return recordGqlFields;
         }
 
-        if (isJunctionRelationField(fieldMetadata)) {
-          const junctionGqlFields = generateJunctionRelationGqlFields({
-            fieldMetadataItem: fieldMetadata,
-            objectMetadataItems,
-          });
-
-          if (isDefined(junctionGqlFields) && depth === 1) {
-            return {
-              ...recordGqlFields,
-              [fieldMetadata.name]: junctionGqlFields,
-            };
-          }
+        if (junctionConfig?.isValid === true && depth === 1) {
+          return {
+            ...recordGqlFields,
+            [fieldMetadata.name]: generateJunctionRelationGqlFields({
+              junctionConfig,
+              objectMetadataItems,
+            }),
+          };
         }
 
         const relationIdentifierSubGqlFields = buildIdentifierGqlFields(

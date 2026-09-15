@@ -9,6 +9,7 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { useBuildWorkspaceUrl } from '@/domain-manager/hooks/useBuildWorkspaceUrl';
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { useRedirectToWorkspaceDomain } from '@/domain-manager/hooks/useRedirectToWorkspaceDomain';
+import { useOpenRecordInPreference } from '@/settings/experience/hooks/useOpenRecordInPreference';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -16,19 +17,17 @@ import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MultiWorkspaceDropdownId';
+import { OPEN_RECORD_IN_OPTIONS } from '@/ui/navigation/navigation-drawer/constants/OpenRecordInOptions';
 import { multiWorkspaceDropdownState } from '@/ui/navigation/navigation-drawer/states/multiWorkspaceDropdownState';
 import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { isNonEmptyString } from '@sniptt/guards';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   IconDotsVertical,
   IconLogout,
@@ -38,20 +37,17 @@ import {
   IconSwitchHorizontal,
   IconUserPlus,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import {
   MenuItem,
   MenuItemSelectAvatar,
   UndecoratedLink,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/navigation';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
-
-const StyledDescription = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  padding-left: ${themeCssVariables.spacing[1]};
-`;
 
 export const MultiWorkspaceDropdownDefaultComponents = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -77,7 +73,16 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
     multiWorkspaceDropdownState,
   );
 
-  const { openSettingsMenu } = useOpenSettingsMenu();
+  const { openRecordInPreference } = useOpenRecordInPreference();
+  const navigateSettings = useNavigateSettings();
+
+  const isMobile = useIsMobile();
+  const canDisplaySidePanel = !isMobile;
+
+  const handleSettings = () => {
+    closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
+    navigateSettings(SettingsPath.ProfilePage);
+  };
 
   const handleSupport = () => {
     window.FrontChat?.('show');
@@ -104,8 +109,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
           <DropdownMenuHeaderLeftComponent
             Avatar={
               <Avatar
-                placeholder={currentWorkspace?.displayName || ''}
-                avatarUrl={getAbsoluteImageUrl(
+                name={currentWorkspace?.displayName || ''}
+                src={getAbsoluteImageUrl(
                   currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
                 )}
               />
@@ -169,8 +174,8 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
                     text={availableWorkspace.displayName ?? t`(No name)`}
                     avatar={
                       <Avatar
-                        placeholder={availableWorkspace.displayName || ''}
-                        avatarUrl={getAbsoluteImageUrl(
+                        name={availableWorkspace.displayName || ''}
+                        src={getAbsoluteImageUrl(
                           availableWorkspace.logo ?? DEFAULT_WORKSPACE_LOGO,
                         )}
                       />
@@ -192,17 +197,33 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
         </>
       )}
       <DropdownMenuItemsContainer>
+        {/* Desktop reaches settings from the drawer's mode switcher, which
+            mobile does not render, so the workspace menu is where it lives. */}
+        {isMobile && (
+          <MenuItem
+            LeftIcon={IconSettings}
+            text={t`Settings`}
+            onClick={handleSettings}
+          />
+        )}
         <MenuItem
           LeftIcon={colorSchemeList.find(({ id }) => id === colorScheme)?.icon}
-          text={
-            <>
-              {t`Theme `}
-              <StyledDescription>{` · ${colorScheme}`}</StyledDescription>
-            </>
-          }
+          text={t`Theme`}
+          contextualText={colorScheme}
           hasSubMenu={true}
           onClick={() => setMultiWorkspaceDropdown('themes')}
         />
+        {canDisplaySidePanel && (
+          <MenuItem
+            LeftIcon={OPEN_RECORD_IN_OPTIONS[openRecordInPreference].Icon}
+            text={t`Open in`}
+            contextualText={t(
+              OPEN_RECORD_IN_OPTIONS[openRecordInPreference].label,
+            )}
+            hasSubMenu={true}
+            onClick={() => setMultiWorkspaceDropdown('open-record-in')}
+          />
+        )}
         <UndecoratedLink
           to={`${getSettingsPath(SettingsPath.WorkspaceMembersPage)}#invite`}
           onClick={() => {
@@ -218,15 +239,6 @@ export const MultiWorkspaceDropdownDefaultComponents = () => {
             onClick={handleSupport}
           />
         )}
-        <UndecoratedLink
-          to={getSettingsPath(SettingsPath.ProfilePage)}
-          onClick={() => {
-            openSettingsMenu();
-            closeDropdown(MULTI_WORKSPACE_DROPDOWN_ID);
-          }}
-        >
-          <MenuItem LeftIcon={IconSettings} text={t`Settings`} />
-        </UndecoratedLink>
       </DropdownMenuItemsContainer>
     </DropdownContent>
   );

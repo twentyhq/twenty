@@ -23,6 +23,7 @@ export const USER_QUERY_FRAGMENT = gql`
     canImpersonate
     supportUserHash
     onboardingStatus
+    previousOnboardingStatus
     isWorkspaceCreator
     workspaceMember {
       ...WorkspaceMemberQueryFragment
@@ -100,11 +101,11 @@ export const USER_QUERY_FRAGMENT = gql`
       defaultRole {
         ...RoleFragment
       }
-      fastModel
-      smartModel
+      aiChatModelTier
+      aiAgentModelTier
+      isAutoModelSelectionEnabled
+      aiModelIdByTier
       aiAdditionalInstructions
-      enabledAiModelIds
-      useRecommendedModels
       isTwoFactorAuthenticationEnforced
       trashRetentionDays
       eventLogRetentionDays

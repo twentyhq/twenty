@@ -3,11 +3,11 @@ import { type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, type IconComponent } from 'twenty-ui/icon';
-import { CardContent } from 'twenty-ui/surfaces';
+import { CardContent } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledRowContainer = styled.div`
-  > * {
+  > div {
     align-items: center;
     box-sizing: border-box;
     display: flex;
@@ -91,14 +91,15 @@ export const SettingsListItemCardContent = ({
   to,
 }: SettingsListItemCardContentProps) => {
   const { theme } = useContext(ThemeContext);
+  const isInteractive = isDefined(onClick) || isDefined(to);
 
   const content = (
     <StyledRowContainer>
       <CardContent
         onClick={onClick}
         divider={divider}
-        isClickable={!!onClick || !!to}
-        hasHoverHighlight={!!to}
+        isClickable={isInteractive}
+        hasHoverHighlight={isInteractive}
       >
         {!!LeftIcon && (
           <LeftIcon

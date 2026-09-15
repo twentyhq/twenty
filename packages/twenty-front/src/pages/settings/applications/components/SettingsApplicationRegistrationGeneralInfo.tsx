@@ -1,12 +1,13 @@
 import {
   IconBox,
   IconDownload,
-  IconGitBranch,
   IconTag,
+  IconVersions,
   IconWorld,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { Trans, useLingui } from '@lingui/react/macro';
+import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
   SettingsTableCard,
   type TableItem,
@@ -22,15 +23,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
-import {
-  AvatarOrIcon,
-  Chip,
-  ChipSize,
-  ChipVariant,
-  Tag,
-} from 'twenty-ui/data-display';
+import { AvatarOrIcon, Chip, Tag } from 'twenty-ui/primitives/data-display';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -73,13 +68,13 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
     },
   );
 
-  const { data: applicationSummaryData } = useQuery(
-    FindOneApplicationSummaryDocument,
-    {
+  const { data: applicationSummaryData, refetch: refetchApplicationSummary } =
+    useQuery(FindOneApplicationSummaryDocument, {
       variables: { universalIdentifier: registration.universalIdentifier },
       skip: !registration.universalIdentifier,
-    },
-  );
+    });
+
+  useRefetchOnApplicationOperation({ refetch: refetchApplicationSummary });
 
   const isApplicationInstalled = isDefined(
     applicationSummaryData?.findOneApplication,
@@ -113,19 +108,19 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
       label: t`Owner`,
       value: isDefined(ownerWorkspace?.displayName) ? (
         <Chip
-          size={ChipSize.Large}
-          variant={ChipVariant.Highlighted}
-          clickable={false}
-          leftComponent={
+          size="md"
+          variant="soft"
+          startElement={
             <AvatarOrIcon
-              avatarType="rounded"
-              avatarUrl={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
+              shape="circle"
+              src={getAbsoluteImageUrl(ownerWorkspace?.logo ?? undefined)}
             />
           }
-          label={ownerWorkspace.displayName}
-        />
+        >
+          {ownerWorkspace.displayName}
+        </Chip>
       ) : (
-        <Tag color="orange" text={t`Unclaimed`} />
+        <Tag color="orange">{t`Unclaimed`}</Tag>
       ),
     });
 
@@ -176,7 +171,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
 
     if (isNonEmptyString(registration.latestAvailableVersion)) {
       items.push({
-        Icon: IconGitBranch,
+        Icon: IconVersions,
         label: t`Latest version`,
         value: registration.latestAvailableVersion,
       });
@@ -186,9 +181,9 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
       Icon: IconDownload,
       label: t`Installed`,
       value: isApplicationInstalled ? (
-        <Tag color="green" text={t`Yes`} />
+        <Tag color="green">{t`Yes`}</Tag>
       ) : (
-        <Tag color="orange" text={t`No`} />
+        <Tag color="orange">{t`No`}</Tag>
       ),
     });
 

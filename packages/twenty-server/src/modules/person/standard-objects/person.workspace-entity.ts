@@ -15,6 +15,8 @@ import { type CompanyWorkspaceEntity } from 'src/modules/company/standard-object
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type NoteTargetWorkspaceEntity } from 'src/modules/note/standard-objects/note-target.workspace-entity';
+import { type CalendarEventTargetWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-target.workspace-entity';
+import { type MessageThreadTargetWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-target.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
 import { type TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
@@ -38,6 +40,8 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   pointOfContactForOpportunities: EntityRelation<OpportunityWorkspaceEntity[]>;
   taskTargets: EntityRelation<TaskTargetWorkspaceEntity[]>;
   noteTargets: EntityRelation<NoteTargetWorkspaceEntity[]>;
+  calendarEventTargets: EntityRelation<CalendarEventTargetWorkspaceEntity[]>;
+  messageThreadTargets: EntityRelation<MessageThreadTargetWorkspaceEntity[]>;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
   messageParticipants: EntityRelation<MessageParticipantWorkspaceEntity[]>;
   calendarEventParticipants: EntityRelation<

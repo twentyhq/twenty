@@ -29,7 +29,6 @@ const meta: Meta<typeof TimelineCard> = {
               targetObjectNameSingular: CoreObjectNameSingular.Company,
             },
             layoutType: PageLayoutType.RECORD_PAGE,
-            isInSidePanel: false,
           }}
         >
           <TimelineActivityContext.Provider value={{ recordId: 'mock-id' }}>

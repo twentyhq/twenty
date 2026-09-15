@@ -1,0 +1,2 @@
+export const ADD_IS_DEPRECATED_TO_APPLICATION_VARIABLES_UPGRADE_COMMAND_NAME =
+  '2.31.0_AddIsDeprecatedToApplicationVariablesFastInstanceCommand_1786533439000';

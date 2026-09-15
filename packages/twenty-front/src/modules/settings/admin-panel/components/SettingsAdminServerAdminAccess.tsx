@@ -14,10 +14,10 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { OTPInput } from 'input-otp';
 import { useState } from 'react';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetServerAdminsDocument,
@@ -148,10 +148,10 @@ export const SettingsAdminServerAdminAccess = ({
         {hasAnyAccess ? (
           <StyledChips>
             {canAccessFullAdminPanel && (
-              <Status color="green" text={t`Admin panel`} weight="medium" />
+              <Status color="green" weight="medium">{t`Admin panel`}</Status>
             )}
             {canImpersonate && (
-              <Status color="blue" text={t`Impersonation`} weight="medium" />
+              <Status color="blue" weight="medium">{t`Impersonation`}</Status>
             )}
           </StyledChips>
         ) : (

@@ -15,8 +15,8 @@ import {
   IconTypography,
   IconVariable,
 } from 'twenty-ui/icon';
-import { Button, LightIconButton } from 'twenty-ui/input';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { ADVANCED_TEXT_EDITOR_BLOCK_INSERTION_RECIPES } from '@/advanced-text-editor/constants/AdvancedTextEditorBlockInsertionRecipes';
@@ -33,6 +33,7 @@ const StyledRail = styled.div`
   box-shadow:
     0px 2px 4px 0px ${themeCssVariables.background.transparent.light},
     0px 0px 4px 0px ${themeCssVariables.background.transparent.medium};
+  corner-shape: round;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};

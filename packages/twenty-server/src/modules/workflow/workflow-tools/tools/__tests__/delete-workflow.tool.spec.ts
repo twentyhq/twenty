@@ -6,9 +6,9 @@ const buildTool = () => {
   const workflowRepository = {
     softDelete: jest.fn().mockResolvedValue({ affected: 1 }),
   };
-  const globalWorkspaceOrmManager = {
+  const workspaceOrmManager = {
     executeInWorkspaceContext: jest.fn((callback: () => unknown) => callback()),
-    getRepository: jest.fn().mockResolvedValue(workflowRepository),
+    getRepository: jest.fn().mockReturnValue(workflowRepository),
   };
   const workflowCommonService = {
     handleWorkflowSubEntities: jest.fn().mockResolvedValue(undefined),
@@ -16,7 +16,7 @@ const buildTool = () => {
 
   const tool = createDeleteWorkflowTool(
     {
-      globalWorkspaceOrmManager,
+      workspaceOrmManager,
       workflowCommonService,
     } as never,
     {
@@ -28,7 +28,7 @@ const buildTool = () => {
   return {
     tool,
     workflowRepository,
-    globalWorkspaceOrmManager,
+    workspaceOrmManager,
     workflowCommonService,
   };
 };

@@ -1,4 +1,8 @@
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 import { faker } from '@faker-js/faker';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
@@ -25,8 +29,13 @@ export const getFlatObjectMetadataMock = (
     objectPermissionIds: [],
     fieldPermissionIds: [],
     fieldIds: [],
+    pageLayoutIds: [],
+    commandMenuItemIds: [],
     description: 'default flat object metadata description',
     icon: 'icon',
+    writability: MetadataWritability.OPEN,
+    readability: MetadataReadability.OPEN,
+    readabilityParentFieldUniversalIdentifiers: null,
     color: null,
     id: faker.string.uuid(),
     imageIdentifierFieldMetadataId,
@@ -59,6 +68,8 @@ export const getFlatObjectMetadataMock = (
     viewUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     searchFieldMetadataUniversalIdentifiers: [],
+    pageLayoutUniversalIdentifiers: [],
+    commandMenuItemUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier:
       labelIdentifierFieldMetadataId,
     imageIdentifierFieldMetadataUniversalIdentifier:

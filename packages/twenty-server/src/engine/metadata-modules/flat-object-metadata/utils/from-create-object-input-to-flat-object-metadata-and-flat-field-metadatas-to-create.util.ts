@@ -1,5 +1,9 @@
 import { getFieldUniversalIdentifier } from 'twenty-shared/application';
-import { ObjectOpenRecordIn } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  MetadataWritability,
+  ObjectOpenRecordIn,
+} from 'twenty-shared/types';
 import {
   capitalize,
   isDefined,
@@ -71,6 +75,9 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       isSearchable: true,
       isUIEditable: true,
       isUICreatable: true,
+      writability: MetadataWritability.OPEN,
+      readability: MetadataReadability.OPEN,
+      readabilityParentFieldUniversalIdentifiers: null,
       isSystem: false,
       labelPlural: capitalize(createObjectInput.labelPlural),
       labelSingular: capitalize(createObjectInput.labelSingular),
@@ -86,6 +93,8 @@ export const fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCre
       viewUniversalIdentifiers: [],
       indexMetadataUniversalIdentifiers: [],
       searchFieldMetadataUniversalIdentifiers: [],
+      pageLayoutUniversalIdentifiers: [],
+      commandMenuItemUniversalIdentifiers: [],
       labelIdentifierFieldMetadataUniversalIdentifier,
       imageIdentifierFieldMetadataUniversalIdentifier: null,
     };

@@ -1,4 +1,4 @@
-import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
@@ -13,15 +13,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type JSX, type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill, TintedIconTile } from 'twenty-ui/data-display';
+import { Pill, TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
   TooltipDelay,
   TooltipPosition,
-} from 'twenty-ui/surfaces';
-import { Label } from 'twenty-ui/typography';
+} from 'twenty-ui/primitives/surfaces';
+import { Label } from 'twenty-ui/primitives/typography';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -235,7 +235,8 @@ const StyledRightOptionsVisbility = styled.div`
   width: 1px;
 
   &[data-visible='true'],
-  .navigation-drawer-item:hover & {
+  .navigation-drawer-item:hover &,
+  .navigation-drawer-item:focus-within & {
     clip-path: unset;
     display: flex;
     height: unset;
@@ -270,7 +271,7 @@ export const NavigationDrawerItem = ({
 }: NavigationDrawerItemProps) => {
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
-  const isExpanded = useNavigationDrawerExpanded();
+  const isExpanded = useIsNavigationDrawerContentExpanded();
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
@@ -461,7 +462,7 @@ export const NavigationDrawerItem = ({
       {!isExpanded && !isMobile && (
         <AppTooltip
           anchorSelect={`#${navigationItemId}`}
-          content={label}
+          title={label}
           place={TooltipPosition.Right}
           delay={TooltipDelay.noDelay}
           positionStrategy="fixed"

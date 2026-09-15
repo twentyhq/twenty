@@ -6,18 +6,8 @@ import { type SettingsBillingPlanInterval } from '@/settings/billing/types/setti
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  BillingPlanKey,
-  SubscriptionInterval,
-} from '~/generated-metadata/graphql';
-
-const parseCurrentPlanKey = (plan: unknown): BillingPlanKey | undefined => {
-  if (plan === BillingPlanKey.PRO || plan === BillingPlanKey.ENTERPRISE) {
-    return plan;
-  }
-
-  return undefined;
-};
+import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
+import { SubscriptionInterval } from '~/generated-metadata/graphql';
 
 export const SettingsBillingPlansContent = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -25,8 +15,8 @@ export const SettingsBillingPlansContent = () => {
   const [billingInterval, setBillingInterval] =
     useState<SettingsBillingPlanInterval>(SubscriptionInterval.Year);
 
-  const currentPlanKey = parseCurrentPlanKey(
-    currentWorkspace?.currentBillingSubscription?.metadata?.['plan'],
+  const currentPlanKey = getSubscriptionPlanKey(
+    currentWorkspace?.currentBillingSubscription,
   );
 
   if (

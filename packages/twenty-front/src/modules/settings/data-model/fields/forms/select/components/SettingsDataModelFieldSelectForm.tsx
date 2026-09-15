@@ -40,9 +40,9 @@ import {
   IconPoint,
   IconTrash,
 } from 'twenty-ui/icon';
-import { LightButton, LightIconButton } from 'twenty-ui/input';
-import { CardContent, CardFooter } from 'twenty-ui/surfaces';
-import { MenuItem } from 'twenty-ui/navigation';
+import { LightButton, LightIconButton } from 'twenty-ui/primitives/input';
+import { CardContent, CardFooter } from 'twenty-ui/primitives/surfaces';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
@@ -68,7 +68,7 @@ type SettingsDataModelFieldSelectFormProps = {
 };
 
 const StyledContainerWrapper = styled.div`
-  > * {
+  > div {
     padding-bottom: 14px;
   }
 `;
@@ -128,7 +128,7 @@ const StyledIconPointContainer = styled.span`
 `;
 
 const StyledFooterContainer = styled.div`
-  > * {
+  > div {
     background-color: ${themeCssVariables.background.secondary};
     padding: ${themeCssVariables.spacing[1]};
   }
@@ -203,7 +203,10 @@ export const SettingsDataModelFieldSelectForm = ({
 
       const optionsWithNew = [...initialOptions, newOption];
 
-      setFormValue('options', optionsWithNew, { shouldDirty: true });
+      setFormValue('options', optionsWithNew, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
       setHasAppliedNewOption(true);
     }
   }, [searchParams, hasAppliedNewOption, initialOptions, setFormValue]);
@@ -301,13 +304,19 @@ export const SettingsDataModelFieldSelectForm = ({
   const handleAddOption = () => {
     const newOptions = getOptionsWithNewOption();
 
-    setFormValue('options', newOptions, { shouldDirty: true });
+    setFormValue('options', newOptions, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   const handleInputEnter = () => {
     const newOptions = getOptionsWithNewOption();
 
-    setFormValue('options', newOptions, { shouldDirty: true });
+    setFormValue('options', newOptions, {
+      shouldDirty: true,
+      shouldValidate: true,
+    });
   };
 
   return (
@@ -443,7 +452,6 @@ export const SettingsDataModelFieldSelectForm = ({
                               key={option.id}
                               draggableId={option.id}
                               index={index}
-                              isDragDisabled={options.length === 1}
                               itemComponent={
                                 <SettingsDataModelFieldSelectFormOptionRow
                                   key={option.id}
@@ -461,7 +469,6 @@ export const SettingsDataModelFieldSelectForm = ({
                                     );
                                     onChange(nextOptions);
 
-                                    // Update option value in defaultValue if value has changed
                                     if (
                                       nextOption.value !== option.value &&
                                       isOptionDefaultValue(option.value)

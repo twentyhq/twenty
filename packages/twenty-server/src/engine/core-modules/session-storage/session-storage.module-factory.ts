@@ -38,13 +38,6 @@ export const getSessionStorageOptions = (
   };
 
   switch (cacheStorageType) {
-    /* case CacheStorageType.Memory: {
-      Logger.warn(
-        'Memory session storage is not recommended for production. Prefer Redis.',
-      );
-
-      return sessionStorage;
-    }*/
     case CacheStorageType.Redis: {
       const connectionString = twentyConfigService.get('REDIS_URL');
 

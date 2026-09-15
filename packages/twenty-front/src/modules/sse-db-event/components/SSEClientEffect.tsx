@@ -1,5 +1,4 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadataStore';
@@ -9,7 +8,6 @@ import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandl
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { createClient } from 'graphql-sse';
 import { useCallback, useEffect } from 'react';
@@ -22,7 +20,6 @@ export const SSEClientEffect = () => {
   const store = useStore();
   const isLogged = useIsLogged();
   const [sseClient, setSseClient] = useAtomState(sseClientState);
-  const tokenPair = useAtomStateValue(tokenPairState);
   const { resyncMetadataStore } = useResyncMetadataStore();
 
   const debouncedResyncMetadataStore = useDebouncedCallback(
@@ -61,14 +58,6 @@ export const SSEClientEffect = () => {
       const newSseClient = createClient({
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
         credentials: 'include',
-        headers: () => {
-          const currentTokenPair = store.get(tokenPairState.atom);
-          const token = currentTokenPair?.accessOrWorkspaceAgnosticToken?.token;
-
-          return {
-            Authorization: token ? `Bearer ${token}` : '',
-          };
-        },
         on: {
           connected: handleSSEClientConnected,
         },
@@ -85,7 +74,6 @@ export const SSEClientEffect = () => {
     setSseClient,
     sseClient,
     store,
-    tokenPair,
     handleSseClientConnectionRetry,
   ]);
 

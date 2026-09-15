@@ -282,6 +282,28 @@ POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionUniver
 
 المعرّف هو `universalIdentifier` الخاص بالـ resolver من ملف manifest لديك. سجّل عنوان URL هذا لدى المزوّد.
 
+**الرد على طلب GET للتحقق.** يتحقق بعض الموفّرين من نقطة نهاية قبل أن يرسلوا إليها، وذلك بإرسال طلب `GET` يحمل تحديًا إلى عنوان URL نفسه الذي سيرسلون إليه الأحداث لاحقًا عبر `POST` — وتُعد WhatsApp Cloud API من Meta أحدهم. لا يستجيب مسار الخادم إلا لطلبات `POST` ما لم تحدد خلاف ذلك، لذا أعلن الطريقتين معًا:
+
+```ts
+serverRouteTriggerSettings: {
+  forwardedRequestHeaders: ['x-hub-signature-256'],
+  httpMethods: ['GET', 'POST'],
+}
+```
+
+يصل التحدي في `event.queryStringParameters`، وتؤدي إعادة `Response` إلى إرجاعه إلى الموفّر ضمن الطلب نفسه. يُرسل نص سلسلة كـ `text/plain`، وهذا ما يتوقعه هؤلاء الموفّرون:
+
+```ts
+const handler = async (event: RoutePayload) => {
+  if (event.requestContext.http.method === 'GET') {
+    return new Response(event.queryStringParameters['hub.challenge']);
+  }
+  // …handle the delivered event
+};
+```
+
+يستبدل `httpMethods` الإعداد الافتراضي بدلاً من الإضافة إليه، لذا فإن `['GET']` وحده يجعل المسار يرفض `POST`. يتم دعم `GET` و`POST` فقط. اتركه غير معيّن ما لم يكن المزوّد يحتاج إلى الفعل الثاني: فالمسار الذي يعلن `GET` سيُنفَّذ محلّله بواسطة أي مستدعٍ غير موثَّق، بما في ذلك برامج الزحف وأدوات توسيع الروابط التي ترسل `GET` دون طلب مسبق. يُستجاب لكل ما لا تتوفر للمنصة طريقة له بالرمز `405` دون أن يُشغَّل المحلّل مطلقًا.
+
 <Note>
 **يجب أن يتم المطالبة بالتطبيق وتثبيته في مساحة عمل المالك الخاصة به.** نظرًا لأن محلِّل الاستدعاء يعمل في **مساحة عمل المالك** (مساحة العمل التي تمتلك تسجيل التطبيق)، فإن مشغّل مسار الخادم يعمل فقط بمجرد أن يكون قد تم *المطالبة* بالتطبيق — أي أصبح لديه مساحة عمل مالكة — **و** تم **تثبيت هذا التطبيق في مساحة عمل المالك**. إلى أن يتحقق الشرطان معًا، فلن يكون لدى محلِّل الاستدعاء مكان يعمل فيه، وبالتالي لا يمكن إرسال المسار. لذلك لا يمكن إدراج أي تطبيق يعرِّض دالة منطقية `serverRouteTriggerSettings` في السوق حتى تتم المطالبة به وتثبيته في مساحة عمل المالك الخاصة به.
 </Note>
@@ -424,6 +446,78 @@ const handler = async (event: PersonDestroyedEvent) => {
   };
 };
 ```
+
+#### سياق التنفيذ
+
+يتلقى كل معالج وسيطًا ثانيًا يصف عملية التشغيل نفسها، بغض النظر عما شغّلها. بينما يتغير شكل الوسيط الأول بحسب المُشغِّل، لا يتغير شكل هذا الوسيط:
+
+```ts
+import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
+
+const handler = async (
+  event: DatabaseEventPayload,
+  { workspaceId, workspaceMemberId }: LogicFunctionExecutionContext,
+) => {
+  if (workspaceMemberId === null) {
+    throw new Error('This function must be triggered by a person');
+  }
+
+  return { reviewedBy: workspaceMemberId, workspaceId };
+};
+```
+
+| الحقل               | النوع            | الوصف                                                                                         |
+| ------------------- | ---------------- | --------------------------------------------------------------------------------------------- |
+| `workspaceId`       | `string`         | مساحة العمل التي تنتمي إليها عملية التشغيل.                                                   |
+| `userWorkspaceId`   | `string \| null` | الشخص الذي شغّل عملية التشغيل، ممثلًا بعضويته في مساحة العمل هذه.                             |
+| `workspaceMemberId` | `string \| null` | الشخص نفسه بصفته سجل عضو في مساحة العمل، وهو ما تربط السجلات به.                              |
+| `retryCount`        | `number`         | `0` في المحاولة الأولى. راجع [المهام الخلفية](/l/ar/developers/extend/apps/logic/background-jobs). |
+| `maxRetries`        | `number`         | الحد الأقصى لعمليات إعادة المحاولة التي يطلبها التطبيق.                                       |
+
+يكون `userWorkspaceId` و`workspaceMemberId` بقيمة `null` عندما لا يشغّل أحد عملية التشغيل: فلا توجد جهة خلف جداول cron وخطافات التثبيت وخطافات الويب غير الموثقة. ويكونان أيضًا بقيمة `null` عندما لا يكون لدى الشخص سجل عضو في مساحة العمل، أو عندما يكون سجله قد حُذف.
+
+<Note>
+**يخبرك السياق بمن شغّل عملية التشغيل.** أما ما قد *تفعله* عملية التشغيل فهو تعريف منفصل أدناه.
+</Note>
+
+#### أذونات الوصول التي تستخدمها المكالمة
+
+يتصرف كل عميل — `CoreApiClient` و`MetadataApiClient` و`RestApiClient` — بصفته الشخص الذي شغّل عملية التشغيل: إذ يتقاطع دوره مع دور تطبيقك، لذا لا يمكن للمكالمة أبدًا أن تفعل أكثر مما يسمح به أيّ منكما. هذا هو السلوك الافتراضي، ويعني أنه لا يمكن للشخص أبدًا استخدام تطبيقك لتجاوز أذوناته الخاصة.
+
+عندما لا يشغّل أحد عملية التشغيل، لا يوجد شخص للتصرف بصفته، لذا يعود العميل نفسه إلى أذونات الوصول الخاصة بتطبيقك: لا تحتاج جداول cron وخطافات التثبيت وخطافات الويب غير الموثقة إلى معالجة خاصة.
+
+تحتاج بعض المكالمات بصورة مشروعة إلى أذونات الوصول الخاصة بالتطبيق حتى عندما يكون هناك شخص *خلف* عملية التشغيل — مثل قراءة سجلات إعدادات تطبيقك، أو تنفيذ عمل لا يستطيع ذلك الشخص تنفيذه بنفسه. أنشئ عميلاً ثانيًا لهذه الحالات:
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const asPerson = new CoreApiClient();
+const asApplication = new CoreApiClient({ runAs: 'application' });
+
+const handler = async (event: DatabaseEventPayload) => {
+  // config records only your app may read
+  const { slackUserLinks } = await asApplication.query({ ... });
+
+  // created as the person, so it is attributed and permission-checked
+  await asPerson.mutation({ createNote: { ... } });
+};
+```
+
+أنشئ كليهما مرة واحدة، في نطاق الوحدة، ثم يحدد كل موضع استدعاء أذونات الوصول التي يستخدمها من خلال العميل الذي يستدعيه. يأخذ `RestApiClient` الخيار نفسه:
+
+```ts
+import { RestApiClient } from 'twenty-client-sdk/rest';
+
+const asApplication = new RestApiClient({ runAs: 'application' });
+```
+
+<Note>
+**عملية التشغيل التي لم يشغّلها أحد تتصرف بصفتها تطبيقك.** لا يوجد شخص خلف جداول cron وخطافات التثبيت وخطافات الويب غير الموثقة، لذا يعود العميل الافتراضي إلى أذونات الوصول الخاصة بتطبيقك ويستمر في العمل. لا يلزم استخدام `runAs: 'application'` إلا عندما تريد أذونات الوصول تلك في عملية تشغيل شغّلها شخص *بالفعل*.
+
+تحقق من `context.workspaceMemberId` عندما تتصرف دالة بشكل مختلف بناءً على وجود شخص خلفها، على سبيل المثال لإسناد سجل.
+</Note>
+
+تستخدم مساعدات SDK التي تصل إلى موارد تطبيقك الخاصة أذونات الوصول الخاصة به دائمًا وتتجاهل `runAs`: وهي [مخزن المفتاح-القيمة](/l/ar/developers/extend/apps/logic/key-value-store) و[الاتصالات](/l/ar/developers/extend/apps/logic/connections) و`runAgent` و`getPublicAssetUrl` وفرض رسوم الأرصدة.
 
 #### إتاحة دالة كأداة ذكاء اصطناعي أو كإجراء ضمن سير العمل
 
@@ -619,6 +713,45 @@ const handler = async (params: { parentMessageId?: string }) => {
 **خطافات التثبيت** — معالجات ما قبل التثبيت وما بعد التثبيت وإلغاء التثبيت — تشترك في وقت التشغيل نفسه، ولكن يُصرَّح عنها بدوال تعريف خاصة بها ولا تأخذ إعدادات المشغّلات. راجع [خطافات التثبيت (Install Hooks)](/l/ar/developers/extend/apps/config/install-hooks) لمعرفة `definePreInstallLogicFunction` و `definePostInstallLogicFunction` و `defineUninstallLogicFunction`.
 </Note>
 
+## إنشاء نشاط في المخطط الزمني
+
+استخدم `createTimelineActivity()` لنشر حدث مجال صريح من دالة منطقية. عرّف الحدث أولاً باعتباره [نوع نشاط في المخطط الزمني](/l/ar/developers/extend/apps/data/timeline-activity-types)، ثم عالج النوع والكائنات باستخدام معرفاتها العامة الثابتة:
+
+```ts
+import { createTimelineActivity } from 'twenty-sdk/logic-function';
+
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  happensAt: new Date().toISOString(),
+  properties: {
+    deliveryProvider: 'postal-service',
+  },
+});
+```
+
+يحوّل Twenty المعرفات العامة إلى معرّفات البيانات الوصفية الخاصة بالتثبيت، ويتحقق من أن نوع نشاط المخطط الزمني ينتمي إلى التطبيق المستدعي، ويلتقط لقطة من بيانات العرض الوصفية الخاصة به في النشاط الجديد.
+
+المدخلات المطلوبة هي `timelineActivityTypeUniversalIdentifier` و`targetObjectUniversalIdentifier` و`targetRecordId`. يمكنك أيضاً توفير `happensAt` و`properties` و`workspaceMemberId`. يتحكم `happensAt` في موضع الحدث ووقته المعروض في المخطط الزمني؛ ويكون افتراضياً وقت الإنشاء.
+
+لربط سجل آخر بالحدث، وفّر `linkedRecordId` و`linkedObjectMetadataUniversalIdentifier` معاً. يمكنك بالإضافة إلى ذلك توفير `linkedRecordCachedName` كخيار احتياطي للعرض التاريخي:
+
+```ts
+await createTimelineActivity({
+  timelineActivityTypeUniversalIdentifier:
+    'f4fa646c-6e11-4d8f-a6be-c3b7a2fc7501',
+  targetObjectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  targetRecordId: postCardId,
+  linkedObjectMetadataUniversalIdentifier: RECIPIENT_UNIVERSAL_IDENTIFIER,
+  linkedRecordId: recipientId,
+  linkedRecordCachedName: recipientName,
+});
+```
+
+يحتاج دور الدالة المنطقية إلى إذن كتابة على كائن `timelineActivity` القياسي. أبقِ أنواع الأحداث الصريحة غير مرتبطة بـ`action`؛ إذ إن النوع المرتبط بإجراء يتلقى بالفعل أحداث تدقيق تلقائية، وإلا فسينتج صفوفاً مكررة.
+
 ## عملاء واجهة برمجة تطبيقات مضبوطة الأنواع (`twenty-client-sdk`)
 
 توفر حزمة `twenty-client-sdk` عميلين لـ GraphQL ذوي أنواع ثابتة للتفاعل مع واجهة Twenty البرمجية من وظائفك المنطقية ومكوّنات الواجهة الأمامية.
@@ -700,7 +833,7 @@ setCompany(result.company);
 </Accordion>
 <Accordion title="MetadataApiClient" description="إعدادات مساحة العمل، والتطبيقات، ورفع الملفات">
 
-يأتي `MetadataApiClient` مُجهّزًا مسبقًا مع SDK (لا حاجة للتوليد). يستعلم عن نقطة النهاية `/metadata` للحصول على تكوين مساحة العمل والتطبيقات ورفع الملفات.
+يأتي `MetadataApiClient` مُجهّزًا مسبقًا مع SDK (لا حاجة للتوليد). يستعلم عن نقطة النهاية `/metadata` للحصول على تكوين مساحة العمل والتطبيقات ورفع الملفات. يأخذ خيار `runAs` نفسه الذي يأخذه `CoreApiClient` — راجع [أذونات الوصول التي تستخدمها المكالمة](#whose-access-a-call-uses).
 
 ```ts
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -753,8 +886,8 @@ console.log(uploadedFile);
 | المعلمة                            | النوع        | الوصف                                                                  |
 | ---------------------------------- | ------------ | ---------------------------------------------------------------------- |
 | `fileBuffer`                       | `Buffer`     | المحتوى الخام للملف                                                    |
-| `filename`                         | `string`     | اسم الملف (يُستخدم للتخزين والعرض)                                     |
-| `contentType`                      | `سلسلة نصية` | نوع MIME (القيمة الافتراضية `application/octet-stream` إذا لم يُحدَّد) |
+| `filename`                         | `سلسلة نصية` | اسم الملف (يُستخدم للتخزين والعرض)                                     |
+| `contentType`                      | `string`     | نوع MIME (القيمة الافتراضية `application/octet-stream` إذا لم يُحدَّد) |
 | `fieldMetadataUniversalIdentifier` | `string`     | قيمة `universalIdentifier` لحقل نوع الملف في كائنك                     |
 
 النقاط الرئيسية:
@@ -768,7 +901,8 @@ console.log(uploadedFile);
   عند تشغيل كودك على Twenty (وظائف منطقية أو مكوّنات أمامية)، يقوم النظام الأساسي بحقن بيانات الاعتماد كمتغيرات بيئية:
 
   * `TWENTY_API_URL` — عنوان URL الأساسي لواجهة Twenty البرمجية
-  * `TWENTY_APP_ACCESS_TOKEN` — مفتاح قصير العمر ذو نطاق يقتصر على الدور الافتراضي لوظيفة تطبيقك
+  * `TWENTY_APP_ACCESS_TOKEN` — مفتاح قصير العمر لأذونات الوصول الافتراضية: دور الشخص متقاطعًا مع دور تطبيقك عندما يكون هناك شخص خلف عملية التشغيل، ودور تطبيقك الخاص عندما لا يكون هناك أحد. الشخص هو من شغّل عملية التشغيل في دالة منطقية، أو من ينظر إلى الصفحة في مكوّن أمامي.
+  * `TWENTY_APP_APPLICATION_ACCESS_TOKEN` — مفتاح قصير العمر يقتصر نطاقه على دور تطبيقك الخاص وحده. للدوال المنطقية فقط، ويُحقن فيها دائمًا، وهو ما يستخدمه `runAs: 'application'`.
 
-  لست **بحاجة** إلى تمرير هذه القيم إلى العملاء — فهي تُقرأ تلقائيًا من `process.env`. تُحدَّد أذونات مفتاح واجهة برمجة التطبيقات بواسطة الدور المُعلن باستخدام `defineApplicationRole()` (أو المشار إليه عبر `defaultRoleUniversalIdentifier` في `application-config.ts`).
+  **لا** تحتاج إلى تمرير هذه إلى العملاء — فهم يقرؤون من `process.env` تلقائيًا، ويغطي [أذونات الوصول التي تستخدمها المكالمة](#whose-access-a-call-uses) الاختيار بينها. تُحدَّد أذونات تطبيقك الخاصة بواسطة الدور المُعلن باستخدام `defineApplicationRole()` (أو المشار إليه عبر `defaultRoleUniversalIdentifier` في `application-config.ts`)؛ ولا يمكن لعملية تشغيل تتصرف بصفة شخص أن تتجاوز ذلك الدور أو دوره.
 </Note>

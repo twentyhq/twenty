@@ -19,11 +19,8 @@ import {
   ALLOWED_ORIGIN,
   DISALLOWED_ORIGIN,
 } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
-import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 describe('successful sign-out (integration)', () => {
-  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
-
   it('should revoke the presented session, clear the cookie, and reject its reuse', async () => {
     const signInResponse = await signInWithCookieCapture({
       originHeader: ALLOWED_ORIGIN,

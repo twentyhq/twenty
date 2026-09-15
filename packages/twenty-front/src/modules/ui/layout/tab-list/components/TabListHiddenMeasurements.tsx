@@ -5,7 +5,7 @@ import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { NodeDimension } from '@/ui/utilities/dimensions/components/NodeDimension';
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/icon';
-import { TabButton } from 'twenty-ui/input';
+import { TabButton } from 'twenty-ui/primitives/input';
 
 import { type TabListDimensions } from '@/ui/layout/tab-list/types/TabListDimension';
 import { TabMoreButton } from './TabMoreButton';
@@ -59,7 +59,9 @@ export const TabListHiddenMeasurements = ({
       ))}
 
       <NodeDimension onDimensionChange={onMoreButtonWidthChange}>
-        <TabMoreButton hiddenTabsCount={1} active={false} />
+        {/* Measured with the highest count it can ever display, so the widest
+        label is reserved and the last visible tab is never clipped by it. */}
+        <TabMoreButton hiddenTabsCount={visibleTabs.length} active={false} />
       </NodeDimension>
 
       {onAddButtonWidthChange && (

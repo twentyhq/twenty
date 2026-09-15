@@ -4,11 +4,11 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
@@ -77,14 +77,11 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
   const hasMore = result?.hasMore ?? false;
 
   const isSearching = debouncedSearchTerm.trim() !== '';
-
-  // Don't render a misleading "no installs" state when the query actually failed
-  if (isDefined(error)) {
-    return null;
-  }
+  const hasFailed = isDefined(error);
 
   // The app is installed nowhere (as opposed to a search yielding no matches)
-  const hasNoInstalls = totalCount === 0 && !isSearching && !loading;
+  const hasNoInstalls =
+    totalCount === 0 && !isSearching && !loading && !hasFailed;
 
   if (hasNoInstalls) {
     return null;
@@ -142,8 +139,14 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
       </StyledSearchInputContainer>
       {loading ? (
         <SettingsSectionSkeletonLoader />
+      ) : hasFailed ? (
+        <SettingsEmptyPlaceholder>{t`Couldn't load installed workspaces`}</SettingsEmptyPlaceholder>
       ) : workspaces.length === 0 ? (
-        <SettingsEmptyPlaceholder>{t`No workspaces found`}</SettingsEmptyPlaceholder>
+        <SettingsEmptyPlaceholder>
+          {isSearching
+            ? t`No workspaces match this search`
+            : t`No workspaces found`}
+        </SettingsEmptyPlaceholder>
       ) : (
         <Table>
           <TableRow
@@ -167,9 +170,9 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
                   overflow="hidden"
                 >
                   <Avatar
-                    avatarUrl={getAbsoluteImageUrl(workspace.logo ?? undefined)}
-                    placeholder={workspace.displayName ?? '—'}
-                    placeholderColorSeed={workspace.id}
+                    src={getAbsoluteImageUrl(workspace.logo ?? undefined)}
+                    name={workspace.displayName ?? '—'}
+                    colorSeed={workspace.id}
                     size="md"
                   />
                   <OverflowingTextWithTooltip
@@ -187,7 +190,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
           </TableBody>
         </Table>
       )}
-      {!isExpanded && totalCount > INITIAL_VISIBLE_WORKSPACES && (
+      {!hasFailed && !isExpanded && totalCount > INITIAL_VISIBLE_WORKSPACES && (
         <StyledButtonContainer>
           <Button
             title={t`Show all`}
@@ -198,7 +201,7 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
           />
         </StyledButtonContainer>
       )}
-      {isExpanded && hasMore && (
+      {!hasFailed && isExpanded && hasMore && (
         <StyledButtonContainer>
           <Button
             title={t`Show more`}

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { type ToolSet } from 'ai';
+import { type ToolExecuteFunction, type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { TOOL_EXECUTION_DURATION_MS_BUCKET_BOUNDARIES } from 'src/engine/core-modules/metrics/constants/tool-execution-duration-ms-bucket-boundaries.constant';
@@ -14,11 +14,9 @@ import { isToolOutputSuccessful } from 'src/engine/core-modules/tool-provider/ut
 import { resolveToolName } from 'src/engine/core-modules/tool-provider/utils/resolve-tool-name.util';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
-import {
-  MCP_PROGRESS_NOTIFICATION_METHOD,
-  TOOL_CALL_PROGRESS_TOKEN_PREFIX,
-} from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
+import { MCP_PROGRESS_NOTIFICATION_METHOD } from 'src/engine/api/mcp/constants/mcp-progress-notification.const';
 import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
+import { getProgressToken } from 'src/engine/api/mcp/utils/get-progress-token.util';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
 
 type McpToolDefinition = ToolSet[string] & {
@@ -61,12 +59,14 @@ export class McpToolExecutorService {
       });
     }
 
-    if (isDefined(sseWriter)) {
+    const progressToken = getProgressToken(params);
+
+    if (isDefined(sseWriter) && isDefined(progressToken)) {
       sseWriter({
         jsonrpc: '2.0',
         method: MCP_PROGRESS_NOTIFICATION_METHOD,
         params: {
-          progressToken: `${TOOL_CALL_PROGRESS_TOKEN_PREFIX}${String(id)}`,
+          progressToken,
           progress: 0,
           total: 1,
         },
@@ -83,9 +83,18 @@ export class McpToolExecutorService {
     const executionStartedAt = performance.now();
 
     try {
-      const result = await tool.execute(params.arguments, {
+      // ToolSet widens execute to a union no argument satisfies. The client's
+      // arguments arrive as raw JSON-RPC input and the output shape is checked by
+      // isToolOutputSuccessful, so both sides stay unknown here.
+      const execute = tool.execute as ToolExecuteFunction<
+        unknown,
+        unknown,
+        undefined
+      >;
+      const result = await execute(params.arguments, {
         toolCallId: '1',
         messages: [],
+        context: undefined,
       });
 
       this.metricsService.recordHistogram({
@@ -117,7 +126,7 @@ export class McpToolExecutorService {
       return wrapJsonRpcResponse(id, {
         result: {
           content: [{ type: 'text', text: JSON.stringify(result) }],
-          isError: false,
+          isError: !succeeded,
         },
       });
     } catch (executionError) {

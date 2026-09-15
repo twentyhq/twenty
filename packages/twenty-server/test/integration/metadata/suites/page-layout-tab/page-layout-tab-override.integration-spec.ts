@@ -2,7 +2,7 @@ import { findPageLayoutTabs } from 'test/integration/metadata/suites/page-layout
 import { updateOnePageLayoutTab } from 'test/integration/metadata/suites/page-layout-tab/utils/update-one-page-layout-tab.util';
 import { findPageLayouts } from 'test/integration/metadata/suites/page-layout/utils/find-page-layouts.util';
 
-import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
+import { PageLayoutType } from 'twenty-shared/types';
 
 const TAB_OVERRIDE_GQL_FIELDS = `
   id

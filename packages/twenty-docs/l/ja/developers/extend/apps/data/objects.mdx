@@ -80,6 +80,7 @@ export default defineObject({
 * 各フィールドには、`name`、`type`、`label`、および自身の安定した `universalIdentifier` が必要です。
 * `fields` 配列は任意です。カスタムフィールドなしでオブジェクトを定義できます。
 * `openRecordIn` は、このオブジェクトのレコードがクリックされたときにどこで開くかを設定します。`ObjectOpenRecordIn.USER_CHOICE`（デフォルト。各ワークスペースメンバーの［Settings → Experience］での設定に従います）、`ObjectOpenRecordIn.SIDE_PANEL`、または `ObjectOpenRecordIn.RECORD_PAGE` のいずれかです。 ワークフローやダッシュボードのように、レコードを使うためにフルページが必要な場合には `RECORD_PAGE` にピン留めします。カレンダーイベントのように、クイックパネルとして表示する方が適しているレコードの場合には `SIDE_PANEL` にピン留めします。
+* `writability` は、ロール権限が適用される前の段階で、そのオブジェクトのレコードを書き込むことができる対象を制御します。`MetadataWritability.OPEN`（デフォルト — ワークスペースロールが決定）、`MetadataWritability.APPLICATION`（あなたのアプリ独自のロジック関数だけがレコードを作成・更新・削除できます。これは、そのレコードが挙動を付与する設定的なオブジェクトに使用し、幅広いレコードアクセス権を持つワークスペースメンバーが API 経由でそれらを編集できないようにします）、`MetadataWritability.SYSTEM`（プラットフォームで管理されるデータ用に予約）があります。 読み取りには影響しません。これはサーバー側で強制されるのに対し、`isUIEditable` は UI 上の操作手段を非表示にするだけです。 これはフィールド単位でも存在し、その場合はオブジェクトレベルよりも厳しく設定することしかできません。
 * ここで定義されたインラインフィールドには `objectUniversalIdentifier` は**不要**です — 親オブジェクトから継承されます。 所有していないオブジェクトにフィールドを追加するには、[`defineField()`](/l/ja/developers/extend/apps/data/extending-objects) を使用します。
 * `yarn twenty dev:add object` を使用すれば、新しいオブジェクトをスキャフォルドできます。名前、フィールド、リレーションシップの設定をガイドしてくれます。 [アーキテクチャ → エンティティのスキャフォールディング](/l/ja/developers/extend/apps/getting-started/scaffolding) を参照してください。
 

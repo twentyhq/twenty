@@ -9,6 +9,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
@@ -18,7 +19,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconLayoutSidebarRightExpand } from 'twenty-ui/icon';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { CommandMenuItemAvailabilityType } from '~/generated-metadata/graphql';
 
 const StyledDropdownMenuContainer = styled.div`
@@ -34,6 +35,8 @@ const StyledDropdownMenuContainer = styled.div`
 export const RecordIndexCommandMenuDropdown = () => {
   const { t } = useLingui();
   const { commandMenuItems } = useContext(CommandMenuContext);
+  const workspaceSurface = useWorkspaceSurface();
+  const shouldShowMoreActions = workspaceSurface.type === 'main';
 
   const recordIndexCommandMenuItems = commandMenuItems.filter(
     (item) =>
@@ -57,7 +60,7 @@ export const RecordIndexCommandMenuDropdown = () => {
 
   const selectedItemIdArray = [
     ...recordIndexCommandMenuItems.map((item) => item.id),
-    'more-actions',
+    ...(shouldShowMoreActions ? ['more-actions'] : []),
   ];
 
   const selectedItemId = useAtomComponentStateValue(
@@ -70,7 +73,6 @@ export const RecordIndexCommandMenuDropdown = () => {
       dropdownId={dropdownId}
       data-select-disable
       dropdownPlacement="bottom-start"
-      dropdownStrategy="absolute"
       dropdownOffset={{
         x: recordIndexCommandMenuDropdownPosition.x ?? 0,
         y: recordIndexCommandMenuDropdownPosition.y ?? 0,
@@ -89,24 +91,26 @@ export const RecordIndexCommandMenuDropdown = () => {
                 {recordIndexCommandMenuItems.map((item) => (
                   <CommandMenuItemRenderer item={item} key={item.id} />
                 ))}
-                <SelectableListItem
-                  itemId="more-actions"
-                  key="more-actions"
-                  onEnter={() => {
-                    closeDropdown(dropdownId);
-                    openSidePanelMenu();
-                  }}
-                >
-                  <MenuItem
-                    LeftIcon={IconLayoutSidebarRightExpand}
-                    onClick={() => {
+                {shouldShowMoreActions && (
+                  <SelectableListItem
+                    itemId="more-actions"
+                    key="more-actions"
+                    onEnter={() => {
                       closeDropdown(dropdownId);
                       openSidePanelMenu();
                     }}
-                    focused={selectedItemId === 'more-actions'}
-                    text={t`More actions`}
-                  />
-                </SelectableListItem>
+                  >
+                    <MenuItem
+                      LeftIcon={IconLayoutSidebarRightExpand}
+                      onClick={() => {
+                        closeDropdown(dropdownId);
+                        openSidePanelMenu();
+                      }}
+                      focused={selectedItemId === 'more-actions'}
+                      text={t`More actions`}
+                    />
+                  </SelectableListItem>
+                )}
               </SelectableList>
             </DropdownMenuItemsContainer>
           </StyledDropdownMenuContainer>

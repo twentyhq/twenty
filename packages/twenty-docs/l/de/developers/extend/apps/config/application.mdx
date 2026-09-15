@@ -37,6 +37,7 @@ Notizen:
 * Pre-Installations-, Post-Installations- und Deinstallationsfunktionen werden während des Manifest-Builds automatisch erkannt — Sie müssen sie in `defineApplication()` nicht referenzieren.
 * Die explizite Übergabe von `defaultRoleUniversalIdentifier` wird für die Abwärtskompatibilität weiterhin unterstützt, ist jedoch zugunsten von `defineApplicationRole()` veraltet.
 * `serverVariables` sind instanzbezogene Konfigurationen und Geheimnisse (z. B. API-Schlüssel). Im Gegensatz zu `applicationVariables` haben sie im Manifest keinen Wert definiert – die Workspace-Operatorin bzw. der Workspace-Operator trägt sie in den App-Einstellungen ein, und sie werden erst dann in Logikfunktionen eingespeist, wenn sie gesetzt sind.
+* Beide Arten von Variablen akzeptieren `isDeprecated: true`. Verwenden Sie dies, um eine Variable außer Betrieb zu nehmen, anstatt sie zu löschen: Wenn der Schlüssel deklariert bleibt, wird der gespeicherte Wert beibehalten (beim Löschen wird der vom Operator eingegebene Wert zerstört), und die Variable wird weiterhin injiziert, sodass Ihr Code darauf zurückfallen kann — `process.env.NEW_API_KEY ?? process.env.API_KEY`. Eine veraltete Variable verschwindet aus den App-Einstellungen, sobald sie keinen Wert mehr hat, und wird niemals bei der Konfigurationsprüfung der App berücksichtigt, sodass `isDeprecated` gegenüber `isRequired` Vorrang hat.
 * Um eine benutzerdefinierte Konfigurationsoberfläche im Tab **Settings** der App anzuzeigen (anstelle des standardmäßigen Variablenkonfigurationsbereichs), deklarieren Sie eine Front-Komponente mit [`defineSettingsFrontComponent()`](/l/de/developers/extend/apps/layout/front-components#custom-settings-component) in einer eigenen Datei. Pro App ist nur eine zulässig. Systemverwaltete Bereiche (Auto-Upgrade, App-URL, Verbindungen) bleiben immer sichtbar.
 
 ## Variablentypen
@@ -96,7 +97,7 @@ Das Gleiche gilt für Frontend-Komponenten, die Werte über `getApplicationVaria
 
 Die mit [`defineApplicationRole()`](/l/de/developers/extend/apps/config/roles) deklarierte Rolle steuert, worauf die Logikfunktionen und Frontend-Komponenten der App zugreifen können:
 
-* Das zur Laufzeit als `TWENTY_APP_ACCESS_TOKEN` injizierte Token wird aus dieser Rolle abgeleitet.
+* Die zur Laufzeit in Ihre Logikfunktionen injizierten Token werden aus dieser Rolle abgeleitet. Ein Aufruf, der als Person agiert, wird zusätzlich durch die Möglichkeiten dieser Person eingeschränkt und kann daher niemals eine der beiden Berechtigungen überschreiten. Siehe [Wessen Zugriff ein Aufruf verwendet](/l/de/developers/extend/apps/logic/logic-functions#whose-access-a-call-uses).
 * Der typisierte API-Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
 * Befolgen Sie das Least-Privilege-Prinzip: Deklarieren Sie nur die Berechtigungen, die Ihre Funktionen benötigen.
 

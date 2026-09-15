@@ -28,7 +28,7 @@ export class UpsertViewWidgetViewSettingsInput {
   @Field(() => ViewType, {
     nullable: true,
     description:
-      'The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, CALENDAR_WIDGET) are allowed.',
+      'The layout type of the widget view. Only widget view types (TABLE_WIDGET, KANBAN_WIDGET, LIST_WIDGET, CALENDAR_WIDGET) are allowed.',
   })
   type?: ViewType;
 

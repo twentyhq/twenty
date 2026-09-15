@@ -16,7 +16,6 @@ import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/t
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
 
 import { ALLOWED_ORIGIN } from 'test/integration/graphql/suites/auth/user-sessions/constants/session-origins.constants';
-import { setupDatabaseConfigOverrideForSuite } from 'test/integration/graphql/suites/auth/user-sessions/utils/setup-database-config-override.util';
 
 type UserSessionApiEntry = {
   id: string;
@@ -26,8 +25,6 @@ type UserSessionApiEntry = {
 };
 
 describe('successful user sessions API (integration)', () => {
-  setupDatabaseConfigOverrideForSuite('AUTH_COOKIE_SESSIONS_ENABLED', true);
-
   let currentSessionCookieHeader: string;
   let otherSessionToken: string;
 

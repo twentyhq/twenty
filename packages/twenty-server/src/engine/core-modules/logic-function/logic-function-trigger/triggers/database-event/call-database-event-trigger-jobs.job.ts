@@ -12,11 +12,14 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
+import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
   LogicFunctionTriggerJob,
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
+import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
+import { buildRoleRowAccessPolicySubject } from 'src/engine/record-share/utils/build-role-row-access-policy-subject.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -29,15 +32,29 @@ export class CallDatabaseEventTriggerJobsJob {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationJobEnqueueThrottlerService: ApplicationJobEnqueueThrottlerService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
   @Process(CallDatabaseEventTriggerJobsJob.name)
   async handle(workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>) {
-    const { flatLogicFunctionMaps, flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(
-        workspaceEventBatch.workspaceId,
-        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
-      );
+    const {
+      flatLogicFunctionMaps,
+      flatApplicationMaps,
+      rolesPermissions,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(
+      workspaceEventBatch.workspaceId,
+      [
+        'flatLogicFunctionMaps',
+        'flatApplicationMaps',
+        'rolesPermissions',
+        'flatRowLevelPermissionPredicateMaps',
+        'flatRowLevelPermissionPredicateGroupMaps',
+        'flatFieldMetadataMaps',
+      ],
+    );
 
     const logicFunctionsWithDatabaseEventTrigger = Object.values(
       flatLogicFunctionMaps.byUniversalIdentifier,
@@ -75,6 +92,15 @@ export class CallDatabaseEventTriggerJobsJob {
       );
     }
 
+    if (logicFunctionsByApplicationId.size === 0) {
+      return;
+    }
+
+    const eventRecordShareGate =
+      this.recordAccessPolicyService.buildEventRecordShareGate(
+        workspaceEventBatch,
+      );
+
     for (const [
       applicationId,
       logicFunctions,
@@ -85,13 +111,29 @@ export class CallDatabaseEventTriggerJobsJob {
       );
       const applicationRegistrationId = application?.applicationRegistrationId;
 
-      if (!isDefined(applicationRegistrationId)) {
+      if (!isDefined(application) || !isDefined(applicationRegistrationId)) {
         continue;
       }
 
+      const admittedRecordIds =
+        await eventRecordShareGate.resolveAdmittedRecordIds(
+          buildRoleRowAccessPolicySubject({
+            roleId: application.defaultRoleId ?? undefined,
+            owningApplicationId: application.id,
+            rolesPermissions,
+            flatRowLevelPermissionPredicateMaps,
+            flatRowLevelPermissionPredicateGroupMaps,
+            flatFieldMetadataMaps,
+          }),
+        );
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,
-        workspaceEventBatch,
+        workspaceEventBatch: {
+          ...workspaceEventBatch,
+          events: workspaceEventBatch.events.filter((event) =>
+            admittedRecordIds.has(event.recordId),
+          ),
+        },
       });
 
       if (logicFunctionPayloads.length === 0) {
@@ -118,8 +160,13 @@ export class CallDatabaseEventTriggerJobsJob {
 
       await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
         LogicFunctionTriggerJob.name,
-        logicFunctionPayloads,
-        { retryLimit: 3 },
+        logicFunctionPayloads.map((logicFunctionPayload) => ({
+          data: logicFunctionPayload,
+        })),
+        {
+          retryLimit: 3,
+          backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+        },
       );
     }
   }

@@ -1,6 +1,6 @@
-import { createElementGeometrySnapshotFixture } from '@/__tests__/createElementGeometrySnapshotFixture';
-import { createViewportGeometrySnapshotFixture } from '@/__tests__/createViewportGeometrySnapshotFixture';
-import { createWorkerGeometryStoreStub } from '@/__tests__/createWorkerGeometryStoreStub';
+import { createElementGeometrySnapshotFixture } from '@/testing/createElementGeometrySnapshotFixture';
+import { createViewportGeometrySnapshotFixture } from '@/testing/createViewportGeometrySnapshotFixture';
+import { createWorkerGeometryStoreStub } from '@/testing/createWorkerGeometryStoreStub';
 import { type WorkerGeometryStore } from '@/polyfills/geometry/types/WorkerGeometryStore';
 import { installElementGeometryPolyfill } from '../installElementGeometryPolyfill';
 

@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import React, { useContext, useState } from 'react';
 import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { IconPhotoUp, IconTrash, IconUpload, IconX } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 const StyledContainer = styled.div`
@@ -110,7 +110,7 @@ export const ImageInput = ({
   const onUploadButtonClick = () => {
     hiddenFileInput.current?.click();
   };
-  const [isPictureURLError, setIsPictureURLError] = useState(false);
+  const [isPictureUrlError, setIsPictureUrlError] = useState(false);
 
   const pictureURI = isNonEmptyString(picture)
     ? getImageAbsoluteURI({
@@ -126,12 +126,12 @@ export const ImageInput = ({
         disabled={disabled}
         onClick={onUploadButtonClick}
       >
-        {pictureURI && !isPictureURLError ? (
+        {pictureURI && !isPictureUrlError ? (
           <img
             src={pictureURI}
             alt="profile"
             onError={() => {
-              setIsPictureURLError(true);
+              setIsPictureUrlError(true);
             }}
           />
         ) : (

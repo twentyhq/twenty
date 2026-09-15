@@ -84,6 +84,29 @@ export default defineField({
 **Importações circulares:** ambos os campos de relação fazem referência ao `universalIdentifier` um do outro. Para evitar problemas de importação circular, exporte os IDs dos seus campos como constantes nomeadas de cada arquivo e importe-os no outro. O sistema de build resolve isso em tempo de compilação.
 </Note>
 
+## Relações de junção
+
+Um objeto de junção conecta um registro de origem a um ou mais registros de destino. Por exemplo, `PostCardRecipient` pode conter tanto uma relação `postCard` quanto uma relação `recipient`. No campo `ONE_TO_MANY` do objeto de origem, defina `junctionTargetFieldUniversalIdentifier` como o campo de relação no objeto de junção que aponta para o destino:
+
+```ts
+export default defineField({
+  universalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  type: FieldType.RELATION,
+  name: 'postCardRecipients',
+  label: 'Post Card Recipients',
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
+    junctionTargetFieldUniversalIdentifier: RECIPIENT_FIELD_ID,
+  },
+});
+```
+
+`RECIPIENT_FIELD_ID` deve identificar uma relação `MANY_TO_ONE` ou morph no objeto de junção. Isso informa ao Twenty qual registro relacionado é o destino quando um recurso como [distribuição de atividade da linha do tempo](/l/pt/developers/extend/apps/data/timeline-activity-types#automatic-and-explicit-events) percorre a junção.
+
 ## Relacionando a objetos padrão
 
 Para criar uma relação com um objeto integrado do Twenty (Person, Company, etc.), use `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
@@ -122,14 +145,15 @@ export default defineField({
 
 ## Propriedades de campos de relação
 
-| Propriedade                                       | Obrigatório             | Descrição                                                                                                  |
-| ------------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `type`                                            | Sim                     | Deve ser `FieldType.RELATION`                                                                              |
-| `relationTargetObjectMetadataUniversalIdentifier` | Sim                     | O `universalIdentifier` do objeto de destino                                                               |
-| `relationTargetFieldMetadataUniversalIdentifier`  | Sim                     | O `universalIdentifier` do campo correspondente no objeto de destino                                       |
-| `universalSettings.relationType`                  | Sim                     | `RelationType.MANY_TO_ONE` ou `RelationType.ONE_TO_MANY`                                                   |
-| `universalSettings.onDelete`                      | Apenas para MANY_TO_ONE | O que acontece quando o registro referenciado é excluído: `CASCADE`, `SET_NULL`, `RESTRICT` ou `NO_ACTION` |
-| `universalSettings.joinColumnName`                | Apenas para MANY_TO_ONE | Nome da coluna no banco de dados para a chave estrangeira (por exemplo, `postCardId`)                      |
+| Propriedade                                                | Obrigatório                   | Descrição                                                                                                  |
+| ---------------------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `type`                                                     | Sim                           | Deve ser `FieldType.RELATION`                                                                              |
+| `relationTargetObjectMetadataUniversalIdentifier`          | Sim                           | O `universalIdentifier` do objeto de destino                                                               |
+| `relationTargetFieldMetadataUniversalIdentifier`           | Sim                           | O `universalIdentifier` do campo correspondente no objeto de destino                                       |
+| `universalSettings.relationType`                           | Sim                           | `RelationType.MANY_TO_ONE` ou `RelationType.ONE_TO_MANY`                                                   |
+| `universalSettings.onDelete`                               | Apenas para MANY_TO_ONE       | O que acontece quando o registro referenciado é excluído: `CASCADE`, `SET_NULL`, `RESTRICT` ou `NO_ACTION` |
+| `universalSettings.joinColumnName`                         | Apenas para MANY_TO_ONE       | Nome da coluna no banco de dados para a chave estrangeira (por exemplo, `postCardId`)                      |
+| `universalSettings.junctionTargetFieldUniversalIdentifier` | Somente ONE_TO_MANY de junção | Campo de relação no objeto de junção que aponta para o destino da distribuição                             |
 
 ## Campos de relação inline
 

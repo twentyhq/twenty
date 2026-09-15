@@ -7,4 +7,5 @@ export type ApplicationAccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   applicationId: string;
   userWorkspaceId?: string;
   userId?: string;
+  workspaceDeletionRequestTimestamp?: string;
 };

@@ -144,6 +144,9 @@
                     "group": "How-Tos",
                     "pages": [
                       "user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user",
+                      "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365",
+                      "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace",
+                      "user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider",
                       "user-guide/calendar-emails/how-tos/limit-emails-imported",
                       "user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects",
                       "user-guide/calendar-emails/how-tos/can-i-send-emails-from-twenty",
@@ -427,7 +430,8 @@
                       "developers/extend/apps/data/objects",
                       "developers/extend/apps/data/extending-objects",
                       "developers/extend/apps/data/system-fields",
-                      "developers/extend/apps/data/relations"
+                      "developers/extend/apps/data/relations",
+                      "developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -438,7 +442,9 @@
                       "developers/extend/apps/logic/key-value-store",
                       "developers/extend/apps/logic/background-jobs",
                       "developers/extend/apps/logic/skills-and-agents",
-                      "developers/extend/apps/logic/connections"
+                      "developers/extend/apps/logic/connections",
+                      "developers/extend/apps/logic/messaging-channels",
+                      "developers/extend/apps/logic/credits"
                     ]
                   },
                   {
@@ -459,13 +465,8 @@
                       "developers/extend/apps/operations/cli",
                       "developers/extend/apps/operations/sync-and-recovery",
                       "developers/extend/apps/operations/testing",
+                      "developers/extend/apps/operations/translations",
                       "developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "Translations",
-                    "pages": [
-                      "developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -493,6 +494,64 @@
                   "developers/contribute/capabilities/local-setup",
                   "developers/contribute/commands",
                   "developers/contribute/style-guide"
+                ]
+              },
+              {
+                "group": "UI Library",
+                "pages": [
+                  {
+                    "group": "Guides",
+                    "pages": [
+                      "ui/getting-started",
+                      "ui/theming",
+                      "ui/tokens",
+                      "ui/dark-mode",
+                      "ui/ssr",
+                      "ui/accessibility"
+                    ]
+                  },
+                  {
+                    "group": "Forms",
+                    "pages": [
+                      "ui/components/input/field",
+                      "ui/components/input/input",
+                      "ui/components/input/input-group",
+                      "ui/components/input/textarea",
+                      "ui/components/input/checkbox",
+                      "ui/components/input/radio",
+                      "ui/components/input/radio-group",
+                      "ui/components/input/select",
+                      "ui/components/input/slider",
+                      "ui/components/input/switch"
+                    ]
+                  },
+                  {
+                    "group": "Navigation",
+                    "pages": [
+                      "ui/components/navigation/list-item",
+                      "ui/components/navigation/tabs"
+                    ]
+                  },
+                  {
+                    "group": "Surfaces",
+                    "pages": [
+                      "ui/components/surfaces/alert-dialog",
+                      "ui/components/surfaces/menu",
+                      "ui/components/surfaces/popover"
+                    ]
+                  },
+                  {
+                    "group": "Feedback",
+                    "pages": [
+                      "ui/components/feedback/toast"
+                    ]
+                  },
+                  {
+                    "group": "Typography",
+                    "pages": [
+                      "ui/components/typography/text"
+                    ]
+                  }
                 ]
               }
             ]
@@ -894,7 +953,8 @@
                       "l/fr/developers/extend/apps/data/objects",
                       "l/fr/developers/extend/apps/data/extending-objects",
                       "l/fr/developers/extend/apps/data/system-fields",
-                      "l/fr/developers/extend/apps/data/relations"
+                      "l/fr/developers/extend/apps/data/relations",
+                      "l/fr/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -926,13 +986,8 @@
                       "l/fr/developers/extend/apps/operations/cli",
                       "l/fr/developers/extend/apps/operations/sync-and-recovery",
                       "l/fr/developers/extend/apps/operations/testing",
+                      "l/fr/developers/extend/apps/operations/translations",
                       "l/fr/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "Traductions",
-                    "pages": [
-                      "l/fr/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -1361,7 +1416,8 @@
                       "l/ar/developers/extend/apps/data/objects",
                       "l/ar/developers/extend/apps/data/extending-objects",
                       "l/ar/developers/extend/apps/data/system-fields",
-                      "l/ar/developers/extend/apps/data/relations"
+                      "l/ar/developers/extend/apps/data/relations",
+                      "l/ar/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -1393,13 +1449,8 @@
                       "l/ar/developers/extend/apps/operations/cli",
                       "l/ar/developers/extend/apps/operations/sync-and-recovery",
                       "l/ar/developers/extend/apps/operations/testing",
+                      "l/ar/developers/extend/apps/operations/translations",
                       "l/ar/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "الترجمات",
-                    "pages": [
-                      "l/ar/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -1828,7 +1879,8 @@
                       "l/cs/developers/extend/apps/data/objects",
                       "l/cs/developers/extend/apps/data/extending-objects",
                       "l/cs/developers/extend/apps/data/system-fields",
-                      "l/cs/developers/extend/apps/data/relations"
+                      "l/cs/developers/extend/apps/data/relations",
+                      "l/cs/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -1860,13 +1912,8 @@
                       "l/cs/developers/extend/apps/operations/cli",
                       "l/cs/developers/extend/apps/operations/sync-and-recovery",
                       "l/cs/developers/extend/apps/operations/testing",
+                      "l/cs/developers/extend/apps/operations/translations",
                       "l/cs/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "Překlady",
-                    "pages": [
-                      "l/cs/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -2295,7 +2342,8 @@
                       "l/de/developers/extend/apps/data/objects",
                       "l/de/developers/extend/apps/data/extending-objects",
                       "l/de/developers/extend/apps/data/system-fields",
-                      "l/de/developers/extend/apps/data/relations"
+                      "l/de/developers/extend/apps/data/relations",
+                      "l/de/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -2327,13 +2375,8 @@
                       "l/de/developers/extend/apps/operations/cli",
                       "l/de/developers/extend/apps/operations/sync-and-recovery",
                       "l/de/developers/extend/apps/operations/testing",
+                      "l/de/developers/extend/apps/operations/translations",
                       "l/de/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "Übersetzungen",
-                    "pages": [
-                      "l/de/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -2762,7 +2805,8 @@
                       "l/es/developers/extend/apps/data/objects",
                       "l/es/developers/extend/apps/data/extending-objects",
                       "l/es/developers/extend/apps/data/system-fields",
-                      "l/es/developers/extend/apps/data/relations"
+                      "l/es/developers/extend/apps/data/relations",
+                      "l/es/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -2794,13 +2838,8 @@
                       "l/es/developers/extend/apps/operations/cli",
                       "l/es/developers/extend/apps/operations/sync-and-recovery",
                       "l/es/developers/extend/apps/operations/testing",
+                      "l/es/developers/extend/apps/operations/translations",
                       "l/es/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "Traducciones",
-                    "pages": [
-                      "l/es/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -3229,7 +3268,8 @@
                       "l/it/developers/extend/apps/data/objects",
                       "l/it/developers/extend/apps/data/extending-objects",
                       "l/it/developers/extend/apps/data/system-fields",
-                      "l/it/developers/extend/apps/data/relations"
+                      "l/it/developers/extend/apps/data/relations",
+                      "l/it/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -3261,13 +3301,8 @@
                       "l/it/developers/extend/apps/operations/cli",
                       "l/it/developers/extend/apps/operations/sync-and-recovery",
                       "l/it/developers/extend/apps/operations/testing",
+                      "l/it/developers/extend/apps/operations/translations",
                       "l/it/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "Traduzioni",
-                    "pages": [
-                      "l/it/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -3696,7 +3731,8 @@
                       "l/ja/developers/extend/apps/data/objects",
                       "l/ja/developers/extend/apps/data/extending-objects",
                       "l/ja/developers/extend/apps/data/system-fields",
-                      "l/ja/developers/extend/apps/data/relations"
+                      "l/ja/developers/extend/apps/data/relations",
+                      "l/ja/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -3728,13 +3764,8 @@
                       "l/ja/developers/extend/apps/operations/cli",
                       "l/ja/developers/extend/apps/operations/sync-and-recovery",
                       "l/ja/developers/extend/apps/operations/testing",
+                      "l/ja/developers/extend/apps/operations/translations",
                       "l/ja/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "翻訳",
-                    "pages": [
-                      "l/ja/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -4163,7 +4194,8 @@
                       "l/ko/developers/extend/apps/data/objects",
                       "l/ko/developers/extend/apps/data/extending-objects",
                       "l/ko/developers/extend/apps/data/system-fields",
-                      "l/ko/developers/extend/apps/data/relations"
+                      "l/ko/developers/extend/apps/data/relations",
+                      "l/ko/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -4195,13 +4227,8 @@
                       "l/ko/developers/extend/apps/operations/cli",
                       "l/ko/developers/extend/apps/operations/sync-and-recovery",
                       "l/ko/developers/extend/apps/operations/testing",
+                      "l/ko/developers/extend/apps/operations/translations",
                       "l/ko/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "번역",
-                    "pages": [
-                      "l/ko/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -4630,7 +4657,8 @@
                       "l/pt/developers/extend/apps/data/objects",
                       "l/pt/developers/extend/apps/data/extending-objects",
                       "l/pt/developers/extend/apps/data/system-fields",
-                      "l/pt/developers/extend/apps/data/relations"
+                      "l/pt/developers/extend/apps/data/relations",
+                      "l/pt/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -4639,6 +4667,7 @@
                       "l/pt/developers/extend/apps/logic/overview",
                       "l/pt/developers/extend/apps/logic/logic-functions",
                       "l/pt/developers/extend/apps/logic/key-value-store",
+                      "l/pt/developers/extend/apps/logic/background-jobs",
                       "l/pt/developers/extend/apps/logic/skills-and-agents",
                       "l/pt/developers/extend/apps/logic/connections"
                     ]
@@ -4661,13 +4690,8 @@
                       "l/pt/developers/extend/apps/operations/cli",
                       "l/pt/developers/extend/apps/operations/sync-and-recovery",
                       "l/pt/developers/extend/apps/operations/testing",
+                      "l/pt/developers/extend/apps/operations/translations",
                       "l/pt/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "Traduções",
-                    "pages": [
-                      "l/pt/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -5096,7 +5120,8 @@
                       "l/ro/developers/extend/apps/data/objects",
                       "l/ro/developers/extend/apps/data/extending-objects",
                       "l/ro/developers/extend/apps/data/system-fields",
-                      "l/ro/developers/extend/apps/data/relations"
+                      "l/ro/developers/extend/apps/data/relations",
+                      "l/ro/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -5128,13 +5153,8 @@
                       "l/ro/developers/extend/apps/operations/cli",
                       "l/ro/developers/extend/apps/operations/sync-and-recovery",
                       "l/ro/developers/extend/apps/operations/testing",
+                      "l/ro/developers/extend/apps/operations/translations",
                       "l/ro/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "Traduceri",
-                    "pages": [
-                      "l/ro/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -5484,13 +5504,27 @@
                       "l/ru/user-guide/settings/capabilities/member-management",
                       "l/ru/user-guide/settings/capabilities/profile-settings",
                       "l/ru/user-guide/settings/capabilities/experience-settings",
-                      "l/ru/user-guide/settings/capabilities/domains-settings"
+                      "l/ru/user-guide/settings/capabilities/domains-settings",
+                      "l/ru/user-guide/settings/capabilities/community-settings"
                     ]
                   },
                   {
                     "group": "Инструкции",
                     "pages": [
                       "l/ru/user-guide/settings/how-tos/settings-faq"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Юридическая информация",
+                "icon": "book",
+                "pages": [
+                  "l/ru/user-guide/legal/overview",
+                  {
+                    "group": "Инструкции",
+                    "pages": [
+                      "l/ru/user-guide/legal/how-tos/legal-faq"
                     ]
                   }
                 ]
@@ -5521,6 +5555,18 @@
                     ]
                   },
                   {
+                    "group": "Обучение",
+                    "pages": [
+                      "l/ru/developers/extend/apps/tutorials/document-generator/overview",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/data-model",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/generating-documents",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/http-routes",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/building-the-ui",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/ai-agent",
+                      "l/ru/developers/extend/apps/tutorials/document-generator/publishing"
+                    ]
+                  },
+                  {
                     "group": "Конфигурация",
                     "pages": [
                       "l/ru/developers/extend/apps/config/overview",
@@ -5536,7 +5582,9 @@
                       "l/ru/developers/extend/apps/data/overview",
                       "l/ru/developers/extend/apps/data/objects",
                       "l/ru/developers/extend/apps/data/extending-objects",
-                      "l/ru/developers/extend/apps/data/relations"
+                      "l/ru/developers/extend/apps/data/system-fields",
+                      "l/ru/developers/extend/apps/data/relations",
+                      "l/ru/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -5545,6 +5593,7 @@
                       "l/ru/developers/extend/apps/logic/overview",
                       "l/ru/developers/extend/apps/logic/logic-functions",
                       "l/ru/developers/extend/apps/logic/key-value-store",
+                      "l/ru/developers/extend/apps/logic/background-jobs",
                       "l/ru/developers/extend/apps/logic/skills-and-agents",
                       "l/ru/developers/extend/apps/logic/connections"
                     ]
@@ -5567,6 +5616,7 @@
                       "l/ru/developers/extend/apps/operations/cli",
                       "l/ru/developers/extend/apps/operations/sync-and-recovery",
                       "l/ru/developers/extend/apps/operations/testing",
+                      "l/ru/developers/extend/apps/operations/translations",
                       "l/ru/developers/extend/apps/operations/publishing"
                     ]
                   }
@@ -5996,7 +6046,8 @@
                       "l/tr/developers/extend/apps/data/objects",
                       "l/tr/developers/extend/apps/data/extending-objects",
                       "l/tr/developers/extend/apps/data/system-fields",
-                      "l/tr/developers/extend/apps/data/relations"
+                      "l/tr/developers/extend/apps/data/relations",
+                      "l/tr/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -6028,13 +6079,8 @@
                       "l/tr/developers/extend/apps/operations/cli",
                       "l/tr/developers/extend/apps/operations/sync-and-recovery",
                       "l/tr/developers/extend/apps/operations/testing",
+                      "l/tr/developers/extend/apps/operations/translations",
                       "l/tr/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "Çeviriler",
-                    "pages": [
-                      "l/tr/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -6463,7 +6509,8 @@
                       "l/zh/developers/extend/apps/data/objects",
                       "l/zh/developers/extend/apps/data/extending-objects",
                       "l/zh/developers/extend/apps/data/system-fields",
-                      "l/zh/developers/extend/apps/data/relations"
+                      "l/zh/developers/extend/apps/data/relations",
+                      "l/zh/developers/extend/apps/data/timeline-activity-types"
                     ]
                   },
                   {
@@ -6472,6 +6519,7 @@
                       "l/zh/developers/extend/apps/logic/overview",
                       "l/zh/developers/extend/apps/logic/logic-functions",
                       "l/zh/developers/extend/apps/logic/key-value-store",
+                      "l/zh/developers/extend/apps/logic/background-jobs",
                       "l/zh/developers/extend/apps/logic/skills-and-agents",
                       "l/zh/developers/extend/apps/logic/connections"
                     ]
@@ -6494,13 +6542,8 @@
                       "l/zh/developers/extend/apps/operations/cli",
                       "l/zh/developers/extend/apps/operations/sync-and-recovery",
                       "l/zh/developers/extend/apps/operations/testing",
+                      "l/zh/developers/extend/apps/operations/translations",
                       "l/zh/developers/extend/apps/operations/publishing"
-                    ]
-                  },
-                  {
-                    "group": "翻译",
-                    "pages": [
-                      "l/zh/developers/extend/apps/translations/overview"
                     ]
                   }
                 ]
@@ -6544,6 +6587,42 @@
     }
   },
   "redirects": [
+    {
+      "source": "/twenty-ui/input/checkbox",
+      "destination": "/ui/components/input/checkbox"
+    },
+    {
+      "source": "/twenty-ui/input/radio",
+      "destination": "/ui/components/input/radio"
+    },
+    {
+      "source": "/twenty-ui/input/select",
+      "destination": "/ui/components/input/select"
+    },
+    {
+      "source": "/twenty-ui/input/text",
+      "destination": "/ui/components/input/input"
+    },
+    {
+      "source": "/twenty-ui/input/toggle",
+      "destination": "/ui/components/input/switch"
+    },
+    {
+      "source": "/twenty-ui/navigation/menu-item",
+      "destination": "/ui/components/navigation/list-item"
+    },
+    {
+      "source": "/twenty-ui",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
+    {
+      "source": "/l/:language/twenty-ui/:slug*",
+      "destination": "/ui/getting-started"
+    },
     {
       "source": "/developers/extend/apps/getting-started",
       "destination": "/developers/extend/apps/getting-started/quick-start"
@@ -6595,6 +6674,14 @@
     {
       "source": "/developers/extend/apps/layout/views-and-pages",
       "destination": "/developers/extend/apps/layout/overview"
+    },
+    {
+      "source": "/developers/extend/apps/translations/overview",
+      "destination": "/developers/extend/apps/operations/translations"
+    },
+    {
+      "source": "/l/:language/developers/extend/apps/translations/overview",
+      "destination": "/l/:language/developers/extend/apps/operations/translations"
     },
     {
       "source": "/developers/extend/capabilities/api",

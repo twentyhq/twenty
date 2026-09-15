@@ -58,13 +58,23 @@ const convertChartFilterToUniversalFilter = ({
   return {
     ...filter,
     recordFilters: filter.recordFilters?.map(
-      ({ fieldMetadataId, ...rest }) => ({
+      ({ fieldMetadataId, relationTargetFieldMetadataId, ...rest }) => ({
         ...rest,
         fieldMetadataUniversalIdentifier: getFieldMetadataUniversalIdentifier({
           fieldMetadataId,
           fieldMetadataUniversalIdentifierById,
           shouldThrowOnMissingIdentifier: false,
         }),
+        ...(isDefined(relationTargetFieldMetadataId)
+          ? {
+              relationTargetFieldMetadataUniversalIdentifier:
+                getFieldMetadataUniversalIdentifier({
+                  fieldMetadataId: relationTargetFieldMetadataId,
+                  fieldMetadataUniversalIdentifierById,
+                  shouldThrowOnMissingIdentifier: false,
+                }),
+            }
+          : {}),
       }),
     ),
   };
@@ -304,7 +314,11 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     }
 
     case WidgetConfigurationType.FRONT_COMPONENT: {
-      const { frontComponentId, configurationType } = configuration;
+      const {
+        frontComponentId,
+        configurationType,
+        headerCommandMenuItemUniversalIdentifiers,
+      } = configuration;
 
       const frontComponentUniversalIdentifier: string | null =
         frontComponentUniversalIdentifierById[frontComponentId] ?? null;
@@ -322,6 +336,23 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       return {
         configurationType,
         frontComponentUniversalIdentifier,
+        headerCommandMenuItemUniversalIdentifiers,
+      };
+    }
+
+    case WidgetConfigurationType.FORM_FIELD: {
+      const { fieldMetadataId, configurationType } = configuration;
+
+      const fieldMetadataUniversalIdentifier =
+        getFieldMetadataUniversalIdentifier({
+          fieldMetadataId,
+          fieldMetadataUniversalIdentifierById,
+          shouldThrowOnMissingIdentifier,
+        });
+
+      return {
+        configurationType,
+        fieldMetadataId: fieldMetadataUniversalIdentifier ?? fieldMetadataId,
       };
     }
 
@@ -332,6 +363,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
         configurationType,
         viewId,
         nestedRelationFieldMetadataId,
+        isUIEditable,
       } = configuration;
 
       const fieldMetadataUniversalIdentifier =
@@ -379,6 +411,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
                 nestedRelationFieldMetadataUniversalIdentifier,
             }
           : {}),
+        ...(isDefined(isUIEditable) ? { isUIEditable } : {}),
       };
     }
 

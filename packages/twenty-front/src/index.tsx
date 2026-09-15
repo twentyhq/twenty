@@ -2,7 +2,6 @@ import ReactDOM from 'react-dom/client';
 
 import { App } from '@/app/components/App';
 import '@/app/utils/setupMonacoEnvironment';
-import { migrateTokenPairCookieToLocalStorage } from '@/auth/utils/migrateTokenPairCookieToLocalStorage';
 import { hydrateMetadataStore } from '@/metadata-store/storage/metadataStoreStorage';
 import '@fontsource/dm-mono/400.css';
 import '@fontsource/dm-mono/500.css';
@@ -15,10 +14,6 @@ import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
 import './index.css';
-
-// TODO: REMOVE this after 2026-12-12 — temporary migration of tokenPair from the
-// legacy cookie to localStorage (legacy cookie has a 180-day expiry).
-migrateTokenPairCookieToLocalStorage();
 
 const renderApp = () => {
   const root = ReactDOM.createRoot(

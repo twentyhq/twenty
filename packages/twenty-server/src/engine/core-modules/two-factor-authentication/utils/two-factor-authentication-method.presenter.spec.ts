@@ -108,7 +108,6 @@ describe('buildTwoFactorAuthenticationMethodSummary', () => {
       strategy: TwoFactorAuthenticationStrategy.TOTP,
     });
 
-    // Ensure other fields are not included
     expect(result![0]).not.toHaveProperty('secret');
     expect(result![0]).not.toHaveProperty('userWorkspaceId');
     expect(result![0]).not.toHaveProperty('userWorkspace');

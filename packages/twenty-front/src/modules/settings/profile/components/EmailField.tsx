@@ -8,8 +8,8 @@ import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { Button } from 'twenty-ui/input';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -148,7 +148,7 @@ export const EmailField = () => {
             {shouldShowWorkspaceLimitTooltip && (
               <AppTooltip
                 anchorSelect={`#${EMAIL_EDIT_DISABLED_TOOLTIP_ANCHOR_ID}`}
-                content={t`You can't change your email because you belong to 2 or more workspaces.`}
+                title={t`You can't change your email because you belong to 2 or more workspaces.`}
                 delay={TooltipDelay.noDelay}
                 place="top"
               />

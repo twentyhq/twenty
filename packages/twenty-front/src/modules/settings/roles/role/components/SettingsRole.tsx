@@ -13,6 +13,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -22,7 +23,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconLockOpen, IconSettings, IconUserPlus } from 'twenty-ui/icon';
+import { IconLock, IconSettings, IconUserPlus } from 'twenty-ui/icon';
 
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getDirtyFields } from '~/utils/getDirtyFields';
@@ -34,9 +35,13 @@ type SettingsRoleProps = {
 };
 
 export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
+  const tabsComponentInstanceId = useWorkspaceSurfaceScopedComponentInstanceId(
+    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
+  );
+
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId,
+    tabsComponentInstanceId,
   );
 
   const navigateSettings = useNavigateSettings();
@@ -79,7 +84,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.PERMISSIONS,
       title: t`Permissions`,
-      Icon: IconLockOpen,
+      Icon: IconLock,
     },
     {
       id: SETTINGS_ROLE_DETAIL_TABS.TABS_IDS.ASSIGNMENT,
@@ -136,12 +141,11 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   return (
     <SettingsPageLayout
       title={<SettingsRoleLabelContainer roleId={roleId} />}
+      pageTitle={settingsDraftRole.label}
       secondaryBar={
         <SettingsTabBar
           tabs={tabs}
-          componentInstanceId={
-            SETTINGS_ROLE_DETAIL_TABS.COMPONENT_INSTANCE_ID + '-' + roleId
-          }
+          componentInstanceId={tabsComponentInstanceId}
         />
       }
       links={[

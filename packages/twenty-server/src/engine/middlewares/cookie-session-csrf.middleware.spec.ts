@@ -11,7 +11,6 @@ describe('CookieSessionCsrfMiddleware', () => {
   let middleware: CookieSessionCsrfMiddleware;
 
   const defaultConfig: Record<string, unknown> = {
-    AUTH_COOKIE_SESSIONS_ENABLED: true,
     SERVER_URL: 'https://crm.example.com',
     FRONTEND_URL: 'https://front.example.com',
     AUTH_COOKIE_ALLOWED_ORIGINS: '',
@@ -204,21 +203,6 @@ describe('CookieSessionCsrfMiddleware', () => {
     expect(response.json).toHaveBeenCalledWith(
       expect.objectContaining({ error: 'CSRF_ORIGIN_MISMATCH' }),
     );
-  });
-
-  it('should skip when cookie sessions are disabled', () => {
-    mockConfig.AUTH_COOKIE_SESSIONS_ENABLED = false;
-
-    const request = buildRequest({
-      headers: {
-        cookie: '__Host-twenty-session=sess_token',
-        origin: 'https://evil.example.com',
-      },
-    });
-
-    middleware.use(request, buildResponse(), next);
-
-    expect(next).toHaveBeenCalled();
   });
 
   it('should still guard a cookie request carrying a non-Bearer authorization header', () => {

@@ -2,7 +2,7 @@ import { promises as fs } from 'fs';
 import { createHash } from 'crypto';
 
 export const handler = async (event) => {
-  const { code, params, env, handlerName } = event;
+  const { code, params, context, env, handlerName } = event;
 
   // oxlint-disable-next-line no-undef
   const oldProcessEnv = { ...process.env };
@@ -19,7 +19,7 @@ export const handler = async (event) => {
       .split('.')
       .reduce((obj, key) => obj[key], mainFile);
 
-    return await handlerFn(params);
+    return await handlerFn(params, context);
   } finally {
     // oxlint-disable-next-line no-undef
     process.env = oldProcessEnv;

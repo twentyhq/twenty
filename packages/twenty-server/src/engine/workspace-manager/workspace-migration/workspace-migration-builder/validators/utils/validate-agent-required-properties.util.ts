@@ -16,7 +16,6 @@ export const validateAgentRequiredProperties = ({
 }: ValidateAgentRequiredPropertiesArgs): FlatEntityValidationError<AiExceptionCode>[] => {
   const errors: FlatEntityValidationError<AiExceptionCode>[] = [];
 
-  // For updates, only validate properties that are being changed
   const isUpdate = updatedProperties !== undefined;
   const shouldValidateLabel = !isUpdate || 'label' in updatedProperties;
   const shouldValidatePrompt = !isUpdate || 'prompt' in updatedProperties;

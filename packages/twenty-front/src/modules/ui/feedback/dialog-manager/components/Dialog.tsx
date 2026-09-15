@@ -10,19 +10,19 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledDialogOverlayBase = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.overlayPrimary};
   display: flex;
-  height: 100dvh;
+  height: calc(100dvh / var(--t-zoom, 1));
   justify-content: center;
   left: 0;
   position: fixed;
   top: 0;
-  width: 100vw;
+  width: calc(100vw / var(--t-zoom, 1));
   z-index: ${RootStackingContextZIndices.Dialog};
 `;
 const StyledDialogOverlay = motion.create(StyledDialogOverlayBase);

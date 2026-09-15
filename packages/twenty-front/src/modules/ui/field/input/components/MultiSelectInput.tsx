@@ -1,4 +1,5 @@
-import { useMemo, useRef, useState } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useRef, useState } from 'react';
 import { Key } from 'ts-key-enum';
 
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
@@ -17,8 +18,11 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
-import { MenuItem, MenuItemMultiSelectTag } from 'twenty-ui/navigation';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import {
+  MenuItem,
+  MenuItemMultiSelectTag,
+} from 'twenty-ui/primitives/navigation';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
@@ -59,12 +63,14 @@ export const MultiSelectInput = ({
     values?.includes(option.value),
   );
 
-  const filteredOptionsInDropDown = useMemo(() => {
-    const searchTerm = normalizeSearchText(searchFilter);
+  const filterOptions = (searchText: string) => {
+    const searchTerm = normalizeSearchText(searchText);
     return options.filter((option) => {
       return normalizeSearchText(option.label).includes(searchTerm);
     });
-  }, [options, searchFilter]);
+  };
+
+  const filteredOptionsInDropDown = filterOptions(searchFilter);
 
   const formatNewSelectedOptions = (value: string) => {
     const selectedOptionsValues = selectedOptions.map(
@@ -113,6 +119,7 @@ export const MultiSelectInput = ({
       selectableListInstanceId={selectableListComponentInstanceId}
       selectableItemIdArray={optionIds}
       focusId={focusId}
+      shouldPreselectFirstItem={isNonEmptyString(searchFilter)}
     >
       <DropdownContent
         ref={containerRef}

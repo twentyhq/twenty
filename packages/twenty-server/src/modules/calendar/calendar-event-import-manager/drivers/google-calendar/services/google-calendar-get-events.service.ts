@@ -128,7 +128,7 @@ export class GoogleCalendarGetEventsService {
           '',
       };
 
-      throw parseGoogleCalendarError(googleCalendarError);
+      throw parseGoogleCalendarError(googleCalendarError, { cause: error });
     }
   }
 }

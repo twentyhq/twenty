@@ -8,7 +8,7 @@ SDK предоставляет программные API, которые поз
 
 ## Использование пакетов npm
 
-Вы можете устанавливать и использовать любые пакеты npm в своём приложении. И логические функции, и компоненты фронтенда собираются с помощью [esbuild](https://esbuild.github.io/), который встраивает все зависимости в выходной файл — каталоги `node_modules` во время выполнения не нужны.
+Вы можете устанавливать и использовать любые пакеты npm в своём приложении. И логические функции, и компоненты фронтенда собираются с помощью [esbuild](https://esbuild.github.io/), который встраивает их зависимости в выходной файл — каталоги `node_modules` во время выполнения не нужны.
 
 ### Установка пакета
 
@@ -56,13 +56,15 @@ export default defineFrontComponent({
 
 ### Как работает бандлинг
 
-Этап сборки использует esbuild для создания одного самодостаточного файла на каждую логическую функцию и на каждый компонент фронтенда. Все импортированные пакеты встроены в бандл.
+Этап сборки использует esbuild для создания одного самодостаточного файла на каждую логическую функцию и на каждый компонент фронтенда. Импортированные пакеты встраиваются в бандл, за исключением перечисленных ниже.
 
 **Логические функции** выполняются в среде Node.js. Встроенные модули Node (`fs`, `path`, `crypto`, `http` и т. д.) доступны и не требуют установки.
 
-**Компоненты фронтенда** выполняются в Web Worker. Встроенные модули Node **недоступны** — доступны только браузерные API и пакеты npm, работающие в браузерной среде.
+**Компоненты фронтенда** выполняются в Web Worker. Встроенные модули Node **недоступны** — доступны только пакеты npm, работающие в браузерной среде. Обратите внимание, что в песочнице реализован *частичный* DOM, поэтому пакет может успешно собраться, но все равно завершиться с ошибкой во время выполнения; см. раздел [Текущие ограничения](/l/ru/developers/extend/apps/layout/front-components#current-limitations).
 
 В обеих средах доступны как предварительно предоставленные модули `twenty-client-sdk/core` и `twenty-client-sdk/metadata` — они не включаются в бандл, а подставляются сервером во время выполнения.
+
+Фронтенд‑компоненты также могут совместно использовать зависимости через [общий бандл зависимостей](/l/ru/developers/extend/apps/layout/front-components#sharing-dependencies-across-front-components). Пакеты, перечисленные в поле `frontComponentSharedDependencies` файла package.json приложения, один раз собираются в отдельный файл и загружаются из него во время выполнения вместо внедрения в каждый компонент, поэтому компонент, который импортирует только общие пакеты, практически не содержит собственного кода зависимостей.
 
 ## Настройка
 
@@ -78,6 +80,13 @@ yarn add -D vitest vite-tsconfig-paths
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
 
+const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
+const TWENTY_API_KEY = process.env.TWENTY_API_KEY ?? '<the pre-seeded local dev key>';
+
+// Make env vars available to globalSetup (test.env only applies to workers)
+process.env.TWENTY_API_URL = TWENTY_API_URL;
+process.env.TWENTY_API_KEY = TWENTY_API_KEY;
+
 export default defineConfig({
   plugins: [
     tsconfigPaths({
@@ -88,66 +97,74 @@ export default defineConfig({
   test: {
     testTimeout: 120_000,
     hookTimeout: 120_000,
+    fileParallelism: false,
     include: ['src/**/*.integration-test.ts'],
-    setupFiles: ['src/__tests__/setup-test.ts'],
+    globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
-      TWENTY_API_URL: 'http://localhost:2020',
-      TWENTY_API_KEY: 'your-api-key',
+      TWENTY_API_URL,
+      TWENTY_API_KEY,
     },
   },
 });
 ```
 
-Создайте файл инициализации, который проверяет доступность сервера перед запуском тестов:
+Создайте глобальный файл настройки, который проверяет, что сервер доступен, записывает тестовую конфигурацию для SDK (`~/.twenty/config.test.json`) и выполняет синхронизацию приложения перед запуском тестов:
 
-```ts src/__tests__/setup-test.ts
+```ts src/__tests__/global-setup.ts
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import { beforeAll } from 'vitest';
 
-const TWENTY_API_URL = process.env.TWENTY_API_URL ?? 'http://localhost:2020';
-const TEST_CONFIG_DIR = path.join(os.tmpdir(), '.twenty-sdk-test');
+import { appDevOnce, appUninstall } from 'twenty-sdk/cli';
 
-beforeAll(async () => {
+const APP_PATH = process.cwd();
+const CONFIG_DIR = path.join(os.homedir(), '.twenty');
+
+export async function setup() {
+  const apiUrl = process.env.TWENTY_API_URL!;
+  const apiKey = process.env.TWENTY_API_KEY!;
+
   // Verify the server is running
-  const response = await fetch(`${TWENTY_API_URL}/healthz`);
-
+  const response = await fetch(`${apiUrl}/healthz`);
   if (!response.ok) {
-    throw new Error(
-      `Twenty server is not reachable at ${TWENTY_API_URL}. ` +
-        'Start the server before running integration tests.',
-    );
+    throw new Error(`Twenty server is not reachable at ${apiUrl}.`);
   }
 
-  // Write a temporary config for the SDK
-  fs.mkdirSync(TEST_CONFIG_DIR, { recursive: true });
-
+  // Write the SDK's test config (the CLI reads config.test.json when NODE_ENV=test)
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(
-    path.join(TEST_CONFIG_DIR, 'config.json'),
+    path.join(CONFIG_DIR, 'config.test.json'),
     JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
-        },
-      },
+      remotes: { local: { apiUrl, apiKey } },
       defaultRemote: 'local',
     }, null, 2),
   );
-});
+
+  // Start from a clean slate, then sync the app
+  await appUninstall({ appPath: APP_PATH }).catch(() => {});
+
+  const result = await appDevOnce({ appPath: APP_PATH });
+  if (!result.success) {
+    throw new Error(`Dev sync failed: ${result.error?.message}`);
+  }
+}
+
+export async function teardown() {
+  await appUninstall({ appPath: APP_PATH });
+}
 ```
 
 ## Программные API SDK
 
 Подпуть `twenty-sdk/cli` экспортирует функции, которые можно вызывать напрямую из тестового кода:
 
-| Функция        | Описание                                                   |
-| -------------- | ---------------------------------------------------------- |
-| `appBuild`     | Собрать приложение и при необходимости упаковать tar-архив |
-| `appDeploy`    | Загрузить tar-архив на сервер                              |
-| `appInstall`   | Установить приложение в активное рабочее пространство      |
-| `appUninstall` | Удалить приложение из активного рабочего пространства      |
+| Функция        | Описание                                                                          |
+| -------------- | --------------------------------------------------------------------------------- |
+| `appBuild`     | Собрать приложение и при необходимости упаковать tar-архив                        |
+| `appDeploy`    | Загрузить tar-архив на сервер                                                     |
+| `appDevOnce`   | Один раз собрать и синхронизировать приложение (то же, что и `yarn twenty apply`) |
+| `appInstall`   | Установить приложение в активное рабочее пространство                             |
+| `appUninstall` | Удалить приложение из активного рабочего пространства                             |
 
 Каждая функция возвращает объект результата с `success: boolean` и либо `data`, либо `error`.
 
@@ -238,64 +255,10 @@ yarn test:watch
 yarn twenty dev:typecheck
 ```
 
-Это запускает `tsc --noEmit` и сообщает о любых ошибках типов.
+Это запускает `tsc --noEmit` для `tsconfig.json` вашего приложения и сообщает о любых ошибках типов. Сгенерированные с помощью скэффолдера приложения также поставляются со скриптом `yarn typecheck`, который проверяет и тестовые файлы (`tsconfig.spec.json`).
 
 ## CI с GitHub Actions
 
-Скэффолдер генерирует готовый к использованию рабочий процесс GitHub Actions в `.github/workflows/ci.yml`. Он автоматически запускает ваши интеграционные тесты при каждом пуше в `main` и в pull request'ах.
+Скэффолдер генерирует готовый к использованию рабочий процесс в `.github/workflows/ci.yml`. При каждом пуше в `main` и каждом pull request он запускает эфемерный сервер Twenty в раннере (через экшен `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test`), затем выполняет `yarn lint`, `yarn typecheck`, `yarn test:unit` и `yarn test` с `TWENTY_API_URL` / `TWENTY_API_KEY`, указывающими на этот сервер. Секреты не требуются, и вы можете зафиксировать версию сервера через переменную окружения `TWENTY_VERSION` в начале рабочего процесса.
 
-Рабочий процесс:
-
-1. Извлекает ваш код
-2. Поднимает временный сервер Twenty с помощью экшена `twentyhq/twenty/.github/actions/spawn-twenty-docker-image`
-3. Устанавливает зависимости с помощью `yarn install --immutable`
-4. Запускает `yarn test` с `TWENTY_API_URL` и `TWENTY_API_KEY`, переданными из выходных данных экшена
-
-```yaml .github/workflows/ci.yml
-name: CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request: {}
-
-env:
-  TWENTY_VERSION: latest
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Spawn Twenty instance
-        id: twenty
-        uses: twentyhq/twenty/.github/actions/spawn-twenty-docker-image@main
-        with:
-          twenty-version: ${{ env.TWENTY_VERSION }}
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: '.nvmrc'
-          cache: 'yarn'
-
-      - name: Install dependencies
-        run: yarn install --immutable
-
-      - name: Run integration tests
-        run: yarn test
-        env:
-          TWENTY_API_URL: ${{ steps.twenty.outputs.server-url }}
-          TWENTY_API_KEY: ${{ steps.twenty.outputs.access-token }}
-```
-
-Вам не нужно настраивать секреты — экшен `spawn-twenty-docker-image` запускает эфемерный сервер Twenty прямо в раннере и выводит данные для подключения. Секрет `GITHUB_TOKEN` предоставляется GitHub автоматически.
-
-Чтобы закрепить конкретную версию Twenty вместо `latest`, измените переменную окружения `TWENTY_VERSION` в начале рабочего процесса.
+См. раздел [Публикация → Автоматизированный CI/CD](/l/ru/developers/extend/apps/operations/publishing#automated-cicd-scaffolded-workflows) для полного пошагового руководства по трем сгенерированным рабочим процессам (`ci.yml`, конвейер деплоя `cd.yml` и `publish.yml` для публикации в npm).

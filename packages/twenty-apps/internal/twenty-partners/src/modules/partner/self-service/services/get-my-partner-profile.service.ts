@@ -1,6 +1,9 @@
 import { type RoutePayload } from 'twenty-sdk/define';
 
-import { PROFILE_OPTIONS, type ProfileOptions } from 'src/modules/partner/self-service/constants/my-profile.constants';
+import {
+  PROFILE_OPTIONS,
+  type ProfileOptions,
+} from 'src/modules/partner/self-service/constants/my-profile.constants';
 import { findMyPartnerProfile } from 'src/modules/partner/self-service/graphql/queries/find-my-partner-profile';
 import {
   mapMyProfilePayload,
@@ -11,7 +14,7 @@ import {
   errorResponse,
   failureResponse,
   resolvePartnerFromRequest,
-} from 'src/modules/partner/self-service/services/resolve-partner-from-request.service';
+} from 'src/modules/shared/http/resolve-partner-from-request.service';
 
 export type MyPartnerProfileResult =
   | { ok: true; profile: MyProfilePayload; options: ProfileOptions }
@@ -32,7 +35,11 @@ export const getMyPartnerProfile = async (
       return errorResponse('NO_PARTNER');
     }
 
-    return { ok: true, profile: mapMyProfilePayload(node), options: PROFILE_OPTIONS };
+    return {
+      ok: true,
+      profile: mapMyProfilePayload(node),
+      options: PROFILE_OPTIONS,
+    };
   } catch (err) {
     return failureResponse('get-my-partner-profile', err);
   }

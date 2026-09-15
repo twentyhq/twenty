@@ -1,1 +1,0 @@
-export const SLACK_ASSISTANT_THINKING_REACTION_EMOJI = 'eyes';

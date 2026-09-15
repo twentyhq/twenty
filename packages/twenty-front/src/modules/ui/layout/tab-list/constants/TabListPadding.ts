@@ -1,1 +1,1 @@
-export const TAB_LIST_LEFT_PADDING = 8;
+export const TAB_LIST_HORIZONTAL_PADDING = 8;

@@ -7,6 +7,7 @@ import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayo
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { isPageLayoutEmpty } from '@/page-layout/utils/isPageLayoutEmpty';
+import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useStore } from 'jotai';
@@ -52,15 +53,10 @@ export const PageLayoutInitializationQueryEffect = ({
         store.set(pageLayoutPersistedComponentCallbackState, layout);
       }
 
-      store.set(pageLayoutDraftComponentCallbackState, {
-        id: layout.id,
-        name: layout.name,
-        type: layout.type,
-        objectMetadataId: layout.objectMetadataId,
-        tabs: layout.tabs,
-        defaultTabToFocusOnMobileAndSidePanelId:
-          layout.defaultTabToFocusOnMobileAndSidePanelId,
-      });
+      store.set(
+        pageLayoutDraftComponentCallbackState,
+        toDraftPageLayout(layout),
+      );
 
       const tabLayouts = convertPageLayoutToTabLayouts(layout);
       store.set(pageLayoutCurrentLayoutsComponentCallbackState, tabLayouts);

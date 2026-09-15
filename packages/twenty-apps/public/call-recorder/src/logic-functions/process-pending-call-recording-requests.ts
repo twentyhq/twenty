@@ -1,7 +1,7 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
-import { PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/pending-call-recording-requests-logic-function-universal-identifier';
+import { PENDING_CALL_RECORDING_REQUESTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { PENDING_CALL_RECORDING_REQUESTS_CRON_PATTERN } from 'src/logic-functions/constants/pending-call-recording-requests-cron-pattern';
 import {
   retryFailedRecallCancellations,
@@ -23,8 +23,10 @@ const processPendingCallRecordingRequestsHandler =
 
     const pendingCallRecordingScheduleResult =
       await scheduleRecallBotsForPendingCallRecordingsSafely(client, now);
-    const failedCancellationResult =
-      await retryFailedRecallCancellationsSafely(client, now);
+    const failedCancellationResult = await retryFailedRecallCancellationsSafely(
+      client,
+      now,
+    );
 
     return {
       pendingCallRecordingScheduleResult,

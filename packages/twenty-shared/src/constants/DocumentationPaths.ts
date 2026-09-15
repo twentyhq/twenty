@@ -34,6 +34,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/data/relations',
   DEVELOPERS_EXTEND_APPS_DATA_SYSTEM_FIELDS:
     '/developers/extend/apps/data/system-fields',
+  DEVELOPERS_EXTEND_APPS_DATA_TIMELINE_ACTIVITY_TYPES:
+    '/developers/extend/apps/data/timeline-activity-types',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_CONCEPTS:
     '/developers/extend/apps/getting-started/concepts',
   DEVELOPERS_EXTEND_APPS_GETTING_STARTED_LOCAL_SERVER:
@@ -61,10 +63,13 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/background-jobs',
   DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
     '/developers/extend/apps/logic/connections',
+  DEVELOPERS_EXTEND_APPS_LOGIC_CREDITS: '/developers/extend/apps/logic/credits',
   DEVELOPERS_EXTEND_APPS_LOGIC_KEY_VALUE_STORE:
     '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
     '/developers/extend/apps/logic/logic-functions',
+  DEVELOPERS_EXTEND_APPS_LOGIC_MESSAGING_CHANNELS:
+    '/developers/extend/apps/logic/messaging-channels',
   DEVELOPERS_EXTEND_APPS_LOGIC_OVERVIEW:
     '/developers/extend/apps/logic/overview',
   DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
@@ -79,8 +84,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/operations/sync-and-recovery',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_TESTING:
     '/developers/extend/apps/operations/testing',
-  DEVELOPERS_EXTEND_APPS_TRANSLATIONS_OVERVIEW:
-    '/developers/extend/apps/translations/overview',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_TRANSLATIONS:
+    '/developers/extend/apps/operations/translations',
   DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_AI_AGENT:
     '/developers/extend/apps/tutorials/document-generator/ai-agent',
   DEVELOPERS_EXTEND_APPS_TUTORIALS_DOCUMENT_GENERATOR_BUILDING_THE_UI:
@@ -122,6 +127,29 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_INTRODUCTION: '/getting-started/introduction',
   GETTING_STARTED_KEY_FEATURES: '/getting-started/key-features',
   GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
+  UI_ACCESSIBILITY: '/ui/accessibility',
+  UI_COMPONENTS_FEEDBACK_TOAST: '/ui/components/feedback/toast',
+  UI_COMPONENTS_INPUT_CHECKBOX: '/ui/components/input/checkbox',
+  UI_COMPONENTS_INPUT_FIELD: '/ui/components/input/field',
+  UI_COMPONENTS_INPUT_INPUT: '/ui/components/input/input',
+  UI_COMPONENTS_INPUT_INPUT_GROUP: '/ui/components/input/input-group',
+  UI_COMPONENTS_INPUT_RADIO: '/ui/components/input/radio',
+  UI_COMPONENTS_INPUT_RADIO_GROUP: '/ui/components/input/radio-group',
+  UI_COMPONENTS_INPUT_SELECT: '/ui/components/input/select',
+  UI_COMPONENTS_INPUT_SLIDER: '/ui/components/input/slider',
+  UI_COMPONENTS_INPUT_SWITCH: '/ui/components/input/switch',
+  UI_COMPONENTS_INPUT_TEXTAREA: '/ui/components/input/textarea',
+  UI_COMPONENTS_NAVIGATION_LIST_ITEM: '/ui/components/navigation/list-item',
+  UI_COMPONENTS_NAVIGATION_TABS: '/ui/components/navigation/tabs',
+  UI_COMPONENTS_SURFACES_ALERT_DIALOG: '/ui/components/surfaces/alert-dialog',
+  UI_COMPONENTS_SURFACES_MENU: '/ui/components/surfaces/menu',
+  UI_COMPONENTS_SURFACES_POPOVER: '/ui/components/surfaces/popover',
+  UI_COMPONENTS_TYPOGRAPHY_TEXT: '/ui/components/typography/text',
+  UI_DARK_MODE: '/ui/dark-mode',
+  UI_GETTING_STARTED: '/ui/getting-started',
+  UI_SSR: '/ui/ssr',
+  UI_THEMING: '/ui/theming',
+  UI_TOKENS: '/ui/tokens',
   USER_GUIDE_AI_CAPABILITIES_AI_AGENTS: '/user-guide/ai/capabilities/ai-agents',
   USER_GUIDE_AI_CAPABILITIES_AI_CHATBOT:
     '/user-guide/ai/capabilities/ai-chatbot',
@@ -148,6 +176,12 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/calendar-emails/how-tos/can-i-track-email-activity-on-all-objects',
   USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_CONNECT_SEVERAL_MAILBOXES_PER_USER:
     '/user-guide/calendar-emails/how-tos/connect-several-mailboxes-per-user',
+  USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_FORWARD_A_SHARED_INBOX_FROM_ANY_MAIL_PROVIDER:
+    '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider',
+  USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_FORWARD_A_SHARED_INBOX_FROM_GOOGLE_WORKSPACE:
+    '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace',
+  USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_FORWARD_A_SHARED_INBOX_FROM_MICROSOFT_365:
+    '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365',
   USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_I_DONT_SEE_EMAILS_ON_RECORDS:
     '/user-guide/calendar-emails/how-tos/i-dont-see-emails-on-records',
   USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_LIMIT_EMAILS_IMPORTED:

@@ -9,16 +9,28 @@ describe('linkPartnerUser', () => {
   const client = { query, mutation } as unknown as CoreApiClient;
 
   // Route each read by the shape of its selection: the cascade query asks for `applications`,
-  // getCompanyPartnerUser for `company`, getPartnerOwner for `partner` only.
+  // getCompanyPartnerUser for `companies`, getPartnerOwner for `partners` only.
   const routeQueries = (opts: {
     cascade: Record<string, unknown>;
     companyOwner?: string | null;
     ownerRecheck?: string | null;
+    companyMissing?: boolean;
+    ownerMissing?: boolean;
   }) => {
     query.mockImplementation((q: Record<string, unknown>) => {
       if ('applications' in q) return Promise.resolve(opts.cascade);
-      if ('company' in q) return Promise.resolve({ company: { id: 'company-1', partnerUserId: opts.companyOwner ?? null } });
-      if ('partner' in q) return Promise.resolve({ partner: { id: 'partner-1', partnerUserId: opts.ownerRecheck ?? null } });
+      if ('companies' in q)
+        return Promise.resolve({
+          companies: opts.companyMissing
+            ? { edges: [] }
+            : { edges: [{ node: { id: 'company-1', partnerUserId: opts.companyOwner ?? null } }] },
+        });
+      if ('partners' in q)
+        return Promise.resolve({
+          partners: opts.ownerMissing
+            ? { edges: [] }
+            : { edges: [{ node: { id: 'partner-1', partnerUserId: opts.ownerRecheck ?? null } }] },
+        });
       return Promise.resolve({});
     });
   };
@@ -32,12 +44,12 @@ describe('linkPartnerUser', () => {
   it('stamps the partner and cascades to persons, company, applications, links, services and content', async () => {
     routeQueries({
       cascade: {
-        partner: {
+        partners: { edges: [{ node: {
           id: 'partner-1',
           companyId: 'company-1',
           partnerUserId: null,
           persons: { edges: [{ node: { id: 'person-1', partnerUserId: null } }, { node: { id: 'person-2', partnerUserId: null } }] },
-        },
+        } }] },
         applications: { edges: [{ node: { id: 'app-1' } }] },
         partnerLinks: { edges: [{ node: { id: 'link-1' } }] },
         partnerServices: { edges: [{ node: { id: 'service-1' } }] },
@@ -69,12 +81,12 @@ describe('linkPartnerUser', () => {
   it('skips persons already linked to a member', async () => {
     routeQueries({
       cascade: {
-        partner: {
+        partners: { edges: [{ node: {
           id: 'partner-1',
           companyId: null,
           partnerUserId: null,
           persons: { edges: [{ node: { id: 'person-1', partnerUserId: 'member-7' } }, { node: { id: 'person-2', partnerUserId: null } }] },
-        },
+        } }] },
         applications: { edges: [] },
         partnerLinks: { edges: [] },
         partnerServices: { edges: [] },
@@ -94,7 +106,7 @@ describe('linkPartnerUser', () => {
     routeQueries({
       companyOwner: 'member-9', // company belongs to another partner's member
       cascade: {
-        partner: { id: 'partner-1', companyId: 'company-1', partnerUserId: null, persons: { edges: [{ node: { id: 'person-1', partnerUserId: null } }] } },
+        partners: { edges: [{ node: { id: 'partner-1', companyId: 'company-1', partnerUserId: null, persons: { edges: [{ node: { id: 'person-1', partnerUserId: null } }] } } }] },
         applications: { edges: [] },
         partnerLinks: { edges: [] },
         partnerServices: { edges: [] },
@@ -114,7 +126,7 @@ describe('linkPartnerUser', () => {
     routeQueries({
       ownerRecheck: 'member-9', // a concurrent onboarding won the claim between read and stamp
       cascade: {
-        partner: { id: 'partner-1', companyId: null, partnerUserId: null, persons: { edges: [{ node: { id: 'person-1', partnerUserId: null } }] } },
+        partners: { edges: [{ node: { id: 'partner-1', companyId: null, partnerUserId: null, persons: { edges: [{ node: { id: 'person-1', partnerUserId: null } }] } } }] },
         applications: { edges: [] },
         partnerLinks: { edges: [] },
         partnerServices: { edges: [] },
@@ -132,7 +144,7 @@ describe('linkPartnerUser', () => {
   it('no-ops when the partner is already linked to the same member', async () => {
     routeQueries({
       cascade: {
-        partner: { id: 'partner-1', companyId: null, partnerUserId: 'member-1', persons: { edges: [] } },
+        partners: { edges: [{ node: { id: 'partner-1', companyId: null, partnerUserId: 'member-1', persons: { edges: [] } } }] },
         applications: { edges: [] },
       },
     });
@@ -144,7 +156,7 @@ describe('linkPartnerUser', () => {
   it('reports partner_already_linked_other when claimed by a different member', async () => {
     routeQueries({
       cascade: {
-        partner: { id: 'partner-1', companyId: null, partnerUserId: 'member-9', persons: { edges: [] } },
+        partners: { edges: [{ node: { id: 'partner-1', companyId: null, partnerUserId: 'member-9', persons: { edges: [] } } }] },
         applications: { edges: [] },
       },
     });
@@ -156,7 +168,7 @@ describe('linkPartnerUser', () => {
   it('throws when a cascade write fails (retry semantics)', async () => {
     routeQueries({
       cascade: {
-        partner: { id: 'partner-1', companyId: null, partnerUserId: null, persons: { edges: [{ node: { id: 'person-1', partnerUserId: null } }] } },
+        partners: { edges: [{ node: { id: 'partner-1', companyId: null, partnerUserId: null, persons: { edges: [{ node: { id: 'person-1', partnerUserId: null } }] } } }] },
         applications: { edges: [] },
         partnerLinks: { edges: [] },
         partnerServices: { edges: [] },
@@ -166,5 +178,40 @@ describe('linkPartnerUser', () => {
     mutation.mockRejectedValueOnce(new Error('boom')); // person stamp fails, before the partner is ever touched
     await expect(linkPartnerUser(client, { partnerId: 'partner-1', memberId: 'member-1' })).rejects.toThrow(/cascade write/);
     expect(mutation).not.toHaveBeenCalledWith(expect.objectContaining({ updatePartner: expect.anything() }));
+  });
+  it('links without throwing when the company and partner rows are absent', async () => {
+    routeQueries({
+      companyMissing: true,
+      ownerMissing: true,
+      cascade: {
+        partners: { edges: [{ node: { id: 'partner-1', companyId: 'company-1', partnerUserId: null, persons: { edges: [] } } }] },
+        applications: { edges: [] },
+        partnerLinks: { edges: [] },
+        partnerServices: { edges: [] },
+        partnerContents: { edges: [] },
+      },
+    });
+
+    const result = await linkPartnerUser(client, { partnerId: 'partner-1', memberId: 'member-1' });
+
+    expect(result).toEqual({ linked: true, partnerId: 'partner-1' });
+    expect(mutation).toHaveBeenCalledWith(expect.objectContaining({ updatePartner: expect.anything() }));
+  });
+  it('runs no cascade write when the cascade read finds no partner row', async () => {
+    routeQueries({
+      cascade: {
+        partners: { edges: [] },
+        applications: { edges: [] },
+        partnerLinks: { edges: [] },
+        partnerServices: { edges: [] },
+        partnerContents: { edges: [] },
+      },
+    });
+
+    const result = await linkPartnerUser(client, { partnerId: 'partner-1', memberId: 'member-1' });
+
+    expect(result).toEqual({ linked: true, partnerId: 'partner-1' });
+    expect(mutation).not.toHaveBeenCalledWith(expect.objectContaining({ updatePerson: expect.anything() }));
+    expect(mutation).not.toHaveBeenCalledWith(expect.objectContaining({ updateCompany: expect.anything() }));
   });
 });
