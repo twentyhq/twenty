@@ -105,7 +105,7 @@ IMPORTANT: The tool schema provides comprehensive field descriptions, examples, 
 
 This is the most efficient way for AI to create workflows as it handles all the complexity in one call.
 
-For a validation report with available variable paths, call validate_workflow after creation.`,
+Call validate_workflow once when the workflow is complete, before activating.`,
   inputSchema: createCompleteWorkflowSchema,
   execute: async (parameters: {
     name: string;

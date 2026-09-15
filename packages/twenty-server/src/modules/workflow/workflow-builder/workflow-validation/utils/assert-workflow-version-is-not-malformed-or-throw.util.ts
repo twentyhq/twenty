@@ -1,7 +1,6 @@
 import {
   MALFORMED_WORKFLOW_VALIDATION_ISSUE_CODES,
   validateWorkflowStructure,
-  WorkflowActionType,
   type WorkflowValidationIssue,
 } from 'twenty-shared/workflow';
 
@@ -13,11 +12,7 @@ import {
   WorkflowVersionValidationExceptionCode,
 } from 'src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception';
 import { getWorkflowRecordStepMetadataIssues } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-workflow-record-step-metadata-issues.util';
-import { validateWorkflowIteratorStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-iterator-step.util';
-import {
-  type WorkflowAction,
-  type WorkflowIteratorAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
 
 type WorkflowVersionMalformedCheckArgs = {
@@ -37,22 +32,8 @@ const getMalformedWorkflowVersionIssues = ({
 }: WorkflowVersionMalformedCheckArgs): WorkflowValidationIssue[] => {
   const structureResult = validateWorkflowStructure({ trigger, steps });
 
-  const iteratorIssues = (steps ?? [])
-    .filter(
-      (step): step is WorkflowIteratorAction =>
-        step.type === WorkflowActionType.ITERATOR,
-    )
-    .flatMap((step) =>
-      validateWorkflowIteratorStep({
-        step,
-        steps: steps ?? [],
-        trigger: trigger ?? null,
-      }),
-    );
-
   return [
     ...structureResult.errors,
-    ...iteratorIssues,
     ...getWorkflowRecordStepMetadataIssues({
       steps: steps ?? [],
       flatObjectMetadataMaps,
