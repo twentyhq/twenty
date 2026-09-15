@@ -11253,12 +11253,12 @@ msgstr "Հավելվածի այս տարբերակը արդեն տեղադրվա
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "Աշխատանքային հոսքի այս տարբերակը պարունակում է սխալ ձևաչափված տվյալներ և չի կարող պահպանվել։"
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "Աշխատանքային հոսքի այս տարբերակը պատրաստ չէ ակտիվացվելու։"
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13326,6 +13326,11 @@ msgstr "Դուք չունեք թույլտվություն այս աշխատան
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Դուք չունեք օգտատերերին ներկայացնելու իրավունք։ Խնդրում ենք կապվել աշխատատարածքի ադմինիստրատորի հետ՝ հասանելիություն ստանալու համար։"
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Դուք չունեք workspace-ի հետ համօգտագործվող կապերը կառավարելու թույլտվություն։ Խնդրում ենք հասանելիություն ստանալու համար կապվեք ձեր workspace-ի ադմինիստրատորի հետ։"
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

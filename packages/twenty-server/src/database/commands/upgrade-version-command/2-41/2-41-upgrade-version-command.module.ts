@@ -10,8 +10,10 @@ import { BackfillTimelineActivityMessageCampaignIndexesCommand } from 'src/datab
 import { MakeNotesAndTasksInheritTheirTargetsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789373200002-make-notes-and-tasks-inherit-their-targets.command';
 import { MoveMessageCampaignCommandsToCampaignFlagCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789468244000-move-message-campaign-commands-to-campaign-flag.command';
 import { RemoveSeeActiveVersionCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789470915878-remove-see-active-version-command-menu-item.command';
+import { NormalizeWorkflowRecordCrudRichTextFieldsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789482628000-normalize-workflow-record-crud-rich-text-fields.command';
 import { PurgeSoftDeletedViewsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789485621000-purge-soft-deleted-views.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -27,6 +29,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceMigrationModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceSchemaManagerModule,
+    WorkflowVersionCoreModule,
   ],
   providers: [
     CorrectStandardFieldAcronymCasingCommand,
@@ -37,6 +40,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     BackfillTimelineActivityMessageCampaignIndexesCommand,
     MoveMessageCampaignCommandsToCampaignFlagCommand,
     RemoveSeeActiveVersionCommandMenuItemCommand,
+    NormalizeWorkflowRecordCrudRichTextFieldsCommand,
     PurgeSoftDeletedViewsCommand,
   ],
 })

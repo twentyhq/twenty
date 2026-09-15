@@ -11253,12 +11253,12 @@ msgstr "Ova verzija aplikacije je već instalirana u ovom radnom prostoru."
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "Ova verzija toka rada sadrži neispravne podatke i ne može da se sačuva."
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "Ova verzija toka rada nije spremna za aktiviranje."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13326,6 +13326,11 @@ msgstr "Nemate dozvolu da preuzimate identitet korisnika u ovom prostoru za rad.
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Nemate dozvolu da imitirate korisnike. Molimo kontaktirajte administratora vaše radne površine za pristup."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Nemate dozvolu da upravljate vezama koje se dele sa radnim prostorom. Molimo kontaktirajte administratora radnog prostora za pristup."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
