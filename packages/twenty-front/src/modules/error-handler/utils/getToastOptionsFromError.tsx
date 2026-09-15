@@ -16,31 +16,37 @@ export const getToastOptionsFromError = ({
   error,
   ...options
 }: GetToastOptionsFromErrorParams): ToastOptions | undefined => {
-  if (isErrorLike(error) && error.name === 'AbortError') {
+  const errorLike = isErrorLike(error) ? error : undefined;
+
+  if (errorLike?.name === 'AbortError') {
     return;
   }
 
-  const conflictingRecord = isErrorLike(error)
-    ? getConflictingRecordFromApolloError(error)
+  const conflictingRecord = isDefined(errorLike)
+    ? getConflictingRecordFromApolloError(errorLike)
     : null;
 
   return {
-    children: isErrorLike(error)
-      ? getErrorMessageFromApolloError(error)
-      : t`An error occurred.`,
-    action: isDefined(conflictingRecord) ? (
-      <Button
-        to={getAppPath(AppPath.RecordShowPage, {
-          objectNameSingular: conflictingRecord.conflictingObjectNameSingular,
-          objectRecordId: conflictingRecord.conflictingRecordId,
-        })}
-        title={t`View existing record`}
-        ariaLabel={t`View existing record`}
-        variant="tertiary"
-        size="small"
-      />
-    ) : undefined,
     ...options,
+    children:
+      options.children ??
+      (isDefined(errorLike)
+        ? getErrorMessageFromApolloError(errorLike)
+        : t`An error occurred.`),
+    action:
+      options.action ??
+      (isDefined(conflictingRecord) ? (
+        <Button
+          to={getAppPath(AppPath.RecordShowPage, {
+            objectNameSingular: conflictingRecord.conflictingObjectNameSingular,
+            objectRecordId: conflictingRecord.conflictingRecordId,
+          })}
+          title={t`View existing record`}
+          ariaLabel={t`View existing record`}
+          variant="tertiary"
+          size="small"
+        />
+      ) : undefined),
     variant: 'error',
   };
 };

@@ -112,10 +112,9 @@ describe('BookCallOnboardingStepActions', () => {
     });
 
     expect(skipButton).not.toBeDisabled();
-    expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
-      children: 'An error occurred.',
-    });
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'error', children: 'network error' }),
+    );
   });
 
   it('should complete the step once even when the embed emits repeatedly', async () => {

@@ -17,7 +17,6 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { i18n } from '@lingui/core';
@@ -162,11 +161,7 @@ export const CreateProfile = () => {
         setIsNavigating(true);
       } catch (error: any) {
         setIsNavigating(false);
-        enqueueToast(
-          getToastOptionsFromError({
-            error: CombinedGraphQLErrors.is(error) ? error : undefined,
-          }),
-        );
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
     [

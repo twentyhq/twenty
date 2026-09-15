@@ -1,4 +1,3 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useCallback, useState } from 'react';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -23,11 +22,7 @@ export const BookCallOnboardingStepActions = () => {
       } catch (error) {
         setIsCompleting(false);
 
-        enqueueToast(
-          getToastOptionsFromError({
-            error: CombinedGraphQLErrors.is(error) ? error : undefined,
-          }),
-        );
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
     [completeBookCallOnboardingStep, enqueueToast],

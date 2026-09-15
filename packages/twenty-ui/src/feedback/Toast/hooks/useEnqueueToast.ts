@@ -1,5 +1,4 @@
 import { useMemo } from 'react';
-import { v4 } from 'uuid';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -9,6 +8,8 @@ import { type ToastOptions } from '../types/ToastOptions';
 import { isToastVisible } from '../utils/isToastVisible';
 import { useDismissToasts } from './useDismissToasts';
 import { useToastContext } from './useToastContext';
+
+let lastToastId = 0;
 
 export const useEnqueueToast = () => {
   const store = useToastContext();
@@ -24,19 +25,19 @@ export const useEnqueueToast = () => {
         return;
       }
 
+      const { dedupeKey, ...toastProps } = options;
       const toasts = store.get(toastsState);
       const visibleToasts = toasts.filter(isToastVisible);
-      const existingToast = visibleToasts.find(
-        ({ notification }) =>
-          isDefined(options.dedupeKey) &&
-          notification.dedupeKey === options.dedupeKey,
-      );
+      const existingToast = isDefined(dedupeKey)
+        ? visibleToasts.find((toast) => toast.dedupeKey === dedupeKey)
+        : undefined;
 
       if (isDefined(existingToast)) {
         return existingToast.notification.id;
       }
 
-      const id = v4();
+      lastToastId += 1;
+      const id = `toast-${lastToastId}`;
       const limit = store.get(toastLimitState);
       const removedCount = Math.max(0, visibleToasts.length - limit + 1);
 
@@ -45,7 +46,8 @@ export const useEnqueueToast = () => {
         nextToasts: [
           ...toasts,
           {
-            notification: { ...options, id },
+            notification: { ...toastProps, id },
+            dedupeKey,
             status: 'visible',
           },
         ],

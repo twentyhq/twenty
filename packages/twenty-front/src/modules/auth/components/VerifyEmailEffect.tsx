@@ -22,6 +22,9 @@ type VerifyEmailEffectProps = {
   onError: () => void;
 };
 
+const EMAIL_VERIFICATION_ERROR_DEDUPE_KEY =
+  'email-verification-error-dedupe-key';
+
 export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
   const {
     verifyEmailAndGetLoginToken,
@@ -96,20 +99,18 @@ export const VerifyEmailEffect = ({ onError }: VerifyEmailEffectProps) => {
 
         await verifyLoginToken(loginToken.token);
       } catch (error) {
-        if (CombinedGraphQLErrors.is(error)) {
-          enqueueToast(
-            getToastOptionsFromError({
-              error,
-              dedupeKey: 'email-verification-error-dedupe-key',
-            }),
-          );
-        } else {
-          enqueueToast({
-            variant: 'error',
-            children: t`Email verification failed`,
-            dedupeKey: 'email-verification-error-dedupe-key',
-          });
-        }
+        enqueueToast(
+          CombinedGraphQLErrors.is(error)
+            ? getToastOptionsFromError({
+                error,
+                dedupeKey: EMAIL_VERIFICATION_ERROR_DEDUPE_KEY,
+              })
+            : {
+                variant: 'error',
+                children: t`Email verification failed`,
+                dedupeKey: EMAIL_VERIFICATION_ERROR_DEDUPE_KEY,
+              },
+        );
         if (isGraphqlErrorOfType(error, 'EMAIL_ALREADY_VERIFIED')) {
           navigate(AppPath.SignInUp);
         }

@@ -5,7 +5,6 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -73,11 +72,7 @@ export const SettingsSecurityAuthBypassOptionsList = () => {
         ...currentWorkspace,
         [key]: currentWorkspace[key],
       });
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(err) ? err : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: err }));
     });
   };
 

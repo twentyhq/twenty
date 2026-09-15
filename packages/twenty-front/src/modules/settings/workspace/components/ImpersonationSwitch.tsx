@@ -3,7 +3,6 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/feedback';
@@ -37,11 +36,7 @@ export const ImpersonationSwitch = () => {
         allowImpersonation: value,
       });
     } catch (err: any) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(err) ? err : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   };
 

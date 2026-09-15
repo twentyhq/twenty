@@ -1,5 +1,6 @@
 import { type I18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
+import { isString } from '@sniptt/guards';
 import { type ToastProps, type ToastVariant } from 'twenty-ui/feedback';
 
 const DEFAULT_ARIA_LABEL_BY_VARIANT: Record<
@@ -27,8 +28,7 @@ export const getLocalizedToastProps = ({
   return {
     iconLabel,
     title:
-      toast.title ??
-      (typeof toast.children === 'string' ? toast.children : iconLabel),
+      toast.title ?? (isString(toast.children) ? toast.children : iconLabel),
     cancelLabel: toast.cancelLabel ?? i18n._(msg`Cancel`),
     closeLabel: toast.closeLabel ?? i18n._(msg`Close`),
   };

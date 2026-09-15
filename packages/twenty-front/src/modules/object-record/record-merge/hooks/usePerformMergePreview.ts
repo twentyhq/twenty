@@ -7,7 +7,6 @@ import { mergeSettingsState } from '@/object-record/record-merge/states/mergeSet
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type ErrorLike } from '@apollo/client';
 import { useEffect, useState } from 'react';
 import { useToast } from 'twenty-ui/feedback';
 
@@ -66,7 +65,7 @@ export const usePerformMergePreview = ({
         upsertRecordsInStore({ partialRecords: [transformPreviewRecord] });
       } catch (error) {
         setMergePreviewRecord(null);
-        enqueueToast(getToastOptionsFromError({ error: error as ErrorLike }));
+        enqueueToast(getToastOptionsFromError({ error }));
       } finally {
         setIsGeneratingPreview(false);
         setIsInitialized(true);

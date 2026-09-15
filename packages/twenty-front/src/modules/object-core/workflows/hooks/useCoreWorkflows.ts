@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { type ErrorLike } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
@@ -8,7 +7,6 @@ import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
-import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -109,9 +107,7 @@ export const useCoreWorkflows = ({
       });
     } catch (fetchMoreError) {
       logError(`useCoreWorkflows fetchMore error : ${fetchMoreError}`);
-      enqueueToast(
-        getToastOptionsFromError({ error: fetchMoreError as ErrorLike }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: fetchMoreError }));
     } finally {
       setIsFetchingMore(false);
     }

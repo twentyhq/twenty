@@ -24,7 +24,6 @@ import {
   connectionImapSmtpCalDav,
   connectionImapSmtpCalDavUpdate,
 } from '@/settings/accounts/validation-schemas/connectionImapSmtpCalDav';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -193,11 +192,7 @@ export const useImapSmtpCaldavConnectionForm = ({
           connectedAccountId: returnedConnectedAccountId,
         });
       } catch (error) {
-        enqueueToast(
-          getToastOptionsFromError({
-            error: CombinedGraphQLErrors.is(error) ? error : undefined,
-          }),
-        );
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
     [

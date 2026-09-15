@@ -1,4 +1,3 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
@@ -108,11 +107,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
 
       enqueueToast({ variant: 'success', children: t`Credit grant revoked.` });
     } catch (error) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(error) ? error : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsRevoking(false);
       setGrantPendingRevocation(null);

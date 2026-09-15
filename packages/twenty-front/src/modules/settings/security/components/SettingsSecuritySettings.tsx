@@ -22,7 +22,6 @@ import { ImpersonationSwitch } from '@/settings/workspace/components/Impersonati
 
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useToast } from 'twenty-ui/feedback';
 import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
@@ -73,11 +72,7 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(err) ? err : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   }, 500);
 
@@ -91,11 +86,7 @@ export const SettingsSecuritySettings = () => {
         },
       });
     } catch (err) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(err) ? err : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   }, 500);
 

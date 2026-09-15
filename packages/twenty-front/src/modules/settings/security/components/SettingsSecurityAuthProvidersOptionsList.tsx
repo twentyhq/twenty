@@ -8,7 +8,6 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 import { ssoIdentitiesProvidersState } from '@/settings/security/states/ssoIdentitiesProvidersState';
 import { Select } from '@/ui/input/components/Select';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -110,11 +109,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         ...currentWorkspace,
         [key]: !currentWorkspace[key],
       });
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(err) ? err : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: err }));
     });
   };
 
@@ -135,11 +130,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
         isPublicInviteLinkEnabled: value,
       });
     } catch (err: any) {
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(err) ? err : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: err }));
     }
   };
 
@@ -198,11 +189,7 @@ export const SettingsSecurityAuthProvidersOptionsList = () => {
             }
           : currentWorkspaceValue,
       );
-      enqueueToast(
-        getToastOptionsFromError({
-          error: CombinedGraphQLErrors.is(err) ? err : undefined,
-        }),
-      );
+      enqueueToast(getToastOptionsFromError({ error: err }));
     });
   };
 

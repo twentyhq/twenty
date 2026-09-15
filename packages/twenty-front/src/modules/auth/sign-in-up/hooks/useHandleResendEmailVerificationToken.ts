@@ -2,7 +2,6 @@ import { useCallback } from 'react';
 
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useToast } from 'twenty-ui/feedback';
@@ -40,16 +39,7 @@ export const useHandleResendEmailVerificationToken = () => {
             enqueueToast({ variant: 'error', children: t`An error occurred.` });
           }
         } catch (error) {
-          if (CombinedGraphQLErrors.is(error)) {
-            enqueueToast(getToastOptionsFromError({ error }));
-          } else {
-            enqueueToast({
-              variant: 'error',
-              children:
-                (error instanceof Error ? error.message : undefined) ??
-                t`An error occurred.`,
-            });
-          }
+          enqueueToast(getToastOptionsFromError({ error }));
         }
       };
     },

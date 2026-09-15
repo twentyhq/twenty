@@ -6,7 +6,6 @@ import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useCaptcha } from '@/client-config/hooks/useCaptcha';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useToast } from 'twenty-ui/feedback';
@@ -56,16 +55,7 @@ export const useHandleResetPassword = () => {
             enqueueToast({ variant: 'error', children: t`An error occurred.` });
           }
         } catch (error) {
-          if (CombinedGraphQLErrors.is(error)) {
-            enqueueToast(getToastOptionsFromError({ error }));
-          } else {
-            enqueueToast({
-              variant: 'error',
-              children:
-                (error instanceof Error ? error.message : undefined) ??
-                t`An error occurred.`,
-            });
-          }
+          enqueueToast(getToastOptionsFromError({ error }));
         }
       };
     },
