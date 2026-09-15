@@ -1,3 +1,5 @@
+import { isUndefined } from '@sniptt/guards';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { type TransitionInboxItemInput } from 'src/engine/core-modules/inbox/dtos/transition-inbox-item.input';
@@ -41,23 +43,22 @@ export const toInboxItemTransition = (
     case 'ASSIGN':
       return {
         kind: 'ASSIGN',
-        toUserWorkspaceId:
-          'toUserWorkspaceId' in input
-            ? (input.toUserWorkspaceId ?? null)
-            : SELF_ASSIGNMENT,
+        toUserWorkspaceId: isUndefined(input.toUserWorkspaceId)
+          ? SELF_ASSIGNMENT
+          : input.toUserWorkspaceId,
       };
 
     // Unlike an assignment, an absent target is not "me": there is no such
     // thing as a default inbox to move to, so it has to be said.
     case 'MOVE':
-      if (!('toQueueId' in input)) {
+      if (isUndefined(input.toQueueId)) {
         throw new InboxException(
           'A move has to name the inbox it is moving to, or null for none',
           InboxExceptionCode.INVALID_INBOX_ACTION,
         );
       }
 
-      return { kind: 'MOVE', toQueueId: input.toQueueId ?? null };
+      return { kind: 'MOVE', toQueueId: input.toQueueId };
 
     default:
       throw new InboxException(

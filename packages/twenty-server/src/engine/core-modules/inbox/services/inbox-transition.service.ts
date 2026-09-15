@@ -280,7 +280,7 @@ export class InboxTransitionService {
       minutes > MAX_RESURFACE_MINUTES
     ) {
       throw new InboxException(
-        `Resurfacing must be between 1 and ${MAX_RESURFACE_MINUTES} minutes away`,
+        `Resurfacing must be in the future and at most ${MAX_RESURFACE_MINUTES} minutes away`,
         InboxExceptionCode.INVALID_INBOX_ACTION,
         {
           userFriendlyMessage: msg`Choose a time to come back to this that is in the future and less than a year away.`,
