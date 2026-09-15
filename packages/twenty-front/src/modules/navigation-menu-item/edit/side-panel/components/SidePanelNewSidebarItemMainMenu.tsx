@@ -71,7 +71,7 @@ export const SidePanelNewSidebarItemMainMenu = ({
                     <IconBox
                       size={16}
                       stroke={theme.icon.stroke.md}
-                      color={getIconTileColorShades('blue').iconColor}
+                      color={getIconTileColorShades('gray').iconColor}
                     />
                   )}
                   label={t`Object`}
