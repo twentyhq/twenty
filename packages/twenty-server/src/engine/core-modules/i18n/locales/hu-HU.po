@@ -11253,12 +11253,12 @@ msgstr "Az alkalmazásnak ez a verziója már telepítve van ezen a munkaterüle
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "Ez a munkafolyamat-verzió hibásan formázott adatokat tartalmaz, ezért nem menthető."
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "Ez a munkafolyamat-verzió nem áll készen az aktiválásra."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13326,6 +13326,11 @@ msgstr "Nincs jogosultsága a felhasználók megszemélyesítéséhez ezen a mun
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Nincs engedélye felhasználók megszemélyesítésére. Kérjük, lépjen kapcsolatba munkaterületének adminisztrátorával a hozzáférés érdekében."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Nincs engedélye a munkaterülettel megosztott kapcsolatok kezelésére. Kérjük, a hozzáférésért lépjen kapcsolatba a munkaterület adminisztrátorával."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
