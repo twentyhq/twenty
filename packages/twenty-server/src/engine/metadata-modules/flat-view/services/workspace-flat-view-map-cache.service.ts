@@ -10,7 +10,7 @@ import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/t
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
 
-const FLAT_VIEW_ROWS_REQUIREMENT = {
+export const FLAT_VIEW_ROWS_REQUIREMENT = {
   view: true,
   application: ['id', 'universalIdentifier'],
   objectMetadata: ['id', 'universalIdentifier'],
