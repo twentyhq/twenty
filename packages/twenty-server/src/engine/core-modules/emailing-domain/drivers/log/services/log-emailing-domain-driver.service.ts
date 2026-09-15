@@ -10,8 +10,6 @@ import {
   EmailingDomainDriverExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
-import { AWS_SES_MAIL_FROM_SUBDOMAIN } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-mail-from-subdomain.constant';
-import { VerificationRecordPurpose } from 'src/engine/core-modules/emailing-domain/drivers/types/verification-record-purpose.type';
 import {
   type EmailingDomainDriverInterface,
   type EmailingDomainResourceInput,
@@ -81,57 +79,30 @@ export class LogEmailingDomainDriver implements EmailingDomainDriverInterface {
         key: `synthetic1._domainkey.${domain}`,
         value: `synthetic1.dkim.amazonses.example`,
         status: 'success',
-        purpose: VerificationRecordPurpose.DKIM,
-        isRequired: true,
       },
       {
         type: 'CNAME',
         key: `synthetic2._domainkey.${domain}`,
         value: `synthetic2.dkim.amazonses.example`,
         status: 'success',
-        purpose: VerificationRecordPurpose.DKIM,
-        isRequired: true,
       },
       {
         type: 'CNAME',
         key: `synthetic3._domainkey.${domain}`,
         value: `synthetic3.dkim.amazonses.example`,
-        status: 'success',
-        purpose: VerificationRecordPurpose.DKIM,
-        isRequired: true,
-      },
-      {
-        type: 'MX',
-        key: `${AWS_SES_MAIL_FROM_SUBDOMAIN}.${domain}`,
-        value: `feedback-smtp.amazonses.example`,
-        priority: 10,
         status: 'pending',
-        purpose: VerificationRecordPurpose.MAIL_FROM,
-        isRequired: true,
-      },
-      {
-        type: 'TXT',
-        key: `${AWS_SES_MAIL_FROM_SUBDOMAIN}.${domain}`,
-        value: 'v=spf1 include:amazonses.example ~all',
-        status: 'pending',
-        purpose: VerificationRecordPurpose.MAIL_FROM,
-        isRequired: true,
       },
       {
         type: 'CNAME',
         key: `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${domain}`,
         value: `app.localhost`,
         status: 'pending',
-        purpose: VerificationRecordPurpose.UNSUBSCRIBE,
-        isRequired: true,
       },
       {
         type: 'CNAME',
         key: `_acme-challenge.${UNSUBSCRIBE_HOSTNAME_PREFIX}.${domain}`,
         value: `${domain}.dcv.cloudflare.example`,
         status: 'error',
-        purpose: VerificationRecordPurpose.UNSUBSCRIBE,
-        isRequired: true,
       },
     ];
   }

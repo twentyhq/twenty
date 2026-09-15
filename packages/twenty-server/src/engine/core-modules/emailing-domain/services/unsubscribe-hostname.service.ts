@@ -10,7 +10,6 @@ import {
 } from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
-import { VerificationRecordPurpose } from 'src/engine/core-modules/emailing-domain/drivers/types/verification-record-purpose.type';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
@@ -174,8 +173,6 @@ export class UnsubscribeHostnameService {
         key: record.key,
         value: record.value,
         status: record.status,
-        purpose: VerificationRecordPurpose.UNSUBSCRIBE,
-        isRequired: true,
       }));
     } catch (error) {
       this.logger.warn(

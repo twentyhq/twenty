@@ -2890,16 +2890,6 @@ type VerificationRecord {
   value: String!
   priority: Float
   status: String
-  purpose: VerificationRecordPurpose
-  isRequired: Boolean
-}
-
-enum VerificationRecordPurpose {
-  DKIM
-  MAIL_FROM
-  DMARC
-  UNSUBSCRIBE
-  RECEIVING
 }
 
 type EmailingDomain {

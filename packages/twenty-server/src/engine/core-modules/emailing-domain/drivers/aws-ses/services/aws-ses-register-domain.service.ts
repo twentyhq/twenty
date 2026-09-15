@@ -5,16 +5,13 @@ import {
   CreateConfigurationSetCommand,
   CreateConfigurationSetEventDestinationCommand,
   CreateTenantResourceAssociationCommand,
-  GetEmailIdentityCommand,
   PutEmailIdentityMailFromAttributesCommand,
 } from '@aws-sdk/client-sesv2';
-import { isNonEmptyString } from '@sniptt/guards';
 import { type AwsSesDriverConfig } from 'src/engine/core-modules/emailing-domain/drivers/interfaces/driver-config.interface';
 
 import { AWS_SES_EVENT_BUS_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-event-bus-name.constant';
 import { AWS_SES_MAIL_FROM_SUBDOMAIN } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-mail-from-subdomain.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
-import { AwsSesMailFromDomainService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-mail-from-domain.service';
 import { AwsSesObservabilityService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-observability.service';
 import { AwsSesOutboundEventDestinationService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-outbound-event-destination.service';
 
@@ -31,7 +28,6 @@ export class AwsSesRegisterDomainService {
     private readonly awsSesClientProvider: AwsSesClientProvider,
     private readonly awsSesObservabilityService: AwsSesObservabilityService,
     private readonly awsSesOutboundEventDestinationService: AwsSesOutboundEventDestinationService,
-    private readonly awsSesMailFromDomainService: AwsSesMailFromDomainService,
   ) {}
 
   async provisionWorkspaceResources(
@@ -112,82 +108,17 @@ export class AwsSesRegisterDomainService {
     );
   }
 
-  async registerDomain(
-    domain: string,
-    config: AwsSesDriverConfig,
-  ): Promise<void> {
+  async registerDomain(domain: string): Promise<void> {
     const sesClient = this.awsSesClientProvider.getSESClient();
-
-    const { MailFromAttributes: currentMailFrom } = await sesClient.send(
-      new GetEmailIdentityCommand({ EmailIdentity: domain }),
-    );
-
-    const shouldKeepCurrentMailFromDomain =
-      await this.shouldKeepCurrentMailFromDomain({
-        mailFromDomain: currentMailFrom?.MailFromDomain,
-        mailFromDomainStatus: currentMailFrom?.MailFromDomainStatus,
-        region: config.region,
-      });
-
-    if (shouldKeepCurrentMailFromDomain) {
-      return;
-    }
-
-    const mailFromDomain = await this.awsSesMailFromDomainService
-      .findAvailableMailFromDomain({ domain, region: config.region })
-      .catch((error) => {
-        this.logger.warn(
-          `Could not probe the MAIL FROM candidates of ${domain}, using the default one: ${error}`,
-        );
-
-        return `${AWS_SES_MAIL_FROM_SUBDOMAIN}.${domain}`;
-      });
-
-    if (mailFromDomain === currentMailFrom?.MailFromDomain) {
-      return;
-    }
 
     await sesClient.send(
       new PutEmailIdentityMailFromAttributesCommand({
         EmailIdentity: domain,
-        MailFromDomain: mailFromDomain,
+        MailFromDomain: `${AWS_SES_MAIL_FROM_SUBDOMAIN}.${domain}`,
         BehaviorOnMxFailure: 'USE_DEFAULT_VALUE',
       }),
     );
 
-    this.logger.log(
-      `Registered MAIL FROM ${mailFromDomain} for domain ${domain}`,
-    );
-  }
-
-  private async shouldKeepCurrentMailFromDomain({
-    mailFromDomain,
-    mailFromDomainStatus,
-    region,
-  }: {
-    mailFromDomain: string | undefined;
-    mailFromDomainStatus: string | undefined;
-    region: string;
-  }): Promise<boolean> {
-    if (!isNonEmptyString(mailFromDomain)) {
-      return false;
-    }
-
-    if (mailFromDomainStatus === 'SUCCESS') {
-      return true;
-    }
-
-    const usage = await this.awsSesMailFromDomainService
-      .getUsage({ mailFromDomain, region })
-      .catch(() => undefined);
-
-    switch (usage) {
-      case undefined:
-      case 'FREE':
-      case 'POINTS_TO_SES':
-        return true;
-      case 'TAKEN':
-        return false;
-    }
+    this.logger.log(`Registered MAIL FROM for domain ${domain}`);
   }
 }
