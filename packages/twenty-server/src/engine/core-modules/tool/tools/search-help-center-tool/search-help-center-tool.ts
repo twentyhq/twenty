@@ -63,7 +63,18 @@ export class SearchHelpCenterTool implements Tool {
         { headers },
       );
 
-      const results = extractHelpCenterResults(response.data);
+      const extraction = extractHelpCenterResults(response.data);
+
+      if (!extraction.isReadable) {
+        return {
+          success: false,
+          message: `Failed to search help center for "${query}"`,
+          error:
+            'Help center search returned a response in an unrecognized shape',
+        };
+      }
+
+      const { results } = extraction;
 
       if (results.length === 0) {
         return {

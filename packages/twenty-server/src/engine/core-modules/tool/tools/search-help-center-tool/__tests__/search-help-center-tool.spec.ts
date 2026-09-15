@@ -100,9 +100,9 @@ describe('SearchHelpCenterTool', () => {
     expect(result.result).toEqual([{ title: 'A' }]);
   });
 
-  it('reports no articles for an unreadable success payload', async () => {
+  it('reports an empty answer as a successful search that found nothing', async () => {
     const { tool } = setup({
-      post: jest.fn().mockResolvedValue({ data: { unexpected: true } }),
+      post: jest.fn().mockResolvedValue({ data: [] }),
     });
 
     const result = await execute(tool);
@@ -112,5 +112,22 @@ describe('SearchHelpCenterTool', () => {
       'No help center articles found for "how to import data"',
     );
     expect(result.result).toEqual([]);
+  });
+
+  it('fails loudly on an unrecognized success payload instead of reporting no articles', async () => {
+    // A 200 carrying an error body must not reach the agent as a successful
+    // search with nothing found -- that hides the operational failure.
+    const { tool } = setup({
+      post: jest
+        .fn()
+        .mockResolvedValue({ data: { error: 'Rate limit exceeded' } }),
+    });
+
+    const result = await execute(tool);
+
+    expect(result.success).toBe(false);
+    expect(result.error).toBe(
+      'Help center search returned a response in an unrecognized shape',
+    );
   });
 });

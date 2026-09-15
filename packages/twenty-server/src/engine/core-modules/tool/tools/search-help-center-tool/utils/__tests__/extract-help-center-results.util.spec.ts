@@ -4,32 +4,55 @@ describe('extractHelpCenterResults', () => {
   it('passes a bare array straight through', () => {
     const results = [{ title: 'Importing data' }];
 
-    expect(extractHelpCenterResults(results)).toBe(results);
+    expect(extractHelpCenterResults(results)).toEqual({
+      isReadable: true,
+      results,
+    });
   });
 
   it('unwraps a results envelope', () => {
     const results = [{ title: 'Inviting a team member' }];
 
-    expect(extractHelpCenterResults({ results })).toBe(results);
+    expect(extractHelpCenterResults({ results })).toEqual({
+      isReadable: true,
+      results,
+    });
   });
 
-  it('returns an empty array for a payload it cannot read', () => {
-    // Reading `.length` off these is what produced
-    // "Found undefined relevant help center articles".
-    expect(extractHelpCenterResults({ error: 'Rate limit exceeded' })).toEqual(
-      [],
-    );
-    expect(extractHelpCenterResults('unexpected')).toEqual([]);
-    expect(extractHelpCenterResults(null)).toEqual([]);
-    expect(extractHelpCenterResults(undefined)).toEqual([]);
+  it('reads an empty answer as a real, readable result', () => {
+    expect(extractHelpCenterResults([])).toEqual({
+      isReadable: true,
+      results: [],
+    });
+    expect(extractHelpCenterResults({ results: [] })).toEqual({
+      isReadable: true,
+      results: [],
+    });
   });
 
-  it('always returns an array, so length is never undefined', () => {
-    for (const payload of [[], { results: [] }, {}, null, undefined, 0, 'x']) {
-      const results = extractHelpCenterResults(payload);
+  it('reports an unrecognized payload as unreadable rather than empty', () => {
+    // Collapsing these to `[]` would present an operational failure as a
+    // successful search that simply found nothing.
+    for (const payload of [
+      { error: 'Rate limit exceeded' },
+      { results: 'not-an-array' },
+      'unexpected',
+      null,
+      undefined,
+      0,
+    ]) {
+      expect(extractHelpCenterResults(payload)).toEqual({ isReadable: false });
+    }
+  });
 
-      expect(Array.isArray(results)).toBe(true);
-      expect(results.length).toEqual(expect.any(Number));
+  it('never yields a results value whose length is undefined', () => {
+    for (const payload of [[], { results: [] }, {}, null, 'x']) {
+      const extraction = extractHelpCenterResults(payload);
+
+      if (extraction.isReadable) {
+        expect(Array.isArray(extraction.results)).toBe(true);
+        expect(extraction.results.length).toEqual(expect.any(Number));
+      }
     }
   });
 });
