@@ -2,11 +2,10 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-
-const UNINSTALL_APPLICATION_MODAL_ID = 'uninstall-application-modal';
 
 type SettingsApplicationActionButtonProps = {
   isInstalled: boolean;
@@ -36,6 +35,7 @@ export const SettingsApplicationActionButton = ({
   isUninstalling,
 }: SettingsApplicationActionButtonProps) => {
   const { openModal } = useModal();
+  const uninstallModalId = useId();
 
   const confirmationValue = t`yes`;
 
@@ -84,13 +84,13 @@ export const SettingsApplicationActionButton = ({
           variant="secondary"
           accent="danger"
           size="small"
-          onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
+          onClick={() => openModal(uninstallModalId)}
           disabled={isUninstalling}
         />
         <ConfirmationModal
           confirmationPlaceholder={confirmationValue}
           confirmationValue={confirmationValue}
-          modalInstanceId={UNINSTALL_APPLICATION_MODAL_ID}
+          modalInstanceId={uninstallModalId}
           title={t`Uninstall Application?`}
           subtitle={
             <Trans>

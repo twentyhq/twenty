@@ -6,19 +6,26 @@ import userEvent from '@testing-library/user-event';
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 
 const mockOpenModal = jest.fn();
+const mockConfirmationModal = jest.fn();
 
 jest.mock('@/ui/layout/modal/hooks/useModal', () => ({
   useModal: () => ({ openModal: mockOpenModal }),
 }));
 
 jest.mock('@/ui/layout/modal/components/ConfirmationModal', () => ({
-  ConfirmationModal: ({
-    confirmButtonText,
-    onConfirmClick,
-  }: {
+  ConfirmationModal: (props: {
     confirmButtonText: string;
+    modalInstanceId: string;
     onConfirmClick: () => void;
-  }) => <button onClick={onConfirmClick}>Confirm {confirmButtonText}</button>,
+  }) => {
+    mockConfirmationModal(props);
+
+    return (
+      <button onClick={props.onConfirmClick}>
+        Confirm {props.confirmButtonText}
+      </button>
+    );
+  },
 }));
 
 type RenderActionButtonOptions = {
@@ -63,6 +70,7 @@ const renderActionButton = ({
 describe('SettingsApplicationActionButton', () => {
   beforeEach(() => {
     mockOpenModal.mockClear();
+    mockConfirmationModal.mockClear();
   });
 
   it('renders nothing without the applications permission', () => {
@@ -122,7 +130,9 @@ describe('SettingsApplicationActionButton', () => {
 
     await user.click(screen.getByRole('button', { name: /^Uninstall\b/ }));
 
-    expect(mockOpenModal).toHaveBeenCalledWith('uninstall-application-modal');
+    const { modalInstanceId } = mockConfirmationModal.mock.lastCall[0];
+
+    expect(mockOpenModal).toHaveBeenCalledWith(modalInstanceId);
     expect(onUninstall).not.toHaveBeenCalled();
 
     await user.click(

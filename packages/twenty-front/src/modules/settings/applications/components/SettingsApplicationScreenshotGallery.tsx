@@ -2,10 +2,8 @@ import { SettingsApplicationScreenshotLightbox } from '@/settings/applications/c
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const SCREENSHOT_LIGHTBOX_MODAL_ID = 'application-screenshot-lightbox-modal';
 
 type SettingsApplicationScreenshotGalleryProps = {
   screenshots: string[];
@@ -79,6 +77,7 @@ export const SettingsApplicationScreenshotGallery = ({
 }: SettingsApplicationScreenshotGalleryProps) => {
   const [selectedScreenshotIndex, setSelectedScreenshotIndex] = useState(0);
   const { openModal, closeModal } = useModal();
+  const lightboxModalId = useId();
 
   if (screenshots.length === 0) {
     return null;
@@ -91,7 +90,7 @@ export const SettingsApplicationScreenshotGallery = ({
       <StyledHeroButton
         type="button"
         aria-label={t`View screenshot in full screen`}
-        onClick={() => openModal(SCREENSHOT_LIGHTBOX_MODAL_ID)}
+        onClick={() => openModal(lightboxModalId)}
       >
         <StyledHeroImage
           src={screenshots[safeIndex]}
@@ -116,12 +115,12 @@ export const SettingsApplicationScreenshotGallery = ({
         </StyledThumbnails>
       )}
       <SettingsApplicationScreenshotLightbox
-        modalInstanceId={SCREENSHOT_LIGHTBOX_MODAL_ID}
+        modalInstanceId={lightboxModalId}
         screenshots={screenshots}
         displayName={displayName}
         selectedIndex={safeIndex}
         onSelectedIndexChange={setSelectedScreenshotIndex}
-        onClose={() => closeModal(SCREENSHOT_LIGHTBOX_MODAL_ID)}
+        onClose={() => closeModal(lightboxModalId)}
       />
     </StyledGalleryContainer>
   );

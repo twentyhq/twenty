@@ -4,7 +4,7 @@ import { getInstallCountEstimate } from '@/settings/applications/utils/getInstal
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext } from 'react';
+import { useContext, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconAlertTriangle,
@@ -23,8 +23,6 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-
-const INSTALL_COUNT_LABEL_ID = 'settings-application-install-count';
 
 export type DeveloperLinks = {
   websiteUrl?: string;
@@ -173,6 +171,8 @@ export const SettingsApplicationAboutSidebar = ({
 }: SettingsApplicationAboutSidebarProps) => {
   const { theme } = useContext(ThemeContext);
   const { formatNumber } = useNumberFormat();
+  // The tooltip anchors on a CSS id selector, which cannot contain the colons of useId
+  const installCountLabelId = useId().replace(/:/g, '');
 
   const getInstallCountRows = (): AboutRow[] => {
     if (!isDefined(installCount) || installCount <= 0) {
@@ -194,7 +194,7 @@ export const SettingsApplicationAboutSidebar = ({
     return [
       {
         Icon: IconDownload,
-        id: INSTALL_COUNT_LABEL_ID,
+        id: installCountLabelId,
         label: t`+${estimatedInstallCount} installs`,
         tooltip: exactInstallCountLabel,
       },
