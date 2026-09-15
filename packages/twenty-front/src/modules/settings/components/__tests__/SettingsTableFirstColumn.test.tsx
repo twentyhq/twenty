@@ -10,6 +10,16 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 const LABEL = 'Documentation https://example.com';
 
 describe('SettingsTableFirstColumn', () => {
+  const originalPointerEvent = window.PointerEvent;
+
+  beforeAll(() => {
+    // jsdom lacks PointerEvent, which Base UI uses to dispatch checkbox clicks.
+    window.PointerEvent = MouseEvent as typeof PointerEvent;
+  });
+
+  afterAll(() => {
+    window.PointerEvent = originalPointerEvent;
+  });
   it('keeps URL-like labels as plain text inside linked rows', async () => {
     const user = userEvent.setup();
 
@@ -85,7 +95,7 @@ describe('SettingsTableFirstColumn', () => {
     const checkbox = screen.getByRole('checkbox', { name: 'Select job' });
     await user.tab();
     expect(checkbox).toHaveFocus();
-    await user.click(checkbox);
+    await user.keyboard(' ');
     expect(checkbox).toBeChecked();
     expect(onCheckedChange).toHaveBeenCalled();
     expect(onRowClick).not.toHaveBeenCalled();
