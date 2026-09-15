@@ -1,25 +1,24 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { AppChip } from '@/applications/components/AppChip';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { type ReactNode } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
+import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/data-display';
 import {
   IconAlertTriangle,
   IconBrandNpm,
   type IconComponent,
+  IconCurrencyDollar,
   IconLink,
   IconMail,
+  IconShare2,
+  IconTag,
+  IconUserCircle,
+  IconVersions,
   IconWorld,
 } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-export type ContentEntry = {
-  icon: IconComponent;
-  count: number;
-  one: string;
-  many: string;
-};
+import { Button } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type DeveloperLinks = {
   websiteUrl?: string;
@@ -30,220 +29,249 @@ export type DeveloperLinks = {
 };
 
 type SettingsApplicationAboutSidebarProps = {
-  actionButton?: ReactNode;
-  pricingDescription?: string;
+  applicationId?: string | null;
+  logoUrl?: string | null;
+  displayName: string;
+  description?: string;
+  onShare?: () => void;
   author?: string;
+  version?: string;
   category?: string;
-  contentEntries?: ContentEntry[];
-  currentVersion?: string;
-  latestAvailableVersion?: string;
+  pricingDescription?: string;
   developerLinks?: DeveloperLinks;
 };
 
-const StyledSidebar = styled.div`
-  flex-shrink: 0;
-  width: 140px;
-`;
+type AboutRow = {
+  Icon: IconComponent;
+  label: string;
+};
 
-const StyledSidebarSection = styled.div`
-  padding: ${themeCssVariables.spacing[3]} 0;
+type ResourceLink = AboutRow & {
+  href: string;
+};
 
-  &:first-of-type {
-    padding-top: 0;
+const isSafeUrl = (url: string | undefined): url is string => {
+  if (!isNonEmptyString(url)) return false;
+
+  try {
+    const parsed = new URL(url);
+
+    return ['http:', 'https:', 'mailto:'].includes(parsed.protocol);
+  } catch {
+    return false;
   }
+};
+
+const StyledSidebar = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[5]};
+  min-width: 0;
 `;
 
-const StyledSidebarLabel = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-  margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledSidebarValue = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-// Prose rather than a datum: it wraps, and stays regular weight so a sentence
-// does not shout next to the short sidebar values.
-const StyledPricingValue = styled.div`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.md};
-  overflow-wrap: anywhere;
-`;
-
-const StyledContentList = styled.div`
+const StyledHeader = styled.div`
   align-items: flex-start;
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
+  gap: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledLink = styled.a`
-  align-items: center;
+const StyledIdentity = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  width: 100%;
+`;
+
+const StyledName = styled.div`
   color: ${themeCssVariables.font.color.primary};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+`;
+
+const StyledDescription = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+`;
+
+const StyledSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledSectionLabel = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.tertiary};
   display: flex;
   font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[2]};
+  min-height: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledRow = styled.div`
+  align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  line-height: 1.4;
+  min-height: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledResourceLink = styled.a`
+  align-items: center;
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  font-size: ${themeCssVariables.font.size.sm};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[1]};
+  line-height: 1.4;
+  min-height: ${themeCssVariables.spacing[6]};
   text-decoration: none;
 
   &:hover {
     text-decoration: underline;
   }
+`;
 
-  &:last-of-type {
-    margin-bottom: 0;
-  }
+const StyledRowIcon = styled.div`
+  display: flex;
+  flex-shrink: 0;
+`;
+
+const StyledRowLabel = styled.span`
+  min-width: 0;
+  overflow-wrap: anywhere;
 `;
 
 export const SettingsApplicationAboutSidebar = ({
-  actionButton,
-  pricingDescription,
+  applicationId,
+  logoUrl,
+  displayName,
+  description,
+  onShare,
   author,
+  version,
   category,
-  contentEntries,
-  currentVersion,
-  latestAvailableVersion,
+  pricingDescription,
   developerLinks,
 }: SettingsApplicationAboutSidebarProps) => {
-  const isSafeUrl = (url: string | undefined): url is string => {
-    if (!isNonEmptyString(url)) return false;
+  const { theme } = useContext(ThemeContext);
 
-    try {
-      const parsed = new URL(url);
+  const aboutRows: AboutRow[] = [
+    ...(isNonEmptyString(author)
+      ? [{ Icon: IconUserCircle, label: t`by ${author}` }]
+      : []),
+    ...(isNonEmptyString(version)
+      ? [{ Icon: IconVersions, label: version }]
+      : []),
+    ...(isNonEmptyString(category) ? [{ Icon: IconTag, label: category }] : []),
+    ...(isNonEmptyString(pricingDescription)
+      ? [{ Icon: IconCurrencyDollar, label: pricingDescription }]
+      : []),
+  ];
 
-      return ['http:', 'https:', 'mailto:'].includes(parsed.protocol);
-    } catch {
-      return false;
-    }
-  };
+  const {
+    websiteUrl,
+    termsUrl,
+    emailSupport,
+    issueReportUrl,
+    sourcePackageUrl,
+  } = developerLinks ?? {};
 
-  const filteredContentEntries = (contentEntries ?? []).filter(
-    (entry) => entry.count > 0,
-  );
-
-  const hasDeveloperLinks =
-    isDefined(developerLinks) &&
-    (isNonEmptyString(developerLinks.websiteUrl) ||
-      isNonEmptyString(developerLinks.termsUrl) ||
-      isNonEmptyString(developerLinks.emailSupport) ||
-      isNonEmptyString(developerLinks.issueReportUrl) ||
-      isNonEmptyString(developerLinks.sourcePackageUrl));
+  const resourceLinks: ResourceLink[] = [
+    ...(isSafeUrl(websiteUrl)
+      ? [{ Icon: IconWorld, label: t`Website`, href: websiteUrl }]
+      : []),
+    ...(isSafeUrl(termsUrl)
+      ? [{ Icon: IconLink, label: t`Terms / Privacy`, href: termsUrl }]
+      : []),
+    ...(isNonEmptyString(emailSupport)
+      ? [
+          {
+            Icon: IconMail,
+            label: t`Email support`,
+            href: `mailto:${emailSupport}`,
+          },
+        ]
+      : []),
+    ...(isSafeUrl(issueReportUrl)
+      ? [
+          {
+            Icon: IconAlertTriangle,
+            label: t`Report an issue`,
+            href: issueReportUrl,
+          },
+        ]
+      : []),
+    ...(isSafeUrl(sourcePackageUrl)
+      ? [{ Icon: IconBrandNpm, label: t`Npm package`, href: sourcePackageUrl }]
+      : []),
+  ];
 
   return (
     <StyledSidebar>
-      {isDefined(actionButton) && (
-        <StyledSidebarSection>{actionButton}</StyledSidebarSection>
+      <StyledHeader>
+        <AppChip
+          applicationId={applicationId}
+          logoUrl={logoUrl}
+          fallbackApplicationData={{ name: displayName }}
+          size="xl"
+          chipOnly
+        />
+        <StyledIdentity>
+          <StyledName>{displayName}</StyledName>
+          {isNonEmptyString(description) && (
+            <StyledDescription>{description}</StyledDescription>
+          )}
+        </StyledIdentity>
+        {isDefined(onShare) && (
+          <Button
+            Icon={IconShare2}
+            title={t`Share`}
+            variant="secondary"
+            size="small"
+            onClick={onShare}
+          />
+        )}
+      </StyledHeader>
+
+      {aboutRows.length > 0 && (
+        <StyledSection>
+          <StyledSectionLabel>{t`About`}</StyledSectionLabel>
+          {aboutRows.map(({ Icon, label }) => (
+            <StyledRow key={label}>
+              <StyledRowIcon>
+                <Icon size={theme.icon.size.sm} />
+              </StyledRowIcon>
+              <StyledRowLabel>{label}</StyledRowLabel>
+            </StyledRow>
+          ))}
+        </StyledSection>
       )}
 
-      {isNonEmptyString(pricingDescription) && (
-        <StyledSidebarSection>
-          <StyledSidebarLabel>{t`Pricing`}</StyledSidebarLabel>
-          <StyledPricingValue>{pricingDescription}</StyledPricingValue>
-        </StyledSidebarSection>
-      )}
-
-      {isDefined(author) && (
-        <StyledSidebarSection>
-          <StyledSidebarLabel>{t`Created by`}</StyledSidebarLabel>
-          <StyledSidebarValue>{author}</StyledSidebarValue>
-        </StyledSidebarSection>
-      )}
-
-      {isDefined(category) && (
-        <StyledSidebarSection>
-          <StyledSidebarLabel>{t`Category`}</StyledSidebarLabel>
-          <StyledSidebarValue>{category}</StyledSidebarValue>
-        </StyledSidebarSection>
-      )}
-
-      {filteredContentEntries.length > 0 && (
-        <StyledSidebarSection>
-          <StyledSidebarLabel>{t`Content`}</StyledSidebarLabel>
-          <StyledContentList>
-            {filteredContentEntries.map((entry) => (
-              <Tag
-                key={entry.one}
-                color="gray"
-                startIcon={<entry.icon />}
-              >{`${entry.count} ${
-                entry.count === 1 ? entry.one : entry.many
-              }`}</Tag>
-            ))}
-          </StyledContentList>
-        </StyledSidebarSection>
-      )}
-
-      {isDefined(currentVersion) && (
-        <StyledSidebarSection>
-          <StyledSidebarLabel>{t`Current`}</StyledSidebarLabel>
-          <StyledSidebarValue>{currentVersion}</StyledSidebarValue>
-        </StyledSidebarSection>
-      )}
-
-      {isDefined(latestAvailableVersion) && (
-        <StyledSidebarSection>
-          <StyledSidebarLabel>{t`Latest`}</StyledSidebarLabel>
-          <StyledSidebarValue>{latestAvailableVersion}</StyledSidebarValue>
-        </StyledSidebarSection>
-      )}
-
-      {hasDeveloperLinks && (
-        <StyledSidebarSection>
-          <StyledSidebarLabel>{t`Developers links`}</StyledSidebarLabel>
-          {isSafeUrl(developerLinks.websiteUrl) && (
-            <StyledLink
-              href={developerLinks.websiteUrl}
+      {resourceLinks.length > 0 && (
+        <StyledSection>
+          <StyledSectionLabel>{t`Resources`}</StyledSectionLabel>
+          {resourceLinks.map(({ Icon, label, href }) => (
+            <StyledResourceLink
+              key={label}
+              href={href}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <IconWorld size={16} />
-              {t`Website`}
-            </StyledLink>
-          )}
-          {isSafeUrl(developerLinks.termsUrl) && (
-            <StyledLink
-              href={developerLinks.termsUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <IconLink size={16} />
-              {t`Terms / Privacy`}
-            </StyledLink>
-          )}
-          {isNonEmptyString(developerLinks.emailSupport) && (
-            <StyledLink
-              href={`mailto:${developerLinks.emailSupport}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <IconMail size={16} />
-              {t`Email support`}
-            </StyledLink>
-          )}
-          {isSafeUrl(developerLinks.issueReportUrl) && (
-            <StyledLink
-              href={developerLinks.issueReportUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <IconAlertTriangle size={16} />
-              {t`Report an issue`}
-            </StyledLink>
-          )}
-          {isSafeUrl(developerLinks.sourcePackageUrl) && (
-            <StyledLink
-              href={developerLinks.sourcePackageUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <IconBrandNpm size={16} />
-              {t`Npm package`}
-            </StyledLink>
-          )}
-        </StyledSidebarSection>
+              <StyledRowIcon>
+                <Icon size={theme.icon.size.sm} />
+              </StyledRowIcon>
+              <StyledRowLabel>{label}</StyledRowLabel>
+            </StyledResourceLink>
+          ))}
+        </StyledSection>
       )}
     </StyledSidebar>
   );

@@ -11,38 +11,35 @@ const StyledGalleryContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  margin-bottom: ${themeCssVariables.spacing[6]};
   min-width: 0;
+  padding-bottom: ${themeCssVariables.spacing[4]};
   width: 100%;
 `;
 
-const StyledScreenshotsContainer = styled.div`
-  align-items: center;
-  aspect-ratio: 8 / 5;
+const StyledHeroContainer = styled.div`
+  aspect-ratio: 59 / 30;
   background-color: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  justify-content: center;
   overflow: hidden;
-`;
-
-const StyledScreenshotImage = styled.img`
-  height: 100%;
-  object-fit: contain;
   width: 100%;
 `;
 
-const StyledScreenshotThumbnails = styled.div`
+const StyledHeroImage = styled.img`
+  display: block;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  width: 100%;
+`;
+
+const StyledThumbnails = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   overflow-x: auto;
 `;
 
-const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
-  align-items: center;
-  aspect-ratio: 8 / 5;
+const StyledThumbnail = styled.button<{ isSelected: boolean }>`
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid
     ${({ isSelected }) =>
@@ -51,10 +48,10 @@ const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
         : themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   cursor: pointer;
-  display: flex;
-  flex: 0 0 96px;
-  justify-content: center;
+  flex: 0 0 88px;
+  height: 56px;
   overflow: hidden;
+  padding: 0;
 
   &:hover {
     border-color: ${themeCssVariables.color.blue};
@@ -62,8 +59,9 @@ const StyledThumbnail = styled.div<{ isSelected?: boolean }>`
 `;
 
 const StyledThumbnailImage = styled.img`
+  display: block;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   width: 100%;
 `;
 
@@ -81,26 +79,29 @@ export const SettingsApplicationScreenshotGallery = ({
 
   return (
     <StyledGalleryContainer>
-      <StyledScreenshotsContainer>
-        <StyledScreenshotImage
+      <StyledHeroContainer>
+        <StyledHeroImage
           src={screenshots[safeIndex]}
           alt={`${displayName} screenshot ${safeIndex + 1}`}
         />
-      </StyledScreenshotsContainer>
-      <StyledScreenshotThumbnails>
-        {screenshots.slice(0, 6).map((screenshot, index) => (
-          <StyledThumbnail
-            key={index}
-            isSelected={index === selectedScreenshotIndex}
-            onClick={() => setSelectedScreenshotIndex(index)}
-          >
-            <StyledThumbnailImage
-              src={screenshot}
-              alt={`${displayName} thumbnail ${index + 1}`}
-            />
-          </StyledThumbnail>
-        ))}
-      </StyledScreenshotThumbnails>
+      </StyledHeroContainer>
+      {screenshots.length > 1 && (
+        <StyledThumbnails>
+          {screenshots.map((screenshot, index) => (
+            <StyledThumbnail
+              key={index}
+              type="button"
+              isSelected={index === safeIndex}
+              onClick={() => setSelectedScreenshotIndex(index)}
+            >
+              <StyledThumbnailImage
+                src={screenshot}
+                alt={`${displayName} thumbnail ${index + 1}`}
+              />
+            </StyledThumbnail>
+          ))}
+        </StyledThumbnails>
+      )}
     </StyledGalleryContainer>
   );
 };
