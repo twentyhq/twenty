@@ -27,6 +27,20 @@ describe('webhook trigger workflow id resolution (e2e)', () => {
       `/webhooks/workflows/${workspaceIdInPath}/${workflowIdInPath}`,
     );
 
+  const triggerWebhookUntilTheMirrorCatchesUp = async (
+    workflowIdInPath: string,
+  ): Promise<request.Response> => {
+    let response = await triggerWebhook(workflowIdInPath);
+
+    for (let attempt = 0; attempt < 20 && response.status !== 200; attempt++) {
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      response = await triggerWebhook(workflowIdInPath);
+    }
+
+    return response;
+  };
+
   const expectWebhookRanTheWorkflow = async (
     response: request.Response,
   ): Promise<void> => {
@@ -149,12 +163,14 @@ describe('webhook trigger workflow id resolution (e2e)', () => {
 
   it('runs the workflow when the path carries the workspace workflow id', async () => {
     await expectWebhookRanTheWorkflow(
-      await triggerWebhook(workspaceWorkflowId),
+      await triggerWebhookUntilTheMirrorCatchesUp(workspaceWorkflowId),
     );
   });
 
   it('runs the workflow when the path carries the core workflow id', async () => {
-    await expectWebhookRanTheWorkflow(await triggerWebhook(coreWorkflowId));
+    await expectWebhookRanTheWorkflow(
+      await triggerWebhookUntilTheMirrorCatchesUp(coreWorkflowId),
+    );
   });
 
   it('does not run anything for an id that is neither', async () => {
