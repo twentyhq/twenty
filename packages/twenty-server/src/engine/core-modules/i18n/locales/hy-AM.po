@@ -177,7 +177,7 @@ msgstr "Այս անունով դաշտ արդեն գոյություն ունի�
 #. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "A free development instance requires an active production instance on this Organization subscription."
-msgstr ""
+msgstr "Այս Կազմակերպության բաժանորդագրության դեպքում անվճար մշակման օրինակի համար պահանջվում է ակտիվ արտադրական օրինակ։"
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -495,7 +495,7 @@ msgstr "Աշխատանքային տարածքի անդամ"
 #. js-lingui-id: ysZV7o
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "A workspace-wide blocklist entry cannot target a workspace member."
-msgstr ""
+msgstr "Ամբողջ աշխատանքային տարածքին վերաբերող արգելափակման ցանկի գրառումը չի կարող թիրախավորել աշխատանքային տարածքի անդամին։"
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1327,7 +1327,7 @@ msgstr "Արգելափակման ցանկի գրառման դիրք"
 #. js-lingui-id: HSo0Xn
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Blocklist scope cannot be updated."
-msgstr ""
+msgstr "Արգելափակման ցանկի շրջանակը չի կարող թարմացվել։"
 
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
@@ -1396,12 +1396,12 @@ msgstr "Կառուցված մշակիչի ուղին սխալ է"
 #: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
 #: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
 msgid "Bulk deletion of blocklist entries is not allowed."
-msgstr ""
+msgstr "Արգելափակման ցանկի գրառումների զանգվածային ջնջումը թույլատրելի չէ։"
 
 #. js-lingui-id: Az75zM
 #: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
 msgid "Bulk restoration of blocklist entries is not allowed."
-msgstr ""
+msgstr "Արգելափակման ցանկի գրառումների զանգվածային վերականգնումը թույլատրելի չէ։"
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Գործողությունն անհնար է ավարտել կապված գրառումների պատճառով։"
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Չի կարելի ստեղծել միাধিক սևագիր տարբերակ նույն աշխատանքային հոսքի համար"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Չի կարելի ստեղծել աշխատանքային հոսքի տարբերակ սևագրից տարբեր վիճակով"
 
@@ -1937,7 +1937,7 @@ msgstr "Չի կարելի ունենալ մեկից ավելի ակտիվ աշխ
 #. js-lingui-id: 9hWalM
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
 msgid "Cannot manage a blocklist entry of another workspace member."
-msgstr ""
+msgstr "Չեք կարող կառավարել աշխատանքային տարածքի մեկ այլ անդամի արգելափակման ցանկի գրառումը։"
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5407,7 +5407,7 @@ msgstr "Խմբավորման հետ օգտագործված դասավորման 
 #. js-lingui-id: 4rRyz1
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "Invalid Organization key."
-msgstr ""
+msgstr "Կազմակերպության բանալին անվավեր է։"
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6499,7 +6499,7 @@ msgstr "Միացնել {objectLabelPlural}"
 #. js-lingui-id: 27Moeu
 #: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
 msgid "Merging blocklist entries is not allowed."
-msgstr ""
+msgstr "Արգելափակման ցանկի գրառումների միավորումը թույլատրելի չէ։"
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -10374,7 +10374,7 @@ msgstr "Այս աշխատատարածքի համար լռելյայն դերը �
 #. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "The development instance slot for this Organization key is already in use on another server."
-msgstr ""
+msgstr "Այս Կազմակերպության բանալու համար նախատեսված մշակման օրինակի տեղն արդեն օգտագործվում է մեկ այլ սերվերի վրա։"
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10439,7 +10439,7 @@ msgstr "Այս ժամանակագծի գործունեության տեսակի 
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Workflow-ի սկզբնական տարբերակը չի կարող ջնջվել"
 
@@ -10941,7 +10941,7 @@ msgstr "Չհաջողվեց գտնել այս գնահատման թիրախը։"
 #. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
-msgstr ""
+msgstr "Այս գործառույթն անվճար է մինչև {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} տեղերի համար։ Ձեր օրինակը գերազանցում է այդ սահմանը, ուստի պահանջվում է Կազմակերպության բանալի։"
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Այս դաշտը չի կարող փոփոխվել։"
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Այս դաշտը չի կարող անմիջապես թարմացվել աշխատանքային հոսքի տարբերակի վրա"
 
@@ -11106,7 +11106,7 @@ msgstr "Գործողությունը հղվում է գրառման, որը գո
 #. js-lingui-id: 8TiDJj
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr ""
+msgstr "Այս Կազմակերպության բանալին արդեն օգտագործվում է մեկ այլ սերվերի օրինակում։ Ազատեք այն այդ սերվերից կամ փոխանցեք այս սերվերին։"
 
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11249,6 +11249,16 @@ msgstr "Այս տարբերակը ավելի բարձր չէ, քան ներկա�
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Հավելվածի այս տարբերակը արդեն տեղադրված է այս աշխատանքային տարածքում։"
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr ""
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr ""
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -12977,7 +12987,7 @@ msgstr "Աշխատատարածքը կասեցված է։"
 #. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
-msgstr ""
+msgstr "Աշխատանքային տարածքների սահմանաչափը հասել է։ Ավելի շատ աշխատանքային տարածքներ ստեղծելու համար պահանջվում է վավեր Կազմակերպության բանալի։"
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -13320,7 +13330,7 @@ msgstr "Դուք չունեք օգտատերերին ներկայացնելու 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
 msgid "You do not have permission to manage the workspace blocklist."
-msgstr ""
+msgstr "Դուք չունեք աշխատանքային տարածքի արգելափակման ցանկը կառավարելու թույլտվություն։"
 
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
@@ -13383,17 +13393,17 @@ msgstr "Դուք հասել եք այս քայլի հրավերների առավ
 #. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
-msgstr ""
+msgstr "Այս Կազմակերպության բանալու համար այսօր հասել եք լիցենզիայի թույլատրված թարմացումների առավելագույն քանակին։ Խնդրում ենք ավելի ուշ կրկին փորձել։"
 
 #. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
 msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
-msgstr ""
+msgstr "Այս Կազմակերպության բանալու համար վերջին 30 օրվա ընթացքում հասել եք սերվերի թույլատրված փոխանցումների առավելագույն քանակին։ Խնդրում ենք ավելի ուշ կրկին փորձել։"
 
 #. js-lingui-id: GFlHFf
 #: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
 msgid "You must be authenticated to manage the blocklist."
-msgstr ""
+msgstr "Պետք է վավերացված լինեք արգելափակման ցանկը կառավարելու համար։"
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

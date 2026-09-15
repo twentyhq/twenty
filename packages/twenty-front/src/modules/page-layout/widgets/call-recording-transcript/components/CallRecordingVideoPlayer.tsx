@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState, type Ref } from 'react';
-import { CircularProgressBar } from 'twenty-ui/feedback';
-import { Button } from 'twenty-ui/input';
+import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // Forces Safari to decode the first frame under preload="metadata".

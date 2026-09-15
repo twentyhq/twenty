@@ -1,7 +1,7 @@
 import { MetadataReadability } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
-export type RecordShareGateKind = 'open' | 'deny' | 'private';
+export type RecordShareGateKind = 'open' | 'deny' | 'private' | 'inherited';
 
 export const resolveRecordShareGateKind = ({
   readability,
@@ -12,7 +12,6 @@ export const resolveRecordShareGateKind = ({
 }): RecordShareGateKind => {
   switch (readability) {
     case MetadataReadability.OPEN:
-    case MetadataReadability.INHERITED:
       return 'open';
     case MetadataReadability.SYSTEM:
       return 'deny';
@@ -20,6 +19,8 @@ export const resolveRecordShareGateKind = ({
       return isOwningApplication ? 'open' : 'deny';
     case MetadataReadability.PRIVATE:
       return isOwningApplication ? 'open' : 'private';
+    case MetadataReadability.INHERITED:
+      return isOwningApplication ? 'open' : 'inherited';
     default:
       assertUnreachable(readability);
   }

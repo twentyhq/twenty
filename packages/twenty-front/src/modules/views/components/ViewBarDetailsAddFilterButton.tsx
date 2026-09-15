@@ -5,7 +5,7 @@ import { useResetFilterDropdown } from '@/object-record/object-filter-dropdown/h
 import { useToggleDropdown } from '@/ui/layout/dropdown/hooks/useToggleDropdown';
 import { t } from '@lingui/core/macro';
 import { IconPlus } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/input';
+import { LightButton } from 'twenty-ui/primitives/input';
 
 export const ViewBarDetailsAddFilterButton = () => {
   const { toggleDropdown } = useToggleDropdown();

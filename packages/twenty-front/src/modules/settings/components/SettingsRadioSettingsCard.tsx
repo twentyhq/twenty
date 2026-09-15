@@ -3,8 +3,8 @@ import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Radio, RadioGroup } from 'twenty-ui/input';
-import { Card, CardContent } from 'twenty-ui/surfaces';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsRadioSettingsCardProps<Option extends { value: string }> = {

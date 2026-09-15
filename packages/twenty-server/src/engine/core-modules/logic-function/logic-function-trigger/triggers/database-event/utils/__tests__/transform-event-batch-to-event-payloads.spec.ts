@@ -1,4 +1,7 @@
-import type { ObjectRecordEvent } from 'twenty-shared/database-events';
+import type {
+  ObjectRecordDeleteEvent,
+  ObjectRecordEvent,
+} from 'twenty-shared/database-events';
 
 import { MAX_EVENTS_PER_TRIGGER_JOB } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/constants/max-events-per-trigger-job.constant';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
@@ -814,5 +817,35 @@ describe('transformEventBatchToEventPayloads', () => {
 
       expect(result).toHaveLength(0);
     });
+  });
+});
+
+describe('transformEventBatchToEventPayloads with a deletion capture', () => {
+  it('should not hand the child records captured with a deletion to the function', () => {
+    const [jobData] = transformEventBatchToEventPayloads({
+      workspaceEventBatch: createMockWorkspaceEventBatch({
+        name: 'company.deleted',
+        events: [
+          createMockEvent({
+            properties: {
+              before: { id: 'record-1' },
+              after: { id: 'record-1', deletedAt: '2026-09-15T00:00:00Z' },
+              updatedFields: ['deletedAt'],
+              diff: {},
+              inheritedReadabilityChildRecords: { noteTarget: [] },
+            } as ObjectRecordDeleteEvent['properties'],
+          }),
+        ],
+      }),
+      logicFunctions: [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: { eventName: 'company.deleted' },
+        }),
+      ],
+    });
+
+    expect(
+      (jobData.payload as { properties: object }).properties,
+    ).not.toHaveProperty('inheritedReadabilityChildRecords');
   });
 });

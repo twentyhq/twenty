@@ -23,7 +23,7 @@ import { OverlayContainer } from '@/ui/layout/overlay/components/OverlayContaine
 import type { SuggestionMenuProps } from '@/ui/suggestion/types/SuggestionMenuProps';
 import { getSuggestionMenuItemAnchorId } from '@/ui/suggestion/utils/getSuggestionMenuItemAnchorId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // The preview card brings its own surface, so the tooltip only contributes

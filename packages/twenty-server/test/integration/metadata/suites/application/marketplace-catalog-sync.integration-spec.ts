@@ -8,6 +8,10 @@ import request from 'supertest';
 import * as tar from 'tar';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { findApplicationRegistrationByUniversalIdentifier } from 'test/integration/metadata/suites/application/utils/find-application-registration-by-universal-identifier.util';
+import { insertCatalogApplicationRegistration } from 'test/integration/metadata/suites/application/utils/insert-catalog-application-registration.util';
+import { syncMarketplaceCatalogFromRegistryPackage } from 'test/integration/metadata/suites/application/utils/sync-marketplace-catalog-from-registry-package.util';
+import { upsertApplicationRegistrationFromCatalog } from 'test/integration/metadata/suites/application/utils/upsert-application-registration-from-catalog.util';
 import { makeAdminPanelAPIRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
@@ -69,40 +73,10 @@ describe('Marketplace Catalog Sync (integration)', () => {
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
       .send({ query, variables });
 
-  const insertCatalogRegistration = async (params: {
-    universalIdentifier: string;
-    name: string;
-    sourcePackage: string;
-    latestAvailableVersion?: string;
-    manifest?: Record<string, unknown>;
-    category?: string;
-  }): Promise<string> => {
-    const id = crypto.randomUUID();
-    const oAuthClientId = crypto.randomUUID();
-
-    await ds.query(
-      `INSERT INTO core."applicationRegistration"
-        (id, "universalIdentifier", name, "oAuthClientId",
-         "oAuthRedirectUris", "oAuthScopes", "workspaceId",
-         "sourceType", "sourcePackage", "latestAvailableVersion",
-         "manifest", "isListed", "category")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)`,
-      [
-        id,
-        params.universalIdentifier,
-        params.name,
-        oAuthClientId,
-        [],
-        [],
-        TEST_WORKSPACE_ID,
-        'npm',
-        params.sourcePackage,
-        params.latestAvailableVersion ?? '1.0.0',
-        params.manifest ? JSON.stringify(params.manifest) : null,
-        true,
-        params.category ?? null,
-      ],
-    );
+  const insertCatalogRegistration = async (
+    params: Parameters<typeof insertCatalogApplicationRegistration>[0],
+  ): Promise<string> => {
+    const id = await insertCatalogApplicationRegistration(params);
 
     createdRegistrationIds.push(id);
 
@@ -195,102 +169,556 @@ describe('Marketplace Catalog Sync (integration)', () => {
     });
   });
 
-  describe.each([true, false])(
-    'catalog sync with manifest: %s',
-    (hasManifest) => {
-      it.each([true, false])(
-        'preserves the admin choice isVetted=%s',
-        async (isVetted) => {
-          const applicationRegistrationService =
-            getAppProviderByClassName<ApplicationRegistrationService>(
-              'ApplicationRegistrationService',
-            );
-          const universalIdentifier = isVetted
-            ? crypto.randomUUID()
-            : MARKETPLACE_VETTED_APPLICATIONS[0].universalIdentifier;
-          const catalogParams = {
-            universalIdentifier,
-            name: 'Vetted catalog sync test',
-            sourceType: ApplicationRegistrationSourceType.NPM,
-            sourcePackage: '@test/vetted-catalog-sync',
-            latestAvailableVersion: '1.0.0',
-            manifest: hasManifest
-              ? buildBaseManifest({
-                  appId: universalIdentifier,
-                  roleId: crypto.randomUUID(),
-                })
-              : null,
-          };
+  describe('catalog sync', () => {
+    it.each([true, false])(
+      'preserves the admin choice isVetted=%s',
+      async (isVetted) => {
+        const applicationRegistrationService =
+          getAppProviderByClassName<ApplicationRegistrationService>(
+            'ApplicationRegistrationService',
+          );
+        const universalIdentifier = isVetted
+          ? crypto.randomUUID()
+          : MARKETPLACE_VETTED_APPLICATIONS[0].universalIdentifier;
+        const catalogParams = {
+          universalIdentifier,
+          name: 'Vetted catalog sync test',
+          sourceType: ApplicationRegistrationSourceType.NPM,
+          sourcePackage: isVetted
+            ? '@test/vetted-catalog-sync'
+            : MARKETPLACE_VETTED_APPLICATIONS[0].sourcePackage,
+          latestAvailableVersion: '1.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+        };
 
-          expect(
+        expect(
+          await applicationRegistrationService.findOneByUniversalIdentifierGlobal(
+            universalIdentifier,
+          ),
+        ).toBeNull();
+
+        try {
+          await applicationRegistrationService.upsertFromCatalog(catalogParams);
+
+          const registration =
             await applicationRegistrationService.findOneByUniversalIdentifierGlobal(
               universalIdentifier,
-            ),
+            );
+
+          expect(registration).toMatchObject({ isVetted: !isVetted });
+
+          const updateResponse = await makeAdminPanelAPIRequest({
+            query: gql`
+              mutation UpdateAdminApplicationRegistration(
+                $input: AdminUpdateApplicationRegistrationInput!
+              ) {
+                updateAdminApplicationRegistration(input: $input) {
+                  id
+                  isVetted
+                }
+              }
+            `,
+            variables: {
+              input: { id: registration?.id, update: { isVetted } },
+            },
+          });
+
+          expect(updateResponse.body.errors).toBeUndefined();
+          expect(
+            updateResponse.body.data.updateAdminApplicationRegistration,
+          ).toMatchObject({ isVetted });
+
+          await applicationRegistrationService.upsertFromCatalog(catalogParams);
+
+          const refreshedResponse = await makeAdminPanelAPIRequest({
+            query: gql`
+              query FindOneAdminApplicationRegistration($id: String!) {
+                findOneAdminApplicationRegistration(id: $id) {
+                  id
+                  isVetted
+                }
+              }
+            `,
+            variables: { id: registration?.id },
+          });
+
+          expect(refreshedResponse.body.errors).toBeUndefined();
+          expect(
+            refreshedResponse.body.data.findOneAdminApplicationRegistration,
+          ).toMatchObject({ isVetted });
+        } finally {
+          await ds.query(
+            `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+            [universalIdentifier],
+          );
+        }
+      },
+    );
+  });
+
+  describe('catalog sync source package pinning', () => {
+    const OFFICIAL_APPLICATION = MARKETPLACE_VETTED_APPLICATIONS[0];
+
+    it('does not let another package overwrite an existing registration', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Pinned App',
+        sourcePackage: '@test/pinned-app',
+      });
+
+      await upsertApplicationRegistrationFromCatalog({
+        universalIdentifier,
+        name: 'Squatted App',
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourcePackage: '@test/squatter-app',
+        latestAvailableVersion: '9.9.9',
+        manifest: buildBaseManifest({
+          appId: universalIdentifier,
+          roleId: crypto.randomUUID(),
+        }),
+      });
+
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({
+        name: 'Pinned App',
+        sourcePackage: '@test/pinned-app',
+        latestAvailableVersion: '1.0.0',
+      });
+    });
+
+    it('does not attach a package to a registration created from a local install', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Dev Mode App',
+        sourceType: ApplicationRegistrationSourceType.LOCAL,
+      });
+
+      await upsertApplicationRegistrationFromCatalog({
+        universalIdentifier,
+        name: 'Squatted App',
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourcePackage: '@test/squatter-app',
+        latestAvailableVersion: '9.9.9',
+        manifest: buildBaseManifest({
+          appId: universalIdentifier,
+          roleId: crypto.randomUUID(),
+        }),
+      });
+
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({
+        name: 'Dev Mode App',
+        sourcePackage: null,
+        latestAvailableVersion: '1.0.0',
+      });
+    });
+
+    it('keeps updating an existing registration from its own package', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Pinned App',
+        sourcePackage: '@test/pinned-app',
+      });
+
+      await upsertApplicationRegistrationFromCatalog({
+        universalIdentifier,
+        name: 'Pinned App',
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourcePackage: '@test/pinned-app',
+        latestAvailableVersion: '2.0.0',
+        manifest: buildBaseManifest({
+          appId: universalIdentifier,
+          roleId: crypto.randomUUID(),
+        }),
+      });
+
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({
+        sourcePackage: '@test/pinned-app',
+        latestAvailableVersion: '2.0.0',
+      });
+    });
+
+    it('does not register an official identifier from a non-official package', async () => {
+      const { universalIdentifier } = OFFICIAL_APPLICATION;
+
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toBeNull();
+
+      try {
+        await upsertApplicationRegistrationFromCatalog({
+          universalIdentifier,
+          name: 'Squatted Official App',
+          sourceType: ApplicationRegistrationSourceType.NPM,
+          sourcePackage: '@test/squatter-app',
+          latestAvailableVersion: '1.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+        });
+
+        expect(
+          await findApplicationRegistrationByUniversalIdentifier({
+            universalIdentifier,
+          }),
+        ).toBeNull();
+      } finally {
+        await cleanupApplicationAndAppRegistration({
+          applicationUniversalIdentifier: universalIdentifier,
+        });
+      }
+    });
+
+    it.each([
+      {
+        variant: 'uppercase',
+        transform: (universalIdentifier: string) =>
+          universalIdentifier.toUpperCase(),
+      },
+      {
+        variant: 'hyphenless',
+        transform: (universalIdentifier: string) =>
+          universalIdentifier.replace(/-/g, ''),
+      },
+    ])(
+      'does not register an official identifier spelled $variant from a non-official package',
+      async ({ transform }) => {
+        const { universalIdentifier } = OFFICIAL_APPLICATION;
+
+        expect(
+          await findApplicationRegistrationByUniversalIdentifier({
+            universalIdentifier,
+          }),
+        ).toBeNull();
+
+        try {
+          await upsertApplicationRegistrationFromCatalog({
+            universalIdentifier: transform(universalIdentifier),
+            name: 'Squatted Official App',
+            sourceType: ApplicationRegistrationSourceType.NPM,
+            sourcePackage: '@test/squatter-app',
+            latestAvailableVersion: '1.0.0',
+            manifest: buildBaseManifest({
+              appId: transform(universalIdentifier),
+              roleId: crypto.randomUUID(),
+            }),
+          });
+
+          expect(
+            await findApplicationRegistrationByUniversalIdentifier({
+              universalIdentifier,
+            }),
           ).toBeNull();
+        } finally {
+          await cleanupApplicationAndAppRegistration({
+            applicationUniversalIdentifier: universalIdentifier,
+          });
+        }
+      },
+    );
 
-          try {
-            await applicationRegistrationService.upsertFromCatalog(
-              catalogParams,
-            );
+    it('does not let another package overwrite an existing registration through an uppercase identifier', async () => {
+      const universalIdentifier = crypto.randomUUID();
 
-            const registration =
-              await applicationRegistrationService.findOneByUniversalIdentifierGlobal(
-                universalIdentifier,
-              );
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Pinned App',
+        sourcePackage: '@test/pinned-app',
+      });
 
-            expect(registration).toMatchObject({ isVetted: !isVetted });
+      await upsertApplicationRegistrationFromCatalog({
+        universalIdentifier: universalIdentifier.toUpperCase(),
+        name: 'Squatted App',
+        sourceType: ApplicationRegistrationSourceType.NPM,
+        sourcePackage: '@test/squatter-app',
+        latestAvailableVersion: '9.9.9',
+        manifest: buildBaseManifest({
+          appId: universalIdentifier.toUpperCase(),
+          roleId: crypto.randomUUID(),
+        }),
+      });
 
-            const updateResponse = await makeAdminPanelAPIRequest({
-              query: gql`
-                mutation UpdateAdminApplicationRegistration(
-                  $input: UpdateApplicationRegistrationInput!
-                ) {
-                  updateAdminApplicationRegistration(input: $input) {
-                    id
-                    isVetted
-                  }
-                }
-              `,
-              variables: {
-                input: { id: registration?.id, update: { isVetted } },
-              },
-            });
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({
+        name: 'Pinned App',
+        sourcePackage: '@test/pinned-app',
+        latestAvailableVersion: '1.0.0',
+      });
+    });
 
-            expect(updateResponse.body.errors).toBeUndefined();
-            expect(
-              updateResponse.body.data.updateAdminApplicationRegistration,
-            ).toMatchObject({ isVetted });
+    it('lets the official package take back an official identifier registered from another package', async () => {
+      const { universalIdentifier, sourcePackage } = OFFICIAL_APPLICATION;
 
-            await applicationRegistrationService.upsertFromCatalog(
-              catalogParams,
-            );
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toBeNull();
 
-            const refreshedResponse = await makeAdminPanelAPIRequest({
-              query: gql`
-                query FindOneAdminApplicationRegistration($id: String!) {
-                  findOneAdminApplicationRegistration(id: $id) {
-                    id
-                    isVetted
-                  }
-                }
-              `,
-              variables: { id: registration?.id },
-            });
+      try {
+        await insertCatalogApplicationRegistration({
+          universalIdentifier,
+          name: 'Squatted Official App',
+          sourcePackage: '@test/squatter-app',
+        });
 
-            expect(refreshedResponse.body.errors).toBeUndefined();
-            expect(
-              refreshedResponse.body.data.findOneAdminApplicationRegistration,
-            ).toMatchObject({ isVetted });
-          } finally {
-            await ds.query(
-              `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
-              [universalIdentifier],
-            );
-          }
-        },
+        await upsertApplicationRegistrationFromCatalog({
+          universalIdentifier,
+          name: 'Official App',
+          sourceType: ApplicationRegistrationSourceType.NPM,
+          sourcePackage,
+          latestAvailableVersion: '2.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+        });
+
+        expect(
+          await findApplicationRegistrationByUniversalIdentifier({
+            universalIdentifier,
+          }),
+        ).toMatchObject({
+          name: 'Official App',
+          sourcePackage,
+          latestAvailableVersion: '2.0.0',
+        });
+      } finally {
+        await cleanupApplicationAndAppRegistration({
+          applicationUniversalIdentifier: universalIdentifier,
+        });
+      }
+    });
+  });
+
+  describe('catalog sync versions', () => {
+    const SOURCE_PACKAGE = '@test/versioned-app';
+
+    const buildCatalogParams = ({
+      universalIdentifier,
+      name,
+      latestAvailableVersion,
+    }: {
+      universalIdentifier: string;
+      name: string;
+      latestAvailableVersion: string | null;
+    }) => ({
+      universalIdentifier,
+      name,
+      sourceType: ApplicationRegistrationSourceType.NPM,
+      sourcePackage: SOURCE_PACKAGE,
+      latestAvailableVersion,
+      manifest: buildBaseManifest({
+        appId: universalIdentifier,
+        roleId: crypto.randomUUID(),
+      }),
+    });
+
+    it('does not downgrade a registration to an older catalog version', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '2.0.0',
+      });
+
+      const registration = await upsertApplicationRegistrationFromCatalog(
+        buildCatalogParams({
+          universalIdentifier,
+          name: 'Older Versioned App',
+          latestAvailableVersion: '1.0.0',
+        }),
       );
-    },
-  );
+
+      expect(registration).toBeNull();
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({
+        name: 'Versioned App',
+        latestAvailableVersion: '2.0.0',
+      });
+    });
+
+    it('does not erase a known version when the catalog entry has none', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+
+      const registration = await upsertApplicationRegistrationFromCatalog(
+        buildCatalogParams({
+          universalIdentifier,
+          name: 'Unversioned App',
+          latestAvailableVersion: null,
+        }),
+      );
+
+      expect(registration).toBeNull();
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({
+        name: 'Versioned App',
+        latestAvailableVersion: '1.0.0',
+      });
+    });
+
+    it('refreshes a registration served again on the same version', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+
+      const registration = await upsertApplicationRegistrationFromCatalog(
+        buildCatalogParams({
+          universalIdentifier,
+          name: 'Renamed Versioned App',
+          latestAvailableVersion: '1.0.0',
+        }),
+      );
+
+      expect(registration).toMatchObject({
+        name: 'Renamed Versioned App',
+        latestAvailableVersion: '1.0.0',
+      });
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({
+        name: 'Renamed Versioned App',
+        latestAvailableVersion: '1.0.0',
+      });
+    });
+
+    it('sets the version on a registration that has none', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: null,
+      });
+
+      await upsertApplicationRegistrationFromCatalog(
+        buildCatalogParams({
+          universalIdentifier,
+          name: 'Versioned App',
+          latestAvailableVersion: '1.0.0',
+        }),
+      );
+
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({ latestAvailableVersion: '1.0.0' });
+    });
+  });
+
+  describe('catalog sync assets', () => {
+    // 1x1 transparent PNG, so file type detection accepts the asset
+    const LOGO_PNG = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==',
+      'base64',
+    );
+
+    const buildManifestWithLogo = (universalIdentifier: string) => {
+      const manifest = buildBaseManifest({
+        appId: universalIdentifier,
+        roleId: crypto.randomUUID(),
+      });
+
+      manifest.application.logo = 'public/logo.png';
+
+      return manifest;
+    };
+
+    it('does not store assets from another package on an existing registration', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Pinned App',
+        sourcePackage: '@test/pinned-app',
+      });
+
+      await syncMarketplaceCatalogFromRegistryPackage({
+        packageName: '@test/squatter-app',
+        version: '2.0.0',
+        manifest: buildManifestWithLogo(universalIdentifier),
+        asset: LOGO_PNG,
+      });
+
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({ logoFileId: null });
+    });
+
+    it('stores assets from the package the registration is bound to', async () => {
+      const universalIdentifier = crypto.randomUUID();
+
+      await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Pinned App',
+        sourcePackage: '@test/pinned-app',
+      });
+
+      await syncMarketplaceCatalogFromRegistryPackage({
+        packageName: '@test/pinned-app',
+        version: '2.0.0',
+        manifest: buildManifestWithLogo(universalIdentifier),
+        asset: LOGO_PNG,
+      });
+
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({ logoFileId: expect.any(String) });
+    });
+  });
 
   describe('installApplication', () => {
     it('should fail if registration does not exist', async () => {

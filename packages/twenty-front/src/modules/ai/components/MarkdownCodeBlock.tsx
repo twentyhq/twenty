@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNumber, isString } from '@sniptt/guards';
 import { Children, isValidElement } from 'react';
 import { IconCopy } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 

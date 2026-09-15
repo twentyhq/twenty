@@ -7,10 +7,10 @@ import {
   Banner,
   type BannerColor,
   type BannerVariant,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/input';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
+import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledText = styled.div`

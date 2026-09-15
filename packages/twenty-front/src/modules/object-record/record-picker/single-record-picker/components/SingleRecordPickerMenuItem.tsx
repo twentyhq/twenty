@@ -14,8 +14,8 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
-import { MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { MenuItemSelectAvatar } from 'twenty-ui/primitives/navigation';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SingleRecordPickerMenuItemProps = {
