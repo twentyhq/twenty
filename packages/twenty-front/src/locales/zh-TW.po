@@ -3786,7 +3786,7 @@ msgstr "快取建立"
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 msgid "Cached input"
-msgstr ""
+msgstr "快取輸入"
 
 #. js-lingui-id: FKV3nW
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -5256,7 +5256,7 @@ msgstr "上下文"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage"
-msgstr ""
+msgstr "內容脈絡與使用量"
 
 #. js-lingui-id: 4FBXVy
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -12122,7 +12122,7 @@ msgstr ""
 #. js-lingui-id: xu7RPQ
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Less"
-msgstr ""
+msgstr "收起"
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -14674,7 +14674,7 @@ msgstr "並未匹配所有欄位"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Not available"
-msgstr ""
+msgstr "不可用"
 
 #. js-lingui-id: tqk+dw
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -17230,7 +17230,7 @@ msgstr "重設此版面配置上的所有覆寫，將其還原為應用程式預
 #. js-lingui-id: n8HLXo
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
-msgstr ""
+msgstr "{daysUntilReset, plural, other {將於 # 天後重設}} ({percentage}%)"
 
 #. js-lingui-id: AASIAQ
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx

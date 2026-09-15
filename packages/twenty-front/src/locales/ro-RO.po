@@ -3786,7 +3786,7 @@ msgstr "Creare în cache"
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 msgid "Cached input"
-msgstr ""
+msgstr "Intrare din cache"
 
 #. js-lingui-id: FKV3nW
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -5256,7 +5256,7 @@ msgstr "Context"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage"
-msgstr ""
+msgstr "Context și utilizare"
 
 #. js-lingui-id: 4FBXVy
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -12145,7 +12145,7 @@ msgstr ""
 #. js-lingui-id: xu7RPQ
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Less"
-msgstr ""
+msgstr "Mai puțin"
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -14697,7 +14697,7 @@ msgstr "Nu toate coloanele sunt potrivite"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Not available"
-msgstr ""
+msgstr "Indisponibil"
 
 #. js-lingui-id: tqk+dw
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -17253,7 +17253,7 @@ msgstr "Resetează toate suprascrierile pentru această dispunere pentru a o rea
 #. js-lingui-id: n8HLXo
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
-msgstr ""
+msgstr "Se resetează în {daysUntilReset, plural, one {# zi} few {# zile} other {# de zile}} ({percentage}%)"
 
 #. js-lingui-id: AASIAQ
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx

@@ -3786,7 +3786,7 @@ msgstr "إنشاء من ذاكرة التخزين المؤقت"
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 msgid "Cached input"
-msgstr ""
+msgstr "الإدخال المخزّن مؤقتًا"
 
 #. js-lingui-id: FKV3nW
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -5256,7 +5256,7 @@ msgstr "السياق"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage"
-msgstr ""
+msgstr "السياق والاستخدام"
 
 #. js-lingui-id: 4FBXVy
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -12145,7 +12145,7 @@ msgstr "وسيلة الإيضاح"
 #. js-lingui-id: xu7RPQ
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Less"
-msgstr ""
+msgstr "أقل"
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -14697,7 +14697,7 @@ msgstr "لم يتم مطابقة جميع الأعمدة"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Not available"
-msgstr ""
+msgstr "غير متاح"
 
 #. js-lingui-id: tqk+dw
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -17253,7 +17253,7 @@ msgstr "إعادة تعيين جميع التجاوزات في هذا التخط
 #. js-lingui-id: n8HLXo
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
-msgstr ""
+msgstr "إعادة التعيين خلال {daysUntilReset, plural, zero {# يوم} one {# يوم} two {# يومين} few {# أيام} many {# يومًا} other {# يوم}} ({percentage}%)"
 
 #. js-lingui-id: AASIAQ
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx

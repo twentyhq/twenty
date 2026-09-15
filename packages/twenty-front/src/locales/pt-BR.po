@@ -3786,7 +3786,7 @@ msgstr "Criação em cache"
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageDetails.tsx
 msgid "Cached input"
-msgstr ""
+msgstr "Entrada em cache"
 
 #. js-lingui-id: FKV3nW
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
@@ -5256,7 +5256,7 @@ msgstr "Contexto"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Context and usage"
-msgstr ""
+msgstr "Contexto e uso"
 
 #. js-lingui-id: 4FBXVy
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -12145,7 +12145,7 @@ msgstr "Legenda"
 #. js-lingui-id: xu7RPQ
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 msgid "Less"
-msgstr ""
+msgstr "Menos"
 
 #. js-lingui-id: 8PPI2g
 #: src/modules/object-record/object-filter-dropdown/utils/getOperandLabel.ts
@@ -14697,7 +14697,7 @@ msgstr "Nem todas as colunas combinadas"
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Not available"
-msgstr ""
+msgstr "Não disponível"
 
 #. js-lingui-id: tqk+dw
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -17253,7 +17253,7 @@ msgstr "Redefina todas as substituições neste layout para voltar ao padrão do
 #. js-lingui-id: n8HLXo
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Reset in {daysUntilReset, plural, one {# day} other {# days}} ({percentage}%)"
-msgstr ""
+msgstr "Redefine em {daysUntilReset, plural, one {# dia} other {# dias}} ({percentage}%)"
 
 #. js-lingui-id: AASIAQ
 #: src/modules/layout-customization/components/LayoutCustomizationBarMenuDropdown.tsx
