@@ -63,9 +63,7 @@ export const AiChatContextUsageDetails = () => {
               Icon={IconHistory}
               label={t`Cached input`}
               value={null}
-              valueLabel={formatAiChatTokens(
-                lastMessage.cachedInputTokens ?? 0,
-              )}
+              valueLabel={formatAiChatTokens(lastMessage.cachedInputTokens)}
             />
             <UsageProgressRow
               Icon={IconArrowDown}
@@ -98,7 +96,7 @@ export const AiChatContextUsageDetails = () => {
           Icon={IconHistory}
           label={t`Cached input`}
           value={null}
-          valueLabel={formatAiChatTokens(agentChatUsage.cachedInputTokens ?? 0)}
+          valueLabel={formatAiChatTokens(agentChatUsage.cachedInputTokens)}
         />
         <UsageProgressRow
           Icon={IconArrowDown}

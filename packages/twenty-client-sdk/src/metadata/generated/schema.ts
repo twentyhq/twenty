@@ -2939,7 +2939,7 @@ export interface AgentMessage {
 export interface AgentChatThread {
     id: Scalars['ID']
     title?: Scalars['String']
-    totalCacheReadTokens?: Scalars['Int']
+    totalCacheReadTokens: Scalars['Int']
     totalInputTokens: Scalars['Int']
     totalOutputTokens: Scalars['Int']
     contextWindowTokens?: Scalars['Int']

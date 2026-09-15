@@ -14,16 +14,13 @@ export const getAgentChatUsageFromThread = (
     | 'totalOutputCredits'
   >,
 ): AgentChatUsageState | null => {
-  if (
-    (thread.conversationSize ?? 0) <= 0 ||
-    !isDefined(thread.contextWindowTokens)
-  ) {
+  if (thread.conversationSize <= 0 || !isDefined(thread.contextWindowTokens)) {
     return null;
   }
   return {
     lastMessage: null,
-    cachedInputTokens: thread.totalCacheReadTokens ?? 0,
-    conversationSize: thread.conversationSize ?? 0,
+    cachedInputTokens: thread.totalCacheReadTokens,
+    conversationSize: thread.conversationSize,
     contextWindowTokens: thread.contextWindowTokens,
     inputTokens: thread.totalInputTokens,
     outputTokens: thread.totalOutputTokens,

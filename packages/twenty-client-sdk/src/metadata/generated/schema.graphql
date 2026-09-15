@@ -3335,7 +3335,7 @@ type AgentMessage {
 type AgentChatThread {
   id: ID!
   title: String
-  totalCacheReadTokens: Int
+  totalCacheReadTokens: Int!
   totalInputTokens: Int!
   totalOutputTokens: Int!
   contextWindowTokens: Int

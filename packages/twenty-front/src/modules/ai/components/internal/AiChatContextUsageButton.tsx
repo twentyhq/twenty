@@ -71,7 +71,7 @@ const StyledFooter = styled.div`
 `;
 
 export const AiChatContextUsageButton = () => {
-  const { t, i18n } = useLingui();
+  const { t } = useLingui();
 
   const shouldReduceMotion = useReducedMotion();
 
@@ -221,7 +221,6 @@ export const AiChatContextUsageButton = () => {
                   loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
                 }
                 valueLabel={getAiChatUsageLabel({
-                  i18n,
                   loading,
                   hasError: isDefined(error),
                   hasUsage: isDefined(creditUsage),
