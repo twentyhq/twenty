@@ -1,6 +1,6 @@
 import { useCreateBlockNote } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
-import { useId } from 'react';
+import { useEffect, useId } from 'react';
 import { Field } from 'twenty-ui/input';
 
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
@@ -72,6 +72,12 @@ export const FormRecordRichTextFieldInput = ({
   const handleBlur = () => {
     removeFocusItemFromFocusStackById({ focusId });
   };
+
+  useEffect(() => {
+    return () => {
+      removeFocusItemFromFocusStackById({ focusId });
+    };
+  }, [focusId, removeFocusItemFromFocusStackById]);
 
   return (
     <FormFieldInputContainer>
