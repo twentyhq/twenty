@@ -20,6 +20,7 @@ import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workfl
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
+import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -517,11 +518,6 @@ export class CoreWorkflowMutationWorkspaceService {
       );
     }
 
-    const { workspaceWorkflowVersionId: workspaceTwinId } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
-        { workspaceId, coreWorkflowVersionId: coreVersion.id },
-      );
-
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
@@ -530,11 +526,16 @@ export class CoreWorkflowMutationWorkspaceService {
             [coreVersion.id, workspaceId],
           );
 
-          await transactionScope
+          const mirrorDeleteResult = await transactionScope
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
               shouldBypassPermissionChecks: true,
             })
-            .softDelete({ id: workspaceTwinId });
+            .softDelete({ coreWorkflowVersionId: coreVersion.id });
+
+          assertExactlyOneMirrorRowWasWritten({
+            affected: mirrorDeleteResult.affected,
+            coreWorkflowVersionId: coreVersion.id,
+          });
         },
       );
     }, buildSystemAuthContext(workspaceId));

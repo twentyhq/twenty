@@ -124,7 +124,6 @@ export class WorkflowVersionStepUpdateWorkspaceService {
           type: newStep.type,
           workspaceId,
           position: newStep.position,
-          workflowVersionId,
           defaultSettings: newStep.settings,
         },
       );

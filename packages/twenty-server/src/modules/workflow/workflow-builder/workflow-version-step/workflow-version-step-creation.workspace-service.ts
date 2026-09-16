@@ -58,7 +58,6 @@ export class WorkflowVersionStepCreationWorkspaceService {
           type: stepType,
           workspaceId,
           position,
-          workflowVersionId,
           id,
           defaultSettings,
         },

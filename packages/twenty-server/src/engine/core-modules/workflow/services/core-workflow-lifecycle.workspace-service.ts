@@ -16,6 +16,7 @@ import {
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { type WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
+import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { CommandMenuItemService } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.service';
@@ -97,10 +98,20 @@ export class CoreWorkflowLifecycleWorkspaceService {
     workspaceId: string;
     coreWorkflowVersionId: string;
   }): Promise<boolean> {
-    const { coreWorkflowVersion } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
-        { workspaceId, coreWorkflowVersionId },
+    const coreWorkflowVersion =
+      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+        where: { id: coreWorkflowVersionId },
+      });
+
+    if (!isDefined(coreWorkflowVersion)) {
+      throw new WorkflowTriggerException(
+        `Core workflow version '${coreWorkflowVersionId}' not found`,
+        WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+        {
+          userFriendlyMessage: msg`Workflow version not found`,
+        },
       );
+    }
 
     await this.workflowVersionValidationWorkspaceService.assertWorkflowVersionIsActivableOrThrow(
       {
@@ -410,11 +421,16 @@ export class CoreWorkflowLifecycleWorkspaceService {
       [coreWorkflowVersionId, workspaceId, status],
     );
 
-    await transactionScope
+    const mirrorUpdateResult = await transactionScope
       .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
         shouldBypassPermissionChecks: true,
       })
       .update({ coreWorkflowVersionId }, { status });
+
+    assertExactlyOneMirrorRowWasWritten({
+      affected: mirrorUpdateResult.affected,
+      coreWorkflowVersionId,
+    });
   }
 
   private async enableAutomatedTrigger({
@@ -494,9 +510,15 @@ export class CoreWorkflowLifecycleWorkspaceService {
       });
     } catch (error) {
       this.logger.error(
-        `Cron trigger cache entry not published for workflow ${workspaceWorkflowId}, the cron cache will rebuild it`,
+        `Cron trigger cache entry not published for workflow ${workspaceWorkflowId}, dropping the cron cache so the next tick rebuilds it from the database`,
         error,
       );
+
+      try {
+        await this.cacheStorageService.del(WORKFLOW_CRON_TRIGGER_CACHE_KEY);
+      } catch (invalidationError) {
+        this.logger.error(invalidationError);
+      }
     }
   }
 

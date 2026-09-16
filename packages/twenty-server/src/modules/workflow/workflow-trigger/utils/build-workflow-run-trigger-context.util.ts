@@ -11,12 +11,12 @@ export const buildWorkflowRunTriggerContext = ({
   workspaceMember,
   payload,
 }: {
-  workspaceMember: WorkspaceMemberWorkspaceEntity;
+  workspaceMember: Pick<WorkspaceMemberWorkspaceEntity, 'id' | 'name'>;
   payload?: object | null;
 }) => ({
   payload: {
-    ...(payload ?? {}),
-    [WORKFLOW_TRIGGER_PAYLOAD_KEY]: { ...(payload ?? {}) },
+    ...payload,
+    [WORKFLOW_TRIGGER_PAYLOAD_KEY]: { ...payload },
     [WORKFLOW_TRIGGER_METADATA_KEY]: {
       [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]: workspaceMember.id,
     },

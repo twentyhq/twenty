@@ -84,18 +84,12 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         { workspaceId, coreWorkflowVersionId },
       );
 
-    const mirrorVersionId = await this.resolveMirrorVersionIdForStepBuilders({
-      workspaceId,
-      coreWorkflowVersionId,
-    });
-
     const { builtStep, additionalCreatedSteps } =
       await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
         {
           type: stepType,
           workspaceId,
           position,
-          workflowVersionId: mirrorVersionId,
           id,
           defaultSettings,
         },
@@ -105,7 +99,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       await this.workflowSchemaWorkspaceService.enrichOutputSchema({
         step: builtStep,
         workspaceId,
-        workflowVersionId: mirrorVersionId,
+        workflowVersionContent: { trigger, steps },
       });
 
     const { updatedSteps, updatedTrigger } = insertStep({
@@ -222,24 +216,19 @@ export class CoreWorkflowVersionMutationWorkspaceService {
 
     const isStepTypeChanged = existingStep.type !== step.type;
 
-    const mirrorVersionId = await this.resolveMirrorVersionIdForStepBuilders({
-      workspaceId,
-      coreWorkflowVersionId,
-    });
-
     const { updatedStep, additionalCreatedSteps } = isStepTypeChanged
       ? await this.rebuildStepForTypeChange({
           existingStep,
           newStep: step,
           workspaceId,
-          mirrorVersionId,
+          workflowVersionContent: { trigger, steps },
         })
       : {
           updatedStep:
             await this.workflowSchemaWorkspaceService.enrichOutputSchema({
               step,
               workspaceId,
-              workflowVersionId: mirrorVersionId,
+              workflowVersionContent: { trigger, steps },
             }),
           additionalCreatedSteps: undefined,
         };
@@ -702,12 +691,15 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     existingStep,
     newStep,
     workspaceId,
-    mirrorVersionId,
+    workflowVersionContent,
   }: {
     existingStep: WorkflowAction;
     newStep: WorkflowAction;
     workspaceId: string;
-    mirrorVersionId: string;
+    workflowVersionContent: {
+      trigger: WorkflowTrigger | null;
+      steps: WorkflowAction[] | null;
+    };
   }): Promise<{
     updatedStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
@@ -725,7 +717,6 @@ export class CoreWorkflowVersionMutationWorkspaceService {
           type: newStep.type,
           workspaceId,
           position: newStep.position,
-          workflowVersionId: mirrorVersionId,
           defaultSettings: newStep.settings,
         },
       );
@@ -742,25 +733,10 @@ export class CoreWorkflowVersionMutationWorkspaceService {
           position: existingStep.position,
         },
         workspaceId,
-        workflowVersionId: mirrorVersionId,
+        workflowVersionContent,
       });
 
     return { updatedStep, additionalCreatedSteps };
-  }
-
-  private async resolveMirrorVersionIdForStepBuilders({
-    workspaceId,
-    coreWorkflowVersionId,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-  }): Promise<string> {
-    const { workspaceWorkflowVersionId } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
-        { workspaceId, coreWorkflowVersionId },
-      );
-
-    return workspaceWorkflowVersionId;
   }
 
   private async getValidatedDraftWithTargetStep({

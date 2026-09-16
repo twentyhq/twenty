@@ -14,6 +14,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { assertExactlyOneMirrorRowWasWritten } from 'src/engine/core-modules/workflow/utils/assert-exactly-one-mirror-row-was-written.util';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
@@ -116,11 +117,16 @@ export class CoreWorkflowVersionWriteService {
             ],
           );
 
-          await transactionScope
+          const mirrorUpdateResult = await transactionScope
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
               shouldBypassPermissionChecks: true,
             })
             .update({ coreWorkflowVersionId }, { trigger, steps });
+
+          assertExactlyOneMirrorRowWasWritten({
+            affected: mirrorUpdateResult.affected,
+            coreWorkflowVersionId,
+          });
         },
       );
     }, buildSystemAuthContext(workspaceId));
