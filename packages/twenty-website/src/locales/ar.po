@@ -8,7 +8,7 @@ msgstr ""
 "Language: ar\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-15 14:21\n"
+"PO-Revision-Date: 2026-09-16 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Arabic\n"
 "Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
@@ -738,7 +738,7 @@ msgstr "منصة جاهزة للنمو"
 #. js-lingui-id: GGXFEW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A proper home on mobile"
-msgstr ""
+msgstr "واجهة رئيسية مناسبة على الجوال"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
@@ -1115,7 +1115,7 @@ msgstr "الذكاء الاصطناعي في سير عمل الترحيل"
 #. js-lingui-id: CKvvwf
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "AI settings now show each model’s provider, price per million tokens, context window, maximum output, and data residency."
-msgstr ""
+msgstr "تعرض إعدادات الذكاء الاصطناعي الآن موفر كل نموذج، وسعر كل مليون رمز مميز، ونافذة السياق، والحد الأقصى للإخراج، وموقع إقامة البيانات."
 
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
@@ -1289,7 +1289,7 @@ msgstr "العربية"
 #. js-lingui-id: Qrqy7n
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Arabic and Hebrew read right to left"
-msgstr ""
+msgstr "تُقرأ العربية والعبرية من اليمين إلى اليسار"
 
 #. js-lingui-id: uicv6Z
 #: src/case-studies/case-study-stories.ts
@@ -1717,7 +1717,7 @@ msgstr "عرض تقويم للكائنات"
 #. js-lingui-id: RZgOeI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
-msgstr ""
+msgstr "تتضمن تسجيلات المكالمات التي لا تحتوي على فيديو الآن مشغل صوت، لذا يعمل فيها أيضًا النقر للانتقال وتمييز النص."
 
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
@@ -1870,12 +1870,12 @@ msgstr "اختر كيفية عرض التواريخ في أي حقل باستخ�
 #. js-lingui-id: BZEHq1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose how your AI should behave on a single slider, from Extra Fast to Extra Smart, instead of picking a model by name. Each tier shows what it trades in speed, cost, and intelligence."
-msgstr ""
+msgstr "اختر كيفية تصرف الذكاء الاصطناعي لديك باستخدام شريط تمرير واحد، من فائق السرعة إلى فائق الذكاء، بدلًا من اختيار نموذج بالاسم. يوضح كل مستوى ما يوازنه من سرعة وتكلفة وذكاء."
 
 #. js-lingui-id: oXetDh
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose where records open"
-msgstr ""
+msgstr "اختر مكان فتح السجلات"
 
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2681,7 +2681,7 @@ msgstr "فريق العزيز، يسرّني أن أقدّم عرضنا لمرا
 #. js-lingui-id: JG4DOf
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Decide whether records open in the side panel or as a full page, set per object and as your own preference in Settings > Experience."
-msgstr ""
+msgstr "حدّد ما إذا كانت السجلات تُفتح في اللوحة الجانبية أو كصفحة كاملة، واضبط ذلك لكل كائن وكتفضيل خاص بك في الإعدادات > التجربة."
 
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
@@ -2698,7 +2698,7 @@ msgstr "الوضع/الظهور الافتراضي للحقل…"
 #. js-lingui-id: IOhXZ5
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Delete a workflow step from the diagram"
-msgstr ""
+msgstr "احذف خطوة من سير العمل من المخطط"
 
 #. js-lingui-id: 9RARjP
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -2994,7 +2994,7 @@ msgstr "تحرير الإجراءات"
 #. js-lingui-id: V4B1Gm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit deactivated objects"
-msgstr ""
+msgstr "حرّر الكائنات المعطّلة"
 
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3435,7 +3435,7 @@ msgstr "فبراير"
 #. js-lingui-id: ATTTRk
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field descriptions on hover"
-msgstr ""
+msgstr "أوصاف الحقول عند التمرير"
 
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4054,7 +4054,7 @@ msgstr "الأجر بالساعة *"
 #. js-lingui-id: c+5807
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
-msgstr ""
+msgstr "مرّر المؤشر فوق عنوان عمود أو تسمية حقل لقراءة وصف ذلك الحقل، بدلاً من فتح الإعدادات للعثور عليه."
 
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
@@ -5663,7 +5663,7 @@ msgstr "فقط 5 دولارات مقابل SSO. تقريبًا برنامج خي
 #. js-lingui-id: Av5T3E
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
-msgstr ""
+msgstr "افتح كائنًا معطّلًا من الإعدادات وعدّله، بدلًا من حذفه وإعادة إنشائه."
 
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
@@ -5873,7 +5873,7 @@ msgstr "الصق المفتاح ثم انقر على Activate."
 #. js-lingui-id: oKV11Q
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pause the recording bot"
-msgstr ""
+msgstr "إيقاف روبوت التسجيل مؤقتاً"
 
 #. js-lingui-id: 1wdjme
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5934,7 +5934,7 @@ msgstr "الفلبين 🇵🇭"
 #. js-lingui-id: hyGrEm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pick an AI model by tier"
-msgstr ""
+msgstr "اختر نموذج ذكاء اصطناعي حسب المستوى"
 
 #. js-lingui-id: we6gj5
 #: src/partner-application/partner-application-copy.ts
@@ -5974,7 +5974,7 @@ msgstr "خطوط أنابيب، وكائنات مخصّصة، ومساعدو ذ�
 #. js-lingui-id: NjL3pD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Play audio-only recordings"
-msgstr ""
+msgstr "تشغيل التسجيلات الصوتية فقط"
 
 #. js-lingui-id: z7gnI9
 #: src/partner-application/partner-application-copy.ts
@@ -6330,7 +6330,7 @@ msgstr "أحداث Google Calendar المتكررة"
 #. js-lingui-id: pRH3vs
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reference records and skills in AI chat"
-msgstr ""
+msgstr "الإشارة إلى السجلات والمهارات في دردشة الذكاء الاصطناعي"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6393,7 +6393,7 @@ msgstr "إزالة {skill}"
 #. js-lingui-id: ChVv1j
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Remove a step from its node in the diagram, without opening the side panel first."
-msgstr ""
+msgstr "أزل خطوة من عقدتها في المخطط، دون فتح اللوحة الجانبية أولًا."
 
 #. js-lingui-id: a/aGHe
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -6819,7 +6819,7 @@ msgstr "عرض السجلات ذات الصلة عبر العلاقات"
 #. js-lingui-id: B79UH5
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See the devices on your account"
-msgstr ""
+msgstr "اعرض الأجهزة الموجودة في حسابك"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6834,7 +6834,7 @@ msgstr "شاهد التحديثات فور حدوثها. اعمل مع فريق�
 #. js-lingui-id: DlPcBc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See what a model costs and where it runs"
-msgstr ""
+msgstr "اطّلع على تكلفة النموذج ومكان تشغيله"
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
@@ -6989,7 +6989,7 @@ msgstr "الخدمات"
 #. js-lingui-id: y/35JB
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Settings > Profile now lists every device with an active session, marks the one you are on, and lets you sign out any of the others."
-msgstr ""
+msgstr "تعرض الإعدادات > الملف الشخصي الآن كل جهاز لديه جلسة نشطة، وتحدد الجهاز الذي تستخدمه، وتتيح لك تسجيل الخروج من أي من الأجهزة الأخرى."
 
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
@@ -7339,7 +7339,7 @@ msgstr "توقّف عن قبول المقايضات."
 #. js-lingui-id: 8b3N0u
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Stop the call recorder from joining calendar meetings with one workspace setting, rather than uninstalling the app. The Recording Bot preference now reads On only when a bot is really scheduled."
-msgstr ""
+msgstr "أوقف مسجّل المكالمات من الانضمام إلى اجتماعات التقويم عبر إعداد واحد لمساحة العمل، بدلاً من إلغاء تثبيت التطبيق. لا يظهر تفضيل روبوت التسجيل الآن على أنه مفعّل إلا عندما يكون روبوت مجدولاً بالفعل."
 
 #. js-lingui-id: hjgBcp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7755,7 +7755,7 @@ msgstr "عبء الحلول الداخلية"
 #. js-lingui-id: 6U7fek
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
-msgstr ""
+msgstr "تنعكس الواجهة الآن للغات التي تُكتب من اليمين إلى اليسار، لذا تُعرض مساحات العمل العربية والعبرية باتجاهها الخاص."
 
 #. js-lingui-id: ZNzKXV
 #: src/case-studies/case-study-stories.ts
@@ -7793,7 +7793,7 @@ msgstr ""
 #. js-lingui-id: 5V+Mch
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The navigation menu is now a page of its own, with a real address and a way back. Create actions appear as icons in page headers, and the bottom bar no longer sits on top of your content."
-msgstr ""
+msgstr "أصبحت قائمة التنقل الآن صفحة مستقلة، لها عنوان فعلي وطريقة للعودة. تظهر إجراءات الإنشاء كأيقونات في رؤوس الصفحات، ولم يعد الشريط السفلي يغطي المحتوى الخاص بك."
 
 #. js-lingui-id: nf1NnD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8276,7 +8276,7 @@ msgstr "مصادقة ثنائية العوامل"
 #. js-lingui-id: QMyFdb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Type <0>@</0> to point the chat at a record, or <1>/</1> to pick one of your workspace’s skills. Both suggest matches as you type."
-msgstr ""
+msgstr "اكتب <0>@</0> للإشارة في الدردشة إلى سجل، أو <1>/</1> لاختيار إحدى مهارات مساحة العمل الخاصة بك. يقترح كلاهما مطابقات أثناء الكتابة."
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
