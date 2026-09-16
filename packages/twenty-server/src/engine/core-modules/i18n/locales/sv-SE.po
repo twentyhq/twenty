@@ -11259,12 +11259,12 @@ msgstr "Den här versionen av applikationen är redan installerad i den här arb
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "Den här arbetsflödesversionen innehåller felaktiga data och kan inte sparas."
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "Den här arbetsflödesversionen är inte redo att aktiveras."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13332,6 +13332,11 @@ msgstr "Du har inte behörighet att agera som användare i denna arbetsyta."
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Du har inte behörighet att imitera användare. Vänligen kontakta din arbetsytsadministratör för åtkomst."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Du har inte behörighet att hantera anslutningar som delas med arbetsutrymmet. Vänligen kontakta din arbetsytsadministratör för åtkomst."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

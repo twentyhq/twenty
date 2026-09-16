@@ -37,7 +37,7 @@ describe('buildAwsSesVerificationRecords', () => {
     expect(records.filter((record) => record.type === 'MX')).toEqual([
       {
         type: 'MX',
-        key: 'bounce.acme.com',
+        key: 'twenty-bounce.acme.com',
         value: 'feedback-smtp.us-east-1.amazonses.com',
         priority: 10,
       },
@@ -54,7 +54,7 @@ describe('buildAwsSesVerificationRecords', () => {
     expect(records.filter((record) => record.type === 'TXT')).toEqual([
       {
         type: 'TXT',
-        key: 'bounce.acme.com',
+        key: 'twenty-bounce.acme.com',
         value: 'v=spf1 include:amazonses.com ~all',
       },
     ]);
@@ -68,5 +68,19 @@ describe('buildAwsSesVerificationRecords', () => {
     });
 
     expect(records).toHaveLength(2);
+  });
+
+  it('should keep the MAIL FROM subdomain already registered in SES for the domain', () => {
+    const records = buildAwsSesVerificationRecords({
+      domain: 'acme.com',
+      dkimTokens: [],
+      mailFromDomain: 'bounce.acme.com',
+      region: 'eu-west-3',
+    });
+
+    expect(records.map((record) => record.key)).toEqual([
+      'bounce.acme.com',
+      'bounce.acme.com',
+    ]);
   });
 });

@@ -16,7 +16,6 @@ const APPLICATION_CONNECTED_ACCOUNTS_QUERY = gql`
   query ApplicationConnectedAccounts($applicationId: UUID!) {
     applicationConnectedAccounts(applicationId: $applicationId) {
       id
-      isOwnedByCurrentUser
     }
   }
 `;
@@ -139,7 +138,7 @@ describe('applicationConnectedAccounts resolver (e2e)', () => {
     });
   }, 120000);
 
-  it('returns workspace-shared connections and the caller own private ones, flagged by ownership', async () => {
+  it('returns workspace-shared connections and the caller own private ones', async () => {
     const response = await makeMetadataAPIRequest({
       query: APPLICATION_CONNECTED_ACCOUNTS_QUERY,
       variables: { applicationId: applicationDbId },
@@ -148,14 +147,14 @@ describe('applicationConnectedAccounts resolver (e2e)', () => {
     expect(response.status).toBe(200);
     expect(response.body.errors).toBeUndefined();
 
-    const accounts: { id: string; isOwnedByCurrentUser: boolean }[] =
+    const accounts: { id: string }[] =
       response.body.data.applicationConnectedAccounts;
 
     expect(accounts).toHaveLength(2);
     expect(accounts).toEqual(
       expect.arrayContaining([
-        { id: SHARED_BY_TIM_ID, isOwnedByCurrentUser: false },
-        { id: PRIVATE_OF_JANE_ID, isOwnedByCurrentUser: true },
+        { id: SHARED_BY_TIM_ID },
+        { id: PRIVATE_OF_JANE_ID },
       ]),
     );
   });

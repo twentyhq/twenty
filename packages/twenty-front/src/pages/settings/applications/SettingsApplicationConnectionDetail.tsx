@@ -328,31 +328,29 @@ export const SettingsApplicationConnectionDetail = () => {
                 title={connectionLabel}
                 description={t`Manage this application's OAuth connection.`}
               />
-              {connection.isOwnedByCurrentUser && (
-                <StyledActions>
-                  {connection.authFailedAt && (
-                    <Button
-                      startIcon={<IconRefresh />}
-                      onClick={handleReconnect}
-                      variant="outline"
-                      color="accent"
-                    >{t`Reconnect`}</Button>
-                  )}
-                  {connection.visibility !== 'workspace' && (
-                    <Button
-                      startIcon={<IconUsers />}
-                      onClick={() => openModal(shareWithWorkspaceModalId)}
-                      variant="outline"
-                    >{t`Share with workspace`}</Button>
-                  )}
+              <StyledActions>
+                {connection.authFailedAt && (
                   <Button
-                    startIcon={<IconTrash />}
-                    onClick={() => openModal(deleteModalId)}
+                    startIcon={<IconRefresh />}
+                    onClick={handleReconnect}
                     variant="outline"
-                    color="danger"
-                  >{t`Disconnect`}</Button>
-                </StyledActions>
-              )}
+                    color="accent"
+                  >{t`Reconnect`}</Button>
+                )}
+                {connection.visibility !== 'workspace' && (
+                  <Button
+                    startIcon={<IconUsers />}
+                    onClick={() => openModal(shareWithWorkspaceModalId)}
+                    variant="outline"
+                  >{t`Share with workspace`}</Button>
+                )}
+                <Button
+                  startIcon={<IconTrash />}
+                  onClick={() => openModal(deleteModalId)}
+                  variant="outline"
+                  color="danger"
+                >{t`Disconnect`}</Button>
+              </StyledActions>
             </Section>
             <Section>
               <H2Title

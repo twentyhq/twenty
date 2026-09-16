@@ -36,7 +36,6 @@ export const SettingsEmailingDomainVerifyButton = ({
       onClick={handleVerify}
       loading={loading}
       startIcon={<IconRefresh />}
-      size="sm"
       disabled={loading}
       variant="outline"
     >{t`Check verification`}</Button>
