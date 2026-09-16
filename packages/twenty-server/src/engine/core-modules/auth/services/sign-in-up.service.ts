@@ -846,13 +846,6 @@ export class SignInUpService {
             customApplicationUniversalIdentifier:
               customApplication.universalIdentifier,
           };
-        }).catch(async (error: unknown) => {
-          await this.fileStorageService.invalidateStorageStock({
-            workspaceId,
-            applicationId: workspaceCustomApplicationId,
-          });
-
-          throw error;
         });
 
       if (isWorkEmailFound) {
@@ -881,6 +874,11 @@ export class SignInUpService {
 
       return { user, workspace };
     } catch (error) {
+      await this.fileStorageService.invalidateStorageStock({
+        workspaceId,
+        applicationId: workspaceCustomApplicationId,
+      });
+
       const isSubdomainConflict =
         error instanceof QueryFailedError &&
         (error as QueryFailedErrorWithCode).code ===

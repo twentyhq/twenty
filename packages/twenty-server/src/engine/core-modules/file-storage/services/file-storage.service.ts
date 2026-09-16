@@ -401,10 +401,9 @@ export class FileStorageService {
         resourcePath,
       });
 
-    const size =
-      isString(persistedSourceFile)
-        ? Buffer.byteLength(persistedSourceFile)
-        : persistedSourceFile.length;
+    const size = isString(persistedSourceFile)
+      ? Buffer.byteLength(persistedSourceFile)
+      : persistedSourceFile.length;
 
     const existingFile = await this.findFileByPath({
       fileRepository: fileRepository,
