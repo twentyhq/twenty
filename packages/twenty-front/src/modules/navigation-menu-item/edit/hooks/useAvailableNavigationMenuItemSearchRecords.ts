@@ -7,6 +7,7 @@ import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchab
 import { isDefined } from 'twenty-shared/utils';
 
 const DEFAULT_RECORD_SUGGESTION_LIMIT = 10;
+const SEARCH_DEBOUNCE_DELAY = 300;
 
 export type NavigationMenuItemSearchRecord = {
   recordId: string;
@@ -29,7 +30,10 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
   const { currentItems } = useNavigationMenuItemEditController();
   const trimmedSearchInput = searchInput.trim();
 
-  const [deferredSearchInput] = useDebounce(trimmedSearchInput, 300);
+  const [deferredSearchInput] = useDebounce(
+    trimmedSearchInput,
+    SEARCH_DEBOUNCE_DELAY,
+  );
 
   const includedObjectNameSingulars = useSearchableObjectNameSingulars({
     selectedObjectNameSingular,
@@ -42,6 +46,14 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
       skip,
       limit: deferredSearchInput ? undefined : DEFAULT_RECORD_SUGGESTION_LIMIT,
     });
+
+  const isSearchDebouncing = trimmedSearchInput !== deferredSearchInput;
+  const isSearchPending = !skip && (recordSearchLoading || isSearchDebouncing);
+  // Avoid flashing the empty state between responses while the user is typing.
+  const [settledSearchInput] = useDebounce(
+    isSearchPending ? null : trimmedSearchInput,
+    SEARCH_DEBOUNCE_DELAY,
+  );
 
   const recordIdsAlreadyAdded = useMemo(
     () =>
@@ -71,8 +83,9 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
   return {
     availableSearchRecords,
     deferredSearchInput,
-    isSearchDebouncing: trimmedSearchInput !== deferredSearchInput,
-    recordSearchLoading,
+    isSearchDebouncing,
+    recordSearchLoading:
+      isSearchPending || (!skip && settledSearchInput !== trimmedSearchInput),
     trimmedSearchInput,
   };
 };
