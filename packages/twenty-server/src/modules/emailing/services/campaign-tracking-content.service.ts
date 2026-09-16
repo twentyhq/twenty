@@ -17,6 +17,7 @@ import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-d
 import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
+import { hashShortLink } from 'src/engine/core-modules/short-link/utils/hash-short-link.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -114,7 +115,7 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
-    const shortLinkIdByUrl = await this.registerShortLinks({
+    const shortLinkIdByIdentity = await this.registerShortLinks({
       workspaceId,
       messageCampaignId,
       urlTemplates,
@@ -137,7 +138,8 @@ export class CampaignTrackingContentService {
               baseUrl,
               recipient,
               urlTemplates,
-              shortLinkIdByUrl,
+              variableNames,
+              shortLinkIdByIdentity,
             }),
           },
         ]),
@@ -184,7 +186,10 @@ export class CampaignTrackingContentService {
     variableNames: string[];
     recipients: TrackingRecipient[];
   }): Promise<Map<string, string>> {
-    const linkByUrl = new Map<string, { url: string; authoredUrl: string }>();
+    const linkByIdentity = new Map<
+      string,
+      { url: string; authoredUrl: string }
+    >();
 
     for (const urlTemplate of urlTemplates) {
       const authoredUrl = this.restoreAuthoredUrl(urlTemplate, variableNames);
@@ -196,19 +201,21 @@ export class CampaignTrackingContentService {
         });
 
         if (isTrackable) {
-          linkByUrl.set(url, { url, authoredUrl });
+          const link = { url, authoredUrl };
+
+          linkByIdentity.set(hashShortLink(link), link);
         }
       }
     }
 
-    if (linkByUrl.size === 0) {
+    if (linkByIdentity.size === 0) {
       return new Map();
     }
 
     return this.shortLinkService.registerCampaignLinks({
       workspaceId,
       messageCampaignId,
-      links: [...linkByUrl.values()],
+      links: [...linkByIdentity.values()],
     });
   }
 
@@ -216,21 +223,26 @@ export class CampaignTrackingContentService {
     baseUrl,
     recipient,
     urlTemplates,
-    shortLinkIdByUrl,
+    variableNames,
+    shortLinkIdByIdentity,
   }: {
     baseUrl: string;
     recipient: TrackingRecipient;
     urlTemplates: string[];
-    shortLinkIdByUrl: Map<string, string>;
+    variableNames: string[];
+    shortLinkIdByIdentity: Map<string, string>;
   }): Record<string, string> {
     const replacements: Record<string, string> = {};
 
     urlTemplates.forEach((urlTemplate, index) => {
+      const authoredUrl = this.restoreAuthoredUrl(urlTemplate, variableNames);
       const { url } = this.resolveLinkUrl({
         urlTemplate,
         replacements: recipient.replacements,
       });
-      const shortLinkId = shortLinkIdByUrl.get(url);
+      const shortLinkId = shortLinkIdByIdentity.get(
+        hashShortLink({ url, authoredUrl }),
+      );
       const linkUrl = isDefined(shortLinkId)
         ? `${baseUrl}/${ApiPath.Emailing}/c/${this.campaignTrackingTokenService.sign(
             { purpose: 'CLICK', deliveryId: recipient.deliveryId, shortLinkId },
