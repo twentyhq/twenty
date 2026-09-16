@@ -7891,7 +7891,7 @@ msgstr "Имена выходных полей должны использова
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Owned opportunities"
-msgstr "Сделки в работе"
+msgstr "Закреплённые сделки"
 
 #. js-lingui-id: l/RVZK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
