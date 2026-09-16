@@ -217,12 +217,11 @@ export const SettingsAgentLogsTab = ({
                   <Status color="blue" loading>{t`Evaluating`}</Status>
                 ) : (
                   <Button
-                    size="small"
-                    variant="secondary"
+                    size="sm"
                     onClick={() => handleEvaluateTurn(turn.id)}
                     disabled={evaluating}
-                    title={t`Evaluate`}
-                  />
+                    variant="outline"
+                  >{t`Evaluate`}</Button>
                 )}
               </TableCell>
               <TableCell

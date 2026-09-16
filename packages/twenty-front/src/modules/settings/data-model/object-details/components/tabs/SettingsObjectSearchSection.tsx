@@ -260,12 +260,11 @@ export const SettingsObjectSearchSection = ({
             dropdownOffset={{ x: 0, y: 8 }}
             clickableComponent={
               <Button
-                Icon={IconPlus}
-                title={t`Add field`}
-                size="small"
-                variant="secondary"
+                startIcon={<IconPlus />}
+                size="sm"
                 disabled={addableFields.length === 0}
-              />
+                variant="outline"
+              >{t`Add field`}</Button>
             }
             dropdownComponents={
               <DropdownContent>

@@ -5673,6 +5673,11 @@ msgstr "作成"
 msgid "Create"
 msgstr "作成"
 
+#. js-lingui-id: MKhSSw
+#: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
+msgid "Create {objectLabelSingular}"
+msgstr ""
+
 #. js-lingui-id: QMLXwt
 #. placeholder {0}: objectMetadataItem.labelSingular
 #: src/pages/object-core/WorkflowCoreIndexPage.tsx

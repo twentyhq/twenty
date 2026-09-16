@@ -8,7 +8,7 @@ Primitives are the foundational controls in Twenty UI. They include inputs, disp
 
 Import primitives from a family entry point, such as `twenty-ui/primitives/input`. See [Getting started](/ui/getting-started) for installation and theme setup.
 
-All existing UI controls belong to the primitives layer, including controls still being migrated to the new API. [Components](/ui/components/overview) are reserved for larger, reusable app building blocks composed from these primitives.
+[Components](/ui/components/overview) combine these primitives into shared design presets and reusable app building blocks.
 
 ## State ownership
 
@@ -61,18 +61,18 @@ import { Popover } from 'twenty-ui/primitives/surfaces';
 type HelpButtonProps = ComponentPropsWithRef<typeof Button>;
 
 const HelpButton = ({ ref, ...props }: HelpButtonProps) => (
-  <Button {...props} ref={ref} variant="secondary" />
+  <Button {...props} ref={ref} variant="outline" />
 );
 
 export const ImportHelp = () => (
   <Popover.Root>
-    <Popover.Trigger render={<HelpButton title="Import help" />} />
+    <Popover.Trigger render={<HelpButton>Import help</HelpButton>} />
     <Popover.Popup>
       <Popover.Title>Import a CSV file</Popover.Title>
       <Popover.Description>
         Use a header row to identify your columns.
       </Popover.Description>
-      <Popover.Close render={<Button title="Got it" />} />
+      <Popover.Close render={<Button>Got it</Button>} />
     </Popover.Popup>
   </Popover.Root>
 );
@@ -86,11 +86,11 @@ Use a native button for button-like parts. On parts that expose `nativeButton`, 
 
 Each page includes usage examples, interaction guidance, and a generated API reference.
 
-| Family       | Primitives                                                                                                                                                                                                                                                                                                                                                                                                               |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Data display | [Avatar](/ui/primitives/data-display/avatar), [Chip](/ui/primitives/data-display/chip), [Tag](/ui/primitives/data-display/tag), [Status](/ui/primitives/data-display/status)                                                                                                                                                                                                                                             |
-| Forms        | [Field](/ui/primitives/input/field), [Input](/ui/primitives/input/input), [InputGroup](/ui/primitives/input/input-group), [Textarea](/ui/primitives/input/textarea), [Checkbox](/ui/primitives/input/checkbox), [Radio](/ui/primitives/input/radio), [RadioGroup](/ui/primitives/input/radio-group), [Select](/ui/primitives/input/select), [Slider](/ui/primitives/input/slider), [Switch](/ui/primitives/input/switch) |
-| Navigation   | [ListItem](/ui/primitives/navigation/list-item), [Tabs](/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                  |
-| Surfaces     | [AlertDialog](/ui/primitives/surfaces/alert-dialog), [Menu](/ui/primitives/surfaces/menu), [Popover](/ui/primitives/surfaces/popover)                                                                                                                                                                                                                                                                                    |
-| Feedback     | [Toast](/ui/primitives/feedback/toast)                                                                                                                                                                                                                                                                                                                                                                                   |
-| Typography   | [Text](/ui/primitives/typography/text)                                                                                                                                                                                                                                                                                                                                                                                   |
+| Family       | Primitives                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Data display | [Avatar](/ui/primitives/data-display/avatar), [Chip](/ui/primitives/data-display/chip), [Tag](/ui/primitives/data-display/tag), [Status](/ui/primitives/data-display/status)                                                                                                                                                                                                                                                                                                                                      |
+| Forms        | [Button](/ui/primitives/input/button), [ButtonGroup](/ui/primitives/input/button-group), [Field](/ui/primitives/input/field), [Input](/ui/primitives/input/input), [InputGroup](/ui/primitives/input/input-group), [Textarea](/ui/primitives/input/textarea), [Checkbox](/ui/primitives/input/checkbox), [Radio](/ui/primitives/input/radio), [RadioGroup](/ui/primitives/input/radio-group), [Select](/ui/primitives/input/select), [Slider](/ui/primitives/input/slider), [Switch](/ui/primitives/input/switch) |
+| Navigation   | [ListItem](/ui/primitives/navigation/list-item), [Tabs](/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| Surfaces     | [AlertDialog](/ui/primitives/surfaces/alert-dialog), [Menu](/ui/primitives/surfaces/menu), [Popover](/ui/primitives/surfaces/popover)                                                                                                                                                                                                                                                                                                                                                                             |
+| Feedback     | [Toast](/ui/primitives/feedback/toast)                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Typography   | [Text](/ui/primitives/typography/text)                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |

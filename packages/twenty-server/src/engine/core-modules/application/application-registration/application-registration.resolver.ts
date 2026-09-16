@@ -259,8 +259,13 @@ export class ApplicationRegistrationResolver {
   async uploadAppTarball(
     @Args({ name: 'file', type: () => GraphQLUpload })
     { createReadStream }: FileUpload,
-    @Args('universalIdentifier', { type: () => String, nullable: true })
-    universalIdentifier: string | undefined,
+    @Args('universalIdentifier', {
+      type: () => String,
+      nullable: true,
+      deprecationReason:
+        'Ignored: the application universalIdentifier is read from the tarball manifest.',
+    })
+    _universalIdentifier: string | undefined,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<ApplicationRegistrationEntity> {
     const maxSize = this.twentyConfigService.get(
@@ -274,7 +279,6 @@ export class ApplicationRegistrationResolver {
 
       return this.applicationTarballService.uploadTarball({
         tarballBuffer,
-        universalIdentifier,
         ownerWorkspaceId: workspaceId,
       });
     } catch (error) {

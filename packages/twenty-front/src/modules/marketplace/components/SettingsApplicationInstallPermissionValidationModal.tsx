@@ -9,8 +9,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
+import { LightButton } from 'twenty-ui/components';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { LightButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { StyledAppModal } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
@@ -126,10 +126,9 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     >
       <StyledFullscreenContainer>
         <StyledLightButton
-          Icon={IconChevronLeft}
-          title={t`Back to settings`}
+          startIcon={<IconChevronLeft />}
           onClick={handleClose}
-        />
+        >{t`Back to settings`}</StyledLightButton>
 
         <StyledContent>
           <StyledAppConnectionHeaderContainer>

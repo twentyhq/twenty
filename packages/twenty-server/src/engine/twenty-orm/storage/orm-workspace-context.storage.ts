@@ -23,6 +23,7 @@ export type ORMWorkspaceContext = {
   objectIdByNameSingular: Record<string, string>;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
   billingEntitlements: BillingEntitlements;
+  isRecordSharingEnabled: boolean;
   permissionsPerRoleId: ObjectsPermissionsByRoleId;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;

@@ -203,14 +203,13 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
                 permission: 'accessibility',
               })
             }
-            variant="secondary"
-            size="medium"
-            title={
-              state.permissions.accessibility === 'denied'
-                ? i18n._('Open settings')
-                : i18n._('Enable')
-            }
-          />
+            variant="outline"
+            size="md"
+          >
+            {state.permissions.accessibility === 'denied'
+              ? i18n._('Open settings')
+              : i18n._('Enable')}
+          </Button>
         )}
       </SettingsCardContent>
       <button
@@ -273,10 +272,11 @@ export const Settings = ({ state, isPending, command }: ActionProps) => (
         <Button
           disabled={isPending('disconnect') || !!state.activeRecording}
           onClick={() => void command({ type: 'disconnect' })}
-          variant="secondary"
-          size="medium"
-          title={i18n._('Disconnect')}
-        />
+          variant="outline"
+          size="md"
+        >
+          {i18n._('Disconnect')}
+        </Button>
       </SettingsCardContent>
     </Card>
   </section>

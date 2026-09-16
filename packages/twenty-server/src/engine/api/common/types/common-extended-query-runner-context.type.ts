@@ -15,4 +15,5 @@ export type CommonExtendedQueryRunnerContext = Omit<
   repository: WorkspaceRepository<ObjectRecord>;
   commonQueryParser: GraphqlQueryParser;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
+  isRecordSharingEnabled: boolean;
 };

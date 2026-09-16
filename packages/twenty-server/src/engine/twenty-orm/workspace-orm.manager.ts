@@ -16,6 +16,7 @@ import {
 import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 
@@ -24,6 +25,7 @@ export class WorkspaceOrmManager {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly recordSharingFeatureService: RecordSharingFeatureService,
   ) {}
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
@@ -139,6 +141,10 @@ export class WorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap,
       billingEntitlements,
+      isRecordSharingEnabled:
+        await this.recordSharingFeatureService.isRecordSharingEnabled(
+          workspaceId,
+        ),
       permissionsPerRoleId,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -185,6 +191,7 @@ export class WorkspaceOrmManager {
       objectIdByNameSingular,
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
+      isRecordSharingEnabled: false,
       permissionsPerRoleId: {},
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},

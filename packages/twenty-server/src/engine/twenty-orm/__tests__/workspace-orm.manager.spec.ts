@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -31,6 +32,12 @@ describe('WorkspaceOrmManager', () => {
     const module = await Test.createTestingModule({
       providers: [
         WorkspaceOrmManager,
+        {
+          provide: RecordSharingFeatureService,
+          useValue: {
+            isRecordSharingEnabled: jest.fn().mockResolvedValue(true),
+          },
+        },
         { provide: WorkspaceCacheService, useValue: workspaceCacheService },
         { provide: WorkspaceDataSourceService, useValue: {} },
       ],
@@ -47,6 +54,7 @@ describe('WorkspaceOrmManager', () => {
       await workspaceOrmManager.executeInWorkspaceContext(
         () => {
           expect(getWorkspaceContext().authContext).toBe(authContext);
+          expect(getWorkspaceContext().isRecordSharingEnabled).toBe(!lite);
           expect(getWorkspaceContext().billingEntitlements).toBe(
             billingEntitlements,
           );

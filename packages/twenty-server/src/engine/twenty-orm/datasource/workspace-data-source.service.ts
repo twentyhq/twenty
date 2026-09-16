@@ -120,6 +120,7 @@ export class WorkspaceDataSourceService
       objectIdByNameSingular: workspaceContext.objectIdByNameSingular,
       featureFlagsMap: workspaceContext.featureFlagsMap,
       billingEntitlements: workspaceContext.billingEntitlements,
+      isRecordSharingEnabled: workspaceContext.isRecordSharingEnabled,
       userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
       apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
       eventEmitterService: this.workspaceEventEmitter,
