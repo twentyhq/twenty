@@ -19,6 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconChevronLeft,
+  IconCompass,
   IconBox,
   IconPerspective,
   IconFolder,
@@ -205,13 +206,6 @@ export const NavigationMenuItemAddDropdownContent = ({
           hasSubMenu: true,
         },
         {
-          id: 'page',
-          label: t`Page`,
-          icon: <TintedIconTile Icon={IconPerspective} />,
-          onClick: () => navigate('page'),
-          hasSubMenu: true,
-        },
-        {
           id: 'folder',
           label: t`Folder`,
           contextualText: folderId
@@ -251,6 +245,13 @@ export const NavigationMenuItemAddDropdownContent = ({
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
             });
           },
+          hasSubMenu: true,
+        },
+        {
+          id: 'page',
+          label: t`Page`,
+          icon: <TintedIconTile Icon={IconPerspective} />,
+          onClick: () => navigate('page'),
           hasSubMenu: true,
         },
       ];
@@ -443,12 +444,10 @@ export const NavigationMenuItemAddDropdownContent = ({
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
       <DropdownMenuHeader
         StartComponent={
-          step !== 'main' && (
-            <DropdownMenuHeaderLeftComponent
-              Icon={IconChevronLeft}
-              onClick={goBack}
-            />
-          )
+          <DropdownMenuHeaderLeftComponent
+            Icon={step === 'main' ? IconCompass : IconChevronLeft}
+            onClick={step === 'main' ? undefined : goBack}
+          />
         }
       >
         {titles[step]}
