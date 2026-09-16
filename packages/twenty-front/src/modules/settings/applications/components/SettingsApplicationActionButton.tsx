@@ -1,10 +1,7 @@
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
 import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { useId } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
+import { IconCheck, IconDownload, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsApplicationActionButtonProps = {
@@ -34,11 +31,6 @@ export const SettingsApplicationActionButton = ({
   onUninstall,
   isUninstalling,
 }: SettingsApplicationActionButtonProps) => {
-  const { openModal } = useModal();
-  const uninstallModalId = useId();
-
-  const confirmationValue = t`yes`;
-
   if (!canInstallMarketplaceApps) {
     return null;
   }
@@ -77,32 +69,10 @@ export const SettingsApplicationActionButton = ({
 
   if (canBeUninstalled && isDefined(onUninstall)) {
     return (
-      <>
-        <Button
-          Icon={IconTrash}
-          title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
-          variant="secondary"
-          accent="danger"
-          size="small"
-          onClick={() => openModal(uninstallModalId)}
-          disabled={isUninstalling}
-        />
-        <ConfirmationModal
-          confirmationPlaceholder={confirmationValue}
-          confirmationValue={confirmationValue}
-          modalInstanceId={uninstallModalId}
-          title={t`Uninstall Application?`}
-          subtitle={
-            <Trans>
-              Please type {`"${confirmationValue}"`} to confirm you want to
-              uninstall this application.
-            </Trans>
-          }
-          onConfirmClick={onUninstall}
-          confirmButtonText={t`Uninstall`}
-          loading={isUninstalling}
-        />
-      </>
+      <SettingsApplicationUninstallButton
+        onUninstall={onUninstall}
+        isUninstalling={isUninstalling}
+      />
     );
   }
 

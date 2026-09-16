@@ -32,6 +32,7 @@ import {
   FindMarketplaceAppDetailDocument,
   FindMarketplaceAppManifestDocument,
   FindOneApplicationByUniversalIdentifierDocument,
+  FindOneApplicationDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -88,6 +89,16 @@ export const SettingsAvailableApplicationDetails = () => {
   });
 
   const application = applicationData?.findOneApplication;
+
+  const { data: installedApplicationData } = useQuery(
+    FindOneApplicationDocument,
+    {
+      variables: { id: application?.id ?? '' },
+      skip: !application?.id,
+    },
+  );
+
+  const installedApplication = installedApplicationData?.findOneApplication;
 
   const detail = detailData?.findMarketplaceAppDetail;
   const manifest = manifestData?.findMarketplaceAppDetail?.manifest as
@@ -173,9 +184,13 @@ export const SettingsAvailableApplicationDetails = () => {
       case 'content':
         return (
           <SettingsApplicationDetailContentTab
-            applicationId={detail.universalIdentifier}
+            applicationId={
+              installedApplication?.id ?? detail.universalIdentifier
+            }
+            installedApplication={installedApplication ?? undefined}
             manifestContent={manifest}
             applicationInfo={{
+              id: installedApplication?.id,
               name: displayName,
               logoUrl: detail.logoUrl,
               universalIdentifier: detail.universalIdentifier,

@@ -8,7 +8,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { H2Title } from 'twenty-ui/primitives/typography';
 import { UpdateApplicationDocument } from '~/generated-metadata/graphql';
 
-export const SettingsApplicationGeneralSection = ({
+export const SettingsApplicationAutoUpdateSection = ({
   applicationId,
   autoUpgrade,
 }: {
@@ -36,7 +36,7 @@ export const SettingsApplicationGeneralSection = ({
 
   return (
     <Section>
-      <H2Title title={t`General`} />
+      <H2Title title={t`Auto update`} />
       <Card rounded fullWidth>
         <SettingsOptionCardContentSwitch
           Icon={IconRefresh}
