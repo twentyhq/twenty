@@ -291,7 +291,7 @@ export const useNavigationMenuItemAddOptions = ({
           return {
             id: page.id,
             label: name,
-            icon: navigationItem ? (
+            icon: isDefined(navigationItem) ? (
               <NavigationMenuItemIcon navigationMenuItem={navigationItem} />
             ) : (
               <TintedIconTile Icon={IconPerspective} />
@@ -303,7 +303,9 @@ export const useNavigationMenuItemAddOptions = ({
                 type: NavigationMenuItemType.PAGE_LAYOUT,
                 pageLayoutId: page.id,
                 name,
-                icon: navigationItem ? navigationItem.icon : 'IconPerspective',
+                icon: isDefined(navigationItem)
+                  ? navigationItem.icon
+                  : 'IconPerspective',
                 color: navigationItem?.color,
               }),
           };
