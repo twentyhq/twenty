@@ -1,10 +1,17 @@
 import { InboxEmailToolCallEditor } from '@/inbox/tool-call-renderers/email/components/InboxEmailToolCallEditor';
+import { InboxEmailToolCallSurface } from '@/inbox/tool-call-renderers/email/components/InboxEmailToolCallSurface';
 import { getInboxToolCallRenderer } from '@/inbox/tool-call-renderers/utils/getInboxToolCallRenderer';
 
 describe('getInboxToolCallRenderer', () => {
-  it('should give the email tool the composer', () => {
+  it('should give the email tool the composer as a row editor', () => {
     expect(getInboxToolCallRenderer('send_email')?.Editor).toBe(
       InboxEmailToolCallEditor,
+    );
+  });
+
+  it('should let the email tool take the body of the pane', () => {
+    expect(getInboxToolCallRenderer('send_email')?.Surface).toBe(
+      InboxEmailToolCallSurface,
     );
   });
 

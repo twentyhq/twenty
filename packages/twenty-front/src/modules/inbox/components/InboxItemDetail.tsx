@@ -9,7 +9,9 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemMarkReadEffect } from '@/inbox/components/InboxItemMarkReadEffect';
 import { InboxItemPlacement } from '@/inbox/components/InboxItemPlacement';
-import { InboxItemView } from '@/inbox/components/InboxItemView';
+import { InboxItemBody } from '@/inbox/components/InboxItemBody';
+import { InboxItemFooter } from '@/inbox/components/InboxItemFooter';
+import { InboxItemPlanProvider } from '@/inbox/components/InboxItemPlanProvider';
 import { useInboxItem } from '@/inbox/hooks/useInboxItem';
 import { useInboxItemPagination } from '@/inbox/hooks/useInboxItemPagination';
 import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
@@ -172,10 +174,13 @@ export const InboxItemDetail = ({
             inboxItemId={inboxItem.id}
             isUnread={inboxItem.isUnread}
           />
-          <InboxItemView
+          <InboxItemPlanProvider
             inboxItem={inboxItem}
             onItemCompleted={hasNext ? goToNext : undefined}
-          />
+          >
+            <InboxItemBody />
+            <InboxItemFooter />
+          </InboxItemPlanProvider>
         </StyledBody>
       )}
     </StyledDetail>
