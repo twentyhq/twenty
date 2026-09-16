@@ -8,7 +8,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { ResolvedSlackUserField } from 'src/front-components/components/ResolvedSlackUserField';
-import { SlackIconSave } from 'src/front-components/components/SlackButtonIcons';
 import { SlackConnectUserIdFields } from 'src/front-components/components/SlackConnectUserIdFields';
 import { SlackUserLinkFormField } from 'src/front-components/components/SlackUserLinkFormField';
 import { SlackUserLinkFormHint } from 'src/front-components/components/SlackUserLinkFormHint';
@@ -233,12 +232,10 @@ export const SlackUserLinkForm = ({
         )}
         <StyledActions>
           <Button
-            type="submit"
-            title="Save link"
-            Icon={SlackIconSave}
+            type="button"
+            title={isSubmitting ? 'Saving…' : 'Save link'}
             variant="primary"
             accent="blue"
-            isLoading={isSubmitting}
             disabled={!canSubmit}
             onClick={handleSubmit}
           />

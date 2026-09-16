@@ -39,6 +39,7 @@ export const SlackChannelRuleModeCell = ({
       onChange={onModeChange}
       disabled={disabled}
       ariaLabel={`Rule mode for ${displayedName}`}
+      size="small"
     />
   );
 };

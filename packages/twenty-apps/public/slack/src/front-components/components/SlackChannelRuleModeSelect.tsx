@@ -7,7 +7,7 @@ import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-chann
 import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 
 // Native select: twenty-ui's Select needs PointerEvent, which the front component sandbox lacks
-const StyledSelect = styled.select`
+const StyledSelect = styled.select<{ $size: 'small' | 'medium' }>`
   background-color: ${() => themeCssVariables.background.transparent.lighter};
   border: 1px solid ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.md};
@@ -15,7 +15,10 @@ const StyledSelect = styled.select`
   color: ${() => themeCssVariables.font.color.primary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
-  height: ${() => themeCssVariables.spacing[8]};
+  height: ${({ $size }) =>
+    $size === 'small'
+      ? themeCssVariables.spacing[6]
+      : themeCssVariables.spacing[8]};
   outline: none;
   padding: 0 ${() => themeCssVariables.spacing[2]};
   width: 100%;
@@ -35,6 +38,7 @@ type SlackChannelRuleModeSelectProps = {
   onChange: (mode: SlackChannelRuleMode) => void;
   disabled?: boolean;
   ariaLabel: string;
+  size?: 'small' | 'medium';
 };
 
 export const SlackChannelRuleModeSelect = ({
@@ -43,8 +47,10 @@ export const SlackChannelRuleModeSelect = ({
   onChange,
   disabled,
   ariaLabel,
+  size = 'medium',
 }: SlackChannelRuleModeSelectProps) => (
   <StyledSelect
+    $size={size}
     id={id}
     value={value}
     disabled={disabled}
