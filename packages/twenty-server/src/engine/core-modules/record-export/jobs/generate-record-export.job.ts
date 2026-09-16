@@ -1,4 +1,5 @@
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
+import { RecordExportSecurityService } from 'src/engine/core-modules/record-export/services/record-export-security.service';
 import { Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
@@ -39,6 +40,7 @@ export class GenerateRecordExportJob {
 
   constructor(
     private readonly recordExportCacheService: RecordExportCacheService,
+    private readonly recordExportSecurityService: RecordExportSecurityService,
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
     private readonly recordExportQueryWorkspaceService: RecordExportQueryWorkspaceService,
     private readonly fileStorageService: FileStorageService,
@@ -79,6 +81,9 @@ export class GenerateRecordExportJob {
     let locale: keyof typeof APP_LOCALES = SOURCE_LOCALE;
 
     try {
+      await this.recordExportSecurityService.assertPermissionsUnchanged(
+        recordExport,
+      );
       const remainingTime =
         RECORD_EXPORT_MAX_DURATION_MS -
         (Date.now() - recordExport.createdAt.getTime());
@@ -103,6 +108,7 @@ export class GenerateRecordExportJob {
       const recordExportQueryWorkspaceService =
         this.recordExportQueryWorkspaceService;
       const recordExportCacheService = this.recordExportCacheService;
+      const recordExportSecurityService = this.recordExportSecurityService;
       let lastProgressAt = 0;
       let lastRequesterRefreshAt = Date.now();
       let bytes = 0;
@@ -161,6 +167,9 @@ export class GenerateRecordExportJob {
 
         do {
           await updateProgress();
+          await recordExportSecurityService.assertPermissionsUnchanged(
+            recordExport,
+          );
           if (
             Date.now() - lastRequesterRefreshAt >=
             RECORD_EXPORT_REQUESTER_REFRESH_INTERVAL_MS
@@ -180,6 +189,9 @@ export class GenerateRecordExportJob {
             context,
             after,
           });
+          await recordExportSecurityService.assertPermissionsUnchanged(
+            recordExport,
+          );
 
           for (const record of results.records) {
             const row = formatRecordExportRow(context.columns, record);
@@ -236,6 +248,9 @@ export class GenerateRecordExportJob {
         mimeType: 'text/csv',
       });
 
+      await this.recordExportSecurityService.assertPermissionsUnchanged(
+        recordExport,
+      );
       const completed = await this.recordExportCacheService.update({
         workspaceId,
         id: recordExport.id,

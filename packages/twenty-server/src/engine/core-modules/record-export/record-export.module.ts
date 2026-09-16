@@ -3,6 +3,10 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { DeleteRecordExportJob } from 'src/engine/core-modules/record-export/jobs/delete-record-export.job';
 import { Module } from '@nestjs/common';
+import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
+import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
+import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
+import { RecordExportSecurityService } from 'src/engine/core-modules/record-export/services/record-export-security.service';
 
 import { CoreCommonApiModule } from 'src/engine/api/common/core-common-api.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
@@ -18,6 +22,9 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    TokenModule,
+    UserSessionModule,
+    WorkspaceCacheStorageModule,
     CoreCommonApiModule,
     FeatureFlagModule,
     JwtModule,
@@ -28,6 +35,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   controllers: [RecordExportController],
   providers: [
+    RecordExportSecurityService,
     RecordExportResolver,
     RecordExportStreamWorkspaceService,
     RecordExportCacheService,

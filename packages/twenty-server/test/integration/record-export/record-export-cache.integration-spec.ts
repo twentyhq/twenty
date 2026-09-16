@@ -25,6 +25,8 @@ describe('record export Redis lifetime', () => {
     workspaceId,
     userWorkspaceId: 'owner',
     workspaceMemberId: 'member',
+    requestTokenHash: 'request-token-hash',
+    permissionsHash: 'permissions-hash',
     filename: 'person.csv',
     parameters: {
       objectMetadataId: 'person',

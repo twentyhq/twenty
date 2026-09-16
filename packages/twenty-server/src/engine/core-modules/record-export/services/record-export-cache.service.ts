@@ -48,6 +48,8 @@ export class RecordExportCacheService {
       | 'workspaceId'
       | 'userWorkspaceId'
       | 'workspaceMemberId'
+      | 'requestTokenHash'
+      | 'permissionsHash'
       | 'parameters'
       | 'filename'
     >,

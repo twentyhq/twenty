@@ -6,6 +6,8 @@ export type RecordExport = {
   workspaceId: string;
   userWorkspaceId: string;
   workspaceMemberId: string;
+  requestTokenHash: string;
+  permissionsHash: string;
   parameters: RecordExportParameters;
   filename: string;
   status: RecordExportStatus;

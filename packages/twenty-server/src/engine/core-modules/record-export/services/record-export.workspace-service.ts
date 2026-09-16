@@ -1,4 +1,6 @@
 import { RecordExportException } from 'src/engine/core-modules/record-export/record-export.exception';
+import { RecordExportSecurityService } from 'src/engine/core-modules/record-export/services/record-export-security.service';
+import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import {
   BadRequestException,
   Injectable,
@@ -33,6 +35,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export class RecordExportWorkspaceService {
   constructor(
     private readonly recordExportCacheService: RecordExportCacheService,
+    private readonly recordExportSecurityService: RecordExportSecurityService,
     @InjectMessageQueue(MessageQueue.recordExportQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectMessageQueue(MessageQueue.cronQueue)
@@ -46,12 +49,18 @@ export class RecordExportWorkspaceService {
   async create({
     parameters,
     authContext,
+    requestTokenHash,
   }: {
     parameters: RecordExportParameters;
     authContext: WorkspaceAuthContext;
+    requestTokenHash: string;
   }): Promise<RecordExport> {
     const requester =
       await this.recordExportQueryWorkspaceService.assertCanExport(authContext);
+    const permissionsHash =
+      await this.recordExportSecurityService.capturePermissionsHash(
+        requester.workspace.id,
+      );
     const context = await this.recordExportQueryWorkspaceService.buildContext({
       parameters,
       authContext: requester,
@@ -62,6 +71,8 @@ export class RecordExportWorkspaceService {
       workspaceId,
       userWorkspaceId: requester.userWorkspaceId,
       workspaceMemberId: requester.workspaceMemberId,
+      requestTokenHash,
+      permissionsHash,
       parameters,
       filename: `${context.queryRunnerContext.flatObjectMetadata.nameSingular}.csv`,
     });
@@ -217,6 +228,9 @@ export class RecordExportWorkspaceService {
     }
 
     this.assertDownloadable(recordExport);
+    await this.recordExportSecurityService.assertPermissionsUnchanged(
+      recordExport,
+    );
     const context = await this.recordExportQueryWorkspaceService.buildContext({
       parameters: recordExport.parameters,
       authContext: requester,
@@ -226,15 +240,17 @@ export class RecordExportWorkspaceService {
       context,
       first: 0,
     });
-    const token = await this.jwtWrapperService.signAsyncOrThrow(
-      {
-        type: JwtTokenTypeEnum.FILE,
-        sub: requester.workspace.id,
-        workspaceId: requester.workspace.id,
-        fileId: recordExport.id,
-      },
-      { expiresIn: 60 },
-    );
+    const payload: RecordExportDownloadTokenJwtPayload = {
+      type: JwtTokenTypeEnum.FILE,
+      purpose: 'record-export',
+      sub: requester.workspace.id,
+      workspaceId: requester.workspace.id,
+      userWorkspaceId: requester.userWorkspaceId,
+      fileId: recordExport.id,
+    };
+    const token = await this.jwtWrapperService.signAsyncOrThrow(payload, {
+      expiresIn: 60,
+    });
 
     return `${this.twentyConfigService.get('SERVER_URL')}/record-exports/${recordExport.id}/download?token=${token}`;
   }

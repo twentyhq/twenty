@@ -23,15 +23,18 @@ export class RecordExportStreamWorkspaceService {
   async stream({
     parameters,
     authContext,
+    requestTokenHash,
   }: {
     parameters: RecordExportParameters;
     authContext: WorkspaceAuthContext;
+    requestTokenHash: string;
   }): Promise<AsyncIterableIterator<RecordExportDTO>> {
     const abortController = new AbortController();
     const service = this;
     const recordExport = await this.recordExportWorkspaceService.create({
       parameters,
       authContext,
+      requestTokenHash,
     });
     let downloadReady = false;
     let connectionError: unknown;

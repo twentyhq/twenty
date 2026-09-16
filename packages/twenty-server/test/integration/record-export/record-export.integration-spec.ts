@@ -1,5 +1,15 @@
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { type AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type UserSessionService } from 'src/engine/core-modules/user-session/services/user-session.service';
+import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
+import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
+import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
+import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
+import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { type RecordExportStreamWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-stream.workspace-service';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -66,6 +76,15 @@ describe('record export lifecycle (integration)', () => {
   let wasAsyncCsvExportEnabled: boolean;
   const connections: ReturnType<typeof createClient>[] = [];
   const exportIds = new Set<string>();
+  const downloadTokens = new Map<string, string>();
+  const sessionTokens = new Set<string>();
+  const authenticationHeaders = (token: string): Record<string, string> =>
+    isUserSessionToken(token)
+      ? {
+          Cookie: `${USER_SESSION_COOKIE_NAME}=${token}`,
+          Origin: `http://localhost:${APP_PORT}`,
+        }
+      : { Authorization: `Bearer ${token}` };
 
   const subscribe = (
     parameters = input,
@@ -73,7 +92,7 @@ describe('record export lifecycle (integration)', () => {
   ) => {
     const connection = createClient({
       url: `http://localhost:${APP_PORT}/metadata`,
-      headers: { Authorization: `Bearer ${token}` },
+      headers: authenticationHeaders(token),
       retryAttempts: 0,
     });
     connections.push(connection);
@@ -111,6 +130,7 @@ describe('record export lifecycle (integration)', () => {
         }
         if (recordExport.status === RecordExportStatus.COMPLETED) {
           expect(recordExport.downloadUrl).toBeDefined();
+          downloadTokens.set(recordExport.id, token);
           return recordExport;
         }
       }
@@ -119,9 +139,15 @@ describe('record export lifecycle (integration)', () => {
     }
   };
 
-  const download = (recordExport: RecordExportDTO) => {
+  const download = (
+    recordExport: RecordExportDTO,
+    token = downloadTokens.get(recordExport.id) ??
+      APPLE_JANE_ADMIN_ACCESS_TOKEN,
+  ) => {
     const url = new URL(recordExport.downloadUrl!);
-    return client.get(url.pathname + url.search);
+    return client
+      .get(url.pathname + url.search)
+      .set(authenticationHeaders(token));
   };
   const getExport = (id: string) =>
     exports.findOrThrow({ workspaceId: SEED_APPLE_WORKSPACE_ID, id });
@@ -208,7 +234,25 @@ describe('record export lifecycle (integration)', () => {
     for (const id of exportIds)
       await exports.cancel({ workspaceId: SEED_APPLE_WORKSPACE_ID, id });
     exportIds.clear();
+    downloadTokens.clear();
+    const sessions =
+      getAppProviderByClassName<UserSessionService>('UserSessionService');
+    for (const token of sessionTokens) {
+      await sessions.revokeSessionByToken(
+        token,
+        UserSessionRevokedReason.UserSignOut,
+      );
+    }
+    sessionTokens.clear();
     if (isDefined(roleId)) {
+      await upsertRowLevelPermissionPredicates({
+        input: {
+          roleId,
+          objectMetadataId: input.objectMetadataId,
+          predicates: [],
+          predicateGroups: [],
+        },
+      });
       await changeRole({
         canAccessAllTools: true,
         canReadAllObjectRecords: true,
@@ -383,7 +427,13 @@ describe('record export lifecycle (integration)', () => {
         .mockRejectedValueOnce(new Error('Queue unavailable'));
       await expect(
         exports.enqueue(
-          await exports.create({ parameters: input, authContext: requester }),
+          await exports.create({
+            parameters: input,
+            authContext: requester,
+            requestTokenHash: hashUserSessionToken(
+              APPLE_JANE_ADMIN_ACCESS_TOKEN,
+            ),
+          }),
         ),
       ).rejects.toThrow('Queue unavailable');
       expect((await getExport(failed!.id)).status).toBe(
@@ -433,6 +483,7 @@ describe('record export lifecycle (integration)', () => {
     const subscription = streams.stream({
       parameters: input,
       authContext: requester,
+      requestTokenHash: hashUserSessionToken(APPLE_JANE_ADMIN_ACCESS_TOKEN),
     });
     try {
       const recordExport = await enqueueStarted;
@@ -510,8 +561,12 @@ describe('record export lifecycle (integration)', () => {
     const url = new URL(recordExport.downloadUrl!);
     await client
       .get(`/record-exports/${v4()}/download${url.search}`)
+      .set(authenticationHeaders(APPLE_JANE_ADMIN_ACCESS_TOKEN))
       .expect(403);
-    await client.get(`${url.pathname}?token=invalid`).expect(403);
+    await client
+      .get(`${url.pathname}?token=invalid`)
+      .set(authenticationHeaders(APPLE_JANE_ADMIN_ACCESS_TOKEN))
+      .expect(403);
     await download(recordExport).expect(200);
   });
 
@@ -565,38 +620,52 @@ describe('record export lifecycle (integration)', () => {
     }
   });
 
-  it('stops generation when export permission is revoked between pages', async () => {
-    const readPage = query.readPage.bind(query);
-    let releasePage = () => {};
-    let notifyPage = () => {};
-    const pageGate = new Promise<void>((resolve) => {
-      releasePage = resolve;
-    });
-    const pageStarted = new Promise<void>((resolve) => {
-      notifyPage = resolve;
-    });
-    jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
-      if (!isDefined(args[0].after) && !isDefined(args[0].first)) {
-        notifyPage();
-        await pageGate;
+  it.each(['export', 'row'])(
+    'stops generation when %s permission changes between pages',
+    async (permission) => {
+      const readPage = query.readPage.bind(query);
+      let releasePage = () => {};
+      let notifyPage = () => {};
+      const pageGate = new Promise<void>((resolve) => {
+        releasePage = resolve;
+      });
+      const pageStarted = new Promise<void>((resolve) => {
+        notifyPage = resolve;
+      });
+      jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+        if (isDefined(args[0].after)) {
+          notifyPage();
+          await pageGate;
+        }
+        return readPage(...args);
+      });
+      const { events } = subscribe(input, APPLE_JONY_MEMBER_ACCESS_TOKEN);
+      try {
+        let recordExport = await nextExport(events);
+        await pageStarted;
+        if (permission === 'export') {
+          await changeRole({ canAccessAllTools: false });
+        } else {
+          await upsertContainsRlsPredicate({
+            roleId,
+            objectNameSingular: 'company',
+            fieldName: 'name',
+            value: companies[0].name,
+          });
+        }
+        releasePage();
+        while (recordExport.status !== RecordExportStatus.FAILED) {
+          recordExport = await nextExport(events);
+        }
+        expect(recordExport.downloadUrl).toBeNull();
+        expect(recordExport.processedRecordCount).toBeLessThan(
+          companies.length,
+        );
+      } finally {
+        releasePage();
       }
-      return readPage(...args);
-    });
-    const { events } = subscribe(input, APPLE_JONY_MEMBER_ACCESS_TOKEN);
-    try {
-      let recordExport = await nextExport(events);
-      await pageStarted;
-      await changeRole({ canAccessAllTools: false });
-      releasePage();
-      while (recordExport.status !== RecordExportStatus.FAILED) {
-        recordExport = await nextExport(events);
-      }
-      expect(recordExport.downloadUrl).toBeNull();
-      expect(recordExport.processedRecordCount).toBeLessThan(companies.length);
-    } finally {
-      releasePage();
-    }
-  });
+    },
+  );
 
   it('applies row permissions to both the count and the exported records', async () => {
     await upsertContainsRlsPredicate({
@@ -686,4 +755,127 @@ describe('record export lifecycle (integration)', () => {
       }),
     ).toBeUndefined();
   });
+
+  it('requires the exact requesting token without consuming the file on denied requests', async () => {
+    const recordExport = await exportToCompletion();
+    const stored = await getExport(recordExport.id);
+    const url = new URL(recordExport.downloadUrl!);
+    const requester = await query.resolveRequester(stored);
+    const tokens =
+      getAppProviderByClassName<AccessTokenService>('AccessTokenService');
+    const otherToken = await tokens.generateAccessToken({
+      userId: requester.user.id,
+      workspaceId: requester.workspace.id,
+      authProvider: AuthProviderEnum.Password,
+    });
+
+    await client.get(url.pathname + url.search).expect(403);
+    await download(recordExport, APPLE_JONY_MEMBER_ACCESS_TOKEN).expect(403);
+    await download(recordExport, otherToken.token).expect(403);
+    expect((await getExport(recordExport.id)).downloadStarted).toBe(false);
+    expect(await fileExists(stored)).toBe(true);
+    await download(recordExport).expect(200);
+  });
+
+  it.each([false, true])(
+    'requires the originating cookie session, revoked: %s',
+    async (isRevoked) => {
+      const ready = await exportToCompletion();
+      const requester = await query.resolveRequester(await getExport(ready.id));
+      const sessions =
+        getAppProviderByClassName<UserSessionService>('UserSessionService');
+      const createSession = async () => {
+        const { sessionToken } = await sessions.createSession({
+          userId: requester.user.id,
+          workspaceId: requester.workspace.id,
+          userWorkspaceId: requester.userWorkspaceId,
+          authProvider: AuthProviderEnum.Password,
+          origin: 'renewal_bridge',
+        });
+        sessionTokens.add(sessionToken);
+        return sessionToken;
+      };
+      const sessionToken = await createSession();
+      const otherSessionToken = await createSession();
+      const recordExport = await exportToCompletion(input, sessionToken);
+
+      await download(recordExport, otherSessionToken).expect(403);
+      await download(recordExport, APPLE_JANE_ADMIN_ACCESS_TOKEN).expect(403);
+      if (isRevoked) {
+        await sessions.revokeSessionByToken(
+          sessionToken,
+          UserSessionRevokedReason.UserSignOut,
+        );
+      }
+      await download(recordExport).expect(isRevoked ? 403 : 200);
+    },
+  );
+
+  it.each(['file-token', 'expired-export-token'])(
+    'rejects a signed %s',
+    async (tokenKind) => {
+      const recordExport = await exportToCompletion();
+      const stored = await getExport(recordExport.id);
+      const jwt =
+        getAppProviderByClassName<JwtWrapperService>('JwtWrapperService');
+      const payload = {
+        type: JwtTokenTypeEnum.FILE as const,
+        sub: stored.workspaceId,
+        workspaceId: stored.workspaceId,
+        fileId: stored.id,
+        ...(tokenKind === 'expired-export-token'
+          ? {
+              purpose: 'record-export',
+              userWorkspaceId: stored.userWorkspaceId,
+            }
+          : {}),
+      };
+      const token = await jwt.signAsyncOrThrow(payload, {
+        expiresIn: tokenKind === 'expired-export-token' ? -1 : 60,
+      });
+      const url = new URL(recordExport.downloadUrl!);
+      await client
+        .get(`${url.pathname}?token=${token}`)
+        .set(authenticationHeaders(APPLE_JANE_ADMIN_ACCESS_TOKEN))
+        .expect(403);
+      await download(recordExport).expect(200);
+    },
+  );
+
+  it.each(['before-download', 'during-storage-open'])(
+    'invalidates the file when row permissions change %s',
+    async (when) => {
+      const recordExport = await exportToCompletion(
+        {
+          ...input,
+          filter: { id: { in: companies.slice(0, 2).map(({ id }) => id) } },
+        },
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      const stored = await getExport(recordExport.id);
+      expect(recordExport.processedRecordCount).toBe(2);
+      const restrictRows = () =>
+        upsertContainsRlsPredicate({
+          roleId,
+          objectNameSingular: 'company',
+          fieldName: 'name',
+          value: companies[0].name,
+        });
+      if (when === 'during-storage-open') {
+        const readFile = storage.readFile.bind(storage);
+        jest
+          .spyOn(storage, 'readFile')
+          .mockImplementationOnce(async (resource) => {
+            await restrictRows();
+            return readFile(resource);
+          });
+      } else {
+        await restrictRows();
+      }
+      const response = await download(recordExport).expect(403);
+      expect(response.text).not.toContain(companies[1].id);
+      expect(await cache.findOne(stored)).toBeUndefined();
+      expect(await fileExists(stored)).toBe(false);
+    },
+  );
 });

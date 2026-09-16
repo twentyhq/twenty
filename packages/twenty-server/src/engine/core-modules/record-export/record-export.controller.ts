@@ -7,6 +7,7 @@ import {
   Get,
   Param,
   Query,
+  Req,
   Res,
   UseGuards,
   UseFilters,
@@ -14,25 +15,34 @@ import {
 
 import { t } from '@lingui/core/macro';
 import { pipeline } from 'node:stream/promises';
-import { Response } from 'express';
+import { type Request, Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FileTokenJwtPayload } from 'src/engine/core-modules/auth/types/file-token-jwt-payload.type';
+import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { RecordExportQueryWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export-query.workspace-service';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
-import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
-import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { RecordExportSecurityService } from 'src/engine/core-modules/record-export/services/record-export-security.service';
+import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
+import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller('record-exports')
-@UseGuards(PublicEndpointGuard, NoPermissionGuard)
+@UseGuards(
+  JwtAuthGuard,
+  WorkspaceAuthGuard,
+  UserAuthGuard,
+  CustomPermissionGuard,
+)
 @UseFilters(PermissionsRestApiExceptionFilter)
 export class RecordExportController {
   constructor(
     private readonly recordExportCacheService: RecordExportCacheService,
+    private readonly recordExportSecurityService: RecordExportSecurityService,
     private readonly recordExportWorkspaceService: RecordExportWorkspaceService,
     private readonly recordExportQueryWorkspaceService: RecordExportQueryWorkspaceService,
     private readonly fileStorageService: FileStorageService,
@@ -43,15 +53,19 @@ export class RecordExportController {
   async download(
     @Param('id') id: string,
     @Query('token') token: string,
+    @Req() request: Request,
     @Res() response: Response,
   ): Promise<void> {
-    let payload: FileTokenJwtPayload;
+    let payload: RecordExportDownloadTokenJwtPayload;
     try {
       payload = await this.jwtWrapperService.verifyJwtToken(token);
       if (
         payload.type !== JwtTokenTypeEnum.FILE ||
+        payload.purpose !== 'record-export' ||
         payload.fileId !== id ||
-        !isDefined(payload.workspaceId)
+        !isDefined(payload.workspaceId) ||
+        payload.workspaceId !== request.workspace?.id ||
+        payload.userWorkspaceId !== request.userWorkspaceId
       ) {
         throw new ForbiddenException(
           t`Invalid or expired export download link.`,
@@ -65,20 +79,34 @@ export class RecordExportController {
       workspaceId: payload.workspaceId,
       id,
     });
+    this.recordExportSecurityService.assertDownloader({
+      request,
+      recordExport,
+    });
     this.recordExportWorkspaceService.assertDownloadable(recordExport);
-    const requester =
-      await this.recordExportQueryWorkspaceService.resolveRequester(
+    try {
+      await this.recordExportSecurityService.assertPermissionsUnchanged(
         recordExport,
       );
-    const context = await this.recordExportQueryWorkspaceService.buildContext({
-      parameters: recordExport.parameters,
-      authContext: requester,
-    });
-    await this.recordExportQueryWorkspaceService.readPage({
-      parameters: recordExport.parameters,
-      context,
-      first: 0,
-    });
+      const requester =
+        await this.recordExportQueryWorkspaceService.resolveRequester(
+          recordExport,
+        );
+      const context = await this.recordExportQueryWorkspaceService.buildContext(
+        {
+          parameters: recordExport.parameters,
+          authContext: requester,
+        },
+      );
+      await this.recordExportQueryWorkspaceService.readPage({
+        parameters: recordExport.parameters,
+        context,
+        first: 0,
+      });
+    } catch (error) {
+      await this.recordExportWorkspaceService.cancel(recordExport);
+      throw error;
+    }
 
     const claimed = await this.recordExportCacheService.update({
       workspaceId: recordExport.workspaceId,
@@ -103,9 +131,16 @@ export class RecordExportController {
     const contentDisposition = `attachment; filename="${recordExport.filename.replace(/["\r\n\\]/g, '_')}"`;
     try {
       const stream = await this.fileStorageService.readFile(resource);
-      response.setHeader('Content-Type', 'text/csv; charset=utf-8');
-      response.setHeader('Content-Disposition', contentDisposition);
-      await pipeline(stream, response);
+      try {
+        await this.recordExportSecurityService.assertPermissionsUnchanged(
+          recordExport,
+        );
+        response.setHeader('Content-Type', 'text/csv; charset=utf-8');
+        response.setHeader('Content-Disposition', contentDisposition);
+        await pipeline(stream, response);
+      } finally {
+        stream.destroy();
+      }
     } finally {
       await this.recordExportWorkspaceService.cancel({
         workspaceId: recordExport.workspaceId,

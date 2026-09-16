@@ -4,7 +4,9 @@ import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules
 import { ForbiddenError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
-import { Args, Subscription } from '@nestjs/graphql';
+import { Args, Context, Subscription } from '@nestjs/graphql';
+import { type Request } from 'express';
+import { RecordExportSecurityService } from 'src/engine/core-modules/record-export/services/record-export-security.service';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 
@@ -28,6 +30,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 export class RecordExportResolver {
   constructor(
     private readonly recordExportStreamService: RecordExportStreamWorkspaceService,
+    private readonly recordExportSecurityService: RecordExportSecurityService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -36,6 +39,7 @@ export class RecordExportResolver {
   })
   async exportRecords(
     @Args('input') input: CreateRecordExportInput,
+    @Context() context: { req: Request },
   ): Promise<AsyncIterableIterator<RecordExportDTO>> {
     const authContext = getWorkspaceAuthContext();
     if (
@@ -51,6 +55,9 @@ export class RecordExportResolver {
     return this.recordExportStreamService.stream({
       parameters: input,
       authContext,
+      requestTokenHash: this.recordExportSecurityService.getRequestTokenHash(
+        context.req,
+      ),
     });
   }
 }
