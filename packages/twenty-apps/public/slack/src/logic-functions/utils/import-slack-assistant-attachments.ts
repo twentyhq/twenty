@@ -17,7 +17,7 @@ import { uploadFileToAgentChat } from 'src/logic-functions/utils/upload-file-to-
 
 type ResolvedSlackFile = {
   resolved: SlackMessageFile;
-  sourceFileName: string;
+  sourceFile: SlackMessageFile;
 };
 
 type ResolvedSlackAttachmentCandidate = ResolvedSlackFile & {
@@ -32,7 +32,7 @@ const isResolvedAttachmentCandidate = (
 const NO_ATTACHMENTS: ImportedSlackAttachments = {
   attachments: [],
   attachedFileNames: [],
-  supersededFileNames: [],
+  attachedSourceFiles: [],
 };
 
 export const importSlackAssistantAttachments = async ({
@@ -56,15 +56,10 @@ export const importSlackAssistantAttachments = async ({
   }
 
   const resolvedFiles = await Promise.all(
-    files.map(async (file): Promise<ResolvedSlackFile> => {
-      // the name this file already contributed to the prompt's file list
-      const [sourceFileName = ''] = getSlackMessageFileNames([file]);
-
-      return {
-        resolved: await resolveSlackFileDetails({ client, file }),
-        sourceFileName,
-      };
-    }),
+    files.map(async (file): Promise<ResolvedSlackFile> => ({
+      resolved: await resolveSlackFileDetails({ client, file }),
+      sourceFile: file,
+    })),
   );
   const candidates = resolvedFiles.filter(isResolvedAttachmentCandidate);
 
@@ -76,10 +71,10 @@ export const importSlackAssistantAttachments = async ({
   const imported: ImportedSlackAttachments = {
     attachments: [],
     attachedFileNames: [],
-    supersededFileNames: [],
+    attachedSourceFiles: [],
   };
 
-  for (const { resolved: candidate, sourceFileName } of candidates) {
+  for (const { resolved: candidate, sourceFile } of candidates) {
     if (imported.attachments.length >= SLACK_ASSISTANT_MAX_ATTACHMENTS) {
       break;
     }
@@ -128,10 +123,7 @@ export const importSlackAssistantAttachments = async ({
 
       imported.attachments.push({ fileId, filename: fileName });
       imported.attachedFileNames.push(fileName);
-
-      if (sourceFileName !== fileName) {
-        imported.supersededFileNames.push(sourceFileName);
-      }
+      imported.attachedSourceFiles.push(sourceFile);
     } catch (error) {
       console.warn(
         `[slack] attachment "${fileName}" stays a name in the prompt: ${error instanceof Error ? error.message : String(error)}`,

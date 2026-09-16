@@ -50,7 +50,7 @@ describe('importSlackAssistantAttachments', () => {
         botToken: 'xoxb-token',
         deadlineAtMs: Date.now() + 60_000,
       }),
-    ).toEqual({ attachments: [], attachedFileNames: [], supersededFileNames: [] });
+    ).toEqual({ attachments: [], attachedFileNames: [], attachedSourceFiles: [] });
   });
 
   it('should attach nothing when the Slack connection has no token', async () => {
@@ -61,7 +61,7 @@ describe('importSlackAssistantAttachments', () => {
         botToken: undefined,
         deadlineAtMs: Date.now() + 60_000,
       }),
-    ).toEqual({ attachments: [], attachedFileNames: [], supersededFileNames: [] });
+    ).toEqual({ attachments: [], attachedFileNames: [], attachedSourceFiles: [] });
 
     expect(downloadSlackFile).not.toHaveBeenCalled();
   });
@@ -70,7 +70,7 @@ describe('importSlackAssistantAttachments', () => {
     expect(await importFiles([PNG_FILE])).toEqual({
       attachments: [{ fileId: 'file-id-1', filename: 'screenshot.png' }],
       attachedFileNames: ['screenshot.png'],
-      supersededFileNames: [],
+      attachedSourceFiles: [PNG_FILE],
     });
   });
 
@@ -79,7 +79,7 @@ describe('importSlackAssistantAttachments', () => {
       { ...PNG_FILE, name: 'notes.txt', mimetype: 'text/plain' },
     ]);
 
-    expect(result).toEqual({ attachments: [], attachedFileNames: [], supersededFileNames: [] });
+    expect(result).toEqual({ attachments: [], attachedFileNames: [], attachedSourceFiles: [] });
     expect(downloadSlackFile).not.toHaveBeenCalled();
   });
 
@@ -153,7 +153,7 @@ describe('importSlackAssistantAttachments', () => {
       deadlineAtMs: Date.now() - 1,
     });
 
-    expect(result).toEqual({ attachments: [], attachedFileNames: [], supersededFileNames: [] });
+    expect(result).toEqual({ attachments: [], attachedFileNames: [], attachedSourceFiles: [] });
     expect(downloadSlackFile).not.toHaveBeenCalled();
   });
 
@@ -190,7 +190,8 @@ describe('importSlackAssistantAttachments', () => {
 
     expect(slackClient.files.info).toHaveBeenCalledWith({ file: 'F1' });
     expect(result.attachedFileNames).toEqual(['screenshot.png']);
-    // the stub reached the prompt unnamed, so that placeholder is superseded
-    expect(result.supersededFileNames).toEqual(['an unnamed file']);
+    // the stub itself is reported, so the prompt drops it by identity rather
+    // than by the placeholder name it shared with any other unnamed file
+    expect(result.attachedSourceFiles).toHaveLength(1);
   });
 });

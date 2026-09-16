@@ -28,6 +28,7 @@ import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-s
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { getSlackMessageFileNames } from 'src/logic-functions/utils/get-slack-message-file-names';
 import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
@@ -91,8 +92,7 @@ export const slackAssistantWorkerHandler = async (
     const [
       {
         conversationMessages,
-        sharedFileNames,
-        historySharedFileNames,
+        sharedFiles,
         requesterName,
         requesterIdentity,
         requestMessage,
@@ -180,7 +180,7 @@ export const slackAssistantWorkerHandler = async (
     const slackConnection = isNonEmptyArray(requestFiles)
       ? await getSlackConnection()
       : undefined;
-    const { attachments, attachedFileNames, supersededFileNames } =
+    const { attachments, attachedFileNames, attachedSourceFiles } =
       await importSlackAssistantAttachments({
         client: slackClient,
         files: requestFiles,
@@ -192,6 +192,11 @@ export const slackAssistantWorkerHandler = async (
           agentDeadlineAtMs - SLACK_ASSISTANT_AGENT_MIN_BUDGET_MS,
         ),
       });
+
+    // by file rather than by name, since two shared files can carry one name
+    const namesOnlyFileNames = getSlackMessageFileNames(
+      sharedFiles.filter((file) => !attachedSourceFiles.includes(file)),
+    );
 
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
@@ -217,11 +222,9 @@ export const slackAssistantWorkerHandler = async (
         timeoutSeconds: agentBudgetRemainingSeconds,
         workspaceBaseUrl: workspaceBaseUrls[0],
         hasMentionedUsers: resolvedMentions.hasMentionedUsers,
-        sharedFileNames,
-        historySharedFileNames,
         attachments,
         attachedFileNames,
-        supersededFileNames,
+        namesOnlyFileNames,
       }),
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());
