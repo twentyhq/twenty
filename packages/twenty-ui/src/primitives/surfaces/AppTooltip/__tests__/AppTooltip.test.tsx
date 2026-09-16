@@ -30,6 +30,34 @@ describe('AppTooltip', () => {
     expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
   });
 
+  it('stays open on pointer leave while the anchor itself holds focus', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <>
+        <span id="anchor" tabIndex={0}>
+          Domain Name
+        </span>
+        <AppTooltip
+          anchorSelect="#anchor"
+          title="The company website URL"
+          delay={TooltipDelay.noDelay}
+        />
+      </>,
+    );
+
+    await user.tab();
+    const anchor = screen.getByText('Domain Name');
+    expect(anchor).toHaveFocus();
+    expect(await screen.findByRole('tooltip')).toBeVisible();
+
+    await user.hover(anchor);
+    await user.unhover(anchor);
+
+    expect(anchor).toHaveFocus();
+    expect(screen.getByRole('tooltip')).toBeVisible();
+  });
+
   it('opens for keyboard focus and closes on blur', async () => {
     const user = userEvent.setup();
 

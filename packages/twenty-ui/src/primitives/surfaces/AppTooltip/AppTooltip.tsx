@@ -180,6 +180,7 @@ export const AppTooltip = ({
     }
 
     let hoveredAnchor: Element | null = null;
+    let focusedAnchor: Element | null = null;
 
     const handleShow = (value: boolean) => {
       if (!isControlled) {
@@ -236,7 +237,9 @@ export const AppTooltip = ({
         !hoveredAnchor.contains(event.target)
       ) {
         stopWatchingPointer();
-        handleAnchorLeave();
+        if (!isDefined(focusedAnchor)) {
+          handleAnchorLeave();
+        }
       }
     };
 
@@ -246,29 +249,42 @@ export const AppTooltip = ({
     };
 
     const removeListeners = anchorElements.map((anchorElement) => {
-      const handleEnter = () => {
+        const handleEnter = () => {
         hoveredAnchor = anchorElement;
         document.addEventListener('pointermove', handlePointerMove);
         handleAnchorEnter(anchorElement);
       };
-      const handleLeave = () => {
+      // Keyboard focus keeps the tooltip up on its own, so only a blur closes
+      // one the anchor itself was focused into.
+      const handlePointerLeave = () => {
+        stopWatchingPointer();
+        if (isDefined(focusedAnchor)) {
+          return;
+        }
+        handleAnchorLeave();
+      };
+      const handleFocus = () => {
+        focusedAnchor = anchorElement;
+        handleAnchorEnter(anchorElement);
+      };
+      const handleBlur = () => {
+        focusedAnchor = null;
         stopWatchingPointer();
         handleAnchorLeave();
       };
-      const handleFocus = () => handleAnchorEnter(anchorElement);
 
       // Deliberately not react-tooltip's mouseover/mouseout parity: those fire
       // per descendant, so child-to-child movement restarted the show timer.
       anchorElement.addEventListener('mouseenter', handleEnter);
-      anchorElement.addEventListener('mouseleave', handleLeave);
+      anchorElement.addEventListener('mouseleave', handlePointerLeave);
       anchorElement.addEventListener('focus', handleFocus);
-      anchorElement.addEventListener('blur', handleLeave);
+      anchorElement.addEventListener('blur', handleBlur);
 
       return () => {
         anchorElement.removeEventListener('mouseenter', handleEnter);
-        anchorElement.removeEventListener('mouseleave', handleLeave);
+        anchorElement.removeEventListener('mouseleave', handlePointerLeave);
         anchorElement.removeEventListener('focus', handleFocus);
-        anchorElement.removeEventListener('blur', handleLeave);
+        anchorElement.removeEventListener('blur', handleBlur);
       };
     });
 

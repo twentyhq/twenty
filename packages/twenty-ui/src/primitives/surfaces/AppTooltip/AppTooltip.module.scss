@@ -28,7 +28,7 @@
   }
 
   &[data-ending-style] {
-    transition-duration: 0s;
+    transition-timing-function: ease-in;
   }
 }
 
