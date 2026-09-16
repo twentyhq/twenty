@@ -7,7 +7,7 @@
       {
         "name": "aria-label",
         "type": "string",
-        "required": false,
+        "required": true,
         "defaultValue": null,
         "description": "Required accessible name describing the action."
       },
@@ -91,7 +91,7 @@
       {
         "name": "aria-label",
         "type": "string",
-        "required": false,
+        "required": true,
         "defaultValue": null,
         "description": "Required accessible name describing the action."
       },
@@ -163,28 +163,28 @@
         "type": "string",
         "required": true,
         "defaultValue": null,
-        "description": ""
+        "description": "Text displayed when hovering or focusing the button."
       },
       {
         "name": "tooltipDelay",
         "type": "\"0ms\" | \"300ms\" | \"500ms\" | \"1000ms\"",
         "required": false,
         "defaultValue": "TooltipDelay.longDelay",
-        "description": ""
+        "description": "Delay before showing the tooltip."
       },
       {
         "name": "tooltipOffset",
         "type": "number",
         "required": false,
         "defaultValue": "5",
-        "description": ""
+        "description": "Distance in pixels between the button and the tooltip."
       },
       {
         "name": "tooltipPlace",
         "type": "\"top\" | \"left\" | \"right\" | \"bottom\"",
         "required": false,
         "defaultValue": "TooltipPosition.Bottom",
-        "description": ""
+        "description": "Preferred placement of the tooltip relative to the button."
       },
       {
         "name": "variant",

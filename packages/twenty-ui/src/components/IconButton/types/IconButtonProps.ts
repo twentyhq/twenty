@@ -4,6 +4,7 @@ import { type ButtonProps } from '@ui/primitives/input/Button/types/ButtonProps'
 
 export type IconButtonProps = Omit<
   ButtonProps,
+  | 'aria-label'
   | 'children'
   | 'startIcon'
   | 'endIcon'

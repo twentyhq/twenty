@@ -2,6 +2,7 @@ import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
 import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
+import { ICON_BUTTON_WITH_TOOLTIP_PROP_DESCRIPTIONS } from './iconButtonWithTooltipPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
@@ -20,7 +21,7 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'components/IconButtonWithTooltip/IconButtonWithTooltip.tsx',
     entryPoint: 'twenty-ui/components',
     slug: 'input/icon-button-with-tooltip',
-    propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
+    propDescriptions: ICON_BUTTON_WITH_TOOLTIP_PROP_DESCRIPTIONS,
   },
   {
     name: 'MainButton',
