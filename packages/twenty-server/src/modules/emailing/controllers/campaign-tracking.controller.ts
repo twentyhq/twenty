@@ -16,7 +16,6 @@ import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CAMPAIGN_TRACKING_TOKEN_FORMAT } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-format.constant';
 import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -25,6 +24,8 @@ import { ShortLinkService } from 'src/engine/core-modules/short-link/services/sh
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 
 const FOUND_STATUS_CODE = 302;
+
+const CAMPAIGN_TRACKING_TOKEN_FORMAT = /^[A-Za-z0-9_-]{72}$/;
 
 @Controller(ApiPath.Emailing)
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)

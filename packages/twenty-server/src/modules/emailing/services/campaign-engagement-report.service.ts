@@ -89,7 +89,10 @@ export class CampaignEngagementReportService {
     }
 
     const scope = { workspaceId, messageCampaignId, activityFilter };
-    const bucket = this.resolveBucket(campaign.sentAt);
+    const campaignAgeMs =
+      Date.now() - (campaign.sentAt?.getTime() ?? Date.now());
+    const bucket: CampaignEngagementBucket =
+      campaignAgeMs <= HOURLY_SERIES_MAX_AGE_MS ? 'hour' : 'day';
 
     const aggregates = await Promise.all([
       this.campaignEngagementEventService.countClicks(scope),
@@ -164,12 +167,6 @@ export class CampaignEngagementReportService {
     }
 
     return campaign;
-  }
-
-  private resolveBucket(sentAt: Date | null): CampaignEngagementBucket {
-    const ageMs = Date.now() - (sentAt?.getTime() ?? Date.now());
-
-    return ageMs <= HOURLY_SERIES_MAX_AGE_MS ? 'hour' : 'day';
   }
 
   private fillSeries({

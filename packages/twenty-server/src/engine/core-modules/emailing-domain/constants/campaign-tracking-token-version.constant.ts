@@ -1,1 +1,0 @@
-export const CAMPAIGN_TRACKING_TOKEN_VERSION = 1;
