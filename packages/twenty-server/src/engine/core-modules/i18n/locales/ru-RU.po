@@ -784,7 +784,7 @@ msgstr "Объект с таким именем уже существует."
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.description"
 msgid "An opportunity"
-msgstr "Возможность"
+msgstr "Сделка"
 
 #. js-lingui-id: Tstlpf
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -1137,7 +1137,7 @@ msgstr "Вложения, связанные с панелью управлен�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Attachments linked to the opportunity"
-msgstr "Вложения, связанные с возможностью"
+msgstr "Вложения, связанные со сделкой"
 
 #. js-lingui-id: GAfs9e
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-standard-flat-field-metadata.util.ts
@@ -1655,7 +1655,7 @@ msgstr "События календаря, связанные с контакт�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Calendar events tied to the opportunity"
-msgstr "События календаря, связанные с возможностью"
+msgstr "События календаря, связанные со сделкой"
 
 #. js-lingui-id: Sn4xhy
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-view-calendar-fields.util.ts
@@ -3800,7 +3800,7 @@ msgstr "Ожидается, что одни и те же поля огранич
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "Experience"
-msgstr "Опыт работы"
+msgstr "Интерфейс"
 
 #. js-lingui-id: PCGpYB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -3814,7 +3814,7 @@ msgstr "Экспортировать"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Export {objectLabel}"
-msgstr "Экспорт {objectLabel}"
+msgstr "Экспорт: {objectLabel}"
 
 #. js-lingui-id: xvfw7w
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4623,7 +4623,7 @@ msgstr "Не удалось пройти аутентификацию через
 #: src/engine/metadata-modules/flat-command-menu-item/utils/build-object-navigation-universal-flat-command-menu-item.util.ts
 msgctxt "commandMenuItem.label"
 msgid "Go to {objectLabelPlural}"
-msgstr "Перейти к {objectLabelPlural}"
+msgstr "Открыть: {objectLabelPlural}"
 
 #. js-lingui-id: LZngY5
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -4923,7 +4923,7 @@ msgstr "Импорт"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "Import {objectLabelPlural}"
-msgstr "Импортировать {objectLabelPlural}"
+msgstr "Импорт: {objectLabelPlural}"
 
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -6284,7 +6284,7 @@ msgstr "Список не найден."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "List of opportunities for which that person is the point of contact"
-msgstr "Список возможностей, для которых этот контакт является контактным лицом"
+msgstr "Список сделок, в которых этот человек указан как контактное лицо"
 
 #. js-lingui-id: Lgr7Gd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-list-standard-flat-field-metadata.util.ts
@@ -6798,7 +6798,7 @@ msgstr "Цепочки сообщений, связанные с контакт�
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Message threads tied to the opportunity"
-msgstr "Цепочки сообщений, связанные с возможностью"
+msgstr "Цепочки сообщений, связанные со сделкой"
 
 #. js-lingui-id: S6Ztef
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
@@ -7086,7 +7086,7 @@ msgstr "Новый"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
 msgid "New {objectLabelSingular}"
-msgstr "Новый {objectLabelSingular}"
+msgstr "Создать: {objectLabelSingular}"
 
 #. js-lingui-id: YT3d3p
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -7342,7 +7342,7 @@ msgstr "Заметки, связанные с контактом"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Notes tied to the opportunity"
-msgstr "Заметки, связанные с возможностью"
+msgstr "Заметки, связанные со сделкой"
 
 #. js-lingui-id: swFcOd
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-note-target-standard-flat-field-metadata.util.ts
@@ -7691,37 +7691,37 @@ msgstr "Операнд \"{rawOperand}\" фильтра диаграммы вид
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Opportunities"
-msgstr "Возможности"
+msgstr "Сделки"
 
 #. js-lingui-id: aflzUo
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelPlural"
 msgid "Opportunities"
-msgstr "Возможности"
+msgstr "Сделки"
 
 #. js-lingui-id: WV1dio
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Opportunities"
-msgstr "Возможности"
+msgstr "Сделки"
 
 #. js-lingui-id: vo/CmK
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
 msgctxt "pageLayoutWidget.title"
 msgid "Opportunities by Owner"
-msgstr "Возможности по владельцам"
+msgstr "Сделки по ответственным"
 
 #. js-lingui-id: x31eoV
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunities linked to the company."
-msgstr "Возможности, связанные с компанией."
+msgstr "Сделки, связанные с компанией."
 
 #. js-lingui-id: I77mP4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunities owned by the workspace member"
-msgstr "Возможности, принадлежащие участнику рабочего пространства"
+msgstr "Сделки, за которые отвечает участник рабочего пространства"
 
 #. js-lingui-id: JpA/cO
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -7731,55 +7731,55 @@ msgstr "Возможности, принадлежащие участнику р
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Opportunity"
-msgstr "Возможность"
+msgstr "Сделка"
 
 #. js-lingui-id: 98euLh
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgctxt "objectMetadata.labelSingular"
 msgid "Opportunity"
-msgstr "Возможность"
+msgstr "Сделка"
 
 #. js-lingui-id: yEL+R4
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunity amount"
-msgstr "Сумма возможности"
+msgstr "Сумма сделки"
 
 #. js-lingui-id: 0zQFQ1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunity close date"
-msgstr "Дата закрытия возможности"
+msgstr "Дата закрытия сделки"
 
 #. js-lingui-id: bm66XQ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunity company"
-msgstr "Компания возможности"
+msgstr "Компания, с которой ведётся сделка"
 
 #. js-lingui-id: 3rJRbD
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunity owner"
-msgstr "Владелец возможности"
+msgstr "Ответственный за сделку"
 
 #. js-lingui-id: vqM7BR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunity point of contact"
-msgstr "Контактное лицо возможности"
+msgstr "Контактное лицо по сделке"
 
 #. js-lingui-id: ATrBjm
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunity record position"
-msgstr "Позиция записи возможности"
+msgstr "Позиция записи сделки"
 
 #. js-lingui-id: GvmK2O
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Opportunity stage"
-msgstr "Стадия возможности"
+msgstr "Этап сделки"
 
 #. js-lingui-id: znHKeT
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-metadata-option-color.util.ts
@@ -7891,7 +7891,7 @@ msgstr "Имена выходных полей должны использова
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Owned opportunities"
-msgstr "Принадлежащие возможности"
+msgstr "Сделки в работе"
 
 #. js-lingui-id: l/RVZK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
@@ -9359,7 +9359,7 @@ msgstr "Безопасность"
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
 msgid "See deleted {objectLabelPlural}"
-msgstr "Показать удаленные {objectLabelPlural}"
+msgstr "Удалённые записи: {objectLabelPlural}"
 
 #. js-lingui-id: VGVS7x
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -10137,7 +10137,7 @@ msgstr "Задачи, связанные с контактом"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Tasks tied to the opportunity"
-msgstr "Задачи, связанные с возможностью"
+msgstr "Задачи, связанные со сделкой"
 
 #. js-lingui-id: LElbiP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-target-standard-flat-field-metadata.util.ts
@@ -10526,7 +10526,7 @@ msgstr "Объект, для которого вы пытаетесь устан
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "The opportunity name"
-msgstr "Название возможности"
+msgstr "Название сделки"
 
 #. js-lingui-id: D/w+3o
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -11379,7 +11379,7 @@ msgstr "Действия на временной шкале, связанные 
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-opportunity-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Timeline Activities linked to the opportunity."
-msgstr "Действия на временной шкале, связанные с возможностью."
+msgstr "События в истории, связанные со сделкой."
 
 #. js-lingui-id: XXuJwA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
