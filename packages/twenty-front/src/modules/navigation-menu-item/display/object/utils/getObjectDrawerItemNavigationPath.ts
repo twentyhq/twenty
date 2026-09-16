@@ -1,16 +1,10 @@
 import { getObjectNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemComputedLink';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
+import { OBJECT_BACKED_NAVIGATION_MENU_ITEM_TYPES } from '@/navigation-menu-item/common/constants/ObjectBackedNavigationMenuItemTypes';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type View } from '@/views/types/View';
-import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-
-const OBJECT_BACKED_NAVIGATION_MENU_ITEM_TYPES = [
-  NavigationMenuItemType.RECORD,
-  NavigationMenuItemType.VIEW,
-  NavigationMenuItemType.OBJECT,
-];
 
 export const getObjectDrawerItemNavigationPath = ({
   navigationMenuItem,
