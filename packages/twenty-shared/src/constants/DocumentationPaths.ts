@@ -139,6 +139,8 @@ export const DOCUMENTATION_PATHS = {
   UI_COMPONENTS_INPUT_FIELD: '/ui/components/input/field',
   UI_COMPONENTS_INPUT_INPUT: '/ui/components/input/input',
   UI_COMPONENTS_INPUT_INPUT_GROUP: '/ui/components/input/input-group',
+  UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
+  UI_COMPONENTS_INPUT_MAIN_BUTTON: '/ui/components/input/main-button',
   UI_COMPONENTS_INPUT_RADIO: '/ui/components/input/radio',
   UI_COMPONENTS_INPUT_RADIO_GROUP: '/ui/components/input/radio-group',
   UI_COMPONENTS_INPUT_SELECT: '/ui/components/input/select',
