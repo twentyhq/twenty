@@ -249,7 +249,7 @@ export const AppTooltip = ({
     };
 
     const removeListeners = anchorElements.map((anchorElement) => {
-        const handleEnter = () => {
+      const handleEnter = () => {
         hoveredAnchor = anchorElement;
         document.addEventListener('pointermove', handlePointerMove);
         handleAnchorEnter(anchorElement);
