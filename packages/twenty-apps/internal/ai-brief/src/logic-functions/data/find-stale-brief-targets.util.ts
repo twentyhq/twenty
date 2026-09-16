@@ -57,7 +57,7 @@ export const findStaleBriefTargets = async ({
       companies: {
         __args: {
           filter: staleBriefFilter(staleBeforeIso),
-          orderBy: [{ updatedAt: 'Desc' }],
+          orderBy: [{ updatedAt: 'DescNullsLast' }],
           first: limit,
         },
         edges: {
@@ -83,7 +83,7 @@ export const findStaleBriefTargets = async ({
     people: {
       __args: {
         filter: staleBriefFilter(staleBeforeIso),
-        orderBy: [{ updatedAt: 'Desc' }],
+        orderBy: [{ updatedAt: 'DescNullsLast' }],
         first: limit,
       },
       edges: {

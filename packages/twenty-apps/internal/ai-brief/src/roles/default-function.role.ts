@@ -1,6 +1,7 @@
 import {
   defineApplicationRole,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
 } from 'twenty-sdk/define';
 
 import { DEFAULT_ROLE_UNIVERSAL_IDENTIFIER } from 'src/constants/default-role.universal-identifier';
@@ -20,6 +21,9 @@ export default defineApplicationRole({
   canBeAssignedToAgents: false,
   canBeAssignedToUsers: false,
   canBeAssignedToApiKeys: false,
+  // The synthesis logic functions invoke the app's agent via runAgent,
+  // which requires the AI permission flag on the executing role.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
   objectPermissions: [
     {
       objectUniversalIdentifier:

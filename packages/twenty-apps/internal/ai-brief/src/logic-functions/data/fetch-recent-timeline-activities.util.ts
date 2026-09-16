@@ -39,7 +39,7 @@ export const fetchRecentTimelineActivities = async ({
           linkedRecordId: { eq: recordId },
           happensAt: { gte: windowStart.toISOString() },
         },
-        orderBy: [{ happensAt: 'Asc' }],
+        orderBy: [{ happensAt: 'AscNullsLast' }],
         first: 100,
       },
       edges: {

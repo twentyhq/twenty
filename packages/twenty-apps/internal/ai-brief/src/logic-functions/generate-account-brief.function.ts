@@ -101,7 +101,7 @@ export default defineLogicFunction({
   timeoutSeconds: 300,
   handler: generateAccountBriefHandler,
   httpRouteTriggerSettings: {
-    path: 'generate-account-brief',
+    path: '/generate-account-brief',
     httpMethod: 'POST',
     isAuthRequired: true,
   },
