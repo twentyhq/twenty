@@ -70,11 +70,11 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
+    "@base-ui/utils": "0.4.0",
     "@monaco-editor/react": "^4.7.0",
     "@sniptt/guards": "^0.2.0",
     "@tabler/icons-react": "^3.31.0",
     "clsx": "^2.1.1",
-    "jotai": "^2.17.1",
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.30.6",
     "type-fest": "^4.10.1",

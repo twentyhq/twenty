@@ -49733,6 +49733,7 @@ __metadata:
   dependencies:
     "@argos-ci/storybook": "npm:6.2.3"
     "@base-ui/react": "npm:^1.8.0"
+    "@base-ui/utils": "npm:0.4.0"
     "@fontsource/inter": "npm:^5.2.8"
     "@monaco-editor/react": "npm:^4.7.0"
     "@prettier/sync": "npm:^0.5.2"
@@ -49757,7 +49758,6 @@ __metadata:
     clsx: "npm:^2.1.1"
     esbuild: "npm:^0.28.1"
     glob: "npm:^11.1.0"
-    jotai: "npm:^2.17.1"
     jsdom: "npm:^30.0.1"
     prettier: "npm:^3.1.1"
     react: "npm:^19.2.0"

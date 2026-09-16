@@ -1,9 +1,10 @@
-import { render, renderHook, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { atom, createStore, Provider, useAtom, useAtomValue } from 'jotai';
+import { act, render, renderHook } from '@testing-library/react';
 import { expect, it, vi } from 'vitest';
 
+import { ToastContext } from '../contexts/ToastContext';
 import { useToast } from '../hooks/useToast';
+import { useToastEntries } from '../hooks/useToastEntries';
+import { createToastStore } from '../stores/createToastStore';
 import { ToastProvider } from '../ToastProvider';
 
 it.each([0, -1, 1.5])('rejects an invalid toast limit of %s', (limit) => {
@@ -12,43 +13,43 @@ it.each([0, -1, 1.5])('rejects an invalid toast limit of %s', (limit) => {
   );
 });
 
-it('preserves the application Jotai scope inside nested toast providers', async () => {
-  const user = userEvent.setup();
-  const applicationStore = createStore();
-  const countAtom = atom(0);
-  applicationStore.set(countAtom, 5);
-
-  const ApplicationCount = () => {
-    const count = useAtomValue(countAtom);
-    return <output>Application count: {count}</output>;
-  };
-
-  const IncrementCount = () => {
-    const [count, setCount] = useAtom(countAtom);
-    return (
-      <button onClick={() => setCount(count + 1)}>
-        Increment from {count}
-      </button>
-    );
-  };
-
-  render(
-    <Provider store={applicationStore}>
-      <ApplicationCount />
-      <ToastProvider>
-        <ToastProvider>
-          <IncrementCount />
-        </ToastProvider>
-      </ToastProvider>
-    </Provider>,
+it('isolates nested provider queues and deduplication', () => {
+  const parentStore = createToastStore();
+  parentStore.set('toasts', [
+    {
+      notification: { id: 'parent', children: 'Parent notification' },
+      dedupeKey: 'saved',
+      status: 'visible',
+    },
+  ]);
+  const parentToasts = parentStore.state.toasts;
+  const { result } = renderHook(
+    () => ({ ...useToast(), toasts: useToastEntries() }),
+    {
+      wrapper: ({ children }) => (
+        <ToastContext.Provider value={parentStore}>
+          <ToastProvider>{children}</ToastProvider>
+        </ToastContext.Provider>
+      ),
+    },
   );
 
-  await user.click(screen.getByRole('button', { name: 'Increment from 5' }));
+  act(() => {
+    result.current.enqueueToast({
+      dedupeKey: 'saved',
+      children: 'Child notification',
+    });
+  });
 
-  expect(screen.getByText('Application count: 6')).toBeVisible();
-  expect(
-    screen.getByRole('button', { name: 'Increment from 6' }),
-  ).toBeVisible();
+  expect(result.current.toasts).toHaveLength(1);
+  expect(result.current.toasts[0].notification.children).toBe(
+    'Child notification',
+  );
+
+  act(() => result.current.closeToast());
+
+  expect(result.current.toasts).toEqual([]);
+  expect(parentStore.state.toasts).toBe(parentToasts);
 });
 
 it('deduplicates consecutive enqueues and applies the provider limit synchronously', () => {

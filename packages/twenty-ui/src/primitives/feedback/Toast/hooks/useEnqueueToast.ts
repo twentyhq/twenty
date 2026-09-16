@@ -2,8 +2,6 @@ import { useMemo } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { toastLimitState } from '../states/toastLimitState';
-import { toastsState } from '../states/toastsState';
 import { type ToastOptions } from '../types/ToastOptions';
 import { isToastVisible } from '../utils/isToastVisible';
 import { useDismissToasts } from './useDismissToasts';
@@ -26,7 +24,7 @@ export const useEnqueueToast = () => {
       }
 
       const { dedupeKey, ...toastProps } = options;
-      const toasts = store.get(toastsState);
+      const { toasts, limit } = store.state;
       const visibleToasts = toasts.filter(isToastVisible);
       const existingToast = isDefined(dedupeKey)
         ? visibleToasts.find((toast) => toast.dedupeKey === dedupeKey)
@@ -38,7 +36,6 @@ export const useEnqueueToast = () => {
 
       lastToastId += 1;
       const id = `toast-${lastToastId}`;
-      const limit = store.get(toastLimitState);
       const removedCount = Math.max(0, visibleToasts.length - limit + 1);
 
       dismissToasts({

@@ -1,17 +1,15 @@
 import { render, renderHook } from '@testing-library/react';
-import { createStore } from 'jotai';
 import { StrictMode } from 'react';
 import { expect, it, vi } from 'vitest';
 
 import { ToastContext } from '../../contexts/ToastContext';
 import { ToasterLifecycleEffect } from '../../../Toaster/internal/ToasterLifecycleEffect';
-import { toastLimitState } from '../../states/toastLimitState';
-import { toastsState } from '../../states/toastsState';
+import { createToastStore } from '../../stores/createToastStore';
 import { useCompleteToastExit } from '../useCompleteToastExit';
 import { useToast } from '../useToast';
 
 const renderToastHooks = ({ hasToaster = true } = {}) => {
-  const store = createStore();
+  const store = createToastStore();
   const hook = renderHook(
     () => ({ ...useToast(), ...useCompleteToastExit() }),
     {
@@ -39,7 +37,7 @@ it('generates distinct ids for each new notification', () => {
 
   expect(firstId).toBeTruthy();
   expect(secondId).not.toBe(firstId);
-  expect(store.get(toastsState)).toEqual([
+  expect(store.state.toasts).toEqual([
     {
       notification: { id: firstId, children: 'First notification' },
       status: 'visible',
@@ -53,17 +51,17 @@ it('generates distinct ids for each new notification', () => {
 
 it('ignores undefined options without publishing or evicting a toast', () => {
   const { store, result } = renderToastHooks();
-  store.set(toastLimitState, 1);
+  store.set('limit', 1);
   const listener = vi.fn();
   const onClose = vi.fn();
-  store.sub(toastsState, listener);
+  store.subscribe(listener);
   result.current.enqueueToast({ children: 'Saved', onClose });
-  const snapshot = store.get(toastsState);
+  const snapshot = store.state.toasts;
   listener.mockClear();
 
   expect(result.current.enqueueToast(undefined)).toBeUndefined();
 
-  expect(store.get(toastsState)).toBe(snapshot);
+  expect(store.state.toasts).toBe(snapshot);
   expect(listener).not.toHaveBeenCalled();
   expect(onClose).not.toHaveBeenCalled();
 });
@@ -72,11 +70,11 @@ it('retains a dismissed toast until its exit finishes and calls onClose once', (
   const { store, result } = renderToastHooks();
   const listener = vi.fn();
   const onClose = vi.fn();
-  store.sub(toastsState, listener);
+  store.subscribe(listener);
   const id = result.current.enqueueToast({ children: 'Saved', onClose });
 
   result.current.closeToast(id);
-  const [closingToast] = store.get(toastsState);
+  const [closingToast] = store.state.toasts;
   expect(closingToast.status).toBe('closing');
   expect(onClose).toHaveBeenCalledOnce();
 
@@ -86,7 +84,7 @@ it('retains a dismissed toast until its exit finishes and calls onClose once', (
   expect(listener).toHaveBeenCalledTimes(2);
 
   result.current.completeToastExit(closingToast);
-  expect(store.get(toastsState)).toEqual([]);
+  expect(store.state.toasts).toEqual([]);
   expect(onClose).toHaveBeenCalledOnce();
   expect(listener).toHaveBeenCalledTimes(3);
 });
@@ -94,23 +92,23 @@ it('retains a dismissed toast until its exit finishes and calls onClose once', (
 it('deduplicates visible notifications without updating their content', () => {
   const { store, result } = renderToastHooks();
   const listener = vi.fn();
-  store.sub(toastsState, listener);
+  store.subscribe(listener);
   const id = result.current.enqueueToast({
     dedupeKey: 'record',
     children: 'Saved',
   });
-  const snapshot = store.get(toastsState);
+  const snapshot = store.state.toasts;
 
   expect(
     result.current.enqueueToast({ dedupeKey: 'record', children: 'Changed' }),
   ).toBe(id);
-  expect(store.get(toastsState)).toBe(snapshot);
+  expect(store.state.toasts).toBe(snapshot);
   expect(listener).toHaveBeenCalledOnce();
 });
 
 it('counts only visible toasts toward the limit and evicts the oldest', () => {
   const { store, result } = renderToastHooks();
-  store.set(toastLimitState, 2);
+  store.set('limit', 2);
   const onFirstClose = vi.fn();
   const onSecondClose = vi.fn();
   const firstId = result.current.enqueueToast({
@@ -124,9 +122,10 @@ it('counts only visible toasts toward the limit and evicts the oldest', () => {
 
   result.current.enqueueToast({ children: 'Fourth' });
   expect(
-    store
-      .get(toastsState)
-      .map(({ notification, status }) => [notification.children, status]),
+    store.state.toasts.map(({ notification, status }) => [
+      notification.children,
+      status,
+    ]),
   ).toEqual([
     ['First', 'closing'],
     ['Second', 'closing'],
@@ -143,14 +142,14 @@ it('reopens a dismissed toast with a new id and completes each exit independentl
   const firstId = result.current.enqueueToast({ dedupeKey: 'saved', onClose });
   const secondId = result.current.enqueueToast({ children: 'Second' });
   result.current.closeToast(firstId);
-  const [firstExit] = store.get(toastsState);
+  const [firstExit] = store.state.toasts;
 
   const restoredId = result.current.enqueueToast({
     dedupeKey: 'saved',
     children: 'Restored',
     onClose,
   });
-  const restoredToasts = store.get(toastsState);
+  const restoredToasts = store.state.toasts;
   expect(restoredToasts.map(({ notification }) => notification.id)).toEqual([
     firstId,
     secondId,
@@ -158,18 +157,18 @@ it('reopens a dismissed toast with a new id and completes each exit independentl
   ]);
   expect(restoredId).not.toBe(firstId);
   result.current.closeToast(firstId);
-  expect(store.get(toastsState)).toBe(restoredToasts);
+  expect(store.state.toasts).toBe(restoredToasts);
   result.current.completeToastExit(firstExit);
-  expect(store.get(toastsState)[1].notification.children).toBe('Restored');
+  expect(store.state.toasts[1].notification.children).toBe('Restored');
 
   result.current.closeToast(restoredId);
-  const snapshot = store.get(toastsState);
+  const snapshot = store.state.toasts;
   result.current.completeToastExit(firstExit);
-  expect(store.get(toastsState)).toBe(snapshot);
+  expect(store.state.toasts).toBe(snapshot);
   result.current.completeToastExit(snapshot[1]);
-  expect(
-    store.get(toastsState).map(({ notification }) => notification.id),
-  ).toEqual([secondId]);
+  expect(store.state.toasts.map(({ notification }) => notification.id)).toEqual(
+    [secondId],
+  );
   expect(onClose).toHaveBeenCalledTimes(2);
 });
 
@@ -182,7 +181,7 @@ it('can restore a notification from its close callback', () => {
 
   result.current.closeToast();
 
-  expect(store.get(toastsState)).toEqual([
+  expect(store.state.toasts).toEqual([
     {
       notification: { id: firstId, onClose },
       dedupeKey: 'saved',
@@ -199,7 +198,7 @@ it('can restore a notification from its close callback', () => {
 
 it('preserves queue limits when an eviction callback enqueues a toast', () => {
   const { store, result } = renderToastHooks();
-  store.set(toastLimitState, 1);
+  store.set('limit', 1);
   const onFirstClose = vi.fn(() => {
     result.current.enqueueToast({ children: 'Third' });
   });
@@ -208,7 +207,7 @@ it('preserves queue limits when an eviction callback enqueues a toast', () => {
 
   result.current.enqueueToast({ children: 'Second', onClose: onSecondClose });
 
-  const toasts = store.get(toastsState);
+  const toasts = store.state.toasts;
 
   expect(
     toasts.map(({ notification, status }) => ({
@@ -226,18 +225,18 @@ it('preserves queue limits when an eviction callback enqueues a toast', () => {
 
 it('removes dismissed notifications immediately without a viewport even with queue subscribers', () => {
   const { store, result } = renderToastHooks({ hasToaster: false });
-  store.sub(toastsState, vi.fn());
-  store.set(toastLimitState, 1);
+  store.subscribe(vi.fn());
+  store.set('limit', 1);
   const onClose = vi.fn();
   result.current.enqueueToast({ children: 'First', onClose });
   const secondId = result.current.enqueueToast({ children: 'Second', onClose });
-  expect(
-    store.get(toastsState).map(({ notification }) => notification.id),
-  ).toEqual([secondId]);
+  expect(store.state.toasts.map(({ notification }) => notification.id)).toEqual(
+    [secondId],
+  );
   expect(onClose).toHaveBeenCalledOnce();
 
   result.current.closeToast();
-  expect(store.get(toastsState)).toEqual([]);
+  expect(store.state.toasts).toEqual([]);
   expect(onClose).toHaveBeenCalledTimes(2);
 });
 
@@ -257,27 +256,27 @@ it('discards unfinished exits when the last viewport unmounts and keeps visible 
   const firstId = result.current.enqueueToast({ children: 'First', onClose });
   result.current.enqueueToast({ children: 'Second' });
   result.current.closeToast(firstId);
-  const closingSnapshot = store.get(toastsState);
+  const closingSnapshot = store.state.toasts;
 
   firstToaster.unmount();
-  expect(store.get(toastsState)).toBe(closingSnapshot);
+  expect(store.state.toasts).toBe(closingSnapshot);
   secondToaster.unmount();
-  expect(store.get(toastsState)).toEqual([closingSnapshot[1]]);
+  expect(store.state.toasts).toEqual([closingSnapshot[1]]);
   mountToaster();
-  expect(store.get(toastsState)).toHaveLength(1);
+  expect(store.state.toasts).toHaveLength(1);
   expect(onClose).toHaveBeenCalledOnce();
 });
 
 it('ignores unknown dismissals and completion for visible notifications', () => {
   const { store, result } = renderToastHooks();
   const listener = vi.fn();
-  store.sub(toastsState, listener);
+  store.subscribe(listener);
   result.current.enqueueToast({ children: 'Saved' });
-  const snapshot = store.get(toastsState);
+  const snapshot = store.state.toasts;
 
   result.current.closeToast('unknown');
   result.current.completeToastExit(snapshot[0]);
 
-  expect(store.get(toastsState)).toBe(snapshot);
+  expect(store.state.toasts).toBe(snapshot);
   expect(listener).toHaveBeenCalledOnce();
 });
