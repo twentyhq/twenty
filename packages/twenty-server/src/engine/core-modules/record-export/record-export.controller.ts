@@ -5,6 +5,7 @@ import {
   ConflictException,
   ForbiddenException,
   Get,
+  Logger,
   Param,
   Query,
   Req,
@@ -40,6 +41,8 @@ import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/p
 )
 @UseFilters(PermissionsRestApiExceptionFilter)
 export class RecordExportController {
+  private readonly logger = new Logger(RecordExportController.name);
+
   constructor(
     private readonly recordExportCacheService: RecordExportCacheService,
     private readonly recordExportSecurityService: RecordExportSecurityService,
@@ -104,7 +107,11 @@ export class RecordExportController {
         first: 0,
       });
     } catch (error) {
-      await this.recordExportWorkspaceService.cancel(recordExport);
+      await this.recordExportWorkspaceService
+        .cancel(recordExport)
+        .catch(() =>
+          this.logger.warn(`Failed to remove export ${recordExport.id}`),
+        );
       throw error;
     }
 
@@ -142,10 +149,11 @@ export class RecordExportController {
         stream.destroy();
       }
     } finally {
-      await this.recordExportWorkspaceService.cancel({
-        workspaceId: recordExport.workspaceId,
-        id: recordExport.id,
-      });
+      await this.recordExportWorkspaceService
+        .cancel(recordExport)
+        .catch(() =>
+          this.logger.warn(`Failed to remove export ${recordExport.id}`),
+        );
     }
   }
 }

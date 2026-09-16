@@ -842,9 +842,14 @@ describe('record export lifecycle (integration)', () => {
     },
   );
 
-  it.each(['before-download', 'during-storage-open'])(
-    'invalidates the file when row permissions change %s',
-    async (when) => {
+  it.each([
+    ['before-download', false],
+    ['during-storage-open', false],
+    ['before-download', true],
+    ['during-storage-open', true],
+  ] as const)(
+    'invalidates the file when row permissions change %s, cleanup fails: %s',
+    async (when, cleanupFails) => {
       const recordExport = await exportToCompletion(
         {
           ...input,
@@ -872,8 +877,64 @@ describe('record export lifecycle (integration)', () => {
       } else {
         await restrictRows();
       }
+      if (cleanupFails) {
+        jest
+          .spyOn(storage, 'deleteFolderObjects')
+          .mockRejectedValueOnce(new Error('Storage deletion unavailable'));
+      }
       const response = await download(recordExport).expect(403);
       expect(response.text).not.toContain(companies[1].id);
+      expect(await cache.findOne(stored)).toBeUndefined();
+      if (cleanupFails) {
+        expect(await fileExists(stored)).toBe(true);
+        await cleanup.handle({
+          workspaceId: stored.workspaceId,
+          recordExportId: stored.id,
+        });
+      }
+      expect(await fileExists(stored)).toBe(false);
+    },
+  );
+
+  it.each(['access-check', 'token-signing'])(
+    'rejects URL issuance when row permissions change during %s',
+    async (when) => {
+      const ready = await exportToCompletion(
+        input,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+      const stored = await getExport(ready.id);
+      const requester = await query.resolveRequester(stored);
+      const restrictRows = () =>
+        upsertContainsRlsPredicate({
+          roleId,
+          objectNameSingular: 'company',
+          fieldName: 'name',
+          value: companies[0].name,
+        });
+      if (when === 'access-check') {
+        const readPage = query.readPage.bind(query);
+        jest.spyOn(query, 'readPage').mockImplementationOnce(async (args) => {
+          const result = await readPage(args);
+          await restrictRows();
+          return result;
+        });
+      } else {
+        const jwt =
+          getAppProviderByClassName<JwtWrapperService>('JwtWrapperService');
+        const sign = jwt.signAsyncOrThrow.bind(jwt);
+        jest
+          .spyOn(jwt, 'signAsyncOrThrow')
+          .mockImplementationOnce(async (...args) => {
+            const result = await sign(...args);
+            await restrictRows();
+            return result;
+          });
+      }
+      await expect(
+        exports.getDownloadUrl({ id: stored.id, authContext: requester }),
+      ).rejects.toThrow('Access permissions have changed');
+      await download(ready).expect(403);
       expect(await cache.findOne(stored)).toBeUndefined();
       expect(await fileExists(stored)).toBe(false);
     },

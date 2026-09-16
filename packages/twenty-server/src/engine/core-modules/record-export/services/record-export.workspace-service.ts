@@ -251,6 +251,9 @@ export class RecordExportWorkspaceService {
     const token = await this.jwtWrapperService.signAsyncOrThrow(payload, {
       expiresIn: 60,
     });
+    await this.recordExportSecurityService.assertPermissionsUnchanged(
+      recordExport,
+    );
 
     return `${this.twentyConfigService.get('SERVER_URL')}/record-exports/${recordExport.id}/download?token=${token}`;
   }
