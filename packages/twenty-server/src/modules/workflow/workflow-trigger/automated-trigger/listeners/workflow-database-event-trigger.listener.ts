@@ -435,7 +435,7 @@ export class WorkflowDatabaseEventTriggerListener {
     );
 
     return this.recordAccessPolicyService
-      .buildEventRecordShareGate(payload)
+      .buildEventRecordAccessGate(payload)
       .resolveAdmittedRecordIds(
         buildRoleRowAccessPolicySubject({
           roleId:

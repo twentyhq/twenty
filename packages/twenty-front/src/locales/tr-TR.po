@@ -4971,6 +4971,11 @@ msgstr "Bu DNS kayıtlarını alan sağlayıcınızla yapılandırın"
 msgid "Configure this widget to display fields"
 msgstr "Alanları görüntülemek için bu widget'ı yapılandırın."
 
+#. js-lingui-id: no/yG9
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Configure what emails should get synced"
+msgstr ""
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -7370,10 +7375,10 @@ msgstr "İletişim otomatik oluşturulmasın."
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "Gmail'e, Outlook e-postalarına kişi oluşturma."
 
-#. js-lingui-id: yjhBSV
+#. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don't sync emails from team@ support@ noreply@..."
-msgstr "team@, support@, noreply@... adreslerinden e-postaları senkronize etme."
+msgid "Don't import emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -15289,6 +15294,7 @@ msgstr "Webhook yükleri için HMAC imzası oluşturmak için kullanılan (iste�
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

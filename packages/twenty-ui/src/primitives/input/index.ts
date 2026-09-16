@@ -56,14 +56,12 @@ export type {
 export { FloatingIconButton } from './FloatingIconButton/FloatingIconButton';
 export type { FloatingIconButtonGroupProps } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
 export { FloatingIconButtonGroup } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
-export type {
-  IconButtonSize,
-  IconButtonPosition,
-  IconButtonVariant,
-  IconButtonAccent,
-  IconButtonProps,
-} from './IconButton/IconButton';
 export { IconButton } from './IconButton/IconButton';
+export type { IconButtonAccent } from './IconButton/types/IconButtonAccent';
+export type { IconButtonPosition } from './IconButton/types/IconButtonPosition';
+export type { IconButtonProps } from './IconButton/types/IconButtonProps';
+export type { IconButtonSize } from './IconButton/types/IconButtonSize';
+export type { IconButtonVariant } from './IconButton/types/IconButtonVariant';
 export type { IconButtonGroupProps } from './IconButtonGroup/IconButtonGroup';
 export { IconButtonGroup } from './IconButtonGroup/IconButtonGroup';
 export type { IconButtonWithTooltipProps } from './IconButtonWithTooltip/IconButtonWithTooltip';
