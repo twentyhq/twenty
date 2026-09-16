@@ -17,7 +17,7 @@ export const buildStockCounter = ({
     spenderId: limit.spenderId,
     meter: limit.meter,
   }),
-  limitId: limit.id,
+  isDefault: false,
   limitValue: limit.limitValue,
   meter: limit.meter,
   resourceType: limit.resourceType,

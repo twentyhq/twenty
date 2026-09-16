@@ -8,7 +8,7 @@ const TTL = 1_000;
 
 const buildCounter = (overrides: Partial<StockCounter> = {}): StockCounter => ({
   key: 'stock:bytes',
-  limitId: 'limit-1',
+  isDefault: false,
   limitValue: 1_000,
   meter: 'bytes',
   resourceType: UsageResourceType.STORAGE,

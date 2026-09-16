@@ -55,6 +55,14 @@ export const USAGE_LIMIT_DEFINITIONS = {
       allowedOperationTypes: [UsageOperationType.STORAGE_FILE],
       allowedSpenderTypes: ['workspace', 'application'],
       allowedMeters: ['bytes', 'quantity'],
+      defaults: [
+        {
+          spenderType: 'workspace',
+          meter: 'bytes',
+          limitValueConfigVariable: 'WORKSPACE_STORAGE_LIMIT_BYTES',
+          isOverridable: true,
+        },
+      ],
     },
   },
   [UsageResourceType.LOGIC_FUNCTION]: {},

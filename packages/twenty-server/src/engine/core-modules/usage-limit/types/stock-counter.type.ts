@@ -5,7 +5,7 @@ import { type StockResourceType } from 'src/engine/core-modules/usage-limit/type
 
 export type StockCounter = {
   key: string;
-  limitId: string;
+  isDefault: boolean;
   limitValue: number;
   meter: StockMeter;
   resourceType: StockResourceType;

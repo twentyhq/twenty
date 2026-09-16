@@ -19,4 +19,5 @@ export const buildStockExhaustedScope = ({
   periodCount: null,
   periodUnit: null,
   retryAfterMs: 0,
+  isDefault: counter.isDefault,
 });
