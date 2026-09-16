@@ -110,19 +110,16 @@ export const NavigationMenuItemEditable = ({
     setMode(nextMode);
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
-  // Favorite links need a URL editor outside workspace customization.
   useEffect(() => {
     if (
       item.type === NavigationMenuItemType.LINK &&
-      selectedNavigationMenuItemIdInEditMode === item.id &&
-      !canOrganize
+      selectedNavigationMenuItemIdInEditMode === item.id
     ) {
       setMode('edit');
       openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
     }
   }, [
     item.type,
-    canOrganize,
     selectedNavigationMenuItemIdInEditMode,
     item.id,
     dropdownId,

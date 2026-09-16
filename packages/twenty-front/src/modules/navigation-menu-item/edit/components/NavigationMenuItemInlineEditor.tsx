@@ -144,41 +144,44 @@ export const NavigationMenuItemInlineEditor = ({
   ) : (
     iconButton
   );
-  const label = isNameInputVisible ? (
-    <StyledNameInput
-      instanceId={focusId}
-      autoFocus
-      selectOnFocus
-      copyButton={false}
-      value={name}
-      onChange={(nextName) => {
-        setName(nextName);
-        if (isDraftMode) void updateItem(item.id, { name: nextName });
-      }}
-      onEnter={finishRename}
-      onTab={finishRename}
-      onShiftTab={finishRename}
-      onEscape={() => {
-        if (isDraftMode) void updateItem(item.id, { name: initialName });
-        stopRenaming();
-      }}
-      onClickOutside={(_, value) => finishRename(value)}
-    />
-  ) : (
-    <StyledLabelButton
-      type="button"
-      onClick={(event) => {
-        event.stopPropagation();
-        if (isSelected) {
-          setInitialName(item.name ?? '');
-          setName(item.name ?? '');
-          setIsRenaming(true);
-        } else select();
-      }}
-    >
-      {isFolder ? item.name : getLinkNavigationMenuItemLabel(item)}
-    </StyledLabelButton>
-  );
+  const label =
+    isFolder && isNameInputVisible ? (
+      <StyledNameInput
+        instanceId={focusId}
+        autoFocus
+        selectOnFocus
+        copyButton={false}
+        value={name}
+        onChange={(nextName) => {
+          setName(nextName);
+          if (isDraftMode) void updateItem(item.id, { name: nextName });
+        }}
+        onEnter={finishRename}
+        onTab={finishRename}
+        onShiftTab={finishRename}
+        onEscape={() => {
+          if (isDraftMode) void updateItem(item.id, { name: initialName });
+          stopRenaming();
+        }}
+        onClickOutside={(_, value) => finishRename(value)}
+      />
+    ) : (
+      <StyledLabelButton
+        type="button"
+        onClick={(event) => {
+          event.stopPropagation();
+          if (!isFolder) {
+            onEditLink();
+          } else if (isSelected) {
+            setInitialName(item.name ?? '');
+            setName(item.name ?? '');
+            setIsRenaming(true);
+          } else select();
+        }}
+      >
+        {isFolder ? item.name : getLinkNavigationMenuItemLabel(item)}
+      </StyledLabelButton>
+    );
   return (
     <NavigationDrawerItemEditingContext.Provider
       value={{

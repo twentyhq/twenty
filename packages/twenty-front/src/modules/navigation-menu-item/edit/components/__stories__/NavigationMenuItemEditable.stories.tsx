@@ -90,8 +90,7 @@ export const EditLink: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(await canvas.findByText('Docs'));
-    await userEvent.click(await canvas.findByText('Docs'));
-    const label = await canvas.findByDisplayValue('Docs');
+    const label = await body.findByDisplayValue('Docs');
     await userEvent.clear(label);
     await userEvent.type(label, 'Documentation{Enter}');
     await expect(await canvas.findByText('Documentation')).toBeVisible();

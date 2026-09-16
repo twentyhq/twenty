@@ -155,10 +155,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     });
     onClose();
     setSelectedNavigationMenuItemIdInEditMode(itemId);
-    if (
-      input.type === NavigationMenuItemType.FOLDER ||
-      input.type === NavigationMenuItemType.LINK
-    ) {
+    if (input.type === NavigationMenuItemType.FOLDER) {
       setNavigationMenuItemIdToRename(itemId);
     }
   };
