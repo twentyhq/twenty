@@ -41,8 +41,6 @@ export const findSlackChannelRule = async (
     );
   }
 
-  // A capability this version cannot interpret is a cap it cannot apply, so
-  // it must never read as full capability. An absent one predates the field.
   if (
     isNonEmptyString(node.capability) &&
     !isSlackChannelRuleCapability(node.capability)

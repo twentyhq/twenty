@@ -28,8 +28,13 @@ export const parseSlackUserLinkConsentButtonValue = (
     return undefined;
   }
 
-  const { decision, slackTeamId, slackUserId, workspaceMemberId, slackUserLinkId } =
-    parsed;
+  const {
+    decision,
+    slackTeamId,
+    slackUserId,
+    workspaceMemberId,
+    slackUserLinkId,
+  } = parsed;
 
   if (
     !isConsentDecision(decision) ||

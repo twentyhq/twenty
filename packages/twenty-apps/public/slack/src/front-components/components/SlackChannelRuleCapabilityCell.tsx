@@ -9,7 +9,6 @@ import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-cha
 import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { isSlackChannelRuleCapability } from 'src/logic-functions/utils/is-slack-channel-rule-capability';
 
-// A rule written before the field existed reads as full; an uninterpretable value does not
 const toDisplayedCapability = (
   capability: string | null,
 ): SlackChannelRuleCapability | undefined => {

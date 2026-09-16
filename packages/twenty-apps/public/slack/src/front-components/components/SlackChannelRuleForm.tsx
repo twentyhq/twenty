@@ -68,7 +68,6 @@ export const SlackChannelRuleForm = ({
       )
     : undefined;
 
-  // Start from the existing rule so saving never silently lifts a cap the admin did not touch
   const handleChannelSelect = (channel: SlackChannelSearchOption) => {
     setSelectedChannel(channel);
 

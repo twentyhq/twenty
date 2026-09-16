@@ -6,8 +6,6 @@ import {
   SLACK_ASSISTANT_READ_ONLY_ROLE_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 
-// Same assistant, narrower role: channel rules capped at read-only run this
-// agent so the tools the model sees are the read-only ones from the start.
 export default defineAgent({
   universalIdentifier: SLACK_ASSISTANT_READ_ONLY_AGENT_UNIVERSAL_IDENTIFIER,
   name: 'slack-assistant-read-only',

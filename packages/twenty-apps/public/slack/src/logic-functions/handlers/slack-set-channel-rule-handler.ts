@@ -167,7 +167,6 @@ export const slackSetChannelRuleHandler = async (
     };
   }
 
-  // An omitted capability keeps the stored one so a mode change never silently lifts a cap
   const capability =
     requestedCapability ??
     existingRule?.capability ??

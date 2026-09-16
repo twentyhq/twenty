@@ -15,6 +15,7 @@ export const SLACK_SUGGESTED_PROMPTS: { title: string; message: string }[] = [
   },
   {
     title: 'Create a task',
-    message: 'Create a task for me to follow up with our newest company next week.',
+    message:
+      'Create a task for me to follow up with our newest company next week.',
   },
 ];
