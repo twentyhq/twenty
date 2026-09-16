@@ -70,22 +70,26 @@ export const WorkspaceSection = () => {
     if (
       item.type === NavigationMenuItemType.FOLDER ||
       item.type === NavigationMenuItemType.LINK
-    )
+    ) {
       return;
+    }
     const link = getNavigationMenuItemComputedLink({
       item,
       objectMetadataItems,
       views,
       lastVisitedViewPerObjectMetadataItem,
     });
-    if (isNonEmptyString(link)) navigate(link);
+    if (isNonEmptyString(link)) {
+      navigate(link);
+    }
   };
   const handleActiveObjectMetadataItemClick = (
     _objectMetadataItem: EnrichedObjectMetadataItem,
     navigationMenuItemId: string,
   ) => {
-    if (enterLayoutCustomizationMode())
+    if (enterLayoutCustomizationMode()) {
       setSelectedNavigationMenuItemIdInEditMode(navigationMenuItemId);
+    }
   };
 
   return (

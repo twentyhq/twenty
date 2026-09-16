@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { useCallback } from 'react';
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
@@ -38,10 +39,14 @@ export const NavigationMenuItemInsertionPreview = ({
   const dropdownId = navigationMenuItemInsertionPreview?.dropdownId;
   const setAnchor = useCallback(
     (element: HTMLDivElement | null) => {
-      if (!dropdownId) return;
+      if (!isDefined(dropdownId)) {
+        return;
+      }
       const button = element?.querySelector('button');
       setNavigationMenuItemInsertionAnchor((anchor) => {
-        if (button) return { dropdownId, element: button };
+        if (isDefined(button)) {
+          return { dropdownId, element: button };
+        }
         return anchor?.dropdownId === dropdownId ? null : anchor;
       });
     },
