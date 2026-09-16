@@ -38,15 +38,13 @@ import { UpdateUserEmailInput } from 'src/engine/core-modules/user/dtos/update-u
 import { UpdateWorkspaceMemberSettingsInput } from 'src/engine/core-modules/user/dtos/update-workspace-member-settings.input';
 import { WorkspaceMemberDTO } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import {
-  type ToWorkspaceMemberDtoArgs,
-  WorkspaceMemberTranspiler,
-} from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
+import { WorkspaceMemberTranspiler } from 'src/engine/core-modules/user/services/workspace-member-transpiler.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { userValidator } from 'src/engine/core-modules/user/user.validate';
 import { assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util';
 import { assertWorkspaceMemberUpdateValuesAreValid } from 'src/engine/core-modules/user/utils/assert-workspace-member-update-values-are-valid.util';
+import { buildWorkspaceMemberDtoArgs } from 'src/engine/core-modules/user/utils/build-workspace-member-dto-args.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
@@ -307,35 +305,12 @@ export class UserResolver {
         workspaceId: workspace.id,
       });
 
-    const toWorkspaceMemberDtoArgs =
-      workspaceMemberEntities.map<ToWorkspaceMemberDtoArgs>(
-        (workspaceMemberEntity) => {
-          const userWorkspace = userWorkspacesByUserIdMap.get(
-            workspaceMemberEntity.userId,
-          );
-
-          if (!isDefined(userWorkspace)) {
-            throw new Error('UserEntity workspace not found');
-          }
-
-          const userWorkspaceRoles = rolesByUserWorkspacesMap.get(
-            userWorkspace.id,
-          );
-
-          if (!isDefined(userWorkspaceRoles)) {
-            throw new Error('UserEntity workspace roles not found');
-          }
-
-          return {
-            userWorkspace,
-            userWorkspaceRoles,
-            workspaceMemberEntity,
-          };
-        },
-      );
-
     return this.workspaceMemberTranspiler.toWorkspaceMemberDtos(
-      toWorkspaceMemberDtoArgs,
+      buildWorkspaceMemberDtoArgs({
+        workspaceMemberEntities,
+        userWorkspacesByUserId: userWorkspacesByUserIdMap,
+        rolesByUserWorkspaceId: rolesByUserWorkspacesMap,
+      }),
     );
   }
 
