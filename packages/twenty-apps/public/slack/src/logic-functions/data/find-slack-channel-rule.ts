@@ -35,7 +35,6 @@ export const findSlackChannelRule = async (
     return undefined;
   }
 
-  // An unknown mode is a restriction this version cannot apply, never an open channel
   if (!isSlackChannelRuleMode(node.mode)) {
     throw new Error(
       `Slack channel rule ${node.id} has an unsupported mode "${node.mode}"`,

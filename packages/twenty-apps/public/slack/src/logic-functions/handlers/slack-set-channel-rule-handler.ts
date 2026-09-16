@@ -107,7 +107,6 @@ export const slackSetChannelRuleHandler = async (
 
   const slackClient = slackClientResult.client;
 
-  // Asked of Slack, not trusted from the payload: a member could otherwise rule their own DM
   let channelInfo: ConversationsInfoResponse;
 
   try {
@@ -152,7 +151,6 @@ export const slackSetChannelRuleHandler = async (
     };
   }
 
-  // Slack's name wins so a renamed channel refreshes on the next save
   const name = readOptionalString(channel.name) ?? requestedName;
 
   const client = new CoreApiClient({ runAs: 'application' });

@@ -143,7 +143,6 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    // Only a rule that changed after enqueue, or a request drained late, lands here
     if (channelAccessPolicy.status === 'SILENT') {
       await stopStatusUpdates();
 

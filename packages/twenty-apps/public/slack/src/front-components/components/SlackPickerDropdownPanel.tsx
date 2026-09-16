@@ -61,7 +61,6 @@ export const SlackPickerDropdownPanel = ({
     <StyledOptions
       role="listbox"
       aria-label={listLabel}
-      // Picking must not blur the search field first, or the panel closes on the way down
       onMouseDown={(event) => event.preventDefault()}
     >
       {options.map((option) => (

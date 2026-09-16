@@ -24,7 +24,6 @@ export const searchSlackChannelsByName = async ({
 }): Promise<SlackChannelSearchOption[]> => {
   const normalizedQuery = query.toLowerCase();
   const slackChannels: SlackChannelSearchOption[] = [];
-  // one window for every page, so rate limited pages cannot each wait in full
   const rateLimitDeadlineAtMs = Date.now() + rateLimitRetryBudgetMs;
   let cursor: string | undefined;
 
