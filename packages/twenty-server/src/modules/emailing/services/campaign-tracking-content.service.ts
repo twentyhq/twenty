@@ -15,19 +15,30 @@ import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emaili
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
 import { type CampaignMessagePart } from 'src/engine/core-modules/emailing-domain/types/campaign-message-part.type';
-import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
-import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag.constant';
-import { type TrackedCampaignBatch } from 'src/modules/emailing/types/tracked-campaign-batch.type';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
 import { resolveTrackedLinkUrl } from 'src/modules/emailing/utils/resolve-tracked-link-url.util';
+
+const CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN = /\{\{v_[htu]_(\d+)\}\}/g;
+
+const CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART: Record<
+  CampaignMessagePart,
+  string
+> = {
+  HTML: 'c_h',
+  TEXT: 'c_t',
+};
+
+type TrackedCampaignBatch = {
+  template: EmailingDomainEmailTemplate;
+  replacementsByDeliveryId: Map<string, Record<string, string>>;
+};
 
 type TrackingRecipient = {
   deliveryId: string;
@@ -214,11 +225,9 @@ export class CampaignTrackingContentService {
       });
       const shortLinkId = shortLinkIdByUrl.get(url);
       const linkUrl = isDefined(shortLinkId)
-        ? this.buildTrackedUrl(baseUrl, {
-            purpose: 'CLICK',
-            deliveryId: recipient.deliveryId,
-            shortLinkId,
-          })
+        ? `${baseUrl}/${ApiPath.Emailing}/c/${this.campaignTrackingTokenService.sign(
+            { purpose: 'CLICK', deliveryId: recipient.deliveryId, shortLinkId },
+          )}`
         : url;
 
       replacements[this.buildLinkTag({ messagePart: 'HTML', index })] =
@@ -227,15 +236,6 @@ export class CampaignTrackingContentService {
     });
 
     return replacements;
-  }
-
-  private buildTrackedUrl(
-    baseUrl: string,
-    payload: CampaignTrackingTokenPayload,
-  ): string {
-    const token = this.campaignTrackingTokenService.sign(payload);
-
-    return `${baseUrl}/${ApiPath.Emailing}/c/${token}`;
   }
 
   private buildLinkTag({
@@ -277,7 +277,10 @@ export class CampaignTrackingContentService {
       return undefined;
     }
 
-    if (this.isLogDriver()) {
+    if (
+      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+      EmailingDomainDriver.LOG
+    ) {
       if (!isNonEmptyString(workspace.subdomain)) {
         return undefined;
       }
@@ -302,12 +305,5 @@ export class CampaignTrackingContentService {
     }
 
     return `https://${unsubscribeHostname}`;
-  }
-
-  private isLogDriver(): boolean {
-    return (
-      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
-      EmailingDomainDriver.LOG
-    );
   }
 }
