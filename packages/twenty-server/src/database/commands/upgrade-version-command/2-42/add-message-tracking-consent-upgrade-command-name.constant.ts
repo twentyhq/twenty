@@ -1,0 +1,2 @@
+export const ADD_MESSAGE_TRACKING_CONSENT_UPGRADE_COMMAND_NAME =
+  '2.42.0_AddMessageTrackingConsentFastInstanceCommand_1789571369002';

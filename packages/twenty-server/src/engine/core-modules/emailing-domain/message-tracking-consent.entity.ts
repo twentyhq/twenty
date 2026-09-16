@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { ADD_MESSAGE_TRACKING_CONSENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-message-tracking-consent-upgrade-command-name.constant';
+import { ADD_MESSAGE_TRACKING_CONSENT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-message-tracking-consent-upgrade-command-name.constant';
 import { MessageTrackingConsentDecision } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-decision.type';
 import { MessageTrackingConsentSource } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-source.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
