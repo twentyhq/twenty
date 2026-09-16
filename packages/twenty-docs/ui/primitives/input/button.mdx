@@ -11,6 +11,48 @@ For recurring design defaults, use [MainButton](/ui/components/input/main-button
 or [LightButton](/ui/components/input/light-button) from `twenty-ui/components`.
 Both share Button's native props, refs, state, and rendering behavior.
 
+## State ownership
+
+`Button` triggers an action and does not manage a selected value, so it has no controlled or uncontrolled selection mode. Its native `value` prop supplies form data, not selection state.
+
+Your application owns `loading`, `disabled`, and `soon`, which default to `false`. Clicking a button does not change these props or automatically show loading while an asynchronous handler runs. Pass the current application state explicitly.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+
+type SaveRecordProps = { onSave: () => Promise<void> };
+
+export const SaveRecord = ({ onSave }: SaveRecordProps) => {
+  const [loading, setLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  const handleSave = async () => {
+    setLoading(true);
+    setHasError(false);
+
+    try {
+      await onSave();
+    } catch {
+      setHasError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Button loading={loading} onClick={handleSave}>
+        Save record
+      </Button>
+      {hasError && <p role="alert">Unable to save the record. Try again.</p>}
+    </>
+  );
+};
+```
+
+The application starts and clears loading around the save operation. The button prevents activation while loading and becomes available again when the operation finishes, including after an error. `MainButton` and `LightButton` use the same state model.
+
 ## Appearance
 
 ```tsx

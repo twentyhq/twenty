@@ -9,6 +9,10 @@ Use the shared `MainButton` component for a prominent action. It composes
 [Button](/ui/primitives/input/button) with a solid surface, elevation, semibold
 text, and 12px horizontal padding. Its default color is neutral and size is `md`.
 
+## State ownership
+
+`MainButton` uses Button's state model and adds no state of its own. Your application supplies `loading`, `disabled`, and `soon`; there are no controlled and uncontrolled selection modes. See [Button's state ownership example](/ui/primitives/input/button#state-ownership) for managing an asynchronous action.
+
 ## Usage
 
 ```tsx
