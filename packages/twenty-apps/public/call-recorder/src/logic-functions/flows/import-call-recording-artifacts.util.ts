@@ -1,9 +1,9 @@
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { ARTIFACT_IMPORT_WORK_BUDGET_MS } from 'src/logic-functions/constants/artifact-import-work-budget-ms';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
-import { updateClaimedCallRecordingArtifacts } from 'src/logic-functions/data/update-claimed-call-recording-artifacts.util';
 import { buildCallRecordingSyncUpdate } from 'src/logic-functions/domain/build-call-recording-sync-update.util';
 import { buildExpiredMediaImportUpdate } from 'src/logic-functions/domain/build-expired-media-import-update.util';
 import { hasCallRecordingUpdateFields } from 'src/logic-functions/domain/has-call-recording-update-fields.util';
@@ -32,6 +32,8 @@ export type ImportCallRecordingArtifactsResult =
       reason: string;
     };
 
+type SaveProgress = (data: CallRecordingUpdateFields) => Promise<void>;
+
 type RecallBotSyncResult = {
   externalRecordingId: string | undefined;
   isMediaExpired: boolean;
@@ -54,29 +56,22 @@ export const importCallRecordingArtifacts = async ({
   request: CallRecordingArtifactsImportRequest;
   scope: CallRecordingArtifactImportScope;
 }): Promise<ImportCallRecordingArtifactsResult> => {
-  const now = new Date();
-  const saveUnderClaim = (data: CallRecordingUpdateFields) =>
-    updateClaimedCallRecordingArtifacts(client, {
-      callRecordingId: request.callRecordingId,
-      scope,
-      claimedAt: now.toISOString(),
-      data,
-    });
+  const signal = AbortSignal.timeout(ARTIFACT_IMPORT_WORK_BUDGET_MS);
   const artifactImportExecution = await runCallRecordingArtifactImportWithClaim(
     {
       client,
       callRecordingId: request.callRecordingId,
       scope,
-      now,
-      runImport: async (callRecording) => {
-        const botSync = await syncRecallBotState(callRecording);
+      now: new Date(),
+      runImport: async (callRecording, saveProgress) => {
+        const botSync = await syncRecallBotState({ callRecording, signal });
+
+        await saveProgress(botSync.updateData);
 
         if (
           !isUndefined(botSync.updateData.status) &&
           botSync.updateData.status !== CallRecordingStatus.PROCESSING
         ) {
-          await saveUnderClaim(botSync.updateData);
-
           return {
             status: 'skipped',
             callRecordingId: callRecording.id,
@@ -91,15 +86,9 @@ export const importCallRecordingArtifacts = async ({
           requestedAt: request.requestedAt,
           externalRecordingId: botSync.externalRecordingId,
           isMediaExpired: botSync.isMediaExpired,
+          saveProgress,
+          signal,
         });
-
-        const updateData = {
-          ...botSync.updateData,
-          ...scopeArtifactsImport.updateData,
-        };
-
-        // Artifacts that landed are kept even when a sibling must be retried.
-        await saveUnderClaim(updateData);
 
         if (scopeArtifactsImport.hasRetryableFailure) {
           throw new Error(
@@ -107,11 +96,16 @@ export const importCallRecordingArtifacts = async ({
           );
         }
 
+        signal.throwIfAborted();
+
         const hasSettled = await settleCallRecordingImport(client, {
           callRecordingId: callRecording.id,
         });
+        const hasUpdates =
+          hasCallRecordingUpdateFields(botSync.updateData) ||
+          hasCallRecordingUpdateFields(scopeArtifactsImport.updateData);
 
-        if (!hasCallRecordingUpdateFields(updateData) && !hasSettled) {
+        if (!hasUpdates && !hasSettled) {
           return {
             status: 'skipped',
             callRecordingId: callRecording.id,
@@ -143,9 +137,13 @@ export const importCallRecordingArtifacts = async ({
 };
 
 // One GET /bot fills whatever the webhooks did not deliver; a vanished bot means its media is gone too.
-const syncRecallBotState = async (
-  callRecording: CallRecordingForArtifactsImport,
-): Promise<RecallBotSyncResult> => {
+const syncRecallBotState = async ({
+  callRecording,
+  signal,
+}: {
+  callRecording: CallRecordingForArtifactsImport;
+  signal: AbortSignal;
+}): Promise<RecallBotSyncResult> => {
   const hasCompleteBotState =
     !isUndefined(callRecording.externalRecordingId) &&
     !isUndefined(callRecording.startedAt) &&
@@ -161,6 +159,7 @@ const syncRecallBotState = async (
 
   const botResult = await getRecallBot({
     externalBotId: callRecording.externalBotId,
+    signal,
   });
 
   if (!botResult.ok) {
@@ -185,35 +184,46 @@ const syncRecallBotState = async (
   };
 };
 
+// Each artifact is saved as it lands so a cut-off job resumes from what it stored.
 const importScopeArtifacts = async ({
   callRecording,
   scope,
   requestedAt,
   externalRecordingId,
   isMediaExpired,
+  saveProgress,
+  signal,
 }: {
   callRecording: CallRecordingForArtifactsImport;
   scope: CallRecordingArtifactImportScope;
   requestedAt: string;
   externalRecordingId: string | undefined;
   isMediaExpired: boolean;
+  saveProgress: SaveProgress;
+  signal: AbortSignal;
 }): Promise<ScopeArtifactsImportResult> => {
   if (scope === 'transcript') {
-    return importCallRecordingTranscript({
+    const transcriptImport = await importCallRecordingTranscript({
       callRecordingId: callRecording.id,
       currentStatus: callRecording.status,
       externalRecordingId,
       requestedAt,
       transcript: callRecording.transcript,
       isMediaExpired,
+      signal,
     });
+
+    await saveProgress(transcriptImport.updateData);
+
+    return transcriptImport;
   }
 
   if (isMediaExpired) {
-    return {
-      updateData: buildExpiredMediaImportUpdate(callRecording),
-      hasRetryableFailure: false,
-    };
+    const updateData = buildExpiredMediaImportUpdate(callRecording);
+
+    await saveProgress(updateData);
+
+    return { updateData, hasRetryableFailure: false };
   }
 
   if (isUndefined(externalRecordingId)) {
@@ -225,15 +235,19 @@ const importScopeArtifacts = async ({
     externalRecordingId,
     hasAudio: isNonEmptyArray(callRecording.audio),
     hasVideo: isNonEmptyArray(callRecording.video),
+    callRecorderFailureReason: callRecording.callRecorderFailureReason,
+    saveProgress,
+    signal,
   });
+  const expiredMediaUpdate =
+    mediaImport.isRecordingGone === true
+      ? buildExpiredMediaImportUpdate(callRecording)
+      : {};
+
+  await saveProgress(expiredMediaUpdate);
 
   return {
-    updateData: {
-      ...mediaImport.updateData,
-      ...(mediaImport.isRecordingGone === true
-        ? buildExpiredMediaImportUpdate(callRecording)
-        : {}),
-    },
+    updateData: { ...mediaImport.updateData, ...expiredMediaUpdate },
     hasRetryableFailure: mediaImport.hasRetryableFailure,
   };
 };

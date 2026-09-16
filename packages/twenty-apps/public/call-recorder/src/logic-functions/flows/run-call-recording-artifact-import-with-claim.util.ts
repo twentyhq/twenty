@@ -5,8 +5,10 @@ import {
   claimCallRecordingArtifactsImport,
   releaseCallRecordingArtifactsImportClaim,
 } from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
+import { updateClaimedCallRecordingArtifacts } from 'src/logic-functions/data/update-claimed-call-recording-artifacts.util';
 import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { type CallRecordingForArtifactsImport } from 'src/logic-functions/types/call-recording-for-artifacts-import.type';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 type CallRecordingArtifactImportExecutionResult<TResult> =
   | {
@@ -28,6 +30,7 @@ export const runCallRecordingArtifactImportWithClaim = async <TResult>({
   now: Date;
   runImport: (
     callRecording: CallRecordingForArtifactsImport,
+    saveProgress: (data: CallRecordingUpdateFields) => Promise<void>,
   ) => Promise<TResult>;
 }): Promise<CallRecordingArtifactImportExecutionResult<TResult>> => {
   const claimedCallRecording = await claimCallRecordingArtifactsImport(client, {
@@ -43,7 +46,14 @@ export const runCallRecordingArtifactImportWithClaim = async <TResult>({
   try {
     return {
       status: 'executed',
-      result: await runImport(claimedCallRecording),
+      result: await runImport(claimedCallRecording, (data) =>
+        updateClaimedCallRecordingArtifacts(client, {
+          callRecordingId,
+          scope,
+          claimedAt: now.toISOString(),
+          data,
+        }),
+      ),
     };
   } finally {
     await releaseCallRecordingArtifactsImportClaim(client, {

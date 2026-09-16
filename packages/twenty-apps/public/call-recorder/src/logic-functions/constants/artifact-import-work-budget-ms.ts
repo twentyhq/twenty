@@ -1,0 +1,1 @@
+export const ARTIFACT_IMPORT_WORK_BUDGET_MS = 200_000;

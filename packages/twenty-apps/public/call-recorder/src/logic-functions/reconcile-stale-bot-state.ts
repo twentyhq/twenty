@@ -7,6 +7,7 @@ import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/conver
 import { reconcileCallRecording } from 'src/logic-functions/flows/reconcile-call-recording.util';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { buildRetryableStepFailure } from 'src/logic-functions/utils/build-step-failure.util';
+import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
 import { getString } from 'src/logic-functions/utils/get-string.util';
 
 export const reconcileStaleBotStateHandler = async (
@@ -14,7 +15,7 @@ export const reconcileStaleBotStateHandler = async (
 ): Promise<object> => {
   const body = asRecord(payload);
   const callRecordingId = getString(body?.callRecordingId);
-  const client = new CoreApiClient();
+  const client = new CoreApiClient({ fetch: fetchWithTimeout });
 
   try {
     if (!isUndefined(callRecordingId)) {

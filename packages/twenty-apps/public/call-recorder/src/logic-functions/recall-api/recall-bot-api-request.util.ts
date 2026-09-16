@@ -9,6 +9,7 @@ import {
   isRetryableRecallApiStatus,
   resolveRecallApiRetryDelayMs,
 } from 'src/logic-functions/recall-api/recall-api-retry-policy.util';
+import { fetchWithTimeout } from 'src/logic-functions/utils/fetch-with-timeout.util';
 
 type RecallBotApiRequestArgs = {
   config: RecallApiConfig;
@@ -18,6 +19,7 @@ type RecallBotApiRequestArgs = {
   idempotencyKey?: string;
   allowNotFound?: boolean;
   maxAttempts?: number;
+  signal?: AbortSignal;
 };
 
 type RecallBotApiRequestResult<TData> =
@@ -41,6 +43,7 @@ export const recallBotApiRequest = async <TData>(
   let totalRetryWaitMs = 0;
 
   for (let attemptNumber = 1; ; attemptNumber++) {
+    requestArgs.signal?.throwIfAborted();
     const { result, isRetryable, retryAfterMs } =
       await performRecallBotApiRequestAttempt<TData>(requestArgs);
 
@@ -74,6 +77,7 @@ const performRecallBotApiRequestAttempt = async <TData>({
   body,
   idempotencyKey,
   allowNotFound = false,
+  signal,
 }: RecallBotApiRequestArgs): Promise<{
   result: RecallBotApiRequestResult<TData>;
   isRetryable: boolean;
@@ -82,8 +86,9 @@ const performRecallBotApiRequestAttempt = async <TData>({
   let response: Response;
 
   try {
-    response = await fetch(`${config.baseUrl}${path}`, {
+    response = await fetchWithTimeout(`${config.baseUrl}${path}`, {
       method,
+      signal,
       headers: {
         Authorization: buildRecallApiAuthorizationHeader(config.apiKey),
         ...(isUndefined(idempotencyKey)
@@ -153,11 +158,15 @@ const performRecallBotApiRequestAttempt = async <TData>({
       },
     };
   } catch (error) {
+    const isAborted =
+      error instanceof Error &&
+      (error.name === 'TimeoutError' || error.name === 'AbortError');
+
     return {
-      isRetryable: false,
+      isRetryable: isAborted,
       result: {
         ok: false,
-        status: response.status,
+        status: isAborted ? null : response.status,
         errorMessage: `Recall API returned a non-JSON response: ${
           error instanceof Error ? error.message : String(error)
         }`,
