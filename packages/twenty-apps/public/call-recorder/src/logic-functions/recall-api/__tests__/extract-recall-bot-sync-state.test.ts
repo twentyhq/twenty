@@ -68,6 +68,7 @@ describe('extractRecallBotSyncState', () => {
       startedAt: '2026-01-01T13:02:00.000Z',
       endedAt: '2026-01-01T14:00:00.000Z',
       externalRecordingId: 'recall-recording-1',
+      mediaExpiredAt: undefined,
       isRecallRecordingDone: true,
     });
   });
@@ -95,6 +96,7 @@ describe('extractRecallBotSyncState', () => {
       startedAt: '2026-01-01T13:02:00.000Z',
       endedAt: '2026-01-01T14:00:00.000Z',
       externalRecordingId: 'recall-recording-1',
+      mediaExpiredAt: undefined,
       isRecallRecordingDone: false,
     });
   });
@@ -126,7 +128,38 @@ describe('extractRecallBotSyncState', () => {
       startedAt: undefined,
       endedAt: undefined,
       externalRecordingId: undefined,
+      mediaExpiredAt: undefined,
       isRecallRecordingDone: false,
+    });
+  });
+
+  it('reports when Recall expired the media of a bot that recorded', () => {
+    const syncState = extractRecallBotSyncState(
+      buildRecallBotSnapshot({
+        statusChanges: [
+          {
+            code: 'in_call_recording',
+            createdAt: '2026-09-04T13:24:11.861710Z',
+          },
+          {
+            code: 'call_ended',
+            subCode: 'timeout_exceeded_everyone_left',
+            createdAt: '2026-09-04T13:27:24.500429Z',
+          },
+          { code: 'done', createdAt: '2026-09-04T13:27:25.494042Z' },
+          { code: 'media_expired', createdAt: '2026-09-11T12:17:33.159774Z' },
+        ],
+      }),
+    );
+
+    expect(syncState).toEqual({
+      status: 'PROCESSING',
+      failureReason: undefined,
+      startedAt: '2026-09-04T13:24:11.861Z',
+      endedAt: '2026-09-04T13:27:24.500Z',
+      externalRecordingId: undefined,
+      mediaExpiredAt: '2026-09-11T12:17:33.159Z',
+      isRecallRecordingDone: true,
     });
   });
 

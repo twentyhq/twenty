@@ -1,5 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 
+import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
 import { retrieveRecallTranscript } from 'src/logic-functions/recall-api/retrieve-recall-transcript.util';
 
 const TRANSCRIPT_DOWNLOAD_TIMEOUT_MS = 20_000;
@@ -8,6 +9,7 @@ export type DownloadTranscriptResult =
   | { outcome: 'filled'; content: unknown }
   | { outcome: 'failed'; subCode: string | null }
   | { outcome: 'pending' }
+  | { outcome: 'deleted' }
   | { outcome: 'error'; errorMessage: string };
 
 export const downloadTranscript = async ({
@@ -18,7 +20,9 @@ export const downloadTranscript = async ({
   const retrieveResult = await retrieveRecallTranscript({ transcriptId });
 
   if (!retrieveResult.ok) {
-    return { outcome: 'error', errorMessage: retrieveResult.errorMessage };
+    return retrieveResult.status === RECALL_API_NOT_FOUND_STATUS
+      ? { outcome: 'deleted' }
+      : { outcome: 'error', errorMessage: retrieveResult.errorMessage };
   }
 
   const { downloadUrl, statusCode, statusSubCode } = retrieveResult.transcript;
@@ -29,6 +33,10 @@ export const downloadTranscript = async ({
 
   if (statusCode === 'error' || statusCode === 'failed') {
     return { outcome: 'failed', subCode: statusSubCode ?? null };
+  }
+
+  if (statusCode === 'deleted') {
+    return { outcome: 'deleted' };
   }
 
   return { outcome: 'pending' };

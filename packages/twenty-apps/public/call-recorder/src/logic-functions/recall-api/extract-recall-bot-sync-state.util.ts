@@ -14,6 +14,7 @@ export type RecallBotSyncState = {
   startedAt: string | undefined;
   endedAt: string | undefined;
   externalRecordingId: string | undefined;
+  mediaExpiredAt: string | undefined;
   isRecallRecordingDone: boolean;
 };
 
@@ -50,6 +51,9 @@ export const extractRecallBotSyncState = (
         findStatusChangeTimestamp(statusChanges, 'call_ended'),
     ),
     externalRecordingId: recording?.id,
+    mediaExpiredAt: normalizeRecallTimestamp(
+      findStatusChangeTimestamp(statusChanges, 'media_expired'),
+    ),
     isRecallRecordingDone:
       !isUndefined(recording?.completedAt) ||
       statusChanges.some((statusChange) => statusChange.code === 'done'),

@@ -11,9 +11,12 @@ import {
   vi,
 } from 'vitest';
 
+import { STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { CALENDAR_EVENT_UPDATE_BATCH_SIZE } from 'src/logic-functions/constants/calendar-event-update-batch-size';
 import { cancelCallRecordingRequest } from 'src/logic-functions/flows/cancel-call-recording-request.util';
+import { convergeDivergedCallRecordings } from 'src/logic-functions/flows/converge-diverged-call-recordings.util';
 import { handleCallRecordingArtifactsImportJob } from 'src/logic-functions/flows/handle-call-recording-artifacts-import-job.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { retryFailedRecallCancellations } from 'src/logic-functions/flows/retry-failed-recall-cancellations.util';
@@ -153,6 +156,7 @@ const inTwoHours = () =>
   new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString();
 const hoursAgo = (hours: number) =>
   new Date(Date.now() - hours * 60 * 60 * 1000).toISOString();
+const daysAgo = (days: number) => hoursAgo(days * 24);
 
 // ---------------------------------------------------------------------------
 // Recall API fake, installed as a fetch interceptor. Twenty API traffic falls
@@ -160,10 +164,18 @@ const hoursAgo = (hours: number) =>
 // captured here so fanned-out jobs do not run inside the test.
 // ---------------------------------------------------------------------------
 
+type FakeRecallBotStatusChange = {
+  code: string;
+  sub_code?: string;
+  created_at: string;
+};
+
 type FakeRecallBot = {
   id: string;
   metadata: Record<string, string>;
   statusCode: string;
+  statusChanges?: FakeRecallBotStatusChange[];
+  recordings?: Array<{ id: string; started_at: string; completed_at: string }>;
 };
 
 type FakeRecallTranscript = {
@@ -191,9 +203,13 @@ class FakeRecallApi {
   botIdByIdempotencyKey = new Map<string, string>();
   transcripts = new Map<string, FakeRecallTranscript>();
   transcriptRequestFailureStatus: number | undefined = undefined;
+  failVideoDownload = false;
+  mediaContentLengthBytes: number | undefined = undefined;
   deletedBotIds: string[] = [];
   listRequestCount = 0;
   artifactImportRequests: object[] = [];
+  recoveryRequests: object[] = [];
+  hasExpiredMedia = false;
   failNextDelete = false;
   failCalendarEventUpdates = false;
   failRecallRemovals = false;
@@ -206,6 +222,42 @@ class FakeRecallApi {
     for (const transcript of this.transcripts.values()) {
       transcript.statusCode = 'done';
       transcript.content = content;
+    }
+  }
+
+  // Mirrors Recall after retention: the bot history ends with media_expired,
+  // the recording disappears from the bot, and its transcripts read as deleted.
+  expireBotMedia({
+    botId,
+    recordingStartedAt,
+    recordingEndedAt,
+  }: {
+    botId: string;
+    recordingStartedAt: string;
+    recordingEndedAt: string;
+  }): void {
+    const bot = this.bots.get(botId);
+
+    if (bot === undefined) {
+      throw new Error(`Unknown fake Recall bot ${botId}`);
+    }
+
+    this.hasExpiredMedia = true;
+    bot.statusCode = 'media_expired';
+    bot.statusChanges = [
+      { code: 'in_call_recording', created_at: recordingStartedAt },
+      {
+        code: 'call_ended',
+        sub_code: 'timeout_exceeded_everyone_left',
+        created_at: recordingEndedAt,
+      },
+      { code: 'done', created_at: recordingEndedAt },
+      { code: 'media_expired', created_at: new Date().toISOString() },
+    ];
+    bot.recordings = [];
+
+    for (const transcript of this.transcripts.values()) {
+      transcript.statusCode = 'deleted';
     }
   }
 
@@ -229,7 +281,14 @@ class FakeRecallApi {
         payloads: object[];
       }[];
 
-      this.artifactImportRequests.push(...(input?.payloads ?? []));
+      if (
+        input?.logicFunctionUniversalIdentifier ===
+        STALE_BOT_STATE_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER
+      ) {
+        this.recoveryRequests.push(...(input.payloads ?? []));
+      } else {
+        this.artifactImportRequests.push(...(input?.payloads ?? []));
+      }
 
       return jsonResponse(200, {
         data: {
@@ -268,11 +327,29 @@ class FakeRecallApi {
           id: bot.id,
           metadata: bot.metadata,
           status: { code: bot.statusCode },
+          status_changes: bot.statusChanges ?? [],
+          recordings: bot.recordings ?? [],
         })),
       });
     }
 
     const botIdMatch = requestUrl.match(/\/bot\/([^/]+)\/$/);
+
+    if (method === 'GET' && botIdMatch !== null) {
+      const bot = this.bots.get(botIdMatch[1]);
+
+      if (bot === undefined) {
+        return jsonResponse(404, {});
+      }
+
+      return jsonResponse(200, {
+        id: bot.id,
+        metadata: bot.metadata,
+        status: { code: bot.statusCode },
+        status_changes: bot.statusChanges ?? [],
+        recordings: bot.recordings ?? [],
+      });
+    }
 
     const ejectedBotIdMatch = requestUrl.match(/\/bot\/([^/]+)\/leave_call\/$/);
 
@@ -304,6 +381,8 @@ class FakeRecallApi {
       method === 'POST' &&
       /\/recording\/[^/]+\/create_transcript\/$/.test(requestUrl)
     ) {
+      if (this.hasExpiredMedia) return jsonResponse(404, {});
+
       if (this.transcriptRequestFailureStatus !== undefined) {
         return jsonResponse(this.transcriptRequestFailureStatus, {});
       }
@@ -366,6 +445,7 @@ class FakeRecallApi {
     }
 
     if (method === 'GET' && /\/recording\/[^/]+\/$/.test(requestUrl)) {
+      if (this.hasExpiredMedia) return jsonResponse(404, {});
       return jsonResponse(200, {
         media_shortcuts: {
           video_mixed: {
@@ -382,6 +462,10 @@ class FakeRecallApi {
       method === 'GET' &&
       requestUrl.startsWith(`${FAKE_RECALL_DOWNLOAD_BASE_URL}/media/`)
     ) {
+      if (this.failVideoDownload && requestUrl.endsWith('.mp4')) {
+        return jsonResponse(500, {});
+      }
+
       // Twenty checks uploads by magic bytes, so the fake media needs real headers.
       const mediaBytes = requestUrl.endsWith('.mp4')
         ? MP4_FILE_HEADER_BYTES
@@ -389,7 +473,11 @@ class FakeRecallApi {
 
       return new Response(mediaBytes, {
         status: 200,
-        headers: { 'content-length': String(mediaBytes.byteLength) },
+        headers: {
+          'content-length': String(
+            this.mediaContentLengthBytes ?? mediaBytes.byteLength,
+          ),
+        },
       });
     }
 
@@ -839,6 +927,19 @@ describe('call recorder app lifecycle (integration)', () => {
     scheduleRecallBotsForPendingCallRecordings({ client, now: new Date() });
   const runCancellationRetryCron = () =>
     retryFailedRecallCancellations({ client, now: new Date() });
+  const runStaleStateCron = async () => {
+    const result = await convergeDivergedCallRecordings({
+      client,
+      now: new Date(),
+    });
+
+    while (recall.recoveryRequests.length > 0) {
+      await reconcileStaleBotStateHandler(recall.recoveryRequests.shift());
+    }
+
+    await runQueuedArtifactImports();
+    return result;
+  };
 
   describe('scheduling from calendar changes', () => {
     it('creates a recording and schedules a Recall bot for a meeting with recording enabled', async () => {
@@ -1187,6 +1288,262 @@ describe('call recorder app lifecycle (integration)', () => {
         (await fetchCallRecording(callRecordingId)).externalBotId,
       ).toBeFalsy();
       expect(recall.deletedBotIds).toContain(botId);
+    });
+  });
+
+  describe('settling recordings whose Recall media expired', () => {
+    const recordingStartedAt = () => hoursAgo(1);
+
+    const deliverRecordingDone = async ({
+      botId,
+      metadata,
+    }: {
+      botId: string;
+      metadata: Record<string, string>;
+    }): Promise<{ startedAt: string; completedAt: string }> => {
+      const startedAt = recordingStartedAt();
+      const completedAt = new Date().toISOString();
+
+      await deliverRecallWebhook(
+        buildRecordingDoneWebhook({ botId, metadata, startedAt, completedAt }),
+      );
+
+      return { startedAt, completedAt };
+    };
+
+    const moveMeetingOutsideConvergenceWindow = (calendarEventId: string) =>
+      client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
+          },
+          id: true,
+        },
+      });
+
+    it('fails a processing recording whose media expired before any artifact was imported', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([callRecordingId]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_expired,audio_import_expired',
+      );
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: null,
+        status: 'EMPTY',
+        subCode: 'transcript_expired',
+      });
+    });
+
+    it('defers media settlement while an artifact import holds its claim', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+      await client.mutation({
+        updateCallRecording: {
+          __args: {
+            id: callRecordingId,
+            data: { artifactsImportClaimedAt: new Date().toISOString() },
+          },
+          id: true,
+        },
+      });
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+      expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+    });
+
+    it('completes a processing recording with imported media once Recall expires the rest', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      await runQueuedArtifactImports();
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([callRecordingId]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: 'recall-transcript-1',
+        status: 'EMPTY',
+        subCode: 'transcript_expired',
+      });
+    });
+
+    it('completes a processing recording with only audio and records the expired video', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.failVideoDownload = true;
+
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      await expect(runQueuedArtifactImports()).rejects.toMatchObject({
+        name: 'RetryableLogicFunctionError',
+      });
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_expired',
+      );
+      expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+    });
+
+    it('fails a recording whose media was too large to store and whose transcript never arrived', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      recall.mediaContentLengthBytes = 600 * 1024 * 1024;
+
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+
+      await runQueuedArtifactImports();
+
+      expect(
+        (await fetchCallRecording(callRecordingId)).callRecorderFailureReason,
+      ).toBe('video_file_too_large,audio_file_too_large');
+
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_file_too_large,audio_file_too_large',
+      );
+      expect(callRecording.transcript).toMatchObject({ status: 'EMPTY' });
+    });
+
+    it('settles a processing recording when Recall reports its media expired by webhook', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'media_expired',
+        }),
+      );
+
+      expect(recall.artifactImportRequests).toHaveLength(4);
+
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_expired,audio_import_expired',
+      );
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: null,
+        status: 'EMPTY',
+        subCode: 'transcript_expired',
+      });
+    });
+
+    it('keeps converging a processing recording whose media is still available', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecordingDone({ botId, metadata });
+      await client.mutation({
+        updateCalendarEvent: {
+          __args: {
+            id: calendarEventId,
+            data: { startsAt: daysAgo(2), endsAt: daysAgo(1) },
+          },
+          id: true,
+        },
+      });
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
     });
   });
 
