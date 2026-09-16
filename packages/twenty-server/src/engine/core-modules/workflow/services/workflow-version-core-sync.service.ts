@@ -90,6 +90,7 @@ export class WorkflowVersionCoreSyncService {
 
       return {
         id: coreWorkflowVersionId,
+        workspaceWorkflowVersionId: workflowVersion.id,
         workflowId: workflowVersion.workflowId,
         coreWorkflowId: resolvedCoreWorkflowId,
         triggers: isDefined(workflowVersion.trigger)
@@ -165,6 +166,15 @@ export class WorkflowVersionCoreSyncService {
     });
   }
 
+  async findCoreVersionByWorkspaceVersionId(
+    workspaceId: string,
+    workspaceWorkflowVersionId: string,
+  ): Promise<WorkflowVersionEntity | null> {
+    return this.coreWorkflowVersionRepository.findOne(workspaceId, {
+      where: { workspaceWorkflowVersionId },
+    });
+  }
+
   async mirrorWorkflowVersionWrite({
     workspaceId,
     transactionScope,
@@ -216,6 +226,7 @@ export class WorkflowVersionCoreSyncService {
          ("id", "workspaceId", "workflowId", "triggers", "steps", "status", "universalIdentifier", "applicationId", "coreWorkflowId", "workspaceWorkflowVersionId")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        ON CONFLICT ("id") DO UPDATE SET
+         "workspaceWorkflowVersionId" = EXCLUDED."workspaceWorkflowVersionId",
          "triggers" = EXCLUDED."triggers",
          "steps" = EXCLUDED."steps",
          "status" = EXCLUDED."status",

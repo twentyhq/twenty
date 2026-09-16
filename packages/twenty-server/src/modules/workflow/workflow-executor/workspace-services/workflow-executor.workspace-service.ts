@@ -203,7 +203,16 @@ export class WorkflowExecutorWorkspaceService {
       !actionOutput.shouldFailSafely &&
       !actionOutput.shouldSkipStepExecution
     ) {
-      await this.sendWorkflowNodeRunEvent(workspaceId, workflowRun.workflowId);
+      const billingWorkflowId =
+        workflowRun.workflowId ?? workflowRun.coreWorkflowId;
+
+      if (!isDefined(billingWorkflowId)) {
+        throw new Error(
+          `Workflow run ${workflowRun.id} has no workflow identity for billing`,
+        );
+      }
+
+      await this.sendWorkflowNodeRunEvent(workspaceId, billingWorkflowId);
     }
 
     const { shouldProcessNextSteps } = await this.processStepExecutionResult({

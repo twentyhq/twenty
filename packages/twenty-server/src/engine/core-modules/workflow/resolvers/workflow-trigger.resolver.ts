@@ -10,6 +10,7 @@ import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/re
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { RunWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.input';
+import { RunCoreWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-core-workflow-version.input';
 import { RunWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/run-workflow-version.dto';
 import { WorkflowRunDTO } from 'src/engine/core-modules/workflow/dtos/workflow-run.dto';
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
@@ -26,6 +27,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 
 @CoreResolver()
 @UseGuards(
@@ -44,6 +46,7 @@ export class WorkflowTriggerResolver {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
+    private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
   ) {}
 
   @Mutation(() => Boolean)
@@ -104,6 +107,51 @@ export class WorkflowTriggerResolver {
       payload: triggerPayload,
       createdBy,
       workspaceId: workspace.id,
+    });
+  }
+
+  @Mutation(() => RunWorkflowVersionDTO)
+  @UseGuards(UserAuthGuard)
+  async runCoreWorkflowVersion(
+    @AuthUser() user: AuthContextUser,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @Args('input')
+    {
+      coreWorkflowVersionId,
+      workflowRunId,
+      payload,
+    }: RunCoreWorkflowVersionInput,
+  ) {
+    const authContext = buildSystemAuthContext(workspace.id);
+    const workspaceMember =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceMemberRepository =
+          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        return workspaceMemberRepository.findOneOrFail({
+          where: { userId: user.id },
+        });
+      }, authContext);
+
+    return this.coreWorkflowRunnerService.run({
+      workspaceId: workspace.id,
+      coreWorkflowVersionId,
+      workflowRunId: workflowRunId ?? undefined,
+      payload: {
+        ...(payload ?? {}),
+        [WORKFLOW_TRIGGER_PAYLOAD_KEY]: { ...(payload ?? {}) },
+        [WORKFLOW_TRIGGER_METADATA_KEY]: {
+          [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]:
+            workspaceMember.id,
+        },
+      },
+      source: buildCreatedByFromFullNameMetadata({
+        fullNameMetadata: workspaceMember.name,
+        workspaceMemberId: workspaceMember.id,
+      }),
     });
   }
 

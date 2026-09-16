@@ -35,6 +35,13 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
     const byWorkflowId: WorkflowAutomatedTriggerMaps['byWorkflowId'] = {};
 
     for (const workflowVersion of activeWorkflowVersions) {
+      if (!isDefined(workflowVersion.coreWorkflowId)) {
+        this.logger.error(
+          `Active core workflow version ${workflowVersion.id} has no core workflow id in workspace ${workspaceId}`,
+        );
+        continue;
+      }
+
       const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion({
         workflowVersion,
         workspaceWorkflowVersionId: null,

@@ -383,8 +383,6 @@ export class WorkflowDatabaseEventTriggerListener {
               workspaceId,
               workflowId: eventListener.workflowId,
               coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
-              workspaceWorkflowVersionId:
-                eventListener.workspaceWorkflowVersionId,
               payload: omitInheritedReadabilityChildRecords(eventPayload),
             },
             { retryLimit: 3 },

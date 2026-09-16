@@ -180,6 +180,24 @@ export class WorkflowCoreSyncService {
     });
   }
 
+  async findCoreWorkflowById(
+    workspaceId: string,
+    coreWorkflowId: string,
+  ): Promise<WorkflowEntity | null> {
+    return this.coreWorkflowRepository.findOne(workspaceId, {
+      where: { id: coreWorkflowId },
+    });
+  }
+
+  async findCoreWorkflowByIdOrWorkspaceWorkflowId(
+    workspaceId: string,
+    workflowId: string,
+  ): Promise<WorkflowEntity | null> {
+    return this.coreWorkflowRepository.findOne(workspaceId, {
+      where: [{ id: workflowId }, { workspaceWorkflowId: workflowId }],
+    });
+  }
+
   private async writeBackCoreWorkflowIds(
     workspaceId: string,
     coreWorkflowIdByWorkspaceRecordId: Map<string, string>,

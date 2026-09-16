@@ -13,6 +13,8 @@ import { RemoveSeeActiveVersionCommandMenuItemCommand } from 'src/database/comma
 import { NormalizeWorkflowRecordCrudRichTextFieldsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789482628000-normalize-workflow-record-crud-rich-text-fields.command';
 import { BackfillDeterministicPermissionUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789553327000-backfill-deterministic-permission-universal-identifiers.command';
 import { SeedObjectInitialViewCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789565000000-seed-object-initial-view.command';
+import { BackfillWorkflowExecutionCoreIdsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789580000001-backfill-workflow-execution-core-ids.command';
+import { MakeWorkflowRunProjectionRelationsNullableCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789580000002-make-workflow-run-projection-relations-nullable.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -46,6 +48,8 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     NormalizeWorkflowRecordCrudRichTextFieldsCommand,
     BackfillDeterministicPermissionUniversalIdentifiersCommand,
     SeedObjectInitialViewCommand,
+    BackfillWorkflowExecutionCoreIdsCommand,
+    MakeWorkflowRunProjectionRelationsNullableCommand,
   ],
 })
 export class V2_41_UpgradeVersionCommandModule {}
