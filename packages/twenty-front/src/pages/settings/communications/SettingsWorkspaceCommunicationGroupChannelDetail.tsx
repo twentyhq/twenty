@@ -1,3 +1,4 @@
+import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
 import { useUpdateEmailGroupChannel } from '@/settings/accounts/hooks/useUpdateEmailGroupChannel';
@@ -242,6 +243,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             </StyledSendingDomainColumn>
           </Section>
         )}
+        <SettingsAccountsMessageChannelDetails messageChannel={channel} />
       </SettingsPageContainer>
       <ConfirmationModal
         modalInstanceId={DELETE_EMAIL_GROUP_MODAL_ID}

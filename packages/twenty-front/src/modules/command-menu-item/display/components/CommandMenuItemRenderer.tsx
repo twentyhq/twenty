@@ -58,7 +58,13 @@ const CommandMenuItemButtonRenderer = ({
     label,
   });
 
-  const command = { key: item.id, label, shortLabel, Icon };
+  const command = {
+    key: item.id,
+    label,
+    shortLabel,
+    Icon,
+    hotKeys: item.hotKeys,
+  };
 
   if (isInPreviewMode) {
     return (
