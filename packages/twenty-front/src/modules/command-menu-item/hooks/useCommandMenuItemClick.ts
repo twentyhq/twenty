@@ -1,3 +1,4 @@
+import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
 import { isPathCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isPathCommandMenuItemPayload';
@@ -12,14 +13,13 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
   item,
   Icon,
   label,
 }: {
-  item: CommandMenuItemFieldsFragment;
+  item: CommandMenuItemDefinition;
   Icon: IconComponent;
   label: string;
 }) => {
@@ -86,6 +86,7 @@ export const useCommandMenuItemClick = ({
             ? item.payload
             : undefined,
         navigationTargetObjectMetadataId: item.navigationTargetObjectMetadataId,
+        creationTargetObjectMetadataId: item.creationTargetObjectMetadataId,
         isInSidePanel: commandMenuContextApi.isInSidePanel,
       });
 
