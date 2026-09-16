@@ -1,3 +1,4 @@
+// oxlint-disable twenty/folder-structure -- Utility specs intentionally live beside their implementation.
 import { buildGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/buildGlobalRecordCreationCommandMenuItems';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import {
