@@ -141,6 +141,8 @@ export const CallRecordingAudioPlayer = ({
     }
   };
 
+  const PlaybackIcon = isPlaying ? IconPlayerPause : IconPlayerPlay;
+
   return (
     <StyledAudioBar>
       <audio
@@ -189,12 +191,11 @@ export const CallRecordingAudioPlayer = ({
             variant="ghost"
             onClick={handleTogglePlayback}
           >
-            {isStalled ? undefined : isPlaying ? (
-              <IconPlayerPause />
+            {isStalled ? (
+              <CircularProgressBar barWidth={2} size={24} />
             ) : (
-              <IconPlayerPlay />
+              <PlaybackIcon />
             )}
-            {isStalled && <CircularProgressBar barWidth={2} size={24} />}
           </IconButton>
           <StyledTrack>
             {isDurationKnown ? (
