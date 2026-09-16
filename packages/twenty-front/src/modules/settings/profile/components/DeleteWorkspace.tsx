@@ -10,6 +10,7 @@ import { IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
 import { useMutation } from '@apollo/client/react';
+import { AppPath } from 'twenty-shared/types';
 import { DeleteCurrentWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const DELETE_WORKSPACE_MODAL_ID = 'delete-workspace-modal';
@@ -27,7 +28,7 @@ export const DeleteWorkspace = () => {
   const deleteWorkspace = async () => {
     await deleteCurrentWorkspace();
     await signOut();
-    redirectToDefaultDomain();
+    redirectToDefaultDomain({ pathname: AppPath.SignInUp });
   };
 
   return (
