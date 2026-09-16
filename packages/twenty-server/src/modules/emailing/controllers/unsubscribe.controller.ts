@@ -175,7 +175,7 @@ export class UnsubscribeController {
     const trackingDecision = this.parseTrackingDecision(body.tracking);
 
     if (isDefined(trackingDecision)) {
-      await this.recordTrackingDecisionIfChanged({
+      await this.recordTrackingDecisionUnlessRecorded({
         workspaceId: payload.workspaceId,
         emailAddress: payload.emailAddress,
         decision: trackingDecision,
@@ -213,7 +213,7 @@ export class UnsubscribeController {
     );
   }
 
-  private async recordTrackingDecisionIfChanged({
+  private async recordTrackingDecisionUnlessRecorded({
     workspaceId,
     emailAddress,
     decision,
@@ -222,15 +222,18 @@ export class UnsubscribeController {
     emailAddress: string;
     decision: MessageTrackingConsentDecision;
   }): Promise<void> {
-    const storedDecision =
-      await this.messageTrackingConsentService.findDecision({
-        workspaceId,
-        emailAddress,
-      });
-    const currentDecision =
-      storedDecision ?? MessageTrackingConsentDecision.GRANTED;
+    const storedConsent = await this.messageTrackingConsentService.findConsent({
+      workspaceId,
+      emailAddress,
+    });
+    const isDefaultDecision =
+      !isDefined(storedConsent) &&
+      decision === MessageTrackingConsentDecision.GRANTED;
+    const isRecipientDecision =
+      storedConsent?.decision === decision &&
+      storedConsent.source === MessageTrackingConsentSource.PREFERENCES_PAGE;
 
-    if (currentDecision === decision) {
+    if (isDefaultDecision || isRecipientDecision) {
       return;
     }
 

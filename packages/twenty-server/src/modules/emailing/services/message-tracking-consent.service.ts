@@ -46,6 +46,18 @@ export class MessageTrackingConsentService {
     private readonly userRoleService: UserRoleService,
   ) {}
 
+  async findConsent({
+    workspaceId,
+    emailAddress,
+  }: {
+    workspaceId: string;
+    emailAddress: string;
+  }): Promise<MessageTrackingConsentEntity | null> {
+    return this.consentRepository.findOneBy(workspaceId, {
+      emailAddress: this.normalizeEmailAddress(emailAddress),
+    });
+  }
+
   async findDecision({
     workspaceId,
     emailAddress,
@@ -53,9 +65,7 @@ export class MessageTrackingConsentService {
     workspaceId: string;
     emailAddress: string;
   }): Promise<MessageTrackingConsentDecision | null> {
-    const consent = await this.consentRepository.findOneBy(workspaceId, {
-      emailAddress: this.normalizeEmailAddress(emailAddress),
-    });
+    const consent = await this.findConsent({ workspaceId, emailAddress });
 
     return consent?.decision ?? null;
   }

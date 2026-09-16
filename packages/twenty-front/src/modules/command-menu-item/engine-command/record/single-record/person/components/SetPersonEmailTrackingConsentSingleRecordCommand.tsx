@@ -1,8 +1,11 @@
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { useSetPersonEmailTrackingConsent } from '@/activities/emails/hooks/useSetPersonEmailTrackingConsent';
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { t } from '@lingui/core/macro';
 import { MessageTrackingConsentDecision } from '~/generated-metadata/graphql';
 
@@ -17,9 +20,26 @@ export const SetPersonEmailTrackingConsentSingleRecordCommand = () => {
     throw new Error('Record ID is required to set email tracking');
   }
 
+  const {
+    record: person,
+    loading,
+    refetch,
+  } = useFindOneRecord<
+    ObjectRecord & {
+      emailTrackingConsent: MessageTrackingConsentDecision | null;
+    }
+  >({
+    objectNameSingular: CoreObjectNameSingular.Person,
+    objectRecordId: personId,
+    recordGqlFields: { emailTrackingConsent: true },
+  });
+
+  if (loading || !isDefined(person)) {
+    return null;
+  }
+
   const isOptedOut =
-    selectedRecord.emailTrackingConsent ===
-    MessageTrackingConsentDecision.DENIED;
+    person.emailTrackingConsent === MessageTrackingConsentDecision.DENIED;
 
   const decision = isOptedOut
     ? MessageTrackingConsentDecision.GRANTED
@@ -39,7 +59,11 @@ export const SetPersonEmailTrackingConsentSingleRecordCommand = () => {
       }
       confirmButtonText={isOptedOut ? t`Opt in` : t`Opt out`}
       confirmButtonColor={isOptedOut ? 'accent' : 'danger'}
-      execute={() => setPersonEmailTrackingConsent({ personId, decision })}
+      execute={async () => {
+        if (await setPersonEmailTrackingConsent({ personId, decision })) {
+          await refetch();
+        }
+      }}
     />
   );
 };
