@@ -63,7 +63,6 @@ const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
   min-width: 0;
-  overflow: hidden;
 
   @media print {
     display: block;

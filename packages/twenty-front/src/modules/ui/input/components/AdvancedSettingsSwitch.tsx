@@ -55,6 +55,7 @@ export const AdvancedSettingsSwitch = ({
     setIsAdvancedModeEnabled(newValue);
   };
   const instanceId = useId();
+  const labelId = `${instanceId}-text`;
   const switchLabel = label ?? t`Advanced`;
 
   return (
@@ -64,10 +65,11 @@ export const AdvancedSettingsSwitch = ({
       isCompact={isCompact}
       title={isCompact ? switchLabel : undefined}
     >
-      {!isCompact && <StyledText>{switchLabel}</StyledText>}
+      {!isCompact && <StyledText id={labelId}>{switchLabel}</StyledText>}
       <StyledSwitch
         id={instanceId}
-        aria-label={switchLabel}
+        aria-label={isCompact ? switchLabel : undefined}
+        aria-labelledby={isCompact ? undefined : labelId}
         onCheckedChange={onChange}
         checked={isAdvancedModeEnabled}
       />

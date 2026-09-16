@@ -48,12 +48,11 @@ const StyledMainCardWrapper = styled.div`
   }
 `;
 
-// oxlint-disable-next-line twenty/no-hardcoded-colors
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
   border-radius: 0;
   box-shadow:
-    -4px 0 4px 0 rgba(0, 0, 0, 0.006),
+    ${themeCssVariables.boxShadow.sidebar},
     0 0 0 1px ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: flex;
@@ -63,19 +62,9 @@ const StyledCard = styled.div`
   overflow: hidden;
   width: 100%;
 
-  .dark & {
-    box-shadow:
-      -4px 0 4px 0 rgba(0, 0, 0, 0.03),
-      0 0 0 1px ${themeCssVariables.border.color.medium};
-  }
-
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     border-radius: 0;
     box-shadow: none;
-
-    .dark & {
-      box-shadow: none;
-    }
   }
 
   @media print {

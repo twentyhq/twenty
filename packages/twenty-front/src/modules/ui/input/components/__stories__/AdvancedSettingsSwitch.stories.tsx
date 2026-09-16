@@ -46,7 +46,7 @@ type Story = StoryObj<typeof AdvancedSettingsSwitch>;
 export const Default: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const control = canvas.getByRole('switch', { name: 'Advanced' });
+    const control = await canvas.findByRole('switch', { name: 'Advanced' });
     await userEvent.click(canvas.getByText('Advanced'));
     await expect(control).toBeChecked();
     await expect(args.setIsAdvancedModeEnabled).toHaveBeenLastCalledWith(true);

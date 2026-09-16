@@ -12,19 +12,17 @@ import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { MainNavigationDrawerContent } from '@/navigation/components/MainNavigationDrawerContent';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import {
-  PermissionFlagType,
-  type AgentChatThread,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
-const THREAD: AgentChatThread = {
+const THREAD = {
   id: '3a36fc8c-c8e2-4f16-a283-24dc05e3704b',
   title: 'Pipeline summary',
   createdAt: '2026-01-01T12:00:00.000Z',
   updatedAt: '2026-01-01T12:00:00.000Z',
   conversationSize: 0,
+  totalCacheReadTokens: 0,
   totalInputCredits: 0,
   totalInputTokens: 0,
   totalOutputCredits: 0,
