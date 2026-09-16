@@ -6,6 +6,7 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { lastClickedNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/lastClickedNavigationMenuItemIdState';
 import { recordIdentifierToObjectRecordIdentifier } from '@/navigation-menu-item/common/utils/recordIdentifierToObjectRecordIdentifier';
 import { useIdentifyActiveNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useIdentifyActiveNavigationMenuItems';
+import { getObjectNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemComputedLink';
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { isCoreWorkflowsObjectNavigationMenuItem } from '@/navigation-menu-item/display/utils/isCoreWorkflowsObjectNavigationMenuItem';
@@ -23,12 +24,11 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useNavigate } from 'react-router-dom';
 import {
-  AppPath,
   CoreObjectNameSingular,
   FeatureFlagKey,
   NavigationMenuItemType,
 } from 'twenty-shared/types';
-import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconLock, useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -99,11 +99,13 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         lastVisitedViewPerObjectMetadataItem,
         isInitialObjectViewEnabled,
       })
-    : getAppPath(
-        AppPath.RecordIndexPage,
-        { objectNamePlural: objectMetadataItem.namePlural },
-        lastVisitedViewId ? { viewId: lastVisitedViewId } : undefined,
-      );
+    : getObjectNavigationMenuItemComputedLink({
+        item: { targetObjectMetadataId: objectMetadataItem.id },
+        objectMetadataItems,
+        views,
+        lastVisitedViewId,
+        isInitialObjectViewEnabled,
+      });
 
   const isActive = hasNavigationMenuItem
     ? activeNavigationMenuItemIds.includes(navigationMenuItem!.id)

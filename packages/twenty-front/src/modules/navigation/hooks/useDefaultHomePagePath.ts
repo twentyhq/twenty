@@ -4,6 +4,7 @@ import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metad
 import { useNavigationMenuItemSectionItems } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { type ObjectPathInfo } from '@/navigation/types/ObjectPathInfo';
 import { getFirstNavigationMenuItemLink } from '@/navigation/utils/getFirstNavigationMenuItemLink';
+import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { filterReadableActiveObjectMetadataItems } from '@/object-metadata/utils/filterReadableActiveObjectMetadataItems';
@@ -55,13 +56,18 @@ export const useDefaultHomePagePath = () => {
     [activeObjectMetadataItems, objectPermissionsByObjectMetadataId],
   );
 
-  const getFirstView = useCallback(
+  const getTargetViewId = useCallback(
     (objectMetadataItemId: string | undefined | null) => {
-      return views.find(
-        (view) => view.objectMetadataId === objectMetadataItemId,
-      );
+      const { initialObjectViewId, indexViewId, firstAvailableViewId } =
+        computeObjectViewTargetIds({
+          views,
+          objectMetadataId: objectMetadataItemId ?? undefined,
+          isInitialObjectViewEnabled,
+        });
+
+      return initialObjectViewId ?? indexViewId ?? firstAvailableViewId;
     },
-    [views],
+    [views, isInitialObjectViewEnabled],
   );
 
   const firstNavigationMenuItemLink = useMemo(
@@ -89,10 +95,10 @@ export const useDefaultHomePagePath = () => {
       return null;
     }
 
-    const view = getFirstView(firstObjectMetadataItem.id);
+    const viewId = getTargetViewId(firstObjectMetadataItem.id);
 
-    return { objectMetadataItem: firstObjectMetadataItem, view };
-  }, [getFirstView, readableNonSystemObjectMetadataItems]);
+    return { objectMetadataItem: firstObjectMetadataItem, viewId };
+  }, [getTargetViewId, readableNonSystemObjectMetadataItems]);
 
   const defaultHomePagePath = useMemo(() => {
     if (!isDefined(currentUser)) {
@@ -125,8 +131,8 @@ export const useDefaultHomePagePath = () => {
     return getAppPath(
       AppPath.RecordIndexPage,
       { objectNamePlural: firstObjectPathInfo.objectMetadataItem?.namePlural },
-      firstObjectPathInfo.view?.id
-        ? { viewId: firstObjectPathInfo.view.id }
+      isDefined(firstObjectPathInfo.viewId)
+        ? { viewId: firstObjectPathInfo.viewId }
         : undefined,
     );
   }, [
