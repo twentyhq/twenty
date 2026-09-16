@@ -593,12 +593,10 @@ export class UsageLimitQuotaService implements OnModuleInit {
       isQuotaLimit,
     );
 
-    return (
-      await this.usageLimitEntitlementService.findEnforceableLimits({
-        workspaceId,
-        limits: quotaLimits,
-      })
-    ).filter(isQuotaLimit);
+    return this.usageLimitEntitlementService.findEnforceableLimits({
+      workspaceId,
+      limits: quotaLimits,
+    });
   }
 
   private async readConsumedValuesAdmittingOnFailure({

@@ -35,14 +35,4 @@ describe('buildStockDelta', () => {
       buildStockDelta({ existingFile: existingFile(500), size: 500 }),
     ).toEqual({ bytes: 0, quantity: 0 });
   });
-
-  // size is a bigint column, so the driver hands it back as a string
-  it('reads a size that comes back as a string', () => {
-    expect(
-      buildStockDelta({
-        existingFile: { size: '500' } as unknown as FileEntity,
-        size: 800,
-      }),
-    ).toEqual({ bytes: 300, quantity: 0 });
-  });
 });

@@ -29,8 +29,10 @@ import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock
 import { buildStockCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter-key.util';
 import { buildStockCounter } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter.util';
 import { buildStockExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-stock-exhausted-scope.util';
+import { buildStockWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-stock-warmed-entries.util';
 import { buildStockScopeKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-scope-key.util';
 import { buildStockWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-warm-lock-key.util';
+import { findExhaustedStockCounter } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-stock-counter.util';
 import { findStockLimitsForSpenders } from 'src/engine/core-modules/usage-limit/utils/find-stock-limits-for-spenders.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -81,20 +83,19 @@ export class UsageLimitStockService {
         counters,
       });
 
-      counters.forEach((counter, index) => {
-        const remaining = remainings[index];
-        const amount = cost[counter.meter] ?? 0;
-
-        if (isDefined(remaining) && remaining < amount) {
-          throw new UsageLimitException(
-            `${counter.resourceType} limit reached for this workspace`,
-            UsageLimitExceptionCode.STOCK_EXHAUSTED,
-            {
-              exhaustedScope: buildStockExhaustedScope({ counter, remaining }),
-            },
-          );
-        }
+      const exhausted = findExhaustedStockCounter({
+        counters,
+        remainings,
+        cost,
       });
+
+      if (isDefined(exhausted)) {
+        throw new UsageLimitException(
+          `${exhausted.counter.resourceType} limit reached for this workspace`,
+          UsageLimitExceptionCode.STOCK_EXHAUSTED,
+          { exhaustedScope: buildStockExhaustedScope(exhausted) },
+        );
+      }
     } catch (error) {
       this.admitOnFailure({ error, workspaceId: args.workspaceId });
     }
@@ -220,12 +221,11 @@ export class UsageLimitStockService {
       return [];
     }
 
-    const enforceableLimits = (
+    const enforceableLimits =
       await this.usageLimitEntitlementService.findEnforceableLimits({
         workspaceId,
         limits: stockLimits,
-      })
-    ).filter(isStockLimit);
+      });
 
     return findStockLimitsForSpenders({
       limits: enforceableLimits,
@@ -294,20 +294,10 @@ export class UsageLimitStockService {
           ),
         );
 
-        const warmedEntries = coldCounters.flatMap((counter) => {
-          const used = usedByScope.get(buildStockScopeKey(counter))?.[
-            counter.meter
-          ];
-
-          return isDefined(used)
-            ? [
-                {
-                  key: counter.key,
-                  value: counter.limitValue - used,
-                  ttl: STOCK_COUNTER_TTL_MS,
-                },
-              ]
-            : [];
+        const warmedEntries = buildStockWarmedEntries({
+          coldCounters,
+          usedByScope,
+          ttl: STOCK_COUNTER_TTL_MS,
         });
 
         await this.cacheStorage.mset(warmedEntries);

@@ -1,6 +1,5 @@
 import { type ExhaustedScope } from 'src/engine/core-modules/usage-limit/types/exhausted-scope.type';
 import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 export const buildStockExhaustedScope = ({
   counter,
@@ -14,7 +13,7 @@ export const buildStockExhaustedScope = ({
   exhaustedKind: 'limit',
   spenderType: counter.spenderType,
   spenderId: counter.spenderId,
-  operationType: UsageOperationType.ALL,
+  operationType: counter.operationType,
   limitValue: counter.limitValue,
   remaining,
   periodCount: null,

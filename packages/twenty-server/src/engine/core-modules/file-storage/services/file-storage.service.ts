@@ -85,7 +85,6 @@ export class FileStorageService {
     const deletedRows = await fileRepository.deleteAndReturn(
       workspaceId,
       where,
-      ['size', 'applicationId'],
     );
 
     const releasedByApplication = deletedRows.reduce((byApplication, row) => {
@@ -95,7 +94,7 @@ export class FileStorageService {
       };
 
       byApplication.set(row.applicationId, {
-        bytes: released.bytes + Number(row.size),
+        bytes: released.bytes + row.size,
         quantity: released.quantity + 1,
       });
 

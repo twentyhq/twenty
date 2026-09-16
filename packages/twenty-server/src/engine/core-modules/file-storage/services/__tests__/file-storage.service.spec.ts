@@ -181,7 +181,7 @@ describe('FileStorageService', () => {
       buildService(null);
 
     fileRepository.deleteAndReturn.mockResolvedValue([
-      { size: '1000', applicationId: APPLICATION_ID },
+      { size: 1000, applicationId: APPLICATION_ID },
       { size: 2000, applicationId: APPLICATION_ID },
       { size: 40, applicationId: 'another-application' },
     ]);
@@ -194,14 +194,10 @@ describe('FileStorageService', () => {
       resourcePath: 'package.json',
     });
 
-    expect(fileRepository.deleteAndReturn).toHaveBeenCalledWith(
-      WORKSPACE_ID,
-      {
-        path: `${FileFolder.Dependencies}/package.json`,
-        applicationId: APPLICATION_ID,
-      },
-      ['size', 'applicationId'],
-    );
+    expect(fileRepository.deleteAndReturn).toHaveBeenCalledWith(WORKSPACE_ID, {
+      path: `${FileFolder.Dependencies}/package.json`,
+      applicationId: APPLICATION_ID,
+    });
     expect(usageLimitStockService.releaseStock).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
       resourceType: UsageResourceType.STORAGE,

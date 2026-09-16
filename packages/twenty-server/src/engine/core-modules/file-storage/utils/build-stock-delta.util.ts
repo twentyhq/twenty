@@ -10,6 +10,6 @@ export const buildStockDelta = ({
   existingFile: FileEntity | null;
   size: number;
 }): StockCost => ({
-  bytes: size - Number(existingFile?.size ?? 0),
+  bytes: size - (existingFile?.size ?? 0),
   quantity: isDefined(existingFile) ? 0 : 1,
 });

@@ -6742,6 +6742,7 @@ export type UsageQuotaDefinition = {
   allowedMeters: Array<Scalars['String']['output']>;
   allowedOperationTypes: Array<UsageOperationType>;
   allowedSpenderTypes: Array<Scalars['String']['output']>;
+  limitKind: Scalars['String']['output'];
   resourceType: UsageResourceType;
 };
 
