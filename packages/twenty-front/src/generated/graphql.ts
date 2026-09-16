@@ -497,7 +497,6 @@ export type ObjectRecordFilterInput = {
 export type Query = {
   __typename?: 'Query';
   coreWorkflow?: Maybe<CoreWorkflowDto>;
-  coreWorkflowById?: Maybe<CoreWorkflowDto>;
   coreWorkflowVersion?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersionById?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersions: Array<CoreWorkflowVersionDto>;
@@ -528,11 +527,6 @@ export type Query = {
 
 export type QueryCoreWorkflowArgs = {
   workspaceWorkflowId: Scalars['UUID']['input'];
-};
-
-
-export type QueryCoreWorkflowByIdArgs = {
-  id: Scalars['UUID']['input'];
 };
 
 

@@ -16,7 +16,6 @@ import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/cor
 import { CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { CoreWorkflowVersionArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.input';
 import { CoreWorkflowVersionsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions.input';
-import { CoreWorkflowByIdArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-by-id.input';
 import { CoreWorkflowVersionByIdArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-version-by-id.input';
 import { CoreWorkflowVersionsByCoreWorkflowIdArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions-by-core-workflow-id.input';
 import { CoreWorkflowArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow.input';
@@ -118,17 +117,6 @@ export class CoreWorkflowResolver {
     return this.coreWorkflowListService.findOneByWorkspaceWorkflowId({
       workspaceId,
       workspaceWorkflowId,
-    });
-  }
-
-  @Query(() => CoreWorkflowDTO, { nullable: true })
-  async coreWorkflowById(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args() { id }: CoreWorkflowByIdArgs,
-  ): Promise<CoreWorkflowDTO | null> {
-    return this.coreWorkflowListService.findOneByCoreWorkflowId({
-      workspaceId,
-      coreWorkflowId: id,
     });
   }
 

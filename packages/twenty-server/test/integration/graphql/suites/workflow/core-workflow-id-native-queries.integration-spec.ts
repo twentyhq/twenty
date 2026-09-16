@@ -1,16 +1,5 @@
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
 
-const CORE_WORKFLOW_BY_ID = `
-  query CoreWorkflowById($id: UUID!) {
-    coreWorkflowById(id: $id) {
-      id
-      name
-      statuses
-      workspaceWorkflowId
-    }
-  }
-`;
-
 const CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID = `
   query CoreWorkflowVersionsByCoreWorkflowId($coreWorkflowId: UUID!) {
     coreWorkflowVersionsByCoreWorkflowId(coreWorkflowId: $coreWorkflowId) {
@@ -31,16 +20,6 @@ const CORE_WORKFLOW_VERSION_BY_ID = `
       status
       trigger
       steps
-    }
-  }
-`;
-
-const CORE_WORKFLOW_LEGACY = `
-  query CoreWorkflow($workspaceWorkflowId: UUID!) {
-    coreWorkflow(workspaceWorkflowId: $workspaceWorkflowId) {
-      id
-      name
-      statuses
     }
   }
 `;
@@ -92,29 +71,7 @@ describe('core workflow id native queries (e2e)', () => {
     );
   });
 
-  it('resolves the workflow by its core id', async () => {
-    const response = await workflowGraphqlRequest(CORE_WORKFLOW_BY_ID, {
-      id: coreWorkflowId,
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.coreWorkflowById.id).toBe(coreWorkflowId);
-    expect(response.body.data.coreWorkflowById.name).toBe(
-      'Core Id Native Queries',
-    );
-    expect(response.body.data.coreWorkflowById.statuses).toContain('DRAFT');
-  });
-
-  it('does not resolve a workspace workflow id through the core id query', async () => {
-    const response = await workflowGraphqlRequest(CORE_WORKFLOW_BY_ID, {
-      id: workspaceWorkflowId,
-    });
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.coreWorkflowById).toBeNull();
-  });
-
-  it('lists the versions by core workflow id', async () => {
+  it('lists the versions by core workflow id, mirror ids included', async () => {
     const response = await workflowGraphqlRequest(
       CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID,
       { coreWorkflowId },
@@ -151,23 +108,6 @@ describe('core workflow id native queries (e2e)', () => {
     expect(response.body.data.coreWorkflowVersionById.label).toBe('v1');
   });
 
-  it('agrees with the workspace-keyed query on the same workflow', async () => {
-    const [byCoreId, byWorkspaceId] = await Promise.all([
-      workflowGraphqlRequest(CORE_WORKFLOW_BY_ID, { id: coreWorkflowId }),
-      workflowGraphqlRequest(CORE_WORKFLOW_LEGACY, { workspaceWorkflowId }),
-    ]);
-
-    expect(byCoreId.body.errors).toBeUndefined();
-    expect(byWorkspaceId.body.errors).toBeUndefined();
-
-    expect(byCoreId.body.data.coreWorkflowById.id).toBe(
-      byWorkspaceId.body.data.coreWorkflow.id,
-    );
-    expect(byCoreId.body.data.coreWorkflowById.statuses).toEqual(
-      byWorkspaceId.body.data.coreWorkflow.statuses,
-    );
-  });
-
   it('agrees with the workspace-keyed query on the version list, labels included', async () => {
     const [byCoreId, byWorkspaceId] = await Promise.all([
       workflowGraphqlRequest(CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID, {
@@ -202,12 +142,6 @@ describe('core workflow id native queries (e2e)', () => {
   });
 
   it('returns nothing for ids that exist in neither table', async () => {
-    const workflowResponse = await workflowGraphqlRequest(CORE_WORKFLOW_BY_ID, {
-      id: ABSENT_ID,
-    });
-
-    expect(workflowResponse.body.data.coreWorkflowById).toBeNull();
-
     const versionResponse = await workflowGraphqlRequest(
       CORE_WORKFLOW_VERSION_BY_ID,
       { id: ABSENT_ID },
