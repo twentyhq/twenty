@@ -17,12 +17,15 @@ import { useInboxEmailToolCallDraft } from '@/inbox/tool-call-renderers/email/ho
 import { type InboxEmailComposerPrefill } from '@/inbox/tool-call-renderers/email/utils/getEmailComposerPrefillFromToolCall';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 
+// The fields grow into whatever height they are given; in a scrolling pane
+// that is nothing, so the card sets the floor the body writes into.
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
+  min-height: 360px;
   overflow: hidden;
 `;
 
