@@ -2,8 +2,6 @@
 
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { withWorkspaceDataContext } from 'src/engine/workspace-cache/storage/workspace-data-context.storage';
-import { getWorkspaceBillingEntitlements } from 'src/engine/core-modules/billing/utils/get-workspace-billing-entitlements.util';
 import { BillingEntitlementSyncService } from 'src/engine/core-modules/billing-webhook/services/billing-entitlement-sync.service';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -35,7 +33,6 @@ describe('BillingEntitlementSyncService', () => {
 
   const workspaceCacheService = {
     invalidateAndRecompute: jest.fn(),
-    getOrRecompute: jest.fn(),
   };
 
   // A real single-holder lock rather than a pass-through, so a test that runs
@@ -300,40 +297,4 @@ describe('BillingEntitlementSyncService', () => {
     expect(lockHeldDuringUpsert).toBe(true);
     expect(heldLockKeys.size).toBe(0);
   });
-  it.each([false, true])(
-    'clears the shared snapshot after sync (refresh fails: %s)',
-    async (refreshFails) => {
-      givenStoredEntitlements([]);
-      workspaceCacheService.getOrRecompute.mockResolvedValue({
-        billingEntitlements: { [BillingEntitlementKey.USAGE_LIMIT]: true },
-      });
-
-      await withWorkspaceDataContext(WORKSPACE_ID, async () => {
-        expect(
-          await getWorkspaceBillingEntitlements(
-            WORKSPACE_ID,
-            workspaceCacheService,
-          ),
-        ).toEqual({ [BillingEntitlementKey.USAGE_LIMIT]: true });
-        if (refreshFails) {
-          workspaceCacheService.invalidateAndRecompute.mockRejectedValueOnce(
-            new Error('refresh failed'),
-          );
-          await expect(syncEntitlements([])).rejects.toThrow('refresh failed');
-        } else {
-          await syncEntitlements([]);
-        }
-        workspaceCacheService.getOrRecompute.mockResolvedValue({
-          billingEntitlements: {},
-        });
-        expect(
-          await getWorkspaceBillingEntitlements(
-            WORKSPACE_ID,
-            workspaceCacheService,
-          ),
-        ).toEqual({});
-      });
-      expect(workspaceCacheService.getOrRecompute).toHaveBeenCalledTimes(2);
-    },
-  );
 });

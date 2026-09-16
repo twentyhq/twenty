@@ -4,8 +4,6 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecord } from 'twenty-shared/types';
 
-import { getWorkspaceBillingEntitlements } from 'src/engine/core-modules/billing/utils/get-workspace-billing-entitlements.util';
-import { withWorkspaceDataContext } from 'src/engine/workspace-cache/storage/workspace-data-context.storage';
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
@@ -92,17 +90,11 @@ export class WorkspaceOrmManager {
     options?: ExecuteInWorkspaceContextOptions,
   ): Promise<T> {
     const resolvedAuthContext = authContext ?? getWorkspaceAuthContext();
+    const context = options?.lite
+      ? await this.loadLiteWorkspaceContext(resolvedAuthContext)
+      : await this.loadWorkspaceContext(resolvedAuthContext);
 
-    return withWorkspaceDataContext(
-      resolvedAuthContext.workspace.id,
-      async () => {
-        const context = options?.lite
-          ? await this.loadLiteWorkspaceContext(resolvedAuthContext)
-          : await this.loadWorkspaceContext(resolvedAuthContext);
-
-        return withWorkspaceContext(context, fn);
-      },
-    );
+    return withWorkspaceContext(context, fn);
   }
 
   private async loadWorkspaceContext(
@@ -110,32 +102,28 @@ export class WorkspaceOrmManager {
   ): Promise<ORMWorkspaceContext> {
     const workspaceId = authContext.workspace.id;
 
-    const [
-      {
-        flatObjectMetadataMaps,
-        flatFieldMetadataMapsOrm,
-        flatIndexMaps,
-        featureFlagsMap,
-        rolesPermissions: permissionsPerRoleId,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-        flatRowLevelPermissionPredicateMaps,
-        flatRowLevelPermissionPredicateGroupMaps,
-      },
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMapsOrm,
+      flatIndexMaps,
+      featureFlagsMap,
       billingEntitlements,
-    ] = await Promise.all([
-      this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMapsOrm',
-        'flatIndexMaps',
-        'featureFlagsMap',
-        'rolesPermissions',
-        'userWorkspaceRoleMap',
-        'apiKeyRoleMap',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatRowLevelPermissionPredicateGroupMaps',
-      ]),
-      getWorkspaceBillingEntitlements(workspaceId, this.workspaceCacheService),
+      rolesPermissions: permissionsPerRoleId,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMapsOrm',
+      'flatIndexMaps',
+      'featureFlagsMap',
+      'billingEntitlements',
+      'rolesPermissions',
+      'userWorkspaceRoleMap',
+      'apiKeyRoleMap',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
@@ -143,7 +131,6 @@ export class WorkspaceOrmManager {
 
     return {
       authContext,
-      billingEntitlements,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       flatIndexMaps,
@@ -151,6 +138,7 @@ export class WorkspaceOrmManager {
       flatRowLevelPermissionPredicateGroupMaps,
       objectIdByNameSingular,
       featureFlagsMap,
+      billingEntitlements,
       permissionsPerRoleId,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
@@ -162,15 +150,14 @@ export class WorkspaceOrmManager {
   ): Promise<ORMWorkspaceContext> {
     const workspaceId = authContext.workspace.id;
 
-    const [
-      { flatObjectMetadataMaps, flatFieldMetadataMapsOrm },
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMapsOrm,
       billingEntitlements,
-    ] = await Promise.all([
-      this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMapsOrm',
-      ]),
-      getWorkspaceBillingEntitlements(workspaceId, this.workspaceCacheService),
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMapsOrm',
+      'billingEntitlements',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
@@ -178,7 +165,6 @@ export class WorkspaceOrmManager {
 
     return {
       authContext,
-      billingEntitlements,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       flatIndexMaps: {
@@ -198,6 +184,7 @@ export class WorkspaceOrmManager {
       },
       objectIdByNameSingular,
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
+      billingEntitlements,
       permissionsPerRoleId: {},
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
