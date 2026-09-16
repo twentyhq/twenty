@@ -2,6 +2,7 @@
   "openai": {
     "npm": "@ai-sdk/openai",
     "label": "OpenAI",
+    "baseUrl": "{{OPENAI_BASE_URL}}",
     "apiKey": "{{OPENAI_API_KEY}}",
     "models": [
       {
