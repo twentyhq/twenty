@@ -1,4 +1,4 @@
-import { type ComponentType, createElement } from 'react';
+import { type ComponentType } from 'react';
 import { Link, type LinkProps } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { Button, type ButtonProps } from 'twenty-ui/primitives/input';
@@ -20,11 +20,13 @@ export const NavigationButton = ({
 }: NavigationButtonProps) => {
   const isLink = isDefined(to);
 
-  return createElement(ButtonComponent, {
-    ...props,
-    type: isLink ? undefined : (type ?? 'button'),
-    render: isLink ? <Link to={to} /> : undefined,
-    role: isLink ? 'link' : role,
-    nativeButton: !isLink,
-  });
+  return (
+    <ButtonComponent
+      {...props}
+      type={isLink ? undefined : (type ?? 'button')}
+      render={isLink ? <Link to={to} /> : undefined}
+      role={isLink ? 'link' : role}
+      nativeButton={!isLink}
+    />
+  );
 };
