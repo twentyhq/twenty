@@ -5,7 +5,7 @@ import { OnboardingVerifyLayout } from '@/onboarding/components/OnboardingVerify
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
+import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 
 export const VerifyEmail = () => {
   const { t } = useLingui();

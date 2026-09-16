@@ -11,7 +11,8 @@ import { type ActivityTargetableObject } from '@/activities/types/ActivityTarget
 import { isAttachmentPreviewEnabledState } from '@/client-config/states/isAttachmentPreviewEnabledState';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ModalContent, ModalHeader } from 'twenty-ui/primitives/surfaces';
+import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
+import { ModalHeader } from '@/ui/layout/modal/components/ModalHeader';
 
 import { ActivityList } from '@/activities/components/ActivityList';
 import {

@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Loader, useToast } from 'twenty-ui/primitives/feedback';
 import { CardPicker, MainButton, RadioGroup } from 'twenty-ui/primitives/input';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
+import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export const ENTERPRISE_PLAN_MODAL_ID = 'enterprise-plan-modal';

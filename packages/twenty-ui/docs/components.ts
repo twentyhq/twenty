@@ -1,3 +1,4 @@
+import { DIALOG_PROP_DESCRIPTIONS } from './dialogPropDescriptions';
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
@@ -75,6 +76,13 @@ export const DOCUMENTED_COMPONENTS = [
     source: 'primitives/navigation/Tabs/Tabs.tsx',
     entryPoint: 'twenty-ui/primitives/navigation',
     slug: 'navigation/tabs',
+  },
+  {
+    name: 'Dialog',
+    source: 'primitives/surfaces/Dialog/Dialog.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/dialog',
+    propDescriptions: DIALOG_PROP_DESCRIPTIONS,
   },
   {
     name: 'AlertDialog',

@@ -15,7 +15,7 @@ import {
   SectionAlignment,
   SectionFontColor,
 } from 'twenty-ui/primitives/layout';
-import { type ModalOverlay } from 'twenty-ui/primitives/surfaces';
+import { type ModalOverlay } from '@/ui/layout/modal/types/ModalOverlay';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type ConfirmationModalProps = {

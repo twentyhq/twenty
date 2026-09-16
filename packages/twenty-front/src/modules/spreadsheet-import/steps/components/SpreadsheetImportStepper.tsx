@@ -4,7 +4,7 @@ import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/Spr
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import { useCallback, useContext, useState } from 'react';
 import { CircularProgressBar, useToast } from 'twenty-ui/primitives/feedback';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
+import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { MatchColumnsStep } from './MatchColumnsStep/MatchColumnsStep';
 import { SelectHeaderStep } from './SelectHeaderStep/SelectHeaderStep';

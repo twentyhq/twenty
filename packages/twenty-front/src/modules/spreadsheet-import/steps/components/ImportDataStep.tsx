@@ -3,7 +3,7 @@ import { StepNavigationButton } from '@/spreadsheet-import/components/StepNaviga
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
+import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { t } from '@lingui/core/macro';

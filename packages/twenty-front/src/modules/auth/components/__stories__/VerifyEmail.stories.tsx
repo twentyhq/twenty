@@ -2,7 +2,7 @@ import { type VerifyEmail } from '@/auth/components/VerifyEmail';
 import { EmailVerificationSent } from '@/auth/sign-in-up/components/EmailVerificationSent';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
+import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 
 // Mock component that just renders the error state of VerifyEmail directly
 // (since normal VerifyEmail has async logic that's hard to test in Storybook)

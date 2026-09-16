@@ -4,7 +4,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { t } from '@lingui/core/macro';
 import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
 import { MainButton } from 'twenty-ui/primitives/input';
-import { ModalFooter } from 'twenty-ui/primitives/surfaces';
+import { ModalFooter } from '@/ui/layout/modal/components/ModalFooter';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledFooterContainer = styled.div`

@@ -21,7 +21,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { ModalContent } from 'twenty-ui/primitives/surfaces';
+import { ModalContent } from '@/ui/layout/modal/components/ModalContent';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type RowsChangeData } from 'react-data-grid';
 import { isDefined } from 'twenty-shared/utils';

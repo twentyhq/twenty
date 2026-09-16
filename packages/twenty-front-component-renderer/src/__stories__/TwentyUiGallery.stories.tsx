@@ -1,3 +1,4 @@
+import { dialogTest } from '@/__stories__/twenty-ui-gallery/utils/dialogTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -27,7 +28,6 @@ import {
   galleryRenderTest,
   inputPreactTest,
   inputReactTest,
-  modalOpenHangTest,
   navigationTest,
   themeTokenTest,
 } from '@/__stories__/twenty-ui-gallery/utils/galleryRenderTests';
@@ -144,15 +144,15 @@ export const SurfacesPreact: Story = createGalleryStory({
   play: galleryRenderTest,
 });
 
-export const ModalOpenReact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-modal-open-gallery',
+export const DialogReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dialog',
   runtime: 'react',
-  play: modalOpenHangTest,
+  play: dialogTest,
 });
-export const ModalOpenPreact: Story = createGalleryStory({
-  frontComponentBundleName: 'twenty-ui-modal-open-gallery',
+export const DialogPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-dialog',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: dialogTest,
 });
 
 export const CodeEditorReact: Story = createGalleryStory({

@@ -29,18 +29,6 @@ export const navigationTest = createGalleryRenderTest({
   expectedFailedComponents: ['RawLink', 'UndecoratedLink'],
 });
 
-// An open Modal portal hangs the React render without an error, so the
-// missing gallery status is the only observable failure. Preact can mount it.
-export const modalOpenHangTest: TwentyUiGalleryPlayFunction = async ({
-  canvasElement,
-}) => {
-  const canvas = within(canvasElement);
-
-  await expect(
-    canvas.findByTestId('gallery-status', {}, { timeout: 10000 }),
-  ).rejects.toThrow();
-};
-
 // Monaco cannot load scripts inside the sandbox worker, so the wrapper mounts
 // but the editor's onMount never fires.
 export const codeEditorTest: TwentyUiGalleryPlayFunction = async ({
