@@ -66,7 +66,7 @@ export const WorkflowCoreIndexPage = () => {
     useCreateCoreWorkflow();
 
   const { displayedCoreWorkflows, selectedRowIds, toggleRow, selectRows } =
-    useCoreWorkflowsSelection({ coreWorkflows });
+    useCoreWorkflowsSelection({ coreWorkflows, loading });
 
   const coreWorkflowsFilterSettings = useAtomStateValue(
     coreWorkflowsFilterSettingsState,

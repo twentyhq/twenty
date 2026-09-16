@@ -15,8 +15,10 @@ export const useCoreWorkflowsSelection = <
   TCoreWorkflow extends Pick<CoreWorkflow, 'id'>,
 >({
   coreWorkflows,
+  loading = false,
 }: {
   coreWorkflows: TCoreWorkflow[];
+  loading?: boolean;
 }) => {
   const [coreWorkflowsSelection, setCoreWorkflowsSelection] = useAtomState(
     coreWorkflowsSelectionState,
@@ -31,10 +33,28 @@ export const useCoreWorkflowsSelection = <
     [setCoreWorkflowsSelection],
   );
 
-  const selectedRowIds = getSelectedCoreWorkflowRowIds({
+  const selectionRowIds = getSelectedCoreWorkflowRowIds({
     selection: coreWorkflowsSelection,
     currentFilterSettings: coreWorkflowsFilterSettings,
-  }).filter((id) => coreWorkflows.some((workflow) => workflow.id === id));
+  });
+  const selectedRowIds = selectionRowIds.filter((id) =>
+    coreWorkflows.some((workflow) => workflow.id === id),
+  );
+
+  useEffect(() => {
+    if (!loading && selectedRowIds.length !== selectionRowIds.length) {
+      setCoreWorkflowsSelection({
+        ...coreWorkflowsSelection,
+        rowIds: selectedRowIds,
+      });
+    }
+  }, [
+    loading,
+    selectedRowIds,
+    selectionRowIds,
+    coreWorkflowsSelection,
+    setCoreWorkflowsSelection,
+  ]);
 
   const selectRows = (rowIds: string[]) =>
     setCoreWorkflowsSelection({
