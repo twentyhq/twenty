@@ -15,7 +15,9 @@ Use `Menu` for actions opened from a trigger. Its items supply keyboard navigati
   height={440}
 />
 
-## Action menu
+## Uncontrolled state
+
+Use `defaultOpen` to set the initial visibility. The menu owns subsequent changes from its trigger, item selection, and dismissal interactions.
 
 ```tsx
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
@@ -24,7 +26,7 @@ import { Menu } from 'twenty-ui/primitives/surfaces';
 type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
 
 export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => (
-  <Menu.Root>
+  <Menu.Root defaultOpen={false}>
     <Menu.Trigger>Record actions</Menu.Trigger>
     <Menu.Popup>
       <Menu.Item startIcon={<IconCopy />} onClick={onDuplicate}>
@@ -39,9 +41,75 @@ export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => (
 );
 ```
 
-Action items close the menu when selected by default. `disabled` prevents selection. `hotkeys` displays shortcut hints; register shortcut handlers in your application.
+`defaultOpen` defaults to `false`, so it can be omitted. Action items close the menu when selected by default. `disabled` prevents selection. `hotkeys` displays shortcut hints; register shortcut handlers in your application.
+
+## Controlled state
+
+Pass `open` and update it with `onOpenChange` to own the same menu's visibility in React state. The callback receives the next boolean and event details, including dismissal and item selection.
+
+```tsx
+import { useState } from 'react';
+import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import { Menu } from 'twenty-ui/primitives/surfaces';
+
+type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
+
+export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Menu.Root open={open} onOpenChange={setOpen}>
+      <Menu.Trigger>Record actions</Menu.Trigger>
+      <Menu.Popup>
+        <Menu.Item startIcon={<IconCopy />} onClick={onDuplicate}>
+          Duplicate
+        </Menu.Item>
+        <Menu.Separator />
+        <Menu.Item startIcon={<IconTrash />} color="danger" onClick={onDelete}>
+          Delete
+        </Menu.Item>
+      </Menu.Popup>
+    </Menu.Root>
+  );
+};
+```
 
 ## Selection and submenus
+
+Item selection is independent of popup visibility. Checkbox items use `defaultChecked` or `checked` with `onCheckedChange`. Radio groups use `defaultValue` or `value` with `onValueChange`.
+
+### Uncontrolled item state
+
+Each checkbox item and radio group owns its selection. Both the menu and submenu also manage their own visibility.
+
+```tsx
+import { Menu } from 'twenty-ui/primitives/surfaces';
+
+export const ViewMenu = () => (
+  <Menu.Root>
+    <Menu.Trigger>View options</Menu.Trigger>
+    <Menu.Popup>
+      <Menu.CheckboxItem defaultChecked={false}>
+        Show archived records
+      </Menu.CheckboxItem>
+      <Menu.Separator />
+      <Menu.SubmenuRoot>
+        <Menu.SubmenuTrigger>Layout</Menu.SubmenuTrigger>
+        <Menu.Popup>
+          <Menu.RadioGroup defaultValue="list">
+            <Menu.RadioItem value="list">List</Menu.RadioItem>
+            <Menu.RadioItem value="board">Board</Menu.RadioItem>
+          </Menu.RadioGroup>
+        </Menu.Popup>
+      </Menu.SubmenuRoot>
+    </Menu.Popup>
+  </Menu.Root>
+);
+```
+
+### Controlled item state
+
+The application owns the same selections in React state. Popup visibility remains uncontrolled because neither root receives `open`.
 
 ```tsx
 import { useState } from 'react';
@@ -77,7 +145,7 @@ export const ViewMenu = () => {
 };
 ```
 
-Checkbox and radio items keep the popup open by default so users can adjust options. Use `closeOnClick` to change that behavior. Nest a `SubmenuRoot`, `SubmenuTrigger`, and `Popup` inside a parent popup for submenus.
+Checkbox and radio items keep the popup open by default so users can adjust options. Use `closeOnClick` to change that behavior. Nest a `SubmenuRoot`, `SubmenuTrigger`, and `Popup` inside a parent popup for submenus. Each `SubmenuRoot` has its own `defaultOpen`, `open`, and `onOpenChange` props, independent of the parent menu.
 
 ## Parts and interaction
 
@@ -100,7 +168,7 @@ Arrow keys move through the items, including disabled ones, which receive focus 
 | Top-level menu | `bottom`     | `start` | `8`          | `0`           |
 | Submenu        | `inline-end` | `start` | `0`          | `-4`          |
 
-It uses the [theme's portal container](/ui/theming) by default. Control open state with `Root.open` and `Root.onOpenChange`.
+It uses the [theme's portal container](/ui/theming) by default.
 
 ## Props
 

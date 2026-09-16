@@ -8,7 +8,7 @@ import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorato
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SidePanelDecorator } from '~/testing/decorators/SidePanelDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTaskRecords } from '~/testing/mock-data/generated/data/tasks/mock-tasks-data';
 
@@ -24,7 +24,7 @@ const meta: Meta<typeof TaskList> = {
     ContextStoreDecorator,
     MemoryRouterDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     SidePanelDecorator,
   ],
   args: {

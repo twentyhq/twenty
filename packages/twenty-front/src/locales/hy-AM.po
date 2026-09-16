@@ -4971,6 +4971,11 @@ msgstr "Կարգավորեք այս DNS գրառումները ձեր դոմեյ
 msgid "Configure this widget to display fields"
 msgstr "Կազմաձևեք այս վիջեթը՝ դաշտեր ցուցադրելու համար"
 
+#. js-lingui-id: no/yG9
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Configure what emails should get synced"
+msgstr ""
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -7370,10 +7375,10 @@ msgstr "Չստեղծել կոնտակտներ ինքնաբար։"
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "Մի ստեղծեք կոնտակտներ Gmail, Outlook էլ. հասցեներից կամ դրանց ուղղված նամակներից"
 
-#. js-lingui-id: yjhBSV
+#. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don't sync emails from team@ support@ noreply@..."
-msgstr "Մի համաժամեցրեք team@ support@ noreply@... էլ. փոստերից եկած նամակները"
+msgid "Don't import emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -15289,6 +15294,7 @@ msgstr "Ոչ պարտադիր գաղտնի բանալի, որը օգտագործ
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx

@@ -15,7 +15,9 @@ import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
   height={240}
 />
 
-## Default selection
+## Uncontrolled state
+
+Use `defaultValue` to set the initial billing frequency. The group owns subsequent changes.
 
 ```tsx
 import { useId } from 'react';
@@ -46,32 +48,39 @@ export const BillingFrequency = () => {
 };
 ```
 
-Use `defaultValue` for an uncontrolled group. Its `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
+The group's `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
 
 ## Controlled state
 
+Pass `value` and update it with `onValueChange` to own the same billing frequency in React state. Selection belongs to the group, not to individual radio controls.
+
 ```tsx
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 
-export const DisplayDensity = () => {
-  const [density, setDensity] = useState('comfortable');
+export const BillingFrequency = () => {
+  const labelId = useId();
+  const [billingFrequency, setBillingFrequency] = useState('monthly');
 
   return (
-    <RadioGroup
-      value={density}
-      onValueChange={setDensity}
-      aria-label="Display density"
-    >
-      <label>
-        <Radio value="compact" />
-        Compact
-      </label>
-      <label>
-        <Radio value="comfortable" />
-        Comfortable
-      </label>
-    </RadioGroup>
+    <fieldset>
+      <legend id={labelId}>Billing frequency</legend>
+      <RadioGroup
+        name="billingFrequency"
+        value={billingFrequency}
+        onValueChange={setBillingFrequency}
+        aria-labelledby={labelId}
+      >
+        <label>
+          <Radio value="monthly" />
+          Monthly
+        </label>
+        <label>
+          <Radio value="yearly" />
+          Yearly
+        </label>
+      </RadioGroup>
+    </fieldset>
   );
 };
 ```

@@ -77,6 +77,18 @@ import { Button } from 'twenty-ui/primitives/input';
 
 # Development
 
+Component guides belong in `packages/twenty-docs/ui/primitives`. For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
+
+Explain state ownership before advanced behavior such as indeterminate selection or manual tab activation. Document independent states, such as selection and popup visibility, separately. For components that delegate state to a parent or group, explain that ownership and link to the relevant examples.
+
+## Internal state
+
+twenty-ui uses Base UI's store for notification state. Each `ToastProvider` creates its own store, and the toaster subscribes to the toast list. Queue rules and rendering remain owned by twenty-ui. Consumers use `useToast()` without configuring a state library.
+
+The store factory and subscription hook are internal to the toast module. `@base-ui/utils` is a direct dependency pinned to the version used by `@base-ui/react`, and the library build keeps it external. Review its store API changes when upgrading the dependency.
+
+## Testing
+
 Component interaction and behavior tests belong in Storybook stories (`*.stories.tsx`) using `play` functions. Component unit tests are reserved for conformance (native props, refs, class names, rendering, and prop types). Keep non-interactive utility, hook, and token tests in the Vitest unit project; avoid duplicating story coverage there.
 
 ```bash
