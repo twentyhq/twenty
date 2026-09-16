@@ -123,23 +123,23 @@ export class CampaignTrackingTokenService {
   ): CampaignTrackingTokenPayload | null {
     const purposeOffset = 1 + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.keyId;
     const purposeByte = encodedPayload.readUInt8(purposeOffset);
-    const deliveryIdOffset = purposeOffset + 1;
-    const deliveryId = this.decodeUuid(
-      encodedPayload.subarray(
-        deliveryIdOffset,
-        deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
-      ),
-    );
+
     if (purposeByte !== CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE.CLICK) {
       return null;
     }
 
+    const deliveryIdOffset = purposeOffset + 1;
     const shortLinkIdOffset =
       deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid;
 
     return {
       purpose: 'CLICK',
-      deliveryId,
+      deliveryId: this.decodeUuid(
+        encodedPayload.subarray(
+          deliveryIdOffset,
+          deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
+        ),
+      ),
       shortLinkId: this.decodeUuid(
         encodedPayload.subarray(
           shortLinkIdOffset,

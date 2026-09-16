@@ -15,7 +15,6 @@ import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emaili
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
 import { type CampaignMessagePart } from 'src/engine/core-modules/emailing-domain/types/campaign-message-part.type';
-import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -226,11 +225,9 @@ export class CampaignTrackingContentService {
       });
       const shortLinkId = shortLinkIdByUrl.get(url);
       const linkUrl = isDefined(shortLinkId)
-        ? this.buildTrackedUrl(baseUrl, {
-            purpose: 'CLICK',
-            deliveryId: recipient.deliveryId,
-            shortLinkId,
-          })
+        ? `${baseUrl}/${ApiPath.Emailing}/c/${this.campaignTrackingTokenService.sign(
+            { purpose: 'CLICK', deliveryId: recipient.deliveryId, shortLinkId },
+          )}`
         : url;
 
       replacements[this.buildLinkTag({ messagePart: 'HTML', index })] =
@@ -239,15 +236,6 @@ export class CampaignTrackingContentService {
     });
 
     return replacements;
-  }
-
-  private buildTrackedUrl(
-    baseUrl: string,
-    payload: CampaignTrackingTokenPayload,
-  ): string {
-    const token = this.campaignTrackingTokenService.sign(payload);
-
-    return `${baseUrl}/${ApiPath.Emailing}/c/${token}`;
   }
 
   private buildLinkTag({
