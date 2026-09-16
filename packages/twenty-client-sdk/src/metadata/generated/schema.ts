@@ -9697,7 +9697,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
       return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
     }
-                        
+    
 
 
     const CampaignAudiencePreviewDTO_possibleTypes: string[] = ['CampaignAudiencePreviewDTO']
