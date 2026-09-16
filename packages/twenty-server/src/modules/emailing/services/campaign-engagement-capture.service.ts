@@ -5,14 +5,12 @@ import { v4 } from 'uuid';
 import { RECORD_CAMPAIGN_ENGAGEMENT_JOB } from 'src/engine/core-modules/emailing-domain/constants/record-campaign-engagement-job.constant';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { type QueueJobBackoffOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 
@@ -23,16 +21,6 @@ const CAPTURE_RATE_LIMIT_PER_REQUESTER = {
   windowMs: 60_000,
 };
 
-const RESPONSE_RELEASE_BUDGET_MS = 100;
-
-const CAMPAIGN_ENGAGEMENT_RECORD_RETRY_LIMIT = 14;
-
-const CAMPAIGN_ENGAGEMENT_RECORD_RETRY_BACKOFF = {
-  strategy: 'exponential',
-  initialDelayMilliseconds: 5_000,
-  jitter: 0.5,
-} as const satisfies QueueJobBackoffOptions;
-
 @Injectable()
 export class CampaignEngagementCaptureService {
   private readonly logger = new Logger(CampaignEngagementCaptureService.name);
@@ -42,7 +30,6 @@ export class CampaignEngagementCaptureService {
     private readonly messageQueueService: MessageQueueService,
     private readonly throttlerService: ThrottlerService,
     private readonly metricsService: MetricsService,
-    private readonly twentyConfigService: TwentyConfigService,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
   ) {}
 
@@ -55,10 +42,7 @@ export class CampaignEngagementCaptureService {
     userAgent: string | null;
     requesterIp: string | null;
   }): Promise<void> {
-    if (
-      !this.twentyConfigService.get('CAMPAIGN_TRACKING_CAPTURE_ENABLED') ||
-      !this.campaignEngagementEventService.isAvailable()
-    ) {
+    if (!this.campaignEngagementEventService.isAvailable()) {
       return;
     }
 
@@ -103,8 +87,12 @@ export class CampaignEngagementCaptureService {
         RECORD_CAMPAIGN_ENGAGEMENT_JOB,
         observation,
         {
-          retryLimit: CAMPAIGN_ENGAGEMENT_RECORD_RETRY_LIMIT,
-          backoff: CAMPAIGN_ENGAGEMENT_RECORD_RETRY_BACKOFF,
+          retryLimit: 14,
+          backoff: {
+            strategy: 'exponential',
+            initialDelayMilliseconds: 5_000,
+            jitter: 0.5,
+          },
         },
       );
     } catch (error) {
@@ -133,7 +121,7 @@ export class CampaignEngagementCaptureService {
     let releaseTimer: NodeJS.Timeout | undefined;
 
     const release = new Promise<void>((resolve) => {
-      releaseTimer = setTimeout(resolve, RESPONSE_RELEASE_BUDGET_MS);
+      releaseTimer = setTimeout(resolve, 100);
     });
 
     try {

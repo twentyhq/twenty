@@ -17,6 +17,13 @@ import { MessageTrackingConsentEntity } from 'src/engine/core-modules/emailing-d
 import { MessageTrackingConsentDecision } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-decision.type';
 import { MessageTrackingConsentSource } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-source.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -35,6 +42,8 @@ export class MessageTrackingConsentService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly permissionsService: PermissionsService,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   async findDecision({
@@ -136,22 +145,30 @@ export class MessageTrackingConsentService {
 
   async recordDecisionForPerson({
     workspaceId,
+    userWorkspaceId,
     personId,
     decision,
     source,
   }: {
     workspaceId: string;
+    userWorkspaceId: string;
     personId: string;
     decision: MessageTrackingConsentDecision;
     source: MessageTrackingConsentSource;
   }): Promise<boolean> {
-    const [person] = await this.findPeopleByIds({
+    await this.assertCanUpdatePeople({ workspaceId, userWorkspaceId });
+
+    const person = await this.findPersonReadableByMember({
       workspaceId,
-      personIds: [personId],
+      userWorkspaceId,
+      personId,
     });
 
     if (!isDefined(person)) {
-      return false;
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
     }
 
     const emailAddresses = this.collectPersonEmailAddresses(person.emails);
@@ -473,5 +490,63 @@ export class MessageTrackingConsentService {
       .map((emailAddress) => this.normalizeEmailAddress(emailAddress));
 
     return [...new Set(emailAddresses)];
+  }
+
+  private async assertCanUpdatePeople({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<void> {
+    const [{ objectsPermissions }, { flatObjectMetadataMaps }] =
+      await Promise.all([
+        this.permissionsService.getUserWorkspacePermissions({
+          workspaceId,
+          userWorkspaceId,
+        }),
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatObjectMetadataMaps',
+        ]),
+      ]);
+
+    const personObjectMetadata =
+      flatObjectMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.person.universalIdentifier
+      ];
+    const personPermissions = isDefined(personObjectMetadata)
+      ? objectsPermissions[personObjectMetadata.id]
+      : undefined;
+
+    if (!personPermissions?.canUpdateObjectRecords) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+  }
+
+  private async findPersonReadableByMember({
+    workspaceId,
+    userWorkspaceId,
+    personId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    personId: string;
+  }): Promise<PersonWorkspaceEntity | null> {
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
+      workspaceId,
+      userWorkspaceId,
+    });
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const personRepository = this.workspaceOrmManager.getRepository(
+        PersonWorkspaceEntity,
+        { unionOf: [roleId] },
+      );
+
+      return personRepository.findOne({ where: { id: personId } });
+    });
   }
 }

@@ -21,7 +21,6 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
-import { PersonAccessService } from 'src/modules/emailing/services/person-access.service';
 
 @UseGuards(WorkspaceAuthGuard, FeatureFlagGuard, NoPermissionGuard)
 @UseFilters(
@@ -34,7 +33,6 @@ import { PersonAccessService } from 'src/modules/emailing/services/person-access
 export class MessageTrackingConsentResolver {
   constructor(
     private readonly messageTrackingConsentService: MessageTrackingConsentService,
-    private readonly personAccessService: PersonAccessService,
     private readonly emailGroupAccessService: EmailGroupAccessService,
   ) {}
 
@@ -47,14 +45,9 @@ export class MessageTrackingConsentResolver {
   ): Promise<boolean> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
 
-    await this.personAccessService.assertCanUpdatePerson({
-      workspaceId: currentWorkspace.id,
-      userWorkspaceId,
-      personId: input.personId,
-    });
-
     return this.messageTrackingConsentService.recordDecisionForPerson({
       workspaceId: currentWorkspace.id,
+      userWorkspaceId,
       personId: input.personId,
       decision: input.decision,
       source: MessageTrackingConsentSource.WORKSPACE_MEMBER,
