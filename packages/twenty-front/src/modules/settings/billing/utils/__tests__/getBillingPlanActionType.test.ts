@@ -137,13 +137,33 @@ describe('getBillingPlanActionType', () => {
     ).toBe('CANCEL_PLAN_SWITCH');
   });
 
-  it('still marks the subscribed and the scheduled cells while both dimensions are scheduled', () => {
+  it('cancels the scheduled switch on the cells that drop one of its dimensions', () => {
     const scheduledProMonthly = {
       currentInterval: SubscriptionInterval.Year,
       currentPlanKey: BillingPlanKey.ENTERPRISE,
       scheduledInterval: SubscriptionInterval.Month,
       scheduledPlanKey: BillingPlanKey.PRO,
     };
+
+    expect(
+      getBillingPlanActionType(
+        buildParams({
+          ...scheduledProMonthly,
+          planKey: BillingPlanKey.ENTERPRISE,
+          selectedInterval: SubscriptionInterval.Month,
+        }),
+      ),
+    ).toBe('CANCEL_PLAN_SWITCH');
+
+    expect(
+      getBillingPlanActionType(
+        buildParams({
+          ...scheduledProMonthly,
+          planKey: BillingPlanKey.PRO,
+          selectedInterval: SubscriptionInterval.Year,
+        }),
+      ),
+    ).toBe('CANCEL_INTERVAL_SWITCH');
 
     expect(
       getBillingPlanActionType(

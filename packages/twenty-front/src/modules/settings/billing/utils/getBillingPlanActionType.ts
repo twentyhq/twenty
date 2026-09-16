@@ -85,5 +85,12 @@ export const getBillingPlanActionType = ({
     return 'SWITCH_INTERVAL_FIRST';
   }
 
-  return isBaselinePlan ? 'SWITCH_INTERVAL' : 'SWITCH_PLAN';
+  // Reaching a cell on the plan or the interval the subscription already has
+  // means dropping that dimension from the scheduled change, which is what
+  // cancelling it does.
+  if (!isBaselinePlan) {
+    return isCurrentPlan ? 'CANCEL_PLAN_SWITCH' : 'SWITCH_PLAN';
+  }
+
+  return isCurrentInterval ? 'CANCEL_INTERVAL_SWITCH' : 'SWITCH_INTERVAL';
 };
