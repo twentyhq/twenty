@@ -66,6 +66,24 @@ export const FormControls: Story = {
   },
 };
 
+export const Loading: Story = {
+  ...Default,
+  args: {
+    loading: true,
+    className: ({ disabled }) => (disabled ? 'unavailable-action' : undefined),
+  },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Save changes',
+    });
+
+    await expect(button).toBeDisabled();
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toHaveClass('unavailable-action');
+    await expect(getComputedStyle(button).fontWeight).toBe('600');
+  },
+};
+
 export const DisabledOutline: Story = {
   ...Default,
   args: { variant: 'outline', elevated: false, disabled: true, onClick: fn() },
