@@ -7,8 +7,10 @@ import { makeGraphqlAPIRequest } from 'test/integration/graphql/utils/make-graph
 import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
 import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { gql } from 'graphql-tag';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -20,6 +22,14 @@ const FIND_CREATED_TIMELINE_ACTIVITY_TYPE = gql`
       action
       objectUniversalIdentifier
     }
+  }
+`;
+
+const SET_PERSON_EMAIL_TRACKING_CONSENT = gql`
+  mutation SetPersonEmailTrackingConsent(
+    $input: SetPersonEmailTrackingConsentInput!
+  ) {
+    setPersonEmailTrackingConsent(input: $input)
   }
 `;
 
@@ -779,6 +789,101 @@ describe('people merge resolvers (integration)', () => {
         ]),
       );
       expect(mergedPerson.whatsapp.additionalPhones).toHaveLength(3);
+    });
+  });
+
+  describe('merging people that carry a system-written field', () => {
+    const PERSON_GQL_FIELDS_WITH_TRACKING_CONSENT = `
+      id
+      emails {
+        primaryEmail
+        additionalEmails
+      }
+      emailTrackingConsent
+    `;
+
+    beforeAll(async () => {
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
+        value: true,
+        expectToFail: false,
+      });
+    });
+
+    afterAll(async () => {
+      await testDataSource.query(
+        `DELETE FROM core."messageTrackingConsent" WHERE "emailAddress" LIKE 'merge-consent-%@example.com'`,
+      );
+
+      await updateFeatureFlag({
+        featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    });
+
+    it('should merge a person whose email tracking consent was set by a member', async () => {
+      const createResponse = await makeGraphqlAPIRequest(
+        createManyOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS_WITH_TRACKING_CONSENT,
+          data: [
+            {
+              name: { firstName: 'Opted', lastName: 'Out' },
+              emails: {
+                primaryEmail: 'merge-consent-priority@example.com',
+                additionalEmails: [],
+              },
+            },
+            {
+              name: { firstName: 'Opted', lastName: 'Duplicate' },
+              emails: {
+                primaryEmail: 'merge-consent-duplicate@example.com',
+                additionalEmails: [],
+              },
+            },
+          ],
+        }),
+      );
+
+      expect(createResponse.body.errors).toBeUndefined();
+
+      const [priorityPerson, duplicatePerson] =
+        createResponse.body.data.createPeople;
+
+      createdPersonIdsForCleaning.push(priorityPerson.id, duplicatePerson.id);
+
+      const setConsentResponse = await makeMetadataAPIRequest({
+        query: SET_PERSON_EMAIL_TRACKING_CONSENT,
+        variables: {
+          input: { personId: priorityPerson.id, decision: 'DENIED' },
+        },
+      });
+
+      expect(setConsentResponse.body.errors).toBeUndefined();
+      expect(setConsentResponse.body.data.setPersonEmailTrackingConsent).toBe(
+        true,
+      );
+
+      const mergeResponse = await makeGraphqlAPIRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: 'people',
+          gqlFields: PERSON_GQL_FIELDS_WITH_TRACKING_CONSENT,
+          ids: [priorityPerson.id, duplicatePerson.id],
+          conflictPriorityIndex: 0,
+        }),
+      );
+
+      expect(mergeResponse.body.errors).toBeUndefined();
+
+      const mergedPerson = mergeResponse.body.data.mergePeople;
+
+      expect(mergedPerson.id).toBe(priorityPerson.id);
+      expect(mergedPerson.emails.primaryEmail).toBe(
+        'merge-consent-priority@example.com',
+      );
+      expect(mergedPerson.emailTrackingConsent).toBe('DENIED');
     });
   });
 });
