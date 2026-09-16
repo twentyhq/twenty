@@ -1,0 +1,23 @@
+import { t } from '@lingui/core/macro';
+
+import { InboxEmailToolCallEditor } from '@/inbox/tool-call-renderers/email/components/InboxEmailToolCallEditor';
+import {
+  DRAFT_EMAIL_TOOL_NAME,
+  SEND_EMAIL_TOOL_NAME,
+} from '@/inbox/tool-call-renderers/email/constants/EmailToolCallNames';
+import { type InboxToolCallRenderer } from '@/inbox/tool-call-renderers/types/InboxToolCallRenderer';
+
+// Keyed by tool name, which is what a producer writes on the row. A standard
+// renderer is first-party React; the same slot is where an app-provided front
+// component will hang once tools can declare one.
+export const INBOX_TOOL_CALL_RENDERERS: Record<string, InboxToolCallRenderer> =
+  {
+    [SEND_EMAIL_TOOL_NAME]: {
+      Editor: InboxEmailToolCallEditor,
+      runLabel: () => t`Send`,
+    },
+    [DRAFT_EMAIL_TOOL_NAME]: {
+      Editor: InboxEmailToolCallEditor,
+      runLabel: () => t`Save draft`,
+    },
+  };

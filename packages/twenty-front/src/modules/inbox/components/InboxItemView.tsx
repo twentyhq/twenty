@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconCheck, IconClockHour8, IconX, useIcons } from 'twenty-ui/icon';
@@ -10,19 +11,24 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemSubjectChip } from '@/inbox/components/InboxItemSubjectChip';
 import { InboxItemPlacement } from '@/inbox/components/InboxItemPlacement';
+import { InboxItemThreadView } from '@/inbox/components/InboxItemThreadView';
 import { InboxPlanActionsSummary } from '@/inbox/components/InboxPlanActionsSummary';
 import { InboxPlanEntityGraph } from '@/inbox/components/InboxPlanEntityGraph';
 import { InboxPlanToolCallRow } from '@/inbox/components/InboxPlanToolCallRow';
 import { InboxSnoozeDropdown } from '@/inbox/components/InboxSnoozeDropdown';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
+import { getInboxItemMessageThreadId } from '@/inbox/utils/getInboxItemMessageThreadId';
 import { getInboxItemOutcomeLabel } from '@/inbox/utils/getInboxItemOutcomeLabel';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type InboxItem,
+  type InboxItemField,
   InboxItemOutcome,
   InboxItemScope,
   InboxItemToolCallStatus,
 } from '~/generated/graphql';
+import { EMAIL_TOOL_CALL_INPUT_SCHEMA } from '@/inbox/tool-call-renderers/email/constants/EmailToolCallInputSchema';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledView = styled.div`
@@ -114,18 +120,40 @@ const StyledFooterEnd = styled.div`
   margin-left: auto;
 `;
 
-export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
+type InboxItemViewProps = {
+  inboxItem: InboxItem;
+  // Called once a run leaves the item done, so the list can move on the way
+  // a mail client does after send.
+  onItemCompleted?: () => void;
+};
+
+export const InboxItemView = ({
+  inboxItem,
+  onItemCompleted,
+}: InboxItemViewProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
   const { enqueueErrorSnackBar } = useSnackBar();
+  const { objectMetadataItems } = useObjectMetadataItems();
   const {
     transitionInboxItem,
     reopenInboxItem,
     runInboxItemToolCalls,
+    runInboxItemToolCall,
+    createInboxItemToolCall,
     updateInboxItemToolCallInput,
     setInboxItemToolCallRejected,
   } = useInboxItemActions();
+
+  const messageThreadId = getInboxItemMessageThreadId({
+    inboxItem,
+    messageThreadObjectMetadataId: objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular ===
+        CoreObjectNameSingular.MessageThread,
+    )?.id,
+  });
 
   const context = inboxItem.context;
   const summary = inboxItem.summary;
@@ -195,20 +223,86 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
     }
   };
 
-  const doItem = async () => {
+  // Editors that save on a delay register how to land what is still pending,
+  // so a run never reads a row the person had already moved past. A stable
+  // container rather than state: nothing renders from it.
+  const [pendingFlushes] = useState(
+    () => new Map<string, () => Promise<void>>(),
+  );
+
+  const registerFlush = (
+    toolCallId: string,
+    flush: (() => Promise<void>) | null,
+  ) => {
+    if (isDefined(flush)) {
+      pendingFlushes.set(toolCallId, flush);
+    } else {
+      pendingFlushes.delete(toolCallId);
+    }
+  };
+
+  const flushPendingEdits = () =>
+    Promise.all([...pendingFlushes.values()].map((flush) => flush()));
+
+  const runGuarded = async (run: () => Promise<InboxItem | undefined>) => {
     setIsRunning(true);
 
     try {
-      await runInboxItemToolCalls({
-        inboxItemId: inboxItem.id,
-        expectedVersion: inboxItem.version,
-      });
+      await flushPendingEdits();
+
+      const inboxItemAfterRun = await run();
+
+      if (inboxItemAfterRun?.scope === InboxItemScope.DONE) {
+        onItemCompleted?.();
+      }
     } catch {
       reportFailure();
     } finally {
       setIsRunning(false);
     }
   };
+
+  const doItem = () =>
+    runGuarded(() =>
+      runInboxItemToolCalls({
+        inboxItemId: inboxItem.id,
+        expectedVersion: inboxItem.version,
+      }),
+    );
+
+  const runToolCall = (toolCallId: string) =>
+    runGuarded(() =>
+      runInboxItemToolCall({
+        inboxItemToolCallId: toolCallId,
+        expectedVersion: inboxItem.version,
+      }),
+    );
+
+  const createAndRunToolCall = (draft: {
+    toolName: string;
+    label: string;
+    icon: string;
+    proposedInput: Record<string, unknown>;
+  }) =>
+    runGuarded(async () => {
+      const toolCall = await createInboxItemToolCall({
+        inboxItemId: inboxItem.id,
+        ...draft,
+        inputSchema: EMAIL_TOOL_CALL_INPUT_SCHEMA as Omit<
+          InboxItemField,
+          '__typename'
+        >[],
+      });
+
+      if (!isDefined(toolCall)) {
+        return undefined;
+      }
+
+      return runInboxItemToolCall({
+        inboxItemToolCallId: toolCall.id,
+        expectedVersion: inboxItem.version,
+      });
+    });
 
   const dismissItem = () =>
     void transitionInboxItem({
@@ -231,6 +325,101 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
         : toolCalls.length > 0
           ? t`Close plan`
           : t`Mark done`;
+
+  const isBusy =
+    isRunning || inFlightEditCount > 0 || failedSaveToolCallIds.length > 0;
+
+  const footerControls = isDone ? (
+    <>
+      {isDefined(inboxItem.outcome) && (
+        <Tag color="gray">{getInboxItemOutcomeLabel(inboxItem.outcome)}</Tag>
+      )}
+      <Button
+        onClick={reopenItem}
+        size="small"
+        title={t`Move to inbox`}
+        variant="secondary"
+      />
+    </>
+  ) : (
+    <>
+      <LightIconButton
+        Icon={IconX}
+        accent="secondary"
+        aria-label={t`Dismiss`}
+        title={t`Dismiss`}
+        onClick={dismissItem}
+      />
+      <InboxSnoozeDropdown
+        inboxItem={inboxItem}
+        clickableComponent={
+          <LightIconButton
+            Icon={IconClockHour8}
+            accent="secondary"
+            aria-label={t`Snooze`}
+            title={t`Snooze`}
+          />
+        }
+      />
+    </>
+  );
+
+  if (isDefined(messageThreadId)) {
+    return (
+      <StyledView>
+        <StyledScroll>
+          <StyledHeader>
+            <StyledType>
+              <InboxItemTypeIcon
+                size={theme.icon.size.sm}
+                color="currentColor"
+              />
+              {inboxItem.inboxItemType.label}
+            </StyledType>
+            <StyledHeaderEnd>
+              <InboxItemPlacement inboxItem={inboxItem} />
+              <span>
+                {t`Updated ${beautifyPastDateRelativeToNow(inboxItem.lastEventAt)}`}
+              </span>
+            </StyledHeaderEnd>
+          </StyledHeader>
+          <StyledTitle>{inboxItem.title}</StyledTitle>
+          {isNonEmptyString(summary) && (
+            <StyledSummary>{summary}</StyledSummary>
+          )}
+          <InboxItemThreadView
+            inboxItem={inboxItem}
+            threadId={messageThreadId}
+            isBusy={isBusy}
+            footerControls={footerControls}
+            onSaveToolCallInput={(toolCallId, editedInput) =>
+              trackEdit(
+                () =>
+                  updateInboxItemToolCallInput({
+                    inboxItemToolCallId: toolCallId,
+                    editedInput,
+                  }),
+                { toolCallId, isInputSave: true },
+              )
+            }
+            onToggleToolCallRejected={(toolCallId, isRejected) =>
+              trackEdit(
+                () =>
+                  setInboxItemToolCallRejected({
+                    inboxItemToolCallId: toolCallId,
+                    isRejected,
+                  }),
+                { toolCallId, isInputSave: false },
+              )
+            }
+            onRunToolCall={runToolCall}
+            onRunAll={doItem}
+            onCreateAndRunToolCall={createAndRunToolCall}
+          />
+        </StyledScroll>
+      </StyledView>
+    );
+  }
 
   return (
     <StyledView>
@@ -297,6 +486,7 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
                       { toolCallId: toolCall.id, isInputSave: false },
                     )
                   }
+                  onRegisterFlush={(flush) => registerFlush(toolCall.id, flush)}
                 />
               ))}
             </StyledToolCallRows>
@@ -306,54 +496,17 @@ export const InboxItemView = ({ inboxItem }: { inboxItem: InboxItem }) => {
 
       <StyledFooter>
         <StyledFooterEnd>
-          {isDone ? (
-            <>
-              {isDefined(inboxItem.outcome) && (
-                <Tag color="gray">
-                  {getInboxItemOutcomeLabel(inboxItem.outcome)}
-                </Tag>
-              )}
-              <Button
-                onClick={reopenItem}
-                size="small"
-                title={t`Move to inbox`}
-                variant="secondary"
-              />
-            </>
-          ) : (
-            <>
-              <LightIconButton
-                Icon={IconX}
-                accent="secondary"
-                aria-label={t`Dismiss`}
-                title={t`Dismiss`}
-                onClick={dismissItem}
-              />
-              <InboxSnoozeDropdown
-                inboxItem={inboxItem}
-                clickableComponent={
-                  <LightIconButton
-                    Icon={IconClockHour8}
-                    accent="secondary"
-                    aria-label={t`Snooze`}
-                    title={t`Snooze`}
-                  />
-                }
-              />
-              <Button
-                Icon={IconCheck}
-                accent="blue"
-                disabled={
-                  isRunning ||
-                  inFlightEditCount > 0 ||
-                  failedSaveToolCallIds.length > 0
-                }
-                onClick={() => void doItem()}
-                size="small"
-                title={doLabel}
-                variant="primary"
-              />
-            </>
+          {footerControls}
+          {!isDone && (
+            <Button
+              Icon={IconCheck}
+              accent="blue"
+              disabled={isBusy}
+              onClick={() => void doItem()}
+              size="small"
+              title={doLabel}
+              variant="primary"
+            />
           )}
         </StyledFooterEnd>
       </StyledFooter>

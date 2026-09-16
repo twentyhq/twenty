@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
@@ -19,6 +20,7 @@ import {
   isToolCallHeldByClaim,
   isToolCallRunning,
 } from 'src/engine/core-modules/inbox/utils/inbox-tool-call-claim.util';
+import { type InboxItemToolCallDraft } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-draft.type';
 import { type InboxItemToolCallInput } from 'src/engine/core-modules/inbox/types/inbox-item-tool-call-input.type';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -153,8 +155,132 @@ export class InboxItemToolCallService {
       });
     }
 
-    // Read back rather than trusting what was loaded before the loop: a skip,
-    // an earlier failure or another run may have landed while the calls ran.
+    return this.settlePlanAfterRun({
+      inboxItemId,
+      workspaceId,
+      actorUserWorkspaceId,
+      accessibleQueueIds,
+      versionBeforeRun: inboxItem.version,
+    });
+  }
+
+  // Runs one call and leaves the rest of the plan as it is: sending a reply
+  // does not commit the person to the two other steps an agent proposed next
+  // to it. The item still clears once nothing in it is left proposed, so a
+  // reply that was the only thing to do is one gesture.
+  async runOne({
+    workspaceId,
+    actorUserWorkspaceId,
+    accessibleQueueIds,
+    inboxItemToolCallId,
+    expectedVersion,
+  }: ToolCallActorArgs & {
+    inboxItemToolCallId: string;
+    expectedVersion?: number;
+  }) {
+    const { toolCall, inboxItem } =
+      await this.findEditableToolCallWithItemOrThrow({
+        workspaceId,
+        actorUserWorkspaceId,
+        accessibleQueueIds,
+        inboxItemToolCallId,
+      });
+
+    if (isDefined(expectedVersion) && inboxItem.version !== expectedVersion) {
+      throw new InboxException(
+        `Inbox item ${inboxItem.id} changed since it was read`,
+        InboxExceptionCode.INBOX_ITEM_CHANGED,
+      );
+    }
+
+    this.assertInputsMatchSchema([toolCall]);
+
+    const claimedAt = new Date();
+
+    const claim = await this.inboxItemToolCallRepository.update(
+      workspaceId,
+      { id: toolCall.id, ...buildClaimableToolCallPredicate() },
+      {
+        resolvedByUserWorkspaceId: actorUserWorkspaceId,
+        resolvedAt: claimedAt,
+      },
+    );
+
+    // Unlike a plan run there is nothing to fall back to: the one call asked
+    // for is already someone else's.
+    if ((claim.affected ?? 0) === 0) {
+      throw new InboxException(
+        `Inbox item tool call ${toolCall.id} changed since it was read`,
+        InboxExceptionCode.INBOX_ITEM_CHANGED,
+      );
+    }
+
+    await this.executeClaimedToolCall({
+      workspaceId,
+      actorUserWorkspaceId,
+      inboxItemToolCallId: toolCall.id,
+      claimedAt,
+    });
+
+    return this.settlePlanAfterRun({
+      inboxItemId: toolCall.inboxItemId,
+      workspaceId,
+      actorUserWorkspaceId,
+      accessibleQueueIds,
+      versionBeforeRun: inboxItem.version,
+    });
+  }
+
+  // A person can add to a plan what no producer proposed, most often a reply
+  // typed by hand on an item that arrived with none. It lands as a row like
+  // any other, so what ran is on record whoever wrote it.
+  async create({
+    workspaceId,
+    actorUserWorkspaceId,
+    accessibleQueueIds,
+    inboxItemId,
+    draft,
+  }: ToolCallActorArgs & {
+    inboxItemId: string;
+    draft: InboxItemToolCallDraft;
+  }): Promise<InboxItemToolCallEntity> {
+    await this.inboxItemService.findVisibleItemOrThrow({
+      inboxItemId,
+      workspaceId,
+      actorUserWorkspaceId,
+      accessibleQueueIds,
+    });
+
+    const toolCalls = await this.findToolCallsInOrder(workspaceId, inboxItemId);
+    const position = toolCalls.reduce(
+      (max, toolCall) => Math.max(max, toolCall.position + 1),
+      0,
+    );
+
+    return this.inboxItemToolCallRepository.insertAndReturnOne(workspaceId, {
+      inboxItemId,
+      position,
+      toolName: draft.toolName,
+      label: draft.label,
+      description: draft.description ?? null,
+      icon: draft.icon ?? null,
+      inputSchema: draft.inputSchema ?? [],
+      proposedInput: draft.proposedInput,
+    });
+  }
+
+  // Read back rather than trusting what was loaded before the run: a skip, an
+  // earlier failure or another run may have landed while the calls ran.
+  private async settlePlanAfterRun({
+    inboxItemId,
+    workspaceId,
+    actorUserWorkspaceId,
+    accessibleQueueIds,
+    versionBeforeRun,
+  }: ToolCallActorArgs & {
+    inboxItemId: string;
+    versionBeforeRun: number;
+  }) {
     const actorArgs = {
       inboxItemId,
       workspaceId,
@@ -192,7 +318,7 @@ export class InboxItemToolCallService {
         workspaceId,
         actorUserWorkspaceId,
         accessibleQueueIds,
-        expectedVersion: inboxItem.version,
+        expectedVersion: versionBeforeRun,
         loadedInboxItem: inboxItemAfterRun,
         transition: {
           kind: 'CLEAR',
@@ -348,14 +474,25 @@ export class InboxItemToolCallService {
     }
   }
 
-  private async findEditableToolCallOrThrow({
+  private async findEditableToolCallOrThrow(
+    args: ToolCallActorArgs & { inboxItemToolCallId: string },
+  ): Promise<InboxItemToolCallEntity> {
+    const { toolCall } = await this.findEditableToolCallWithItemOrThrow(args);
+
+    return toolCall;
+  }
+
+  private async findEditableToolCallWithItemOrThrow({
     workspaceId,
     actorUserWorkspaceId,
     accessibleQueueIds,
     inboxItemToolCallId,
   }: ToolCallActorArgs & {
     inboxItemToolCallId: string;
-  }): Promise<InboxItemToolCallEntity> {
+  }): Promise<{
+    toolCall: InboxItemToolCallEntity;
+    inboxItem: InboxItemEntity;
+  }> {
     const toolCall = await this.inboxItemToolCallRepository.findOne(
       workspaceId,
       { where: { id: inboxItemToolCallId } },
@@ -368,7 +505,7 @@ export class InboxItemToolCallService {
       );
     }
 
-    await this.inboxItemService.findVisibleItemOrThrow({
+    const inboxItem = await this.inboxItemService.findVisibleItemOrThrow({
       inboxItemId: toolCall.inboxItemId,
       workspaceId,
       actorUserWorkspaceId,
@@ -386,6 +523,6 @@ export class InboxItemToolCallService {
       );
     }
 
-    return toolCall;
+    return { toolCall, inboxItem };
   }
 }

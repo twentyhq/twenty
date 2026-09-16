@@ -29,6 +29,7 @@ import {
 } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/inbox-transition.service';
+import { CreateInboxItemToolCallInput } from 'src/engine/core-modules/inbox/dtos/create-inbox-item-tool-call.input';
 import { TransitionInboxItemInput } from 'src/engine/core-modules/inbox/dtos/transition-inbox-item.input';
 import {
   toInboxItemDto,
@@ -284,6 +285,63 @@ export class InboxItemResolver {
   ): Promise<InboxItemDTO> {
     const inboxItem = await this.inboxItemToolCallService.runAll({
       inboxItemId,
+      workspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
+      accessibleQueueIds: await this.findAccessibleQueueIds(
+        workspaceId,
+        userWorkspaceId,
+      ),
+      expectedVersion,
+    });
+
+    return toInboxItemDto(inboxItem, new Date(), userWorkspaceId);
+  }
+
+  @Mutation(() => InboxItemToolCallDTO)
+  async createInboxItemToolCall(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('input') input: CreateInboxItemToolCallInput,
+  ): Promise<InboxItemToolCallDTO> {
+    const toolCall = await this.inboxItemToolCallService.create({
+      workspaceId,
+      actorUserWorkspaceId: userWorkspaceId,
+      accessibleQueueIds: await this.findAccessibleQueueIds(
+        workspaceId,
+        userWorkspaceId,
+      ),
+      inboxItemId: input.inboxItemId,
+      draft: {
+        toolName: input.toolName,
+        label: input.label,
+        description: input.description,
+        icon: input.icon,
+        inputSchema: input.inputSchema?.map((field) => ({
+          key: field.key,
+          label: field.label,
+          type: field.type,
+          isRequired: field.isRequired ?? false,
+        })),
+        proposedInput: toInboxItemToolCallInput(input.proposedInput) ?? {},
+      },
+    });
+
+    return toInboxItemToolCallDto(toolCall);
+  }
+
+  // One call rather than the plan: sending a reply must not commit the person
+  // to the other steps proposed beside it.
+  @Mutation(() => InboxItemDTO)
+  async runInboxItemToolCall(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @Args('inboxItemToolCallId', { type: () => UUIDScalarType })
+    inboxItemToolCallId: string,
+    @Args('expectedVersion', { type: () => Int, nullable: true })
+    expectedVersion?: number,
+  ): Promise<InboxItemDTO> {
+    const inboxItem = await this.inboxItemToolCallService.runOne({
+      inboxItemToolCallId,
       workspaceId,
       actorUserWorkspaceId: userWorkspaceId,
       accessibleQueueIds: await this.findAccessibleQueueIds(

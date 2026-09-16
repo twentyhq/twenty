@@ -154,7 +154,10 @@ export const InboxItemDetail = ({
             inboxItemId={inboxItem.id}
             isUnread={inboxItem.isUnread}
           />
-          <InboxItemView inboxItem={inboxItem} />
+          <InboxItemView
+            inboxItem={inboxItem}
+            onItemCompleted={hasNext ? goToNext : undefined}
+          />
         </StyledBody>
       )}
     </StyledDetail>

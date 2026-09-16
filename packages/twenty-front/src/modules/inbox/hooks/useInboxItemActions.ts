@@ -1,7 +1,9 @@
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
 
+import { CREATE_INBOX_ITEM_TOOL_CALL } from '@/inbox/graphql/mutations/createInboxItemToolCall';
 import { MARK_INBOX_ITEM_READ } from '@/inbox/graphql/mutations/markInboxItemRead';
+import { RUN_INBOX_ITEM_TOOL_CALL } from '@/inbox/graphql/mutations/runInboxItemToolCall';
 import { RUN_INBOX_ITEM_TOOL_CALLS } from '@/inbox/graphql/mutations/runInboxItemToolCalls';
 import { SET_INBOX_ITEM_TOOL_CALL_REJECTED } from '@/inbox/graphql/mutations/setInboxItemToolCallRejected';
 import { UPDATE_INBOX_ITEM_TOOL_CALL_INPUT } from '@/inbox/graphql/mutations/updateInboxItemToolCallInput';
@@ -9,6 +11,7 @@ import { TRANSITION_INBOX_ITEM } from '@/inbox/graphql/mutations/transitionInbox
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import {
   type InboxItem,
+  type InboxItemField,
   type InboxItemOutcome,
   type InboxItemToolCall,
 } from '~/generated/graphql';
@@ -173,6 +176,31 @@ export const useInboxItemActions = () => {
     { inboxItemId: string; expectedVersion?: number }
   >(RUN_INBOX_ITEM_TOOL_CALLS, mutationOptions);
 
+  const [runInboxItemToolCallMutation] = useMutation<
+    { runInboxItemToolCall: InboxItem },
+    { inboxItemToolCallId: string; expectedVersion?: number }
+  >(RUN_INBOX_ITEM_TOOL_CALL, mutationOptions);
+
+  // Adding a call changes what the item's query returns, so the item is
+  // re-read rather than patched into the cache.
+  const [createInboxItemToolCallMutation] = useMutation<
+    { createInboxItemToolCall: InboxItemToolCall },
+    {
+      input: {
+        inboxItemId: string;
+        toolName: string;
+        label: string;
+        description?: string;
+        icon?: string;
+        inputSchema?: Omit<InboxItemField, '__typename'>[];
+        proposedInput: Record<string, unknown>;
+      };
+    }
+  >(CREATE_INBOX_ITEM_TOOL_CALL, {
+    client: apolloCoreClient,
+    refetchQueries: ['GetMyInboxItem'],
+  });
+
   const updateInboxItemToolCallInput = useCallback(
     async ({
       inboxItemToolCallId,
@@ -203,6 +231,8 @@ export const useInboxItemActions = () => {
     [setInboxItemToolCallRejectedMutation],
   );
 
+  // The item comes back so a caller can tell a run that finished the plan
+  // from one that left work behind, without another read.
   const runInboxItemToolCalls = useCallback(
     async ({
       inboxItemId,
@@ -210,12 +240,50 @@ export const useInboxItemActions = () => {
     }: {
       inboxItemId: string;
       expectedVersion?: number;
-    }) => {
-      await runInboxItemToolCallsMutation({
+    }): Promise<InboxItem | undefined> => {
+      const result = await runInboxItemToolCallsMutation({
         variables: { inboxItemId, expectedVersion },
       });
+
+      return result.data?.runInboxItemToolCalls;
     },
     [runInboxItemToolCallsMutation],
+  );
+
+  const runInboxItemToolCall = useCallback(
+    async ({
+      inboxItemToolCallId,
+      expectedVersion,
+    }: {
+      inboxItemToolCallId: string;
+      expectedVersion?: number;
+    }): Promise<InboxItem | undefined> => {
+      const result = await runInboxItemToolCallMutation({
+        variables: { inboxItemToolCallId, expectedVersion },
+      });
+
+      return result.data?.runInboxItemToolCall;
+    },
+    [runInboxItemToolCallMutation],
+  );
+
+  const createInboxItemToolCall = useCallback(
+    async (input: {
+      inboxItemId: string;
+      toolName: string;
+      label: string;
+      description?: string;
+      icon?: string;
+      inputSchema?: Omit<InboxItemField, '__typename'>[];
+      proposedInput: Record<string, unknown>;
+    }): Promise<InboxItemToolCall | undefined> => {
+      const result = await createInboxItemToolCallMutation({
+        variables: { input },
+      });
+
+      return result.data?.createInboxItemToolCall;
+    },
+    [createInboxItemToolCallMutation],
   );
 
   return {
@@ -227,5 +295,7 @@ export const useInboxItemActions = () => {
     updateInboxItemToolCallInput,
     setInboxItemToolCallRejected,
     runInboxItemToolCalls,
+    runInboxItemToolCall,
+    createInboxItemToolCall,
   };
 };

@@ -46,6 +46,7 @@ describe('InboxItemToolCallService', () => {
     find: jest.fn(),
     findOne: jest.fn(),
     update: jest.fn(),
+    insertAndReturnOne: jest.fn(),
   };
   const inboxItemService = { findVisibleItemOrThrow: jest.fn() };
   const inboxTransitionService = { transition: jest.fn() };
@@ -537,6 +538,171 @@ describe('InboxItemToolCallService', () => {
         code: InboxExceptionCode.INBOX_ITEM_CHANGED,
       });
       expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('runOne', () => {
+    // The row as the run reads it before the claim, then as it reads it back
+    // by id once claimed
+    const givenSingleToolCall = (
+      toolCall: InboxItemToolCallEntity,
+      after: InboxItemToolCallEntity[],
+    ) => {
+      inboxItemToolCallRepository.findOne.mockImplementation(
+        async (_workspaceId: string, options: { where: { id: string } }) =>
+          options.where.id === toolCall.id
+            ? { ...toolCall, resolvedAt: claimTimeOf(toolCall.id) }
+            : null,
+      );
+      inboxItemToolCallRepository.find.mockResolvedValueOnce(after);
+    };
+
+    it('should run only the call asked for and clear the item when nothing is left proposed', async () => {
+      const reply = buildToolCall({ id: 'reply' });
+
+      givenSingleToolCall(reply, [
+        { ...reply, status: InboxItemToolCallStatus.EXECUTED },
+      ]);
+
+      const result = await service.runOne({
+        ...actorArgs,
+        inboxItemToolCallId: 'reply',
+        expectedVersion: 3,
+      });
+
+      expect(inboxToolCallExecutionService.execute).toHaveBeenCalledTimes(1);
+      expect(inboxToolCallExecutionService.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ toolName: 'send_email' }),
+      );
+      expect(inboxTransitionService.transition).toHaveBeenCalledWith(
+        expect.objectContaining({
+          expectedVersion: 3,
+          transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
+        }),
+      );
+      expect(result).toMatchObject({ outcome: InboxItemOutcome.DONE });
+    });
+
+    // Sending a reply must not commit the person to the steps beside it.
+    it('should leave the item in the inbox while another call is still proposed', async () => {
+      const reply = buildToolCall({ id: 'reply' });
+      const task = buildToolCall({
+        id: 'task',
+        position: 1,
+        toolName: 'create_task',
+      });
+
+      givenSingleToolCall(reply, [
+        { ...reply, status: InboxItemToolCallStatus.EXECUTED },
+        task,
+      ]);
+
+      await service.runOne({ ...actorArgs, inboxItemToolCallId: 'reply' });
+
+      expect(inboxToolCallExecutionService.execute).toHaveBeenCalledTimes(1);
+      expect(inboxTransitionService.transition).not.toHaveBeenCalled();
+    });
+
+    it('should refuse to run a call another run claimed first', async () => {
+      const reply = buildToolCall({ id: 'reply' });
+
+      givenSingleToolCall(reply, []);
+      inboxItemToolCallRepository.update.mockResolvedValueOnce({
+        affected: 0,
+      });
+
+      await expect(
+        service.runOne({ ...actorArgs, inboxItemToolCallId: 'reply' }),
+      ).rejects.toMatchObject({ code: InboxExceptionCode.INBOX_ITEM_CHANGED });
+
+      expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
+    });
+
+    it('should refuse to run a call that already ran', async () => {
+      const reply = buildToolCall({
+        id: 'reply',
+        status: InboxItemToolCallStatus.EXECUTED,
+      });
+
+      givenSingleToolCall(reply, []);
+
+      await expect(
+        service.runOne({ ...actorArgs, inboxItemToolCallId: 'reply' }),
+      ).rejects.toMatchObject({ code: InboxExceptionCode.INBOX_ITEM_CHANGED });
+    });
+
+    it('should refuse to run a plan that changed since it was read', async () => {
+      givenSingleToolCall(buildToolCall({ id: 'reply' }), []);
+
+      await expect(
+        service.runOne({
+          ...actorArgs,
+          inboxItemToolCallId: 'reply',
+          expectedVersion: 2,
+        }),
+      ).rejects.toMatchObject({ code: InboxExceptionCode.INBOX_ITEM_CHANGED });
+    });
+  });
+
+  describe('create', () => {
+    it('should append the call after the last one in the plan', async () => {
+      inboxItemToolCallRepository.find.mockResolvedValueOnce([
+        buildToolCall({ id: 'first', position: 0 }),
+        buildToolCall({ id: 'second', position: 4 }),
+      ]);
+      inboxItemToolCallRepository.insertAndReturnOne.mockImplementation(
+        async (
+          _workspaceId: string,
+          toolCall: Partial<InboxItemToolCallEntity>,
+        ) => ({ id: 'created', ...toolCall }) as InboxItemToolCallEntity,
+      );
+
+      const created = await service.create({
+        ...actorArgs,
+        inboxItemId: INBOX_ITEM_ID,
+        draft: {
+          toolName: 'send_email',
+          label: 'Reply',
+          proposedInput: { recipients: { to: 'priya@northwind.com' } },
+        },
+      });
+
+      expect(
+        inboxItemToolCallRepository.insertAndReturnOne,
+      ).toHaveBeenCalledWith(WORKSPACE_ID, {
+        inboxItemId: INBOX_ITEM_ID,
+        position: 5,
+        toolName: 'send_email',
+        label: 'Reply',
+        description: null,
+        icon: null,
+        inputSchema: [],
+        proposedInput: { recipients: { to: 'priya@northwind.com' } },
+      });
+      expect(created.id).toBe('created');
+    });
+
+    it('should refuse to add a call to an item the actor cannot see', async () => {
+      inboxItemService.findVisibleItemOrThrow.mockRejectedValueOnce(
+        new InboxException(
+          'Inbox item not found',
+          InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+        ),
+      );
+
+      await expect(
+        service.create({
+          ...actorArgs,
+          inboxItemId: INBOX_ITEM_ID,
+          draft: { toolName: 'send_email', label: 'Reply', proposedInput: {} },
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+      });
+
+      expect(
+        inboxItemToolCallRepository.insertAndReturnOne,
+      ).not.toHaveBeenCalled();
     });
   });
 

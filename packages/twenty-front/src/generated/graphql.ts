@@ -165,6 +165,16 @@ export type CreateDraftFromWorkflowVersionInput = {
   workflowVersionIdToCopy: Scalars['UUID']['input'];
 };
 
+export type CreateInboxItemToolCallInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  icon?: InputMaybe<Scalars['String']['input']>;
+  inboxItemId: Scalars['UUID']['input'];
+  inputSchema?: InputMaybe<Array<InboxItemFieldInput>>;
+  label: Scalars['String']['input'];
+  proposedInput: Scalars['JSON']['input'];
+  toolName: Scalars['String']['input'];
+};
+
 export type CreateInboxQueueInput = {
   icon?: InputMaybe<Scalars['String']['input']>;
   label: Scalars['String']['input'];
@@ -377,6 +387,13 @@ export type InboxItemField = {
   type: InboxItemFieldType;
 };
 
+export type InboxItemFieldInput = {
+  isRequired?: InputMaybe<Scalars['Boolean']['input']>;
+  key: Scalars['String']['input'];
+  label: Scalars['String']['input'];
+  type: InboxItemFieldType;
+};
+
 export enum InboxItemFieldType {
   BOOLEAN = 'BOOLEAN',
   LONG_TEXT = 'LONG_TEXT',
@@ -504,6 +521,7 @@ export type Mutation = {
   computeStepOutputSchema: Scalars['JSON']['output'];
   createCoreWorkflow: CoreWorkflowDto;
   createDraftFromWorkflowVersion: WorkflowVersionDto;
+  createInboxItemToolCall: InboxItemToolCall;
   createInboxQueue: InboxQueueSettings;
   createWorkflowVersionEdge: WorkflowVersionStepChanges;
   createWorkflowVersionStep: WorkflowVersionStepChanges;
@@ -520,6 +538,7 @@ export type Mutation = {
   generateSignedDpa: GenerateSignedDpaResult;
   markInboxItemRead: InboxItem;
   retryWorkflowRun: WorkflowRun;
+  runInboxItemToolCall: InboxItem;
   runInboxItemToolCalls: InboxItem;
   runWorkflowVersion: RunWorkflowVersion;
   setInboxItemToolCallRejected: InboxItemToolCall;
@@ -556,6 +575,11 @@ export type MutationCreateCoreWorkflowArgs = {
 
 export type MutationCreateDraftFromWorkflowVersionArgs = {
   input: CreateDraftFromWorkflowVersionInput;
+};
+
+
+export type MutationCreateInboxItemToolCallArgs = {
+  input: CreateInboxItemToolCallInput;
 };
 
 
@@ -631,6 +655,12 @@ export type MutationMarkInboxItemReadArgs = {
 
 export type MutationRetryWorkflowRunArgs = {
   workflowRunId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRunInboxItemToolCallArgs = {
+  expectedVersion?: InputMaybe<Scalars['Int']['input']>;
+  inboxItemToolCallId: Scalars['UUID']['input'];
 };
 
 

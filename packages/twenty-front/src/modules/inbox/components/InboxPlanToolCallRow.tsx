@@ -6,6 +6,7 @@ import { LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxPlanToolCallEditor } from '@/inbox/components/InboxPlanToolCallEditor';
+import { getInboxToolCallRenderer } from '@/inbox/tool-call-renderers/utils/getInboxToolCallRenderer';
 import {
   type InboxItemToolCall,
   InboxItemToolCallStatus,
@@ -59,6 +60,7 @@ type InboxPlanToolCallRowProps = {
   onToggleExpanded: () => void;
   onSave: (editedInput: Record<string, unknown>) => Promise<void>;
   onToggleRejected: (isRejected: boolean) => Promise<void>;
+  onRegisterFlush?: (flush: (() => Promise<void>) | null) => void;
 };
 
 export const InboxPlanToolCallRow = ({
@@ -68,6 +70,7 @@ export const InboxPlanToolCallRow = ({
   onToggleExpanded,
   onSave,
   onToggleRejected,
+  onRegisterFlush,
 }: InboxPlanToolCallRowProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
@@ -78,6 +81,12 @@ export const InboxPlanToolCallRow = ({
   const hasRun =
     toolCall.status === InboxItemToolCallStatus.EXECUTED ||
     toolCall.status === InboxItemToolCallStatus.FAILED;
+
+  // The tool decides how its call is edited; the schema form is what a tool
+  // gets when it has not said.
+  const Editor =
+    getInboxToolCallRenderer(toolCall.toolName)?.Editor ??
+    InboxPlanToolCallEditor;
 
   return (
     <StyledRow>
@@ -110,12 +119,13 @@ export const InboxPlanToolCallRow = ({
         )}
       </StyledHeader>
       {isExpanded && (
-        <InboxPlanToolCallEditor
+        <Editor
           // Remounted per state so the draft always belongs to the row shown.
           key={`${toolCall.id}-${toolCall.status}`}
           toolCall={toolCall}
           source={source}
           onSave={onSave}
+          onRegisterFlush={onRegisterFlush}
         />
       )}
     </StyledRow>
