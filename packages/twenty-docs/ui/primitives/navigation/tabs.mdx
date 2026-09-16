@@ -15,7 +15,9 @@ import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
   height={240}
 />
 
-## Tab panels
+## Uncontrolled state
+
+Use `defaultValue` to set the initial active tab. The tabs own subsequent selection changes.
 
 ```tsx
 import { Tabs } from 'twenty-ui/primitives/navigation';
@@ -36,7 +38,35 @@ export const RecordTabs = () => (
 
 `Tabs.Tab` accepts `startIcon`, `badge`, and a `size` of `sm` or `md` (default `sm`). The active indicator is included in `Tabs.List`.
 
-## Controlled state and manual activation
+## Controlled state
+
+Pass `value` and update it with `onValueChange` to own the same active tab in React state. The callback receives the next value and event details.
+
+```tsx
+import { useState } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => {
+  const [tab, setTab] = useState<string | number | null>('overview');
+
+  return (
+    <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs.List aria-label="Record details">
+        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+        <Tabs.Tab value="activity" badge={3}>
+          Activity
+        </Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
+      <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+## Manual activation
+
+Keyboard activation is independent of state ownership. Use `activateOnFocus={false}` with either controlled or uncontrolled tabs.
 
 ```tsx
 import { useState } from 'react';
