@@ -103,6 +103,10 @@ export const useObjectOptionsForBoard = ({
         toIndex: result.destination.index - 1,
       });
 
+      if (!isDefined(updatedRecordField)) {
+        return;
+      }
+
       saveViewFields([mapRecordFieldToViewField(updatedRecordField)]);
 
       const modifiedRecordIndexFieldDefinitions = produce(
