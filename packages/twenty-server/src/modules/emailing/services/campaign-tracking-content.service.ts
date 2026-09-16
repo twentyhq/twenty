@@ -16,11 +16,8 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
 import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
-import {
-  hashLink,
-  ShortLinkService,
-  type ShortLinkToRegister,
-} from 'src/engine/core-modules/short-link/services/short-link.service';
+import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
+import { hashShortLink } from 'src/engine/core-modules/short-link/utils/hash-short-link.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -184,7 +181,10 @@ export class CampaignTrackingContentService {
     variableNames: string[];
     recipients: TrackingRecipient[];
   }): Promise<Map<string, string>> {
-    const linkByIdentity = new Map<string, ShortLinkToRegister>();
+    const linkByIdentity = new Map<
+      string,
+      { url: string; authoredUrl: string }
+    >();
 
     for (const urlTemplate of urlTemplates) {
       const authoredUrl = this.restoreAuthoredUrl(urlTemplate, variableNames);
@@ -198,7 +198,7 @@ export class CampaignTrackingContentService {
         if (isTrackable) {
           const link = { url, authoredUrl };
 
-          linkByIdentity.set(hashLink(link), link);
+          linkByIdentity.set(hashShortLink(link), link);
         }
       }
     }
@@ -236,7 +236,7 @@ export class CampaignTrackingContentService {
         replacements: recipient.replacements,
       });
       const shortLinkId = shortLinkIdByIdentity.get(
-        hashLink({ url, authoredUrl }),
+        hashShortLink({ url, authoredUrl }),
       );
       const linkUrl = isDefined(shortLinkId)
         ? `${baseUrl}/${ApiPath.Emailing}/c/${this.campaignTrackingTokenService.sign(
