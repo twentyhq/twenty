@@ -14,7 +14,9 @@ export const getCommandMenuButtonLabel = ({
   shouldHideLabel: boolean;
 }): string | undefined => {
   if (isLoading) {
-    return isDefined(progress) ? `${Math.round(progress)}%` : t`Preparing…`;
+    return isDefined(progress) && progress > 0
+      ? `${Math.round(progress)}%`
+      : t`Preparing…`;
   }
 
   if (shouldHideLabel) {
