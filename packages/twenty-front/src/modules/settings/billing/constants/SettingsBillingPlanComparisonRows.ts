@@ -179,6 +179,14 @@ export const SETTINGS_BILLING_PLAN_COMPARISON_ROWS = [
     type: 'feature',
   },
   {
+    featureLabel: msg`Record sharing`,
+    plans: {
+      [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
+      [BillingPlanKey.PRO]: { kind: 'excluded' },
+    },
+    type: 'feature',
+  },
+  {
     featureLabel: msg`SSO`,
     plans: {
       [BillingPlanKey.ENTERPRISE]: { kind: 'included' },
