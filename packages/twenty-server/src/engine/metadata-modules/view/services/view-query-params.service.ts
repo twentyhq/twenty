@@ -21,6 +21,12 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { DEFAULT_TIMEZONE } from 'src/engine/metadata-modules/view/constants/default-timezone.constant';
+import {
+  generateViewExceptionMessage,
+  ViewException,
+  ViewExceptionCode,
+  ViewExceptionMessageKey,
+} from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -58,12 +64,17 @@ export class ViewQueryParamsService {
       workspaceId,
     );
 
-    if (!view) {
-      throw new Error(`View with id ${viewId} not found`);
-    }
-
-    if (!isViewVisibleToUser(view, currentUserWorkspaceId)) {
-      throw new Error(`View with id ${viewId} not found`);
+    if (
+      !isDefined(view) ||
+      !isViewVisibleToUser(view, currentUserWorkspaceId)
+    ) {
+      throw new ViewException(
+        generateViewExceptionMessage(
+          ViewExceptionMessageKey.VIEW_NOT_FOUND,
+          viewId,
+        ),
+        ViewExceptionCode.VIEW_NOT_FOUND,
+      );
     }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
