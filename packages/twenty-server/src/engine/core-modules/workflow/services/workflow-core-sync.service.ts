@@ -8,7 +8,7 @@ import { In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
+import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -128,49 +128,12 @@ export class WorkflowCoreSyncService {
     workspaceId: string,
     workflows: WorkflowWorkspaceEntity[],
   ): Promise<Map<string, string>> {
-    const workspaceWorkflowIds = workflows.map((workflow) => workflow.id);
-
-    if (workspaceWorkflowIds.length === 0) {
-      return new Map();
-    }
-
-    const isColumnAvailable = await hasCoreWorkflowWorkspaceWorkflowIdColumn(
-      (query) => this.workspaceRepository.manager.query(query),
-    );
-
-    if (!isColumnAvailable) {
-      return new Map();
-    }
-
-    // Raw SQL: workspaceWorkflowId is also hidden from the entity metadata
-    // while the upgrade that introduces it runs, so a repository where clause
-    // on it throws even once the column exists.
-    const reverseMappedCoreWorkflows =
-      (await this.workspaceRepository.manager.query(
-        `SELECT DISTINCT ON ("workspaceWorkflowId") "workspaceWorkflowId", "id"
-       FROM core."workflow"
-       WHERE "workspaceId" = $1 AND "workspaceWorkflowId" = ANY($2::uuid[])
-       ORDER BY "workspaceWorkflowId", "createdAt" ASC, "id" ASC`,
-        [workspaceId, workspaceWorkflowIds],
-      )) as { workspaceWorkflowId: string; id: string }[];
-
-    const coreWorkflowIdByWorkspaceWorkflowId = new Map<string, string>();
-
-    for (const coreWorkflow of reverseMappedCoreWorkflows) {
-      if (
-        isNonEmptyString(coreWorkflow.workspaceWorkflowId) &&
-        !coreWorkflowIdByWorkspaceWorkflowId.has(
-          coreWorkflow.workspaceWorkflowId,
-        )
-      ) {
-        coreWorkflowIdByWorkspaceWorkflowId.set(
-          coreWorkflow.workspaceWorkflowId,
-          coreWorkflow.id,
-        );
-      }
-    }
-
-    return coreWorkflowIdByWorkspaceWorkflowId;
+    return resolveCoreWorkflowIdsByWorkspaceWorkflowId({
+      executeQuery: (query, parameters) =>
+        this.workspaceRepository.manager.query(query, parameters),
+      workspaceId,
+      workspaceWorkflowIds: workflows.map((workflow) => workflow.id),
+    });
   }
 
   private async resolveCoreVersionIdByWorkspaceVersionId(
