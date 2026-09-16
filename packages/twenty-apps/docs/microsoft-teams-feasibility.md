@@ -75,11 +75,44 @@ in Slack: the same app identity serves every tenant.
 
 The SDK landscape moved in 2025: the Bot Framework SDK is archived (support
 ended 2025-12-31). Microsoft now points to the Teams SDK (`@microsoft/teams.*`,
-GA for JavaScript) or the Microsoft 365 Agents SDK (`@microsoft/agents-*`).
-Both assume they own an HTTP server, which does not fit a logic function. The
-right shape for us is what the Slack app did with `@slack/web-api`: a thin REST
-client (`@microsoft/teams.api`, or plain `fetch`) plus our own JWT verification,
-which Microsoft documents as seven explicit checks for exactly this case.
+GA for JavaScript) or the Microsoft 365 Agents SDK (`@microsoft/agents-*`). The
+hosting packages in both assume they own an HTTP server, which does not fit a
+logic function, but `@microsoft/teams.api` is not one of those: it is a
+standalone REST client exposing `ConversationActivityClient`,
+`ConversationMemberClient`, `BotClient` and friends, with no server attached. So
+the shape is what the Slack app did with `@slack/web-api`: a REST client plus our
+own JWT verification, which Microsoft documents as seven explicit checks for
+exactly this case.
+
+### Client choice, measured 2026-09-16
+
+Spike run against the SDK's real esbuild options (bundle, ESM out, `platform:
+node`, node builtins external without the `node:` prefix, `createRequire`
+banner). Sizes are the bundled logic function:
+
+| Candidate | Result |
+|---|---|
+| `jose` alone | 31.9 KB, no warnings |
+| `jose` + native `fetch`, covering token minting, send activity and member lookup | **33.4 KB, no warnings** |
+| `@microsoft/teams.api` 2.0.16 | 1,171 KB, no warnings |
+| `@microsoft/agents-hosting` 1.8.1 | fails to bundle, unresolved `@opentelemetry/api` and `@opentelemetry/api-logs` |
+
+`teams.api` works, but it ships as CommonJS with no `exports` map, so esbuild
+cannot tree-shake it. Of its 1,171 KB, 366 KB is `@microsoft/teams.cards`, 206 KB
+is `axios` and 208 KB is `mime-db`, none of which we need: the package itself is
+only 183 KB and we are on a runtime with native `fetch`.
+
+**Take the lean path.** `jose` plus `fetch` is 35x smaller and covers every call
+the app makes. It was also smoke-tested rather than merely compiled: the bundled
+output signs and verifies an RS256 token end to end under Node. Borrow request
+and response types from `@microsoft/teams.api` as a dev dependency if we want
+them, without shipping its runtime.
+
+Two environment notes for whoever implements this. Node builtins are externalised
+without the `node:` prefix, so import `crypto` the way the Slack app does rather
+than `node:crypto`. And the Slack app declares Node `^24.5.0` while this
+container runs 22, so confirm the deployed runtime before relying on anything
+newer.
 
 ## Slack to Teams mapping
 
@@ -317,8 +350,9 @@ Goal: retire the unknowns before writing product code.
   anything.
 - Run the Entra delegated flow through `ConnectionProviderOAuthFlowService`
   against a dev tenant: PKCE plus secret, `id_token` claims, refresh.
-- Bundle `@microsoft/teams.api` versus plain `fetch` through the SDK's esbuild
-  step and pick one.
+- ~~Bundle `@microsoft/teams.api` versus plain `fetch` through the SDK's esbuild
+  step and pick one.~~ Done 2026-09-16: take `jose` plus native `fetch` at 33 KB
+  over `teams.api` at 1,171 KB. See Client choice above.
 - Confirm whether the bot member API returns `email` in a live tenant
   (Blocker 2b). Half a day, and it decides the linking flow.
 - Decide the Cloud distribution path: confirm whether a pre-2025 multi-tenant
