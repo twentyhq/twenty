@@ -17,14 +17,12 @@ import {
   CreatePublicDomainDocument,
   DeletePublicDomainDocument,
   FindManyPublicDomainsDocument,
+  FindOneApplicationNameDocument,
 } from '~/generated-metadata/graphql';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/components/CheckPublicDomainValidRecordsEffect';
-import { selectedApplicationIdForPublicDomainState } from '@/settings/domains/states/selectedApplicationIdForPublicDomainState';
-import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -53,12 +51,11 @@ const StyledRecordsWrapper = styled.div`
 `;
 
 export const SettingPublicDomain = () => {
-  const [selectedPublicDomain, setSelectedPublicDomain] = useAtomState(
-    selectedPublicDomainState,
-  );
-  const selectedApplicationIdForPublicDomain = useAtomStateValue(
-    selectedApplicationIdForPublicDomainState,
-  );
+  const { applicationId = '', publicDomainId } = useParams<{
+    applicationId: string;
+    publicDomainId: string;
+  }>();
+
   const { t } = useLingui();
   const navigate = useNavigateSettings();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
@@ -67,22 +64,42 @@ export const SettingPublicDomain = () => {
     CreatePublicDomainDocument,
   );
 
+  const { data: publicDomainsData, refetch: refetchPublicDomains } = useQuery(
+    FindManyPublicDomainsDocument,
+  );
+
+  const selectedPublicDomain = isDefined(publicDomainId)
+    ? publicDomainsData?.findManyPublicDomains?.find(
+        ({ id }) => id === publicDomainId,
+      )
+    : undefined;
+
+  const { data: applicationData } = useQuery(FindOneApplicationNameDocument, {
+    variables: { id: applicationId },
+    skip: !applicationId,
+  });
+
+  const applicationName =
+    applicationData?.findOneApplication?.name ?? t`Application`;
+
   const [newPublicDomain, setNewPublicDomain] = useState<string | undefined>(
-    selectedPublicDomain?.domain ?? '',
+    '',
   );
 
   const [newPublicDomainError, setNewPublicDomainError] = useState<
     string | undefined
   >(undefined);
 
-  const { refetch: refetchPublicDomains } = useQuery(
-    FindManyPublicDomainsDocument,
-  );
-
   const [deletePublicDomain] = useMutation(DeletePublicDomainDocument);
 
   const { isLoading, publicDomainRecords, checkPublicDomainRecords } =
     useCheckPublicDomainValidRecords();
+
+  // Also used once the create and delete mutations resolve, so it cannot be
+  // replaced by a Link.
+  // oxlint-disable-next-line twenty/no-navigate-prefer-link
+  const navigateToApplication = () =>
+    navigate(SettingsPath.ApplicationDetail, { applicationId });
 
   const onDelete = async () => {
     if (!selectedPublicDomain) {
@@ -91,12 +108,12 @@ export const SettingPublicDomain = () => {
 
     await deletePublicDomain({
       variables: { domain: selectedPublicDomain.domain },
-      onCompleted: () => {
+      onCompleted: async () => {
         enqueueSuccessSnackBar({
           message: t`Custom domain successfully deleted`,
         });
-        navigate(SettingsPath.Applications);
-        refetchPublicDomains();
+        await refetchPublicDomains();
+        navigateToApplication();
       },
       onError: (error) =>
         enqueueErrorSnackBar({
@@ -108,10 +125,7 @@ export const SettingPublicDomain = () => {
   const validationSchema = getDomainValidationSchema();
 
   const onCreate = async () => {
-    if (
-      !isDefined(newPublicDomain) ||
-      !isDefined(selectedApplicationIdForPublicDomain)
-    ) {
+    if (!isDefined(newPublicDomain) || !isDefined(applicationId)) {
       return;
     }
 
@@ -127,13 +141,14 @@ export const SettingPublicDomain = () => {
     await createPublicDomain({
       variables: {
         domain: newPublicDomain,
-        applicationId: selectedApplicationIdForPublicDomain,
+        applicationId,
       },
-      onCompleted: (data) => {
-        setSelectedPublicDomain(data.createPublicDomain);
+      onCompleted: async () => {
         enqueueSuccessSnackBar({
           message: t`Custom domain successfully created`,
         });
+        await refetchPublicDomains();
+        navigateToApplication();
       },
       onError: (error) => {
         setNewPublicDomainError(error.message);
@@ -156,11 +171,17 @@ export const SettingPublicDomain = () => {
           children: <Trans>Apps</Trans>,
           href: getSettingsPath(SettingsPath.Applications),
         },
+        {
+          children: applicationName,
+          href: getSettingsPath(SettingsPath.ApplicationDetail, {
+            applicationId,
+          }),
+        },
         { children: <Trans>Custom Domain</Trans> },
       ]}
       actionButton={
         <SaveAndCancelButtons
-          onCancel={() => navigate(SettingsPath.Applications)}
+          onCancel={navigateToApplication}
           isSaveDisabled={loading || isDefined(selectedPublicDomain)}
           onSave={onCreate}
         />
@@ -179,7 +200,7 @@ export const SettingPublicDomain = () => {
           )}
           <StyledDomainFormWrapper>
             <TextInput
-              value={newPublicDomain}
+              value={selectedPublicDomain?.domain ?? newPublicDomain}
               onChange={setNewPublicDomain}
               error={newPublicDomainError}
               type="text"

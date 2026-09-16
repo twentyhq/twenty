@@ -828,7 +828,11 @@ const createSettingsRouteElements = ({
         element={<SettingsCustomDomainPage />}
       />
       <Route
-        path={SettingsPath.PublicDomain}
+        path={SettingsPath.ApplicationPublicDomainNew}
+        element={<SettingPublicDomain />}
+      />
+      <Route
+        path={SettingsPath.ApplicationPublicDomainDetail}
         element={<SettingPublicDomain />}
       />
       <Route path={SettingsPath.LegalDpa} element={<SettingsLegalDpa />} />
