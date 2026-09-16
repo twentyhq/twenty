@@ -83,7 +83,11 @@ describe('Inbound email exclude group emails (integration)', () => {
       () =>
         workspaceOrmManager
           .getRepository<MessageWorkspaceEntity>('message')
-          .findOneBy({ headerMessageId }),
+          .createQueryBuilder('message')
+          .where('message.headerMessageId = :headerMessageId', {
+            headerMessageId,
+          })
+          .getOne<MessageWorkspaceEntity>(),
       buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
       { lite: true },
     );
@@ -132,7 +136,9 @@ describe('Inbound email exclude group emails (integration)', () => {
     );
 
     expect(outcome.kind).toBe('excluded');
-    expect(await findMessage(headerMessageId)).toBeNull();
+    expect(
+      (await findMessage(headerMessageId))?.headerMessageId,
+    ).toBeUndefined();
   }, 60000);
 
   it('imports an email sent from a person', async () => {
@@ -147,6 +153,8 @@ describe('Inbound email exclude group emails (integration)', () => {
     );
 
     expect(outcome.kind).toBe('imported');
-    expect(await findMessage(headerMessageId)).not.toBeNull();
+    expect((await findMessage(headerMessageId))?.headerMessageId).toBe(
+      headerMessageId,
+    );
   }, 60000);
 });
