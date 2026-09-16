@@ -99,6 +99,7 @@ const StyledTagContainer = styled.div`
 `;
 
 const StyledTag = styled(Tag)`
+  box-sizing: border-box;
   max-width: 100%;
 `;
 
