@@ -7,6 +7,14 @@ image:
 nameOverride: ""
 fullnameOverride: ""
 
+# ServiceAccount used by the server and worker pods
+serviceAccount:
+  create: true
+  name: ""  # defaults to the chart fullname if not set
+  annotations: {}
+  # eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/twenty-role
+  # iam.gke.io/gcp-service-account: twenty@my-project.iam.gserviceaccount.com
+
 # Global security context (uid/gid for all pods)
 securityContext:
   runAsUser: 1000

@@ -64,6 +64,15 @@
     "fullnameOverride": { "type": "string" },
     "namespaceOverride": { "type": "string" },
 
+    "serviceAccount": {
+      "type": "object",
+      "properties": {
+        "create": { "type": "boolean" },
+        "name": { "type": "string" },
+        "annotations": { "type": "object" }
+      }
+    },
+
     "secrets": {
       "type": "object",
       "properties": {
