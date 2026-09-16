@@ -31,6 +31,21 @@ import {
 } from 'src/modules/dashboard/exceptions/dashboard.exception';
 import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
 
+// A role-scoped read validates every column it selects, so reading the whole
+// row would refuse a duplication over a dashboard field it never copies
+const DUPLICATION_SOURCE_COLUMNS: (keyof DashboardWorkspaceEntity)[] = [
+  'id',
+  'title',
+  'pageLayoutId',
+  'position',
+];
+
+const DUPLICATED_DASHBOARD_COLUMNS: (keyof DashboardWorkspaceEntity)[] = [
+  ...DUPLICATION_SOURCE_COLUMNS,
+  'createdAt',
+  'updatedAt',
+];
+
 @Injectable()
 export class DashboardDuplicationService {
   private readonly logger = new Logger(DashboardDuplicationService.name);
@@ -72,6 +87,7 @@ export class DashboardDuplicationService {
 
       const originalDashboard = await dashboardRepository.findOne({
         where: { id: dashboardId },
+        select: DUPLICATION_SOURCE_COLUMNS,
       });
 
       if (!isDefined(originalDashboard)) {
@@ -239,6 +255,7 @@ export class DashboardDuplicationService {
 
     const newDashboard = await dashboardRepository.findOne({
       where: { id: newDashboardId },
+      select: DUPLICATED_DASHBOARD_COLUMNS,
     });
 
     if (!isDefined(newDashboard)) {

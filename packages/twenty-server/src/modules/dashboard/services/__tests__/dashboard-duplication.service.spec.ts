@@ -171,6 +171,26 @@ describe('DashboardDuplicationService', () => {
     });
   });
 
+  it('should only read the columns the duplication copies', async () => {
+    await service.duplicateDashboard(DASHBOARD_ID, authContext);
+
+    expect(dashboardRepository.findOne).toHaveBeenNthCalledWith(1, {
+      where: { id: DASHBOARD_ID },
+      select: ['id', 'title', 'pageLayoutId', 'position'],
+    });
+    expect(dashboardRepository.findOne).toHaveBeenNthCalledWith(2, {
+      where: { id: 'new-dashboard-id' },
+      select: [
+        'id',
+        'title',
+        'pageLayoutId',
+        'position',
+        'createdAt',
+        'updatedAt',
+      ],
+    });
+  });
+
   it('should refuse the caller before copying the layout when the role cannot create dashboards', async () => {
     workspaceContext = buildWorkspaceContext({
       canUpdateObjectRecords: false,
