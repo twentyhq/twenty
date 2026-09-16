@@ -537,7 +537,7 @@ msgstr "{hours, plural, one {{hours} timme} other {{hours} timmar}}"
 #. placeholder {1}: formatNumber(installCount)
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
-msgstr ""
+msgstr "{installCount, plural, one {{0} installation} other {{1} installationer}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -817,7 +817,7 @@ msgstr "% kvar"
 #. js-lingui-id: rhCsft
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "+{estimatedInstallCount} installs"
-msgstr ""
+msgstr "+{estimatedInstallCount} installationer"
 
 #. js-lingui-id: n9nj+X
 #. placeholder {0}: aiChatThreadPendingDelete?.threadTitle ?? ''
@@ -4973,7 +4973,7 @@ msgstr "Konfigurera den här widgeten för att visa fält"
 #. js-lingui-id: no/yG9
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Configure what emails should get synced"
-msgstr ""
+msgstr "Konfigurera vilka e-postmeddelanden som ska synkroniseras"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -5676,7 +5676,7 @@ msgstr "Skapa"
 #. js-lingui-id: MKhSSw
 #: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
 msgid "Create {objectLabelSingular}"
-msgstr ""
+msgstr "Skapa {objectLabelSingular}"
 
 #. js-lingui-id: QMLXwt
 #. placeholder {0}: objectMetadataItem.labelSingular
@@ -7382,7 +7382,7 @@ msgstr "Skapa inte kontakter från/till Gmail, Outlook e-post"
 #. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don't import emails from team@ support@ noreply@..."
-msgstr ""
+msgstr "Importera inte e-post från team@ support@ noreply@..."
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -13729,7 +13729,7 @@ msgstr "Nästa period"
 #. js-lingui-id: tgnDjk
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 msgid "Next screenshot"
-msgstr ""
+msgstr "Nästa skärmbild"
 
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -14773,7 +14773,7 @@ msgstr "Inget att visa"
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
-msgstr ""
+msgstr "Aviseringar"
 
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
@@ -16193,7 +16193,7 @@ msgstr "Föregående period"
 #. js-lingui-id: k7xxm/
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 msgid "Previous screenshot"
-msgstr ""
+msgstr "Föregående skärmbild"
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -17250,7 +17250,7 @@ msgstr "Resurstyp"
 #. js-lingui-id: s+MGs7
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Resources"
-msgstr ""
+msgstr "Resurser"
 
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -18771,7 +18771,7 @@ msgstr "Sjunde"
 #. js-lingui-id: Z8lGw6
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Share"
-msgstr ""
+msgstr "Dela"
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -22597,7 +22597,7 @@ msgstr ""
 #. js-lingui-id: 0XIngj
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
 msgid "View screenshot in full screen"
-msgstr ""
+msgstr "Visa skärmbild i helskärm"
 
 #. js-lingui-id: 4y776f
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

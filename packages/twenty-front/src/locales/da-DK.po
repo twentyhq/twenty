@@ -537,7 +537,7 @@ msgstr "{hours, plural, one {{hours} time} other {{hours} timer}}"
 #. placeholder {1}: formatNumber(installCount)
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
-msgstr ""
+msgstr "{installCount, plural, one {{0} installation} other {{1} installationer}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -817,7 +817,7 @@ msgstr "% tilbage"
 #. js-lingui-id: rhCsft
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "+{estimatedInstallCount} installs"
-msgstr ""
+msgstr "+{estimatedInstallCount} installationer"
 
 #. js-lingui-id: n9nj+X
 #. placeholder {0}: aiChatThreadPendingDelete?.threadTitle ?? ''
@@ -4973,7 +4973,7 @@ msgstr "Konfigurer denne widget til at vise felter"
 #. js-lingui-id: no/yG9
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Configure what emails should get synced"
-msgstr ""
+msgstr "Konfigurer, hvilke e-mails der skal synkroniseres"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -5676,7 +5676,7 @@ msgstr "Opret"
 #. js-lingui-id: MKhSSw
 #: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
 msgid "Create {objectLabelSingular}"
-msgstr ""
+msgstr "Opret {objectLabelSingular}"
 
 #. js-lingui-id: QMLXwt
 #. placeholder {0}: objectMetadataItem.labelSingular
@@ -7382,7 +7382,7 @@ msgstr "Opret ikke kontakter fra/til Gmail-, Outlook-emails"
 #. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don't import emails from team@ support@ noreply@..."
-msgstr ""
+msgstr "Importér ikke e-mails fra team@ support@ noreply@..."
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -13727,7 +13727,7 @@ msgstr "Næste periode"
 #. js-lingui-id: tgnDjk
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 msgid "Next screenshot"
-msgstr ""
+msgstr "Næste skærmbillede"
 
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -14771,7 +14771,7 @@ msgstr "Intet at se"
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
-msgstr ""
+msgstr "Notifikationer"
 
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
@@ -16191,7 +16191,7 @@ msgstr "Forrige periode"
 #. js-lingui-id: k7xxm/
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 msgid "Previous screenshot"
-msgstr ""
+msgstr "Forrige skærmbillede"
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -17248,7 +17248,7 @@ msgstr "Ressourcetype"
 #. js-lingui-id: s+MGs7
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Resources"
-msgstr ""
+msgstr "Ressourcer"
 
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -18767,7 +18767,7 @@ msgstr "Syvende"
 #. js-lingui-id: Z8lGw6
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Share"
-msgstr ""
+msgstr "Del"
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -22591,7 +22591,7 @@ msgstr ""
 #. js-lingui-id: 0XIngj
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
 msgid "View screenshot in full screen"
-msgstr ""
+msgstr "Vis skærmbillede i fuld skærm"
 
 #. js-lingui-id: 4y776f
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

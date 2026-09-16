@@ -537,7 +537,7 @@ msgstr "{hours, plural, other {{hours} 小时}}"
 #. placeholder {1}: formatNumber(installCount)
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
-msgstr ""
+msgstr "{installCount, plural, other {{0} 次安装}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -817,7 +817,7 @@ msgstr "剩余 %"
 #. js-lingui-id: rhCsft
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "+{estimatedInstallCount} installs"
-msgstr ""
+msgstr "+{estimatedInstallCount} 次安装"
 
 #. js-lingui-id: n9nj+X
 #. placeholder {0}: aiChatThreadPendingDelete?.threadTitle ?? ''
@@ -4973,7 +4973,7 @@ msgstr "配置此小部件以显示字段"
 #. js-lingui-id: no/yG9
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Configure what emails should get synced"
-msgstr ""
+msgstr "配置应同步哪些电子邮件"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -5676,7 +5676,7 @@ msgstr "创建"
 #. js-lingui-id: MKhSSw
 #: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
 msgid "Create {objectLabelSingular}"
-msgstr ""
+msgstr "创建{objectLabelSingular}"
 
 #. js-lingui-id: QMLXwt
 #. placeholder {0}: objectMetadataItem.labelSingular
@@ -7382,7 +7382,7 @@ msgstr "不要将联系人从/到Gmail、Outlook邮件创建"
 #. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don't import emails from team@ support@ noreply@..."
-msgstr ""
+msgstr "不要导入来自team@、support@、noreply@...的电子邮件"
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -13704,7 +13704,7 @@ msgstr "下一个周期"
 #. js-lingui-id: tgnDjk
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 msgid "Next screenshot"
-msgstr ""
+msgstr "下一张截图"
 
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -14748,7 +14748,7 @@ msgstr "没有可查看的内容"
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
-msgstr ""
+msgstr "通知"
 
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
@@ -16168,7 +16168,7 @@ msgstr "上一个周期"
 #. js-lingui-id: k7xxm/
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 msgid "Previous screenshot"
-msgstr ""
+msgstr "上一张截图"
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -17225,7 +17225,7 @@ msgstr "资源类型"
 #. js-lingui-id: s+MGs7
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Resources"
-msgstr ""
+msgstr "资源"
 
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -18744,7 +18744,7 @@ msgstr "第七"
 #. js-lingui-id: Z8lGw6
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Share"
-msgstr ""
+msgstr "分享"
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -22536,7 +22536,7 @@ msgstr ""
 #. js-lingui-id: 0XIngj
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
 msgid "View screenshot in full screen"
-msgstr ""
+msgstr "全屏查看截图"
 
 #. js-lingui-id: 4y776f
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts

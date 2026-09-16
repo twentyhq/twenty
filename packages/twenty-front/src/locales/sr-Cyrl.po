@@ -537,7 +537,7 @@ msgstr "{hours, plural, one {{hours} сат} few {{hours} сата} other {{hour
 #. placeholder {1}: formatNumber(installCount)
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
-msgstr ""
+msgstr "{installCount, plural, one {{0} инсталација} few {{1} инсталације} other {{1} инсталација}}"
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -817,7 +817,7 @@ msgstr "% преостало"
 #. js-lingui-id: rhCsft
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "+{estimatedInstallCount} installs"
-msgstr ""
+msgstr "+{estimatedInstallCount} инсталација"
 
 #. js-lingui-id: n9nj+X
 #. placeholder {0}: aiChatThreadPendingDelete?.threadTitle ?? ''
@@ -4973,7 +4973,7 @@ msgstr "Подесите овај виџет за приказ поља"
 #. js-lingui-id: no/yG9
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Configure what emails should get synced"
-msgstr ""
+msgstr "Подесите који имејлови треба да се синхронизују"
 
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
@@ -5676,7 +5676,7 @@ msgstr "Креирајте"
 #. js-lingui-id: MKhSSw
 #: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
 msgid "Create {objectLabelSingular}"
-msgstr ""
+msgstr "Креирај {objectLabelSingular}"
 
 #. js-lingui-id: QMLXwt
 #. placeholder {0}: objectMetadataItem.labelSingular
@@ -7382,7 +7382,7 @@ msgstr "Не креирајте контакте из/у Gmail, Outlook имеј
 #. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 msgid "Don't import emails from team@ support@ noreply@..."
-msgstr ""
+msgstr "Не увозите имејлове са team@ support@ noreply@..."
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -13727,7 +13727,7 @@ msgstr "Следећи период"
 #. js-lingui-id: tgnDjk
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 msgid "Next screenshot"
-msgstr ""
+msgstr "Следећи снимак екрана"
 
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -14771,7 +14771,7 @@ msgstr "Ништа за приказ"
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/ui/feedback/toast/components/AppToaster.tsx
 msgid "Notifications"
-msgstr ""
+msgstr "Обавештења"
 
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
@@ -16191,7 +16191,7 @@ msgstr "Претходни период"
 #. js-lingui-id: k7xxm/
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 msgid "Previous screenshot"
-msgstr ""
+msgstr "Претходни снимак екрана"
 
 #. js-lingui-id: aHCEmh
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -17248,7 +17248,7 @@ msgstr "Тип ресурса"
 #. js-lingui-id: s+MGs7
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Resources"
-msgstr ""
+msgstr "Ресурси"
 
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
@@ -18767,7 +18767,7 @@ msgstr "Седми"
 #. js-lingui-id: Z8lGw6
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Share"
-msgstr ""
+msgstr "Дели"
 
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
@@ -22589,7 +22589,7 @@ msgstr ""
 #. js-lingui-id: 0XIngj
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
 msgid "View screenshot in full screen"
-msgstr ""
+msgstr "Прикажи снимак екрана преко целог екрана"
 
 #. js-lingui-id: 4y776f
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
