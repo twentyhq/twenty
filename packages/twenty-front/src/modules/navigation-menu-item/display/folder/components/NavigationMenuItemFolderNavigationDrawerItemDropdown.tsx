@@ -88,7 +88,7 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
             onClose={closeDropdown}
           />
         ) : (
-          <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
+          <DropdownContent widthInPixels={GenericDropdownContentWidth.Large}>
             <DropdownMenuItemsContainer>
               <MenuItem
                 LeftIcon={IconEdit}
