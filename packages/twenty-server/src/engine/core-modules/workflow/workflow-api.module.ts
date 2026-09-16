@@ -19,6 +19,7 @@ import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/w
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
 import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
+import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { WorkflowCoreModule } from 'src/engine/core-modules/workflow/workflow-core.module';
 import { CoreWorkflowVersionListService } from 'src/engine/core-modules/workflow/services/core-workflow-version-list.service';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
@@ -71,6 +72,7 @@ import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/wor
     CoreWorkflowListService,
     CoreWorkflowMutationWorkspaceService,
     CoreWorkflowVersionMutationWorkspaceService,
+    CoreWorkflowVersionWriteService,
     CoreWorkflowVersionListService,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
     provideWorkspaceScopedRepository(WorkflowEntity),

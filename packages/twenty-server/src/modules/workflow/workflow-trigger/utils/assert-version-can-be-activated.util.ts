@@ -15,8 +15,11 @@ import { WorkflowTriggerType } from 'src/modules/workflow/workflow-trigger/types
 import { assertFormStepIsValid } from 'src/modules/workflow/workflow-trigger/utils/assert-form-step-is-valid.util';
 
 export function assertVersionCanBeActivated(
-  workflowVersion: WorkflowVersionWorkspaceEntity,
-  workflow: WorkflowWorkspaceEntity,
+  workflowVersion: Pick<
+    WorkflowVersionWorkspaceEntity,
+    'id' | 'status' | 'trigger' | 'steps'
+  >,
+  workflow: Pick<WorkflowWorkspaceEntity, 'lastPublishedVersionId'>,
 ) {
   assertVersionIsValid(workflowVersion);
 
@@ -40,7 +43,12 @@ export function assertVersionCanBeActivated(
   }
 }
 
-function assertVersionIsValid(workflowVersion: WorkflowVersionWorkspaceEntity) {
+function assertVersionIsValid(
+  workflowVersion: Pick<
+    WorkflowVersionWorkspaceEntity,
+    'id' | 'status' | 'trigger' | 'steps'
+  >,
+) {
   if (!workflowVersion.trigger) {
     throw new WorkflowTriggerException(
       'Workflow version does not contain trigger',

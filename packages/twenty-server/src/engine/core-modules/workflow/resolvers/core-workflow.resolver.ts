@@ -75,6 +75,7 @@ export class CoreWorkflowResolver {
   @Mutation(() => CoreWorkflowDTO)
   async duplicateCoreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthUser() user: AuthContextUser,
     @Args('input')
     {
       coreWorkflowIdToDuplicate,
@@ -83,6 +84,7 @@ export class CoreWorkflowResolver {
   ): Promise<CoreWorkflowDTO> {
     return this.coreWorkflowMutationWorkspaceService.duplicateWorkflow({
       workspaceId,
+      user,
       coreWorkflowIdToDuplicate,
       coreWorkflowVersionIdToCopy,
     });
@@ -117,19 +119,19 @@ export class CoreWorkflowResolver {
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args('input') input: DiscardCoreWorkflowDraftInput,
   ): Promise<CoreWorkflowDTO | null> {
-    const workspaceWorkflowId =
+    const coreWorkflowId =
       await this.coreWorkflowMutationWorkspaceService.discardDraftVersion(
         workspaceId,
         input,
       );
 
-    if (!isDefined(workspaceWorkflowId)) {
+    if (!isDefined(coreWorkflowId)) {
       return null;
     }
 
-    return this.coreWorkflowListService.findOneByWorkspaceWorkflowId({
+    return this.coreWorkflowListService.findOneById({
       workspaceId,
-      workspaceWorkflowId,
+      coreWorkflowId,
     });
   }
 

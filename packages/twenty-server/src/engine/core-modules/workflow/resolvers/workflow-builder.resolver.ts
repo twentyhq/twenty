@@ -51,14 +51,16 @@ export class WorkflowBuilderResolver {
       coreWorkflowVersionId,
     }: ComputeStepOutputSchemaInput,
   ): Promise<OutputSchema> {
-    const resolvedWorkflowVersionId =
-      !isDefined(workflowVersionId) && isDefined(coreWorkflowVersionId)
-        ? (
-            await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
-              { workspaceId, coreWorkflowVersionId },
-            )
-          ).workspaceWorkflowVersionId
-        : workflowVersionId;
+    let resolvedWorkflowVersionId = workflowVersionId;
+
+    if (!isDefined(workflowVersionId) && isDefined(coreWorkflowVersionId)) {
+      const { workspaceWorkflowVersionId } =
+        await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
+          { workspaceId, coreWorkflowVersionId },
+        );
+
+      resolvedWorkflowVersionId = workspaceWorkflowVersionId;
+    }
 
     return this.workflowSchemaWorkspaceService.computeStepOutputSchema({
       step,

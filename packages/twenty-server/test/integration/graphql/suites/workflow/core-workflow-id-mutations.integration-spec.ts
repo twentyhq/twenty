@@ -267,7 +267,9 @@ describe('core workflow id mutations (e2e)', () => {
 
     workflowRunIds.push(workflowRunId);
 
-    await waitForWorkflowCompletion(workflowRunId);
+    const completedRun = await waitForWorkflowCompletion(workflowRunId);
+
+    expect(completedRun?.status).toBe('COMPLETED');
 
     const deactivateResponse = await workflowGraphqlRequest(
       `
@@ -421,5 +423,26 @@ describe('core workflow id mutations (e2e)', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.errors[0].message).toContain('not found');
+  });
+
+  it('rejects a discard carrying both transitional ids', async () => {
+    const response = await workflowGraphqlRequest(
+      `
+        mutation DiscardCoreWorkflowDraft($input: DiscardCoreWorkflowDraftInput!) {
+          discardCoreWorkflowDraft(input: $input) {
+            id
+          }
+        }
+      `,
+      {
+        input: {
+          coreWorkflowVersionId: coreWorkflowVersionId,
+          workspaceWorkflowVersionId: coreWorkflowVersionId,
+        },
+      },
+    );
+
+    expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain('Only one');
   });
 });

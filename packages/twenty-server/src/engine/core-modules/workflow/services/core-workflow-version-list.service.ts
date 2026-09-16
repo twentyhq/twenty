@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { Equal, In, LessThan, LessThanOrEqual } from 'typeorm';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
@@ -185,36 +185,76 @@ export class CoreWorkflowVersionListService {
     const coreWorkflowVersion =
       await this.coreWorkflowVersionRepository.findOne(workspaceId, {
         where: { id: coreWorkflowVersionId },
-        select: {
-          id: true,
-          coreWorkflowId: true,
-          triggers: true,
-          steps: true,
-        },
       });
 
     if (!isDefined(coreWorkflowVersion?.coreWorkflowId)) {
       return null;
     }
 
-    const siblings = await this.findManyByCoreWorkflowId({
+    const coreWorkflow = await this.coreWorkflowRepository.findOne(
       workspaceId,
-      coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
-    });
-
-    const coreWorkflowVersionMetadata = siblings.find(
-      (sibling) => sibling.id === coreWorkflowVersionId,
+      {
+        where: { id: coreWorkflowVersion.coreWorkflowId },
+        select: { id: true, workspaceWorkflowId: true },
+      },
     );
 
-    if (!isDefined(coreWorkflowVersionMetadata)) {
-      return null;
-    }
+    const olderSiblingsCount = await this.coreWorkflowVersionRepository.count(
+      workspaceId,
+      {
+        where: {
+          coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
+          createdAt: LessThan(coreWorkflowVersion.createdAt),
+        },
+      },
+    );
+
+    const tiedOlderSiblingsCount =
+      await this.coreWorkflowVersionRepository.count(workspaceId, {
+        where: {
+          coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
+          createdAt: Equal(coreWorkflowVersion.createdAt),
+          id: LessThanOrEqual(coreWorkflowVersion.id),
+        },
+      });
+
+    const workspaceWorkflowVersionId =
+      await this.findWorkspaceVersionIdForCoreVersionId({
+        workspaceId,
+        coreWorkflowVersionId,
+      });
 
     return {
-      ...coreWorkflowVersionMetadata,
+      id: coreWorkflowVersion.id,
+      label: buildCoreWorkflowVersionLabel(
+        olderSiblingsCount + tiedOlderSiblingsCount,
+      ),
+      status: coreWorkflowVersion.status,
+      workspaceWorkflowVersionId,
+      workspaceWorkflowId: coreWorkflow?.workspaceWorkflowId ?? null,
       trigger: coreWorkflowVersion.triggers?.[0] ?? null,
       steps: coreWorkflowVersion.steps ?? null,
+      createdAt: coreWorkflowVersion.createdAt.toISOString(),
+      updatedAt: coreWorkflowVersion.updatedAt.toISOString(),
     };
+  }
+
+  private async findWorkspaceVersionIdForCoreVersionId({
+    workspaceId,
+    coreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId: string;
+  }): Promise<string | null> {
+    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      const workspaceVersion = await this.workspaceOrmManager
+        .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+          shouldBypassPermissionChecks: true,
+        })
+        .findOne({ where: { coreWorkflowVersionId } });
+
+      return workspaceVersion?.id ?? null;
+    }, buildSystemAuthContext(workspaceId));
   }
 
   private async findWorkspaceVersionIdByCoreVersionId({

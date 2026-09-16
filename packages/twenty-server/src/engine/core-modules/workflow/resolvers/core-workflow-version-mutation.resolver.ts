@@ -25,6 +25,7 @@ import { WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/
 import { WorkflowVersionTriggerDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-trigger.dto';
 import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-query-validation-graphql-api-exception.filter';
 import { WorkflowTriggerGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-trigger-graphql-api-exception.filter';
+import { WorkflowVersionEdgeGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-edge-graphql-api-exception.filter';
 import { WorkflowVersionStepGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-step-graphql-api-exception.filter';
 import { WorkflowVersionValidationGraphqlApiExceptionFilter } from 'src/engine/core-modules/workflow/filters/workflow-version-validation-graphql-api-exception.filter';
 import { CoreWorkflowLifecycleWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service';
@@ -53,6 +54,7 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
   PreventNestToAutoLogGraphqlErrorsFilter,
   WorkflowQueryValidationGraphqlApiExceptionFilter,
   WorkflowTriggerGraphqlApiExceptionFilter,
+  WorkflowVersionEdgeGraphqlApiExceptionFilter,
   WorkflowVersionStepGraphqlApiExceptionFilter,
   WorkflowVersionValidationGraphqlApiExceptionFilter,
 )

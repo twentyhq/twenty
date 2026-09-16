@@ -15,6 +15,10 @@ import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common
 import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/assert-workflow-version-is-draft.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
+import {
+  buildSourceStepWithAddedEdge,
+  buildSourceStepWithRemovedEdge,
+} from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/WorkflowStepConnectionOptions';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowTrigger } from 'src/modules/workflow/workflow-trigger/types/workflow-trigger.type';
@@ -237,15 +241,11 @@ export class WorkflowVersionEdgeWorkspaceService {
       });
     }
 
-    const { updatedSourceStep, shouldPersist } = isDefined(
+    const { updatedSourceStep, shouldPersist } = buildSourceStepWithAddedEdge({
+      sourceStep,
+      target,
       sourceConnectionOptions,
-    )
-      ? this.buildUpdatedSourceStepWithConnectionOptions({
-          sourceStep,
-          target,
-          sourceConnectionOptions,
-        })
-      : this.buildUpdatedSourceStep({ sourceStep, target });
+    });
 
     const updatedSteps = steps.map((step) => {
       if (step.id === source) {
@@ -273,97 +273,6 @@ export class WorkflowVersionEdgeWorkspaceService {
       existingSteps: steps,
       updatedSteps,
     });
-  }
-
-  private buildUpdatedSourceStepWithConnectionOptions({
-    sourceStep,
-    target,
-    sourceConnectionOptions,
-  }: {
-    sourceStep: WorkflowAction;
-    target: string;
-    sourceConnectionOptions: WorkflowStepConnectionOptions;
-  }): {
-    updatedSourceStep: WorkflowAction;
-    shouldPersist: boolean;
-  } {
-    switch (sourceConnectionOptions.connectedStepType) {
-      case WorkflowActionType.ITERATOR:
-        if (sourceStep.type !== WorkflowActionType.ITERATOR) {
-          throw new WorkflowVersionEdgeException(
-            `Source step '${sourceStep.id}' is not an iterator`,
-            WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
-          );
-        }
-
-        if (sourceConnectionOptions.settings.isConnectedToLoop) {
-          const currentInitialLoopStepIds =
-            sourceStep.settings.input.initialLoopStepIds;
-
-          if (currentInitialLoopStepIds?.includes(target)) {
-            return {
-              updatedSourceStep: sourceStep,
-              shouldPersist: false,
-            };
-          }
-
-          return {
-            updatedSourceStep: {
-              ...sourceStep,
-              settings: {
-                ...sourceStep.settings,
-                input: {
-                  ...sourceStep.settings.input,
-                  initialLoopStepIds: [
-                    ...(currentInitialLoopStepIds ?? []),
-                    target,
-                  ],
-                },
-              },
-            },
-            shouldPersist: true,
-          };
-        } else {
-          return this.buildUpdatedSourceStep({
-            sourceStep,
-            target,
-          });
-        }
-
-      default:
-        return this.buildUpdatedSourceStep({
-          sourceStep,
-          target,
-        });
-    }
-  }
-
-  private buildUpdatedSourceStep({
-    sourceStep,
-    target,
-  }: {
-    sourceStep: WorkflowAction;
-    target: string;
-  }): {
-    updatedSourceStep: WorkflowAction;
-    shouldPersist: boolean;
-  } {
-    if (sourceStep.nextStepIds?.includes(target)) {
-      return {
-        updatedSourceStep: sourceStep,
-        shouldPersist: false,
-      };
-    }
-
-    const updatedSourceStep = {
-      ...sourceStep,
-      nextStepIds: [...(sourceStep.nextStepIds ?? []), target],
-    };
-
-    return {
-      updatedSourceStep,
-      shouldPersist: true,
-    };
   }
 
   private async deleteTriggerEdge({
@@ -454,23 +363,13 @@ export class WorkflowVersionEdgeWorkspaceService {
       });
     }
 
-    const { updatedSourceStep, shouldPersist } = isDefined(
-      sourceConnectionOptions,
-    )
-      ? this.buildUpdatedSourceStepWithOptions({
-          sourceStep,
-          target,
-          sourceConnectionOptions,
-        })
-      : {
-          updatedSourceStep: {
-            ...sourceStep,
-            nextStepIds: sourceStep.nextStepIds?.filter(
-              (nextStepId: string) => nextStepId !== target,
-            ),
-          },
-          shouldPersist: true,
-        };
+    const { updatedSourceStep, shouldPersist } = buildSourceStepWithRemovedEdge(
+      {
+        sourceStep,
+        target,
+        sourceConnectionOptions,
+      },
+    );
 
     if (!shouldPersist) {
       return computeWorkflowVersionStepChanges({
@@ -503,74 +402,6 @@ export class WorkflowVersionEdgeWorkspaceService {
       existingSteps: steps,
       updatedSteps,
     });
-  }
-
-  private buildUpdatedSourceStepWithOptions({
-    sourceStep,
-    target,
-    sourceConnectionOptions,
-  }: {
-    sourceStep: WorkflowAction;
-    target: string;
-    sourceConnectionOptions: WorkflowStepConnectionOptions;
-  }): {
-    updatedSourceStep: WorkflowAction;
-    shouldPersist: boolean;
-  } {
-    switch (sourceConnectionOptions.connectedStepType) {
-      case WorkflowActionType.ITERATOR:
-        if (sourceStep.type !== WorkflowActionType.ITERATOR) {
-          throw new WorkflowVersionEdgeException(
-            `Source step '${sourceStep.id}' is not an iterator`,
-            WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
-          );
-        }
-
-        if (sourceConnectionOptions.settings.isConnectedToLoop) {
-          const currentInitialLoopStepIds =
-            sourceStep.settings.input.initialLoopStepIds;
-
-          if (!currentInitialLoopStepIds?.includes(target)) {
-            return {
-              updatedSourceStep: sourceStep,
-              shouldPersist: false,
-            };
-          }
-
-          return {
-            updatedSourceStep: {
-              ...sourceStep,
-              settings: {
-                ...sourceStep.settings,
-                input: {
-                  ...sourceStep.settings.input,
-                  initialLoopStepIds: currentInitialLoopStepIds.filter(
-                    (id: string) => id !== target,
-                  ),
-                },
-              },
-            },
-            shouldPersist: true,
-          };
-        }
-
-        return {
-          updatedSourceStep: {
-            ...sourceStep,
-            nextStepIds: sourceStep.nextStepIds?.filter((id) => id !== target),
-          },
-          shouldPersist: true,
-        };
-
-      default:
-        return {
-          updatedSourceStep: {
-            ...sourceStep,
-            nextStepIds: sourceStep.nextStepIds?.filter((id) => id !== target),
-          },
-          shouldPersist: true,
-        };
-    }
   }
 
   private assertConnectionOptionsAreSupported(
