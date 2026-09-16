@@ -1,3 +1,4 @@
+import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-drawer/contexts/NavigationDrawerItemEditingContext';
 import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
@@ -282,6 +283,7 @@ export const NavigationDrawerItem = ({
   variant = 'default',
 }: NavigationDrawerItemProps) => {
   const { theme } = useContext(ThemeContext);
+  const editingContent = useContext(NavigationDrawerItemEditingContext);
   const isMobile = useIsMobile();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const setIsNavigationDrawerExpanded = useSetAtomState(
@@ -327,21 +329,29 @@ export const NavigationDrawerItem = ({
     triggerEvent,
   });
 
-  const elementType = isExternalLink
-    ? 'a'
-    : isInternalLink
-      ? Link
-      : isDefined(rightOptions)
-        ? 'div'
-        : undefined;
+  const elementType = editingContent
+    ? 'div'
+    : isExternalLink
+      ? 'a'
+      : isInternalLink
+        ? Link
+        : isDefined(rightOptions)
+          ? 'div'
+          : undefined;
 
   return (
     <StyledNavigationDrawerItemContainer>
       <StyledItem
         id={navigationItemId}
         className={`navigation-drawer-item ${className || ''}`}
-        onClick={handleMouseDownNavigationClickClick}
-        onMouseDown={handleMouseDown}
+        onClick={(event) => {
+          if (!event.currentTarget.contains(event.target as Node)) return;
+          handleMouseDownNavigationClickClick(event);
+        }}
+        onMouseDown={(event) => {
+          if (!event.currentTarget.contains(event.target as Node)) return;
+          handleMouseDown(event);
+        }}
         active={active}
         aria-current={isDefined(to) && active ? 'page' : undefined}
         isSoon={isSoon}
@@ -351,9 +361,15 @@ export const NavigationDrawerItem = ({
         isNavigationDrawerExpanded={isExpanded}
         isDragging={isDragging}
         hasRightOptions={isDefined(rightOptions)}
-        isSelectedInEditMode={isSelectedInEditMode}
+        isSelectedInEditMode={
+          isSelectedInEditMode || editingContent?.isSelected
+        }
         as={elementType}
-        role={!to && isDefined(rightOptions) ? 'button' : undefined}
+        role={
+          !editingContent && !to && isDefined(rightOptions)
+            ? 'button'
+            : undefined
+        }
         to={isInternalLink ? to : undefined}
         href={isExternalLink ? to : undefined}
         target={isExternalLink ? '_blank' : undefined}
@@ -367,7 +383,10 @@ export const NavigationDrawerItem = ({
             </NavigationDrawerAnimatedCollapseWrapper>
           )}
 
-          {Icon &&
+          {editingContent ? (
+            <StyledIcon>{editingContent.icon}</StyledIcon>
+          ) : (
+            Icon &&
             (isNonEmptyString(iconColor) ? (
               <StyledIcon>
                 <TintedIconTile Icon={Icon} color={iconColor} />
@@ -401,25 +420,28 @@ export const NavigationDrawerItem = ({
                   }
                 />
               </StyledIcon>
-            ))}
+            ))
+          )}
 
           <StyledLabelParent>
-            <OverflowingTextWithTooltip
-              text={
-                <>
-                  <StyledItemLabel>{label}</StyledItemLabel>
-                  {secondaryLabel && (
-                    <StyledItemSecondaryLabel>
-                      {' · '}
-                      {secondaryLabel}
-                    </StyledItemSecondaryLabel>
-                  )}
-                </>
-              }
-              tooltipContent={
-                secondaryLabel ? `${label} · ${secondaryLabel}` : label
-              }
-            />
+            {editingContent?.label ?? (
+              <OverflowingTextWithTooltip
+                text={
+                  <>
+                    <StyledItemLabel>{label}</StyledItemLabel>
+                    {secondaryLabel && (
+                      <StyledItemSecondaryLabel>
+                        {' · '}
+                        {secondaryLabel}
+                      </StyledItemSecondaryLabel>
+                    )}
+                  </>
+                }
+                tooltipContent={
+                  secondaryLabel ? `${label} · ${secondaryLabel}` : label
+                }
+              />
+            )}
           </StyledLabelParent>
 
           {showStyledSpacer && <StyledSpacer />}

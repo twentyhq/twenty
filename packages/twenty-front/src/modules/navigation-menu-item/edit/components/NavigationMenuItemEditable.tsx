@@ -32,6 +32,7 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { NavigationMenuItemActions } from '@/navigation-menu-item/edit/components/NavigationMenuItemActions';
+import { NavigationMenuItemLinkEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor';
 import { NavigationMenuItemInlineEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor';
 
 const StyledRow = styled.div`
@@ -100,21 +101,28 @@ export const NavigationMenuItemEditable = ({
     item.type === NavigationMenuItemType.FOLDER;
   const close = () => {
     closeDropdown(dropdownId);
-    setSelectedNavigationMenuItemIdInEditMode(null);
+    setSelectedNavigationMenuItemIdInEditMode((selectedId) =>
+      selectedId === item.id ? null : selectedId,
+    );
   };
   const open = (nextMode: 'actions' | 'edit') => {
     setNavigationMenuItemEditSection(isWorkspace ? 'workspace' : 'favorite');
     setMode(nextMode);
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
-  // Newly created folders and links mount after the add dropdown closes.
+  // Favorite links need a URL editor outside workspace customization.
   useEffect(() => {
-    if (canEdit && selectedNavigationMenuItemIdInEditMode === item.id) {
+    if (
+      item.type === NavigationMenuItemType.LINK &&
+      selectedNavigationMenuItemIdInEditMode === item.id &&
+      !canOrganize
+    ) {
       setMode('edit');
       openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
     }
   }, [
-    canEdit,
+    item.type,
+    canOrganize,
     selectedNavigationMenuItemIdInEditMode,
     item.id,
     dropdownId,
@@ -131,7 +139,22 @@ export const NavigationMenuItemEditable = ({
     FOLDER: { label: t`Folder`, Icon: IconFolder },
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
   };
-  let content = children;
+  const row =
+    canEdit &&
+    (canOrganize ||
+      (item.type === NavigationMenuItemType.FOLDER &&
+        selectedNavigationMenuItemIdInEditMode === item.id)) ? (
+      <NavigationMenuItemInlineEditor
+        item={item}
+        dropdownId={dropdownId}
+        onEditLink={() => open('edit')}
+      >
+        {children}
+      </NavigationMenuItemInlineEditor>
+    ) : (
+      children
+    );
+  let content = row;
   if (
     canOrganize ||
     (canEdit && selectedNavigationMenuItemIdInEditMode === item.id)
@@ -143,10 +166,10 @@ export const NavigationMenuItemEditable = ({
         onClose={close}
       />
     );
-    if (mode === 'edit' && canEdit) {
+    if (mode === 'edit' && item.type === NavigationMenuItemType.LINK) {
       dropdownComponents = (
         <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-          <NavigationMenuItemInlineEditor
+          <NavigationMenuItemLinkEditor
             item={item}
             dropdownId={dropdownId}
             onClose={close}
@@ -162,7 +185,7 @@ export const NavigationMenuItemEditable = ({
             ? navigationMenuItemInsertionAnchor.element
             : undefined
         }
-        clickableComponent={children}
+        clickableComponent={row}
         disableClickForClickableComponent
         dropdownPlacement={mode === 'edit' ? 'top-start' : 'right-start'}
         dropdownOffset={
@@ -172,7 +195,11 @@ export const NavigationMenuItemEditable = ({
           `${dropdownId}-icon`,
           `${dropdownId}-icon-icon-color-picker`,
         ]}
-        onClose={() => setSelectedNavigationMenuItemIdInEditMode(null)}
+        onClose={() =>
+          setSelectedNavigationMenuItemIdInEditMode((selectedId) =>
+            selectedId === item.id ? null : selectedId,
+          )
+        }
         dropdownComponents={dropdownComponents}
       />
     );
@@ -186,20 +213,6 @@ export const NavigationMenuItemEditable = ({
         event.preventDefault();
         event.stopPropagation();
         open('actions');
-      }}
-      onClickCapture={(event) => {
-        if (!event.currentTarget.contains(event.target as Node)) return;
-        if (
-          !canOrganize ||
-          !canEdit ||
-          (event.target as HTMLElement).closest(
-            '[data-navigation-actions], [data-navigation-folder-toggle]',
-          )
-        )
-          return;
-        event.preventDefault();
-        event.stopPropagation();
-        open('edit');
       }}
     >
       {content}
@@ -225,9 +238,16 @@ export const NavigationMenuItemEditable = ({
         <AppTooltip
           anchorSelect={`#${anchorId}`}
           title={types[item.type as NavigationMenuItemType].label}
+          description={
+            item.type === NavigationMenuItemType.FOLDER
+              ? t`Click to edit`
+              : undefined
+          }
           Icon={types[item.type as NavigationMenuItemType].Icon}
           offset={theme.spacingMultiplicator}
-          hidden={isDropdownOpen}
+          hidden={
+            isDropdownOpen || selectedNavigationMenuItemIdInEditMode === item.id
+          }
           place={TooltipPosition.Top}
           positionStrategy="fixed"
         />

@@ -1,3 +1,4 @@
+import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
 import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -66,6 +67,9 @@ export const NavigationMenuItemAddDropdownContent = ({
   const { getIcon } = useIcons();
   const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
     selectedNavigationMenuItemIdInEditModeState,
+  );
+  const setNavigationMenuItemIdToRename = useSetAtomState(
+    navigationMenuItemIdToRenameState,
   );
   const [step, setStep] = useState<Step>('main');
   const [search, setSearch] = useState('');
@@ -141,6 +145,12 @@ export const NavigationMenuItemAddDropdownContent = ({
     });
     onClose();
     setSelectedNavigationMenuItemIdInEditMode(itemId);
+    if (
+      input.type === NavigationMenuItemType.FOLDER ||
+      input.type === NavigationMenuItemType.LINK
+    ) {
+      setNavigationMenuItemIdToRename(itemId);
+    }
   };
   const navigate = (next: Step) => {
     setStep(next);

@@ -1,3 +1,5 @@
+import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { Fragment } from 'react';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
@@ -71,6 +73,8 @@ const meta: Meta<typeof NavigationMenuItemEditable> = {
   ],
   parameters: { container: { width: 240 } },
   beforeEach: () => {
+    jotaiStore.set(selectedNavigationMenuItemIdInEditModeState.atom, null);
+    jotaiStore.set(navigationMenuItemIdToRenameState.atom, null);
     jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, true);
     jotaiStore.set(navigationMenuItemsDraftState.atom, ITEMS);
     jotaiStore.set(navigationMenuItemEditSectionState.atom, 'workspace');
@@ -86,14 +90,20 @@ export const EditLink: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(await canvas.findByText('Docs'));
-    const label = await body.findByDisplayValue('Docs');
-    const url = await body.findByDisplayValue('https://example.com');
+    await userEvent.click(await canvas.findByText('Docs'));
+    const label = await canvas.findByDisplayValue('Docs');
     await userEvent.clear(label);
-    await userEvent.type(label, 'Documentation');
+    await userEvent.type(label, 'Documentation{Enter}');
+    await expect(await canvas.findByText('Documentation')).toBeVisible();
+    await userEvent.click(
+      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
+    );
+    const url = await body.findByDisplayValue('https://example.com');
     await userEvent.clear(url);
     await userEvent.type(url, 'https://twenty.com/docs{Enter}');
-    await expect(await canvas.findByText('Documentation')).toBeVisible();
-    await userEvent.click(await canvas.findByText('Documentation'));
+    await userEvent.click(
+      (await canvas.findAllByRole('button', { name: 'Edit link' }))[0],
+    );
     await expect(
       await body.findByDisplayValue('https://twenty.com/docs'),
     ).toBeVisible();
@@ -160,10 +170,48 @@ export const PreviewInsertion: Story = {
       ),
     ).toEqual(['Select a menu item', 'Docs', 'Status']);
     await userEvent.click(await body.findByText('Link'));
-    await expect(await body.findByDisplayValue('Link label')).toBeVisible();
+    await expect(await body.findByDisplayValue('Twenty')).toBeVisible();
     await expect(
       canvas.queryByText('Select a menu item'),
     ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const EditFolderInPlace: Story = {
+  beforeEach: () => {
+    jotaiStore.set(navigationMenuItemsDraftState.atom, [
+      {
+        ...ITEMS[0],
+        id: 'folder',
+        name: 'Projects',
+        type: NavigationMenuItemType.FOLDER,
+        icon: 'IconFolder',
+        color: 'orange',
+      },
+    ]);
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(await canvas.findByText('Projects'));
+    await expect(canvas.queryByRole('textbox')).not.toBeInTheDocument();
+    await userEvent.click(await canvas.findByText('Projects'));
+    const input = await canvas.findByDisplayValue('Projects');
+    await userEvent.clear(input);
+    await userEvent.type(input, 'Work{Enter}');
+    await userEvent.click(await canvas.findByText('Work'));
+    await userEvent.clear(await canvas.findByDisplayValue('Work'));
+    await userEvent.type(await canvas.findByRole('textbox'), 'Discard{Escape}');
+    await expect(await canvas.findByText('Work')).toBeVisible();
+    await userEvent.click(
+      await canvas.findByLabelText('Choose icon and color', {
+        selector: 'button',
+      }),
+    );
+    await expect(
+      await body.findByRole('button', { name: 'Icon123' }),
+    ).toBeVisible();
     await userEvent.keyboard('{Escape}');
   },
 };

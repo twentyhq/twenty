@@ -53,11 +53,12 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 const StyledFolderContainer = styled.div<{
   $isSelectedInEditMode: boolean;
 }>`
-  border: ${({ $isSelectedInEditMode }) =>
+  border-radius: ${themeCssVariables.border.radius.md};
+  outline: ${({ $isSelectedInEditMode }) =>
     $isSelectedInEditMode
       ? `1px solid ${themeCssVariables.color.blue}`
       : 'none'};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  outline-offset: -1px;
   transition: background-color 150ms ease-in-out;
 
   &[data-drag-over-header='true'] {
