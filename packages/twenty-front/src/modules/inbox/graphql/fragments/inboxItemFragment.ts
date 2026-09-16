@@ -56,11 +56,6 @@ export const INBOX_ITEM_FRAGMENT = gql`
       output
       error
     }
-    inboxItemType {
-      id
-      name
-      label
-      icon
-    }
+    icon
   }
 `;

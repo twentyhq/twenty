@@ -27,7 +27,6 @@ export type InboxPrincipalRef =
 
 export type RouteInboxItemArgs = {
   workspaceId: string;
-  typeName: string;
   // Every producer names itself, so a row can always be traced back to what
   // wrote it and a bad producer is identifiable from the data.
   producer: InboxItemProducer;
@@ -35,6 +34,9 @@ export type RouteInboxItemArgs = {
   // produced no new text cannot blank out a good title or summary.
   title?: string;
   summary?: string;
+  // Presentation only. Left out, the client derives one from the subject and
+  // the plan, so a producer names an icon when neither says enough.
+  icon?: string;
   source?: InboxItemContextSource;
   // Replaced wholesale on a fold, like the plan: what an item is about is what
   // the latest event says it is about.
@@ -50,5 +52,7 @@ export type RouteInboxItemArgs = {
   // Only read for subjects that carry no owner of their own. When it resolves
   // to nobody the item lands in triage rather than being dropped.
   target?: InboxPrincipalRef;
+  // Left out, an item with proposed calls needs action and one without is an
+  // update; a producer that knows better says so.
   priority?: InboxItemPriority;
 };

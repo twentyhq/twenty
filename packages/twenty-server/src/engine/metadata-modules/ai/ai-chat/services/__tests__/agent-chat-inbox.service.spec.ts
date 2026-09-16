@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { INBOX_ITEM_TYPE_NAME } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
+import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { AgentChatInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-inbox.service';
 
@@ -42,7 +42,8 @@ describe('AgentChatInboxService', () => {
       expect(inboxRouterService.route).toHaveBeenCalledWith({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: INBOX_ITEM_TYPE_NAME.agentRunFailed,
+        icon: 'IconAlertTriangle',
+        priority: InboxItemPriority.NEEDS_ACTION,
         summary: 'The model stopped responding',
         subject: {
           kind: 'thread',
@@ -77,7 +78,8 @@ describe('AgentChatInboxService', () => {
 
       expect(inboxRouterService.route).toHaveBeenCalledWith(
         expect.objectContaining({
-          typeName: INBOX_ITEM_TYPE_NAME.agentQuestion,
+          icon: 'IconHelpCircle',
+          priority: InboxItemPriority.NEEDS_ACTION,
         }),
       );
     });
@@ -92,7 +94,8 @@ describe('AgentChatInboxService', () => {
 
       expect(inboxRouterService.route).toHaveBeenCalledWith(
         expect.objectContaining({
-          typeName: INBOX_ITEM_TYPE_NAME.conversation,
+          icon: 'IconMessageCircle',
+          priority: InboxItemPriority.UPDATE,
         }),
       );
     });

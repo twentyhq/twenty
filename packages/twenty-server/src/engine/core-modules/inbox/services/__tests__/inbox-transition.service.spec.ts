@@ -1,6 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
@@ -17,11 +16,6 @@ const OTHER_USER_WORKSPACE_ID = 'other-user-workspace-id';
 const QUEUE_ID = 'queue-id';
 const NOW = new Date('2026-08-07T10:00:00.000Z');
 
-const APPROVAL_TYPE = {
-  id: 'approval-type-id',
-  name: 'approval',
-} as InboxItemTypeEntity;
-
 const buildInboxItem = (
   overrides: Partial<InboxItemEntity> = {},
 ): InboxItemEntity =>
@@ -29,7 +23,7 @@ const buildInboxItem = (
     id: INBOX_ITEM_ID,
     workspaceId: WORKSPACE_ID,
     assigneeUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
-    inboxItemType: APPROVAL_TYPE,
+    icon: 'IconCircleCheck',
     lastEventAt: new Date('2026-08-07T09:00:00.000Z'),
     clearedAt: null,
     version: 3,

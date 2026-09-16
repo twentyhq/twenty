@@ -6,7 +6,6 @@ import {
 import { type InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { type InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
-import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { type InboxItemFieldSchema } from 'src/engine/core-modules/inbox/types/inbox-item-field-schema.type';
 import { toInboxItemContextDto } from 'src/engine/core-modules/inbox/utils/to-inbox-item-context-dto.util';
 import {
@@ -38,14 +37,12 @@ export const toInboxItemToolCallDto = (
   error: toolCall.error,
 });
 
-// Requires the type relation to be loaded, so a caller that forgot the join
-// fails at compile time rather than at render time. Tool calls are optional:
-// a producer's freshly inserted row has none to show.
-export type InboxItemWithType = Omit<
+// Tool calls and records are optional: a producer's freshly inserted row has
+// none to show.
+export type InboxItemWithPlan = Omit<
   InboxItemEntity,
-  'inboxItemType' | 'toolCalls' | 'records'
+  'toolCalls' | 'records'
 > & {
-  inboxItemType: InboxItemTypeEntity;
   toolCalls?: InboxItemToolCallEntity[];
   records?: InboxItemRecordEntity[];
 };
@@ -53,20 +50,13 @@ export type InboxItemWithType = Omit<
 // `now` comes from the request rather than from here, so every item in one
 // response is placed against the same instant as the query that selected it.
 export const toInboxItemDto = (
-  inboxItem: InboxItemWithType,
+  inboxItem: InboxItemWithPlan,
   now: Date,
   actorUserWorkspaceId: string,
 ): InboxItemDTO => {
-  const inboxItemType = inboxItem.inboxItemType;
-
   return {
     id: inboxItem.id,
-    inboxItemType: {
-      id: inboxItemType.id,
-      name: inboxItemType.name,
-      label: inboxItemType.label,
-      icon: inboxItemType.icon,
-    },
+    icon: inboxItem.icon,
     scope: getInboxItemScope(inboxItem, now),
     isUnread: isInboxItemUnread(inboxItem),
     priority: inboxItem.priority,

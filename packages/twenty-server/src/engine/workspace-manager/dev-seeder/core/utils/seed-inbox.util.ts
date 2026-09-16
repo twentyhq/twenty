@@ -1,11 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
-import {
-  INBOX_ITEM_TYPE_NAME,
-  STANDARD_INBOX_ITEM_TYPES,
-  type StandardInboxItemTypeName,
-} from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import {
@@ -27,7 +22,6 @@ import { INBOX_MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager
 import { MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
 import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 
-const inboxItemTypeTableName = 'inboxItemType';
 const inboxQueueTableName = 'inboxQueue';
 const inboxQueueRoleTableName = 'inboxQueueRole';
 const inboxItemTableName = 'inboxItem';
@@ -81,7 +75,7 @@ const getSeededPeople = (workspaceId: string): SeededPeople => {
 
 type SeededInboxItem = {
   seedName: string;
-  typeName: StandardInboxItemTypeName;
+  icon: string;
   title: string;
   priority?: InboxItemPriority;
   hoursAgo: number;
@@ -162,7 +156,7 @@ const EMAIL_INPUT_SCHEMA: InboxItemFieldSchema[] = [
 const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
   {
     seedName: 'plan-move-google-renewal-forward',
-    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    icon: 'IconSparkles',
     title: "Move Google's renewal forward",
     hoursAgo: 1,
     assignee: 'me',
@@ -309,7 +303,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'plan-invoice-microsoft-renewal',
-    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    icon: 'IconSparkles',
     title: "Invoice Microsoft's annual renewal",
     hoursAgo: 1.5,
     assignee: 'me',
@@ -383,7 +377,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'plan-create-meta-opportunity',
-    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    icon: 'IconSparkles',
     title: 'Create an opportunity for Meta',
     hoursAgo: 2,
     assignee: 'me',
@@ -466,7 +460,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'plan-schedule-demo-with-slb',
-    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    icon: 'IconSparkles',
     title: 'Schedule a demo with SLB',
     hoursAgo: 3,
     assignee: 'me',
@@ -555,7 +549,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'plan-update-cisco-profile',
-    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    icon: 'IconSparkles',
     title: "Update Cisco's company profile",
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 5,
@@ -610,7 +604,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'plan-log-call-with-uber',
-    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    icon: 'IconSparkles',
     title: 'Log the call with Uber',
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 28,
@@ -698,7 +692,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
 const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   {
     seedName: 'approve-google-renewal',
-    typeName: INBOX_ITEM_TYPE_NAME.approval,
+    icon: 'IconCircleCheck',
     title: "Approve Google's renewal quote",
     content: {
       summary:
@@ -727,7 +721,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'question-microsoft-tier',
-    typeName: INBOX_ITEM_TYPE_NAME.agentQuestion,
+    icon: 'IconHelpCircle',
     title: 'Which pricing tier should I quote Microsoft?',
     content: {
       summary:
@@ -739,7 +733,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'sync-invoices-run-failed',
-    typeName: INBOX_ITEM_TYPE_NAME.workflowRunFailed,
+    icon: 'IconAlertTriangle',
     title: 'Sync invoices to Stripe failed',
     content: {
       summary:
@@ -750,7 +744,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'meta-buying-committee',
-    typeName: INBOX_ITEM_TYPE_NAME.conversation,
+    icon: 'IconMessageCircle',
     title: "Add Meta's buying committee",
     content: {
       summary: 'New reply: Sarah added two more stakeholders to the thread.',
@@ -763,7 +757,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'q4-pipeline-review',
-    typeName: INBOX_ITEM_TYPE_NAME.conversation,
+    icon: 'IconMessageCircle',
     title: 'Prepare the Q4 pipeline review',
     content: {
       summary:
@@ -777,7 +771,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'review-cisco-onboarding-fee',
-    typeName: INBOX_ITEM_TYPE_NAME.approval,
+    icon: 'IconCircleCheck',
     title: "Review Cisco's onboarding fee",
     content: {
       summary:
@@ -791,7 +785,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'approve-uber-invoice',
-    typeName: INBOX_ITEM_TYPE_NAME.approval,
+    icon: 'IconCircleCheck',
     title: "Approve Uber's onboarding invoice",
     content: { summary: 'Invoice #1042 for $5,000, due in 30 days.' },
     hoursAgo: 50,
@@ -802,7 +796,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'salesforce-profile-update',
-    typeName: INBOX_ITEM_TYPE_NAME.conversation,
+    icon: 'IconMessageCircle',
     title: "Update Salesforce's company profile",
     content: {
       summary:
@@ -817,7 +811,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'move-google-renewal-forward',
-    typeName: INBOX_ITEM_TYPE_NAME.approval,
+    icon: 'IconCircleCheck',
     title: "Move Google's renewal forward",
     content: {
       summary:
@@ -829,7 +823,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'create-microsoft-opportunity',
-    typeName: INBOX_ITEM_TYPE_NAME.conversation,
+    icon: 'IconMessageCircle',
     title: 'Create an opportunity for Microsoft',
     content: {
       summary:
@@ -842,7 +836,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'follow-up-slb-buyer',
-    typeName: INBOX_ITEM_TYPE_NAME.approval,
+    icon: 'IconCircleCheck',
     title: "Follow up with SLB's buyer",
     content: {
       summary:
@@ -855,7 +849,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'log-call-with-sarah',
-    typeName: INBOX_ITEM_TYPE_NAME.conversation,
+    icon: 'IconMessageCircle',
     title: 'Log the call with Sarah',
     content: {
       summary: 'Save the call notes and update the opportunity stage.',
@@ -867,7 +861,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'amdocs-ticket-closed',
-    typeName: INBOX_ITEM_TYPE_NAME.conversation,
+    icon: 'IconMessageCircle',
     title: "Amdocs' import ticket was closed",
     content: {
       summary: 'The duplicate contacts were merged and the customer confirmed.',
@@ -881,7 +875,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'update-q4-pipeline',
-    typeName: INBOX_ITEM_TYPE_NAME.conversation,
+    icon: 'IconMessageCircle',
     title: 'Update the Q4 pipeline',
     content: {
       summary:
@@ -959,7 +953,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
   // 1. A shared inbox. Nobody owns these until somebody takes them.
   {
     seedName: 'hello-refund-request',
-    typeName: INBOX_ITEM_TYPE_NAME.inboundMessage,
+    icon: 'IconMail',
     title: 'Refund for a duplicate charge',
     hoursAgo: 1,
     queueName: 'support',
@@ -1023,7 +1017,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'hello-sso-question',
-    typeName: INBOX_ITEM_TYPE_NAME.inboundMessage,
+    icon: 'IconMail',
     title: 'Does the plan include SAML?',
     hoursAgo: 4,
     isRead: true,
@@ -1048,7 +1042,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'hello-shipping-delay',
-    typeName: INBOX_ITEM_TYPE_NAME.inboundMessage,
+    icon: 'IconMail',
     title: 'Chasing an order that has not shipped',
     hoursAgo: 1,
     queueName: 'support',
@@ -1077,7 +1071,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
   // 2. Notifications about something the platform did or is asking for.
   {
     seedName: 'notify-inbox-access-request',
-    typeName: INBOX_ITEM_TYPE_NAME.systemNotification,
+    icon: 'IconBell',
     title: 'Jane asked for access to the Sales inbox',
     hoursAgo: 2,
     assignee: 'me',
@@ -1112,7 +1106,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'notify-mailbox-disconnected',
-    typeName: INBOX_ITEM_TYPE_NAME.systemNotification,
+    icon: 'IconBell',
     title: 'Your mailbox stopped syncing',
     priority: InboxItemPriority.UPDATE,
     hoursAgo: 9,
@@ -1133,7 +1127,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
   // 3. Something read on the person's behalf, turned into a suggestion.
   {
     seedName: 'suggest-tasks-from-call',
-    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    icon: 'IconSparkles',
     title: 'Three follow-ups from your call with Sarah',
     hoursAgo: 3,
     assignee: 'me',
@@ -1192,7 +1186,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
   },
   {
     seedName: 'suggest-from-personal-email',
-    typeName: INBOX_ITEM_TYPE_NAME.agentPlan,
+    icon: 'IconSparkles',
     title: 'Linnea is asking for the updated deck',
     hoursAgo: 6,
     assignee: 'me',
@@ -1294,47 +1288,6 @@ export const seedInbox = async ({
 }: SeedInboxArgs) => {
   const people = getSeededPeople(workspaceId);
   const now = new Date();
-
-  // The same rows the service seeds on first use, so a later upsert finds them
-  // by universal identifier and only refreshes their declarations. The ids are
-  // read back rather than assumed, in case the service got there first.
-  await queryRunner.manager
-    .createQueryBuilder()
-    .insert()
-    .into(`${schemaName}.${inboxItemTypeTableName}`, [
-      'id',
-      'workspaceId',
-      'universalIdentifier',
-      'applicationId',
-      'name',
-      'label',
-      'icon',
-      'defaultPriority',
-    ])
-    .orIgnore()
-    .values(
-      STANDARD_INBOX_ITEM_TYPES.map((standardType) => ({
-        id: generateSeedId(workspaceId, `inbox-item-type-${standardType.name}`),
-        workspaceId,
-        universalIdentifier: standardType.universalIdentifier,
-        applicationId: inboxReferenceIds.applicationId,
-        name: standardType.name,
-        label: standardType.label,
-        icon: standardType.icon,
-        defaultPriority: standardType.defaultPriority,
-      })),
-    )
-    .execute();
-
-  const typeRows: { id: string; name: StandardInboxItemTypeName }[] =
-    await queryRunner.query(
-      `SELECT "id", "name" FROM ${schemaName}."${inboxItemTypeTableName}"
-       WHERE "workspaceId" = $1 AND "deletedAt" IS NULL`,
-      [workspaceId],
-    );
-  const typeIdByName = Object.fromEntries(
-    typeRows.map((row) => [row.name, row.id]),
-  ) as Record<StandardInboxItemTypeName, string>;
 
   const queueIdByName = Object.fromEntries(
     SEEDED_QUEUES.map((queue) => [
@@ -1457,7 +1410,7 @@ export const seedInbox = async ({
     .into(`${schemaName}.${inboxItemTableName}`, [
       'id',
       'workspaceId',
-      'inboxItemTypeId',
+      'icon',
       'priority',
       'title',
       'summary',
@@ -1493,7 +1446,7 @@ export const seedInbox = async ({
           return {
             id: generateSeedId(workspaceId, `inbox-item-${item.seedName}`),
             workspaceId,
-            inboxItemTypeId: typeIdByName[item.typeName],
+            icon: item.icon,
             priority: item.priority ?? InboxItemPriority.NEEDS_ACTION,
             title: item.title,
             summary: item.content.summary ?? null,
@@ -1527,7 +1480,7 @@ export const seedInbox = async ({
             subjectRecordId: resolveSubjectRecordId(item.subject),
             queueId: item.queueName ? queueIdByName[item.queueName] : null,
             assigneeUserWorkspaceId,
-            slotKey: `${item.typeName}:${item.seedName}`,
+            slotKey: item.seedName,
             createdAt: hoursAgo(
               now,
               Math.max(item.hoursAgo, item.cleared?.hoursAgo ?? 0),

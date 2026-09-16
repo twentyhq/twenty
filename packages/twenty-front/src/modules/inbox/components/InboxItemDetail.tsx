@@ -4,7 +4,7 @@ import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { IconChevronLeft } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemMarkReadEffect } from '@/inbox/components/InboxItemMarkReadEffect';
@@ -13,10 +13,12 @@ import { InboxItemBody } from '@/inbox/components/InboxItemBody';
 import { InboxItemFooter } from '@/inbox/components/InboxItemFooter';
 import { InboxItemPlanProvider } from '@/inbox/components/InboxItemPlanProvider';
 import { useInboxItem } from '@/inbox/hooks/useInboxItem';
+import { useInboxItemIcon } from '@/inbox/hooks/useInboxItemIcon';
 import { useInboxItemPagination } from '@/inbox/hooks/useInboxItemPagination';
 import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
 import { getInboxQueuePath } from '@/inbox/utils/getInboxQueuePath';
 import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
+import { type InboxItem } from '~/generated/graphql';
 
 const StyledDetail = styled.div`
   display: flex;
@@ -94,6 +96,24 @@ const StyledPlaceholder = styled.div`
   padding: ${themeCssVariables.spacing[10]};
 `;
 
+type InboxItemDetailTitleProps = {
+  inboxItem: InboxItem;
+};
+
+const InboxItemDetailTitle = ({ inboxItem }: InboxItemDetailTitleProps) => {
+  const { theme } = useContext(ThemeContext);
+  const InboxItemIcon = useInboxItemIcon(inboxItem);
+
+  return (
+    <StyledTitle title={inboxItem.title}>
+      <StyledTitleIcon>
+        <InboxItemIcon size={theme.icon.size.sm} color="currentColor" />
+      </StyledTitleIcon>
+      <StyledTitleText>{inboxItem.title}</StyledTitleText>
+    </StyledTitle>
+  );
+};
+
 type InboxItemDetailProps = {
   inboxItemId?: string;
   inboxListLocation: InboxListLocation;
@@ -109,7 +129,6 @@ export const InboxItemDetail = ({
 }: InboxItemDetailProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
-  const { getIcon } = useIcons();
   const { inboxItem, loading, error } = useInboxItem(inboxItemId);
   // The list moves on after a send the way a mail client does, so the next
   // item is still resolved even though the bar no longer offers to step.
@@ -117,7 +136,6 @@ export const InboxItemDetail = ({
     inboxListLocation,
     inboxItemId,
   });
-  const InboxItemTypeIcon = getIcon(inboxItem?.inboxItemType.icon);
 
   const listPath = isDefined(inboxListLocation.inboxQueueName)
     ? getInboxQueuePath(inboxListLocation.inboxQueueName)
@@ -145,15 +163,7 @@ export const InboxItemDetail = ({
         )}
         {isDefined(inboxItem) && (
           <>
-            <StyledTitle title={inboxItem.title}>
-              <StyledTitleIcon aria-label={inboxItem.inboxItemType.label}>
-                <InboxItemTypeIcon
-                  size={theme.icon.size.sm}
-                  color="currentColor"
-                />
-              </StyledTitleIcon>
-              <StyledTitleText>{inboxItem.title}</StyledTitleText>
-            </StyledTitle>
+            <InboxItemDetailTitle inboxItem={inboxItem} />
             <StyledPlacementSlot>
               <InboxItemPlacement inboxItem={inboxItem} />
             </StyledPlacementSlot>

@@ -22,7 +22,7 @@ describe('InboxGraphqlApiExceptionFilter', () => {
     [InboxExceptionCode.UNKNOWN_INBOX_QUEUE, NotFoundError],
     [InboxExceptionCode.INBOX_ITEM_CHANGED, ConflictError],
     [InboxExceptionCode.INVALID_INBOX_ACTION, UserInputError],
-    [InboxExceptionCode.UNKNOWN_INBOX_ITEM_TYPE, UserInputError],
+    [InboxExceptionCode.UNKNOWN_INBOX_RECIPIENT, UserInputError],
   ])(
     'should turn %s into the matching GraphQL error',
     (code, expectedError) => {

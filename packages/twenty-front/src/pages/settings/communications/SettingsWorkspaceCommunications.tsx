@@ -11,7 +11,6 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SettingsInboxQueuesTable } from '@/settings/inbox/components/SettingsInboxQueuesTable';
-import { SettingsInboxRoutingTable } from '@/settings/inbox/components/SettingsInboxRoutingTable';
 import { useInboxSettings } from '@/settings/inbox/hooks/useInboxSettings';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
@@ -69,11 +68,7 @@ export const SettingsWorkspaceCommunications = () => {
     FeatureFlagKey.IS_INBOX_ENABLED,
   );
 
-  const {
-    inboxQueues,
-    inboxItemTypes,
-    loading: isInboxSettingsLoading,
-  } = useInboxSettings();
+  const { inboxQueues } = useInboxSettings();
 
   const tabs = [
     { id: COMMUNICATIONS_TAB_ID.emails, title: t`Emails`, Icon: IconMail },
@@ -173,18 +168,6 @@ export const SettingsWorkspaceCommunications = () => {
                   {t`New shared inbox`}
                 </NavigationButton>
               </StyledButtonRow>
-            </Section>
-            <Section>
-              <H2Title
-                title={t`Routing`}
-                description={t`Where each kind of work goes when nothing named a recipient. Rules with conditions belong in a workflow.`}
-              />
-              {!isInboxSettingsLoading && (
-                <SettingsInboxRoutingTable
-                  inboxItemTypes={inboxItemTypes}
-                  inboxQueues={inboxQueues}
-                />
-              )}
             </Section>
           </>
         )}

@@ -19,7 +19,6 @@ import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
-import { INBOX_ITEM_TYPE_NAME } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
@@ -365,7 +364,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               input: {
                 title: '',
                 summary: '',
-                typeName: INBOX_ITEM_TYPE_NAME.approval,
               },
             },
           },

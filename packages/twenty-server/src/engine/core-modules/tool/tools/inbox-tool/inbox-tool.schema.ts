@@ -50,12 +50,12 @@ export const CreateInboxItemToolInputZodSchema = z.object({
     .string()
     .describe('A short second line giving context under the title')
     .optional(),
-  typeName: z
+  icon: z
     .string()
     .describe(
-      'The kind of work this is, used for its icon and routing. One of: approval, conversation, agent_question, workflow_run_failed, agent_plan.',
+      'A Tabler icon name for the item, such as IconCircleCheck for an approval or IconBell for a notice. Omit to let the inbox pick one from what the item is about.',
     )
-    .default('approval'),
+    .optional(),
   toolCalls: z
     .array(InboxItemToolCallDraftZodSchema)
     .describe(

@@ -6,7 +6,6 @@ import { buildCreateInboxItemStepLog } from 'src/modules/workflow/workflow-execu
 
 const input: WorkflowCreateInboxItemActionInput = {
   title: 'Approve the discount',
-  typeName: 'approval',
 };
 
 describe('buildCreateInboxItemStepLog', () => {

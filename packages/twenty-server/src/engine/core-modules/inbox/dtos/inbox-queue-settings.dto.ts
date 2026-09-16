@@ -26,21 +26,3 @@ export class InboxQueueSettingsDTO {
   @Field(() => [UUIDScalarType])
   roleIds: string[];
 }
-
-@ObjectType('InboxItemTypeSettings')
-export class InboxItemTypeSettingsDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
-
-  @Field(() => String)
-  name: string;
-
-  @Field(() => String)
-  label: string;
-
-  @Field(() => String, { nullable: true })
-  icon: string | null;
-
-  @Field(() => UUIDScalarType, { nullable: true })
-  defaultQueueId: string | null;
-}

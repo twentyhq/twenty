@@ -9,45 +9,7 @@ export class CreateInboxTablesFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `DO $$ BEGIN CREATE TYPE "core"."inboxItemType_defaultpriority_enum" AS ENUM ('NEEDS_ACTION', 'UPDATE'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
-    );
-    await queryRunner.query(
       `DO $$ BEGIN CREATE TYPE "core"."inboxItem_priority_enum" AS ENUM ('NEEDS_ACTION', 'UPDATE'); EXCEPTION WHEN duplicate_object THEN null; END $$`,
-    );
-
-    await queryRunner.query(
-      `CREATE TABLE IF NOT EXISTS "core"."inboxItemType" (
-        "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
-        "workspaceId" uuid NOT NULL,
-        "universalIdentifier" uuid NOT NULL,
-        "applicationId" uuid NOT NULL,
-        "name" character varying NOT NULL,
-        "label" character varying NOT NULL,
-        "icon" character varying,
-        "defaultPriority" "core"."inboxItemType_defaultpriority_enum" NOT NULL DEFAULT 'UPDATE',
-        "defaultQueueId" uuid,
-        "deletedAt" TIMESTAMP WITH TIME ZONE,
-        "createdAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        "updatedAt" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-        CONSTRAINT "PK_inboxItemType_id" PRIMARY KEY ("id"),
-        CONSTRAINT "FK_INBOX_ITEM_TYPE_WORKSPACE_ID" FOREIGN KEY ("workspaceId")
-          REFERENCES "core"."workspace"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_INBOX_ITEM_TYPE_APPLICATION_ID" FOREIGN KEY ("applicationId")
-          REFERENCES "core"."application"("id") ON DELETE CASCADE
-      )`,
-    );
-
-    await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_TYPE_NAME_WORKSPACE_ID_UNIQUE"
-        ON "core"."inboxItemType" ("name", "workspaceId")`,
-    );
-    await queryRunner.query(
-      `CREATE UNIQUE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_TYPE_WORKSPACE_ID_UNIVERSAL_IDENTIFIER_UNIQUE"
-        ON "core"."inboxItemType" ("workspaceId", "universalIdentifier")`,
-    );
-    await queryRunner.query(
-      `CREATE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_TYPE_APPLICATION_ID"
-        ON "core"."inboxItemType" ("applicationId")`,
     );
 
     // A shared inbox. Work addressed here belongs to nobody until someone takes
@@ -109,8 +71,8 @@ export class CreateInboxTablesFastInstanceCommand
       `CREATE TABLE IF NOT EXISTS "core"."inboxItem" (
         "id" uuid NOT NULL DEFAULT uuid_generate_v4(),
         "workspaceId" uuid NOT NULL,
-        "inboxItemTypeId" uuid NOT NULL,
         "priority" "core"."inboxItem_priority_enum" NOT NULL DEFAULT 'UPDATE',
+        "icon" character varying,
         "title" character varying NOT NULL,
         "summary" character varying,
         "context" jsonb NOT NULL DEFAULT '{}',
@@ -134,8 +96,6 @@ export class CreateInboxTablesFastInstanceCommand
           CHECK (("queueId" IS NOT NULL) OR ("assigneeUserWorkspaceId" IS NOT NULL)),
         CONSTRAINT "FK_INBOX_ITEM_WORKSPACE_ID" FOREIGN KEY ("workspaceId")
           REFERENCES "core"."workspace"("id") ON DELETE CASCADE,
-        CONSTRAINT "FK_INBOX_ITEM_INBOX_ITEM_TYPE_ID" FOREIGN KEY ("inboxItemTypeId")
-          REFERENCES "core"."inboxItemType"("id") ON DELETE CASCADE,
         CONSTRAINT "FK_INBOX_ITEM_THREAD_ID" FOREIGN KEY ("threadId")
           REFERENCES "core"."agentChatThread"("id") ON DELETE CASCADE,
         CONSTRAINT "FK_INBOX_ITEM_QUEUE_ID" FOREIGN KEY ("queueId")
@@ -173,20 +133,6 @@ export class CreateInboxTablesFastInstanceCommand
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "IDX_INBOX_ITEM_THREAD_ID"
         ON "core"."inboxItem" ("threadId")`,
-    );
-
-    // Added once both tables exist, since the type table is created first.
-    // Dropped first because Postgres has no ADD CONSTRAINT IF NOT EXISTS, and
-    // this command has to survive being re-run.
-    await queryRunner.query(
-      `ALTER TABLE "core"."inboxItemType"
-        DROP CONSTRAINT IF EXISTS "FK_INBOX_ITEM_TYPE_DEFAULT_QUEUE_ID"`,
-    );
-    await queryRunner.query(
-      `ALTER TABLE "core"."inboxItemType"
-        ADD CONSTRAINT "FK_INBOX_ITEM_TYPE_DEFAULT_QUEUE_ID"
-        FOREIGN KEY ("defaultQueueId")
-        REFERENCES "core"."inboxQueue"("id") ON DELETE SET NULL`,
     );
 
     // The calls an item proposes, one row each. Created last since it points
@@ -275,13 +221,9 @@ export class CreateInboxTablesFastInstanceCommand
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItemRecord"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItem"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxQueueRole"`);
-    await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxItemType"`);
     await queryRunner.query(`DROP TABLE IF EXISTS "core"."inboxQueue"`);
     await queryRunner.query(
       `DROP TYPE IF EXISTS "core"."inboxItem_priority_enum"`,
-    );
-    await queryRunner.query(
-      `DROP TYPE IF EXISTS "core"."inboxItemType_defaultpriority_enum"`,
     );
   }
 }

@@ -1,7 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
 
-import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxQueueRoleEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-role.entity';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
@@ -55,11 +54,6 @@ describe('InboxQueueService', () => {
     update: jest.fn(),
     withManager: jest.fn(() => inboxItemRepository),
   };
-  const inboxItemTypeRepository: { update: jest.Mock; withManager: jest.Mock } =
-    {
-      update: jest.fn(),
-      withManager: jest.fn(() => inboxItemTypeRepository),
-    };
   const roleRepository = { find: jest.fn() };
   const userRoleService = { getRoleIdForUserWorkspace: jest.fn() };
   const queueLockQueryBuilder = {
@@ -120,10 +114,6 @@ describe('InboxQueueService', () => {
         {
           provide: getWorkspaceScopedRepositoryToken(InboxItemEntity),
           useValue: inboxItemRepository,
-        },
-        {
-          provide: getWorkspaceScopedRepositoryToken(InboxItemTypeEntity),
-          useValue: inboxItemTypeRepository,
         },
         {
           provide: getWorkspaceScopedRepositoryToken(RoleEntity),
@@ -331,11 +321,6 @@ describe('InboxQueueService', () => {
         queueId: QUEUE_ID,
       });
 
-      expect(inboxItemTypeRepository.update).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        { defaultQueueId: QUEUE_ID },
-        { defaultQueueId: null },
-      );
       expect(messageChannelRepository.update).toHaveBeenCalledWith(
         { workspaceId: WORKSPACE_ID, defaultInboxQueueId: QUEUE_ID },
         { defaultInboxQueueId: null },

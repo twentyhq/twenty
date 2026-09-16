@@ -4,7 +4,6 @@ import { IsNull, QueryFailedError } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
-import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
@@ -12,7 +11,6 @@ import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -33,8 +31,6 @@ const WORKSPACE_ID = 'workspace-id';
 const THREAD_ID = 'thread-id';
 const THREAD_OWNER_USER_WORKSPACE_ID = 'thread-owner-user-workspace-id';
 const FALLBACK_USER_WORKSPACE_ID = 'fallback-user-workspace-id';
-const CONVERSATION_TYPE_ID = 'conversation-type-id';
-const RUN_FAILED_TYPE_ID = 'run-failed-type-id';
 const EXISTING_ITEM_ID = 'existing-item-id';
 const INSERTED_ITEM_ID = 'inserted-item-id';
 const THREAD_SLOT_KEY = `thread:${THREAD_ID}`;
@@ -44,27 +40,13 @@ const SUPPORT_QUEUE_ID = 'support-queue-id';
 const MESSAGE_CHANNEL_ID = 'message-channel-id';
 const NOW = new Date('2026-08-07T10:00:00.000Z');
 
-const CONVERSATION_TYPE = {
-  id: CONVERSATION_TYPE_ID,
-  name: 'conversation',
-  label: 'Conversation',
-  defaultPriority: InboxItemPriority.UPDATE,
-} as InboxItemTypeEntity;
-
-const RUN_FAILED_TYPE = {
-  id: RUN_FAILED_TYPE_ID,
-  name: 'workflow_run_failed',
-  label: 'Workflow run failed',
-  defaultPriority: InboxItemPriority.NEEDS_ACTION,
-} as InboxItemTypeEntity;
-
 const buildInboxItem = (
   overrides: Partial<InboxItemEntity> = {},
 ): InboxItemEntity =>
   ({
     id: EXISTING_ITEM_ID,
     workspaceId: WORKSPACE_ID,
-    inboxItemTypeId: CONVERSATION_TYPE_ID,
+    icon: 'IconMessageCircle',
     priority: InboxItemPriority.UPDATE,
     title: 'An older message',
     assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
@@ -111,10 +93,6 @@ describe('InboxRouterService', () => {
     transaction: jest.fn((run: (manager: unknown) => unknown) => run({})),
   };
 
-  const inboxItemTypeService = {
-    findByName: jest.fn(),
-  };
-
   const featureFlagService = {
     isFeatureEnabled: jest.fn(),
   };
@@ -139,7 +117,6 @@ describe('InboxRouterService', () => {
 
     loggerWarnSpy = jest.spyOn(Logger.prototype, 'warn').mockImplementation();
 
-    inboxItemTypeService.findByName.mockResolvedValue(CONVERSATION_TYPE);
     featureFlagService.isFeatureEnabled.mockResolvedValue(true);
     inboxQueueService.findOrCreateDefaultQueue.mockResolvedValue({
       id: TRIAGE_QUEUE_ID,
@@ -187,10 +164,6 @@ describe('InboxRouterService', () => {
           useValue: messageChannelRepository,
         },
         {
-          provide: InboxItemTypeService,
-          useValue: inboxItemTypeService,
-        },
-        {
           provide: InboxQueueService,
           useValue: inboxQueueService,
         },
@@ -224,13 +197,11 @@ describe('InboxRouterService', () => {
       const result = await service.route({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
       });
 
       expect(result).toBeNull();
-      expect(inboxItemTypeService.findByName).not.toHaveBeenCalled();
       expect(inboxItemRepository.insertAndReturnOne).not.toHaveBeenCalled();
       expect(inboxItemRepository.update).not.toHaveBeenCalled();
     });
@@ -271,7 +242,6 @@ describe('InboxRouterService', () => {
       const routeOrThrow = service.routeOrThrow({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'approval',
         title: 'Approve the discount',
       });
 
@@ -288,7 +258,6 @@ describe('InboxRouterService', () => {
       const routeOrThrow = service.routeOrThrow({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
       });
@@ -302,7 +271,6 @@ describe('InboxRouterService', () => {
       const inboxItem = await service.routeOrThrow({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
       });
@@ -316,7 +284,6 @@ describe('InboxRouterService', () => {
       const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A message from Alice',
         summary: 'Hello there',
         subject: threadSubject,
@@ -328,7 +295,7 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
         {
-          inboxItemTypeId: CONVERSATION_TYPE_ID,
+          icon: null,
           priority: InboxItemPriority.UPDATE,
           title: 'A message from Alice',
           summary: 'Hello there',
@@ -349,7 +316,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A record needs attention',
         target: {
           kind: 'userWorkspace',
@@ -375,12 +341,9 @@ describe('InboxRouterService', () => {
     });
 
     it('should prefer a producer supplied slot over the subject when both are given', async () => {
-      inboxItemTypeService.findByName.mockResolvedValue(RUN_FAILED_TYPE);
-
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'workflow_run_failed',
         title: 'A workflow run failed',
         slotKey: RUN_SLOT_KEY,
         target: {
@@ -401,12 +364,9 @@ describe('InboxRouterService', () => {
     });
 
     it('should always insert without looking for an existing item when no slot resolves', async () => {
-      inboxItemTypeService.findByName.mockResolvedValue(RUN_FAILED_TYPE);
-
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'workflow_run_failed',
         title: 'A workflow run failed',
         target: {
           kind: 'userWorkspace',
@@ -431,7 +391,6 @@ describe('InboxRouterService', () => {
       const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A newer message',
         subject: threadSubject,
       });
@@ -447,11 +406,7 @@ describe('InboxRouterService', () => {
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,
         { id: EXISTING_ITEM_ID },
-        expect.objectContaining({
-          inboxItemTypeId: CONVERSATION_TYPE_ID,
-          title: 'A newer message',
-          priority: InboxItemPriority.UPDATE,
-        }),
+        expect.objectContaining({ title: 'A newer message' }),
       );
 
       const [, , partialUpdate] = inboxItemRepository.update.mock.calls[0];
@@ -478,7 +433,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A reply on a conversation that was done',
         subject: threadSubject,
       });
@@ -492,17 +446,16 @@ describe('InboxRouterService', () => {
       expect(partialUpdate).not.toHaveProperty('readAt');
     });
 
-    it('should fall back to the type label when the producer sends no title', async () => {
+    it('should give an item with no title a placeholder rather than refuse it', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         subject: threadSubject,
       });
 
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ title: 'Conversation' }),
+        expect.objectContaining({ title: 'Untitled' }),
       );
     });
 
@@ -517,7 +470,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         subject: threadSubject,
       });
 
@@ -537,7 +489,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'workflowRun',
-        typeName: 'conversation',
         subject: threadSubject,
       });
 
@@ -553,7 +504,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A plan',
         subject: threadSubject,
         toolCalls: [
@@ -588,7 +538,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         subject: threadSubject,
         toolCalls: [
           { toolName: 'send_email', label: 'Send email', proposedInput: {} },
@@ -612,13 +561,12 @@ describe('InboxRouterService', () => {
       );
     });
 
-    it('should keep an explicitly requested priority when folding rather than the type default', async () => {
+    it('should keep an explicitly requested priority when folding rather than deriving one', async () => {
       inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'An urgent message',
         priority: InboxItemPriority.NEEDS_ACTION,
         subject: threadSubject,
@@ -628,6 +576,84 @@ describe('InboxRouterService', () => {
         WORKSPACE_ID,
         { id: EXISTING_ITEM_ID },
         expect.objectContaining({ priority: InboxItemPriority.NEEDS_ACTION }),
+      );
+    });
+
+    it('should read a plan with proposed calls as needing action when the producer says nothing', async () => {
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
+        title: 'Two things to approve',
+        subject: threadSubject,
+        toolCalls: [
+          { toolName: 'create_task', label: 'Create task', proposedInput: {} },
+        ],
+      });
+
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ priority: InboxItemPriority.NEEDS_ACTION }),
+      );
+    });
+
+    it('should read an item with nothing to do as an update when the producer says nothing', async () => {
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
+        title: 'Something to look at',
+        subject: threadSubject,
+      });
+
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ priority: InboxItemPriority.UPDATE }),
+      );
+    });
+
+    it('should leave the priority alone when folding with neither calls nor a priority', async () => {
+      inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
+
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
+        summary: 'A new message arrived',
+        subject: threadSubject,
+      });
+
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: EXISTING_ITEM_ID },
+        expect.not.objectContaining({ priority: expect.anything() }),
+      );
+    });
+
+    it('should store the icon a producer names and carry it through a fold', async () => {
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
+        title: 'A question',
+        icon: 'IconHelpCircle',
+        subject: threadSubject,
+      });
+
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ icon: 'IconHelpCircle' }),
+      );
+
+      inboxItemRepository.findOne.mockResolvedValue(buildInboxItem());
+
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
+        icon: 'IconMessageCircle',
+        subject: threadSubject,
+      });
+
+      expect(inboxItemRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: EXISTING_ITEM_ID },
+        expect.objectContaining({ icon: 'IconMessageCircle' }),
       );
     });
   });
@@ -647,7 +673,6 @@ describe('InboxRouterService', () => {
       const result = await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
       });
@@ -670,7 +695,6 @@ describe('InboxRouterService', () => {
         service.routeItem({
           workspaceId: WORKSPACE_ID,
           producer: 'agentChat',
-          typeName: 'conversation',
           title: 'A message from Alice',
           subject: threadSubject,
         }),
@@ -687,7 +711,6 @@ describe('InboxRouterService', () => {
         service.routeItem({
           workspaceId: WORKSPACE_ID,
           producer: 'agentChat',
-          typeName: 'conversation',
           title: 'A message from Alice',
           subject: threadSubject,
         }),
@@ -697,28 +720,12 @@ describe('InboxRouterService', () => {
   });
 
   describe('routeItem assignee resolution', () => {
-    it('should throw when the type key is unknown', async () => {
-      inboxItemTypeService.findByName.mockResolvedValue(null);
-
-      await expect(
-        service.routeItem({
-          workspaceId: WORKSPACE_ID,
-          producer: 'agentChat',
-          typeName: 'not_a_type',
-          title: 'A message from Alice',
-          subject: threadSubject,
-        }),
-      ).rejects.toThrow('Unknown inbox item type not_a_type');
-      expect(inboxItemRepository.insertAndReturnOne).not.toHaveBeenCalled();
-    });
-
     // Work that no rule can address still has to land somewhere a human can
     // find it.
     it('should send work nobody can be found for to the triage queue', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A message nobody owns',
       });
 
@@ -731,53 +738,10 @@ describe('InboxRouterService', () => {
       );
     });
 
-    // The workspace decides where a kind of work goes; the producer only says
-    // what happened.
-    it('should send work to the queue the type is configured with before triage', async () => {
-      inboxItemTypeService.findByName.mockResolvedValue({
-        ...CONVERSATION_TYPE,
-        defaultQueueId: SUPPORT_QUEUE_ID,
-      });
-
-      await service.routeItem({
-        workspaceId: WORKSPACE_ID,
-        producer: 'agentChat',
-        typeName: 'conversation',
-        title: 'A message nobody owns',
-      });
-
-      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
-      );
-      expect(inboxQueueService.findOrCreateDefaultQueue).not.toHaveBeenCalled();
-    });
-
-    it('should let a producer that named a queue outrank the type default', async () => {
-      inboxItemTypeService.findByName.mockResolvedValue({
-        ...CONVERSATION_TYPE,
-        defaultQueueId: TRIAGE_QUEUE_ID,
-      });
-
-      await service.routeItem({
-        workspaceId: WORKSPACE_ID,
-        producer: 'agentChat',
-        typeName: 'conversation',
-        title: 'A support request',
-        target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
-      });
-
-      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
-        WORKSPACE_ID,
-        expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
-      );
-    });
-
     it('should address work to the queue a producer named, with nobody holding it', async () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A support request',
         target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
       });
@@ -802,7 +766,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'Mail to a shared address',
         target: {
           kind: 'messageChannel',
@@ -826,19 +789,14 @@ describe('InboxRouterService', () => {
 
     // Nobody has configured this channel yet, which is not a reason to drop the
     // work on the floor.
-    it('should fall back to the type default when the channel names no queue', async () => {
+    it('should send work to triage when the channel names no queue', async () => {
       messageChannelRepository.findOne.mockResolvedValue({
         defaultInboxQueueId: null,
-      });
-      inboxItemTypeService.findByName.mockResolvedValue({
-        ...CONVERSATION_TYPE,
-        defaultQueueId: SUPPORT_QUEUE_ID,
       });
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'Mail to an unconfigured shared address',
         target: {
           kind: 'messageChannel',
@@ -848,17 +806,16 @@ describe('InboxRouterService', () => {
 
       expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
         WORKSPACE_ID,
-        expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
+        expect.objectContaining({ queueId: TRIAGE_QUEUE_ID }),
       );
     });
 
-    it('should send work to triage when neither the channel nor the type names a queue', async () => {
+    it('should send work to triage when the channel went away', async () => {
       messageChannelRepository.findOne.mockResolvedValue(null);
 
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'Mail to a channel that went away',
         target: {
           kind: 'messageChannel',
@@ -882,7 +839,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A reply on a thread somebody owns',
         subject: threadSubject,
         target: {
@@ -907,7 +863,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A second message on the same request',
         slotKey: RUN_SLOT_KEY,
         target: { kind: 'queue', queueId: SUPPORT_QUEUE_ID },
@@ -922,7 +877,6 @@ describe('InboxRouterService', () => {
       await service.routeItem({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
         target: {
@@ -945,7 +899,6 @@ describe('InboxRouterService', () => {
       const result = await service.route({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
       });
@@ -955,14 +908,13 @@ describe('InboxRouterService', () => {
     });
 
     it('should return null and log a warning instead of throwing when routing fails', async () => {
-      inboxItemTypeService.findByName.mockRejectedValue(
+      inboxItemRepository.findOne.mockRejectedValue(
         new Error('metadata unavailable'),
       );
 
       const result = await service.route({
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat',
-        typeName: 'conversation',
         title: 'A message from Alice',
         subject: threadSubject,
       });
@@ -975,19 +927,18 @@ describe('InboxRouterService', () => {
     });
 
     it('should swallow the error that routeItem raises for the same arguments', async () => {
-      inboxItemTypeService.findByName.mockResolvedValue(null);
+      inboxItemRepository.insertAndReturnOne.mockRejectedValue(
+        new Error('insert failed'),
+      );
 
       const args = {
         workspaceId: WORKSPACE_ID,
         producer: 'agentChat' as const,
-        typeName: 'not_a_type',
         title: 'A message from Alice',
         subject: threadSubject,
       };
 
-      await expect(service.routeItem(args)).rejects.toThrow(
-        'Unknown inbox item type not_a_type',
-      );
+      await expect(service.routeItem(args)).rejects.toThrow('insert failed');
       await expect(service.route(args)).resolves.toBeNull();
     });
   });

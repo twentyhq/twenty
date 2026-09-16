@@ -6,6 +6,7 @@ import { useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemAssignee } from '@/inbox/components/InboxItemAssignee';
+import { useInboxItemIcon } from '@/inbox/hooks/useInboxItemIcon';
 import { InboxListRowButtons } from '@/inbox/components/InboxListRowButtons';
 import { type InboxItem, InboxItemPriority } from '~/generated/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
@@ -154,7 +155,7 @@ export const InboxListRow = ({
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
 
-  const InboxItemIcon = getIcon(inboxItem.inboxItemType.icon);
+  const InboxItemIcon = useInboxItemIcon(inboxItem);
   const needsAction = inboxItem.priority === InboxItemPriority.NEEDS_ACTION;
   const toolIcons = inboxItem.toolCalls
     .slice(0, MAX_ROW_TOOL_ICONS)

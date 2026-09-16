@@ -5,14 +5,12 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
-import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxQueueRoleEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue-role.entity';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { InboxItemResolver } from 'src/engine/core-modules/inbox/resolvers/inbox-item.resolver';
 import { InboxSettingsResolver } from 'src/engine/core-modules/inbox/resolvers/inbox-settings.resolver';
 import { InboxItemToolCallService } from 'src/engine/core-modules/inbox/services/inbox-item-tool-call.service';
-import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxToolCallExecutionService } from 'src/engine/core-modules/inbox/services/inbox-tool-call-execution.service';
 import { InboxItemService } from 'src/engine/core-modules/inbox/services/inbox-item.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
@@ -36,7 +34,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       InboxItemEntity,
       InboxItemRecordEntity,
       InboxItemToolCallEntity,
-      InboxItemTypeEntity,
       InboxQueueEntity,
       InboxQueueRoleEntity,
       ApplicationEntity,
@@ -52,7 +49,6 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   ],
   providers: [
     InboxItemService,
-    InboxItemTypeService,
     InboxQueueService,
     InboxItemToolCallService,
     InboxToolCallExecutionService,
@@ -63,16 +59,10 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     provideWorkspaceScopedRepository(InboxItemEntity),
     provideWorkspaceScopedRepository(InboxItemRecordEntity),
     provideWorkspaceScopedRepository(InboxItemToolCallEntity),
-    provideWorkspaceScopedRepository(InboxItemTypeEntity),
     provideWorkspaceScopedRepository(InboxQueueEntity),
     provideWorkspaceScopedRepository(InboxQueueRoleEntity),
     provideWorkspaceScopedRepository(RoleEntity),
   ],
-  exports: [
-    InboxRouterService,
-    InboxItemTypeService,
-    InboxQueueService,
-    InboxTransitionService,
-  ],
+  exports: [InboxRouterService, InboxQueueService, InboxTransitionService],
 })
 export class InboxModule {}

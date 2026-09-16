@@ -13,14 +13,13 @@ import {
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
-import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import {
   InboxException,
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
-import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import {
   INBOX_ITEM_CONTEXT_VERSION,
@@ -38,6 +37,8 @@ import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
+const DEFAULT_INBOX_ITEM_TITLE = 'Untitled';
+
 @Injectable()
 export class InboxRouterService {
   private readonly logger = new Logger(InboxRouterService.name);
@@ -53,7 +54,6 @@ export class InboxRouterService {
     private readonly inboxItemRecordRepository: WorkspaceScopedRepository<InboxItemRecordEntity>,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    private readonly inboxItemTypeService: InboxItemTypeService,
     private readonly inboxQueueService: InboxQueueService,
     private readonly featureFlagService: FeatureFlagService,
     private readonly userWorkspaceService: UserWorkspaceService,
@@ -70,7 +70,7 @@ export class InboxRouterService {
 
   async route(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
     return this.bestEffort(
-      `route inbox item of type ${args.typeName}`,
+      `route inbox item from ${args.producer}`,
       args.workspaceId,
       async () => {
         if (!(await this.isInboxEnabled(args.workspaceId))) {
@@ -94,7 +94,7 @@ export class InboxRouterService {
 
     if (!isDefined(item)) {
       throw new InboxException(
-        `Failed to route inbox item of type ${args.typeName}`,
+        `Failed to route inbox item from ${args.producer}`,
         InboxExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }
@@ -103,22 +103,9 @@ export class InboxRouterService {
   }
 
   async routeItem(args: RouteInboxItemArgs): Promise<InboxItemEntity | null> {
-    const inboxItemType = await this.inboxItemTypeService.findByName({
-      workspaceId: args.workspaceId,
-      name: args.typeName,
-    });
-
-    if (!isDefined(inboxItemType)) {
-      throw new InboxException(
-        `Unknown inbox item type ${args.typeName}`,
-        InboxExceptionCode.UNKNOWN_INBOX_ITEM_TYPE,
-      );
-    }
-
     return this.upsertItem({
       args,
-      inboxItemType,
-      address: await this.resolveAddress(args, inboxItemType),
+      address: await this.resolveAddress(args),
       // Defaulting the slot to the subject folds every event about that subject
       // into one item; an event with no subject gets an item of its own.
       slotKey: args.slotKey ?? this.resolveSubjectKey(args.subject),
@@ -127,7 +114,6 @@ export class InboxRouterService {
 
   private async resolveAddress(
     args: RouteInboxItemArgs,
-    inboxItemType: InboxItemTypeEntity,
   ): Promise<InboxItemAddress> {
     if (isDefined(args.subject?.ownerUserWorkspaceId)) {
       return {
@@ -161,10 +147,6 @@ export class InboxRouterService {
       }
     }
 
-    if (isDefined(inboxItemType.defaultQueueId)) {
-      return { kind: 'queue', queueId: inboxItemType.defaultQueueId };
-    }
-
     const defaultQueue = await this.inboxQueueService.findOrCreateDefaultQueue({
       workspaceId: args.workspaceId,
     });
@@ -193,12 +175,10 @@ export class InboxRouterService {
 
   private async upsertItem({
     args,
-    inboxItemType,
     address,
     slotKey,
   }: {
     args: RouteInboxItemArgs;
-    inboxItemType: InboxItemTypeEntity;
     address: InboxItemAddress;
     slotKey: string | null;
   }): Promise<InboxItemEntity | null> {
@@ -211,13 +191,12 @@ export class InboxRouterService {
       : null;
 
     if (isDefined(existingItem)) {
-      return this.foldIntoItem({ existingItem, args, inboxItemType });
+      return this.foldIntoItem({ existingItem, args });
     }
 
     try {
       return await this.insertItem({
         args,
-        inboxItemType,
         address,
         slotKey,
       });
@@ -240,7 +219,6 @@ export class InboxRouterService {
       return this.foldIntoItem({
         existingItem: concurrentItem,
         args,
-        inboxItemType,
       });
     }
   }
@@ -275,11 +253,9 @@ export class InboxRouterService {
   private async foldIntoItem({
     existingItem,
     args,
-    inboxItemType,
   }: {
     existingItem: InboxItemEntity;
     args: RouteInboxItemArgs;
-    inboxItemType: InboxItemTypeEntity;
   }): Promise<InboxItemEntity | null> {
     // The item is locked before its plan is touched, so two folds take turns
     // and neither leaves the event recorded without its calls.
@@ -303,9 +279,12 @@ export class InboxRouterService {
         args.workspaceId,
         { id: existingItem.id },
         {
-          // The type tracks the latest event, so a pending question surfaces on the folded item and clears again once answered.
-          inboxItemTypeId: inboxItemType.id,
-          priority: args.priority ?? inboxItemType.defaultPriority,
+          // The latest event decides how urgent the item reads, so a pending
+          // question surfaces on the folded item and settles once answered.
+          ...(isDefined(resolvePriority(args))
+            ? { priority: resolvePriority(args) }
+            : {}),
+          ...(isDefined(args.icon) ? { icon: args.icon } : {}),
           ...(isDefined(args.title) ? { title: args.title } : {}),
           ...(isDefined(args.summary) ? { summary: args.summary } : {}),
           context: buildContext(args),
@@ -464,12 +443,10 @@ export class InboxRouterService {
 
   private async insertItem({
     args,
-    inboxItemType,
     address,
     slotKey,
   }: {
     args: RouteInboxItemArgs;
-    inboxItemType: InboxItemTypeEntity;
     address: InboxItemAddress;
     slotKey: string | null;
   }): Promise<InboxItemEntity> {
@@ -479,9 +456,9 @@ export class InboxRouterService {
       const inboxItem = await this.inboxItemRepository
         .withManager(manager)
         .insertAndReturnOne(args.workspaceId, {
-          inboxItemTypeId: inboxItemType.id,
-          priority: args.priority ?? inboxItemType.defaultPriority,
-          title: args.title ?? inboxItemType.label,
+          priority: resolvePriority(args) ?? InboxItemPriority.UPDATE,
+          icon: args.icon ?? null,
+          title: args.title ?? DEFAULT_INBOX_ITEM_TITLE,
           summary: args.summary ?? null,
           context: buildContext(args),
           queueId: address.kind === 'queue' ? address.queueId : null,
@@ -618,6 +595,24 @@ export const buildSubjectKey = (subject: InboxSubject): string =>
   subject.kind === 'thread'
     ? `thread:${subject.threadId}`
     : `record:${subject.objectMetadataId}:${subject.recordId}`;
+
+// A plan is work; anything else is news until a producer says otherwise. On a
+// fold that names no calls and no priority, the item keeps what it had.
+const resolvePriority = (
+  args: RouteInboxItemArgs,
+): InboxItemPriority | undefined => {
+  if (isDefined(args.priority)) {
+    return args.priority;
+  }
+
+  if (!isDefined(args.toolCalls)) {
+    return undefined;
+  }
+
+  return isNonEmptyArray(args.toolCalls)
+    ? InboxItemPriority.NEEDS_ACTION
+    : InboxItemPriority.UPDATE;
+};
 
 // A fold rewrites provenance because the latest event is what the item now
 // reports coming from; omitting the source keeps the item honest rather than

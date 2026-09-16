@@ -7,6 +7,7 @@ import {
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
+import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { type InboxPrincipalRef } from 'src/engine/core-modules/inbox/types/route-inbox-item.type';
 import { CreateInboxItemToolInputZodSchema } from 'src/engine/core-modules/tool/tools/inbox-tool/inbox-tool.schema';
@@ -52,8 +53,8 @@ export class CreateInboxItemTool implements Tool {
       const inboxItem = await this.inboxRouterService.routeOrThrow({
         workspaceId: context.workspaceId,
         producer: 'inboxTool',
-        typeName: parameters.typeName,
         title: parameters.title,
+        ...(isDefined(parameters.icon) ? { icon: parameters.icon } : {}),
         ...(isDefined(parameters.summary)
           ? { summary: parameters.summary }
           : {}),
@@ -62,7 +63,8 @@ export class CreateInboxItemTool implements Tool {
         ...(isNonEmptyArray(parameters.toolCalls)
           ? { toolCalls: toInboxItemToolCallDrafts(parameters.toolCalls) }
           : {}),
-        priority: parameters.priority,
+        // Work an agent puts in front of someone wants attention unless it says otherwise.
+        priority: parameters.priority ?? InboxItemPriority.NEEDS_ACTION,
         slotKey: parameters.slotKey,
         target: await this.resolveTarget(parameters, context.workspaceId),
       });

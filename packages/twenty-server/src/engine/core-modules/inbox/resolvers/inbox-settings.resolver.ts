@@ -8,20 +8,14 @@ import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/c
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
-import {
-  InboxItemTypeSettingsDTO,
-  InboxQueueSettingsDTO,
-} from 'src/engine/core-modules/inbox/dtos/inbox-queue-settings.dto';
+import { InboxQueueSettingsDTO } from 'src/engine/core-modules/inbox/dtos/inbox-queue-settings.dto';
 import {
   CreateInboxQueueInput,
-  SetInboxItemTypeDefaultQueueInput,
   SetInboxQueueRolesInput,
   UpdateInboxQueueInput,
 } from 'src/engine/core-modules/inbox/dtos/inbox-queue-settings.input';
 import { InboxGraphqlApiExceptionFilter } from 'src/engine/core-modules/inbox/filters/inbox-graphql-api-exception.filter';
-import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inbox-item-type.service';
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
-import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { type InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -32,16 +26,6 @@ import {
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-
-const toInboxItemTypeSettingsDto = (
-  inboxItemType: InboxItemTypeEntity,
-): InboxItemTypeSettingsDTO => ({
-  id: inboxItemType.id,
-  name: inboxItemType.name,
-  label: inboxItemType.label,
-  icon: inboxItemType.icon,
-  defaultQueueId: inboxItemType.defaultQueueId,
-});
 
 // Administering shared inboxes decides who can read whose work, so it sits
 // behind the workspace settings permission rather than behind the access it
@@ -57,10 +41,7 @@ const toInboxItemTypeSettingsDto = (
 @UseFilters(AuthGraphqlApiExceptionFilter, InboxGraphqlApiExceptionFilter)
 @RequireFeatureFlag(FeatureFlagKey.IS_INBOX_ENABLED)
 export class InboxSettingsResolver {
-  constructor(
-    private readonly inboxQueueService: InboxQueueService,
-    private readonly inboxItemTypeService: InboxItemTypeService,
-  ) {}
+  constructor(private readonly inboxQueueService: InboxQueueService) {}
 
   @Query(() => [InboxQueueSettingsDTO])
   async inboxQueueSettings(
@@ -134,31 +115,6 @@ export class InboxSettingsResolver {
     });
 
     return true;
-  }
-
-  @Query(() => [InboxItemTypeSettingsDTO])
-  async inboxItemTypeSettings(
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<InboxItemTypeSettingsDTO[]> {
-    const inboxItemTypes = await this.inboxItemTypeService.findAllForSettings({
-      workspaceId: workspace.id,
-    });
-
-    return inboxItemTypes.map(toInboxItemTypeSettingsDto);
-  }
-
-  @Mutation(() => InboxItemTypeSettingsDTO)
-  async setInboxItemTypeDefaultQueue(
-    @Args('input') input: SetInboxItemTypeDefaultQueueInput,
-    @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<InboxItemTypeSettingsDTO> {
-    const inboxItemType = await this.inboxItemTypeService.setDefaultQueue({
-      workspaceId: workspace.id,
-      inboxItemTypeId: input.inboxItemTypeId,
-      defaultQueueId: input.defaultQueueId ?? null,
-    });
-
-    return toInboxItemTypeSettingsDto(inboxItemType);
   }
 
   private async readQueueSettings(

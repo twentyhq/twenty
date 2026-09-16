@@ -30,17 +30,6 @@ const SET_INBOX_QUEUE_ROLES = gql`
   }
 `;
 
-const SET_INBOX_ITEM_TYPE_DEFAULT_QUEUE = gql`
-  mutation SetInboxItemTypeDefaultQueue(
-    $input: SetInboxItemTypeDefaultQueueInput!
-  ) {
-    setInboxItemTypeDefaultQueue(input: $input) {
-      id
-      defaultQueueId
-    }
-  }
-`;
-
 const DELETE_INBOX_QUEUE = gql`
   mutation DeleteInboxQueue($queueId: UUID!) {
     deleteInboxQueue(queueId: $queueId)
@@ -54,16 +43,6 @@ const GET_INBOX_QUEUE_SETTINGS = gql`
       name
       label
       isDefault
-    }
-  }
-`;
-
-const GET_INBOX_ITEM_TYPE_SETTINGS = gql`
-  query GetInboxItemTypeSettings {
-    inboxItemTypeSettings {
-      id
-      name
-      defaultQueueId
     }
   }
 `;
@@ -194,37 +173,6 @@ describe('inbox queue administration', () => {
 
     expect(response.body.errors).toBeDefined();
     expect(response.body.data?.setInboxQueueRoles).toBeFalsy();
-  });
-
-  // The routing default is an address items are sent to, so an id this
-  // workspace cannot see into must never become one
-  it('should reject routing a kind of work to a shared inbox that does not exist', async () => {
-    const typesResponse = await makeGraphqlAPIRequest({
-      query: GET_INBOX_ITEM_TYPE_SETTINGS,
-    });
-    const inboxItemType = typesResponse.body.data.inboxItemTypeSettings[0];
-
-    const response = await makeGraphqlAPIRequest({
-      query: SET_INBOX_ITEM_TYPE_DEFAULT_QUEUE,
-      variables: {
-        input: {
-          inboxItemTypeId: inboxItemType.id,
-          defaultQueueId: UNKNOWN_QUEUE_ID,
-        },
-      },
-    });
-
-    expect(response.body.errors).toBeDefined();
-
-    const unchanged = await makeGraphqlAPIRequest({
-      query: GET_INBOX_ITEM_TYPE_SETTINGS,
-    });
-
-    expect(
-      unchanged.body.data.inboxItemTypeSettings.find(
-        ({ id }: { id: string }) => id === inboxItemType.id,
-      ).defaultQueueId,
-    ).toBe(inboxItemType.defaultQueueId);
   });
 
   it('should refuse to delete the triage inbox', async () => {

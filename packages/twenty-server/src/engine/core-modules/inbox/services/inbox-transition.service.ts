@@ -129,7 +129,7 @@ export class InboxTransitionService {
   ): Promise<InboxItemEntity> {
     const inboxItem = await this.inboxItemRepository.findOne(workspaceId, {
       where: { id: inboxItemId },
-      relations: { inboxItemType: true, toolCalls: true, records: true },
+      relations: { toolCalls: true, records: true },
     });
 
     if (!isDefined(inboxItem)) {

@@ -3,7 +3,7 @@ import { type InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbo
 export type WorkflowCreateInboxItemActionInput = {
   title: string;
   summary?: string;
-  typeName: string;
+  icon?: string;
   queueId?: string;
   assigneeWorkspaceMemberId?: string;
   priority?: InboxItemPriority;

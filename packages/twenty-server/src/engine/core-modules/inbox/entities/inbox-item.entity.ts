@@ -12,7 +12,6 @@ import {
 } from 'typeorm';
 
 import { CREATE_INBOX_TABLES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/create-inbox-tables-upgrade-command-name.constant';
-import { InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -77,15 +76,10 @@ export class InboxItemEntity {
   })
   workspace: EntityRelation<WorkspaceEntity>;
 
-  @Column({ nullable: false, type: 'uuid' })
-  inboxItemTypeId: string;
-
-  @ManyToOne(() => InboxItemTypeEntity, { onDelete: 'CASCADE' })
-  @JoinColumn({
-    name: 'inboxItemTypeId',
-    foreignKeyConstraintName: 'FK_INBOX_ITEM_INBOX_ITEM_TYPE_ID',
-  })
-  inboxItemType: EntityRelation<InboxItemTypeEntity>;
+  // Presentation only, set by the producer. Absent, the client derives one
+  // from what the item is about and what it proposes.
+  @Column({ nullable: true, type: 'varchar' })
+  icon: string | null;
 
   @Column({
     type: 'enum',

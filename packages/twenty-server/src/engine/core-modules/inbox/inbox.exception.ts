@@ -9,7 +9,6 @@ import {
 } from 'src/utils/custom-exception';
 
 export const InboxExceptionCode = appendCommonExceptionCode({
-  UNKNOWN_INBOX_ITEM_TYPE: 'UNKNOWN_INBOX_ITEM_TYPE',
   UNKNOWN_INBOX_QUEUE: 'UNKNOWN_INBOX_QUEUE',
   UNKNOWN_INBOX_ROLE: 'UNKNOWN_INBOX_ROLE',
   UNKNOWN_INBOX_RECIPIENT: 'UNKNOWN_INBOX_RECIPIENT',
@@ -25,8 +24,6 @@ const getInboxExceptionUserFriendlyMessage = (
   code: keyof typeof InboxExceptionCode,
 ) => {
   switch (code) {
-    case InboxExceptionCode.UNKNOWN_INBOX_ITEM_TYPE:
-      return msg`This kind of inbox item is not declared.`;
     case InboxExceptionCode.UNKNOWN_INBOX_QUEUE:
       return msg`This shared inbox does not exist, or you are not a member.`;
     case InboxExceptionCode.UNKNOWN_INBOX_ROLE:

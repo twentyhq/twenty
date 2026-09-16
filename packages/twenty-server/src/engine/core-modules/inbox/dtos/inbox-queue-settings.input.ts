@@ -57,14 +57,3 @@ export class SetInboxQueueRolesInput {
   @IsArray()
   roleIds: string[];
 }
-
-@InputType()
-export class SetInboxItemTypeDefaultQueueInput {
-  @Field(() => UUIDScalarType)
-  inboxItemTypeId: string;
-
-  // Null sends this kind of work back to the triage queue.
-  @Field(() => UUIDScalarType, { nullable: true })
-  @IsOptional()
-  defaultQueueId?: string | null;
-}

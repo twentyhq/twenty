@@ -3,8 +3,13 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INBOX_ITEM_TYPE_NAME } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
+import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
+
+const CONVERSATION_ICON = 'IconMessageCircle';
+const QUESTION_ICON = 'IconHelpCircle';
+const FAILED_ICON = 'IconAlertTriangle';
+const DEFAULT_CONVERSATION_TITLE = 'Conversation';
 
 type ThreadContext = {
   threadId: string;
@@ -27,8 +32,9 @@ export class AgentChatInboxService {
     await this.inboxRouterService.route({
       workspaceId,
       producer: 'agentChat',
-      typeName: INBOX_ITEM_TYPE_NAME.conversation,
-      title,
+      icon: CONVERSATION_ICON,
+      priority: InboxItemPriority.UPDATE,
+      title: title ?? DEFAULT_CONVERSATION_TITLE,
       subject: {
         kind: 'thread',
         threadId,
@@ -50,9 +56,12 @@ export class AgentChatInboxService {
     await this.inboxRouterService.route({
       workspaceId,
       producer: 'agentChat',
-      typeName: hasPendingQuestion
-        ? INBOX_ITEM_TYPE_NAME.agentQuestion
-        : INBOX_ITEM_TYPE_NAME.conversation,
+      // The latest turn decides how the item reads: a pending question wants
+      // an answer, anything else is news about the conversation.
+      icon: hasPendingQuestion ? QUESTION_ICON : CONVERSATION_ICON,
+      priority: hasPendingQuestion
+        ? InboxItemPriority.NEEDS_ACTION
+        : InboxItemPriority.UPDATE,
       ...(isDefined(summary) ? { summary } : {}),
       subject: {
         kind: 'thread',
@@ -91,7 +100,8 @@ export class AgentChatInboxService {
     await this.inboxRouterService.route({
       workspaceId,
       producer: 'agentChat',
-      typeName: INBOX_ITEM_TYPE_NAME.agentRunFailed,
+      icon: FAILED_ICON,
+      priority: InboxItemPriority.NEEDS_ACTION,
       ...(isNonEmptyString(errorMessage) ? { summary: errorMessage } : {}),
       subject: {
         kind: 'thread',

@@ -136,7 +136,7 @@ describe('InboxItemService', () => {
         WORKSPACE_ID,
         expect.objectContaining({
           order: { lastEventAt: 'DESC' },
-          relations: { inboxItemType: true, toolCalls: true, records: true },
+          relations: { toolCalls: true, records: true },
           take: DEFAULT_INBOX_PAGE_SIZE,
         }),
       );
@@ -175,7 +175,7 @@ describe('InboxItemService', () => {
             assigneeUserWorkspaceId: ASSIGNEE_USER_WORKSPACE_ID,
           },
         ],
-        relations: { inboxItemType: true, toolCalls: true, records: true },
+        relations: { toolCalls: true, records: true },
       });
     });
 

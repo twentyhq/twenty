@@ -11,30 +11,11 @@ const INBOX_QUEUE_SETTINGS_FRAGMENT = gql`
   }
 `;
 
-const INBOX_ITEM_TYPE_SETTINGS_FRAGMENT = gql`
-  fragment InboxItemTypeSettingsFields on InboxItemTypeSettings {
-    id
-    name
-    label
-    icon
-    defaultQueueId
-  }
-`;
-
 export const GET_INBOX_QUEUE_SETTINGS = gql`
   ${INBOX_QUEUE_SETTINGS_FRAGMENT}
   query GetInboxQueueSettings {
     inboxQueueSettings {
       ...InboxQueueSettingsFields
-    }
-  }
-`;
-
-export const GET_INBOX_ITEM_TYPE_SETTINGS = gql`
-  ${INBOX_ITEM_TYPE_SETTINGS_FRAGMENT}
-  query GetInboxItemTypeSettings {
-    inboxItemTypeSettings {
-      ...InboxItemTypeSettingsFields
     }
   }
 `;
@@ -69,16 +50,5 @@ export const SET_INBOX_QUEUE_ROLES = gql`
 export const DELETE_INBOX_QUEUE = gql`
   mutation DeleteInboxQueue($queueId: UUID!) {
     deleteInboxQueue(queueId: $queueId)
-  }
-`;
-
-export const SET_INBOX_ITEM_TYPE_DEFAULT_QUEUE = gql`
-  ${INBOX_ITEM_TYPE_SETTINGS_FRAGMENT}
-  mutation SetInboxItemTypeDefaultQueue(
-    $input: SetInboxItemTypeDefaultQueueInput!
-  ) {
-    setInboxItemTypeDefaultQueue(input: $input) {
-      ...InboxItemTypeSettingsFields
-    }
   }
 `;

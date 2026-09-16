@@ -4,7 +4,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { INBOX_ITEM_TYPE_NAME } from 'src/engine/core-modules/inbox/constants/standard-inbox-item-types.constant';
+import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import {
   WorkflowCommonException,
@@ -87,11 +87,12 @@ export class WorkflowRunInboxWorkspaceService {
     await this.inboxRouterService.route({
       workspaceId,
       producer: 'workflowRun',
-      typeName: INBOX_ITEM_TYPE_NAME.workflowRunFailed,
+      icon: 'IconAlertTriangle',
+      priority: InboxItemPriority.NEEDS_ACTION,
       title: `${workflowName ?? 'Workflow'} run failed`,
       ...(isDefined(error) ? { summary: error } : {}),
       target: { kind: 'userWorkspace', userWorkspaceId },
-      slotKey: `${INBOX_ITEM_TYPE_NAME.workflowRunFailed}:${workflowRun.id}`,
+      slotKey: `workflowRunFailed:${workflowRun.id}`,
       ...(isDefined(workflowRunObjectMetadataId)
         ? {
             subject: {

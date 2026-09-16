@@ -1,22 +1,17 @@
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
 import {
   CREATE_INBOX_QUEUE,
   DELETE_INBOX_QUEUE,
-  GET_INBOX_ITEM_TYPE_SETTINGS,
-  SET_INBOX_ITEM_TYPE_DEFAULT_QUEUE,
   SET_INBOX_QUEUE_ROLES,
   UPDATE_INBOX_QUEUE,
 } from '@/settings/inbox/graphql/inboxSettingsOperations';
 import { useInboxQueueSettings } from '@/settings/inbox/hooks/useInboxQueueSettings';
-import { type InboxItemTypeSettings } from '~/generated/graphql';
 
 const INBOX_SETTINGS_REFETCH_QUERIES = [
   'GetInboxQueueSettings',
-  'GetInboxItemTypeSettings',
   // The drawer's shared section follows these grants, so it changes too.
   'GetMyInboxQueues',
 ];
@@ -24,23 +19,12 @@ const INBOX_SETTINGS_REFETCH_QUERIES = [
 export const useInboxSettings = () => {
   const apolloCoreClient = useApolloCoreClient();
 
-  // The queries are flag-guarded server-side, so asking with the flag off is a
-  // GraphQL error rather than an empty list.
-  const isInboxFeatureEnabled = useIsInboxEnabled();
-
   const mutationOptions = {
     client: apolloCoreClient,
     refetchQueries: INBOX_SETTINGS_REFETCH_QUERIES,
   };
 
   const { inboxQueues, loading: queuesLoading } = useInboxQueueSettings();
-
-  const { data: typesData, loading: typesLoading } = useQuery<{
-    inboxItemTypeSettings: InboxItemTypeSettings[];
-  }>(GET_INBOX_ITEM_TYPE_SETTINGS, {
-    client: apolloCoreClient,
-    skip: !isInboxFeatureEnabled,
-  });
 
   const [createInboxQueueMutation] = useMutation(
     CREATE_INBOX_QUEUE,
@@ -56,10 +40,6 @@ export const useInboxSettings = () => {
   );
   const [deleteInboxQueueMutation] = useMutation(
     DELETE_INBOX_QUEUE,
-    mutationOptions,
-  );
-  const [setInboxItemTypeDefaultQueueMutation] = useMutation(
-    SET_INBOX_ITEM_TYPE_DEFAULT_QUEUE,
     mutationOptions,
   );
 
@@ -91,24 +71,12 @@ export const useInboxSettings = () => {
     [deleteInboxQueueMutation],
   );
 
-  const setInboxItemTypeDefaultQueue = useCallback(
-    async (input: {
-      inboxItemTypeId: string;
-      defaultQueueId: string | null;
-    }) => {
-      await setInboxItemTypeDefaultQueueMutation({ variables: { input } });
-    },
-    [setInboxItemTypeDefaultQueueMutation],
-  );
-
   return {
     inboxQueues,
-    inboxItemTypes: typesData?.inboxItemTypeSettings ?? [],
-    loading: queuesLoading || typesLoading,
+    loading: queuesLoading,
     createInboxQueue,
     updateInboxQueue,
     setInboxQueueRoles,
     deleteInboxQueue,
-    setInboxItemTypeDefaultQueue,
   };
 };

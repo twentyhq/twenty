@@ -67,21 +67,6 @@ export class InboxItemToolCallDTO {
   error: string | null;
 }
 
-@ObjectType('InboxItemType')
-export class InboxItemTypeDTO {
-  @Field(() => UUIDScalarType)
-  id: string;
-
-  @Field(() => String)
-  name: string;
-
-  @Field(() => String)
-  label: string;
-
-  @Field(() => String, { nullable: true })
-  icon: string | null;
-}
-
 @ObjectType('InboxQueue')
 export class InboxQueueDTO {
   @Field(() => UUIDScalarType)
@@ -108,8 +93,8 @@ export class InboxItemDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
-  @Field(() => InboxItemTypeDTO)
-  inboxItemType: InboxItemTypeDTO;
+  @Field(() => String, { nullable: true })
+  icon: string | null;
 
   // Evaluated server side and never recomputed by the client, so one place
   // decides what counts as handled.
