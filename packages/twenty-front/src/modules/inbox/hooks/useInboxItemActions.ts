@@ -22,8 +22,10 @@ import { logError } from '~/utils/logError';
 // which the mutation's own payload updates.
 const INBOX_REFETCH_QUERIES = ['GetMyInboxItems', 'GetMyInboxCounts'];
 
+type InboxItemTransitionKind = 'CLEAR' | 'REOPEN' | 'ASSIGN' | 'MOVE';
+
 type InboxItemTransitionInput = {
-  kind: string;
+  kind: InboxItemTransitionKind;
   outcome?: InboxItemOutcome;
   resurfaceAt?: string;
   toUserWorkspaceId?: string | null;

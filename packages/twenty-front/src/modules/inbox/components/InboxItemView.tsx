@@ -21,7 +21,6 @@ import { getInboxItemOutcomeLabel } from '@/inbox/utils/getInboxItemOutcomeLabel
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import {
   type InboxItem,
-  type InboxItemField,
   InboxItemOutcome,
   InboxItemScope,
   InboxItemToolCallStatus,
@@ -269,10 +268,7 @@ export const InboxItemView = ({
       const toolCall = await createInboxItemToolCall({
         inboxItemId: inboxItem.id,
         ...draft,
-        inputSchema: EMAIL_TOOL_CALL_INPUT_SCHEMA as Omit<
-          InboxItemField,
-          '__typename'
-        >[],
+        inputSchema: EMAIL_TOOL_CALL_INPUT_SCHEMA,
       });
 
       if (!isDefined(toolCall)) {
