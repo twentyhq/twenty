@@ -276,11 +276,13 @@ export const InboxItemThreadView = ({
       toolCall={toolCall}
       source={inboxItem.context.source ?? undefined}
       isExpanded={expandedToolCallIds.includes(toolCall.id)}
+      isBusy={isBusy}
       onToggleExpanded={() => toggleToolCall(toolCall.id)}
       onSave={(editedInput) => onSaveToolCallInput(toolCall.id, editedInput)}
       onToggleRejected={(isRejected) =>
         onToggleToolCallRejected(toolCall.id, isRejected)
       }
+      onRun={() => onRunToolCall(toolCall.id)}
     />
   );
 

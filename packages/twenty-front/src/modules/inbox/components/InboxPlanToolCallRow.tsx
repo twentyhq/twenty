@@ -1,8 +1,15 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconChevronDown, IconRepeat, IconX, useIcons } from 'twenty-ui/icon';
+import {
+  IconChevronDown,
+  IconPlayerPlay,
+  IconRepeat,
+  IconX,
+  useIcons,
+} from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -28,7 +35,7 @@ const StyledHeader = styled.div`
 `;
 
 const StyledToggle = styled.button<{ isRejected: boolean }>`
-  align-items: center;
+  align-items: flex-start;
   background: transparent;
   border: none;
   color: ${themeCssVariables.font.color.primary};
@@ -37,14 +44,37 @@ const StyledToggle = styled.button<{ isRejected: boolean }>`
   flex: 1;
   font-family: inherit;
   font-size: ${themeCssVariables.font.size.md};
-  font-weight: ${themeCssVariables.font.weight.medium};
   gap: ${themeCssVariables.spacing[2]};
   min-width: 0;
   opacity: ${({ isRejected }) => (isRejected ? 0.5 : 1)};
   padding: ${themeCssVariables.spacing[1]} 0;
   text-align: left;
+`;
+
+const StyledToggleIcon = styled.span`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: 20px;
+`;
+
+const StyledToggleText = styled.span`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[1]};
+  min-width: 0;
+`;
+
+const StyledLabel = styled.span<{ isRejected: boolean }>`
+  font-weight: ${themeCssVariables.font.weight.medium};
+  line-height: 20px;
   text-decoration: ${({ isRejected }) =>
     isRejected ? 'line-through' : 'none'};
+`;
+
+const StyledDescription = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledError = styled.div`
@@ -65,9 +95,13 @@ type InboxPlanToolCallRowProps = {
   toolCall: InboxItemToolCall;
   source?: InboxItemContextSource;
   isExpanded: boolean;
+  // Blocks the per-step run while a run or a save is still on the wire.
+  isBusy?: boolean;
   onToggleExpanded: () => void;
   onSave: (editedInput: Record<string, unknown>) => Promise<void>;
   onToggleRejected: (isRejected: boolean) => Promise<void>;
+  // Runs this step alone and leaves the rest of the plan proposed.
+  onRun?: () => Promise<void>;
   onRegisterFlush?: (flush: (() => Promise<void>) | null) => void;
 };
 
@@ -75,9 +109,11 @@ export const InboxPlanToolCallRow = ({
   toolCall,
   source,
   isExpanded,
+  isBusy = false,
   onToggleExpanded,
   onSave,
   onToggleRejected,
+  onRun,
   onRegisterFlush,
 }: InboxPlanToolCallRowProps) => {
   const { t } = useLingui();
@@ -88,6 +124,9 @@ export const InboxPlanToolCallRow = ({
   const isRejected = toolCall.status === InboxItemToolCallStatus.REJECTED;
   const isFailed = toolCall.status === InboxItemToolCallStatus.FAILED;
   const hasSucceeded = toolCall.status === InboxItemToolCallStatus.EXECUTED;
+  const canRun =
+    isDefined(onRun) &&
+    (toolCall.status === InboxItemToolCallStatus.PROPOSED || isFailed);
 
   const statusTag = isFailed
     ? { color: 'red' as const, label: t`Failed` }
@@ -112,8 +151,15 @@ export const InboxPlanToolCallRow = ({
           isRejected={isRejected}
           onClick={onToggleExpanded}
         >
-          <ToolIcon size={theme.icon.size.md} />
-          {toolCall.label}
+          <StyledToggleIcon>
+            <ToolIcon size={theme.icon.size.md} />
+          </StyledToggleIcon>
+          <StyledToggleText>
+            <StyledLabel isRejected={isRejected}>{toolCall.label}</StyledLabel>
+            {isNonEmptyString(toolCall.description) && (
+              <StyledDescription>{toolCall.description}</StyledDescription>
+            )}
+          </StyledToggleText>
         </StyledToggle>
         {isDefined(statusTag) && (
           <Tag color={statusTag.color}>{statusTag.label}</Tag>
@@ -126,6 +172,16 @@ export const InboxPlanToolCallRow = ({
             onClick={onToggleExpanded}
           />
         </StyledChevron>
+        {canRun && (
+          <LightIconButton
+            Icon={IconPlayerPlay}
+            accent="secondary"
+            aria-label={isFailed ? t`Try this step again` : t`Do this step`}
+            title={isFailed ? t`Try this step again` : t`Do this step`}
+            disabled={isBusy}
+            onClick={() => void onRun()}
+          />
+        )}
         {!hasSucceeded && (
           <LightIconButton
             Icon={isRejected ? IconRepeat : IconX}

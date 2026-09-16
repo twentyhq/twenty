@@ -12,7 +12,6 @@ import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { InboxItemSubjectChip } from '@/inbox/components/InboxItemSubjectChip';
 import { InboxItemThreadView } from '@/inbox/components/InboxItemThreadView';
-import { InboxPlanActionsSummary } from '@/inbox/components/InboxPlanActionsSummary';
 import { InboxPlanEntityGraph } from '@/inbox/components/InboxPlanEntityGraph';
 import { InboxPlanToolCallRow } from '@/inbox/components/InboxPlanToolCallRow';
 import { InboxSnoozeDropdown } from '@/inbox/components/InboxSnoozeDropdown';
@@ -69,10 +68,29 @@ const StyledSummary = styled.p`
   margin: 0;
 `;
 
-const StyledToolCallRows = styled.div`
+const StyledPlanCard = styled.div`
+  background: ${themeCssVariables.background.primary};
+  border: 1px solid ${themeCssVariables.border.color.medium};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
-  gap: ${themeCssVariables.spacing[3]};
+`;
+
+const StyledPlanHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+`;
+
+const StyledPlanCount = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledPlanRow = styled.div`
+  border-top: 1px solid ${themeCssVariables.border.color.light};
+  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
 `;
 
 const StyledFooter = styled.div`
@@ -140,10 +158,6 @@ export const InboxItemView = ({
   // Every call starts folded; the person opens the ones they want to change.
   const [expandedToolCallIds, setExpandedToolCallIds] = useState<string[]>([]);
 
-  const expandToolCall = (toolCallId: string) =>
-    setExpandedToolCallIds((current) =>
-      current.includes(toolCallId) ? current : [...current, toolCallId],
-    );
   const toggleToolCall = (toolCallId: string) =>
     setExpandedToolCallIds((current) =>
       current.includes(toolCallId)
@@ -386,20 +400,26 @@ export const InboxItemView = ({
         )}
 
         {toolCalls.length > 0 && (
-          <>
-            <StyledSectionTitle>{t`Plan`}</StyledSectionTitle>
-            <InboxPlanActionsSummary
-              toolCalls={toolCalls}
-              onSelect={expandToolCall}
-            />
-            <StyledToolCallRows>
-              {toolCalls.map((toolCall) => (
+          <StyledPlanCard>
+            <StyledPlanHeader>
+              <StyledSectionTitle>{t`Plan`}</StyledSectionTitle>
+              {pendingToolCalls.length > 0 && (
+                <StyledPlanCount>
+                  {pendingToolCalls.length === 1
+                    ? t`1 step to do`
+                    : t`${pendingToolCalls.length} steps to do`}
+                </StyledPlanCount>
+              )}
+            </StyledPlanHeader>
+            {toolCalls.map((toolCall) => (
+              <StyledPlanRow key={toolCall.id}>
                 <InboxPlanToolCallRow
-                  key={toolCall.id}
                   toolCall={toolCall}
                   source={context.source ?? undefined}
                   isExpanded={expandedToolCallIds.includes(toolCall.id)}
+                  isBusy={isBusy}
                   onToggleExpanded={() => toggleToolCall(toolCall.id)}
+                  onRun={() => runToolCall(toolCall.id)}
                   onSave={(editedInput) =>
                     trackEdit(
                       () =>
@@ -422,9 +442,9 @@ export const InboxItemView = ({
                   }
                   onRegisterFlush={(flush) => registerFlush(toolCall.id, flush)}
                 />
-              ))}
-            </StyledToolCallRows>
-          </>
+              </StyledPlanRow>
+            ))}
+          </StyledPlanCard>
         )}
       </StyledScroll>
 
