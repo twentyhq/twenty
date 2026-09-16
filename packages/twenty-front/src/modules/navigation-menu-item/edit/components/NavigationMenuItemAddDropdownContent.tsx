@@ -4,7 +4,7 @@ import { useState, type ReactNode } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
-  IconArrowLeft,
+  IconChevronLeft,
   IconBox,
   IconFolder,
   IconLink,
@@ -14,7 +14,7 @@ import {
 } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { Avatar, TintedIconTile } from 'twenty-ui/primitives/data-display';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -330,9 +330,8 @@ export const NavigationMenuItemAddDropdownContent = ({
       <DropdownMenuHeader
         StartComponent={
           step !== 'main' && (
-            <LightIconButton
-              Icon={IconArrowLeft}
-              aria-label={t`Back`}
+            <DropdownMenuHeaderLeftComponent
+              Icon={IconChevronLeft}
               onClick={goBack}
             />
           )
