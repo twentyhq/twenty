@@ -111,15 +111,14 @@ export const SidePanelComposeEmailPage = () => {
           />,
           <Button
             key="send"
-            size="small"
-            variant="primary"
-            accent="blue"
-            title={t`Send`}
-            Icon={IconSend}
+            size="sm"
+            startIcon={<IconSend />}
             hotkeys={[getOsControlSymbol(), '⏎']}
             onClick={composerState.handleSend}
             disabled={!canSend}
-          />,
+            variant="solid"
+            color="accent"
+          >{t`Send`}</Button>,
         ]}
       />
     </StyledContainer>

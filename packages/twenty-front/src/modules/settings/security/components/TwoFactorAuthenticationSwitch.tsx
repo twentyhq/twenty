@@ -1,15 +1,16 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
-import { IconLifebuoy } from 'twenty-ui/icon';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { IconLifebuoy } from 'twenty-ui/icon';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const TwoFactorAuthenticationSwitch = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -41,10 +42,12 @@ export const TwoFactorAuthenticationSwitch = () => {
         ...currentWorkspace,
         isTwoFactorAuthenticationEnforced: !newEnforceValue,
       });
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-        message: err?.message,
-      });
+      enqueueToast(
+        getToastOptionsFromError({
+          error: err,
+          children: err?.message,
+        }),
+      );
     }
   };
 

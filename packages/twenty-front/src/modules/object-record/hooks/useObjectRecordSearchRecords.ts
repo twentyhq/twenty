@@ -2,11 +2,10 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { MAX_SEARCH_RESULTS } from '@/command-menu/constants/MaxSearchResults';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useDoObjectMetadataItemsExist } from '@/object-metadata/hooks/useDoObjectMetadataItemsExist';
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type WatchQueryFetchPolicy } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 import { useMemo } from 'react';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type ObjectRecordFilterInput,
@@ -14,7 +13,7 @@ import {
 } from '~/generated/graphql';
 
 // maybe we should look at ObjectMetadataItemIdentifier to update the API even though there are many location to update
-export type UseSearchRecordsParams = {
+type UseSearchRecordsParams = {
   objectNameSingulars: string[];
   limit?: number;
   onError?: (error?: Error) => void;
@@ -49,8 +48,6 @@ export const useObjectRecordSearchRecords = ({
     fetchPolicy: fetchPolicy,
     client: apolloCoreClient,
   });
-
-  useSnackBarOnQueryError(error);
 
   const effectiveData = loading ? previousData : data;
 

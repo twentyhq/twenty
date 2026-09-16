@@ -1,3 +1,4 @@
+import { type AnimatedPlaceholderType } from './types/AnimatedPlaceholderType';
 import { clsx } from 'clsx';
 import { useEffect, useRef } from 'react';
 
@@ -10,10 +11,6 @@ import { useThemeColorScheme } from '@ui/theme-constants';
 import styles from './AnimatedPlaceholder.module.scss';
 
 const PARALLAX_OFFSET_IN_PX = 2;
-
-export type AnimatedPlaceholderType =
-  | keyof typeof BACKGROUND
-  | keyof typeof MOVING_IMAGE;
 
 type AnimatedPlaceholderProps = {
   type: AnimatedPlaceholderType;

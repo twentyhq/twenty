@@ -1,23 +1,23 @@
 import { useState } from 'react';
 
-import { type ErrorLike } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
 
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { logError } from '~/utils/logError';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
 import { buildCoreWorkflowFilterInput } from '@/object-core/workflows/utils/buildCoreWorkflowFilterInput';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { sortedFieldByTableFamilyState } from '@/ui/layout/table/states/sortedFieldByTableFamilyState';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   CoreWorkflowOrderByDirection,
   CoreWorkflowOrderByField,
   GetCoreWorkflowsDocument,
 } from '~/generated/graphql';
+import { logError } from '~/utils/logError';
 
 export const CORE_WORKFLOWS_TABLE_ID = 'workflowCore';
 export const CORE_WORKFLOWS_PAGE_SIZE = 60;
@@ -82,7 +82,7 @@ export const useCoreWorkflows = ({
   );
   const connection = (data ?? previousData)?.coreWorkflows;
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const fetchNextPage = async () => {
     if (connection?.pageInfo.hasNextPage !== true || isFetchingMore) {
@@ -107,7 +107,7 @@ export const useCoreWorkflows = ({
       });
     } catch (fetchMoreError) {
       logError(`useCoreWorkflows fetchMore error : ${fetchMoreError}`);
-      enqueueErrorSnackBar({ apolloError: fetchMoreError as ErrorLike });
+      enqueueToast(getToastOptionsFromError({ error: fetchMoreError }));
     } finally {
       setIsFetchingMore(false);
     }

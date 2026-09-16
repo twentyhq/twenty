@@ -48,16 +48,16 @@ export class ObjectPermissionEntity extends SyncableEntity {
   objectMetadata: Relation<ObjectMetadataEntity>;
 
   @Column({ nullable: true, type: 'boolean' })
-  canReadObjectRecords?: boolean;
+  canReadObjectRecords?: boolean | null;
 
   @Column({ nullable: true, type: 'boolean' })
-  canUpdateObjectRecords?: boolean;
+  canUpdateObjectRecords?: boolean | null;
 
   @Column({ nullable: true, type: 'boolean' })
-  canSoftDeleteObjectRecords?: boolean;
+  canSoftDeleteObjectRecords?: boolean | null;
 
   @Column({ nullable: true, type: 'boolean' })
-  canDestroyObjectRecords?: boolean;
+  canDestroyObjectRecords?: boolean | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

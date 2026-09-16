@@ -1,3 +1,5 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
@@ -39,7 +41,6 @@ import { isAiChatCreditsExhaustedError } from '@/ai/utils/isAiChatCreditsExhaust
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -56,7 +57,7 @@ export const useAgentChat = (
   const { getBrowsingContext } = useGetBrowsingContext();
   const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
   const apolloClient = useApolloClient();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
   const store = useStore();
@@ -85,8 +86,9 @@ export const useAgentChat = (
     }
 
     if (aiModels.length === 0) {
-      enqueueErrorSnackBar({
-        message: t`No AI provider is configured on this instance.`,
+      enqueueToast({
+        variant: 'error',
+        children: t`No AI provider is configured on this instance.`,
       });
 
       return;
@@ -272,7 +274,7 @@ export const useAgentChat = (
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
     aiModels,
-    enqueueErrorSnackBar,
+    enqueueToast,
     setCurrentAiChatThread,
     apolloClient,
     applyOptimisticUnarchive,
@@ -304,11 +306,9 @@ export const useAgentChat = (
         variables: { threadId },
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
-  }, [store, apolloClient, enqueueErrorSnackBar]);
+  }, [store, apolloClient, enqueueToast]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_STOP_EVENT_NAME,
