@@ -29,31 +29,21 @@ const StyledMainCardWrapper = styled.div`
   box-sizing: border-box;
   display: flex;
   flex: 1 1 0;
-  margin-left: -3px;
   min-width: 0;
-  padding-left: 4px;
   width: 0;
-
-  @media (max-width: ${MOBILE_VIEWPORT}px) {
-    margin-left: 0;
-    padding-left: 0;
-  }
 
   @media print {
     display: block;
-    margin-left: 0;
     min-width: auto;
-    padding-left: 0;
     width: auto;
   }
 `;
 
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
+  border-left: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: 0;
-  box-shadow:
-    ${themeCssVariables.boxShadow.sidebar},
-    0 0 0 1px ${themeCssVariables.border.color.medium};
+  box-shadow: ${themeCssVariables.boxShadow.sidebar};
   box-sizing: border-box;
   display: flex;
   flex: 1;
@@ -63,12 +53,12 @@ const StyledCard = styled.div`
   width: 100%;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    border-radius: 0;
+    border-left: none;
     box-shadow: none;
   }
 
   @media print {
-    border-radius: 0;
+    border-left: none;
     box-shadow: none;
     display: block;
     min-height: auto;

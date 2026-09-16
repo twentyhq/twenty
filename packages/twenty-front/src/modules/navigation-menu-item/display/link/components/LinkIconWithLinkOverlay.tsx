@@ -11,31 +11,21 @@ const failedFaviconUrls = new Set<string>();
 
 const StyledCompositeContainer = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
-  height: 16px;
+  height: calc(${themeCssVariables.icon.size.md} * 1px);
   justify-content: center;
   position: relative;
-  width: 16px;
-`;
-
-const StyledMainIconWrapper = styled.div`
-  align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  overflow: hidden;
-  position: absolute;
+  width: calc(${themeCssVariables.icon.size.md} * 1px);
 `;
 
 const StyledFaviconImage = styled.img`
-  height: 100%;
+  display: block;
+  flex-shrink: 0;
+  height: calc(${themeCssVariables.icon.size.md} * 1px);
   object-fit: contain;
-  width: 100%;
+  width: calc(${themeCssVariables.icon.size.md} * 1px);
 `;
 
 const StyledLinkOverlay = styled.div<{ $backgroundColor: string }>`
@@ -74,23 +64,21 @@ export const LinkIconWithLinkOverlay = ({
 
   return (
     <StyledCompositeContainer>
-      <StyledMainIconWrapper>
-        {showFavicon ? (
-          <StyledFaviconImage
-            src={faviconUrl}
-            alt=""
-            onError={() => {
-              if (isDefined(link)) failedFaviconUrls.add(link);
-              setLocalFailedLink(linkKey);
-            }}
-          />
-        ) : (
-          <ColoredIcon
-            Icon={DefaultIcon}
-            color={navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK}
-          />
-        )}
-      </StyledMainIconWrapper>
+      {showFavicon ? (
+        <StyledFaviconImage
+          src={faviconUrl}
+          alt=""
+          onError={() => {
+            if (isDefined(link)) failedFaviconUrls.add(link);
+            setLocalFailedLink(linkKey);
+          }}
+        />
+      ) : (
+        <ColoredIcon
+          Icon={DefaultIcon}
+          color={navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK}
+        />
+      )}
       <StyledLinkOverlay $backgroundColor={themeCssVariables.grayScale.gray4}>
         <LinkIcon
           size="14px"

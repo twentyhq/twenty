@@ -19,7 +19,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
 import { FormProvider, useForm } from 'react-hook-form';
-import { parseThemeColor } from 'twenty-ui/utilities';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 
 type SettingsUpdateDataModelObjectAboutFormProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -58,7 +58,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       namePlural,
       nameSingular,
       ...(isCustomObject
-        ? { color: parseThemeColor(objectMetadataItem.color) }
+        ? { color: getObjectColorWithFallback(objectMetadataItem) }
         : {}),
     },
   });

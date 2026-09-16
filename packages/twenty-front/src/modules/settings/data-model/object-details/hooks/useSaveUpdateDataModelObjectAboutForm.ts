@@ -15,7 +15,7 @@ import { TRANSLATABLE_PROPERTIES_BY_METADATA_NAME } from 'twenty-shared/i18n';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { parseThemeColor } from 'twenty-ui/utilities';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
 import { MetadataTranslationsDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -131,10 +131,12 @@ export const useSaveUpdateDataModelObjectAboutForm = ({
         nameSingular: updatedObject?.data?.updateOneObject.nameSingular,
         ...(isCustomObject
           ? {
-              color: parseThemeColor(
-                updatedObject?.data?.updateOneObject.color ??
+              color: getObjectColorWithFallback({
+                ...objectMetadataItem,
+                color:
+                  updatedObject?.data?.updateOneObject.color ??
                   objectMetadataItem.color,
-              ),
+              }),
             }
           : {}),
       });
