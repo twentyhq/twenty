@@ -22,7 +22,9 @@ export const getReplyDefaultsFromMessages = ({
   const lastSentMessage = sentMessages[sentMessages.length - 1];
 
   if (!isDefined(lastSentMessage)) {
-    return messages.length === 0 ? null : { to: '', subject: '', inReplyTo: '' };
+    return messages.length === 0
+      ? null
+      : { to: '', subject: '', inReplyTo: '' };
   }
 
   const rawSubject = lastSentMessage.subject ?? '';

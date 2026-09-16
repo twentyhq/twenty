@@ -71,7 +71,10 @@ export const useInboxReplyAccount = ({
 
   return {
     replyAccount: isDefined(account)
-      ? { connectedAccountId: account.id, connectedAccountHandle: account.handle }
+      ? {
+          connectedAccountId: account.id,
+          connectedAccountHandle: account.handle,
+        }
       : null,
     loading: accountsLoading || channelsLoading,
   };
