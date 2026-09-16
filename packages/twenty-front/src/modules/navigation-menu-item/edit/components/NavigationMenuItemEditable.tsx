@@ -164,7 +164,10 @@ export const NavigationMenuItemEditable = ({
         }
         clickableComponent={children}
         disableClickForClickableComponent
-        dropdownPlacement="right-start"
+        dropdownPlacement={mode === 'edit' ? 'top-start' : 'right-start'}
+        dropdownOffset={
+          mode === 'edit' ? { y: theme.spacingMultiplicator } : undefined
+        }
         excludedClickOutsideIds={[
           `${dropdownId}-icon`,
           `${dropdownId}-icon-icon-color-picker`,

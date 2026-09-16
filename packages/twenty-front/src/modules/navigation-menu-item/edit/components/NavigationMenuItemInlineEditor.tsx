@@ -122,7 +122,11 @@ export const NavigationMenuItemInlineEditor = ({
         autoFocus
         aria-label={t`Folder name`}
         value={name}
-        onChange={(event) => setName(event.target.value)}
+        onChange={(event) => {
+          const nextName = event.target.value;
+          setName(nextName);
+          void updateItem(item.id, { name: nextName });
+        }}
         onBlur={(event) => {
           if (!event.currentTarget.parentElement?.contains(event.relatedTarget))
             saveFolder();

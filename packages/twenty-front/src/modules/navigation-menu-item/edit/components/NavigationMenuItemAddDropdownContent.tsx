@@ -212,8 +212,8 @@ export const NavigationMenuItemAddDropdownContent = ({
           onClick: () => {
             addItem({
               type: NavigationMenuItemType.LINK,
-              name: t`Link label`,
-              link: 'https://www.example.com',
+              name: 'Twenty',
+              link: 'https://twenty.com',
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
             });
           },
