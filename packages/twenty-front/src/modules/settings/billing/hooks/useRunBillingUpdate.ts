@@ -5,7 +5,6 @@ import {
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { isBillingUpdateRunningState } from '@/settings/billing/states/isBillingUpdateRunningState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useStore } from 'jotai';
 
@@ -20,7 +19,6 @@ export const useRunBillingUpdate = ({
   const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
 
   const store = useStore();
-  const isBillingUpdateRunning = useAtomStateValue(isBillingUpdateRunningState);
 
   const runBillingUpdate = async ({
     getErrorMessage,
@@ -59,8 +57,5 @@ export const useRunBillingUpdate = ({
     }
   };
 
-  return {
-    isBillingUpdateRunning,
-    runBillingUpdate,
-  };
+  return { runBillingUpdate };
 };

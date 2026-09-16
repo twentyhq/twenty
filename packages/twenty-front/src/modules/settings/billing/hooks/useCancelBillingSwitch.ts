@@ -16,22 +16,17 @@ export const useCancelBillingSwitch = () => {
     CancelSwitchBillingIntervalDocument,
   );
 
-  const {
-    isBillingUpdateRunning: isCancellingPlanSwitch,
-    runBillingUpdate: runPlanSwitchCancellation,
-  } = useRunBillingUpdate({
+  const { runBillingUpdate: runPlanSwitchCancellation } = useRunBillingUpdate({
     mutate: async () =>
       (await cancelSwitchBillingPlanMutation()).data?.cancelSwitchBillingPlan,
   });
 
-  const {
-    isBillingUpdateRunning: isCancellingIntervalSwitch,
-    runBillingUpdate: runIntervalSwitchCancellation,
-  } = useRunBillingUpdate({
-    mutate: async () =>
-      (await cancelSwitchBillingIntervalMutation()).data
-        ?.cancelSwitchBillingInterval,
-  });
+  const { runBillingUpdate: runIntervalSwitchCancellation } =
+    useRunBillingUpdate({
+      mutate: async () =>
+        (await cancelSwitchBillingIntervalMutation()).data
+          ?.cancelSwitchBillingInterval,
+    });
 
   const cancelPlanSwitch = async () =>
     await runPlanSwitchCancellation({
@@ -45,10 +40,5 @@ export const useCancelBillingSwitch = () => {
       getSuccessMessage: () => t`Interval switching has been cancelled.`,
     });
 
-  return {
-    cancelIntervalSwitch,
-    cancelPlanSwitch,
-    isCancellingIntervalSwitch,
-    isCancellingPlanSwitch,
-  };
+  return { cancelIntervalSwitch, cancelPlanSwitch };
 };

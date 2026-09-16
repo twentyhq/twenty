@@ -13,14 +13,8 @@ export const SettingsBillingSwitchModals = () => {
     confirmationModalSwitchToMonthlyMessage,
     confirmationModalSwitchToYearlyMessage,
   } = useBillingWording();
-  const { isSwitchingInterval, switchBillingInterval } =
-    useSwitchBillingInterval();
-  const {
-    cancelIntervalSwitch,
-    cancelPlanSwitch,
-    isCancellingIntervalSwitch,
-    isCancellingPlanSwitch,
-  } = useCancelBillingSwitch();
+  const { switchBillingInterval } = useSwitchBillingInterval();
+  const { cancelIntervalSwitch, cancelPlanSwitch } = useCancelBillingSwitch();
 
   return (
     <>
@@ -31,7 +25,6 @@ export const SettingsBillingSwitchModals = () => {
         onConfirmClick={switchBillingInterval}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
-        loading={isSwitchingInterval}
       />
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingIntervalToMonthly}
@@ -40,7 +33,6 @@ export const SettingsBillingSwitchModals = () => {
         onConfirmClick={switchBillingInterval}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
-        loading={isSwitchingInterval}
       />
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingInterval}
@@ -49,7 +41,6 @@ export const SettingsBillingSwitchModals = () => {
         onConfirmClick={cancelIntervalSwitch}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
-        loading={isCancellingIntervalSwitch}
       />
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingPlan}
@@ -58,7 +49,6 @@ export const SettingsBillingSwitchModals = () => {
         onConfirmClick={cancelPlanSwitch}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
-        loading={isCancellingPlanSwitch}
       />
     </>
   );

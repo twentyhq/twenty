@@ -20,6 +20,7 @@ import {
   IconArrowUp,
   IconCheck,
   IconCircleX,
+  type IconComponent,
 } from 'twenty-ui/icon';
 import {
   BillingPlanKey,
@@ -78,6 +79,47 @@ export const useBillingPlanActions = ({
     variant: 'secondary',
   });
 
+  const createDisabledAction = (
+    title: string,
+    Icon?: IconComponent,
+  ): SettingsBillingPlanAction => ({
+    disabled: true,
+    Icon,
+    title,
+    variant: 'secondary',
+  });
+
+  const createCancelAction = (
+    modalId: string,
+    title: string,
+  ): SettingsBillingPlanAction => ({
+    accent: 'blue',
+    disabled: isBillingUpdateRunning,
+    Icon: IconCircleX,
+    isLoading: isBillingUpdateRunning,
+    onClick: () => openModal(modalId),
+    title,
+    variant: 'primary',
+  });
+
+  const createSwitchAction = ({
+    isUpgrade,
+    modalId,
+    title,
+  }: {
+    isUpgrade: boolean;
+    modalId: string;
+    title: string;
+  }): SettingsBillingPlanAction => ({
+    accent: isUpgrade ? 'blue' : 'default',
+    disabled: isBillingUpdateRunning,
+    Icon: isUpgrade ? IconArrowUp : IconArrowDown,
+    isLoading: isBillingUpdateRunning,
+    onClick: () => openModal(modalId),
+    title,
+    variant: isUpgrade ? 'primary' : 'secondary',
+  });
+
   const getPlanAction = (
     planKey: BillingPlanKey,
   ): SettingsBillingPlanAction => {
@@ -102,97 +144,46 @@ export const useBillingPlanActions = ({
       case 'UPDATE_PAYMENT':
         return createBillingPortalAction(t`Update payment`);
       case 'CURRENT':
-        return {
-          disabled: true,
-          Icon: IconCheck,
-          title: t`Current`,
-          variant: 'secondary',
-        };
+        return createDisabledAction(t`Current`, IconCheck);
       case 'SCHEDULED':
-        return {
-          disabled: true,
-          title: t`Scheduled`,
-          variant: 'secondary',
-        };
+        return createDisabledAction(t`Scheduled`);
       case 'UNAVAILABLE':
-        return {
-          disabled: true,
-          title: t`Unavailable`,
-          variant: 'secondary',
-        };
+        return createDisabledAction(t`Unavailable`);
       case 'CONTACT_ADMIN':
-        return {
-          disabled: true,
-          title: t`Contact admin`,
-          variant: 'secondary',
-        };
-      case 'CANCEL_PLAN_SWITCH':
-        return {
-          accent: 'blue',
-          disabled: isBillingUpdateRunning,
-          Icon: IconCircleX,
-          isLoading: isBillingUpdateRunning,
-          onClick: () => openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan),
-          title: t`Cancel plan switching`,
-          variant: 'primary',
-        };
-      case 'CANCEL_INTERVAL_SWITCH':
-        return {
-          accent: 'blue',
-          disabled: isBillingUpdateRunning,
-          Icon: IconCircleX,
-          isLoading: isBillingUpdateRunning,
-          onClick: () =>
-            openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval),
-          title: t`Cancel interval switching`,
-          variant: 'primary',
-        };
+        return createDisabledAction(t`Contact admin`);
       case 'SWITCH_INTERVAL_FIRST':
-        return {
-          disabled: true,
-          title: t`Switch interval first`,
-          variant: 'secondary',
-        };
+        return createDisabledAction(t`Switch interval first`);
+      case 'CANCEL_PLAN_SWITCH':
+        return createCancelAction(
+          BILLING_MODAL_IDS.cancelSwitchBillingPlan,
+          t`Cancel plan switching`,
+        );
+      case 'CANCEL_INTERVAL_SWITCH':
+        return createCancelAction(
+          BILLING_MODAL_IDS.cancelSwitchBillingInterval,
+          t`Cancel interval switching`,
+        );
       case 'SWITCH_INTERVAL': {
-        const isUpgradeToAnnual =
-          selectedInterval === SubscriptionInterval.Year;
+        const isUpgrade = selectedInterval === SubscriptionInterval.Year;
 
-        return {
-          disabled: isBillingUpdateRunning,
-          Icon: isUpgradeToAnnual ? IconArrowUp : IconArrowDown,
-          isLoading: isBillingUpdateRunning,
-          onClick: () =>
-            openModal(
-              isUpgradeToAnnual
-                ? BILLING_MODAL_IDS.switchBillingIntervalToYearly
-                : BILLING_MODAL_IDS.switchBillingIntervalToMonthly,
-            ),
-          title: isUpgradeToAnnual
-            ? t`Upgrade to annual`
-            : t`Downgrade to monthly`,
-          variant: isUpgradeToAnnual ? 'primary' : 'secondary',
-          accent: isUpgradeToAnnual ? 'blue' : 'default',
-        };
+        return createSwitchAction({
+          isUpgrade,
+          modalId: isUpgrade
+            ? BILLING_MODAL_IDS.switchBillingIntervalToYearly
+            : BILLING_MODAL_IDS.switchBillingIntervalToMonthly,
+          title: isUpgrade ? t`Upgrade to annual` : t`Downgrade to monthly`,
+        });
       }
       case 'SWITCH_PLAN': {
-        const isUpgradeToOrganization = planKey === BillingPlanKey.ENTERPRISE;
+        const isUpgrade = planKey === BillingPlanKey.ENTERPRISE;
 
-        return {
-          disabled: isBillingUpdateRunning,
-          Icon: isUpgradeToOrganization ? IconArrowUp : IconArrowDown,
-          isLoading: isBillingUpdateRunning,
-          onClick: () =>
-            openModal(
-              isUpgradeToOrganization
-                ? BILLING_MODAL_IDS.switchBillingPlanToEnterprise
-                : BILLING_MODAL_IDS.switchBillingPlanToPro,
-            ),
-          title: isUpgradeToOrganization
-            ? t`Upgrade to Organization`
-            : t`Downgrade to Pro`,
-          variant: isUpgradeToOrganization ? 'primary' : 'secondary',
-          accent: isUpgradeToOrganization ? 'blue' : 'default',
-        };
+        return createSwitchAction({
+          isUpgrade,
+          modalId: isUpgrade
+            ? BILLING_MODAL_IDS.switchBillingPlanToEnterprise
+            : BILLING_MODAL_IDS.switchBillingPlanToPro,
+          title: isUpgrade ? t`Upgrade to Organization` : t`Downgrade to Pro`,
+        });
       }
     }
   };

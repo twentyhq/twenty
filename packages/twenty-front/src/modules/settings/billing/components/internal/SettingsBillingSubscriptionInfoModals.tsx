@@ -21,8 +21,7 @@ export const SettingsBillingSubscriptionInfoModals = ({
   startSubscriptionSubtitle,
 }: SettingsBillingSubscriptionInfoModalsProps) => {
   const { t } = useLingui();
-  const { cancelResourceCreditSwitch, isCancellingResourceCreditSwitch } =
-    useCancelResourceCreditSwitch();
+  const { cancelResourceCreditSwitch } = useCancelResourceCreditSwitch();
 
   return (
     <>
@@ -50,7 +49,6 @@ export const SettingsBillingSubscriptionInfoModals = ({
         onConfirmClick={cancelResourceCreditSwitch}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
-        loading={isCancellingResourceCreditSwitch}
       />
     </>
   );

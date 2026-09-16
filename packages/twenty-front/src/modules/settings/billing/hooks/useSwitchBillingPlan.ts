@@ -16,7 +16,7 @@ export const useSwitchBillingPlan = () => {
 
   const [switchBillingPlanMutation] = useMutation(SwitchBillingPlanDocument);
 
-  const { isBillingUpdateRunning, runBillingUpdate } = useRunBillingUpdate({
+  const { runBillingUpdate } = useRunBillingUpdate({
     mutate: async () =>
       (await switchBillingPlanMutation()).data?.switchBillingPlan,
   });
@@ -36,8 +36,5 @@ export const useSwitchBillingPlan = () => {
       getSuccessMessage: () => getSuccessMessage(targetPlanKey),
     });
 
-  return {
-    isSwitchingPlan: isBillingUpdateRunning,
-    switchBillingPlan,
-  };
+  return { switchBillingPlan };
 };

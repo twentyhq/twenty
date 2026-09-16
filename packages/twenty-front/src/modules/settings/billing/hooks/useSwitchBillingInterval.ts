@@ -19,7 +19,7 @@ export const useSwitchBillingInterval = () => {
     SwitchSubscriptionIntervalDocument,
   );
 
-  const { isBillingUpdateRunning, runBillingUpdate } = useRunBillingUpdate({
+  const { runBillingUpdate } = useRunBillingUpdate({
     mutate: async () =>
       (await switchSubscriptionIntervalMutation()).data
         ?.switchSubscriptionInterval,
@@ -41,8 +41,5 @@ export const useSwitchBillingInterval = () => {
       getSuccessMessage,
     });
 
-  return {
-    isSwitchingInterval: isBillingUpdateRunning,
-    switchBillingInterval,
-  };
+  return { switchBillingInterval };
 };

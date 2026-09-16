@@ -1,12 +1,13 @@
+import { type SettingsBillingPlanActionType } from '@/settings/billing/types/settingsBillingPlanAction.type';
 import { getBillingPlanActionType } from '@/settings/billing/utils/getBillingPlanActionType';
 import {
   BillingPlanKey,
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
-const buildParams = (
-  overrides: Partial<Parameters<typeof getBillingPlanActionType>[0]> = {},
-) => ({
+type Params = Parameters<typeof getBillingPlanActionType>[0];
+
+const buildParams = (overrides: Partial<Params>): Params => ({
   canSwitchSubscription: true,
   currentInterval: SubscriptionInterval.Month,
   currentPlanKey: BillingPlanKey.PRO,
@@ -16,217 +17,156 @@ const buildParams = (
   planKey: BillingPlanKey.PRO,
   scheduledInterval: undefined,
   scheduledPlanKey: undefined,
-  selectedInterval: SubscriptionInterval.Month as
-    | SubscriptionInterval.Month
-    | SubscriptionInterval.Year,
+  selectedInterval: SubscriptionInterval.Month,
   shouldUpdatePayment: false,
   ...overrides,
 });
 
+const organizationYearlyWithMonthlyScheduled = {
+  currentInterval: SubscriptionInterval.Year,
+  currentPlanKey: BillingPlanKey.ENTERPRISE,
+  scheduledInterval: SubscriptionInterval.Month,
+  scheduledPlanKey: BillingPlanKey.ENTERPRISE,
+};
+
+const organizationYearlyWithProYearlyScheduled = {
+  currentInterval: SubscriptionInterval.Year,
+  currentPlanKey: BillingPlanKey.ENTERPRISE,
+  scheduledInterval: SubscriptionInterval.Year,
+  scheduledPlanKey: BillingPlanKey.PRO,
+};
+
+const organizationYearlyWithProMonthlyScheduled = {
+  currentInterval: SubscriptionInterval.Year,
+  currentPlanKey: BillingPlanKey.ENTERPRISE,
+  scheduledInterval: SubscriptionInterval.Month,
+  scheduledPlanKey: BillingPlanKey.PRO,
+};
+
+const proCell = { planKey: BillingPlanKey.PRO };
+const organizationCell = { planKey: BillingPlanKey.ENTERPRISE };
+const monthly = { selectedInterval: SubscriptionInterval.Month };
+const yearly = { selectedInterval: SubscriptionInterval.Year };
+
 describe('getBillingPlanActionType', () => {
-  it('marks the subscribed plan at the subscribed interval as current', () => {
-    expect(getBillingPlanActionType(buildParams())).toBe('CURRENT');
-  });
-
-  it('switches interval on the subscribed plan at another interval', () => {
-    expect(
-      getBillingPlanActionType(
-        buildParams({ selectedInterval: SubscriptionInterval.Year }),
-      ),
-    ).toBe('SWITCH_INTERVAL');
-  });
-
-  it('switches plan on another plan at the subscribed interval', () => {
-    expect(
-      getBillingPlanActionType(
-        buildParams({ planKey: BillingPlanKey.ENTERPRISE }),
-      ),
-    ).toBe('SWITCH_PLAN');
-  });
-
-  it('blocks another plan at another interval, which takes two steps', () => {
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          planKey: BillingPlanKey.ENTERPRISE,
-          selectedInterval: SubscriptionInterval.Year,
-        }),
-      ),
-    ).toBe('SWITCH_INTERVAL_FIRST');
-  });
-
-  it('marks the scheduled plan and interval as scheduled', () => {
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          planKey: BillingPlanKey.ENTERPRISE,
-          scheduledInterval: SubscriptionInterval.Year,
-          scheduledPlanKey: BillingPlanKey.ENTERPRISE,
-          selectedInterval: SubscriptionInterval.Year,
-        }),
-      ),
-    ).toBe('SCHEDULED');
-  });
-
-  it('acts on the scheduled phase, which is what a further change is applied to', () => {
-    const scheduledOrganizationMonthly = {
-      currentInterval: SubscriptionInterval.Year,
-      currentPlanKey: BillingPlanKey.ENTERPRISE,
-      scheduledInterval: SubscriptionInterval.Month,
-      scheduledPlanKey: BillingPlanKey.ENTERPRISE,
-    };
-
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          ...scheduledOrganizationMonthly,
-          planKey: BillingPlanKey.PRO,
-          selectedInterval: SubscriptionInterval.Month,
-        }),
-      ),
-    ).toBe('SWITCH_PLAN');
-
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          ...scheduledOrganizationMonthly,
-          planKey: BillingPlanKey.ENTERPRISE,
-          selectedInterval: SubscriptionInterval.Year,
-        }),
-      ),
-    ).toBe('CURRENT');
-
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          ...scheduledOrganizationMonthly,
-          planKey: BillingPlanKey.ENTERPRISE,
-          selectedInterval: SubscriptionInterval.Month,
-        }),
-      ),
-    ).toBe('SCHEDULED');
-  });
-
-  it('offers to cancel the scheduled interval switch on the cell it blocks', () => {
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          currentInterval: SubscriptionInterval.Year,
-          currentPlanKey: BillingPlanKey.ENTERPRISE,
-          planKey: BillingPlanKey.PRO,
-          scheduledInterval: SubscriptionInterval.Month,
-          scheduledPlanKey: BillingPlanKey.ENTERPRISE,
-          selectedInterval: SubscriptionInterval.Year,
-        }),
-      ),
-    ).toBe('CANCEL_INTERVAL_SWITCH');
-  });
-
-  it('offers to cancel the scheduled plan switch on the cell it blocks', () => {
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          currentInterval: SubscriptionInterval.Year,
-          currentPlanKey: BillingPlanKey.ENTERPRISE,
-          planKey: BillingPlanKey.ENTERPRISE,
-          scheduledInterval: SubscriptionInterval.Year,
-          scheduledPlanKey: BillingPlanKey.PRO,
-          selectedInterval: SubscriptionInterval.Month,
-        }),
-      ),
-    ).toBe('CANCEL_PLAN_SWITCH');
-  });
-
-  it('cancels the scheduled switch on the cells that drop one of its dimensions', () => {
-    const scheduledProMonthly = {
-      currentInterval: SubscriptionInterval.Year,
-      currentPlanKey: BillingPlanKey.ENTERPRISE,
-      scheduledInterval: SubscriptionInterval.Month,
-      scheduledPlanKey: BillingPlanKey.PRO,
-    };
-
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          ...scheduledProMonthly,
-          planKey: BillingPlanKey.ENTERPRISE,
-          selectedInterval: SubscriptionInterval.Month,
-        }),
-      ),
-    ).toBe('CANCEL_PLAN_SWITCH');
-
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          ...scheduledProMonthly,
-          planKey: BillingPlanKey.PRO,
-          selectedInterval: SubscriptionInterval.Year,
-        }),
-      ),
-    ).toBe('CANCEL_INTERVAL_SWITCH');
-
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          ...scheduledProMonthly,
-          planKey: BillingPlanKey.ENTERPRISE,
-          selectedInterval: SubscriptionInterval.Year,
-        }),
-      ),
-    ).toBe('CURRENT');
-
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          ...scheduledProMonthly,
-          planKey: BillingPlanKey.PRO,
-          selectedInterval: SubscriptionInterval.Month,
-        }),
-      ),
-    ).toBe('SCHEDULED');
-  });
-
-  it('sends a canceled subscription to the billing portal', () => {
-    expect(
-      getBillingPlanActionType(buildParams({ isSubscriptionCanceled: true })),
-    ).toBe('MANAGE_BILLING');
-  });
-
-  it('asks for a payment update before any switch, but leaves the current plan marked as current', () => {
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          planKey: BillingPlanKey.ENTERPRISE,
-          shouldUpdatePayment: true,
-        }),
-      ),
-    ).toBe('UPDATE_PAYMENT');
-
-    expect(
-      getBillingPlanActionType(buildParams({ shouldUpdatePayment: true })),
-    ).toBe('CURRENT');
-  });
-
-  it('points a member without the billing permission to an admin', () => {
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          canSwitchSubscription: false,
-          hasPermissionToManageBilling: false,
-          planKey: BillingPlanKey.ENTERPRISE,
-        }),
-      ),
-    ).toBe('CONTACT_ADMIN');
-  });
-
-  it('marks a switch as unavailable when the subscription cannot be switched', () => {
-    expect(
-      getBillingPlanActionType(
-        buildParams({
-          canSwitchSubscription: false,
-          planKey: BillingPlanKey.ENTERPRISE,
-        }),
-      ),
-    ).toBe('UNAVAILABLE');
+  it.each<[string, Partial<Params>, SettingsBillingPlanActionType]>([
+    ['the subscribed plan at the subscribed interval', {}, 'CURRENT'],
+    ['the subscribed plan at another interval', yearly, 'SWITCH_INTERVAL'],
+    [
+      'another plan at the subscribed interval',
+      organizationCell,
+      'SWITCH_PLAN',
+    ],
+    [
+      'another plan at another interval, which takes two steps',
+      { ...organizationCell, ...yearly },
+      'SWITCH_INTERVAL_FIRST',
+    ],
+    [
+      'the scheduled plan at the scheduled interval',
+      {
+        ...organizationCell,
+        ...yearly,
+        scheduledInterval: SubscriptionInterval.Year,
+        scheduledPlanKey: BillingPlanKey.ENTERPRISE,
+      },
+      'SCHEDULED',
+    ],
+    [
+      'a plan switch resolved against the scheduled interval',
+      { ...organizationYearlyWithMonthlyScheduled, ...proCell, ...monthly },
+      'SWITCH_PLAN',
+    ],
+    [
+      'the subscribed pair while an interval switch is scheduled',
+      {
+        ...organizationYearlyWithMonthlyScheduled,
+        ...organizationCell,
+        ...yearly,
+      },
+      'CURRENT',
+    ],
+    [
+      'the scheduled pair of an interval switch',
+      {
+        ...organizationYearlyWithMonthlyScheduled,
+        ...organizationCell,
+        ...monthly,
+      },
+      'SCHEDULED',
+    ],
+    [
+      'the cell a scheduled interval switch blocks',
+      { ...organizationYearlyWithMonthlyScheduled, ...proCell, ...yearly },
+      'CANCEL_INTERVAL_SWITCH',
+    ],
+    [
+      'the cell a scheduled plan switch blocks',
+      {
+        ...organizationYearlyWithProYearlyScheduled,
+        ...organizationCell,
+        ...monthly,
+      },
+      'CANCEL_PLAN_SWITCH',
+    ],
+    [
+      'the cell dropping the plan of a scheduled switch',
+      {
+        ...organizationYearlyWithProMonthlyScheduled,
+        ...organizationCell,
+        ...monthly,
+      },
+      'CANCEL_PLAN_SWITCH',
+    ],
+    [
+      'the cell dropping the interval of a scheduled switch',
+      { ...organizationYearlyWithProMonthlyScheduled, ...proCell, ...yearly },
+      'CANCEL_INTERVAL_SWITCH',
+    ],
+    [
+      'the subscribed pair while both dimensions are scheduled',
+      {
+        ...organizationYearlyWithProMonthlyScheduled,
+        ...organizationCell,
+        ...yearly,
+      },
+      'CURRENT',
+    ],
+    [
+      'the scheduled pair while both dimensions are scheduled',
+      { ...organizationYearlyWithProMonthlyScheduled, ...proCell, ...monthly },
+      'SCHEDULED',
+    ],
+    [
+      'a canceled subscription',
+      { isSubscriptionCanceled: true },
+      'MANAGE_BILLING',
+    ],
+    [
+      'another plan while payment is overdue',
+      { ...organizationCell, shouldUpdatePayment: true },
+      'UPDATE_PAYMENT',
+    ],
+    [
+      'the subscribed plan while payment is overdue',
+      { shouldUpdatePayment: true },
+      'CURRENT',
+    ],
+    [
+      'a member without the billing permission',
+      {
+        ...organizationCell,
+        canSwitchSubscription: false,
+        hasPermissionToManageBilling: false,
+      },
+      'CONTACT_ADMIN',
+    ],
+    [
+      'a subscription that cannot be switched',
+      { ...organizationCell, canSwitchSubscription: false },
+      'UNAVAILABLE',
+    ],
+  ])('resolves %s', (_description, overrides, expected) => {
+    expect(getBillingPlanActionType(buildParams(overrides))).toBe(expected);
   });
 });

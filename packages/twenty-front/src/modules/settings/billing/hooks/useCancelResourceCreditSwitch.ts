@@ -10,7 +10,7 @@ export const useCancelResourceCreditSwitch = () => {
     CancelSwitchResourceCreditPriceDocument,
   );
 
-  const { isBillingUpdateRunning, runBillingUpdate } = useRunBillingUpdate({
+  const { runBillingUpdate } = useRunBillingUpdate({
     mutate: async () =>
       (await cancelSwitchResourceCreditPriceMutation()).data
         ?.cancelSwitchResourceCreditPrice,
@@ -22,8 +22,5 @@ export const useCancelResourceCreditSwitch = () => {
       getSuccessMessage: () => t`Credit pack switching has been cancelled.`,
     });
 
-  return {
-    cancelResourceCreditSwitch,
-    isCancellingResourceCreditSwitch: isBillingUpdateRunning,
-  };
+  return { cancelResourceCreditSwitch };
 };
