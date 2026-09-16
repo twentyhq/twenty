@@ -3,10 +3,10 @@ import { isString } from '@sniptt/guards';
 // Formats values for CSV output by wrapping in quotes when needed and escaping internal quotes.
 // This handles CSV formatting requirements (commas, quotes, newlines) but NOT security issues.
 // For security (CSV injection prevention), use sanitizeValueForCSVExport() BEFORE this function.
-export const formatValueForCSV = (value: any) => {
+export const formatValueForCSV = (value: unknown) => {
   if (value == null) return '';
 
-  const stringValue = isString(value) ? value : JSON.stringify(value);
+  const stringValue = isString(value) ? value : (JSON.stringify(value) ?? '');
 
   if (
     stringValue.includes(',') ||
