@@ -60,7 +60,8 @@ export const SpreadsheetImport = (props: SpreadsheetImportProps) => {
         {
           title: t`Exit`,
           onClick: mergedProps.onClose,
-          accent: 'danger',
+          color: 'danger',
+          variant: 'solid',
           role: 'confirm',
         },
       ],

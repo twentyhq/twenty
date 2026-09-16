@@ -234,7 +234,9 @@ export const ContentAndSlots: Story = {
     children: <strong>Rich content</strong>,
     startElement: <IconUser />,
     endElement: (
-      <Button type="button" title="Remove" ariaLabel="Remove" onClick={fn()} />
+      <Button type="button" aria-label="Remove" onClick={fn()}>
+        Remove
+      </Button>
     ),
     endElementDivider: true,
   },

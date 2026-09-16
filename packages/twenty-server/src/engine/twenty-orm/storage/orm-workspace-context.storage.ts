@@ -21,6 +21,7 @@ export type ORMWorkspaceContext = {
   flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
   objectIdByNameSingular: Record<string, string>;
   featureFlagsMap: Record<FeatureFlagKey, boolean>;
+  isRecordSharingEnabled: boolean;
   permissionsPerRoleId: ObjectsPermissionsByRoleId;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   apiKeyRoleMap: Record<string, string>;

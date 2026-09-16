@@ -228,13 +228,12 @@ export const SettingsObjectNewFieldConfigure = () => {
             }
             trailing={
               <Button
-                title={t`Save`}
-                variant="primary"
-                size="small"
-                accent="blue"
+                size="sm"
                 onClick={formConfig.handleSubmit(handleSave)}
                 disabled={!canSave || isSaving}
-              />
+                variant="solid"
+                color="accent"
+              >{t`Save`}</Button>
             }
           />
         }

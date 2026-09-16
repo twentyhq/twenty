@@ -115,11 +115,12 @@ export const MeetingRow = ({
             meetingId: meeting.id,
           })
         }
-        variant="secondary"
-        size="medium"
-        title={i18n._('Join')}
-        Icon={IconArrowUpRight}
-      />
+        variant="outline"
+        size="md"
+        startIcon={<IconArrowUpRight />}
+      >
+        {i18n._('Join')}
+      </Button>
     </div>
   </div>
 );

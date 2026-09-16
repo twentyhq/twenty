@@ -17,7 +17,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback, useEffect, useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { MainButton } from 'twenty-ui/primitives/input';
+import { MainButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { ActivateWorkspaceDocument } from '~/generated-metadata/graphql';
 
@@ -147,13 +147,12 @@ export const WorkspaceActivation = () => {
       <OnboardingStepAnimatedItem index={3}>
         <StyledButtonContainer>
           <MainButton
-            title={t`Retry`}
             onClick={() => {
               void activate();
             }}
             disabled={isActivating}
             fullWidth
-          />
+          >{t`Retry`}</MainButton>
         </StyledButtonContainer>
       </OnboardingStepAnimatedItem>
     </StyledContainer>

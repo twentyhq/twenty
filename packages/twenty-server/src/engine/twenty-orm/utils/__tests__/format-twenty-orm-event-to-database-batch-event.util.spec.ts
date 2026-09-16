@@ -14,7 +14,7 @@ import {
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
 import { formatTwentyOrmEventToDatabaseBatchEvent } from 'src/engine/twenty-orm/utils/format-twenty-orm-event-to-database-batch-event.util';
-import { type InheritedReadabilityChildRecordsCarrier } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
+import { type InheritedReadabilityChildRecordsCarrier } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 
 describe('formatTwentyOrmEventToDatabaseBatchEvent', () => {
   const workspaceId = 'workspace-id';

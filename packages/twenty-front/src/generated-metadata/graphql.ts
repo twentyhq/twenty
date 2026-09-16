@@ -752,6 +752,7 @@ export type BillingEntitlement = {
 export enum BillingEntitlementKey {
   AUDIT_LOGS = 'AUDIT_LOGS',
   CUSTOM_DOMAIN = 'CUSTOM_DOMAIN',
+  RECORD_SHARING = 'RECORD_SHARING',
   RLS = 'RLS',
   SSO = 'SSO',
   USAGE_LIMIT = 'USAGE_LIMIT'
@@ -4399,7 +4400,6 @@ export type MutationUpgradeApplicationArgs = {
 
 export type MutationUploadAppTarballArgs = {
   file: Scalars['Upload']['input'];
-  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 

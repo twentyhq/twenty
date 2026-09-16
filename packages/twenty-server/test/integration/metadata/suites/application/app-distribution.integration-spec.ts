@@ -177,6 +177,42 @@ describe('App Distribution (integration)', () => {
       expect(rows[0].sourceType).toBe('tarball');
     });
 
+    it('should reject a tarball whose manifest identifier is not a valid UUID', async () => {
+      const tarball = await createTestTarball({
+        'manifest.json': createValidManifest('not-a-uuid'),
+        'package.json': JSON.stringify({ name: 'test-app', version: '1.0.0' }),
+      });
+
+      const { errors } = await uploadAppTarball({
+        tarballBuffer: tarball,
+        expectToFail: true,
+      });
+
+      expect(errors).toBeDefined();
+    });
+
+    it('should reject a tarball whose manifest has no application identifier', async () => {
+      const tarball = await createTestTarball({
+        'manifest.json': JSON.stringify({
+          application: {
+            displayName: 'App Without Identifier',
+            description: 'A test app',
+            applicationVariables: {},
+            packageJsonChecksum: null,
+            yarnLockChecksum: null,
+          },
+        }),
+        'package.json': JSON.stringify({ name: 'test-app', version: '1.0.0' }),
+      });
+
+      const { errors } = await uploadAppTarball({
+        tarballBuffer: tarball,
+        expectToFail: true,
+      });
+
+      expect(errors).toBeDefined();
+    });
+
     it('should fail to update existing version', async () => {
       const uid = crypto.randomUUID();
       const manifest = createValidManifest(uid);

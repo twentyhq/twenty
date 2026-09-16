@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { enUS } from 'date-fns/locale';
 import { Temporal } from 'temporal-polyfill';
+import { type ButtonProps } from 'twenty-ui/primitives/input';
 
 import { RecordCalendarTopBar } from '@/object-record/record-calendar/components/RecordCalendarTopBar';
 import { recordCalendarSelectedDateComponentState } from '@/object-record/record-calendar/states/recordCalendarSelectedDateComponentState';
@@ -92,16 +93,12 @@ jest.mock('@/views/hooks/useUpdateCurrentView', () => ({
 }));
 jest.mock('twenty-ui/primitives/input', () => ({
   Button: ({
-    ariaLabel,
+    'aria-label': ariaLabel,
+    children,
     onClick,
-    title,
-  }: {
-    ariaLabel?: string;
-    onClick: () => void;
-    title?: string;
-  }) => (
+  }: Pick<ButtonProps, 'aria-label' | 'children' | 'onClick'>) => (
     <button aria-label={ariaLabel} onClick={onClick}>
-      {title}
+      {children}
     </button>
   ),
 }));

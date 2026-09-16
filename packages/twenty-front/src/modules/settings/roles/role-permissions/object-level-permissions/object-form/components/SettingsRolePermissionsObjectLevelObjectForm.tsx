@@ -1,3 +1,4 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { mapRLSOperandToRecordFilterOperand } from '@/object-record/record-filter/utils/mapRLSOperandToRecordFilterOperand';
@@ -18,7 +19,6 @@ import {
   isDefined,
   isRecordFilterValueValid,
 } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -157,14 +157,13 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           label={t`2. Set ${objectLabelPlural} permissions`}
           onBack={() => navigate(previousStepPath)}
           trailing={
-            <Button
-              title={t`Finish`}
-              variant="primary"
-              size="small"
-              accent="blue"
-              to={isFinishDisabled ? undefined : finishButtonPath}
+            <NavigationButton
+              size="sm"
+              to={finishButtonPath}
               disabled={isFinishDisabled}
-            />
+              variant="solid"
+              color="accent"
+            >{t`Finish`}</NavigationButton>
           }
         />
       }
