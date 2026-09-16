@@ -34,10 +34,24 @@ const PERMISSION_DENIED_RESPONSE = JSON.stringify({
   ],
 });
 
+const BILLING_PLAN_REQUIRED_RESPONSE = JSON.stringify({
+  data: { trackAnalytics: null },
+  errors: [
+    {
+      message: 'Workspace subscription is required',
+      extensions: {
+        code: 'FORBIDDEN',
+        subCode: 'BILLING_PLAN_REQUIRED',
+      },
+    },
+  ],
+});
+
 const mockOnError = jest.fn();
 const mockOnNetworkError = jest.fn();
 const mockOnPayloadTooLarge = jest.fn();
 const mockOnUnauthenticatedError = jest.fn();
+const mockOnBillingPlanRequired = jest.fn();
 
 const mockWorkspaceMember = {
   id: 'workspace-member-id',
@@ -100,6 +114,7 @@ const createMockOptions = (): Options => ({
   onNetworkError: mockOnNetworkError,
   onPayloadTooLarge: mockOnPayloadTooLarge,
   onUnauthenticatedError: mockOnUnauthenticatedError,
+  onBillingPlanRequired: mockOnBillingPlanRequired,
   appVersion: '1.0.0',
 });
 
@@ -355,5 +370,24 @@ describe('ApolloFactory', () => {
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
     expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+  });
+
+  it('should call onBillingPlanRequired once for BILLING_PLAN_REQUIRED', async () => {
+    fetchMock.mockResponse(BILLING_PLAN_REQUIRED_RESPONSE);
+
+    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(mockOnBillingPlanRequired).toHaveBeenCalledTimes(1);
+    expect(mockOnUnauthenticatedError).not.toHaveBeenCalled();
+    // Avoid toast flash before redirect — do not forward to onError.
+    expect(mockOnError).not.toHaveBeenCalled();
+  });
+
+  it('should not treat FORBIDDEN without plan-required subCode as plan required', async () => {
+    fetchMock.mockResponse(PERMISSION_DENIED_RESPONSE);
+
+    await expect(makeRequest()).rejects.toBeInstanceOf(CombinedGraphQLErrors);
+
+    expect(mockOnBillingPlanRequired).not.toHaveBeenCalled();
   });
 });

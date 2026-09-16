@@ -8,6 +8,7 @@ import { useApolloFactory } from '@/apollo/hooks/useApolloFactory';
 import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
 import { getSessionGeneration } from '@/auth/utils/getSessionGeneration';
 import { rotateSessionGeneration } from '@/auth/utils/rotateSessionGeneration';
+import { AppPath } from 'twenty-shared/types';
 
 enableFetchMocks();
 
@@ -22,18 +23,44 @@ jest.mock('react-router-dom', () => {
   };
 });
 
-const Wrapper = ({ children }: { children: React.ReactNode }) => (
-  <MemoryRouter
-    initialEntries={['/welcome', '/verify', '/opportunities']}
-    initialIndex={2}
-  >
-    <SnackBarComponentInstanceContext.Provider
-      value={{ instanceId: 'test-instance-id' }}
-    >
-      {children}
-    </SnackBarComponentInstanceContext.Provider>
-  </MemoryRouter>
-);
+const BILLING_PLAN_REQUIRED_RESPONSE = JSON.stringify({
+  data: {},
+  errors: [
+    {
+      message: 'Workspace subscription is required',
+      extensions: {
+        code: 'FORBIDDEN',
+        subCode: 'BILLING_PLAN_REQUIRED',
+      },
+    },
+  ],
+});
+
+const createWrapper =
+  (initialEntries: string[], initialIndex = 0) =>
+  ({ children }: { children: React.ReactNode }) => (
+    <MemoryRouter initialEntries={initialEntries} initialIndex={initialIndex}>
+      <SnackBarComponentInstanceContext.Provider
+        value={{ instanceId: 'test-instance-id' }}
+      >
+        {children}
+      </SnackBarComponentInstanceContext.Provider>
+    </MemoryRouter>
+  );
+
+const Wrapper = createWrapper(['/welcome', '/verify', '/opportunities'], 2);
+
+const mutateTrack = async (factory: ReturnType<typeof useApolloFactory>) => {
+  await factory.mutate({
+    mutation: gql`
+      mutation Track($type: String!, $sessionId: String!, $data: JSON!) {
+        track(type: $type, sessionId: $sessionId, data: $data) {
+          success
+        }
+      }
+    `,
+  });
+};
 
 describe('useApolloFactory', () => {
   beforeEach(() => {
@@ -97,15 +124,7 @@ describe('useApolloFactory', () => {
 
     try {
       await act(async () => {
-        await result.current.factory.mutate({
-          mutation: gql`
-            mutation Track($type: String!, $sessionId: String!, $data: JSON!) {
-              track(type: $type, sessionId: $sessionId, data: $data) {
-                success
-              }
-            }
-          `,
-        });
+        await mutateTrack(result.current.factory);
       });
     } catch (error) {
       mutationError = error;
@@ -115,5 +134,50 @@ describe('useApolloFactory', () => {
     expect(getSessionGeneration()).toBeNull();
     expect(mockNavigate).toHaveBeenCalled();
     expect(mockNavigate).toHaveBeenCalledWith('/welcome');
+  });
+
+  it('should navigate to /plan-required on BILLING_PLAN_REQUIRED', async () => {
+    fetchMock.mockResponse(BILLING_PLAN_REQUIRED_RESPONSE);
+
+    const { result } = renderHook(() => useApolloFactory(), {
+      wrapper: createWrapper(['/objects/companies']),
+    });
+
+    let mutationError: unknown;
+
+    try {
+      await act(async () => {
+        await mutateTrack(result.current);
+      });
+    } catch (error) {
+      mutationError = error;
+    }
+
+    expect(mutationError).toBeInstanceOf(CombinedGraphQLErrors);
+    expect(mockNavigate).toHaveBeenCalledTimes(1);
+    expect(mockNavigate).toHaveBeenCalledWith(AppPath.PlanRequired, {
+      replace: true,
+    });
+  });
+
+  it('should not navigate when already on plan-required path', async () => {
+    fetchMock.mockResponse(BILLING_PLAN_REQUIRED_RESPONSE);
+
+    const { result } = renderHook(() => useApolloFactory(), {
+      wrapper: createWrapper([AppPath.PlanRequired]),
+    });
+
+    let mutationError: unknown;
+
+    try {
+      await act(async () => {
+        await mutateTrack(result.current);
+      });
+    } catch (error) {
+      mutationError = error;
+    }
+
+    expect(mutationError).toBeInstanceOf(CombinedGraphQLErrors);
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 });

@@ -914,6 +914,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
+      'When true, deny workspace GraphQL/REST product APIs until a billing subscription exists (PLAN_REQUIRED). Default false for gradual rollout.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_PLAN_REQUIRED_API_ENFORCEMENT_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
     description: 'Link required for billing plan',
     type: ConfigVariableType.STRING,
   })

@@ -63,6 +63,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SkipPlanRequired } from 'src/engine/guards/decorators/skip-plan-required.decorator';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -87,6 +88,7 @@ const getHMACKey = (email?: string, key?: string | null) => {
 };
 
 @MetadataResolver(() => UserEntity)
+@SkipPlanRequired()
 @UseFilters(PermissionsGraphqlApiExceptionFilter)
 export class UserResolver {
   constructor(

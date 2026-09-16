@@ -96,6 +96,7 @@ import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { SkipPlanRequired } from 'src/engine/guards/decorators/skip-plan-required.decorator';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { getRequestBaseUrl } from 'src/utils/get-request-base-url.util';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -120,6 +121,7 @@ const PASSWORD_RESET_EMAIL_RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver()
+@SkipPlanRequired()
 @UseFilters(
   CaptchaGraphqlApiExceptionFilter,
   AuthGraphqlApiExceptionFilter,

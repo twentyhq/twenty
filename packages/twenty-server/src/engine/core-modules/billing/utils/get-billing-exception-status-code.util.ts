@@ -32,6 +32,7 @@ export const getBillingExceptionStatusCode = (
       return 400;
     case BillingExceptionCode.BILLING_CREDITS_EXHAUSTED:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
+    case BillingExceptionCode.BILLING_PLAN_REQUIRED:
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
       return 402;
     case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
