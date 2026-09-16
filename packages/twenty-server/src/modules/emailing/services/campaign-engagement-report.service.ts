@@ -18,6 +18,7 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { type ShortLinkEntity } from 'src/engine/core-modules/short-link/short-link.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
@@ -62,9 +63,14 @@ export class CampaignEngagementReportService {
       userWorkspaceId,
     });
 
-    const campaign = await this.findReadableCampaignOrThrow({
+    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
       workspaceId,
       userWorkspaceId,
+    });
+
+    const campaign = await this.findReadableCampaignOrThrow({
+      workspaceId,
+      roleId,
       messageCampaignId,
     });
 
@@ -122,6 +128,7 @@ export class CampaignEngagementReportService {
       }),
       recipients: await this.attachRecipients({
         workspaceId,
+        roleId,
         messageCampaignId,
         engagedDeliveries,
       }),
@@ -130,18 +137,13 @@ export class CampaignEngagementReportService {
 
   private async findReadableCampaignOrThrow({
     workspaceId,
-    userWorkspaceId,
+    roleId,
     messageCampaignId,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
+    roleId: string;
     messageCampaignId: string;
   }): Promise<ReportedCampaign> {
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
-
     const campaign = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const campaignRepository = this.workspaceOrmManager.getRepository(
@@ -255,10 +257,12 @@ export class CampaignEngagementReportService {
 
   private async attachRecipients({
     workspaceId,
+    roleId,
     messageCampaignId,
     engagedDeliveries,
   }: {
     workspaceId: string;
+    roleId: string;
     messageCampaignId: string;
     engagedDeliveries: {
       deliveryId: string;
@@ -281,10 +285,45 @@ export class CampaignEngagementReportService {
       deliveries.map((delivery) => [delivery.id, delivery.personId]),
     );
 
+    const readablePersonIds = await this.findReadablePersonIds({
+      roleId,
+      personIds: [...personIdByDeliveryId.values()].filter(isDefined),
+    });
+
     return engagedDeliveries.flatMap((engaged) => {
       const personId = personIdByDeliveryId.get(engaged.deliveryId);
 
-      return isDefined(personId) ? [{ ...engaged, personId }] : [];
+      return isDefined(personId) && readablePersonIds.has(personId)
+        ? [{ ...engaged, personId }]
+        : [];
     });
+  }
+
+  private async findReadablePersonIds({
+    roleId,
+    personIds,
+  }: {
+    roleId: string;
+    personIds: string[];
+  }): Promise<Set<string>> {
+    if (personIds.length === 0) {
+      return new Set();
+    }
+
+    const people = await this.workspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const personRepository = this.workspaceOrmManager.getRepository(
+          PersonWorkspaceEntity,
+          { unionOf: [roleId] },
+        );
+
+        return personRepository.find({
+          where: { id: In(personIds) },
+          select: { id: true },
+        });
+      },
+    );
+
+    return new Set(people.map((person) => person.id));
   }
 }
