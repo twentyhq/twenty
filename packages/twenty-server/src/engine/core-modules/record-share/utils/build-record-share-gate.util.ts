@@ -21,8 +21,6 @@ import {
   type RowAccessPolicyTarget,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
 
-// An inherited parent is gated by the full row access policy, which this gate is
-// itself a branch of, so the caller passes the recursion back in
 type BuildParentPolicy = (target: RowAccessPolicyTarget) => RowAccessPolicy;
 
 type RecordShareGateArgs = {

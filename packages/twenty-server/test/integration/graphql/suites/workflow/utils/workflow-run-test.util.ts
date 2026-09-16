@@ -147,8 +147,6 @@ export const waitForWorkflowCompletion = async (
   return workflowRun;
 };
 
-// The run reaches RUNNING as soon as its trigger completes, while each step
-// moves out of NOT_STARTED on a later write, so a step assertion needs its own wait
 export const waitForWorkflowRunStepStatus = async (
   workflowRunId: string,
   stepId: string,
