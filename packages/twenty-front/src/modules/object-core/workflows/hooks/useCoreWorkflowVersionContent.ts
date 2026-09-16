@@ -6,12 +6,12 @@ import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { GetCoreWorkflowVersionDocument } from '~/generated/graphql';
 
 export const useCoreWorkflowVersionContent = ({
-  workspaceWorkflowId,
-  workspaceWorkflowVersionId,
+  coreWorkflowId,
+  coreWorkflowVersionId,
   skip,
 }: {
-  workspaceWorkflowId: string | undefined;
-  workspaceWorkflowVersionId: string | undefined;
+  coreWorkflowId: string | undefined;
+  coreWorkflowVersionId: string | undefined;
   skip: boolean;
 }): WorkflowVersion | undefined => {
   const apolloCoreClient = useApolloCoreClient();
@@ -20,33 +20,30 @@ export const useCoreWorkflowVersionContent = ({
     client: apolloCoreClient,
     fetchPolicy: 'cache-and-network',
     variables: {
-      workspaceWorkflowVersionId: workspaceWorkflowVersionId ?? '',
+      coreWorkflowVersionId: coreWorkflowVersionId ?? '',
     },
     skip:
-      skip ||
-      !isDefined(workspaceWorkflowVersionId) ||
-      !isDefined(workspaceWorkflowId),
+      skip || !isDefined(coreWorkflowVersionId) || !isDefined(coreWorkflowId),
   });
 
   const coreWorkflowVersion = data?.coreWorkflowVersion;
 
   if (
     !isDefined(coreWorkflowVersion) ||
-    !isDefined(workspaceWorkflowId) ||
-    !isDefined(workspaceWorkflowVersionId) ||
-    coreWorkflowVersion.workspaceWorkflowVersionId !==
-      workspaceWorkflowVersionId ||
-    coreWorkflowVersion.workspaceWorkflowId !== workspaceWorkflowId
+    !isDefined(coreWorkflowId) ||
+    !isDefined(coreWorkflowVersionId) ||
+    coreWorkflowVersion.id !== coreWorkflowVersionId ||
+    coreWorkflowVersion.coreWorkflowId !== coreWorkflowId
   ) {
     return undefined;
   }
 
   return {
     __typename: 'WorkflowVersion',
-    id: workspaceWorkflowVersionId,
+    id: coreWorkflowVersionId,
     name: coreWorkflowVersion.label,
     status: coreWorkflowVersion.status,
-    workflowId: workspaceWorkflowId,
+    workflowId: coreWorkflowId,
     createdAt: coreWorkflowVersion.createdAt,
     updatedAt: coreWorkflowVersion.updatedAt,
     trigger: coreWorkflowVersion.trigger,

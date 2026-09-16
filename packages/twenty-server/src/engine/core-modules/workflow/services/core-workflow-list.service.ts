@@ -24,6 +24,7 @@ type CoreWorkflowRow = {
   cursorSortValue: string | null;
   name: string | null;
   lastPublishedVersionId: string | null;
+  lastPublishedCoreWorkflowVersionId: string | null;
   applicationId: string | null;
   workspaceWorkflowId: string | null;
   updatedAt: Date;
@@ -62,7 +63,7 @@ const GROUPED_WORKFLOW_COLUMNS = `c.id, c.name, c."createdAt", c."updatedAt"`;
 
 const CORE_WORKFLOW_AGGREGATE_COLUMNS = `
          c.name,
-         c."lastPublishedVersionId",
+         c."lastPublishedVersionId", c."lastPublishedCoreWorkflowVersionId",
          c."applicationId",
          c."createdAt",
          c."updatedAt",
@@ -79,6 +80,7 @@ const toCoreWorkflowDTO = (row: CoreWorkflowRow): CoreWorkflowDTO => ({
     hasDeactivatedVersion: row.hasDeactivatedVersion,
   }),
   lastPublishedVersionId: row.lastPublishedVersionId,
+  lastPublishedCoreWorkflowVersionId: row.lastPublishedCoreWorkflowVersionId,
   applicationId: row.applicationId,
   workspaceWorkflowId: row.workspaceWorkflowId,
   createdAt: row.createdAt.toISOString(),

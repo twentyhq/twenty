@@ -1,3 +1,6 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
+import { useOpenCoreWorkflowVersionsSidePanel } from '@/object-core/workflows/versions/hooks/useOpenCoreWorkflowVersionsSidePanel';
 import { HeadlessNavigateEngineCommand } from '@/command-menu-item/engine-command/components/HeadlessNavigateEngineCommand';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
@@ -10,7 +13,18 @@ const SeeVersionsWorkflowVersionSingleRecordCommandContent = ({
 }: {
   workflowId: string;
 }) => {
+  const isCore = useIsWorkflowCoreEnabled();
+  const { openCoreWorkflowVersionsSidePanel } =
+    useOpenCoreWorkflowVersionsSidePanel();
   const workflowWithCurrentVersion = useWorkflowWithCurrentVersion(workflowId);
+
+  if (isCore) {
+    return (
+      <HeadlessEngineCommandWrapperEffect
+        execute={() => openCoreWorkflowVersionsSidePanel(workflowId)}
+      />
+    );
+  }
 
   return (
     <HeadlessNavigateEngineCommand

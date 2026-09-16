@@ -15,7 +15,7 @@ import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useSte
 
 export const CoreWorkflowVersionDiagramEffect = ({
   workflowId,
-  workspaceWorkflowVersionId,
+  coreWorkflowVersionId,
   label,
   status,
   createdAt,
@@ -23,7 +23,7 @@ export const CoreWorkflowVersionDiagramEffect = ({
   steps,
 }: {
   workflowId: string;
-  workspaceWorkflowVersionId: string;
+  coreWorkflowVersionId: string;
   label: string;
   status: WorkflowVersionStatus;
   createdAt: string;
@@ -44,12 +44,12 @@ export const CoreWorkflowVersionDiagramEffect = ({
 
   useEffect(() => {
     setFlow({
-      workflowVersionId: workspaceWorkflowVersionId,
+      workflowVersionId: coreWorkflowVersionId,
       trigger,
       steps,
     });
     setWorkflowVisualizerWorkflowId(workflowId);
-    setWorkflowVisualizerWorkflowVersionId(workspaceWorkflowVersionId);
+    setWorkflowVisualizerWorkflowVersionId(coreWorkflowVersionId);
     setWorkflowDiagram(
       generateWorkflowDiagram({
         trigger: trigger ?? undefined,
@@ -59,7 +59,7 @@ export const CoreWorkflowVersionDiagramEffect = ({
     );
     populateStepsOutputSchema({
       __typename: 'WorkflowVersion',
-      id: workspaceWorkflowVersionId,
+      id: coreWorkflowVersionId,
       name: label,
       workflowId,
       status,
@@ -80,7 +80,7 @@ export const CoreWorkflowVersionDiagramEffect = ({
     steps,
     trigger,
     workflowId,
-    workspaceWorkflowVersionId,
+    coreWorkflowVersionId,
   ]);
 
   return null;

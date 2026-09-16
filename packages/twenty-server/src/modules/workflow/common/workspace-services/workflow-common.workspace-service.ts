@@ -171,11 +171,21 @@ export class WorkflowCommonWorkspaceService {
       return;
     }
 
+    const workflowVersion = await this.getWorkflowVersionOrFail({
+      workspaceId,
+      workflowVersionId: workflow.lastPublishedVersionId,
+    });
     const existingCommandMenuItem =
-      await this.commandMenuItemService.findByWorkflowVersionId(
+      (isDefined(workflowVersion.coreWorkflowVersionId)
+        ? await this.commandMenuItemService.findByCoreWorkflowVersionId(
+            workflowVersion.coreWorkflowVersionId,
+            workspaceId,
+          )
+        : null) ??
+      (await this.commandMenuItemService.findByWorkflowVersionId(
         workflow.lastPublishedVersionId,
         workspaceId,
-      );
+      ));
 
     if (!isDefined(existingCommandMenuItem)) {
       return;
@@ -385,6 +395,7 @@ export class WorkflowCommonWorkspaceService {
         await this.cleanupCommandMenuItemForVersion(
           workflowVersion.id,
           workspaceId,
+          workflowVersion.coreWorkflowVersionId,
         );
       }
     }
@@ -397,12 +408,19 @@ export class WorkflowCommonWorkspaceService {
   private async cleanupCommandMenuItemForVersion(
     workflowVersionId: string,
     workspaceId: string,
+    coreWorkflowVersionId: string | null,
   ) {
     const existingCommandMenuItem =
-      await this.commandMenuItemService.findByWorkflowVersionId(
+      (isDefined(coreWorkflowVersionId)
+        ? await this.commandMenuItemService.findByCoreWorkflowVersionId(
+            coreWorkflowVersionId,
+            workspaceId,
+          )
+        : null) ??
+      (await this.commandMenuItemService.findByWorkflowVersionId(
         workflowVersionId,
         workspaceId,
-      );
+      ));
 
     if (isDefined(existingCommandMenuItem)) {
       await this.commandMenuItemService.delete(

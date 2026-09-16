@@ -8,10 +8,10 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
 export const CoreWorkflowVersionRestoreButton = ({
   workflowId,
-  workspaceWorkflowVersionId,
+  coreWorkflowVersionId,
 }: {
   workflowId: string;
-  workspaceWorkflowVersionId: string;
+  coreWorkflowVersionId: string;
 }) => {
   const { t } = useLingui();
   const { openModal } = useModal();
@@ -22,7 +22,7 @@ export const CoreWorkflowVersionRestoreButton = ({
     isLoadingCoreWorkflowVersions,
   } = useRestoreCoreWorkflowVersionAsDraft({
     workflowId,
-    workspaceWorkflowVersionId,
+    coreWorkflowVersionId,
   });
 
   const handleRestoreClick = () => {

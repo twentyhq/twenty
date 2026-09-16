@@ -544,7 +544,6 @@ export class CommandMenuItemService {
           flatMapsKeys: ['flatCommandMenuItemMaps'],
         },
       );
-
     const flatCommandMenuItem = Object.values(
       flatCommandMenuItemMaps.byUniversalIdentifier,
     ).find(

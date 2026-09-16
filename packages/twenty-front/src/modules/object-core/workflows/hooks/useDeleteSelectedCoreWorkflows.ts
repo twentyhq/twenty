@@ -11,6 +11,7 @@ import {
   coreWorkflowsSelectionState,
 } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { getSelectedCoreWorkflowRowIds } from '@/object-core/workflows/utils/getSelectedCoreWorkflowRowIds';
+import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -59,16 +60,16 @@ export const useDeleteSelectedCoreWorkflows = () => {
       return;
     }
 
-    let deletedWorkspaceWorkflowIds: string[];
+    let deletedCoreWorkflows: NonNullable<
+      DeleteCoreWorkflowsMutation['deleteCoreWorkflows']
+    >;
 
     try {
       const { data } = await deleteCoreWorkflowsMutation({
         variables: { input: { coreWorkflowIds: selectedCoreWorkflowIds } },
       });
 
-      deletedWorkspaceWorkflowIds = (data?.deleteCoreWorkflows ?? []).map(
-        (deletedCoreWorkflow) => deletedCoreWorkflow.workspaceWorkflowId,
-      );
+      deletedCoreWorkflows = data?.deleteCoreWorkflows ?? [];
     } catch (error) {
       logError(error);
       enqueueToast({
@@ -79,7 +80,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
       return;
     }
 
-    if (!isNonEmptyArray(deletedWorkspaceWorkflowIds)) {
+    if (!isNonEmptyArray(deletedCoreWorkflows)) {
       enqueueToast({
         variant: 'error',
         children: t`No workflows were deleted`,
@@ -89,6 +90,23 @@ export const useDeleteSelectedCoreWorkflows = () => {
     }
 
     setCoreWorkflowsSelection(EMPTY_CORE_WORKFLOWS_SELECTION);
+
+    const deletedCoreWorkflowIds = deletedCoreWorkflows.map(
+      (deletedCoreWorkflow) => deletedCoreWorkflow.id,
+    );
+    const deletedWorkspaceWorkflowIds = deletedCoreWorkflows.map(
+      (deletedCoreWorkflow) => deletedCoreWorkflow.workspaceWorkflowId,
+    );
+
+    for (const coreWorkflowId of deletedCoreWorkflowIds) {
+      apolloCoreClient.cache.evict({
+        id: apolloCoreClient.cache.identify({
+          __typename: 'CoreWorkflowDTO',
+          id: coreWorkflowId,
+        }),
+      });
+    }
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
 
     removeNavigationMenuItemsByTargetRecordIds(deletedWorkspaceWorkflowIds);
 

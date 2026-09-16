@@ -16,6 +16,9 @@ export class CoreWorkflowVersionDTO {
   @Field(() => UUIDScalarType)
   id: string;
 
+  @Field(() => UUIDScalarType, { nullable: true })
+  coreWorkflowId?: string | null;
+
   @Field(() => String)
   label: string;
 

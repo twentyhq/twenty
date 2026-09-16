@@ -1,3 +1,8 @@
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ComputeStepOutputSchemaDocument } from '~/generated/graphql';
+import { isBaseOutputSchemaV2, TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type WorkflowVersion } from '@/workflow/types/Workflow';
 import { getStepOutputSchemaFamilyStateKey } from '@/workflow/utils/getStepOutputSchemaFamilyStateKey';
@@ -18,10 +23,12 @@ import { resolvePersistedStepOutputSchema } from '@/workflow/workflow-variables/
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 export const useStepsOutputSchema = () => {
   const store = useStore();
+  const client = useApolloCoreClient();
+  const isCore = useIsWorkflowCoreEnabled();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const populateStepsOutputSchema = useCallback(
     (workflowVersion: WorkflowVersion) => {
@@ -73,6 +80,30 @@ export const useStepsOutputSchema = () => {
           shouldRecomputeOutputSchemaFamilyState.atomFamily(stepKey),
           false,
         );
+
+        if (isCore && step.type === 'ITERATOR') {
+          void client
+            .mutate({
+              mutation: ComputeStepOutputSchemaDocument,
+              variables: {
+                input: { coreWorkflowVersionId: workflowVersion.id, step },
+              },
+            })
+            .then(({ data }) => {
+              const outputSchema = data?.computeStepOutputSchema;
+              const schemaState =
+                stepsOutputSchemaFamilyState.atomFamily(stepKey);
+              if (
+                store.get(schemaState) === stepOutputSchema &&
+                isBaseOutputSchemaV2(outputSchema)
+              ) {
+                store.set(schemaState, { ...stepOutputSchema, outputSchema });
+              }
+            })
+            .catch((error: Error) => {
+              enqueueErrorSnackBar({ apolloError: error });
+            });
+        }
       });
 
       const trigger = workflowVersion.trigger;
@@ -127,7 +158,7 @@ export const useStepsOutputSchema = () => {
         );
       }
     },
-    [store],
+    [store, client, isCore, enqueueErrorSnackBar],
   );
 
   const markStepForRecomputation = useCallback(

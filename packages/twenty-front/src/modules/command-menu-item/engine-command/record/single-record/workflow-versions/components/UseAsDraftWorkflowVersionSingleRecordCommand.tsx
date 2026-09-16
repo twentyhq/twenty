@@ -1,3 +1,4 @@
+import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { HeadlessConfirmationModalEngineCommandEffect } from '@/command-menu-item/engine-command/components/HeadlessConfirmationModalEngineCommandEffect';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
@@ -15,6 +16,7 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
   workflowId: string;
   workflowVersionId: string;
 }) => {
+  const isCore = useIsWorkflowCoreEnabled();
   const { t } = useLingui();
   const workflow = useWorkflowWithCurrentVersion(workflowId);
   const { createDraftFromWorkflowVersion } =
@@ -30,6 +32,10 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
       workflowVersionIdToCopy: workflowVersionId,
     });
 
+    if (isCore) {
+      navigate(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflowId });
+      return;
+    }
     navigate(AppPath.RecordShowPage, {
       objectNameSingular: CoreObjectNameSingular.Workflow,
       objectRecordId: workflowId,
@@ -51,10 +57,14 @@ const UseAsDraftWorkflowVersionSingleRecordCommandContent = ({
       confirmButtonText={t`Override Draft`}
       linkButton={{
         title: t`Go to Draft`,
-        to: getAppPath(AppPath.RecordShowPage, {
-          objectNameSingular: CoreObjectNameSingular.Workflow,
-          objectRecordId: workflowId,
-        }),
+        to: isCore
+          ? getAppPath(AppPath.WorkflowCoreShowPage, {
+              coreWorkflowId: workflowId,
+            })
+          : getAppPath(AppPath.RecordShowPage, {
+              objectNameSingular: CoreObjectNameSingular.Workflow,
+              objectRecordId: workflowId,
+            }),
       }}
       execute={handleExecute}
     />

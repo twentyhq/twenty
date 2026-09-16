@@ -65,59 +65,21 @@ describe('useCoreWorkflowsSelection', () => {
     );
   });
 
-  it('should drop the deleted rows and clear the selection when a deletion is reported', () => {
+  it('selects a core workflow without a workspace mirror ID', () => {
     const { result } = renderSelection();
-
-    act(() => {
-      result.current.toggleRow('core-1');
-    });
-
-    act(() => {
-      result.current.forgetDeletedWorkspaceWorkflows(['workspace-1']);
-    });
-
-    expect(
-      result.current.displayedCoreWorkflows.map(
-        (coreWorkflow) => coreWorkflow.id,
-      ),
-    ).toEqual(['core-2', 'core-3']);
-    expect(result.current.selectedRowIds).toEqual([]);
+    act(() => result.current.toggleRow('core-3'));
+    expect(result.current.selectedRowIds).toEqual(['core-3']);
   });
 
-  it('should ignore a deletion that targets rows it is not showing', () => {
-    const { result } = renderSelection();
-
-    act(() => {
-      result.current.toggleRow('core-1');
-    });
-
-    act(() => {
-      result.current.forgetDeletedWorkspaceWorkflows(['workspace-elsewhere']);
-    });
-
-    expect(result.current.displayedCoreWorkflows).toHaveLength(3);
-    expect(result.current.selectedRowIds).toEqual(['core-1']);
-  });
-
-  it('should keep a deleted workflow hidden once the mirror drops its workspace record', () => {
+  it('removes deleted records from the displayed selection after refetch', () => {
     const { result, rerender } = renderSelection();
-
-    act(() => {
-      result.current.forgetDeletedWorkspaceWorkflows(['workspace-1']);
-    });
-
-    rerender({
-      coreWorkflows: [
-        { id: 'core-1', workspaceWorkflowId: null },
-        { id: 'core-2', workspaceWorkflowId: 'workspace-2' },
-      ],
-    });
-
-    expect(
-      result.current.displayedCoreWorkflows.map(
-        (coreWorkflow) => coreWorkflow.id,
-      ),
-    ).toEqual(['core-2']);
+    act(() => result.current.toggleRow('core-1'));
+    rerender({ coreWorkflows: coreWorkflows.slice(1) });
+    expect(result.current.selectedRowIds).toEqual([]);
+    expect(result.current.displayedCoreWorkflows.map(({ id }) => id)).toEqual([
+      'core-2',
+      'core-3',
+    ]);
   });
 
   it('should drop the selection when the filter settings change', () => {
