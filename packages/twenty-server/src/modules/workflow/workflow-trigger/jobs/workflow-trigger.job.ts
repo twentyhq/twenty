@@ -113,7 +113,7 @@ export class WorkflowTriggerJob {
       workspaceId,
       coreWorkflowVersionId,
       payload,
-      source: buildWorkflowRunSource(),
+      source: buildWorkflowRunSource(coreWorkflow.name),
     });
   }
 

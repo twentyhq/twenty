@@ -296,39 +296,59 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     },
   );
 
-  it.each(['unversioned', 'workspace-version', 'core-version'] as const)(
-    'accepts the %s legacy queue envelope',
-    async (envelope) => {
-      const fixture = await createFixture();
-      const queue = global.app.get<MessageQueueService>(
-        getQueueToken(MessageQueue.workflowQueue),
-      );
+  it.each([
+    'unversioned',
+    'workspace-version',
+    'core-version',
+    'backfilled-paired',
+  ] as const)('accepts the %s legacy queue envelope', async (envelope) => {
+    const fixture = await createFixture();
 
-      await queue.add('WorkflowTriggerJob', {
+    if (envelope === 'backfilled-paired') {
+      await global.testDataSource.query(
+        'UPDATE core."workflowVersion" SET "workspaceWorkflowVersionId" = NULL WHERE id = $1',
+        [fixture.coreWorkflowVersionId],
+      );
+      await global.workflowTestServices.backfill.runOnWorkspace({
         workspaceId,
-        workflowId: fixture.workflowId as string,
-        payload: { marker: envelope },
-        ...(envelope === 'workspace-version'
-          ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
-          : {}),
-        ...(envelope === 'core-version'
-          ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
-          : {}),
+        dataSource: global.testDataSource,
+        options: {},
+        index: 0,
+        total: 1,
       });
-      for (let attempt = 0; attempt < 100; attempt++) {
-        const [run] = await global.testDataSource.query(
-          `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
-          [fixture.coreWorkflowId],
-        );
-        if (run) {
-          await waitForRun(run.id, 'COMPLETED');
-          return;
-        }
-        await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+
+    const queue = global.app.get<MessageQueueService>(
+      getQueueToken(MessageQueue.workflowQueue),
+    );
+
+    await queue.add('WorkflowTriggerJob', {
+      workspaceId,
+      workflowId: fixture.workflowId as string,
+      payload: { marker: envelope },
+      ...(envelope === 'workspace-version' || envelope === 'backfilled-paired'
+        ? { workspaceWorkflowVersionId: fixture.workflowVersionId }
+        : {}),
+      ...(envelope === 'core-version' || envelope === 'backfilled-paired'
+        ? { coreWorkflowVersionId: fixture.coreWorkflowVersionId }
+        : {}),
+    });
+    for (let attempt = 0; attempt < 100; attempt++) {
+      const [run] = await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."workflowRun" WHERE "coreWorkflowId" = $1`,
+        [fixture.coreWorkflowId],
+      );
+      if (run) {
+        const completedRun = await waitForRun(run.id, 'COMPLETED');
+
+        expect(completedRun.createdByName).toBe('B-Async execution');
+        expect(completedRun.createdBySource).toBe('WORKFLOW');
+        return;
       }
-      throw new Error('Legacy queue envelope did not dispatch');
-    },
-  );
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
+    throw new Error('Legacy queue envelope did not dispatch');
+  });
 
   it('rejects a queued version belonging to another workflow or tenant', async () => {
     const first = await createFixture();
@@ -787,6 +807,90 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
       });
     }
   });
+
+  it.each(['rename', 'activate'] as const)(
+    'allows reconciliation to acquire core locks during a blocked %s',
+    async (operation) => {
+      const fixture = await createFixture();
+
+      if (operation === 'activate') {
+        await global.testDataSource.query(
+          `UPDATE core."workflowVersion" SET status = 'DRAFT' WHERE id = $1`,
+          [fixture.coreWorkflowVersionId],
+        );
+        await global.testDataSource.query(
+          `UPDATE "${schema}"."workflowVersion" SET status = 'DRAFT' WHERE id = $1`,
+          [fixture.workflowVersionId],
+        );
+        await global.testDataSource.query(
+          `UPDATE core.workflow SET "lastPublishedCoreWorkflowVersionId" = NULL, "lastPublishedVersionId" = NULL WHERE id = $1`,
+          [fixture.coreWorkflowId],
+        );
+        await global.testDataSource.query(
+          `UPDATE "${schema}".workflow SET "lastPublishedVersionId" = NULL WHERE id = $1`,
+          [fixture.workflowId],
+        );
+      }
+
+      const transaction = global.testDataSource.createQueryRunner();
+
+      await transaction.connect();
+      await transaction.startTransaction();
+      await transaction.query(
+        `SELECT id FROM "${schema}".workflow WHERE id = $1 FOR UPDATE`,
+        [fixture.workflowId],
+      );
+      const [{ pid }] = await transaction.query(
+        'SELECT pg_backend_pid() AS pid',
+      );
+      const mutation = workflowGraphqlRequest(
+        operation === 'rename'
+          ? 'mutation Update($input: UpdateCoreWorkflowInput!) { updateCoreWorkflow(input: $input) { id name } }'
+          : 'mutation Activate($id: UUID!) { activateCoreWorkflowVersion(coreWorkflowVersionId: $id) }',
+        operation === 'rename'
+          ? {
+              input: {
+                coreWorkflowId: fixture.coreWorkflowId,
+                name: 'Concurrent rename',
+              },
+            }
+          : { id: fixture.coreWorkflowVersionId },
+      ).then((response) => response);
+
+      try {
+        let blocked = false;
+
+        for (let attempt = 0; attempt < 100; attempt++) {
+          const [activity] = await global.testDataSource.query(
+            `SELECT EXISTS(SELECT 1 FROM pg_stat_activity WHERE $1 = ANY(pg_blocking_pids(pid)) AND query LIKE 'UPDATE %') AS blocked`,
+            [pid],
+          );
+
+          if (activity.blocked) {
+            blocked = true;
+            break;
+          }
+
+          await new Promise((resolve) => setTimeout(resolve, 20));
+        }
+
+        expect(blocked).toBe(true);
+        await transaction.query(
+          'SELECT id FROM core.workflow WHERE id = $1 FOR UPDATE NOWAIT',
+          [fixture.coreWorkflowId],
+        );
+        await transaction.commitTransaction();
+        expect((await mutation).body.errors).toBeUndefined();
+      } finally {
+        if (transaction.isTransactionActive) {
+          await transaction.rollbackTransaction();
+        }
+
+        await transaction.release();
+        await mutation;
+      }
+    },
+  );
 
   it('fires a mirrorless database-event workflow from a real record creation', async () => {
     const fixture = await createFixture({
