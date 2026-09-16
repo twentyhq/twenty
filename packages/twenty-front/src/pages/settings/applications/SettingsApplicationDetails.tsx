@@ -163,13 +163,16 @@ export const SettingsApplicationDetails = () => {
 
   const settingsFrontComponentId =
     application?.settingsCustomTabFrontComponentId;
+  const hasCustomSettingsTab = isDefined(settingsFrontComponentId);
 
   const tabs: SingleTabProps[] = [
     { id: GENERAL_TAB_ID, title: t`General`, Icon: IconSettings },
-    ...(displayedApplicationVariables.length > 0
+    // A custom settings tab lays out the application variables itself, so
+    // exposing them again would duplicate the same fields.
+    ...(!hasCustomSettingsTab && displayedApplicationVariables.length > 0
       ? [{ id: VARIABLES_TAB_ID, title: t`Variables`, Icon: IconVariable }]
       : []),
-    ...(isDefined(settingsFrontComponentId)
+    ...(hasCustomSettingsTab
       ? [
           {
             id: CUSTOM_SETTINGS_TAB_ID,
@@ -210,7 +213,7 @@ export const SettingsApplicationDetails = () => {
           />
         );
       case CUSTOM_SETTINGS_TAB_ID:
-        return isDefined(settingsFrontComponentId) ? (
+        return hasCustomSettingsTab ? (
           <SettingsApplicationCustomSettingsSection
             frontComponentId={settingsFrontComponentId}
           />
