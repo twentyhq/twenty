@@ -7,6 +7,7 @@ import { useSwitchBillingInterval } from '@/settings/billing/hooks/useSwitchBill
 import { useSwitchBillingPlan } from '@/settings/billing/hooks/useSwitchBillingPlan';
 import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { getBillingPlanActionType } from '@/settings/billing/utils/getBillingPlanActionType';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -66,11 +67,6 @@ export const useBillingPlanActions = ({
     !isCancellationScheduled &&
     hasPermissionToManageBilling;
 
-  const isSelectedIntervalCurrent =
-    selectedInterval === currentBillingSubscription?.interval;
-  const nextInterval =
-    splitedPhaseItemsInPrices.nextBasePrice?.recurringInterval;
-
   const createBillingPortalAction = (
     title: string,
   ): SettingsBillingPlanAction => ({
@@ -83,85 +79,98 @@ export const useBillingPlanActions = ({
   const getPlanAction = (
     planKey: BillingPlanKey,
   ): SettingsBillingPlanAction => {
-    if (isSubscriptionCanceled) {
-      return createBillingPortalAction(t`Manage billing`);
+    const actionType = getBillingPlanActionType({
+      canSwitchSubscription,
+      currentInterval: currentBillingSubscription?.interval,
+      currentPlanKey,
+      hasPermissionToManageBilling,
+      isCancellationScheduled,
+      isSubscriptionCanceled,
+      planKey,
+      scheduledInterval:
+        splitedPhaseItemsInPrices.nextBasePrice?.recurringInterval,
+      scheduledPlanKey: nextPlan?.planKey,
+      selectedInterval,
+      shouldUpdatePayment,
+    });
+
+    switch (actionType) {
+      case 'MANAGE_BILLING':
+        return createBillingPortalAction(t`Manage billing`);
+      case 'UPDATE_PAYMENT':
+        return createBillingPortalAction(t`Update payment`);
+      case 'CURRENT':
+        return {
+          disabled: true,
+          Icon: IconCheck,
+          title: t`Current`,
+          variant: 'secondary',
+        };
+      case 'SCHEDULED':
+        return {
+          disabled: true,
+          title: t`Scheduled`,
+          variant: 'secondary',
+        };
+      case 'UNAVAILABLE':
+        return {
+          disabled: true,
+          title: t`Unavailable`,
+          variant: 'secondary',
+        };
+      case 'CONTACT_ADMIN':
+        return {
+          disabled: true,
+          title: t`Contact admin`,
+          variant: 'secondary',
+        };
+      case 'SWITCH_INTERVAL_FIRST':
+        return {
+          disabled: true,
+          title: t`Switch interval first`,
+          variant: 'secondary',
+        };
+      case 'SWITCH_INTERVAL': {
+        const isUpgradeToAnnual =
+          selectedInterval === SubscriptionInterval.Year;
+
+        return {
+          disabled: isSwitchingInterval,
+          Icon: isUpgradeToAnnual ? IconArrowUp : IconArrowDown,
+          isLoading: isSwitchingInterval,
+          onClick: () =>
+            openModal(
+              isUpgradeToAnnual
+                ? BILLING_MODAL_IDS.switchBillingIntervalToYearly
+                : BILLING_MODAL_IDS.switchBillingIntervalToMonthly,
+            ),
+          title: isUpgradeToAnnual
+            ? t`Upgrade to annual`
+            : t`Downgrade to monthly`,
+          variant: 'secondary',
+        };
+      }
+      case 'SWITCH_PLAN': {
+        const isUpgradeToOrganization = planKey === BillingPlanKey.ENTERPRISE;
+
+        return {
+          disabled: isSwitchingPlan,
+          Icon: isUpgradeToOrganization ? IconArrowUp : IconArrowDown,
+          isLoading: isSwitchingPlan,
+          onClick: () =>
+            openModal(
+              isUpgradeToOrganization
+                ? BILLING_MODAL_IDS.switchBillingPlanToEnterprise
+                : BILLING_MODAL_IDS.switchBillingPlanToPro,
+            ),
+          title: isUpgradeToOrganization
+            ? t`Upgrade to Organization`
+            : t`Downgrade to Pro`,
+          variant: isUpgradeToOrganization ? 'primary' : 'secondary',
+          accent: isUpgradeToOrganization ? 'blue' : 'default',
+        };
+      }
     }
-
-    const isCurrentPlan = currentPlanKey === planKey;
-    const isIntervalSwitch = isCurrentPlan && !isSelectedIntervalCurrent;
-
-    if (isCurrentPlan && isSelectedIntervalCurrent) {
-      return {
-        disabled: true,
-        Icon: IconCheck,
-        title: t`Current`,
-        variant: 'secondary',
-      };
-    }
-
-    const isScheduled = isIntervalSwitch
-      ? selectedInterval === nextInterval
-      : nextPlan?.planKey === planKey;
-
-    if (isScheduled) {
-      return {
-        disabled: true,
-        title: t`Scheduled`,
-        variant: 'secondary',
-      };
-    }
-
-    if (shouldUpdatePayment) {
-      return createBillingPortalAction(t`Update payment`);
-    }
-
-    if (isCancellationScheduled) {
-      return createBillingPortalAction(t`Manage billing`);
-    }
-
-    if (!canSwitchSubscription) {
-      return {
-        disabled: true,
-        title: hasPermissionToManageBilling ? t`Unavailable` : t`Contact admin`,
-        variant: 'secondary',
-      };
-    }
-
-    if (isIntervalSwitch) {
-      const isSwitchingToAnnual =
-        selectedInterval === SubscriptionInterval.Year;
-
-      return {
-        disabled: isSwitchingInterval,
-        Icon: isSwitchingToAnnual ? IconArrowUp : IconArrowDown,
-        isLoading: isSwitchingInterval,
-        onClick: () =>
-          openModal(
-            isSwitchingToAnnual
-              ? BILLING_MODAL_IDS.switchBillingIntervalToYearly
-              : BILLING_MODAL_IDS.switchBillingIntervalToMonthly,
-          ),
-        title: isSwitchingToAnnual ? t`Switch to annual` : t`Switch to monthly`,
-        variant: 'secondary',
-      };
-    }
-
-    const isSwitchingToOrganizationPlan = planKey === BillingPlanKey.ENTERPRISE;
-
-    return {
-      disabled: isSwitchingPlan,
-      Icon: isSwitchingToOrganizationPlan ? IconArrowUp : IconArrowDown,
-      isLoading: isSwitchingPlan,
-      onClick: () =>
-        openModal(
-          isSwitchingToOrganizationPlan
-            ? BILLING_MODAL_IDS.switchBillingPlanToEnterprise
-            : BILLING_MODAL_IDS.switchBillingPlanToPro,
-        ),
-      title: isSwitchingToOrganizationPlan ? t`Upgrade` : t`Switch to Pro`,
-      variant: isSwitchingToOrganizationPlan ? 'primary' : 'secondary',
-      accent: isSwitchingToOrganizationPlan ? 'blue' : 'default',
-    };
   };
 
   return {

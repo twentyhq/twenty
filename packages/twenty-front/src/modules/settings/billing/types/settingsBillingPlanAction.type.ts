@@ -13,3 +13,14 @@ export type SettingsBillingPlanAction = {
   title: string;
   variant: ButtonVariant;
 };
+
+export type SettingsBillingPlanActionType =
+  | 'CONTACT_ADMIN'
+  | 'CURRENT'
+  | 'MANAGE_BILLING'
+  | 'SCHEDULED'
+  | 'SWITCH_INTERVAL'
+  | 'SWITCH_INTERVAL_FIRST'
+  | 'SWITCH_PLAN'
+  | 'UNAVAILABLE'
+  | 'UPDATE_PAYMENT';

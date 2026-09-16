@@ -12,13 +12,15 @@ import { SubscriptionInterval } from '~/generated-metadata/graphql';
 export const SettingsBillingPlansContent = () => {
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { formatPrices: planPrices } = useFormatPrices();
-  const [billingInterval, setBillingInterval] =
-    useState<SettingsBillingPlanInterval>(
-      currentWorkspace?.currentBillingSubscription?.interval ===
-        SubscriptionInterval.Month
-        ? SubscriptionInterval.Month
-        : SubscriptionInterval.Year,
-    );
+  const [selectedInterval, setSelectedInterval] =
+    useState<SettingsBillingPlanInterval>();
+
+  const billingInterval =
+    selectedInterval ??
+    (currentWorkspace?.currentBillingSubscription?.interval ===
+    SubscriptionInterval.Month
+      ? SubscriptionInterval.Month
+      : SubscriptionInterval.Year);
 
   const currentPlanKey = getSubscriptionPlanKey(
     currentWorkspace?.currentBillingSubscription,
@@ -31,7 +33,7 @@ export const SettingsBillingPlansContent = () => {
     return (
       <SettingsBillingPlansWithoutSubscription
         billingInterval={billingInterval}
-        onBillingIntervalChange={setBillingInterval}
+        onBillingIntervalChange={setSelectedInterval}
         planPrices={planPrices}
       />
     );
@@ -41,7 +43,7 @@ export const SettingsBillingPlansContent = () => {
     <SettingsBillingPlansWithSubscription
       billingInterval={billingInterval}
       currentPlanKey={currentPlanKey}
-      onBillingIntervalChange={setBillingInterval}
+      onBillingIntervalChange={setSelectedInterval}
       planPrices={planPrices}
     />
   );

@@ -67,35 +67,20 @@ describe('useBillingWording', () => {
     mockCurrentInterval = SubscriptionInterval.Month;
   });
 
-  it('quotes the subscribed interval price without a notice when that interval is selected', () => {
+  it('quotes the subscribed interval price and states that a plan switch leaves it unchanged', () => {
     const { confirmationModalSwitchToOrganizationMessage } =
       renderBillingWording();
 
-    const message = confirmationModalSwitchToOrganizationMessage(
-      SubscriptionInterval.Month,
-    );
-
-    expect(message).toBe('You will be charged $25 per user per month.');
-  });
-
-  it('warns that the billing interval is unchanged when another interval is selected', () => {
-    const { confirmationModalSwitchToOrganizationMessage } =
-      renderBillingWording();
-
-    const message = confirmationModalSwitchToOrganizationMessage(
-      SubscriptionInterval.Year,
-    );
-
-    expect(message).toBe(
-      'You will be charged $25 per user per month. Your billing interval stays monthly: change it separately from the Billing tab once this plan change is applied.',
+    expect(confirmationModalSwitchToOrganizationMessage()).toBe(
+      'You will be charged $25 per user per month. Your billing interval stays monthly, this only changes your plan.',
     );
   });
 
-  it('quotes the yearly plan as a monthly price billed annually', () => {
+  it('quotes a yearly plan as a monthly price billed annually and states that the plan is unchanged', () => {
     const { confirmationModalSwitchToYearlyMessage } = renderBillingWording();
 
     expect(confirmationModalSwitchToYearlyMessage()).toBe(
-      'You will be charged $9 per user per month billed annually. A prorata with your current subscription will be applied.',
+      'You will be charged $9 per user per month billed annually. A prorata with your current subscription will be applied. Your plan stays Pro, this only changes your billing interval.',
     );
   });
 
@@ -104,9 +89,7 @@ describe('useBillingWording', () => {
 
     const { confirmationModalSwitchToProMessage } = renderBillingWording();
 
-    const message = confirmationModalSwitchToProMessage(
-      SubscriptionInterval.Month,
-    );
+    const message = confirmationModalSwitchToProMessage();
 
     expect(message).toContain(
       'You will be charged $9 per user per month billed annually.',
