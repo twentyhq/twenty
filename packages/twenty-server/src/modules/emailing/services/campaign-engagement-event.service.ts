@@ -7,10 +7,8 @@ import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/forma
 import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
 import { CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
 import { CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS } from 'src/modules/emailing/constants/campaign-engagement-activity-class.constant';
-import { CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS } from 'src/modules/emailing/constants/campaign-engagement-insert-busy-timeout-ms.constant';
-import { SHORT_LINK_CLICK_TABLE } from 'src/modules/emailing/constants/short-link-click-table.constant';
+import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
 import { type CampaignEngagementBucket } from 'src/modules/emailing/types/campaign-engagement-bucket.type';
-import { type ShortLinkClickEvent } from 'src/modules/emailing/types/short-link-click-event.type';
 
 type CampaignScope = {
   workspaceId: string;
@@ -18,6 +16,18 @@ type CampaignScope = {
   activityFilter: CampaignEngagementActivityFilter;
 };
 
+type ShortLinkClickEvent = {
+  workspaceId: string;
+  messageCampaignId: string;
+  shortLinkId: string;
+  deliveryId: string;
+  eventId: string;
+  occurredAt: string;
+  activityClass: CampaignEngagementActivityClass;
+};
+
+const SHORT_LINK_CLICK_TABLE = 'shortLinkClick';
+const CAMPAIGN_ENGAGEMENT_INSERT_BUSY_TIMEOUT_MS = 1_000;
 const SCANNER_BURST_MIN_DISTINCT_LINKS = 3;
 const SCANNER_BURST_WINDOW_MS = 10_000;
 

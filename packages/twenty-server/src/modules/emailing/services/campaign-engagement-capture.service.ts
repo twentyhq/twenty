@@ -2,11 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { v4 } from 'uuid';
 
-import { CAMPAIGN_ENGAGEMENT_RECORD_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-engagement-record-retry-backoff.constant';
-import { CAMPAIGN_ENGAGEMENT_RECORD_RETRY_LIMIT } from 'src/engine/core-modules/emailing-domain/constants/campaign-engagement-record-retry-limit.constant';
 import { RECORD_CAMPAIGN_ENGAGEMENT_JOB } from 'src/engine/core-modules/emailing-domain/constants/record-campaign-engagement-job.constant';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { type QueueJobBackoffOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -25,6 +24,14 @@ const CAPTURE_RATE_LIMIT_PER_REQUESTER = {
 };
 
 const RESPONSE_RELEASE_BUDGET_MS = 100;
+
+const CAMPAIGN_ENGAGEMENT_RECORD_RETRY_LIMIT = 14;
+
+const CAMPAIGN_ENGAGEMENT_RECORD_RETRY_BACKOFF = {
+  strategy: 'exponential',
+  initialDelayMilliseconds: 5_000,
+  jitter: 0.5,
+} as const satisfies QueueJobBackoffOptions;
 
 @Injectable()
 export class CampaignEngagementCaptureService {
