@@ -15,6 +15,7 @@ import {
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { type AdminApplicationRegistrationClaimDTO } from 'src/engine/core-modules/application/application-registration/dtos/admin-application-registration-claim.dto';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { isValidNpmVersionSpec } from 'src/engine/core-modules/application/application-package/utils/is-valid-npm-version-spec.util';
 import { type ApplicationRegistrationGithubClaimStateJwtPayload } from 'src/engine/core-modules/auth/types/application-registration-github-claim-state-jwt-payload.type';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -237,14 +238,22 @@ export class ApplicationRegistrationClaimService {
       params.version ??
       (await this.fetchLatestVersion(registryUrl, params.packageName));
 
+    if (!isValidNpmVersionSpec(version)) {
+      throw new ApplicationRegistrationException(
+        `Invalid version "${version}" for ${params.packageName}`,
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     // Scoped packages need their slash percent-encoded for the registry path.
     const encodedName = params.packageName.replace(/\//g, '%2F');
+    const encodedVersion = encodeURIComponent(version);
 
     let data: unknown;
 
     try {
       const response = await axios.get(
-        `${registryUrl}/-/npm/v1/attestations/${encodedName}@${version}`,
+        `${registryUrl}/-/npm/v1/attestations/${encodedName}@${encodedVersion}`,
         {
           headers: { 'User-Agent': 'Twenty-Marketplace' },
           timeout: 10_000,
