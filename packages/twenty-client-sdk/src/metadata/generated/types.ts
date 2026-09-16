@@ -5830,88 +5830,6 @@ export default {
                 1
             ]
         },
-        "MessageCampaignEngagementBucketDTO": {
-            "bucketStart": [
-                4
-            ],
-            "clicks": [
-                28
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "MessageCampaignEngagementLinkDTO": {
-            "authoredUrl": [
-                1
-            ],
-            "uniqueClickers": [
-                28
-            ],
-            "totalClicks": [
-                28
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "MessageCampaignEngagementRecipientDTO": {
-            "deliveryId": [
-                3
-            ],
-            "personId": [
-                3
-            ],
-            "firstClickedAt": [
-                4
-            ],
-            "lastClickedAt": [
-                4
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "MessageCampaignEngagementDTO": {
-            "isAvailable": [
-                8
-            ],
-            "totalClicks": [
-                28
-            ],
-            "uniqueClickers": [
-                28
-            ],
-            "series": [
-                328
-            ],
-            "links": [
-                329
-            ],
-            "recipients": [
-                330
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "MessageCampaignFollowUpDraft": {
-            "messageCampaignId": [
-                3
-            ],
-            "listId": [
-                3
-            ],
-            "memberCount": [
-                28
-            ],
-            "skippedCount": [
-                28
-            ],
-            "__typename": [
-                1
-            ]
-        },
         "CampaignAudiencePreviewDTO": {
             "totalMembers": [
                 28
@@ -7819,15 +7737,6 @@ export default {
             "unsubscribeTopics": [
                 342
             ],
-            "messageCampaignEngagement": [
-                331,
-                {
-                    "input": [
-                        415,
-                        "MessageCampaignEngagementInput!"
-                    ]
-                }
-            ],
             "myMessageChannels": [
                 317,
                 {
@@ -8295,18 +8204,6 @@ export default {
                 1
             ]
         },
-        "MessageCampaignEngagementInput": {
-            "messageCampaignId": [
-                3
-            ],
-            "activityFilter": [
-                416
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "CampaignEngagementActivityFilter": {},
         "ListAppMessageChannelsInput": {
             "connectedAccountId": [
                 3
@@ -9893,15 +9790,6 @@ export default {
                     "input": [
                         544,
                         "SetPersonEmailTrackingConsentInput!"
-                    ]
-                }
-            ],
-            "createMessageCampaignFollowUpDraft": [
-                332,
-                {
-                    "input": [
-                        415,
-                        "MessageCampaignEngagementInput!"
                     ]
                 }
             ],

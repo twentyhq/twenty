@@ -3018,40 +3018,6 @@ type CreateEmailGroupChannelOutput {
   forwardingAddress: String!
 }
 
-type MessageCampaignEngagementBucketDTO {
-  bucketStart: DateTime!
-  clicks: Int!
-}
-
-type MessageCampaignEngagementLinkDTO {
-  authoredUrl: String!
-  uniqueClickers: Int!
-  totalClicks: Int!
-}
-
-type MessageCampaignEngagementRecipientDTO {
-  deliveryId: UUID!
-  personId: UUID!
-  firstClickedAt: DateTime
-  lastClickedAt: DateTime!
-}
-
-type MessageCampaignEngagementDTO {
-  isAvailable: Boolean!
-  totalClicks: Int!
-  uniqueClickers: Int!
-  series: [MessageCampaignEngagementBucketDTO!]!
-  links: [MessageCampaignEngagementLinkDTO!]!
-  recipients: [MessageCampaignEngagementRecipientDTO!]!
-}
-
-type MessageCampaignFollowUpDraft {
-  messageCampaignId: UUID!
-  listId: UUID!
-  memberCount: Int!
-  skippedCount: Int!
-}
-
 type CampaignAudiencePreviewDTO {
   totalMembers: Int!
   withoutEmail: Int!
@@ -3770,7 +3736,6 @@ type Query {
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
-  messageCampaignEngagement(input: MessageCampaignEngagementInput!): MessageCampaignEngagementDTO!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
@@ -3873,16 +3838,6 @@ input FindMessageSuppressionsInput {
   unsubscribeTopicId: UUID
   limit: Int! = 30
   offset: Int! = 0
-}
-
-input MessageCampaignEngagementInput {
-  messageCampaignId: UUID!
-  activityFilter: CampaignEngagementActivityFilter = FILTERED
-}
-
-enum CampaignEngagementActivityFilter {
-  FILTERED
-  ALL
 }
 
 input ListAppMessageChannelsInput {
@@ -4105,7 +4060,6 @@ type Mutation {
   updateUnsubscribeTopic(input: UpdateUnsubscribeTopicInput!): UnsubscribeTopic!
   deleteUnsubscribeTopic(id: String!): Boolean!
   setPersonEmailTrackingConsent(input: SetPersonEmailTrackingConsentInput!): Boolean!
-  createMessageCampaignFollowUpDraft(input: MessageCampaignEngagementInput!): MessageCampaignFollowUpDraft!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
