@@ -63,7 +63,7 @@ export const ViewPickerListContent = () => {
     (view) => view.visibility === ViewVisibility.UNLISTED,
   );
 
-  const isLastView = viewsOnCurrentObject.length <= 1;
+  const isLastView = visibleViews.length <= 1;
 
   const shouldShowSectionLabels =
     workspaceViews.length > 0 && unlistedViews.length > 0;

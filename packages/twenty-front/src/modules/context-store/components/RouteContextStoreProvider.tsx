@@ -10,7 +10,7 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { computeObjectViewTargetIds } from '@/views/utils/computeObjectViewTargetIds';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isWidgetViewType } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
   ViewKey,
@@ -112,7 +112,7 @@ export const RouteContextStoreProvider = () => {
 
   const lastVisitedViewId =
     isDefined(lastVisitedView) &&
-    lastVisitedView.type !== ViewType.FIELDS_WIDGET &&
+    !isWidgetViewType(lastVisitedView.type) &&
     !(isInitialObjectViewEnabled && lastVisitedView.key === ViewKey.INDEX)
       ? lastVisitedViewIdRaw
       : undefined;

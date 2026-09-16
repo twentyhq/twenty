@@ -18,6 +18,12 @@ const indexView = makeView('view-index', 0, ViewKey.INDEX);
 const initialView = makeView('view-initial', 1, null);
 const userView = makeView('view-user', 7, null);
 const widgetView = makeView('view-widget', 2, null, ViewType.FIELDS_WIDGET);
+const tableWidgetView = makeView(
+  'view-table-widget',
+  0,
+  null,
+  ViewType.TABLE_WIDGET,
+);
 
 describe('computeObjectViewTargetIds', () => {
   it('should not resolve an initial view when the flag is off', () => {
@@ -62,5 +68,16 @@ describe('computeObjectViewTargetIds', () => {
 
     expect(result.indexViewId).toBeUndefined();
     expect(result.firstAvailableViewId).toBeUndefined();
+  });
+
+  it('should never resolve a widget view, whatever its type', () => {
+    const result = computeObjectViewTargetIds({
+      views: [tableWidgetView, widgetView, indexView, initialView],
+      objectMetadataId: 'metadata-1',
+      isInitialObjectViewEnabled: true,
+    });
+
+    expect(result.initialObjectViewId).toBe('view-initial');
+    expect(result.firstAvailableViewId).toBe('view-index');
   });
 });

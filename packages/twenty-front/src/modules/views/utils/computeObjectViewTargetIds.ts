@@ -1,6 +1,6 @@
 import { type View } from '@/views/types/View';
 import { ViewKey } from '@/views/types/ViewKey';
-import { ViewType } from '~/generated-metadata/graphql';
+import { isWidgetViewType } from 'twenty-shared/utils';
 
 export const computeObjectViewTargetIds = <
   TView extends Pick<
@@ -24,7 +24,7 @@ export const computeObjectViewTargetIds = <
     .filter(
       (view) =>
         view.objectMetadataId === objectMetadataId &&
-        view.type !== ViewType.FIELDS_WIDGET,
+        !isWidgetViewType(view.type),
     )
     .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
 
