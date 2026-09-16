@@ -56,22 +56,24 @@ export const RecordingControls = ({
             isPending('pause', 'resume', 'stop', 'record') || transitional
           }
           onClick={() => void command({ type: paused ? 'resume' : 'pause' })}
-          variant="secondary"
-          size="medium"
-          Icon={paused ? IconPlayerPlay : IconPlayerPause}
-          title={paused ? i18n._('Resume') : i18n._('Pause')}
-        />
+          variant="outline"
+          size="md"
+          startIcon={paused ? <IconPlayerPlay /> : <IconPlayerPause />}
+        >
+          {paused ? i18n._('Resume') : i18n._('Pause')}
+        </Button>
         <Button
           disabled={
             isPending('pause', 'resume', 'stop', 'record') || transitional
           }
           onClick={() => void command({ type: 'stop' })}
-          variant="secondary"
-          accent="danger"
-          size="medium"
-          Icon={IconPlayerStop}
-          title={i18n._('Finish recording')}
-        />
+          variant="outline"
+          color="danger"
+          size="md"
+          startIcon={<IconPlayerStop />}
+        >
+          {i18n._('Finish recording')}
+        </Button>
       </div>
     </Card>
   );

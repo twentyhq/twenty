@@ -44,13 +44,7 @@ export const WithAdornment: Story = {
   ...WithDescription,
   args: {
     ...WithDescription.args,
-    adornment: (
-      <Button
-        title="Edit workspace"
-        aria-label="Edit workspace"
-        onClick={handleEdit}
-      />
-    ),
+    adornment: <Button onClick={handleEdit}>Edit workspace</Button>,
   },
   play: async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button', {

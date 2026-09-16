@@ -65,18 +65,20 @@ export const CompanionApp = () => {
             {!onboarding && (
               <div className="button-group">
                 <Button
-                  variant="primary"
-                  accent="blue"
-                  size="medium"
+                  variant="solid"
+                  color="accent"
+                  size="md"
+                  elevated
                   disabled={
                     isPending('record') ||
                     !!state.activeRecording ||
                     !state.updatedAt
                   }
                   onClick={() => void command({ type: 'record' })}
-                  Icon={IconCircleDot}
-                  title={i18n._('New recording')}
-                />
+                  startIcon={<IconCircleDot />}
+                >
+                  {i18n._('New recording')}
+                </Button>
               </div>
             )}
           </header>

@@ -208,12 +208,11 @@ export const SettingsDevelopersWebhookForm = ({
                 description={t`Delete this webhook`}
               />
               <Button
-                accent="danger"
-                variant="secondary"
-                title={t`Delete`}
-                Icon={IconTrash}
+                startIcon={<IconTrash />}
                 onClick={() => openModal(DELETE_WEBHOOK_MODAL_ID)}
-              />
+                variant="outline"
+                color="danger"
+              >{t`Delete`}</Button>
             </Section>
           )}
         </SettingsPageContainer>

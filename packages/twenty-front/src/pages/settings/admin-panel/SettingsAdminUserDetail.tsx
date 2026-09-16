@@ -201,14 +201,7 @@ export const SettingsAdminUserDetail = () => {
                 user.id !== currentUser.id && (
                   <StyledButtonContainer>
                     <Button
-                      Icon={IconEyeShare}
-                      variant="primary"
-                      accent="default"
-                      title={
-                        activeWorkspace.allowImpersonation === false
-                          ? t`Impersonation is disabled for this workspace`
-                          : t`Impersonate`
-                      }
+                      startIcon={<IconEyeShare />}
                       onClick={() =>
                         handleImpersonate(user.id, activeWorkspace.id)
                       }
@@ -216,7 +209,12 @@ export const SettingsAdminUserDetail = () => {
                         impersonatingUserId !== null ||
                         activeWorkspace.allowImpersonation === false
                       }
-                    />
+                      variant="outline"
+                    >
+                      {activeWorkspace.allowImpersonation === false
+                        ? t`Impersonation is disabled for this workspace`
+                        : t`Impersonate`}
+                    </Button>
                   </StyledButtonContainer>
                 )}
             </Section>

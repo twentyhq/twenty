@@ -131,11 +131,10 @@ export const SettingsSsoSamlForm = () => {
             accept=".xml"
           />
           <Button
-            Icon={IconUpload}
+            startIcon={<IconUpload />}
             onClick={handleUploadFileClick}
-            title={t`Upload file`}
             type="button"
-          ></Button>
+          >{t`Upload file`}</Button>
           {isXMLMetadataValid() && (
             <IconCheck
               size={theme.icon.size.md}
@@ -153,11 +152,10 @@ export const SettingsSsoSamlForm = () => {
         <StyledInputsContainer>
           <StyledContainer>
             <Button
-              Icon={IconDownload}
+              startIcon={<IconDownload />}
               onClick={downloadMetadata}
-              title={t`Download file`}
               type="button"
-            />
+            >{t`Download file`}</Button>
           </StyledContainer>
           <HorizontalSeparator text={t`Or`} />
           <StyledContainer>
@@ -172,13 +170,12 @@ export const SettingsSsoSamlForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(acsUrl, t`ACS URL copied to clipboard`);
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
           <StyledContainer>
@@ -193,13 +190,12 @@ export const SettingsSsoSamlForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(entityID, t`Entity ID copied to clipboard`);
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
         </StyledInputsContainer>

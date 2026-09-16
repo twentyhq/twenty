@@ -13,7 +13,7 @@
   {
     "name": "components",
     "path": "dist/components.mjs",
-    "limit": "45 kB"
+    "limit": "100 kB"
   },
   {
     "name": "primitives",

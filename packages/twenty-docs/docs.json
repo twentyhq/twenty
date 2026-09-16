@@ -526,6 +526,8 @@
                       {
                         "group": "Forms",
                         "pages": [
+                          "ui/primitives/input/button",
+                          "ui/primitives/input/button-group",
                           "ui/primitives/input/field",
                           "ui/primitives/input/input",
                           "ui/primitives/input/input-group",
@@ -572,6 +574,8 @@
                     "group": "Components",
                     "pages": [
                       "ui/components/overview",
+                      "ui/components/input/main-button",
+                      "ui/components/input/light-button",
                       "ui/components/section-header"
                     ]
                   }

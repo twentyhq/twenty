@@ -190,21 +190,21 @@ export const SettingPublicDomain = () => {
                 <ButtonGroup>
                   <StyledButtonContainer>
                     <Button
-                      isLoading={isLoading}
-                      Icon={IconReload}
-                      title={t`Reload`}
-                      variant="primary"
+                      loading={isLoading}
+                      startIcon={<IconReload />}
                       onClick={() =>
                         checkPublicDomainRecords(selectedPublicDomain.domain)
                       }
                       type="button"
-                    />
+                      variant="outline"
+                    >{t`Reload`}</Button>
                   </StyledButtonContainer>
                   <StyledButtonContainer>
                     <Button
-                      Icon={IconTrash}
-                      variant="primary"
+                      startIcon={<IconTrash />}
+                      aria-label={t`Delete`}
                       onClick={onDelete}
+                      variant="outline"
                     />
                   </StyledButtonContainer>
                 </ButtonGroup>

@@ -142,11 +142,10 @@ export const SettingsApplicationRegistrationOAuthTab = ({
         />
         <StyledRotateContainer>
           <Button
-            Icon={IconRefresh}
-            title={t`Rotate client secret`}
-            variant="secondary"
+            startIcon={<IconRefresh />}
             onClick={() => openModal(ROTATE_SECRET_MODAL_ID)}
-          />
+            variant="outline"
+          >{t`Rotate client secret`}</Button>
         </StyledRotateContainer>
       </Section>
 

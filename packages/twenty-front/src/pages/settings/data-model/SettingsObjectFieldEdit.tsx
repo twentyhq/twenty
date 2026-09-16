@@ -428,29 +428,31 @@ export const SettingsObjectFieldEdit = () => {
                 />
                 <StyledDangerButtons>
                   <Button
-                    Icon={
-                      fieldMetadataItem.isActive ? IconArchive : IconArchiveOff
+                    startIcon={
+                      fieldMetadataItem.isActive ? (
+                        <IconArchive />
+                      ) : (
+                        <IconArchiveOff />
+                      )
                     }
-                    variant="secondary"
-                    title={
-                      fieldMetadataItem.isActive ? t`Deactivate` : t`Activate`
-                    }
-                    size="small"
+                    size="sm"
                     onClick={
                       fieldMetadataItem.isActive
                         ? handleDeactivate
                         : handleActivate
                     }
-                  />
+                    variant="outline"
+                  >
+                    {fieldMetadataItem.isActive ? t`Deactivate` : t`Activate`}
+                  </Button>
                   {isCustomField && (
                     <Button
-                      Icon={IconTrash}
-                      variant="secondary"
-                      accent="danger"
-                      title={t`Delete`}
-                      size="small"
+                      startIcon={<IconTrash />}
+                      size="sm"
                       onClick={handleDelete}
-                    />
+                      variant="outline"
+                      color="danger"
+                    >{t`Delete`}</Button>
                   )}
                 </StyledDangerButtons>
               </Section>

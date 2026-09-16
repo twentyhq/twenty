@@ -134,14 +134,13 @@ export const SettingsBillingLimitEditForm = ({
                 description={t`Spending stays capped by your plan allowance and the other limits.`}
               />
               <Button
-                Icon={IconTrash}
-                title={t`Delete limit`}
-                variant="secondary"
-                accent="danger"
-                size="small"
+                startIcon={<IconTrash />}
+                size="sm"
                 disabled={isDeleting}
                 onClick={() => openModal(DELETE_MODAL_ID)}
-              />
+                variant="outline"
+                color="danger"
+              >{t`Delete limit`}</Button>
               <ConfirmationModal
                 modalInstanceId={DELETE_MODAL_ID}
                 title={t`Delete this limit?`}

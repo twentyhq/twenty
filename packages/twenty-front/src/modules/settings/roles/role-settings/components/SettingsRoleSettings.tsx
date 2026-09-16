@@ -123,15 +123,14 @@ export const SettingsRoleSettings = ({
               description={t`Delete this role and assign a new role to its members`}
             />
             <Button
-              title={t`Delete role`}
-              size="small"
-              variant="secondary"
-              accent="danger"
+              size="sm"
               onClick={() => {
                 openModal(ROLE_SETTINGS_DELETE_ROLE_CONFIRMATION_MODAL_ID);
               }}
               disabled={!isEditable}
-            />
+              variant="outline"
+              color="danger"
+            >{t`Delete role`}</Button>
           </Section>
           <SettingsRoleSettingsDeleteRoleConfirmationModal roleId={roleId} />
         </>

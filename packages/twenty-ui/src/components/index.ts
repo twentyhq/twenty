@@ -7,5 +7,8 @@
  *                              |___/
  */
 
+export { LightButton } from './LightButton/LightButton';
+export type { LightButtonProps } from './LightButton/types/LightButtonProps';
+export { MainButton } from './MainButton/MainButton';
 export { SectionHeader } from './SectionHeader/SectionHeader';
 export type { SectionHeaderProps } from './SectionHeader/types/SectionHeaderProps';

@@ -82,16 +82,15 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
           {meetings.length > 3 && (
             <div>
               <Button
-                variant="tertiary"
+                variant="ghost"
                 className="see-more"
-                ariaExpanded={showAllMeetings}
+                aria-expanded={showAllMeetings}
                 onClick={() => setShowAllMeetings(!showAllMeetings)}
-                size="medium"
-                title={
-                  showAllMeetings ? i18n._('Show less') : i18n._('See more')
-                }
-                Icon={IconChevronRight}
-              />
+                size="md"
+                startIcon={<IconChevronRight />}
+              >
+                {showAllMeetings ? i18n._('Show less') : i18n._('See more')}
+              </Button>
             </div>
           )}
         </>
@@ -120,11 +119,12 @@ const UpcomingMeetings = ({ state, isPending, command }: ActionProps) => {
             {!state.calendarConnected && (
               <Button
                 onClick={() => void command({ type: 'open-calendar-settings' })}
-                variant="secondary"
-                size="medium"
-                title={i18n._('Connect calendar')}
-                Icon={IconArrowUpRight}
-              />
+                variant="outline"
+                size="md"
+                startIcon={<IconArrowUpRight />}
+              >
+                {i18n._('Connect calendar')}
+              </Button>
             )}
           </SettingsCardContent>
         </Card>
@@ -145,12 +145,13 @@ export const Home = ({ state, command, isPending }: ActionProps) => {
           title={i18n._('Recordings')}
           adornment={
             <Button
-              variant="tertiary"
-              title={i18n._('View all in Twenty')}
-              Icon={IconArrowUpRight}
+              variant="ghost"
+              startIcon={<IconArrowUpRight />}
               disabled={isPending('open-recordings')}
               onClick={() => void command({ type: 'open-recordings' })}
-            />
+            >
+              {i18n._('View all in Twenty')}
+            </Button>
           }
         />
         <RecordingList state={state} isPending={isPending} command={command} />

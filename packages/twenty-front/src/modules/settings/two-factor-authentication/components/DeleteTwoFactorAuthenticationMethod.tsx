@@ -89,11 +89,10 @@ export const DeleteTwoFactorAuthentication = () => {
       />
 
       <Button
-        accent="danger"
         onClick={() => openModal(DELETE_TWO_FACTOR_AUTHENTICATION_MODAL_ID)}
-        variant="secondary"
-        title={t`Reset 2FA`}
-      />
+        variant="outline"
+        color="danger"
+      >{t`Reset 2FA`}</Button>
 
       <ConfirmationModal
         confirmationValue={userEmail}

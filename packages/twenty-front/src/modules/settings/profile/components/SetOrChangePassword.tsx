@@ -20,11 +20,9 @@ export const SetOrChangePassword = () => {
   return (
     <>
       <SectionHeader title={heading} description={description} />
-      <Button
-        onClick={handleResetPassword()}
-        variant="secondary"
-        title={heading}
-      />
+      <Button onClick={handleResetPassword()} variant="outline">
+        {heading}
+      </Button>
     </>
   );
 };

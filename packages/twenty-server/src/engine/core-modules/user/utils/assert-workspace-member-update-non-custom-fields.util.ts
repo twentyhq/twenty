@@ -1,20 +1,22 @@
 import { msg } from '@lingui/core/macro';
 
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-const WORKSPACE_MEMBER_UPDATE_DISALLOWED_FIELD_NAMES = new Set([
-  'id',
-  'userId',
+// Deny-by-default allowlist of self-service settings: lifecycle, audit and email columns (notably deletedAt) and relations must go through their own flow.
+const WORKSPACE_MEMBER_SETTINGS_UPDATE_ALLOWED_FIELD_NAMES = new Set<string>([
+  'name',
+  'colorScheme',
+  'uiScale',
+  'openRecordIn',
+  'locale',
+  'avatarUrl',
+  'jobTitle',
+  'calendarStartDay',
+  'timeZone',
+  'dateFormat',
+  'timeFormat',
+  'numberFormat',
 ]);
-
-const WORKSPACE_MEMBER_NON_CUSTOM_UPDATE_FIELD_ALLOWLIST = new Set<string>(
-  Object.keys(STANDARD_OBJECTS.workspaceMember.fields).filter(
-    (fieldName) =>
-      !WORKSPACE_MEMBER_UPDATE_DISALLOWED_FIELD_NAMES.has(fieldName),
-  ),
-);
 
 export const assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly = ({
   update,
@@ -30,7 +32,7 @@ export const assertWorkspaceMemberUpdateUsesNonCustomFieldsOnly = ({
   }
 
   for (const payloadKey of updateKeys) {
-    if (!WORKSPACE_MEMBER_NON_CUSTOM_UPDATE_FIELD_ALLOWLIST.has(payloadKey)) {
+    if (!WORKSPACE_MEMBER_SETTINGS_UPDATE_ALLOWED_FIELD_NAMES.has(payloadKey)) {
       throw new UserInputError(
         `Cannot update custom workspaceMember field via this endpoint: ${payloadKey}`,
         {

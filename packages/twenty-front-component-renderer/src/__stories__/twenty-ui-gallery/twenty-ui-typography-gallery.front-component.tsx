@@ -32,11 +32,9 @@ const SectionHeaderExample = () => {
         title="Workspace preferences"
         description="Manage the settings for your workspace."
         adornment={
-          <Button
-            title="Edit workspace"
-            aria-label="Edit workspace"
-            onClick={() => setActivations((count) => count + 1)}
-          />
+          <Button onClick={() => setActivations((count) => count + 1)}>
+            Edit workspace
+          </Button>
         }
       />
       <Text aria-label="Workspace edits">{activations}</Text>

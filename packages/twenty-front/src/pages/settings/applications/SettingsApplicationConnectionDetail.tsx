@@ -331,29 +331,25 @@ export const SettingsApplicationConnectionDetail = () => {
               <StyledActions>
                 {connection.authFailedAt && (
                   <Button
-                    title={t`Reconnect`}
-                    Icon={IconRefresh}
-                    variant="secondary"
-                    accent="blue"
+                    startIcon={<IconRefresh />}
                     onClick={handleReconnect}
-                  />
+                    variant="outline"
+                    color="accent"
+                  >{t`Reconnect`}</Button>
                 )}
                 {connection.visibility !== 'workspace' && (
                   <Button
-                    title={t`Share with workspace`}
-                    Icon={IconUsers}
-                    variant="secondary"
-                    accent="default"
+                    startIcon={<IconUsers />}
                     onClick={() => openModal(shareWithWorkspaceModalId)}
-                  />
+                    variant="outline"
+                  >{t`Share with workspace`}</Button>
                 )}
                 <Button
-                  title={t`Disconnect`}
-                  Icon={IconTrash}
-                  variant="secondary"
-                  accent="danger"
+                  startIcon={<IconTrash />}
                   onClick={() => openModal(deleteModalId)}
-                />
+                  variant="outline"
+                  color="danger"
+                >{t`Disconnect`}</Button>
               </StyledActions>
             </Section>
             <Section>
@@ -406,7 +402,7 @@ export const SettingsApplicationConnectionDetail = () => {
               }
               onConfirmClick={handleShareWithWorkspace}
               confirmButtonText={t`Reconnect and share`}
-              confirmButtonAccent="blue"
+              confirmButtonColor="accent"
             />
           </>
         )}

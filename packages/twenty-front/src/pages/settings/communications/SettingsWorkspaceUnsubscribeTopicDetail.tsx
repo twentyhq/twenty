@@ -148,14 +148,13 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
       ]}
       actionButton={
         <Button
-          Icon={IconTrash}
-          title={t`Delete`}
-          variant="secondary"
-          accent="danger"
-          size="small"
+          startIcon={<IconTrash />}
+          size="sm"
           disabled={deleting}
           onClick={() => openModal(DELETE_UNSUBSCRIBE_TOPIC_MODAL_ID)}
-        />
+          variant="outline"
+          color="danger"
+        >{t`Delete`}</Button>
       }
     >
       <SettingsPageContainer>
@@ -209,7 +208,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
         subtitle={t`Are you sure you want to delete ${topicName}? Recipients will no longer be able to opt out of this category.`}
         onConfirmClick={handleDelete}
         confirmButtonText={t`Delete`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
         loading={deleting}
       />
     </SettingsPageLayout>

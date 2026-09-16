@@ -38,10 +38,11 @@ const AnimatedExpandableContainerWithButton = ({
       <Button
         type="button"
         className={styles.button}
-        title={isExpanded ? 'Collapse' : 'Expand'}
-        ariaLabel={isExpanded ? 'Collapse' : 'Expand'}
+        aria-label={isExpanded ? 'Collapse' : 'Expand'}
         onClick={() => setIsExpanded(!isExpanded)}
-      />
+      >
+        {isExpanded ? 'Collapse' : 'Expand'}
+      </Button>
       <AnimatedExpandableContainer
         isExpanded={isExpanded}
         dimension={args.dimension}
