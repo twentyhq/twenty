@@ -1,31 +1,11 @@
+import { type IconButtonProps } from './types/IconButtonProps';
+
 import { clsx } from 'clsx';
 import React from 'react';
 
-import { type IconComponent } from '@ui/icon';
 import { useTheme } from '@ui/theme-constants';
 
 import styles from './IconButton.module.scss';
-
-export type IconButtonSize = 'medium' | 'small';
-export type IconButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
-export type IconButtonVariant = 'primary' | 'secondary' | 'tertiary';
-export type IconButtonAccent = 'default' | 'blue' | 'danger';
-
-export type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  className?: string;
-  Icon?: IconComponent;
-  variant?: IconButtonVariant;
-  size?: IconButtonSize;
-  position?: IconButtonPosition;
-  accent?: IconButtonAccent;
-  disabled?: boolean;
-  focus?: boolean;
-  dataTestId?: string;
-  ariaLabel?: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  to?: string;
-  children?: React.ReactNode;
-};
 
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
   (

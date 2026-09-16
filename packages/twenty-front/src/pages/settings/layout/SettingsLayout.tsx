@@ -64,13 +64,12 @@ export const SettingsLayout = () => {
                 description={t`Customize how your workspace looks.`}
                 action={
                   <Button
-                    title={t`Customize`}
-                    variant="primary"
-                    accent="blue"
-                    size="small"
-                    Icon={IconPencil}
+                    size="sm"
+                    startIcon={<IconPencil />}
                     onClick={handleCustomize}
-                  />
+                    variant="solid"
+                    color="accent"
+                  >{t`Customize`}</Button>
                 }
               />
             }

@@ -18,13 +18,11 @@ import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRi
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
-import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
+import { ProgressRingWithLabel } from '@/ui/feedback/progress-ring/components/ProgressRingWithLabel';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const GRID_AUTO_COLUMNS = '1.2fr 1fr 120px 96px';
-
-const USED_RING_SIZE = 14;
 
 const StyledCell = styled.div`
   align-items: center;
@@ -124,17 +122,13 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
   return (
     <StyledUsed id={anchorId}>
       {isDefined(item.consumedPercentage) ? (
-        <>
-          <span>{item.consumedPercentage}%</span>
-          <ProgressRing
-            size={USED_RING_SIZE}
-            value={item.consumedPercentage}
-            barColor={getUsageLimitRingColor({
-              consumedPercentage: item.consumedPercentage,
-              isExhausted: item.isExhausted,
-            })}
-          />
-        </>
+        <ProgressRingWithLabel
+          value={item.consumedPercentage}
+          barColor={getUsageLimitRingColor({
+            consumedPercentage: item.consumedPercentage,
+            isExhausted: item.isExhausted,
+          })}
+        />
       ) : (
         <StyledEmptyValue>—</StyledEmptyValue>
       )}

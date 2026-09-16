@@ -11253,12 +11253,12 @@ msgstr "Aquesta versió de l'aplicació ja està instal·lada en aquest espai de
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "Aquesta versió del flux de treball conté dades malformades i no es pot desar."
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "Aquesta versió del flux de treball no està preparada per activar-se."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13326,6 +13326,11 @@ msgstr "No tens permís per suplantar usuaris en aquest espai de treball."
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "No tens permís per suplantar els usuaris. Si us plau, contacta amb l'administrador del teu espai de treball per obtenir accés."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "No tens permís per gestionar les connexions compartides amb l'espai de treball. Si us plau, contacta amb l'administrador del teu espai de treball per obtenir accés."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

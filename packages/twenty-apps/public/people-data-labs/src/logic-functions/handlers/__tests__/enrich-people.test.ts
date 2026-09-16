@@ -74,6 +74,21 @@ beforeEach(() => {
 });
 
 describe('enrichPeopleCore', () => {
+  it('rejects an invalid likelihood before calling PDL or writing records', async () => {
+    const captured: Captured = {};
+    const client = buildClient({ people: [PERSON_NODE_MOCK], captured });
+
+    await expect(
+      enrichPeopleCore({
+        input: { records: [{ id: 'p1' }], minLikelihood: 11 },
+        client,
+      }),
+    ).rejects.toThrow('Minimum likelihood must be an integer between 1 and 10.');
+
+    expect(enrichPeopleMock).not.toHaveBeenCalled();
+    expect(captured).toEqual({});
+  });
+
   it('fills empty standard fields and writes pdl metadata via updatePerson on a match', async () => {
     enrichPeopleMock.mockResolvedValue([
       {

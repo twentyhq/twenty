@@ -1,4 +1,5 @@
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
@@ -19,10 +20,7 @@ import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
-import {
-  FeatureFlagKey,
-  type CommandMenuItemFieldsFragment,
-} from '~/generated-metadata/graphql';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`
   cursor: not-allowed;
@@ -33,7 +31,7 @@ const StyledPreviewWrapper = styled.div`
 `;
 
 type CommandMenuItemRendererProps = {
-  item: CommandMenuItemFieldsFragment;
+  item: CommandMenuItemDefinition;
   isPrimaryAction?: boolean;
   shouldHideLabel?: boolean;
 };
@@ -66,7 +64,13 @@ const CommandMenuItemButtonRenderer = ({
       label,
     });
 
-  const command = { key: item.id, label, shortLabel, Icon };
+  const command = {
+    key: item.id,
+    label,
+    shortLabel,
+    Icon,
+    hotKeys: item.hotKeys,
+  };
 
   if (isInPreviewMode) {
     return (

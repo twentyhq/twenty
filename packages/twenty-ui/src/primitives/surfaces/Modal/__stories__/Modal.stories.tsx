@@ -69,8 +69,10 @@ export const Default: Story = {
         </Section>
       </ModalContent>
       <ModalFooter>
-        <Button title="Cancel" variant="secondary" />
-        <Button title="Save" variant="primary" accent="blue" />
+        <Button variant="outline">{'Cancel'}</Button>
+        <Button variant="solid" color="accent">
+          {'Save'}
+        </Button>
       </ModalFooter>
     </Modal>
   ),
@@ -117,14 +119,17 @@ export const Confirmation: Story = {
           permanently removed.
         </Section>
       </div>
-      <Button title="Cancel" variant="secondary" fullWidth justify="center" />
+      <Button fullWidth variant="outline" style={{ justifyContent: 'center' }}>
+        {'Cancel'}
+      </Button>
       <Button
-        title="Delete"
-        variant="secondary"
-        accent="danger"
         fullWidth
-        justify="center"
-      />
+        variant="outline"
+        color="danger"
+        style={{ justifyContent: 'center' }}
+      >
+        {'Delete'}
+      </Button>
     </Modal>
   ),
 };
@@ -151,8 +156,10 @@ export const Small: Story = {
         <Section>Are you sure you want to archive this item?</Section>
       </ModalContent>
       <ModalFooter>
-        <Button title="No" variant="secondary" />
-        <Button title="Yes, archive" variant="primary" accent="blue" />
+        <Button variant="outline">{'No'}</Button>
+        <Button variant="solid" color="accent">
+          {'Yes, archive'}
+        </Button>
       </ModalFooter>
     </Modal>
   ),
@@ -187,8 +194,10 @@ export const ExtraLarge: Story = {
         </Section>
       </ModalContent>
       <ModalFooter>
-        <Button title="Cancel" variant="secondary" />
-        <Button title="Upload & import" variant="primary" accent="blue" />
+        <Button variant="outline">{'Cancel'}</Button>
+        <Button variant="solid" color="accent">
+          {'Upload & import'}
+        </Button>
       </ModalFooter>
     </Modal>
   ),
@@ -213,12 +222,9 @@ const InteractiveModal = () => {
 
   return (
     <>
-      <Button
-        title="Open Modal"
-        variant="primary"
-        accent="blue"
-        onClick={() => setIsOpen(true)}
-      />
+      <Button onClick={() => setIsOpen(true)} variant="solid" color="accent">
+        {'Open Modal'}
+      </Button>
       <Modal
         isOpen={isOpen}
         size="medium"
@@ -242,17 +248,16 @@ const InteractiveModal = () => {
           </Section>
         </ModalContent>
         <ModalFooter>
+          <Button onClick={() => setIsOpen(false)} variant="outline">
+            {'Cancel'}
+          </Button>
           <Button
-            title="Cancel"
-            variant="secondary"
             onClick={() => setIsOpen(false)}
-          />
-          <Button
-            title="Create"
-            variant="primary"
-            accent="blue"
-            onClick={() => setIsOpen(false)}
-          />
+            variant="solid"
+            color="accent"
+          >
+            {'Create'}
+          </Button>
         </ModalFooter>
       </Modal>
     </>

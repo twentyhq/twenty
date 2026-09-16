@@ -24,10 +24,11 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
-import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { EventStreamService } from 'src/engine/subscriptions/event-stream.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { type EventStreamData } from 'src/engine/subscriptions/types/event-stream-data.type';
@@ -103,6 +104,9 @@ describe('ObjectRecordEventPublisher', () => {
       WorkspaceManyOrAllFlatEntityMapsCacheService,
       'getOrRecomputeManyOrAllFlatEntityMaps'
     >
+  >;
+  let mockRecordSharingFeatureService: jest.Mocked<
+    Pick<RecordSharingFeatureService, 'isRecordSharingEnabled'>
   >;
   let mockRecordShareService: jest.Mocked<
     Pick<RecordShareService, 'findByRecordIds'>
@@ -278,6 +282,10 @@ describe('ObjectRecordEventPublisher', () => {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     };
 
+    mockRecordSharingFeatureService = {
+      isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
+    };
+
     mockWorkspaceOrmManager = {
       executeInWorkspaceContext: jest.fn(),
       getRepository: jest.fn(),
@@ -331,6 +339,10 @@ describe('ObjectRecordEventPublisher', () => {
         {
           provide: RecordShareService,
           useValue: mockRecordShareService,
+        },
+        {
+          provide: RecordSharingFeatureService,
+          useValue: mockRecordSharingFeatureService,
         },
         RecordAccessPolicyService,
         {
@@ -467,10 +479,8 @@ describe('ObjectRecordEventPublisher', () => {
         readability: MetadataReadability.INHERITED,
       };
 
-      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
-        createCacheMock({
-          featureFlagsMap: { [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true },
-        }),
+      mockRecordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
+        true,
       );
       mockEventStreamService.getStreamsData.mockResolvedValue(
         new Map([
@@ -548,10 +558,8 @@ describe('ObjectRecordEventPublisher', () => {
         readability: MetadataReadability.PRIVATE,
       };
 
-      mockWorkspaceCacheService.getOrRecompute.mockImplementation(
-        createCacheMock({
-          featureFlagsMap: { [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true },
-        }),
+      mockRecordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
+        true,
       );
 
       mockRecordShareService.findByRecordIds.mockResolvedValue([
@@ -598,6 +606,34 @@ describe('ObjectRecordEventPublisher', () => {
             matchedEvent.objectRecordEvent.recordId,
         ),
       ).toEqual(['record-1']);
+    });
+
+    it('should read the record sharing entitlement once for a batch whatever the subscriber count', async () => {
+      mockRecordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
+        true,
+      );
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([
+          [streamChannelId, mockStreamData],
+          ['second-stream-channel-id', mockStreamData],
+          ['third-stream-channel-id', mockStreamData],
+        ]) as Map<string, EventStreamData | undefined>,
+      );
+
+      await service.publish({
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [createMockEvent()],
+      } as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(3);
+      expect(
+        mockRecordSharingFeatureService.isRecordSharingEnabled,
+      ).toHaveBeenCalledTimes(1);
     });
 
     it('should not publish events when record does not match RLS filter', async () => {

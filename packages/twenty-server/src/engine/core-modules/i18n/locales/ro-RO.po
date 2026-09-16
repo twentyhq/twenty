@@ -11253,12 +11253,12 @@ msgstr "Această versiune a aplicației este deja instalată în acest spațiu d
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "Această versiune a fluxului de lucru conține date incorecte și nu poate fi salvată."
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "Această versiune a fluxului de lucru nu este pregătită pentru a fi activată."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13326,6 +13326,11 @@ msgstr "Nu aveți permisiunea de a vă autentifica în numele utilizatorilor în
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Nu aveți permisiunea de a impersona utilizatori. Vă rugăm să contactați administratorul spațiului de lucru pentru acces."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Nu aveți permisiunea de a gestiona conexiunile partajate cu spațiul de lucru. Vă rugăm să contactați administratorul spațiului de lucru pentru acces."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

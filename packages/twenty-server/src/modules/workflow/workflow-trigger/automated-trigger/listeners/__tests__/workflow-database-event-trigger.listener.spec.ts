@@ -3,7 +3,6 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import type { ObjectRecordUpdateEvent } from 'twenty-shared/database-events';
 import {
-  FeatureFlagKey,
   MetadataReadability,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
@@ -12,8 +11,10 @@ import {
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
-import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
+import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -28,6 +29,9 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
   let messageQueueService: jest.Mocked<MessageQueueService>;
   let workspaceCacheService: jest.Mocked<WorkspaceCacheService>;
   let recordShareService: jest.Mocked<RecordShareService>;
+  let recordSharingFeatureService: jest.Mocked<
+    Pick<RecordSharingFeatureService, 'isRecordSharingEnabled'>
+  >;
 
   const setTriggerMap = (
     listeners: Array<{ workflowId: string; settings: object; type?: unknown }>,
@@ -105,6 +109,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
       findByRecordIds: jest.fn().mockResolvedValue([]),
     } as unknown as jest.Mocked<RecordShareService>;
 
+    recordSharingFeatureService = {
+      isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         WorkflowDatabaseEventTriggerListener,
@@ -123,6 +131,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         {
           provide: RecordShareService,
           useValue: recordShareService,
+        },
+        {
+          provide: RecordSharingFeatureService,
+          useValue: recordSharingFeatureService,
         },
         RecordAccessPolicyService,
         {
@@ -417,6 +429,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         ],
       };
 
+      recordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
+        true,
+      );
+
       workspaceCacheService.getOrRecompute.mockImplementation(((
         _workspaceId: string,
         keys: string[],
@@ -424,9 +440,7 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         Promise.resolve(
           !keys.includes('workflowAutomatedTriggerMaps')
             ? {
-                featureFlagsMap: {
-                  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true,
-                },
+                featureFlagsMap: {},
                 flatApplicationMaps: {
                   byId: {
                     [applicationId]: {
@@ -441,6 +455,11 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
                 },
                 flatRoleMaps: { byUniversalIdentifier: {} },
                 rolesPermissions: {},
+                flatRowLevelPermissionPredicateMaps:
+                  createEmptyFlatEntityMaps(),
+                flatRowLevelPermissionPredicateGroupMaps:
+                  createEmptyFlatEntityMaps(),
+                flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
               }
             : {
                 workflowAutomatedTriggerMaps: {
@@ -493,6 +512,10 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         }),
       };
 
+      recordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
+        true,
+      );
+
       workspaceCacheService.getOrRecompute.mockImplementation(((
         _workspaceId: string,
         keys: string[],
@@ -500,12 +523,15 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
         Promise.resolve(
           !keys.includes('workflowAutomatedTriggerMaps')
             ? {
-                featureFlagsMap: {
-                  [FeatureFlagKey.IS_RECORD_SHARING_ENABLED]: true,
-                },
+                featureFlagsMap: {},
                 flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
                 flatRoleMaps: { byUniversalIdentifier: {} },
                 rolesPermissions: {},
+                flatRowLevelPermissionPredicateMaps:
+                  createEmptyFlatEntityMaps(),
+                flatRowLevelPermissionPredicateGroupMaps:
+                  createEmptyFlatEntityMaps(),
+                flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
               }
             : {
                 workflowAutomatedTriggerMaps: {

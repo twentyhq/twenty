@@ -52,9 +52,6 @@
     "**/.yarn": true
   },
   "oxc.lint.enable": true,
-  "files.associations": {
-    ".cursorrules": "markdown"
-  },
   "jestrunner.codeLensSelector": "**/*.{test,spec,integration-spec}.{js,jsx,ts,tsx}",
   "typescript.tsdk": "node_modules/typescript/lib",
   "typescript.experimental.useTsgo": false

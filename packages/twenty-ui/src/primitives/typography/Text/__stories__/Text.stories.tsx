@@ -43,6 +43,11 @@ export const Truncate: Story = {
   },
 };
 
+export const Documentation: Story = {
+  ...Truncate,
+  play: undefined,
+};
+
 export const LineClamp: Story = {
   decorators: [ComponentDecorator],
   args: {

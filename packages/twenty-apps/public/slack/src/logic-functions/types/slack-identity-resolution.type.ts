@@ -16,5 +16,6 @@ export type SlackIdentityResolution = SlackIdentityResolutionBase &
         memberProvenance: SlackMemberProvenance;
       }
     | { outcome: 'membershipNotConfirmed' }
+    | { outcome: 'membershipUnverifiable' }
     | { outcome: 'unidentified' }
   );

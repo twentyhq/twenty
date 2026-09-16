@@ -1,9 +1,9 @@
 import { PAGE_LAYOUT_TEST_INSTANCE_ID } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { CallRecordingSummaryBody } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody';
 import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/call-recording/testing/getCallRecordingWidgetStoryDecorator';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
-import { CallRecordingSummaryBody } from '@/page-layout/widgets/call-recording-summary/components/CallRecordingSummaryBody';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
@@ -15,7 +15,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { CallRecordingStatus } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const SUMMARY_WIDGET_ID = 'summary-widget';
 const SUMMARY_TAB_ID = 'summary-tab';
@@ -127,7 +127,7 @@ const meta: Meta<typeof CallRecordingSummaryBody> = {
       widgetId: SUMMARY_WIDGET_ID,
     }),
     MemoryRouterDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     ComponentDecorator,
   ],
   parameters: {

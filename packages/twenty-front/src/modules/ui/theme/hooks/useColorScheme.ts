@@ -1,13 +1,15 @@
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { persistedColorSchemeState } from '@/ui/theme/states/persistedColorSchemeState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { isErrorLike } from '@apollo/client/errors';
+
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   type IconComponent,
   IconMoon,
@@ -20,7 +22,7 @@ export const useColorScheme = () => {
   const store = useStore();
 
   const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const colorScheme = currentWorkspaceMember?.colorScheme ?? 'System';
 
@@ -68,10 +70,10 @@ export const useColorScheme = () => {
           );
         }
 
-        enqueueErrorSnackBar(isErrorLike(error) ? { apolloError: error } : {});
+        enqueueToast(getToastOptionsFromError({ error }));
       }
     },
-    [store, updateWorkspaceMemberSettings, enqueueErrorSnackBar],
+    [store, updateWorkspaceMemberSettings, enqueueToast],
   );
 
   const colorSchemeList: Array<{

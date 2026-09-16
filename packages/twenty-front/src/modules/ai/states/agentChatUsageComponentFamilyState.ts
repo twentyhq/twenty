@@ -11,6 +11,7 @@ export type AgentChatLastMessageUsage = {
 
 export type AgentChatUsageState = {
   lastMessage: AgentChatLastMessageUsage | null;
+  cachedInputTokens: number;
   conversationSize: number;
   contextWindowTokens: number;
   inputTokens: number;

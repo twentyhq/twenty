@@ -316,10 +316,9 @@ export const AdvancedTextEditorInsertRail = ({
               {t`Paste a link to a hosted image`}
             </StyledImageHint>
             <Button
-              title={t`Insert image`}
-              size="small"
+              size="sm"
               onClick={handleInsertImage}
-            />
+            >{t`Insert image`}</Button>
           </StyledImageForm>
         </StyledPopover>
       )}

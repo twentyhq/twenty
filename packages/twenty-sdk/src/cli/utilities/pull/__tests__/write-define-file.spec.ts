@@ -5,10 +5,12 @@ import {
   OBJECT_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
+  ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
   writeDefineFile,
 } from '@/cli/utilities/pull/write-define-file';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { describe, expect, it } from 'vitest';
 
 describe('writeDefineFile', () => {
@@ -469,6 +471,80 @@ describe('writeDefineFile', () => {
         '  position: 2,\n' +
         "  name: 'Operations',\n" +
         "  icon: 'IconFolder',\n" +
+        '});\n',
+    );
+  });
+
+  it('should write the row-level predicates, predicate groups and system permission flags of a role as enum members', () => {
+    const file = writeDefineFile({
+      definer: 'defineRole',
+      config: {
+        universalIdentifier: 'role-uid',
+        label: 'Auditor',
+        rowLevelPermissionPredicateGroups: [
+          {
+            universalIdentifier: 'predicate-group-uid',
+            objectUniversalIdentifier: 'object-uid',
+            logicalOperator: 'OR',
+          },
+        ],
+        rowLevelPermissionPredicates: [
+          {
+            universalIdentifier: 'predicate-uid',
+            objectUniversalIdentifier: 'object-uid',
+            fieldUniversalIdentifier: 'field-uid',
+            operand: 'CONTAINS',
+            value: 'Rex',
+            predicateGroupUniversalIdentifier: 'predicate-group-uid',
+          },
+        ],
+        permissionFlagUniversalIdentifiers: [
+          SystemPermissionFlag.WORKSPACE,
+          'application-permission-flag-uid',
+        ],
+      },
+      enumBindings: ROLE_ENUM_BINDINGS,
+    });
+
+    expect(
+      file.startsWith(
+        'import {\n' +
+          '  defineRole,\n' +
+          '  RowLevelPermissionPredicateGroupLogicalOperator,\n' +
+          '  RowLevelPermissionPredicateOperand,\n' +
+          '  SystemPermissionFlag,\n' +
+          "} from 'twenty-sdk/define';\n",
+      ),
+    ).toBe(true);
+    expect(file).toContain(
+      'logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,',
+    );
+    expect(file).toContain(
+      'operand: RowLevelPermissionPredicateOperand.CONTAINS,',
+    );
+    expect(file).toContain('SystemPermissionFlag.WORKSPACE');
+    expect(file).toContain("'application-permission-flag-uid'");
+  });
+
+  it('should write a permission flag with its permission type as a literal', () => {
+    const file = writeDefineFile({
+      definer: 'definePermissionFlag',
+      config: {
+        universalIdentifier: 'permission-flag-uid',
+        key: 'EXPORT_PETS',
+        label: 'Export pets',
+        permissionType: 'settings',
+      },
+    });
+
+    expect(file).toBe(
+      "import { definePermissionFlag } from 'twenty-sdk/define';\n" +
+        '\n' +
+        'export default definePermissionFlag({\n' +
+        "  universalIdentifier: 'permission-flag-uid',\n" +
+        "  key: 'EXPORT_PETS',\n" +
+        "  label: 'Export pets',\n" +
+        "  permissionType: 'settings',\n" +
         '});\n',
     );
   });

@@ -3,15 +3,15 @@ import { MetadataReadability } from 'twenty-shared/types';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  buildRowAccessPolicy,
   type RowAccessPolicyEnvironment,
   type RowAccessPolicySubject,
-} from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+} from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { buildRowAccessPolicy } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util';
-import { resolveInheritedReadabilityParents } from 'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util';
+import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
 
 jest.mock(
-  'src/engine/twenty-orm/utils/resolve-inherited-readability-parents.util',
+  'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util',
 );
 jest.mock(
   'src/engine/twenty-orm/utils/render-row-level-permission-filter-to-sql.util',

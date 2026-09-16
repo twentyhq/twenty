@@ -4,7 +4,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 import { StepLogicalOperator, ViewFilterOperand } from 'twenty-shared/types';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
@@ -88,7 +88,7 @@ const meta: Meta<typeof WorkflowEditActionFilter> = {
     ComponentDecorator,
     RouterDecorator,
     WorkspaceDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
 };
 
