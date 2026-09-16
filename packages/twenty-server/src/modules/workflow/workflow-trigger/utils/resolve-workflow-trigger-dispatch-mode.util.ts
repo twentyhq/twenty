@@ -10,8 +10,7 @@ export type WorkflowTriggerDispatchMode =
       coreWorkflowVersionId: string;
       workspaceWorkflowVersionId?: string;
     }
-  | { mode: 'LEGACY' }
-  | { mode: 'INCOMPLETE' };
+  | { mode: 'LEGACY' };
 
 export const resolveWorkflowTriggerDispatchMode = ({
   coreWorkflowVersionId,
@@ -25,10 +24,6 @@ export const resolveWorkflowTriggerDispatchMode = ({
         ? { workspaceWorkflowVersionId }
         : {}),
     };
-  }
-
-  if (isDefined(workspaceWorkflowVersionId)) {
-    return { mode: 'INCOMPLETE' };
   }
 
   return { mode: 'LEGACY' };

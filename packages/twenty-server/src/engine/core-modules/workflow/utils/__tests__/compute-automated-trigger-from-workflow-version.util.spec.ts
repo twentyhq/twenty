@@ -7,6 +7,7 @@ import {
 
 const buildWorkflowVersion = (trigger: WorkflowTrigger | null) => ({
   id: 'core-version-1',
+  workflowId: 'workspace-workflow-1',
   coreWorkflowId: 'core-workflow-1',
   triggers: trigger ? [trigger] : [],
 });
@@ -26,6 +27,7 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
       }),
     ).toEqual({
       workflowId: 'core-workflow-1',
+      legacyWorkflowId: 'workspace-workflow-1',
       coreWorkflowVersionId: 'core-version-1',
       workspaceWorkflowVersionId: 'workspace-version-1',
       type: AutomatedTriggerType.DATABASE_EVENT,
@@ -47,6 +49,7 @@ describe('computeAutomatedTriggerFromWorkflowVersion', () => {
 
     expect(automatedTrigger).toMatchObject({
       workflowId: 'core-workflow-1',
+      legacyWorkflowId: 'workspace-workflow-1',
       coreWorkflowVersionId: 'core-version-1',
     });
     expect(automatedTrigger).not.toHaveProperty('workspaceWorkflowVersionId');

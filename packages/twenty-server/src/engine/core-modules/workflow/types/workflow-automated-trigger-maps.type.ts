@@ -3,7 +3,10 @@ import { type AutomatedTriggerSettings } from 'src/modules/workflow/workflow-tri
 
 export type CoreDispatchIds =
   | { coreWorkflowVersionId: string; workspaceWorkflowVersionId?: string }
-  | { coreWorkflowVersionId?: null; workspaceWorkflowVersionId?: null };
+  | {
+      coreWorkflowVersionId?: null;
+      workspaceWorkflowVersionId?: string | null;
+    };
 
 export type CachedWorkflowAutomatedTrigger = {
   workflowId: string;

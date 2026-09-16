@@ -1,3 +1,4 @@
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
@@ -46,6 +47,7 @@ export class WorkflowCommonWorkspaceService {
   private readonly logger = new Logger(WorkflowCommonWorkspaceService.name);
 
   constructor(
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
@@ -309,6 +311,13 @@ export class WorkflowCommonWorkspaceService {
           workspaceId,
           operation,
         });
+
+        if (operation !== 'destroy') {
+          await this.workflowCoreSyncService.reconcileWorkspaceWorkflows(
+            workspaceId,
+            [workflowId],
+          );
+        }
 
         await this.handleLogicFunctionSubEntities({
           workflowVersionRepository,

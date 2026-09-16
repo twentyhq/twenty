@@ -358,6 +358,23 @@ export class WorkflowTriggerWorkspaceService {
             transactionScope,
           );
 
+        if (!isDefined(mirroredCoreWorkflowVersionId)) {
+          throw new WorkflowTriggerException(
+            'Activated workflow version has no core mapping',
+            WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+          );
+        }
+
+        await transactionScope.executeRawQuery(
+          `UPDATE core."workflow" SET "lastPublishedVersionId" = $3, "lastPublishedCoreWorkflowVersionId" = $4, "updatedAt" = now() WHERE "workspaceId" = $1 AND "workspaceWorkflowId" = $2`,
+          [
+            workspaceId,
+            workflow.id,
+            workflowVersion.id,
+            mirroredCoreWorkflowVersionId,
+          ],
+        );
+
         mirroredCoreWorkflowVersionIdForCommandMenuItem =
           mirroredCoreWorkflowVersionId;
 

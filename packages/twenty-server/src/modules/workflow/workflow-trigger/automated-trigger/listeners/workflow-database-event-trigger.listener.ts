@@ -1,3 +1,4 @@
+import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
@@ -51,6 +52,7 @@ import {
 
 type DatabaseEventTriggerListener = {
   workflowId: string;
+  legacyWorkflowId?: string;
   settings: AutomatedTriggerSettings;
 } & CoreDispatchIds;
 
@@ -381,8 +383,9 @@ export class WorkflowDatabaseEventTriggerListener {
             WorkflowTriggerJob.name,
             {
               workspaceId,
-              workflowId: eventListener.workflowId,
-              coreWorkflowVersionId: eventListener.coreWorkflowVersionId,
+              workflowId:
+                eventListener.legacyWorkflowId ?? eventListener.workflowId,
+              ...buildCoreDispatchIds(eventListener),
               payload: omitInheritedReadabilityChildRecords(eventPayload),
             },
             { retryLimit: 3 },

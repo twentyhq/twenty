@@ -116,16 +116,20 @@ export class RunWorkflowJob {
         workflowRun.coreWorkflowVersionId,
       );
 
-    if (!isDefined(workflowVersion)) {
+    if (
+      !isDefined(workflowVersion) ||
+      workflowVersion.coreWorkflowId !== workflowRun.coreWorkflowId
+    ) {
       throw new WorkflowRunException(
         'Core workflow version not found',
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
       );
     }
 
-    const trigger = workflowVersion.triggers?.[0];
+    const trigger = workflowRun.state?.flow?.trigger;
+    const steps = workflowRun.state?.flow?.steps;
 
-    if (!trigger || !workflowVersion.steps) {
+    if (!trigger || !steps) {
       throw new WorkflowRunException(
         'Workflow version has no trigger or steps',
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
@@ -134,7 +138,7 @@ export class RunWorkflowJob {
 
     await this.codeStepBuildService.buildCodeStepsFromSourceForSteps({
       workspaceId,
-      steps: workflowVersion.steps,
+      steps,
     });
 
     await this.workflowRunWorkspaceService.startWorkflowRun({

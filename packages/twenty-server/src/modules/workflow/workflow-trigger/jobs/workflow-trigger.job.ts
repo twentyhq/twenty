@@ -7,6 +7,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkflowVersionStatus as CoreWorkflowVersionStatus } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
+import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
 import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-source.util';
@@ -26,6 +27,7 @@ export class WorkflowTriggerJob {
   private readonly logger = new Logger(WorkflowTriggerJob.name);
   constructor(
     private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
+    private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
@@ -34,21 +36,9 @@ export class WorkflowTriggerJob {
   async handle(data: WorkflowTriggerJobData): Promise<void> {
     const dispatchMode = resolveWorkflowTriggerDispatchMode(data);
 
-    if (dispatchMode.mode === 'INCOMPLETE') {
-      this.logger.error(
-        `Dispatch ids are half resolved for workflow ${data.workflowId} in workspace ${data.workspaceId}`,
-      );
-      this.exceptionHandlerService.captureExceptions([
-        new Error(
-          `Dropped workflow trigger with half resolved dispatch ids for workflow ${data.workflowId} in workspace ${data.workspaceId}`,
-        ),
-      ]);
-
-      return;
-    }
-
     if (dispatchMode.mode === 'CORE') {
       return this.handleFromCore({
+        workflowId: data.workflowId,
         workspaceId: data.workspaceId,
         coreWorkflowVersionId: dispatchMode.coreWorkflowVersionId,
         workspaceWorkflowVersionId: dispatchMode.workspaceWorkflowVersionId,
@@ -56,15 +46,17 @@ export class WorkflowTriggerJob {
       });
     }
 
-    return this.handleFromWorkspace(data);
+    return this.handleLegacyDispatch(data);
   }
 
   private async handleFromCore({
+    workflowId,
     workspaceId,
     coreWorkflowVersionId,
     workspaceWorkflowVersionId,
     payload,
   }: {
+    workflowId: string;
     workspaceId: string;
     coreWorkflowVersionId: string;
     workspaceWorkflowVersionId?: string;
@@ -79,6 +71,22 @@ export class WorkflowTriggerJob {
     if (!isDefined(coreWorkflowVersion)) {
       this.captureDroppedDispatch(
         `Core workflow version ${coreWorkflowVersionId} not found in workspace ${workspaceId}`,
+      );
+      return;
+    }
+
+    const coreWorkflow =
+      await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
+        workspaceId,
+        workflowId,
+      );
+
+    if (
+      !isDefined(coreWorkflow) ||
+      coreWorkflowVersion.coreWorkflowId !== coreWorkflow.id
+    ) {
+      this.captureDroppedDispatch(
+        `Core workflow version ${coreWorkflowVersionId} does not belong to workflow ${workflowId} in workspace ${workspaceId}`,
       );
       return;
     }
@@ -109,33 +117,35 @@ export class WorkflowTriggerJob {
     });
   }
 
-  private async handleFromWorkspace(
+  private async handleLegacyDispatch(
     data: WorkflowTriggerJobData,
   ): Promise<void> {
-    if (!isDefined(data.workspaceWorkflowVersionId)) {
-      this.captureDroppedDispatch(
-        `Legacy workflow trigger for ${data.workflowId} in workspace ${data.workspaceId} has no version id`,
-      );
-      return;
-    }
-
-    const coreWorkflowVersion =
-      await this.workflowVersionCoreSyncService.findCoreVersionByWorkspaceVersionId(
+    const coreWorkflow =
+      await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
         data.workspaceId,
-        data.workspaceWorkflowVersionId,
+        data.workflowId,
       );
+    const coreWorkflowVersionId = isDefined(data.workspaceWorkflowVersionId)
+      ? (
+          await this.workflowVersionCoreSyncService.findCoreVersionByWorkspaceVersionId(
+            data.workspaceId,
+            data.workspaceWorkflowVersionId,
+          )
+        )?.id
+      : coreWorkflow?.lastPublishedCoreWorkflowVersionId;
 
-    if (!isDefined(coreWorkflowVersion)) {
+    if (!isDefined(coreWorkflowVersionId)) {
       this.captureDroppedDispatch(
-        `Legacy workflow version ${data.workspaceWorkflowVersionId} has no core mapping in workspace ${data.workspaceId}`,
+        `Legacy workflow trigger for ${data.workflowId} has no core version mapping in workspace ${data.workspaceId}`,
       );
       return;
     }
 
     await this.handleFromCore({
+      workflowId: data.workflowId,
       workspaceId: data.workspaceId,
-      coreWorkflowVersionId: coreWorkflowVersion.id,
-      workspaceWorkflowVersionId: data.workspaceWorkflowVersionId,
+      coreWorkflowVersionId,
+      workspaceWorkflowVersionId: data.workspaceWorkflowVersionId ?? undefined,
       payload: data.payload,
     });
   }

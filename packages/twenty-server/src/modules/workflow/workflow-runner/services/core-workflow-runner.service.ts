@@ -78,7 +78,12 @@ export class CoreWorkflowRunnerService {
       workflowVersion.coreWorkflowId,
     );
 
-    if (!isDefined(workflow)) {
+    if (
+      !isDefined(workflow) ||
+      workflowVersion.workflowId !== workflow.workspaceWorkflowId ||
+      isDefined(workflow.workspaceWorkflowId) !==
+        isDefined(workflowVersion.workspaceWorkflowVersionId)
+    ) {
       throw new WorkflowRunException(
         'Core workflow not found',
         WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,

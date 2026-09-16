@@ -16,4 +16,7 @@ export const buildCoreDispatchIds = ({
           ? { workspaceWorkflowVersionId }
           : {}),
       }
-    : { coreWorkflowVersionId: null, workspaceWorkflowVersionId: null };
+    : {
+        coreWorkflowVersionId: null,
+        workspaceWorkflowVersionId: workspaceWorkflowVersionId ?? null,
+      };

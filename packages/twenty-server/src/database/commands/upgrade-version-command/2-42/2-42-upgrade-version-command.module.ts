@@ -1,4 +1,6 @@
 import { BackfillWorkspaceWorkflowVersionIdCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789652804001-backfill-workspace-workflow-version-id.command';
+import { BackfillWorkflowExecutionCoreIdsCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789593132221-backfill-workflow-execution-core-ids.command';
+import { MakeWorkflowRunProjectionRelationsNullableCommand } from 'src/database/commands/upgrade-version-command/2-42/2-42-workspace-command-1789593132222-make-workflow-run-projection-relations-nullable.command';
 import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
@@ -21,6 +23,8 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     UnpinCreationCommandsOnRecordSelectionCommand,
     RelinkWorkflowVersionsToCoreWorkflowsCommand,
     BackfillWorkspaceWorkflowVersionIdCommand,
+    BackfillWorkflowExecutionCoreIdsCommand,
+    MakeWorkflowRunProjectionRelationsNullableCommand,
   ],
   exports: [RelinkWorkflowVersionsToCoreWorkflowsCommand],
 })

@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -36,19 +36,24 @@ export class WorkspaceWorkflowAutomatedTriggerMapCacheService extends WorkspaceC
 
     for (const workflowVersion of activeWorkflowVersions) {
       if (!isDefined(workflowVersion.coreWorkflowId)) {
-        this.logger.error(
+        throw new Error(
           `Active core workflow version ${workflowVersion.id} has no core workflow id in workspace ${workspaceId}`,
         );
-        continue;
       }
 
       const automatedTrigger = computeAutomatedTriggerFromWorkflowVersion({
         workflowVersion,
-        workspaceWorkflowVersionId: null,
+        workspaceWorkflowVersionId: workflowVersion.workspaceWorkflowVersionId,
       });
 
       if (isDefined(automatedTrigger)) {
-        byWorkflowId[workflowVersion.workflowId] = automatedTrigger;
+        if (isDefined(byWorkflowId[workflowVersion.coreWorkflowId])) {
+          throw new Error(
+            `Multiple active core versions for workflow ${workflowVersion.coreWorkflowId} in workspace ${workspaceId}`,
+          );
+        }
+
+        byWorkflowId[workflowVersion.coreWorkflowId] = automatedTrigger;
       }
     }
 

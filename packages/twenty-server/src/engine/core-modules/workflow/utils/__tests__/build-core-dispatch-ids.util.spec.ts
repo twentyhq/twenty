@@ -23,7 +23,7 @@ describe('buildCoreDispatchIds', () => {
       }),
     ).toEqual({
       coreWorkflowVersionId: null,
-      workspaceWorkflowVersionId: null,
+      workspaceWorkflowVersionId: 'workspace-version-1',
     });
     expect(buildCoreDispatchIds({})).toEqual({
       coreWorkflowVersionId: null,

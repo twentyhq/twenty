@@ -117,7 +117,10 @@ export class WorkflowTriggerController {
           workflow.lastPublishedCoreWorkflowVersionId,
         );
 
-      if (!isDefined(workflowVersion)) {
+      if (
+        !isDefined(workflowVersion) ||
+        workflowVersion.coreWorkflowId !== workflow.id
+      ) {
         throw new WorkflowTriggerException(
           `[Webhook trigger] No workflow version activated for workflow ${workflowId} in workspace ${workspaceId}`,
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,

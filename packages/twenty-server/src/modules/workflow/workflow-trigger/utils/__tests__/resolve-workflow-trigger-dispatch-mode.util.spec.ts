@@ -24,7 +24,7 @@ describe('resolveWorkflowTriggerDispatchMode', () => {
     ).toEqual({ mode: 'LEGACY' });
   });
 
-  it('should accept a core-only envelope and reject a workspace-only envelope', () => {
+  it('should accept both core-only and legacy workspace-only envelopes', () => {
     expect(
       resolveWorkflowTriggerDispatchMode({
         coreWorkflowVersionId: 'core-version-1',
@@ -37,6 +37,6 @@ describe('resolveWorkflowTriggerDispatchMode', () => {
       resolveWorkflowTriggerDispatchMode({
         workspaceWorkflowVersionId: 'workspace-version-1',
       }),
-    ).toEqual({ mode: 'INCOMPLETE' });
+    ).toEqual({ mode: 'LEGACY' });
   });
 });
