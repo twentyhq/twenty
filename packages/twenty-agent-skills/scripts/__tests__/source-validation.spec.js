@@ -1,20 +1,25 @@
-const { test } = require('node:test');
-const assert = require('node:assert');
-const fs = require('node:fs');
-const path = require('node:path');
+import { test } from 'node:test';
+import assert from 'node:assert';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const PLUGIN_ROOT = path.resolve(__dirname, '..', '..');
+import * as metadata from '../validators/metadata.js';
+import * as assets from '../validators/assets.js';
+import * as skills from '../validators/skills.js';
+import * as references from '../validators/references.js';
+import * as crossDocContracts from '../validators/cross-doc-contracts.js';
+import * as setupHelper from '../validators/setup-helper.js';
+
+const PLUGIN_ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+);
 const PLUGIN_JSON_PATH = path.join(PLUGIN_ROOT, '.codex-plugin', 'plugin.json');
 const PACKAGE_JSON_PATH = path.join(PLUGIN_ROOT, 'package.json');
 const MCP_JSON_PATH = path.join(PLUGIN_ROOT, '.mcp.json');
 const MARKETPLACE_TEMPLATE_PATH = path.join(PLUGIN_ROOT, 'templates', 'marketplace.example.json');
-
-const metadata = require('../validators/metadata');
-const assets = require('../validators/assets');
-const skills = require('../validators/skills');
-const references = require('../validators/references');
-const crossDocContracts = require('../validators/cross-doc-contracts');
-const setupHelper = require('../validators/setup-helper');
 
 const collectFailures = (assertion) => {
   const failures = [];

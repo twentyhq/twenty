@@ -1,11 +1,11 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const { afterEach, beforeEach, describe, it } = require('node:test');
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { afterEach, beforeEach, describe, it } from 'node:test';
 
-const { CANONICAL_SKILL_NAMES } = require('../lib');
-const {
+import { CANONICAL_SKILL_NAMES } from '../lib.js';
+import {
   assertSkillFrontmatter,
   assertSelfContainedReferences,
   assertPortability,
@@ -13,8 +13,8 @@ const {
   assertOperatingRulesShipped,
   assertNoDanglingDocMentions,
   validatePortableSkills,
-} = require('../validate-distribution');
-const { writeFixtureFile } = require('./fixtures');
+} from '../validate-distribution.js';
+import { writeFixtureFile } from './fixtures.js';
 
 const writeValidSkill = (skillsRoot, skillName) => {
   writeFixtureFile(

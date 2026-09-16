@@ -1,10 +1,10 @@
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const { afterEach, beforeEach, describe, it } = require('node:test');
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
+import { afterEach, beforeEach, describe, it } from 'node:test';
 
-const {
+import {
   rewriteSkillReferenceLinks,
   collectSkillSeedReferences,
   resolveReferenceClosure,
@@ -12,8 +12,8 @@ const {
   buildDistribution,
   CANONICAL_SKILL_NAMES,
   listFiles,
-} = require('../lib');
-const { writeFixtureFile } = require('./fixtures');
+} from '../lib.js';
+import { writeFixtureFile } from './fixtures.js';
 
 describe('rewriteSkillReferenceLinks', () => {
   it('should rewrite plugin-relative reference links to skill-relative links', () => {

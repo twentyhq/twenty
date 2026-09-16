@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Harness-agnostic Agent Skills for creating, developing, operating, and publishing Twenty apps.",
   "private": true,
+  "type": "module",
   "license": "AGPL-3.0",
   "scripts": {
     "build": "node ./scripts/build.js",

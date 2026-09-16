@@ -1,7 +1,7 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const {
+import {
   PLUGIN_ROOT,
   REPO_ROOT,
   PUBLIC_DOCS_MCP_SERVER_NAME,
@@ -13,7 +13,7 @@ const {
   listFiles,
   isAllowedDocumentationHost,
   createJsonReaders,
-} = require('./lib');
+} from './lib.js';
 
 const assertJsonMetadata = (fail) => {
   const { readJson, readOptionalJson } = createJsonReaders(fail);
@@ -256,7 +256,7 @@ const assertMarketplaceTemplate = (fail) => {
   }
 };
 
-module.exports = {
+export {
   assertJsonMetadata,
   assertNoBundledMcpConfig,
   assertInterfaceFields,

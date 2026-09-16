@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 
-const metadata = require('./validators/metadata');
-const assets = require('./validators/assets');
-const skills = require('./validators/skills');
-const references = require('./validators/references');
-const crossDocContracts = require('./validators/cross-doc-contracts');
-const setupHelper = require('./validators/setup-helper');
+import * as metadata from './validators/metadata.js';
+import * as assets from './validators/assets.js';
+import * as skills from './validators/skills.js';
+import * as references from './validators/references.js';
+import * as crossDocContracts from './validators/cross-doc-contracts.js';
+import * as setupHelper from './validators/setup-helper.js';
 
 const failures = [];
 const fail = (message) => failures.push(message);

@@ -1,18 +1,18 @@
 #!/usr/bin/env node
 
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const {
+import {
   DISTRIBUTION_ROOT,
   CANONICAL_SKILL_NAMES,
   listFiles,
   readText,
-} = require('./lib');
-const {
+} from './lib.js';
+import {
   assertSelfContainedReferences,
   assertSkillFrontmatter,
-} = require('./validate-distribution');
+} from './validate-distribution.js';
 
 const [installRoot, ...requestedSkills] = process.argv.slice(2);
 

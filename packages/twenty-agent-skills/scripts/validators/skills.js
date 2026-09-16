@@ -1,7 +1,7 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const {
+import {
   PLUGIN_ROOT,
   CANONICAL_SKILL_NAMES,
   LEGACY_SKILL_NAMES,
@@ -9,7 +9,7 @@ const {
   listFiles,
   parseSkillFrontmatter,
   parseQuotedYamlField,
-} = require('./lib');
+} from './lib.js';
 
 const assertSkills = (fail) => {
   const skillsRoot = path.join(PLUGIN_ROOT, 'skills');
@@ -168,7 +168,7 @@ const assertNoLegacySkillReferences = (fail) => {
   }
 };
 
-module.exports = {
+export {
   CANONICAL_SKILL_NAMES,
   assertSkills,
   assertSkillTriggerPhrases,

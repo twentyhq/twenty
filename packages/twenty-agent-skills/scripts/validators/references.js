@@ -1,7 +1,7 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const { PLUGIN_ROOT, readText } = require('./lib');
+import { PLUGIN_ROOT, readText } from './lib.js';
 
 const REQUIRED_REFERENCES = [
   'references/design/front-component-ui.md',
@@ -97,7 +97,7 @@ const assertHowAppsWork = (fail) => {
   }
 };
 
-module.exports = {
+export {
   REQUIRED_REFERENCES,
   assertReferences,
   assertHowAppsWork,

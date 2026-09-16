@@ -1,13 +1,17 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const {
+import {
   CANONICAL_SKILL_NAMES,
   readText,
   listFiles,
-} = require('./validators/lib');
+} from './validators/lib.js';
 
-const PACKAGE_ROOT = path.resolve(__dirname, '..');
+const PACKAGE_ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+);
 const DISTRIBUTION_ROOT = path.join(PACKAGE_ROOT, 'dist');
 
 const SKILL_REFERENCE_PATTERN =
@@ -194,7 +198,7 @@ const buildDistribution = ({
   );
 };
 
-module.exports = {
+export {
   PACKAGE_ROOT,
   DISTRIBUTION_ROOT,
   CANONICAL_SKILL_NAMES,

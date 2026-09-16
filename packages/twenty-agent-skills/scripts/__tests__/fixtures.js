@@ -1,5 +1,5 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
 const writeFixtureFile = (root, relativePath, contents) => {
   const absolutePath = path.join(root, relativePath);
@@ -8,4 +8,4 @@ const writeFixtureFile = (root, relativePath, contents) => {
   fs.writeFileSync(absolutePath, contents);
 };
 
-module.exports = { writeFixtureFile };
+export { writeFixtureFile };

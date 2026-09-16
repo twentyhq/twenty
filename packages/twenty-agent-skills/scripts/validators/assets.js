@@ -1,13 +1,13 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const {
+import {
   MIN_LOGO_DIMENSION,
   readText,
   readPngDimensions,
   createJsonReaders,
   createInterfacePathResolver,
-} = require('./lib');
+} from './lib.js';
 
 const assertAssets = (fail) => {
   const { readJson } = createJsonReaders(fail);
@@ -78,4 +78,4 @@ const assertAssets = (fail) => {
   }
 };
 
-module.exports = { assertAssets };
+export { assertAssets };

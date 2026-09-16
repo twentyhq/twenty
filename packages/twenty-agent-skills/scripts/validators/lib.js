@@ -1,7 +1,12 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const PLUGIN_ROOT = path.resolve(__dirname, '..', '..');
+const PLUGIN_ROOT = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '..',
+  '..',
+);
 const REPO_ROOT = path.resolve(PLUGIN_ROOT, '..', '..');
 
 const PUBLIC_DOCS_MCP_SERVER_NAME = 'twenty-docs';
@@ -189,7 +194,7 @@ const createInterfacePathResolver = (fail) => (relativePath) => {
   return resolvedPath;
 };
 
-module.exports = {
+export {
   PLUGIN_ROOT,
   REPO_ROOT,
   PUBLIC_DOCS_MCP_SERVER_NAME,

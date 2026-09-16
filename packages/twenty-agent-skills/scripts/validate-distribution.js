@@ -1,18 +1,19 @@
 #!/usr/bin/env node
 
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const {
+import {
   DISTRIBUTION_ROOT,
   CANONICAL_SKILL_NAMES,
   readText,
   listFiles,
-} = require('./lib');
-const {
+} from './lib.js';
+import {
   isAllowedDocumentationHost,
   parseSkillFrontmatter,
-} = require('./validators/lib');
+} from './validators/lib.js';
 
 // The portable skills must work after `npx skills add` copies a single skill
 // directory into an agent's skill folder, outside the monorepo. Nothing in a
@@ -326,7 +327,11 @@ const validatePortableSkills = (skillsRoot, fail) => {
   assertSelfHostedSupport(skillsRoot, fail);
 };
 
-if (require.main === module) {
+const isEntryPoint =
+  process.argv[1] !== undefined &&
+  path.resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isEntryPoint) {
   const failures = [];
 
   validatePortableSkills(path.join(DISTRIBUTION_ROOT, 'skills'), (message) =>
@@ -346,7 +351,7 @@ if (require.main === module) {
   console.log('Twenty agent skills validation passed.');
 }
 
-module.exports = {
+export {
   FORBIDDEN_PORTABILITY_FRAGMENTS,
   assertSkillDirectories,
   assertSkillFrontmatter,

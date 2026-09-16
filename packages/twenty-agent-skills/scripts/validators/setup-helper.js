@@ -1,7 +1,7 @@
-const path = require('node:path');
-const { spawnSync } = require('node:child_process');
+import path from 'node:path';
+import { spawnSync } from 'node:child_process';
 
-const { PLUGIN_ROOT } = require('./lib');
+import { PLUGIN_ROOT } from './lib.js';
 
 const URL_NORMALIZATION_CASES = [
   ['myworkspace.localhost:3001', 'http://myworkspace.localhost:3001/mcp'],
@@ -45,4 +45,4 @@ const assertSetupHelper = (fail) => {
   }
 };
 
-module.exports = { assertSetupHelper };
+export { assertSetupHelper };

@@ -1,7 +1,7 @@
-const fs = require('node:fs');
-const path = require('node:path');
+import fs from 'node:fs';
+import path from 'node:path';
 
-const { PLUGIN_ROOT, listFiles, readText } = require('./lib');
+import { PLUGIN_ROOT, listFiles, readText } from './lib.js';
 
 const assertTwentyMcpFormattingContract = (fail) => {
   const skillPath = path.join(PLUGIN_ROOT, 'skills/use-twenty-mcp/SKILL.md');
@@ -455,7 +455,7 @@ const assertOperatingRulesSingleSource = (fail) => {
   }
 };
 
-module.exports = {
+export {
   OPERATING_RULE_HEADLINES,
   assertOperatingRulesSingleSource,
   assertTwentyMcpFormattingContract,
