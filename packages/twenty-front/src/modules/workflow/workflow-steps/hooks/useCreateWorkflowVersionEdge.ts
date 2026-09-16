@@ -1,20 +1,21 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useMutation } from '@apollo/client/react';
-import {
-  type CreateWorkflowVersionEdgeMutation,
-  type CreateWorkflowVersionEdgeMutationVariables,
-  type CreateWorkflowVersionEdgeInput,
-} from '~/generated/graphql';
 import { CREATE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/createWorkflowVersionEdge';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
+import { useMutation } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import {
+  type CreateWorkflowVersionEdgeInput,
+  type CreateWorkflowVersionEdgeMutation,
+  type CreateWorkflowVersionEdgeMutationVariables,
+} from '~/generated/graphql';
 
 export const useCreateWorkflowVersionEdge = () => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [mutate] = useMutation<
     CreateWorkflowVersionEdgeMutation,
@@ -27,7 +28,7 @@ export const useCreateWorkflowVersionEdge = () => {
     const result = await mutate({
       variables: { input },
       onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
 

@@ -8,7 +8,7 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { NumberFormat } from '@/localization/constants/NumberFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
@@ -20,8 +20,8 @@ import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { CurrencyCode } from 'twenty-shared/constants';
 import { StorybookFieldInputDropdownFocusIdSetterEffect } from '~/testing/components/StorybookFieldInputDropdownFocusIdSetterEffect';
 
@@ -158,7 +158,7 @@ const meta: Meta = {
     amountMicros: AMOUNT_MICROS_WITH_CENTS,
     numberFormat: NumberFormat.DOTS_AND_COMMA,
   },
-  decorators: [clearMocksDecorator, SnackBarDecorator],
+  decorators: [clearMocksDecorator, ToastDecorator],
   parameters: {
     clearMocks: true,
   },

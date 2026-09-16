@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
 import { addEmptyOperationIfNecessary } from '@/settings/developers/utils/addEmptyOperationIfNecessary';
 import {
@@ -13,12 +14,10 @@ import {
   webhookFormSchema,
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { useMutation, useQuery } from '@apollo/client/react';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   CreateWebhookDocument,
   DeleteWebhookDocument,
@@ -42,7 +41,7 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const navigate = useNavigateSettings();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const isCreationMode = mode === WebhookFormMode.Create;
 
@@ -86,8 +85,6 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     }
   }, [webhookData, formConfig]);
 
-  useSnackBarOnQueryError(error, t`Failed to load webhook`);
-
   const { isDirty, isValid, isSubmitting } = formConfig.formState;
   const canSave = isCreationMode
     ? isValid && !isSubmitting
@@ -103,8 +100,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         ? `${createdWebhook?.targetUrl}`
         : '';
 
-      enqueueSuccessSnackBar({
-        message: t`Webhook ${targetUrl} created successfully`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Webhook ${targetUrl} created successfully`,
       });
 
       navigate(
@@ -117,16 +115,15 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
           : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
   const handleUpdate = async (formValues: WebhookFormValues) => {
     if (!webhookId) {
-      enqueueErrorSnackBar({
-        message: t`Webhook ID is required for updates`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Webhook ID is required for updates`,
       });
       return;
     }
@@ -144,13 +141,12 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         ? `${updatedWebhook.targetUrl}`
         : '';
 
-      enqueueSuccessSnackBar({
-        message: t`Webhook ${targetUrl} updated successfully`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Webhook ${targetUrl} updated successfully`,
       });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
@@ -189,8 +185,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const handleDelete = async () => {
     if (!webhookId) {
-      enqueueErrorSnackBar({
-        message: t`Webhook ID is required for deletion`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Webhook ID is required for deletion`,
       });
       return;
     }
@@ -199,8 +196,9 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       await deleteWebhook({
         variables: { id: webhookId },
       });
-      enqueueSuccessSnackBar({
-        message: t`Webhook deleted successfully`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Webhook deleted successfully`,
       });
 
       navigate(
@@ -211,9 +209,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
