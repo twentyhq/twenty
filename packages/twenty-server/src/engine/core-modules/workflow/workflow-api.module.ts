@@ -3,6 +3,8 @@ import { Module } from '@nestjs/common';
 import { WorkflowVersionValidationModule } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
 import { WorkflowTriggerController } from 'src/engine/core-modules/workflow/controllers/workflow-trigger.controller';
 import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
@@ -26,26 +28,34 @@ import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
+import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
+import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspace-services/workflow-metadata-read.module';
 import { WorkflowBuilderModule } from 'src/modules/workflow/workflow-builder/workflow-builder.module';
 import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
 import { WorkflowVersionModule } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.module';
 import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.module';
 import { WorkflowRunnerModule } from 'src/modules/workflow/workflow-runner/workflow-runner.module';
+import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
 import { WorkflowTriggerModule } from 'src/modules/workflow/workflow-trigger/workflow-trigger.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([WorkspaceEntity, WorkflowVersionEntity]),
     RecordPositionModule,
+    AutomatedTriggerModule,
+    CacheLockModule,
+    CacheStorageModule,
+    CommandMenuItemModule,
     WorkflowCoreModule,
     WorkflowTriggerModule,
     WorkflowBuilderModule,
     WorkflowCommonModule,
+    WorkflowMetadataReadModule,
     WorkflowVersionModule,
     WorkflowRunModule,
     WorkflowRunnerModule,
