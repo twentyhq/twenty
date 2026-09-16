@@ -120,16 +120,18 @@ export const SettingsAccountsMessageChannelDetails = ({
           </Card>
         </Section>
       )}
-      <Section>
-        <H2Title
-          title={t`Visibility`}
-          description={t`Define what will be visible to other users in your workspace`}
-        />
-        <SettingsAccountsMessageVisibilityCard
-          value={messageChannel.visibility}
-          onChange={handleVisibilityChange}
-        />
-      </Section>
+      {!isGroupMailbox && (
+        <Section>
+          <H2Title
+            title={t`Visibility`}
+            description={t`Define what will be visible to other users in your workspace`}
+          />
+          <SettingsAccountsMessageVisibilityCard
+            value={messageChannel.visibility}
+            onChange={handleVisibilityChange}
+          />
+        </Section>
+      )}
       <Section>
         <H2Title
           title={t`Contact auto-creation`}
