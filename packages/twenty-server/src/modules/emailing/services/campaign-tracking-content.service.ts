@@ -81,7 +81,7 @@ export class CampaignTrackingContentService {
 
     const html = template.html ?? '';
 
-    if (html.trim() === '') {
+    if (!isNonEmptyString(html.trim())) {
       return untracked;
     }
 
@@ -318,15 +318,17 @@ export class CampaignTrackingContentService {
     }
 
     if (this.isLogDriver()) {
-      return isNonEmptyString(workspace.subdomain)
-        ? buildLogDriverUnsubscribeBaseUrl({
-            serverUrl: this.twentyConfigService.get('SERVER_URL'),
-            isMultiWorkspaceEnabled: this.twentyConfigService.get(
-              'IS_MULTIWORKSPACE_ENABLED',
-            ),
-            subdomain: workspace.subdomain,
-          })
-        : undefined;
+      if (!isNonEmptyString(workspace.subdomain)) {
+        return undefined;
+      }
+
+      return buildLogDriverUnsubscribeBaseUrl({
+        serverUrl: this.twentyConfigService.get('SERVER_URL'),
+        isMultiWorkspaceEnabled: this.twentyConfigService.get(
+          'IS_MULTIWORKSPACE_ENABLED',
+        ),
+        subdomain: workspace.subdomain,
+      });
     }
 
     const emailingDomain = await this.emailingDomainRepository.findOne(
@@ -335,9 +337,11 @@ export class CampaignTrackingContentService {
     );
     const unsubscribeHostname = emailingDomain?.unsubscribeHostname;
 
-    return isNonEmptyString(unsubscribeHostname)
-      ? `https://${unsubscribeHostname}`
-      : undefined;
+    if (!isNonEmptyString(unsubscribeHostname)) {
+      return undefined;
+    }
+
+    return `https://${unsubscribeHostname}`;
   }
 
   private isLogDriver(): boolean {
