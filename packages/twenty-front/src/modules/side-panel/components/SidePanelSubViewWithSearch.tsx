@@ -23,10 +23,12 @@ const StyledSearchContainer = styled.div`
 const StyledSearchInput = styled.input`
   background: transparent;
   border: none;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: 0;
   box-sizing: border-box;
 
+  min-width: 0;
   outline: none;
+  overflow: hidden;
   padding: 0;
   width: 100%;
 

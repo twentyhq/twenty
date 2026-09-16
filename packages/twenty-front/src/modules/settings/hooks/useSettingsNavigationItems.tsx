@@ -30,7 +30,7 @@ import {
   IconMessageCircle,
   IconPlug,
   IconServer,
-  IconSettings,
+  IconSettings2,
   IconSparkles,
   IconUserCircle,
   IconUsers,
@@ -116,7 +116,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`General`,
           path: SettingsPath.General,
-          Icon: IconSettings,
+          Icon: IconSettings2,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {

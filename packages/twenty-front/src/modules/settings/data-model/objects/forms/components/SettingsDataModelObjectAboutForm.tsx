@@ -1,3 +1,4 @@
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
@@ -19,7 +20,6 @@ import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { IconInfoCircle, IconLink, IconRefresh } from 'twenty-ui/icon';
 import { Tooltip, Card } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { parseThemeColor } from 'twenty-ui/utilities';
 import { type StringKeyOf } from 'type-fest';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { computeMetadataNamesFromLabels } from '~/pages/settings/data-model/utils/computeMetadataNamesFromLabels';
@@ -97,6 +97,11 @@ export const SettingsDataModelObjectAboutForm = ({
   watch('description');
   watch('icon');
   const objectIconColor = watch('color');
+  const resolvedIconColor = getObjectColorWithFallback({
+    nameSingular: objectMetadataItem?.nameSingular ?? watch('nameSingular'),
+    isSystem: objectMetadataItem?.isSystem ?? false,
+    color: objectIconColor,
+  });
 
   const apiNameTooltipText =
     !isDefined(objectMetadataItem) ||
@@ -154,6 +159,7 @@ export const SettingsDataModelObjectAboutForm = ({
             render={({ field: { onChange, value } }) => (
               <IconPicker
                 selectedIconKey={value}
+                iconColor={resolvedIconColor}
                 disabled={disableEdition}
                 dropdownId={
                   isDefined(objectMetadataItem)
@@ -163,7 +169,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 iconColorPicker={
                   showObjectColorInIconPicker
                     ? {
-                        selectedColor: parseThemeColor(objectIconColor),
+                        selectedColor: resolvedIconColor,
                         onColorChange: (nextColor) => {
                           setValue('color', nextColor, {
                             shouldDirty: true,
