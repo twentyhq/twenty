@@ -10,6 +10,7 @@ import { IconTrash } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
 import { useMutation } from '@apollo/client/react';
+import { AppPath } from 'twenty-shared/types';
 import { DeleteCurrentWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const DELETE_WORKSPACE_MODAL_ID = 'delete-workspace-modal';
@@ -27,7 +28,10 @@ export const DeleteWorkspace = () => {
   const deleteWorkspace = async () => {
     await deleteCurrentWorkspace();
     await signOut();
-    redirectToDefaultDomain();
+    // signOut's navigation to the sign-in page has not landed yet, so without
+    // an explicit pathname the deleted workspace's settings path would ride
+    // along to the default domain and come back as a returnToPath.
+    redirectToDefaultDomain({ pathname: AppPath.SignInUp });
   };
 
   return (
