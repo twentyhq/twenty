@@ -1,6 +1,10 @@
+import { NavigationMenuItemObjectColorEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemObjectColorEditor';
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import {
+  isDropdownOpenComponentState,
+  isDropdownOpenComponentState as isColorPickerOpenComponentState,
+} from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useEffect, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
@@ -93,6 +97,10 @@ export const NavigationMenuItemEditable = ({
     isDropdownOpenComponentState,
     dropdownId,
   );
+  const isColorPickerOpen = useAtomComponentStateValue(
+    isColorPickerOpenComponentState,
+    `navigation-item-${item.id}-color`,
+  );
   const anchorId = `navigation-item-anchor-${item.id}`;
   const isWorkspace = !item.userWorkspaceId;
   const canOrganize = isLayoutCustomizationModeEnabled && isWorkspace;
@@ -137,10 +145,14 @@ export const NavigationMenuItemEditable = ({
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
   };
   const row =
-    canEdit &&
-    (canOrganize ||
-      (item.type === NavigationMenuItemType.FOLDER &&
-        selectedNavigationMenuItemIdInEditMode === item.id)) ? (
+    canOrganize && item.type === NavigationMenuItemType.OBJECT ? (
+      <NavigationMenuItemObjectColorEditor item={item}>
+        {children}
+      </NavigationMenuItemObjectColorEditor>
+    ) : canEdit &&
+      (canOrganize ||
+        (item.type === NavigationMenuItemType.FOLDER &&
+          selectedNavigationMenuItemIdInEditMode === item.id)) ? (
       <NavigationMenuItemInlineEditor
         item={item}
         dropdownId={dropdownId}
@@ -243,7 +255,9 @@ export const NavigationMenuItemEditable = ({
           Icon={types[item.type as NavigationMenuItemType].Icon}
           offset={theme.spacingMultiplicator}
           hidden={
-            isDropdownOpen || selectedNavigationMenuItemIdInEditMode === item.id
+            isDropdownOpen ||
+            isColorPickerOpen ||
+            selectedNavigationMenuItemIdInEditMode === item.id
           }
           place={TooltipPosition.Top}
           positionStrategy="fixed"

@@ -1,3 +1,4 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
 import { useCommandMenuItemsDraftState } from '@/command-menu-item/hooks/useCommandMenuItemsDraftState';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
@@ -16,6 +17,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useIsLayoutCustomizationDirty = () => {
+  const objectColorsDraft = useAtomValue(objectColorsDraftState.atom);
   const { isDirty: isNavigationDirty } = useNavigationMenuItemsDraftState();
   const { isDirty: isCommandMenuItemsDirty } = useCommandMenuItemsDraftState();
 
@@ -109,6 +111,9 @@ export const useIsLayoutCustomizationDirty = () => {
 
   return {
     isDirty:
-      isNavigationDirty || isAnyPageLayoutDirty || isCommandMenuItemsDirty,
+      Object.keys(objectColorsDraft).length > 0 ||
+      isNavigationDirty ||
+      isAnyPageLayoutDirty ||
+      isCommandMenuItemsDirty,
   };
 };

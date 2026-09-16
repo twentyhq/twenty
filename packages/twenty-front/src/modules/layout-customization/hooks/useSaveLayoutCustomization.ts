@@ -1,3 +1,5 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { useSaveCommandMenuItemsDraft } from '@/command-menu-item/edit/hooks/useSaveCommandMenuItemsDraft';
 import { useCommandMenuItemsDraftState } from '@/command-menu-item/hooks/useCommandMenuItemsDraftState';
 import { useExitLayoutCustomizationMode } from '@/layout-customization/hooks/useExitLayoutCustomizationMode';
@@ -27,6 +29,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
 export const useSaveLayoutCustomization = () => {
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const [isSaving, setIsSaving] = useState(false);
   const store = useStore();
   const { t } = useLingui();
@@ -47,6 +50,19 @@ export const useSaveLayoutCustomization = () => {
   const save = useCallback(async () => {
     setIsSaving(true);
     try {
+      for (const [objectId, color] of Object.entries(
+        store.get(objectColorsDraftState.atom),
+      )) {
+        const result = await updateOneObjectMetadataItem({
+          idToUpdate: objectId,
+          updatePayload: { color },
+        });
+        if (result.status === 'failed') return;
+        store.set(objectColorsDraftState.atom, (draft) => {
+          const { [objectId]: _savedColor, ...remainingColors } = draft;
+          return remainingColors;
+        });
+      }
       const navigationDraft = store.get(navigationMenuItemsDraftState.atom);
       const prefetchItems = store.get(navigationMenuItemsSelector.atom);
       const workspaceItems = filterWorkspaceNavigationMenuItems(prefetchItems);
@@ -151,6 +167,7 @@ export const useSaveLayoutCustomization = () => {
       setIsSaving(false);
     }
   }, [
+    updateOneObjectMetadataItem,
     saveDraft,
     saveCommandMenuItemsDraft,
     isCommandMenuItemsDirty,
