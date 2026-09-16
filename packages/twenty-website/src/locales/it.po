@@ -8,7 +8,7 @@ msgstr ""
 "Language: it\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-15 14:21\n"
+"PO-Revision-Date: 2026-09-16 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -735,6 +735,11 @@ msgstr "Una piattaforma pronta a *crescere*"
 msgid "A platform ready to grow"
 msgstr "Una piattaforma pronta a crescere"
 
+#. js-lingui-id: GGXFEW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A proper home on mobile"
+msgstr "Una vera e propria home su dispositivo mobile"
+
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
 msgid ""
@@ -1110,7 +1115,7 @@ msgstr "AI nel flusso di lavoro di migrazione"
 #. js-lingui-id: CKvvwf
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "AI settings now show each model’s provider, price per million tokens, context window, maximum output, and data residency."
-msgstr ""
+msgstr "Le impostazioni dell'IA ora mostrano il fornitore di ciascun modello, il prezzo per milione di token, la finestra di contesto, l'output massimo e la residenza dei dati."
 
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
@@ -1284,7 +1289,7 @@ msgstr "Arabo"
 #. js-lingui-id: Qrqy7n
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Arabic and Hebrew read right to left"
-msgstr ""
+msgstr "Arabo ed ebraico si leggono da destra a sinistra"
 
 #. js-lingui-id: uicv6Z
 #: src/case-studies/case-study-stories.ts
@@ -1712,7 +1717,7 @@ msgstr "Vista calendario per oggetti"
 #. js-lingui-id: RZgOeI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
-msgstr ""
+msgstr "Le registrazioni delle chiamate senza video ora includono un lettore audio, quindi anche lì funzionano la ricerca con clic e l'evidenziazione della trascrizione."
 
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
@@ -1865,7 +1870,12 @@ msgstr "Scegli come visualizzare le date in qualsiasi campo utilizzando un forma
 #. js-lingui-id: BZEHq1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose how your AI should behave on a single slider, from Extra Fast to Extra Smart, instead of picking a model by name. Each tier shows what it trades in speed, cost, and intelligence."
-msgstr ""
+msgstr "Scegli come deve comportarsi la tua IA con un unico cursore, da Extra veloce a Extra intelligente, invece di selezionare un modello per nome. Ogni livello mostra il compromesso in termini di velocità, costo e intelligenza."
+
+#. js-lingui-id: oXetDh
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose where records open"
+msgstr "Scegli dove aprire i record"
 
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2668,6 +2678,11 @@ msgstr "Solo opportunità, contatti e prodotti"
 msgid "Dear Team, I am pleased to submit our proposal for your consideration. We have carefully reviewed your requirements."
 msgstr "Gentile team, sono lieto di inviare la nostra proposta alla vostra attenzione. Abbiamo esaminato attentamente le vostre esigenze."
 
+#. js-lingui-id: JG4DOf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Decide whether records open in the side panel or as a full page, set per object and as your own preference in Settings > Experience."
+msgstr "Decidi se aprire i record nel pannello laterale o a pagina intera, impostandolo per oggetto e come preferenza personale in Impostazioni > Esperienza."
+
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -2679,6 +2694,11 @@ msgstr "Supporto dedicato e SLA"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Default position/visibility for field…"
 msgstr "Posizione/visibilità predefinita per il campo…"
+
+#. js-lingui-id: IOhXZ5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Delete a workflow step from the diagram"
+msgstr "Elimina un passaggio del flusso di lavoro dal diagramma"
 
 #. js-lingui-id: 9RARjP
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -2970,6 +2990,11 @@ msgstr "Ecuador 🇪🇨"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Edit actions"
 msgstr "Modifica azioni"
+
+#. js-lingui-id: V4B1Gm
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Edit deactivated objects"
+msgstr "Modifica oggetti disattivati"
 
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3410,7 +3435,7 @@ msgstr "Feb"
 #. js-lingui-id: ATTTRk
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field descriptions on hover"
-msgstr ""
+msgstr "Descrizioni dei campi al passaggio del mouse"
 
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4027,7 +4052,7 @@ msgstr "Tariffa oraria *"
 #. js-lingui-id: c+5807
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
-msgstr ""
+msgstr "Passa il cursore sull'intestazione di una colonna o sull'etichetta di un campo per leggere la descrizione di quel campo, invece di aprire le impostazioni per trovarla."
 
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
@@ -5633,6 +5658,11 @@ msgstr "Tariffa di onboarding obbligatoria una tantum"
 msgid "Only $5 for SSO. Practically a charity program."
 msgstr "Solo 5 $ per SSO. Praticamente un programma di beneficenza."
 
+#. js-lingui-id: Av5T3E
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
+msgstr "Apri un oggetto disattivato da Impostazioni e modificalo, invece di eliminarlo e ricrearlo."
+
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
 #: src/partners-marketplace/PartnerSelectedWork.tsx
@@ -5841,7 +5871,7 @@ msgstr "Incolla la chiave e fai clic su Activate."
 #. js-lingui-id: oKV11Q
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pause the recording bot"
-msgstr ""
+msgstr "Metti in pausa il bot di registrazione"
 
 #. js-lingui-id: 1wdjme
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5902,7 +5932,7 @@ msgstr "Filippine 🇵🇭"
 #. js-lingui-id: hyGrEm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pick an AI model by tier"
-msgstr ""
+msgstr "Scegli un modello di IA per livello"
 
 #. js-lingui-id: we6gj5
 #: src/partner-application/partner-application-copy.ts
@@ -5942,7 +5972,7 @@ msgstr "Pipeline, oggetti personalizzati, assistenti AI e un'API nativa sopra Po
 #. js-lingui-id: NjL3pD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Play audio-only recordings"
-msgstr ""
+msgstr "Riproduci registrazioni solo audio"
 
 #. js-lingui-id: z7gnI9
 #: src/partner-application/partner-application-copy.ts
@@ -6298,7 +6328,7 @@ msgstr "Eventi ricorrenti di Google Calendar"
 #. js-lingui-id: pRH3vs
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reference records and skills in AI chat"
-msgstr ""
+msgstr "Fai riferimento a record e competenze nella chat IA"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6357,6 +6387,11 @@ msgstr "Rimuovi il filtro {0}"
 #: src/partner-application/partner-application-copy.ts
 msgid "Remove {skill}"
 msgstr "Rimuovi {skill}"
+
+#. js-lingui-id: ChVv1j
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Remove a step from its node in the diagram, without opening the side panel first."
+msgstr "Rimuovi un passaggio dal relativo nodo nel diagramma, senza prima aprire il pannello laterale."
 
 #. js-lingui-id: a/aGHe
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -6779,6 +6814,11 @@ msgstr "Vedi più funzionalità"
 msgid "See related records across relationships"
 msgstr "Visualizza i record correlati tramite le relazioni"
 
+#. js-lingui-id: B79UH5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See the devices on your account"
+msgstr "Visualizza i dispositivi nel tuo account"
+
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
 msgid "See Twenty pricing"
@@ -6792,7 +6832,7 @@ msgstr "Vedi gli aggiornamenti mentre accadono. Lavora con il tuo team e con gli
 #. js-lingui-id: DlPcBc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See what a model costs and where it runs"
-msgstr ""
+msgstr "Scopri quanto costa un modello e dove viene eseguito"
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
@@ -6943,6 +6983,11 @@ msgstr "Serbia 🇷🇸"
 #: src/partners-marketplace/PartnerServices.tsx
 msgid "Services"
 msgstr "Servizi"
+
+#. js-lingui-id: y/35JB
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Settings > Profile now lists every device with an active session, marks the one you are on, and lets you sign out any of the others."
+msgstr "Impostazioni > Profilo ora elenca tutti i dispositivi con una sessione attiva, contrassegna quello in uso e ti consente di disconnettere dagli altri."
 
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
@@ -7292,7 +7337,7 @@ msgstr "Smetti di accontentarti dei compromessi."
 #. js-lingui-id: 8b3N0u
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Stop the call recorder from joining calendar meetings with one workspace setting, rather than uninstalling the app. The Recording Bot preference now reads On only when a bot is really scheduled."
-msgstr ""
+msgstr "Impedisci al registratore di chiamate di partecipare alle riunioni del calendario con un'unica impostazione dello spazio di lavoro, anziché disinstallare l'app. L'opzione Bot di registrazione ora indica Attivo solo quando è davvero programmato un bot."
 
 #. js-lingui-id: hjgBcp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7708,7 +7753,7 @@ msgstr "Il peso dell’in-house"
 #. js-lingui-id: 6U7fek
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
-msgstr ""
+msgstr "L'interfaccia ora si rispecchia per le lingue da destra a sinistra, così gli spazi di lavoro in arabo ed ebraico vengono letti nella rispettiva direzione."
 
 #. js-lingui-id: ZNzKXV
 #: src/case-studies/case-study-stories.ts
@@ -7742,6 +7787,11 @@ msgid ""
 msgstr ""
 "Il prezzo di listino è solo l’inizio.\n"
 "Ecco come appare la fattura quando un team reale lo utilizza."
+
+#. js-lingui-id: 5V+Mch
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The navigation menu is now a page of its own, with a real address and a way back. Create actions appear as icons in page headers, and the bottom bar no longer sits on top of your content."
+msgstr "Il menu di navigazione ora è una pagina a sé stante, con un vero indirizzo e un modo per tornare indietro. Le azioni di creazione vengono visualizzate come icone nelle intestazioni delle pagine e la barra inferiore non si sovrappone più ai tuoi contenuti."
 
 #. js-lingui-id: nf1NnD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8224,7 +8274,7 @@ msgstr "Autenticazione a due fattori"
 #. js-lingui-id: QMyFdb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Type <0>@</0> to point the chat at a record, or <1>/</1> to pick one of your workspace’s skills. Both suggest matches as you type."
-msgstr ""
+msgstr "Digita <0>@</0> per indirizzare la chat a un record oppure <1>/</1> per scegliere una delle competenze del tuo spazio di lavoro. Entrambi suggeriscono corrispondenze durante la digitazione."
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
