@@ -301,6 +301,20 @@ export class ApplicationService {
     });
   }
 
+  async countInstalledWorkspacesForApplication(
+    universalIdentifier: string,
+  ): Promise<number> {
+    return this.applicationRepository
+      .createQueryBuilder('application')
+      .innerJoin('application.workspace', 'workspace')
+      .where('application.universalIdentifier = :universalIdentifier', {
+        universalIdentifier,
+      })
+      .andWhere('application.deletedAt IS NULL')
+      .andWhere('workspace.deletedAt IS NULL')
+      .getCount();
+  }
+
   // Number of workspaces each external (non-LOCAL) application is installed in,
   // ranked by install count. Powers the "most installed apps" gauge/leaderboard.
   // LOCAL apps (built-in Standard/Custom) exist in every workspace and are not
