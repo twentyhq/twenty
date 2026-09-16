@@ -261,6 +261,42 @@ class FakeRecallApi {
     }
   }
 
+  // Mirrors Recall after a call the app never heard the end of: the bot
+  // history and its recording are complete, but no webhook reached the app.
+  finishBotRecording({
+    botId,
+    recordingStartedAt,
+    recordingEndedAt,
+  }: {
+    botId: string;
+    recordingStartedAt: string;
+    recordingEndedAt: string;
+  }): void {
+    const bot = this.bots.get(botId);
+
+    if (bot === undefined) {
+      throw new Error(`Unknown fake Recall bot ${botId}`);
+    }
+
+    bot.statusCode = 'done';
+    bot.statusChanges = [
+      { code: 'in_call_recording', created_at: recordingStartedAt },
+      {
+        code: 'call_ended',
+        sub_code: 'timeout_exceeded_everyone_left',
+        created_at: recordingEndedAt,
+      },
+      { code: 'done', created_at: recordingEndedAt },
+    ];
+    bot.recordings = [
+      {
+        id: 'recall-recording-1',
+        started_at: recordingStartedAt,
+        completed_at: recordingEndedAt,
+      },
+    ];
+  }
+
   botForCallRecording(callRecordingId: string): FakeRecallBot | undefined {
     return [...this.bots.values()].find(
       (bot) => bot.metadata.twentyCallRecordingId === callRecordingId,
@@ -572,6 +608,20 @@ const buildRecordingDoneWebhook = ({
   },
 });
 
+const buildRecordingDeletedWebhook = ({
+  botId,
+  metadata,
+}: {
+  botId: string;
+  metadata: Record<string, string>;
+}) => ({
+  event: 'recording.deleted',
+  data: {
+    bot: { id: botId, metadata },
+    recording: { id: 'recall-recording-1' },
+  },
+});
+
 const buildTranscriptDoneWebhook = ({
   botId,
   metadata,
@@ -806,6 +856,8 @@ describe('call recorder app lifecycle (integration)', () => {
             startedAt: true,
             endedAt: true,
             transcript: true,
+            audio: { fileId: true },
+            video: { fileId: true },
           },
         },
       },
@@ -874,6 +926,18 @@ describe('call recorder app lifecycle (integration)', () => {
       metadata: buildBotMetadata(callRecording.id, workspaceId),
     };
   };
+
+  // The recovery cron only reconciles a bot once its meeting has started.
+  const moveMeetingIntoPast = (calendarEventId: string) =>
+    client.mutation({
+      updateCalendarEvent: {
+        __args: {
+          id: calendarEventId,
+          data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
+        },
+        id: true,
+      },
+    });
 
   const deliverCalendarEventUpdate = ({
     calendarEventId,
@@ -1311,17 +1375,6 @@ describe('call recorder app lifecycle (integration)', () => {
       return { startedAt, completedAt };
     };
 
-    const moveMeetingOutsideConvergenceWindow = (calendarEventId: string) =>
-      client.mutation({
-        updateCalendarEvent: {
-          __args: {
-            id: calendarEventId,
-            data: { startsAt: daysAgo(9), endsAt: daysAgo(8) },
-          },
-          id: true,
-        },
-      });
-
     it('fails a processing recording whose media expired before any artifact was imported', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
         await scheduleRecordingThroughCalendarReconciliation();
@@ -1335,7 +1388,7 @@ describe('call recorder app lifecycle (integration)', () => {
         recordingStartedAt: startedAt,
         recordingEndedAt: completedAt,
       });
-      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+      await moveMeetingIntoPast(calendarEventId);
 
       const cronResult = await runStaleStateCron();
 
@@ -1367,7 +1420,7 @@ describe('call recorder app lifecycle (integration)', () => {
         recordingStartedAt: startedAt,
         recordingEndedAt: completedAt,
       });
-      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+      await moveMeetingIntoPast(calendarEventId);
       await client.mutation({
         updateCallRecording: {
           __args: {
@@ -1401,7 +1454,7 @@ describe('call recorder app lifecycle (integration)', () => {
         recordingStartedAt: startedAt,
         recordingEndedAt: completedAt,
       });
-      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+      await moveMeetingIntoPast(calendarEventId);
 
       const cronResult = await runStaleStateCron();
 
@@ -1437,7 +1490,7 @@ describe('call recorder app lifecycle (integration)', () => {
         recordingStartedAt: startedAt,
         recordingEndedAt: completedAt,
       });
-      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+      await moveMeetingIntoPast(calendarEventId);
 
       await runStaleStateCron();
 
@@ -1472,7 +1525,7 @@ describe('call recorder app lifecycle (integration)', () => {
         recordingStartedAt: startedAt,
         recordingEndedAt: completedAt,
       });
-      await moveMeetingOutsideConvergenceWindow(calendarEventId);
+      await moveMeetingIntoPast(calendarEventId);
 
       await runStaleStateCron();
 
@@ -1523,6 +1576,118 @@ describe('call recorder app lifecycle (integration)', () => {
       });
     });
 
+    it('settles a processing recording when Recall announces retention expiry by recording.deleted', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      const { startedAt, completedAt } = await deliverRecordingDone({
+        botId,
+        metadata,
+      });
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: completedAt,
+      });
+      await deliverRecallWebhook(
+        buildRecordingDeletedWebhook({ botId, metadata }),
+      );
+
+      expect(recall.artifactImportRequests).toHaveLength(4);
+
+      await runQueuedArtifactImports();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_expired,audio_import_expired',
+      );
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: null,
+        status: 'EMPTY',
+        subCode: 'transcript_expired',
+      });
+    });
+
+    it('drops a recording.deleted webhook for a recording that already completed', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecordingDone({ botId, metadata });
+      await runQueuedArtifactImports();
+      recall.completeTranscripts([]);
+      await deliverRecallWebhook(
+        buildTranscriptDoneWebhook({ botId, metadata }),
+      );
+      await runQueuedArtifactImports();
+
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'COMPLETED',
+      );
+
+      const importRequestCountBeforeDeletion =
+        recall.artifactImportRequests.length;
+
+      await deliverRecallWebhook(
+        buildRecordingDeletedWebhook({ botId, metadata }),
+      );
+
+      expect(recall.artifactImportRequests).toHaveLength(
+        importRequestCountBeforeDeletion,
+      );
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('COMPLETED');
+      expect(callRecording.callRecorderFailureReason).toBeFalsy();
+      expect(callRecording.audio).toHaveLength(1);
+      expect(callRecording.video).toHaveLength(1);
+    });
+
+    it('fails a processing recording whose recording.done was lost once the bot reports its media expired', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const startedAt = recordingStartedAt();
+      const endedAt = new Date().toISOString();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'call_ended',
+          statusTimestamp: endedAt,
+        }),
+      );
+
+      const processingCallRecording = await fetchCallRecording(callRecordingId);
+
+      expect(processingCallRecording.status).toBe('PROCESSING');
+      expect(processingCallRecording.externalRecordingId).toBeFalsy();
+      expect(processingCallRecording.startedAt).toBeFalsy();
+
+      recall.expireBotMedia({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: endedAt,
+      });
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'video_import_expired,audio_import_expired',
+      );
+      expect(callRecording.transcript).toEqual({
+        recallTranscriptId: null,
+        status: 'EMPTY',
+        subCode: 'transcript_expired',
+      });
+      expect(callRecording.startedAt).toBeTruthy();
+    });
+
     it('keeps converging a processing recording whose media is still available', async () => {
       const { calendarEventId, callRecordingId, botId, metadata } =
         await scheduleRecordingThroughCalendarReconciliation();
@@ -1544,6 +1709,121 @@ describe('call recorder app lifecycle (integration)', () => {
 
       expect(callRecording.status).toBe('PROCESSING');
       expect(callRecording.callRecorderFailureReason).toBeFalsy();
+    });
+  });
+
+  describe('recovering recordings whose Recall webhooks were lost', () => {
+    it('imports the media of a processing recording whose recording.done was lost', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const startedAt = hoursAgo(1);
+      const endedAt = new Date().toISOString();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'call_ended',
+          statusTimestamp: endedAt,
+        }),
+      );
+      recall.finishBotRecording({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: endedAt,
+      });
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([callRecordingId]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.externalRecordingId).toBe('recall-recording-1');
+      expect(callRecording.startedAt).toBeTruthy();
+      expect(callRecording.audio).toHaveLength(1);
+      expect(callRecording.video).toHaveLength(1);
+      expect(callRecording.transcript).toMatchObject({ status: 'PENDING' });
+    });
+
+    it('moves a recording still marked recording to processing once Recall shows the bot finished', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+      const startedAt = hoursAgo(1);
+      const endedAt = new Date().toISOString();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'in_call_recording',
+          statusTimestamp: startedAt,
+        }),
+      );
+      recall.finishBotRecording({
+        botId,
+        recordingStartedAt: startedAt,
+        recordingEndedAt: endedAt,
+      });
+      await moveMeetingIntoPast(calendarEventId);
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([callRecordingId]);
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('PROCESSING');
+      expect(callRecording.externalRecordingId).toBe('recall-recording-1');
+      expect(callRecording.endedAt).toBeTruthy();
+      expect(callRecording.audio).toHaveLength(1);
+      expect(callRecording.video).toHaveLength(1);
+    });
+
+    it('fails a recording still marked recording whose bot vanished from Recall', async () => {
+      const { calendarEventId, callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'in_call_recording',
+        }),
+      );
+      recall.bots.delete(botId);
+      await moveMeetingIntoPast(calendarEventId);
+
+      await runStaleStateCron();
+
+      const callRecording = await fetchCallRecording(callRecordingId);
+
+      expect(callRecording.status).toBe('FAILED');
+      expect(callRecording.callRecorderFailureReason).toBe(
+        'recall_bot_not_found',
+      );
+    });
+
+    it('leaves an upcoming meeting alone', async () => {
+      const { callRecordingId, botId, metadata } =
+        await scheduleRecordingThroughCalendarReconciliation();
+
+      await deliverRecallWebhook(
+        buildBotStatusChangeWebhook({
+          botId,
+          metadata,
+          statusCode: 'joining_call',
+        }),
+      );
+      recall.bots.delete(botId);
+
+      const cronResult = await runStaleStateCron();
+
+      expect(cronResult.enqueuedCallRecordingIds).toEqual([]);
+      expect((await fetchCallRecording(callRecordingId)).status).toBe(
+        'JOINING',
+      );
     });
   });
 
