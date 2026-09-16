@@ -90,11 +90,14 @@ export const validateOperationIsPermittedOrThrow = ({
     authContext,
   });
 
-  if (isExemptFromObjectPermissions(objectMetadata)) {
+  const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
+
+  if (
+    isExemptFromObjectPermissions(objectMetadata) &&
+    !isDefined(permissionsForEntity)
+  ) {
     return;
   }
-
-  const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
 
   if (
     !isDefined(permissionsForEntity) ||
