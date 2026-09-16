@@ -29,7 +29,7 @@ const StyledComposer = styled.div`
 `;
 
 export type InboxEmailComposerHandle = {
-  flushSave: () => Promise<void>;
+  flushSave: () => Promise<boolean>;
   getInput: () => Record<string, unknown>;
 };
 
@@ -44,7 +44,7 @@ type InboxEmailComposerProps = {
     >
   >;
   contextRecord?: EmailComposerContextRecord | null;
-  onSave?: (editedInput: Record<string, unknown>) => Promise<void>;
+  onSave?: (editedInput: Record<string, unknown>) => Promise<boolean>;
 };
 
 // The real composer bound to a tool call: what the person types is the call's

@@ -98,11 +98,11 @@ type InboxPlanToolCallRowProps = {
   // Blocks the per-step run while a run or a save is still on the wire.
   isBusy?: boolean;
   onToggleExpanded: () => void;
-  onSave: (editedInput: Record<string, unknown>) => Promise<void>;
-  onToggleRejected: (isRejected: boolean) => Promise<void>;
+  onSave: (editedInput: Record<string, unknown>) => Promise<boolean>;
+  onToggleRejected: (isRejected: boolean) => Promise<boolean>;
   // Runs this step alone and leaves the rest of the plan proposed.
   onRun?: () => Promise<void>;
-  onRegisterFlush?: (flush: (() => Promise<void>) | null) => void;
+  onRegisterFlush?: (flush: (() => Promise<boolean>) | null) => void;
 };
 
 export const InboxPlanToolCallRow = ({

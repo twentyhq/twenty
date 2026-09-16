@@ -11,10 +11,11 @@ import {
 export type InboxToolCallEditorProps = {
   toolCall: InboxItemToolCall;
   source?: InboxItemContextSource;
-  onSave: (editedInput: Record<string, unknown>) => Promise<void>;
+  onSave: (editedInput: Record<string, unknown>) => Promise<boolean>;
   // An editor that saves on a delay hands the plan a way to land what is still
-  // pending before a run reads the row. Null on unmount.
-  onRegisterFlush?: (flush: (() => Promise<void>) | null) => void;
+  // pending before a run reads the row, resolving to whether it did. Null on
+  // unmount.
+  onRegisterFlush?: (flush: (() => Promise<boolean>) | null) => void;
 };
 
 // A surface gets the whole item, not just its call: what it draws may depend
@@ -22,8 +23,8 @@ export type InboxToolCallEditorProps = {
 export type InboxToolCallSurfaceProps = {
   toolCall: InboxItemToolCall;
   inboxItem: InboxItem;
-  onSave: (editedInput: Record<string, unknown>) => Promise<void>;
-  onRegisterFlush?: (flush: (() => Promise<void>) | null) => void;
+  onSave: (editedInput: Record<string, unknown>) => Promise<boolean>;
+  onRegisterFlush?: (flush: (() => Promise<boolean>) | null) => void;
 };
 
 // A tool that can be started by hand from what an item is about. The subject

@@ -19,7 +19,7 @@ export const useInboxEmailToolCallDraft = ({
 }: {
   composerState: EmailComposerState;
   prefill: InboxEmailComposerPrefill;
-  onSave?: (editedInput: Record<string, unknown>) => Promise<void>;
+  onSave?: (editedInput: Record<string, unknown>) => Promise<boolean>;
 }) => {
   // Mirrors, not state: nothing renders from them. The composer's state is
   // read live so a save or a send carries what is on screen, including a
@@ -30,7 +30,7 @@ export const useInboxEmailToolCallDraft = ({
   // oxlint-disable-next-line twenty/no-state-useref
   const latestRef = useRef({ composerState, inReplyTo: prefill.inReplyTo });
   // oxlint-disable-next-line twenty/no-state-useref
-  const pendingSaveRef = useRef<Promise<void> | null>(null);
+  const pendingSaveRef = useRef<Promise<boolean> | null>(null);
 
   latestRef.current = { composerState, inReplyTo: prefill.inReplyTo };
 
@@ -69,10 +69,12 @@ export const useInboxEmailToolCallDraft = ({
   const debouncedSave = useDebouncedCallback(save, SAVE_DEBOUNCE_MS);
 
   // Whatever is still debounced lands before a run reads the row, and a save
-  // already on the wire is waited for rather than raced.
+  // already on the wire is waited for rather than raced. Nothing pending means
+  // the row already holds what is on screen.
   const flushSave = useCallback(async () => {
     debouncedSave.flush();
-    await pendingSaveRef.current;
+
+    return (await pendingSaveRef.current) ?? true;
   }, [debouncedSave]);
 
   const withSave =

@@ -29,18 +29,20 @@ export type InboxItemPlanContextValue = {
   otherPendingToolCallCount: number;
   runAll: () => Promise<void>;
   runToolCall: (toolCallId: string) => Promise<void>;
-  createToolCall: (draft: InboxItemToolCallDraft) => Promise<void>;
+  // Writes resolve to whether they landed. A failure is already reported and
+  // keeps the plan busy; the flag lets a flush stop the run that asked for it.
+  createToolCall: (draft: InboxItemToolCallDraft) => Promise<boolean>;
   saveToolCallInput: (
     toolCallId: string,
     editedInput: Record<string, unknown>,
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   setToolCallRejected: (
     toolCallId: string,
     isRejected: boolean,
-  ) => Promise<void>;
+  ) => Promise<boolean>;
   registerFlush: (
     toolCallId: string,
-    flush: (() => Promise<void>) | null,
+    flush: (() => Promise<boolean>) | null,
   ) => void;
   archiveItem: () => void;
   reopenItem: () => void;

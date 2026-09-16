@@ -71,11 +71,12 @@ export const InboxItemPlanProvider = ({
   // A blur save or a skip still on the wire must land before the item is done,
   // or the run could use the input from before the edit. A save that failed
   // keeps the run blocked until that call saves again, since its editor still
-  // shows what the server never got.
+  // shows what the server never got. Resolves to whether the write landed, so
+  // a run that flushed it can stop without waiting for the state to render.
   const trackEdit = async (
     edit: () => Promise<unknown>,
     inputSaveToolCallId?: string,
-  ) => {
+  ): Promise<boolean> => {
     setInFlightEditCount((count) => count + 1);
 
     try {
@@ -86,6 +87,8 @@ export const InboxItemPlanProvider = ({
           current.filter((id) => id !== inputSaveToolCallId),
         );
       }
+
+      return true;
     } catch {
       if (isDefined(inputSaveToolCallId)) {
         setFailedSaveToolCallIds((current) =>
@@ -96,6 +99,8 @@ export const InboxItemPlanProvider = ({
       }
 
       reportFailure();
+
+      return false;
     } finally {
       setInFlightEditCount((count) => count - 1);
     }
@@ -105,12 +110,12 @@ export const InboxItemPlanProvider = ({
   // so a run never reads a row the person had already moved past. A stable
   // container rather than state: nothing renders from it.
   const [pendingFlushes] = useState(
-    () => new Map<string, () => Promise<void>>(),
+    () => new Map<string, () => Promise<boolean>>(),
   );
 
   const registerFlush = (
     toolCallId: string,
-    flush: (() => Promise<void>) | null,
+    flush: (() => Promise<boolean>) | null,
   ) => {
     if (isDefined(flush)) {
       pendingFlushes.set(toolCallId, flush);
@@ -119,14 +124,24 @@ export const InboxItemPlanProvider = ({
     }
   };
 
-  const flushPendingEdits = () =>
-    Promise.all([...pendingFlushes.values()].map((flush) => flush()));
+  const flushPendingEdits = async () => {
+    const landed = await Promise.all(
+      [...pendingFlushes.values()].map((flush) => flush()),
+    );
+
+    return landed.every(Boolean);
+  };
 
   const runGuarded = async (run: () => Promise<InboxItem | undefined>) => {
     setIsRunning(true);
 
     try {
-      await flushPendingEdits();
+      // A save that failed on the way in has already been reported, and the
+      // row still holds the input from before the edit: running now would
+      // send that.
+      if (!(await flushPendingEdits())) {
+        return;
+      }
 
       const inboxItemAfterRun = await run();
 

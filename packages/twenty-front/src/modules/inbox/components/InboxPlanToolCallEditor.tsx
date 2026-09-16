@@ -115,7 +115,7 @@ const EMAIL_TOOL_NAME = 'send_email';
 type InboxPlanToolCallEditorProps = {
   toolCall: InboxItemToolCall;
   source?: InboxItemContextSource;
-  onSave: (editedInput: Record<string, unknown>) => Promise<void>;
+  onSave: (editedInput: Record<string, unknown>) => Promise<boolean>;
 };
 
 // A schema-driven form covers any tool; an email gets the composer treatment
