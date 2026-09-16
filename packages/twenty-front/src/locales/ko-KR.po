@@ -5457,7 +5457,7 @@ msgstr "비용"
 #. js-lingui-id: R0dp36
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Cost index"
-msgstr ""
+msgstr "비용 지수"
 
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
@@ -7784,7 +7784,7 @@ msgstr "편집기"
 #. js-lingui-id: QyUT/d
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Effort"
-msgstr ""
+msgstr "추론 노력"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -13065,7 +13065,7 @@ msgstr "모델 ID가 필요합니다"
 #. js-lingui-id: E6zx5y
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Model information"
-msgstr ""
+msgstr "모델 정보"
 
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -14678,7 +14678,7 @@ msgstr "목록에 없음"
 #. js-lingui-id: zLXWou
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Not measured at this effort yet, so these are the base model's readings."
-msgstr ""
+msgstr "이 추론 노력에서는 아직 측정되지 않았으므로, 기본 모델의 측정값입니다."
 
 #. js-lingui-id: AjdrYY
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
@@ -22663,7 +22663,7 @@ msgstr "데이터 모델 시각화"
 #. js-lingui-id: Ii6BOL
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Vs Balanced mode"
-msgstr ""
+msgstr "균형 모드와 비교"
 
 #. js-lingui-id: IEcsBR
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx

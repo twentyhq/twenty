@@ -5457,7 +5457,7 @@ msgstr "Költség"
 #. js-lingui-id: R0dp36
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Cost index"
-msgstr ""
+msgstr "Költségindex"
 
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
@@ -7784,7 +7784,7 @@ msgstr "Szerkesztő"
 #. js-lingui-id: QyUT/d
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Effort"
-msgstr ""
+msgstr "Erőfeszítés"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -13065,7 +13065,7 @@ msgstr "A modellazonosító megadása kötelező"
 #. js-lingui-id: E6zx5y
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Model information"
-msgstr ""
+msgstr "Modellinformációk"
 
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -14678,7 +14678,7 @@ msgstr "Nincs felsorolva"
 #. js-lingui-id: zLXWou
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Not measured at this effort yet, so these are the base model's readings."
-msgstr ""
+msgstr "Ezen az erőfeszítési szinten még nem történt mérés, ezért ezek az alapmodell értékei."
 
 #. js-lingui-id: AjdrYY
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
@@ -22663,7 +22663,7 @@ msgstr "Adatmodell vizualizálása"
 #. js-lingui-id: Ii6BOL
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Vs Balanced mode"
-msgstr ""
+msgstr "A kiegyensúlyozott módhoz képest"
 
 #. js-lingui-id: IEcsBR
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
