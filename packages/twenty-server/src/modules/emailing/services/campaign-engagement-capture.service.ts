@@ -108,19 +108,19 @@ export class CampaignEngagementCaptureService {
         },
       );
     } catch (error) {
-      if (error instanceof ThrottlerException) {
-        this.metricsService.incrementCounterBy({
-          key: MetricsKeys.CampaignEngagementCaptureThrottled,
-          amount: 1,
-        });
+      const isThrottled = error instanceof ThrottlerException;
 
+      this.metricsService.incrementCounterBy({
+        key: isThrottled
+          ? MetricsKeys.CampaignEngagementCaptureThrottled
+          : MetricsKeys.CampaignEngagementCaptureFailed,
+        amount: 1,
+      });
+
+      if (isThrottled) {
         return;
       }
 
-      this.metricsService.incrementCounterBy({
-        key: MetricsKeys.CampaignEngagementCaptureFailed,
-        amount: 1,
-      });
       this.logger.warn(
         `Dropped click event for delivery ${observation.deliveryId}: ${error}`,
       );

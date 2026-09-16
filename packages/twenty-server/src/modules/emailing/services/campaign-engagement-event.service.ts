@@ -116,12 +116,14 @@ export class CampaignEngagementEventService {
   }: CampaignScope & { bucket: CampaignEngagementBucket }): Promise<
     { bucketStart: Date; clicks: number }[]
   > {
+    const bucketFunction = bucket === 'hour' ? 'toStartOfHour' : 'toStartOfDay';
+
     const rows = await this.select<{
       bucketStart: string;
       clicks: string | number;
     }>(
       `SELECT
-         ${this.bucketFunction(bucket)}(occurredAt) AS bucketStart,
+         ${bucketFunction}(occurredAt) AS bucketStart,
          uniqExact(eventId) AS clicks
        FROM ${SHORT_LINK_CLICK_TABLE}
        WHERE ${CLICK_SCOPE_CONDITION}
@@ -198,10 +200,6 @@ export class CampaignEngagementEventService {
       firstClickedAt: parseClickHouseDateTime(row.firstClickedAt),
       lastEngagedAt: parseClickHouseDateTime(row.lastEngagedAt),
     }));
-  }
-
-  private bucketFunction(bucket: CampaignEngagementBucket): string {
-    return bucket === 'hour' ? 'toStartOfHour' : 'toStartOfDay';
   }
 
   private buildClickActivityCondition(
