@@ -43,6 +43,7 @@ export const useCreateAgentChatThread = () => {
         contextWindowTokens: null,
         totalInputTokens: 0,
         totalOutputTokens: 0,
+        totalCacheReadTokens: 0,
         totalInputCredits: 0,
         totalOutputCredits: 0,
       };

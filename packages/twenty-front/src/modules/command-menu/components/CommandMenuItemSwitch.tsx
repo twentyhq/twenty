@@ -1,6 +1,9 @@
 import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-list/states/isSelectedItemIdComponentFamilyState';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { MenuItemSwitch, type MenuItemSwitchProps } from 'twenty-ui/navigation';
+import {
+  MenuItemSwitch,
+  type MenuItemSwitchProps,
+} from 'twenty-ui/primitives/navigation';
 
 export type CommandMenuItemSwitchProps = MenuItemSwitchProps & {
   id: string;

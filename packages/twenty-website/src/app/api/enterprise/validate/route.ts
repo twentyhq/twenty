@@ -59,7 +59,7 @@ export async function POST(request: Request) {
 
     if (!payload) {
       return NextResponse.json(
-        { error: 'Invalid enterprise key' },
+        { error: 'Invalid Organization key' },
         { status: 403 },
       );
     }
@@ -158,7 +158,7 @@ export async function POST(request: Request) {
       isBillable: binding.isBillable,
     });
   } catch (error: unknown) {
-    console.error('Enterprise key validation failed', error);
+    console.error('Organization key validation failed', error);
 
     return NextResponse.json(
       { error: 'Internal server error' },

@@ -61,6 +61,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(LogicFunctionEntity),
   ],
   exports: [
+    UsageLimitEntitlementService,
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitStockService,

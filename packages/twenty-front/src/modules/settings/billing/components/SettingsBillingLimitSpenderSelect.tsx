@@ -1,9 +1,12 @@
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronLeft } from 'twenty-ui/icon';
-import { MenuItemSelect, MenuItemSelectAvatar } from 'twenty-ui/navigation';
+import {
+  MenuItemSelect,
+  MenuItemSelectAvatar,
+} from 'twenty-ui/primitives/navigation';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsBillingLimitNestedSelect } from '@/settings/billing/components/internal/SettingsBillingLimitNestedSelect';
@@ -109,9 +112,9 @@ export const SettingsBillingLimitSpenderSelect = ({
     if (spenderType === 'workspace') {
       return (
         <Avatar
-          placeholder={workspaceName}
-          avatarUrl={workspaceAvatarUrl}
-          type="squared"
+          name={workspaceName}
+          src={workspaceAvatarUrl}
+          shape="square"
           size="md"
         />
       );
@@ -131,9 +134,9 @@ export const SettingsBillingLimitSpenderSelect = ({
 
     return (
       <Avatar
-        placeholder={selectedOption?.label ?? ''}
-        avatarUrl={selectedOption?.avatarUrl}
-        type={spenderType === 'userWorkspace' ? 'rounded' : 'squared'}
+        name={selectedOption?.label ?? ''}
+        src={selectedOption?.avatarUrl}
+        shape={spenderType === 'userWorkspace' ? 'circle' : 'square'}
         size="md"
       />
     );
@@ -153,9 +156,9 @@ export const SettingsBillingLimitSpenderSelect = ({
           selected={selected}
           avatar={
             <Avatar
-              placeholder={option.label}
-              avatarUrl={option.avatarUrl}
-              type={kind === 'userWorkspace' ? 'rounded' : 'squared'}
+              name={option.label}
+              src={option.avatarUrl}
+              shape={kind === 'userWorkspace' ? 'circle' : 'square'}
               size="md"
             />
           }
@@ -227,9 +230,9 @@ export const SettingsBillingLimitSpenderSelect = ({
             selected={spenderType === 'workspace'}
             avatar={
               <Avatar
-                placeholder={workspaceName}
-                avatarUrl={workspaceAvatarUrl}
-                type="squared"
+                name={workspaceName}
+                src={workspaceAvatarUrl}
+                shape="square"
                 size="md"
               />
             }
@@ -242,21 +245,28 @@ export const SettingsBillingLimitSpenderSelect = ({
       )}
       {otherGroups.length > 0 && (
         <DropdownMenuItemsContainer>
-          {otherGroups.map((group) => (
-            <MenuItemSelect
-              key={group.id}
-              LeftIcon={group.Icon}
-              text={t(group.label)}
-              selected={false}
-              hasSubMenu
-              disabled={!isIntraWorkspaceLimitEntitled}
-              contextualText={
-                isIntraWorkspaceLimitEntitled ? undefined : t`Organization plan`
-              }
-              contextualTextPosition="right"
-              onClick={() => setBrowsedSpenderType(group.spenderType)}
-            />
-          ))}
+          {otherGroups.map((group) =>
+            isIntraWorkspaceLimitEntitled ? (
+              <MenuItemSelect
+                key={group.id}
+                LeftIcon={group.Icon}
+                text={t(group.label)}
+                selected={false}
+                hasSubMenu
+                onClick={() => setBrowsedSpenderType(group.spenderType)}
+              />
+            ) : (
+              <MenuItemSelect
+                key={group.id}
+                LeftIcon={group.Icon}
+                text={t(group.label)}
+                selected={false}
+                disabled
+                contextualText={t`Organization plan`}
+                contextualTextPosition="right"
+              />
+            ),
+          )}
         </DropdownMenuItemsContainer>
       )}
     </DropdownContent>

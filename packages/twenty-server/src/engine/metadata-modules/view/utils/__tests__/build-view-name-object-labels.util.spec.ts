@@ -9,6 +9,9 @@ const i18nContext = {
   locale: 'fr-FR' as const,
   i18nInstance: { _: (id: string) => id },
   isStandardApp: true,
+  workspaceCustomApplicationUniversalIdentifier:
+    'workspace-custom-application-universal-identifier',
+  ownerApplicationUniversalIdentifier: undefined,
 };
 
 describe('buildViewNameObjectLabels', () => {

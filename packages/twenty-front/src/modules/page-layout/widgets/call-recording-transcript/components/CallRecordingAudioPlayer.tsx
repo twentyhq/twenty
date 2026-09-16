@@ -3,13 +3,13 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { CircularProgressBar } from 'twenty-ui/feedback';
+import { CircularProgressBar } from 'twenty-ui/primitives/feedback';
 import {
   IconHeadphones,
   IconPlayerPause,
   IconPlayerPlay,
 } from 'twenty-ui/icon';
-import { Button, IconButton, Slider } from 'twenty-ui/input';
+import { Button, IconButton, Slider } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledAudioBar = styled.div`

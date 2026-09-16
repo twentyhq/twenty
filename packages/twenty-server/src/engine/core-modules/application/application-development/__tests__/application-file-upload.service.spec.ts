@@ -3,7 +3,11 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { FileFolder } from 'twenty-shared/types';
 
 import { ApplicationFileUploadService } from 'src/engine/core-modules/application/application-development/application-file-upload.service';
-import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import {
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-upload/services/file-upload-completion.service';
@@ -20,7 +24,12 @@ describe('ApplicationFileUploadService', () => {
     findByUniversalIdentifier: jest.fn().mockResolvedValue({
       id: 'application-id',
       universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      applicationRegistrationId: 'registration-id',
     }),
+  };
+
+  const applicationRegistrationService = {
+    findOneOwnedByWorkspaceOrThrow: jest.fn(),
   };
 
   const fileUploadTargetService = {
@@ -37,6 +46,13 @@ describe('ApplicationFileUploadService', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+
+    applicationRegistrationService.findOneOwnedByWorkspaceOrThrow.mockResolvedValue(
+      {
+        id: 'registration-id',
+        ownerWorkspaceId: WORKSPACE_ID,
+      },
+    );
 
     fileUploadTargetService.createUploadTargetsBatch.mockImplementation(
       (requests: { resourcePath: string }[]) =>
@@ -57,6 +73,10 @@ describe('ApplicationFileUploadService', () => {
       providers: [
         ApplicationFileUploadService,
         { provide: ApplicationService, useValue: applicationService },
+        {
+          provide: ApplicationRegistrationService,
+          useValue: applicationRegistrationService,
+        },
         { provide: FileUploadTargetService, useValue: fileUploadTargetService },
         {
           provide: FileUploadCompletionService,
@@ -329,6 +349,79 @@ describe('ApplicationFileUploadService', () => {
           message: expect.stringContaining('No pending upload found'),
         },
       ]);
+    });
+  });
+
+  describe('registration ownership', () => {
+    const uploadRequest = {
+      workspaceId: WORKSPACE_ID,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      files: [
+        {
+          fileFolder: FileFolder.BuiltLogicFunction,
+          filePath: 'handler.mjs',
+          size: 12,
+        },
+        {
+          fileFolder: FileFolder.Dependencies,
+          filePath: 'package.json',
+          size: 12,
+        },
+      ],
+    };
+
+    const refuseOwnership = (code: ApplicationExceptionCode) =>
+      applicationRegistrationService.findOneOwnedByWorkspaceOrThrow.mockRejectedValueOnce(
+        new ApplicationException('Refused', code),
+      );
+
+    it('should check ownership by universal identifier before creating upload targets', async () => {
+      await service.createApplicationFileUploads(uploadRequest);
+
+      expect(
+        applicationRegistrationService.findOneOwnedByWorkspaceOrThrow,
+      ).toHaveBeenCalledWith({
+        universalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+        workspaceId: WORKSPACE_ID,
+      });
+    });
+
+    it('should refuse upload targets when the workspace does not own the registration', async () => {
+      refuseOwnership(ApplicationExceptionCode.FORBIDDEN);
+
+      await expect(
+        service.createApplicationFileUploads(uploadRequest),
+      ).rejects.toMatchObject({ code: ApplicationExceptionCode.FORBIDDEN });
+      expect(
+        fileUploadTargetService.createUploadTargetsBatch,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should refuse upload targets when no registration matches the application', async () => {
+      refuseOwnership(ApplicationExceptionCode.APPLICATION_NOT_FOUND);
+
+      await expect(
+        service.createApplicationFileUploads(uploadRequest),
+      ).rejects.toThrow(ApplicationException);
+      expect(
+        fileUploadTargetService.createUploadTargetsBatch,
+      ).not.toHaveBeenCalled();
+    });
+
+    it('should refuse to complete uploads when the workspace does not own the registration', async () => {
+      refuseOwnership(ApplicationExceptionCode.FORBIDDEN);
+
+      await expect(
+        service.completeApplicationFileUploads({
+          workspaceId: WORKSPACE_ID,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          fileIds: ['file-id'],
+        }),
+      ).rejects.toMatchObject({ code: ApplicationExceptionCode.FORBIDDEN });
+      expect(fileRepository.find).not.toHaveBeenCalled();
+      expect(
+        fileUploadCompletionService.completeUploadsBatch,
+      ).not.toHaveBeenCalled();
     });
   });
 });

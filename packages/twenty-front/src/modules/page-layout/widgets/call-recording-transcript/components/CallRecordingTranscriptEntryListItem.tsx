@@ -6,7 +6,7 @@ import { t } from '@lingui/core/macro';
 import { type Ref } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledEntry = styled.li<{
@@ -125,18 +125,19 @@ export const CallRecordingTranscriptEntryListItem = ({
     >
       <StyledEntryHeader>
         <Chip
-          clickable={false}
-          label={speakerName}
-          variant={ChipVariant.Transparent}
-          leftComponent={
+          variant="ghost"
+          startElement={
             <Avatar
-              placeholder={speakerName}
-              placeholderColorSeed={speakerName}
+              name={speakerName}
+              colorSeed={speakerName}
               size="sm"
-              type="rounded"
+              shape="circle"
             />
           }
-        />
+          style={{ paddingInlineStart: 0 }}
+        >
+          {speakerName}
+        </Chip>
         {isDefined(formattedStartTimestamp) && (
           <StyledTimestamp
             as={isSelectable ? 'button' : undefined}

@@ -2,7 +2,7 @@ import { OnboardingPlanCard } from '@/onboarding/components/upgrade-free-trial/O
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, fn, userEvent, within } from 'storybook/test';
-import { RadioGroup } from 'twenty-ui/input';
+import { RadioGroup } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const PlanChoices = ({

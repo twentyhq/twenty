@@ -14,8 +14,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 export const SettingsAiUsageTab = () => {
@@ -44,8 +44,8 @@ export const SettingsAiUsageTab = () => {
           adornment={<OrganizationAdornment />}
         />
         <SettingsEnterpriseFeatureGateCard
-          title={t`Enterprise feature`}
-          description={t`AI usage analytics is available with an Enterprise key.`}
+          title={t`Organization feature`}
+          description={t`AI usage analytics is available with an Organization key.`}
           buttonTitle={t`Activate`}
         />
       </Section>

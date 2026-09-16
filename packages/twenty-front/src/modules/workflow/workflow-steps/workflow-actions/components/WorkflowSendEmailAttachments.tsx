@@ -3,7 +3,7 @@ import { AttachmentChip } from '@/file/components/AttachmentChip';
 import { useFileUpload } from '@/file-upload/hooks/useFileUpload';
 import { VariableChip } from '@/object-record/record-field/ui/form-types/components/VariableChip';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { InputLabel } from 'twenty-ui/input';
+import { InputLabel } from 'twenty-ui/primitives/input';
 
 import { isString } from '@sniptt/guards';
 import { styled } from '@linaria/react';

@@ -6,7 +6,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { capitalize, isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/data-display';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -36,6 +36,11 @@ const StyledCopyableCell = styled.div`
   & input {
     cursor: pointer;
     pointer-events: none;
+    transition:
+      background-color calc(${themeCssVariables.animation.duration.normal} * 1s)
+        ease,
+      border-color calc(${themeCssVariables.animation.duration.normal} * 1s)
+        ease;
   }
 
   &:hover input {
