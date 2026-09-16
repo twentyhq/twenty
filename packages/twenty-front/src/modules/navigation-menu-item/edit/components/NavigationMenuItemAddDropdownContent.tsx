@@ -14,6 +14,7 @@ import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-i
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { Fragment, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronLeft, IconX } from 'twenty-ui/icon';
@@ -205,7 +206,7 @@ export const NavigationMenuItemAddDropdownContent = ({
             .filter((group) => group.items.length > 0)
             .map((group) => (
               <Fragment key={group.label}>
-                {group.label && (
+                {isNonEmptyString(group.label) && (
                   <DropdownMenuSectionLabel label={group.label} />
                 )}
                 {group.items.map((item) => (

@@ -61,6 +61,7 @@ export const useSaveLayoutCustomization = () => {
         const colorResults = await Promise.all(
           objectColorEntries.map(async ([objectId, color]) => ({
             objectId,
+            color,
             result: await updateOneObjectMetadataItem({
               idToUpdate: objectId,
               updatePayload: { color },
@@ -69,23 +70,26 @@ export const useSaveLayoutCustomization = () => {
           })),
         );
 
-        const savedObjectIds = new Set(
+        const savedColorByObjectId = new Map(
           colorResults
             .filter(({ result }) => result.status === 'successful')
-            .map(({ objectId }) => objectId),
+            .map(({ objectId, color }) => [objectId, color]),
         );
 
+        // The picker stays live while these run, so only drop an entry the user
+        // has not changed again since it was sent.
         store.set(objectColorsDraftState.atom, (draft) =>
           Object.fromEntries(
             Object.entries(draft).filter(
-              ([objectId]) => !savedObjectIds.has(objectId),
+              ([objectId, color]) =>
+                savedColorByObjectId.get(objectId) !== color,
             ),
           ),
         );
 
         await refetchCommandMenuItems();
 
-        if (savedObjectIds.size !== objectColorEntries.length) {
+        if (savedColorByObjectId.size !== objectColorEntries.length) {
           return;
         }
       }
