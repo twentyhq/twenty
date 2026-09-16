@@ -58,7 +58,9 @@ export class ShortLinkService {
     return new Map(persistedLinks.map((link) => [link.url, link.id]));
   }
 
-  async findById(shortLinkId: string): Promise<ShortLinkEntity | null> {
+  async findByIdAcrossWorkspaces(
+    shortLinkId: string,
+  ): Promise<ShortLinkEntity | null> {
     return this.globalShortLinkRepository.findOne({
       where: { id: shortLinkId },
     });

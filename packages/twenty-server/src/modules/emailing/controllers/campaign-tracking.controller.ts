@@ -35,12 +35,14 @@ export class CampaignTrackingController {
   @Redirect()
   @Header('Cache-Control', 'no-store')
   @Header('Referrer-Policy', 'no-referrer')
-  async click(
+  async handleTrackedLinkClick(
     @Param('token') token: string,
   ): Promise<{ url: string; statusCode: number }> {
     const payload = this.verifyTokenOrThrow(token);
 
-    const shortLink = await this.shortLinkService.findById(payload.shortLinkId);
+    const shortLink = await this.shortLinkService.findByIdAcrossWorkspaces(
+      payload.shortLinkId,
+    );
 
     if (!isDefined(shortLink)) {
       throw new NotFoundException('Unknown tracked link');
