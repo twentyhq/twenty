@@ -37,6 +37,8 @@ export const MenuItemSelectTag = ({
 
   return (
     <StyledMenuItemSelect
+      role="option"
+      aria-selected={selected === true}
       onClick={onClick}
       className={className}
       focused={focused}
