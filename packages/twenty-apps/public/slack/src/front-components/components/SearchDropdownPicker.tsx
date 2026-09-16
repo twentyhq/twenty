@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 
+import { SlackDropdownBackdrop } from 'src/front-components/components/SlackDropdownBackdrop';
 import {
   type SlackPickerOption,
   SlackPickerDropdownPanel,
@@ -11,6 +12,13 @@ import { SlackUserLinkTextInput } from 'src/front-components/components/SlackUse
 const StyledContainer = styled.div`
   position: relative;
   width: 100%;
+`;
+
+// Above the backdrop, so clicking back into the field moves the caret
+// instead of dismissing the panel
+const StyledInputWrapper = styled.div`
+  position: relative;
+  z-index: 2;
 `;
 
 type SearchDropdownPickerProps<TOption> = {
@@ -38,57 +46,72 @@ export const SearchDropdownPicker = <TOption,>({
   disabled,
   autoFocus,
 }: SearchDropdownPickerProps<TOption>) => {
-  const [isFocused, setIsFocused] = useState(false);
+  // Closing on blur would unmount the panel on mouse down, before the click
+  // that picks an option ever lands on it
+  const [isOpen, setIsOpen] = useState(false);
 
   const hasSearchTerm = isNonEmptyString(searchTerm.trim());
-  const isDropdownOpen = isFocused && hasSearchTerm;
+  const isDropdownOpen = isOpen && hasSearchTerm;
 
   const handleSelect = (option: TOption) => {
+    setIsOpen(false);
     onSearchTermChange('');
     onSelect(option);
   };
 
-  const pickerOptions = options.map(getOption);
-
   return (
     <StyledContainer>
-      <SlackUserLinkTextInput
-        value={searchTerm}
-        onChange={(event) => onSearchTermChange(event.target.value)}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        onKeyDown={(event) => {
-          if (event.key !== 'Enter') {
-            return;
-          }
+      <StyledInputWrapper>
+        <SlackUserLinkTextInput
+          value={searchTerm}
+          onChange={(event) => {
+            setIsOpen(true);
+            onSearchTermChange(event.target.value);
+          }}
+          onFocus={() => setIsOpen(true)}
+          onKeyDown={(event) => {
+            if (event.key === 'Escape') {
+              event.preventDefault();
+              setIsOpen(false);
 
-          event.preventDefault();
+              return;
+            }
 
-          if (options.length > 0) {
-            handleSelect(options[0]);
-          }
-        }}
-        placeholder={searchLabel}
-        disabled={disabled}
-        autoFocus={autoFocus}
-        aria-label={searchLabel}
-      />
-      {isDropdownOpen && (
-        <SlackPickerDropdownPanel
-          options={pickerOptions}
-          isSearching={isSearching}
-          emptyText={emptyText}
-          listLabel={searchLabel}
-          onSelect={(optionKey) => {
-            const selectedOption = options.find(
-              (option) => getOption(option).key === optionKey,
-            );
+            if (event.key !== 'Enter') {
+              return;
+            }
 
-            if (selectedOption !== undefined) {
-              handleSelect(selectedOption);
+            event.preventDefault();
+
+            if (options.length > 0) {
+              handleSelect(options[0]);
             }
           }}
+          placeholder={searchLabel}
+          disabled={disabled}
+          autoFocus={autoFocus}
+          aria-label={searchLabel}
         />
+      </StyledInputWrapper>
+      {isDropdownOpen && (
+        <>
+          <SlackDropdownBackdrop onClose={() => setIsOpen(false)} />
+          <SlackPickerDropdownPanel
+            options={options.map(getOption)}
+            isSearching={isSearching}
+            emptyText={emptyText}
+            listLabel={searchLabel}
+            onSelect={(optionKey) => {
+              const selectedOption = options.find(
+                (option) => getOption(option).key === optionKey,
+              );
+
+              if (selectedOption !== undefined) {
+                handleSelect(selectedOption);
+              }
+            }}
+          />
+        </>
       )}
     </StyledContainer>
   );

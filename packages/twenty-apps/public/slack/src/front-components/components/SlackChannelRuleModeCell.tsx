@@ -3,10 +3,9 @@ import { Tag } from 'twenty-ui/data-display';
 
 import { SlackChannelRuleModeSelect } from 'src/front-components/components/SlackChannelRuleModeSelect';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
+import { DISCONNECTED_SLACK_WORKSPACE_LABEL } from 'src/front-components/utils/is-from-disconnected-slack-workspace.util';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
-
-const DISCONNECTED_WORKSPACE_LABEL = 'Slack workspace disconnected';
 
 type SlackChannelRuleModeCellProps = {
   rule: SlackChannelRuleRecord;
@@ -24,7 +23,7 @@ export const SlackChannelRuleModeCell = ({
   onModeChange,
 }: SlackChannelRuleModeCellProps) => {
   if (isDisconnected) {
-    return <Tag color="gray" text={DISCONNECTED_WORKSPACE_LABEL} />;
+    return <Tag color="gray" text={DISCONNECTED_SLACK_WORKSPACE_LABEL} />;
   }
 
   const mode = isSlackChannelRuleMode(rule.mode) ? rule.mode : undefined;
