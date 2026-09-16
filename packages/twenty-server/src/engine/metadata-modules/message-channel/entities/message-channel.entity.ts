@@ -24,7 +24,7 @@ import {
   WebhookSubscriptionStatus,
 } from 'twenty-shared/types';
 
-import { ADD_MESSAGE_CHANNEL_DEFAULT_INBOX_QUEUE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-message-channel-default-inbox-queue-upgrade-command-name.constant';
+import { ADD_MESSAGE_CHANNEL_DEFAULT_INBOX_QUEUE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-message-channel-default-inbox-queue-upgrade-command-name.constant';
 import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
