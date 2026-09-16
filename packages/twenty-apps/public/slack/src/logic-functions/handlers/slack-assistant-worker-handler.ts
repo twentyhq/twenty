@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
@@ -18,6 +18,8 @@ import { enqueueSlackMessageDelivery } from 'src/logic-functions/utils/enqueue-s
 import { extractAgentResponseText } from 'src/logic-functions/utils/extract-agent-response-text';
 import { fetchSlackAssistantContext } from 'src/logic-functions/utils/fetch-slack-assistant-context';
 import { fetchWorkspaceBaseUrls } from 'src/logic-functions/utils/fetch-workspace-base-urls';
+import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connection';
+import { importSlackAssistantAttachments } from 'src/logic-functions/utils/import-slack-assistant-attachments';
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
@@ -122,6 +124,19 @@ export const slackAssistantWorkerHandler = async (
       }).catch(() => undefined);
     }
 
+    const requestFiles = requestMessage?.files;
+    const slackConnection = isNonEmptyArray(requestFiles)
+      ? await getSlackConnection()
+      : undefined;
+    const { attachments, attachedFileNames } =
+      await importSlackAssistantAttachments({
+        client: slackClient,
+        files: requestFiles,
+        botToken: slackConnection?.success
+          ? slackConnection.accessToken
+          : undefined,
+      });
+
     const resolvedMentions = await resolveSlackAssistantMentions({
       requestText,
       conversationMessages,
@@ -147,6 +162,8 @@ export const slackAssistantWorkerHandler = async (
         workspaceBaseUrl: workspaceBaseUrls[0],
         hasMentionedUsers: resolvedMentions.hasMentionedUsers,
         sharedFileNames,
+        attachments,
+        attachedFileNames,
       }),
       deadlineAtMs: agentDeadlineAtMs,
     }).finally(() => stopStatusUpdates());

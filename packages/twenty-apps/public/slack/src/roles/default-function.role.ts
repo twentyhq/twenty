@@ -65,5 +65,9 @@ export default defineApplicationRole({
     })),
   ],
   fieldPermissions: [],
-  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+  permissionFlagUniversalIdentifiers: [
+    SystemPermissionFlag.AI,
+    // Files shared in Slack are re-hosted in Twenty so the agent can read them
+    SystemPermissionFlag.UPLOAD_FILE,
+  ],
 });
