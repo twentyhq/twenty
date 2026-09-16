@@ -38,7 +38,7 @@ export const SetPersonEmailTrackingConsentSingleRecordCommand = () => {
           : t`This person keeps receiving campaign emails. Starting with the next campaign, link clicks on their emails will not be recorded. Clicks already recorded are kept.`
       }
       confirmButtonText={isOptedOut ? t`Opt in` : t`Opt out`}
-      confirmButtonAccent={isOptedOut ? 'blue' : 'danger'}
+      confirmButtonColor={isOptedOut ? 'accent' : 'danger'}
       execute={() => setPersonEmailTrackingConsent({ personId, decision })}
     />
   );

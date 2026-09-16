@@ -1,10 +1,10 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 
 import { SET_PERSON_EMAIL_TRACKING_CONSENT } from '@/activities/emails/graphql/mutations/setPersonEmailTrackingConsent';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { t } from '@lingui/core/macro';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   MessageTrackingConsentDecision,
   type SetPersonEmailTrackingConsentMutation,
@@ -17,7 +17,7 @@ export const useSetPersonEmailTrackingConsent = () => {
     SetPersonEmailTrackingConsentMutationVariables
   >(SET_PERSON_EMAIL_TRACKING_CONSENT);
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
 
   const setPersonEmailTrackingConsent = async ({
@@ -33,8 +33,9 @@ export const useSetPersonEmailTrackingConsent = () => {
       });
 
       if (result.data?.setPersonEmailTrackingConsent !== true) {
-        enqueueErrorSnackBar({
-          message: t`Could not update the email tracking preference`,
+        enqueueToast({
+          variant: 'error',
+          children: t`Could not update the email tracking preference`,
         });
 
         return false;
@@ -50,8 +51,9 @@ export const useSetPersonEmailTrackingConsent = () => {
         ],
       });
 
-      enqueueSuccessSnackBar({
-        message:
+      enqueueToast({
+        variant: 'success',
+        children:
           decision === MessageTrackingConsentDecision.DENIED
             ? t`Opted out of email tracking`
             : t`Opted in to email tracking`,
@@ -59,9 +61,7 @@ export const useSetPersonEmailTrackingConsent = () => {
 
       return true;
     } catch (error) {
-      enqueueErrorSnackBar({
-        ...(CombinedGraphQLErrors.is(error) ? { apolloError: error } : {}),
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
 
       return false;
     }

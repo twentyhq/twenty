@@ -31,7 +31,7 @@ const PERSON_RECORD_PAGE_VIEW_UNIVERSAL_IDENTIFIER =
 const SET_EMAIL_TRACKING_CONSENT_COMMAND_UNIVERSAL_IDENTIFIER =
   STANDARD_COMMAND_MENU_ITEMS.setPersonEmailTrackingConsent.universalIdentifier;
 
-@RegisteredWorkspaceCommand('2.41.0', 1789552605003)
+@RegisteredWorkspaceCommand('2.41.0', 1789571369003)
 @Command({
   name: 'upgrade:2-41:add-person-email-tracking-consent',
   description:
