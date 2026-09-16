@@ -65,20 +65,19 @@ export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
           }}
         >
           <Button
-            ariaLabel={i18n._('Change open companion shortcut')}
+            aria-label={i18n._('Change open companion shortcut')}
             disabled={isPending('settings')}
             onClick={() => setCapturing(true)}
-            variant="secondary"
-            size="medium"
-            title={
-              capturing
-                ? i18n._('Press shortcut…')
-                : formatShortcut(
-                    state.settings.openShortcut,
-                    navigator.platform.startsWith('Mac'),
-                  )
-            }
-          />
+            variant="outline"
+            size="md"
+          >
+            {capturing
+              ? i18n._('Press shortcut…')
+              : formatShortcut(
+                  state.settings.openShortcut,
+                  navigator.platform.startsWith('Mac'),
+                )}
+          </Button>
         </div>
       </div>
     </SettingsCardContent>

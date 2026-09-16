@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type Dispatch, type SetStateAction, useState } from 'react';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { H3Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -20,11 +20,8 @@ const StyledRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledButtonContainer = styled(ButtonGroup)`
   display: flex;
-  & > :not(:first-of-type) > button {
-    border-left: none;
-  }
 `;
 
 type ConfigVariableEditProps = {
@@ -125,29 +122,30 @@ export const ConfigVariableEdit = ({
           {input}
           {!isEditing ? (
             <Button
-              Icon={IconPencil}
-              variant="primary"
+              startIcon={<IconPencil />}
+              aria-label={t`Edit`}
               onClick={handleEdit}
               type="button"
               disabled={editDisabled}
+              variant="outline"
             />
           ) : (
-            <StyledButtonContainer>
+            <StyledButtonContainer aria-label={t`Edit variable`}>
               <Button
-                Icon={IconCheck}
-                variant="secondary"
-                position="left"
+                startIcon={<IconCheck />}
+                aria-label={t`Save`}
                 type={'button'}
                 onClick={handleSave}
                 disabled={isSaveDisabled || isSubmitting}
+                variant="outline"
               />
               <Button
-                Icon={IconX}
-                variant="secondary"
-                position="right"
+                startIcon={<IconX />}
+                aria-label={t`Cancel`}
                 onClick={handleCancel}
                 type="button"
                 disabled={isSubmitting}
+                variant="outline"
               />
             </StyledButtonContainer>
           )}
@@ -157,7 +155,7 @@ export const ConfigVariableEdit = ({
             subtitle={t`Are you sure you want to reset this variable?`}
             onConfirmClick={handleConfirmReset}
             confirmButtonText={t`Reset`}
-            confirmButtonAccent="danger"
+            confirmButtonColor="danger"
           />
         </StyledRow>
         {helpContent}

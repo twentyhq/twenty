@@ -209,13 +209,12 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         <StyledDangerButtonGroup>
           <Button
             id={DELETE_REGISTRATION_BUTTON_ID}
-            accent="danger"
-            variant="secondary"
-            title={t`Delete app`}
-            Icon={IconTrash}
+            startIcon={<IconTrash />}
             disabled={hasActiveInstalls}
             onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
-          />
+            variant="outline"
+            color="danger"
+          >{t`Delete app`}</Button>
           {hasActiveInstalls && (
             <AppTooltip
               anchorSelect={`#${DELETE_REGISTRATION_BUTTON_ID}`}
@@ -229,21 +228,17 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           {isUnclaimed
             ? fromAdmin && (
                 <Button
-                  accent="default"
-                  variant="secondary"
-                  title={t`Claim ownership`}
-                  Icon={IconUserPlus}
+                  startIcon={<IconUserPlus />}
                   onClick={() => openModal(CLAIM_OWNERSHIP_MODAL_ID)}
-                />
+                  variant="outline"
+                >{t`Claim ownership`}</Button>
               )
             : !isUnclaimed && (
                 <Button
-                  accent="default"
-                  variant="secondary"
-                  title={t`Transfer ownership`}
-                  Icon={IconShare}
+                  startIcon={<IconShare />}
                   onClick={() => openModal(TRANSFER_OWNERSHIP_MODAL_ID)}
-                />
+                  variant="outline"
+                >{t`Transfer ownership`}</Button>
               )}
         </StyledDangerButtonGroup>
       </Section>
@@ -276,7 +271,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         }
         onConfirmClick={handleClaimOwnership}
         confirmButtonText={t`Claim`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         loading={isClaiming}
       />
 
@@ -316,20 +311,18 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
             closeModal(TRANSFER_OWNERSHIP_MODAL_ID);
             setTransferSubdomain('');
           }}
-          variant="secondary"
-          title={t`Cancel`}
           fullWidth
-        />
+          variant="outline"
+        >{t`Cancel`}</StyledAppModalButton>
         <StyledAppModalButton
           onClick={handleTransferOwnership}
-          variant="secondary"
-          accent="danger"
-          title={t`Transfer`}
           disabled={
             !isNonEmptyString(transferSubdomain.trim()) || isTransferring
           }
           fullWidth
-        />
+          variant="outline"
+          color="danger"
+        >{t`Transfer`}</StyledAppModalButton>
       </StyledAppModal>
     </>
   );

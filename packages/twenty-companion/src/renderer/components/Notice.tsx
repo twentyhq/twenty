@@ -25,13 +25,14 @@ export const Notice = ({ state, command }: ActionProps) =>
         </span>
         {state.error?.recovery && (
           <Button
-            title={i18n._('Install Desktop Recorder')}
-            variant="secondary"
-            inverted
+            className="notice-recovery"
+            variant="outline"
             onClick={() =>
               state.error?.recovery && void command(state.error.recovery)
             }
-          />
+          >
+            {i18n._('Install Desktop Recorder')}
+          </Button>
         )}
         <IconButton
           className="notice-close"

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import { useHasMultipleAuthMethods } from '@/auth/sign-in-up/hooks/useHasMultipleAuthMethods';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { lastAuthenticatedMethodState } from '@/auth/states/lastAuthenticatedMethodState';
@@ -9,14 +10,15 @@ import { AuthenticatedMethod } from '@/auth/types/AuthenticatedMethod.enum';
 import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp.type';
 import { useLingui } from '@lingui/react/macro';
 import { memo, useContext } from 'react';
+import { MainButton } from 'twenty-ui/components';
 import { IconGoogle } from 'twenty-ui/icon';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
-import { MainButton } from 'twenty-ui/primitives/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+
 const GoogleIcon = memo(() => {
   const { theme } = useContext(ThemeContext);
   return <IconGoogle size={theme.icon.size.md} />;
@@ -48,12 +50,11 @@ export const SignInUpWithGoogle = ({
     <>
       <StyledSsoButtonContainer>
         <MainButton
-          Icon={GoogleIcon}
-          title={t`Continue with Google`}
+          startIcon={isDefined(GoogleIcon) ? <GoogleIcon /> : undefined}
           onClick={handleClick}
-          variant={signInUpStep === SignInUpStep.Init ? undefined : 'secondary'}
           fullWidth
-        />
+          variant={signInUpStep === SignInUpStep.Init ? 'solid' : 'outline'}
+        >{t`Continue with Google`}</MainButton>
         {isLastUsed && (isGlobalScope || hasMultipleAuthMethods) && (
           <LastUsedPill />
         )}
