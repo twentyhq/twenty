@@ -296,7 +296,8 @@ export class WorkflowVersionCoreSyncService {
         workspaceId,
         {
           where: { workspaceWorkflowId: In(unresolvedWorkflowIds) },
-          select: { id: true, workspaceWorkflowId: true },
+          select: { id: true, workspaceWorkflowId: true, createdAt: true },
+          order: { createdAt: 'ASC', id: 'ASC' },
         },
       );
 
