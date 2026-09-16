@@ -23,7 +23,6 @@ import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/
 import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { CampaignTrackingController } from 'src/modules/emailing/controllers/campaign-tracking.controller';
 import { UnsubscribeController } from 'src/modules/emailing/controllers/unsubscribe.controller';
-import { MessageListAccessService } from 'src/modules/emailing/services/message-list-access.service';
 import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { EmailingOngoingStaleCronJob } from 'src/modules/emailing/crons/jobs/emailing-ongoing-stale.cron.job';
@@ -107,7 +106,6 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     provideWorkspaceScopedRepository(EmailingDomainEntity),
     provideWorkspaceScopedRepository(MessageSuppressionEntity),
     CampaignTrackingContentService,
-    MessageListAccessService,
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
     provideWorkspaceScopedRepository(CampaignDeliveryEntity),
     EmailingOngoingStaleCronCommand,

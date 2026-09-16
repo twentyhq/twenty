@@ -5,6 +5,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { IconClick } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
@@ -48,7 +49,7 @@ export const ClickTrackingSwitch = () => {
 
   return (
     <>
-      {currentWorkspace && (
+      {isDefined(currentWorkspace) && (
         <Card rounded>
           <SettingsOptionCardContentSwitch
             Icon={IconClick}

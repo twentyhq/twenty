@@ -22,16 +22,12 @@ export class AddShortLinkAndMessageTrackingFastInstanceCommand
          "url" character varying NOT NULL,
          "urlHash" character(64) NOT NULL,
          CONSTRAINT "PK_shortLink_id" PRIMARY KEY ("id"),
-         CONSTRAINT "FK_shortLink_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+         CONSTRAINT "FK_e0d06726bc9fe1da76297867e04" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION
        )`,
     );
 
     await queryRunner.query(
       `CREATE UNIQUE INDEX "IDX_SHORT_LINK_URL_UNIQUE" ON "core"."shortLink" ("workspaceId", "messageCampaignId", "urlHash")`,
-    );
-
-    await queryRunner.query(
-      `CREATE INDEX "IDX_SHORT_LINK_MESSAGE_CAMPAIGN_ID" ON "core"."shortLink" ("workspaceId", "messageCampaignId")`,
     );
   }
 

@@ -1,27 +1,40 @@
 import { Injectable } from '@nestjs/common';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { DuplicatedMessageListDTO } from 'src/modules/emailing/dtos/duplicated-message-list.dto';
 import {
   MessageListException,
   MessageListExceptionCode,
 } from 'src/modules/emailing/exceptions/message-list.exception';
-import { MessageListAccessService } from 'src/modules/emailing/services/message-list-access.service';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
+
+const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.messageList.universalIdentifier,
+  STANDARD_OBJECTS.messageListMember.universalIdentifier,
+];
 
 @Injectable()
 export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
-    private readonly messageListAccessService: MessageListAccessService,
+    private readonly permissionsService: PermissionsService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
 
@@ -36,7 +49,7 @@ export class MessageListDuplicationService {
   }): Promise<DuplicatedMessageListDTO> {
     const workspaceId = authContext.workspace.id;
 
-    await this.messageListAccessService.assertCanReadAndUpdateLists({
+    await this.assertCanReadAndUpdateDuplicatedObjects({
       workspaceId,
       userWorkspaceId,
     });
@@ -60,6 +73,45 @@ export class MessageListDuplicationService {
         ),
       authContext,
     );
+  }
+
+  // messageList and messageListMember are system objects, for which the
+  // repositories skip role permission checks, so the role is checked here.
+  private async assertCanReadAndUpdateDuplicatedObjects({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<void> {
+    const [{ objectsPermissions }, { flatObjectMetadataMaps }] =
+      await Promise.all([
+        this.permissionsService.getUserWorkspacePermissions({
+          workspaceId,
+          userWorkspaceId,
+        }),
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatObjectMetadataMaps',
+        ]),
+      ]);
+
+    for (const objectUniversalIdentifier of DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS) {
+      const objectMetadata =
+        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
+      const objectPermissions = isDefined(objectMetadata)
+        ? objectsPermissions[objectMetadata.id]
+        : undefined;
+
+      if (
+        !objectPermissions?.canReadObjectRecords ||
+        !objectPermissions.canUpdateObjectRecords
+      ) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+    }
   }
 
   private async duplicateInTransaction({
