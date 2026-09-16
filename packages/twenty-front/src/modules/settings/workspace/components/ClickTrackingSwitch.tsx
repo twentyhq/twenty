@@ -15,7 +15,7 @@ export const ClickTrackingSwitch = () => {
     currentWorkspaceState,
   );
 
-  const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
+  const [updateWorkspace, { loading }] = useMutation(UpdateWorkspaceDocument);
 
   const handleChange = async () => {
     if (!currentWorkspace?.id) {
@@ -55,6 +55,7 @@ export const ClickTrackingSwitch = () => {
             title={t`Track link clicks`}
             description={t`Count clicks by routing campaign links through Twenty before the original page.`}
             checked={currentWorkspace.isCampaignClickTrackingEnabled}
+            disabled={loading}
             onChange={handleChange}
           />
         </Card>
