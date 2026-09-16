@@ -35,6 +35,27 @@ const CORE_WORKFLOW_VERSION_BY_ID = `
   }
 `;
 
+const CORE_WORKFLOW_LEGACY = `
+  query CoreWorkflow($workspaceWorkflowId: UUID!) {
+    coreWorkflow(workspaceWorkflowId: $workspaceWorkflowId) {
+      id
+      name
+      statuses
+    }
+  }
+`;
+
+const CORE_WORKFLOW_VERSIONS_LEGACY = `
+  query CoreWorkflowVersions($workspaceWorkflowId: UUID!) {
+    coreWorkflowVersions(workspaceWorkflowId: $workspaceWorkflowId) {
+      id
+      label
+      status
+      workspaceWorkflowVersionId
+    }
+  }
+`;
+
 const ABSENT_ID = '00000000-0000-4000-8000-000000000000';
 
 describe('core workflow id native queries (e2e)', () => {
@@ -128,6 +149,56 @@ describe('core workflow id native queries (e2e)', () => {
       coreWorkflowVersionId,
     );
     expect(response.body.data.coreWorkflowVersionById.label).toBe('v1');
+  });
+
+  it('agrees with the workspace-keyed query on the same workflow', async () => {
+    const [byCoreId, byWorkspaceId] = await Promise.all([
+      workflowGraphqlRequest(CORE_WORKFLOW_BY_ID, { id: coreWorkflowId }),
+      workflowGraphqlRequest(CORE_WORKFLOW_LEGACY, { workspaceWorkflowId }),
+    ]);
+
+    expect(byCoreId.body.errors).toBeUndefined();
+    expect(byWorkspaceId.body.errors).toBeUndefined();
+
+    expect(byCoreId.body.data.coreWorkflowById.id).toBe(
+      byWorkspaceId.body.data.coreWorkflow.id,
+    );
+    expect(byCoreId.body.data.coreWorkflowById.statuses).toEqual(
+      byWorkspaceId.body.data.coreWorkflow.statuses,
+    );
+  });
+
+  it('agrees with the workspace-keyed query on the version list, labels included', async () => {
+    const [byCoreId, byWorkspaceId] = await Promise.all([
+      workflowGraphqlRequest(CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID, {
+        coreWorkflowId,
+      }),
+      workflowGraphqlRequest(CORE_WORKFLOW_VERSIONS_LEGACY, {
+        workspaceWorkflowId,
+      }),
+    ]);
+
+    expect(byCoreId.body.errors).toBeUndefined();
+    expect(byWorkspaceId.body.errors).toBeUndefined();
+
+    const normalise = (
+      versions: {
+        id: string;
+        label: string;
+        status: string;
+        workspaceWorkflowVersionId: string | null;
+      }[],
+    ) =>
+      versions.map(({ id, label, status, workspaceWorkflowVersionId }) => ({
+        id,
+        label,
+        status,
+        workspaceWorkflowVersionId,
+      }));
+
+    expect(
+      normalise(byCoreId.body.data.coreWorkflowVersionsByCoreWorkflowId),
+    ).toEqual(normalise(byWorkspaceId.body.data.coreWorkflowVersions));
   });
 
   it('returns nothing for ids that exist in neither table', async () => {
