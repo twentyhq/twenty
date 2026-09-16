@@ -15,6 +15,7 @@ export type SlackPickerOption = {
   name: string;
   meta?: string;
   avatar?: SlackPickerOptionAvatar;
+  isSelected?: boolean;
 };
 
 const StyledDropdownPanel = styled.div`
@@ -64,7 +65,11 @@ export const SlackPickerDropdownPanel = ({
       onMouseDown={(event) => event.preventDefault()}
     >
       {options.map((option) => (
-        <div key={option.key} role="option" aria-selected={false}>
+        <div
+          key={option.key}
+          role="option"
+          aria-selected={option.isSelected === true}
+        >
           {isDefined(option.avatar) ? (
             <MenuItemAvatar
               avatar={{
@@ -81,6 +86,7 @@ export const SlackPickerDropdownPanel = ({
             <MenuItem
               text={option.name}
               contextualText={option.meta}
+              selected={option.isSelected}
               onClick={() => onSelect(option.key)}
             />
           )}

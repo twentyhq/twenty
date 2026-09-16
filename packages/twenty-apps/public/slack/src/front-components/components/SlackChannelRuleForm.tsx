@@ -92,11 +92,6 @@ export const SlackChannelRuleForm = ({
             meta={
               selectedChannel.isPrivate ? 'Private channel' : 'Public channel'
             }
-            avatar={{
-              type: 'squared',
-              placeholder: selectedChannel.name,
-              placeholderColorSeed: selectedChannel.slackChannelId,
-            }}
             changeLabel="Pick a different channel"
             onChangeRequest={() => setSelectedChannel(null)}
             disabled={isSubmitting}
