@@ -44,7 +44,7 @@ import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usag
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const STOCK_COUNTER_TTL_MS = 2 * 24 * 60 * 60 * 1000;
+const STOCK_COUNTER_TTL_MS = 60 * 60 * 1000;
 const STOCK_WARM_LOCK_OPTIONS = { ms: 50, maxRetries: 20, ttl: 10_000 };
 
 type StockArgs = {
