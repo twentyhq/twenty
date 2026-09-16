@@ -32,11 +32,18 @@ describe('Core REST API Merge endpoint', () => {
 
     await makeRestAPIRequest({
       method: 'get',
+      path: `/people/${TEST_PERSON_1_ID}`,
+    }).expect(200);
+
+    await makeRestAPIRequest({
+      method: 'get',
       path: `/people/${TEST_PERSON_2_ID}`,
     }).expect(404);
   });
 
   it('should not delete records on a dry run merge', async () => {
+    // dryRun returns a synthetic preview record (fresh id) and must not mutate
+    // the source records.
     await makeRestAPIRequest({
       method: 'patch',
       path: '/people/merge',
@@ -48,8 +55,13 @@ describe('Core REST API Merge endpoint', () => {
     })
       .expect(200)
       .expect((res) => {
-        expect(res.body.data.mergePerson.id).toBe(TEST_PERSON_1_ID);
+        expect(res.body.data.mergePerson.id).not.toBe(TEST_PERSON_2_ID);
       });
+
+    await makeRestAPIRequest({
+      method: 'get',
+      path: `/people/${TEST_PERSON_1_ID}`,
+    }).expect(200);
 
     await makeRestAPIRequest({
       method: 'get',
