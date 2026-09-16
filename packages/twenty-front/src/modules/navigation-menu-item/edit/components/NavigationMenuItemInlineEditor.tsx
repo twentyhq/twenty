@@ -148,6 +148,7 @@ export const NavigationMenuItemInlineEditor = ({
     <StyledNameInput
       instanceId={focusId}
       autoFocus
+      selectOnFocus
       copyButton={false}
       value={name}
       onChange={(nextName) => {
