@@ -361,10 +361,10 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
     expect.objectContaining({ name: 'Acme', employees: 10, position: 'first' }),
   );
   await expect(onRecordCreated).toHaveBeenCalledTimes(1);
-  await expect(onRecordCreated).toHaveBeenCalledWith({
-    record: expect.objectContaining({ name: 'Acme', employees: 10 }),
-    recordInput: expect.objectContaining({ name: 'Acme', position: 'first' }),
-  });
+  await expect(onRecordCreated).toHaveBeenCalledWith(
+    expect.objectContaining({ name: 'Acme', employees: 10 }),
+    expect.objectContaining({ name: 'Acme', position: 'first' }),
+  );
 };
 
 export const SubmitWithButton: Story = {
