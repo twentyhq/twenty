@@ -1,3 +1,4 @@
+import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { NavigationMenuItemInsertionPreview } from '@/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
@@ -53,6 +54,7 @@ type NavigationItemDropTargetProps = {
   compact?: boolean;
   dropTargetIdOverride?: string;
   highlightPosition?: 'top' | 'bottom';
+  previewSubItemState?: NavigationDrawerSubItemState;
 };
 
 export const NavigationItemDropTarget = ({
@@ -63,6 +65,7 @@ export const NavigationItemDropTarget = ({
   compact = false,
   dropTargetIdOverride,
   highlightPosition = 'bottom',
+  previewSubItemState,
 }: NavigationItemDropTargetProps) => {
   const { activeDropTargetId, forbiddenDropTargetId } = useContext(
     NavigationDropTargetContext,
@@ -83,6 +86,7 @@ export const NavigationItemDropTarget = ({
         folderId={folderId}
         index={index}
         sectionId={sectionId}
+        subItemState={previewSubItemState}
       />
       {children}
     </StyledDropTarget>

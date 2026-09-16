@@ -1,3 +1,4 @@
+import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { useCallback } from 'react';
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -14,6 +15,7 @@ type NavigationMenuItemInsertionPreviewProps = {
   folderId: string | null;
   index: number;
   sectionId: NavigationSections;
+  subItemState?: NavigationDrawerSubItemState;
 };
 
 const StyledPreview = styled.div<{ isInFolder: boolean }>`
@@ -25,6 +27,7 @@ export const NavigationMenuItemInsertionPreview = ({
   folderId,
   index,
   sectionId,
+  subItemState,
 }: NavigationMenuItemInsertionPreviewProps) => {
   const navigationMenuItemInsertionPreview = useAtomStateValue(
     navigationMenuItemInsertionPreviewState,
@@ -69,7 +72,7 @@ export const NavigationMenuItemInsertionPreview = ({
         Icon={getIcon('IconFold')}
         variant="placeholder"
         indentationLevel={folderId ? 2 : 1}
-        subItemState={folderId ? 'intermediate-after-selected' : undefined}
+        subItemState={subItemState}
       />
     </StyledPreview>
   );

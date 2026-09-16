@@ -119,14 +119,17 @@ export const NavigationMenuItemFolderDnd = ({
   const navigationMenuItemInsertionPreview = useAtomStateValue(
     navigationMenuItemInsertionPreviewState,
   );
-  const isAddingFavoriteFolderItem =
-    isEditInPlace &&
-    navigationMenuItemInsertionPreview?.section === 'favorite' &&
-    navigationMenuItemInsertionPreview.folderId === folderId;
-
   const section: NavigationMenuItemSection = isEditInPlace
     ? 'favorite'
     : 'workspace';
+  const insertionIndex =
+    navigationMenuItemInsertionPreview?.section === section &&
+    navigationMenuItemInsertionPreview.folderId === folderId
+      ? navigationMenuItemInsertionPreview.index
+      : null;
+  const hasInsertionPreview = isDefined(insertionIndex);
+  const isAddingFavoriteFolderItem = isEditInPlace && hasInsertionPreview;
+
   const isWorkspace = !isEditInPlace;
   const sectionId = isEditInPlace
     ? NavigationSections.FAVORITES
@@ -267,7 +270,19 @@ export const NavigationMenuItemFolderDnd = ({
     ? navigationMenuItems.length === 0
     : isLayoutCustomizationModeEnabled;
   const folderContentLength =
-    navigationMenuItems.length + (showAddMenuItem ? 1 : 0);
+    navigationMenuItems.length +
+    (showAddMenuItem && !isAddingFavoriteFolderItem ? 1 : 0) +
+    (hasInsertionPreview ? 1 : 0);
+  const getIndexWithInsertionPreview = (index: number) =>
+    isDefined(insertionIndex) && index >= insertionIndex ? index + 1 : index;
+  const selectedIndexWithInsertionPreview =
+    getIndexWithInsertionPreview(activeChildIndex);
+  const getPreviewSubItemState = (index: number) =>
+    getNavigationSubItemLeftAdornment({
+      index,
+      arrayLength: folderContentLength,
+      selectedIndex: selectedIndexWithInsertionPreview,
+    });
 
   const deleteModal =
     isEditInPlace && favoritesEdit.isModalOpened
@@ -336,6 +351,7 @@ export const NavigationMenuItemFolderDnd = ({
                   index={index}
                   sectionId={sectionId}
                   compact={isCompact}
+                  previewSubItemState={getPreviewSubItemState(index)}
                   dropTargetIdOverride={getDndKitDropTargetId(
                     folderContentDroppableId,
                     index,
@@ -353,9 +369,9 @@ export const NavigationMenuItemFolderDnd = ({
                 >
                   <NavigationMenuItemFolderSubItem
                     navigationMenuItem={navigationMenuItem}
-                    index={index}
+                    index={getIndexWithInsertionPreview(index)}
                     arrayLength={folderContentLength}
-                    selectedIndex={activeChildIndex}
+                    selectedIndex={selectedIndexWithInsertionPreview}
                     isDragging={isDragging}
                     rightOptions={
                       isEditInPlace ? (
@@ -389,6 +405,9 @@ export const NavigationMenuItemFolderDnd = ({
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
                 compact={isCompact}
+                previewSubItemState={getPreviewSubItemState(
+                  navigationMenuItems.length,
+                )}
                 dropTargetIdOverride={getDndKitDropTargetId(
                   folderContentDroppableId,
                   navigationMenuItems.length,
@@ -409,7 +428,9 @@ export const NavigationMenuItemFolderDnd = ({
                         variant="tertiary"
                         isSelectedInEditMode={false}
                         subItemState={getNavigationSubItemLeftAdornment({
-                          index: navigationMenuItems.length,
+                          index: getIndexWithInsertionPreview(
+                            navigationMenuItems.length,
+                          ),
                           arrayLength: folderContentLength,
                           selectedIndex: -1,
                         })}
