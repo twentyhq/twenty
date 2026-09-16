@@ -92,6 +92,9 @@ const MARKDOWN_COMPONENTS = {
       {processChildrenForChatReferences(children)}
     </a>
   ),
+  // The rendered markdown can come from third-party app READMEs, so images
+  // are never loaded, not even the ones written in markdown syntax
+  img: () => null,
   code: ({
     className,
     children,
