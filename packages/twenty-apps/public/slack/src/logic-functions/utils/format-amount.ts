@@ -21,7 +21,8 @@ export const formatAmount = (
         style: 'currency',
         currency: currencyCode,
       }).format(value);
-    } catch {}
+    } catch {
+    }
   }
 
   return new Intl.NumberFormat('en-US').format(value);
