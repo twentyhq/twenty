@@ -11,6 +11,6 @@ export default defineConfig({
   test: {
     testTimeout: 60_000,
     include: ['src/**/*.integration-test.ts'],
-    globalSetup: ['src/__tests__/global-setup.ts'],
+    globalSetup: ['src/__tests__/setup.ts', 'src/__tests__/teardown.ts'],
   },
 });
