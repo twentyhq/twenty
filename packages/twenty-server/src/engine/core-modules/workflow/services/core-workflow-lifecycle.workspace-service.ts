@@ -146,6 +146,12 @@ export class CoreWorkflowLifecycleWorkspaceService {
       },
     );
 
+    const isLastPublishedVersion =
+      coreWorkflow.lastPublishedCoreWorkflowVersionId ===
+        coreWorkflowVersion.id ||
+      coreWorkflow.lastPublishedVersionId ===
+        resolved.workspaceWorkflowVersionId;
+
     assertVersionCanBeActivated(
       {
         id: coreWorkflowVersion.id,
@@ -154,7 +160,9 @@ export class CoreWorkflowLifecycleWorkspaceService {
         steps,
       },
       {
-        lastPublishedVersionId: coreWorkflow.lastPublishedCoreWorkflowVersionId,
+        lastPublishedVersionId: isLastPublishedVersion
+          ? coreWorkflowVersion.id
+          : null,
       },
     );
 
@@ -177,8 +185,16 @@ export class CoreWorkflowLifecycleWorkspaceService {
       steps: steps ?? [],
     });
 
+    const currentlyActiveCoreVersion =
+      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+        where: {
+          coreWorkflowId: coreWorkflow.id,
+          status: CoreWorkflowVersionStatus.ACTIVE,
+        },
+      });
+
     const previousPublishedCoreVersionId =
-      coreWorkflow.lastPublishedCoreWorkflowVersionId;
+      currentlyActiveCoreVersion?.id ?? null;
 
     if (
       isDefined(previousPublishedCoreVersionId) &&
