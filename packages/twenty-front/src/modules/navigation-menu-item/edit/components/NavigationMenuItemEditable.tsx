@@ -27,6 +27,11 @@ import { NavigationMenuItemInlineEditor } from '@/navigation-menu-item/edit/comp
 const StyledRow = styled.div`
   min-width: 0;
   position: relative;
+
+  &:hover .navigation-drawer-item {
+    background: ${themeCssVariables.background.transparent.light};
+  }
+
   &:hover > [data-navigation-actions],
   &:focus-within > [data-navigation-actions] {
     opacity: 1;
@@ -35,14 +40,12 @@ const StyledRow = styled.div`
 `;
 const StyledActions = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.secondary};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  bottom: ${themeCssVariables.spacing['0.5']};
   display: flex;
   opacity: 0;
   pointer-events: none;
   position: absolute;
-  right: ${themeCssVariables.spacing[1]};
-  top: ${themeCssVariables.spacing[1]};
+  right: ${themeCssVariables.spacing['0.5']};
 `;
 
 type NavigationMenuItemEditableProps = {
