@@ -35,8 +35,6 @@ export const applyPersonInteractions = async (
   for (const [personId, interactions] of interactionsByPersonId) {
     const current = stateByPersonId.get(personId);
 
-    // A person the read did not return no longer exists, and upserting its id
-    // would insert it back rather than update it.
     if (!current) {
       continue;
     }

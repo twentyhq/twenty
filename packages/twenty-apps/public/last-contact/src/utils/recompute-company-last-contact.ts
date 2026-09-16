@@ -1,6 +1,5 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { chunk } from 'src/utils/chunk';
 import { collectExistingRecordIds } from 'src/utils/collect-existing-record-ids';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
 import {
@@ -8,8 +7,8 @@ import {
   upsertRecordsInBatches,
 } from 'src/utils/upsert-records-in-batches';
 
-// The server caps a group-by at this many groups per call.
-const GROUPS_PER_QUERY = 50;
+const PAGE_SIZE = 200;
+const MAX_SCAN_PAGES = 5;
 
 const EMPTY_LAST_CONTACT: Record<string, string | null> = {
   lastContactAt: null,
@@ -18,14 +17,17 @@ const EMPTY_LAST_CONTACT: Record<string, string | null> = {
 };
 
 type PersonNode = {
+  companyId?: string | null;
   lastContactAt?: string | null;
   lastContactItemMessage?: { id: string } | null;
   lastContactItemCalendarEvent?: { id: string } | null;
 };
 
-type PersonGroup = {
-  groupByDimensionValues?: unknown[] | null;
-  edges?: { node: PersonNode }[] | null;
+const PERSON_LAST_CONTACT_SELECTION = {
+  companyId: true,
+  lastContactAt: true,
+  lastContactItemMessage: { id: true },
+  lastContactItemCalendarEvent: { id: true },
 };
 
 const buildLastContactData = (
@@ -33,48 +35,87 @@ const buildLastContactData = (
 ): Record<string, string | null> => ({
   lastContactAt: person.lastContactAt ?? null,
   lastContactItemMessageId: person.lastContactItemMessage?.id ?? null,
-  lastContactItemCalendarEventId: person.lastContactItemCalendarEvent?.id ?? null,
+  lastContactItemCalendarEventId:
+    person.lastContactItemCalendarEvent?.id ?? null,
 });
 
-// Grouping people by their company and ordering each group by contact recency
-// yields every company's most recently contacted person in one call, where
-// asking company by company costs one indexed lookup each.
+const fetchTopPersonForCompany = async (
+  client: CoreApiClient,
+  companyId: string,
+): Promise<PersonNode | undefined> => {
+  const { people } = await executeWithRetry(() =>
+    client.query({
+      people: {
+        __args: {
+          filter: {
+            companyId: { eq: companyId },
+            lastContactAt: { is: 'NOT_NULL' },
+          },
+          orderBy: [{ lastContactAt: 'DescNullsLast' }],
+          first: 1,
+        },
+        edges: { node: PERSON_LAST_CONTACT_SELECTION },
+      },
+    }),
+  );
+
+  return people?.edges?.[0]?.node as PersonNode | undefined;
+};
+
 const collectTopPersonByCompanyId = async (
   client: CoreApiClient,
   companyIds: string[],
 ): Promise<Map<string, PersonNode>> => {
   const topPersonByCompanyId = new Map<string, PersonNode>();
+  const unresolvedCompanyIds = new Set(companyIds);
 
-  for (const ids of chunk(companyIds, GROUPS_PER_QUERY)) {
-    const { peopleGroupBy } = await executeWithRetry(() =>
+  let after: string | undefined;
+  let scannedPages = 0;
+  let hasNextPage = false;
+
+  do {
+    const { people } = await executeWithRetry(() =>
       client.query({
-        peopleGroupBy: {
+        people: {
           __args: {
-            groupBy: [{ company: { id: true } }],
             filter: {
-              companyId: { in: ids },
+              companyId: { in: companyIds },
               lastContactAt: { is: 'NOT_NULL' },
             },
-            orderByForRecords: [{ lastContactAt: 'DescNullsLast' }],
-            limit: GROUPS_PER_QUERY,
+            orderBy: [{ lastContactAt: 'DescNullsLast' }],
+            first: PAGE_SIZE,
+            after,
           },
-          groupByDimensionValues: true,
-          edges: {
-            node: {
-              lastContactAt: true,
-              lastContactItemMessage: { id: true },
-              lastContactItemCalendarEvent: { id: true },
-            },
-          },
+          edges: { node: PERSON_LAST_CONTACT_SELECTION },
+          pageInfo: { hasNextPage: true, endCursor: true },
         },
       }),
     );
 
-    for (const group of (peopleGroupBy ?? []) as PersonGroup[]) {
-      const companyId = group.groupByDimensionValues?.[0];
-      const topPerson = group.edges?.[0]?.node;
+    for (const edge of people?.edges ?? []) {
+      const person = edge.node as PersonNode;
+      const companyId = person.companyId;
 
-      if (typeof companyId === 'string' && topPerson) {
+      if (companyId && unresolvedCompanyIds.has(companyId)) {
+        topPersonByCompanyId.set(companyId, person);
+        unresolvedCompanyIds.delete(companyId);
+      }
+    }
+
+    scannedPages += 1;
+    hasNextPage = people?.pageInfo.hasNextPage ?? false;
+    after = hasNextPage ? (people?.pageInfo.endCursor ?? undefined) : undefined;
+  } while (
+    after &&
+    unresolvedCompanyIds.size > 0 &&
+    scannedPages < MAX_SCAN_PAGES
+  );
+
+  if (hasNextPage) {
+    for (const companyId of unresolvedCompanyIds) {
+      const topPerson = await fetchTopPersonForCompany(client, companyId);
+
+      if (topPerson) {
         topPersonByCompanyId.set(companyId, topPerson);
       }
     }
@@ -83,9 +124,6 @@ const collectTopPersonByCompanyId = async (
   return topPersonByCompanyId;
 };
 
-// A company's last contact mirrors the most recent contact of any of its people,
-// so it must be recomputed whenever that set of people changes rather than only
-// when an interaction happens.
 export const recomputeCompaniesLastContact = async (
   client: CoreApiClient,
   companyIds: string[],

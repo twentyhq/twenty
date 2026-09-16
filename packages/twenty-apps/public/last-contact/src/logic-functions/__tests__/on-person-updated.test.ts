@@ -36,13 +36,18 @@ const buildBatch = (
 beforeEach(() => {
   queryMock.mockReset();
   queryMock.mockImplementation((query) =>
-    query.peopleGroupBy
-      ? Promise.resolve({ peopleGroupBy: [] })
-      : Promise.resolve({
+    query.companies
+      ? Promise.resolve({
           companies: {
             edges: query.companies.__args.filter.id.in.map((id: string) => ({
               node: { id },
             })),
+            pageInfo: { hasNextPage: false, endCursor: null },
+          },
+        })
+      : Promise.resolve({
+          people: {
+            edges: [],
             pageInfo: { hasNextPage: false, endCursor: null },
           },
         }),

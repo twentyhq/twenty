@@ -136,8 +136,6 @@ export const recomputeOpportunitiesLastContact = async (
     personIds,
   );
 
-  // Every id here came back from the opportunities read above, so none of them
-  // can be inserted by the upsert.
   const upserts: RecordUpsert[] = [
     ...pointOfContactIdByOpportunityId,
   ].map(([opportunityId, pointOfContactId]) => ({

@@ -3,16 +3,9 @@ const INITIAL_RETRY_DELAY_MS = 2_000;
 const MAX_RETRY_DELAY_MS = 30_000;
 const MAX_JITTER_MS = 1_000;
 
-// The GraphQL rate limit answers HTTP 200 with an errors array, so it is only
-// visible through the extensions the server attaches. RATE_LIMITED comes from
-// the usage-limit path; LIMIT_REACHED is the throttler, which reports itself as
-// BAD_USER_INPUT and would otherwise look like a permanent failure.
 const RETRYABLE_ERROR_CODES = ['RATE_LIMITED', 'TIMEOUT'];
 const RETRYABLE_ERROR_SUB_CODES = ['LIMIT_REACHED'];
 
-// Transport failures never reach the GraphQL layer, so they carry no extensions
-// and have to be recognised from the message the client SDK builds out of the
-// status text and raw response body.
 const RETRYABLE_TRANSPORT_ERROR_PATTERN =
   /\b(429|1015|too many requests|502|503|504|bad gateway|gateway time-?out|service unavailable|timed? ?out|fetch failed|econnreset|econnrefused|socket hang up)\b/i;
 

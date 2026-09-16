@@ -172,9 +172,6 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      // A database event happens once. Dropping its trigger job loses the
-      // change for good, so an application over its enqueue budget has its
-      // jobs delayed into a later window instead of skipped.
       const { delayMs, isCapped } =
         await this.applicationJobEnqueueThrottlerService.reserveEnqueueDelay({
           applicationId,

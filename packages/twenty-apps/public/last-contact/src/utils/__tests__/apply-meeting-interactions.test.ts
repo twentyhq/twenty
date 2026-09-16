@@ -33,9 +33,6 @@ const buildClient = (participants: Record<string, unknown>[] = []) => {
 
     if (query.people) {
       const requestedIds: string[] = query.people.__args.filter.id.in;
-
-      // The company resolve and the last-contact state read both query people;
-      // only the former selects companyId.
       return Promise.resolve({
         people: buildPage(
           query.people.edges.node.companyId

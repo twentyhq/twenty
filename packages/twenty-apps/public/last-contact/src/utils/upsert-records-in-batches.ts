@@ -12,13 +12,6 @@ export type UpsertMutationName =
 
 export type RecordUpsert = { id: string } & Record<string, string | null>;
 
-// The API rate limit is consumed once per operation, and updateMany applies a
-// single payload to every record it matches. Writing one timestamp per record
-// therefore costs one call per record, which is what exhausts the application
-// budget during a mailbox sync. createMany with upsert matches on the primary
-// key and carries a distinct payload per record, so a whole batch is one call.
-// Callers must only pass ids they just read back, since an id matching nothing
-// is inserted rather than ignored.
 export const upsertRecordsInBatches = async (
   client: CoreApiClient,
   mutationName: UpsertMutationName,

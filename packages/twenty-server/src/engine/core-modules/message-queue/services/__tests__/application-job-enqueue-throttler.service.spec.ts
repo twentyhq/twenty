@@ -60,8 +60,6 @@ describe('ApplicationJobEnqueueThrottlerService', () => {
 
   it('delays by the time the missing tokens take to refill', async () => {
     throttlerService.getAvailableTokensCount.mockResolvedValue(400);
-
-    // 100 tokens missing at 500 per 60s refills in 12s.
     expect(await reserve(500)).toEqual({ delayMs: 12_000, isCapped: false });
   });
 

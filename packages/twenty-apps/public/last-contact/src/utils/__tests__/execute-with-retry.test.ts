@@ -1,10 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { executeWithRetry } from 'src/utils/execute-with-retry';
-
-// The client SDK surfaces a GraphQL error as an Error carrying the raw errors
-// array, and the API answers a rate limit with HTTP 200, so the extensions are
-// the only place the refusal is visible.
 const buildGraphqlError = (
   message: string,
   extensions: Record<string, unknown>,

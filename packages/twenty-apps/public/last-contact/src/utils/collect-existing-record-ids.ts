@@ -7,8 +7,6 @@ const PAGE_SIZE = 200;
 
 export type RecordQueryField = 'people' | 'companies' | 'opportunities';
 
-// An upsert inserts an id that matches nothing, so anything deleted between the
-// event and the handler has to be dropped from the batch before it is written.
 export const collectExistingRecordIds = async (
   client: CoreApiClient,
   queryField: RecordQueryField,

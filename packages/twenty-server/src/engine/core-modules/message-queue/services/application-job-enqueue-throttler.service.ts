@@ -9,8 +9,6 @@ import {
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
-// Ceiling on how far a deferred enqueue is pushed out. A burst larger than this
-// is worth seeing in the logs rather than silently scheduling jobs hours away.
 const MAX_ENQUEUE_DEFERRAL_MS = 60 * 60 * 1_000;
 
 const computeRefillDelayMs = ({
@@ -132,11 +130,6 @@ export class ApplicationJobEnqueueThrottlerService {
     ]);
   }
 
-  // Refusing an enqueue drops the jobs for good, which is only acceptable when
-  // the caller fires again on its own. For one-shot work, the budget is spent
-  // as a delay instead: tokens are always consumed, so a bucket already in
-  // debt pushes the next caller further out and the burst spreads rather than
-  // disappearing.
   async reserveEnqueueDelay({
     applicationId,
     applicationRegistrationId,

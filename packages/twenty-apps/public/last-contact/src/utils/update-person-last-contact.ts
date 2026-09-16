@@ -99,10 +99,6 @@ export const collectPersonLastContactState = async (
   return stateByPersonId;
 };
 
-// The recency comparison used to run server-side as a filter on the update. An
-// upsert carries no filter, so it is done here against the state read in the
-// same handler: a person whose stored contact is already newer is left out of
-// the batch entirely.
 export const buildPersonLastContactUpdate = (
   personId: string,
   current: PersonLastContactState,
