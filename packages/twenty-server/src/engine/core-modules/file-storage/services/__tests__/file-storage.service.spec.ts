@@ -7,6 +7,7 @@ import { type FileEntity } from 'src/engine/core-modules/file/entities/file.enti
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
+import { type ComputeUsedStock } from 'src/engine/core-modules/usage-limit/types/compute-used-stock.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
@@ -30,6 +31,7 @@ describe('FileStorageService', () => {
         .mockImplementation((_workspaceId, entity) => entity),
       withManager: jest.fn().mockReturnValue(transactionRepository),
       deleteAndReturn: jest.fn().mockResolvedValue([]),
+      createQueryBuilder: jest.fn(),
     };
 
     const driver = {
@@ -246,6 +248,7 @@ describe('FileStorageService', () => {
       resourceType: UsageResourceType.STORAGE,
       operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId: APPLICATION_ID },
+      computeUsedStock: expect.any(Function),
       cost: { bytes: 2, quantity: 1 },
     });
     expect(driver.writeFile).not.toHaveBeenCalled();
@@ -262,6 +265,7 @@ describe('FileStorageService', () => {
       resourceType: UsageResourceType.STORAGE,
       operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId: APPLICATION_ID },
+      computeUsedStock: expect.any(Function),
       cost: { bytes: 0, quantity: 1 },
     });
   });
@@ -276,6 +280,7 @@ describe('FileStorageService', () => {
       resourceType: UsageResourceType.STORAGE,
       operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId: APPLICATION_ID },
+      computeUsedStock: expect.any(Function),
       cost: { bytes: 12, quantity: 1 },
     });
   });
@@ -313,6 +318,7 @@ describe('FileStorageService', () => {
       resourceType: UsageResourceType.STORAGE,
       operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId: APPLICATION_ID },
+      computeUsedStock: expect.any(Function),
       cost: { bytes: 1, quantity: 0 },
     });
     expect(usageLimitStockService.acquireStock).toHaveBeenCalledWith({
@@ -321,6 +327,75 @@ describe('FileStorageService', () => {
       operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId: APPLICATION_ID },
       cost: { bytes: 1, quantity: 0 },
+    });
+  });
+
+  describe('recount handed to the stock', () => {
+    const buildQueryBuilder = () => {
+      const queryBuilder = {
+        select: jest.fn(),
+        addSelect: jest.fn(),
+        where: jest.fn(),
+        withDeleted: jest.fn(),
+        andWhere: jest.fn(),
+        getRawOne: jest
+          .fn()
+          .mockResolvedValue({ quantity: '3', bytes: '1024' }),
+      };
+
+      queryBuilder.select.mockReturnValue(queryBuilder);
+      queryBuilder.addSelect.mockReturnValue(queryBuilder);
+      queryBuilder.where.mockReturnValue(queryBuilder);
+      queryBuilder.withDeleted.mockReturnValue(queryBuilder);
+      queryBuilder.andWhere.mockReturnValue(queryBuilder);
+
+      return queryBuilder;
+    };
+
+    const buildServiceWithRecount = async () => {
+      const { service, usageLimitStockService, fileRepository } =
+        buildService(null);
+      const queryBuilder = buildQueryBuilder();
+
+      fileRepository.createQueryBuilder.mockReturnValue(queryBuilder);
+
+      await writeFile(service, 'a-freshly-generated-identifier');
+
+      const [{ computeUsedStock }] = usageLimitStockService.assertStockAvailable
+        .mock.calls[0] as [{ computeUsedStock: ComputeUsedStock }];
+
+      return { computeUsedStock, queryBuilder };
+    };
+
+    it('should count every row of the workspace, soft-deleted ones included', async () => {
+      const { computeUsedStock, queryBuilder } =
+        await buildServiceWithRecount();
+
+      await expect(
+        computeUsedStock({ spenderType: 'workspace', spenderId: null }),
+      ).resolves.toEqual({ quantity: 3, bytes: 1024 });
+
+      expect(queryBuilder.where).toHaveBeenCalledWith(
+        'file.workspaceId = :workspaceId',
+        { workspaceId: WORKSPACE_ID },
+      );
+      expect(queryBuilder.withDeleted).toHaveBeenCalledTimes(1);
+      expect(queryBuilder.andWhere).not.toHaveBeenCalled();
+    });
+
+    it('should narrow the recount to the application the limit is scoped to', async () => {
+      const { computeUsedStock, queryBuilder } =
+        await buildServiceWithRecount();
+
+      await computeUsedStock({
+        spenderType: 'application',
+        spenderId: APPLICATION_ID,
+      });
+
+      expect(queryBuilder.andWhere).toHaveBeenCalledWith(
+        'file.applicationId = :applicationId',
+        { applicationId: APPLICATION_ID },
+      );
     });
   });
 });

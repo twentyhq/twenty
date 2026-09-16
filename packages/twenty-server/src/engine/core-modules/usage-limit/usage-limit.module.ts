@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
@@ -35,7 +34,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       UserWorkspaceEntity,
       AgentEntity,
       LogicFunctionEntity,
-      FileEntity,
     ]),
     WorkspaceCacheModule,
     PermissionsModule,
@@ -61,7 +59,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(UserWorkspaceEntity),
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(LogicFunctionEntity),
-    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
     UsageLimitQuotaService,

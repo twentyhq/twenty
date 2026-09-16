@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
@@ -11,7 +11,6 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/consume-quota-counters-script.constant';
@@ -22,10 +21,10 @@ import {
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
+import { type ComputeUsedStock } from 'src/engine/core-modules/usage-limit/types/compute-used-stock.type';
 import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
 import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
-import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
 import { buildStockCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter-key.util';
 import { buildStockCounter } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter.util';
 import { buildStockExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-stock-exhausted-scope.util';
@@ -36,10 +35,8 @@ import { findExhaustedStockCounter } from 'src/engine/core-modules/usage-limit/u
 import { findStockLimitsForSpenders } from 'src/engine/core-modules/usage-limit/utils/find-stock-limits-for-spenders.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const STOCK_COUNTER_TTL_MS = 2 * 24 * 60 * 60 * 1000;
@@ -59,8 +56,6 @@ export class UsageLimitStockService {
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
     private readonly cacheStorage: CacheStorageService,
-    @InjectWorkspaceScopedRepository(FileEntity)
-    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly cacheLockService: CacheLockService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
@@ -69,8 +64,12 @@ export class UsageLimitStockService {
 
   async assertStockAvailable({
     cost,
+    computeUsedStock,
     ...args
-  }: StockArgs & { cost: StockCost }): Promise<void> {
+  }: StockArgs & {
+    cost: StockCost;
+    computeUsedStock: ComputeUsedStock;
+  }): Promise<void> {
     try {
       const counters = await this.buildCounters(args);
 
@@ -81,6 +80,7 @@ export class UsageLimitStockService {
       const remainings = await this.readRemainings({
         workspaceId: args.workspaceId,
         counters,
+        computeUsedStock,
       });
 
       const exhausted = findExhaustedStockCounter({
@@ -237,9 +237,11 @@ export class UsageLimitStockService {
   private async readRemainings({
     workspaceId,
     counters,
+    computeUsedStock,
   }: {
     workspaceId: string;
     counters: StockCounter[];
+    computeUsedStock: ComputeUsedStock;
   }): Promise<(number | null)[]> {
     const remainings = await this.cacheStorage.mget<number>(
       counters.map((counter) => counter.key),
@@ -249,15 +251,17 @@ export class UsageLimitStockService {
       return remainings;
     }
 
-    return this.warmColdCounters({ workspaceId, counters });
+    return this.warmColdCounters({ workspaceId, counters, computeUsedStock });
   }
 
   private async warmColdCounters({
     workspaceId,
     counters,
+    computeUsedStock,
   }: {
     workspaceId: string;
     counters: StockCounter[];
+    computeUsedStock: ComputeUsedStock;
   }): Promise<(number | null)[]> {
     return this.cacheLockService.withLock(
       async () => {
@@ -288,7 +292,10 @@ export class UsageLimitStockService {
               async ([scopeKey, counter]) =>
                 [
                   scopeKey,
-                  await this.computeUsedStock({ workspaceId, counter }),
+                  await computeUsedStock({
+                    spenderType: counter.spenderType,
+                    spenderId: counter.spenderId,
+                  }),
                 ] as const,
             ),
           ),
@@ -314,49 +321,6 @@ export class UsageLimitStockService {
       buildStockWarmLockKey(workspaceId),
       STOCK_WARM_LOCK_OPTIONS,
     );
-  }
-
-  private computeUsedStock({
-    workspaceId,
-    counter,
-  }: {
-    workspaceId: string;
-    counter: StockCounter;
-  }): Promise<Record<StockMeter, number>> {
-    switch (counter.resourceType) {
-      case UsageResourceType.STORAGE:
-        return this.computeStorageUsedStock({ workspaceId, counter });
-      default:
-        return assertUnreachable(counter.resourceType);
-    }
-  }
-
-  private async computeStorageUsedStock({
-    workspaceId,
-    counter,
-  }: {
-    workspaceId: string;
-    counter: StockCounter;
-  }): Promise<Record<StockMeter, number>> {
-    const query = this.fileRepository
-      .createQueryBuilder('file')
-      .select('COUNT(*)::bigint', 'quantity')
-      .addSelect('COALESCE(SUM(file.size), 0)::bigint', 'bytes')
-      .where('file.workspaceId = :workspaceId', { workspaceId })
-      .withDeleted();
-
-    if (counter.spenderType === 'application') {
-      query.andWhere('file.applicationId = :applicationId', {
-        applicationId: counter.spenderId,
-      });
-    }
-
-    const used = await query.getRawOne<{ quantity: string; bytes: string }>();
-
-    return {
-      quantity: Number(used?.quantity ?? 0),
-      bytes: Number(used?.bytes ?? 0),
-    };
   }
 
   private admitOnFailure({

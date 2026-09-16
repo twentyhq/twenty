@@ -29,6 +29,8 @@ import { buildStockDelta } from 'src/engine/core-modules/file-storage/utils/buil
 import { STOCK_METERS } from 'src/engine/core-modules/usage-limit/constants/usage-meters.constant';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
+import { type StockMeter } from 'src/engine/core-modules/usage-limit/types/stock-meter.type';
+import { type StockScope } from 'src/engine/core-modules/usage-limit/types/stock-scope.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -70,7 +72,38 @@ export class FileStorageService {
       operationType: UsageOperationType.STORAGE_FILE,
       spenders: { applicationId },
       cost: delta,
+      computeUsedStock: (scope) =>
+        this.computeStorageUsedStock({ workspaceId, ...scope }),
     });
+  }
+
+  // Soft-deleted rows keep their stock until the hard delete releases it
+  private async computeStorageUsedStock({
+    workspaceId,
+    spenderType,
+    spenderId,
+  }: StockScope & { workspaceId: string }): Promise<
+    Record<StockMeter, number>
+  > {
+    const query = this.fileRepository
+      .createQueryBuilder('file')
+      .select('COUNT(*)::bigint', 'quantity')
+      .addSelect('COALESCE(SUM(file.size), 0)::bigint', 'bytes')
+      .where('file.workspaceId = :workspaceId', { workspaceId })
+      .withDeleted();
+
+    if (spenderType === 'application') {
+      query.andWhere('file.applicationId = :applicationId', {
+        applicationId: spenderId,
+      });
+    }
+
+    const used = await query.getRawOne<{ quantity: string; bytes: string }>();
+
+    return {
+      quantity: Number(used?.quantity ?? 0),
+      bytes: Number(used?.bytes ?? 0),
+    };
   }
 
   private async deleteFileRows({
