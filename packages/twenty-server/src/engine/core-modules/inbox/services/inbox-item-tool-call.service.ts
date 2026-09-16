@@ -546,7 +546,7 @@ export class InboxItemToolCallService {
     if (!isDefined(toolCall)) {
       throw new InboxException(
         `Inbox item tool call ${inboxItemToolCallId} not found`,
-        InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+        InboxExceptionCode.INBOX_ITEM_TOOL_CALL_NOT_FOUND,
       );
     }
 

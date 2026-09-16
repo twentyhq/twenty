@@ -13,6 +13,7 @@ export const InboxExceptionCode = appendCommonExceptionCode({
   UNKNOWN_INBOX_ROLE: 'UNKNOWN_INBOX_ROLE',
   UNKNOWN_INBOX_RECIPIENT: 'UNKNOWN_INBOX_RECIPIENT',
   INBOX_ITEM_NOT_FOUND: 'INBOX_ITEM_NOT_FOUND',
+  INBOX_ITEM_TOOL_CALL_NOT_FOUND: 'INBOX_ITEM_TOOL_CALL_NOT_FOUND',
   INBOX_ITEM_CHANGED: 'INBOX_ITEM_CHANGED',
   INVALID_INBOX_ACTION: 'INVALID_INBOX_ACTION',
   INVALID_INBOX_TOOL_CALL_INPUT: 'INVALID_INBOX_TOOL_CALL_INPUT',
@@ -32,6 +33,8 @@ const getInboxExceptionUserFriendlyMessage = (
       return msg`This person is not a member of this workspace.`;
     case InboxExceptionCode.INBOX_ITEM_NOT_FOUND:
       return msg`This inbox item no longer exists.`;
+    case InboxExceptionCode.INBOX_ITEM_TOOL_CALL_NOT_FOUND:
+      return msg`This step of the plan no longer exists.`;
     case InboxExceptionCode.INBOX_ITEM_CHANGED:
       return msg`Someone else worked on this item. Reload and try again.`;
     case InboxExceptionCode.INVALID_INBOX_ACTION:

@@ -18,6 +18,7 @@ export class InboxGraphqlApiExceptionFilter implements ExceptionFilter {
   catch(exception: InboxException) {
     switch (exception.code) {
       case InboxExceptionCode.INBOX_ITEM_NOT_FOUND:
+      case InboxExceptionCode.INBOX_ITEM_TOOL_CALL_NOT_FOUND:
       case InboxExceptionCode.UNKNOWN_INBOX_QUEUE:
         throw new NotFoundError(exception);
       case InboxExceptionCode.INBOX_ITEM_CHANGED:

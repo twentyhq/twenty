@@ -841,6 +841,23 @@ describe('InboxItemToolCallService', () => {
       );
     });
 
+    // A missing step is not a missing item: the client keeps the item and
+    // only drops the row
+    it('should refuse to edit a step that no longer exists', async () => {
+      inboxItemToolCallRepository.findOne.mockResolvedValue(null);
+
+      await expect(
+        service.updateInput({
+          ...actorArgs,
+          inboxItemToolCallId: 'tool-call-id',
+          editedInput: {},
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_TOOL_CALL_NOT_FOUND,
+      });
+      expect(inboxItemToolCallRepository.update).not.toHaveBeenCalled();
+    });
+
     it('should refuse to edit a call that went through', async () => {
       inboxItemToolCallRepository.findOne.mockResolvedValue(
         buildToolCall({ status: InboxItemToolCallStatus.EXECUTED }),

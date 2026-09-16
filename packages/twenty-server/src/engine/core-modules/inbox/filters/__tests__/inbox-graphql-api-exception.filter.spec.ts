@@ -19,6 +19,7 @@ describe('InboxGraphqlApiExceptionFilter', () => {
   // failure, so a missing item reads as the server being broken
   it.each([
     [InboxExceptionCode.INBOX_ITEM_NOT_FOUND, NotFoundError],
+    [InboxExceptionCode.INBOX_ITEM_TOOL_CALL_NOT_FOUND, NotFoundError],
     [InboxExceptionCode.UNKNOWN_INBOX_QUEUE, NotFoundError],
     [InboxExceptionCode.INBOX_ITEM_CHANGED, ConflictError],
     [InboxExceptionCode.INVALID_INBOX_ACTION, UserInputError],
