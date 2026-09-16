@@ -41,10 +41,10 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         fieldName: 'id',
         type: FieldMetadataType.UUID,
         label: i18nLabel(
-          msg({ message: `Id`, context: 'fieldMetadata.label' }),
+          msg({ message: `ID`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
-          msg({ message: `Id`, context: 'fieldMetadata.description' }),
+          msg({ message: `ID`, context: 'fieldMetadata.description' }),
         ),
         icon: 'Icon123',
         isSystem: true,
@@ -254,7 +254,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         type: FieldMetadataType.TEXT,
         label: i18nLabel(
           msg({
-            message: `Message External Id`,
+            message: `Message External ID`,
             context: 'fieldMetadata.label',
           }),
         ),
@@ -281,7 +281,7 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         type: FieldMetadataType.TEXT,
         label: i18nLabel(
           msg({
-            message: `Thread External Id`,
+            message: `Thread External ID`,
             context: 'fieldMetadata.label',
           }),
         ),
@@ -353,13 +353,13 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         type: FieldMetadataType.UUID,
         label: i18nLabel(
           msg({
-            message: `Message Channel Id`,
+            message: `Message Channel ID`,
             context: 'fieldMetadata.label',
           }),
         ),
         description: i18nLabel(
           msg({
-            message: `Message Channel Id`,
+            message: `Message Channel ID`,
             context: 'fieldMetadata.description',
           }),
         ),
@@ -380,11 +380,11 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         morphId: null,
         fieldName: 'messageThread',
         label: i18nLabel(
-          msg({ message: `Message Thread Id`, context: 'fieldMetadata.label' }),
+          msg({ message: `Message Thread ID`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
           msg({
-            message: `Message Thread Id`,
+            message: `Message Thread ID`,
             context: 'fieldMetadata.description',
           }),
         ),
@@ -412,10 +412,10 @@ export const buildMessageChannelMessageAssociationStandardFlatFieldMetadatas =
         morphId: null,
         fieldName: 'message',
         label: i18nLabel(
-          msg({ message: `Message Id`, context: 'fieldMetadata.label' }),
+          msg({ message: `Message ID`, context: 'fieldMetadata.label' }),
         ),
         description: i18nLabel(
-          msg({ message: `Message Id`, context: 'fieldMetadata.description' }),
+          msg({ message: `Message ID`, context: 'fieldMetadata.description' }),
         ),
         icon: 'IconHash',
         isNullable: true,

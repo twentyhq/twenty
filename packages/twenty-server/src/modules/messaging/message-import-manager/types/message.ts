@@ -53,7 +53,16 @@ export type MessageParticipant = Omit<
   | 'messageId'
   | 'messageCampaign'
   | 'messageCampaignId'
->;
+> &
+  ExplicitParticipantIdentity;
+
+// Email providers leave these unset and the email matcher fills them in
+// afterwards. A source whose handles are not email addresses supplies them
+// up front instead, because nothing can derive them from the handle.
+export type ExplicitParticipantIdentity = {
+  personId?: string | null;
+  workspaceMemberId?: string | null;
+};
 
 export type MessageWithParticipants = Message & {
   participants: MessageParticipant[];

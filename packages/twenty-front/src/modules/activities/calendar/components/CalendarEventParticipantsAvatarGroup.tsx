@@ -3,7 +3,7 @@ import { type CalendarEventCallRecording } from '@/activities/calendar/types/Cal
 import { type CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { isTimelineCalendarEventParticipant } from '@/activities/calendar/types/guards/IsTimelineCalendarEventParticipant';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, AvatarGroup } from 'twenty-ui/data-display';
+import { Avatar, AvatarGroup } from 'twenty-ui/primitives/data-display';
 import { type TimelineCalendarEventParticipant } from '~/generated/graphql';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -64,16 +64,16 @@ export const CalendarEventParticipantsAvatarGroup = ({
             key={[participant.workspaceMemberId, participant.displayName]
               .filter(isDefined)
               .join('-')}
-            avatarUrl={getAbsoluteImageUrl(participant.avatarUrl)}
-            placeholder={
+            src={getAbsoluteImageUrl(participant.avatarUrl)}
+            name={
               participant.firstName && participant.lastName
                 ? `${participant.firstName} ${participant.lastName}`
                 : participant.displayName
             }
-            placeholderColorSeed={
+            colorSeed={
               participant.workspaceMemberId || participant.personId || ''
             }
-            type="rounded"
+            shape="circle"
           />
         )),
       ]}

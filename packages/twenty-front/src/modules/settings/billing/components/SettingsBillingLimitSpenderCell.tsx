@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -54,11 +54,11 @@ export const SettingsBillingLimitSpenderCell = ({
     if (isWorkspaceWide) {
       return (
         <Avatar
-          placeholder={name}
-          avatarUrl={getAbsoluteImageUrl(
+          name={name}
+          src={getAbsoluteImageUrl(
             currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
           )}
-          type="squared"
+          shape="square"
           size="sm"
         />
       );
@@ -67,9 +67,9 @@ export const SettingsBillingLimitSpenderCell = ({
     if (row.spenderType === 'userWorkspace') {
       return (
         <Avatar
-          placeholder={name}
-          avatarUrl={row.spenderAvatarUrl}
-          type="rounded"
+          name={name}
+          src={row.spenderAvatarUrl}
+          shape="circle"
           size="sm"
         />
       );
@@ -78,9 +78,9 @@ export const SettingsBillingLimitSpenderCell = ({
     if (row.spenderType === 'application') {
       return (
         <Avatar
-          placeholder={name}
-          avatarUrl={row.spenderAvatarUrl}
-          type="squared"
+          name={name}
+          src={row.spenderAvatarUrl}
+          shape="square"
           size="sm"
         />
       );

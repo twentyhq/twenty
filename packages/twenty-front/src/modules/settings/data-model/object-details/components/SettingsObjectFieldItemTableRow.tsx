@@ -26,9 +26,9 @@ import {
   IconPlus,
   useIcons,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
+import { LightIconButton } from 'twenty-ui/primitives/input';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';

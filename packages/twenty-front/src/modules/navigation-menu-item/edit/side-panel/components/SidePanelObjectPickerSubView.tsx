@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { TintedIconTile } from 'twenty-ui/data-display';
+import { TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconSettings } from 'twenty-ui/icon';
 
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';

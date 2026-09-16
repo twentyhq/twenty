@@ -29,7 +29,7 @@ import {
   NavigationMenuItemType,
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconLock, useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -149,14 +149,14 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
   const Icon = isRecord
     ? () => (
         <Avatar
-          type={
+          shape={
             objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
-              ? 'squared'
-              : 'rounded'
+              ? 'square'
+              : 'circle'
           }
-          avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
-          placeholderColorSeed={navigationMenuItem!.targetRecordId ?? undefined}
-          placeholder={itemLabel}
+          src={getAbsoluteImageUrl(recordIdentifier?.avatarUrl)}
+          colorSeed={navigationMenuItem!.targetRecordId ?? undefined}
+          name={itemLabel}
         />
       )
     : isViewWithResolvedView && isDefined(view?.icon)

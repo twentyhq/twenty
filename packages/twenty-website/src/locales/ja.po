@@ -8,7 +8,7 @@ msgstr ""
 "Language: ja\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 12:23\n"
+"PO-Revision-Date: 2026-09-15 14:21\n"
 "Last-Translator: \n"
 "Language-Team: Japanese\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -821,15 +821,15 @@ msgstr "アカウントオーナー"
 msgid "Action"
 msgstr "アクション"
 
-#. js-lingui-id: Kqfsda
+#. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
-msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
-msgstr "チェックアウト後にTwentyエンタープライズライセンスをアクティベートし、セルフホスト環境のインスタンスにキーをコピーしてください。"
+msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
+msgstr "決済後にTwenty Organizationライセンスをアクティベートし、キーをセルフホスト型インスタンスにコピーしてください。"
 
-#. js-lingui-id: muhZ+X
+#. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Activating your enterprise license…"
-msgstr "エンタープライズライセンスを有効化しています…"
+msgid "Activating your Organization license…"
+msgstr "Organizationライセンスを有効化しています…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2157,10 +2157,10 @@ msgstr "コピー"
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "レコードページから直接、通話録音の文字起こしまたは動画リンクをコピーできます。"
 
-#. js-lingui-id: 7qTWwB
+#. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Copy the enterprise key above."
-msgstr "上のエンタープライズキーをコピーしてください。"
+msgid "Copy the Organization key above."
+msgstr "上のOrganizationキーをコピーしてください。"
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2996,11 +2996,6 @@ msgstr "Elevate ConsultingはTwentyを請求、Teams、リソース管理、そ�
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "ElevateのCEOはTwentyに強い感銘を受け、社内のセットアップが完了する前からクライアントに推奨し始めました。チームは、特定の業務要件に合わせたカスタムプロダクトのバックエンドとしてなど、コンサルティング案件の一部としてTwentyをクライアントプロジェクトに組み込むことを検討しています。"
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "メール & カレンダー"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -3042,6 +3037,7 @@ msgid "Emails"
 msgstr "メール"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "メール & カレンダー"
@@ -3151,16 +3147,6 @@ msgstr "有効なURLを入力してください（http:// または https:// で
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Enterprise"
 msgstr "Enterprise"
-
-#. js-lingui-id: 87BcPj
-#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
-msgid "Enterprise *activation*"
-msgstr "エンタープライズの*アクティベーション*"
-
-#. js-lingui-id: NTskGY
-#: src/platform/routing/static-website-routes.ts
-msgid "Enterprise Activation | Twenty"
-msgstr "Enterprise Activation | Twenty"
 
 #. js-lingui-id: aDpB6R
 #: src/sections/compare/compare-data.ts
@@ -3331,10 +3317,10 @@ msgstr "ロングラン決定！"
 msgid "Extra Dataverse storage (10 GB)"
 msgstr "追加の Dataverse ストレージ (10 GB)"
 
-#. js-lingui-id: tX4pRm
+#. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Failed to activate enterprise key. Please try again."
-msgstr "エンタープライズキーのアクティベーションに失敗しました。もう一度お試しください。"
+msgid "Failed to activate Organization key. Please try again."
+msgstr "Organizationキーのアクティベーションに失敗しました。もう一度お試しください。"
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -3401,11 +3387,6 @@ msgstr "注目のアプリ"
 msgid "Feb"
 msgstr "Feb"
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "フィールドレベル権限"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3424,6 +3405,11 @@ msgstr "フィールドウィジェットが、より多くのリレーション
 #. js-lingui-id: e6BgMV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
+msgstr "フィールドレベル権限"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
 msgstr "フィールドレベル権限"
 
 #. js-lingui-id: RnX5oc
@@ -5630,10 +5616,10 @@ msgstr "導入事例を開く: {0}"
 msgid "Open menu"
 msgstr "メニューを開く"
 
-#. js-lingui-id: pkXQA+
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Enterprise."
-msgstr "Twentyセルフホストインスタンスの設定を開き、Settings → Enterpriseに進んでください。"
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
+msgstr "Twentyセルフホストインスタンスの設定を開き、Admin Panel → Organizationに進んでください。"
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5665,6 +5651,16 @@ msgstr "案件"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Organization"
 msgstr "Organization"
+
+#. js-lingui-id: hjEu3O
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
+msgid "Organization *activation*"
+msgstr "組織の*アクティベーション*"
+
+#. js-lingui-id: CKppYD
+#: src/platform/routing/static-website-routes.ts
+msgid "Organization Activation | Twenty"
+msgstr "組織のアクティベーション | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -6820,6 +6816,7 @@ msgstr "セルフホストのワークスペースで、従量課金のサポー
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6842,11 +6839,6 @@ msgstr "セルフオンボーディング"
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "セルフサービス、パートナーは任意"
-
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "Selfhosting"
 
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -8156,14 +8148,14 @@ msgstr "Twenty vs SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty vs SAP Sales Cloud の料金 — 本当のコスト比較"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "二要素認証"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
+msgstr "二要素認証"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
 msgstr "二要素認証"
 
 #. js-lingui-id: O+vc/1
@@ -8518,14 +8510,10 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "ブリーフを送信できませんでした。しばらくしてから、もう一度お試しください。"
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "問題をその場しのぎで覆い隠すつもりはありませんでした。大規模な利用にも耐えうる、機関が頼れるものを構築したかったのです。そのためには、私たちが想定していたあらゆる複雑さを支えられる、十分に堅牢な土台から始める必要がありました。"
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "私たちは問題にパッチを当ててやり過ごしたくはありませんでした。大規模でも機関が安心して頼れるものを作りたかったのです。そのためには、私たちが思い描いた複雑さのすべてを支えられるだけの、十分に堅牢な基盤から始める必要がありました。"
 
 #. js-lingui-id: GVxbgf
 #: src/platform/releases/ReleaseNotes.tsx
@@ -9165,16 +9153,6 @@ msgstr "あなたのブリーフ"
 msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
 msgstr "チェックアウトが完了しました。以下の手順に従って、ライセンスキーをTwentyインスタンスにコピーしてください。"
 
-#. js-lingui-id: krHgj1
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise key"
-msgstr "エンタープライズキー"
-
-#. js-lingui-id: +dxjCu
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise license has been activated successfully."
-msgstr "エンタープライズライセンスは正常にアクティベートされました。"
-
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts
 msgid "Your name *"
@@ -9184,6 +9162,16 @@ msgstr "お名前 *"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Your network, fully mapped."
 msgstr "ネットワーク全体を完全に可視化。"
+
+#. js-lingui-id: 91Ysnw
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization key"
+msgstr "組織キー"
+
+#. js-lingui-id: sarabV
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization license has been activated successfully."
+msgstr "組織ライセンスが正常にアクティベートされました。"
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

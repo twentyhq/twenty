@@ -12,10 +12,10 @@ import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag, type TagColor } from 'twenty-ui/data-display';
+import { Tag, type TagColor } from 'twenty-ui/primitives/data-display';
 import { IconCopy } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { Button } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetSigningKeysDocument,
@@ -112,7 +112,11 @@ export const SettingsAdminSigningKeysTable = () => {
                 key={signingKey.id}
                 gridTemplateColumns={SIGNING_KEYS_GRID_TEMPLATE_COLUMNS}
               >
-                <TableCell overflow="hidden" gap={themeCssVariables.spacing[1]}>
+                <TableCell
+                  color={themeCssVariables.font.color.primary}
+                  overflow="hidden"
+                  gap={themeCssVariables.spacing[1]}
+                >
                   <OverflowingTextWithTooltip
                     text={signingKey.id}
                     tooltipContent={t`Created on ${beautifyExactDateTime(signingKey.createdAt)}`}

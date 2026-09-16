@@ -38,6 +38,10 @@ export default defineLogicFunction({
             label: 'Update fields',
             enum: [...UPDATE_FIELDS_OPTION_VALUES],
           },
+          minLikelihood: {
+            type: 'number',
+            label: 'Minimum likelihood (1-10)',
+          },
         },
       },
     ],

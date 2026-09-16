@@ -24,10 +24,9 @@ export const buildRecordShareCondition = ({
   const accessLevelsParameterName = `recordShareAccessLevels_${parameterSuffix}`;
 
   const recordShareAlias = escapeIdentifier(`${tableAlias}_recordShare`);
-  const quotedTableAlias = escapeIdentifier(tableAlias);
 
   const conditions = [
-    `${recordShareAlias}."recordId" = ${quotedTableAlias}."id"`,
+    `${recordShareAlias}."recordId" = ${escapeIdentifier(tableAlias)}."id"`,
     `${recordShareAlias}."objectMetadataId" = :${objectMetadataIdParameterName}`,
     `${recordShareAlias}."principalId" = ANY(:${principalIdsParameterName})`,
     `${recordShareAlias}."accessLevel" IN (:...${accessLevelsParameterName})`,

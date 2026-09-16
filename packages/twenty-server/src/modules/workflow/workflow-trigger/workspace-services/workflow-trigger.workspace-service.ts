@@ -28,6 +28,7 @@ import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standa
 import { assertWorkflowVersionTriggerIsDefined } from 'src/modules/workflow/common/utils/assert-workflow-version-trigger-is-defined.util';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { getPickRecordLoadBalanceConfigError } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/get-pick-record-load-balance-config-error.util';
+import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import {
   type WorkflowAction,
@@ -58,6 +59,7 @@ export class WorkflowTriggerWorkspaceService {
   private readonly logger = new Logger(WorkflowTriggerWorkspaceService.name);
 
   constructor(
+    private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly codeStepBuildService: CodeStepBuildService,
@@ -135,6 +137,14 @@ export class WorkflowTriggerWorkspaceService {
           WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
         );
       }
+
+      await this.workflowVersionValidationWorkspaceService.assertWorkflowVersionIsActivableOrThrow(
+        {
+          workspaceId,
+          trigger: workflowVersion.trigger,
+          steps: workflowVersion.steps,
+        },
+      );
 
       assertVersionCanBeActivated(workflowVersion, workflow);
 
@@ -284,11 +294,7 @@ export class WorkflowTriggerWorkspaceService {
       );
     }
 
-    await this.createOrUpdateCommandMenuItem(
-      workflow,
-      workflowVersion,
-      workspaceId,
-    );
+    let mirroredCoreWorkflowVersionIdForCommandMenuItem: string | null = null;
 
     await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
@@ -352,11 +358,21 @@ export class WorkflowTriggerWorkspaceService {
             transactionScope,
           );
 
+        mirroredCoreWorkflowVersionIdForCommandMenuItem =
+          mirroredCoreWorkflowVersionId;
+
         await this.enableAutomatedTrigger(workflowVersion, workspaceId, {
           transactionScope,
           coreWorkflowVersionId: mirroredCoreWorkflowVersionId,
         });
       },
+    );
+
+    await this.createOrUpdateCommandMenuItem(
+      workflow,
+      workflowVersion,
+      workspaceId,
+      mirroredCoreWorkflowVersionIdForCommandMenuItem,
     );
 
     await this.workflowVersionCoreSyncService.invalidateAutomatedTriggerMaps(
@@ -473,6 +489,7 @@ export class WorkflowTriggerWorkspaceService {
     workflow: WorkflowWorkspaceEntity,
     workflowVersion: WorkflowVersionWorkspaceEntity,
     workspaceId: string,
+    mirroredCoreWorkflowVersionId: string | null,
   ) {
     assertWorkflowVersionTriggerIsDefined(workflowVersion);
 
@@ -510,6 +527,10 @@ export class WorkflowTriggerWorkspaceService {
       await this.commandMenuItemService.create(
         {
           workflowVersionId: workflowVersion.id,
+          coreWorkflowVersionId:
+            mirroredCoreWorkflowVersionId ??
+            workflowVersion.coreWorkflowVersionId ??
+            undefined,
           engineComponentKey: EngineComponentKey.TRIGGER_WORKFLOW_VERSION,
           label,
           shortLabel: label,
