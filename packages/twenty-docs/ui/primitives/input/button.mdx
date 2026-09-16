@@ -82,7 +82,7 @@ export const DocumentationLink = () => (
 );
 ```
 
-`href` renders an anchor with link semantics. For a router link, use `render={<Link to="/settings" />}`, `nativeButton={false}`, and `role="link"`. Disabled links cannot activate.
+`href` renders an anchor with link semantics. The caller can supply its own `render` element or router link. Set `href` and preserve an anchor for navigation; without `href`, preserve a native button. Button derives its semantics without public `nativeButton` or `role` flags. Disabled links cannot activate.
 
 Buttons default to `type="button"`. Set `type="submit"` or `type="reset"` explicitly for forms. Native props, event handlers, refs, and Base UI's `render` prop pass through to the root.
 

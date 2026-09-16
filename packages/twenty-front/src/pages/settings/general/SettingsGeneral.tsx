@@ -14,7 +14,7 @@ import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Section } from 'twenty-ui/components';
-import { IconHistory, IconKey, IconSettings } from 'twenty-ui/icon';
+import { IconHistory, IconKey, IconSettings2 } from 'twenty-ui/icon';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';
@@ -35,7 +35,11 @@ export const SettingsGeneral = () => {
   );
 
   const tabs = [
-    { id: GENERAL_TAB_GENERAL, title: t`General`, Icon: IconSettings },
+    {
+      id: GENERAL_TAB_GENERAL,
+      title: t`General`,
+      Icon: IconSettings2,
+    },
     ...(hasSecurityPermission
       ? [
           { id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey },

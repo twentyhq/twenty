@@ -23,7 +23,8 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { t } from '@lingui/core/macro';
 import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
-import { Button, ButtonGroup, IconButton } from 'twenty-ui/primitives/input';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -118,12 +119,9 @@ export const UpdateViewButtonGroup = () => {
           <Dropdown
             dropdownId={updateViewButtonDropdownId}
             clickableComponent={
-              <IconButton
-                size="small"
-                accent="blue"
-                Icon={IconChevronDown}
-                position="right"
-              />
+              <IconButton aria-label={t`View update options`}>
+                <IconChevronDown />
+              </IconButton>
             }
             dropdownComponents={
               <DropdownContent>

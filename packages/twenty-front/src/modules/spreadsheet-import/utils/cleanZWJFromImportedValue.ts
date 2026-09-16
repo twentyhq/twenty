@@ -1,4 +1,4 @@
-import { CSV_INJECTION_PREVENTION_ZWJ } from '@/spreadsheet-import/constants/CsvInjectionPreventionZwj';
+import { CSV_INJECTION_PREVENTION_ZWJ } from 'twenty-shared/constants';
 
 export const cleanZWJFromImportedValue = (value: string): string => {
   if (typeof value !== 'string') return value;

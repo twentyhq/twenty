@@ -1,6 +1,6 @@
 declare const classNames: {
   readonly button: 'button';
-  readonly small: 'small';
-  readonly medium: 'medium';
+  readonly tooltipAnchor: 'tooltipAnchor';
+  readonly icon: 'icon';
 };
 export default classNames;

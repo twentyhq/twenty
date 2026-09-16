@@ -29,7 +29,6 @@ export const TintedIconTile = ({
   return (
     <StyledTintedIconTileContainer
       $backgroundColor={style.backgroundColor}
-      $borderColor={style.borderColor}
       $dimension={tileDimension}
     >
       <Icon size={iconSize} stroke={iconStroke} color={style.iconColor} />

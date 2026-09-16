@@ -40,9 +40,8 @@ export const Info = ({
       {buttonTitle && to && (
         <span className={styles.linkContainer}>
           <Button
+            href={to}
             render={<Link to={to} />}
-            nativeButton={false}
-            role="link"
             size="sm"
             variant="outline"
             color={accent === 'blue' ? 'accent' : 'danger'}

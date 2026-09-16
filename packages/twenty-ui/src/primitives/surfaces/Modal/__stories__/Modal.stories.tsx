@@ -4,7 +4,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { IconX } from '@ui/icon';
 
-import { Button, IconButton } from '@ui/primitives/input';
+import { Button } from '@ui/primitives/input';
+import { IconButton } from '@ui/components';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 
 import { Modal } from '@ui/primitives/surfaces/Modal/Modal';
@@ -226,11 +227,13 @@ const InteractiveModal = () => {
         <ModalHeader>
           <Section.Header title="Create record" />
           <IconButton
-            Icon={IconX}
-            variant="tertiary"
-            size="small"
+            aria-label="Close"
+            variant="ghost"
+            size="sm"
             onClick={() => setIsOpen(false)}
-          />
+          >
+            <IconX />
+          </IconButton>
         </ModalHeader>
         <ModalContent>
           <Section.Root>
