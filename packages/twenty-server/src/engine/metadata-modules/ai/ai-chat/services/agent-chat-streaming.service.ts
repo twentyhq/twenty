@@ -75,7 +75,10 @@ export class AgentChatStreamingService {
     thread,
     workspaceId,
   }: {
-    thread: Pick<AgentChatThreadEntity, 'id' | 'activeStreamId'>;
+    thread: Pick<
+      AgentChatThreadEntity,
+      'id' | 'activeStreamId' | 'userWorkspaceId'
+    >;
     workspaceId: string;
   }): Promise<AgentChatThreadLastStreamError | null> {
     if (!isDefined(thread.activeStreamId)) {
@@ -123,6 +126,22 @@ export class AgentChatStreamingService {
         },
       })
       .catch(() => {});
+
+    // A reaped turn never reaches the job's failure path, so this is the only
+    // place its owner can be told about it. Routed last and swallowed on its
+    // own failure, as in the job: the interruption is what has to be reported.
+    await this.agentChatInboxService
+      .onTurnFailed({
+        threadId: thread.id,
+        workspaceId,
+        userWorkspaceId: thread.userWorkspaceId,
+        errorMessage: interruptedError.message,
+      })
+      .catch((inboxError) => {
+        this.logger.error(
+          `Failed to route the interrupted turn for thread ${thread.id} to the inbox: ${inboxError instanceof Error ? inboxError.message : String(inboxError)}`,
+        );
+      });
 
     return interruptedError;
   }
@@ -550,7 +569,7 @@ export class AgentChatStreamingService {
   }): Promise<{ streamId: string; turnId: string | null }> {
     const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId },
-      select: ['id', 'activeStreamId'],
+      select: ['id', 'activeStreamId', 'userWorkspaceId'],
     });
 
     if (isDefined(thread)) {

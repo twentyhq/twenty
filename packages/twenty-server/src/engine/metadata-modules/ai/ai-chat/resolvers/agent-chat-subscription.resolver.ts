@@ -107,7 +107,7 @@ export class AgentChatSubscriptionResolver {
     const thread = await this.threadRepository
       .findOne(workspaceId, {
         where: { id: threadId },
-        select: ['id', 'activeStreamId'],
+        select: ['id', 'activeStreamId', 'userWorkspaceId'],
       })
       .catch(() => null);
 
