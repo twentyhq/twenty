@@ -136,24 +136,28 @@ export const useBillingPlanActions = ({
           title: t`Contact admin`,
           variant: 'secondary',
         };
+      // Only downgrades are ever scheduled, so cancelling one keeps the richer
+      // subscription and is highlighted like the other upgrades.
       case 'CANCEL_PLAN_SWITCH':
         return {
+          accent: 'blue',
           disabled: isCancellingPlanSwitch,
           Icon: IconCircleX,
           isLoading: isCancellingPlanSwitch,
           onClick: () => openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan),
           title: t`Cancel plan switching`,
-          variant: 'secondary',
+          variant: 'primary',
         };
       case 'CANCEL_INTERVAL_SWITCH':
         return {
+          accent: 'blue',
           disabled: isCancellingIntervalSwitch,
           Icon: IconCircleX,
           isLoading: isCancellingIntervalSwitch,
           onClick: () =>
             openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval),
           title: t`Cancel interval switching`,
-          variant: 'secondary',
+          variant: 'primary',
         };
       case 'SWITCH_INTERVAL_FIRST':
         return {
@@ -178,7 +182,8 @@ export const useBillingPlanActions = ({
           title: isUpgradeToAnnual
             ? t`Upgrade to annual`
             : t`Downgrade to monthly`,
-          variant: 'secondary',
+          variant: isUpgradeToAnnual ? 'primary' : 'secondary',
+          accent: isUpgradeToAnnual ? 'blue' : 'default',
         };
       }
       case 'SWITCH_PLAN': {
