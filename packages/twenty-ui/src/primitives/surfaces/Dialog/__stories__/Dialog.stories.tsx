@@ -1,6 +1,6 @@
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
 
@@ -49,7 +49,23 @@ export const Default: Story = {
 export const Documentation: Story = {
   ...Default,
   args: { defaultOpen: false },
-  play: undefined,
+  play: async ({ canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button', {
+      name: 'Edit account',
+    });
+    const body = within(canvasElement.ownerDocument.body);
+
+    expect(body.queryByRole('dialog')).not.toBeInTheDocument();
+    await userEvent.click(trigger);
+    const dialog = await waitForDialog(canvasElement);
+    expect(dialog).toHaveAccessibleName('Edit account');
+    expect(dialog).toHaveAccessibleDescription('Update the account details.');
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: 'Close' }),
+    );
+    await waitFor(() => expect(dialog).not.toBeInTheDocument());
+    await waitFor(() => expect(trigger).toHaveFocus());
+  },
 };
 
 export const Small: Story = {
