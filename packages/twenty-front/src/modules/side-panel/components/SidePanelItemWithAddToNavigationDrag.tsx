@@ -97,7 +97,9 @@ export const SidePanelItemWithAddToNavigationDrag = ({
         }
       }}
       onMouseLeave={() => {
-        if (!disabled && !disableDrag) setIsHovered(false);
+        if (!disabled && !disableDrag) {
+          setIsHovered(false);
+        }
       }}
       onMouseDown={registerPayload}
     >

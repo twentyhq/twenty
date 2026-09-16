@@ -345,11 +345,15 @@ export const NavigationDrawerItem = ({
         id={navigationItemId}
         className={`navigation-drawer-item ${className || ''}`}
         onClick={(event) => {
-          if (!event.currentTarget.contains(event.target as Node)) return;
+          if (!event.currentTarget.contains(event.target as Node)) {
+            return;
+          }
           handleMouseDownNavigationClickClick(event);
         }}
         onMouseDown={(event) => {
-          if (!event.currentTarget.contains(event.target as Node)) return;
+          if (!event.currentTarget.contains(event.target as Node)) {
+            return;
+          }
           handleMouseDown(event);
         }}
         active={active}

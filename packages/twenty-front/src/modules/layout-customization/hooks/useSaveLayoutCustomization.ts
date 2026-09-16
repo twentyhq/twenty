@@ -57,7 +57,9 @@ export const useSaveLayoutCustomization = () => {
           idToUpdate: objectId,
           updatePayload: { color },
         });
-        if (result.status === 'failed') return;
+        if (result.status === 'failed') {
+          return;
+        }
         store.set(objectColorsDraftState.atom, (draft) => {
           const { [objectId]: _savedColor, ...remainingColors } = draft;
           return remainingColors;

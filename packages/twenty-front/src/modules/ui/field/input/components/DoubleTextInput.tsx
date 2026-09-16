@@ -192,7 +192,9 @@ export const DoubleTextInput = ({
   ) => {
     event.stopPropagation();
     event.preventDefault();
-    if (selectOnFocus) event.currentTarget.select();
+    if (selectOnFocus) {
+      event.currentTarget.select();
+    }
   };
 
   return (
@@ -203,7 +205,9 @@ export const DoubleTextInput = ({
           autoFocus
           onFocus={(event) => {
             setFocusPosition('left');
-            if (selectOnFocus) event.currentTarget.select();
+            if (selectOnFocus) {
+              event.currentTarget.select();
+            }
           }}
           ref={firstValueInputRef}
           placeholder={firstValuePlaceholder}
@@ -226,7 +230,9 @@ export const DoubleTextInput = ({
           autoComplete="off"
           onFocus={(event) => {
             setFocusPosition('right');
-            if (selectOnFocus) event.currentTarget.select();
+            if (selectOnFocus) {
+              event.currentTarget.select();
+            }
           }}
           ref={secondValueInputRef}
           placeholder={secondValuePlaceholder}

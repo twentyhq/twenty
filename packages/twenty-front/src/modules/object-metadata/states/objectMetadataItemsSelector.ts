@@ -10,7 +10,9 @@ export const objectMetadataItemsSelector = createAtomSelector<
   get: ({ get }) => {
     const objectMetadataItems = get(objectMetadataItemsWithFieldsSelector);
     const objectColorsDraft = get(objectColorsDraftState);
-    if (Object.keys(objectColorsDraft).length === 0) return objectMetadataItems;
+    if (Object.keys(objectColorsDraft).length === 0) {
+      return objectMetadataItems;
+    }
     return objectMetadataItems.map((object) =>
       objectColorsDraft[object.id]
         ? { ...object, color: objectColorsDraft[object.id] }
