@@ -406,12 +406,12 @@ export class ObjectMetadataToolsFactory {
           }>;
         }) => {
           try {
-            await Promise.all(
-              parameters.objects.map(async ({ id, icon, ...update }) => {
-                const normalizedIcon = normalizeIconName(icon);
+            await this.objectMetadataService.updateManyObjects({
+              updateObjectInputs: parameters.objects.map(
+                ({ id, icon, ...update }) => {
+                  const normalizedIcon = normalizeIconName(icon);
 
-                await this.objectMetadataService.updateOneObject({
-                  updateObjectInput: {
+                  return {
                     id,
                     update: {
                       ...update,
@@ -419,11 +419,11 @@ export class ObjectMetadataToolsFactory {
                         ? { icon: normalizedIcon }
                         : {}),
                     },
-                  },
-                  workspaceId,
-                });
-              }),
-            );
+                  };
+                },
+              ),
+              workspaceId,
+            });
 
             return true;
           } catch (error) {

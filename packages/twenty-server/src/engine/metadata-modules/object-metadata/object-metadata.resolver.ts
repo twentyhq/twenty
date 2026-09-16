@@ -44,6 +44,7 @@ import {
 } from 'src/engine/metadata-modules/object-metadata/dtos/object-filter.input';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectRecordCountDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-record-count.dto';
+import { UpdateManyObjectsInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-many-objects.input';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { CursorPagingInput } from 'src/engine/metadata-modules/pagination/dtos/cursor-paging.input';
 import { type CursorConnection } from 'src/engine/metadata-modules/pagination/dtos/cursor-connection-type.factory';
@@ -392,6 +393,25 @@ export class ObjectMetadataResolver {
         });
 
       return fromFlatObjectMetadataToObjectMetadataDto(flatobjectMetadata);
+    } catch (error) {
+      objectMetadataGraphqlApiExceptionHandler(error);
+    }
+  }
+
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
+  @Mutation(() => [ObjectMetadataDTO])
+  async updateManyObjects(
+    @Args('input') updateManyObjectsInput: UpdateManyObjectsInput,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ) {
+    try {
+      const flatObjectMetadatas =
+        await this.objectMetadataService.updateManyObjects({
+          updateObjectInputs: updateManyObjectsInput.updates,
+          workspaceId,
+        });
+
+      return flatObjectMetadatas.map(fromFlatObjectMetadataToObjectMetadataDto);
     } catch (error) {
       objectMetadataGraphqlApiExceptionHandler(error);
     }
