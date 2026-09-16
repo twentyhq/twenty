@@ -1,3 +1,6 @@
+import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
+import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   NavigationMenuItemSelectableItem,
   type NavigationMenuItemOption,
@@ -5,7 +8,7 @@ import {
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
@@ -67,6 +70,38 @@ export const NavigationMenuItemAddDropdownContent = ({
   const [search, setSearch] = useState('');
   const [objectId, setObjectId] = useState<string | null>(null);
   const { currentItems, createItem } = useNavigationMenuItemEditController();
+  const navigationMenuItemEditSection = useAtomStateValue(
+    navigationMenuItemEditSectionState,
+  );
+  const setNavigationMenuItemInsertionPreview = useSetAtomState(
+    navigationMenuItemInsertionPreviewState,
+  );
+  const insertionIndex =
+    position ??
+    currentItems.filter(
+      (item) => (item.folderId ?? null) === (folderId ?? null),
+    ).length;
+
+  // The preview follows the add flow's lifetime, including nested menu pages.
+  useEffect(() => {
+    setNavigationMenuItemInsertionPreview({
+      dropdownId,
+      section: navigationMenuItemEditSection,
+      folderId: folderId ?? null,
+      index: insertionIndex,
+    });
+    return () =>
+      setNavigationMenuItemInsertionPreview((preview) =>
+        preview?.dropdownId === dropdownId ? null : preview,
+      );
+  }, [
+    dropdownId,
+    navigationMenuItemEditSection,
+    folderId,
+    insertionIndex,
+    setNavigationMenuItemInsertionPreview,
+  ]);
+
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();

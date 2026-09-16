@@ -60,7 +60,7 @@ export type NavigationDrawerItemProps = {
   triggerEvent?: TriggerEventType;
   preventCollapseOnMobile?: boolean;
   isSelectedInEditMode?: boolean;
-  variant?: 'default' | 'tertiary';
+  variant?: 'default' | 'tertiary' | 'placeholder';
 };
 
 type StyledItemProps = Pick<
@@ -82,8 +82,10 @@ type StyledItemProps = Pick<
 
 const StyledItem = styled.button<StyledItemProps>`
   align-items: center;
-  background: ${({ active }) =>
-    active ? themeCssVariables.background.transparent.light : 'transparent'};
+  background: ${({ active, variant }) =>
+    active || variant === 'placeholder'
+      ? themeCssVariables.background.transparent.light
+      : 'transparent'};
   border: ${({ isSelectedInEditMode }) =>
     isSelectedInEditMode
       ? `1px solid ${themeCssVariables.color.blue}`
@@ -91,6 +93,9 @@ const StyledItem = styled.button<StyledItemProps>`
   border-radius: ${themeCssVariables.border.radius.md};
   box-sizing: border-box;
   color: ${({ active, isSoon, variant }) => {
+    if (variant === 'placeholder') {
+      return themeCssVariables.font.color.light;
+    }
     if (variant === 'tertiary') {
       return themeCssVariables.font.color.tertiary;
     }
@@ -124,7 +129,8 @@ const StyledItem = styled.button<StyledItemProps>`
       ? themeCssVariables.spacing['0.5']
       : themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[1]};
-  pointer-events: ${({ isSoon }) => (isSoon ? 'none' : 'auto')};
+  pointer-events: ${({ isSoon, variant }) =>
+    isSoon || variant === 'placeholder' ? 'none' : 'auto'};
   text-decoration: none;
   user-select: none;
   width: ${({ isNavigationDrawerExpanded, hasRightOptions }) =>
@@ -340,6 +346,7 @@ export const NavigationDrawerItem = ({
         aria-current={isDefined(to) && active ? 'page' : undefined}
         isSoon={isSoon}
         variant={variant}
+        disabled={variant === 'placeholder'}
         indentationLevel={indentationLevel}
         isNavigationDrawerExpanded={isExpanded}
         isDragging={isDragging}

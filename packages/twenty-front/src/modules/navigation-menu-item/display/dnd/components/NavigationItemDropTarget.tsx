@@ -1,3 +1,4 @@
+import { NavigationMenuItemInsertionPreview } from '@/navigation-menu-item/edit/components/NavigationMenuItemInsertionPreview';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -78,6 +79,11 @@ export const NavigationItemDropTarget = ({
       data-drag-over={isDragOver && !isDropForbidden ? 'true' : undefined}
       data-drop-forbidden={isDropForbidden ? 'true' : undefined}
     >
+      <NavigationMenuItemInsertionPreview
+        folderId={folderId}
+        index={index}
+        sectionId={sectionId}
+      />
       {children}
     </StyledDropTarget>
   );

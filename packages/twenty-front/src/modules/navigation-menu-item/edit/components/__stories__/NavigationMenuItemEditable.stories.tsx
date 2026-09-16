@@ -1,3 +1,6 @@
+import { Fragment } from 'react';
+import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
+import { NavigationItemDropTarget } from '@/navigation-menu-item/display/dnd/components/NavigationItemDropTarget';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -34,11 +37,25 @@ const EditableNavigation = () => {
     <>
       {[...items]
         .sort((a, b) => a.position - b.position)
-        .map((item) => (
-          <NavigationMenuItemEditable key={item.id} item={item}>
-            <NavigationDrawerItem label={item.name ?? ''} Icon={IconLink} />
-          </NavigationMenuItemEditable>
+        .map((item, index) => (
+          <Fragment key={item.id}>
+            <NavigationItemDropTarget
+              folderId={null}
+              index={index}
+              sectionId={NavigationSections.WORKSPACE}
+              compact
+            />
+            <NavigationMenuItemEditable item={item}>
+              <NavigationDrawerItem label={item.name ?? ''} Icon={IconLink} />
+            </NavigationMenuItemEditable>
+          </Fragment>
         ))}
+      <NavigationItemDropTarget
+        folderId={null}
+        index={items.length}
+        sectionId={NavigationSections.WORKSPACE}
+        compact
+      />
     </>
   );
 };
@@ -106,5 +123,47 @@ export const OrganizeFromBothMenus: Story = {
     await userEvent.click(await body.findByText('Remove from sidebar'));
     await expect(canvas.queryByText('Docs')).not.toBeInTheDocument();
     await expect(await canvas.findByText('Status')).toBeVisible();
+  },
+};
+
+export const PreviewInsertion: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.pointer({
+      target: await canvas.findByText('Docs'),
+      keys: '[MouseRight]',
+    });
+    await userEvent.click(await body.findByText('Add menu item after'));
+    await expect(
+      await canvas.findByRole('button', { name: 'Select a menu item' }),
+    ).toBeDisabled();
+    await expect(
+      (await canvas.findAllByText(/^(Docs|Status|Select a menu item)$/)).map(
+        (element) => element.textContent,
+      ),
+    ).toEqual(['Docs', 'Select a menu item', 'Status']);
+    await userEvent.click(await body.findByText('Object'));
+    await expect(await canvas.findByText('Select a menu item')).toBeVisible();
+    await userEvent.keyboard('{Escape}');
+    await expect(
+      canvas.queryByText('Select a menu item'),
+    ).not.toBeInTheDocument();
+    await userEvent.pointer({
+      target: await canvas.findByText('Docs'),
+      keys: '[MouseRight]',
+    });
+    await userEvent.click(await body.findByText('Add menu item before'));
+    await expect(
+      (await canvas.findAllByText(/^(Docs|Status|Select a menu item)$/)).map(
+        (element) => element.textContent,
+      ),
+    ).toEqual(['Select a menu item', 'Docs', 'Status']);
+    await userEvent.click(await body.findByText('Link'));
+    await expect(await body.findByDisplayValue('Link label')).toBeVisible();
+    await expect(
+      canvas.queryByText('Select a menu item'),
+    ).not.toBeInTheDocument();
+    await userEvent.keyboard('{Escape}');
   },
 };
