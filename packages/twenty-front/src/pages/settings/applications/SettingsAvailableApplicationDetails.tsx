@@ -244,7 +244,7 @@ export const SettingsAvailableApplicationDetails = () => {
           />
         }
       >
-        <SettingsPageContainer>
+        <SettingsPageContainer overflow="visible">
           {isUnlisted && (
             <InlineBanner
               LeftIcon={IconEyeOff}

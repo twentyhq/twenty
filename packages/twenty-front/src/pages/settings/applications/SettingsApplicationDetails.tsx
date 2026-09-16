@@ -331,7 +331,7 @@ export const SettingsApplicationDetails = () => {
           />
         }
       >
-        <SettingsPageContainer>
+        <SettingsPageContainer overflow="visible">
           {isApplicationStopped && (
             <InlineBanner
               color="danger"
