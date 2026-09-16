@@ -648,11 +648,12 @@ export class ViewToolsFactory {
           'Get filter and sort parameters from a view. Use these parameters with find_* tools to query records matching the view.',
         inputSchema: GetViewQueryParamsInputSchema,
         execute: async (parameters: { viewId: string }) => {
-          return this.viewQueryParamsService.resolveViewToQueryParams(
-            parameters.viewId,
+          return this.viewQueryParamsService.resolveViewToQueryParams({
+            viewId: parameters.viewId,
             workspaceId,
             currentWorkspaceMemberId,
-          );
+            currentUserWorkspaceId: userWorkspaceId,
+          });
         },
       },
     };

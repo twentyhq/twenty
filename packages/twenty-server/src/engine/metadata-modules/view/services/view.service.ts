@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey, ViewType, ViewVisibility } from 'twenty-shared/types';
+import { FeatureFlagKey, ViewType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -33,6 +33,7 @@ import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/up
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
+import { isViewVisibleToUser } from 'src/engine/metadata-modules/view/utils/is-view-visible-to-user.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
@@ -385,24 +386,6 @@ export class ViewService {
     });
   }
 
-  private isViewVisibleToUser(
-    view: {
-      visibility: ViewVisibility;
-      createdByUserWorkspaceId: string | null;
-    },
-    userWorkspaceId?: string,
-  ): boolean {
-    if (view.visibility === ViewVisibility.WORKSPACE) {
-      return true;
-    }
-
-    return (
-      view.visibility === ViewVisibility.UNLISTED &&
-      isDefined(userWorkspaceId) &&
-      view.createdByUserWorkspaceId === userWorkspaceId
-    );
-  }
-
   private async getFilteredFlatViews({
     workspaceId,
     objectMetadataId,
@@ -446,7 +429,7 @@ export class ViewService {
           viewTypes.length === 0 ||
           viewTypes.includes(flatView.type),
       )
-      .filter((flatView) => this.isViewVisibleToUser(flatView, userWorkspaceId))
+      .filter((flatView) => isViewVisibleToUser(flatView, userWorkspaceId))
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
   }
 
