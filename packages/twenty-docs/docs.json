@@ -552,8 +552,7 @@
                         "pages": [
                           "ui/primitives/surfaces/alert-dialog",
                           "ui/primitives/surfaces/menu",
-                          "ui/primitives/surfaces/popover",
-                          "ui/primitives/surfaces/tooltip"
+                          "ui/primitives/surfaces/popover"
                         ]
                       },
                       {
