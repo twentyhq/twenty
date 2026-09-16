@@ -18,11 +18,10 @@ import { type InboxEmailComposerPrefill } from '@/inbox/tool-call-renderers/emai
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 
 // The fields grow into whatever height they are given; in a scrolling pane
-// that is nothing, so the card sets the floor the body writes into.
-const StyledCard = styled.div`
+// that is nothing, so this sets the floor the body writes into. No border of
+// its own: whoever places the composer draws the frame around it.
+const StyledComposer = styled.div`
   background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
   min-height: 360px;
@@ -114,12 +113,12 @@ export const InboxEmailComposer = forwardRef<
   ]);
 
   return (
-    <StyledCard>
+    <StyledComposer>
       <EmailComposerFields
         composerState={composerState}
         contextRecord={isDefined(contextRecord) ? contextRecord : undefined}
         onAttachFiles={openAttachmentPicker}
       />
-    </StyledCard>
+    </StyledComposer>
   );
 });

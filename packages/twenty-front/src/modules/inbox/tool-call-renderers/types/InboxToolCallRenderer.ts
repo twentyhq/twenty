@@ -1,6 +1,7 @@
 import { type ComponentType } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 
+import { type InboxItemToolCallDraft } from '@/inbox/contexts/InboxItemPlanContext';
 import {
   type InboxItem,
   type InboxItemContextSource,
@@ -25,6 +26,17 @@ export type InboxToolCallSurfaceProps = {
   onRegisterFlush?: (flush: (() => Promise<void>) | null) => void;
 };
 
+// A tool that can be started by hand from what an item is about. The subject
+// preview knows nothing about it: the slot asks the registry which tools
+// start from the subject's object and draws their starters. The proposal is a
+// hook because what it proposes is usually read from the subject.
+export type InboxToolCallStarter = {
+  startsFrom: string[];
+  label: () => string;
+  Icon: IconComponent;
+  useProposal: (inboxItem: InboxItem) => InboxItemToolCallDraft | null;
+};
+
 // How a call renders is decided per tool; how it runs is not. A renderer edits
 // the call's input and never executes anything itself, so the plan stays the
 // one place a call is run from and the actor's permissions stay the ones that
@@ -33,6 +45,7 @@ export type InboxToolCallSurfaceProps = {
 export type InboxToolCallRenderer = {
   Editor: ComponentType<InboxToolCallEditorProps>;
   Surface?: ComponentType<InboxToolCallSurfaceProps>;
+  starter?: InboxToolCallStarter;
   // What the primary control reads and shows when this call is the one run.
   runLabel: () => string;
   RunIcon: IconComponent;
