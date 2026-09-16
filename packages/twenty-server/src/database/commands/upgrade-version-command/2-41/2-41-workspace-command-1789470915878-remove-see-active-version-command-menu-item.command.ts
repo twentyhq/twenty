@@ -16,6 +16,9 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 const SEE_ACTIVE_VERSION_WORKFLOW_UNIVERSAL_IDENTIFIER =
   '31790508-75ff-4e4c-a768-83bd1b0718e0';
 
+const SEE_ACTIVE_VERSION_WORKFLOW_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
+  '6259a4a5-428e-41b9-a032-333c2d51e15f';
+
 @RegisteredWorkspaceCommand('2.41.0', 1789470915878)
 @Command({
   name: 'upgrade:2-41:remove-see-active-version-command-menu-item',
@@ -38,9 +41,10 @@ export class RemoveSeeActiveVersionCommandMenuItemCommand extends ProvisionedWor
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { flatCommandMenuItemMaps } =
+    const { flatCommandMenuItemMaps, flatFrontComponentMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
+        'flatFrontComponentMaps',
       ]);
 
     const itemToDelete = findFlatEntityByUniversalIdentifier<FlatCommandMenuItem>(
@@ -58,18 +62,26 @@ export class RemoveSeeActiveVersionCommandMenuItemCommand extends ProvisionedWor
       return;
     }
 
-    const isFrontComponentRenderedItem =
-      itemToDelete.engineComponentKey ===
-        EngineComponentKey.FRONT_COMPONENT_RENDERER &&
-      isDefined(itemToDelete.frontComponentId);
+    const renderedFrontComponentUniversalIdentifier = isDefined(
+      itemToDelete.frontComponentId,
+    )
+      ? flatFrontComponentMaps.universalIdentifierById[
+          itemToDelete.frontComponentId
+        ]
+      : undefined;
+
+    const rendersTheSeeActiveVersionFrontComponent =
+      renderedFrontComponentUniversalIdentifier ===
+      SEE_ACTIVE_VERSION_WORKFLOW_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER;
 
     const isLegacyEngineKeyItem =
+      !isDefined(itemToDelete.frontComponentId) &&
       itemToDelete.engineComponentKey ===
-      EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW;
+        EngineComponentKey.SEE_ACTIVE_VERSION_WORKFLOW;
 
-    if (!isFrontComponentRenderedItem && !isLegacyEngineKeyItem) {
+    if (!rendersTheSeeActiveVersionFrontComponent && !isLegacyEngineKeyItem) {
       throw new Error(
-        `Command menu item ${SEE_ACTIVE_VERSION_WORKFLOW_UNIVERSAL_IDENTIFIER} in workspace ${workspaceId} carries engine component key ${itemToDelete.engineComponentKey}, refusing to delete`,
+        `Command menu item ${SEE_ACTIVE_VERSION_WORKFLOW_UNIVERSAL_IDENTIFIER} in workspace ${workspaceId} is not the See Active Version item (engine component key ${itemToDelete.engineComponentKey}, front component ${renderedFrontComponentUniversalIdentifier ?? 'none'}), refusing to delete`,
       );
     }
 
