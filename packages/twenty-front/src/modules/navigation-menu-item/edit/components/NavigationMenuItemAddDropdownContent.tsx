@@ -1,3 +1,4 @@
+import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { useQuery } from '@apollo/client/react';
 import { FindAllStandalonePageLayoutsDocument } from '~/generated-metadata/graphql';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
@@ -21,7 +22,6 @@ import {
   IconFolder,
   IconLink,
   IconTable,
-  IconUser,
   useIcons,
 } from 'twenty-ui/icon';
 import { Avatar, TintedIconTile } from 'twenty-ui/primitives/data-display';
@@ -197,7 +197,7 @@ export const NavigationMenuItemAddDropdownContent = ({
         {
           id: 'record',
           label: t`Record`,
-          icon: <TintedIconTile Icon={IconUser} />,
+          icon: <Avatar name={t`Record`} shape="circle" size="md" />,
           onClick: () => navigate('record'),
           hasSubMenu: true,
         },
@@ -356,6 +356,8 @@ export const NavigationMenuItemAddDropdownContent = ({
             icon: (
               <Avatar
                 name={record.label}
+                shape={getAvatarShape(object)}
+                size="md"
                 src={getAbsoluteImageUrl(record.imageUrl)}
                 colorSeed={record.recordId}
               />
