@@ -155,7 +155,7 @@ describe('Usage limit mutations', () => {
       const response = await createUsageLimitRequest({ burstValue: 10 });
 
       expect(response.body.errors?.[0]?.message).toBe(
-        'A quota cannot hold a burst value',
+        'A quota limit cannot hold a burst value',
       );
     });
   });

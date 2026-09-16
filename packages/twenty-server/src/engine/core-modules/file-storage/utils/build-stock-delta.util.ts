@@ -7,7 +7,7 @@ export const buildStockDelta = ({
   existingFile,
   size,
 }: {
-  existingFile: FileEntity | null;
+  existingFile: Pick<FileEntity, 'size'> | null;
   size: number;
 }): StockCost => ({
   bytes: size - (existingFile?.size ?? 0),

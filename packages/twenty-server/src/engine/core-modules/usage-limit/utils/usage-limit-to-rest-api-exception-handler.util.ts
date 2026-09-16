@@ -8,21 +8,29 @@ import { buildRateLimitResponseHeaders } from 'src/engine/core-modules/usage-lim
 import { getRetryAfterSeconds } from 'src/engine/core-modules/usage-limit/utils/get-retry-after-seconds.util';
 import { getUsageLimitErrorCode } from 'src/engine/core-modules/usage-limit/utils/get-usage-limit-error-code.util';
 
+// Paying only unblocks an exhausted allowance; configured limits reset with
+// time, so they answer 429 with retry headers whatever their period length. A
+// stock never resets, so retrying cannot help it.
+const getStatusCode = (
+  exhaustedScope: UsageLimitException['exhaustedScope'],
+): HttpStatus => {
+  if (exhaustedScope?.exhaustedKind === 'allowance') {
+    return HttpStatus.PAYMENT_REQUIRED;
+  }
+
+  if (exhaustedScope?.limitKind === 'stock') {
+    return HttpStatus.CONFLICT;
+  }
+
+  return HttpStatus.TOO_MANY_REQUESTS;
+};
+
 export const buildUsageLimitHttpException = (
   error: UsageLimitException,
 ): HttpException => {
   const { exhaustedScope } = error;
 
-  // Paying only unblocks an exhausted allowance; configured limits reset with
-  // time, so they answer 429 with retry headers whatever their period length.
-  const isAllowanceExhausted = exhaustedScope?.exhaustedKind === 'allowance';
-  const isStockExhausted = exhaustedScope?.limitKind === 'stock';
-
-  const statusCode = isAllowanceExhausted
-    ? HttpStatus.PAYMENT_REQUIRED
-    : isStockExhausted
-      ? HttpStatus.CONFLICT
-      : HttpStatus.TOO_MANY_REQUESTS;
+  const statusCode = getStatusCode(exhaustedScope);
 
   if (!isDefined(exhaustedScope)) {
     return new HttpException(error.message, statusCode);
@@ -48,9 +56,9 @@ export const buildUsageLimitHttpException = (
       periodUnit: exhaustedScope.periodUnit,
       retryAfterSeconds,
     },
-    isAllowanceExhausted || isStockExhausted
-      ? {}
-      : buildRateLimitResponseHeaders({ exhaustedScope, retryAfterSeconds }),
+    statusCode === HttpStatus.TOO_MANY_REQUESTS
+      ? buildRateLimitResponseHeaders({ exhaustedScope, retryAfterSeconds })
+      : {},
   );
 };
 

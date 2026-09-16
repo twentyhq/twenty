@@ -1,7 +1,6 @@
-import { type FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { buildStockDelta } from 'src/engine/core-modules/file-storage/utils/build-stock-delta.util';
 
-const existingFile = (size: number) => ({ size }) as unknown as FileEntity;
+const existingFile = (size: number) => ({ size });
 
 describe('buildStockDelta', () => {
   it('charges a new file for everything it holds', () => {
