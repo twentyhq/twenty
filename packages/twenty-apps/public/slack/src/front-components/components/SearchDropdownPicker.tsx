@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { SlackDropdownBackdrop } from 'src/front-components/components/SlackDropdownBackdrop';
 import {
@@ -102,7 +103,7 @@ export const SearchDropdownPicker = <TOption,>({
                 (option) => getOption(option).key === optionKey,
               );
 
-              if (selectedOption !== undefined) {
+              if (isDefined(selectedOption)) {
                 handleSelect(selectedOption);
               }
             }}

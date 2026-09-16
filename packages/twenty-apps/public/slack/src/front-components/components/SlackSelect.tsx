@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
+import { isDefined } from 'twenty-sdk/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SlackDropdownBackdrop } from 'src/front-components/components/SlackDropdownBackdrop';
@@ -78,7 +79,7 @@ export const SlackSelect = <TValue extends string>({
                 (option) => option.value === optionKey,
               );
 
-              if (nextOption !== undefined) {
+              if (isDefined(nextOption)) {
                 onChange(nextOption.value);
               }
             }}
