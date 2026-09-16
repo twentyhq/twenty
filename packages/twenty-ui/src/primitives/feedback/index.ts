@@ -7,7 +7,7 @@
  *                              |___/
  */
 
-export type { AnimatedPlaceholderType } from './AnimatedPlaceholder/AnimatedPlaceholder';
+export type { AnimatedPlaceholderType } from './AnimatedPlaceholder/types/AnimatedPlaceholderType';
 export { AnimatedPlaceholder } from './AnimatedPlaceholder/AnimatedPlaceholder';
 export { BACKGROUND } from './AnimatedPlaceholder/constants/Background';
 export { DARK_BACKGROUND } from './AnimatedPlaceholder/constants/DarkBackground';
