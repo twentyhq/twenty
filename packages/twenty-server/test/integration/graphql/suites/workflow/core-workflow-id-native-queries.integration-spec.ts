@@ -17,6 +17,8 @@ const CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID = `
       id
       label
       status
+      workspaceWorkflowId
+      workspaceWorkflowVersionId
     }
   }
 `;
@@ -104,6 +106,8 @@ describe('core workflow id native queries (e2e)', () => {
     expect(versions).toHaveLength(1);
     expect(versions[0].status).toBe('DRAFT');
     expect(versions[0].label).toBe('v1');
+    expect(versions[0].workspaceWorkflowId).toBe(workspaceWorkflowId);
+    expect(versions[0].workspaceWorkflowVersionId).not.toBeNull();
   });
 
   it('resolves a version by its core id, with its content', async () => {

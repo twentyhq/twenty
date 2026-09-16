@@ -147,12 +147,25 @@ export class CoreWorkflowVersionListService {
       },
     );
 
+    const workspaceVersionIdByCoreVersionId = isDefined(
+      coreWorkflow.workspaceWorkflowId,
+    )
+      ? await this.findWorkspaceVersionIdByCoreVersionId({
+          workspaceId,
+          workspaceWorkflowId: coreWorkflow.workspaceWorkflowId,
+          coreWorkflowVersionIds: coreWorkflowVersions.map(
+            (coreWorkflowVersion) => coreWorkflowVersion.id,
+          ),
+        })
+      : {};
+
     return coreWorkflowVersions
       .map((coreWorkflowVersion, index) => ({
         id: coreWorkflowVersion.id,
         label: buildCoreWorkflowVersionLabel(index + 1),
         status: coreWorkflowVersion.status,
-        workspaceWorkflowVersionId: null,
+        workspaceWorkflowVersionId:
+          workspaceVersionIdByCoreVersionId[coreWorkflowVersion.id] ?? null,
         workspaceWorkflowId: coreWorkflow.workspaceWorkflowId,
         trigger: null,
         steps: null,
