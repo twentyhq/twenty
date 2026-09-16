@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/FolderIconDefault';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconChevronUp,
   IconChevronDown,
-  IconFolder,
+  IconHierarchy2,
+  useIcons,
   IconFolderSymlink,
   IconRowInsertTop,
   IconRowInsertBottom,
@@ -38,6 +41,7 @@ export const NavigationMenuItemActions = ({
   onClose,
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
+  const { getIcon } = useIcons();
   const items = useNavigationMenuItemEditSectionItems();
   const { moveUp, moveDown, moveToFolder, remove } =
     useNavigationMenuItemMoveRemove();
@@ -108,9 +112,9 @@ export const NavigationMenuItemActions = ({
   ];
   const folders: NavigationMenuItemOption[] = [
     {
-      id: 'workspace',
-      label: t`Workspace`,
-      Icon: IconFolder,
+      id: 'root',
+      label: t`Root level`,
+      Icon: IconHierarchy2,
       isDisabled: !item.folderId,
       onClick: () => run(() => moveToFolder(item.id, null)),
     },
@@ -119,7 +123,12 @@ export const NavigationMenuItemActions = ({
       .map((folder) => ({
         id: folder.id,
         label: folder.name ?? t`Folder`,
-        icon: <ColoredIcon Icon={IconFolder} color={folder.color} />,
+        icon: (
+          <ColoredIcon
+            Icon={getIcon(folder.icon ?? FOLDER_ICON_DEFAULT)}
+            color={folder.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
+          />
+        ),
         isDisabled: folder.id === item.folderId,
         onClick: () => run(() => moveToFolder(item.id, folder.id)),
       })),
