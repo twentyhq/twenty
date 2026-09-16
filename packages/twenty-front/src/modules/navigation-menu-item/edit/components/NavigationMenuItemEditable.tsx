@@ -173,7 +173,8 @@ export const NavigationMenuItemEditable = ({
       onContextMenu={(event) => {
         if (
           !canOrganize ||
-          !event.currentTarget.contains(event.target as Node)
+          !(event.target instanceof Node) ||
+          !event.currentTarget.contains(event.target)
         ) {
           return;
         }

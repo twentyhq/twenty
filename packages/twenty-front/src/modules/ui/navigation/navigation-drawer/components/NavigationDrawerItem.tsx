@@ -329,13 +329,19 @@ export const NavigationDrawerItem = ({
         id={navigationItemId}
         className={`navigation-drawer-item ${className || ''}`}
         onClick={(event) => {
-          if (!event.currentTarget.contains(event.target as Node)) {
+          if (
+            !(event.target instanceof Node) ||
+            !event.currentTarget.contains(event.target)
+          ) {
             return;
           }
           handleMouseDownNavigationClickClick(event);
         }}
         onMouseDown={(event) => {
-          if (!event.currentTarget.contains(event.target as Node)) {
+          if (
+            !(event.target instanceof Node) ||
+            !event.currentTarget.contains(event.target)
+          ) {
             return;
           }
           handleMouseDown(event);

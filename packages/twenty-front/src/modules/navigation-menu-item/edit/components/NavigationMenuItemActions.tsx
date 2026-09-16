@@ -3,6 +3,7 @@ import { FOLDER_ICON_DEFAULT } from '@/navigation-menu-item/common/constants/Fol
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronUp,
   IconChevronDown,
@@ -107,7 +108,7 @@ export const NavigationMenuItemActions = ({
       id: 'root',
       label: t`Root level`,
       Icon: IconHierarchy2,
-      isDisabled: !item.folderId,
+      isDisabled: !isDefined(item.folderId),
       onClick: () => run(() => moveToFolder(item.id, null)),
     },
     ...items
