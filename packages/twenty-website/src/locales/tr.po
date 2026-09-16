@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-15 14:21\n"
+"PO-Revision-Date: 2026-09-16 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -738,7 +738,7 @@ msgstr "Büyümeye hazır bir platform"
 #. js-lingui-id: GGXFEW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A proper home on mobile"
-msgstr ""
+msgstr "Mobilde gerçek bir ana sayfa"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
@@ -1115,7 +1115,7 @@ msgstr "Taşıma iş akışında yapay zekâ"
 #. js-lingui-id: CKvvwf
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "AI settings now show each model’s provider, price per million tokens, context window, maximum output, and data residency."
-msgstr ""
+msgstr "Yapay zeka ayarları artık her modelin sağlayıcısını, milyon token başına fiyatını, bağlam penceresini, maksimum çıktısını ve veri ikametini gösteriyor."
 
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
@@ -1289,7 +1289,7 @@ msgstr "Arapça"
 #. js-lingui-id: Qrqy7n
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Arabic and Hebrew read right to left"
-msgstr ""
+msgstr "Arapça ve İbranice sağdan sola okunur"
 
 #. js-lingui-id: uicv6Z
 #: src/case-studies/case-study-stories.ts
@@ -1717,7 +1717,7 @@ msgstr "Nesneler için Takvim Görünümü"
 #. js-lingui-id: RZgOeI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
-msgstr ""
+msgstr "Video içermeyen arama kayıtları artık bir ses oynatıcıyla birlikte geliyor; böylece tıklayarak konuma gitme ve transkript vurgulama burada da çalışıyor."
 
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
@@ -1870,12 +1870,12 @@ msgstr "Her alanda tarihlerin nasıl görüntüleneceğini, kullanım durumunuza
 #. js-lingui-id: BZEHq1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose how your AI should behave on a single slider, from Extra Fast to Extra Smart, instead of picking a model by name. Each tier shows what it trades in speed, cost, and intelligence."
-msgstr ""
+msgstr "Modeli adına göre seçmek yerine, Yapay zekanızın nasıl davranması gerektiğini Ekstra Hızlı ile Ekstra Akıllı arasındaki tek bir kaydırıcıdan seçin. Her seviye, hız, maliyet ve zeka açısından sunduğu dengeyi gösterir."
 
 #. js-lingui-id: oXetDh
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose where records open"
-msgstr ""
+msgstr "Kayıtların nerede açılacağını seçin"
 
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2681,7 +2681,7 @@ msgstr "Sevgili Ekip, değerlendirmelerinize sunmak üzere teklifimizi iletmekte
 #. js-lingui-id: JG4DOf
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Decide whether records open in the side panel or as a full page, set per object and as your own preference in Settings > Experience."
-msgstr ""
+msgstr "Kayıtların yan panelde mi yoksa tam sayfa olarak mı açılacağını belirleyin; bunu nesne bazında ve Ayarlar > Deneyim bölümünde kendi tercihiniz olarak ayarlayın."
 
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
@@ -2698,7 +2698,7 @@ msgstr "Alan için varsayılan konum/görünürlük…"
 #. js-lingui-id: IOhXZ5
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Delete a workflow step from the diagram"
-msgstr ""
+msgstr "Diyagramdan bir iş akışı adımını silin"
 
 #. js-lingui-id: 9RARjP
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -2994,7 +2994,7 @@ msgstr "Eylemleri düzenle"
 #. js-lingui-id: V4B1Gm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit deactivated objects"
-msgstr ""
+msgstr "Devre dışı bırakılmış nesneleri düzenleyin"
 
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3435,7 +3435,7 @@ msgstr "Şub"
 #. js-lingui-id: ATTTRk
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field descriptions on hover"
-msgstr ""
+msgstr "Üzerine gelindiğinde alan açıklamaları"
 
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4054,7 +4054,7 @@ msgstr "Saatlik ücret *"
 #. js-lingui-id: c+5807
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
-msgstr ""
+msgstr "Bir alanın açıklamasını bulmak için ayarları açmak yerine, bu açıklamayı okumak üzere sütun başlığının veya alan etiketinin üzerine gelin."
 
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
@@ -5663,7 +5663,7 @@ msgstr "SSO sadece 5 $. Neredeyse bir hayır programı."
 #. js-lingui-id: Av5T3E
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
-msgstr ""
+msgstr "Devre dışı bırakılmış bir nesneyi Ayarlar'dan açın ve silip yeniden oluşturmak yerine değiştirin."
 
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
@@ -5873,7 +5873,7 @@ msgstr "Anahtarı yapıştırın ve Etkinleştir'e tıklayın."
 #. js-lingui-id: oKV11Q
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pause the recording bot"
-msgstr ""
+msgstr "Kayıt botunu duraklatın"
 
 #. js-lingui-id: 1wdjme
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5934,7 +5934,7 @@ msgstr "Filipinler 🇵🇭"
 #. js-lingui-id: hyGrEm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pick an AI model by tier"
-msgstr ""
+msgstr "Kademesine göre bir yapay zeka modeli seçin"
 
 #. js-lingui-id: we6gj5
 #: src/partner-application/partner-application-copy.ts
@@ -5974,7 +5974,7 @@ msgstr "Boru hatları, özel nesneler, yapay zeka asistanları ve Postgres üzer
 #. js-lingui-id: NjL3pD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Play audio-only recordings"
-msgstr ""
+msgstr "Yalnızca ses içeren kayıtları oynatın"
 
 #. js-lingui-id: z7gnI9
 #: src/partner-application/partner-application-copy.ts
@@ -6330,7 +6330,7 @@ msgstr "Yinelenen Google Takvim etkinlikleri"
 #. js-lingui-id: pRH3vs
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reference records and skills in AI chat"
-msgstr ""
+msgstr "Yapay zeka sohbetinde kayıtlara ve becerilere başvurun"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6393,7 +6393,7 @@ msgstr "{skill} öğesini kaldır"
 #. js-lingui-id: ChVv1j
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Remove a step from its node in the diagram, without opening the side panel first."
-msgstr ""
+msgstr "Önce yan paneli açmadan, diyagramdaki düğümünden bir adımı kaldırın."
 
 #. js-lingui-id: a/aGHe
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -6819,7 +6819,7 @@ msgstr "İlişkiler genelinde ilgili kayıtları görüntüleyin"
 #. js-lingui-id: B79UH5
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See the devices on your account"
-msgstr ""
+msgstr "Hesabınızdaki cihazları görün"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6834,7 +6834,7 @@ msgstr "Güncellemeleri olurken görün. Ekibiniz ve ajanlarınızla kesintisiz 
 #. js-lingui-id: DlPcBc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See what a model costs and where it runs"
-msgstr ""
+msgstr "Bir modelin maliyetini ve nerede çalıştığını görün"
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
@@ -6989,7 +6989,7 @@ msgstr "Hizmetler"
 #. js-lingui-id: y/35JB
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Settings > Profile now lists every device with an active session, marks the one you are on, and lets you sign out any of the others."
-msgstr ""
+msgstr "Ayarlar > Profil artık etkin oturumu olan tüm cihazları listeliyor, kullandığınız cihazı işaretliyor ve diğerlerinden herhangi birinin oturumunu kapatmanıza olanak tanıyor."
 
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
@@ -7339,7 +7339,7 @@ msgstr "Tavizlere razı gelmeyi bırakın."
 #. js-lingui-id: 8b3N0u
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Stop the call recorder from joining calendar meetings with one workspace setting, rather than uninstalling the app. The Recording Bot preference now reads On only when a bot is really scheduled."
-msgstr ""
+msgstr "Uygulamayı kaldırmak yerine tek bir çalışma alanı ayarıyla çağrı kaydedicinin takvim toplantılarına katılmasını engelleyin. Kayıt Botu tercihi artık yalnızca gerçekten bir bot planlandığında Açık olarak görünür."
 
 #. js-lingui-id: hjgBcp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7755,7 +7755,7 @@ msgstr "Ev İçi Yük"
 #. js-lingui-id: 6U7fek
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
-msgstr ""
+msgstr "Arayüz artık sağdan sola diller için yansıtılıyor; böylece Arapça ve İbranice çalışma alanları kendi yönlerinde okunuyor."
 
 #. js-lingui-id: ZNzKXV
 #: src/case-studies/case-study-stories.ts
@@ -7793,7 +7793,7 @@ msgstr ""
 #. js-lingui-id: 5V+Mch
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The navigation menu is now a page of its own, with a real address and a way back. Create actions appear as icons in page headers, and the bottom bar no longer sits on top of your content."
-msgstr ""
+msgstr "Gezinme menüsü artık gerçek bir adresi ve geri dönüş yolu olan kendi sayfasına sahip. Oluşturma işlemleri sayfa başlıklarında simge olarak görünür ve alt çubuk artık içeriğinizin üzerinde yer almaz."
 
 #. js-lingui-id: nf1NnD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8276,7 +8276,7 @@ msgstr "İki Faktörlü Kimlik Doğrulama"
 #. js-lingui-id: QMyFdb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Type <0>@</0> to point the chat at a record, or <1>/</1> to pick one of your workspace’s skills. Both suggest matches as you type."
-msgstr ""
+msgstr "Sohbette bir kayda işaret etmek için <0>@</0> yazın veya çalışma alanınızdaki becerilerden birini seçmek için <1>/</1> yazın. Her ikisi de yazdıkça eşleşmeler önerir."
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts

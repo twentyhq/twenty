@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-15 14:21\n"
+"PO-Revision-Date: 2026-09-16 16:20\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -738,7 +738,7 @@ msgstr "一个随时准备扩展的平台"
 #. js-lingui-id: GGXFEW
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A proper home on mobile"
-msgstr ""
+msgstr "移动端的理想主页"
 
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
@@ -1115,7 +1115,7 @@ msgstr "迁移工作流中的 AI"
 #. js-lingui-id: CKvvwf
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "AI settings now show each model’s provider, price per million tokens, context window, maximum output, and data residency."
-msgstr ""
+msgstr "AI 设置现会显示每个模型的提供商、每百万个令牌的价格、上下文窗口、最大输出量和数据驻留地。"
 
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
@@ -1289,7 +1289,7 @@ msgstr "阿拉伯语"
 #. js-lingui-id: Qrqy7n
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Arabic and Hebrew read right to left"
-msgstr ""
+msgstr "阿拉伯语和希伯来语从右向左阅读"
 
 #. js-lingui-id: uicv6Z
 #: src/case-studies/case-study-stories.ts
@@ -1717,7 +1717,7 @@ msgstr "对象的日历视图"
 #. js-lingui-id: RZgOeI
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
-msgstr ""
+msgstr "没有视频的通话录音现会附带音频播放器，因此点击跳转和转录文本高亮功能也可在其中使用。"
 
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
@@ -1870,12 +1870,12 @@ msgstr "使用通用的 Unicode 日期格式，为任意字段选择最适合你
 #. js-lingui-id: BZEHq1
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose how your AI should behave on a single slider, from Extra Fast to Extra Smart, instead of picking a model by name. Each tier shows what it trades in speed, cost, and intelligence."
-msgstr ""
+msgstr "现在，您可以通过单个滑块选择 AI 的行为方式，从“极快”到“极智能”，无需再按名称选择模型。每个级别都会显示其在速度、成本和智能方面的权衡。"
 
 #. js-lingui-id: oXetDh
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose where records open"
-msgstr ""
+msgstr "选择记录的打开位置"
 
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
@@ -2681,7 +2681,7 @@ msgstr "亲爱的团队，我很高兴提交我们的提案供你们考虑。我
 #. js-lingui-id: JG4DOf
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Decide whether records open in the side panel or as a full page, set per object and as your own preference in Settings > Experience."
-msgstr ""
+msgstr "决定记录是在侧边栏中打开还是以完整页面打开，可按对象设置，也可在“设置”>“体验”中设置为您的个人偏好。"
 
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
@@ -2698,7 +2698,7 @@ msgstr "字段的默认位置/可见性…"
 #. js-lingui-id: IOhXZ5
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Delete a workflow step from the diagram"
-msgstr ""
+msgstr "从图表中删除工作流步骤"
 
 #. js-lingui-id: 9RARjP
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -2994,7 +2994,7 @@ msgstr "编辑动作"
 #. js-lingui-id: V4B1Gm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Edit deactivated objects"
-msgstr ""
+msgstr "编辑已停用的对象"
 
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3435,7 +3435,7 @@ msgstr "Feb"
 #. js-lingui-id: ATTTRk
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field descriptions on hover"
-msgstr ""
+msgstr "悬停时显示字段说明"
 
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
@@ -4054,7 +4054,7 @@ msgstr "小时费率 *"
 #. js-lingui-id: c+5807
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
-msgstr ""
+msgstr "将鼠标悬停在列标题或字段标签上即可查看该字段的描述，无需打开设置查找。"
 
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
@@ -5663,7 +5663,7 @@ msgstr "SSO 只要 5 美元。几乎就是慈善项目。"
 #. js-lingui-id: Av5T3E
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
-msgstr ""
+msgstr "从“设置”中打开已停用的对象并进行更改，而无需将其删除后重新构建。"
 
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
@@ -5873,7 +5873,7 @@ msgstr "粘贴密钥并点击 Activate。"
 #. js-lingui-id: oKV11Q
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pause the recording bot"
-msgstr ""
+msgstr "暂停录制机器人"
 
 #. js-lingui-id: 1wdjme
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
@@ -5934,7 +5934,7 @@ msgstr "菲律宾 🇵🇭"
 #. js-lingui-id: hyGrEm
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Pick an AI model by tier"
-msgstr ""
+msgstr "按层级选择 AI 模型"
 
 #. js-lingui-id: we6gj5
 #: src/partner-application/partner-application-copy.ts
@@ -5974,7 +5974,7 @@ msgstr "销售漏斗、自定义对象、AI 助手，以及构建在 Postgres �
 #. js-lingui-id: NjL3pD
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Play audio-only recordings"
-msgstr ""
+msgstr "播放仅音频录制内容"
 
 #. js-lingui-id: z7gnI9
 #: src/partner-application/partner-application-copy.ts
@@ -6330,7 +6330,7 @@ msgstr "重复的 Google 日历事件"
 #. js-lingui-id: pRH3vs
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Reference records and skills in AI chat"
-msgstr ""
+msgstr "在 AI 聊天中引用记录和技能"
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6393,7 +6393,7 @@ msgstr "移除 {skill}"
 #. js-lingui-id: ChVv1j
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Remove a step from its node in the diagram, without opening the side panel first."
-msgstr ""
+msgstr "无需先打开侧边面板，即可从图表中的节点移除步骤。"
 
 #. js-lingui-id: a/aGHe
 #: src/sections/product-feature/data/feature-tiles.ts
@@ -6819,7 +6819,7 @@ msgstr "查看跨关系的相关记录"
 #. js-lingui-id: B79UH5
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See the devices on your account"
-msgstr ""
+msgstr "查看您账户中的设备"
 
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
@@ -6834,7 +6834,7 @@ msgstr "实时查看更新情况。与您的团队和坐席无缝协作。"
 #. js-lingui-id: DlPcBc
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "See what a model costs and where it runs"
-msgstr ""
+msgstr "查看模型的费用和运行位置"
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
@@ -6989,7 +6989,7 @@ msgstr "服务"
 #. js-lingui-id: y/35JB
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Settings > Profile now lists every device with an active session, marks the one you are on, and lets you sign out any of the others."
-msgstr ""
+msgstr "“设置”>“个人资料”现在会列出所有具有活跃会话的设备，标记您当前使用的设备，并允许您退出其他任意设备的登录。"
 
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
@@ -7339,7 +7339,7 @@ msgstr "别再接受这些权衡。"
 #. js-lingui-id: 8b3N0u
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Stop the call recorder from joining calendar meetings with one workspace setting, rather than uninstalling the app. The Recording Bot preference now reads On only when a bot is really scheduled."
-msgstr ""
+msgstr "通过一项工作区设置即可阻止通话录制器加入日历会议，无需卸载应用。现在，只有真正安排了机器人时，“录制机器人”偏好设置才会显示为“开启”。"
 
 #. js-lingui-id: hjgBcp
 #: src/platform/releases/ReleaseNotes.tsx
@@ -7755,7 +7755,7 @@ msgstr "内部开发负担"
 #. js-lingui-id: 6U7fek
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
-msgstr ""
+msgstr "界面现在会针对从右至左书写的语言进行镜像显示，因此阿拉伯语和希伯来语工作区会按其自身的书写方向显示。"
 
 #. js-lingui-id: ZNzKXV
 #: src/case-studies/case-study-stories.ts
@@ -7793,7 +7793,7 @@ msgstr ""
 #. js-lingui-id: 5V+Mch
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "The navigation menu is now a page of its own, with a real address and a way back. Create actions appear as icons in page headers, and the bottom bar no longer sits on top of your content."
-msgstr ""
+msgstr "导航菜单现在拥有独立页面，具有实际地址和返回方式。创建操作会作为图标显示在页面标题中，底部栏也不再覆盖您的内容。"
 
 #. js-lingui-id: nf1NnD
 #: src/platform/releases/ReleaseNotes.tsx
@@ -8276,7 +8276,7 @@ msgstr "双重身份验证"
 #. js-lingui-id: QMyFdb
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Type <0>@</0> to point the chat at a record, or <1>/</1> to pick one of your workspace’s skills. Both suggest matches as you type."
-msgstr ""
+msgstr "输入 <0>@</0> 可让聊天引用某条记录，或输入 <1>/</1> 从工作区技能中选择一项。两者都会在您输入时建议匹配项。"
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
