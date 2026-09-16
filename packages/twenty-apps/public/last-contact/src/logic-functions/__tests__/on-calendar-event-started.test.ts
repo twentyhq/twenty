@@ -59,7 +59,21 @@ const setupQueryMock = ({
     }
 
     if (query.people) {
-      return Promise.resolve({ people: singlePage([]) });
+      const requestedIds: string[] = query.people.__args.filter.id.in;
+
+      // The company resolve and the last-contact state read both query people;
+      // only the former selects companyId.
+      return Promise.resolve({
+        people: singlePage(
+          query.people.edges.node.companyId
+            ? requestedIds.map((id) => ({ id, companyId: null }))
+            : requestedIds.map((id) => ({ id })),
+        ),
+      });
+    }
+
+    if (query.companies) {
+      return Promise.resolve({ companies: singlePage([]) });
     }
 
     return Promise.resolve({ opportunities: singlePage([]) });
@@ -69,7 +83,7 @@ const setupQueryMock = ({
 beforeEach(() => {
   queryMock.mockReset();
   mutationMock.mockReset();
-  mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
+  mutationMock.mockResolvedValue({});
 });
 
 describe('on-calendar-event-started definition', () => {
@@ -159,11 +173,12 @@ describe('on-calendar-event-started handler', () => {
       participantsByEventCalls[1][0].calendarEventParticipants.__args.after,
     ).toBe('participants-cursor-1');
 
-    const personUpdates = mutationMock.mock.calls.filter(
-      ([mutation]) => mutation.updatePeople,
+    const personUpserts = mutationMock.mock.calls.filter(
+      ([mutation]) => mutation.createPeople,
     );
-    expect(personUpdates).toHaveLength(2);
-    expect(personUpdates[0][0].updatePeople.__args.data).toMatchObject({
+    expect(personUpserts).toHaveLength(1);
+    expect(personUpserts[0][0].createPeople.__args.data).toHaveLength(2);
+    expect(personUpserts[0][0].createPeople.__args.data[0]).toMatchObject({
       lastContactAt: PAST_EVENT_STARTS_AT,
       lastContactItemCalendarEventId: 'event-1',
     });

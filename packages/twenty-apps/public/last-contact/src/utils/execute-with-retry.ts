@@ -3,12 +3,22 @@ const INITIAL_RETRY_DELAY_MS = 2_000;
 const MAX_RETRY_DELAY_MS = 30_000;
 const MAX_JITTER_MS = 1_000;
 
-// The client SDK surfaces HTTP failures as plain Error messages built from the
-// status text and raw response body, so retryability has to be detected from
-// the message text. Covers rate limiting (429, Cloudflare 1015), transient
-// gateway errors (502/503/504) and network-level failures.
-const RETRYABLE_ERROR_PATTERN =
-  /\b(429|1015|too many requests|rate ?limit\w*|502|503|504|bad gateway|gateway time-?out|service unavailable|timed? ?out|fetch failed|econnreset|econnrefused|socket hang up)\b/i;
+// The GraphQL rate limit answers HTTP 200 with an errors array, so it is only
+// visible through the extensions the server attaches. RATE_LIMITED comes from
+// the usage-limit path; LIMIT_REACHED is the throttler, which reports itself as
+// BAD_USER_INPUT and would otherwise look like a permanent failure.
+const RETRYABLE_ERROR_CODES = ['RATE_LIMITED', 'TIMEOUT'];
+const RETRYABLE_ERROR_SUB_CODES = ['LIMIT_REACHED'];
+
+// Transport failures never reach the GraphQL layer, so they carry no extensions
+// and have to be recognised from the message the client SDK builds out of the
+// status text and raw response body.
+const RETRYABLE_TRANSPORT_ERROR_PATTERN =
+  /\b(429|1015|too many requests|502|503|504|bad gateway|gateway time-?out|service unavailable|timed? ?out|fetch failed|econnreset|econnrefused|socket hang up)\b/i;
+
+type GraphqlErrorLike = {
+  extensions?: { code?: unknown; subCode?: unknown; retryAfterMs?: unknown };
+};
 
 const sleep = (durationMs: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, durationMs));
@@ -16,11 +26,29 @@ const sleep = (durationMs: number): Promise<void> =>
 const getErrorMessage = (error: unknown): string =>
   error instanceof Error ? error.message : String(error);
 
+const getGraphqlErrors = (error: unknown): GraphqlErrorLike[] => {
+  const errors = (error as { errors?: unknown })?.errors;
+
+  return Array.isArray(errors) ? (errors as GraphqlErrorLike[]) : [];
+};
+
+const isRetryableGraphqlError = ({ extensions }: GraphqlErrorLike): boolean =>
+  RETRYABLE_ERROR_CODES.includes(extensions?.code as string) ||
+  RETRYABLE_ERROR_SUB_CODES.includes(extensions?.subCode as string);
+
 const isRetryableError = (error: unknown): boolean =>
-  RETRYABLE_ERROR_PATTERN.test(getErrorMessage(error));
+  getGraphqlErrors(error).some(isRetryableGraphqlError) ||
+  RETRYABLE_TRANSPORT_ERROR_PATTERN.test(getErrorMessage(error));
 
 const parseRetryAfterMs = (error: unknown): number | undefined => {
+  for (const { extensions } of getGraphqlErrors(error)) {
+    if (typeof extensions?.retryAfterMs === 'number') {
+      return extensions.retryAfterMs;
+    }
+  }
+
   const match = getErrorMessage(error).match(/"retry_after"\s*:\s*(\d+)/);
+
   return match ? Number(match[1]) * 1_000 : undefined;
 };
 

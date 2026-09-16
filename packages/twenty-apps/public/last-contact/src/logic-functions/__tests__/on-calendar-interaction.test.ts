@@ -55,7 +55,21 @@ const setupQueryMock = (participants: Record<string, unknown>[]) => {
     }
 
     if (query.people) {
-      return Promise.resolve({ people: buildPage([]) });
+      const requestedIds: string[] = query.people.__args.filter.id.in;
+
+      // The company resolve and the last-contact state read both query people;
+      // only the former selects companyId.
+      return Promise.resolve({
+        people: buildPage(
+          query.people.edges.node.companyId
+            ? requestedIds.map((id) => ({ id, companyId: null }))
+            : requestedIds.map((id) => ({ id })),
+        ),
+      });
+    }
+
+    if (query.companies) {
+      return Promise.resolve({ companies: buildPage([]) });
     }
 
     return Promise.resolve({ opportunities: buildPage([]) });
@@ -67,7 +81,7 @@ beforeEach(() => {
   vi.setSystemTime(new Date(NOW));
   queryMock.mockReset();
   mutationMock.mockReset();
-  mutationMock.mockResolvedValue({ updatePeople: [{ id: 'updated' }] });
+  mutationMock.mockResolvedValue({});
 });
 
 afterEach(() => {
@@ -108,15 +122,18 @@ describe('on-calendar-interaction handler', () => {
     expect(
       queryMock.mock.calls[0][0].calendarEventParticipants.__args.filter,
     ).toEqual({ calendarEventId: { in: [CALENDAR_EVENT_ID] } });
-    expect(mutationMock.mock.calls[0][0].updatePeople.__args.data).toEqual({
-      lastContactAt: PAST_EVENT_STARTS_AT,
-      lastContactById: null,
-      lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
-      lastContactItemMessageId: null,
-      lastOutboundAt: PAST_EVENT_STARTS_AT,
-      lastInboundAt: PAST_EVENT_STARTS_AT,
-      lastMeetingId: CALENDAR_EVENT_ID,
-    });
+    expect(mutationMock.mock.calls[0][0].createPeople.__args.data).toEqual([
+      {
+        id: PERSON_ID,
+        lastContactAt: PAST_EVENT_STARTS_AT,
+        lastContactById: null,
+        lastContactItemCalendarEventId: CALENDAR_EVENT_ID,
+        lastContactItemMessageId: null,
+        lastOutboundAt: PAST_EVENT_STARTS_AT,
+        lastInboundAt: PAST_EVENT_STARTS_AT,
+        lastMeetingId: CALENDAR_EVENT_ID,
+      },
+    ]);
   });
 
   it('should do nothing when no participant has both a person and a calendar event', async () => {

@@ -11,7 +11,6 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { ApplicationJobEnqueueThrottlerService } from 'src/engine/core-modules/message-queue/services/application-job-enqueue-throttler.service';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
 import { transformEventBatchToEventPayloads } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/database-event/utils/transform-event-batch-to-event-payloads';
 import {
@@ -173,22 +172,20 @@ export class CallDatabaseEventTriggerJobsJob {
         continue;
       }
 
-      try {
-        await this.applicationJobEnqueueThrottlerService.throttleOrThrow({
+      // A database event happens once. Dropping its trigger job loses the
+      // change for good, so an application over its enqueue budget has its
+      // jobs delayed into a later window instead of skipped.
+      const { delayMs, isCapped } =
+        await this.applicationJobEnqueueThrottlerService.reserveEnqueueDelay({
           applicationId,
           applicationRegistrationId,
           jobCount: logicFunctionPayloads.length,
         });
-      } catch (error) {
-        if (error instanceof ThrottlerException) {
-          this.logger.warn(
-            `Enqueue throttled for application ${applicationId} (registration ${applicationRegistrationId}) in workspace ${workspaceEventBatch.workspaceId}: skipping ${logicFunctionPayloads.length} logic function trigger(s)`,
-          );
 
-          continue;
-        }
-
-        throw error;
+      if (delayMs > 0) {
+        this.logger.warn(
+          `Enqueue throttled for application ${applicationId} (registration ${applicationRegistrationId}) in workspace ${workspaceEventBatch.workspaceId}: delaying ${logicFunctionPayloads.length} logic function trigger(s) by ${delayMs}ms${isCapped ? ' (capped)' : ''}`,
+        );
       }
 
       await this.messageQueueService.bulkAdd<LogicFunctionTriggerJobData>(
@@ -199,6 +196,7 @@ export class CallDatabaseEventTriggerJobsJob {
         {
           retryLimit: 3,
           backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
+          ...(delayMs > 0 ? { delay: delayMs } : {}),
         },
       );
     }

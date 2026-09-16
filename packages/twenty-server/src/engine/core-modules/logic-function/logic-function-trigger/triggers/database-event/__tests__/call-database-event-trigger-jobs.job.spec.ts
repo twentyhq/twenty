@@ -131,6 +131,9 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
   let messageQueueService: { bulkAdd: jest.Mock };
   let recordShareService: { findByRecordIds: jest.Mock };
   let recordSharingFeatureService: { isRecordSharingEnabled: jest.Mock };
+  let applicationJobEnqueueThrottlerService: {
+    reserveEnqueueDelay: jest.Mock;
+  };
   let cacheData: Record<string, unknown>;
 
   const buildBatch = (
@@ -186,6 +189,11 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     recordSharingFeatureService = {
       isRecordSharingEnabled: jest.fn().mockResolvedValue(false),
     };
+    applicationJobEnqueueThrottlerService = {
+      reserveEnqueueDelay: jest
+        .fn()
+        .mockResolvedValue({ delayMs: 0, isCapped: false }),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -203,7 +211,7 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
         },
         {
           provide: ApplicationJobEnqueueThrottlerService,
-          useValue: { throttleOrThrow: jest.fn().mockResolvedValue(undefined) },
+          useValue: applicationJobEnqueueThrottlerService,
         },
         { provide: RecordShareService, useValue: recordShareService },
         {
@@ -223,6 +231,37 @@ describe('CallDatabaseEventTriggerJobsJob', () => {
     }).compile();
 
     job = module.get(CallDatabaseEventTriggerJobsJob);
+  });
+
+  it('should enqueue without delay while the application is within its budget', async () => {
+    await job.handle(
+      buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+    );
+
+    expect(messageQueueService.bulkAdd).toHaveBeenCalledWith(
+      LogicFunctionTriggerJob.name,
+      expect.anything(),
+      expect.not.objectContaining({ delay: expect.anything() }),
+    );
+  });
+
+  it('should delay rather than drop the events of an application over its enqueue budget', async () => {
+    applicationJobEnqueueThrottlerService.reserveEnqueueDelay.mockResolvedValue(
+      {
+        delayMs: 42_000,
+        isCapped: false,
+      },
+    );
+
+    await job.handle(
+      buildBatch([buildEvent('record-1', { name: 'New', salary: 10 })]),
+    );
+
+    expect(messageQueueService.bulkAdd).toHaveBeenCalledWith(
+      LogicFunctionTriggerJob.name,
+      expect.anything(),
+      expect.objectContaining({ delay: 42_000 }),
+    );
   });
 
   it('should enqueue the events of an object the application role reads', async () => {

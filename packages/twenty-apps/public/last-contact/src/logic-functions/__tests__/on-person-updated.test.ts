@@ -35,13 +35,28 @@ const buildBatch = (
 
 beforeEach(() => {
   queryMock.mockReset();
-  queryMock.mockResolvedValue({ people: { edges: [] } });
+  queryMock.mockImplementation((query) =>
+    query.peopleGroupBy
+      ? Promise.resolve({ peopleGroupBy: [] })
+      : Promise.resolve({
+          companies: {
+            edges: query.companies.__args.filter.id.in.map((id: string) => ({
+              node: { id },
+            })),
+            pageInfo: { hasNextPage: false, endCursor: null },
+          },
+        }),
+  );
   mutationMock.mockReset();
   mutationMock.mockResolvedValue({});
 });
 
 const updatedCompanyIds = () =>
-  mutationMock.mock.calls.map(([mutation]) => mutation.updateCompany.__args.id);
+  mutationMock.mock.calls.flatMap(([mutation]) =>
+    mutation.createCompanies.__args.data.map(
+      (record: { id: string }) => record.id,
+    ),
+  );
 
 describe('on-person-updated definition', () => {
   it('should batch companyId updates', () => {
