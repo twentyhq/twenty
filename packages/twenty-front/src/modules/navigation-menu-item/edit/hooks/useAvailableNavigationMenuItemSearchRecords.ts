@@ -1,4 +1,3 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 
@@ -6,6 +5,8 @@ import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
 import { isDefined } from 'twenty-shared/utils';
+
+const DEFAULT_RECORD_SUGGESTION_LIMIT = 10;
 
 export type NavigationMenuItemSearchRecord = {
   recordId: string;
@@ -38,7 +39,8 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
     useObjectRecordSearchRecords({
       objectNameSingulars: includedObjectNameSingulars,
       searchInput: deferredSearchInput,
-      skip: skip || !isNonEmptyString(deferredSearchInput),
+      skip,
+      limit: deferredSearchInput ? undefined : DEFAULT_RECORD_SUGGESTION_LIMIT,
     });
 
   const recordIdsAlreadyAdded = useMemo(

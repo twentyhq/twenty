@@ -321,8 +321,6 @@ export const NavigationMenuItemAddDropdownContent = ({
         .includes(search.trim().toLocaleLowerCase()),
   );
   let emptyMessage = t`No results found`;
-  if (step === 'record' && !search.trim())
-    emptyMessage = t`Type to search records`;
   if (step === 'record' && (recordSearchLoading || isSearchDebouncing))
     emptyMessage = t`Loading...`;
 
