@@ -168,13 +168,18 @@ export const AppTooltip = ({
       return;
     }
 
+    setShow(false);
     setActiveAnchor(anchorElements[0] ?? null);
   }, [anchorElements, activeAnchor]);
 
   useEffect(() => {
-    if (anchorElements.length === 0) {
+    if (hidden || anchorElements.length === 0) {
+      setShow(false);
+      isHoveringTooltipRef.current = false;
       return;
     }
+
+    let hoveredAnchor: Element | null = null;
 
     const handleShow = (value: boolean) => {
       if (!isControlled) {
@@ -223,29 +228,50 @@ export const AppTooltip = ({
     };
 
     const removeListeners = anchorElements.map((anchorElement) => {
-      const handleEnter = () => handleAnchorEnter(anchorElement);
-      const handleLeave = () => handleAnchorLeave();
+      const handleEnter = () => {
+        hoveredAnchor = anchorElement;
+        handleAnchorEnter(anchorElement);
+      };
+      const handleLeave = () => {
+        hoveredAnchor = null;
+        handleAnchorLeave();
+      };
+      const handleFocus = () => handleAnchorEnter(anchorElement);
 
       // Child-to-child pointer movement must not restart the tooltip timer.
       anchorElement.addEventListener('mouseenter', handleEnter);
       anchorElement.addEventListener('mouseleave', handleLeave);
-      anchorElement.addEventListener('focus', handleEnter);
+      anchorElement.addEventListener('focus', handleFocus);
       anchorElement.addEventListener('blur', handleLeave);
 
       return () => {
         anchorElement.removeEventListener('mouseenter', handleEnter);
         anchorElement.removeEventListener('mouseleave', handleLeave);
-        anchorElement.removeEventListener('focus', handleEnter);
+        anchorElement.removeEventListener('focus', handleFocus);
         anchorElement.removeEventListener('blur', handleLeave);
       };
     });
 
+    // Dragging or replacing a row can prevent its mouseleave event.
+    const handlePointerMove = (event: PointerEvent) => {
+      if (
+        hoveredAnchor &&
+        event.target instanceof Node &&
+        !hoveredAnchor.contains(event.target)
+      ) {
+        hoveredAnchor = null;
+        handleAnchorLeave();
+      }
+    };
+    document.addEventListener('pointermove', handlePointerMove);
+
     return () => {
+      document.removeEventListener('pointermove', handlePointerMove);
       removeListeners.forEach((removeListener) => removeListener());
       clearTimeout(showDelayTimerRef.current);
       clearTimeout(hideDelayTimerRef.current);
     };
-  }, [anchorElements, isControlled, delayShowMs, interactive]);
+  }, [anchorElements, isControlled, delayShowMs, interactive, hidden]);
 
   useEffect(() => {
     return () => {
