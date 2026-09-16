@@ -9,6 +9,7 @@ import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-p
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
@@ -51,13 +52,15 @@ import {
   PageLayoutTabLayoutMode,
   RelationOnDeleteAction,
   RelationType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewSortDirection,
   ViewType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { version as getUuidVersion } from 'uuid';
+import { version as getUuidVersion, v4 } from 'uuid';
 
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
@@ -107,6 +110,12 @@ const TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION_ID =
   '7e3d1c2b-0033-4a7b-8c9d-0e1f2a3b4c5d';
 const EXPORT_TICKETS_PERMISSION_FLAG_ID =
   '7e3d1c2b-0034-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_TICKET_PREDICATE_GROUP_ID =
+  '7e3d1c2b-0035-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID =
+  '7e3d1c2b-0036-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_TICKET_TITLE_PREDICATE_ID =
+  '7e3d1c2b-0037-4a7b-8c9d-0e1f2a3b4c5d';
 
 const ENGINE_DERIVED_FIELD_NAMES = [
   'id',
@@ -156,6 +165,12 @@ const buildIdentifierNames = (): Map<string, string> => {
       'TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION',
     ],
     [EXPORT_TICKETS_PERMISSION_FLAG_ID, 'EXPORT_TICKETS_PERMISSION_FLAG'],
+    [TEST_ROLE_TICKET_PREDICATE_GROUP_ID, 'TEST_ROLE_TICKET_PREDICATE_GROUP'],
+    [
+      TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID,
+      'TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP',
+    ],
+    [TEST_ROLE_TICKET_TITLE_PREDICATE_ID, 'TEST_ROLE_TICKET_TITLE_PREDICATE'],
     [TICKET_OBJECT_ID, 'TICKET_OBJECT'],
     [PROJECT_OBJECT_ID, 'PROJECT_OBJECT'],
     [TICKET_TITLE_FIELD_ID, 'TICKET_TITLE_FIELD'],
@@ -788,6 +803,35 @@ const manifest = buildBaseManifest({
             canUpdateFieldValue: false,
           },
         ],
+        rowLevelPermissionPredicateGroups: [
+          {
+            universalIdentifier: TEST_ROLE_TICKET_PREDICATE_GROUP_ID,
+            objectUniversalIdentifier: TICKET_OBJECT_ID,
+            logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+            position: 0,
+          },
+          {
+            universalIdentifier: TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID,
+            objectUniversalIdentifier: TICKET_OBJECT_ID,
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            parentPredicateGroupUniversalIdentifier:
+              TEST_ROLE_TICKET_PREDICATE_GROUP_ID,
+            position: 1,
+          },
+        ],
+        rowLevelPermissionPredicates: [
+          {
+            universalIdentifier: TEST_ROLE_TICKET_TITLE_PREDICATE_ID,
+            objectUniversalIdentifier: TICKET_OBJECT_ID,
+            fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'bug',
+            predicateGroupUniversalIdentifier:
+              TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID,
+            position: 0,
+          },
+        ],
         permissionFlagUniversalIdentifiers: [
           EXPORT_TICKETS_PERMISSION_FLAG_ID,
           SystemPermissionFlag.WORKSPACE,
@@ -955,6 +999,15 @@ describe('Application export - data model', () => {
       ApplicationExportCoverageStatus.EXPORTED,
     );
     expect(statusOf(EXPORT_TICKETS_PERMISSION_FLAG_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TEST_ROLE_TICKET_PREDICATE_GROUP_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TEST_ROLE_TICKET_TITLE_PREDICATE_ID)).toBe(
       ApplicationExportCoverageStatus.EXPORTED,
     );
     expect(statusOf(TICKET_INDEX_VIEW_ID)).toBe(
@@ -1223,6 +1276,52 @@ describe('Application export - data model', () => {
         },
       });
 
+      const predicateGroupId = v4();
+      const keptPredicateId = v4();
+      const removedPredicateId = v4();
+      const predicateGroupInput = {
+        id: predicateGroupId,
+        objectMetadataId: personObject.id,
+        logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+      };
+      const keptPredicateInput = {
+        id: keptPredicateId,
+        fieldMetadataId: personJobTitleField.id,
+        operand: RowLevelPermissionPredicateOperand.CONTAINS,
+        value: 'Engineer',
+        rowLevelPermissionPredicateGroupId: predicateGroupId,
+        positionInRowLevelPermissionPredicateGroup: 0,
+      };
+
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          objectMetadataId: personObject.id,
+          predicateGroups: [predicateGroupInput],
+          predicates: [
+            keptPredicateInput,
+            {
+              id: removedPredicateId,
+              fieldMetadataId: personJobTitleField.id,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value: 'Manager',
+              rowLevelPermissionPredicateGroupId: predicateGroupId,
+              positionInRowLevelPermissionPredicateGroup: 1,
+            },
+          ],
+        },
+      });
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          objectMetadataId: personObject.id,
+          predicateGroups: [predicateGroupInput],
+          predicates: [keptPredicateInput],
+        },
+      });
+
       const { data } = await exportApplication({
         universalIdentifier: customApplication.universalIdentifier,
         expectToFail: false,
@@ -1246,9 +1345,38 @@ describe('Application export - data model', () => {
               canUpdateFieldValue: false,
             }),
           ],
+          rowLevelPermissionPredicateGroups: [
+            expect.objectContaining({
+              universalIdentifier: predicateGroupId,
+              objectUniversalIdentifier:
+                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+              logicalOperator:
+                RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            }),
+          ],
+          rowLevelPermissionPredicates: [
+            expect.objectContaining({
+              universalIdentifier: keptPredicateId,
+              objectUniversalIdentifier:
+                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value: 'Engineer',
+              predicateGroupUniversalIdentifier: predicateGroupId,
+              position: 0,
+            }),
+          ],
           permissionFlagUniversalIdentifiers: [SystemPermissionFlag.EXPORT_CSV],
         }),
       );
+      expect(
+        data.exportApplication.coverage.find(
+          ({ universalIdentifier }) =>
+            universalIdentifier === removedPredicateId,
+        ),
+      ).toMatchObject({
+        metadataName: 'rowLevelPermissionPredicate',
+        status: ApplicationExportCoverageStatus.EXCLUDED,
+      });
 
       const dryRun = await syncApplication({
         manifest: data.exportApplication.manifest,
@@ -1260,6 +1388,15 @@ describe('Application export - data model', () => {
       expect(dryRun.errors).toBeUndefined();
       expect(dryRun.data.syncApplication.actions).toEqual([]);
     } finally {
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          objectMetadataId: personObject.id,
+          predicateGroups: [],
+          predicates: [],
+        },
+      });
       await deleteOneRole({
         expectToFail: false,
         input: { idToDelete: createdRoleId },

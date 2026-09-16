@@ -1,5 +1,5 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -36,7 +36,6 @@ import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueForm
 import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
 import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
 import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Select } from '@/ui/input/components/Select';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -61,7 +60,7 @@ type UsageBreakdownItem = {
 
 export const SettingsAdminAI = () => {
   const apolloAdminClient = useApolloAdminClient();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { refetch: refetchClientConfig } = useClientConfig();
   const { formatUsageValue } = useUsageValueFormatter();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
@@ -149,8 +148,9 @@ export const SettingsAdminAI = () => {
       });
       await refetchClientConfig();
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update default model`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to update default model`,
       });
     }
   };

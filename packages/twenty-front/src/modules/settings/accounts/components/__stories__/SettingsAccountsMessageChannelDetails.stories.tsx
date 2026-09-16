@@ -1,16 +1,16 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
+import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import {
   MessageChannelContactAutoCreationPolicy,
   MessageChannelType,
   MessageFolderImportPolicy,
 } from 'twenty-shared/types';
-import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MessageChannelVisibility } from '~/generated/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const mockedMessageChannel = {
   id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6a',
@@ -30,7 +30,7 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   args: {
     messageChannel: mockedMessageChannel,

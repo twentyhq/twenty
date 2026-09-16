@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 
 import { useOrigin } from '@/domain-manager/hooks/useOrigin';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-import { t } from '@lingui/core/macro';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMutation } from '@apollo/client/react';
+import { t } from '@lingui/core/macro';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { ResendEmailVerificationTokenDocument } from '~/generated-metadata/graphql';
 
 export const useHandleResendEmailVerificationToken = () => {
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [resendEmailVerificationToken, { loading }] = useMutation(
     ResendEmailVerificationTokenDocument,
   );
@@ -18,9 +18,7 @@ export const useHandleResendEmailVerificationToken = () => {
     (email: string | null) => {
       return async () => {
         if (!email) {
-          enqueueErrorSnackBar({
-            message: t`Invalid email`,
-          });
+          enqueueToast({ variant: 'error', children: t`Invalid email` });
           return;
         }
 
@@ -33,27 +31,19 @@ export const useHandleResendEmailVerificationToken = () => {
           });
 
           if (data?.resendEmailVerificationToken?.success === true) {
-            enqueueSuccessSnackBar({
-              message: t`Email verification link resent!`,
+            enqueueToast({
+              variant: 'success',
+              children: t`Email verification link resent!`,
             });
           } else {
-            enqueueErrorSnackBar({});
+            enqueueToast({ variant: 'error', children: t`An error occurred.` });
           }
         } catch (error) {
-          enqueueErrorSnackBar(
-            CombinedGraphQLErrors.is(error)
-              ? { apolloError: error }
-              : { message: error instanceof Error ? error.message : undefined },
-          );
+          enqueueToast(getToastOptionsFromError({ error }));
         }
       };
     },
-    [
-      enqueueErrorSnackBar,
-      enqueueSuccessSnackBar,
-      resendEmailVerificationToken,
-      origin,
-    ],
+    [enqueueToast, resendEmailVerificationToken, origin],
   );
 
   return { handleResendEmailVerificationToken, loading };

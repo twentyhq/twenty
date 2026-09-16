@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import { SpreadsheetImportStepperContainer } from '@/spreadsheet-import/steps/components/SpreadsheetImportStepperContainer';
 import { stepBarInternalState } from '@/ui/navigation/step-bar/states/stepBarInternalState';
@@ -11,7 +11,7 @@ const meta: Meta<typeof SpreadsheetImportStepperContainer> = {
   title: 'Modules/SpreadsheetImport/Steps',
   component: SpreadsheetImportStepperContainer,
   decorators: [
-    SnackBarDecorator,
+    ToastDecorator,
     ObjectMetadataItemsDecorator,
     ContextStoreDecorator,
   ],

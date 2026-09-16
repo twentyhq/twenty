@@ -10,8 +10,11 @@ type SpeechRecognitionTestWindow = {
   SpeechRecognition?: WebSpeechRecognitionConstructor;
 };
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({ enqueueErrorSnackBar: jest.fn() }),
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/primitives/feedback', () => ({
+  ...jest.requireActual('twenty-ui/primitives/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 const renderEffect = () =>
