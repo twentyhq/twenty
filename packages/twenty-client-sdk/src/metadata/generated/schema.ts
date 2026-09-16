@@ -2593,45 +2593,6 @@ export interface CreateEmailGroupChannelOutput {
     __typename: 'CreateEmailGroupChannelOutput'
 }
 
-export interface MessageCampaignEngagementBucketDTO {
-    bucketStart: Scalars['DateTime']
-    clicks: Scalars['Int']
-    __typename: 'MessageCampaignEngagementBucketDTO'
-}
-
-export interface MessageCampaignEngagementLinkDTO {
-    authoredUrl: Scalars['String']
-    uniqueClickers: Scalars['Int']
-    totalClicks: Scalars['Int']
-    __typename: 'MessageCampaignEngagementLinkDTO'
-}
-
-export interface MessageCampaignEngagementRecipientDTO {
-    deliveryId: Scalars['UUID']
-    personId: Scalars['UUID']
-    firstClickedAt?: Scalars['DateTime']
-    lastClickedAt: Scalars['DateTime']
-    __typename: 'MessageCampaignEngagementRecipientDTO'
-}
-
-export interface MessageCampaignEngagementDTO {
-    isAvailable: Scalars['Boolean']
-    totalClicks: Scalars['Int']
-    uniqueClickers: Scalars['Int']
-    series: MessageCampaignEngagementBucketDTO[]
-    links: MessageCampaignEngagementLinkDTO[]
-    recipients: MessageCampaignEngagementRecipientDTO[]
-    __typename: 'MessageCampaignEngagementDTO'
-}
-
-export interface MessageCampaignFollowUpDraft {
-    messageCampaignId: Scalars['UUID']
-    listId: Scalars['UUID']
-    memberCount: Scalars['Int']
-    skippedCount: Scalars['Int']
-    __typename: 'MessageCampaignFollowUpDraft'
-}
-
 export interface CampaignAudiencePreviewDTO {
     totalMembers: Scalars['Int']
     withoutEmail: Scalars['Int']
@@ -3311,7 +3272,6 @@ export interface Query {
     previewMessageCampaignAudience: CampaignAudiencePreviewDTO
     messageSuppressions: MessageSuppressionList
     unsubscribeTopics: UnsubscribeTopic[]
-    messageCampaignEngagement: MessageCampaignEngagementDTO
     myMessageChannels: MessageChannel[]
     appMessageChannels: MessageChannel[]
     getEmailingDomains: EmailingDomain[]
@@ -3359,8 +3319,6 @@ export interface Query {
     currentUserApplicationAuthorizations: ApplicationAuthorization[]
     __typename: 'Query'
 }
-
-export type CampaignEngagementActivityFilter = 'FILTERED' | 'ALL'
 
 export type EventLogTable = 'WORKSPACE_EVENT' | 'PAGEVIEW' | 'OBJECT_EVENT' | 'USAGE_EVENT' | 'APPLICATION_LOG'
 
@@ -3525,7 +3483,6 @@ export interface Mutation {
     createUnsubscribeTopic: UnsubscribeTopic
     updateUnsubscribeTopic: UnsubscribeTopic
     deleteUnsubscribeTopic: Scalars['Boolean']
-    createMessageCampaignFollowUpDraft: MessageCampaignFollowUpDraft
     updateMessageChannel: MessageChannel
     createEmailGroupChannel: CreateEmailGroupChannelOutput
     updateEmailGroupChannel: MessageChannel
@@ -6333,50 +6290,6 @@ export interface CreateEmailGroupChannelOutputGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface MessageCampaignEngagementBucketDTOGenqlSelection{
-    bucketStart?: boolean | number
-    clicks?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MessageCampaignEngagementLinkDTOGenqlSelection{
-    authoredUrl?: boolean | number
-    uniqueClickers?: boolean | number
-    totalClicks?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MessageCampaignEngagementRecipientDTOGenqlSelection{
-    deliveryId?: boolean | number
-    personId?: boolean | number
-    firstClickedAt?: boolean | number
-    lastClickedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MessageCampaignEngagementDTOGenqlSelection{
-    isAvailable?: boolean | number
-    totalClicks?: boolean | number
-    uniqueClickers?: boolean | number
-    series?: MessageCampaignEngagementBucketDTOGenqlSelection
-    links?: MessageCampaignEngagementLinkDTOGenqlSelection
-    recipients?: MessageCampaignEngagementRecipientDTOGenqlSelection
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface MessageCampaignFollowUpDraftGenqlSelection{
-    messageCampaignId?: boolean | number
-    listId?: boolean | number
-    memberCount?: boolean | number
-    skippedCount?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface CampaignAudiencePreviewDTOGenqlSelection{
     totalMembers?: boolean | number
     withoutEmail?: boolean | number
@@ -7101,7 +7014,6 @@ export interface QueryGenqlSelection{
     previewMessageCampaignAudience?: (CampaignAudiencePreviewDTOGenqlSelection & { __args: {input: PreviewMessageCampaignAudienceInput} })
     messageSuppressions?: (MessageSuppressionListGenqlSelection & { __args: {input: FindMessageSuppressionsInput} })
     unsubscribeTopics?: UnsubscribeTopicGenqlSelection
-    messageCampaignEngagement?: (MessageCampaignEngagementDTOGenqlSelection & { __args: {input: MessageCampaignEngagementInput} })
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     appMessageChannels?: (MessageChannelGenqlSelection & { __args?: {filter?: (ListAppMessageChannelsInput | null)} })
     getEmailingDomains?: EmailingDomainGenqlSelection
@@ -7170,8 +7082,6 @@ id: Scalars['ID']}
 export interface PreviewMessageCampaignAudienceInput {listId: Scalars['String'],unsubscribeTopicId?: (Scalars['String'] | null)}
 
 export interface FindMessageSuppressionsInput {reason?: (MessageSuppressionReason | null),searchTerm?: (Scalars['String'] | null),unsubscribeTopicId?: (Scalars['UUID'] | null),limit: Scalars['Int'],offset: Scalars['Int']}
-
-export interface MessageCampaignEngagementInput {messageCampaignId: Scalars['UUID'],activityFilter?: (CampaignEngagementActivityFilter | null)}
 
 export interface ListAppMessageChannelsInput {connectedAccountId?: (Scalars['UUID'] | null)}
 
@@ -7352,7 +7262,6 @@ export interface MutationGenqlSelection{
     createUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: CreateUnsubscribeTopicInput} })
     updateUnsubscribeTopic?: (UnsubscribeTopicGenqlSelection & { __args: {input: UpdateUnsubscribeTopicInput} })
     deleteUnsubscribeTopic?: { __args: {id: Scalars['String']} }
-    createMessageCampaignFollowUpDraft?: (MessageCampaignFollowUpDraftGenqlSelection & { __args: {input: MessageCampaignEngagementInput} })
     updateMessageChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateMessageChannelInput} })
     createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
     updateEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {input: UpdateEmailGroupChannelInput} })
@@ -9788,47 +9697,7 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
       if (!obj?.__typename) throw new Error('__typename is missing in "isCreateEmailGroupChannelOutput"')
       return CreateEmailGroupChannelOutput_possibleTypes.includes(obj.__typename)
     }
-    
-
-
-    const MessageCampaignEngagementBucketDTO_possibleTypes: string[] = ['MessageCampaignEngagementBucketDTO']
-    export const isMessageCampaignEngagementBucketDTO = (obj?: { __typename?: any } | null): obj is MessageCampaignEngagementBucketDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignEngagementBucketDTO"')
-      return MessageCampaignEngagementBucketDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MessageCampaignEngagementLinkDTO_possibleTypes: string[] = ['MessageCampaignEngagementLinkDTO']
-    export const isMessageCampaignEngagementLinkDTO = (obj?: { __typename?: any } | null): obj is MessageCampaignEngagementLinkDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignEngagementLinkDTO"')
-      return MessageCampaignEngagementLinkDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MessageCampaignEngagementRecipientDTO_possibleTypes: string[] = ['MessageCampaignEngagementRecipientDTO']
-    export const isMessageCampaignEngagementRecipientDTO = (obj?: { __typename?: any } | null): obj is MessageCampaignEngagementRecipientDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignEngagementRecipientDTO"')
-      return MessageCampaignEngagementRecipientDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MessageCampaignEngagementDTO_possibleTypes: string[] = ['MessageCampaignEngagementDTO']
-    export const isMessageCampaignEngagementDTO = (obj?: { __typename?: any } | null): obj is MessageCampaignEngagementDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignEngagementDTO"')
-      return MessageCampaignEngagementDTO_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const MessageCampaignFollowUpDraft_possibleTypes: string[] = ['MessageCampaignFollowUpDraft']
-    export const isMessageCampaignFollowUpDraft = (obj?: { __typename?: any } | null): obj is MessageCampaignFollowUpDraft => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isMessageCampaignFollowUpDraft"')
-      return MessageCampaignFollowUpDraft_possibleTypes.includes(obj.__typename)
-    }
-    
+                        
 
 
     const CampaignAudiencePreviewDTO_possibleTypes: string[] = ['CampaignAudiencePreviewDTO']
@@ -11181,11 +11050,6 @@ export const enumAllMetadataName = {
    connectionProvider: 'connectionProvider' as const,
    searchFieldMetadata: 'searchFieldMetadata' as const,
    timelineActivityType: 'timelineActivityType' as const
-}
-
-export const enumCampaignEngagementActivityFilter = {
-   FILTERED: 'FILTERED' as const,
-   ALL: 'ALL' as const
 }
 
 export const enumEventLogTable = {

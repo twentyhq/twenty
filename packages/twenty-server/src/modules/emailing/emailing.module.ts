@@ -29,9 +29,6 @@ import { RecordCampaignEngagementJob } from 'src/modules/emailing/jobs/record-ca
 import { CampaignEngagementCaptureService } from 'src/modules/emailing/services/campaign-engagement-capture.service';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { CampaignEngagementRecordingService } from 'src/modules/emailing/services/campaign-engagement-recording.service';
-import { CampaignEngagementReportService } from 'src/modules/emailing/services/campaign-engagement-report.service';
-import { CampaignFollowUpService } from 'src/modules/emailing/services/campaign-follow-up.service';
-import { CampaignEngagementResolver } from 'src/modules/emailing/resolvers/campaign-engagement.resolver';
 import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
 import { EmailingOngoingStaleCronJob } from 'src/modules/emailing/crons/jobs/emailing-ongoing-stale.cron.job';
@@ -120,9 +117,6 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     CampaignEngagementCaptureService,
     CampaignEngagementRecordingService,
     CampaignEngagementEventService,
-    CampaignEngagementReportService,
-    CampaignFollowUpService,
-    CampaignEngagementResolver,
     RecordCampaignEngagementJob,
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
     provideWorkspaceScopedRepository(CampaignDeliveryEntity),

@@ -1003,11 +1003,6 @@ export type CampaignAudiencePreviewDto = {
   withoutEmail: Scalars['Int']['output'];
 };
 
-export enum CampaignEngagementActivityFilter {
-  ALL = 'ALL',
-  FILTERED = 'FILTERED'
-}
-
 export type CancelMessageCampaignInput = {
   campaignId: Scalars['String']['input'];
 };
@@ -2724,50 +2719,6 @@ export type MessageCampaignDetailsConfiguration = {
   configurationType: WidgetConfigurationType;
 };
 
-export type MessageCampaignEngagementBucketDto = {
-  __typename?: 'MessageCampaignEngagementBucketDTO';
-  bucketStart: Scalars['DateTime']['output'];
-  clicks: Scalars['Int']['output'];
-};
-
-export type MessageCampaignEngagementDto = {
-  __typename?: 'MessageCampaignEngagementDTO';
-  isAvailable: Scalars['Boolean']['output'];
-  links: Array<MessageCampaignEngagementLinkDto>;
-  recipients: Array<MessageCampaignEngagementRecipientDto>;
-  series: Array<MessageCampaignEngagementBucketDto>;
-  totalClicks: Scalars['Int']['output'];
-  uniqueClickers: Scalars['Int']['output'];
-};
-
-export type MessageCampaignEngagementInput = {
-  activityFilter?: InputMaybe<CampaignEngagementActivityFilter>;
-  messageCampaignId: Scalars['UUID']['input'];
-};
-
-export type MessageCampaignEngagementLinkDto = {
-  __typename?: 'MessageCampaignEngagementLinkDTO';
-  authoredUrl: Scalars['String']['output'];
-  totalClicks: Scalars['Int']['output'];
-  uniqueClickers: Scalars['Int']['output'];
-};
-
-export type MessageCampaignEngagementRecipientDto = {
-  __typename?: 'MessageCampaignEngagementRecipientDTO';
-  deliveryId: Scalars['UUID']['output'];
-  firstClickedAt?: Maybe<Scalars['DateTime']['output']>;
-  lastClickedAt: Scalars['DateTime']['output'];
-  personId: Scalars['UUID']['output'];
-};
-
-export type MessageCampaignFollowUpDraft = {
-  __typename?: 'MessageCampaignFollowUpDraft';
-  listId: Scalars['UUID']['output'];
-  memberCount: Scalars['Int']['output'];
-  messageCampaignId: Scalars['UUID']['output'];
-  skippedCount: Scalars['Int']['output'];
-};
-
 export type MessageChannel = {
   __typename?: 'MessageChannel';
   connectedAccount?: Maybe<ConnectedAccountPublicDto>;
@@ -3037,7 +2988,6 @@ export type Mutation = {
   createManyViewFieldGroups: Array<ViewFieldGroup>;
   createManyViewFields: Array<ViewField>;
   createManyViewGroups: Array<ViewGroup>;
-  createMessageCampaignFollowUpDraft: MessageCampaignFollowUpDraft;
   createMessageSuppression: MessageSuppression;
   createNavigationMenuItem: NavigationMenuItem;
   createOIDCIdentityProvider: SetupSso;
@@ -3442,10 +3392,6 @@ export type MutationCreateManyViewGroupsArgs = {
   inputs: Array<CreateViewGroupInput>;
 };
 
-
-export type MutationCreateMessageCampaignFollowUpDraftArgs = {
-  input: MessageCampaignEngagementInput;
-};
 
 
 export type MutationCreateMessageSuppressionArgs = {
@@ -5165,7 +5111,6 @@ export type Query = {
   isApplicationStopped: Scalars['Boolean']['output'];
   lineChartData: LineChartData;
   listPlans: Array<BillingPlan>;
-  messageCampaignEngagement: MessageCampaignEngagementDto;
   messageSuppressions: MessageSuppressionList;
   metadataTranslations: Array<MetadataTranslation>;
   minimalMetadata: MinimalMetadata;
@@ -5578,10 +5523,6 @@ export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
 };
 
-
-export type QueryMessageCampaignEngagementArgs = {
-  input: MessageCampaignEngagementInput;
-};
 
 
 export type QueryMessageSuppressionsArgs = {

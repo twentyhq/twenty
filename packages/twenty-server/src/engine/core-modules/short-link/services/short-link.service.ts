@@ -66,41 +66,6 @@ export class ShortLinkService {
     });
   }
 
-  async findByIds({
-    workspaceId,
-    shortLinkIds,
-  }: {
-    workspaceId: string;
-    shortLinkIds: string[];
-  }): Promise<ShortLinkEntity[]> {
-    const shortLinks: ShortLinkEntity[] = [];
-
-    for (const shortLinkIdsChunk of chunk(
-      shortLinkIds,
-      FIND_BY_IDS_CHUNK_SIZE,
-    )) {
-      shortLinks.push(
-        ...(await this.shortLinkRepository.find(workspaceId, {
-          where: { id: In(shortLinkIdsChunk) },
-        })),
-      );
-    }
-
-    return shortLinks;
-  }
-
-  async findCampaignLinks({
-    workspaceId,
-    messageCampaignId,
-  }: {
-    workspaceId: string;
-    messageCampaignId: string;
-  }): Promise<ShortLinkEntity[]> {
-    return this.shortLinkRepository.find(workspaceId, {
-      where: { messageCampaignId },
-    });
-  }
-
   private hashUrl(url: string): string {
     return createHash('sha256').update(url).digest('hex');
   }

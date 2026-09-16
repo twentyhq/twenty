@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { type CampaignEngagementObservation } from 'src/modules/emailing/types/campaign-engagement-observation.type';
 import { classifyEngagementUserAgent } from 'src/modules/emailing/utils/classify-engagement-user-agent.util';
@@ -15,6 +16,8 @@ export class CampaignEngagementRecordingService {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(CampaignDeliveryEntity)
     private readonly campaignDeliveryRepository: Repository<CampaignDeliveryEntity>,
+    @InjectRepository(WorkspaceEntity)
+    private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
   ) {}
 
@@ -24,6 +27,14 @@ export class CampaignEngagementRecordingService {
     });
 
     if (!isDefined(delivery)) {
+      return;
+    }
+
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: delivery.workspaceId,
+    });
+
+    if (!workspace?.isCampaignClickTrackingEnabled) {
       return;
     }
 
