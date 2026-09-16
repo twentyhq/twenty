@@ -110,12 +110,11 @@ export const UpdateViewButtonGroup = () => {
   return (
     <StyledContainer>
       {currentView?.key !== 'INDEX' ? (
-        <ButtonGroup size="small" accent="blue">
+        <ButtonGroup size="sm" variant="solid" color="accent">
           <Button
-            title={t`Update view`}
             onClick={handleUpdateViewClick}
             disabled={!canPersistChanges}
-          />
+          >{t`Update view`}</Button>
           <Dropdown
             dropdownId={updateViewButtonDropdownId}
             clickableComponent={
@@ -141,12 +140,11 @@ export const UpdateViewButtonGroup = () => {
         </ButtonGroup>
       ) : (
         <Button
-          title={t`Save as new view`}
           onClick={handleSaveAsNewViewClick}
-          accent="blue"
-          size="small"
-          variant="secondary"
-        />
+          size="sm"
+          variant="outline"
+          color="accent"
+        >{t`Save as new view`}</Button>
       )}
     </StyledContainer>
   );

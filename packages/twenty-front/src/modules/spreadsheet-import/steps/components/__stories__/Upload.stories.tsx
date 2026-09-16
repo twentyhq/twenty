@@ -11,7 +11,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { Provider as JotaiProvider } from 'jotai';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof UploadStep> = {
   title: 'Modules/SpreadsheetImport/UploadStep',
@@ -35,7 +35,7 @@ const meta: Meta<typeof UploadStep> = {
         </JotaiProvider>
       );
     },
-    SnackBarDecorator,
+    ToastDecorator,
   ],
 };
 

@@ -86,8 +86,8 @@ export const SettingsApplicationsDeveloperTab = () => {
           t`Commands copied to clipboard`,
         );
       }}
-      ariaLabel={t`Copy commands`}
-      Icon={IconCopy}
+      aria-label={t`Copy commands`}
+      startIcon={<IconCopy />}
     />
   );
 
@@ -108,10 +108,8 @@ export const SettingsApplicationsDeveloperTab = () => {
         <CommandBlock commands={createCommands} button={createCopyButton} />
         <StyledButtonContainer>
           <Button
-            Icon={IconArrowUpRight}
-            variant={'secondary'}
-            size={'small'}
-            title={t`Read documentation`}
+            startIcon={<IconArrowUpRight />}
+            size="sm"
             onClick={() =>
               window.open(
                 getDocumentationUrl({
@@ -121,7 +119,8 @@ export const SettingsApplicationsDeveloperTab = () => {
                 '_blank',
               )
             }
-          />
+            variant="outline"
+          >{t`Read documentation`}</Button>
         </StyledButtonContainer>
       </Section>
 

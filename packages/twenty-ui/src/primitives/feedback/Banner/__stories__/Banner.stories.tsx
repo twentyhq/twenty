@@ -74,12 +74,18 @@ export const Default: Story = {
         <div className={styles.bannerContent}>
           Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
           <Button
-            variant="secondary"
-            accent={getButtonAccent(args.color)}
-            title="Reconnect"
-            size="small"
-            inverted={args.variant === 'primary'}
-          />
+            size="sm"
+            variant="outline"
+            color={args.color === 'danger' ? 'danger' : 'accent'}
+            style={{
+              color:
+                args.variant === 'primary'
+                  ? 'var(--t-font-color-inverted)'
+                  : undefined,
+            }}
+          >
+            {'Reconnect'}
+          </Button>
         </div>
         <BannerCloseButton color={args.color} variant={args.variant} />
       </Banner>
@@ -99,12 +105,18 @@ export const Catalog: CatalogStory<Story, typeof Banner> = {
       <div className={styles.bannerContent}>
         Sync lost with mailbox hello@twenty.com. Please reconnect for updates:
         <Button
-          variant="secondary"
-          accent={getButtonAccent(args.color)}
-          title="Reconnect"
-          size="small"
-          inverted={args.variant === 'primary'}
-        />
+          size="sm"
+          variant="outline"
+          color={args.color === 'danger' ? 'danger' : 'accent'}
+          style={{
+            color:
+              args.variant === 'primary'
+                ? 'var(--t-font-color-inverted)'
+                : undefined,
+          }}
+        >
+          {'Reconnect'}
+        </Button>
       </div>
       <BannerCloseButton color={args.color} variant={args.variant} />
     </Banner>

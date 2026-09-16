@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import ms from 'ms';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
 
 import {
@@ -19,6 +20,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { OAuthErrorResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-error-response.type';
 import { OAuthTokenResponse } from 'src/engine/core-modules/application/application-oauth/types/oauth-token-response.type';
+import { isConfidentialApplicationOAuthClient } from 'src/engine/core-modules/application/application-oauth/utils/is-confidential-application-oauth-client.util';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -72,7 +74,10 @@ export class OAuthService {
 
     const applicationRegistration = clientValidation;
 
-    if (applicationRegistration.oAuthClientSecretHash && !clientSecret) {
+    if (
+      isConfidentialApplicationOAuthClient(applicationRegistration) &&
+      !isNonEmptyString(clientSecret)
+    ) {
       return this.errorResponse(
         'invalid_client',
         'Client authentication required for confidential clients',
@@ -191,9 +196,22 @@ export class OAuthService {
       );
     }
 
-    await this.appTokenRepository.update(authCodeToken.id, {
-      revokedAt: new Date(),
-    });
+    // Atomic single-use consume: only the request that flips revokedAt from null proceeds, closing the check-then-use race.
+    const consumeResult = await this.appTokenRepository.update(
+      { id: authCodeToken.id, revokedAt: IsNull() },
+      { revokedAt: new Date() },
+    );
+
+    if (!consumeResult.affected) {
+      this.logger.warn(
+        `Authorization code replay detected for client ${clientId} (concurrent redemption).`,
+      );
+
+      return this.errorResponse(
+        'invalid_grant',
+        'Authorization code has already been used',
+      );
+    }
 
     if (!authCodeToken.userId || !authCodeToken.workspaceId) {
       return this.errorResponse(
@@ -333,7 +351,10 @@ export class OAuthService {
     const applicationRegistration = clientValidation;
 
     // Confidential clients (those with a secret) must authenticate
-    if (applicationRegistration.oAuthClientSecretHash && !clientSecret) {
+    if (
+      isConfidentialApplicationOAuthClient(applicationRegistration) &&
+      !isNonEmptyString(clientSecret)
+    ) {
       return this.errorResponse(
         'invalid_client',
         'Client authentication required for confidential clients',
@@ -487,6 +508,14 @@ export class OAuthService {
     const clientValidation = await this.validateClient(clientId);
 
     if ('error' in clientValidation) {
+      return { active: false };
+    }
+
+    // RFC 7662 §2.1: a confidential client must authenticate to introspect; without its secret we disclose nothing.
+    if (
+      isConfidentialApplicationOAuthClient(clientValidation) &&
+      !isNonEmptyString(clientSecret)
+    ) {
       return { active: false };
     }
 

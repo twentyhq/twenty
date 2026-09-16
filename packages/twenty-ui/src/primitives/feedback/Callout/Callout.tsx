@@ -4,7 +4,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { IconHelp, IconX } from '@ui/icon/components/TablerIcons';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { LightButton, LightIconButton } from '@ui/primitives/input';
+import { LightIconButton, Button } from '@ui/primitives/input';
 
 import styles from './Callout.module.scss';
 
@@ -104,11 +104,15 @@ export const Callout = ({
       </div>
       {isDefined(action) && (
         <div className={styles.footer}>
-          <LightButton
+          <Button
             type="button"
-            title={action.label}
             onClick={action.onClick}
-          />
+            size="sm"
+            variant="ghost"
+            style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+          >
+            {action.label}
+          </Button>
         </div>
       )}
     </div>

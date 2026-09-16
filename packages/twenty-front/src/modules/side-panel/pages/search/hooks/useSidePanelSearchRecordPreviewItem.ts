@@ -1,5 +1,5 @@
 import { SIDE_PANEL_SELECTABLE_LIST_ID } from '@/side-panel/constants/SidePanelSelectableListId';
-import { type SearchResultItem } from '@/side-panel/pages/search/hooks/useSidePanelSearchRecords';
+import { type SearchResultItem } from '@/side-panel/pages/search/types/SearchResultItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 

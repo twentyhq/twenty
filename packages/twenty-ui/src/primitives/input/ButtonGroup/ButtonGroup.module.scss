@@ -1,4 +1,18 @@
 .container {
   border-radius: var(--t-border-radius-md);
-  display: flex;
+  display: inline-flex;
+  max-inline-size: 100%;
+
+  & > :not(:first-child) {
+    border-start-start-radius: 0;
+    border-end-start-radius: 0;
+    margin-inline-start: -1px;
+  }
+  & > :not(:last-child) {
+    border-start-end-radius: 0;
+    border-end-end-radius: 0;
+  }
+  & > :focus-visible {
+    z-index: 1;
+  }
 }

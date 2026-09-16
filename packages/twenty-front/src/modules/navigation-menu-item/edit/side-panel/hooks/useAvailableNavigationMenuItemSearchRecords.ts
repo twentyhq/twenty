@@ -7,7 +7,7 @@ import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRec
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
 import { isDefined } from 'twenty-shared/utils';
 
-export type NavigationMenuItemSearchRecord = {
+type NavigationMenuItemSearchRecord = {
   recordId: string;
   objectNameSingular: string;
   label: string;
@@ -34,12 +34,15 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
     selectedObjectNameSingular,
   });
 
-  const { loading: recordSearchLoading, searchRecords } =
-    useObjectRecordSearchRecords({
-      objectNameSingulars: includedObjectNameSingulars,
-      searchInput: deferredSearchInput,
-      skip: skip || !isNonEmptyString(deferredSearchInput),
-    });
+  const {
+    loading: recordSearchLoading,
+    searchRecords,
+    error,
+  } = useObjectRecordSearchRecords({
+    objectNameSingulars: includedObjectNameSingulars,
+    searchInput: deferredSearchInput,
+    skip: skip || !isNonEmptyString(deferredSearchInput),
+  });
 
   const recordIdsAlreadyAdded = useMemo(
     () =>
@@ -67,6 +70,7 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
   );
 
   return {
+    error,
     availableSearchRecords,
     deferredSearchInput,
     isSearchDebouncing: trimmedSearchInput !== deferredSearchInput,

@@ -1,7 +1,8 @@
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
@@ -15,7 +16,7 @@ export const SettingsApplicationGeneralSection = ({
   applicationId: string;
   autoUpgrade: boolean;
 }) => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [updateApplication] = useMutation(UpdateApplicationDocument);
 
@@ -28,8 +29,9 @@ export const SettingsApplicationGeneralSection = ({
         },
       });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to update auto-upgrade setting.`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to update auto-upgrade setting.`,
       });
     }
   };

@@ -11,7 +11,7 @@ import { FileUploadDecorator } from '~/testing/decorators/FileUploadDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordTableDecorator } from '~/testing/decorators/RecordTableDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 
@@ -46,7 +46,7 @@ const meta: Meta<typeof RecordListRowStory> = {
     FileUploadDecorator,
     RecordTableDecorator,
     ContextStoreDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     ObjectMetadataItemsDecorator,
   ],
   parameters: {

@@ -31,12 +31,11 @@ export const ApiKeyInput = ({ apiKey }: ApiKeyInputProps) => {
         />
       </StyledLinkContainer>
       <Button
-        Icon={IconCopy}
-        title={t`Copy`}
+        startIcon={<IconCopy />}
         onClick={() => {
           copyToClipboard(apiKey, t`API Key copied to clipboard`);
         }}
-      />
+      >{t`Copy`}</Button>
     </StyledContainer>
   );
 };

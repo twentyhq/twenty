@@ -1,12 +1,12 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 
-import { SettingsPath } from 'twenty-shared/types';
 import { useMutation } from '@apollo/client/react';
+import { SettingsPath } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { DeleteOneAgentDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -24,7 +24,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
   const { t } = useLingui();
   const { closeModal } = useModal();
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [deleteAgent] = useMutation(DeleteOneAgentDocument);
 
   const handleDelete = async () => {
@@ -37,9 +37,7 @@ export const SettingsAgentDeleteConfirmationModal = ({
       closeModal(DELETE_AGENT_MODAL_ID);
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 

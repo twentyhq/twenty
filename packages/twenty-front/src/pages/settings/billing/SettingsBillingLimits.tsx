@@ -1,9 +1,9 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 import { SettingsBillingLimitsContent } from '@/settings/billing/components/SettingsBillingLimitsContent';
 import { SettingsBillingPageLayout } from '@/settings/billing/components/SettingsBillingPageLayout';
@@ -14,14 +14,13 @@ export const SettingsBillingLimits = () => {
   return (
     <SettingsBillingPageLayout
       actionButton={
-        <UndecoratedLink to={getSettingsPath(SettingsPath.BillingNewLimit)}>
-          <Button
-            Icon={IconPlus}
-            title={t`New limit`}
-            accent="blue"
-            size="small"
-          />
-        </UndecoratedLink>
+        <NavigationButton
+          to={getSettingsPath(SettingsPath.BillingNewLimit)}
+          startIcon={<IconPlus />}
+          size="sm"
+          variant="solid"
+          color="accent"
+        >{t`New limit`}</NavigationButton>
       }
     >
       <SettingsBillingLimitsContent />

@@ -216,7 +216,7 @@ export const MatchColumnsStep = ({
           {
             title: t`Continue`,
             onClick: handleAlertOnContinue,
-            variant: 'primary',
+            variant: 'outline',
             role: 'confirm',
           },
         ],
@@ -262,7 +262,8 @@ export const MatchColumnsStep = ({
         {
           title: t`Restart`,
           onClick: onBackConfirmation,
-          accent: 'danger',
+          color: 'danger',
+          variant: 'solid',
           role: 'confirm',
         },
       ],
