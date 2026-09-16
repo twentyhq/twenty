@@ -1,5 +1,5 @@
 export const TINTED_ICON_TILE_COLOR_SHADES = {
-  background: 5,
+  background: 4,
   border: 6,
-  icon: 11,
+  icon: 10,
 } as const;

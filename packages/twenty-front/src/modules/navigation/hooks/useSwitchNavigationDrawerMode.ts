@@ -1,3 +1,4 @@
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 
@@ -27,6 +28,7 @@ import { isAiChatPath } from '~/utils/isAiChatPath';
 import { isInboxPath } from '~/utils/isInboxPath';
 
 export const useSwitchNavigationDrawerMode = () => {
+  const isMobile = useIsMobile();
   const location = useLocation();
   const navigate = useNavigate();
   const navigateSettings = useNavigateSettings();
@@ -68,7 +70,9 @@ export const useSwitchNavigationDrawerMode = () => {
 
     if (isSettingsDrawer) {
       setCurrentMobileNavigationDrawer('main');
-      setIsNavigationDrawerExpanded(navigationDrawerExpandedMemorized);
+      if (isMobile) {
+        setIsNavigationDrawerExpanded(navigationDrawerExpandedMemorized);
+      }
       navigate(
         getNavigationDrawerHomeDestination({
           memorizedUrl: navigationMemorizedUrl,
