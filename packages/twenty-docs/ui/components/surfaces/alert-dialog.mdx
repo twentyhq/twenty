@@ -3,15 +3,23 @@ title: AlertDialog
 description: Ask for confirmation before an action that needs an explicit decision.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
 
 Use `AlertDialog` for a decision that interrupts the current workflow, such as confirming deletion. It provides an accessible modal with a backdrop and focus management.
+
+<StoryEmbed
+  storyId="ui-surfaces-alertdialog--documentation"
+  title="AlertDialog example"
+  height={440}
+/>
 
 ## Confirmation
 
 ```tsx
 import { useState } from 'react';
-import { AlertDialog } from 'twenty-ui/surfaces';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
 
 type DeleteConfirmationProps = { onDelete: () => void };
 

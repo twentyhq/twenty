@@ -28,6 +28,7 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { type InheritedReadabilityChildRecords } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <
@@ -40,6 +41,7 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   authContext,
   recordsAfter,
   recordsBefore,
+  inheritedReadabilityChildRecordsByRecordId,
 }: {
   action: DatabaseEventAction;
   objectMetadataItem: FlatObjectMetadata;
@@ -48,8 +50,21 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   authContext?: RawAuthContext;
   recordsAfter?: T[];
   recordsBefore?: T[];
+  inheritedReadabilityChildRecordsByRecordId?: Map<
+    string,
+    InheritedReadabilityChildRecords
+  >;
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
+
+  const buildInheritedReadabilityChildRecordsProperty = (recordId: string) => {
+    const inheritedReadabilityChildRecords =
+      inheritedReadabilityChildRecordsByRecordId?.get(recordId);
+
+    return isDefined(inheritedReadabilityChildRecords)
+      ? { inheritedReadabilityChildRecords }
+      : {};
+  };
 
   let events: (
     | ObjectRecordDeleteEvent<T>
@@ -151,6 +166,9 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
               after: recordAfter,
               updatedFields,
               diff,
+              ...(action === DatabaseEventAction.DELETED
+                ? buildInheritedReadabilityChildRecordsProperty(recordAfter.id)
+                : {}),
             },
           } satisfies
             | ObjectRecordUpdateEvent<T>
@@ -196,7 +214,10 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
         event.userWorkspaceId = authContext?.userWorkspaceId;
         event.workspaceMemberId = authContext?.workspaceMemberId;
         event.recordId = recordBefore.id;
-        event.properties = { before: recordBefore };
+        event.properties = {
+          before: recordBefore,
+          ...buildInheritedReadabilityChildRecordsProperty(recordBefore.id),
+        };
 
         return event;
       });

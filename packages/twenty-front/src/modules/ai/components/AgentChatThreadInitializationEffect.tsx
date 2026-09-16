@@ -27,7 +27,10 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
@@ -96,32 +99,24 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [storeEntry.status, hasAiPermission, setAgentChatThreadsLoading]);
 
   useEffect(() => {
-    const selectedThread = agentChatVisibleThreads.find(
-      (thread) => thread.id === currentAiChatThread,
-    );
-    if (!isDefined(selectedThread)) return;
-    const usageState = agentChatUsageFamilyCallback({
-      threadId: selectedThread.id,
-    });
-    if (!isDefined(store.get(usageState))) {
-      store.set(usageState, getAgentChatUsageFromThread(selectedThread));
-    }
-  }, [
-    currentAiChatThread,
-    agentChatVisibleThreads,
-    agentChatUsageFamilyCallback,
-    store,
-  ]);
-
-  useEffect(() => {
     if (
       hasInitializedAgentChatThreads ||
-      (currentAiChatThread !== null && isValidUuid(currentAiChatThread))
+      (storeEntry.status === 'empty' && hasAiPermission)
     ) {
       return;
     }
 
-    if (storeEntry.status === 'empty' && hasAiPermission) {
+    if (isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)) {
+      const selectedThread = (storeEntry.current as AgentChatThread[]).find(
+        ({ id }) => id === currentAiChatThread,
+      );
+      if (isDefined(selectedThread)) {
+        store.set(
+          agentChatUsageFamilyCallback({ threadId: selectedThread.id }),
+          getAgentChatUsageFromThread(selectedThread),
+        );
+      }
+      setHasInitializedAgentChatThreads(true);
       return;
     }
 
@@ -168,6 +163,7 @@ export const AgentChatThreadInitializationEffect = () => {
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     storeEntry.status,
+    storeEntry.current,
     setCurrentAiChatThread,
     setAgentChatInput,
     store,

@@ -3,14 +3,22 @@ title: Switch
 description: A labeled on or off control with controlled and uncontrolled state.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import SwitchReference from '/snippets/ui/generated/input/switch.mdx';
 
 Use `Switch` for an on or off preference. Give the control a visible label or an accessible name.
 
+<StoryEmbed
+  storyId="ui-input-switch-switch--default"
+  title="Switch example"
+  height={240}
+/>
+
 ## Uncontrolled state
 
 ```tsx
-import { Switch } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/primitives/input';
 
 export const NotificationsPreference = () => (
   <label>
@@ -24,7 +32,7 @@ export const NotificationsPreference = () => (
 
 ```tsx
 import { useState } from 'react';
-import { Switch } from 'twenty-ui/input';
+import { Switch } from 'twenty-ui/primitives/input';
 
 export const NotificationsPreference = () => {
   const [checked, setChecked] = useState(false);

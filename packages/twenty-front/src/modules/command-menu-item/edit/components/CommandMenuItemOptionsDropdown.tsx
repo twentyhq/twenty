@@ -9,7 +9,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconRefresh, IconTag } from 'twenty-ui/icon';
-import { MenuItem, MenuItemSwitch } from 'twenty-ui/navigation';
+import { MenuItem, MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 type CommandMenuItemOptionsDropdownProps = Pick<

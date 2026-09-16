@@ -3,14 +3,22 @@ title: Select
 description: Choose one or more values from a popup list of options.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import SelectReference from '/snippets/ui/generated/input/select.mdx';
 
 Use `Select` for a form value chosen from a list. Use [Menu](/ui/components/surfaces/menu) for commands and actions.
 
+<StoryEmbed
+  storyId="ui-input-select--documentation"
+  title="Select example"
+  height={400}
+/>
+
 ## Single selection
 
 ```tsx
-import { Select } from 'twenty-ui/input';
+import { Select } from 'twenty-ui/primitives/input';
 
 const PRIORITIES = [
   { value: 'low', label: 'Low' },
@@ -40,7 +48,7 @@ Supply `items` on `Root` so `Value` renders the selected item's label; without i
 
 ```tsx
 import { useState } from 'react';
-import { Select } from 'twenty-ui/input';
+import { Select } from 'twenty-ui/primitives/input';
 
 const LANGUAGES = [
   { value: 'en', label: 'English' },

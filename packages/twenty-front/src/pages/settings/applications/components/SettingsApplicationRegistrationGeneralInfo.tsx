@@ -5,7 +5,7 @@ import {
   IconVersions,
   IconWorld,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
@@ -23,9 +23,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
-import { AvatarOrIcon, Chip, Tag } from 'twenty-ui/data-display';
+import { AvatarOrIcon, Chip, Tag } from 'twenty-ui/primitives/data-display';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';

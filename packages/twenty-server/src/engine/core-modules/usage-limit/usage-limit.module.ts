@@ -1,5 +1,3 @@
-import { AiChatUsageResolver } from 'src/engine/core-modules/usage-limit/ai-chat-usage.resolver';
-import { AiChatUsageService } from 'src/engine/core-modules/usage-limit/services/ai-chat-usage.service';
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -44,8 +42,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UsageModule,
   ],
   providers: [
-    AiChatUsageResolver,
-    AiChatUsageService,
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitEntitlementService,
@@ -63,6 +59,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(LogicFunctionEntity),
   ],
   exports: [
+    UsageLimitEntitlementService,
     UsageLimitQuotaService,
     UsageLimitSpeedService,
     UsageLimitsCacheService,

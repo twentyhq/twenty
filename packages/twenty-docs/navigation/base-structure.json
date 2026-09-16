@@ -444,6 +444,7 @@
                 "developers/extend/apps/logic/background-jobs",
                 "developers/extend/apps/logic/skills-and-agents",
                 "developers/extend/apps/logic/connections",
+                "developers/extend/apps/logic/messaging-channels",
                 "developers/extend/apps/logic/credits"
               ]
             },
@@ -515,6 +516,16 @@
                 "ui/dark-mode",
                 "ui/ssr",
                 "ui/accessibility"
+              ]
+            },
+            {
+              "key": "uiDataDisplay",
+              "label": "Data display",
+              "pages": [
+                "ui/components/data-display/avatar",
+                "ui/components/data-display/chip",
+                "ui/components/data-display/tag",
+                "ui/components/data-display/status"
               ]
             },
             {

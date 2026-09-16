@@ -1,7 +1,8 @@
+import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui/layout';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import {
   IconArrowUp,
   IconArrowDown,
@@ -39,10 +40,10 @@ export const AiChatContextUsageDetails = () => {
     agentChatUsageComponentFamilyState,
     { threadId: currentAiChatThread },
   );
-  if (!agentChatUsage) return null;
+  if (!isDefined(agentChatUsage)) {
+    return null;
+  }
 
-  const formatTokens = (tokens: number) =>
-    formatNumber(tokens, { abbreviate: true, decimals: 1 });
   const lastMessage = agentChatUsage.lastMessage;
 
   return (
@@ -56,19 +57,19 @@ export const AiChatContextUsageDetails = () => {
               Icon={IconArrowUp}
               label={t`Input tokens`}
               value={null}
-              valueLabel={formatTokens(lastMessage.inputTokens)}
+              valueLabel={formatAiChatTokens(lastMessage.inputTokens)}
             />
             <UsageProgressRow
               Icon={IconHistory}
               label={t`Cached input`}
               value={null}
-              valueLabel={formatTokens(lastMessage.cachedInputTokens ?? 0)}
+              valueLabel={formatAiChatTokens(lastMessage.cachedInputTokens)}
             />
             <UsageProgressRow
               Icon={IconArrowDown}
               label={t`Output tokens`}
               value={null}
-              valueLabel={formatTokens(lastMessage.outputTokens)}
+              valueLabel={formatAiChatTokens(lastMessage.outputTokens)}
             />
             <UsageProgressRow
               Icon={IconCoins}
@@ -89,19 +90,19 @@ export const AiChatContextUsageDetails = () => {
           Icon={IconArrowUp}
           label={t`Input tokens`}
           value={null}
-          valueLabel={formatTokens(agentChatUsage.inputTokens)}
+          valueLabel={formatAiChatTokens(agentChatUsage.inputTokens)}
         />
         <UsageProgressRow
           Icon={IconHistory}
           label={t`Cached input`}
           value={null}
-          valueLabel={formatTokens(agentChatUsage.cachedInputTokens ?? 0)}
+          valueLabel={formatAiChatTokens(agentChatUsage.cachedInputTokens)}
         />
         <UsageProgressRow
           Icon={IconArrowDown}
           label={t`Output tokens`}
           value={null}
-          valueLabel={formatTokens(agentChatUsage.outputTokens)}
+          valueLabel={formatAiChatTokens(agentChatUsage.outputTokens)}
         />
         <UsageProgressRow
           Icon={IconCoins}

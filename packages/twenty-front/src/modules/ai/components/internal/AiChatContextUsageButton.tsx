@@ -1,3 +1,5 @@
+import { getAiChatUsageLabel } from '@/ai/utils/getAiChatUsageLabel';
+import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
 import { useQuery } from '@apollo/client/react';
 import {
   FloatingPortal,
@@ -20,9 +22,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useReducedMotion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { IconWindow, IconGauge } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/layout';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
@@ -70,48 +72,68 @@ const StyledFooter = styled.div`
 
 export const AiChatContextUsageButton = () => {
   const { t } = useLingui();
+
   const shouldReduceMotion = useReducedMotion();
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [showDetails, setShowDetails] = useState(false);
+
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+
   const agentChatUsage = useAtomComponentFamilyStateValue(
     agentChatUsageComponentFamilyState,
     { threadId: currentAiChatThread },
   );
+
   const tiers = useAiModelTiers();
+
   const { chatTier } = useWorkspaceAiModelTiers();
+
   const agentChatUserSelectedModelTier = useAtomStateValue(
     agentChatUserSelectedModelTierState,
   );
+
   const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
+
   const modelTier = isWorkspaceSetupChat
     ? 'fast'
     : (agentChatUserSelectedModelTier ?? chatTier);
+
   const contextWindow =
     agentChatUsage?.contextWindowTokens ??
     tiers.find(({ tier }) => tier === modelTier)?.model?.contextWindowTokens ??
     0;
+
   const conversationSize = agentChatUsage?.conversationSize ?? 0;
+
   const percentage =
     contextWindow > 0
       ? Math.min(100, Math.max(0, (conversationSize / contextWindow) * 100))
       : 0;
+
   const { data, loading, error } = useQuery(GetAiChatUsageDocument, {
     skip: !isOpen || isWorkspaceSetupChat,
     fetchPolicy: 'network-only',
   });
+
   const creditUsage = data?.aiChatUsage;
+
   const limitValue = isDefined(creditUsage)
     ? Number(creditUsage.limitValue)
     : null;
+
   const consumedValue = isDefined(creditUsage?.consumedValue)
     ? Number(creditUsage?.consumedValue)
     : null;
+
   const progress = isDefined(limitValue)
     ? computeUsageLimitProgress({ limitValue, consumedValue })
     : null;
+
   const creditPercentage =
     limitValue === 0 ? 100 : (progress?.consumedPercentage ?? null);
+
   const daysUntilReset = isDefined(creditUsage?.periodEnd)
     ? Math.max(
         0,
@@ -120,25 +142,35 @@ export const AiChatContextUsageButton = () => {
         ),
       )
     : null;
+
   const { refs, floatingStyles, context } = useFloating({
     open: isOpen,
     onOpenChange: (open) => {
       setIsOpen(open);
-      if (open) setShowDetails(false);
+      if (open) {
+        setShowDetails(false);
+      }
     },
     placement: 'top-start',
     middleware: [offset(8), flip(), shift({ padding: 8 })],
     whileElementsMounted: autoUpdate,
   });
+
   const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
     duration: shouldReduceMotion ? 0 : { open: 150, close: 100 },
     initial: { opacity: 0 },
   });
+
   const hover = useHover(context, { handleClose: safePolygon() });
+
   const focus = useFocus(context);
+
   const click = useClick(context);
+
   const dismiss = useDismiss(context);
+
   const role = useRole(context, { role: 'dialog' });
+
   const { getReferenceProps, getFloatingProps } = useInteractions([
     hover,
     focus,
@@ -146,8 +178,6 @@ export const AiChatContextUsageButton = () => {
     dismiss,
     role,
   ]);
-  const formatTokens = (value: number) =>
-    formatNumber(value, { abbreviate: true, decimals: 1 });
 
   return (
     <>
@@ -175,7 +205,7 @@ export const AiChatContextUsageButton = () => {
               value={percentage}
               valueLabel={
                 contextWindow > 0
-                  ? `(${formatTokens(conversationSize)}/${formatTokens(contextWindow)}) ${formatNumber(percentage, { decimals: 1 })}%`
+                  ? `(${formatAiChatTokens(conversationSize)}/${formatAiChatTokens(contextWindow)}) ${formatNumber(percentage, { decimals: 1 })}%`
                   : t`Not available`
               }
               barColor={getUsageLimitRingColor({
@@ -190,20 +220,13 @@ export const AiChatContextUsageButton = () => {
                 value={
                   loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
                 }
-                valueLabel={
-                  loading
-                    ? t`Loading…`
-                    : isDefined(error)
-                      ? t`Not available`
-                      : !isDefined(creditUsage)
-                        ? t`No limit`
-                        : isDefined(daysUntilReset) &&
-                            isDefined(creditPercentage)
-                          ? t`Reset in ${daysUntilReset} days (${formatNumber(creditPercentage, { decimals: 1 })}%)`
-                          : !isDefined(creditPercentage)
-                            ? '—'
-                            : undefined
-                }
+                valueLabel={getAiChatUsageLabel({
+                  loading,
+                  hasError: isDefined(error),
+                  hasUsage: isDefined(creditUsage),
+                  daysUntilReset,
+                  creditPercentage,
+                })}
                 barColor={getUsageLimitRingColor({
                   consumedPercentage: creditPercentage ?? 0,
                   isExhausted: creditPercentage === 100,

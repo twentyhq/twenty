@@ -26,7 +26,7 @@ import {
   IconGauge,
   IconInfoCircle,
 } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/layout';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import {
   themeCssVariables,
   useThemeContainer,

@@ -697,6 +697,21 @@ describe('UsageLimitQuotaService', () => {
       });
     });
 
+    it('reports unknown consumption when the allowance period changes', async () => {
+      setAllowance(2000);
+      creditAllowanceProvider.getCreditAllowance.mockResolvedValue({
+        ...ALLOWANCE_PERIOD,
+        periodStart: new Date('2026-09-15T09:00:00.000Z'),
+        allowanceMicro: 2000,
+      });
+      await expect(service.getAllowanceUsage('workspace-1')).resolves.toEqual({
+        limitValue: 2000,
+        consumedValue: null,
+        periodEnd: ALLOWANCE_PERIOD.periodEnd,
+      });
+      expect(cacheStorage.mget).not.toHaveBeenCalled();
+    });
+
     it('returns no limit when the allowance is disabled', async () => {
       creditAllowanceProvider.isCreditAllowanceEnabled.mockResolvedValue(false);
       await expect(

@@ -788,6 +788,7 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         formatResult: this.context.formatResult,
       },
       whereClauses: this.whereClauses,
+      includeDeleted: this.includeDeleted,
       parameters: this.parameters,
     });
   }

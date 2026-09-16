@@ -1,24 +1,37 @@
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 import { type ObjectLiteral } from 'typeorm';
 
+import {
+  type RowAccessPolicy,
+  type SqlCondition,
+} from 'src/engine/twenty-orm/types/row-access-policy.type';
 import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
-export type InheritedReadabilityParentGate =
-  | { kind: 'open' }
-  | { kind: 'denied' }
-  | { kind: 'private'; objectMetadataId: string }
+export type InheritedReadabilityParentCondition =
   | {
-      kind: 'inherited';
+      kind: 'column';
+      joinColumnName: string;
       parentTableAlias: string;
       parentTableExpression: string;
-      parentCondition: { sql: string; parameters: ObjectLiteral };
+      policy: RowAccessPolicy;
+    }
+  | {
+      kind: 'children';
+      childTableAlias: string;
+      childTableExpression: string;
+      childJoinColumnName: string;
+      policy: RowAccessPolicy;
     };
 
-export type InheritedReadabilityParentCondition = {
-  joinColumnName: string;
-  gate: InheritedReadabilityParentGate;
-};
+const buildChildLinkBoundCondition = ({
+  quotedTableAlias,
+  quotedChildTableAlias,
+}: {
+  quotedTableAlias: string;
+  quotedChildTableAlias: string;
+}): string =>
+  `(${quotedChildTableAlias}."deletedAt" IS NULL OR (${quotedTableAlias}."deletedAt" IS NOT NULL AND ${quotedChildTableAlias}."deletedAt" >= ${quotedTableAlias}."deletedAt"))`;
 
 export const buildInheritedReadabilityCondition = ({
   tableAlias,
@@ -34,11 +47,9 @@ export const buildInheritedReadabilityCondition = ({
   recordShareTableExpression: string;
   principalIds: string[];
   accessLevels: RecordShareAccessLevel[];
-}): { sql: string; parameters: ObjectLiteral } | undefined => {
+}): SqlCondition => {
   const parameters: ObjectLiteral = {};
   const quotedTableAlias = escapeIdentifier(tableAlias);
-  const quoteColumn = (joinColumnName: string) =>
-    `${quotedTableAlias}.${escapeIdentifier(joinColumnName)}`;
 
   // The share rows on the record itself, its creator's among them, grant
   // access on their own, as they do on a PRIVATE record
@@ -52,38 +63,45 @@ export const buildInheritedReadabilityCondition = ({
 
   Object.assign(parameters, ownRecordShareCondition.parameters);
 
-  const parentConditions = parents.flatMap(({ joinColumnName, gate }) => {
-    const notNullCondition = `${quoteColumn(joinColumnName)} IS NOT NULL`;
-
-    switch (gate.kind) {
-      case 'open':
-        return [notNullCondition];
-      case 'denied':
-        return [];
-      case 'private': {
-        const recordShareCondition = buildRecordShareCondition({
-          tableAlias,
-          recordShareTableExpression,
-          objectMetadataId: gate.objectMetadataId,
-          principalIds,
-          accessLevels,
-          recordIdExpression: quoteColumn(joinColumnName),
-        });
-
-        Object.assign(parameters, recordShareCondition.parameters);
-
-        return [`(${notNullCondition} AND ${recordShareCondition.sql})`];
-      }
-      case 'inherited': {
-        const quotedParentTableAlias = escapeIdentifier(gate.parentTableAlias);
-
-        Object.assign(parameters, gate.parentCondition.parameters);
-
-        return [
-          `(${notNullCondition} AND EXISTS (SELECT 1 FROM ${gate.parentTableExpression} AS ${quotedParentTableAlias} WHERE ${quotedParentTableAlias}."id" = ${quoteColumn(joinColumnName)} AND ${gate.parentCondition.sql}))`,
-        ];
-      }
+  const parentConditions = parents.flatMap((parent) => {
+    if (parent.policy.kind === 'denied') {
+      return [];
     }
+
+    if (parent.kind === 'children') {
+      const quotedChildTableAlias = escapeIdentifier(parent.childTableAlias);
+      const childRowConditions = [
+        `${quotedChildTableAlias}.${escapeIdentifier(parent.childJoinColumnName)} = ${quotedTableAlias}."id"`,
+        buildChildLinkBoundCondition({
+          quotedTableAlias,
+          quotedChildTableAlias,
+        }),
+      ];
+
+      if (parent.policy.kind === 'gated') {
+        Object.assign(parameters, parent.policy.condition.parameters);
+        childRowConditions.push(parent.policy.condition.sql);
+      }
+
+      return [
+        `EXISTS (SELECT 1 FROM ${parent.childTableExpression} AS ${quotedChildTableAlias} WHERE ${childRowConditions.join(' AND ')})`,
+      ];
+    }
+
+    const quotedJoinColumn = `${quotedTableAlias}.${escapeIdentifier(parent.joinColumnName)}`;
+    const notNullCondition = `${quotedJoinColumn} IS NOT NULL`;
+
+    if (parent.policy.kind === 'open') {
+      return [notNullCondition];
+    }
+
+    const quotedParentTableAlias = escapeIdentifier(parent.parentTableAlias);
+
+    Object.assign(parameters, parent.policy.condition.parameters);
+
+    return [
+      `(${notNullCondition} AND EXISTS (SELECT 1 FROM ${parent.parentTableExpression} AS ${quotedParentTableAlias} WHERE ${quotedParentTableAlias}."id" = ${quotedJoinColumn} AND ${parent.policy.condition.sql}))`,
+    ];
   });
 
   return {

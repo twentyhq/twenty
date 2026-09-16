@@ -3,15 +3,23 @@ title: ListItem
 description: Compose consistent rows with icons, descriptions, indicators, and actions.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
 
 `ListItem` supplies the visual layout shared by list and menu rows. Use [Menu](/ui/components/surfaces/menu) or [Select](/ui/components/input/select) when you need their selection and keyboard behavior.
+
+<StoryEmbed
+  storyId="ui-navigation-listitem--default"
+  title="ListItem example"
+  height={240}
+/>
 
 ## Action row
 
 ```tsx
 import { IconCopy } from 'twenty-ui/icon';
-import { ListItem } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 type DuplicateActionProps = { onDuplicate: () => void };
 
@@ -33,7 +41,7 @@ The default element is a `div`. Use `render` to give an interactive row appropri
 
 ```tsx
 import { useState } from 'react';
-import { ListItem } from 'twenty-ui/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ShowArchivedToggle = () => {
   const [selected, setSelected] = useState(false);

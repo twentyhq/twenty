@@ -1767,17 +1767,6 @@ type BillingUpdate {
   billingSubscriptions: [BillingSubscription!]!
 }
 
-type AiChatUsage {
-  limitValue: BigInt!
-  consumedValue: BigInt
-  periodEnd: DateTime
-}
-
-"""
-The `BigInt` scalar type represents non-fractional signed whole numeric values.
-"""
-scalar BigInt
-
 type UsageBreakdownItem {
   key: String!
   label: String
@@ -1859,6 +1848,11 @@ type UsageQuotaWithConsumption {
   periodStart: DateTime
   periodEnd: DateTime
 }
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
 
 type UsageQuotaScopeConsumption {
   consumedValue: BigInt
@@ -1980,7 +1974,7 @@ type ApplicationConnectedAccountDTO {
   createdAt: DateTime!
   updatedAt: DateTime!
   connectionParameters: PublicImapSmtpCaldavConnectionParameters
-  isOwnedByCurrentUser: Boolean!
+  isOwnedByCurrentUser: Boolean! @deprecated(reason: "Ownership no longer gates connection actions, every application admin manages a workspace-shared connection")
 }
 
 type FeatureFlag {
@@ -1993,7 +1987,7 @@ enum FeatureFlagKey {
   IS_UNIQUE_INDEXES_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_JSON_FILTER_ENABLED
-  IS_EMAIL_GROUP_ENABLED
+  IS_MESSAGE_CAMPAIGN_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
   IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
@@ -2964,6 +2958,7 @@ enum MessageChannelType {
   EMAIL
   SMS
   EMAIL_GROUP
+  APP
 }
 
 enum MessageChannelContactAutoCreationPolicy {
@@ -3000,6 +2995,16 @@ enum MessageChannelSyncStage {
   MESSAGES_IMPORT_SCHEDULED
   MESSAGES_IMPORT_ONGOING
   FAILED
+}
+
+type IngestedAppMessage {
+  externalId: String!
+  messageId: UUID!
+  messageThreadId: UUID!
+}
+
+type IngestAppMessagesOutput {
+  messages: [IngestedAppMessage!]!
 }
 
 type CreateEmailGroupChannelOutput {
@@ -3294,6 +3299,12 @@ type EventLogQueryResult {
   pageInfo: EventLogPageInfo!
 }
 
+type AiChatUsage {
+  limitValue: BigInt!
+  consumedValue: BigInt
+  periodEnd: DateTime
+}
+
 type Skill {
   id: UUID!
   name: String!
@@ -3324,7 +3335,7 @@ type AgentMessage {
 type AgentChatThread {
   id: ID!
   title: String
-  totalCacheReadTokens: Float
+  totalCacheReadTokens: Int!
   totalInputTokens: Int!
   totalOutputTokens: Int!
   contextWindowTokens: Int
@@ -3623,7 +3634,6 @@ type Query {
   enterpriseCheckoutSession(billingInterval: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
-  aiChatUsage: AiChatUsage
   usageLimits: [UsageLimit!]!
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   usageQuotaDefinitions: UsageQuotaDefinitions!
@@ -3720,6 +3730,7 @@ type Query {
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   unsubscribeTopics: [UnsubscribeTopic!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
+  appMessageChannels(filter: ListAppMessageChannelsInput): [MessageChannel!]!
   getEmailingDomains: [EmailingDomain!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
@@ -3733,6 +3744,7 @@ type Query {
   appConnections(filter: ListAppConnectionsInput): [AppConnection!]!
   appConnection(id: ID!): AppConnection!
   findWorkspaceAiStats: WorkspaceAiStats!
+  aiChatUsage: AiChatUsage
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
@@ -3819,6 +3831,10 @@ input FindMessageSuppressionsInput {
   unsubscribeTopicId: UUID
   limit: Int! = 30
   offset: Int! = 0
+}
+
+input ListAppMessageChannelsInput {
+  connectedAccountId: UUID
 }
 
 input ListAppConnectionsInput {
@@ -4040,6 +4056,10 @@ type Mutation {
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
+  createAppMessageChannel(input: CreateAppMessageChannelInput!): MessageChannel!
+  updateAppMessageChannel(input: UpdateAppMessageChannelInput!): MessageChannel!
+  deleteAppMessageChannel(id: UUID!): MessageChannel!
+  ingestAppMessages(input: IngestAppMessagesInput!): IngestAppMessagesOutput!
   createEmailingDomain(input: CreateEmailingDomainInput!): EmailingDomain!
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
@@ -4884,9 +4904,6 @@ input UpdateApplicationRegistrationPayload {
   name: String
   oAuthRedirectUris: [String!]
   oAuthScopes: [String!]
-  isListed: Boolean
-  isPreInstalled: Boolean
-  isVetted: Boolean
 }
 
 input CreateApplicationRegistrationVariableInput {
@@ -5185,6 +5202,50 @@ input UpdateEmailGroupChannelInput {
   displayName: String
 }
 
+input CreateAppMessageChannelInput {
+  connectedAccountId: UUID!
+  handle: String!
+  displayName: String
+  visibility: MessageChannelVisibility!
+}
+
+input UpdateAppMessageChannelInput {
+  id: UUID!
+  displayName: String
+  visibility: MessageChannelVisibility
+  isSyncEnabled: Boolean
+}
+
+input IngestAppMessagesInput {
+  messageChannelId: UUID!
+  messages: [AppMessageInput!]!
+}
+
+input AppMessageInput {
+  externalId: String!
+  threadExternalId: String!
+  subject: String
+  text: String!
+  receivedAt: DateTime!
+  participants: [AppMessageParticipantInput!]!
+}
+
+input AppMessageParticipantInput {
+  role: MessageParticipantRole!
+  handle: String!
+  displayName: String
+  personId: UUID
+  workspaceMemberId: UUID
+}
+
+enum MessageParticipantRole {
+  FROM
+  TO
+  CC
+  BCC
+  REPLY_TO
+}
+
 input CreateEmailingDomainInput {
   domain: String!
 }
@@ -5199,11 +5260,17 @@ input RunAgentInput {
 input RunAgentMessageInput {
   role: RunAgentMessageRole!
   content: String!
+  attachments: [RunAgentMessageAttachmentInput!]
 }
 
 enum RunAgentMessageRole {
   user
   assistant
+}
+
+input RunAgentMessageAttachmentInput {
+  fileId: UUID!
+  filename: String
 }
 
 input CreateWebhookInput {

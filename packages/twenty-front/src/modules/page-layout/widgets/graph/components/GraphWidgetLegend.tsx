@@ -14,8 +14,8 @@ import { styled } from '@linaria/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useContext, useRef, useState } from 'react';
 import { IconChevronLeft, IconChevronRight } from 'twenty-ui/icon';
-import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
-import { LightIconButton } from 'twenty-ui/input';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type GraphWidgetLegendItem = {

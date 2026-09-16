@@ -105,10 +105,10 @@ describe('recordShare object', () => {
       recordShares: [recordShareInput],
     });
 
-    const insertedRecordShares = await recordShareService.findByRecord({
+    const insertedRecordShares = await recordShareService.findByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId: personObjectMetadataId,
-      recordId: PERSON_DATA_SEED_IDS.ID_1,
+      recordIds: [PERSON_DATA_SEED_IDS.ID_1],
     });
 
     expect(insertedRecordShares).toHaveLength(1);
@@ -122,10 +122,10 @@ describe('recordShare object', () => {
     });
 
     const recordSharesAfterDuplicateInsert =
-      await recordShareService.findByRecord({
+      await recordShareService.findByRecordIds({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
         objectMetadataId: personObjectMetadataId,
-        recordId: PERSON_DATA_SEED_IDS.ID_1,
+        recordIds: [PERSON_DATA_SEED_IDS.ID_1],
       });
 
     expect(recordSharesAfterDuplicateInsert).toHaveLength(1);
@@ -138,10 +138,10 @@ describe('recordShare object', () => {
       sourceId,
     });
 
-    const recordSharesAfterDelete = await recordShareService.findByRecord({
+    const recordSharesAfterDelete = await recordShareService.findByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId: personObjectMetadataId,
-      recordId: PERSON_DATA_SEED_IDS.ID_1,
+      recordIds: [PERSON_DATA_SEED_IDS.ID_1],
     });
 
     expect(recordSharesAfterDelete).toHaveLength(0);
