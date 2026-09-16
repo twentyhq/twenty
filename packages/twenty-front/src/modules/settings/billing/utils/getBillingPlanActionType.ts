@@ -60,17 +60,30 @@ export const getBillingPlanActionType = ({
     return hasPermissionToManageBilling ? 'UNAVAILABLE' : 'CONTACT_ADMIN';
   }
 
-  if (isDefined(scheduledPlanKey) && scheduledPlanKey !== currentPlanKey) {
-    return 'CANCEL_PLAN_SWITCH';
-  }
+  // A further change is applied to the scheduled phase, not to the subscription
+  // as it stands today, so that phase is what the remaining cells compare to.
+  const isPlanSwitchScheduled =
+    isDefined(scheduledPlanKey) && scheduledPlanKey !== currentPlanKey;
+  const isIntervalSwitchScheduled =
+    isDefined(scheduledInterval) && scheduledInterval !== currentInterval;
 
-  if (isDefined(scheduledInterval) && scheduledInterval !== currentInterval) {
-    return 'CANCEL_INTERVAL_SWITCH';
-  }
+  const isBaselinePlan =
+    planKey === (isPlanSwitchScheduled ? scheduledPlanKey : currentPlanKey);
+  const isBaselineInterval =
+    selectedInterval ===
+    (isIntervalSwitchScheduled ? scheduledInterval : currentInterval);
 
-  if (!isCurrentPlan && !isCurrentInterval) {
+  if (!isBaselinePlan && !isBaselineInterval) {
+    if (isPlanSwitchScheduled) {
+      return 'CANCEL_PLAN_SWITCH';
+    }
+
+    if (isIntervalSwitchScheduled) {
+      return 'CANCEL_INTERVAL_SWITCH';
+    }
+
     return 'SWITCH_INTERVAL_FIRST';
   }
 
-  return isCurrentPlan ? 'SWITCH_INTERVAL' : 'SWITCH_PLAN';
+  return isBaselinePlan ? 'SWITCH_INTERVAL' : 'SWITCH_PLAN';
 };
