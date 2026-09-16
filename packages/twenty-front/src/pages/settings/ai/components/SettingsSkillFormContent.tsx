@@ -20,6 +20,7 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type FindOneSkillQuery } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SettingsSkillDangerZone } from '~/pages/settings/ai/components/SettingsSkillDangerZone';
@@ -237,7 +238,7 @@ export const SettingsSkillFormContent = ({
                           sideOffset={5}
                           side="bottom"
                           positionMethod="fixed"
-                          delay={300}
+                          delay={TooltipDelay.shortDelay}
                         >
                           <IconInfoCircle
                             id="info-circle-id-skill-name"

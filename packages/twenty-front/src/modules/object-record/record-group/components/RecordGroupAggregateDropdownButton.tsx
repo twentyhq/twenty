@@ -1,5 +1,6 @@
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { type Nullable } from 'twenty-shared/types';
@@ -37,7 +38,7 @@ export const RecordGroupAggregateDropdownButton = ({
         content={tooltip ?? ''}
         side="right"
         positionMethod="fixed"
-        delay={500}
+        delay={TooltipDelay.mediumDelay}
         disabled={isDropdownOpen}
       >
         <StyledHeaderDropdownButton id={dropdownId} isUnfolded={isDropdownOpen}>

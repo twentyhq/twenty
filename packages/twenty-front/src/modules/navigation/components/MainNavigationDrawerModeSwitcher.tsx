@@ -10,6 +10,7 @@ import { useActiveNavigationDrawerMode } from '@/navigation/hooks/useActiveNavig
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationDrawerModes } from '@/navigation/hooks/useNavigationDrawerModes';
 import { useSwitchNavigationDrawerMode } from '@/navigation/hooks/useSwitchNavigationDrawerMode';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -152,7 +153,7 @@ export const MainNavigationDrawerModeSwitcher = () => {
                 : label
             }
             disabled={!shouldShowTooltips && !isDisabled}
-            delay={0}
+            delay={TooltipDelay.noDelay}
             side={isExpanded ? 'bottom' : 'right'}
             positionMethod="fixed"
           >

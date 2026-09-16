@@ -9,6 +9,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { billingState } from '@/client-config/states/billingState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const pillClassName = css`
@@ -67,7 +68,12 @@ export const OrganizationAdornment = ({
   }
 
   return (
-    <Tooltip content={tooltipContent} delay={300} side="top" maxWidth="260px">
+    <Tooltip
+      content={tooltipContent}
+      delay={TooltipDelay.shortDelay}
+      side="top"
+      maxWidth="260px"
+    >
       {adornment}
     </Tooltip>
   );

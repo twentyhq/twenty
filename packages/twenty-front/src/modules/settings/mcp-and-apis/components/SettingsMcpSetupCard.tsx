@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type McpSetupCard } from '@/settings/mcp-and-apis/types/McpSetup';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { Pill } from 'twenty-ui/primitives/data-display';
 import { IconExternalLink } from 'twenty-ui/icon';
 import { Tooltip, Card, CardContent } from 'twenty-ui/primitives/surfaces';
@@ -104,7 +105,7 @@ const SettingsMcpSetupCardAction = ({
     return (
       <Tooltip
         content={card.disabledTooltip}
-        delay={300}
+        delay={TooltipDelay.shortDelay}
         side="bottom"
         positionMethod="fixed"
         disabled={

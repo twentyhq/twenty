@@ -1,5 +1,6 @@
 import { ForbiddenFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ForbiddenFieldDisplay';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { plural, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -37,7 +38,11 @@ export const PageLayoutWidgetForbiddenDisplay = ({
   };
 
   return (
-    <Tooltip delay={500} content={getTooltipContent()} side="top">
+    <Tooltip
+      delay={TooltipDelay.mediumDelay}
+      content={getTooltipContent()}
+      side="top"
+    >
       <div id={tooltipId}>
         <ForbiddenFieldDisplay />
       </div>

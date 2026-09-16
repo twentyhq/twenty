@@ -7,6 +7,7 @@ import { type SettingsDataModelObjectAboutFormValues } from '@/settings/data-mod
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { plural } from 'pluralize';
@@ -335,7 +336,7 @@ export const SettingsDataModelObjectAboutForm = ({
                                     sideOffset={5}
                                     side="bottom"
                                     positionMethod="fixed"
-                                    delay={300}
+                                    delay={TooltipDelay.shortDelay}
                                   >
                                     <IconInfoCircle
                                       id={infoCircleElementId + fieldName}

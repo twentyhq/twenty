@@ -1,4 +1,5 @@
 import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type FallbackProps } from 'react-error-boundary';
@@ -25,7 +26,11 @@ export const PageLayoutWidgetInvalidConfigDisplay = ({
 
   return (
     <StyledInvalidConfigContainer>
-      <Tooltip delay={500} content={tooltipContent} side="top">
+      <Tooltip
+        delay={TooltipDelay.mediumDelay}
+        content={tooltipContent}
+        side="top"
+      >
         <div id={tooltipId}>
           <Status color="red">{text}</Status>
         </div>

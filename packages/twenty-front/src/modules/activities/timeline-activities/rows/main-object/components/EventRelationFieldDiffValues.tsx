@@ -6,6 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -134,7 +135,7 @@ const RelationFieldDiffValue = ({
   return (
     <Tooltip
       content={tooltipContent}
-      delay={300}
+      delay={TooltipDelay.shortDelay}
       side="bottom"
       positionMethod="fixed"
     >

@@ -1,5 +1,6 @@
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { WorkflowVariablesDropdownStepItems } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownStepItems';
 import { WorkflowVariablesDropdownSteps } from '@/workflow/workflow-variables/components/WorkflowVariablesDropdownSteps';
 import { SEARCH_VARIABLES_DROPDOWN_ID } from '@/workflow/workflow-variables/constants/SearchVariablesDropdownId';
@@ -97,7 +98,7 @@ export const WorkflowVariablesDropdown = ({
       <Tooltip
         content={t`No variables are available yet. Variables come from the workflow trigger and previous steps.`}
         side="top"
-        delay={500}
+        delay={TooltipDelay.mediumDelay}
         sideOffset={5}
       >
         <StyledDropdownVariableButtonContainer

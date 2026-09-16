@@ -6,6 +6,7 @@ import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldM
 import { RECORD_LIST_ROW_INPUT_ID_PREFIX } from '@/object-record/record-list/constants/RecordListRowInputIdPrefix';
 import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
@@ -39,7 +40,7 @@ export const RecordListRowField = ({
   return (
     <Tooltip.Trigger
       payload={recordField.fieldMetadataItemId}
-      delay={300}
+      delay={TooltipDelay.shortDelay}
       render={<StyledFieldContainer style={{ maxWidth }} />}
     >
       <FieldContext.Provider

@@ -22,6 +22,7 @@ import { isThinkingStepPartActive } from '@/ai/utils/isThinkingStepPartActive';
 import { type ThinkingStepPart } from '@/ai/utils/thinkingStepPart';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
@@ -321,7 +322,7 @@ const ThinkingToolStepRow = ({
             ) : (
               <OverflowingTextWithTooltip
                 text={displayMessage}
-                tooltipDelay={300}
+                tooltipDelay={TooltipDelay.shortDelay}
               />
             )}
           </StyledToolRowLabel>

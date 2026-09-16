@@ -19,6 +19,7 @@ import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPla
 import { SettingsNameCellSecondaryLabel } from '@/settings/components/SettingsNameCellSecondaryLabel';
 import { SettingsTableListSection } from '@/settings/components/SettingsTableListSection';
 import { ProgressRingWithLabel } from '@/ui/feedback/progress-ring/components/ProgressRingWithLabel';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { type UsageResourceType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -99,7 +100,7 @@ const NameCell = ({ item }: { item: UsageLimitRow }) => {
           <Tooltip
             content={t`Limits on members, API keys and apps require the Organization plan.`}
             side="top"
-            delay={300}
+            delay={TooltipDelay.shortDelay}
             positionMethod="fixed"
           >
             <SettingsNameCellSecondaryLabel id={deactivatedAnchorId}>
@@ -120,7 +121,7 @@ const UsedCell = ({ item }: { item: UsageLimitRow }) => {
   return (
     <Tooltip
       side="top"
-      delay={300}
+      delay={TooltipDelay.shortDelay}
       positionMethod="fixed"
       content={
         <StyledTooltipRows>

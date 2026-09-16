@@ -6,6 +6,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
 import { useUpdateEmail } from '@/settings/profile/hooks/useUpdateEmail';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -125,7 +126,7 @@ export const EmailField = () => {
           <StyledActionWrapper key="view">
             <Tooltip
               content={t`You can't change your email because you belong to 2 or more workspaces.`}
-              delay={0}
+              delay={TooltipDelay.noDelay}
               side="top"
               disabled={!shouldShowWorkspaceLimitTooltip}
             >

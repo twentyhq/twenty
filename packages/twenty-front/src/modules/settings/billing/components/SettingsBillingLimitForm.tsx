@@ -27,6 +27,7 @@ import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRi
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ProgressRing } from '@/ui/feedback/progress-ring/components/ProgressRing';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import {
   type UsageQuotaDefinitionsQuery,
   UsageOperationType,
@@ -197,7 +198,7 @@ export const SettingsBillingLimitForm = ({
               RightIcon={() => (
                 <Tooltip
                   side="top"
-                  delay={300}
+                  delay={TooltipDelay.shortDelay}
                   positionMethod="fixed"
                   content={
                     <>

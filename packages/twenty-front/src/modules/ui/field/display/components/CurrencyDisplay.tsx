@@ -11,6 +11,7 @@ import {
   type FieldCurrencyValue,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { EllipsisDisplay } from 'twenty-ui/primitives/data-display';
 import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -60,7 +61,7 @@ export const CurrencyDisplay = ({
         <>
           <Tooltip
             content={currencyTooltipContent}
-            delay={300}
+            delay={TooltipDelay.shortDelay}
             side="top"
             positionMethod="fixed"
           >

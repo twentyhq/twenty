@@ -1,3 +1,4 @@
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { IconInfoCircle } from 'twenty-ui/icon';
@@ -60,7 +61,7 @@ export const SettingsBillingLabelValueItem = ({
             content={tooltipText}
             arrow
             side="top"
-            delay={300}
+            delay={TooltipDelay.shortDelay}
             positionMethod="fixed"
           >
             <StyledInfoIcon id={tooltipId} size={12} />

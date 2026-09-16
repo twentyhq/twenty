@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -41,7 +42,7 @@ export const EmailThreadMessageSender = ({
 
     sentAtContent = (
       <Tooltip
-        delay={500}
+        delay={TooltipDelay.mediumDelay}
         content={formatToHumanReadableDate(sentAt)}
         side="top"
       >

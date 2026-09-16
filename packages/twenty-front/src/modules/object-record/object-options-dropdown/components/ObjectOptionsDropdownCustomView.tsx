@@ -11,6 +11,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -243,7 +244,7 @@ export const ObjectOptionsDropdownCustomView = ({
               content={t`Not available on Default View`}
               side="bottom"
               maxWidth={'100%'}
-              delay={500}
+              delay={TooltipDelay.mediumDelay}
               disabled={!isDefaultView}
             >
               <div id="group-by-menu-item">
@@ -281,7 +282,7 @@ export const ObjectOptionsDropdownCustomView = ({
         <DropdownMenuSeparator />
         <DropdownMenuItemsContainer scrollable={false}>
           <Tooltip
-            delay={500}
+            delay={TooltipDelay.mediumDelay}
             content={
               isDefaultView
                 ? t`Not available on Default View`

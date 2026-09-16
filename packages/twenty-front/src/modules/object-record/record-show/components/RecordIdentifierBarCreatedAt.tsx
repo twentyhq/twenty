@@ -1,5 +1,6 @@
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { StyledHeaderIdentifierLabel } from '@/ui/layout/page/components/StyledHeaderIdentifierLabel';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -43,7 +44,7 @@ export const RecordIdentifierBarCreatedAt = ({
 
   return (
     <Tooltip
-      delay={500}
+      delay={TooltipDelay.mediumDelay}
       content={beautifyExactDateTime(recordCreatedAt)}
       side="left"
     >

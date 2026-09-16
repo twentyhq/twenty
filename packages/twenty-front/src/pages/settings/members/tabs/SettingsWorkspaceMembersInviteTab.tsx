@@ -7,6 +7,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
@@ -183,7 +184,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                         content={workspaceInvitation.email}
                         side="top"
                         positionMethod="fixed"
-                        delay={300}
+                        delay={TooltipDelay.shortDelay}
                       >
                         <StyledTextContainerWithEllipsis
                           id={`invitation-email-${workspaceInvitation.id}`}

@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -47,7 +48,11 @@ export const EventRowDate = ({ happensAt }: EventRowDateProps) => {
   });
 
   return (
-    <Tooltip content={exactHappensAt} delay={500} side="left">
+    <Tooltip
+      content={exactHappensAt}
+      delay={TooltipDelay.mediumDelay}
+      side="left"
+    >
       <StyledEventRowDate id={dateElementId} tabIndex={0}>
         {relativeHappensAt}
       </StyledEventRowDate>

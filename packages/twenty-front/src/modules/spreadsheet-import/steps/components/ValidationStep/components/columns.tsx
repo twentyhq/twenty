@@ -14,6 +14,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Checkbox, Switch } from 'twenty-ui/primitives/input';
 import { type ImportedStructuredRowMetadata } from '@/spreadsheet-import/steps/components/ValidationStep/types';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 const StyledHeaderContainer = styled.div`
   align-items: center;
@@ -126,7 +127,7 @@ export const generateColumns = (
           <Tooltip
             side="top"
             content={column.description}
-            delay={500}
+            delay={TooltipDelay.mediumDelay}
             disabled={!column.description}
           >
             <StyledHeaderLabel id={formatSafeId(column.key)}>
@@ -222,7 +223,7 @@ export const generateColumns = (
             <Tooltip
               content={row.__errors?.[columnKey]?.message}
               side="top"
-              delay={300}
+              delay={TooltipDelay.shortDelay}
             >
               {component}
             </Tooltip>

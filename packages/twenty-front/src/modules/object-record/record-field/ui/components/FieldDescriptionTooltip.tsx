@@ -1,4 +1,5 @@
 import { FieldDescriptionTooltipContext } from '@/object-record/record-field/ui/contexts/FieldDescriptionTooltipContext';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useContext, useId } from 'react';
@@ -39,7 +40,7 @@ export const FieldDescriptionTooltip = ({
     <>
       <Tooltip.Trigger
         handle={tooltipHandle}
-        delay={1000}
+        delay={TooltipDelay.longDelay}
         payload={{ title: label, description }}
         render={<StyledLabel />}
         aria-describedby={descriptionId}

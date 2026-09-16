@@ -6,6 +6,7 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID } from '@/ui/layout/page-header/constants/PageHeaderSidePanelButtonClickOutsideId';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -71,7 +72,7 @@ export const SidePanelToggleButton = () => {
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
       <Tooltip
         content={tooltipContent}
-        delay={1000}
+        delay={TooltipDelay.longDelay}
         side="bottom"
         sideOffset={5}
       >

@@ -1,6 +1,7 @@
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -211,7 +212,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
             content={t`Uninstall this app from all workspaces before deleting it`}
             side="bottom"
             positionMethod="fixed"
-            delay={300}
+            delay={TooltipDelay.shortDelay}
             disabled={!hasActiveInstalls}
           >
             <span tabIndex={hasActiveInstalls ? 0 : undefined}>

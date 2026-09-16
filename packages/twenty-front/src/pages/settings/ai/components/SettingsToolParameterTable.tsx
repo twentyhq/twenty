@@ -10,6 +10,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import {
   IconArrowUpRight,
   IconInfoCircle,
@@ -153,7 +154,7 @@ export const SettingsToolParameterTable = ({
                           sideOffset={5}
                           side="bottom"
                           positionMethod="fixed"
-                          delay={300}
+                          delay={TooltipDelay.shortDelay}
                         >
                           <IconInfoCircle
                             id={infoIconId}

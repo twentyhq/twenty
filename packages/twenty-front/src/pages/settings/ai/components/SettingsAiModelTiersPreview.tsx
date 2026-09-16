@@ -15,6 +15,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { formatNumber } from '~/utils/format/formatNumber';
 
 const GRID_TEMPLATE_COLUMNS = '1fr 1fr 1fr 1fr';
@@ -34,7 +35,7 @@ const renderBenchmarkValue = ({
   (tier.model?.isBenchmarkInherited ?? false) && value !== EMPTY_VALUE ? (
     <Tooltip
       content={t`Not measured at this effort yet. Showing the base model's reading.`}
-      delay={300}
+      delay={TooltipDelay.shortDelay}
     >
       <StyledInheritedValue>{value}</StyledInheritedValue>
     </Tooltip>
@@ -96,7 +97,7 @@ export const SettingsAiModelTiersPreview = () => {
             >
               <TableCell color={themeCssVariables.font.color.primary}>
                 <Tooltip
-                  delay={300}
+                  delay={TooltipDelay.shortDelay}
                   content={
                     <Tooltip.Content
                       startIcon={

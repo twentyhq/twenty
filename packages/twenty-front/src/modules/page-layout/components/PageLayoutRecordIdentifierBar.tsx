@@ -5,6 +5,7 @@ import { PAGE_LAYOUT_RECORD_IDENTIFIER_BAR_HEIGHT } from '@/page-layout/constant
 import { useOpenPageLayoutTabSettings } from '@/page-layout/hooks/useOpenPageLayoutTabSettings';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
@@ -116,7 +117,7 @@ export const PageLayoutRecordIdentifierBar = ({
               ariaLabel={t`Edit pinned tab: ${pinnedTab.title}`}
               onClick={() => openTabSettings(pinnedTab.id)}
               tooltipContent={t`Pinned tab, always shown on the left`}
-              tooltipDelay={300}
+              tooltipDelay={TooltipDelay.shortDelay}
               size="small"
               variant="tertiary"
             />

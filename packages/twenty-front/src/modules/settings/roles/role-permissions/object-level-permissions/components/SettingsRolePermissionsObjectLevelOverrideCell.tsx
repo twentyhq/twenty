@@ -4,6 +4,7 @@ import { PermissionIcon } from '@/settings/roles/role-permissions/objects-permis
 import { SETTINGS_ROLE_OBJECT_LEVEL_PERMISSION_TO_ROLE_OBJECT_PERMISSION_MAPPING } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectLevelPermissionToRoleObjectPermissionMapping';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -71,7 +72,7 @@ export const SettingsRolePermissionsObjectLevelOverrideCell = ({
           ? t`${roleLabel} can't ${humanReadableAction} ${objectLabel} records`
           : t`${roleLabel} can ${humanReadableAction} ${objectLabel} records`
       }
-      delay={300}
+      delay={TooltipDelay.shortDelay}
       side="bottom"
       positionMethod="fixed"
     >

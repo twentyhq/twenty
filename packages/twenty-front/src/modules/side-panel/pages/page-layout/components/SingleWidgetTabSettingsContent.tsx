@@ -12,6 +12,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
 import { IconEyeX, IconRefreshDot, IconTrash } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -118,7 +119,7 @@ export const SingleWidgetTabSettingsContent = ({
             />
           </SelectableListItem>
           <Tooltip
-            delay={500}
+            delay={TooltipDelay.mediumDelay}
             content={t`No default configuration available for this tab`}
             side="bottom"
             disabled={!isResetToDefaultDisabled}

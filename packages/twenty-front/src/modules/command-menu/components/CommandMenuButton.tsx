@@ -1,4 +1,5 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
@@ -48,7 +49,7 @@ export const CommandMenuButton = ({
   return (
     <Tooltip
       content={tooltipTitle}
-      delay={1000}
+      delay={TooltipDelay.longDelay}
       side="bottom"
       sideOffset={5}
       disabled={!hasHotKeys && isDefined(resolvedShortLabel)}

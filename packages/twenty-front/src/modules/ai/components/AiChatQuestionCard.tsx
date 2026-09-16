@@ -31,6 +31,7 @@ import { AiModelTierDropdown } from '@/ai/components/AiModelTierDropdown';
 import { useSubmitQuestionAnswer } from '@/ai/hooks/useSubmitQuestionAnswer';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const NUMBER_ICONS: IconComponent[] = [
@@ -454,7 +455,11 @@ export const AiChatQuestionCard = ({
                   )}
                 </StyledOptionLeft>
                 {isDefined(option.description) && (
-                  <Tooltip content={option.description} delay={300} side="left">
+                  <Tooltip
+                    content={option.description}
+                    delay={TooltipDelay.shortDelay}
+                    side="left"
+                  >
                     <span
                       id={tooltipId}
                       onClick={(event) => event.stopPropagation()}

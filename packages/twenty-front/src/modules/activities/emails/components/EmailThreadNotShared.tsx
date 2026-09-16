@@ -1,3 +1,4 @@
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
@@ -42,7 +43,7 @@ export const EmailThreadNotShared = ({
   return (
     <Tooltip
       content={t`Only the subject is shared`}
-      delay={500}
+      delay={TooltipDelay.mediumDelay}
       side="bottom"
       positionMethod="fixed"
       disabled={!(visibility === MessageChannelVisibility.SUBJECT)}

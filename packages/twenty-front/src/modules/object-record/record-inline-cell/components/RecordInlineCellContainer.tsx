@@ -9,6 +9,7 @@ import { RecordInlineCellValue } from '@/object-record/record-inline-cell/compon
 
 import { assertFieldMetadata } from '@/object-record/record-field/ui/types/guards/assertFieldMetadata';
 import { isFieldText } from '@/object-record/record-field/ui/types/guards/isFieldText';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import {
   Tooltip,
   OverflowingTextWithTooltip,
@@ -109,7 +110,7 @@ export const RecordInlineCellContainer = () => {
           disabled={showLabel}
           side="bottom"
           positionMethod="fixed"
-          delay={300}
+          delay={TooltipDelay.shortDelay}
         >
           <StyledLabelAndIconContainer>
             {IconLabel && (

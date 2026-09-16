@@ -13,6 +13,7 @@ import { IDENTIFIER_MAX_CHAR_LENGTH } from 'twenty-shared/metadata';
 import { getErrorMessageFromError } from '@/settings/data-model/fields/forms/utils/errorMessages';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -210,7 +211,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
                                 sideOffset={5}
                                 side="bottom"
                                 positionMethod="fixed"
-                                delay={300}
+                                delay={TooltipDelay.shortDelay}
                               >
                                 <IconInfoCircle
                                   id="info-circle-id-name"

@@ -24,6 +24,7 @@ import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { createRecordLevelPermissionVariablePicker } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionVariablePicker';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -211,7 +212,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
         <StyledContainer>
           <Tooltip
             content={fullLabel}
-            delay={300}
+            delay={TooltipDelay.shortDelay}
             side="bottom"
             positionMethod="fixed"
           >

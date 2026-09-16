@@ -1,6 +1,7 @@
 import { useIsSettingsDrawer } from '@/navigation/hooks/useIsSettingsDrawer';
 import { useNavigationDrawerTogglePresentation } from '@/navigation/hooks/useNavigationDrawerTogglePresentation';
 import { useToggleNavigationDrawer } from '@/navigation/hooks/useToggleNavigationDrawer';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { LightIconButton } from 'twenty-ui/primitives/input';
@@ -39,7 +40,12 @@ export const NavigationDrawerCollapseButton = ({
   }
 
   return (
-    <Tooltip content={label} delay={1000} side="bottom" sideOffset={5}>
+    <Tooltip
+      content={label}
+      delay={TooltipDelay.longDelay}
+      side="bottom"
+      sideOffset={5}
+    >
       <StyledCollapseButton className={className}>
         <LightIconButton
           Icon={Icon}

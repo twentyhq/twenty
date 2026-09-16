@@ -1,4 +1,5 @@
 import { AppChip } from '@/applications/components/AppChip';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useId } from 'react';
@@ -59,7 +60,7 @@ export const CalendarEventCallRecorderAvatar = ({
   return (
     <Tooltip
       content={getCallRecordingStatusLabel(status)}
-      delay={300}
+      delay={TooltipDelay.shortDelay}
       side="top"
       positionMethod="fixed"
     >

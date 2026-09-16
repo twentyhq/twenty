@@ -15,6 +15,7 @@ import {
   type RoleWithPartialMembers,
 } from '@/settings/roles/types/RoleWithPartialMembers';
 import { ROLE_TARGET_CONFIG } from '@/settings/roles/role-assignment/constants/RoleTargetConfig';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 
 const StyledAssignToMemberContainer = styled.div`
   display: flex;
@@ -68,7 +69,7 @@ export const RoleAssignmentSection = ({
           clickableComponent={
             <Tooltip
               content={config.tooltip?.content()}
-              delay={0}
+              delay={TooltipDelay.noDelay}
               disabled={
                 !config.tooltip?.shouldShow(allWorkspaceMembersHaveThisRole)
               }

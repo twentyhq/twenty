@@ -9,6 +9,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { selectedItemIdComponentState } from '@/ui/layout/selectable-list/states/selectedItemIdComponentState';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useCanPersistViewChanges } from '@/views/hooks/useCanPersistViewChanges';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
@@ -96,7 +97,7 @@ export const ObjectOptionsDropdownVisibilityContent = () => {
             <Tooltip
               content={t`Workspace views require manage views permission`}
               positionMethod="fixed"
-              delay={500}
+              delay={TooltipDelay.mediumDelay}
               disabled={!!hasViewsPermission}
             >
               <div id="workspace-visibility-option">

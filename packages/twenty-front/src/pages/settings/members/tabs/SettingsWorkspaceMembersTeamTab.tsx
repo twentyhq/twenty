@@ -1,3 +1,4 @@
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -259,7 +260,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
                       content={`${workspaceMember.name.firstName} ${workspaceMember.name.lastName}`}
                       side="top"
                       positionMethod="fixed"
-                      delay={300}
+                      delay={TooltipDelay.shortDelay}
                     >
                       <StyledTextContainerWithEllipsis
                         id={`hover-text-${workspaceMember.id}`}

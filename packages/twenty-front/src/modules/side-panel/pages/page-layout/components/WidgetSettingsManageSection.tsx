@@ -14,6 +14,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
@@ -110,7 +111,7 @@ export const WidgetSettingsManageSection = ({
           />
         </SelectableListItem>
         <Tooltip
-          delay={500}
+          delay={TooltipDelay.mediumDelay}
           content={t`No default configuration available for this widget`}
           side="bottom"
           disabled={!isResetToDefaultDisabled}
