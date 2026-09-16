@@ -3908,12 +3908,12 @@ type Mutation {
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  createUsageLimit(input: CreateUsageLimitInput!): UsageLimit!
-  updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
-  deleteUsageLimit(usageLimitId: UUID!): Boolean!
   uploadWorkspaceLogo(file: Upload!): FileWithSignedUrl!
   uploadWorkspaceMemberProfilePicture(file: Upload!): FileWithSignedUrl!
   uploadFilesFieldFileByUniversalIdentifier(file: Upload!, fieldMetadataUniversalIdentifier: String!): FileWithSignedUrl!
+  createUsageLimit(input: CreateUsageLimitInput!): UsageLimit!
+  updateUsageLimit(input: UpdateUsageLimitInput!): UsageLimit!
+  deleteUsageLimit(usageLimitId: UUID!): Boolean!
   createViewFilterGroup(input: CreateViewFilterGroupInput!): ViewFilterGroup!
   updateViewFilterGroup(id: String!, input: UpdateViewFilterGroupInput!): ViewFilterGroup!
   deleteViewFilterGroup(id: String!): Boolean!
@@ -4198,6 +4198,9 @@ input UpdateNavigationMenuItemInput {
   pageLayoutId: UUID
 }
 
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
 input CreateUsageLimitInput {
   resourceType: UsageResourceType!
   operationType: UsageOperationType!
@@ -4215,9 +4218,6 @@ input UpdateUsageLimitInput {
   id: UUID!
   payload: CreateUsageLimitInput!
 }
-
-"""The `Upload` scalar type represents a file upload."""
-scalar Upload
 
 input CreateViewFilterGroupInput {
   id: UUID
