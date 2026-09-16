@@ -5,8 +5,8 @@ import { SelectableListItem } from '@/ui/layout/selectable-list/components/Selec
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { ColorSample } from 'twenty-ui/data-display';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 import { getMainColorNameFromPaletteColorName } from 'twenty-ui/utilities';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type ThemeColor } from 'twenty-ui/theme';

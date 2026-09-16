@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 import {
@@ -247,6 +247,7 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
   await expect(createButton).toHaveTextContent(getOsControlSymbol());
   await expect(createButton).toHaveTextContent('⏎');
   if (isDefined(shortcut)) {
+    await expect(nameInput).toHaveFocus();
     await userEvent.keyboard(shortcut);
   } else {
     await userEvent.click(createButton);

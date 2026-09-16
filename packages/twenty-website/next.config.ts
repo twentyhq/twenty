@@ -119,6 +119,16 @@ const nextConfig: LinariaConfig = {
       // Strip the source-locale prefix: /en/foo → /foo (301).
       { source: '/en', destination: '/', statusCode: 301 },
       { source: '/en/:path*', destination: '/:path*', statusCode: 301 },
+      {
+        source: '/enterprise/activate',
+        destination: '/organization/activate',
+        permanent: true,
+      },
+      {
+        source: `/:locale(${WEBSITE_LOCALE_LIST.join('|')})/enterprise/activate`,
+        destination: '/:locale/organization/activate',
+        permanent: true,
+      },
       // /partners/list folded into the lead page, whose directory zone is the
       // same grid. Both the unprefixed and the locale-prefixed URLs were in the
       // sitemap, so both need the 308.

@@ -4,11 +4,12 @@ import {
 } from '@/object-record/record-field/ui/form-types/components/FormCallingCodeSelectInput';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormNestedFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormNestedFieldInputContainer';
-import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { Field } from 'twenty-ui/input';
+import { Field } from 'twenty-ui/primitives/input';
 import { t } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 
 type FormPhoneFieldInputProps = {
   label?: string;
@@ -35,11 +36,11 @@ export const FormPhoneFieldInput = ({
     });
   };
 
-  const handleNumberChange = (number: string) => {
+  const handleNumberChange = (number: string | number | null) => {
     onChange({
       primaryPhoneCountryCode: defaultValue?.primaryPhoneCountryCode ?? '',
       primaryPhoneCallingCode: defaultValue?.primaryPhoneCallingCode ?? '',
-      primaryPhoneNumber: number,
+      primaryPhoneNumber: isDefined(number) ? `${number}` : '',
     });
   };
 
@@ -55,7 +56,7 @@ export const FormPhoneFieldInput = ({
           readonly={readonly}
           VariablePicker={VariablePicker}
         />
-        <FormTextFieldInput
+        <FormNumberFieldInput
           label={t`Phone Number`}
           defaultValue={defaultValue?.primaryPhoneNumber ?? ''}
           onChange={handleNumberChange}

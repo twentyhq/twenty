@@ -11,7 +11,7 @@ import {
   IconPlus,
   useIcons,
 } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';

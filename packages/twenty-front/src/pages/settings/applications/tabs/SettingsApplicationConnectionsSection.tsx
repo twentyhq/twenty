@@ -9,12 +9,12 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { Avatar, Status } from 'twenty-ui/data-display';
-import { Info } from 'twenty-ui/feedback';
+import { Avatar, Status } from 'twenty-ui/primitives/data-display';
+import { Info } from 'twenty-ui/primitives/feedback';
 import { IconChevronRight, IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useFindApplicationConnectionProviders } from '~/pages/settings/applications/hooks/useFindApplicationConnectionProviders';
 import { useApplicationConnectedAccounts } from '~/pages/settings/applications/hooks/useApplicationConnectedAccounts';
@@ -113,6 +113,7 @@ export const SettingsApplicationConnectionsSection = ({
                       )}
                     >
                       <TableCell
+                        color={themeCssVariables.font.color.primary}
                         clickable
                         minWidth="0"
                         overflow="hidden"

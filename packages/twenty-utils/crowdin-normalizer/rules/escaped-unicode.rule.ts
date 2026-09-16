@@ -20,7 +20,9 @@ function unescapeUnicode(text: string, sourceText?: string): string {
   if (sourceText === undefined) return text;
 
   return text.replace(ESCAPED_UNICODE_REGEX, (escape, hex) =>
-    sourceText.includes(escape) ? escape : String.fromCharCode(parseInt(hex, 16)),
+    sourceText.includes(escape)
+      ? escape
+      : String.fromCharCode(parseInt(hex, 16)),
   );
 }
 

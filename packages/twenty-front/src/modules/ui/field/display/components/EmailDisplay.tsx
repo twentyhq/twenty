@@ -1,7 +1,7 @@
 import { type MouseEvent } from 'react';
-import { EllipsisDisplay } from 'twenty-ui/data-display';
+import { EllipsisDisplay } from 'twenty-ui/primitives/data-display';
 import { isDefined } from 'twenty-shared/utils';
-import { ContactLink } from 'twenty-ui/navigation';
+import { ContactLink } from 'twenty-ui/primitives/navigation';
 
 const validateEmail = (email: string) => {
   // Record this without using regex

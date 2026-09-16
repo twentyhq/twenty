@@ -106,12 +106,15 @@ export class ApplicationManifestApplyService {
       }
     }
 
-    return this.applicationRegistrationService.updateFromManifest({
-      applicationRegistrationId,
-      manifest,
-      sourceType,
-      latestAvailableVersion,
-      preventVersionDowngrade,
-    });
+    const manifestUpdate =
+      await this.applicationRegistrationService.updateFromManifest({
+        applicationRegistrationId,
+        manifest,
+        sourceType,
+        latestAvailableVersion,
+        preventVersionDowngrade,
+      });
+
+    return isDefined(manifestUpdate);
   }
 }

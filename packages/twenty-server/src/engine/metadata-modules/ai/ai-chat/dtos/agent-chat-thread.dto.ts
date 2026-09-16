@@ -9,6 +9,9 @@ export class AgentChatThreadDTO {
   title: string;
 
   @Field(() => Int)
+  totalCacheReadTokens: number;
+
+  @Field(() => Int)
   totalInputTokens: number;
 
   @Field(() => Int)

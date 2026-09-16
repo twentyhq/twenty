@@ -169,10 +169,10 @@ msgstr "A duplicate entry was detected."
 msgid "A field with this name already exists."
 msgstr "A field with this name already exists."
 
-#. js-lingui-id: cWaEaJ
+#. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "A free development instance requires an active production instance on this enterprise subscription."
-msgstr "A free development instance requires an active production instance on this enterprise subscription."
+msgid "A free development instance requires an active production instance on this Organization subscription."
+msgstr "A free development instance requires an active production instance on this Organization subscription."
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -486,6 +486,11 @@ msgstr "A workflow version"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "A workspace member"
+
+#. js-lingui-id: ysZV7o
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "A workspace-wide blocklist entry cannot target a workspace member."
+msgstr "A workspace-wide blocklist entry cannot target a workspace member."
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1314,6 +1319,11 @@ msgctxt "fieldMetadata.description"
 msgid "Blocklist record position"
 msgstr "Blocklist record position"
 
+#. js-lingui-id: HSo0Xn
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist scope cannot be updated."
+msgstr "Blocklist scope cannot be updated."
+
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1376,6 +1386,17 @@ msgstr "Built component path is invalid"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Built handler path is invalid"
 msgstr "Built handler path is invalid"
+
+#. js-lingui-id: DKvxoP
+#: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
+msgid "Bulk deletion of blocklist entries is not allowed."
+msgstr "Bulk deletion of blocklist entries is not allowed."
+
+#. js-lingui-id: Az75zM
+#: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
+msgid "Bulk restoration of blocklist entries is not allowed."
+msgstr "Bulk restoration of blocklist entries is not allowed."
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1834,18 +1855,13 @@ msgstr "Cannot add permissions on system objects."
 msgid "Cannot complete operation due to related records."
 msgstr "Cannot complete operation due to related records."
 
-#. js-lingui-id: 6Sk/wo
-#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
-msgid "Cannot create blocklist entry for another workspace member."
-msgstr "Cannot create blocklist entry for another workspace member."
-
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Cannot create multiple draft versions for the same workflow"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Cannot create workflow version with status other than draft"
 
@@ -1912,6 +1928,11 @@ msgstr "Cannot give write permission without read permission."
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Cannot have more than one active workflow version"
+
+#. js-lingui-id: 9hWalM
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot manage a blocklist entry of another workspace member."
+msgstr "Cannot manage a blocklist entry of another workspace member."
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5165,11 +5186,6 @@ msgstr "Invalid email address."
 msgid "Invalid email or domain."
 msgstr "Invalid email or domain."
 
-#. js-lingui-id: pOHI+b
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "Invalid enterprise key."
-msgstr "Invalid enterprise key."
-
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
 msgid "Invalid event input."
@@ -5382,6 +5398,11 @@ msgstr "Invalid order by parameter."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
 msgstr "Invalid order by with group by parameter."
+
+#. js-lingui-id: 4rRyz1
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid Organization key."
+msgstr "Invalid Organization key."
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6469,6 +6490,11 @@ msgstr "Merge"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "Merge {objectLabelPlural}"
+
+#. js-lingui-id: 27Moeu
+#: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
+msgid "Merging blocklist entries is not allowed."
+msgstr "Merging blocklist entries is not allowed."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -9324,18 +9350,6 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Security"
 msgstr "Security"
 
-#. js-lingui-id: BqBYOO
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Active Version"
-msgstr "See Active Version"
-
-#. js-lingui-id: BWZaOR
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Active Version"
-msgstr "See Active Version"
-
 #. js-lingui-id: BCRQC8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10352,10 +10366,10 @@ msgstr "The default role cannot be deleted."
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "The default role for this workspace could not be found. Please contact support for assistance."
 
-#. js-lingui-id: hmg/aY
+#. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "The development instance slot for this enterprise key is already in use on another server."
-msgstr "The development instance slot for this enterprise key is already in use on another server."
+msgid "The development instance slot for this Organization key is already in use on another server."
+msgstr "The development instance slot for this Organization key is already in use on another server."
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10419,7 +10433,8 @@ msgid "The happensAt field used by this timeline activity type is not available"
 msgstr "The happensAt field used by this timeline activity type is not available"
 
 #. js-lingui-id: EJUSll
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "The initial version of a workflow can not be deleted"
 
@@ -10913,20 +10928,15 @@ msgstr "This endpoint has moved. Call it at {publicFunctionUrl} instead."
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 
-#. js-lingui-id: i4wotH
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-
 #. js-lingui-id: mjE4RD
 #: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
 msgid "This evaluation target could not be found."
 msgstr "This evaluation target could not be found."
 
-#. js-lingui-id: uNp8ZA
+#. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
+msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
+msgstr "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10939,7 +10949,7 @@ msgid "This field cannot be modified."
 msgstr "This field cannot be modified."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "This field cannot be updated directly on a workflow version"
 
@@ -11088,6 +11098,11 @@ msgstr "This operation is not supported."
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "This operation references a record that does not exist or cannot be modified due to existing relationships."
 
+#. js-lingui-id: 8TiDJj
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+msgstr "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11229,6 +11244,16 @@ msgstr "This version is not higher than the currently deployed version. Please b
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "This version of the application is already installed in this workspace."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "This workflow version contains malformed data and cannot be saved."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "This workflow version is not ready to be activated."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11863,12 +11888,6 @@ msgstr "User friendly error message"
 msgctxt "fieldMetadata.label"
 msgid "User ID"
 msgstr "User ID"
-
-#. js-lingui-id: NJT8W8
-#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
-#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
-msgid "User id is required."
-msgstr "User id is required."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -12813,6 +12832,7 @@ msgid "Workflow version does not contain trigger"
 msgstr "Workflow version does not contain trigger"
 
 #. js-lingui-id: bqFL4g
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "Workflow version is not in draft status"
@@ -12959,10 +12979,10 @@ msgstr "Workspace is not ready to welcome new members"
 msgid "Workspace is suspended."
 msgstr "Workspace is suspended."
 
-#. js-lingui-id: iN7doz
+#. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
-msgstr "Workspace limit reached. A valid enterprise key is required to create more workspaces."
+msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
+msgstr "Workspace limit reached. A valid Organization key is required to create more workspaces."
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -13302,6 +13322,16 @@ msgstr "You do not have permission to impersonate users in this workspace."
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+
+#. js-lingui-id: cpivo2
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
+msgid "You do not have permission to manage the workspace blocklist."
+msgstr "You do not have permission to manage the workspace blocklist."
+
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13360,20 +13390,20 @@ msgstr "You have exhausted your credits. Please upgrade your plan to continue."
 msgid "You have reached the maximum number of invitations for this step."
 msgstr "You have reached the maximum number of invitations for this step."
 
-#. js-lingui-id: 4kMeNM
+#. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
-msgstr "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
+msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
+msgstr "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
 
-#. js-lingui-id: 475gCs
+#. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
-msgstr "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
+msgstr "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
 
-#. js-lingui-id: nq15cs
-#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
-msgid "You must be authenticated to manage blocklist."
-msgstr "You must be authenticated to manage blocklist."
+#. js-lingui-id: GFlHFf
+#: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
+msgid "You must be authenticated to manage the blocklist."
+msgstr "You must be authenticated to manage the blocklist."
 
 #. js-lingui-id: z+7x/s
 #: src/engine/core-modules/auth/auth.exception.ts

@@ -28,5 +28,8 @@ export class CoreWorkflowDTO {
   workspaceWorkflowId: string | null;
 
   @Field(() => String)
+  createdAt: string;
+
+  @Field(() => String)
   updatedAt: string;
 }

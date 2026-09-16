@@ -1,5 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
 
 import { FrontComponentCard } from '@/__stories__/shared/front-components/front-component-card';

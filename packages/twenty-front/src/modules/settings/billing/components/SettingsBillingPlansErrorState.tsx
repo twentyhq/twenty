@@ -5,9 +5,9 @@ import {
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTextContainer,
   AnimatedPlaceholderErrorTitle,
-} from 'twenty-ui/feedback';
+} from 'twenty-ui/primitives/feedback';
 import { IconRefresh } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 type SettingsBillingPlansErrorStateProps = {
   onRetry: () => void;

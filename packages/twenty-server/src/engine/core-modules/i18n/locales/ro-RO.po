@@ -174,10 +174,10 @@ msgstr "A fost detectată o înregistrare duplicată."
 msgid "A field with this name already exists."
 msgstr "Un câmp cu acest nume există deja."
 
-#. js-lingui-id: cWaEaJ
+#. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "A free development instance requires an active production instance on this enterprise subscription."
-msgstr "O instanță de dezvoltare gratuită necesită o instanță de producție activă pe acest abonament enterprise."
+msgid "A free development instance requires an active production instance on this Organization subscription."
+msgstr "O instanță de dezvoltare gratuită necesită o instanță de producție activă pentru acest abonament Organization."
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -491,6 +491,11 @@ msgstr "O versiune de flux de lucru"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "Un membru al spațiului de lucru"
+
+#. js-lingui-id: ysZV7o
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "A workspace-wide blocklist entry cannot target a workspace member."
+msgstr "O intrare din lista de blocare la nivelul întregului spațiu de lucru nu poate viza un membru al spațiului de lucru."
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1319,6 +1324,11 @@ msgctxt "fieldMetadata.description"
 msgid "Blocklist record position"
 msgstr "Poziția înregistrării listei de blocare"
 
+#. js-lingui-id: HSo0Xn
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist scope cannot be updated."
+msgstr "Domeniul de aplicare al listei de blocare nu poate fi actualizat."
+
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1381,6 +1391,17 @@ msgstr "Calea componentei construite este invalidă"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Built handler path is invalid"
 msgstr "Calea către handlerul compilat este invalidă"
+
+#. js-lingui-id: DKvxoP
+#: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
+msgid "Bulk deletion of blocklist entries is not allowed."
+msgstr "Ștergerea în masă a intrărilor din lista de blocare nu este permisă."
+
+#. js-lingui-id: Az75zM
+#: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
+msgid "Bulk restoration of blocklist entries is not allowed."
+msgstr "Restaurarea în masă a intrărilor din lista de blocare nu este permisă."
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1839,18 +1860,13 @@ msgstr "Nu se pot adăuga permisiuni pe obiectele de sistem."
 msgid "Cannot complete operation due to related records."
 msgstr "Operațiunea nu poate fi finalizată din cauza înregistrărilor asociate."
 
-#. js-lingui-id: 6Sk/wo
-#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
-msgid "Cannot create blocklist entry for another workspace member."
-msgstr "Nu se poate crea o intrare în lista de blocare pentru un alt membru al spațiului de lucru."
-
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Nu se pot crea mai multe versiuni schiță pentru același flux de lucru"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Nu se poate crea o versiune a fluxului de lucru cu alt statut decât schiță"
 
@@ -1917,6 +1933,11 @@ msgstr "Nu se pot acorda permisiuni de scriere fără permisiuni de citire."
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "Nu se poate avea mai mult de o versiune activă de flux de lucru"
+
+#. js-lingui-id: 9hWalM
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot manage a blocklist entry of another workspace member."
+msgstr "Nu se poate gestiona o intrare din lista de blocare a unui alt membru al spațiului de lucru."
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5170,11 +5191,6 @@ msgstr "Adresă de e-mail invalidă."
 msgid "Invalid email or domain."
 msgstr "Email sau domeniu invalid."
 
-#. js-lingui-id: pOHI+b
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "Invalid enterprise key."
-msgstr "Cheie invalidă pentru Enterprise."
-
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
 msgid "Invalid event input."
@@ -5387,6 +5403,11 @@ msgstr "Parametru invalid pentru order by."
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
 msgstr "Parametru invalid pentru order by cu group by."
+
+#. js-lingui-id: 4rRyz1
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid Organization key."
+msgstr "Cheie Organization nevalidă."
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6474,6 +6495,11 @@ msgstr "Îmbină"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "Unește {objectLabelPlural}"
+
+#. js-lingui-id: 27Moeu
+#: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
+msgid "Merging blocklist entries is not allowed."
+msgstr "Fuzionarea intrărilor din lista de blocare nu este permisă."
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -9329,18 +9355,6 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Security"
 msgstr "Securitate"
 
-#. js-lingui-id: BqBYOO
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Active Version"
-msgstr "Vezi versiunea activă"
-
-#. js-lingui-id: BWZaOR
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Active Version"
-msgstr "Vezi versiunea activă"
-
 #. js-lingui-id: BCRQC8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10357,10 +10371,10 @@ msgstr "Rolul implicit nu poate fi șters."
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "Rolul implicit pentru acest spațiu de lucru nu a putut fi găsit. Vă rugăm să contactați suportul pentru asistență."
 
-#. js-lingui-id: hmg/aY
+#. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "The development instance slot for this enterprise key is already in use on another server."
-msgstr "Slotul de instanță de dezvoltare pentru această cheie enterprise este deja utilizat pe un alt server."
+msgid "The development instance slot for this Organization key is already in use on another server."
+msgstr "Slotul de instanță de dezvoltare pentru această cheie Organization este deja utilizat pe un alt server."
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10424,7 +10438,8 @@ msgid "The happensAt field used by this timeline activity type is not available"
 msgstr "Câmpul happensAt utilizat de acest tip de activitate din cronologie nu este disponibil"
 
 #. js-lingui-id: EJUSll
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Versiunea inițială a unui flux de lucru nu poate fi ștearsă"
 
@@ -10918,20 +10933,15 @@ msgstr "Acest endpoint a fost mutat. Apelați-l la {publicFunctionUrl} în schim
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "Acest endpoint nu mai este disponibil pe /s/. Utilizați în schimb URL-ul dedicat de domeniu public."
 
-#. js-lingui-id: i4wotH
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr "Această cheie enterprise este deja utilizată pe o altă instanță de server. Eliberați-o de pe acel server sau transferați-o pe acesta."
-
 #. js-lingui-id: mjE4RD
 #: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
 msgid "This evaluation target could not be found."
 msgstr "Această țintă de evaluare nu a fost găsită."
 
-#. js-lingui-id: uNp8ZA
+#. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr "Această funcționalitate este gratuită pentru până la {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} locuri. Instanța dvs. depășește acest număr, astfel încât este necesară o cheie enterprise."
+msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
+msgstr "Această funcționalitate este gratuită pentru până la {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} locuri. Instanța dvs. depășește această limită, astfel că este necesară o cheie Organization."
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10944,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Acest câmp nu poate fi modificat."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Acest câmp nu poate fi actualizat direct într-o versiune de flux de lucru"
 
@@ -11093,6 +11103,11 @@ msgstr "Această operațiune nu este acceptată."
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "Această operațiune face referire la o înregistrare care nu există sau nu poate fi modificată din cauza relațiilor existente."
 
+#. js-lingui-id: 8TiDJj
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+msgstr "Această cheie Organization este deja utilizată pe o altă instanță de server. Eliberați-o de pe acel server sau transferați-o pe acesta."
+
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11234,6 +11249,16 @@ msgstr "Această versiune nu este superioară versiunii implementate în prezent
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Această versiune a aplicației este deja instalată în acest spațiu de lucru."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Această versiune a fluxului de lucru conține date incorecte și nu poate fi salvată."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Această versiune a fluxului de lucru nu este pregătită pentru a fi activată."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11868,12 +11893,6 @@ msgstr "Mesaj de eroare prietenos pentru utilizator"
 msgctxt "fieldMetadata.label"
 msgid "User ID"
 msgstr "ID utilizator"
-
-#. js-lingui-id: NJT8W8
-#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
-#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
-msgid "User id is required."
-msgstr "ID-ul utilizatorului este necesar."
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -12818,6 +12837,7 @@ msgid "Workflow version does not contain trigger"
 msgstr "Versiunea fluxului de lucru nu conține declanșator"
 
 #. js-lingui-id: bqFL4g
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "Versiunea fluxului de lucru nu este în statut de schiță"
@@ -12964,10 +12984,10 @@ msgstr "Spațiul de lucru nu este pregătit să primească noi membri"
 msgid "Workspace is suspended."
 msgstr "Spațiul de lucru este suspendat."
 
-#. js-lingui-id: iN7doz
+#. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
-msgstr "Limita spațiilor de lucru a fost atinsă. Este necesară o cheie Enterprise validă pentru a crea mai multe spații de lucru."
+msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
+msgstr "Limita spațiilor de lucru a fost atinsă. Este necesară o cheie Organization validă pentru a crea mai multe spații de lucru."
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -13307,6 +13327,16 @@ msgstr "Nu aveți permisiunea de a vă autentifica în numele utilizatorilor în
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Nu aveți permisiunea de a impersona utilizatori. Vă rugăm să contactați administratorul spațiului de lucru pentru acces."
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Nu aveți permisiunea de a gestiona conexiunile partajate cu spațiul de lucru. Vă rugăm să contactați administratorul spațiului de lucru pentru acces."
+
+#. js-lingui-id: cpivo2
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
+msgid "You do not have permission to manage the workspace blocklist."
+msgstr "Nu aveți permisiunea de a gestiona lista de blocare a spațiului de lucru."
+
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13365,19 +13395,19 @@ msgstr ""
 msgid "You have reached the maximum number of invitations for this step."
 msgstr "Ați atins numărul maxim de invitații pentru acest pas."
 
-#. js-lingui-id: 4kMeNM
+#. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
-msgstr "Ați atins numărul maxim de reîmprospătări de licență permise astăzi pentru această cheie enterprise. Vă rugăm să încercați mai târziu."
+msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
+msgstr "Ați atins numărul maxim de reîmprospătări de licență permise astăzi pentru această cheie Organization. Vă rugăm să încercați mai târziu."
 
-#. js-lingui-id: 475gCs
+#. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
-msgstr "Ați atins numărul maxim de transferuri de server permise în ultimele 30 de zile pentru această cheie enterprise. Vă rugăm să încercați mai târziu."
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
+msgstr "Ați atins numărul maxim de transferuri de server permise în ultimele 30 de zile pentru această cheie Organization. Vă rugăm să încercați mai târziu."
 
-#. js-lingui-id: nq15cs
-#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
-msgid "You must be authenticated to manage blocklist."
+#. js-lingui-id: GFlHFf
+#: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
+msgid "You must be authenticated to manage the blocklist."
 msgstr "Trebuie să fiți autentificat pentru a gestiona lista de blocare."
 
 #. js-lingui-id: z+7x/s

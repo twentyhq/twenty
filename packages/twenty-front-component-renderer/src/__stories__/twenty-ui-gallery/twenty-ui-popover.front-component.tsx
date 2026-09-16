@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Popover } from 'twenty-ui/surfaces';
+import { Popover } from 'twenty-ui/primitives/surfaces';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 

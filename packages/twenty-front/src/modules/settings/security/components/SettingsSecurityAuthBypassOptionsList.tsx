@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { IconGoogle, IconMicrosoft, IconPassword } from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation } from '@apollo/client/react';
 import {

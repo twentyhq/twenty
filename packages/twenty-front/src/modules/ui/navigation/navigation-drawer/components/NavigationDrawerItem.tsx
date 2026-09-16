@@ -13,15 +13,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type JSX, type ReactNode, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Pill, TintedIconTile } from 'twenty-ui/data-display';
+import { Pill, TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 import {
   AppTooltip,
   OverflowingTextWithTooltip,
   TooltipDelay,
   TooltipPosition,
-} from 'twenty-ui/surfaces';
-import { Label } from 'twenty-ui/typography';
+} from 'twenty-ui/primitives/surfaces';
+import { Label } from 'twenty-ui/primitives/typography';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,

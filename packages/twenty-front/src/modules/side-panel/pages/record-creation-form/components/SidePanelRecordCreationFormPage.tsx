@@ -18,7 +18,7 @@ import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
@@ -115,6 +115,7 @@ const SidePanelRecordCreationForm = ({
     goBackFromSidePanel();
   };
 
+  // Form fields own their focus scope, so side-panel-scoped hotkeys do not fire.
   const handleKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>) => {
     if (
       event.key !== Key.Enter ||

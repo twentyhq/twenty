@@ -95,6 +95,7 @@ export class WorkflowCoreSyncService {
               workflow.lastPublishedVersionId,
             ) ?? null)
           : null,
+        createdAt: new Date(workflow.createdAt),
         universalIdentifier: uuidv4(),
         applicationId,
       };

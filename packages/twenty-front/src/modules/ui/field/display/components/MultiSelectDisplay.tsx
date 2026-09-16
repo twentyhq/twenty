@@ -1,13 +1,12 @@
 import { type FieldMultiSelectValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
-import { Tag } from 'twenty-ui/data-display';
-import { type SelectOption } from 'twenty-ui/input';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
-const StyledContainer = styled.div<{ wrap?: boolean }>`
+const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  flex-wrap: ${({ wrap }) => (wrap ? 'wrap' : 'nowrap')};
   gap: 4px;
   justify-content: flex-start;
 
@@ -21,11 +20,9 @@ const StyledContainer = styled.div<{ wrap?: boolean }>`
 export const MultiSelectDisplay = ({
   values,
   options,
-  wrap = false,
 }: {
   values: FieldMultiSelectValue | undefined;
   options: SelectOption[];
-  wrap?: boolean;
 }) => {
   const selectedOptions = values
     ? options?.filter((option) => values.includes(option.value))
@@ -34,7 +31,7 @@ export const MultiSelectDisplay = ({
   if (!isDefined(selectedOptions)) return null;
 
   return (
-    <StyledContainer wrap={wrap}>
+    <StyledContainer>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           preventShrink

@@ -174,10 +174,10 @@ msgstr "偵測到重複項目。"
 msgid "A field with this name already exists."
 msgstr "具有此名稱的欄位已存在。"
 
-#. js-lingui-id: cWaEaJ
+#. js-lingui-id: L6D4W7
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "A free development instance requires an active production instance on this enterprise subscription."
-msgstr "在此企業訂閱中，免費開發實例需要有一個啟用中的正式環境實例。"
+msgid "A free development instance requires an active production instance on this Organization subscription."
+msgstr "免費開發實例需要在此組織訂閱中有一個啟用中的正式環境實例。"
 
 #. js-lingui-id: D0Kuk1
 #: src/engine/metadata-modules/front-component/front-component.exception.ts
@@ -491,6 +491,11 @@ msgstr "工作流程版本"
 msgctxt "objectMetadata.description"
 msgid "A workspace member"
 msgstr "工作區成員"
+
+#. js-lingui-id: ysZV7o
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "A workspace-wide blocklist entry cannot target a workspace member."
+msgstr "工作區範圍的封鎖清單項目不能以工作區成員為目標。"
 
 #. js-lingui-id: spjW+Z
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -1319,6 +1324,11 @@ msgctxt "fieldMetadata.description"
 msgid "Blocklist record position"
 msgstr "阻止列表記錄位置"
 
+#. js-lingui-id: HSo0Xn
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Blocklist scope cannot be updated."
+msgstr "無法更新封鎖清單範圍。"
+
 #. js-lingui-id: V2zJDX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -1381,6 +1391,17 @@ msgstr "建置的元件路徑無效"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
 msgid "Built handler path is invalid"
 msgstr "建置的處理常式路徑無效"
+
+#. js-lingui-id: DKvxoP
+#: src/modules/blocklist/query-hooks/blocklist-delete-many.pre-query.hook.ts
+#: src/modules/blocklist/query-hooks/blocklist-destroy-many.pre-query.hook.ts
+msgid "Bulk deletion of blocklist entries is not allowed."
+msgstr "不允許批次刪除封鎖清單項目。"
+
+#. js-lingui-id: Az75zM
+#: src/modules/blocklist/query-hooks/blocklist-restore-many.pre-query.hook.ts
+msgid "Bulk restoration of blocklist entries is not allowed."
+msgstr "不允許批次還原封鎖清單項目。"
 
 #. js-lingui-id: HOWEGX
 #: src/modules/blocklist/query-hooks/blocklist-update-many.pre-query.hook.ts
@@ -1839,18 +1860,13 @@ msgstr "無法在系統物件上新增權限。"
 msgid "Cannot complete operation due to related records."
 msgstr "由於存在關聯記錄，無法完成操作。"
 
-#. js-lingui-id: 6Sk/wo
-#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
-msgid "Cannot create blocklist entry for another workspace member."
-msgstr "無法為其他工作區成員建立封鎖清單項目。"
-
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "無法為相同工作流創建多個草稿版本"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "無法創建非草稿狀態的工作流版本"
 
@@ -1917,6 +1933,11 @@ msgstr "沒有讀取權限時，無法授予寫入權限。"
 #: src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service.ts
 msgid "Cannot have more than one active workflow version"
 msgstr "不能有多個活動的工作流版本"
+
+#. js-lingui-id: 9hWalM
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-validation.service.ts
+msgid "Cannot manage a blocklist entry of another workspace member."
+msgstr "無法管理其他工作區成員的封鎖清單項目。"
 
 #. js-lingui-id: DAGexD
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
@@ -5170,11 +5191,6 @@ msgstr "無效的電子郵件地址。"
 msgid "Invalid email or domain."
 msgstr "無效的電子郵件或網域。"
 
-#. js-lingui-id: pOHI+b
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "Invalid enterprise key."
-msgstr "無效的企業金鑰。"
-
 #. js-lingui-id: 8knMLv
 #: src/engine/core-modules/event-logs/emit/event-log-emitter.exception.ts
 msgid "Invalid event input."
@@ -5387,6 +5403,11 @@ msgstr "無效的排序參數。"
 #: src/engine/api/rest/input-request-parsers/rest-input-request-parser.exception.ts
 msgid "Invalid order by with group by parameter."
 msgstr "分組時的排序參數無效。"
+
+#. js-lingui-id: 4rRyz1
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "Invalid Organization key."
+msgstr "無效的組織金鑰。"
 
 #. js-lingui-id: LM08/z
 #: src/engine/metadata-modules/page-layout/exceptions/page-layout.exception.ts
@@ -6474,6 +6495,11 @@ msgstr "合併"
 msgctxt "commandMenuItem.label"
 msgid "Merge {objectLabelPlural}"
 msgstr "合併 {objectLabelPlural}"
+
+#. js-lingui-id: 27Moeu
+#: src/modules/blocklist/query-hooks/blocklist-merge-many.pre-query.hook.ts
+msgid "Merging blocklist entries is not allowed."
+msgstr "不允許合併封鎖清單項目。"
 
 #. js-lingui-id: T+v4U0
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -9329,18 +9355,6 @@ msgctxt "commandMenuItem.shortLabel"
 msgid "Security"
 msgstr "安全"
 
-#. js-lingui-id: BqBYOO
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.label"
-msgid "See Active Version"
-msgstr "查看啟用中的版本"
-
-#. js-lingui-id: BWZaOR
-#: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
-msgctxt "commandMenuItem.shortLabel"
-msgid "See Active Version"
-msgstr "查看啟用中的版本"
-
 #. js-lingui-id: BCRQC8
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.label"
@@ -10357,10 +10371,10 @@ msgstr "無法刪除預設角色。"
 msgid "The default role for this workspace could not be found. Please contact support for assistance."
 msgstr "未找到此工作區的默認角色。請聯繫支持以獲得幫助。"
 
-#. js-lingui-id: hmg/aY
+#. js-lingui-id: mkzyoh
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "The development instance slot for this enterprise key is already in use on another server."
-msgstr "此企業金鑰的開發實例槽位已在另一台伺服器上使用。"
+msgid "The development instance slot for this Organization key is already in use on another server."
+msgstr "此組織金鑰的開發實例槽位已在另一台伺服器上使用。"
 
 #. js-lingui-id: 22Peto
 #: src/engine/core-modules/approved-access-domain/approved-access-domain.exception.ts
@@ -10424,7 +10438,8 @@ msgid "The happensAt field used by this timeline activity type is not available"
 msgstr "此時間軸活動類型使用的 happensAt 欄位無法使用"
 
 #. js-lingui-id: EJUSll
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "工作流的初始版本不能被刪除"
 
@@ -10918,20 +10933,15 @@ msgstr "此端點已變更位置。請改為呼叫 {publicFunctionUrl}。"
 msgid "This endpoint is no longer available on /s/. Use the dedicated public domain URL instead."
 msgstr "此端點不再可於 /s/ 使用。請改用專用的公開網域 URL。"
 
-#. js-lingui-id: i4wotH
-#: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This enterprise key is already in use on another server instance. Release it from that server, or transfer it to this one."
-msgstr "此企業金鑰已在另一個伺服器實例上使用。請從該伺服器釋放，或轉移到此伺服器。"
-
 #. js-lingui-id: mjE4RD
 #: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
 msgid "This evaluation target could not be found."
 msgstr "找不到此評估目標。"
 
-#. js-lingui-id: uNp8ZA
+#. js-lingui-id: yKb71p
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an enterprise key is required."
-msgstr "此功能最多可免費供 {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} 個席位使用。您的執行個體超過此數量，因此需要企業金鑰。"
+msgid "This feature is complimentary up to {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} seats. Your instance is above that, so an Organization key is required."
+msgstr "此功能免費提供最多 {MAX_SEATS_WITHOUT_ENTERPRISE_KEY} 個席位。您的實例超過此數量，因此需要組織金鑰。"
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -10944,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "此欄位無法修改。"
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "此欄位無法在工作流程版本中直接更新"
 
@@ -11093,6 +11103,11 @@ msgstr "不支援此操作。"
 msgid "This operation references a record that does not exist or cannot be modified due to existing relationships."
 msgstr "此操作參照的記錄不存在，或因現有關聯而無法修改。"
 
+#. js-lingui-id: 8TiDJj
+#: src/engine/core-modules/enterprise/enterprise.exception.ts
+msgid "This Organization key is already in use on another server instance. Release it from that server, or transfer it to this one."
+msgstr "此組織金鑰已在另一個伺服器實例上使用。請從該伺服器釋放，或轉移到此伺服器。"
+
 #. js-lingui-id: 3q5jw3
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
@@ -11234,6 +11249,16 @@ msgstr "此版本不高於目前已部署的版本。請在 package.json 中提�
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "此應用程式的這個版本已安裝於此工作區。"
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "此工作流程版本包含格式錯誤的資料，無法儲存。"
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "此工作流程版本尚未準備好啟用。"
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -11868,12 +11893,6 @@ msgstr "使用者友善的錯誤訊息"
 msgctxt "fieldMetadata.label"
 msgid "User ID"
 msgstr "用戶 ID"
-
-#. js-lingui-id: NJT8W8
-#: src/modules/blocklist/query-hooks/blocklist-create-many.pre-query.hook.ts
-#: src/modules/blocklist/query-hooks/blocklist-update-one.pre-query.hook.ts
-msgid "User id is required."
-msgstr "需要使用者 ID。"
 
 #. js-lingui-id: pMOjQa
 #: src/engine/core-modules/auth/services/auth.service.ts
@@ -12818,6 +12837,7 @@ msgid "Workflow version does not contain trigger"
 msgstr "工作流版本未包含觸發器"
 
 #. js-lingui-id: bqFL4g
+#: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
 #: src/modules/workflow/common/utils/assert-workflow-version-is-draft.util.ts
 msgid "Workflow version is not in draft status"
 msgstr "工作流版本不在草稿狀態"
@@ -12964,10 +12984,10 @@ msgstr "工作區尚未準備好迎接新成員"
 msgid "Workspace is suspended."
 msgstr "工作區已被暫停。"
 
-#. js-lingui-id: iN7doz
+#. js-lingui-id: L48JPB
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
-msgid "Workspace limit reached. A valid enterprise key is required to create more workspaces."
-msgstr "工作區數量已達上限。需要有效的企業金鑰才能建立更多工作區。"
+msgid "Workspace limit reached. A valid Organization key is required to create more workspaces."
+msgstr "工作區數量已達上限。需要有效的組織金鑰才能建立更多工作區。"
 
 #. js-lingui-id: foYipq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util.ts
@@ -13307,6 +13327,16 @@ msgstr "您沒有權限在此工作區中模擬使用者。"
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "您無權冒充用戶。請與您的工作區管理員聯繫以獲取訪問權限。"
 
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "您無權管理與工作區共用的連線。請聯絡您的工作區管理員以取得存取權。"
+
+#. js-lingui-id: cpivo2
+#: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
+msgid "You do not have permission to manage the workspace blocklist."
+msgstr "您沒有管理工作區封鎖清單的權限。"
+
 #. js-lingui-id: q5OVn+
 #: src/engine/core-modules/application/application.exception.ts
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -13365,19 +13395,19 @@ msgstr "您的點數已用盡。請升級您的方案以繼續。"
 msgid "You have reached the maximum number of invitations for this step."
 msgstr "您已達到此步驟邀請數量的上限。"
 
-#. js-lingui-id: 4kMeNM
+#. js-lingui-id: FKZs7e
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of license refreshes allowed today for this enterprise key. Please try again later."
-msgstr "您已達到此企業金鑰在今天可允許的最大授權重新整理次數。請稍後再試。"
+msgid "You have reached the maximum number of license refreshes allowed today for this Organization key. Please try again later."
+msgstr "您已達到此組織金鑰在今天可允許的最大授權重新整理次數。請稍後再試。"
 
-#. js-lingui-id: 475gCs
+#. js-lingui-id: wvXHJI
 #: src/engine/core-modules/enterprise/enterprise.exception.ts
-msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this enterprise key. Please try again later."
-msgstr "您已達到此企業金鑰在過去 30 天內可允許的最大伺服器轉移次數。請稍後再試。"
+msgid "You have reached the maximum number of server transfers allowed in the last 30 days for this Organization key. Please try again later."
+msgstr "您已達到此組織金鑰在過去 30 天內可允許的最大伺服器轉移次數。請稍後再試。"
 
-#. js-lingui-id: nq15cs
-#: src/modules/blocklist/query-hooks/blocklist-create-one.pre-query.hook.ts
-msgid "You must be authenticated to manage blocklist."
+#. js-lingui-id: GFlHFf
+#: src/modules/blocklist/utils/build-blocklist-mutation-context-or-throw.util.ts
+msgid "You must be authenticated to manage the blocklist."
 msgstr "您必須經過身份驗證才能管理封鎖清單。"
 
 #. js-lingui-id: z+7x/s
