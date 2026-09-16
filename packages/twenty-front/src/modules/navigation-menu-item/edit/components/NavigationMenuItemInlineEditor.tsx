@@ -9,8 +9,9 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { type ThemeColor } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { parseThemeColor } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { TextInput } from '@/ui/field/input/components/TextInput';
 import { IconPicker } from '@/ui/input/components/IconPicker';
@@ -92,21 +93,25 @@ export const NavigationMenuItemInlineEditor = ({
     isExpanded &&
     isSelected;
   const clearFavoriteSelection = () => {
-    if (item.userWorkspaceId) {
+    if (isDefined(item.userWorkspaceId)) {
       setSelectedNavigationMenuItemIdInEditMode((currentId) =>
         currentId === item.id ? null : currentId,
       );
     }
   };
   const stopRenaming = (clearSelection = true) => {
-    if (clearSelection) clearFavoriteSelection();
+    if (clearSelection) {
+      clearFavoriteSelection();
+    }
     setIsRenaming(false);
     setNavigationMenuItemIdToRename((currentId) =>
       currentId === item.id ? null : currentId,
     );
   };
   useEffect(() => {
-    if (!isNameInputVisible) return;
+    if (!isNameInputVisible) {
+      return;
+    }
     pushFocusItemToFocusStack({
       focusId,
       component: { type: FocusComponentType.TEXT_INPUT, instanceId: focusId },
@@ -151,8 +156,9 @@ export const NavigationMenuItemInlineEditor = ({
       onClose={clearFavoriteSelection}
       onChange={({ iconKey }) => void updateItem(item.id, { icon: iconKey })}
       iconColorPicker={{
-        selectedColor: (item.color ??
-          DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER) as ThemeColor,
+        selectedColor: parseThemeColor(
+          item.color ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
+        ),
         onColorChange: (color) => void updateItem(item.id, { color }),
       }}
       clickableComponent={iconButton}
@@ -170,13 +176,17 @@ export const NavigationMenuItemInlineEditor = ({
         value={name}
         onChange={(nextName) => {
           setName(nextName);
-          if (isDraftMode) void updateItem(item.id, { name: nextName });
+          if (isDraftMode) {
+            void updateItem(item.id, { name: nextName });
+          }
         }}
         onEnter={finishRename}
         onTab={finishRename}
         onShiftTab={finishRename}
         onEscape={() => {
-          if (isDraftMode) void updateItem(item.id, { name: initialName });
+          if (isDraftMode) {
+            void updateItem(item.id, { name: initialName });
+          }
           stopRenaming();
         }}
         onClickOutside={(event, value) =>
@@ -200,7 +210,9 @@ export const NavigationMenuItemInlineEditor = ({
             setInitialName(item.name ?? '');
             setName(item.name ?? '');
             setIsRenaming(true);
-          } else select();
+          } else {
+            select();
+          }
         }}
       >
         {isFolder ? item.name : getLinkNavigationMenuItemLabel(item)}
@@ -213,7 +225,7 @@ export const NavigationMenuItemInlineEditor = ({
         label,
         isSelected:
           isSelected &&
-          (!isFolder || !isExpanded || Boolean(item.userWorkspaceId)),
+          (!isFolder || !isExpanded || isDefined(item.userWorkspaceId)),
       }}
     >
       <StyledEditor ref={editorRef}>{children}</StyledEditor>

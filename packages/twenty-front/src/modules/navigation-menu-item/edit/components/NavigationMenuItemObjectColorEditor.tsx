@@ -57,8 +57,9 @@ export const NavigationMenuItemObjectColorEditor = ({
     (object) => object.id === item.targetObjectMetadataId,
   );
 
-  if (!isDefined(object) || object.isSystem || !hasDataModelPermission)
+  if (!isDefined(object) || object.isSystem || !hasDataModelPermission) {
     return children;
+  }
 
   return (
     <NavigationDrawerItemEditingContext.Provider
@@ -83,11 +84,16 @@ export const NavigationMenuItemObjectColorEditor = ({
                   selectedColor={getObjectColorWithFallback(object)}
                   onSelectColor={(color) => {
                     setObjectColorsDraft((draft) => {
-                      const nextDraft = { ...draft };
-                      if (color === getObjectColorWithFallback(persistedObject))
-                        delete nextDraft[object.id];
-                      else nextDraft[object.id] = color;
-                      return nextDraft;
+                      const { [object.id]: _previousColor, ...otherColors } =
+                        draft;
+
+                      if (
+                        color === getObjectColorWithFallback(persistedObject)
+                      ) {
+                        return otherColors;
+                      }
+
+                      return { ...otherColors, [object.id]: color };
                     });
                     closeDropdown(dropdownId);
                   }}

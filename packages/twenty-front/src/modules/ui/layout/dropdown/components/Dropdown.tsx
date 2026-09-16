@@ -178,7 +178,9 @@ export const Dropdown = ({
   });
 
   useLayoutEffect(() => {
-    if (!isDefined(positionReference)) return;
+    if (!isDefined(positionReference)) {
+      return;
+    }
     // Keep the original trigger for click-outside handling.
     const trigger = refs.domReference.current;
     refs.setPositionReference(positionReference);

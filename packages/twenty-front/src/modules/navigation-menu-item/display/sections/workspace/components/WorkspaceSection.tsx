@@ -23,6 +23,7 @@ import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/l
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
@@ -53,6 +54,7 @@ export const WorkspaceSection = () => {
     setSelectedNavigationMenuItemIdInEditMode,
   ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
   const navigate = useNavigate();
+  const { openNavigationSection } = useNavigationSection('Workspace');
 
   const { t } = useLingui();
 
@@ -99,6 +101,7 @@ export const WorkspaceSection = () => {
               <NavigationMenuItemAddDropdown
                 instanceId="workspace-header"
                 position={0}
+                onOpen={openNavigationSection}
               >
                 <LightIconButton
                   Icon={IconPlus}

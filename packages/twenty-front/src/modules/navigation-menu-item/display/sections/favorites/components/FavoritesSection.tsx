@@ -49,7 +49,8 @@ export const FavoritesSection = () => {
 
   const { t } = useLingui();
 
-  const { toggleNavigationSection } = useNavigationSection('Favorites');
+  const { toggleNavigationSection, openNavigationSection } =
+    useNavigationSection('Favorites');
   const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
     'Favorites',
@@ -108,6 +109,7 @@ export const FavoritesSection = () => {
         <NavigationMenuItemAddDropdown
           instanceId="favorites"
           section="favorite"
+          onOpen={openNavigationSection}
         >
           <LightIconButton Icon={IconPlus} accent="tertiary" />
         </NavigationMenuItemAddDropdown>

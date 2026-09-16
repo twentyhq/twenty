@@ -116,7 +116,9 @@ export const NavigationMenuItemEditable = ({
     setHoveredNavigationMenuItemId(item.id);
   };
   useEffect(() => {
-    if (activeDropdownFocusId !== null) setHoveredNavigationMenuItemId(null);
+    if (activeDropdownFocusId !== null) {
+      setHoveredNavigationMenuItemId(null);
+    }
   }, [activeDropdownFocusId, setHoveredNavigationMenuItemId]);
 
   const theme = useTheme();
@@ -252,13 +254,18 @@ export const NavigationMenuItemEditable = ({
           activeDropdownFocusId === null &&
           event.target.matches(':focus-visible') &&
           !event.target.closest('[data-navigation-actions]')
-        )
+        ) {
           setHoveredNavigationMenuItemId(item.id);
+        }
       }}
       onBlurCapture={clearTooltip}
       onContextMenu={(event) => {
-        if (!canOrganize || !event.currentTarget.contains(event.target as Node))
+        if (
+          !canOrganize ||
+          !event.currentTarget.contains(event.target as Node)
+        ) {
           return;
+        }
         event.preventDefault();
         event.stopPropagation();
         open('actions');
@@ -290,13 +297,13 @@ export const NavigationMenuItemEditable = ({
           <AppTooltip
             isOpen
             anchorSelect={`#${anchorId}`}
-            title={types[item.type as NavigationMenuItemType].label}
+            title={types[item.type].label}
             description={
               item.type === NavigationMenuItemType.FOLDER
                 ? t`Click to edit`
                 : undefined
             }
-            Icon={types[item.type as NavigationMenuItemType].Icon}
+            Icon={types[item.type].Icon}
             offset={theme.spacingMultiplicator}
             hidden={
               isDropdownOpen ||

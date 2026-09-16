@@ -8,6 +8,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 export type NavigationMenuItemOption = {
   id: string;
   label: string;
+  searchableValues?: string[];
   contextualText?: string;
   Icon?: IconComponent;
   icon?: ReactNode;

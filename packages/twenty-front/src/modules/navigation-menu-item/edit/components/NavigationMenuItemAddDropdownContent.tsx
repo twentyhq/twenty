@@ -17,6 +17,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { Fragment, useEffect, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   IconChevronLeft,
   IconX,
@@ -54,6 +55,7 @@ import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-ite
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { ViewKey } from '@/views/types/ViewKey';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 type Step = 'main' | 'object' | 'view' | 'record' | 'page';
 type NavigationMenuItemAddDropdownContentProps = {
@@ -174,8 +176,11 @@ export const NavigationMenuItemAddDropdownContent = ({
   };
   const goBack = () => {
     setSearch('');
-    if (objectId) setObjectId(null);
-    else setStep('main');
+    if (isDefined(objectId)) {
+      setObjectId(null);
+    } else {
+      setStep('main');
+    }
   };
   const titles: Record<Step, string> = {
     main: t`Add menu item`,
@@ -186,7 +191,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   };
 
   const getItems = (targetStep: Step = step): NavigationMenuItemOption[] => {
-    if (targetStep === 'main')
+    if (targetStep === 'main') {
       return [
         {
           id: 'object',
@@ -212,11 +217,11 @@ export const NavigationMenuItemAddDropdownContent = ({
         {
           id: 'folder',
           label: t`Folder`,
-          contextualText: folderId
+          contextualText: isDefined(folderId)
             ? t`Cannot nest folders into folders`
             : undefined,
-          Icon: folderId ? IconFolder : undefined,
-          icon: folderId ? undefined : (
+          Icon: isDefined(folderId) ? IconFolder : undefined,
+          icon: isDefined(folderId) ? undefined : (
             <ColoredIcon
               Icon={IconFolder}
               color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
@@ -229,7 +234,7 @@ export const NavigationMenuItemAddDropdownContent = ({
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
             });
           },
-          isDisabled: Boolean(folderId),
+          isDisabled: isDefined(folderId),
         },
         {
           id: 'link',
@@ -257,6 +262,7 @@ export const NavigationMenuItemAddDropdownContent = ({
           hasSubMenu: true,
         },
       ];
+    }
     if (
       targetStep === 'object' ||
       (targetStep === 'view' && !objectId && !isSearchingAllItems)
@@ -281,6 +287,12 @@ export const NavigationMenuItemAddDropdownContent = ({
       return objects.map((object) => ({
         id: object.id,
         label: object.labelPlural,
+        searchableValues: [
+          object.labelPlural,
+          object.labelSingular,
+          object.namePlural,
+          object.nameSingular,
+        ],
         icon: <ObjectMetadataIcon objectMetadataItem={object} />,
         isAlreadyInSidebar:
           targetStep === 'object' &&
@@ -293,16 +305,17 @@ export const NavigationMenuItemAddDropdownContent = ({
           if (targetStep === 'view') {
             setObjectId(object.id);
             setSearch('');
-          } else
+          } else {
             addItem({
               type: NavigationMenuItemType.OBJECT,
               targetObjectMetadataId: object.id,
               color: getObjectColorWithFallback(object),
             });
+          }
         },
       }));
     }
-    if (targetStep === 'view')
+    if (targetStep === 'view') {
       return views
         .filter(
           (view) =>
@@ -327,6 +340,7 @@ export const NavigationMenuItemAddDropdownContent = ({
               addItem({ type: NavigationMenuItemType.VIEW, viewId: view.id }),
           };
         });
+    }
     if (targetStep === 'page') {
       const pageLayoutIdsAlreadyAdded = new Set(
         currentItems.map((item) => item.pageLayoutId),
@@ -366,12 +380,14 @@ export const NavigationMenuItemAddDropdownContent = ({
             firstPage.label.localeCompare(secondPage.label),
         );
     }
-    if (targetStep === 'record')
+    if (targetStep === 'record') {
       return navigationMenuItemSearchRecords.flatMap((record) => {
         const object = objectMetadataItems.find(
           (object) => object.nameSingular === record.objectNameSingular,
         );
-        if (!object) return [];
+        if (!isDefined(object)) {
+          return [];
+        }
         return [
           {
             isDisabled: record.isAlreadyInSidebar,
@@ -401,10 +417,14 @@ export const NavigationMenuItemAddDropdownContent = ({
           },
         ];
       });
+    }
     return [];
   };
+  const normalizedSearch = normalizeSearchText(search.trim());
   const matchesSearch = (item: NavigationMenuItemOption) =>
-    item.label.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase());
+    (item.searchableValues ?? [item.label]).some((value) =>
+      normalizeSearchText(value).includes(normalizedSearch),
+    );
   const groups = isSearchingAllItems
     ? [
         { label: t`Objects`, items: getItems('object').filter(matchesSearch) },
@@ -436,13 +456,16 @@ export const NavigationMenuItemAddDropdownContent = ({
   if (
     (step === 'record' || isSearchingAllItems) &&
     (recordSearchLoading || isSearchDebouncing)
-  )
+  ) {
     emptyMessage = t`Loading...`;
+  }
 
-  if ((step === 'page' || isSearchingAllItems) && standalonePagesLoading)
+  if ((step === 'page' || isSearchingAllItems) && standalonePagesLoading) {
     emptyMessage = t`Loading...`;
-  if (step === 'page' && standalonePagesError)
+  }
+  if (step === 'page' && standalonePagesError) {
     emptyMessage = t`Couldn't load pages`;
+  }
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>

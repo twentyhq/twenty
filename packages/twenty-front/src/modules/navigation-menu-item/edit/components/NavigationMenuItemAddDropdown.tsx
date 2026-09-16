@@ -9,6 +9,7 @@ type NavigationMenuItemAddDropdownProps = {
   children: ReactNode;
   instanceId?: string;
   section?: 'workspace' | 'favorite';
+  onOpen?: () => void;
 } & (
   | { folderId: string; position: number }
   | { folderId?: never; position?: number }
@@ -20,6 +21,7 @@ export const NavigationMenuItemAddDropdown = ({
   section = 'workspace',
   folderId,
   position,
+  onOpen,
 }: NavigationMenuItemAddDropdownProps) => {
   const navigationMenuItemInsertionAnchor = useAtomStateValue(
     navigationMenuItemInsertionAnchorState,
@@ -36,6 +38,7 @@ export const NavigationMenuItemAddDropdown = ({
           : undefined
       }
       dropdownPlacement="right-start"
+      onOpen={onOpen}
       clickableComponent={children}
       dropdownComponents={
         <NavigationMenuItemAddDropdownContent

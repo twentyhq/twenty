@@ -93,7 +93,9 @@ export const SelectableList = ({
 
   useEffect(
     () => () => {
-      if (shouldPreselectFirstItem) resetSelectedItem();
+      if (shouldPreselectFirstItem) {
+        resetSelectedItem();
+      }
     },
     [resetSelectedItem, shouldPreselectFirstItem],
   );
