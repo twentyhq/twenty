@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { IconX } from 'twenty-ui/icon';
-import { IconButton, type ButtonVariant } from 'twenty-ui/primitives/input';
+import { type ButtonVariant } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
 import { isWelcomeAnimationVisibleState } from '@/onboarding/states/isWelcomeAnimationVisibleState';

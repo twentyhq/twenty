@@ -12,7 +12,8 @@ import {
   type BannerVariant,
 } from 'twenty-ui/primitives/feedback';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

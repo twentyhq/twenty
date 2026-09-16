@@ -13,11 +13,11 @@ import { isDefined } from 'twenty-shared/utils';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
 import {
-  IconButton,
   type ButtonSize,
   type ButtonVariant,
   LightIconButton,
 } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 

@@ -1,5 +1,5 @@
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { LightButton, MainButton } from 'twenty-ui/components';
+import { IconButton, LightButton, MainButton } from 'twenty-ui/components';
 import { IconPlus, IconSearch, IconStar, IconTrash } from 'twenty-ui/icon';
 import {
   AnimatedButton,
@@ -14,7 +14,6 @@ import {
   FloatingButtonGroup,
   FloatingIconButton,
   FloatingIconButtonGroup,
-  IconButton,
   IconButtonGroup,
   IconListViewGrip,
   InsideButton,

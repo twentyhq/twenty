@@ -23,7 +23,8 @@ import {
   IconPlayerPause,
   IconPlayerPlay,
 } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 

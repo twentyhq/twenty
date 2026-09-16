@@ -12,7 +12,7 @@ import IconButtonReference from '/snippets/ui/generated/input/icon-button.mdx';
 ## Usage
 
 ```tsx
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
 
 export const CreateRecordButton = () => (
@@ -31,7 +31,7 @@ Sizes are `sm` (24px) and `md` (32px). The defaults are `md`, `outline`, and `ne
 
 <StoryEmbed
   title="Icon button example"
-  storyId="ui-input-button-iconbutton--catalog"
+  storyId="ui-components-iconbutton--catalog"
   height={620}
 />
 
@@ -42,7 +42,8 @@ Your application supplies `loading` and `disabled`. Both prevent activation. Loa
 ## Grouped actions
 
 ```tsx
-import { ButtonGroup, IconButton } from 'twenty-ui/primitives/input';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { IconPlus, IconSearch } from 'twenty-ui/icon';
 
 export const RecordActions = () => (

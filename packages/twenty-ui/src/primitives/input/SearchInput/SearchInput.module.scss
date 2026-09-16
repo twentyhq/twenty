@@ -5,6 +5,15 @@
   width: 100%;
 }
 
+.filterButton {
+  --tw-button-padding-inline: 0;
+  inline-size: var(--t-spacing-8);
+}
+
+.filterIcon {
+  display: flex;
+}
+
 .inputContainer {
   align-items: center;
   background-color: var(--t-background-transparent-lighter);

@@ -8,7 +8,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { IconX } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 
 type SettingsApplicationRegistrationRedirectURIsTableProps = {
   redirectUris: string[];

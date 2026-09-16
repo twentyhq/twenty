@@ -12,7 +12,7 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useId } from 'react';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 
 type OptionsDropdownMenuProps = {
   dropdownId?: string;

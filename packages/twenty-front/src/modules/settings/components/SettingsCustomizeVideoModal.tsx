@@ -5,7 +5,7 @@ import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { type IconComponent, IconX } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 
 export type SettingsCustomizeVideoModalTab = {

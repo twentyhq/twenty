@@ -8,7 +8,7 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/components/IconButton/IconButton';
 import {
   Banner,
   type BannerColor,

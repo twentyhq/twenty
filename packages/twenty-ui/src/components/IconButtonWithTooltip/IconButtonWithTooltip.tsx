@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/components/IconButton/IconButton';
 import {
   AppTooltip,
   TooltipDelay,

@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { Menu } from '@base-ui/react/menu';
 import { CalendarEventIndicator } from './CalendarEventIndicator';
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/components/IconButton/IconButton';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { MenuItem } from '@ui/primitives/navigation/MenuItem/MenuItem';
 import styles from './MeetingRow.module.scss';

@@ -1,7 +1,7 @@
 [
   {
     "name": "IconButton",
-    "entryPoint": "twenty-ui/primitives/input",
+    "entryPoint": "twenty-ui/components",
     "slug": "input/icon-button",
     "props": [
       {

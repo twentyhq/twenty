@@ -5,7 +5,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBox, IconNorthStar, IconPlus, IconTrash } from 'twenty-ui/icon';
-import { IconButton, type SelectOption } from 'twenty-ui/primitives/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const OBJECT_DROPDOWN_WIDTH = 240;

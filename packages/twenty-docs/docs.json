@@ -528,7 +528,6 @@
                         "pages": [
                           "ui/primitives/input/button",
                           "ui/primitives/input/button-group",
-                          "ui/primitives/input/icon-button",
                           "ui/primitives/input/field",
                           "ui/primitives/input/input",
                           "ui/primitives/input/input-group",
@@ -576,6 +575,7 @@
                       "ui/components/overview",
                       "ui/components/input/main-button",
                       "ui/components/input/light-button",
+                      "ui/components/input/icon-button",
                       "ui/components/input/icon-button-with-tooltip"
                     ]
                   }

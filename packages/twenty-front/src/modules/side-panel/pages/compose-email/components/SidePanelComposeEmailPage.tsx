@@ -15,7 +15,8 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconPaperclip, IconSend, IconTrash } from 'twenty-ui/icon';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 import { useAttachEmailFiles } from '@/activities/emails/hooks/useAttachEmailFiles';

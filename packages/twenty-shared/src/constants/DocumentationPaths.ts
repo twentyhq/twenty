@@ -128,6 +128,7 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_KEY_FEATURES: '/getting-started/key-features',
   GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
   UI_ACCESSIBILITY: '/ui/accessibility',
+  UI_COMPONENTS_INPUT_ICON_BUTTON: '/ui/components/input/icon-button',
   UI_COMPONENTS_INPUT_ICON_BUTTON_WITH_TOOLTIP:
     '/ui/components/input/icon-button-with-tooltip',
   UI_COMPONENTS_INPUT_LIGHT_BUTTON: '/ui/components/input/light-button',
@@ -144,7 +145,6 @@ export const DOCUMENTATION_PATHS = {
   UI_PRIMITIVES_INPUT_BUTTON_GROUP: '/ui/primitives/input/button-group',
   UI_PRIMITIVES_INPUT_CHECKBOX: '/ui/primitives/input/checkbox',
   UI_PRIMITIVES_INPUT_FIELD: '/ui/primitives/input/field',
-  UI_PRIMITIVES_INPUT_ICON_BUTTON: '/ui/primitives/input/icon-button',
   UI_PRIMITIVES_INPUT_INPUT: '/ui/primitives/input/input',
   UI_PRIMITIVES_INPUT_INPUT_GROUP: '/ui/primitives/input/input-group',
   UI_PRIMITIVES_INPUT_RADIO: '/ui/primitives/input/radio',

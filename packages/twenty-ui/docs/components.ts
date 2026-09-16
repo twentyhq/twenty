@@ -10,8 +10,8 @@ import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 export const DOCUMENTED_COMPONENTS = [
   {
     name: 'IconButton',
-    source: 'primitives/input/IconButton/IconButton.tsx',
-    entryPoint: 'twenty-ui/primitives/input',
+    source: 'components/IconButton/IconButton.tsx',
+    entryPoint: 'twenty-ui/components',
     slug: 'input/icon-button',
     propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
   },

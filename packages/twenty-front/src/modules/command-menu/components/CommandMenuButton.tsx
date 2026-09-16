@@ -10,7 +10,7 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/primitives/surfaces';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 
 export type CommandMenuButtonProps = {
   command: {

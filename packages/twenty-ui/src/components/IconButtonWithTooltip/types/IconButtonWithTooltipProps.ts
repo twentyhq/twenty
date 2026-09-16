@@ -1,4 +1,4 @@
-import { type IconButtonProps } from '@ui/primitives/input/IconButton/types/IconButtonProps';
+import { type IconButtonProps } from '@ui/components/IconButton/types/IconButtonProps';
 import {
   type TooltipDelay,
   type TooltipPosition,

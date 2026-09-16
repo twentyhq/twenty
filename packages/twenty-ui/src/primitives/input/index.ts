@@ -56,8 +56,6 @@ export type {
 export { FloatingIconButton } from './FloatingIconButton/FloatingIconButton';
 export type { FloatingIconButtonGroupProps } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
 export { FloatingIconButtonGroup } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
-export { IconButton } from './IconButton/IconButton';
-export type { IconButtonProps } from './IconButton/types/IconButtonProps';
 export type { IconButtonGroupProps } from './IconButtonGroup/IconButtonGroup';
 export { IconButtonGroup } from './IconButtonGroup/IconButtonGroup';
 export { IconListViewGrip } from './IconListViewGrip/IconListViewGrip';
