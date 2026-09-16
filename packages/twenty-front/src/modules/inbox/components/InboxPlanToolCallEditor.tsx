@@ -133,9 +133,8 @@ export const InboxPlanToolCallEditor = ({
   );
 
   const isRejected = toolCall.status === InboxItemToolCallStatus.REJECTED;
-  const hasRun =
-    toolCall.status === InboxItemToolCallStatus.EXECUTED ||
-    toolCall.status === InboxItemToolCallStatus.FAILED;
+  const hasRun = toolCall.status === InboxItemToolCallStatus.EXECUTED;
+  const hasFailed = toolCall.status === InboxItemToolCallStatus.FAILED;
 
   // A schema from the producer wins; without one the proposal's own keys are
   // the form, as text.
@@ -297,13 +296,9 @@ export const InboxPlanToolCallEditor = ({
         )}
         {longFields.map(renderField)}
       </StyledFields>
-      {hasRun && (
-        <StyledStatus
-          isFailure={toolCall.status === InboxItemToolCallStatus.FAILED}
-        >
-          {toolCall.status === InboxItemToolCallStatus.FAILED
-            ? (toolCall.error ?? t`This step failed`)
-            : t`Done`}
+      {(hasRun || hasFailed) && (
+        <StyledStatus isFailure={hasFailed}>
+          {hasFailed ? (toolCall.error ?? t`This step failed`) : t`Done`}
         </StyledStatus>
       )}
     </StyledCard>

@@ -1,7 +1,9 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconRepeat, IconX, useIcons } from 'twenty-ui/icon';
+import { Tag } from 'twenty-ui/primitives/data-display';
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -45,6 +47,12 @@ const StyledToggle = styled.button<{ isRejected: boolean }>`
     isRejected ? 'line-through' : 'none'};
 `;
 
+const StyledError = styled.div`
+  color: ${themeCssVariables.color.red};
+  font-size: ${themeCssVariables.font.size.sm};
+  padding-left: ${themeCssVariables.spacing[6]};
+`;
+
 const StyledChevron = styled.span<{ isExpanded: boolean }>`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
@@ -78,9 +86,16 @@ export const InboxPlanToolCallRow = ({
 
   const ToolIcon = getIcon(toolCall.icon);
   const isRejected = toolCall.status === InboxItemToolCallStatus.REJECTED;
-  const hasRun =
-    toolCall.status === InboxItemToolCallStatus.EXECUTED ||
-    toolCall.status === InboxItemToolCallStatus.FAILED;
+  const isFailed = toolCall.status === InboxItemToolCallStatus.FAILED;
+  const hasSucceeded = toolCall.status === InboxItemToolCallStatus.EXECUTED;
+
+  const statusTag = isFailed
+    ? { color: 'red' as const, label: t`Failed` }
+    : hasSucceeded
+      ? { color: 'green' as const, label: t`Done` }
+      : isRejected
+        ? { color: 'gray' as const, label: t`Skipped` }
+        : null;
 
   // The tool decides how its call is edited; the schema form is what a tool
   // gets when it has not said.
@@ -100,6 +115,9 @@ export const InboxPlanToolCallRow = ({
           <ToolIcon size={theme.icon.size.md} />
           {toolCall.label}
         </StyledToggle>
+        {isDefined(statusTag) && (
+          <Tag color={statusTag.color}>{statusTag.label}</Tag>
+        )}
         <StyledChevron isExpanded={isExpanded}>
           <LightIconButton
             Icon={IconChevronDown}
@@ -108,7 +126,7 @@ export const InboxPlanToolCallRow = ({
             onClick={onToggleExpanded}
           />
         </StyledChevron>
-        {!hasRun && (
+        {!hasSucceeded && (
           <LightIconButton
             Icon={isRejected ? IconRepeat : IconX}
             accent="secondary"
@@ -118,6 +136,9 @@ export const InboxPlanToolCallRow = ({
           />
         )}
       </StyledHeader>
+      {isFailed && !isExpanded && (
+        <StyledError>{toolCall.error ?? t`This step failed`}</StyledError>
+      )}
       {isExpanded && (
         <Editor
           // Remounted per state so the draft always belongs to the row shown.

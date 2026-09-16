@@ -197,14 +197,29 @@ export class InboxItemToolCallService {
 
     const claimedAt = new Date();
 
-    const claim = await this.inboxItemToolCallRepository.update(
-      workspaceId,
-      { id: toolCall.id, ...buildClaimableToolCallPredicate() },
-      {
-        resolvedByUserWorkspaceId: actorUserWorkspaceId,
-        resolvedAt: claimedAt,
-      },
-    );
+    // A failed row is not in flight, so it is claimed on its status alone and
+    // put back in the proposed state its run expects; the old error goes with
+    // it so the row reads as this attempt's.
+    const claim =
+      toolCall.status === InboxItemToolCallStatus.FAILED
+        ? await this.inboxItemToolCallRepository.update(
+            workspaceId,
+            { id: toolCall.id, status: InboxItemToolCallStatus.FAILED },
+            {
+              status: InboxItemToolCallStatus.PROPOSED,
+              error: null,
+              resolvedByUserWorkspaceId: actorUserWorkspaceId,
+              resolvedAt: claimedAt,
+            },
+          )
+        : await this.inboxItemToolCallRepository.update(
+            workspaceId,
+            { id: toolCall.id, ...buildClaimableToolCallPredicate() },
+            {
+              resolvedByUserWorkspaceId: actorUserWorkspaceId,
+              resolvedAt: claimedAt,
+            },
+          );
 
     // Unlike a plan run there is nothing to fall back to: the one call asked
     // for is already someone else's.
@@ -512,10 +527,11 @@ export class InboxItemToolCallService {
       accessibleQueueIds,
     });
 
+    // A failed call stays editable: the person fixes what was wrong and runs
+    // it again. Only a call in flight or one that went through is closed.
     if (
       isToolCallRunning(toolCall) ||
-      toolCall.status === InboxItemToolCallStatus.EXECUTED ||
-      toolCall.status === InboxItemToolCallStatus.FAILED
+      toolCall.status === InboxItemToolCallStatus.EXECUTED
     ) {
       throw new InboxException(
         `Inbox item tool call ${inboxItemToolCallId} is running or has run`,

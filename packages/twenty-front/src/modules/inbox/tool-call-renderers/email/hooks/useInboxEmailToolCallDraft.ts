@@ -1,7 +1,9 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Dispatch, type SetStateAction, useCallback, useRef } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
+import { type ConnectedAccountSender } from '@/accounts/types/ConnectedAccountSender';
 import { type EmailComposerState } from '@/activities/emails/types/EmailComposerState';
 import { buildEmailToolCallInput } from '@/inbox/tool-call-renderers/email/utils/buildEmailToolCallInput';
 import { type InboxEmailComposerPrefill } from '@/inbox/tool-call-renderers/email/utils/getEmailComposerPrefillFromToolCall';
@@ -16,10 +18,12 @@ export const useInboxEmailToolCallDraft = ({
   composerState,
   prefill,
   onSave,
+  onSenderChange,
 }: {
   composerState: EmailComposerState;
   prefill: InboxEmailComposerPrefill;
   onSave?: (editedInput: Record<string, unknown>) => Promise<void>;
+  onSenderChange?: (hasSender: boolean) => void;
 }) => {
   // Mirrors, not state: nothing renders from them. The composer's state is
   // read live so a save or a send carries what is on screen, including a
@@ -91,7 +95,21 @@ export const useInboxEmailToolCallDraft = ({
     setBcc: withSave(composerState.setBcc),
     setSubject: withSave(composerState.setSubject),
     setBody: withSave(composerState.setBody),
-    setSender: withSave(composerState.setSender),
+    // The sender is the one field whoever owns the Send button needs to know
+    // about, since there is nothing to send without one.
+    setSender: (action) => {
+      const sender: ConnectedAccountSender =
+        typeof action === 'function'
+          ? action({
+              connectedAccountId: composerState.connectedAccountId,
+              fromHandle: composerState.fromHandle,
+            })
+          : action;
+
+      composerState.setSender(sender);
+      onSenderChange?.(isNonEmptyString(sender.connectedAccountId));
+      debouncedSave();
+    },
   };
 
   return { composerState: composerStateWithSaves, flushSave, getInput };

@@ -23,6 +23,7 @@ import { AGENT_CHAT_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/de
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { EMAIL_GROUP_CHANNEL_SEED_HANDLES } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
+import { INBOX_MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/inbox-message-thread-data-seeds.constant';
 import { MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
 import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
 
@@ -964,7 +965,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
     queueName: 'support',
     subject: {
       kind: 'messageThread',
-      threadId: MESSAGE_THREAD_DATA_SEED_IDS.ID_1,
+      threadId: INBOX_MESSAGE_THREAD_DATA_SEED_IDS.REFUND,
     },
     content: {
       summary:
@@ -989,7 +990,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
           label: 'Duplicate charge on invoice 4482',
           subtitle: 'hello@ · 1 message',
           kind: 'messageThread',
-          recordId: MESSAGE_THREAD_DATA_SEED_IDS.ID_1,
+          recordId: INBOX_MESSAGE_THREAD_DATA_SEED_IDS.REFUND,
         },
       ],
       edges: [{ from: 'priya', to: 'thread', label: 'wrote' }],
@@ -1042,7 +1043,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
     queueName: 'support',
     subject: {
       kind: 'messageThread',
-      threadId: MESSAGE_THREAD_DATA_SEED_IDS.ID_3,
+      threadId: INBOX_MESSAGE_THREAD_DATA_SEED_IDS.SHIPPING,
     },
     // Answered yesterday and back this morning, which is the case a shared
     // inbox has to get right: the reply reopens the item rather than starting
@@ -1057,7 +1058,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
         detail: 'sam@bellweather.co to hello@ · 1 hour ago',
         excerpt:
           'Thanks for the update yesterday, but tracking still shows nothing. Can you check with the carrier?',
-        messageCount: 4,
+        messageCount: 3,
       },
     },
   },

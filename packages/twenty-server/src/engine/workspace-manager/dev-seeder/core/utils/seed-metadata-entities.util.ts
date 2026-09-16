@@ -99,6 +99,11 @@ const getSeedIds = (workspaceId: string) => {
   };
 };
 
+// The data seeds that attach mail to a shared address need the channel id of
+// the workspace they run in.
+export const getMessageChannelSeedIds = (workspaceId: string) =>
+  getSeedIds(workspaceId).messageChannelIds;
+
 export const seedMetadataEntities = async ({
   queryRunner,
   schemaName,

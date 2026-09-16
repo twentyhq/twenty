@@ -43,6 +43,7 @@ type InboxEmailComposerProps = {
   >;
   contextRecord?: EmailComposerContextRecord | null;
   onSave?: (editedInput: Record<string, unknown>) => Promise<void>;
+  onSenderChange?: (hasSender: boolean) => void;
 };
 
 // The real composer bound to a tool call: what the person types is the call's
@@ -52,7 +53,7 @@ type InboxEmailComposerProps = {
 export const InboxEmailComposer = forwardRef<
   InboxEmailComposerHandle,
   InboxEmailComposerProps
->(({ prefill, replyDefaults, contextRecord, onSave }, ref) => {
+>(({ prefill, replyDefaults, contextRecord, onSave, onSenderChange }, ref) => {
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: Pick<
       ConnectedAccount,
@@ -100,6 +101,7 @@ export const InboxEmailComposer = forwardRef<
     composerState: baseComposerState,
     prefill: resolvedPrefill,
     onSave,
+    onSenderChange,
   });
 
   const { openAttachmentPicker } = useAttachEmailFiles({

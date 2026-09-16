@@ -631,6 +631,52 @@ describe('InboxItemToolCallService', () => {
       ).rejects.toMatchObject({ code: InboxExceptionCode.INBOX_ITEM_CHANGED });
     });
 
+    it('should run a failed call again and drop its old error on the way in', async () => {
+      const failedReply = buildToolCall({
+        id: 'reply',
+        status: InboxItemToolCallStatus.FAILED,
+        error: 'No refresh token',
+        resolvedAt: new Date(),
+      });
+
+      // The row is read failed before the claim, then proposed and holding
+      // this run's claim once claimed
+      inboxItemToolCallRepository.findOne.mockImplementation(async () => {
+        const retryClaim = inboxItemToolCallRepository.update.mock.calls.find(
+          ([, where]) => where.status === InboxItemToolCallStatus.FAILED,
+        );
+
+        return isDefined(retryClaim)
+          ? {
+              ...failedReply,
+              status: InboxItemToolCallStatus.PROPOSED,
+              error: null,
+              resolvedAt: retryClaim[2].resolvedAt,
+            }
+          : failedReply;
+      });
+      inboxItemToolCallRepository.find.mockResolvedValueOnce([
+        { ...failedReply, status: InboxItemToolCallStatus.EXECUTED },
+      ]);
+
+      const result = await service.runOne({
+        ...actorArgs,
+        inboxItemToolCallId: 'reply',
+      });
+
+      expect(inboxItemToolCallRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: 'reply', status: InboxItemToolCallStatus.FAILED },
+        expect.objectContaining({
+          status: InboxItemToolCallStatus.PROPOSED,
+          error: null,
+          resolvedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
+        }),
+      );
+      expect(inboxToolCallExecutionService.execute).toHaveBeenCalledTimes(1);
+      expect(result).toMatchObject({ outcome: InboxItemOutcome.DONE });
+    });
+
     it('should refuse to run a plan that changed since it was read', async () => {
       givenSingleToolCall(buildToolCall({ id: 'reply' }), []);
 
@@ -706,7 +752,66 @@ describe('InboxItemToolCallService', () => {
     });
   });
 
+  describe('updateInput', () => {
+    it('should let a failed call be edited before it is run again', async () => {
+      inboxItemToolCallRepository.findOne.mockResolvedValue(
+        buildToolCall({
+          status: InboxItemToolCallStatus.FAILED,
+          error: 'Invalid email addresses',
+          resolvedAt: new Date(),
+        }),
+      );
+
+      const toolCall = await service.updateInput({
+        ...actorArgs,
+        inboxItemToolCallId: 'tool-call-id',
+        editedInput: { to: 'marie@example.com' },
+      });
+
+      expect(toolCall.editedInput).toEqual({ to: 'marie@example.com' });
+      expect(inboxItemToolCallRepository.update).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        { id: 'tool-call-id', status: InboxItemToolCallStatus.FAILED },
+        { editedInput: { to: 'marie@example.com' } },
+      );
+    });
+
+    it('should refuse to edit a call that went through', async () => {
+      inboxItemToolCallRepository.findOne.mockResolvedValue(
+        buildToolCall({ status: InboxItemToolCallStatus.EXECUTED }),
+      );
+
+      await expect(
+        service.updateInput({
+          ...actorArgs,
+          inboxItemToolCallId: 'tool-call-id',
+          editedInput: {},
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_CHANGED,
+      });
+      expect(inboxItemToolCallRepository.update).not.toHaveBeenCalled();
+    });
+  });
+
   describe('setRejected', () => {
+    it('should let a failed step be skipped', async () => {
+      inboxItemToolCallRepository.findOne.mockResolvedValue(
+        buildToolCall({
+          status: InboxItemToolCallStatus.FAILED,
+          resolvedAt: new Date(),
+        }),
+      );
+
+      const toolCall = await service.setRejected({
+        ...actorArgs,
+        inboxItemToolCallId: 'tool-call-id',
+        isRejected: true,
+      });
+
+      expect(toolCall.status).toBe(InboxItemToolCallStatus.REJECTED);
+    });
+
     it('should refuse to skip a step that is running', async () => {
       inboxItemToolCallRepository.findOne.mockResolvedValue(
         buildToolCall({ resolvedAt: new Date() }),
