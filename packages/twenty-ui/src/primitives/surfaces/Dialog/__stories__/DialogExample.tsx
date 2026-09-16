@@ -13,7 +13,7 @@ export const DialogExample = ({
   <Dialog.Root {...props}>
     <Dialog.Trigger
       disabled={disabled}
-      render={<Button aria-label="Edit account" title="Edit account" />}
+      render={<Button>Edit account</Button>}
     />
     <Dialog.Popup size={size} {...popupProps}>
       <Dialog.Header>
@@ -22,12 +22,8 @@ export const DialogExample = ({
       </Dialog.Header>
       {content && <Dialog.Body>{content}</Dialog.Body>}
       <Dialog.Footer>
-        <Dialog.Close
-          render={
-            <Button aria-label="Close" title="Close" variant="secondary" />
-          }
-        />
-        <Dialog.Close render={<Button aria-label="Save" title="Save" />} />
+        <Dialog.Close render={<Button variant="outline">Close</Button>} />
+        <Dialog.Close render={<Button>Save</Button>} />
       </Dialog.Footer>
     </Dialog.Popup>
   </Dialog.Root>

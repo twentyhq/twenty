@@ -239,11 +239,12 @@ export const AiChatContextUsageButton = () => {
                 <HorizontalSeparator noMargin />
                 <StyledFooter>
                   <Button
-                    title={showDetails ? t`Less` : t`More`}
-                    size="small"
-                    variant="secondary"
+                    size="sm"
+                    variant="outline"
                     onClick={() => setShowDetails(!showDetails)}
-                  />
+                  >
+                    {showDetails ? t`Less` : t`More`}
+                  </Button>
                 </StyledFooter>
               </>
             )}

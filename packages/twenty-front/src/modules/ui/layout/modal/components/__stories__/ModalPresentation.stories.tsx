@@ -31,7 +31,7 @@ export const Layout: Story = {
           Account information
         </ModalContent>
         <ModalFooter autoHeight smallPadding centered>
-          <Button title="Save" aria-label="Save" />
+          <Button>Save</Button>
         </ModalFooter>
       </>
     ),
@@ -64,7 +64,7 @@ export const ConfirmationLayout: Story = {
     narrowWidth: true,
     autoHeight: true,
     gap: 2,
-    children: <Button title="Confirm" aria-label="Confirm" />,
+    children: <Button>Confirm</Button>,
   },
   play: async ({ canvasElement }) => {
     const dialog = await within(canvasElement.ownerDocument.body).findByRole(

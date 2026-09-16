@@ -4,7 +4,6 @@ import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconBell } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
-import { LightButton } from '@ui/primitives/input/LightButton/LightButton';
 import { ClickToActionLink } from '@ui/primitives/navigation/ClickToActionLink/ClickToActionLink';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -58,7 +57,16 @@ export const WithDescriptionAndAction: Story = {
   render: (args) => (
     <Toast
       {...args}
-      action={<LightButton title="Undo" onClick={args.onCancel} />}
+      action={
+        <Button
+          onClick={args.onCancel}
+          size="sm"
+          variant="ghost"
+          style={{ fontWeight: 'var(--t-font-weight-regular)' }}
+        >
+          {'Undo'}
+        </Button>
+      }
     />
   ),
   play: async ({ canvasElement, args }) => {
@@ -108,10 +116,11 @@ const DismissibleToast = ({ onClose, ...props }: ToastProps) => {
     <>
       <Button
         type="button"
-        title="Show notification"
-        ariaLabel="Show notification"
+        aria-label="Show notification"
         onClick={() => setIsOpen(true)}
-      />
+      >
+        Show notification
+      </Button>
       {isOpen && (
         <Toast
           {...props}

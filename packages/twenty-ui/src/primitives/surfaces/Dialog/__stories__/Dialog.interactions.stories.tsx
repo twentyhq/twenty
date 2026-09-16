@@ -105,28 +105,22 @@ const ControlledDialog = () => {
     <>
       <Text>{saved ? 'Account saved' : 'Record available'}</Text>
       <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Trigger
-          render={<Button aria-label="Edit account" title="Edit account" />}
-        />
+        <Dialog.Trigger render={<Button>Edit account</Button>} />
         <Dialog.Popup>
           <Dialog.Header>
             <Dialog.Title>Edit account</Dialog.Title>
             <Dialog.Description>Update the account details.</Dialog.Description>
           </Dialog.Header>
           <Dialog.Footer>
-            <Dialog.Close
-              render={
-                <Button aria-label="Close" title="Close" variant="secondary" />
-              }
-            />
+            <Dialog.Close render={<Button variant="outline">Close</Button>} />
             <Button
-              aria-label="Save changes"
-              title="Save changes"
               onClick={() => {
                 setSaved(true);
                 setOpen(false);
               }}
-            />
+            >
+              Save changes
+            </Button>
           </Dialog.Footer>
         </Dialog.Popup>
       </Dialog.Root>
@@ -207,7 +201,7 @@ const CustomFocusDialog = () => {
         popupProps={{ initialFocus, finalFocus }}
         content={<Input ref={initialFocus} aria-label="Confirmation" />}
       />
-      <Button aria-label="Next record" title="Next record" ref={finalFocus} />
+      <Button ref={finalFocus}>Next record</Button>
     </>
   );
 };
@@ -364,11 +358,11 @@ const NonModalDialog = () => {
   return (
     <>
       <Button
-        title="Page action"
-        aria-label="Page action"
         style={{ position: 'fixed', insetBlockStart: 8, insetInlineStart: 8 }}
         onClick={() => setPageActionCount(pageActionCount + 1)}
-      />
+      >
+        Page action
+      </Button>
       <Text role="status">Page actions: {pageActionCount}</Text>
       <DialogExample open modal={false} popupProps={{ backdrop: false }} />
     </>

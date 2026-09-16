@@ -12,9 +12,7 @@ const DialogExample = () => {
   return (
     <TwentyUiGalleryCard title="Dialog">
       <Dialog.Root open={open} onOpenChange={setOpen}>
-        <Dialog.Trigger
-          render={<Button aria-label="Edit account" title="Edit account" />}
-        />
+        <Dialog.Trigger render={<Button>Edit account</Button>} />
         <Dialog.Popup>
           <Dialog.Header>
             <Dialog.Title>Edit account</Dialog.Title>
@@ -22,9 +20,7 @@ const DialogExample = () => {
           </Dialog.Header>
           <Dialog.Body>Account details</Dialog.Body>
           <Dialog.Footer>
-            <Dialog.Close
-              render={<Button aria-label="Close" title="Close" />}
-            />
+            <Dialog.Close render={<Button>Close</Button>} />
           </Dialog.Footer>
         </Dialog.Popup>
       </Dialog.Root>

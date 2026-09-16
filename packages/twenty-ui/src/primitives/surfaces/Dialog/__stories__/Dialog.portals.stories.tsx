@@ -84,11 +84,9 @@ const DeferredContainerDialog = () => {
   return (
     <ThemeProvider colorScheme="light" applyToRoot={false}>
       <div ref={containerRef} data-testid="deferred-container" />
-      <Button
-        aria-label="Attach container"
-        title="Attach container"
-        onClick={() => setContainer(containerRef.current)}
-      />
+      <Button onClick={() => setContainer(containerRef.current)}>
+        Attach container
+      </Button>
       <DialogExample open popupProps={{ container }} />
     </ThemeProvider>
   );

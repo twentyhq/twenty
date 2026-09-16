@@ -47,7 +47,7 @@ const dialogOptionsArray: DialogOptionsArray = [
       {
         title: 'Are you sure?',
         onClick: mockOnclick,
-        variant: 'primary',
+        variant: 'outline',
         role: 'confirm',
       },
     ],
@@ -60,7 +60,7 @@ const dialogOptionsArray: DialogOptionsArray = [
       {
         title: 'Are you sure?',
         onClick: mockOnclick,
-        variant: 'primary',
+        variant: 'outline',
         role: 'confirm',
       },
     ],
@@ -73,7 +73,7 @@ const dialogOptionsArray: DialogOptionsArray = [
       {
         title: 'Are you sure?',
         onClick: mockOnclick,
-        variant: 'primary',
+        variant: 'outline',
         role: 'confirm',
       },
     ],

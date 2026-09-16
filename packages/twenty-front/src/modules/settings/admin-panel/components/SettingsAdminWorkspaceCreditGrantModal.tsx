@@ -227,20 +227,16 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       <StyledModalActions>
         <Button
           onClick={handleClose}
-          variant="secondary"
-          title={t`Cancel`}
           fullWidth
-          justify="center"
-        />
+          variant="outline"
+        >{t`Cancel`}</Button>
         <Button
           onClick={handleSubmit}
-          variant="primary"
-          accent="blue"
-          title={t`Grant`}
           disabled={!isAmountValid || loading}
           fullWidth
-          justify="center"
-        />
+          variant="solid"
+          color="accent"
+        >{t`Grant`}</Button>
       </StyledModalActions>
     </ModalStatefulWrapper>
   );

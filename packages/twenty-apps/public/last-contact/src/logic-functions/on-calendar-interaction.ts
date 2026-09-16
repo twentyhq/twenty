@@ -1,28 +1,46 @@
-import { defineLogicFunction, type ObjectRecordUpdateEvent } from 'twenty-sdk/define';
-import { type DatabaseEventPayload } from 'twenty-sdk/logic-function';
+import {
+  defineLogicFunction,
+  type ObjectRecordUpdateEvent,
+} from 'twenty-sdk/define';
+import { type DatabaseEventBatchPayload } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/constants/batch-handler-timeout-seconds';
 import { CALENDAR_INTERACTION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { updatePersonLastContactFromCalendar } from 'src/utils/update-person-last-contact-from-calendar';
+import {
+  applyMeetingInteractions,
+  type CalendarEventParticipantLink,
+} from 'src/utils/apply-meeting-interactions';
 
 type CalendarEventParticipantUpdate = {
   personId?: string | null;
+  calendarEventId?: string | null;
 };
 
 const handler = async (
-  event: DatabaseEventPayload<
+  batch: DatabaseEventBatchPayload<
     ObjectRecordUpdateEvent<CalendarEventParticipantUpdate>
   >,
 ): Promise<void> => {
-  const personId = event.properties.after.personId;
+  const linkByKey = new Map<string, CalendarEventParticipantLink>();
 
-  if (!personId) {
+  for (const event of batch.events) {
+    const personId = event.properties.after.personId;
+    const calendarEventId = event.properties.after.calendarEventId;
+
+    if (personId && calendarEventId) {
+      linkByKey.set(`${personId}:${calendarEventId}`, {
+        personId,
+        calendarEventId,
+      });
+    }
+  }
+
+  if (linkByKey.size === 0) {
     return;
   }
 
-  const client = new CoreApiClient();
-
-  await updatePersonLastContactFromCalendar(client, personId);
+  await applyMeetingInteractions(new CoreApiClient(), [...linkByKey.values()]);
 };
 
 export default defineLogicFunction({
@@ -30,10 +48,11 @@ export default defineLogicFunction({
   name: 'on-calendar-interaction',
   description:
     "Updates a person's last-contacted fields, and the last contact on their company and opportunities, when a new calendar event participant is created (past events only).",
-  timeoutSeconds: 60,
+  timeoutSeconds: BATCH_HANDLER_TIMEOUT_SECONDS,
   databaseEventTriggerSettings: {
     eventName: 'calendarEventParticipant.updated',
     updatedFields: ['personId'],
+    batchMode: true,
   },
   handler,
 });
