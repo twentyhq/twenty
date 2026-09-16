@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { ADD_SHORT_LINK_AND_MESSAGE_TRACKING_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-short-link-and-message-tracking-upgrade-command-name.constant';
+import { ADD_SHORT_LINK_AND_MESSAGE_TRACKING_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-42/add-short-link-and-message-tracking-upgrade-command-name.constant';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
