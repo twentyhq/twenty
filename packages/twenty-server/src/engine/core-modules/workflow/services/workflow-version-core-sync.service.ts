@@ -12,6 +12,7 @@ import {
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
+import { buildMirroredCoreWorkflowId } from 'src/engine/core-modules/workflow/utils/build-mirrored-core-workflow-id.util';
 import { hasCoreWorkflowWorkspaceWorkflowIdColumn } from 'src/engine/core-modules/workflow/utils/has-core-workflow-workspace-workflow-id-column.util';
 import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -378,7 +379,10 @@ export class WorkflowVersionCoreSyncService {
       return null;
     }
 
-    const createdCoreWorkflowId = uuidv4();
+    const createdCoreWorkflowId = buildMirroredCoreWorkflowId({
+      workspaceId,
+      workspaceWorkflowId: workflowId,
+    });
 
     const lastPublishedVersionId = isNonEmptyString(
       workflow.lastPublishedVersionId,
@@ -396,7 +400,8 @@ export class WorkflowVersionCoreSyncService {
     await transactionScope.executeRawQuery(
       `INSERT INTO core."workflow"
          ("id", "workspaceId", "name", "workspaceWorkflowId", "lastPublishedVersionId", "lastPublishedCoreWorkflowVersionId", "createdAt", "universalIdentifier", "applicationId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+       ON CONFLICT ("id") DO NOTHING`,
       [
         createdCoreWorkflowId,
         workspaceId,

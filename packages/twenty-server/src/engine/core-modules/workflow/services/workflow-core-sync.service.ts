@@ -8,6 +8,7 @@ import { In, Repository } from 'typeorm';
 import { v4 as uuidv4 } from 'uuid';
 
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { buildMirroredCoreWorkflowId } from 'src/engine/core-modules/workflow/utils/build-mirrored-core-workflow-id.util';
 import { resolveCoreWorkflowIdsByWorkspaceWorkflowId } from 'src/engine/core-modules/workflow/utils/resolve-core-workflow-ids-by-workspace-workflow-id.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -82,7 +83,12 @@ export class WorkflowCoreSyncService {
               workflow.id,
             ) ?? null);
 
-      const coreWorkflowId = linkedCoreWorkflowId ?? uuidv4();
+      const coreWorkflowId =
+        linkedCoreWorkflowId ??
+        buildMirroredCoreWorkflowId({
+          workspaceId,
+          workspaceWorkflowId: workflow.id,
+        });
 
       if (workflow.coreWorkflowId !== coreWorkflowId) {
         coreWorkflowIdByWorkspaceRecordId.set(workflow.id, coreWorkflowId);
