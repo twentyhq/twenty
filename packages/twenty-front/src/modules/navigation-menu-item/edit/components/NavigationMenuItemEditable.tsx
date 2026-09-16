@@ -174,25 +174,38 @@ export const NavigationMenuItemEditable = ({
     FOLDER: { label: t`Folder`, Icon: IconFolder },
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
   };
-  const row =
-    canOrganize && item.type === NavigationMenuItemType.OBJECT ? (
-      <NavigationMenuItemObjectColorEditor item={item}>
-        {children}
-      </NavigationMenuItemObjectColorEditor>
-    ) : canEdit &&
-      (canOrganize ||
-        (item.type === NavigationMenuItemType.FOLDER &&
-          selectedNavigationMenuItemIdInEditMode === item.id)) ? (
-      <NavigationMenuItemInlineEditor
-        item={item}
-        dropdownId={dropdownId}
-        onEditLink={() => open('edit')}
-      >
-        {children}
-      </NavigationMenuItemInlineEditor>
-    ) : (
-      children
-    );
+  const canPickObjectColor =
+    canOrganize && item.type === NavigationMenuItemType.OBJECT;
+  const isSelectedFolder =
+    item.type === NavigationMenuItemType.FOLDER &&
+    selectedNavigationMenuItemIdInEditMode === item.id;
+  const canEditInline = canEdit && (canOrganize || isSelectedFolder);
+
+  const renderRow = () => {
+    if (canPickObjectColor) {
+      return (
+        <NavigationMenuItemObjectColorEditor item={item}>
+          {children}
+        </NavigationMenuItemObjectColorEditor>
+      );
+    }
+
+    if (canEditInline) {
+      return (
+        <NavigationMenuItemInlineEditor
+          item={item}
+          dropdownId={dropdownId}
+          onEditLink={() => open('edit')}
+        >
+          {children}
+        </NavigationMenuItemInlineEditor>
+      );
+    }
+
+    return children;
+  };
+
+  const row = renderRow();
   let content = row;
   if (
     canOrganize ||

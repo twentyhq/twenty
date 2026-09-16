@@ -238,7 +238,8 @@ export const AppTooltip = ({
       };
       const handleFocus = () => handleAnchorEnter(anchorElement);
 
-      // Child-to-child pointer movement must not restart the tooltip timer.
+      // Deliberately not react-tooltip's mouseover/mouseout parity: those fire
+      // per descendant, so child-to-child movement restarted the show timer.
       anchorElement.addEventListener('mouseenter', handleEnter);
       anchorElement.addEventListener('mouseleave', handleLeave);
       anchorElement.addEventListener('focus', handleFocus);
