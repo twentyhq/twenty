@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useIsInboxEnabled } from '@/inbox/hooks/useIsInboxEnabled';
+import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { useDeleteEmailGroupChannel } from '@/settings/accounts/hooks/useDeleteEmailGroupChannel';
 import { useInboxSettings } from '@/settings/inbox/hooks/useInboxSettings';
 import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChannels';
@@ -291,6 +292,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
             </StyledSendingDomainColumn>
           </Section>
         )}
+        <SettingsAccountsMessageChannelDetails messageChannel={channel} />
       </SettingsPageContainer>
       <ConfirmationModal
         modalInstanceId={DELETE_EMAIL_GROUP_MODAL_ID}

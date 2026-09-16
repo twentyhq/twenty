@@ -27,6 +27,9 @@ import {
 } from 'src/engine/metadata-modules/permissions/permissions.exception';
 import { type FlatRowLevelPermissionPredicateGroupMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group-maps.type';
 import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
+import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
+import { UNSATISFIABLE_RECORD_FILTER } from 'src/engine/twenty-orm/constants/unsatisfiable-record-filter.constant';
+import { resolveUnsatisfiableRecordFilterGroupIds } from 'src/engine/twenty-orm/utils/resolve-unsatisfiable-record-filter-group-ids.util';
 import { resolveWorkspaceMemberPredicateValue } from 'src/engine/twenty-orm/utils/resolve-workspace-member-predicate-value.util';
 import { validatePredicateValueCompatibility } from 'src/engine/twenty-orm/utils/validate-predicate-value-compatibility.util';
 
@@ -37,6 +40,54 @@ type BuildRecordFilterForRoleArgs = {
   objectMetadata: FlatObjectMetadata;
   roleId: string;
   workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
+};
+
+const resolveWorkspaceMemberBoundPredicateValue = ({
+  predicate,
+  workspaceMemberFieldMetadataId,
+  targetFieldMetadata,
+  flatFieldMetadataMaps,
+  workspaceMember,
+}: {
+  predicate: FlatRowLevelPermissionPredicate;
+  workspaceMemberFieldMetadataId: string;
+  targetFieldMetadata: OrmFlatFieldMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+  workspaceMember: UserWorkspaceAuthContext['workspaceMember'] | undefined;
+}): RowLevelPermissionPredicateValue | null => {
+  const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: workspaceMemberFieldMetadataId,
+    flatEntityMaps: flatFieldMetadataMaps,
+  });
+
+  if (!isDefined(workspaceMemberFieldMetadata)) {
+    throw new PermissionsException(
+      `Workspace member field metadata not found for row level predicate ${predicate.id}`,
+      PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
+    );
+  }
+
+  if (!isDefined(workspaceMember)) {
+    return null;
+  }
+
+  const resolvedWorkspaceMemberValue = resolveWorkspaceMemberPredicateValue({
+    workspaceMember,
+    workspaceMemberFieldMetadata,
+    workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
+  });
+
+  if (!isDefined(resolvedWorkspaceMemberValue)) {
+    return null;
+  }
+
+  const isPredicateValueCompatible = validatePredicateValueCompatibility({
+    workspaceMemberFieldMetadata,
+    targetFieldMetadata,
+    predicateValue: resolvedWorkspaceMemberValue,
+  });
+
+  return isPredicateValueCompatible ? resolvedWorkspaceMemberValue : null;
 };
 
 const buildRecordFilterForRole = ({
@@ -62,84 +113,61 @@ const buildRecordFilterForRole = ({
     return null;
   }
 
-  const recordFilters = predicates
-    .map((predicate) => {
-      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
-        flatEntityId: predicate.fieldMetadataId,
-        flatEntityMaps: flatFieldMetadataMaps,
-      });
+  const recordFilters: RecordFilter[] = [];
+  const unsatisfiableRecordFilterIds = new Set<string>();
 
-      if (!isDefined(fieldMetadata)) {
-        throw new PermissionsException(
-          `Field metadata not found for row level predicate ${predicate.id}`,
-          PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
-        );
-      }
+  for (const predicate of predicates) {
+    const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: predicate.fieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
 
-      const workspaceMemberFieldMetadataId =
-        predicate.workspaceMemberFieldMetadataId;
-      let predicateValue: RowLevelPermissionPredicateValue = predicate.value;
+    if (!isDefined(fieldMetadata)) {
+      throw new PermissionsException(
+        `Field metadata not found for row level predicate ${predicate.id}`,
+        PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
+      );
+    }
 
-      if (isDefined(workspaceMemberFieldMetadataId)) {
-        const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps(
-          {
-            flatEntityId: workspaceMemberFieldMetadataId,
-            flatEntityMaps: flatFieldMetadataMaps,
-          },
-        );
+    const workspaceMemberFieldMetadataId =
+      predicate.workspaceMemberFieldMetadataId;
+    let predicateValue: RowLevelPermissionPredicateValue = predicate.value;
 
-        if (!isDefined(workspaceMemberFieldMetadata)) {
-          throw new PermissionsException(
-            `Workspace member field metadata not found for row level predicate ${predicate.id}`,
-            PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND,
-          );
-        }
-
-        if (!isDefined(workspaceMember)) {
-          return null;
-        }
-
-        const resolvedWorkspaceMemberValue =
-          resolveWorkspaceMemberPredicateValue({
-            workspaceMember,
-            workspaceMemberFieldMetadata,
-            workspaceMemberSubFieldName: predicate.workspaceMemberSubFieldName,
-          });
-
-        if (!isDefined(resolvedWorkspaceMemberValue)) {
-          return null;
-        }
-
-        const isPredicateValueCompatible = validatePredicateValueCompatibility({
-          workspaceMemberFieldMetadata,
+    if (isDefined(workspaceMemberFieldMetadataId)) {
+      const workspaceMemberBoundValue =
+        resolveWorkspaceMemberBoundPredicateValue({
+          predicate,
+          workspaceMemberFieldMetadataId,
           targetFieldMetadata: fieldMetadata,
-          predicateValue: resolvedWorkspaceMemberValue,
+          flatFieldMetadataMaps,
+          workspaceMember,
         });
 
-        if (!isPredicateValueCompatible) {
-          return null;
-        }
-
-        predicateValue = resolvedWorkspaceMemberValue;
+      // A predicate bound to a workspace member value the acting principal does
+      // not carry (no member, unset field, incompatible value) cannot be
+      // satisfied. Dropping it would lift the restriction instead of applying
+      // it, so it is kept as a branch that never matches.
+      if (!isDefined(workspaceMemberBoundValue)) {
+        unsatisfiableRecordFilterIds.add(predicate.id);
       }
 
-      const effectiveSubFieldName = predicate.subFieldName as
-        | CompositeFieldSubFieldName
-        | undefined;
+      predicateValue = workspaceMemberBoundValue ?? predicate.value;
+    }
 
-      let filterValue = convertViewFilterValueToString(predicateValue);
+    const effectiveSubFieldName = predicate.subFieldName as
+      | CompositeFieldSubFieldName
+      | undefined;
 
-      return {
-        id: predicate.id,
-        fieldMetadataId: predicate.fieldMetadataId,
-        value: filterValue,
-        type: getFilterTypeFromFieldType(fieldMetadata.type),
-        operand: predicate.operand as unknown as RecordFilter['operand'],
-        recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,
-        subFieldName: effectiveSubFieldName,
-      } satisfies RecordFilter;
-    })
-    .filter(isDefined);
+    recordFilters.push({
+      id: predicate.id,
+      fieldMetadataId: predicate.fieldMetadataId,
+      value: convertViewFilterValueToString(predicateValue),
+      type: getFilterTypeFromFieldType(fieldMetadata.type),
+      operand: predicate.operand as unknown as RecordFilter['operand'],
+      recordFilterGroupId: predicate.rowLevelPermissionPredicateGroupId,
+      subFieldName: effectiveSubFieldName,
+    });
+  }
 
   const relevantGroupIds = new Set<string>();
 
@@ -186,9 +214,79 @@ const buildRecordFilterForRole = ({
         predicateGroup.parentRowLevelPermissionPredicateGroupId,
     }));
 
+  if (unsatisfiableRecordFilterIds.size === 0) {
+    return computeRecordGqlOperationFilter({
+      recordFilters,
+      recordFilterGroups,
+      fieldMetadataItems: Object.values(
+        flatFieldMetadataMaps.byUniversalIdentifier,
+      ).filter(isDefined),
+      filterValueDependencies: {
+        currentWorkspaceMemberId: workspaceMember?.id,
+      },
+    });
+  }
+
+  const unsatisfiableRecordFilterGroupIds =
+    resolveUnsatisfiableRecordFilterGroupIds({
+      recordFilters,
+      recordFilterGroups,
+      unsatisfiableRecordFilterIds,
+    });
+
+  const recordFilterGroupById = new Map(
+    recordFilterGroups.map((recordFilterGroup) => [
+      recordFilterGroup.id,
+      recordFilterGroup,
+    ]),
+  );
+
+  const isInUnsatisfiableGroup = (
+    recordFilterGroupId: string | null | undefined,
+  ): boolean => {
+    const visitedGroupIds = new Set<string>();
+    let currentGroupId = recordFilterGroupId;
+
+    while (isDefined(currentGroupId) && !visitedGroupIds.has(currentGroupId)) {
+      if (unsatisfiableRecordFilterGroupIds.has(currentGroupId)) {
+        return true;
+      }
+
+      visitedGroupIds.add(currentGroupId);
+      currentGroupId =
+        recordFilterGroupById.get(currentGroupId)?.parentRecordFilterGroupId;
+    }
+
+    return false;
+  };
+
+  // The role filter ANDs the branches that sit outside any group, so one of
+  // them being unsatisfiable leaves the role with nothing to match.
+  const isRoleFilterUnsatisfiable =
+    recordFilters.some(
+      (recordFilter) =>
+        !isDefined(recordFilter.recordFilterGroupId) &&
+        unsatisfiableRecordFilterIds.has(recordFilter.id),
+    ) ||
+    recordFilterGroups.some(
+      (recordFilterGroup) =>
+        !isDefined(recordFilterGroup.parentRecordFilterGroupId) &&
+        unsatisfiableRecordFilterGroupIds.has(recordFilterGroup.id),
+    );
+
+  if (isRoleFilterUnsatisfiable) {
+    return UNSATISFIABLE_RECORD_FILTER;
+  }
+
   return computeRecordGqlOperationFilter({
-    recordFilters,
-    recordFilterGroups,
+    recordFilters: recordFilters.filter(
+      (recordFilter) =>
+        !unsatisfiableRecordFilterIds.has(recordFilter.id) &&
+        !isInUnsatisfiableGroup(recordFilter.recordFilterGroupId),
+    ),
+    recordFilterGroups: recordFilterGroups.filter(
+      (recordFilterGroup) => !isInUnsatisfiableGroup(recordFilterGroup.id),
+    ),
     fieldMetadataItems: Object.values(
       flatFieldMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined),

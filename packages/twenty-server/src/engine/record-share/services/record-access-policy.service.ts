@@ -10,7 +10,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
-import { type EventRecordShareGate } from 'src/engine/record-share/types/event-record-share-gate.type';
+import { type EventRecordAccessGate } from 'src/engine/record-share/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
 import {
   type EventRecordSnapshot,
@@ -59,11 +59,14 @@ export class RecordAccessPolicyService {
     private readonly recordShareService: RecordShareService,
   ) {}
 
-  buildEventRecordShareGate({
+  // A subject receives the records a query would return it: its role must read
+  // the object and the row-level filter must hold on the event snapshot before
+  // the share gate of the object is consulted.
+  buildEventRecordAccessGate({
     workspaceId,
     objectMetadata,
     events,
-  }: WorkspaceEventBatch<ObjectRecordEvent>): EventRecordShareGate {
+  }: WorkspaceEventBatch<ObjectRecordEvent>): EventRecordAccessGate {
     let recordSharesPromise: Promise<RecordShare[]> | undefined;
     const fetchRecordShares: FetchRecordShares = () =>
       (recordSharesPromise ??= this.recordShareService.findByRecordIds({
@@ -74,11 +77,22 @@ export class RecordAccessPolicyService {
 
     return {
       resolveAdmittedRecordIds: async (subject) => {
+        const snapshots = await this.resolveSnapshotsReadableByRole({
+          workspaceId,
+          objectMetadata,
+          snapshots: resolveEventRecordSnapshots(events),
+          subject,
+          depth: 0,
+        });
+
+        if (snapshots.length === 0) {
+          return new Set();
+        }
+
         const { featureFlagsMap } =
           await this.workspaceCacheService.getOrRecompute(workspaceId, [
             'featureFlagsMap',
           ]);
-        const snapshots = resolveEventRecordSnapshots(events);
 
         if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
           return new Set(snapshots.map((snapshot) => snapshot.id));
@@ -90,6 +104,57 @@ export class RecordAccessPolicyService {
         );
       },
     };
+  }
+
+  private async resolveSnapshotsReadableByRole({
+    workspaceId,
+    objectMetadata,
+    snapshots,
+    subject,
+    maps,
+  }: SnapshotEvaluation): Promise<EventRecordSnapshot[]> {
+    if (snapshots.length === 0) {
+      return [];
+    }
+
+    if (
+      isDefined(subject.objectsPermissions) &&
+      !isObjectOperationPermitted({
+        objectMetadata,
+        operationType: 'select',
+        objectsPermissions: subject.objectsPermissions,
+      })
+    ) {
+      return [];
+    }
+
+    const rowLevelPermissionRecordFilter =
+      subject.resolveRowLevelPermissionRecordFilter(objectMetadata);
+
+    if (
+      !isDefined(rowLevelPermissionRecordFilter) ||
+      Object.keys(rowLevelPermissionRecordFilter).length === 0
+    ) {
+      return snapshots;
+    }
+
+    const flatFieldMetadataMaps =
+      maps?.flatFieldMetadataMapsOrm ??
+      (
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatFieldMetadataMapsOrm',
+        ])
+      ).flatFieldMetadataMapsOrm;
+
+    return snapshots.filter((snapshot) =>
+      isRecordMatchingRLSRowLevelPermissionPredicate({
+        record: snapshot,
+        filter: rowLevelPermissionRecordFilter,
+        flatObjectMetadata: objectMetadata,
+        flatFieldMetadataMaps,
+        shouldIgnoreSoftDeleteDefaultFilter: true,
+      }),
+    );
   }
 
   private async resolveSnapshotIdsAdmittedByRecordShareGate(
@@ -315,39 +380,18 @@ export class RecordAccessPolicyService {
   private async resolveReadableSnapshotIds(
     evaluation: SnapshotEvaluationInContext,
   ): Promise<Set<string>> {
-    const { workspaceId, objectMetadata, snapshots, subject, depth, maps } =
-      evaluation;
+    const { workspaceId, objectMetadata, depth } = evaluation;
 
-    if (snapshots.length === 0 || depth > MAX_INHERITED_READABILITY_DEPTH) {
+    if (depth > MAX_INHERITED_READABILITY_DEPTH) {
       return new Set();
     }
 
-    if (
-      isDefined(subject.objectsPermissions) &&
-      !isObjectOperationPermitted({
-        objectMetadata,
-        operationType: 'select',
-        objectsPermissions: subject.objectsPermissions,
-      })
-    ) {
-      return new Set();
-    }
-
-    const rowLevelPermissionRecordFilter =
-      subject.resolveRowLevelPermissionRecordFilter(objectMetadata);
     const candidateSnapshots =
-      isDefined(rowLevelPermissionRecordFilter) &&
-      Object.keys(rowLevelPermissionRecordFilter).length > 0
-        ? snapshots.filter((snapshot) =>
-            isRecordMatchingRLSRowLevelPermissionPredicate({
-              record: snapshot,
-              filter: rowLevelPermissionRecordFilter,
-              flatObjectMetadata: objectMetadata,
-              flatFieldMetadataMaps: maps.flatFieldMetadataMapsOrm,
-              shouldIgnoreSoftDeleteDefaultFilter: true,
-            }),
-          )
-        : snapshots;
+      await this.resolveSnapshotsReadableByRole(evaluation);
+
+    if (candidateSnapshots.length === 0) {
+      return new Set();
+    }
 
     return this.resolveSnapshotIdsAdmittedByRecordShareGate(
       { ...evaluation, snapshots: candidateSnapshots },

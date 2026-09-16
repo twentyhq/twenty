@@ -4782,6 +4782,9 @@ export default {
             "galleryImages": [
                 1
             ],
+            "installCount": [
+                28
+            ],
             "defaultRoleUniversalIdentifier": [
                 1
             ],
