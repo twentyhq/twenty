@@ -185,6 +185,40 @@ export const RELEASE_NOTES: ReleaseNote[] = [
     ],
   },
   {
+    release: '2.34.0',
+    date: '2026-08-24',
+    highlights: [
+      {
+        title: msg`A proper home on mobile`,
+        description: (
+          <Trans>
+            The navigation menu is now a page of its own, with a real address
+            and a way back. Create actions appear as icons in page headers, and
+            the bottom bar no longer sits on top of your content.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Edit deactivated objects`,
+        description: (
+          <Trans>
+            Open a deactivated object from Settings and change it, instead of
+            deleting it and building it again.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Delete a workflow step from the diagram`,
+        description: (
+          <Trans>
+            Remove a step from its node in the diagram, without opening the side
+            panel first.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
     release: '2.28.0',
     date: '2026-08-11',
     highlights: [
@@ -194,6 +228,30 @@ export const RELEASE_NOTES: ReleaseNote[] = [
           <Trans>
             Display records two relationships away directly on a record page—for
             example, opportunities associated with a company’s contacts.
+          </Trans>
+        ),
+      },
+    ],
+  },
+  {
+    release: '2.27.0',
+    date: '2026-08-04',
+    highlights: [
+      {
+        title: msg`See the devices on your account`,
+        description: (
+          <Trans>
+            Settings &gt; Profile now lists every device with an active session,
+            marks the one you are on, and lets you sign out any of the others.
+          </Trans>
+        ),
+      },
+      {
+        title: msg`Choose where records open`,
+        description: (
+          <Trans>
+            Decide whether records open in the side panel or as a full page, set
+            per object and as your own preference in Settings &gt; Experience.
           </Trans>
         ),
       },
