@@ -191,7 +191,6 @@ export const SettingsApplicationDetailAboutTab = ({
         )}
         {isDefined(markdownText) && (
           <StyledMarkdownContent>
-            {/* App descriptions come from third-party READMEs, whose images must not load */}
             <LazyMarkdownRenderer text={markdownText} noImage />
           </StyledMarkdownContent>
         )}
