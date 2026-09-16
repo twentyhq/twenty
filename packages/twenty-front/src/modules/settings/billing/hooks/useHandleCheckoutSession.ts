@@ -1,4 +1,6 @@
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -47,11 +49,17 @@ export const useHandleCheckoutSession = ({
         return;
       }
       redirect(data.checkoutSession.url);
-    } catch {
-      enqueueToast({
-        variant: 'error',
-        children: t`Checkout session error. Please retry or contact Twenty team`,
-      });
+    } catch (error) {
+      // Surface server user errors (e.g. BILLING_SUBSCRIPTION_ALREADY_EXISTS)
+      // instead of a generic toast — same pattern as useSubmitSubscriptionPayment.
+      if (CombinedGraphQLErrors.is(error)) {
+        enqueueToast(getToastOptionsFromError({ error }));
+      } else {
+        enqueueToast({
+          variant: 'error',
+          children: t`Checkout session error. Please retry or contact Twenty team`,
+        });
+      }
     } finally {
       setIsSubmitting(false);
     }
