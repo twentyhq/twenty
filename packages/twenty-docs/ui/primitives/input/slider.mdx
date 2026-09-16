@@ -15,6 +15,32 @@ import SliderReference from '/snippets/ui/generated/input/slider.mdx';
   height={240}
 />
 
+## Anatomy
+
+Put the track and thumbs inside `Slider.Control`, which handles pointer interaction. This tree shows a single-thumb slider.
+
+```text
+Slider.Root
+├── Slider.Label
+├── Slider.Value
+└── Slider.Control
+    └── Slider.Track
+        ├── Slider.Indicator
+        └── Slider.Thumb
+```
+
+| Part        | Requirement                   | Purpose                                                         |
+| ----------- | ----------------------------- | --------------------------------------------------------------- |
+| `Root`      | Required                      | Owns the value, bounds, step, and orientation.                  |
+| `Control`   | Required                      | Handles pointer interaction and positions the thumbs.           |
+| `Track`     | Required for the styled track | Shows the full value range.                                     |
+| `Thumb`     | One per adjustable value      | Provides a focusable handle with keyboard interaction.          |
+| `Label`     | Recommended                   | Supplies a visible label; every thumb needs an accessible name. |
+| `Value`     | Optional                      | Displays the current numeric value.                             |
+| `Indicator` | Optional                      | Shows the selected portion of the track.                        |
+
+For a range, add a thumb for each value with its matching `index` and a distinct accessible name. Labels and numeric output stay outside `Control`, so they do not become part of the draggable area.
+
 ## Uncontrolled state
 
 Use `defaultValue` to set the initial volume. The slider owns subsequent changes.
@@ -100,17 +126,7 @@ Give range thumbs distinct accessible names and an `index` corresponding to thei
 
 To control a range, store the array in React state and pass it through `value` and `onValueChange`, just as for a single value.
 
-## Parts and keyboard
-
-| Part        | Purpose                                        |
-| ----------- | ---------------------------------------------- |
-| `Root`      | Owns the value, bounds, step, and orientation. |
-| `Label`     | Names the slider.                              |
-| `Value`     | Displays the current value.                    |
-| `Control`   | Handles pointer interaction.                   |
-| `Track`     | Shows the full value range.                    |
-| `Indicator` | Shows the selected portion of the track.       |
-| `Thumb`     | Provides a focusable handle for one value.     |
+## Keyboard and appearance
 
 Arrow keys adjust a focused thumb by a step. Home and End move it toward the bounds while respecting range constraints. `orientation="vertical"` changes the layout and keyboard direction. Use `disabled` on `Root` to prevent changes.
 
