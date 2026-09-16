@@ -85,7 +85,6 @@ export const InboxItemPlacement = ({ inboxItem }: InboxItemPlacementProps) => {
     <StyledPlacement>
       <Select
         dropdownId={`inbox-item-queue-${inboxItem.id}`}
-        dropdownWidthAuto
         onChange={moveToQueue}
         options={queueOptions}
         selectSizeVariant="small"
@@ -93,7 +92,6 @@ export const InboxItemPlacement = ({ inboxItem }: InboxItemPlacementProps) => {
       />
       <Select
         dropdownId={`inbox-item-assignee-${inboxItem.id}`}
-        dropdownWidthAuto
         onChange={assignToMember}
         options={assigneeOptions}
         selectSizeVariant="small"
