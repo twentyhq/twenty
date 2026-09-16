@@ -143,8 +143,7 @@ export const slackAssistantWorkerHandler = async (
       });
     }
 
-    // The enqueue path already drops silenced channels; this only catches a
-    // rule that changed after the request was recorded, or one drained late.
+    // Only a rule that changed after enqueue, or a request drained late, lands here
     if (channelAccessPolicy.status === 'SILENT') {
       await stopStatusUpdates();
 

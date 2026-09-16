@@ -1,3 +1,4 @@
+import { type ConversationsInfoResponse } from '@slack/web-api';
 import { isNonEmptyString } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
@@ -42,7 +43,7 @@ const describeChannel = ({
 }: {
   name: string | undefined;
   slackChannelId: string;
-}) => (isNonEmptyString(name) ? `#${name}` : slackChannelId);
+}): string => (isNonEmptyString(name) ? `#${name}` : slackChannelId);
 
 export const slackSetChannelRuleHandler = async (
   payload: SlackRouteBody,
@@ -106,12 +107,22 @@ export const slackSetChannelRuleHandler = async (
 
   const slackClient = slackClientResult.client;
 
-  // Asked of Slack rather than trusted from the payload: a rule on a direct
-  // message would otherwise let one member silence or open their own DM.
-  const channelInfo = await slackClient.conversations
-    .info({ channel: slackChannelId })
-    .catch(() => undefined);
-  const channel = channelInfo?.channel;
+  // Asked of Slack, not trusted from the payload: a member could otherwise rule their own DM
+  let channelInfo: ConversationsInfoResponse;
+
+  try {
+    channelInfo = await slackClient.conversations.info({
+      channel: slackChannelId,
+    });
+  } catch (error) {
+    return {
+      success: false,
+      message: 'Could not confirm the channel with Slack',
+      error: toErrorMessage(error),
+    };
+  }
+
+  const channel = channelInfo.channel;
 
   if (!isDefined(channel)) {
     return {
@@ -141,7 +152,7 @@ export const slackSetChannelRuleHandler = async (
     };
   }
 
-  // Slack's name wins so a renamed channel refreshes on the next save.
+  // Slack's name wins so a renamed channel refreshes on the next save
   const name = readOptionalString(channel.name) ?? requestedName;
 
   const client = new CoreApiClient({ runAs: 'application' });
@@ -158,8 +169,7 @@ export const slackSetChannelRuleHandler = async (
     };
   }
 
-  // An omitted capability keeps the stored one, so changing a mode from the
-  // list never silently lifts a read-only cap.
+  // An omitted capability keeps the stored one so a mode change never silently lifts a cap
   const capability =
     requestedCapability ??
     existingRule?.capability ??

@@ -13,8 +13,7 @@ const SILENCED_CHANNEL_SKIP_REASON = 'Channel is silenced by a channel rule';
 
 const DIRECT_MESSAGE_CHANNEL_TYPE = 'im';
 
-// Checked before anything visible happens in Slack, so a silenced channel
-// never sees a thinking status, an empty-request hint or a recorded request.
+// Runs before anything visible happens in Slack or any request is recorded
 const isSilencedChannelEvent = async ({
   body,
   slackChannelId,

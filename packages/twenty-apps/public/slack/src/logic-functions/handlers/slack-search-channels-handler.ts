@@ -1,21 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import {
-  type SlackChannelSearchOption,
-  type SlackChannelSearchResult,
-} from 'src/logic-functions/types/slack-channel-search.type';
+import { type SlackChannelSearchResult } from 'src/logic-functions/types/slack-channel-search.type';
 import { type SlackRouteBody } from 'src/logic-functions/types/slack-route-body.type';
 import { asRecord } from 'src/logic-functions/utils/as-record.util';
 import { currentUserHasRolesPermission } from 'src/logic-functions/utils/current-user-has-roles-permission';
 import { getSlackClient } from 'src/logic-functions/utils/get-slack-client';
 import { readOptionalString } from 'src/logic-functions/utils/read-optional-string.util';
+import { searchSlackChannelsByName } from 'src/logic-functions/utils/search-slack-channels-by-name';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const MAX_RESULTS = 10;
-// Slack's largest page; the page bound only guards against a runaway cursor
-const SLACK_PAGE_SIZE = 1000;
-const MAX_PAGES = 20;
-const CHANNEL_TYPES = 'public_channel,private_channel';
 
 export const slackSearchChannelsHandler = async (
   payload: SlackRouteBody,
@@ -32,10 +26,7 @@ export const slackSearchChannelsHandler = async (
   }
 
   const body = asRecord(payload.body) ?? {};
-  const query = readOptionalString(body.query)
-    ?.trim()
-    .replace(/^#/, '')
-    .toLowerCase();
+  const query = readOptionalString(body.query)?.trim().replace(/^#/, '');
 
   if (!isNonEmptyString(query)) {
     return { success: true, slackChannels: [] };
@@ -51,46 +42,12 @@ export const slackSearchChannelsHandler = async (
     };
   }
 
-  const slackClient = slackClientResult.client;
-  const slackChannels: SlackChannelSearchOption[] = [];
-  let cursor: string | undefined;
-
   try {
-    for (let page = 0; page < MAX_PAGES; page += 1) {
-      const response = await slackClient.conversations.list({
-        types: CHANNEL_TYPES,
-        exclude_archived: true,
-        limit: SLACK_PAGE_SIZE,
-        cursor,
-      });
-
-      for (const channel of response.channels ?? []) {
-        if (slackChannels.length >= MAX_RESULTS) {
-          break;
-        }
-
-        if (
-          !isNonEmptyString(channel.id) ||
-          !isNonEmptyString(channel.name) ||
-          !channel.name.toLowerCase().includes(query)
-        ) {
-          continue;
-        }
-
-        slackChannels.push({
-          slackChannelId: channel.id,
-          name: channel.name,
-          isPrivate: channel.is_private === true,
-          isMember: channel.is_member === true,
-        });
-      }
-
-      cursor = response.response_metadata?.next_cursor;
-
-      if (slackChannels.length >= MAX_RESULTS || !isNonEmptyString(cursor)) {
-        break;
-      }
-    }
+    const slackChannels = await searchSlackChannelsByName({
+      slackClient: slackClientResult.client,
+      query,
+      maxResults: MAX_RESULTS,
+    });
 
     return { success: true, slackChannels };
   } catch (error) {

@@ -12,8 +12,8 @@ import { SlackChannelRuleModeSelect } from 'src/front-components/components/Slac
 import { SlackPickedEntityButton } from 'src/front-components/components/SlackPickedEntityButton';
 import { SlackUserLinkFormField } from 'src/front-components/components/SlackUserLinkFormField';
 import { SlackUserLinkFormHint } from 'src/front-components/components/SlackUserLinkFormHint';
-import { SLACK_CHANNEL_RULE_CAPABILITY_DESCRIPTIONS } from 'src/front-components/constants/slack-channel-rule-capability-labels.constant';
-import { SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS } from 'src/front-components/constants/slack-channel-rule-mode-labels.constant';
+import { SLACK_CHANNEL_RULE_CAPABILITY_DESCRIPTIONS } from 'src/front-components/constants/slack-channel-rule-capability-descriptions.constant';
+import { SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS } from 'src/front-components/constants/slack-channel-rule-mode-descriptions.constant';
 import { useSetSlackChannelRule } from 'src/front-components/hooks/use-set-slack-channel-rule';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
 import { SLACK_CHANNEL_RULE_CAPABILITY } from 'src/logic-functions/constants/slack-channel-rule-capability';
@@ -69,8 +69,7 @@ export const SlackChannelRuleForm = ({
       )
     : undefined;
 
-  // Picking a channel that already has a rule starts the form from that rule,
-  // so saving it never silently lifts a cap the admin did not touch.
+  // Start from the existing rule so saving never silently lifts a cap the admin did not touch
   const handleChannelSelect = (channel: SlackChannelSearchOption) => {
     setSelectedChannel(channel);
 

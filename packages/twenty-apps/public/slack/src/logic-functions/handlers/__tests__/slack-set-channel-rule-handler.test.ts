@@ -125,8 +125,21 @@ describe('slackSetChannelRuleHandler', () => {
     });
   });
 
-  it('should refuse a channel Slack does not return', async () => {
+  it('should surface the Slack error when the channel lookup fails', async () => {
     conversationsInfoMock.mockRejectedValue(new Error('channel_not_found'));
+
+    const result = await slackSetChannelRuleHandler(buildPayload(VALID_BODY));
+
+    expect(result).toEqual({
+      success: false,
+      message: 'Could not confirm the channel with Slack',
+      error: 'channel_not_found',
+    });
+    expect(createSlackChannelRuleMock).not.toHaveBeenCalled();
+  });
+
+  it('should refuse a channel Slack does not return', async () => {
+    conversationsInfoMock.mockResolvedValue({ ok: true });
 
     const result = await slackSetChannelRuleHandler(buildPayload(VALID_BODY));
 

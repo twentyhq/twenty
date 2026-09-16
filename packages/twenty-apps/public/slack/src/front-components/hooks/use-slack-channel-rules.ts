@@ -4,7 +4,6 @@ import { RestApiClient } from 'twenty-client-sdk/rest';
 
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
 
-// The REST page cap; the page bound only guards against a runaway cursor
 const SLACK_CHANNEL_RULES_PAGE_SIZE = 200;
 const SLACK_CHANNEL_RULES_MAX_PAGES = 10;
 
@@ -77,11 +76,7 @@ type SlackChannelRulesState = {
   refetchSlackChannelRules: () => Promise<void>;
 };
 
-export const useSlackChannelRules = ({
-  isEnabled,
-}: {
-  isEnabled: boolean;
-}): SlackChannelRulesState => {
+export const useSlackChannelRules = (): SlackChannelRulesState => {
   const [slackChannelRules, setSlackChannelRules] = useState<
     SlackChannelRuleRecord[]
   >([]);
@@ -148,14 +143,8 @@ export const useSlackChannelRules = ({
   }, []);
 
   useEffect(() => {
-    if (!isEnabled) {
-      setIsSlackChannelRulesLoading(false);
-
-      return;
-    }
-
     fetchSlackChannelRules();
-  }, [fetchSlackChannelRules, isEnabled]);
+  }, [fetchSlackChannelRules]);
 
   return {
     slackChannelRules,

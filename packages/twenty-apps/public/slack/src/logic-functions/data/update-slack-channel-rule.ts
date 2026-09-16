@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { isDefined } from 'twenty-sdk/utils';
 
 import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
@@ -15,10 +14,10 @@ export const updateSlackChannelRule = async (
     capability,
   }: {
     id: string;
-    name?: string;
-    slackTeamId?: string;
-    mode?: SlackChannelRuleMode;
-    capability?: SlackChannelRuleCapability;
+    name: string | undefined;
+    slackTeamId: string;
+    mode: SlackChannelRuleMode;
+    capability: SlackChannelRuleCapability;
   },
 ): Promise<void> => {
   await client.mutation({
@@ -27,9 +26,9 @@ export const updateSlackChannelRule = async (
         id,
         data: {
           ...(isNonEmptyString(name) ? { name } : {}),
-          ...(isNonEmptyString(slackTeamId) ? { slackTeamId } : {}),
-          ...(isDefined(mode) ? { mode } : {}),
-          ...(isDefined(capability) ? { capability } : {}),
+          slackTeamId,
+          mode,
+          capability,
         },
       },
       id: true,

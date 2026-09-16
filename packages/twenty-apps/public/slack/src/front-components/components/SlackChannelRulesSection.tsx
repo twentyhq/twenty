@@ -19,10 +19,16 @@ import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-chann
 import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 
 const StyledCenteredState = styled.div`
+  align-items: center;
+  box-sizing: border-box;
   color: ${() => themeCssVariables.font.color.tertiary};
+  display: flex;
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
-  padding: ${() => themeCssVariables.spacing[2]};
+  height: 100%;
+  justify-content: center;
+  padding: ${() => themeCssVariables.spacing[4]};
+  width: 100%;
 `;
 
 const StyledDisclosure = styled.div`
@@ -46,7 +52,7 @@ export const SlackChannelRulesSection = ({
     channelRulesErrorMessage,
     hasMoreSlackChannelRules,
     refetchSlackChannelRules,
-  } = useSlackChannelRules({ isEnabled: true });
+  } = useSlackChannelRules();
   const { setSlackChannelRule, savingChannelId } = useSetSlackChannelRule();
   const { removeSlackChannelRule, removingRuleId } =
     useRemoveSlackChannelRule();

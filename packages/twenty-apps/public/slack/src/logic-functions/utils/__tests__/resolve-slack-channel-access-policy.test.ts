@@ -1,4 +1,3 @@
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { resolveSlackChannelAccessPolicy } from 'src/logic-functions/utils/resolve-slack-channel-access-policy';
@@ -16,7 +15,7 @@ vi.mock('src/logic-functions/utils/get-slack-access-mode', () => ({
   getSlackAccessMode: getSlackAccessModeMock,
 }));
 
-const client = {} as CoreApiClient;
+const client = { query: vi.fn() };
 
 const buildRule = (mode: string, capability = 'FULL') => ({
   id: 'rule-1',
