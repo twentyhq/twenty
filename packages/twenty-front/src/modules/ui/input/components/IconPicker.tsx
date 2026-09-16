@@ -439,6 +439,7 @@ export const IconPicker = ({
         clickableComponent={
           clickableComponent ?? (
             <IconButton
+              type="button"
               ariaLabel={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}
               Icon={displayIcon}

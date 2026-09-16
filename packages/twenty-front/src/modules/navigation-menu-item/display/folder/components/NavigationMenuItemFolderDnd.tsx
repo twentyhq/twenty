@@ -4,7 +4,7 @@ import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import React, { Fragment, useCallback, useContext } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFolder, IconHeartOff, IconPlus, useIcons } from 'twenty-ui/icon';
@@ -39,7 +39,7 @@ import { useNavigationMenuItemFolderOpenState } from '@/navigation-menu-item/dis
 import { useIsNavigationMenuItemEditHighlighted } from '@/navigation-menu-item/display/hooks/useIsNavigationMenuItemEditHighlighted';
 import type { NavigationMenuItemClickParams } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemSectionItems';
 import { useFavoritesFolderEdit } from '@/navigation-menu-item/edit/folder/hooks/useFavoritesFolderEdit';
-import { useOpenAddItemToFolderPage } from '@/navigation-menu-item/edit/hooks/useOpenAddItemToFolderPage';
+import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdown';
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -143,7 +143,6 @@ export const NavigationMenuItemFolderDnd = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const { openAddItemToFolderPage } = useOpenAddItemToFolderPage();
   const isFolderEditHighlighted = useIsNavigationMenuItemEditHighlighted({
     id: folderId,
     folderId: null,
@@ -272,14 +271,6 @@ export const NavigationMenuItemFolderDnd = ({
       ? navigationMenuItems.length + 1
       : navigationMenuItems.length;
 
-  const handleAddMenuItemToFolder = useCallback(() => {
-    openAddItemToFolderPage({
-      folderId,
-      position: navigationMenuItems.length,
-      resetNavigationStack: true,
-    });
-  }, [folderId, navigationMenuItems.length, openAddItemToFolderPage]);
-
   const deleteModal =
     isEditInPlace && favoritesEdit.isModalOpened
       ? createPortal(
@@ -384,19 +375,23 @@ export const NavigationMenuItemFolderDnd = ({
               />
               {isWorkspace && isLayoutCustomizationModeEnabled && (
                 <NavigationMenuItemEntrance>
-                  <NavigationDrawerSubItem
-                    label={t`Add menu item`}
-                    Icon={IconPlus}
-                    onClick={handleAddMenuItemToFolder}
-                    triggerEvent="CLICK"
-                    variant="tertiary"
-                    isSelectedInEditMode={false}
-                    subItemState={getNavigationSubItemLeftAdornment({
-                      index: navigationMenuItems.length,
-                      arrayLength: folderContentLength,
-                      selectedIndex: -1,
-                    })}
-                  />
+                  <NavigationMenuItemAddDropdown
+                    folderId={folderId}
+                    position={navigationMenuItems.length}
+                  >
+                    <NavigationDrawerSubItem
+                      label={t`Add menu item`}
+                      Icon={IconPlus}
+                      triggerEvent="CLICK"
+                      variant="tertiary"
+                      isSelectedInEditMode={false}
+                      subItemState={getNavigationSubItemLeftAdornment({
+                        index: navigationMenuItems.length,
+                        arrayLength: folderContentLength,
+                        selectedIndex: -1,
+                      })}
+                    />
+                  </NavigationMenuItemAddDropdown>
                 </NavigationMenuItemEntrance>
               )}
             </NavigationMenuItemDroppableSlot>
