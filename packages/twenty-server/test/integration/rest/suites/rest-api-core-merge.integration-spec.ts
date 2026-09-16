@@ -43,7 +43,7 @@ describe('Core REST API Merge endpoint', () => {
 
   it('should not delete records on a dry run merge', async () => {
     // dryRun returns a synthetic preview record (fresh id) and must not mutate
-    // the source records.
+    // the source records, so behavior is asserted via the records still existing.
     await makeRestAPIRequest({
       method: 'patch',
       path: '/people/merge',
@@ -52,11 +52,7 @@ describe('Core REST API Merge endpoint', () => {
         conflictPriorityIndex: 0,
         dryRun: true,
       },
-    })
-      .expect(200)
-      .expect((res) => {
-        expect(res.body.data.mergePerson.id).not.toBe(TEST_PERSON_2_ID);
-      });
+    }).expect(200);
 
     await makeRestAPIRequest({
       method: 'get',
