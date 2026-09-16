@@ -180,13 +180,11 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
     isWorkflowCoreIndexPageEnabled,
   });
 
-  let objectSecondaryLabel: string | undefined;
-
-  if (isViewWithResolvedView) {
-    objectSecondaryLabel = objectMetadataItem.labelPlural;
-  } else if (isRecord) {
-    objectSecondaryLabel = objectMetadataItem.labelSingular;
-  }
+  const objectSecondaryLabel = isViewWithResolvedView
+    ? objectMetadataItem.labelPlural
+    : isRecord
+      ? objectMetadataItem.labelSingular
+      : undefined;
 
   const secondaryLabel = isCoreWorkflowsIndexItem
     ? t`System`
