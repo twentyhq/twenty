@@ -133,14 +133,17 @@ export class WorkflowCoreSyncService {
       return new Map();
     }
 
-    const reverseMappedCoreWorkflows = await this.coreWorkflowRepository.find(
-      workspaceId,
-      {
-        where: { workspaceWorkflowId: In(workspaceWorkflowIds) },
-        select: { id: true, workspaceWorkflowId: true, createdAt: true },
-        order: { createdAt: 'ASC', id: 'ASC' },
-      },
-    );
+    // Raw SQL: workspaceWorkflowId is hidden from the entity metadata while an
+    // upgrade that introduces it is running, which makes a repository where
+    // clause on it throw.
+    const reverseMappedCoreWorkflows =
+      (await this.workspaceRepository.manager.query(
+        `SELECT DISTINCT ON ("workspaceWorkflowId") "workspaceWorkflowId", "id"
+       FROM core."workflow"
+       WHERE "workspaceId" = $1 AND "workspaceWorkflowId" = ANY($2::uuid[])
+       ORDER BY "workspaceWorkflowId", "createdAt" ASC, "id" ASC`,
+        [workspaceId, workspaceWorkflowIds],
+      )) as { workspaceWorkflowId: string; id: string }[];
 
     const coreWorkflowIdByWorkspaceWorkflowId = new Map<string, string>();
 

@@ -11,7 +11,6 @@ import {
   WorkflowVersionEntity,
   WorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -33,8 +32,6 @@ export class WorkflowVersionCoreSyncService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
-    @InjectWorkspaceScopedRepository(WorkflowEntity)
-    private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -292,14 +289,17 @@ export class WorkflowVersionCoreSyncService {
     );
 
     if (unresolvedWorkflowIds.length > 0) {
-      const reverseMappedCoreWorkflows = await this.coreWorkflowRepository.find(
-        workspaceId,
-        {
-          where: { workspaceWorkflowId: In(unresolvedWorkflowIds) },
-          select: { id: true, workspaceWorkflowId: true, createdAt: true },
-          order: { createdAt: 'ASC', id: 'ASC' },
-        },
-      );
+      // Raw SQL: workspaceWorkflowId is hidden from the entity metadata while an
+      // upgrade that introduces it is running, which makes a repository where
+      // clause on it throw.
+      const reverseMappedCoreWorkflows =
+        (await this.workspaceRepository.manager.query(
+          `SELECT DISTINCT ON ("workspaceWorkflowId") "workspaceWorkflowId", "id"
+           FROM core."workflow"
+           WHERE "workspaceId" = $1 AND "workspaceWorkflowId" = ANY($2::uuid[])
+           ORDER BY "workspaceWorkflowId", "createdAt" ASC, "id" ASC`,
+          [workspaceId, unresolvedWorkflowIds],
+        )) as { workspaceWorkflowId: string; id: string }[];
 
       for (const coreWorkflow of reverseMappedCoreWorkflows) {
         if (

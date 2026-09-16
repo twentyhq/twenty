@@ -4,7 +4,6 @@ import { RecordPositionModule } from 'src/engine/core-modules/record-position/re
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { WorkspaceWorkflowAutomatedTriggerMapCacheService } from 'src/engine/core-modules/workflow/services/workspace-workflow-automated-trigger-map-cache.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -15,11 +14,7 @@ import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspac
 @Module({
   imports: [
     RecordPositionModule,
-    TypeOrmModule.forFeature([
-      WorkflowVersionEntity,
-      WorkflowEntity,
-      WorkspaceEntity,
-    ]),
+    TypeOrmModule.forFeature([WorkflowVersionEntity, WorkspaceEntity]),
     WorkspaceCacheModule,
     WorkflowMetadataReadModule,
   ],
@@ -27,7 +22,6 @@ import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspac
     WorkspaceWorkflowAutomatedTriggerMapCacheService,
     WorkflowVersionCoreSyncService,
     provideWorkspaceScopedRepository(WorkflowVersionEntity),
-    provideWorkspaceScopedRepository(WorkflowEntity),
   ],
   exports: [
     TypeOrmModule,
