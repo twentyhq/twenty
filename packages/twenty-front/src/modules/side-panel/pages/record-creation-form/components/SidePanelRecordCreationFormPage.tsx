@@ -11,14 +11,16 @@ import { recordCreationFormRequestComponentState } from '@/side-panel/pages/reco
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useState } from 'react';
+import { type KeyboardEvent, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Key } from 'ts-key-enum';
 import { type JsonValue } from 'type-fest';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -113,8 +115,25 @@ const SidePanelRecordCreationForm = ({
     goBackFromSidePanel();
   };
 
+  // Form fields own their focus scope, so side-panel-scoped hotkeys do not fire.
+  const handleKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (
+      event.key !== Key.Enter ||
+      !(event.metaKey || event.ctrlKey) ||
+      event.shiftKey ||
+      event.altKey ||
+      event.nativeEvent.isComposing
+    ) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    handleCreateClick();
+  };
+
   return (
-    <StyledContainer>
+    <StyledContainer onKeyDownCapture={handleKeyDownCapture}>
       <StyledContent>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}
@@ -135,6 +154,7 @@ const SidePanelRecordCreationForm = ({
             size="small"
             onClick={handleCreateClick}
             disabled={isSubmitting}
+            hotkeys={[getOsControlSymbol(), '⏎']}
             dataTestId="record-creation-form-create-button"
           />,
         ]}

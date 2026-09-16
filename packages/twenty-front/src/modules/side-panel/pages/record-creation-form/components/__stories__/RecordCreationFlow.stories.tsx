@@ -34,6 +34,7 @@ import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
+import { getOsControlSymbol } from 'twenty-ui/utilities';
 import {
   EngineComponentKey,
   FeatureFlagKey,
@@ -328,6 +329,8 @@ const submitCompany = async (canvasElement: HTMLElement, shortcut?: string) => {
   await userEvent.clear(nameInput);
   await userEvent.type(nameInput, 'Acme');
   const createButton = canvas.getByTestId('record-creation-form-create-button');
+  await expect(createButton).toHaveTextContent(getOsControlSymbol());
+  await expect(createButton).toHaveTextContent('⏎');
   if (isDefined(shortcut)) {
     await expect(nameInput).toHaveFocus();
     await userEvent.keyboard(shortcut);
@@ -420,4 +423,13 @@ export const CreateCompanyFromTaskPage: Story = {
 export const CreateCompanyWithoutObjectContext: Story = {
   args: { commandOrigin: 'no-object' },
   play: ({ canvasElement }) => createCompanyFromCommandMenu(canvasElement),
+};
+
+export const SubmitWithCommandEnter: Story = {
+  play: ({ canvasElement }) =>
+    submitCompany(canvasElement, '{Meta>}{Enter}{/Meta}'),
+};
+export const SubmitWithControlEnter: Story = {
+  play: ({ canvasElement }) =>
+    submitCompany(canvasElement, '{Control>}{Enter}{/Control}'),
 };
