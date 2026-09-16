@@ -42,15 +42,11 @@ const buildBatch = (
   })),
 });
 
-const setupQueryMock = (calendarEvents: Record<string, unknown>[]) => {
+const setupQueryMock = (participants: Record<string, unknown>[]) => {
   queryMock.mockImplementation((query) => {
-    if (query.calendarEvents) {
-      return Promise.resolve({ calendarEvents: buildPage(calendarEvents) });
-    }
-
     if (query.calendarEventParticipants) {
       return Promise.resolve({
-        calendarEventParticipants: buildPage([]),
+        calendarEventParticipants: buildPage(participants),
       });
     }
 
@@ -92,7 +88,15 @@ describe('on-calendar-interaction definition', () => {
 describe('on-calendar-interaction handler', () => {
   it('updates the person from the calendar event carried by the participant', async () => {
     setupQueryMock([
-      { id: CALENDAR_EVENT_ID, startsAt: PAST_EVENT_STARTS_AT },
+      {
+        calendarEventId: CALENDAR_EVENT_ID,
+        isOrganizer: null,
+        workspaceMemberId: null,
+        calendarEvent: {
+          startsAt: PAST_EVENT_STARTS_AT,
+          isCanceled: false,
+        },
+      },
     ]);
 
     await handler(
@@ -101,11 +105,9 @@ describe('on-calendar-interaction handler', () => {
       ]),
     );
 
-    expect(queryMock.mock.calls[0][0].calendarEvents.__args.filter).toEqual({
-      id: { in: [CALENDAR_EVENT_ID] },
-      startsAt: { lte: NOW },
-      isCanceled: { eq: false },
-    });
+    expect(
+      queryMock.mock.calls[0][0].calendarEventParticipants.__args.filter,
+    ).toEqual({ calendarEventId: { in: [CALENDAR_EVENT_ID] } });
     expect(mutationMock.mock.calls[0][0].updatePeople.__args.data).toEqual({
       lastContactAt: PAST_EVENT_STARTS_AT,
       lastContactById: null,

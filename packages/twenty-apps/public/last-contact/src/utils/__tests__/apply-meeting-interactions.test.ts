@@ -11,29 +11,23 @@ const OLDER_CALENDAR_EVENT_ID = '55555555-5555-5555-5555-555555555555';
 const NOW = '2026-06-12T12:00:00.000Z';
 const PAST_EVENT_STARTS_AT = '2026-06-10T09:00:00.000Z';
 const OLDER_EVENT_STARTS_AT = '2026-06-01T09:00:00.000Z';
+const FUTURE_EVENT_STARTS_AT = '2026-06-20T09:00:00.000Z';
 
-type Page = { edges: { node: Record<string, unknown> }[]; pageInfo: { hasNextPage: boolean; endCursor: string | null } };
+type Page = {
+  edges: { node: Record<string, unknown> }[];
+  pageInfo: { hasNextPage: boolean; endCursor: string | null };
+};
 
 const buildPage = (nodes: Record<string, unknown>[]): Page => ({
   edges: nodes.map((node) => ({ node })),
   pageInfo: { hasNextPage: false, endCursor: null },
 });
 
-const buildClient = ({
-  calendarEvents = [],
-  memberParticipants = [],
-}: {
-  calendarEvents?: Record<string, unknown>[];
-  memberParticipants?: Record<string, unknown>[];
-}) => {
+const buildClient = (participants: Record<string, unknown>[] = []) => {
   const queryMock = vi.fn().mockImplementation((query) => {
-    if (query.calendarEvents) {
-      return Promise.resolve({ calendarEvents: buildPage(calendarEvents) });
-    }
-
     if (query.calendarEventParticipants) {
       return Promise.resolve({
-        calendarEventParticipants: buildPage(memberParticipants),
+        calendarEventParticipants: buildPage(participants),
       });
     }
 
@@ -61,6 +55,25 @@ const buildClient = ({
   };
 };
 
+const buildParticipant = ({
+  calendarEventId,
+  startsAt,
+  isCanceled = false,
+  isOrganizer = null,
+  workspaceMemberId = null,
+}: {
+  calendarEventId: string;
+  startsAt: string;
+  isCanceled?: boolean;
+  isOrganizer?: boolean | null;
+  workspaceMemberId?: string | null;
+}) => ({
+  calendarEventId,
+  isOrganizer,
+  workspaceMemberId,
+  calendarEvent: { startsAt, isCanceled },
+});
+
 beforeEach(() => {
   vi.useFakeTimers();
   vi.setSystemTime(new Date(NOW));
@@ -71,8 +84,8 @@ afterEach(() => {
 });
 
 describe('applyMeetingInteractions', () => {
-  it('resolves the whole batch of calendar events in one query', async () => {
-    const { client, queryMock } = buildClient({});
+  it('resolves the whole batch through one participants query', async () => {
+    const { client, queryMock } = buildClient();
 
     await applyMeetingInteractions(client, [
       { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
@@ -80,31 +93,27 @@ describe('applyMeetingInteractions', () => {
     ]);
 
     expect(queryMock).toHaveBeenCalledTimes(1);
-    expect(queryMock.mock.calls[0][0].calendarEvents.__args.filter).toEqual({
-      id: { in: [CALENDAR_EVENT_ID, OLDER_CALENDAR_EVENT_ID] },
-      startsAt: { lte: NOW },
-      isCanceled: { eq: false },
+    expect(
+      queryMock.mock.calls[0][0].calendarEventParticipants.__args.filter,
+    ).toEqual({
+      calendarEventId: { in: [CALENDAR_EVENT_ID, OLDER_CALENDAR_EVENT_ID] },
     });
   });
 
   it('sets lastContactAt, the organizer member and the calendarEvent item', async () => {
-    const { client, mutationMock } = buildClient({
-      calendarEvents: [
-        { id: CALENDAR_EVENT_ID, startsAt: PAST_EVENT_STARTS_AT },
-      ],
-      memberParticipants: [
-        {
-          calendarEventId: CALENDAR_EVENT_ID,
-          isOrganizer: false,
-          workspaceMemberId: '66666666-6666-6666-6666-666666666666',
-        },
-        {
-          calendarEventId: CALENDAR_EVENT_ID,
-          isOrganizer: true,
-          workspaceMemberId: MEMBER_ID,
-        },
-      ],
-    });
+    const { client, mutationMock } = buildClient([
+      buildParticipant({
+        calendarEventId: CALENDAR_EVENT_ID,
+        startsAt: PAST_EVENT_STARTS_AT,
+        workspaceMemberId: '66666666-6666-6666-6666-666666666666',
+      }),
+      buildParticipant({
+        calendarEventId: CALENDAR_EVENT_ID,
+        startsAt: PAST_EVENT_STARTS_AT,
+        isOrganizer: true,
+        workspaceMemberId: MEMBER_ID,
+      }),
+    ]);
 
     await applyMeetingInteractions(client, [
       { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
@@ -122,12 +131,16 @@ describe('applyMeetingInteractions', () => {
   });
 
   it('keeps only the most recent meeting when a person attended several in the batch', async () => {
-    const { client, mutationMock } = buildClient({
-      calendarEvents: [
-        { id: OLDER_CALENDAR_EVENT_ID, startsAt: OLDER_EVENT_STARTS_AT },
-        { id: CALENDAR_EVENT_ID, startsAt: PAST_EVENT_STARTS_AT },
-      ],
-    });
+    const { client, mutationMock } = buildClient([
+      buildParticipant({
+        calendarEventId: OLDER_CALENDAR_EVENT_ID,
+        startsAt: OLDER_EVENT_STARTS_AT,
+      }),
+      buildParticipant({
+        calendarEventId: CALENDAR_EVENT_ID,
+        startsAt: PAST_EVENT_STARTS_AT,
+      }),
+    ]);
 
     await applyMeetingInteractions(client, [
       { personId: PERSON_ID, calendarEventId: OLDER_CALENDAR_EVENT_ID },
@@ -145,8 +158,29 @@ describe('applyMeetingInteractions', () => {
     });
   });
 
-  it('does not update anyone when no event has started yet', async () => {
-    const { client, mutationMock } = buildClient({});
+  it('skips a meeting that has not started yet', async () => {
+    const { client, mutationMock } = buildClient([
+      buildParticipant({
+        calendarEventId: CALENDAR_EVENT_ID,
+        startsAt: FUTURE_EVENT_STARTS_AT,
+      }),
+    ]);
+
+    await applyMeetingInteractions(client, [
+      { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },
+    ]);
+
+    expect(mutationMock).not.toHaveBeenCalled();
+  });
+
+  it('skips a canceled meeting', async () => {
+    const { client, mutationMock } = buildClient([
+      buildParticipant({
+        calendarEventId: CALENDAR_EVENT_ID,
+        startsAt: PAST_EVENT_STARTS_AT,
+        isCanceled: true,
+      }),
+    ]);
 
     await applyMeetingInteractions(client, [
       { personId: PERSON_ID, calendarEventId: CALENDAR_EVENT_ID },

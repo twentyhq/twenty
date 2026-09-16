@@ -31,29 +31,25 @@ const singlePage = (nodes: Record<string, unknown>[]): Page => ({
 const setupQueryMock = ({
   calendarEventsPages,
   participantsPages,
-  startedCalendarEvents = [],
+  startedParticipants = [],
 }: {
   calendarEventsPages: Page[];
   participantsPages: Page[];
-  startedCalendarEvents?: Record<string, unknown>[];
+  startedParticipants?: Record<string, unknown>[];
 }) => {
   const remainingEventsPages = [...calendarEventsPages];
   const remainingParticipantsPages = [...participantsPages];
 
   queryMock.mockImplementation((query) => {
     if (query.calendarEvents) {
-      return Promise.resolve({
-        calendarEvents: query.calendarEvents.__args.filter.id
-          ? singlePage(startedCalendarEvents)
-          : remainingEventsPages.shift(),
-      });
+      return Promise.resolve({ calendarEvents: remainingEventsPages.shift() });
     }
 
     if (query.calendarEventParticipants) {
       return Promise.resolve({
-        calendarEventParticipants: query.calendarEventParticipants.__args.filter
-          .workspaceMemberId
-          ? singlePage([])
+        calendarEventParticipants: query.calendarEventParticipants.edges.node
+          .calendarEvent
+          ? singlePage(startedParticipants)
           : remainingParticipantsPages.shift(),
       });
     }
@@ -138,8 +134,16 @@ describe('on-calendar-event-started handler', () => {
           { personId: PERSON_ID_2, calendarEventId: 'event-1' },
         ]),
       ],
-      startedCalendarEvents: [
-        { id: 'event-1', startsAt: PAST_EVENT_STARTS_AT },
+      startedParticipants: [
+        {
+          calendarEventId: 'event-1',
+          isOrganizer: null,
+          workspaceMemberId: null,
+          calendarEvent: {
+            startsAt: PAST_EVENT_STARTS_AT,
+            isCanceled: false,
+          },
+        },
       ],
     });
 
@@ -148,7 +152,7 @@ describe('on-calendar-event-started handler', () => {
     const participantsByEventCalls = queryMock.mock.calls.filter(
       ([query]) =>
         query.calendarEventParticipants?.__args.filter.calendarEventId &&
-        !query.calendarEventParticipants?.__args.filter.workspaceMemberId,
+        !query.calendarEventParticipants?.edges.node.calendarEvent,
     );
     expect(participantsByEventCalls).toHaveLength(2);
     expect(

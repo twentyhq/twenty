@@ -16,58 +16,19 @@ export type CalendarEventInteraction = {
 
 type CalendarEventParticipantNode = Participant & {
   calendarEventId?: string | null;
+  calendarEvent?: {
+    startsAt: string | null;
+    isCanceled: boolean | null;
+  } | null;
 };
 
-const collectPastStartsAt = async (
+// Meetings are read through their participants rather than the calendarEvents root
+// query, which only surfaces events attached to a visible calendar channel. One query
+// per page of participants also resolves the whole batch in a few calls.
+export const collectCalendarEventInteractions = async (
   client: CoreApiClient,
   calendarEventIds: string[],
-): Promise<Map<string, string>> => {
-  const startsAtByCalendarEventId = new Map<string, string>();
-  const now = new Date().toISOString();
-
-  for (const ids of chunk(calendarEventIds, PAGE_SIZE)) {
-    let after: string | undefined;
-
-    do {
-      const { calendarEvents } = await executeWithRetry(() =>
-        client.query({
-          calendarEvents: {
-            __args: {
-              filter: {
-                id: { in: ids },
-                startsAt: { lte: now },
-                isCanceled: { eq: false },
-              },
-              first: PAGE_SIZE,
-              after,
-            },
-            edges: { node: { id: true, startsAt: true } },
-            pageInfo: { hasNextPage: true, endCursor: true },
-          },
-        }),
-      );
-
-      for (const edge of calendarEvents?.edges ?? []) {
-        const { id, startsAt } = edge.node;
-
-        if (id && startsAt) {
-          startsAtByCalendarEventId.set(id, startsAt);
-        }
-      }
-
-      after = calendarEvents?.pageInfo.hasNextPage
-        ? (calendarEvents.pageInfo.endCursor ?? undefined)
-        : undefined;
-    } while (after);
-  }
-
-  return startsAtByCalendarEventId;
-};
-
-const collectMemberParticipants = async (
-  client: CoreApiClient,
-  calendarEventIds: string[],
-): Promise<Map<string, CalendarEventParticipantNode[]>> => {
+): Promise<Map<string, CalendarEventInteraction>> => {
   const participantsByCalendarEventId = new Map<
     string,
     CalendarEventParticipantNode[]
@@ -81,10 +42,7 @@ const collectMemberParticipants = async (
         client.query({
           calendarEventParticipants: {
             __args: {
-              filter: {
-                calendarEventId: { in: ids },
-                workspaceMemberId: { is: 'NOT_NULL' },
-              },
+              filter: { calendarEventId: { in: ids } },
               first: PAGE_SIZE,
               after,
             },
@@ -93,6 +51,7 @@ const collectMemberParticipants = async (
                 calendarEventId: true,
                 isOrganizer: true,
                 workspaceMemberId: true,
+                calendarEvent: { startsAt: true, isCanceled: true },
               },
             },
             pageInfo: { hasNextPage: true, endCursor: true },
@@ -124,46 +83,26 @@ const collectMemberParticipants = async (
     } while (after);
   }
 
-  return participantsByCalendarEventId;
-};
-
-// Resolves a batch of calendar events at once, dropping the ones that have not
-// started yet or were canceled: a meeting only counts as a contact once it happened.
-export const collectCalendarEventInteractions = async (
-  client: CoreApiClient,
-  calendarEventIds: string[],
-): Promise<Map<string, CalendarEventInteraction>> => {
-  if (calendarEventIds.length === 0) {
-    return new Map();
-  }
-
-  const startsAtByCalendarEventId = await collectPastStartsAt(
-    client,
-    calendarEventIds,
-  );
-  const pastCalendarEventIds = [...startsAtByCalendarEventId.keys()];
-
-  if (pastCalendarEventIds.length === 0) {
-    return new Map();
-  }
-
-  const participantsByCalendarEventId = await collectMemberParticipants(
-    client,
-    pastCalendarEventIds,
-  );
-
+  const now = new Date().toISOString();
   const interactionByCalendarEventId = new Map<
     string,
     CalendarEventInteraction
   >();
 
-  for (const [calendarEventId, startsAt] of startsAtByCalendarEventId) {
+  for (const [calendarEventId, participants] of participantsByCalendarEventId) {
+    const calendarEvent = participants[0]?.calendarEvent;
+    const startsAt = calendarEvent?.startsAt ?? null;
+
+    // A meeting only counts as a contact once it happened, and never when canceled
+    if (!startsAt || calendarEvent?.isCanceled === true || startsAt > now) {
+      continue;
+    }
+
     interactionByCalendarEventId.set(calendarEventId, {
       startsAt,
-      workspaceMemberId: pickContactTeamMemberId(
-        participantsByCalendarEventId.get(calendarEventId) ?? [],
-        { isOrganizer: true },
-      ),
+      workspaceMemberId: pickContactTeamMemberId(participants, {
+        isOrganizer: true,
+      }),
     });
   }
 
