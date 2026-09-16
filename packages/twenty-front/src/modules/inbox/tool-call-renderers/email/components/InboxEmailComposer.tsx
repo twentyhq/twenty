@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useQuery } from '@apollo/client/react';
-import { useEffect } from 'react';
+import { forwardRef, useImperativeHandle } from 'react';
 import { EmailOperation } from 'twenty-shared/types';
 import {
   canConnectedAccountPerformEmailOperation,
@@ -43,21 +43,16 @@ type InboxEmailComposerProps = {
   >;
   contextRecord?: EmailComposerContextRecord | null;
   onSave?: (editedInput: Record<string, unknown>) => Promise<void>;
-  // The run lives with whoever owns the button, and needs to flush the draft
-  // first; a ref would do but a callback keeps the parent free of imperative
-  // handles.
-  onHandleChange: (handle: InboxEmailComposerHandle | null) => void;
 };
 
 // The real composer bound to a tool call: what the person types is the call's
-// edited input, and what runs is the tool, never this component.
-export const InboxEmailComposer = ({
-  prefill,
-  replyDefaults,
-  contextRecord,
-  onSave,
-  onHandleChange,
-}: InboxEmailComposerProps) => {
+// edited input, and what runs is the tool, never this component. The run
+// lives with whoever owns the button, which reaches the draft through the
+// handle: flush what is still debounced, or read the input for a new call.
+export const InboxEmailComposer = forwardRef<
+  InboxEmailComposerHandle,
+  InboxEmailComposerProps
+>(({ prefill, replyDefaults, contextRecord, onSave }, ref) => {
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: Pick<
       ConnectedAccount,
@@ -111,14 +106,10 @@ export const InboxEmailComposer = ({
     onFilesAttached: composerState.setFiles,
   });
 
-  // Registration, not state sync: the parent needs a way to flush and read the
-  // draft for as long as this composer is mounted.
-  useEffect(() => {
-    onHandleChange({ flushSave, getInput });
-
-    return () => onHandleChange(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useImperativeHandle(ref, () => ({ flushSave, getInput }), [
+    flushSave,
+    getInput,
+  ]);
 
   return (
     <StyledCard>
@@ -129,4 +120,4 @@ export const InboxEmailComposer = ({
       />
     </StyledCard>
   );
-};
+});

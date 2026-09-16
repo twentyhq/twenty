@@ -1,4 +1,4 @@
-import { type Dispatch, type SetStateAction, useRef } from 'react';
+import { type Dispatch, type SetStateAction, useCallback, useRef } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { serializeEmailRecipients } from '@/activities/emails/recipients/utils/serializeEmailRecipients';
@@ -24,32 +24,33 @@ export const useInboxEmailToolCallDraft = ({
   // Mirrors, not state: nothing renders from them. The composer's state is
   // read live so a save or a send carries what is on screen, including a
   // sender the composer picked after mount; a save already on the wire is
-  // awaited by the run that follows rather than raced.
+  // awaited by the run that follows rather than raced. Reading through the
+  // ref is also what keeps getInput and flushSave stable, which the handle
+  // exposed to the parent needs.
   // oxlint-disable-next-line twenty/no-state-useref
-  const latestComposerStateRef = useRef(composerState);
+  const latestRef = useRef({ composerState, inReplyTo: prefill.inReplyTo });
   // oxlint-disable-next-line twenty/no-state-useref
   const pendingSaveRef = useRef<Promise<void> | null>(null);
 
-  latestComposerStateRef.current = composerState;
+  latestRef.current = { composerState, inReplyTo: prefill.inReplyTo };
 
   // Recipients are serialized from the composer's chips, so an untouched
   // "Name <address>" default is sent as the address, exactly as the standalone
   // composer would send it.
-  const getInput = () => {
-    const { to, cc, bcc, subject, body, connectedAccountId, fromHandle } =
-      latestComposerStateRef.current;
+  const getInput = useCallback(() => {
+    const { composerState: current, inReplyTo } = latestRef.current;
 
     return buildEmailToolCallInput({
-      to: serializeEmailRecipients(to),
-      cc: serializeEmailRecipients(cc),
-      bcc: serializeEmailRecipients(bcc),
-      subject,
-      body,
-      connectedAccountId,
-      fromHandle,
-      inReplyTo: prefill.inReplyTo,
+      to: serializeEmailRecipients(current.to),
+      cc: serializeEmailRecipients(current.cc),
+      bcc: serializeEmailRecipients(current.bcc),
+      subject: current.subject,
+      body: current.body,
+      connectedAccountId: current.connectedAccountId,
+      fromHandle: current.fromHandle,
+      inReplyTo,
     });
-  };
+  }, []);
 
   const save = () => {
     if (!onSave) {
@@ -69,10 +70,10 @@ export const useInboxEmailToolCallDraft = ({
 
   // Whatever is still debounced lands before a run reads the row, and a save
   // already on the wire is waited for rather than raced.
-  const flushSave = async () => {
+  const flushSave = useCallback(async () => {
     debouncedSave.flush();
     await pendingSaveRef.current;
-  };
+  }, [debouncedSave]);
 
   const withSave =
     <TValue>(

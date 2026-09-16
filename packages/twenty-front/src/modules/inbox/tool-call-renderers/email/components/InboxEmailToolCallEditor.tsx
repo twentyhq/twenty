@@ -31,9 +31,7 @@ export const InboxEmailToolCallEditor = ({
     <InboxEmailComposer
       prefill={getEmailComposerPrefillFromToolCall(toolCall)}
       onSave={onSave}
-      onHandleChange={(handle) =>
-        onRegisterFlush?.(handle ? handle.flushSave : null)
-      }
+      ref={(handle) => onRegisterFlush?.(handle ? handle.flushSave : null)}
     />
   );
 };

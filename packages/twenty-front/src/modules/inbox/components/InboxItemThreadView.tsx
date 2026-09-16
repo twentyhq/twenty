@@ -313,7 +313,7 @@ export const InboxItemThreadView = ({
                     onSaveToolCallInput(emailToolCall.id, editedInput)
                 : undefined
             }
-            onHandleChange={setComposerHandle}
+            ref={setComposerHandle}
           />
         )}
         {!isComposerOpen && !isDone && isDefined(replyDefaults) && (
