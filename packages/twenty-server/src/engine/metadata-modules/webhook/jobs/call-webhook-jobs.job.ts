@@ -1,7 +1,6 @@
 import { Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -20,6 +19,7 @@ import { computeWebhookOperationsToMatch } from 'src/engine/metadata-modules/web
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
 import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/core-modules/record-share/constants/everyone-row-access-policy-subject.constant';
 import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
@@ -32,6 +32,7 @@ export class CallWebhookJobsJob {
     private readonly messageQueueService: MessageQueueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
+    private readonly recordSharingFeatureService: RecordSharingFeatureService,
     private readonly webhookRateLimitService: WebhookRateLimitService,
   ) {}
 
@@ -51,10 +52,10 @@ export class CallWebhookJobsJob {
       operation,
     });
 
-    const { flatWebhookMaps, flatObjectMetadataMaps, featureFlagsMap } =
+    const { flatWebhookMaps, flatObjectMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
-        ['flatWebhookMaps', 'flatObjectMetadataMaps', 'featureFlagsMap'],
+        ['flatWebhookMaps', 'flatObjectMetadataMaps'],
       );
 
     const webhooks = Object.values(flatWebhookMaps.byUniversalIdentifier)
@@ -75,7 +76,9 @@ export class CallWebhookJobsJob {
     });
 
     const isRecordSharingEnabled =
-      featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED] ?? false;
+      await this.recordSharingFeatureService.isRecordSharingEnabled(
+        workspaceEventBatch.workspaceId,
+      );
 
     // Without the readability the batch cannot be gated, so nothing may leave
     if (isRecordSharingEnabled && !isDefined(flatObjectMetadata)) {

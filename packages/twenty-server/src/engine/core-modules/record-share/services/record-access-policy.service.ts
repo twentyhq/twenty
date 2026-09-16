@@ -3,7 +3,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
-import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { isNonEmptyString } from '@sniptt/guards';
 import { In } from 'typeorm';
@@ -12,6 +12,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { RecordSharingFeatureService } from 'src/engine/core-modules/record-share/services/record-sharing-feature.service';
 import { type EventRecordShareGate } from 'src/engine/core-modules/record-share/types/event-record-share-gate.type';
 import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import {
@@ -59,6 +60,7 @@ export class RecordAccessPolicyService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordShareService: RecordShareService,
+    private readonly recordSharingFeatureService: RecordSharingFeatureService,
   ) {}
 
   buildEventRecordShareGate({
@@ -76,13 +78,13 @@ export class RecordAccessPolicyService {
 
     return {
       resolveAdmittedRecordIds: async (subject) => {
-        const { featureFlagsMap } =
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'featureFlagsMap',
-          ]);
         const snapshots = resolveEventRecordSnapshots(events);
 
-        if (!featureFlagsMap[FeatureFlagKey.IS_RECORD_SHARING_ENABLED]) {
+        if (
+          !(await this.recordSharingFeatureService.isRecordSharingEnabled(
+            workspaceId,
+          ))
+        ) {
           return new Set(snapshots.map((snapshot) => snapshot.id));
         }
 

@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
-  FeatureFlagKey,
   MetadataReadability,
   type ObjectRecord,
   type ObjectsPermissions,
@@ -1382,9 +1381,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   private isRecordSharingEnabled(): boolean {
-    return this.options.internalContext.featureFlagsMap[
-      FeatureFlagKey.IS_RECORD_SHARING_ENABLED
-    ];
+    return this.options.internalContext.isRecordSharingEnabled;
   }
 
   private async resolveWritableRecordIds({
