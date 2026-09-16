@@ -30,7 +30,14 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useStore } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { useContext, useEffect, useState } from 'react';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  fn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 import { AppPath, OpenRecordIn, SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
@@ -437,4 +444,34 @@ export const SubmitWithCommandEnter: Story = {
 export const SubmitWithControlEnter: Story = {
   play: ({ canvasElement }) =>
     submitCompany(canvasElement, '{Control>}{Enter}{/Control}'),
+};
+
+export const IgnoreNonSubmitKeys: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: /Create company/ }),
+    );
+    const input = await canvas.findByRole('textbox');
+    await userEvent.click(input);
+    await userEvent.keyboard('{Enter}');
+    await userEvent.keyboard('{Meta>}{Shift>}{Enter}{/Shift}{/Meta}');
+    await userEvent.keyboard('{Control>}{Alt>}{Enter}{/Alt}{/Control}');
+    fireEvent.keyDown(input, {
+      key: 'Enter',
+      code: 'Enter',
+      metaKey: true,
+      isComposing: true,
+    });
+    fireEvent.keyDown(input, {
+      key: 'Enter',
+      code: 'Enter',
+      ctrlKey: true,
+      keyCode: 229,
+    });
+    await expect(
+      canvas.getByTestId('record-creation-form-create-button'),
+    ).toBeVisible();
+    await expect(createCompanyRequest).not.toHaveBeenCalled();
+  },
 };

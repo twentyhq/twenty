@@ -147,6 +147,7 @@ export const FormArrayFieldInput = ({
 
   const handleFirstItemInputChange = (value: string) => {
     setNewItemDraftValue(value);
+    onChange(value === '' ? [] : [value]);
   };
 
   const handleFirstItemInputEnter = () => {

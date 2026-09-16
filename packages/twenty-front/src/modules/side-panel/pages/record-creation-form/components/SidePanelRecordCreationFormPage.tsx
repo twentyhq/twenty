@@ -1,3 +1,7 @@
+import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
+import { currentFocusIdSelector } from '@/ui/utilities/focus/states/currentFocusIdSelector';
+import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { RecordFormFieldInputs } from '@/object-record/record-form/components/RecordFormFieldInputs';
@@ -11,7 +15,7 @@ import { recordCreationFormRequestComponentState } from '@/side-panel/pages/reco
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { type KeyboardEvent, useState } from 'react';
+import { useRef, useState } from 'react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Key } from 'ts-key-enum';
@@ -77,6 +81,8 @@ const SidePanelRecordCreationForm = ({
     useAtomComponentState(recordCreationFormDraftComponentState);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const currentFocusId = useAtomStateValue(currentFocusIdSelector);
 
   const draftRecord = recordCreationFormDraft ?? initialDraftRecord;
 
@@ -115,25 +121,27 @@ const SidePanelRecordCreationForm = ({
     goBackFromSidePanel();
   };
 
-  // Form fields own their focus scope, so side-panel-scoped hotkeys do not fire.
-  const handleKeyDownCapture = (event: KeyboardEvent<HTMLDivElement>) => {
-    if (
-      event.key !== Key.Enter ||
-      !(event.metaKey || event.ctrlKey) ||
-      event.shiftKey ||
-      event.altKey ||
-      event.nativeEvent.isComposing
-    ) {
-      return;
-    }
+  useHotkeysOnFocusedElement({
+    keys: [`${Key.Meta}+${Key.Enter}`, `${Key.Control}+${Key.Enter}`],
+    focusId: currentFocusId ?? SIDE_PANEL_FOCUS_ID,
+    callback: (event) => {
+      if (
+        !(event.target instanceof Node) ||
+        !containerRef.current?.contains(event.target)
+      ) {
+        return;
+      }
 
-    event.preventDefault();
-    event.stopPropagation();
-    handleCreateClick();
-  };
+      event.preventDefault();
+      event.stopPropagation();
+      handleCreateClick();
+    },
+    dependencies: [currentFocusId, handleCreateClick],
+    options: { preventDefault: false },
+  });
 
   return (
-    <StyledContainer onKeyDownCapture={handleKeyDownCapture}>
+    <StyledContainer ref={containerRef}>
       <StyledContent>
         <RecordFormFieldInputs
           objectMetadataItem={objectMetadataItem}

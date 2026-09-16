@@ -342,3 +342,20 @@ export const DisabledWithVariable: Story = {
     expect(searchInputInModal).not.toBeInTheDocument();
   },
 };
+
+export const PublishFirstItemDraft: Story = {
+  args: {
+    label: 'Items',
+    defaultValue: undefined,
+    onChange: fn(),
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const input = await canvas.findByPlaceholderText('Enter an item');
+    await userEvent.type(input, 'First item');
+    await expect(args.onChange).toHaveBeenLastCalledWith(['First item']);
+    await expect(input).toHaveValue('First item');
+    await userEvent.clear(input);
+    await expect(args.onChange).toHaveBeenLastCalledWith([]);
+  },
+};
