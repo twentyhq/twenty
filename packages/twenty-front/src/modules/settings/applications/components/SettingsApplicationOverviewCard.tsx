@@ -2,6 +2,7 @@ import { AppChip } from '@/applications/components/AppChip';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -104,9 +105,7 @@ export const SettingsApplicationOverviewCard = ({
             <StyledDescription>{description}</StyledDescription>
           )}
         </StyledText>
-        {actions !== undefined && actions !== null && (
-          <StyledActions>{actions}</StyledActions>
-        )}
+        {isDefined(actions) && <StyledActions>{actions}</StyledActions>}
       </StyledIdentity>
       {isNonEmptyString(coverImageUrl) && (
         <StyledCover>

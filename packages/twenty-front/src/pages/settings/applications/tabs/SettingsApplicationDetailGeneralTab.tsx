@@ -4,6 +4,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconShoppingBag, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
@@ -63,6 +64,52 @@ export const SettingsApplicationDetailGeneralTab = ({
     application.applicationRegistration?.sourceType,
   );
 
+  const actions = [
+    ...(isNonEmptyString(marketplaceUniversalIdentifier)
+      ? [
+          <Button
+            key="see"
+            Icon={IconShoppingBag}
+            title={t`See`}
+            variant="secondary"
+            size="small"
+            onClick={() =>
+              navigateSettings(SettingsPath.AvailableApplicationDetail, {
+                availableApplicationId: marketplaceUniversalIdentifier,
+              })
+            }
+          />,
+        ]
+      : []),
+    ...(canManageApplications && hasUpdate
+      ? [
+          <Button
+            key="upgrade"
+            Icon={IconUpload}
+            title={
+              isUpgrading
+                ? t`Upgrading...`
+                : t`Upgrade to ${latestAvailableVersion ?? ''}`
+            }
+            variant="secondary"
+            accent="blue"
+            size="small"
+            onClick={onUpgrade}
+            disabled={isUpgrading}
+          />,
+        ]
+      : []),
+    ...(canManageApplications && application.canBeUninstalled
+      ? [
+          <SettingsApplicationUninstallButton
+            key="uninstall"
+            onUninstall={onUninstall}
+            isUninstalling={isUninstalling}
+          />,
+        ]
+      : []),
+  ];
+
   return (
     <>
       <Section>
@@ -72,44 +119,7 @@ export const SettingsApplicationDetailGeneralTab = ({
           displayName={displayName}
           description={description}
           coverImageUrl={coverImageUrl}
-          actions={
-            <>
-              {isNonEmptyString(marketplaceUniversalIdentifier) && (
-                <Button
-                  Icon={IconShoppingBag}
-                  title={t`See`}
-                  variant="secondary"
-                  size="small"
-                  onClick={() =>
-                    navigateSettings(SettingsPath.AvailableApplicationDetail, {
-                      availableApplicationId: marketplaceUniversalIdentifier,
-                    })
-                  }
-                />
-              )}
-              {canManageApplications && hasUpdate && (
-                <Button
-                  Icon={IconUpload}
-                  title={
-                    isUpgrading
-                      ? t`Upgrading...`
-                      : t`Upgrade to ${latestAvailableVersion ?? ''}`
-                  }
-                  variant="secondary"
-                  accent="blue"
-                  size="small"
-                  onClick={onUpgrade}
-                  disabled={isUpgrading}
-                />
-              )}
-              {canManageApplications && application.canBeUninstalled && (
-                <SettingsApplicationUninstallButton
-                  onUninstall={onUninstall}
-                  isUninstalling={isUninstalling}
-                />
-              )}
-            </>
-          }
+          actions={isNonEmptyArray(actions) ? actions : undefined}
         />
       </Section>
       {isUpgradable && (
