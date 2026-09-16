@@ -18,7 +18,7 @@ type NavigationMenuItemAddDropdownProps = {
 
 export const NavigationMenuItemAddDropdown = ({
   children,
-  instanceId = 'workspace',
+  instanceId,
   section = 'workspace',
   folderId,
   position,
@@ -26,7 +26,7 @@ export const NavigationMenuItemAddDropdown = ({
   const navigationMenuItemInsertionAnchor = useAtomStateValue(
     navigationMenuItemInsertionAnchorState,
   );
-  const dropdownId = `navigation-add-item-${folderId ?? instanceId}`;
+  const dropdownId = `navigation-add-item-${instanceId ?? folderId ?? 'workspace'}`;
   const { closeDropdown } = useCloseDropdown();
   const setNavigationMenuItemEditSection = useSetAtomState(
     navigationMenuItemEditSectionState,

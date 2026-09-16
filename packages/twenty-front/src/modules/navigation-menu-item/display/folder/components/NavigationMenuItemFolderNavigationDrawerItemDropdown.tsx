@@ -1,5 +1,11 @@
+import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdown';
 import { useLingui } from '@lingui/react/macro';
-import { IconDotsVertical, IconEdit, IconTrash } from 'twenty-ui/icon';
+import {
+  IconDotsVertical,
+  IconEdit,
+  IconPlus,
+  IconTrash,
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
@@ -10,6 +16,7 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 
 type NavigationMenuItemFolderNavigationDrawerItemDropdownProps = {
   folderId: string;
+  itemCount: number;
   onEdit: () => void;
   onDelete: () => void;
   closeDropdown: () => void;
@@ -17,6 +24,7 @@ type NavigationMenuItemFolderNavigationDrawerItemDropdownProps = {
 
 export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
   folderId,
+  itemCount,
   onEdit,
   onDelete,
   closeDropdown,
@@ -49,6 +57,18 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
               accent="default"
               text={t`Edit`}
             />
+            <NavigationMenuItemAddDropdown
+              folderId={folderId}
+              position={itemCount}
+              section="favorite"
+              instanceId={`favorite-folder-actions-${folderId}`}
+            >
+              <MenuItem
+                LeftIcon={IconPlus}
+                accent="default"
+                text={t`Add menu item`}
+              />
+            </NavigationMenuItemAddDropdown>
             <MenuItem
               LeftIcon={IconTrash}
               onClick={handleDelete}

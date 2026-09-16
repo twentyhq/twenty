@@ -187,6 +187,7 @@ export const NavigationMenuItemFolderDnd = ({
   const headerRightOptions = isEditInPlace ? (
     <NavigationMenuItemFolderNavigationDrawerItemDropdown
       folderId={folderId}
+      itemCount={navigationMenuItems.length}
       onEdit={favoritesEdit.startEditing}
       onDelete={favoritesEdit.handleFolderDelete}
       closeDropdown={favoritesEdit.closeDropdown}
@@ -249,7 +250,9 @@ export const NavigationMenuItemFolderDnd = ({
     ? isLayoutCustomizationModeEnabled || navigationMenuItems.length === 0
     : true;
 
-  const showAddMenuItem = isEditInPlace || isLayoutCustomizationModeEnabled;
+  const showAddMenuItem = isEditInPlace
+    ? navigationMenuItems.length === 0
+    : isLayoutCustomizationModeEnabled;
   const folderContentLength =
     navigationMenuItems.length + (showAddMenuItem ? 1 : 0);
 
@@ -372,7 +375,7 @@ export const NavigationMenuItemFolderDnd = ({
                 folderId={folderId}
                 index={navigationMenuItems.length}
                 sectionId={sectionId}
-                compact={isEditInPlace ? false : isCompact}
+                compact={isCompact}
                 dropTargetIdOverride={getDndKitDropTargetId(
                   folderContentDroppableId,
                   navigationMenuItems.length,
