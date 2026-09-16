@@ -46,6 +46,7 @@ export const NavigationMenuItemLinkEditor = ({
     <>
       <DoubleTextInput
         instanceId={dropdownId}
+        selectOnFocus
         firstValue={item.name ?? ''}
         secondValue={item.link ?? ''}
         firstValuePlaceholder={t`Link label`}
