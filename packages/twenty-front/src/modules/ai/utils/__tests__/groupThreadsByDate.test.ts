@@ -25,6 +25,7 @@ describe('groupThreadsByDate', () => {
     createdAt: twoDaysAgo.toISOString(),
     totalInputTokens: 0,
     totalOutputTokens: 0,
+    totalCacheReadTokens: 0,
     contextWindowTokens: null,
     conversationSize: 0,
     totalInputCredits: 0,
