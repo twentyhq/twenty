@@ -4,6 +4,13 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { scheduleRecallBotsForPendingCallRecordings } from 'src/logic-functions/flows/schedule-recall-bots-for-pending-call-recordings.util';
 import { computeRecallBotCreationIdempotencyKey } from 'src/logic-functions/recall-api/schedule-recall-bot.util';
+import { resetWorkspaceCreditAvailabilityMemo } from 'src/logic-functions/utils/get-workspace-credit-availability.util';
+
+const getCreditAvailabilityMock = vi.hoisted(() => vi.fn());
+
+vi.mock('twenty-sdk/billing', () => ({
+  getCreditAvailability: getCreditAvailabilityMock,
+}));
 
 const NOW = new Date('2026-01-01T12:00:00.000Z');
 const WORKSPACE_ID = '123e4567-e89b-12d3-a456-426614174000';
@@ -199,6 +206,9 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     );
     fetchMock.mockReset();
     stubRecallApi();
+    resetWorkspaceCreditAvailabilityMemo();
+    getCreditAvailabilityMock.mockReset();
+    getCreditAvailabilityMock.mockResolvedValue({ hasAvailableCredits: true });
   });
 
   afterEach(() => {
@@ -583,6 +593,112 @@ describe('scheduleRecallBotsForPendingCallRecordings', () => {
     expect(result.markedFailedCallRecordingIds).toEqual([]);
     expect(fetchMock).not.toHaveBeenCalled();
     expect(client.callRecordings[0].status).toBe('SCHEDULED');
+  });
+
+  it('sends no bot and keeps the request pending when the workspace has no credits', async () => {
+    getCreditAvailabilityMock.mockResolvedValue({
+      hasAvailableCredits: false,
+      reason: 'no-credits',
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [buildPendingCallRecording()],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.scheduledCallRecordingIds).toEqual([]);
+    expect(createBotCalls()).toHaveLength(0);
+    // Still pending and unattempted, so the next sweep can schedule it.
+    expect(client.callRecordings[0].status).toBe('SCHEDULED');
+    expect(client.callRecordings[0].externalBotId).toBeNull();
+    expect(client.callRecordings[0].botScheduleAttemptedAt).toBeUndefined();
+    expect(client.callRecordings[0].callRecorderFailureReason).toBe(
+      'insufficient_credits',
+    );
+  });
+
+  it('asks billing once for a whole batch instead of once per recording', async () => {
+    getCreditAvailabilityMock.mockResolvedValue({
+      hasAvailableCredits: false,
+      reason: 'no-credits',
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({ id: 'call-recording-1' }),
+        buildPendingCallRecording({
+          id: 'call-recording-2',
+          calendarEventId: 'calendar-event-2',
+        }),
+      ],
+      calendarEvents: [
+        buildCalendarEvent(),
+        buildCalendarEvent({ id: 'calendar-event-2' }),
+      ],
+    });
+
+    await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(getCreditAvailabilityMock).toHaveBeenCalledTimes(1);
+    expect(createBotCalls()).toHaveLength(0);
+  });
+
+  it('schedules the deferred bot and clears the billing marker once credits are back', async () => {
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          callRecorderFailureReason: 'insufficient_credits',
+        }),
+      ],
+      calendarEvents: [buildCalendarEvent()],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.scheduledCallRecordingIds).toEqual(['call-recording-1']);
+    expect(createBotCalls()).toHaveLength(1);
+    expect(client.callRecordings[0].externalBotId).toBe('recall-bot-1');
+    expect(client.callRecordings[0].callRecorderFailureReason).toBeNull();
+  });
+
+  it('reports billing as the reason when a meeting ends while the workspace is unpaid', async () => {
+    getCreditAvailabilityMock.mockResolvedValue({
+      hasAvailableCredits: false,
+      reason: 'no-credits',
+    });
+    const client = new FakeCoreApiClient({
+      callRecordings: [
+        buildPendingCallRecording({
+          callRecorderFailureReason: 'insufficient_credits',
+        }),
+      ],
+      calendarEvents: [
+        buildCalendarEvent({
+          startsAt: PAST_STARTS_AT,
+          endsAt: PAST_ENDS_AT,
+        }),
+      ],
+    });
+
+    const result = await scheduleRecallBotsForPendingCallRecordings({
+      client: client as unknown as CoreApiClient,
+      now: NOW,
+    });
+
+    expect(result.markedFailedCallRecordingIds).toEqual(['call-recording-1']);
+    expect(client.callRecordings[0].status).toBe('FAILED');
+    expect(client.callRecordings[0].callRecorderFailureReason).toBe(
+      'insufficient_credits',
+    );
   });
 
   it('does nothing when every scheduled recording already has a bot', async () => {

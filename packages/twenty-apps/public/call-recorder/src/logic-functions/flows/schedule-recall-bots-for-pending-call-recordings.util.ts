@@ -2,6 +2,7 @@ import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { INSUFFICIENT_CREDITS_FAILURE_REASON } from 'src/logic-functions/constants/insufficient-credits-failure-reason';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
 import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { canRescheduleCallRecordingWithoutRecallLookup } from 'src/logic-functions/domain/can-reschedule-call-recording-without-recall-lookup.util';
@@ -215,11 +216,22 @@ const resolveEndedPendingCallRecording = async ({
   result: ScheduleRecallBotsForPendingCallRecordingsResult;
 }): Promise<void> => {
   if (isUndefined(callRecording.botScheduleAttemptedAt)) {
+    // A row skipped for billing carries that reason already; keeping it tells
+    // the user the meeting went unrecorded because the workspace could not
+    // pay, not because scheduling broke.
+    const isAwaitingCredits =
+      callRecording.callRecorderFailureReason ===
+      INSUFFICIENT_CREDITS_FAILURE_REASON;
+
     await markCallRecordingFailed({
       client,
       callRecording,
-      failureReason: BOT_NEVER_SCHEDULED_FAILURE_REASON,
-      logMessage: `call recording ${callRecording.id} never got a Recall bot and its meeting has ended; marking it failed`,
+      failureReason: isAwaitingCredits
+        ? INSUFFICIENT_CREDITS_FAILURE_REASON
+        : BOT_NEVER_SCHEDULED_FAILURE_REASON,
+      logMessage: isAwaitingCredits
+        ? `call recording ${callRecording.id} never got a Recall bot because the workspace had no credits and its meeting has ended; marking it failed`
+        : `call recording ${callRecording.id} never got a Recall bot and its meeting has ended; marking it failed`,
     });
     result.markedFailedCallRecordingIds.push(callRecording.id);
 

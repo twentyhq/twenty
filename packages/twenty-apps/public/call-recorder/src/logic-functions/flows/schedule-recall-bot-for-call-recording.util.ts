@@ -3,12 +3,15 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { INSUFFICIENT_CREDITS_FAILURE_REASON } from 'src/logic-functions/constants/insufficient-credits-failure-reason';
+import { type CallRecordingRecord } from 'src/logic-functions/types/call-recording-record.type';
 import { type MeetingRecording } from 'src/logic-functions/types/meeting-recording.type';
 import { buildRecallBotAutomaticVideoOutput } from 'src/logic-functions/domain/build-recall-bot-automatic-video-output.util';
 import { buildRecallRoutingMetadata } from 'src/logic-functions/domain/build-recall-routing-metadata.util';
 import { computeRecallBotJoinAt } from 'src/logic-functions/domain/compute-recall-bot-join-at.util';
 import { findCallRecordingsByIds } from 'src/logic-functions/data/find-call-recordings-by-ids.util';
 import { getCurrentWorkspaceId } from 'src/logic-functions/data/get-current-workspace-id.util';
+import { getWorkspaceCreditAvailability } from 'src/logic-functions/utils/get-workspace-credit-availability.util';
 import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-calendar-bot-scheduling-enabled.util';
 import {
   computeRecallBotCreationIdempotencyKey,
@@ -45,6 +48,22 @@ export const scheduleRecallBotForCallRecording = async (
     freshCallRecording.status !== CallRecordingStatus.SCHEDULED ||
     !isUndefined(freshCallRecording.externalBotId)
   ) {
+    return false;
+  }
+
+  const creditAvailability = await getWorkspaceCreditAvailability();
+
+  if (!creditAvailability.hasAvailableCredits) {
+    // Deliberately before the attempt marker: nothing reaches Recall, so the
+    // row keeps its pending shape and the next sweep schedules the bot once
+    // the workspace can pay again. Cancelling here would throw away a
+    // recording the user still asked for.
+    console.warn(
+      `[call-recorder] not scheduling a Recall bot for callRecording ${callRecording.id}: workspace cannot spend (${creditAvailability.reason})`,
+    );
+
+    await markCallRecordingAwaitingCredits(client, freshCallRecording);
+
     return false;
   }
 
@@ -108,8 +127,35 @@ export const scheduleRecallBotForCallRecording = async (
 
   await updateCallRecording(client, {
     id: callRecording.id,
-    data: { externalBotId: scheduleResult.externalBotId },
+    data: {
+      externalBotId: scheduleResult.externalBotId,
+      ...(freshCallRecording.callRecorderFailureReason ===
+      INSUFFICIENT_CREDITS_FAILURE_REASON
+        ? { callRecorderFailureReason: null }
+        : {}),
+    },
   });
 
   return true;
+};
+
+// Marks why the bot is missing so a meeting that ends while the workspace is
+// still unpaid reports billing rather than a generic scheduling failure. Only
+// written on the transition: a re-skip of an already-marked row would burn a
+// write on every sweep.
+const markCallRecordingAwaitingCredits = async (
+  client: CoreApiClient,
+  callRecording: CallRecordingRecord,
+): Promise<void> => {
+  if (
+    callRecording.callRecorderFailureReason ===
+    INSUFFICIENT_CREDITS_FAILURE_REASON
+  ) {
+    return;
+  }
+
+  await updateCallRecording(client, {
+    id: callRecording.id,
+    data: { callRecorderFailureReason: INSUFFICIENT_CREDITS_FAILURE_REASON },
+  });
 };
