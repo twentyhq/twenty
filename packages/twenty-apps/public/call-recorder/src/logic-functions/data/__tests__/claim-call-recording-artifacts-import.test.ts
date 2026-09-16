@@ -1,150 +1,195 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import {
   claimCallRecordingArtifactsImport,
   releaseCallRecordingArtifactsImportClaim,
 } from 'src/logic-functions/data/claim-call-recording-artifacts-import.util';
+import { updateClaimedCallRecordingArtifacts } from 'src/logic-functions/data/update-claimed-call-recording-artifacts.util';
+import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
-const mutationMock = vi.fn();
+type ClaimField = 'artifactsImportClaimedAt' | 'transcriptImportClaimedAt';
+type Predicate = { eq?: string; is?: 'NULL'; lte?: string };
+type ClaimFilter = Partial<Record<ClaimField, Predicate>> & {
+  id: { eq: string };
+  status?: { eq: string };
+  or?: Partial<Record<ClaimField, Predicate>>[];
+};
 
-const client = { mutation: mutationMock } as unknown as CoreApiClient;
-
-describe('claimCallRecordingArtifactsImport', () => {
-  beforeEach(() => {
-    mutationMock.mockReset();
-  });
-
-  it('claims the media lease when no fresh lease is held and stamps the lease timestamp', async () => {
-    mutationMock.mockResolvedValue({
-      updateCallRecordings: [{ id: 'call-recording-1' }],
-    });
-
-    const claimed = await claimCallRecordingArtifactsImport(client, {
-      callRecordingId: 'call-recording-1',
-      scope: 'media',
-      now: new Date('2026-01-01T14:06:00.000Z'),
-    });
-
-    expect(claimed).toBe(true);
-    expect(mutationMock).toHaveBeenCalledWith({
+const buildStore = () => {
+  const row: CallRecordingUpdateFields & { id: string } = {
+    id: 'recording',
+    status: CallRecordingStatus.PROCESSING,
+    artifactsImportClaimedAt: null,
+    transcriptImportClaimedAt: null,
+  };
+  const matches = (field: ClaimField, predicate: Predicate | undefined) => {
+    if (predicate === undefined) return true;
+    const value = row[field];
+    if (predicate.is === 'NULL') return value === null;
+    if (predicate.eq !== undefined) return value === predicate.eq;
+    return (
+      typeof value === 'string' &&
+      predicate.lte !== undefined &&
+      value <= predicate.lte
+    );
+  };
+  const client = {
+    mutation: async ({
+      updateCallRecordings,
+    }: {
       updateCallRecordings: {
-        __args: {
-          filter: {
-            id: { eq: 'call-recording-1' },
-            or: [
-              { artifactsImportClaimedAt: { is: 'NULL' } },
-              { artifactsImportClaimedAt: { lte: '2026-01-01T13:56:00.000Z' } },
-            ],
-          },
-          data: { artifactsImportClaimedAt: '2026-01-01T14:06:00.000Z' },
-        },
-        id: true,
-      },
-    });
-  });
+        __args: { filter: ClaimFilter; data: CallRecordingUpdateFields };
+      };
+    }) => {
+      const { filter, data } = updateCallRecordings.__args;
+      const claimFields: ClaimField[] = [
+        'artifactsImportClaimedAt',
+        'transcriptImportClaimedAt',
+      ];
+      const hasMatched =
+        filter.id.eq === row.id &&
+        (filter.status === undefined || row.status === filter.status.eq) &&
+        claimFields.every((field) => matches(field, filter[field])) &&
+        (filter.or === undefined ||
+          filter.or.some((part) =>
+            claimFields.every((field) => matches(field, part[field])),
+          ));
 
-  it('claims the transcript lease on its own field so a held media lease cannot block it', async () => {
-    mutationMock.mockResolvedValue({
-      updateCallRecordings: [{ id: 'call-recording-1' }],
-    });
+      if (!hasMatched) return { updateCallRecordings: [] };
+      Object.assign(row, data);
+      return { updateCallRecordings: [{ id: row.id }] };
+    },
+  };
 
-    const claimed = await claimCallRecordingArtifactsImport(client, {
-      callRecordingId: 'call-recording-1',
-      scope: 'transcript',
-      now: new Date('2026-01-01T14:06:00.000Z'),
-    });
+  return { row, client: client as unknown as CoreApiClient };
+};
 
-    expect(claimed).toBe(true);
-    expect(mutationMock).toHaveBeenCalledWith({
-      updateCallRecordings: {
-        __args: {
-          filter: {
-            id: { eq: 'call-recording-1' },
-            or: [
-              { transcriptImportClaimedAt: { is: 'NULL' } },
-              { transcriptImportClaimedAt: { lte: '2026-01-01T13:56:00.000Z' } },
-            ],
-          },
-          data: { transcriptImportClaimedAt: '2026-01-01T14:06:00.000Z' },
-        },
-        id: true,
-      },
-    });
-  });
+const NOW = new Date('2026-01-01T14:06:00.000Z');
 
-  it('does not claim when a fresh lease already blocks the update', async () => {
-    mutationMock.mockResolvedValue({ updateCallRecordings: [] });
+describe.each(['media', 'transcript'] as const)(
+  '%s artifact import claim',
+  (scope) => {
+    const field =
+      scope === 'media'
+        ? 'artifactsImportClaimedAt'
+        : 'transcriptImportClaimedAt';
 
-    const claimed = await claimCallRecordingArtifactsImport(client, {
-      callRecordingId: 'call-recording-1',
-      scope: 'media',
-      now: new Date('2026-01-01T14:06:00.000Z'),
+    it('claims processing work and rejects a concurrent worker', async () => {
+      const { client, row } = buildStore();
+      const request = { callRecordingId: row.id, scope, now: NOW };
+
+      expect(await claimCallRecordingArtifactsImport(client, request)).toBe(
+        true,
+      );
+      expect(await claimCallRecordingArtifactsImport(client, request)).toBe(
+        false,
+      );
+      expect(row[field]).toBe(NOW.toISOString());
     });
 
-    expect(claimed).toBe(false);
-  });
+    it('does not reclaim while an earlier Lambda can still be running', async () => {
+      const { client, row } = buildStore();
+      row[field] = new Date(NOW.getTime() - 14 * 60_000).toISOString();
 
-  it('reclaims a lease older than the TTL', async () => {
-    // Emulate the DB-side filter so the lte staleBefore branch and TTL math are exercised.
-    const storedClaimedAt = '2026-01-01T13:45:00.000Z'; // 21 minutes before now
-    mutationMock.mockImplementation(async (mutation: any) => {
-      const { filter } = mutation.updateCallRecordings.__args;
-      const staleBefore = filter.or[1].artifactsImportClaimedAt.lte;
-      const matches = storedClaimedAt <= staleBefore;
-
-      return { updateCallRecordings: matches ? [{ id: filter.id.eq }] : [] };
+      expect(
+        await claimCallRecordingArtifactsImport(client, {
+          callRecordingId: row.id,
+          scope,
+          now: NOW,
+        }),
+      ).toBe(false);
     });
 
-    const claimed = await claimCallRecordingArtifactsImport(client, {
-      callRecordingId: 'call-recording-1',
-      scope: 'media',
-      now: new Date('2026-01-01T14:06:00.000Z'),
+    it('reclaims an abandoned claim after the maximum execution window', async () => {
+      const { client, row } = buildStore();
+      row[field] = new Date(NOW.getTime() - 17 * 60_000).toISOString();
+
+      expect(
+        await claimCallRecordingArtifactsImport(client, {
+          callRecordingId: row.id,
+          scope,
+          now: NOW,
+        }),
+      ).toBe(true);
     });
 
-    expect(claimed).toBe(true);
-    expect(
-      mutationMock.mock.calls[0][0].updateCallRecordings.__args.data,
-    ).toEqual({ artifactsImportClaimedAt: '2026-01-01T14:06:00.000Z' });
-  });
+    it('prevents an old worker from writing progress or releasing its replacement claim', async () => {
+      const { client, row } = buildStore();
+      const oldClaimedAt = new Date(NOW.getTime() - 17 * 60_000).toISOString();
+      row[field] = oldClaimedAt;
+      await claimCallRecordingArtifactsImport(client, {
+        callRecordingId: row.id,
+        scope,
+        now: NOW,
+      });
 
-  it('does not reclaim a lease still within the TTL', async () => {
-    const storedClaimedAt = '2026-01-01T14:02:00.000Z'; // 4 minutes before now
-    mutationMock.mockImplementation(async (mutation: any) => {
-      const { filter } = mutation.updateCallRecordings.__args;
-      const staleBefore = filter.or[1].artifactsImportClaimedAt.lte;
-      const matches = storedClaimedAt <= staleBefore;
+      await expect(
+        updateClaimedCallRecordingArtifacts(client, {
+          callRecordingId: row.id,
+          scope,
+          claimedAt: oldClaimedAt,
+          data: { callRecorderFailureReason: 'old-result' },
+        }),
+      ).rejects.toThrow('no longer active');
+      await releaseCallRecordingArtifactsImportClaim(client, {
+        callRecordingId: row.id,
+        scope,
+        claimedAt: oldClaimedAt,
+      });
 
-      return { updateCallRecordings: matches ? [{ id: filter.id.eq }] : [] };
+      expect(row[field]).toBe(NOW.toISOString());
+      expect(row.callRecorderFailureReason).toBeUndefined();
     });
 
-    const claimed = await claimCallRecordingArtifactsImport(client, {
-      callRecordingId: 'call-recording-1',
-      scope: 'media',
-      now: new Date('2026-01-01T14:06:00.000Z'),
-    });
+    it('saves progress and releases only the owned scope', async () => {
+      const { client, row } = buildStore();
+      row.artifactsImportClaimedAt = NOW.toISOString();
+      row.transcriptImportClaimedAt = NOW.toISOString();
+      const claim = {
+        callRecordingId: row.id,
+        scope,
+        claimedAt: NOW.toISOString(),
+      };
 
-    expect(claimed).toBe(false);
-  });
+      await updateClaimedCallRecordingArtifacts(client, {
+        ...claim,
+        data: { callRecorderFailureReason: 'video_file_too_large' },
+      });
+      await releaseCallRecordingArtifactsImportClaim(client, claim);
 
-  it('releases the lease idempotently when the call recording no longer exists', async () => {
-    mutationMock.mockResolvedValue({
-      updateCallRecordings: [],
+      expect(row.callRecorderFailureReason).toBe('video_file_too_large');
+      expect(row[field]).toBeNull();
+      expect(
+        row[
+          scope === 'media'
+            ? 'transcriptImportClaimedAt'
+            : 'artifactsImportClaimedAt'
+        ],
+      ).toBe(NOW.toISOString());
     });
+    it('cannot claim or write to an already completed recording', async () => {
+      const { client, row } = buildStore();
+      row.status = CallRecordingStatus.COMPLETED;
+      row[field] = NOW.toISOString();
 
-    await releaseCallRecordingArtifactsImportClaim(client, {
-      callRecordingId: 'call-recording-1',
-      scope: 'transcript',
+      expect(
+        await claimCallRecordingArtifactsImport(client, {
+          callRecordingId: row.id,
+          scope,
+          now: NOW,
+        }),
+      ).toBe(false);
+      await expect(
+        updateClaimedCallRecordingArtifacts(client, {
+          callRecordingId: row.id,
+          scope,
+          claimedAt: NOW.toISOString(),
+          data: { callRecorderFailureReason: 'late-result' },
+        }),
+      ).rejects.toThrow('no longer active');
+      expect(row.callRecorderFailureReason).toBeUndefined();
     });
-
-    expect(mutationMock).toHaveBeenCalledWith({
-      updateCallRecordings: {
-        __args: {
-          filter: { id: { eq: 'call-recording-1' } },
-          data: { transcriptImportClaimedAt: null },
-        },
-        id: true,
-      },
-    });
-  });
-});
+  },
+);

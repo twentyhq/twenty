@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import {
   claimCallRecordingArtifactsImport,
   releaseCallRecordingArtifactsImportClaim,
@@ -20,6 +21,7 @@ type CallRecordingArtifactImportExecutionResult<TResult> =
       status: 'skipped';
       reason:
         | 'artifact import already in progress'
+        | 'call recording is not processing'
         | 'no matching call recording';
     };
 
@@ -67,6 +69,10 @@ export const runCallRecordingArtifactImportWithClaim = async <TResult>({
       };
     }
 
+    if (callRecording.status !== CallRecordingStatus.PROCESSING) {
+      return { status: 'skipped', reason: 'call recording is not processing' };
+    }
+
     return {
       status: 'executed',
       result: await runImport(callRecording),
@@ -75,6 +81,7 @@ export const runCallRecordingArtifactImportWithClaim = async <TResult>({
     await releaseCallRecordingArtifactsImportClaim(client, {
       callRecordingId,
       scope,
+      claimedAt: now.toISOString(),
     });
   }
 };
