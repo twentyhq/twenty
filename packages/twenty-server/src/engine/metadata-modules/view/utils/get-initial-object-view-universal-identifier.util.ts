@@ -1,4 +1,4 @@
-import { computeDeterministicUuid } from '@/application/deterministic-identifier/compute-deterministic-uuid.util';
+import { computeDeterministicUuid } from 'twenty-shared/application';
 
 const INITIAL_OBJECT_VIEW_KEY = 'INITIAL' as const;
 

@@ -1,4 +1,4 @@
-import { getInitialObjectViewUniversalIdentifier } from 'twenty-shared/application';
+import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
 import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
 import { ViewType } from 'twenty-shared/types';
 

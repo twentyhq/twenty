@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { MetadataFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/metadata-flat-entity.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-universal-identifier-in-universal-flat-entity-maps.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
 import { computeMissingInitialObjectViewOperations } from 'src/engine/metadata-modules/view/utils/compute-missing-initial-object-view-operations.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -106,11 +105,9 @@ export class TwentyStandardApplicationService {
 
     await this.seedStandardObjectInitialViewsOrThrow({
       workspaceId,
-      standardObjectMetadataUniversalIdentifiers: new Set(
-        Object.keys(
-          toTwentyStandardAllFlatEntityMaps.flatObjectMetadataMaps
-            .byUniversalIdentifier,
-        ),
+      standardObjectMetadataUniversalIdentifiers: Object.keys(
+        toTwentyStandardAllFlatEntityMaps.flatObjectMetadataMaps
+          .byUniversalIdentifier,
       ),
     });
   }
@@ -120,7 +117,7 @@ export class TwentyStandardApplicationService {
     standardObjectMetadataUniversalIdentifiers,
   }: {
     workspaceId: string;
-    standardObjectMetadataUniversalIdentifiers: Set<string>;
+    standardObjectMetadataUniversalIdentifiers: string[];
   }): Promise<void> {
     const { flatObjectMetadataMaps, flatViewMaps, flatViewFieldMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -135,15 +132,11 @@ export class TwentyStandardApplicationService {
       );
 
     const seedOperations = computeMissingInitialObjectViewOperations({
-      flatObjectMetadatas: Object.values(
-        flatObjectMetadataMaps.byUniversalIdentifier,
-      )
-        .filter(isDefined)
-        .filter((flatObjectMetadata) =>
-          standardObjectMetadataUniversalIdentifiers.has(
-            flatObjectMetadata.universalIdentifier,
-          ),
-        ),
+      flatObjectMetadatas:
+        findManyFlatEntityByUniversalIdentifierInUniversalFlatEntityMaps({
+          flatEntityMaps: flatObjectMetadataMaps,
+          universalIdentifiers: standardObjectMetadataUniversalIdentifiers,
+        }),
       flatViewMaps,
       flatViewFieldMaps,
       initialViewApplicationUniversalIdentifier:

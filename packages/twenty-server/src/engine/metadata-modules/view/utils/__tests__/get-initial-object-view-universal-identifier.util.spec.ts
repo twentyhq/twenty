@@ -1,5 +1,5 @@
-import { getInitialObjectViewUniversalIdentifier } from '@/application/deterministic-identifier/get-initial-object-view-universal-identifier.util';
-import { getSystemViewUniversalIdentifier } from '@/application/deterministic-identifier/get-system-view-universal-identifier.util';
+import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
+import { getSystemViewUniversalIdentifier } from 'twenty-shared/application';
 
 describe('getInitialObjectViewUniversalIdentifier', () => {
   const viewApplicationUniversalIdentifier =

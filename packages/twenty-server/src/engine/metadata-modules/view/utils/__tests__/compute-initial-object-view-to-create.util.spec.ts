@@ -1,4 +1,4 @@
-import { getInitialObjectViewUniversalIdentifier } from 'twenty-shared/application';
+import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
 import { ViewType } from 'twenty-shared/types';
 
 import { computeInitialObjectViewToCreate } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-to-create.util';
