@@ -40,7 +40,7 @@ type SourceCampaign = Pick<
   | 'unsubscribeTopicId'
 >;
 
-const FIND_BY_ID_CHUNK_SIZE = 5_000;
+const FIND_BY_IDS_CHUNK_SIZE = 5_000;
 
 @Injectable()
 export class CampaignFollowUpService {
@@ -125,7 +125,7 @@ export class CampaignFollowUpService {
 
     const personIds = new Set<string>();
 
-    for (const deliveryIdsChunk of chunk(deliveryIds, FIND_BY_ID_CHUNK_SIZE)) {
+    for (const deliveryIdsChunk of chunk(deliveryIds, FIND_BY_IDS_CHUNK_SIZE)) {
       const deliveries = await this.campaignDeliveryRepository.find(
         workspaceId,
         {
@@ -224,7 +224,7 @@ export class CampaignFollowUpService {
   }): Promise<string[]> {
     const readablePersonIds: string[] = [];
 
-    for (const personIdsChunk of chunk(personIds, FIND_BY_ID_CHUNK_SIZE)) {
+    for (const personIdsChunk of chunk(personIds, FIND_BY_IDS_CHUNK_SIZE)) {
       const people = await personRepository.find({
         where: { id: In(personIdsChunk) },
         select: { id: true },

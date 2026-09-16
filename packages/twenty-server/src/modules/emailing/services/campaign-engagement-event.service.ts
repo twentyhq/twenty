@@ -167,30 +167,30 @@ export class CampaignEngagementEventService {
     }));
   }
 
-  async findEngagedDeliveries({
+  async findClickedDeliveries({
     limit,
     ...scope
   }: CampaignScope & { limit: number }): Promise<
     {
       deliveryId: string;
       firstClickedAt: Date | null;
-      lastEngagedAt: Date;
+      lastClickedAt: Date;
     }[]
   > {
     const rows = await this.select<{
       deliveryId: string;
       firstClickedAt: string;
-      lastEngagedAt: string;
+      lastClickedAt: string;
     }>(
       `SELECT
          deliveryId,
          min(occurredAt) AS firstClickedAt,
-         max(occurredAt) AS lastEngagedAt
+         max(occurredAt) AS lastClickedAt
        FROM ${SHORT_LINK_CLICK_TABLE}
        WHERE ${CLICK_SCOPE_CONDITION}
          ${this.buildClickActivityCondition(scope.activityFilter)}
        GROUP BY deliveryId
-       ORDER BY lastEngagedAt DESC
+       ORDER BY lastClickedAt DESC
        LIMIT {limit:UInt32}`,
       { ...scope, limit },
     );
@@ -198,7 +198,7 @@ export class CampaignEngagementEventService {
     return rows.map((row) => ({
       deliveryId: row.deliveryId,
       firstClickedAt: parseClickHouseDateTime(row.firstClickedAt),
-      lastEngagedAt: parseClickHouseDateTime(row.lastEngagedAt),
+      lastClickedAt: parseClickHouseDateTime(row.lastClickedAt),
     }));
   }
 

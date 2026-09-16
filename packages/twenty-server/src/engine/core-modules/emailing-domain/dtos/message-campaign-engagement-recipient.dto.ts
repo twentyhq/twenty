@@ -14,5 +14,5 @@ export class MessageCampaignEngagementRecipientDTO {
   firstClickedAt: Date | null;
 
   @Field(() => Date)
-  lastEngagedAt: Date;
+  lastClickedAt: Date;
 }
