@@ -22,9 +22,6 @@ type CalendarEventParticipantNode = Participant & {
   } | null;
 };
 
-// Meetings are read through their participants rather than the calendarEvents root
-// query, which only surfaces events attached to a visible calendar channel. One query
-// per page of participants also resolves the whole batch in a few calls.
 export const collectCalendarEventInteractions = async (
   client: CoreApiClient,
   calendarEventIds: string[],
@@ -93,7 +90,6 @@ export const collectCalendarEventInteractions = async (
     const calendarEvent = participants[0]?.calendarEvent;
     const startsAt = calendarEvent?.startsAt ?? null;
 
-    // A meeting only counts as a contact once it happened, and never when canceled
     if (!startsAt || calendarEvent?.isCanceled === true || startsAt > now) {
       continue;
     }

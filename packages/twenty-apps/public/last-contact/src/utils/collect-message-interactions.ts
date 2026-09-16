@@ -21,8 +21,6 @@ type MessageParticipantNode = Participant & {
   message?: { receivedAt: string | null } | null;
 };
 
-// One query per page of participants instead of one query per message, so a
-// batch of message participant events resolves its messages in a few calls.
 export const collectMessageInteractions = async (
   client: CoreApiClient,
   messageIds: string[],

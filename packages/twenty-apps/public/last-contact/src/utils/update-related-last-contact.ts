@@ -109,7 +109,7 @@ const collectPointOfContactIds = async (
 
 // Companies and opportunities surface emails and meetings from their related
 // people, so their last contact mirrors the most recent contact of any person
-// connected to them. People sharing a company collapse into a single update.
+// connected to them.
 export const updateRelatedLastContactForPeople = async (
   client: CoreApiClient,
   contactByPersonId: Map<string, RelatedInteraction>,
