@@ -1,4 +1,4 @@
-import { isArray, isNull, isUndefined } from '@sniptt/guards';
+import { isArray, isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
@@ -85,7 +85,10 @@ export const importCallRecordingTranscript = async ({
     listResult.transcripts,
   );
 
-  if (listResult.transcripts.length > 0 && isUndefined(transcriptArtifact)) {
+  if (
+    isNonEmptyArray(listResult.transcripts) &&
+    isUndefined(transcriptArtifact)
+  ) {
     return buildExpiredTranscriptArtifactResult({
       recallTranscriptId:
         existingTranscriptMarker?.recallTranscriptId ??
