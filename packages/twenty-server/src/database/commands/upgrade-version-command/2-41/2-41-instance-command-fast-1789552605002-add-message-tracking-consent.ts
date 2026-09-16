@@ -26,7 +26,7 @@ export class AddMessageTrackingConsentFastInstanceCommand
          "decision" "core"."messageTrackingConsent_decision_enum" NOT NULL,
          "source" "core"."messageTrackingConsent_source_enum" NOT NULL,
          CONSTRAINT "PK_messageTrackingConsent_id" PRIMARY KEY ("id"),
-         CONSTRAINT "FK_messageTrackingConsent_workspaceId" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION
+         CONSTRAINT "FK_c0cc212b3fec7ad57847260a8f8" FOREIGN KEY ("workspaceId") REFERENCES "core"."workspace"("id") ON DELETE CASCADE ON UPDATE NO ACTION
        )`,
     );
 

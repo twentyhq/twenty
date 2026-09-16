@@ -95,7 +95,6 @@ describe('buildUnsubscribePreferencesPage', () => {
       });
 
       expect(page).toContain('action="/unsubscribe/update"');
-      expect(page).toContain('name="trackingBefore" value="" />');
       expect(page).toContain('value="GRANTED" checked />');
       expect(page).toContain('value="DENIED" />');
     });
@@ -111,7 +110,6 @@ describe('buildUnsubscribePreferencesPage', () => {
         unsubscribeAllPath: '/unsubscribe/all',
       });
 
-      expect(page).toContain('name="trackingBefore" value="DENIED" />');
       expect(page).toContain('value="GRANTED" />');
       expect(page).toContain('value="DENIED" checked />');
     });

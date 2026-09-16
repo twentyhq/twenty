@@ -47,7 +47,6 @@ type UnsubscribeFormBody = {
   t?: string;
   unsubscribeTopicId?: string | string[];
   tracking?: string;
-  trackingBefore?: string;
 };
 
 const RATE_LIMIT = { maxRequests: 120, windowMs: 60_000 };
@@ -175,12 +174,11 @@ export class UnsubscribeController {
 
     const trackingDecision = this.parseTrackingDecision(body.tracking);
 
-    if (isDefined(trackingDecision) && body.tracking !== body.trackingBefore) {
-      await this.messageTrackingConsentService.recordDecision({
+    if (isDefined(trackingDecision)) {
+      await this.recordTrackingDecisionIfChanged({
         workspaceId: payload.workspaceId,
         emailAddress: payload.emailAddress,
         decision: trackingDecision,
-        source: MessageTrackingConsentSource.PREFERENCES_PAGE,
       });
     }
 
@@ -213,6 +211,35 @@ export class UnsubscribeController {
       'You have been unsubscribed',
       'You will no longer receive marketing emails from this sender.',
     );
+  }
+
+  private async recordTrackingDecisionIfChanged({
+    workspaceId,
+    emailAddress,
+    decision,
+  }: {
+    workspaceId: string;
+    emailAddress: string;
+    decision: MessageTrackingConsentDecision;
+  }): Promise<void> {
+    const storedDecision =
+      await this.messageTrackingConsentService.findDecision({
+        workspaceId,
+        emailAddress,
+      });
+    const currentDecision =
+      storedDecision ?? MessageTrackingConsentDecision.GRANTED;
+
+    if (currentDecision === decision) {
+      return;
+    }
+
+    await this.messageTrackingConsentService.recordDecision({
+      workspaceId,
+      emailAddress,
+      decision,
+      source: MessageTrackingConsentSource.PREFERENCES_PAGE,
+    });
   }
 
   private parseTrackingDecision(

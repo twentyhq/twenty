@@ -47,9 +47,10 @@ export class MessageTrackingConsentResolver {
   ): Promise<boolean> {
     this.emailGroupAccessService.validateEmailGroupAccessOrThrow();
 
-    await this.personAccessService.assertCanUpdatePeople({
+    await this.personAccessService.assertCanUpdatePerson({
       workspaceId: currentWorkspace.id,
       userWorkspaceId,
+      personId: input.personId,
     });
 
     return this.messageTrackingConsentService.recordDecisionForPerson({

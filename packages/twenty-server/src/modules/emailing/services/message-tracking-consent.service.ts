@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { In, QueryFailedError, Repository } from 'typeorm';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
@@ -19,6 +20,7 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type TrackingPreference } from 'src/modules/emailing/types/tracking-preference.type';
 import { collectPersonEmailAddresses } from 'src/modules/emailing/utils/collect-person-email-addresses.util';
 import { normalizeEmailAddress } from 'src/modules/emailing/utils/normalize-email-address.util';
@@ -32,6 +34,13 @@ type RecordDecisionArgs = {
   source: MessageTrackingConsentSource;
 };
 
+type UpsertDecisionsArgs = {
+  workspaceId: string;
+  emailAddresses: string[];
+  decision: MessageTrackingConsentDecision;
+  source: MessageTrackingConsentSource;
+};
+
 @Injectable()
 export class MessageTrackingConsentService {
   constructor(
@@ -40,6 +49,7 @@ export class MessageTrackingConsentService {
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async findDecision({
@@ -130,19 +140,17 @@ export class MessageTrackingConsentService {
       return;
     }
 
-    await this.upsertDecision({
+    await this.upsertDecisions({
       workspaceId,
-      emailAddress: normalizedEmailAddress,
+      emailAddresses: [normalizedEmailAddress],
       decision,
       source,
     });
 
-    const people = await this.findPeopleByEmailAddresses({
+    await this.refreshPeopleByEmailAddresses({
       workspaceId,
       emailAddresses: [normalizedEmailAddress],
     });
-
-    await this.refreshPersonFields({ workspaceId, people });
   }
 
   async recordDecisionForPerson({
@@ -175,16 +183,14 @@ export class MessageTrackingConsentService {
       await this.assertNotRefusedByRecipient({ workspaceId, emailAddresses });
     }
 
-    for (const emailAddress of emailAddresses) {
-      await this.upsertDecision({
-        workspaceId,
-        emailAddress,
-        decision,
-        source,
-      });
-    }
+    await this.upsertDecisions({
+      workspaceId,
+      emailAddresses,
+      decision,
+      source,
+    });
 
-    await this.refreshPersonFields({ workspaceId, people: [person] });
+    await this.refreshPeopleByEmailAddresses({ workspaceId, emailAddresses });
 
     return true;
   }
@@ -225,51 +231,104 @@ export class MessageTrackingConsentService {
     }
   }
 
-  private async upsertDecision({
+  private async upsertDecisions({
     workspaceId,
-    emailAddress,
+    emailAddresses,
     decision,
     source,
-  }: RecordDecisionArgs): Promise<void> {
-    const updateExisting = async (): Promise<boolean> => {
-      const existingConsent = await this.consentRepository.findOneBy(
-        workspaceId,
-        { emailAddress },
-      );
+  }: UpsertDecisionsArgs): Promise<void> {
+    const existingConsents = await this.consentRepository.find(workspaceId, {
+      where: { emailAddress: In(emailAddresses) },
+    });
+    const isRecipientRefusal = (consent: MessageTrackingConsentEntity) =>
+      consent.decision === MessageTrackingConsentDecision.DENIED &&
+      consent.source === MessageTrackingConsentSource.PREFERENCES_PAGE;
+    const consentIdsToUpdate = existingConsents
+      .filter(
+        (consent) =>
+          !(
+            source === MessageTrackingConsentSource.WORKSPACE_MEMBER &&
+            decision === MessageTrackingConsentDecision.DENIED &&
+            isRecipientRefusal(consent)
+          ),
+      )
+      .map((consent) => consent.id);
 
-      if (!isDefined(existingConsent)) {
-        return false;
-      }
-
+    if (consentIdsToUpdate.length > 0) {
       await this.consentRepository.update(
         workspaceId,
-        { id: existingConsent.id },
+        { id: In(consentIdsToUpdate) },
         { decision, source },
       );
+    }
 
-      return true;
-    };
+    const existingEmailAddresses = new Set(
+      existingConsents.map((consent) => consent.emailAddress),
+    );
+    const emailAddressesToInsert = emailAddresses.filter(
+      (emailAddress) => !existingEmailAddresses.has(emailAddress),
+    );
 
-    if (await updateExisting()) {
+    if (emailAddressesToInsert.length === 0) {
       return;
     }
 
     try {
-      await this.consentRepository.insert(workspaceId, {
-        emailAddress,
-        decision,
-        source,
-      });
+      await this.consentRepository.insert(
+        workspaceId,
+        emailAddressesToInsert.map((emailAddress) => ({
+          emailAddress,
+          decision,
+          source,
+        })),
+      );
     } catch (error) {
       const isUniqueViolation =
         error instanceof QueryFailedError &&
         (error as QueryFailedErrorWithCode).code ===
           POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION;
 
-      if (!isUniqueViolation || !(await updateExisting())) {
+      if (!isUniqueViolation) {
         throw error;
       }
+
+      await this.upsertDecisions({
+        workspaceId,
+        emailAddresses: emailAddressesToInsert,
+        decision,
+        source,
+      });
     }
+  }
+
+  private async refreshPeopleByEmailAddresses({
+    workspaceId,
+    emailAddresses,
+  }: {
+    workspaceId: string;
+    emailAddresses: string[];
+  }): Promise<void> {
+    const people = await this.findPeopleByEmailAddresses({
+      workspaceId,
+      emailAddresses,
+    });
+
+    await this.refreshPersonFields({ workspaceId, people });
+  }
+
+  private async isPersonConsentFieldProvisioned(
+    workspaceId: string,
+  ): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.person.fields.emailTrackingConsent.universalIdentifier
+      ],
+    );
   }
 
   private async refreshPersonFields({
@@ -279,6 +338,13 @@ export class MessageTrackingConsentService {
     workspaceId: string;
     people: PersonWorkspaceEntity[];
   }): Promise<void> {
+    if (
+      people.length === 0 ||
+      !(await this.isPersonConsentFieldProvisioned(workspaceId))
+    ) {
+      return;
+    }
+
     const primaryEmailAddressByPersonId = new Map(
       people.map((person) => [
         person.id,
@@ -307,6 +373,11 @@ export class MessageTrackingConsentService {
         { shouldBypassPermissionChecks: true },
       );
 
+      const personIdsByDecision = new Map<
+        MessageTrackingConsentDecision | null,
+        string[]
+      >();
+
       for (const person of people) {
         const emailTrackingConsent =
           decisionByEmailAddress.get(
@@ -317,8 +388,15 @@ export class MessageTrackingConsentService {
           continue;
         }
 
+        personIdsByDecision.set(emailTrackingConsent, [
+          ...(personIdsByDecision.get(emailTrackingConsent) ?? []),
+          person.id,
+        ]);
+      }
+
+      for (const [emailTrackingConsent, personIds] of personIdsByDecision) {
         await personRepository.update(
-          { id: person.id },
+          { id: In(personIds) },
           { emailTrackingConsent },
         );
       }
