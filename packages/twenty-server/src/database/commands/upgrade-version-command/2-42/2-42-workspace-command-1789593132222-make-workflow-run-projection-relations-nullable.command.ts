@@ -32,6 +32,16 @@ export class MakeWorkflowRunProjectionRelationsNullableCommand extends Provision
     }
 
     const schema = getWorkspaceSchemaName(workspaceId);
+    const [table] = await dataSource.query(
+      'SELECT to_regclass($1) AS name',
+      [`"${schema}"."workflowRun"`],
+    );
+
+    if (!isDefined(table?.name)) {
+      this.logger.log(`Workflow run table absent in workspace ${workspaceId}, skipping projection relations`);
+
+      return;
+    }
 
     await dataSource.query(
       `ALTER TABLE "${schema}"."workflowRun"

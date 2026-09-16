@@ -21,6 +21,8 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { workflowGraphqlRequest } from 'test/integration/graphql/suites/workflow/utils/workflow-graphql-request.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { type ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const schema = getWorkspaceSchemaName(workspaceId);
@@ -1104,6 +1106,27 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     const run = await waitForRun(created.id, 'COMPLETED');
     expect(run.coreWorkflowVersionId).toBe(fixture.coreWorkflowVersionId);
     expect(run.state.flow.steps).toEqual(fixture.steps);
+  });
+
+  it('skips unprovisioned workflow tables during upgrades', async () => {
+    for (const name of [
+      'RelinkWorkflowVersionsToCoreWorkflowsCommand',
+      'BackfillWorkflowExecutionCoreIdsCommand',
+      'MakeWorkflowRunProjectionRelationsNullableCommand',
+    ]) {
+      const command =
+        getAppProviderByClassName<ProvisionedWorkspaceCommandRunner>(name);
+
+      await expect(
+        command.runOnWorkspace({
+          workspaceId: randomUUID(),
+          options: {},
+          dataSource: global.testDataSource,
+          index: 0,
+          total: 1,
+        }),
+      ).resolves.toBeUndefined();
+    }
   });
 
   it('provisions a fresh workspace with synchronous parent and version mappings', async () => {

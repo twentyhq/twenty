@@ -39,6 +39,12 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
     try {
       const schema = getWorkspaceSchemaName(workspaceId);
 
+      if (!(await queryRunner.hasTable(`${schema}.workflowVersion`))) {
+        this.logger.log(`Workflow version table absent in workspace ${workspaceId}, skipping backfill`);
+
+        return;
+      }
+
       if (!(await this.hasRequiredColumns(queryRunner, schema))) {
         throw new Error(`Workflow execution schema is not ready in workspace ${workspaceId}`);
       }
