@@ -322,7 +322,7 @@ export class MessageCampaignBatchDeliveryService {
   }): Promise<void> {
     const { workspaceId, campaignId, emailingDomainId } = data;
 
-    const { template, textPartHtml, variableNames } =
+    const { template, plainTextSourceHtml, variableNames } =
       await compileCampaignBatchTemplate({
         subjectTemplate: campaign.subject ?? '',
         bodyTemplate: campaign.bodyTemplate ?? '',
@@ -361,7 +361,7 @@ export class MessageCampaignBatchDeliveryService {
         emailingDomainId,
         messageCampaignId: campaignId,
         template,
-        textPartHtml,
+        plainTextSourceHtml,
         variableNames,
         recipients: claimedRecipients.map((recipient) => ({
           deliveryId: recipient.messageId,
