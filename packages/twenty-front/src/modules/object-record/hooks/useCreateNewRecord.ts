@@ -21,10 +21,10 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 type UseCreateNewRecordProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   buildRecordInput?: () => Partial<ObjectRecord>;
-  onRecordCreated?: (args: {
-    record: ObjectRecord;
-    recordInput?: Partial<ObjectRecord>;
-  }) => void;
+  onRecordCreated?: (
+    record: ObjectRecord,
+    recordInput?: Partial<ObjectRecord>,
+  ) => void;
 };
 
 export const useCreateNewRecord = ({
@@ -117,7 +117,7 @@ export const useCreateNewRecord = ({
         });
       }
 
-      onRecordCreated?.({ record: createdRecord, recordInput });
+      onRecordCreated?.(createdRecord, recordInput);
 
       upsertRecordsInStore({ partialRecords: [createdRecord] });
 

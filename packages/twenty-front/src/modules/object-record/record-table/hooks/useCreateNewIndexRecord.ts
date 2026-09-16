@@ -45,13 +45,7 @@ export const useCreateNewIndexRecord = ({
   });
 
   const onRecordCreated = useCallback(
-    ({
-      record: createdRecord,
-      recordInput,
-    }: {
-      record: ObjectRecord;
-      recordInput?: Partial<ObjectRecord>;
-    }) => {
+    (createdRecord: ObjectRecord, recordInput?: Partial<ObjectRecord>) => {
       if (isDefined(recordIndexGroupFieldMetadataItem)) {
         const recordGroup = recordGroupDefinitions.find(
           findByProperty(
