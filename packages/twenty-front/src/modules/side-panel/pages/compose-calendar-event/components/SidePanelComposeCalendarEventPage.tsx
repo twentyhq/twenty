@@ -5,7 +5,6 @@ import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { composeCalendarEventInitialValuesComponentState } from '@/side-panel/pages/compose-calendar-event/states/composeCalendarEventInitialValuesComponentState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -13,6 +12,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconCalendarEvent, IconTrash } from 'twenty-ui/icon';
 import { Button, IconButton } from 'twenty-ui/primitives/input';
 import { getOsControlSymbol } from 'twenty-ui/utilities';
@@ -32,7 +32,7 @@ export const SidePanelComposeCalendarEventPage = () => {
   const { closeSidePanelMenu } = useSidePanelMenu();
   const navigateSettings = useNavigateSettings();
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const composerState = useCalendarEventComposer({
     initialValues: composeCalendarEventInitialValues,
@@ -69,8 +69,9 @@ export const SidePanelComposeCalendarEventPage = () => {
         loginHint: selectedAccount.handle,
       });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Failed to reconnect calendar account`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to reconnect calendar account`,
       });
     }
   };
@@ -102,15 +103,14 @@ export const SidePanelComposeCalendarEventPage = () => {
           />,
           <Button
             key="create"
-            size="small"
-            variant="primary"
-            accent="blue"
-            title={t`Create event`}
-            Icon={IconCalendarEvent}
+            size="sm"
+            startIcon={<IconCalendarEvent />}
             hotkeys={[getOsControlSymbol(), '⏎']}
             onClick={composerState.handleCreate}
             disabled={!composerState.canCreate}
-          />,
+            variant="solid"
+            color="accent"
+          >{t`Create event`}</Button>,
         ]}
       />
     </StyledContainer>

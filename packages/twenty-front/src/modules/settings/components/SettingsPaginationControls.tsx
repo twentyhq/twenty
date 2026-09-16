@@ -36,20 +36,18 @@ export const SettingsPaginationControls = ({
   return (
     <StyledContainer>
       <Button
-        title={t`Previous`}
-        variant="secondary"
-        size="small"
+        size="sm"
         disabled={page === 0 || isLoading}
         onClick={() => onPageChange(page - 1)}
-      />
+        variant="outline"
+      >{t`Previous`}</Button>
       <div>{t`Page ${page + 1} of ${pageCount}`}</div>
       <Button
-        title={t`Next`}
-        variant="secondary"
-        size="small"
+        size="sm"
         disabled={isNextDisabled || isLoading}
         onClick={() => onPageChange(page + 1)}
-      />
+        variant="outline"
+      >{t`Next`}</Button>
     </StyledContainer>
   );
 };

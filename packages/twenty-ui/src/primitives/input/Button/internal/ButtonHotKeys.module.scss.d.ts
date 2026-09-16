@@ -1,5 +1,4 @@
 declare const classNames: {
-  readonly separator: 'separator';
-  readonly shortcutLabel: 'shortcutLabel';
+  readonly hotkeys: 'hotkeys';
 };
 export default classNames;

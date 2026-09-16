@@ -110,11 +110,10 @@ export const SettingsUnsubscribersFilterDropdown = ({
       onClose={goToMenu}
       clickableComponent={
         <Button
-          Icon={IconFilter}
-          size="medium"
-          variant="secondary"
-          accent="default"
-          ariaLabel={t`Filter unsubscribers`}
+          startIcon={<IconFilter />}
+          size="md"
+          aria-label={t`Filter unsubscribers`}
+          variant="outline"
         />
       }
       dropdownComponents={renderContent()}

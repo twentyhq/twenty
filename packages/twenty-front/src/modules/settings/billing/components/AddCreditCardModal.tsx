@@ -77,11 +77,9 @@ export const AddCreditCardModal = ({
       <StyledCancelButtonContainer>
         <Button
           onClick={() => closeModal(modalInstanceId)}
-          variant="secondary"
-          title={t`Cancel`}
           fullWidth
-          justify="center"
-        />
+          variant="outline"
+        >{t`Cancel`}</Button>
       </StyledCancelButtonContainer>
     </ModalStatefulWrapper>
   );

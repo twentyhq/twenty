@@ -11253,12 +11253,12 @@ msgstr "גרסה זו של היישום כבר מותקנת במרחב עבוד�
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "גרסת זרימת עבודה זו מכילה נתונים פגומים ולא ניתן לשמור אותה."
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "גרסת זרימת עבודה זו אינה מוכנה להפעלה."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13326,6 +13326,11 @@ msgstr "אין לך הרשאה להתחזות למשתמשים במרחב עבו
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "אין לך הרשאה להיכנס למשתמשים אחרים. אנא פנה למנהל המרחב שלך לקבלת גישה."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "אין לך הרשאה לנהל חיבורים המשותפים עם מרחב העבודה. נא לפנות למנהל מרחב העבודה שלך לקבלת גישה."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

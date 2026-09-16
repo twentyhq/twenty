@@ -13,7 +13,7 @@ import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuesti
 import { styled } from '@linaria/react';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const StyledContainer = styled.div`
   max-width: 400px;
@@ -120,7 +120,7 @@ const meta: Meta<typeof AiChatQuestionCard> = {
         </StoreSeeder>
       </AgentChatComponentInstanceContext.Provider>
     ),
-    SnackBarDecorator,
+    ToastDecorator,
     ComponentDecorator,
     MemoryRouterDecorator,
     RootDecorator,

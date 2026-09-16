@@ -1,3 +1,6 @@
+import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
+import { AiChatUsageService } from 'src/engine/metadata-modules/ai/ai-chat/services/ai-chat-usage.service';
+import { AiChatUsageResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/ai-chat-usage.resolver';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -44,6 +47,7 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
 
 @Module({
   imports: [
+    UsageLimitModule,
     TypeOrmModule.forFeature([
       AgentChatThreadEntity,
       FileEntity,
@@ -68,6 +72,8 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     WorkflowToolsModule,
   ],
   providers: [
+    AiChatUsageService,
+    AiChatUsageResolver,
     AgentChatCancelSubscriberService,
     AgentChatEventPublisherService,
     AgentChatStreamHeartbeatService,

@@ -27,8 +27,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Elements, PaymentElement } from '@stripe/react-stripe-js';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { MainButton } from 'twenty-ui/components';
 import { Info, Loader } from 'twenty-ui/primitives/feedback';
-import { MainButton, RadioGroup } from 'twenty-ui/primitives/input';
+import { RadioGroup } from 'twenty-ui/primitives/input';
 import { CAL_LINK, ClickToActionLink } from 'twenty-ui/primitives/navigation';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -102,12 +103,11 @@ const UpgradeFreeTrialSubmitButton = ({
 
   return (
     <MainButton
-      title={t`Continue`}
       onClick={handleSubmit}
       fullWidth
-      Icon={() => (isSubmitting ? <Loader /> : null)}
+      startIcon={isSubmitting ? <Loader /> : null}
       disabled={!isStripeReady || isSubmitting}
-    />
+    >{t`Continue`}</MainButton>
   );
 };
 
@@ -231,16 +231,15 @@ const UpgradeFreeTrialContent = ({
                 recurringInterval={billingCheckoutSession.interval}
               />
             ) : (
-              <MainButton title={t`Continue`} fullWidth disabled />
+              <MainButton fullWidth disabled>{t`Continue`}</MainButton>
             )
           ) : (
             <MainButton
-              title={t`Continue`}
               onClick={handleCheckoutSessionClick}
               fullWidth
-              Icon={() => (isCheckoutSubmitting ? <Loader /> : null)}
+              startIcon={isCheckoutSubmitting ? <Loader /> : null}
               disabled={isCheckoutSubmitting}
-            />
+            >{t`Continue`}</MainButton>
           )}
           <StyledLinkGroup>
             <ClickToActionLink onClick={signOut}>

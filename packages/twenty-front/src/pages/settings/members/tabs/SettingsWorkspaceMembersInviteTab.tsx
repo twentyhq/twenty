@@ -1,36 +1,35 @@
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { styled } from '@linaria/react';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { useQuery } from '@apollo/client/react';
-import { isNonEmptyArray } from '@sniptt/guards';
-import { formatDistanceToNow } from 'date-fns';
-import { useContext, useMemo } from 'react';
-
-import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
-
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
 import { SettingsApprovedAccessDomainsListCard } from '@/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useDeleteWorkspaceInvitation } from '@/workspace-invitation/hooks/useDeleteWorkspaceInvitation';
 import { useResendWorkspaceInvitation } from '@/workspace-invitation/hooks/useResendWorkspaceInvitation';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
 import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
+import { useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { isNonEmptyArray } from '@sniptt/guards';
+import { formatDistanceToNow } from 'date-fns';
+import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { Status } from 'twenty-ui/primitives/data-display';
 import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { Status } from 'twenty-ui/primitives/data-display';
 import { IconButton } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
+import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 const StyledButtonContainer = styled.div`
   align-items: center;
@@ -71,7 +70,7 @@ const StyledTableRows = styled.div`
 export const SettingsWorkspaceMembersInviteTab = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const roles = useSettingsAllRoles();
   const { localeCatalog } = useAtomStateValue(dateLocaleState);
 
@@ -89,18 +88,15 @@ export const SettingsWorkspaceMembersInviteTab = () => {
     GetWorkspaceInvitationsDocument,
   );
 
-  useSnackBarOnQueryError(invitationsError);
-
   const workspaceInvitations = invitationsData?.findWorkspaceInvitations ?? [];
 
   const handleRemoveWorkspaceInvitation = async (appTokenId: string) => {
     const result = await deleteWorkspaceInvitation({ appTokenId });
     if (isDefined(result.error)) {
-      enqueueErrorSnackBar({
-        message: t`Error deleting invitation`,
-        options: {
-          duration: 2000,
-        },
+      enqueueToast({
+        variant: 'error',
+        children: t`Error deleting invitation`,
+        duration: 2000,
       });
     }
   };
@@ -108,11 +104,10 @@ export const SettingsWorkspaceMembersInviteTab = () => {
   const handleResendWorkspaceInvitation = async (appTokenId: string) => {
     const result = await resendInvitation({ appTokenId });
     if (isDefined(result.error)) {
-      enqueueErrorSnackBar({
-        message: t`Error resending invitation`,
-        options: {
-          duration: 2000,
-        },
+      enqueueToast({
+        variant: 'error',
+        children: t`Error resending invitation`,
+        duration: 2000,
       });
     }
   };
@@ -125,6 +120,8 @@ export const SettingsWorkspaceMembersInviteTab = () => {
 
   return (
     <>
+      <ToastOnQueryErrorEffect error={invitationsError} />
+
       <SettingsRolesQueryEffect />
       {currentWorkspace?.inviteHash &&
         currentWorkspace?.isPublicInviteLinkEnabled && (

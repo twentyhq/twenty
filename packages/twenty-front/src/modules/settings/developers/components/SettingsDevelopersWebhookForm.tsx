@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { Controller, FormProvider } from 'react-hook-form';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -64,7 +65,15 @@ export const SettingsDevelopersWebhookForm = ({
   };
 
   if ((loading && !isCreationMode) || isDefined(error)) {
-    return <SettingsSkeletonLoader />;
+    return (
+      <>
+        <ToastOnQueryErrorEffect
+          error={error}
+          message={t`Failed to load webhook`}
+        />
+        <SettingsSkeletonLoader />
+      </>
+    );
   }
 
   const descriptionTextAreaId = `${webhookId}-description`;
@@ -199,12 +208,11 @@ export const SettingsDevelopersWebhookForm = ({
                 description={t`Delete this webhook`}
               />
               <Button
-                accent="danger"
-                variant="secondary"
-                title={t`Delete`}
-                Icon={IconTrash}
+                startIcon={<IconTrash />}
                 onClick={() => openModal(DELETE_WEBHOOK_MODAL_ID)}
-              />
+                variant="outline"
+                color="danger"
+              >{t`Delete`}</Button>
             </Section>
           )}
         </SettingsPageContainer>

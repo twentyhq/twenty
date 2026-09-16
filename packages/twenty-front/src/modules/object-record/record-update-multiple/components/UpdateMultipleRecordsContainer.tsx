@@ -1,9 +1,8 @@
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
-import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter';
 import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
 import { useUpdateMultipleRecordsActions } from '@/object-record/record-update-multiple/hooks/useUpdateMultipleRecordsActions';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { ShowPageContainer } from '@/ui/layout/page/components/ShowPageContainer';
@@ -12,6 +11,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const UPDATE_MULTIPLE_RECORDS_CONFIRMATION_MODAL_ID =
@@ -56,7 +56,7 @@ export const UpdateMultipleRecordsContainer = ({
   const hasSelectedRecords = contextStoreNumberOfSelectedRecords > 0;
 
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { openModal } = useModal();
   const { closeSidePanelMenu } = useSidePanelMenu();
 
@@ -73,8 +73,9 @@ export const UpdateMultipleRecordsContainer = ({
       await updateRecords(fieldUpdates);
       closeSidePanelMenu();
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      enqueueToast({
+        variant: 'error',
+        children:
           error instanceof Error
             ? error.message
             : t`Failed to update records. Please try again.`,
@@ -125,7 +126,7 @@ export const UpdateMultipleRecordsContainer = ({
         subtitle={t`This will modify ${contextStoreNumberOfSelectedRecords} records. This action cannot be undone.`}
         onConfirmClick={handleConfirmedUpdate}
         confirmButtonText={t`Update records`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
     </SidePanelProvider>
   );

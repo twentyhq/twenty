@@ -1,7 +1,5 @@
-import {
-  IconButton,
-  type IconButtonProps,
-} from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import type { IconButtonProps } from '@ui/primitives/input/IconButton/types/IconButtonProps';
 import {
   AppTooltip,
   TooltipDelay,

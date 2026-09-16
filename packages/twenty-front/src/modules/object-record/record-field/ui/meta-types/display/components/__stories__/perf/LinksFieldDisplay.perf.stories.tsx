@@ -6,7 +6,7 @@ import { FieldFocusContextProvider } from '@/object-record/record-field/ui/conte
 import { LinksFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/LinksFieldDisplay';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
@@ -30,7 +30,7 @@ const meta: Meta = {
       secondaryLinks: ['https://www.toto.com'],
     }),
     ComponentDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   component: LinksFieldDisplay,
   args: {},

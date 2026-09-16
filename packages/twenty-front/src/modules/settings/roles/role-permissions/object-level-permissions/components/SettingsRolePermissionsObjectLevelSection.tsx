@@ -138,15 +138,14 @@ export const SettingsRolePermissionsObjectLevelSection = ({
         <StyledCreateObjectOverrideSectionContainer>
           <Section>
             <Button
-              Icon={IconPlus}
-              title={t`Add rule`}
-              variant="secondary"
-              size="small"
+              startIcon={<IconPlus />}
+              size="sm"
               disabled={
                 !settingsDraftRole.isEditable || allObjectsHaveSetPermission
               }
               onClick={handleAddRule}
-            />
+              variant="outline"
+            >{t`Add rule`}</Button>
           </Section>
         </StyledCreateObjectOverrideSectionContainer>
       )}

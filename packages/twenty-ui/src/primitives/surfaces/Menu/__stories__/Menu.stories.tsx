@@ -9,6 +9,7 @@ import {
   IconShare,
   IconTrash,
 } from '@ui/icon';
+import { Button } from '@ui/primitives/input/Button/Button';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -118,9 +119,12 @@ const MenuStory = ({ content = 'basic', ...props }: MenuStoryProps) => {
 
   return (
     <Menu.Root defaultOpen defaultTriggerId={triggerId} {...props}>
-      <Menu.Trigger id={triggerId} style={{ alignSelf: 'flex-start' }}>
-        Options
-      </Menu.Trigger>
+      <Menu.Trigger
+        id={triggerId}
+        aria-label="Options"
+        style={{ alignSelf: 'flex-start' }}
+        render={<Button>Options</Button>}
+      />
       <Menu.Popup>{MENU_STORY_CONTENT[content]}</Menu.Popup>
     </Menu.Root>
   );
@@ -154,6 +158,36 @@ export const Documentation: Story = {
   ...Default,
   args: { defaultOpen: false },
   play: undefined,
+};
+
+export const DocumentationInteractions: Story = {
+  ...Documentation,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Options' });
+
+    await userEvent.click(trigger);
+    const menu = await body.findByRole('menu', { name: 'Options' });
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(trigger).toHaveAttribute('aria-controls', menu.id);
+
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    await expect(trigger).toHaveFocus();
+
+    await userEvent.keyboard('{ArrowDown}');
+    const reopenedMenu = await body.findByRole('menu', { name: 'Options' });
+    await userEvent.click(
+      within(reopenedMenu).getByRole('menuitem', { name: /Duplicate/ }),
+    );
+    await waitFor(() =>
+      expect(body.queryByRole('menu')).not.toBeInTheDocument(),
+    );
+    await expect(trigger).toHaveFocus();
+  },
 };
 export const Selection: Story = {
   decorators: [ComponentDecorator],
@@ -233,9 +267,11 @@ const MenuCatalogCell = ({ content = 'basic' }: MenuStoryProps) => {
       style={{ position: 'relative', width: 220, height: 230 }}
     >
       <Menu.Root open triggerId={triggerId} modal={false}>
-        <Menu.Trigger id={triggerId} aria-label={`${content} options`}>
-          Options
-        </Menu.Trigger>
+        <Menu.Trigger
+          id={triggerId}
+          aria-label={`${content} options`}
+          render={<Button>Options</Button>}
+        />
         <Menu.Popup container={cellElement} side="bottom" align="start">
           {contentByType[content]}
         </Menu.Popup>

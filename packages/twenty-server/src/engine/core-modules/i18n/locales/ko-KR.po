@@ -11253,12 +11253,12 @@ msgstr "이 애플리케이션의 해당 버전은 이 워크스페이스에 이
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "이 워크플로 버전에는 잘못된 형식의 데이터가 포함되어 있어 저장할 수 없습니다."
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "이 워크플로 버전은 활성화할 준비가 되지 않았습니다."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13326,6 +13326,11 @@ msgstr "이 워크스페이스에서 사용자를 가장할 권한이 없습니�
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "사용자를 가장할 권한이 없습니다. 작업 공간 관리자에게 문의하십시오."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "작업 공간과 공유된 연결을 관리할 권한이 없습니다. 액세스하려면 작업 공간 관리자에게 문의하십시오."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

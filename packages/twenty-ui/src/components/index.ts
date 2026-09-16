@@ -7,4 +7,6 @@
  *                              |___/
  */
 
-export {};
+export { LightButton } from './LightButton/LightButton';
+export type { LightButtonProps } from './LightButton/types/LightButtonProps';
+export { MainButton } from './MainButton/MainButton';

@@ -1,3 +1,4 @@
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -5,10 +6,9 @@ import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordF
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { flowComponentState } from '@/workflow/states/flowComponentState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { UPDATE_WORKFLOW_VERSION_TRIGGER } from '@/workflow/graphql/mutations/updateWorkflowVersionTrigger';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
 import {
   type WorkflowTrigger,
   type WorkflowVersion,
@@ -18,6 +18,7 @@ import { useMutation } from '@apollo/client/react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   type UpdateWorkflowVersionTriggerMutation,
   type UpdateWorkflowVersionTriggerMutationVariables,
@@ -27,7 +28,7 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const { getUpdatableWorkflowVersion } =
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
@@ -61,7 +62,7 @@ export const useUpdateWorkflowVersionTrigger = (instanceId?: string) => {
         },
       },
       onError: (error) => {
-        enqueueErrorSnackBar({ apolloError: error });
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
 

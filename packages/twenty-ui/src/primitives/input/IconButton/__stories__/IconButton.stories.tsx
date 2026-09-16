@@ -7,13 +7,11 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import {
-  IconButton,
-  type IconButtonAccent,
-  type IconButtonPosition,
-  type IconButtonSize,
-  type IconButtonVariant,
-} from '@ui/primitives/input/IconButton/IconButton';
+import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import type { IconButtonAccent } from '@ui/primitives/input/IconButton/types/IconButtonAccent';
+import type { IconButtonPosition } from '@ui/primitives/input/IconButton/types/IconButtonPosition';
+import type { IconButtonSize } from '@ui/primitives/input/IconButton/types/IconButtonSize';
+import type { IconButtonVariant } from '@ui/primitives/input/IconButton/types/IconButtonVariant';
 
 const meta: Meta<typeof IconButton> = {
   title: 'UI/Input/Button/IconButton',

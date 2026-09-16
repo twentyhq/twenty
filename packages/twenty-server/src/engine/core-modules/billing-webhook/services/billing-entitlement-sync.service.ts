@@ -12,6 +12,7 @@ import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/serv
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type EntitlementTransitionArgs = {
   workspaceId: string;
@@ -33,6 +34,7 @@ export class BillingEntitlementSyncService {
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly cacheLockService: CacheLockService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async syncEntitlements({
@@ -100,6 +102,10 @@ export class BillingEntitlementSyncService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'billingEntitlements',
+    ]);
 
     // The opposite order to the reset above, because the unsafe direction is
     // reversed: predicates deleted while the row still grants RLS would leave

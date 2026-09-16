@@ -193,23 +193,21 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
       {!hasFailed && !isExpanded && totalCount > INITIAL_VISIBLE_WORKSPACES && (
         <StyledButtonContainer>
           <Button
-            title={t`Show all`}
-            Icon={IconChevronDown}
-            variant="secondary"
-            size="small"
+            startIcon={<IconChevronDown />}
+            size="sm"
             onClick={() => setIsExpanded(true)}
-          />
+            variant="outline"
+          >{t`Show all`}</Button>
         </StyledButtonContainer>
       )}
       {!hasFailed && isExpanded && hasMore && (
         <StyledButtonContainer>
           <Button
-            title={t`Show more`}
-            Icon={IconDotsVertical}
-            variant="secondary"
-            size="small"
+            startIcon={<IconDotsVertical />}
+            size="sm"
             onClick={handleShowMore}
-          />
+            variant="outline"
+          >{t`Show more`}</Button>
         </StyledButtonContainer>
       )}
     </StyledSection>

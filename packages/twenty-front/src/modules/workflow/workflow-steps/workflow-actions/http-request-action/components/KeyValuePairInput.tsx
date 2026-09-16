@@ -167,10 +167,15 @@ export const KeyValuePairInput = ({
               (pair.id !== pairs[pairs.length - 1].id && !pair.isAutoSet ? (
                 <Button
                   onClick={() => handleRemovePair(pair.id)}
-                  Icon={IconTrash}
+                  startIcon={<IconTrash />}
+                  aria-label={t`Delete`}
                 />
               ) : (
-                <Button Icon={IconTrash} disabled={true} />
+                <Button
+                  startIcon={<IconTrash />}
+                  aria-label={t`Delete`}
+                  disabled={true}
+                />
               ))}
           </StyledKeyValueContainer>
         ))}
