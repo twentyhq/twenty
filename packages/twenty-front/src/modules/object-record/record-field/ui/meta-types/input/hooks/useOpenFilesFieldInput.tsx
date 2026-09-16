@@ -5,20 +5,20 @@ import { filesFieldUploadState } from '@/object-record/record-field/ui/states/fi
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useStore } from 'jotai';
 import { useLingui } from '@lingui/react/macro';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { MULTI_ITEM_FIELD_DEFAULT_MAX_VALUES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const useOpenFilesFieldInput = () => {
   const { openFileUpload } = useFileUpload();
   const { uploadFile } = useUploadFilesFieldFile();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { t } = useLingui();
   const store = useStore();
 
@@ -88,8 +88,9 @@ export const useOpenFilesFieldInput = () => {
         multiple: true,
         onUpload: async (selectedFiles: File[]) => {
           if (selectedFiles.length + currentFileCount > maxNumberOfValues) {
-            enqueueErrorSnackBar({
-              message: t`Cannot upload more than ${maxNumberOfValues} files`,
+            enqueueToast({
+              variant: 'error',
+              children: t`Cannot upload more than ${maxNumberOfValues} files`,
             });
 
             store.set(
@@ -141,7 +142,7 @@ export const useOpenFilesFieldInput = () => {
       openFileUpload,
       uploadFile,
       pushFocusItemToFocusStack,
-      enqueueErrorSnackBar,
+      enqueueToast,
       t,
       store,
     ],

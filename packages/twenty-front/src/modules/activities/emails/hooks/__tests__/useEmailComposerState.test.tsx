@@ -5,14 +5,11 @@ import { type ReactNode } from 'react';
 import { SEND_EMAIL } from '@/activities/emails/graphql/mutations/sendEmail';
 import { useEmailComposerState } from '@/activities/emails/hooks/useEmailComposerState';
 
-const mockEnqueueSuccessSnackBar = jest.fn();
-const mockEnqueueErrorSnackBar = jest.fn();
+const mockEnqueueToast = jest.fn();
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar', () => ({
-  useSnackBar: () => ({
-    enqueueSuccessSnackBar: mockEnqueueSuccessSnackBar,
-    enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-  }),
+jest.mock('twenty-ui/primitives/feedback', () => ({
+  ...jest.requireActual('twenty-ui/primitives/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
 }));
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
@@ -119,7 +116,9 @@ describe('useEmailComposerState', () => {
     });
 
     expect(onSent).toHaveBeenCalledWith('message-thread-1');
-    expect(mockEnqueueErrorSnackBar).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).not.toHaveBeenCalledWith(
+      expect.objectContaining({ variant: 'error' }),
+    );
   });
 
   it('drops a picked alias when the reply moves to another account', () => {

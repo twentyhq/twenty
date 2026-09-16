@@ -1,0 +1,189 @@
+---
+title: Select
+description: Choose one or more values from a popup list of options.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SelectReference from '/snippets/ui/generated/input/select.mdx';
+
+Use `Select` for a form value chosen from a list. Use [Menu](/ui/primitives/surfaces/menu) for commands and actions.
+
+<StoryEmbed
+  storyId="ui-input-select--documentation"
+  title="Select example"
+  height={400}
+/>
+
+## Uncontrolled state
+
+Use `defaultValue` to set the initial priority. The select owns subsequent selection changes.
+
+```tsx
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => (
+  <Select.Root name="priority" defaultValue="normal" items={PRIORITIES}>
+    <Select.Trigger aria-label="Priority">
+      <Select.Value placeholder="Choose a priority" />
+    </Select.Trigger>
+    <Select.Popup>
+      {PRIORITIES.map(({ value, label }) => (
+        <Select.Item key={value} value={value}>
+          {label}
+        </Select.Item>
+      ))}
+    </Select.Popup>
+  </Select.Root>
+);
+```
+
+Supply `items` on `Root` so `Value` renders the selected item's label; without it, the trigger shows the raw value. The selected value can be `null` when nothing is selected.
+
+## Controlled state
+
+Pass `value` and update it with `onValueChange` to own the same priority in React state. The callback receives the next value and event details.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      name="priority"
+      value={priority}
+      onValueChange={setPriority}
+      items={PRIORITIES}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+      </Select.Trigger>
+      <Select.Popup>
+        {PRIORITIES.map(({ value, label }) => (
+          <Select.Item key={value} value={value}>
+            {label}
+          </Select.Item>
+        ))}
+      </Select.Popup>
+    </Select.Root>
+  );
+};
+```
+
+## Multiple selection
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const LANGUAGES = [
+  { value: 'en', label: 'English' },
+  { value: 'fr', label: 'French' },
+  { value: 'es', label: 'Spanish' },
+];
+
+export const LanguageSelect = () => {
+  const [languages, setLanguages] = useState<string[]>(['en']);
+
+  return (
+    <Select.Root
+      multiple
+      value={languages}
+      onValueChange={setLanguages}
+      items={LANGUAGES}
+    >
+      <Select.Trigger aria-label="Languages">
+        <Select.Value placeholder="Choose languages" />
+      </Select.Trigger>
+      <Select.Popup>
+        {LANGUAGES.map(({ value, label }) => (
+          <Select.Item key={value} value={value}>
+            {label}
+          </Select.Item>
+        ))}
+      </Select.Popup>
+    </Select.Root>
+  );
+};
+```
+
+With `multiple`, the value is an array. Use `defaultValue={['en']}` instead of `value` and `onValueChange` for an uncontrolled multiple selection. The generic root types represent the option value and whether multiple selection is enabled.
+
+## Open state
+
+Selection and popup visibility are independent. The examples above leave popup visibility uncontrolled. Selecting a single value closes the popup; multiple selection keeps it open. Use `defaultOpen` to set its initial visibility; it defaults to `false`.
+
+Pass `open` and update it with `onOpenChange` to control visibility. This example controls the popup while leaving the selected priority uncontrolled.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Select.Root
+      name="priority"
+      defaultValue="normal"
+      items={PRIORITIES}
+      open={open}
+      onOpenChange={setOpen}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+      </Select.Trigger>
+      <Select.Popup>
+        {PRIORITIES.map(({ value, label }) => (
+          <Select.Item key={value} value={value}>
+            {label}
+          </Select.Item>
+        ))}
+      </Select.Popup>
+    </Select.Root>
+  );
+};
+```
+
+## Parts and placement
+
+| Part                  | Purpose                                                    |
+| --------------------- | ---------------------------------------------------------- |
+| `Root`                | Owns selection, open state, and form integration.          |
+| `Trigger`             | Opens the list and supports `sm` or `md` sizing.           |
+| `Value`               | Displays the selected label or a placeholder.              |
+| `Popup`               | Provides the portal and positioned list.                   |
+| `Item`                | Represents an option, with optional icons and description. |
+| `Group`, `GroupLabel` | Group related options under an accessible label.           |
+| `Separator`           | Separates groups visually.                                 |
+
+`Popup` defaults to `side="bottom"`, `align="start"`, and `sideOffset={8}`. Set `alignItemWithTrigger` to align the selected option over the trigger. It uses the [theme's portal container](/ui/theming#scope-an-override) unless you provide `container`.
+
+Keyboard users can open the list from the trigger, navigate options with arrow keys, and type to find an option. Escape dismisses the popup. Label the trigger or integrate the select with [Field](/ui/primitives/input/field); a placeholder alone does not name the control.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<SelectReference />

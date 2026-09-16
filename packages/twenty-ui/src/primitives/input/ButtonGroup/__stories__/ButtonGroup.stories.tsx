@@ -6,12 +6,10 @@ import {
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import {
-  Button,
-  type ButtonAccent,
-  type ButtonSize,
-  type ButtonVariant,
-} from '@ui/primitives/input/Button/Button';
+import { Button } from '@ui/primitives/input/Button/Button';
+import type { ButtonAccent } from '@ui/primitives/input/Button/types/ButtonAccent';
+import type { ButtonSize } from '@ui/primitives/input/Button/types/ButtonSize';
+import type { ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 
 const meta: Meta<typeof ButtonGroup> = {

@@ -3,7 +3,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const BLOCKNOTE_PARAGRAPH = JSON.stringify([
@@ -35,7 +35,7 @@ const meta: Meta<typeof FormRecordRichTextFieldInput> = {
   component: FormRecordRichTextFieldInput,
   decorators: [
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     ComponentDecorator,
   ],
   parameters: {

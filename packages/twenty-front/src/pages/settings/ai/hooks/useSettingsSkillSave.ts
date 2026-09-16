@@ -1,11 +1,11 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import {
   CreateSkillDocument,
   type FindOneSkillQuery,
@@ -29,7 +29,7 @@ export const useSettingsSkillSave = ({
   validateForm: () => boolean;
 }) => {
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [originalFormValues, setOriginalFormValues] =
     useState(initialFormValues);
@@ -70,9 +70,7 @@ export const useSettingsSkillSave = ({
 
       setOriginalFormValues({ ...formValues });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsSubmitting(false);
     }
@@ -110,9 +108,7 @@ export const useSettingsSkillSave = ({
 
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsSubmitting(false);
     }

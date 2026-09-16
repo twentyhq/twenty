@@ -4,10 +4,10 @@ import { type AdvancedTextEditorProfile } from '@/advanced-text-editor/types/Adv
 import { buildFullRichTextWithVariableTagExtensions } from '@/advanced-text-editor/utils/buildFullRichTextExtensions';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor } from 'storybook/test';
-import { isDefined, TIPTAP_DOCUMENT_SCHEMA_VERSION } from 'twenty-shared/utils';
+import { TIPTAP_DOCUMENT_SCHEMA_VERSION, isDefined } from 'twenty-shared/utils';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
@@ -89,7 +89,7 @@ const meta: Meta<typeof EditorWrapper> = {
     WorkflowStepDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     RouterDecorator,
     WorkspaceDecorator,
   ],
