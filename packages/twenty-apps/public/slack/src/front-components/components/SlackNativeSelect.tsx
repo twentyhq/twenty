@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 // Native select: twenty-ui's Select needs PointerEvent, which the front component sandbox lacks
-export const SlackNativeSelect = styled.select`
+export const SlackNativeSelect = styled.select<{ $size: 'small' | 'medium' }>`
   background-color: ${() => themeCssVariables.background.transparent.lighter};
   border: 1px solid ${() => themeCssVariables.border.color.medium};
   border-radius: ${() => themeCssVariables.border.radius.md};
@@ -10,7 +10,10 @@ export const SlackNativeSelect = styled.select`
   color: ${() => themeCssVariables.font.color.primary};
   font-family: ${() => themeCssVariables.font.family};
   font-size: ${() => themeCssVariables.font.size.sm};
-  height: ${() => themeCssVariables.spacing[8]};
+  height: ${({ $size }) =>
+    $size === 'small'
+      ? themeCssVariables.spacing[6]
+      : themeCssVariables.spacing[8]};
   outline: none;
   padding: 0 ${() => themeCssVariables.spacing[2]};
   width: 100%;

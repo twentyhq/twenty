@@ -7,7 +7,6 @@ import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
-import { SlackIconPlus } from 'src/front-components/components/SlackButtonIcons';
 import { SlackChannelRuleForm } from 'src/front-components/components/SlackChannelRuleForm';
 import { SlackChannelRulesList } from 'src/front-components/components/SlackChannelRulesList';
 import { useRemoveSlackChannelRule } from 'src/front-components/hooks/use-remove-slack-channel-rule';
@@ -150,7 +149,6 @@ export const SlackChannelRulesSection = ({
             <Button
               type="button"
               title="Add a channel rule"
-              Icon={SlackIconPlus}
               size="small"
               variant="secondary"
               onClick={() => setIsFormOpen(true)}

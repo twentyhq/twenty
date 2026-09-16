@@ -10,6 +10,7 @@ type SlackChannelRuleCapabilitySelectProps = {
   onChange: (capability: SlackChannelRuleCapability) => void;
   disabled?: boolean;
   ariaLabel: string;
+  size?: 'small' | 'medium';
 };
 
 export const SlackChannelRuleCapabilitySelect = ({
@@ -18,8 +19,10 @@ export const SlackChannelRuleCapabilitySelect = ({
   onChange,
   disabled,
   ariaLabel,
+  size = 'medium',
 }: SlackChannelRuleCapabilitySelectProps) => (
   <SlackNativeSelect
+    $size={size}
     id={id}
     value={value}
     disabled={disabled}

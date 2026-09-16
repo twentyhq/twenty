@@ -51,6 +51,7 @@ export const SlackChannelRuleCapabilityCell = ({
       onChange={onCapabilityChange}
       disabled={disabled}
       ariaLabel={`Capability for ${displayedName}`}
+      size="small"
     />
   );
 };

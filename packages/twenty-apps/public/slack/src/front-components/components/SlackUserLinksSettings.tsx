@@ -14,7 +14,6 @@ import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
-import { SlackIconPlus } from 'src/front-components/components/SlackButtonIcons';
 import { SlackChannelRulesSection } from 'src/front-components/components/SlackChannelRulesSection';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
@@ -283,7 +282,6 @@ const SlackUserLinksSettingsContent = () => {
             <Button
               type="button"
               title="Link someone not listed above"
-              Icon={SlackIconPlus}
               size="small"
               variant="secondary"
               onClick={() => setIsManualFormOpen(true)}

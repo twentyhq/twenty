@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-sdk/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { SlackIconSave } from 'src/front-components/components/SlackButtonIcons';
 import { SlackChannelPicker } from 'src/front-components/components/SlackChannelPicker';
 import { SlackChannelRuleCapabilitySelect } from 'src/front-components/components/SlackChannelRuleCapabilitySelect';
 import { SlackChannelRuleModeSelect } from 'src/front-components/components/SlackChannelRuleModeSelect';
@@ -128,6 +127,11 @@ export const SlackChannelRuleForm = ({
             meta={
               selectedChannel.isPrivate ? 'Private channel' : 'Public channel'
             }
+            avatar={{
+              type: 'squared',
+              placeholder: selectedChannel.name,
+              placeholderColorSeed: selectedChannel.slackChannelId,
+            }}
             changeLabel="Pick a different channel"
             onChangeRequest={() => setSelectedChannel(null)}
             disabled={isSubmitting}
@@ -176,20 +180,18 @@ export const SlackChannelRuleForm = ({
       <StyledActions>
         <Button
           type="button"
-          title="Cancel"
-          variant="tertiary"
-          disabled={isSubmitting}
-          onClick={onCancel}
-        />
-        <Button
-          type="submit"
-          title="Save rule"
-          Icon={SlackIconSave}
+          title={isSubmitting ? 'Saving…' : 'Save rule'}
           variant="primary"
           accent="blue"
-          isLoading={isSubmitting}
           disabled={!canSubmit}
           onClick={handleSubmit}
+        />
+        <Button
+          type="button"
+          title="Cancel"
+          variant="secondary"
+          disabled={isSubmitting}
+          onClick={onCancel}
         />
       </StyledActions>
     </StyledForm>
