@@ -7,7 +7,7 @@ import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import RadioReference from '/snippets/ui/generated/input/radio.mdx';
 
-`Radio` represents one option inside [RadioGroup](/ui/components/input/radio-group). Give each option a distinct `value` and a visible label. The group owns the selected value.
+`Radio` represents one option inside [RadioGroup](/ui/primitives/input/radio-group). Give each option a distinct `value` and a visible label. The group owns the selected value.
 
 <StoryEmbed
   storyId="ui-input-radio--documentation"
@@ -46,7 +46,7 @@ The `size` prop accepts `sm` or `md` and defaults to `sm`. Use the same size for
 
 ## Keyboard and selection
 
-Tab enters or leaves the group. Arrow keys move between enabled options and select the focused option. Space selects the focused radio. Selection and change handlers belong on `RadioGroup`; see its [controlled example](/ui/components/input/radio-group#controlled-state).
+Tab enters or leaves the group. Arrow keys move between enabled options and select the focused option. Space selects the focused radio. Selection and change handlers belong on `RadioGroup`; see its [controlled example](/ui/primitives/input/radio-group#controlled-state).
 
 `Radio` is generic over the value type. Keep that type consistent with its group. Native attributes such as `aria-describedby` can associate an option with additional help text.
 
