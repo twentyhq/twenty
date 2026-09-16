@@ -34,11 +34,17 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { NavigationMenuItemAddDropdownForm } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownForm';
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { useAddFolderToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddFolderToNavigationMenu';
+import { useAddLinkToNavigationMenu } from '@/navigation-menu-item/edit/side-panel/hooks/useAddLinkToNavigationMenu';
+import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
+import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { ViewKey } from '@/views/types/ViewKey';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type Step = 'main' | 'object' | 'view' | 'record' | 'folder' | 'link';
+type Step = 'main' | 'object' | 'view' | 'record';
 type Item = {
   id: string;
   label: string;
@@ -48,6 +54,7 @@ type Item = {
   hasSubMenu?: boolean;
 };
 const NavigationMenuItemAddDropdownOption = ({ item }: { item: Item }) => {
+  const { t } = useLingui();
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
     item.id,
@@ -62,6 +69,10 @@ const NavigationMenuItemAddDropdownOption = ({ item }: { item: Item }) => {
         LeftComponent={item.icon}
         onClick={item.onClick}
         disabled={item.isDisabled}
+        contextualText={
+          item.isDisabled && !item.hasSubMenu ? t`Already in navbar` : undefined
+        }
+        contextualTextPosition="left"
         hasSubMenu={item.hasSubMenu}
         focused={isSelectedItemId}
       />
@@ -84,6 +95,10 @@ export const NavigationMenuItemAddDropdownContent = ({
 }: NavigationMenuItemAddDropdownContentProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
+  const { handleAddFolder } = useAddFolderToNavigationMenu();
+  const { handleAddLink } = useAddLinkToNavigationMenu();
+  const { openNavigationMenuItemInSidePanel } =
+    useOpenNavigationMenuItemInSidePanel();
   const [step, setStep] = useState<Step>('main');
   const [search, setSearch] = useState('');
   const [objectId, setObjectId] = useState<string | null>(null);
@@ -119,11 +134,27 @@ export const NavigationMenuItemAddDropdownContent = ({
   });
 
   const addItem = (input: NewNavigationMenuItemInput) => {
-    createItem(input, {
+    const itemId = createItem(input, {
       targetFolderId: folderId ?? null,
       targetIndex: position,
     });
     onClose();
+    const object = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.id === input.targetObjectMetadataId,
+    );
+    const view = views.find(
+      (availableView) => availableView.id === input.viewId,
+    );
+    openNavigationMenuItemInSidePanel({
+      itemId,
+      pageTitle:
+        input.targetRecordIdentifier?.labelIdentifier ??
+        object?.labelSingular ??
+        view?.name ??
+        t`Edit menu item`,
+      pageIcon: getIcon(object?.icon ?? view?.icon),
+    });
   };
   const navigate = (next: Step) => {
     setStep(next);
@@ -140,8 +171,6 @@ export const NavigationMenuItemAddDropdownContent = ({
     object: t`Object`,
     view: t`View`,
     record: t`Record`,
-    folder: t`Folder`,
-    link: t`Link`,
   };
 
   const getItems = (): Item[] => {
@@ -171,16 +200,32 @@ export const NavigationMenuItemAddDropdownContent = ({
         {
           id: 'folder',
           label: t`Folder`,
-          icon: <TintedIconTile Icon={IconFolder} color="orange" />,
-          onClick: () => navigate('folder'),
+          icon: (
+            <ColoredIcon
+              Icon={IconFolder}
+              color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}
+            />
+          ),
+          onClick: () => {
+            onClose();
+            handleAddFolder();
+          },
           isDisabled: Boolean(folderId),
           hasSubMenu: true,
         },
         {
           id: 'link',
           label: t`Link`,
-          icon: <TintedIconTile Icon={IconLink} color="red" />,
-          onClick: () => navigate('link'),
+          icon: (
+            <ColoredIcon
+              Icon={IconLink}
+              color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK}
+            />
+          ),
+          onClick: () => {
+            onClose();
+            handleAddLink();
+          },
           hasSubMenu: true,
         },
       ];
@@ -274,7 +319,6 @@ export const NavigationMenuItemAddDropdownContent = ({
         .toLocaleLowerCase()
         .includes(search.trim().toLocaleLowerCase()),
   );
-  const isForm = step === 'folder' || step === 'link';
   let emptyMessage = t`No results found`;
   if (step === 'record' && !search.trim())
     emptyMessage = t`Type to search records`;
@@ -296,44 +340,30 @@ export const NavigationMenuItemAddDropdownContent = ({
       >
         {titles[step]}
       </DropdownMenuHeader>
-      {isForm ? (
-        <NavigationMenuItemAddDropdownForm
-          key={step}
-          isFolder={step === 'folder'}
-          onAdd={addItem}
-        />
-      ) : (
-        <>
-          <DropdownMenuSearchInput
-            key={`search-${step}-${objectId}`}
-            value={search}
-            onChange={(event) => setSearch(event.target.value)}
-            placeholder={
-              step === 'record' ? t`Search records...` : t`Search...`
-            }
-          />
-          <SelectableList
-            key={`${step}-${objectId}`}
-            selectableListInstanceId={`${dropdownId}-list`}
-            focusId={dropdownId}
-            selectableItemIdArray={items
-              .filter((item) => !item.isDisabled)
-              .map((item) => item.id)}
-          >
-            <DropdownMenuItemsContainer hasMaxHeight>
-              {items.map((item) => (
-                <NavigationMenuItemAddDropdownOption
-                  key={item.id}
-                  item={item}
-                />
-              ))}
-              {items.length === 0 && (
-                <DropdownMenuSectionLabel label={emptyMessage} />
-              )}
-            </DropdownMenuItemsContainer>
-          </SelectableList>
-        </>
-      )}
+      <DropdownMenuSearchInput
+        key={`search-${step}-${objectId}`}
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
+        placeholder={step === 'record' ? t`Search records...` : t`Search...`}
+      />
+      <DropdownMenuSeparator />
+      <SelectableList
+        key={`${step}-${objectId}`}
+        selectableListInstanceId={`${dropdownId}-list`}
+        focusId={dropdownId}
+        selectableItemIdArray={items
+          .filter((item) => !item.isDisabled)
+          .map((item) => item.id)}
+      >
+        <DropdownMenuItemsContainer hasMaxHeight>
+          {items.map((item) => (
+            <NavigationMenuItemAddDropdownOption key={item.id} item={item} />
+          ))}
+          {items.length === 0 && (
+            <DropdownMenuSectionLabel label={emptyMessage} />
+          )}
+        </DropdownMenuItemsContainer>
+      </SelectableList>
     </DropdownContent>
   );
 };
