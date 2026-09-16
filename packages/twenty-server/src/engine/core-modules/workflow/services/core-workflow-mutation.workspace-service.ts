@@ -111,11 +111,42 @@ export class CoreWorkflowMutationWorkspaceService {
       name: `${sourceCoreWorkflow.name ?? ''} (Duplicate)`,
     });
 
+    try {
+      return await this.writeDuplicatedContentAndReturn({
+        workspaceId,
+        duplicatedCoreWorkflowId: duplicatedWorkflow.id,
+        trigger: remappedTrigger,
+        steps: remappedSteps,
+      });
+    } catch (error) {
+      try {
+        await this.deleteWorkflows(workspaceId, {
+          coreWorkflowIds: [duplicatedWorkflow.id],
+        });
+      } catch (cleanupError) {
+        this.logger.error(cleanupError);
+      }
+
+      throw error;
+    }
+  }
+
+  private async writeDuplicatedContentAndReturn({
+    workspaceId,
+    duplicatedCoreWorkflowId,
+    trigger,
+    steps,
+  }: {
+    workspaceId: string;
+    duplicatedCoreWorkflowId: string;
+    trigger: NonNullable<WorkflowVersionEntity['triggers']>[number];
+    steps: WorkflowAction[];
+  }): Promise<CoreWorkflowDTO> {
     const initialDraft = await this.coreWorkflowVersionRepository.findOne(
       workspaceId,
       {
         where: {
-          coreWorkflowId: duplicatedWorkflow.id,
+          coreWorkflowId: duplicatedCoreWorkflowId,
           status: CoreWorkflowVersionStatus.DRAFT,
         },
       },
@@ -123,7 +154,7 @@ export class CoreWorkflowMutationWorkspaceService {
 
     if (!isDefined(initialDraft)) {
       throw new WorkflowQueryValidationException(
-        `Duplicated core workflow '${duplicatedWorkflow.id}' has no initial draft version`,
+        `Duplicated core workflow '${duplicatedCoreWorkflowId}' has no initial draft version`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
           userFriendlyMessage: msg`Workflow duplication failed, please retry`,
@@ -140,19 +171,19 @@ export class CoreWorkflowMutationWorkspaceService {
       workspaceId,
       coreWorkflowVersionId: initialDraft.id,
       workspaceWorkflowVersionId,
-      trigger: remappedTrigger,
-      steps: remappedSteps,
+      trigger,
+      steps,
     });
 
     const duplicatedCoreWorkflow =
       await this.coreWorkflowListService.findOneById({
         workspaceId,
-        coreWorkflowId: duplicatedWorkflow.id,
+        coreWorkflowId: duplicatedCoreWorkflowId,
       });
 
     if (!isDefined(duplicatedCoreWorkflow)) {
       throw new WorkflowQueryValidationException(
-        `Core row '${duplicatedWorkflow.id}' of the duplicated workflow not found`,
+        `Core row '${duplicatedCoreWorkflowId}' of the duplicated workflow not found`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
           userFriendlyMessage: msg`Workflow duplication failed, please retry`,

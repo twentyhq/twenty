@@ -264,6 +264,8 @@ export class CoreWorkflowLifecycleWorkspaceService {
       );
     }, buildSystemAuthContext(workspaceId));
 
+    await this.writeCronTriggerCacheEntryAfterCommit({ resolved });
+
     await this.createOrUpdateCommandMenuItem({
       workspaceId,
       resolved,
@@ -478,27 +480,42 @@ export class CoreWorkflowLifecycleWorkspaceService {
           transactionScope,
         });
 
-        const cachedTrigger: CachedCronTrigger = {
-          workspaceId,
-          workflowId: workspaceWorkflowId,
-          pattern,
-          ...buildCoreDispatchIds({
-            coreWorkflowVersionId: resolved.coreWorkflowVersion.id,
-            workspaceWorkflowVersionId,
-          }),
-        };
-
-        await this.cacheStorageService.hashSetIfExists({
-          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-          field: workspaceWorkflowId,
-          value: JSON.stringify(cachedTrigger),
-        });
-
         return;
       }
       default:
         assertNever(trigger);
     }
+  }
+
+  // Redis does not join the database transaction, so the cache entry is only
+  // published once the activation transaction has committed.
+  private async writeCronTriggerCacheEntryAfterCommit({
+    resolved,
+  }: {
+    resolved: ResolvedCoreVersion;
+  }): Promise<void> {
+    const { trigger, workspaceWorkflowId, workspaceWorkflowVersionId } =
+      resolved;
+
+    if (!isDefined(trigger) || trigger.type !== WorkflowTriggerType.CRON) {
+      return;
+    }
+
+    const cachedTrigger: CachedCronTrigger = {
+      workspaceId: resolved.coreWorkflowVersion.workspaceId,
+      workflowId: workspaceWorkflowId,
+      pattern: computeCronPatternFromSchedule(trigger),
+      ...buildCoreDispatchIds({
+        coreWorkflowVersionId: resolved.coreWorkflowVersion.id,
+        workspaceWorkflowVersionId,
+      }),
+    };
+
+    await this.cacheStorageService.hashSetIfExists({
+      key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+      field: workspaceWorkflowId,
+      value: JSON.stringify(cachedTrigger),
+    });
   }
 
   private async disableAutomatedTrigger({
