@@ -1,3 +1,5 @@
+import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { NavigationMenuItemIconWithOverlay } from '@/navigation-menu-item/display/components/NavigationMenuItemIconWithOverlay';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -5,7 +7,7 @@ import {
   Avatar,
   getIconTileColorShades,
 } from 'twenty-ui/primitives/data-display';
-import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
+import { IconLink, IconPerspective, IconWorld, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -29,6 +31,9 @@ export const NavigationMenuItemIcon = ({
   navigationMenuItem: NavigationMenuItem;
 }) => {
   const { getIcon } = useIcons();
+  const isLayoutCustomizationModeEnabled = useAtomStateValue(
+    isLayoutCustomizationModeEnabledState,
+  );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
 
@@ -81,11 +86,9 @@ export const NavigationMenuItemIcon = ({
     const pageLayoutColor = getNavigationMenuItemColor(navigationMenuItem);
     const pageLayoutIconStyle = getIconTileColorShades(pageLayoutColor);
 
-    if (isDefined(PageLayoutIcon)) {
-      return <ColoredIcon Icon={PageLayoutIcon} color={pageLayoutColor} />;
-    }
-
-    return (
+    const pageIcon = isDefined(PageLayoutIcon) ? (
+      <ColoredIcon Icon={PageLayoutIcon} color={pageLayoutColor} />
+    ) : (
       <Avatar
         size="md"
         shape="rounded-square"
@@ -93,6 +96,14 @@ export const NavigationMenuItemIcon = ({
         color={pageLayoutIconStyle.iconColor}
         backgroundColor={pageLayoutIconStyle.backgroundColor}
       />
+    );
+
+    return isLayoutCustomizationModeEnabled ? (
+      <NavigationMenuItemIconWithOverlay OverlayIcon={IconPerspective}>
+        {pageIcon}
+      </NavigationMenuItemIconWithOverlay>
+    ) : (
+      pageIcon
     );
   }
 

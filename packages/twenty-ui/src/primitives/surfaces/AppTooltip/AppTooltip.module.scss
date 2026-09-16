@@ -27,8 +27,11 @@
     opacity: 0;
   }
 
+  // No exit transition: the shared tooltip is reused across anchors, and a
+  // fading node lingers while the next one opens, which strands references to
+  // the old element. Scope any exit animation per instance instead.
   &[data-ending-style] {
-    transition-timing-function: ease-in;
+    transition-duration: 0s;
   }
 }
 
