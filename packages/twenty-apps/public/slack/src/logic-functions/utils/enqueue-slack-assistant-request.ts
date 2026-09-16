@@ -13,7 +13,6 @@ const SILENCED_CHANNEL_SKIP_REASON = 'Channel is silenced by a channel rule';
 
 const DIRECT_MESSAGE_CHANNEL_TYPE = 'im';
 
-// Runs before anything visible happens in Slack or any request is recorded
 const isSilencedChannelEvent = async ({
   body,
   slackChannelId,
@@ -49,7 +48,6 @@ export const enqueueSlackAssistantRequest = async (
     return await replyToEmptySlackAssistantRequest(parsed.emptyRequest);
   }
 
-  // Before the follow-up gate: an expired thread would otherwise be nudged.
   if (
     await isSilencedChannelEvent({
       body,

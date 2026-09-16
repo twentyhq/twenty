@@ -14,8 +14,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-// Above the backdrop, so clicking back into the field moves the caret
-// instead of dismissing the panel
 const StyledInputWrapper = styled.div`
   position: relative;
   z-index: 2;
@@ -46,8 +44,6 @@ export const SearchDropdownPicker = <TOption,>({
   disabled,
   autoFocus,
 }: SearchDropdownPickerProps<TOption>) => {
-  // Closing on blur would unmount the panel on mouse down, before the click
-  // that picks an option ever lands on it
   const [isOpen, setIsOpen] = useState(false);
 
   const hasSearchTerm = isNonEmptyString(searchTerm.trim());

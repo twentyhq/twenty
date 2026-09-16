@@ -35,7 +35,6 @@ const toChannelRulePolicy = (
   }
 };
 
-// A rule is the finer grain, so it wins over the workspace mode in both directions
 export const resolveSlackChannelAccessPolicy = async ({
   client,
   slackChannelId,
