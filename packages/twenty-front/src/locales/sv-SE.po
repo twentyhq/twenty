@@ -5457,7 +5457,7 @@ msgstr "Kostnad"
 #. js-lingui-id: R0dp36
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Cost index"
-msgstr ""
+msgstr "Kostnadsindex"
 
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
@@ -7784,7 +7784,7 @@ msgstr "Redigerare"
 #. js-lingui-id: QyUT/d
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Effort"
-msgstr ""
+msgstr "Ansträngning"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -13065,7 +13065,7 @@ msgstr "Modell-ID krävs"
 #. js-lingui-id: E6zx5y
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Model information"
-msgstr ""
+msgstr "Modellinformation"
 
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -14680,7 +14680,7 @@ msgstr "Inte listad"
 #. js-lingui-id: zLXWou
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Not measured at this effort yet, so these are the base model's readings."
-msgstr ""
+msgstr "Har ännu inte mätts vid denna ansträngningsnivå, så detta är basmodellens värden."
 
 #. js-lingui-id: AjdrYY
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
@@ -22671,7 +22671,7 @@ msgstr "Visualisera datamodell"
 #. js-lingui-id: Ii6BOL
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Vs Balanced mode"
-msgstr ""
+msgstr "Jämfört med balanserat läge"
 
 #. js-lingui-id: IEcsBR
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
