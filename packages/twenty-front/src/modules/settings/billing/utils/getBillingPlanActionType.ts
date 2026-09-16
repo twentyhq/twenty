@@ -60,20 +60,23 @@ export const getBillingPlanActionType = ({
     return hasPermissionToManageBilling ? 'UNAVAILABLE' : 'CONTACT_ADMIN';
   }
 
-  // A further change is applied to the scheduled phase, not to the subscription
-  // as it stands today, so that phase is what the remaining cells compare to.
   const isPlanSwitchScheduled =
     isDefined(scheduledPlanKey) && scheduledPlanKey !== currentPlanKey;
   const isIntervalSwitchScheduled =
     isDefined(scheduledInterval) && scheduledInterval !== currentInterval;
 
-  const isBaselinePlan =
-    planKey === (isPlanSwitchScheduled ? scheduledPlanKey : currentPlanKey);
-  const isBaselineInterval =
-    selectedInterval ===
-    (isIntervalSwitchScheduled ? scheduledInterval : currentInterval);
+  const planKeyAfterScheduledChange = isPlanSwitchScheduled
+    ? scheduledPlanKey
+    : currentPlanKey;
+  const intervalAfterScheduledChange = isIntervalSwitchScheduled
+    ? scheduledInterval
+    : currentInterval;
 
-  if (!isBaselinePlan && !isBaselineInterval) {
+  const isPlanAfterScheduledChange = planKey === planKeyAfterScheduledChange;
+  const isIntervalAfterScheduledChange =
+    selectedInterval === intervalAfterScheduledChange;
+
+  if (!isPlanAfterScheduledChange && !isIntervalAfterScheduledChange) {
     if (isPlanSwitchScheduled) {
       return 'CANCEL_PLAN_SWITCH';
     }
@@ -85,10 +88,7 @@ export const getBillingPlanActionType = ({
     return 'SWITCH_INTERVAL_FIRST';
   }
 
-  // Reaching a cell on the plan or the interval the subscription already has
-  // means dropping that dimension from the scheduled change, which is what
-  // cancelling it does.
-  if (!isBaselinePlan) {
+  if (!isPlanAfterScheduledChange) {
     return isCurrentPlan ? 'CANCEL_PLAN_SWITCH' : 'SWITCH_PLAN';
   }
 

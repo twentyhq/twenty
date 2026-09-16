@@ -6,30 +6,26 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SettingsBillingSubscriptionInfoCard } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard';
 import { SettingsBillingSubscriptionInfoCardHeaderActions } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions';
 import { SettingsBillingSubscriptionInfoModals } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals';
-import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
+import { useBillingUpdateMutation } from '@/settings/billing/hooks/useBillingUpdateMutation';
 import { useCancelBillingSwitch } from '@/settings/billing/hooks/useCancelBillingSwitch';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
-import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { useSwitchBillingInterval } from '@/settings/billing/hooks/useSwitchBillingInterval';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/primitives/typography';
@@ -64,12 +60,6 @@ export const SettingsBillingSubscriptionInfo = ({
   const { formatNumber } = useNumberFormat();
 
   const { openModal } = useModal();
-
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-
-  const { applyCurrentWorkspaceBillingUpdate } =
-    useApplyCurrentWorkspaceBillingUpdate();
-  const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
 
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
 
@@ -136,6 +126,10 @@ export const SettingsBillingSubscriptionInfo = ({
     isCancellingIntervalSwitch,
     isCancellingPlanSwitch,
   } = useCancelBillingSwitch();
+  const {
+    isMutationRunning: isCancellingMeteredSwitch,
+    runBillingUpdateMutation: runResourceCreditSwitchCancellation,
+  } = useBillingUpdateMutation();
 
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
@@ -326,8 +320,6 @@ export const SettingsBillingSubscriptionInfo = ({
         ]
       : []),
   ];
-  const [isCancellingMeteredSwitch, setIsCancellingMeteredSwitch] =
-    useState(false);
 
   const isAnyActionLoading =
     isSwitchingInterval ||
@@ -339,66 +331,14 @@ export const SettingsBillingSubscriptionInfo = ({
   const isSubscriptionActionDisabled =
     !canSwitchSubscription || isAnyActionLoading;
 
-  const applyBillingUpdate = (
-    billingUpdate: Parameters<typeof applyCurrentWorkspaceBillingUpdate>[0],
-  ) => {
-    applyCurrentWorkspaceBillingUpdate(billingUpdate, {
-      onBillingUpdateApplied: refetchResourceCreditUsage,
+  const cancelResourceCreditSwitching = async () =>
+    await runResourceCreditSwitchCancellation({
+      errorMessage: t`Error while cancelling credit pack switching.`,
+      mutate: async () =>
+        (await cancelSwitchResourceCreditPrice()).data
+          ?.cancelSwitchResourceCreditPrice,
+      successMessage: t`Credit pack switching has been cancelled.`,
     });
-  };
-
-  const runBillingAction = async ({
-    action,
-    getErrorMessage,
-    getSuccessMessage,
-    isLoading,
-    setIsLoading,
-  }: {
-    action: () => Promise<void>;
-    getErrorMessage: () => string;
-    getSuccessMessage: () => string;
-    isLoading: boolean;
-    setIsLoading: (isLoading: boolean) => void;
-  }) => {
-    if (isAnyActionLoading || isLoading) return;
-
-    setIsLoading(true);
-    try {
-      await action();
-
-      enqueueSuccessSnackBar({ message: getSuccessMessage() });
-    } catch (error) {
-      enqueueErrorSnackBar({
-        message: getErrorMessage(),
-      });
-
-      if (!CombinedGraphQLErrors.is(error)) {
-        throw error;
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const cancelResourceCreditSwitching = async () => {
-    await runBillingAction({
-      action: async () => {
-        const { data } = await cancelSwitchResourceCreditPrice();
-
-        if (
-          isDefined(
-            data?.cancelSwitchResourceCreditPrice?.currentBillingSubscription,
-          )
-        ) {
-          applyBillingUpdate(data.cancelSwitchResourceCreditPrice);
-        }
-      },
-      getErrorMessage: () => t`Error while cancelling credit pack switching.`,
-      getSuccessMessage: () => t`Credit pack switching has been cancelled.`,
-      isLoading: isCancellingMeteredSwitch,
-      setIsLoading: setIsCancellingMeteredSwitch,
-    });
-  };
 
   return (
     <Section>

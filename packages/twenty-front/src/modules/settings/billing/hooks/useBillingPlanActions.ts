@@ -136,8 +136,6 @@ export const useBillingPlanActions = ({
           title: t`Contact admin`,
           variant: 'secondary',
         };
-      // Only downgrades are ever scheduled, so cancelling one keeps the richer
-      // subscription and is highlighted like the other upgrades.
       case 'CANCEL_PLAN_SWITCH':
         return {
           accent: 'blue',
