@@ -211,7 +211,9 @@ export const NavigationMenuItemAddDropdownContent = ({
         {
           id: 'folder',
           label: t`Folder`,
-          icon: (
+          contextualText: folderId ? t`No nested folders` : undefined,
+          Icon: folderId ? IconFolder : undefined,
+          icon: folderId ? undefined : (
             <ColoredIcon
               Icon={IconFolder}
               color={DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER}

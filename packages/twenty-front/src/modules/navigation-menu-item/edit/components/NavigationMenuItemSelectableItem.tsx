@@ -8,6 +8,7 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 export type NavigationMenuItemOption = {
   id: string;
   label: string;
+  contextualText?: string;
   Icon?: IconComponent;
   icon?: ReactNode;
   onClick: () => void;
@@ -39,7 +40,7 @@ export const NavigationMenuItemSelectableItem = ({
         onClick={item.onClick}
         disabled={item.isDisabled}
         contextualText={
-          item.isAlreadyInNavbar ? t`Already in navbar` : undefined
+          item.isAlreadyInNavbar ? t`Already in navbar` : item.contextualText
         }
         contextualTextPosition="left"
         hasSubMenu={item.hasSubMenu}
