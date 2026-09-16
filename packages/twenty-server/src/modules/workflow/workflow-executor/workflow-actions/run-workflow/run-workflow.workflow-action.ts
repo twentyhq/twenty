@@ -27,6 +27,13 @@ import { buildWorkflowRunSource } from 'src/modules/workflow/workflow-trigger/ut
 // execute normally, the next hop fails the step instead of recursing unbounded.
 const RUN_WORKFLOW_MAX_DEPTH = 5;
 
+// Top-level trigger payload key for the recursion counter. This must live
+// outside WORKFLOW_TRIGGER_METADATA_KEY ('metadata'), which is already
+// caller-visible trigger data (e.g. manual-trigger workspaceMemberId) — the
+// runner would otherwise clobber it, or a webhook-supplied 'metadata.runDepth'
+// could be misread as a real recursion depth.
+export const RUN_WORKFLOW_DEPTH_PAYLOAD_KEY = '__runWorkflowDepth';
+
 @Injectable()
 export class RunWorkflowWorkflowAction implements WorkflowAction {
   constructor(
@@ -64,25 +71,29 @@ export class RunWorkflowWorkflowAction implements WorkflowAction {
       context,
     ) as WorkflowRunWorkflowActionInput;
 
-    // 'metadata' is reserved on the child's trigger payload for the depth
-    // counter below; without this check a user-mapped 'metadata' key would
-    // be silently clobbered instead of surfacing a configuration error.
-    if (isDefined(workflowActionInput.input?.metadata)) {
+    // RUN_WORKFLOW_DEPTH_PAYLOAD_KEY is reserved on the child's trigger
+    // payload for the depth counter below; without this check a user-mapped
+    // key of the same name would be silently clobbered instead of surfacing
+    // a configuration error.
+    if (
+      isDefined(workflowActionInput.input?.[RUN_WORKFLOW_DEPTH_PAYLOAD_KEY])
+    ) {
       throw new WorkflowStepExecutorException(
-        "'metadata' is a reserved key in the run workflow input",
+        `'${RUN_WORKFLOW_DEPTH_PAYLOAD_KEY}' is a reserved key in the run workflow input`,
         WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
       );
     }
 
     // Only RUN_WORKFLOW itself writes runDepth onto the payload (D-10) — a
     // mapped `input` field can never spoof this counter, it is read from
-    // context.trigger.metadata, which the runner populates on each hop.
-    // context.trigger is the persisted trigger payload of the *current* run,
-    // which for a WEBHOOK-triggered workflow is entirely caller-controlled,
-    // so the value must be validated rather than trusted as a number.
+    // context.trigger[RUN_WORKFLOW_DEPTH_PAYLOAD_KEY], which the runner
+    // populates on each hop. context.trigger is the persisted trigger
+    // payload of the *current* run, which for a WEBHOOK-triggered workflow
+    // is entirely caller-controlled, so the value must be validated rather
+    // than trusted as a number.
     const rawRunDepth = (
-      context.trigger as { metadata?: { runDepth?: unknown } } | undefined
-    )?.metadata?.runDepth;
+      context.trigger as Record<string, unknown> | undefined
+    )?.[RUN_WORKFLOW_DEPTH_PAYLOAD_KEY];
 
     const runDepth = isDefined(rawRunDepth) ? rawRunDepth : 0;
 
@@ -190,7 +201,7 @@ export class RunWorkflowWorkflowAction implements WorkflowAction {
 
     const payload = {
       ...workflowActionInput.input,
-      metadata: { runDepth: nextRunDepth },
+      [RUN_WORKFLOW_DEPTH_PAYLOAD_KEY]: nextRunDepth,
     };
 
     const workflowRunnerWorkspaceService = this.moduleRef.get(

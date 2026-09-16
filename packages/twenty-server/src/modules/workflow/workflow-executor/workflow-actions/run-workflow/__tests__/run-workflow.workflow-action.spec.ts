@@ -18,7 +18,10 @@ import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-obje
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowStepExecutorExceptionCode } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { RunWorkflowWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/run-workflow/run-workflow.workflow-action';
+import {
+  RUN_WORKFLOW_DEPTH_PAYLOAD_KEY,
+  RunWorkflowWorkflowAction,
+} from 'src/modules/workflow/workflow-executor/workflow-actions/run-workflow/run-workflow.workflow-action';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
 import {
   WorkflowTriggerException,
@@ -113,15 +116,16 @@ describe('RunWorkflowWorkflowAction', () => {
   it('returns the child workflowRunId and stamps runDepth + 1 on the child payload', async () => {
     const result = await executeWithInput(
       { workflowId: calleeWorkflow.id, input: { foo: 'bar' } },
-      { metadata: { runDepth: 2 } },
+      { [RUN_WORKFLOW_DEPTH_PAYLOAD_KEY]: 2 },
     );
 
     expect(result).toEqual({ result: { workflowRunId: 'child-run-1' } });
+    expect(workflowRunnerWorkspaceService.run).toHaveBeenCalledTimes(1);
     expect(workflowRunnerWorkspaceService.run).toHaveBeenCalledWith(
       expect.objectContaining({
         workspaceId: 'workspace-1',
         workflowVersionId: calleeWorkflow.lastPublishedVersionId,
-        payload: { foo: 'bar', metadata: { runDepth: 3 } },
+        payload: { foo: 'bar', [RUN_WORKFLOW_DEPTH_PAYLOAD_KEY]: 3 },
       }),
     );
   });
@@ -129,9 +133,12 @@ describe('RunWorkflowWorkflowAction', () => {
   it('defaults to depth 0 when the trigger payload has no runDepth', async () => {
     await executeWithInput({ workflowId: calleeWorkflow.id, input: {} }, {});
 
+    expect(workflowRunnerWorkspaceService.run).toHaveBeenCalledTimes(1);
     expect(workflowRunnerWorkspaceService.run).toHaveBeenCalledWith(
       expect.objectContaining({
-        payload: expect.objectContaining({ metadata: { runDepth: 1 } }),
+        payload: expect.objectContaining({
+          [RUN_WORKFLOW_DEPTH_PAYLOAD_KEY]: 1,
+        }),
       }),
     );
   });
@@ -178,12 +185,15 @@ describe('RunWorkflowWorkflowAction', () => {
     it('allows a chain at the max depth', async () => {
       await executeWithInput(
         { workflowId: calleeWorkflow.id, input: {} },
-        { metadata: { runDepth: 4 } },
+        { [RUN_WORKFLOW_DEPTH_PAYLOAD_KEY]: 4 },
       );
 
+      expect(workflowRunnerWorkspaceService.run).toHaveBeenCalledTimes(1);
       expect(workflowRunnerWorkspaceService.run).toHaveBeenCalledWith(
         expect.objectContaining({
-          payload: expect.objectContaining({ metadata: { runDepth: 5 } }),
+          payload: expect.objectContaining({
+            [RUN_WORKFLOW_DEPTH_PAYLOAD_KEY]: 5,
+          }),
         }),
       );
     });
@@ -192,7 +202,7 @@ describe('RunWorkflowWorkflowAction', () => {
       await expect(
         executeWithInput(
           { workflowId: calleeWorkflow.id, input: {} },
-          { metadata: { runDepth: 5 } },
+          { [RUN_WORKFLOW_DEPTH_PAYLOAD_KEY]: 5 },
         ),
       ).rejects.toMatchObject({
         code: WorkflowStepExecutorExceptionCode.WORKFLOW_RUN_DEPTH_EXCEEDED,
@@ -211,7 +221,7 @@ describe('RunWorkflowWorkflowAction', () => {
         await expect(
           executeWithInput(
             { workflowId: calleeWorkflow.id, input: {} },
-            { metadata: { runDepth } },
+            { [RUN_WORKFLOW_DEPTH_PAYLOAD_KEY]: runDepth },
           ),
         ).rejects.toMatchObject({
           code: WorkflowStepExecutorExceptionCode.WORKFLOW_RUN_DEPTH_EXCEEDED,
@@ -221,11 +231,27 @@ describe('RunWorkflowWorkflowAction', () => {
     );
   });
 
-  it('rejects a mapped input that tries to set the reserved metadata key', async () => {
+  it('passes a mapped metadata field through untouched instead of clobbering it', async () => {
+    await executeWithInput({
+      workflowId: calleeWorkflow.id,
+      input: { metadata: { workspaceMemberId: 'member-1' } },
+    });
+
+    expect(workflowRunnerWorkspaceService.run).toHaveBeenCalledTimes(1);
+    expect(workflowRunnerWorkspaceService.run).toHaveBeenCalledWith(
+      expect.objectContaining({
+        payload: expect.objectContaining({
+          metadata: { workspaceMemberId: 'member-1' },
+        }),
+      }),
+    );
+  });
+
+  it('rejects a mapped input that tries to set the reserved depth key', async () => {
     await expect(
       executeWithInput({
         workflowId: calleeWorkflow.id,
-        input: { metadata: { spoofed: true } },
+        input: { [RUN_WORKFLOW_DEPTH_PAYLOAD_KEY]: 999 },
       }),
     ).rejects.toMatchObject({
       code: WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
