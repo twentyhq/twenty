@@ -1,0 +1,117 @@
+---
+title: RadioGroup
+description: Manage a single selection across a set of radio options.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
+
+`RadioGroup` coordinates the value, keyboard navigation, and form submission of its [Radio](/ui/primitives/input/radio) children.
+
+<StoryEmbed
+  storyId="ui-input-radiogroup--default"
+  title="RadioGroup example"
+  height={240}
+/>
+
+## Anatomy
+
+Put each `Radio` inside the group and associate it with a label. `RadioGroup` and `Radio` are separate exports.
+
+```text
+fieldset
+├── legend
+└── RadioGroup
+    ├── label
+    │   └── Radio
+    └── label
+        └── Radio
+```
+
+| Part                 | Requirement                 | Purpose                                                    |
+| -------------------- | --------------------------- | ---------------------------------------------------------- |
+| `RadioGroup`         | Required                    | Owns selection, keyboard navigation, and form integration. |
+| `Radio`              | One per option              | Supplies an option with a distinct `value`.                |
+| `label`              | Recommended for each option | Provides a visible, clickable name for its radio.          |
+| `fieldset`, `legend` | Optional grouping           | Groups related controls under a visible heading.           |
+
+Give the group its own accessible name using `aria-label` or `aria-labelledby`. In the examples below, `aria-labelledby` connects the group to the legend. Each radio also needs its own name. Put selection props on `RadioGroup` and option values on `Radio`.
+
+## Uncontrolled state
+
+Use `defaultValue` to set the initial billing frequency. The group owns subsequent changes.
+
+```tsx
+import { useId } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => {
+  const labelId = useId();
+
+  return (
+    <fieldset>
+      <legend id={labelId}>Billing frequency</legend>
+      <RadioGroup
+        name="billingFrequency"
+        defaultValue="monthly"
+        aria-labelledby={labelId}
+      >
+        <label>
+          <Radio value="monthly" />
+          Monthly
+        </label>
+        <label>
+          <Radio value="yearly" />
+          Yearly
+        </label>
+      </RadioGroup>
+    </fieldset>
+  );
+};
+```
+
+The group's `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
+
+## Controlled state
+
+Pass `value` and update it with `onValueChange` to own the same billing frequency in React state. Selection belongs to the group, not to individual radio controls.
+
+```tsx
+import { useId, useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => {
+  const labelId = useId();
+  const [billingFrequency, setBillingFrequency] = useState('monthly');
+
+  return (
+    <fieldset>
+      <legend id={labelId}>Billing frequency</legend>
+      <RadioGroup
+        name="billingFrequency"
+        value={billingFrequency}
+        onValueChange={setBillingFrequency}
+        aria-labelledby={labelId}
+      >
+        <label>
+          <Radio value="monthly" />
+          Monthly
+        </label>
+        <label>
+          <Radio value="yearly" />
+          Yearly
+        </label>
+      </RadioGroup>
+    </fieldset>
+  );
+};
+```
+
+`onValueChange` receives the next value and event details. The generic value type is inferred from the props. Use `disabled` on the group to disable every option, or on an individual radio to disable one choice. Arrow keys navigate the enabled options; Tab moves out of the group.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<RadioGroupReference />

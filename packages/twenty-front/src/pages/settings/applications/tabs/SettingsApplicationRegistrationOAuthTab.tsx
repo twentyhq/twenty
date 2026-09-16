@@ -1,6 +1,5 @@
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { ApiKeyInput } from '@/settings/developers/components/ApiKeyInput';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -10,18 +9,19 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconKey, IconRefresh, IconShield } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   RotateApplicationRegistrationClientSecretDocument,
   UpdateApplicationRegistrationDocument,
 } from '~/generated-metadata/graphql';
-import { applicationRegistrationClientSecretFamilyState } from '~/pages/settings/applications/states/applicationRegistrationClientSecretFamilyState';
-import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 import { SettingsApplicationRegistrationRedirectURIsInput } from '~/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput';
 import { SettingsApplicationRegistrationRedirectURIsTable } from '~/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsTable';
+import { applicationRegistrationClientSecretFamilyState } from '~/pages/settings/applications/states/applicationRegistrationClientSecretFamilyState';
+import { type ApplicationRegistrationData } from '~/pages/settings/applications/tabs/types/ApplicationRegistrationData';
 
 const ROTATE_SECRET_MODAL_ID = 'rotate-application-registration-secret-modal';
 
@@ -35,7 +35,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
   registration: ApplicationRegistrationData;
 }) => {
   const { t } = useLingui();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { openModal } = useModal();
 
   const applicationRegistrationId = registration.id;
@@ -73,10 +73,13 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           },
         },
       });
-      enqueueSuccessSnackBar({ message: t`Redirect URIs updated` });
+      enqueueToast({ variant: 'success', children: t`Redirect URIs updated` });
       setFormRedirectUris(newFormRedirectUris);
     } catch {
-      enqueueErrorSnackBar({ message: t`Error updating redirect URIs` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Error updating redirect URIs`,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -93,13 +96,15 @@ export const SettingsApplicationRegistrationOAuthTab = ({
 
       if (isNonEmptyString(secret)) {
         setRotatedSecret(secret);
-        enqueueSuccessSnackBar({
-          message: t`Client secret rotated. Copy it now — it won't be shown again.`,
+        enqueueToast({
+          variant: 'success',
+          children: t`Client secret rotated. Copy it now — it won't be shown again.`,
         });
       }
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error rotating client secret`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Error rotating client secret`,
       });
     } finally {
       setIsLoading(false);
@@ -137,11 +142,10 @@ export const SettingsApplicationRegistrationOAuthTab = ({
         />
         <StyledRotateContainer>
           <Button
-            Icon={IconRefresh}
-            title={t`Rotate client secret`}
-            variant="secondary"
+            startIcon={<IconRefresh />}
             onClick={() => openModal(ROTATE_SECRET_MODAL_ID)}
-          />
+            variant="outline"
+          >{t`Rotate client secret`}</Button>
         </StyledRotateContainer>
       </Section>
 

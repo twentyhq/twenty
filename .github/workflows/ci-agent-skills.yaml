@@ -1,0 +1,199 @@
+name: CI Agent Skills
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - package.json
+      - packages/twenty-agent-skills/**
+      - .github/workflows/ci-agent-skills.yaml
+
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+jobs:
+  changed-files-check:
+    uses: ./.github/workflows/changed-files.yaml
+    with:
+      files: |
+        package.json
+        packages/twenty-agent-skills/**
+        .github/workflows/ci-agent-skills.yaml
+
+  agent-skills-validate:
+    needs: changed-files-check
+    if: needs.changed-files-check.outputs.any_changed == 'true'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch local actions
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 10
+
+      - name: Install dependencies
+        uses: ./.github/actions/yarn-install
+
+      - name: Agent Skills / Build and validate
+        run: npx nx run twenty-agent-skills:validate
+
+      - name: Agent Skills / Test
+        run: npx nx run twenty-agent-skills:test
+
+      - name: Agent Skills / List with the skills CLI
+        run: |
+          set -euo pipefail
+          LISTING="$(npx -y skills@latest add ./packages/twenty-agent-skills/dist --list)"
+          echo "$LISTING"
+
+          for SKILL in create-app develop-app manage-app publish-app use-twenty-mcp; do
+            grep -q "$SKILL" <<<"$LISTING" || {
+              echo "::error::$SKILL missing from the collection listing"
+              exit 1
+            }
+          done
+
+          # The package path must scope discovery to the app skills; a listing that
+          # also carries repository-wide skills means the source is wrong.
+          if grep -q 'syncable-entity' <<<"$LISTING"; then
+            echo "::error::listing leaked internal contributor skills"
+            exit 1
+          fi
+
+      - name: Agent Skills / Install each skill independently
+        run: |
+          set -euo pipefail
+          for SKILL in create-app develop-app manage-app publish-app use-twenty-mcp; do
+            INSTALL_DIR="$(mktemp -d)"
+            (
+              cd "$INSTALL_DIR"
+              npx -y skills@latest add "$GITHUB_WORKSPACE/packages/twenty-agent-skills/dist" \
+                --skill "$SKILL" --agent claude-code --agent codex --copy -y
+            )
+            npx nx run twenty-agent-skills:verify:install -- "$INSTALL_DIR" "$SKILL"
+            rm -rf "$INSTALL_DIR"
+          done
+
+      - name: Agent Skills / Install the whole collection
+        run: |
+          set -euo pipefail
+          INSTALL_DIR="$(mktemp -d)"
+          (
+            cd "$INSTALL_DIR"
+            npx -y skills@latest add "$GITHUB_WORKSPACE/packages/twenty-agent-skills/dist" \
+              --skill '*' --agent claude-code --agent codex --copy -y
+          )
+          npx nx run twenty-agent-skills:verify:install -- "$INSTALL_DIR"
+          rm -rf "$INSTALL_DIR"
+
+      - name: Archive the verified distribution
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: tar -C packages/twenty-agent-skills/dist -czf "$RUNNER_TEMP/twenty-agent-skills.tar.gz" .
+
+      - name: Upload the verified distribution
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: twenty-agent-skills
+          path: ${{ runner.temp }}/twenty-agent-skills.tar.gz
+          retention-days: 1
+          if-no-files-found: error
+
+  agent-skills-publish:
+    needs: agent-skills-validate
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.repository == 'twentyhq/twenty'
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      released: ${{ steps.publish.outputs.released }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Download the verified distribution
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: twenty-agent-skills
+          path: ${{ runner.temp }}/agent-skills-artifact
+
+      - name: Publish distribution branch
+        id: publish
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 --no-tags origin main
+          if [ "$(git rev-parse "$GITHUB_SHA:packages/twenty-agent-skills")" != "$(git rev-parse 'FETCH_HEAD:packages/twenty-agent-skills')" ]; then
+            echo 'Skipping this distribution because the skills source has changed on main.'
+            exit 0
+          fi
+
+          DISTRIBUTION_DIR="$RUNNER_TEMP/agent-skills-dist"
+          PUBLISH_DIR="$RUNNER_TEMP/agent-skills-release"
+          mkdir "$DISTRIBUTION_DIR"
+          tar -xzf "$RUNNER_TEMP/agent-skills-artifact/twenty-agent-skills.tar.gz" -C "$DISTRIBUTION_DIR"
+
+          REMOTE_BRANCH="$(git ls-remote --heads origin refs/heads/agent-skills)"
+          if [ -n "$REMOTE_BRANCH" ]; then
+            git fetch --no-tags origin refs/heads/agent-skills
+            git worktree add --detach "$PUBLISH_DIR" FETCH_HEAD
+          else
+            git worktree add --detach --no-checkout "$PUBLISH_DIR"
+            git -C "$PUBLISH_DIR" switch --orphan agent-skills
+          fi
+
+          rsync -a --delete --exclude=/.git "$DISTRIBUTION_DIR/" "$PUBLISH_DIR/"
+          cd "$PUBLISH_DIR"
+          git add --all
+          if git diff --cached --quiet; then
+            echo 'The agent-skills distribution is unchanged.'
+            echo 'released=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m "Publish agent skills from $GITHUB_SHA"
+          git push origin HEAD:refs/heads/agent-skills
+          echo 'released=true' >> "$GITHUB_OUTPUT"
+
+  agent-skills-remote-source:
+    needs: agent-skills-publish
+    if: needs.agent-skills-publish.outputs.released == 'true'
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+
+      - name: Setup Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: '24'
+
+      - name: Download the verified distribution
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: twenty-agent-skills
+          path: ${{ runner.temp }}/agent-skills-artifact
+
+      - name: Agent Skills / Install from the documented remote source
+        run: |
+          set -euo pipefail
+          mkdir -p packages/twenty-agent-skills/dist
+          tar -xzf "$RUNNER_TEMP/agent-skills-artifact/twenty-agent-skills.tar.gz" -C packages/twenty-agent-skills/dist
+          INSTALL_DIR="$(mktemp -d)"
+          (
+            cd "$INSTALL_DIR"
+            npx -y skills@latest add 'https://github.com/twentyhq/twenty/tree/agent-skills' \
+              --skill '*' --agent claude-code --agent codex --copy -y
+          )
+          node packages/twenty-agent-skills/scripts/verify-install.js "$INSTALL_DIR"
+          rm -rf "$INSTALL_DIR"

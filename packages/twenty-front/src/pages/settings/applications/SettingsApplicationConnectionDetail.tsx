@@ -328,35 +328,29 @@ export const SettingsApplicationConnectionDetail = () => {
                 title={connectionLabel}
                 description={t`Manage this application's OAuth connection.`}
               />
-              {connection.isOwnedByCurrentUser && (
-                <StyledActions>
-                  {connection.authFailedAt && (
-                    <Button
-                      title={t`Reconnect`}
-                      Icon={IconRefresh}
-                      variant="secondary"
-                      accent="blue"
-                      onClick={handleReconnect}
-                    />
-                  )}
-                  {connection.visibility !== 'workspace' && (
-                    <Button
-                      title={t`Share with workspace`}
-                      Icon={IconUsers}
-                      variant="secondary"
-                      accent="default"
-                      onClick={() => openModal(shareWithWorkspaceModalId)}
-                    />
-                  )}
+              <StyledActions>
+                {connection.authFailedAt && (
                   <Button
-                    title={t`Disconnect`}
-                    Icon={IconTrash}
-                    variant="secondary"
-                    accent="danger"
-                    onClick={() => openModal(deleteModalId)}
-                  />
-                </StyledActions>
-              )}
+                    startIcon={<IconRefresh />}
+                    onClick={handleReconnect}
+                    variant="outline"
+                    color="accent"
+                  >{t`Reconnect`}</Button>
+                )}
+                {connection.visibility !== 'workspace' && (
+                  <Button
+                    startIcon={<IconUsers />}
+                    onClick={() => openModal(shareWithWorkspaceModalId)}
+                    variant="outline"
+                  >{t`Share with workspace`}</Button>
+                )}
+                <Button
+                  startIcon={<IconTrash />}
+                  onClick={() => openModal(deleteModalId)}
+                  variant="outline"
+                  color="danger"
+                >{t`Disconnect`}</Button>
+              </StyledActions>
             </Section>
             <Section>
               <H2Title
@@ -408,7 +402,7 @@ export const SettingsApplicationConnectionDetail = () => {
               }
               onConfirmClick={handleShareWithWorkspace}
               confirmButtonText={t`Reconnect and share`}
-              confirmButtonAccent="blue"
+              confirmButtonColor="accent"
             />
           </>
         )}

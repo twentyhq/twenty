@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { EmailsCardContent } from '@/activities/emails/components/EmailsCardContent';
@@ -12,14 +13,20 @@ import { type TimelineThreadsWithTotal } from '~/generated/graphql';
 export const EmailsCard = () => {
   const targetRecord = useTargetRecord();
 
-  const { data, firstQueryLoading, isFetchingMore, fetchMoreRecords, refetch } =
-    useCustomResolver<TimelineThreadsWithTotal>(
-      getTimelineThreadsFromObjectRecord,
-      'getTimelineThreadsFromObjectRecord',
-      'timelineThreads',
-      targetRecord,
-      TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
-    );
+  const {
+    data,
+    error,
+    firstQueryLoading,
+    isFetchingMore,
+    fetchMoreRecords,
+    refetch,
+  } = useCustomResolver<TimelineThreadsWithTotal>({
+    query: getTimelineThreadsFromObjectRecord,
+    queryName: 'getTimelineThreadsFromObjectRecord',
+    objectName: 'timelineThreads',
+    activityTargetableObject: targetRecord,
+    pageSize: TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
+  });
 
   useSubscribeTimelineToParticipantChanges({
     queryId: `emails-${targetRecord.id}`,
@@ -45,6 +52,8 @@ export const EmailsCard = () => {
 
   return (
     <>
+      <ToastOnQueryErrorEffect error={error} />
+
       <WidgetHeaderCountEffect count={totalNumberOfThreads} />
       <EmailsCardContent
         firstQueryLoading={firstQueryLoading}

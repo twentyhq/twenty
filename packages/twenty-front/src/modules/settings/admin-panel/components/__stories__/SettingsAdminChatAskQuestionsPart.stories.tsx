@@ -5,7 +5,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { SettingsAdminChatAskQuestionsPart } from '@/settings/admin-panel/components/SettingsAdminChatAskQuestionsPart';
 import { type AdminChatThreadMessagePart } from '@/settings/admin-panel/types/AdminChatThreadMessagePart';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const QUESTIONS = [
   {
@@ -52,7 +52,7 @@ const buildPart = (
 const meta: Meta<typeof SettingsAdminChatAskQuestionsPart> = {
   title: 'Modules/Settings/AdminPanel/SettingsAdminChatAskQuestionsPart',
   component: SettingsAdminChatAskQuestionsPart,
-  decorators: [SnackBarDecorator, ComponentDecorator],
+  decorators: [ToastDecorator, ComponentDecorator],
   parameters: { container: { width: 700 } },
   argTypes: { part: { control: false }, result: { control: false } },
 };

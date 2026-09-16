@@ -5,7 +5,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { NavigationMenuItemFolderSubItem } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderSubItem';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof NavigationMenuItemFolderSubItem> = {
   title: 'Modules/NavigationMenuItem/NavigationMenuItemFolderSubItem',
@@ -14,7 +14,7 @@ const meta: Meta<typeof NavigationMenuItemFolderSubItem> = {
     ComponentDecorator,
     IconsProviderDecorator,
     MemoryRouterDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   parameters: { container: { width: 240 } },
   args: {

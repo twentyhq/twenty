@@ -20,11 +20,11 @@ import { convertPageLayoutDraftToUpdateInput } from '@/page-layout/utils/convert
 import { convertPageLayoutToTabLayouts } from '@/page-layout/utils/convertPageLayoutToTabLayouts';
 import { toDraftPageLayout } from '@/page-layout/utils/toDraftPageLayout';
 import { transformPageLayout } from '@/page-layout/utils/transformPageLayout';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { useCallback, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
@@ -37,7 +37,7 @@ export const useSaveLayoutCustomization = () => {
   const { saveDraft } = useSaveNavigationMenuItemsDraft();
   const { saveCommandMenuItemsDraft } = useSaveCommandMenuItemsDraft();
   const { isDirty: isCommandMenuItemsDirty } = useCommandMenuItemsDraftState();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { updatePageLayoutWithTabsAndWidgets } =
     useUpdatePageLayoutWithTabsAndWidgets();
   const { createPendingFieldsWidgetViews } =
@@ -151,8 +151,9 @@ export const useSaveLayoutCustomization = () => {
       }
 
       if (hasAnyFailure) {
-        enqueueErrorSnackBar({
-          message: t`Some layout changes could not be saved`,
+        enqueueToast({
+          variant: 'error',
+          children: t`Some layout changes could not be saved`,
         });
         return;
       }
@@ -160,8 +161,9 @@ export const useSaveLayoutCustomization = () => {
       exitLayoutCustomizationMode();
     } catch (error) {
       logError(error);
-      enqueueErrorSnackBar({
-        message: t`Failed to save layout customization`,
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to save layout customization`,
       });
     } finally {
       setIsSaving(false);
@@ -176,7 +178,7 @@ export const useSaveLayoutCustomization = () => {
     updatePageLayoutWithTabsAndWidgets,
     savePageLayoutWidgetsData,
     exitLayoutCustomizationMode,
-    enqueueErrorSnackBar,
+    enqueueToast,
     store,
     t,
   ]);

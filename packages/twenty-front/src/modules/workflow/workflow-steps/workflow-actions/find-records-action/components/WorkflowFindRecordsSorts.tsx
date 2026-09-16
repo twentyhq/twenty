@@ -139,7 +139,8 @@ export const WorkflowFindRecordsSorts = ({
             {!readonly && (
               <Button
                 onClick={() => handleRemoveSort(sort.id)}
-                Icon={IconTrash}
+                startIcon={<IconTrash />}
+                aria-label={t`Delete`}
                 disabled={readonly}
               />
             )}
@@ -149,15 +150,13 @@ export const WorkflowFindRecordsSorts = ({
 
       <StyledAddButtonContainer>
         <Button
-          Icon={IconArrowsSort}
-          size="small"
-          variant="secondary"
-          accent="default"
+          startIcon={<IconArrowsSort />}
+          size="sm"
           onClick={handleAddSort}
-          ariaLabel={t`Add sort`}
-          title={t`Add sort`}
+          aria-label={t`Add sort`}
           disabled={readonly}
-        />
+          variant="outline"
+        >{t`Add sort`}</Button>
       </StyledAddButtonContainer>
     </StyledContainer>
   );

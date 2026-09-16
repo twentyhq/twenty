@@ -7,7 +7,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import * as bcrypt from 'bcrypt';
 import isEqual from 'lodash.isequal';
 import { type Manifest } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import { IsNull, type FindOptionsWhere, type Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -41,8 +41,8 @@ import {
 } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { buildRegistrationManifestUpdateFields } from 'src/engine/core-modules/application/application-registration/utils/build-registration-manifest-update-fields.util';
-import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
 import { fromManifestApplicationToDisplayFields } from 'src/engine/core-modules/application/application-registration/utils/from-manifest-application-to-display-fields.util';
+import { serializeApplicationRegistrationForBroadcast } from 'src/engine/core-modules/application/application-registration/utils/serialize-application-registration-for-broadcast.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -54,10 +54,10 @@ import {
 } from 'src/engine/core-modules/application/jobs/upgrade-applications.job-constants';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
+import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { ServerFileStorageService } from 'src/engine/core-modules/file-storage/services/server-file-storage.service';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -107,6 +107,15 @@ const APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT: (keyof ApplicationRegist
     'createdAt',
     'updatedAt',
   ];
+
+export type UpsertApplicationRegistrationFromCatalogParams = {
+  universalIdentifier: string;
+  name: string;
+  sourceType: ApplicationRegistrationSourceType;
+  sourcePackage: string;
+  latestAvailableVersion: string | null;
+  manifest: Manifest;
+};
 
 export type ApplicationRegistrationCatalogCard = {
   id: string;
@@ -277,32 +286,6 @@ export class ApplicationRegistrationService {
         version: version ?? 'unknown',
       },
     });
-  }
-
-  async setLatestAvailableVersionIfChanged(
-    applicationRegistrationId: string,
-    newVersion: string | null,
-    { shouldBroadcastUpdate = true }: { shouldBroadcastUpdate?: boolean } = {},
-  ): Promise<boolean> {
-    const result = await this.applicationRegistrationRepository
-      .createQueryBuilder()
-      .update(ApplicationRegistrationEntity)
-      .set({ latestAvailableVersion: newVersion })
-      .where('id = :id', { id: applicationRegistrationId })
-      .andWhere('"latestAvailableVersion" IS DISTINCT FROM :newVersion', {
-        newVersion,
-      })
-      .execute();
-
-    const hasChanged = (result.affected ?? 0) > 0;
-
-    if (hasChanged && shouldBroadcastUpdate) {
-      await this.broadcastApplicationRegistrationUpdatedById(
-        applicationRegistrationId,
-      );
-    }
-
-    return hasChanged;
   }
 
   async findMany(
@@ -691,7 +674,10 @@ export class ApplicationRegistrationService {
         | 'ownerWorkspaceId'
       >
     >;
-  }): Promise<boolean> {
+  }): Promise<{
+    registration: ApplicationRegistrationEntity;
+    isNewerVersion: boolean;
+  } | null> {
     return this.cacheLockService.withLock(
       async () => {
         const existing =
@@ -699,20 +685,28 @@ export class ApplicationRegistrationService {
             where: { id: applicationRegistrationId },
           });
 
+        const isSameOrNewerVersion =
+          isDefined(latestAvailableVersion) &&
+          shouldRefreshApplicationRegistrationOnInstall({
+            installedVersion: latestAvailableVersion,
+            latestAvailableVersion: existing.latestAvailableVersion,
+          });
+
         if (
           preventVersionDowngrade &&
           isDefined(latestAvailableVersion) &&
-          !shouldRefreshApplicationRegistrationOnInstall({
-            installedVersion: latestAvailableVersion,
-            latestAvailableVersion: existing.latestAvailableVersion,
-          })
+          !isSameOrNewerVersion
         ) {
           this.logger.log(
             `Skipping registration update for ${existing.universalIdentifier}: version ${latestAvailableVersion} is older than latest available version ${existing.latestAvailableVersion}`,
           );
 
-          return false;
+          return null;
         }
+
+        const isNewerVersion =
+          isSameOrNewerVersion &&
+          latestAvailableVersion !== existing.latestAvailableVersion;
 
         const manifestUpdateFields = buildRegistrationManifestUpdateFields({
           manifestApplication: manifest.application,
@@ -723,6 +717,22 @@ export class ApplicationRegistrationService {
         const hasLogoPathChanged =
           (manifestUpdateFields.logo ?? null) !== (existing.logo ?? null);
 
+        const updateFields = {
+          name: manifest.application?.displayName ?? existing.name,
+          manifest,
+          ...manifestUpdateFields,
+          ...(hasLogoPathChanged && { logoFileId: null }),
+          ...(sourceType !== undefined && { sourceType }),
+          ...(latestAvailableVersion !== undefined && {
+            latestAvailableVersion,
+          }),
+          ...additionalFields,
+        };
+
+        // TypeORM's deep partial type cannot represent the manifest JSON column.
+        const updatePayload =
+          updateFields as QueryDeepPartialEntity<ApplicationRegistrationEntity>;
+
         // Partial update in one transaction: the row and its variable schemas
         // stay on the same manifest without clobbering columns written by
         // flows outside this lock.
@@ -730,17 +740,7 @@ export class ApplicationRegistrationService {
           async (entityManager) => {
             await entityManager
               .getRepository(ApplicationRegistrationEntity)
-              .update(applicationRegistrationId, {
-                name: manifest.application?.displayName ?? existing.name,
-                manifest,
-                ...manifestUpdateFields,
-                ...(hasLogoPathChanged && { logoFileId: null }),
-                ...(sourceType !== undefined && { sourceType }),
-                ...(latestAvailableVersion !== undefined && {
-                  latestAvailableVersion,
-                }),
-                ...additionalFields,
-              } as QueryDeepPartialEntity<ApplicationRegistrationEntity>);
+              .update(applicationRegistrationId, updatePayload);
 
             if (isDefined(manifest.application?.serverVariables)) {
               await this.applicationRegistrationVariableService.syncVariableSchemas(
@@ -759,7 +759,10 @@ export class ApplicationRegistrationService {
           registrationBeforeUpdate ?? existing,
         );
 
-        return true;
+        return {
+          registration: { ...existing, ...updateFields },
+          isNewerVersion,
+        };
       },
       `application-registration-update:${applicationRegistrationId}`,
       APPLICATION_REGISTRATION_UPDATE_LOCK_OPTIONS,
@@ -825,102 +828,115 @@ export class ApplicationRegistrationService {
   }
 
   async upsertFromCatalog(
-    params: Pick<
-      ApplicationRegistrationEntity,
-      | 'universalIdentifier'
-      | 'name'
-      | 'sourceType'
-      | 'sourcePackage'
-      | 'latestAvailableVersion'
-      | 'manifest'
-    >,
-  ): Promise<void> {
+    rawParams: UpsertApplicationRegistrationFromCatalogParams,
+  ): Promise<ApplicationRegistrationEntity | null> {
+    if (!isValidUuid(rawParams.universalIdentifier)) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${rawParams.sourcePackage}: universal identifier ${rawParams.universalIdentifier} is not a valid UUID`,
+      );
+
+      return null;
+    }
+
+    const params = {
+      ...rawParams,
+      universalIdentifier: rawParams.universalIdentifier.toLowerCase(),
+    };
+
     const existing = await this.findOneByUniversalIdentifierGlobal(
       params.universalIdentifier,
     );
 
-    if (isDefined(existing) && isDefined(params.manifest)) {
-      const isNewVersion = await this.setLatestAvailableVersionIfChanged(
-        existing.id,
-        params.latestAvailableVersion ?? null,
-        { shouldBroadcastUpdate: false },
+    if (
+      isDefined(existing) &&
+      existing.sourceType !== ApplicationRegistrationSourceType.NPM
+    ) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: universal identifier ${params.universalIdentifier} is registered from source ${existing.sourceType}`,
       );
 
-      await this.updateFromManifest({
-        applicationRegistrationId: existing.id,
-        manifest: params.manifest,
-        sourceType: params.sourceType,
-        latestAvailableVersion: params.latestAvailableVersion,
-        registrationBeforeUpdate: existing,
-        additionalFields: {
-          name: params.name,
-          sourcePackage: params.sourcePackage,
-        },
-      });
+      return null;
+    }
 
-      if (isNewVersion) {
-        this.emitRegistrationPublishMetric({
-          isNewRegistration: false,
-          universalIdentifier: params.universalIdentifier,
-          name: params.name,
-          sourceType: params.sourceType,
-          version: params.latestAvailableVersion,
-        });
+    const officialSourcePackage = MARKETPLACE_VETTED_APPLICATIONS.find(
+      ({ universalIdentifier }) =>
+        universalIdentifier === params.universalIdentifier,
+    )?.sourcePackage;
 
-        await this.enqueueAutoUpgradeApplications(existing.id);
-      }
+    const expectedSourcePackage =
+      officialSourcePackage ?? existing?.sourcePackage;
 
-      return;
+    if (
+      isDefined(expectedSourcePackage) &&
+      expectedSourcePackage !== params.sourcePackage
+    ) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: universal identifier ${params.universalIdentifier} belongs to package ${expectedSourcePackage}`,
+      );
+
+      return null;
     }
 
     if (isDefined(existing)) {
-      const isNewVersion = await this.setLatestAvailableVersionIfChanged(
-        existing.id,
-        params.latestAvailableVersion ?? null,
-        { shouldBroadcastUpdate: false },
-      );
-
-      // A registration first created by a local install (CLI dev / tarball
-      // upload) starts unlisted on purpose. Once the catalog source serves the
-      // same universalIdentifier, surface it in the marketplace — while
-      // preserving an operator's decision to delist a registry-sourced app.
-      const isRelistedFromLocalSource =
-        existing.sourceType === ApplicationRegistrationSourceType.TARBALL ||
-        existing.sourceType === ApplicationRegistrationSourceType.LOCAL;
-
-      await this.applicationRegistrationRepository.save({
-        ...existing,
-        name: params.name,
-        sourceType: params.sourceType,
-        sourcePackage: params.sourcePackage,
-        latestAvailableVersion: params.latestAvailableVersion,
-        isListed: existing.isListed || isRelistedFromLocalSource,
-        manifest: params.manifest,
-        ...fromManifestApplicationToDisplayFields(params.manifest?.application),
-      });
-
-      await this.invalidateMarketplaceAppsCache();
-
-      await this.broadcastApplicationRegistrationUpdatedById(
-        existing.id,
-        existing,
-      );
-
-      if (isNewVersion) {
-        this.emitRegistrationPublishMetric({
-          isNewRegistration: false,
-          universalIdentifier: params.universalIdentifier,
-          name: params.name,
-          sourceType: params.sourceType,
-          version: params.latestAvailableVersion,
-        });
-
-        await this.enqueueAutoUpgradeApplications(existing.id);
-      }
-
-      return;
+      return this.updateFromCatalog(existing, params);
     }
 
+    return this.createFromCatalog(params, {
+      isVetted: isDefined(officialSourcePackage),
+    });
+  }
+
+  private async updateFromCatalog(
+    existing: ApplicationRegistrationEntity,
+    params: UpsertApplicationRegistrationFromCatalogParams,
+  ): Promise<ApplicationRegistrationEntity | null> {
+    if (
+      !isDefined(params.latestAvailableVersion) &&
+      isDefined(existing.latestAvailableVersion)
+    ) {
+      this.logger.warn(
+        `Skipping catalog entry from package ${params.sourcePackage}: no version for universal identifier ${params.universalIdentifier} while ${existing.latestAvailableVersion} is already known`,
+      );
+
+      return null;
+    }
+
+    const manifestUpdate = await this.updateFromManifest({
+      applicationRegistrationId: existing.id,
+      manifest: params.manifest,
+      sourceType: params.sourceType,
+      latestAvailableVersion: params.latestAvailableVersion,
+      preventVersionDowngrade: true,
+      registrationBeforeUpdate: existing,
+      additionalFields: {
+        name: params.name,
+        sourcePackage: params.sourcePackage,
+      },
+    });
+
+    if (!isDefined(manifestUpdate)) {
+      return null;
+    }
+
+    if (manifestUpdate.isNewerVersion) {
+      this.emitRegistrationPublishMetric({
+        isNewRegistration: false,
+        universalIdentifier: params.universalIdentifier,
+        name: params.name,
+        sourceType: params.sourceType,
+        version: params.latestAvailableVersion,
+      });
+
+      await this.enqueueAutoUpgradeApplications(existing.id);
+    }
+
+    return manifestUpdate.registration;
+  }
+
+  private async createFromCatalog(
+    params: UpsertApplicationRegistrationFromCatalogParams,
+    { isVetted }: { isVetted: boolean },
+  ): Promise<ApplicationRegistrationEntity> {
     const registration = this.applicationRegistrationRepository.create({
       universalIdentifier: params.universalIdentifier,
       name: params.name,
@@ -928,12 +944,9 @@ export class ApplicationRegistrationService {
       sourcePackage: params.sourcePackage,
       latestAvailableVersion: params.latestAvailableVersion,
       isListed: true,
-      isVetted: MARKETPLACE_VETTED_APPLICATIONS.some(
-        ({ universalIdentifier }) =>
-          universalIdentifier === params.universalIdentifier,
-      ),
+      isVetted,
       manifest: params.manifest,
-      ...fromManifestApplicationToDisplayFields(params.manifest?.application),
+      ...fromManifestApplicationToDisplayFields(params.manifest.application),
       oAuthClientId: v4(),
       oAuthRedirectUris: [],
       oAuthScopes: [],
@@ -952,14 +965,14 @@ export class ApplicationRegistrationService {
 
     await this.invalidateMarketplaceAppsCache();
 
-    if (!isDefined(params.manifest?.application?.serverVariables)) {
-      return;
+    if (isDefined(params.manifest.application.serverVariables)) {
+      await this.applicationRegistrationVariableService.syncVariableSchemas(
+        registration.id,
+        params.manifest.application.serverVariables,
+      );
     }
 
-    await this.applicationRegistrationVariableService.syncVariableSchemas(
-      registration.id,
-      params.manifest.application.serverVariables,
-    );
+    return registration;
   }
 
   async createCliRegistrationIfNotExists(): Promise<ApplicationRegistrationEntity | null> {

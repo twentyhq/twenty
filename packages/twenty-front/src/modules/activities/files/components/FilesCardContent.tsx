@@ -78,11 +78,10 @@ export const FilesCardContent = ({
               <AttachmentUploadTrigger targetableObject={targetRecord}>
                 {({ openFilePicker }) => (
                   <Button
-                    Icon={IconPlus}
-                    title={t`Add file`}
-                    variant="secondary"
+                    startIcon={<IconPlus />}
                     onClick={openFilePicker}
-                  />
+                    variant="outline"
+                  >{t`Add file`}</Button>
                 )}
               </AttachmentUploadTrigger>
             )}

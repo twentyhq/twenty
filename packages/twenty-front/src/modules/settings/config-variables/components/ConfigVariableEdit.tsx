@@ -1,15 +1,15 @@
-import { styled } from '@linaria/react';
-import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
-import { H3Title } from 'twenty-ui/primitives/typography';
-import { Button } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/primitives/layout';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { type Dispatch, type SetStateAction, useState } from 'react';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { type Dispatch, type SetStateAction, useState } from 'react';
+import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H3Title } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const RESET_VARIABLE_MODAL_ID =
   'reset-application-registration-config-variable-modal';
@@ -20,11 +20,8 @@ const StyledRow = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledButtonContainer = styled(ButtonGroup)`
   display: flex;
-  & > :not(:first-of-type) > button {
-    border-left: none;
-  }
 `;
 
 type ConfigVariableEditProps = {
@@ -62,7 +59,7 @@ export const ConfigVariableEdit = ({
 
   const { openModal } = useModal();
 
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -70,13 +67,12 @@ export const ConfigVariableEdit = ({
     try {
       setIsSubmitting(true);
       await onSave?.();
-      enqueueSuccessSnackBar({
-        message: t`Variable ${title} updated`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Variable ${title} updated`,
       });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error updating variable`,
-      });
+      enqueueToast({ variant: 'error', children: t`Error updating variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);
@@ -87,13 +83,12 @@ export const ConfigVariableEdit = ({
     try {
       setIsSubmitting(true);
       await onConfirmReset?.();
-      enqueueSuccessSnackBar({
-        message: t`Variable ${title} reset`,
+      enqueueToast({
+        variant: 'success',
+        children: t`Variable ${title} reset`,
       });
     } catch {
-      enqueueErrorSnackBar({
-        message: t`Error resetting variable`,
-      });
+      enqueueToast({ variant: 'error', children: t`Error resetting variable` });
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);
@@ -127,29 +122,30 @@ export const ConfigVariableEdit = ({
           {input}
           {!isEditing ? (
             <Button
-              Icon={IconPencil}
-              variant="primary"
+              startIcon={<IconPencil />}
+              aria-label={t`Edit`}
               onClick={handleEdit}
               type="button"
               disabled={editDisabled}
+              variant="outline"
             />
           ) : (
-            <StyledButtonContainer>
+            <StyledButtonContainer aria-label={t`Edit variable`}>
               <Button
-                Icon={IconCheck}
-                variant="secondary"
-                position="left"
+                startIcon={<IconCheck />}
+                aria-label={t`Save`}
                 type={'button'}
                 onClick={handleSave}
                 disabled={isSaveDisabled || isSubmitting}
+                variant="outline"
               />
               <Button
-                Icon={IconX}
-                variant="secondary"
-                position="right"
+                startIcon={<IconX />}
+                aria-label={t`Cancel`}
                 onClick={handleCancel}
                 type="button"
                 disabled={isSubmitting}
+                variant="outline"
               />
             </StyledButtonContainer>
           )}
@@ -159,7 +155,7 @@ export const ConfigVariableEdit = ({
             subtitle={t`Are you sure you want to reset this variable?`}
             onConfirmClick={handleConfirmReset}
             confirmButtonText={t`Reset`}
-            confirmButtonAccent="danger"
+            confirmButtonColor="danger"
           />
         </StyledRow>
         {helpContent}

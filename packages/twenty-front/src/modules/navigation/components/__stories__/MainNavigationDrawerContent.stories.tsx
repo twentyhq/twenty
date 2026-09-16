@@ -14,7 +14,7 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const THREAD = {
   id: '3a36fc8c-c8e2-4f16-a283-24dc05e3704b',
@@ -78,7 +78,7 @@ const AiNavigationContent = () => {
 const meta: Meta<typeof MainNavigationDrawerContent> = {
   title: 'Modules/Navigation/MainNavigationDrawerContent',
   component: MainNavigationDrawerContent,
-  decorators: [ComponentDecorator, IconsProviderDecorator, SnackBarDecorator],
+  decorators: [ComponentDecorator, IconsProviderDecorator, ToastDecorator],
   parameters: { container: { width: 240, height: 400 } },
   render: () => <AiNavigationContent />,
 };

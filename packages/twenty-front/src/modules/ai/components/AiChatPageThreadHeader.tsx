@@ -102,13 +102,12 @@ export const AiChatPageThreadHeader = ({
       <StyledActions>
         {hasConversation && (
           <Button
-            Icon={IconPlus}
-            title={t`New chat`}
-            size="small"
-            variant="primary"
-            accent="blue"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={() => switchToNewChat()}
-          />
+            variant="solid"
+            color="accent"
+          >{t`New chat`}</Button>
         )}
         <AiChatThreadItemMenu
           threadId={thread.id}

@@ -17,7 +17,7 @@ export const useSingleRecordPickerRecords = ({
   const singleRecordPickerSelectedId = useAtomComponentStateValue(
     singleRecordPickerSelectedIdComponentState,
   );
-  const { pickableMorphItems, loading } = useSingleRecordPickerPerformSearch({
+  return useSingleRecordPickerPerformSearch({
     searchFilter: singleRecordPickerSearchFilter,
     selectedIds: singleRecordPickerSelectedId
       ? [singleRecordPickerSelectedId]
@@ -25,6 +25,4 @@ export const useSingleRecordPickerRecords = ({
     excludedRecordIds: excludedRecordIds,
     objectNameSingulars,
   });
-
-  return { pickableMorphItems, loading };
 };

@@ -19,7 +19,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const ITEMS: NavigationMenuItem[] = ['Docs', 'Status'].map(
   (name, position) => ({
@@ -69,7 +69,7 @@ const meta: Meta<typeof NavigationMenuItemEditable> = {
     ComponentWithRouterDecorator,
     ObjectMetadataItemsDecorator,
     IconsProviderDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   parameters: { container: { width: 240 } },
   beforeEach: () => {
