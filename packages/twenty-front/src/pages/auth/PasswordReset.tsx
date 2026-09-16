@@ -29,7 +29,7 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { MainButton } from 'twenty-ui/primitives/input';
+import { MainButton } from 'twenty-ui/components';
 import { AnimatedEaseIn } from 'twenty-ui/primitives/layout';
 import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -293,12 +293,13 @@ export const PasswordReset = () => {
 
                 <StyledMainButtonContainer>
                   <MainButton
-                    variant="secondary"
-                    title={passwordActionLabel}
                     type="submit"
                     fullWidth
                     disabled={isUpdatingPassword}
-                  />
+                    variant="outline"
+                  >
+                    {passwordActionLabel}
+                  </MainButton>
                 </StyledMainButtonContainer>
               </StyledForm>
             )}

@@ -15,6 +15,29 @@ import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
   height={240}
 />
 
+## Anatomy
+
+`ListItem` exposes content slots through props. These slots arrange content inside one row; they are not separately exported components.
+
+```text
+ListItem
+├── startIcon
+├── children
+├── description
+├── actions
+└── endIcon
+```
+
+| Slot                                 | Requirement                      | Purpose                                                                         |
+| ------------------------------------ | -------------------------------- | ------------------------------------------------------------------------------- |
+| `children`                           | Required for a visible row label | Supplies the main text.                                                         |
+| `startIcon`, `endIcon`               | Optional                         | Add supporting icons at either end of the row content.                          |
+| `description`                        | Optional                         | Adds supporting text inline or at the end, according to `descriptionPlacement`. |
+| `actions`                            | Optional                         | Adds trailing content, such as a separately focusable action.                   |
+| `indicator`, `hotkeys`, `hasSubmenu` | Optional                         | Configure built-in selection marks, shortcut hints, and the submenu indicator.  |
+
+The row supplies layout. Use `render` to choose its element and semantics. For a row with independent action buttons, keep the row itself non-interactive so those buttons remain separate controls.
+
 ## Action row
 
 ```tsx
@@ -64,6 +87,32 @@ export const ShowArchivedToggle = () => {
 ## Slots
 
 Use `startIcon` and `endIcon` for icons, `description` for supporting text, `actions` for trailing content, and `hasSubmenu` for a submenu indicator. `descriptionPlacement` accepts `inline` or `end`. `color="danger"` styles a destructive action. Avoid nesting interactive controls inside a row rendered as a button.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type ContactRowProps = { onOpen: () => void };
+
+export const ContactRow = ({ onOpen }: ContactRowProps) => (
+  <ListItem
+    description="Account owner"
+    actions={
+      <Button
+        type="button"
+        aria-label="Open Alex Morgan's profile"
+        variant="ghost"
+        size="sm"
+        onClick={onOpen}
+      >
+        Open
+      </Button>
+    }
+  >
+    Alex Morgan
+  </ListItem>
+);
+```
 
 ## Props
 

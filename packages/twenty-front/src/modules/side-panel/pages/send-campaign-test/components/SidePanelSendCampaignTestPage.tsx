@@ -88,14 +88,13 @@ export const SidePanelSendCampaignTestPage = () => {
         actions={[
           <Button
             key="send-test"
-            title={t`Send test email`}
-            Icon={IconSend}
-            variant="primary"
-            accent="blue"
-            size="small"
+            startIcon={<IconSend />}
+            size="sm"
             disabled={!canSend || loading}
             onClick={handleSend}
-          />,
+            variant="solid"
+            color="accent"
+          >{t`Send test email`}</Button>,
         ]}
       />
     </StyledContainer>

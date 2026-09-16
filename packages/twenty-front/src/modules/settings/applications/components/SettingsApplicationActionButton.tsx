@@ -46,32 +46,32 @@ export const SettingsApplicationActionButton = ({
   if (!isInstalled || isInstalling) {
     return (
       <Button
-        Icon={IconDownload}
-        title={isInstalling ? t`Installing...` : t`Install`}
-        variant="primary"
-        accent="blue"
-        size="small"
+        startIcon={<IconDownload />}
+        variant="solid"
+        color="accent"
+        size="sm"
         onClick={onInstall}
         disabled={isInstalling}
-      />
+      >
+        {isInstalling ? t`Installing...` : t`Install`}
+      </Button>
     );
   }
 
   if (hasUpdate) {
     return (
       <Button
-        Icon={IconUpload}
-        title={
-          isUpgrading
-            ? t`Upgrading...`
-            : t`Upgrade to ${latestAvailableVersion ?? ''}`
-        }
-        variant="secondary"
-        accent="blue"
-        size="small"
+        startIcon={<IconUpload />}
+        variant="outline"
+        color="accent"
+        size="sm"
         onClick={onUpgrade}
         disabled={isUpgrading}
-      />
+      >
+        {isUpgrading
+          ? t`Upgrading...`
+          : t`Upgrade to ${latestAvailableVersion ?? ''}`}
+      </Button>
     );
   }
 
@@ -79,14 +79,15 @@ export const SettingsApplicationActionButton = ({
     return (
       <>
         <Button
-          Icon={IconTrash}
-          title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
-          variant="secondary"
-          accent="danger"
-          size="small"
+          startIcon={<IconTrash />}
+          variant="outline"
+          color="danger"
+          size="sm"
           onClick={() => openModal(uninstallModalId)}
           disabled={isUninstalling}
-        />
+        >
+          {isUninstalling ? t`Uninstalling...` : t`Uninstall`}
+        </Button>
         <ConfirmationModal
           confirmationPlaceholder={confirmationValue}
           confirmationValue={confirmationValue}
@@ -108,12 +109,10 @@ export const SettingsApplicationActionButton = ({
 
   return (
     <Button
-      Icon={IconCheck}
-      title={t`Installed`}
-      variant="secondary"
-      accent="default"
-      size="small"
+      startIcon={<IconCheck />}
+      variant="outline"
+      size="sm"
       disabled
-    />
+    >{t`Installed`}</Button>
   );
 };

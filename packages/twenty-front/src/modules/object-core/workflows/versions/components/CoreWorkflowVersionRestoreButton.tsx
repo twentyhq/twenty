@@ -38,13 +38,12 @@ export const CoreWorkflowVersionRestoreButton = ({
   return (
     <>
       <Button
-        title={t`Restore`}
-        variant="primary"
-        accent="blue"
-        size="small"
+        size="sm"
         disabled={isRestoring || isLoadingCoreWorkflowVersions}
         onClick={handleRestoreClick}
-      />
+        variant="solid"
+        color="accent"
+      >{t`Restore`}</Button>
       <ConfirmationModal
         modalInstanceId={RESTORE_CORE_WORKFLOW_VERSION_MODAL_ID}
         title={t`A draft already exists`}

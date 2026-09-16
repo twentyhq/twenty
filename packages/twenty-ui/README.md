@@ -35,7 +35,7 @@ import 'twenty-ui/theme-light.css';
 
 export const App = () => (
   <ThemeProvider colorScheme="light">
-    <Button title="Click me" />
+    <Button>Click me</Button>
   </ThemeProvider>
 );
 ```
@@ -52,9 +52,9 @@ import { Button } from 'twenty-ui/primitives/input';
 | --- | --- |
 | `twenty-ui` | All components, icons, theme tokens, and utilities |
 | `twenty-ui/assets` | Logos and static assets |
-| `twenty-ui/components` | Reserved for reusable app building blocks |
+| `twenty-ui/components` | Shared design presets and reusable app building blocks |
 | `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/primitives` | All existing UI component families |
+| `twenty-ui/primitives` | Foundational UI controls and compound controls |
 | `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |
 | `twenty-ui/primitives/data-display` | Avatars, chips, tags, status indicators, and display helpers |
 | `twenty-ui/primitives/feedback` | Toasts, banners, progress bars, and loaders |
@@ -77,9 +77,11 @@ import { Button } from 'twenty-ui/primitives/input';
 
 # Development
 
-Component guides belong in `packages/twenty-docs/ui/primitives`. For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
+Primitive guides belong in `packages/twenty-docs/ui/primitives`. Shared component guides belong in `packages/twenty-docs/ui/components`. For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
 
 Explain state ownership before advanced behavior such as indeterminate selection or manual tab activation. Document independent states, such as selection and popup visibility, separately. For components that delegate state to a parent or group, explain that ownership and link to the relevant examples.
+
+For compound components, include an anatomy tree and identify required parts, optional parts, and elements supplied internally. Show supported composition with complete examples, use Twenty UI components for supporting controls, and explain how custom wrappers preserve props and refs. Use `text` fences for structural diagrams and `tsx` fences for runnable examples so the documentation checker validates the examples.
 
 ## Internal state
 

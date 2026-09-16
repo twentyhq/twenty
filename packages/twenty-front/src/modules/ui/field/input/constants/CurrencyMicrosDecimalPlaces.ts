@@ -1,0 +1,1 @@
+export const CURRENCY_MICROS_DECIMAL_PLACES = 6;

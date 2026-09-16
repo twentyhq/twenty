@@ -52,7 +52,7 @@ export const SettingsBillingSubscriptionInfoModals = ({
         subtitle={switchToYearlySubtitle}
         onConfirmClick={onSwitchInterval}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         loading={isSwitchingInterval}
       />
       <ConfirmationModal
@@ -61,7 +61,7 @@ export const SettingsBillingSubscriptionInfoModals = ({
         subtitle={switchToMonthlySubtitle}
         onConfirmClick={onSwitchInterval}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         loading={isSwitchingInterval}
       />
       <ConfirmationModal
@@ -70,7 +70,7 @@ export const SettingsBillingSubscriptionInfoModals = ({
         subtitle={cancelIntervalSwitchingSubtitle}
         onConfirmClick={onCancelIntervalSwitching}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         loading={isCancellingIntervalSwitch}
       />
       <ConfirmationModal
@@ -79,7 +79,7 @@ export const SettingsBillingSubscriptionInfoModals = ({
         subtitle={cancelPlanSwitchingSubtitle}
         onConfirmClick={onCancelPlanSwitching}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         loading={isCancellingPlanSwitch}
       />
       {billingHasPaymentMethod === false ? (
@@ -94,7 +94,7 @@ export const SettingsBillingSubscriptionInfoModals = ({
           subtitle={startSubscriptionSubtitle}
           onConfirmClick={onEndTrialPeriod}
           confirmButtonText={t`Confirm`}
-          confirmButtonAccent="blue"
+          confirmButtonColor="accent"
           loading={isEndTrialPeriodLoading}
         />
       )}
@@ -104,7 +104,7 @@ export const SettingsBillingSubscriptionInfoModals = ({
         subtitle={t`You have scheduled a credit pack change. Do you want to cancel it?`}
         onConfirmClick={onCancelResourceCreditSwitching}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
         loading={isCancellingMeteredSwitch}
       />
     </>

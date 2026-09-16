@@ -272,17 +272,18 @@ export const SendCampaignForm = ({ campaign }: SendCampaignFormProps) => {
         actions={[
           <Button
             key="send"
-            title={buildCampaignSendButtonTitle({
+            startIcon={isScheduling ? <IconClock /> : <IconSend />}
+            size="sm"
+            disabled={!canSend || isSending}
+            onClick={handleSend}
+            variant="solid"
+            color="accent"
+          >
+            {buildCampaignSendButtonTitle({
               deliveryTiming,
               isAlreadyScheduled,
             })}
-            Icon={isScheduling ? IconClock : IconSend}
-            variant="primary"
-            accent="blue"
-            size="small"
-            disabled={!canSend || isSending}
-            onClick={handleSend}
-          />,
+          </Button>,
         ]}
       />
     </StyledContainer>

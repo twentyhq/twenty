@@ -40,13 +40,9 @@ describe('AppToaster', () => {
         children: 'Record saved',
         description: 'Your changes are available',
         action: (
-          <Button
-            title="Undo"
-            ariaLabel="Undo"
-            onClick={onAction}
-            variant="tertiary"
-            size="small"
-          />
+          <Button onClick={onAction} variant="ghost" size="sm">
+            Undo
+          </Button>
         ),
         onClose,
         progress: 100,

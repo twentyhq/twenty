@@ -1,9 +1,9 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { isErrorLike } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 import { type ToastOptions } from 'twenty-ui/primitives/feedback';
-import { Button } from 'twenty-ui/primitives/input';
 
 import { getConflictingRecordFromApolloError } from '~/utils/get-conflicting-record-from-apollo-error.util';
 import { getErrorMessageFromApolloError } from '~/utils/get-error-message-from-apollo-error.util';
@@ -36,16 +36,16 @@ export const getToastOptionsFromError = ({
     action:
       options.action ??
       (isDefined(conflictingRecord) ? (
-        <Button
+        <NavigationButton
           to={getAppPath(AppPath.RecordShowPage, {
             objectNameSingular: conflictingRecord.conflictingObjectNameSingular,
             objectRecordId: conflictingRecord.conflictingRecordId,
           })}
-          title={t`View existing record`}
-          ariaLabel={t`View existing record`}
-          variant="tertiary"
-          size="small"
-        />
+          variant="ghost"
+          size="sm"
+        >
+          {t`View existing record`}
+        </NavigationButton>
       ) : undefined),
     variant: 'error',
   };
