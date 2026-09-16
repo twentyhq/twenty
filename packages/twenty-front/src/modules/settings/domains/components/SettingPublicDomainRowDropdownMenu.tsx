@@ -1,13 +1,14 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
-import { useMutation, useQuery } from '@apollo/client/react';
 import {
   type PublicDomain,
   DeletePublicDomainDocument,
@@ -22,7 +23,7 @@ export const SettingPublicDomainRowDropdownMenu = ({
   const dropdownId = `settings-public-domain-row-${publicDomain.id}`;
   const { t } = useLingui();
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const { closeDropdown } = useCloseDropdown();
 
@@ -38,10 +39,11 @@ export const SettingPublicDomainRowDropdownMenu = ({
         domain: publicDomain.domain,
       },
       onCompleted: () =>
-        enqueueSuccessSnackBar({
-          message: t`Custom domain successfully deleted`,
+        enqueueToast({
+          variant: 'success',
+          children: t`Custom domain successfully deleted`,
         }),
-      onError: (error) => enqueueErrorSnackBar({ apolloError: error }),
+      onError: (error) => enqueueToast(getToastOptionsFromError({ error })),
     });
   };
 

@@ -1,22 +1,22 @@
 import { GET_AUTHORIZATION_URL_FOR_SSO } from '@/auth/graphql/mutations/getAuthorizationUrlForSSO';
 import { useSso } from '@/auth/sign-in-up/hooks/useSso';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
+
 import { MockedProvider } from '@apollo/client/testing/react';
 import { renderHook } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
-jest.mock('@/ui/feedback/snack-bar-manager/hooks/useSnackBar');
+const mockEnqueueToast = jest.fn();
+
+jest.mock('twenty-ui/primitives/feedback', () => ({
+  ...jest.requireActual('twenty-ui/primitives/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
+}));
 jest.mock('@/domain-manager/hooks/useRedirect');
 jest.mock('~/generated/graphql');
 
-const mockEnqueueErrorSnackBar = jest.fn();
 const mockRedirect = jest.fn();
 
-(useSnackBar as jest.Mock).mockReturnValue({
-  enqueueErrorSnackBar: mockEnqueueErrorSnackBar,
-});
 (useRedirect as jest.Mock).mockReturnValue({
   redirect: mockRedirect,
 });
@@ -75,7 +75,7 @@ describe('useSso', () => {
     expect(mockRedirect).toHaveBeenCalledWith('http://example.com');
   });
 
-  it('should enqueue error snackbar when URL retrieval fails', async () => {
+  it('should enqueue error toast when URL retrieval fails', async () => {
     const { result } = renderHook(() => useSso(), {
       wrapper: Wrapper,
     });
@@ -83,10 +83,9 @@ describe('useSso', () => {
 
     await result.current.redirectToSsoLoginPage(identityProviderId);
 
-    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
-      apolloError: new CombinedGraphQLErrors({
-        errors: [{ message: 'Error message' }],
-      }),
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      variant: 'error',
+      children: 'An error occurred.',
     });
   });
 });

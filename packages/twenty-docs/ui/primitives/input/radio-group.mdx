@@ -15,7 +15,32 @@ import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
   height={240}
 />
 
-## Default selection
+## Anatomy
+
+Put each `Radio` inside the group and associate it with a label. `RadioGroup` and `Radio` are separate exports.
+
+```text
+fieldset
+├── legend
+└── RadioGroup
+    ├── label
+    │   └── Radio
+    └── label
+        └── Radio
+```
+
+| Part                 | Requirement                 | Purpose                                                    |
+| -------------------- | --------------------------- | ---------------------------------------------------------- |
+| `RadioGroup`         | Required                    | Owns selection, keyboard navigation, and form integration. |
+| `Radio`              | One per option              | Supplies an option with a distinct `value`.                |
+| `label`              | Recommended for each option | Provides a visible, clickable name for its radio.          |
+| `fieldset`, `legend` | Optional grouping           | Groups related controls under a visible heading.           |
+
+Give the group its own accessible name using `aria-label` or `aria-labelledby`. In the examples below, `aria-labelledby` connects the group to the legend. Each radio also needs its own name. Put selection props on `RadioGroup` and option values on `Radio`.
+
+## Uncontrolled state
+
+Use `defaultValue` to set the initial billing frequency. The group owns subsequent changes.
 
 ```tsx
 import { useId } from 'react';
@@ -46,32 +71,39 @@ export const BillingFrequency = () => {
 };
 ```
 
-Use `defaultValue` for an uncontrolled group. Its `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
+The group's `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
 
 ## Controlled state
 
+Pass `value` and update it with `onValueChange` to own the same billing frequency in React state. Selection belongs to the group, not to individual radio controls.
+
 ```tsx
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 
-export const DisplayDensity = () => {
-  const [density, setDensity] = useState('comfortable');
+export const BillingFrequency = () => {
+  const labelId = useId();
+  const [billingFrequency, setBillingFrequency] = useState('monthly');
 
   return (
-    <RadioGroup
-      value={density}
-      onValueChange={setDensity}
-      aria-label="Display density"
-    >
-      <label>
-        <Radio value="compact" />
-        Compact
-      </label>
-      <label>
-        <Radio value="comfortable" />
-        Comfortable
-      </label>
-    </RadioGroup>
+    <fieldset>
+      <legend id={labelId}>Billing frequency</legend>
+      <RadioGroup
+        name="billingFrequency"
+        value={billingFrequency}
+        onValueChange={setBillingFrequency}
+        aria-labelledby={labelId}
+      >
+        <label>
+          <Radio value="monthly" />
+          Monthly
+        </label>
+        <label>
+          <Radio value="yearly" />
+          Yearly
+        </label>
+      </RadioGroup>
+    </fieldset>
   );
 };
 ```

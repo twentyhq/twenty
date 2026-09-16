@@ -1,8 +1,8 @@
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { type ApplicationVariable } from '~/generated-metadata/graphql';
 import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
 import { applicationVariablesDraftFamilyState } from '~/pages/settings/applications/states/applicationVariablesDraftFamilyState';
@@ -19,7 +19,7 @@ export const useApplicationVariablesDraft = ({
     applicationId,
   );
   const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [isSavingApplicationVariables, setIsSavingApplicationVariables] =
     useState(false);
 
@@ -57,7 +57,10 @@ export const useApplicationVariablesDraft = ({
 
       setDraftValueByKey({});
     } catch {
-      enqueueErrorSnackBar({ message: t`Failed to save the app settings.` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to save the app settings.`,
+      });
     } finally {
       setIsSavingApplicationVariables(false);
     }

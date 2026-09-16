@@ -1,8 +1,8 @@
-import { SnackBarComponentInstanceContext } from '@/ui/feedback/snack-bar-manager/contexts/SnackBarComponentInstanceContext';
 import { gql, InMemoryCache } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing/react';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { ToastProvider } from 'twenty-ui/primitives/feedback';
 
 import {
   type Application,
@@ -96,11 +96,7 @@ const renderVariablesDraft = (applicationId: string) => {
 
   const wrapper = ({ children }: { children: ReactNode }) => (
     <MockedProvider mocks={mocks} cache={cache}>
-      <SnackBarComponentInstanceContext.Provider
-        value={{ instanceId: 'test-instance-id' }}
-      >
-        {children}
-      </SnackBarComponentInstanceContext.Provider>
+      <ToastProvider>{children}</ToastProvider>
     </MockedProvider>
   );
 

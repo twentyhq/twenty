@@ -9,7 +9,7 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { canCreateRecordsForObjectMetadataItem } from '@/object-record/utils/canCreateRecordsForObjectMetadataItem';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   type CreateCoreWorkflowMutation,
   type CreateCoreWorkflowMutationVariables,
@@ -37,7 +37,7 @@ export const useCreateCoreWorkflow = () => {
 
   const navigate = useNavigateApp();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const canCreateCoreWorkflow = canCreateRecordsForObjectMetadataItem({
     objectPermissions,
@@ -61,7 +61,10 @@ export const useCreateCoreWorkflow = () => {
       workspaceWorkflowId = data?.createCoreWorkflow.workspaceWorkflowId;
     } catch (error) {
       logError(error);
-      enqueueErrorSnackBar({ message: t`Failed to create workflow` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to create workflow`,
+      });
 
       return;
     } finally {
@@ -69,7 +72,10 @@ export const useCreateCoreWorkflow = () => {
     }
 
     if (!isDefined(workspaceWorkflowId)) {
-      enqueueErrorSnackBar({ message: t`Failed to create workflow` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to create workflow`,
+      });
 
       return;
     }
@@ -81,7 +87,7 @@ export const useCreateCoreWorkflow = () => {
   }, [
     createCoreWorkflowMutation,
     navigate,
-    enqueueErrorSnackBar,
+    enqueueToast,
     isCreatingCoreWorkflow,
   ]);
 

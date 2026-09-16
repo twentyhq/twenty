@@ -38,6 +38,11 @@ export const Default: Story = {
   },
 };
 
+export const Documentation: Story = {
+  ...Default,
+  play: undefined,
+};
+
 export const WithLongText: Story = {
   decorators: [ComponentDecorator],
   args: {

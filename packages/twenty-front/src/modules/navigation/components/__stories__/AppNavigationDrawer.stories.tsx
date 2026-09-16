@@ -4,11 +4,11 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { currentMobileNavigationDrawerState } from '@/navigation/states/currentMobileNavigationDrawerState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 import {
   AppNavigationDrawer,
@@ -62,7 +62,7 @@ const meta: Meta<StoryArgs> = {
         />
       </MemoryRouter>
     ),
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   component: AppNavigationDrawer,
   args: { routePath: AppPath.Index },
