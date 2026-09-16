@@ -244,7 +244,6 @@ export const NavigationMenuItemAddDropdownContent = ({
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
             });
           },
-          hasSubMenu: true,
         },
         {
           id: 'page',
