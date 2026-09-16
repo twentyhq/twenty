@@ -1,6 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
+import { useCancelBillingSwitch } from '@/settings/billing/hooks/useCancelBillingSwitch';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { useSwitchBillingInterval } from '@/settings/billing/hooks/useSwitchBillingInterval';
@@ -16,7 +17,12 @@ import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconArrowDown, IconArrowUp, IconCheck } from 'twenty-ui/icon';
+import {
+  IconArrowDown,
+  IconArrowUp,
+  IconCheck,
+  IconCircleX,
+} from 'twenty-ui/icon';
 import {
   BillingPlanKey,
   PermissionFlagType,
@@ -44,6 +50,12 @@ export const useBillingPlanActions = ({
   const { isSwitchingPlan, switchBillingPlan } = useSwitchBillingPlan();
   const { isSwitchingInterval, switchBillingInterval } =
     useSwitchBillingInterval();
+  const {
+    cancelIntervalSwitch,
+    cancelPlanSwitch,
+    isCancellingIntervalSwitch,
+    isCancellingPlanSwitch,
+  } = useCancelBillingSwitch();
 
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.BillingPlans));
@@ -124,16 +136,23 @@ export const useBillingPlanActions = ({
           title: t`Contact admin`,
           variant: 'secondary',
         };
-      case 'CANCEL_PLAN_SWITCH_FIRST':
+      case 'CANCEL_PLAN_SWITCH':
         return {
-          disabled: true,
-          title: t`Cancel plan switching first`,
+          disabled: isCancellingPlanSwitch,
+          Icon: IconCircleX,
+          isLoading: isCancellingPlanSwitch,
+          onClick: () => openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan),
+          title: t`Cancel plan switching`,
           variant: 'secondary',
         };
-      case 'CANCEL_INTERVAL_SWITCH_FIRST':
+      case 'CANCEL_INTERVAL_SWITCH':
         return {
-          disabled: true,
-          title: t`Cancel interval switching first`,
+          disabled: isCancellingIntervalSwitch,
+          Icon: IconCircleX,
+          isLoading: isCancellingIntervalSwitch,
+          onClick: () =>
+            openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval),
+          title: t`Cancel interval switching`,
           variant: 'secondary',
         };
       case 'SWITCH_INTERVAL_FIRST':
@@ -186,6 +205,10 @@ export const useBillingPlanActions = ({
   };
 
   return {
+    cancelIntervalSwitch,
+    cancelPlanSwitch,
+    isCancellingIntervalSwitch,
+    isCancellingPlanSwitch,
     isSwitchingInterval,
     isSwitchingPlan,
     planActions: {

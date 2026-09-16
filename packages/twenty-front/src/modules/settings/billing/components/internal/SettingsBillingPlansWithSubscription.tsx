@@ -28,12 +28,18 @@ export const SettingsBillingPlansWithSubscription = ({
 }: SettingsBillingPlansWithSubscriptionProps) => {
   const { t } = useLingui();
   const {
+    confirmationModalCancelIntervalSwitchingMessage,
+    confirmationModalCancelPlanSwitchingMessage,
     confirmationModalSwitchToMonthlyMessage,
     confirmationModalSwitchToOrganizationMessage,
     confirmationModalSwitchToProMessage,
     confirmationModalSwitchToYearlyMessage,
   } = useBillingWording();
   const {
+    cancelIntervalSwitch,
+    cancelPlanSwitch,
+    isCancellingIntervalSwitch,
+    isCancellingPlanSwitch,
     isSwitchingInterval,
     isSwitchingPlan,
     planActions,
@@ -87,6 +93,24 @@ export const SettingsBillingPlansWithSubscription = ({
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
         loading={isSwitchingInterval}
+      />
+      <ConfirmationModal
+        modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingPlan}
+        title={t`Cancel plan switching?`}
+        subtitle={confirmationModalCancelPlanSwitchingMessage()}
+        onConfirmClick={cancelPlanSwitch}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent="blue"
+        loading={isCancellingPlanSwitch}
+      />
+      <ConfirmationModal
+        modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingInterval}
+        title={t`Cancel interval switching?`}
+        subtitle={confirmationModalCancelIntervalSwitchingMessage()}
+        onConfirmClick={cancelIntervalSwitch}
+        confirmButtonText={t`Confirm`}
+        confirmButtonAccent="blue"
+        loading={isCancellingIntervalSwitch}
       />
     </SettingsPageContainer>
   );

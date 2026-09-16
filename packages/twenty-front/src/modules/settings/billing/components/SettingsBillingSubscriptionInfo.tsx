@@ -9,6 +9,7 @@ import { SettingsBillingSubscriptionInfoModals } from '@/settings/billing/compon
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
+import { useCancelBillingSwitch } from '@/settings/billing/hooks/useCancelBillingSwitch';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
@@ -35,8 +36,6 @@ import { H2Title } from 'twenty-ui/primitives/typography';
 import { Section } from 'twenty-ui/primitives/layout';
 import {
   BillingPlanKey,
-  CancelSwitchBillingIntervalDocument,
-  CancelSwitchBillingPlanDocument,
   CancelSwitchResourceCreditPriceDocument,
   PermissionFlagType,
   SubscriptionInterval,
@@ -103,14 +102,6 @@ export const SettingsBillingSubscriptionInfo = ({
     getBeautifiedRenewDate,
   } = useBillingWording();
 
-  const [cancelSwitchBillingInterval] = useMutation(
-    CancelSwitchBillingIntervalDocument,
-  );
-
-  const [cancelSwitchBillingPlan] = useMutation(
-    CancelSwitchBillingPlanDocument,
-  );
-
   const [cancelSwitchResourceCreditPrice] = useMutation(
     CancelSwitchResourceCreditPriceDocument,
   );
@@ -139,6 +130,12 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { isSwitchingInterval, switchBillingInterval } =
     useSwitchBillingInterval();
+  const {
+    cancelIntervalSwitch,
+    cancelPlanSwitch,
+    isCancellingIntervalSwitch,
+    isCancellingPlanSwitch,
+  } = useCancelBillingSwitch();
 
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
@@ -329,9 +326,6 @@ export const SettingsBillingSubscriptionInfo = ({
         ]
       : []),
   ];
-  const [isCancellingPlanSwitch, setIsCancellingPlanSwitch] = useState(false);
-  const [isCancellingIntervalSwitch, setIsCancellingIntervalSwitch] =
-    useState(false);
   const [isCancellingMeteredSwitch, setIsCancellingMeteredSwitch] =
     useState(false);
 
@@ -384,43 +378,6 @@ export const SettingsBillingSubscriptionInfo = ({
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const cancelPlanSwitching = async () => {
-    await runBillingAction({
-      action: async () => {
-        const { data } = await cancelSwitchBillingPlan();
-
-        if (
-          isDefined(data?.cancelSwitchBillingPlan.currentBillingSubscription)
-        ) {
-          applyBillingUpdate(data.cancelSwitchBillingPlan);
-        }
-      },
-      getErrorMessage: () => t`Error while cancelling plan switching.`,
-      getSuccessMessage: () => t`Plan switching has been cancelled.`,
-      isLoading: isCancellingPlanSwitch,
-      setIsLoading: setIsCancellingPlanSwitch,
-    });
-  };
-
-  const cancelIntervalSwitching = async () => {
-    await runBillingAction({
-      action: async () => {
-        const { data } = await cancelSwitchBillingInterval();
-        if (
-          isDefined(
-            data?.cancelSwitchBillingInterval.currentBillingSubscription,
-          )
-        ) {
-          applyBillingUpdate(data.cancelSwitchBillingInterval);
-        }
-      },
-      getErrorMessage: () => t`Error while cancelling interval switching.`,
-      getSuccessMessage: () => t`Interval switching has been cancelled.`,
-      isLoading: isCancellingIntervalSwitch,
-      setIsLoading: setIsCancellingIntervalSwitch,
-    });
   };
 
   const cancelResourceCreditSwitching = async () => {
@@ -508,8 +465,8 @@ export const SettingsBillingSubscriptionInfo = ({
         isCancellingPlanSwitch={isCancellingPlanSwitch}
         isEndTrialPeriodLoading={isEndTrialPeriodLoading}
         isSwitchingInterval={isSwitchingInterval}
-        onCancelIntervalSwitching={cancelIntervalSwitching}
-        onCancelPlanSwitching={cancelPlanSwitching}
+        onCancelIntervalSwitching={cancelIntervalSwitch}
+        onCancelPlanSwitching={cancelPlanSwitch}
         onCancelResourceCreditSwitching={cancelResourceCreditSwitching}
         onEndTrialPeriod={endTrialPeriod}
         onPaymentMethodAdded={startSubscriptionAfterPaymentMethodAdded}

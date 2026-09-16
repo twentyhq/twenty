@@ -68,7 +68,7 @@ describe('getBillingPlanActionType', () => {
     ).toBe('SCHEDULED');
   });
 
-  it('blocks the other cells while a plan switch is scheduled, rather than rewriting it', () => {
+  it('offers to cancel the scheduled plan switch on the other cells, rather than rewriting it', () => {
     const scheduledProMonthly = {
       currentInterval: SubscriptionInterval.Year,
       currentPlanKey: BillingPlanKey.ENTERPRISE,
@@ -84,7 +84,7 @@ describe('getBillingPlanActionType', () => {
           selectedInterval: SubscriptionInterval.Year,
         }),
       ),
-    ).toBe('CANCEL_PLAN_SWITCH_FIRST');
+    ).toBe('CANCEL_PLAN_SWITCH');
 
     expect(
       getBillingPlanActionType(
@@ -94,7 +94,7 @@ describe('getBillingPlanActionType', () => {
           selectedInterval: SubscriptionInterval.Month,
         }),
       ),
-    ).toBe('CANCEL_PLAN_SWITCH_FIRST');
+    ).toBe('CANCEL_PLAN_SWITCH');
   });
 
   it('still marks the subscribed and the scheduled cells while a change is scheduled', () => {
@@ -126,7 +126,7 @@ describe('getBillingPlanActionType', () => {
     ).toBe('SCHEDULED');
   });
 
-  it('names the pending interval switch when only the interval is scheduled', () => {
+  it('offers to cancel the scheduled interval switch when only the interval is scheduled', () => {
     expect(
       getBillingPlanActionType(
         buildParams({
@@ -136,7 +136,7 @@ describe('getBillingPlanActionType', () => {
           selectedInterval: SubscriptionInterval.Month,
         }),
       ),
-    ).toBe('CANCEL_INTERVAL_SWITCH_FIRST');
+    ).toBe('CANCEL_INTERVAL_SWITCH');
 
     expect(
       getBillingPlanActionType(

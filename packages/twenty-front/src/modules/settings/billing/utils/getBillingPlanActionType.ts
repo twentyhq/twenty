@@ -61,11 +61,11 @@ export const getBillingPlanActionType = ({
   }
 
   if (isDefined(scheduledPlanKey) && scheduledPlanKey !== currentPlanKey) {
-    return 'CANCEL_PLAN_SWITCH_FIRST';
+    return 'CANCEL_PLAN_SWITCH';
   }
 
   if (isDefined(scheduledInterval) && scheduledInterval !== currentInterval) {
-    return 'CANCEL_INTERVAL_SWITCH_FIRST';
+    return 'CANCEL_INTERVAL_SWITCH';
   }
 
   if (!isCurrentPlan && !isCurrentInterval) {
