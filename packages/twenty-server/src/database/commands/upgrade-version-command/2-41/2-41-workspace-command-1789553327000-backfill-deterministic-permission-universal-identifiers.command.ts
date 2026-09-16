@@ -49,7 +49,7 @@ const computeUniversalIdentifierUpdates = <
       universalIdentifier,
     }));
 
-@RegisteredWorkspaceCommand('2.41.0', 1789474828000)
+@RegisteredWorkspaceCommand('2.41.0', 1789553327000)
 @Command({
   name: 'upgrade:2-41:backfill-deterministic-permission-universal-identifiers',
   description:
