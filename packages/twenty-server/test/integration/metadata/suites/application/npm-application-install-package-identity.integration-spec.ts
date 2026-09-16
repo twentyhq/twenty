@@ -22,8 +22,8 @@ const APP_UNIVERSAL_IDENTIFIER = 'b4a1a0e2-1b6a-4b2f-9c58-0d2a5d5b6f10';
 const FOREIGN_APP_IDENTIFIER = 'e7d3c8f1-5a2b-4c9d-8e6f-1a2b3c4d5e6f';
 const ROLE_UNIVERSAL_IDENTIFIER = 'a1b2c3d4-5e6f-4a7b-8c9d-0e1f2a3b4c5d';
 const VALID_VERSION = '1.2.3';
-const PATH_SEGMENT_VERSION = '../@other-scope/other-package/latest';
-const OTHER_PACKAGE_NAME = '@other-scope/other-package';
+const TRAVERSAL_VERSION = '../@evil/pkg/latest';
+const SUBSTITUTE_PACKAGE_NAME = '@evil/substitute-app';
 
 const expectPackageResolutionFailure = (errors: BaseGraphQLError[]) => {
   expect(errors).toHaveLength(1);
@@ -90,7 +90,7 @@ describe('npm application install package identity (integration)', () => {
     jest.useFakeTimers();
   });
 
-  it('rejects a version containing path segments before any registry call', async () => {
+  it('rejects a path-traversal version before any registry call', async () => {
     const stub = stubNpmRegistry(await buildRegistryPackage());
 
     activeStub = stub;
@@ -98,7 +98,7 @@ describe('npm application install package identity (integration)', () => {
     const { errors } = await installApplication({
       input: {
         universalIdentifier: APP_UNIVERSAL_IDENTIFIER,
-        version: PATH_SEGMENT_VERSION,
+        version: TRAVERSAL_VERSION,
       },
       expectToFail: true,
     });
@@ -109,7 +109,7 @@ describe('npm application install package identity (integration)', () => {
 
   it('percent-encodes the request and refuses a mismatched registry package name', async () => {
     const stub = stubNpmRegistry(
-      await buildRegistryPackage({ metadataName: OTHER_PACKAGE_NAME }),
+      await buildRegistryPackage({ metadataName: SUBSTITUTE_PACKAGE_NAME }),
     );
 
     activeStub = stub;
@@ -130,7 +130,7 @@ describe('npm application install package identity (integration)', () => {
 
   it('rejects a package whose package.json name differs from the registration', async () => {
     const stub = stubNpmRegistry(
-      await buildRegistryPackage({ packageJsonName: OTHER_PACKAGE_NAME }),
+      await buildRegistryPackage({ packageJsonName: SUBSTITUTE_PACKAGE_NAME }),
     );
 
     activeStub = stub;
@@ -164,7 +164,7 @@ describe('npm application install package identity (integration)', () => {
     expectPackageResolutionFailure(errors);
   });
 
-  it('installs a package whose identity matches the registration', async () => {
+  it('installs a package whose identity and digest match the registration', async () => {
     const stub = stubNpmRegistry(await buildRegistryPackage());
 
     activeStub = stub;

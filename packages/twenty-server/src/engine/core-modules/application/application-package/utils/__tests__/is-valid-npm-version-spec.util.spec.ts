@@ -23,16 +23,10 @@ describe('isValidNpmVersionSpec', () => {
   );
 
   it.each([
-    ['parent path segment', '../@other-scope/other-package/latest'],
-    [
-      'nested parent path segment',
-      'latest/../../@other-scope/other-package/latest',
-    ],
+    ['path traversal', '../@evil/pkg/latest'],
+    ['nested traversal', 'latest/../../@evil/pkg/latest'],
     ['slash', '1.2.3/extra'],
-    [
-      'percent-encoded parent path segment',
-      '%2e%2e%2f@other-scope%2fother-package%2flatest',
-    ],
+    ['percent-encoded traversal', '%2e%2e%2f@evil%2fpkg%2flatest'],
     ['percent sign', '1%2E2%2E3'],
     ['whitespace', '1.2.3 '],
     ['newline', 'latest\n'],
@@ -61,10 +55,8 @@ describe('assertValidNpmVersionSpec', () => {
     expect(() => assertValidNpmVersionSpec('1.2.3')).not.toThrow();
   });
 
-  it('should throw INVALID_INPUT for a spec containing path segments', () => {
-    expect(() =>
-      assertValidNpmVersionSpec('../@other-scope/other-package/latest'),
-    ).toThrow(
+  it('should throw INVALID_INPUT for a traversal spec', () => {
+    expect(() => assertValidNpmVersionSpec('../@evil/pkg/latest')).toThrow(
       expect.objectContaining({
         code: ApplicationExceptionCode.INVALID_INPUT,
       }),

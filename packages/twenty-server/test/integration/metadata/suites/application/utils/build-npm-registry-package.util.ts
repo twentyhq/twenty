@@ -12,7 +12,7 @@ export type StubbedRegistryPackage = {
 };
 
 // Builds the registry metadata and tarball a stubbed npm registry serves for
-// one package version. Overrides let a test produce the mismatches the install
+// one package version. Overrides let a test forge the mismatches the install
 // path must reject: a metadata or package.json name that is not the requested
 // package, or a manifest identifier that is not the registration's.
 export const buildNpmRegistryPackage = async ({
