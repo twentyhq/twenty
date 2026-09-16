@@ -22,12 +22,24 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN } from 'src/modules/emailing/constants/campaign-batch-variable-tag-pattern.constant';
-import { CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART } from 'src/modules/emailing/constants/campaign-tracking-tag.constant';
-import { type TrackedCampaignBatch } from 'src/modules/emailing/types/tracked-campaign-batch.type';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
 import { resolveTrackedLinkUrl } from 'src/modules/emailing/utils/resolve-tracked-link-url.util';
+
+const CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN = /\{\{v_[htu]_(\d+)\}\}/g;
+
+const CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART: Record<
+  CampaignMessagePart,
+  string
+> = {
+  HTML: 'c_h',
+  TEXT: 'c_t',
+};
+
+type TrackedCampaignBatch = {
+  template: EmailingDomainEmailTemplate;
+  replacementsByDeliveryId: Map<string, Record<string, string>>;
+};
 
 type TrackingRecipient = {
   deliveryId: string;
@@ -277,16 +289,21 @@ export class CampaignTrackingContentService {
       return undefined;
     }
 
-    if (this.isLogDriver()) {
-      return isNonEmptyString(workspace.subdomain)
-        ? buildLogDriverUnsubscribeBaseUrl({
-            serverUrl: this.twentyConfigService.get('SERVER_URL'),
-            isMultiWorkspaceEnabled: this.twentyConfigService.get(
-              'IS_MULTIWORKSPACE_ENABLED',
-            ),
-            subdomain: workspace.subdomain,
-          })
-        : undefined;
+    if (
+      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
+      EmailingDomainDriver.LOG
+    ) {
+      if (!isNonEmptyString(workspace.subdomain)) {
+        return undefined;
+      }
+
+      return buildLogDriverUnsubscribeBaseUrl({
+        serverUrl: this.twentyConfigService.get('SERVER_URL'),
+        isMultiWorkspaceEnabled: this.twentyConfigService.get(
+          'IS_MULTIWORKSPACE_ENABLED',
+        ),
+        subdomain: workspace.subdomain,
+      });
     }
 
     const emailingDomain = await this.emailingDomainRepository.findOne(
@@ -298,12 +315,5 @@ export class CampaignTrackingContentService {
     return isNonEmptyString(unsubscribeHostname)
       ? `https://${unsubscribeHostname}`
       : undefined;
-  }
-
-  private isLogDriver(): boolean {
-    return (
-      this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
-      EmailingDomainDriver.LOG
-    );
   }
 }
