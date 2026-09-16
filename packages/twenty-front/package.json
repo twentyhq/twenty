@@ -137,8 +137,6 @@
     "react-responsive": "^9.0.2",
     "react-router-dom": "^6.30.6",
     "react-textarea-autosize": "^8.4.1",
-    "rehype-raw": "^7.0.0",
-    "rehype-sanitize": "^6.0.0",
     "remark-gfm": "^4.0.1",
     "rxjs": "^7.2.0",
     "temporal-polyfill": "^0.3.0",

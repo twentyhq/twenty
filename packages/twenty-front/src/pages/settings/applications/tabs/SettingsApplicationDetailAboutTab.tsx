@@ -175,7 +175,7 @@ export const SettingsApplicationDetailAboutTab = ({
         )}
         {isDefined(markdownText) && (
           <StyledMarkdownContent>
-            <LazyMarkdownRenderer text={markdownText} allowSanitizedHtml />
+            <LazyMarkdownRenderer text={markdownText} />
           </StyledMarkdownContent>
         )}
       </StyledMainColumn>
