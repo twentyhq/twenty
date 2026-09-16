@@ -35,7 +35,10 @@ export const SidePanelCoreWorkflowVersionPage = () => {
     workspaceWorkflowVersionId,
   );
 
-  if (!isDefined(coreWorkflowVersion)) {
+  if (
+    !isDefined(coreWorkflowVersion) ||
+    !isDefined(coreWorkflowVersion.workspaceWorkflowId)
+  ) {
     return null;
   }
 

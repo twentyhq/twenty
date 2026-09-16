@@ -143,7 +143,7 @@ export type CoreWorkflowVersionDto = {
   steps?: Maybe<Scalars['JSON']['output']>;
   trigger?: Maybe<Scalars['JSON']['output']>;
   updatedAt: Scalars['String']['output'];
-  workspaceWorkflowId: Scalars['UUID']['output'];
+  workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
   workspaceWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
 };
 
@@ -497,8 +497,11 @@ export type ObjectRecordFilterInput = {
 export type Query = {
   __typename?: 'Query';
   coreWorkflow?: Maybe<CoreWorkflowDto>;
+  coreWorkflowById?: Maybe<CoreWorkflowDto>;
   coreWorkflowVersion?: Maybe<CoreWorkflowVersionDto>;
+  coreWorkflowVersionById?: Maybe<CoreWorkflowVersionDto>;
   coreWorkflowVersions: Array<CoreWorkflowVersionDto>;
+  coreWorkflowVersionsByCoreWorkflowId: Array<CoreWorkflowVersionDto>;
   coreWorkflows: CoreWorkflowConnection;
   dpaAgreements: Array<DpaAgreement>;
   dpaPreview: DpaDocument;
@@ -528,13 +531,28 @@ export type QueryCoreWorkflowArgs = {
 };
 
 
+export type QueryCoreWorkflowByIdArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
 export type QueryCoreWorkflowVersionArgs = {
   workspaceWorkflowVersionId: Scalars['UUID']['input'];
 };
 
 
+export type QueryCoreWorkflowVersionByIdArgs = {
+  id: Scalars['UUID']['input'];
+};
+
+
 export type QueryCoreWorkflowVersionsArgs = {
   workspaceWorkflowId: Scalars['UUID']['input'];
+};
+
+
+export type QueryCoreWorkflowVersionsByCoreWorkflowIdArgs = {
+  coreWorkflowId: Scalars['UUID']['input'];
 };
 
 
@@ -1007,14 +1025,14 @@ export type GetCoreWorkflowVersionQueryVariables = Exact<{
 }>;
 
 
-export type GetCoreWorkflowVersionQuery = { __typename?: 'Query', coreWorkflowVersion?: { __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, workspaceWorkflowVersionId?: any | null, workspaceWorkflowId: any, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } | null };
+export type GetCoreWorkflowVersionQuery = { __typename?: 'Query', coreWorkflowVersion?: { __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, workspaceWorkflowVersionId?: any | null, workspaceWorkflowId?: any | null, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } | null };
 
 export type GetCoreWorkflowVersionsQueryVariables = Exact<{
   workspaceWorkflowId: Scalars['UUID']['input'];
 }>;
 
 
-export type GetCoreWorkflowVersionsQuery = { __typename?: 'Query', coreWorkflowVersions: Array<{ __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, workspaceWorkflowVersionId?: any | null, workspaceWorkflowId: any, createdAt: string, updatedAt: string }> };
+export type GetCoreWorkflowVersionsQuery = { __typename?: 'Query', coreWorkflowVersions: Array<{ __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, workspaceWorkflowVersionId?: any | null, workspaceWorkflowId?: any | null, createdAt: string, updatedAt: string }> };
 
 export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
 
