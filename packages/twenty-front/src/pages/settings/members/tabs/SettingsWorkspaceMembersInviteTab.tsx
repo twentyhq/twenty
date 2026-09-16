@@ -21,7 +21,7 @@ import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { H2Title } from 'twenty-ui/primitives/typography';
@@ -207,25 +207,29 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     <TableCell align="right">
                       <StyledButtonContainer>
                         <IconButton
+                          aria-label={t`Resend invitation`}
                           onClick={() => {
                             handleResendWorkspaceInvitation(
                               workspaceInvitation.id,
                             );
                           }}
-                          variant="tertiary"
-                          size="medium"
-                          Icon={IconReload}
-                        />
+                          variant="ghost"
+                          size="md"
+                        >
+                          <IconReload />
+                        </IconButton>
                         <IconButton
+                          aria-label={t`Remove invitation`}
                           onClick={() => {
                             handleRemoveWorkspaceInvitation(
                               workspaceInvitation.id,
                             );
                           }}
-                          variant="tertiary"
-                          size="medium"
-                          Icon={IconTrash}
-                        />
+                          variant="ghost"
+                          size="md"
+                        >
+                          <IconTrash />
+                        </IconButton>
                       </StyledButtonContainer>
                     </TableCell>
                   </TableRow>

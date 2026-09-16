@@ -586,7 +586,8 @@
               "pages": [
                 "ui/components/overview",
                 "ui/components/input/main-button",
-                "ui/components/input/light-button"
+                "ui/components/input/light-button",
+                "ui/components/input/icon-button"
               ]
             }
           ]

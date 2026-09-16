@@ -1,3 +1,4 @@
+import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
 import { useIsLayoutCustomizationDirty } from '@/layout-customization/hooks/useIsLayoutCustomizationDirty';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
@@ -52,6 +53,15 @@ const getWrapper =
   );
 
 describe('useIsLayoutCustomizationDirty', () => {
+  it('enables Save for an object color change without navigation changes', () => {
+    const store = createStore();
+    store.set(objectColorsDraftState.atom, { 'company-id': 'red' });
+    const { result } = renderHook(() => useIsLayoutCustomizationDirty(), {
+      wrapper: getWrapper(store),
+    });
+    expect(result.current.isDirty).toBe(true);
+  });
+
   it('should return not dirty when no layouts are touched and nav is clean', () => {
     const store = createStore();
     const wrapper = getWrapper(store);

@@ -11,7 +11,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import {
   AppTooltip,
   TooltipDelay,
@@ -82,14 +82,15 @@ export const SidePanelToggleButton = () => {
         data-click-outside-id={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
       >
         <IconButton
-          Icon={IconDotsVertical}
-          dataTestId="page-header-side-panel-button"
-          size="small"
-          variant="primary"
-          accent="default"
-          ariaLabel={ariaLabel}
+          data-testid="page-header-side-panel-button"
+          size="sm"
+          variant="outline"
+          color="neutral"
+          aria-label={ariaLabel}
           onClick={openSidePanelMenu}
-        />
+        >
+          <IconDotsVertical />
+        </IconButton>
       </div>
 
       <StyledTooltipWrapper>

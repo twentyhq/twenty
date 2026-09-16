@@ -22,7 +22,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 import { IconPencil, IconPlus } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type FieldWidgetRelationEditActionProps = {
@@ -88,17 +88,14 @@ export const FieldWidgetRelationEditAction = ({
     fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE ||
     hasAtLeastOneRelationRecord;
 
-  const triggerIcon = isEditAction ? IconPencil : IconPlus;
+  const TriggerIcon = isEditAction ? IconPencil : IconPlus;
   const triggerLabel = isEditAction ? t`Edit relation` : t`Add relation`;
 
   const dropdownTriggerClickableComponent = (
     <StyledEditButtonWrapper>
-      <IconButton
-        Icon={triggerIcon}
-        variant="tertiary"
-        size="small"
-        ariaLabel={triggerLabel}
-      />
+      <IconButton variant="ghost" size="sm" aria-label={triggerLabel}>
+        <TriggerIcon />
+      </IconButton>
     </StyledEditButtonWrapper>
   );
 

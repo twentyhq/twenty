@@ -13,6 +13,7 @@ import { RemoveSeeActiveVersionCommandMenuItemCommand } from 'src/database/comma
 import { NormalizeWorkflowRecordCrudRichTextFieldsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789482628000-normalize-workflow-record-crud-rich-text-fields.command';
 import { BackfillDeterministicPermissionUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789553327000-backfill-deterministic-permission-universal-identifiers.command';
 import { SeedObjectInitialViewCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789565000000-seed-object-initial-view.command';
+import { UnpinCreationCommandsOnRecordSelectionCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789565075331-unpin-creation-commands-on-record-selection.command';
 import { AddPersonEmailTrackingConsentCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789571369003-add-person-email-tracking-consent.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
@@ -47,6 +48,7 @@ import { WorkspaceSchemaMigrationRunnerActionHandlersModule } from 'src/engine/w
     NormalizeWorkflowRecordCrudRichTextFieldsCommand,
     BackfillDeterministicPermissionUniversalIdentifiersCommand,
     SeedObjectInitialViewCommand,
+    UnpinCreationCommandsOnRecordSelectionCommand,
     AddPersonEmailTrackingConsentCommand,
   ],
 })

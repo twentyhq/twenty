@@ -149,7 +149,7 @@ export const SettingsDataModelFieldIconLabelForm = ({
             <IconPicker
               selectedIconKey={value ?? 'IconUsers'}
               onChange={({ iconKey }) => onChange(iconKey)}
-              variant="primary"
+              variant="outline"
               disabled={readonly}
             />
           )}
