@@ -52,7 +52,7 @@ import {
   WidgetType,
 } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
@@ -289,7 +289,7 @@ const meta = {
   component: RecordCreationFlow,
   decorators: [
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     RouterDecorator,
     ComponentDecorator,
   ],

@@ -1,3 +1,4 @@
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { ResourceCreditPackagePickerModal } from '@/settings/billing/components/internal/ResourceCreditPackagePickerModal';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
@@ -5,7 +6,6 @@ import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -87,7 +87,7 @@ export const ResourceCreditPriceSelector = ({
 
   const [selectedPriceId, setSelectedPriceId] = useState<string | undefined>();
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [setResourceCreditPrice, { loading: isUpdating }] = useMutation(
     SetResourceCreditSubscriptionPriceDocument,
@@ -309,10 +309,16 @@ export const ResourceCreditPriceSelector = ({
           onBillingUpdateApplied: refetchResourceCreditUsage,
         },
       );
-      enqueueSuccessSnackBar({ message: t`Resource credits updated.` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Resource credits updated.`,
+      });
       setSelectedPriceId(undefined);
     } catch (error) {
-      enqueueErrorSnackBar({ message: t`Failed to update resource credits.` });
+      enqueueToast({
+        variant: 'error',
+        children: t`Failed to update resource credits.`,
+      });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;
