@@ -14,20 +14,22 @@ import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/dr
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
-import { type CampaignMessagePart } from 'src/engine/core-modules/emailing-domain/types/campaign-message-part.type';
+import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
 import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
 import { normalizeEmailAddress } from 'src/modules/emailing/utils/normalize-email-address.util';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
-import { resolveTrackedLinkUrl } from 'src/modules/emailing/utils/resolve-tracked-link-url.util';
 
 const CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN = /\{\{v_[htu]_(\d+)\}\}/g;
+
+type CampaignMessagePart = 'HTML' | 'TEXT';
 
 const CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART: Record<
   CampaignMessagePart,
@@ -200,7 +202,7 @@ export class CampaignTrackingContentService {
       const authoredUrl = this.restoreAuthoredUrl(urlTemplate, variableNames);
 
       for (const recipient of recipients) {
-        const { url, isTrackable } = resolveTrackedLinkUrl({
+        const { url, isTrackable } = this.resolveLinkUrl({
           urlTemplate,
           replacements: recipient.replacements,
         });
@@ -236,7 +238,7 @@ export class CampaignTrackingContentService {
     const replacements: Record<string, string> = {};
 
     urlTemplates.forEach((urlTemplate, index) => {
-      const { url } = resolveTrackedLinkUrl({
+      const { url } = this.resolveLinkUrl({
         urlTemplate,
         replacements: recipient.replacements,
       });
@@ -286,6 +288,21 @@ export class CampaignTrackingContentService {
     index: number;
   }): string {
     return `${CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART[messagePart]}_${index}`;
+  }
+
+  private resolveLinkUrl({
+    urlTemplate,
+    replacements,
+  }: {
+    urlTemplate: string;
+    replacements: Record<string, string>;
+  }): { url: string; isTrackable: boolean } {
+    const url = applyReplacementTags(urlTemplate, replacements);
+
+    return {
+      url,
+      isTrackable: TRACKABLE_URL_PATTERN.test(url) && URL.canParse(url),
+    };
   }
 
   private restoreAuthoredUrl(

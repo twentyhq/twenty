@@ -32,11 +32,10 @@ import { CampaignEngagementEventService } from 'src/modules/emailing/services/ca
 import { CampaignEngagementRecordingService } from 'src/modules/emailing/services/campaign-engagement-recording.service';
 import { CampaignEngagementReportService } from 'src/modules/emailing/services/campaign-engagement-report.service';
 import { CampaignFollowUpService } from 'src/modules/emailing/services/campaign-follow-up.service';
-import { MessageCampaignAccessService } from 'src/modules/emailing/services/message-campaign-access.service';
-import { MessageListAccessService } from 'src/modules/emailing/services/message-list-access.service';
 import { MessageTrackingConsentPersonListener } from 'src/modules/emailing/listeners/message-tracking-consent-person.listener';
 import { MessageTrackingConsentResolver } from 'src/modules/emailing/resolvers/message-tracking-consent.resolver';
 import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
+import { ObjectRecordPermissionService } from 'src/modules/emailing/services/object-record-permission.service';
 import { PersonAccessService } from 'src/modules/emailing/services/person-access.service';
 import { CampaignEngagementResolver } from 'src/modules/emailing/resolvers/campaign-engagement.resolver';
 import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
@@ -128,15 +127,14 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     MessageTrackingConsentService,
     MessageTrackingConsentPersonListener,
     MessageTrackingConsentResolver,
-    PersonAccessService,
     CampaignTrackingContentService,
     CampaignEngagementCaptureService,
     CampaignEngagementRecordingService,
     CampaignEngagementEventService,
     CampaignEngagementReportService,
     CampaignFollowUpService,
-    MessageCampaignAccessService,
-    MessageListAccessService,
+    ObjectRecordPermissionService,
+    PersonAccessService,
     CampaignEngagementResolver,
     RecordCampaignEngagementJob,
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),

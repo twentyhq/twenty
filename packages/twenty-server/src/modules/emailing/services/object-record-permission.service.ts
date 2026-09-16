@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -11,24 +11,28 @@ import {
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-const LIST_OBJECT_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.messageList.universalIdentifier,
-  STANDARD_OBJECTS.messageListMember.universalIdentifier,
-];
+export type ObjectRecordPermission = keyof Pick<
+  ObjectPermissions,
+  'canReadObjectRecords' | 'canUpdateObjectRecords'
+>;
 
 @Injectable()
-export class MessageListAccessService {
+export class ObjectRecordPermissionService {
   constructor(
     private readonly permissionsService: PermissionsService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async assertCanReadAndUpdateLists({
+  async assertObjectRecordPermissions({
     workspaceId,
     userWorkspaceId,
+    objectUniversalIdentifiers,
+    requiredPermissions,
   }: {
     workspaceId: string;
     userWorkspaceId: string;
+    objectUniversalIdentifiers: string[];
+    requiredPermissions: ObjectRecordPermission[];
   }): Promise<void> {
     const [{ objectsPermissions }, { flatObjectMetadataMaps }] =
       await Promise.all([
@@ -41,17 +45,19 @@ export class MessageListAccessService {
         ]),
       ]);
 
-    for (const objectUniversalIdentifier of LIST_OBJECT_UNIVERSAL_IDENTIFIERS) {
+    for (const objectUniversalIdentifier of objectUniversalIdentifiers) {
       const objectMetadata =
         flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
       const objectPermissions = isDefined(objectMetadata)
         ? objectsPermissions[objectMetadata.id]
         : undefined;
 
-      if (
-        !objectPermissions?.canReadObjectRecords ||
-        !objectPermissions.canUpdateObjectRecords
-      ) {
+      const hasRequiredPermissions = requiredPermissions.every(
+        (requiredPermission) =>
+          objectPermissions?.[requiredPermission] === true,
+      );
+
+      if (!hasRequiredPermissions) {
         throw new PermissionsException(
           PermissionsExceptionMessage.PERMISSION_DENIED,
           PermissionsExceptionCode.PERMISSION_DENIED,

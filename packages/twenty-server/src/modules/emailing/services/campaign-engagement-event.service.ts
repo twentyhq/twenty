@@ -6,7 +6,6 @@ import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickhouse/utils/format-date-time-for-clickhouse.util';
 import { parseClickHouseDateTime } from 'src/database/clickhouse/utils/parse-clickhouse-date-time.util';
 import { CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
-import { CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS } from 'src/modules/emailing/constants/campaign-engagement-activity-class.constant';
 import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
 import { type CampaignEngagementBucket } from 'src/modules/emailing/types/campaign-engagement-bucket.type';
 
@@ -49,8 +48,8 @@ const SCANNER_BURST_EVENT_SUBQUERY = `SELECT eventId
   )
   WHERE distinctLinksInWindow >= ${SCANNER_BURST_MIN_DISTINCT_LINKS}`;
 
-const FILTERED_CLICK_CONDITION = `AND activityClass != '${CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.SUSPECTED_AUTOMATION}'
-  AND activityClass != '${CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.PRIVACY_PROXY}'
+const FILTERED_CLICK_CONDITION = `AND activityClass != 'SUSPECTED_AUTOMATION'
+  AND activityClass != 'PRIVACY_PROXY'
   AND eventId NOT IN (${SCANNER_BURST_EVENT_SUBQUERY})`;
 
 @Injectable()
