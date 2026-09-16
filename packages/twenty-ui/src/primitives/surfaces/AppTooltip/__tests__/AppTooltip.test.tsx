@@ -27,7 +27,9 @@ describe('AppTooltip', () => {
     expect(button).toHaveFocus();
     await user.unhover(button);
 
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
   });
 
   it('stays open on pointer leave while the anchor itself holds focus', async () => {
@@ -76,7 +78,9 @@ describe('AppTooltip', () => {
     await user.tab();
     expect(await screen.findByRole('tooltip')).toBeVisible();
     await user.tab();
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
   });
   it('does not restore a stale tooltip after a menu closes', async () => {
     const user = userEvent.setup();
@@ -99,7 +103,9 @@ describe('AppTooltip', () => {
     await user.unhover(screen.getByRole('button'));
     rerender(renderTooltip(false));
 
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
     await user.hover(screen.getByRole('button'));
     expect(await screen.findByRole('tooltip')).toBeVisible();
   });
@@ -144,6 +150,8 @@ describe('AppTooltip', () => {
     await user.hover(screen.getByRole('button'));
     expect(await screen.findByRole('tooltip')).toBeVisible();
     fireEvent.pointerMove(document.body);
-    expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.queryByRole('tooltip')).not.toBeInTheDocument(),
+    );
   });
 });

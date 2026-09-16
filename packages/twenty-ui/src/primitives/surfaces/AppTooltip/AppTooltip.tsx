@@ -212,14 +212,12 @@ export const AppTooltip = ({
       clearTimeout(hideDelayTimerRef.current);
     };
 
+    // Always defer the hide: a shared tooltip moved between anchors would
+    // otherwise unmount and remount, losing the popup node mid-swap.
     const handleAnchorLeave = () => {
       clearTimeout(showDelayTimerRef.current);
       clearTimeout(hideDelayTimerRef.current);
 
-      if (!interactive) {
-        handleShow(false);
-        return;
-      }
       hideDelayTimerRef.current = setTimeout(() => {
         if (isHoveringTooltipRef.current) {
           return;
