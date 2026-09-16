@@ -5,7 +5,7 @@ import { useSso } from '@/auth/sign-in-up/hooks/useSso';
 import { guessSsoIdentityProviderIconByUrl } from '@/settings/security/utils/guessSsoIdentityProviderIconByUrl';
 
 import { workspaceAuthProvidersState } from '@/workspace/states/workspaceAuthProvidersState';
-import React, { createElement } from 'react';
+import React from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { MainButton } from 'twenty-ui/components';
 import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
@@ -20,20 +20,24 @@ export const SignInUpSsoIdentityProviderSelection = () => {
     <>
       <StyledOnboardingContentContainer>
         {isDefined(workspaceAuthProviders?.sso) &&
-          workspaceAuthProviders?.sso.map((idp) => (
-            <React.Fragment key={idp.id}>
-              <MainButton
-                onClick={() => redirectToSsoLoginPage(idp.id)}
-                startIcon={createElement(
-                  guessSsoIdentityProviderIconByUrl(idp.issuer),
-                )}
-                fullWidth
-              >
-                {idp.name}
-              </MainButton>
-              <HorizontalSeparator visible={false} />
-            </React.Fragment>
-          ))}
+          workspaceAuthProviders?.sso.map((identityProvider) => {
+            const IdentityProviderIcon = guessSsoIdentityProviderIconByUrl(
+              identityProvider.issuer,
+            );
+
+            return (
+              <React.Fragment key={identityProvider.id}>
+                <MainButton
+                  onClick={() => redirectToSsoLoginPage(identityProvider.id)}
+                  startIcon={<IdentityProviderIcon />}
+                  fullWidth
+                >
+                  {identityProvider.name}
+                </MainButton>
+                <HorizontalSeparator visible={false} />
+              </React.Fragment>
+            );
+          })}
       </StyledOnboardingContentContainer>
     </>
   );
