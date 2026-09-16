@@ -128,7 +128,7 @@ export class CampaignEngagementCaptureService {
   }
 
   private async releaseResponseAfterBudget(
-    recording: Promise<void>,
+    enqueueing: Promise<void>,
   ): Promise<void> {
     let releaseTimer: NodeJS.Timeout | undefined;
 
@@ -137,7 +137,7 @@ export class CampaignEngagementCaptureService {
     });
 
     try {
-      await Promise.race([recording, release]);
+      await Promise.race([enqueueing, release]);
     } finally {
       clearTimeout(releaseTimer);
     }

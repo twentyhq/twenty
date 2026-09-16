@@ -19,12 +19,12 @@ import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role
 import { ShortLinkService } from 'src/engine/core-modules/short-link/services/short-link.service';
 import { type ShortLinkEntity } from 'src/engine/core-modules/short-link/short-link.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
 import { ObjectRecordPermissionService } from 'src/modules/emailing/services/object-record-permission.service';
+import { PersonAccessService } from 'src/modules/emailing/services/person-access.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignEngagementBucket } from 'src/modules/emailing/types/campaign-engagement-bucket.type';
 
@@ -45,6 +45,7 @@ export class CampaignEngagementReportService {
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
     private readonly shortLinkService: ShortLinkService,
     private readonly objectRecordPermissionService: ObjectRecordPermissionService,
+    private readonly personAccessService: PersonAccessService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -284,10 +285,11 @@ export class CampaignEngagementReportService {
       deliveries.map((delivery) => [delivery.id, delivery.personId]),
     );
 
-    const readablePersonIds = await this.findReadablePersonIds({
-      roleId,
-      personIds: [...personIdByDeliveryId.values()].filter(isDefined),
-    });
+    const readablePersonIds =
+      await this.personAccessService.findReadablePersonIds({
+        roleId,
+        personIds: [...personIdByDeliveryId.values()].filter(isDefined),
+      });
 
     return clickedDeliveries.flatMap((clickedDelivery) => {
       const personId = personIdByDeliveryId.get(clickedDelivery.deliveryId);
@@ -296,33 +298,5 @@ export class CampaignEngagementReportService {
         ? [{ ...clickedDelivery, personId }]
         : [];
     });
-  }
-
-  private async findReadablePersonIds({
-    roleId,
-    personIds,
-  }: {
-    roleId: string;
-    personIds: string[];
-  }): Promise<Set<string>> {
-    if (personIds.length === 0) {
-      return new Set();
-    }
-
-    const people = await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const personRepository = this.workspaceOrmManager.getRepository(
-          PersonWorkspaceEntity,
-          { unionOf: [roleId] },
-        );
-
-        return personRepository.find({
-          where: { id: In(personIds) },
-          select: { id: true },
-        });
-      },
-    );
-
-    return new Set(people.map((person) => person.id));
   }
 }

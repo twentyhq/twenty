@@ -32,6 +32,7 @@ import { CampaignEngagementRecordingService } from 'src/modules/emailing/service
 import { CampaignEngagementReportService } from 'src/modules/emailing/services/campaign-engagement-report.service';
 import { CampaignFollowUpService } from 'src/modules/emailing/services/campaign-follow-up.service';
 import { ObjectRecordPermissionService } from 'src/modules/emailing/services/object-record-permission.service';
+import { PersonAccessService } from 'src/modules/emailing/services/person-access.service';
 import { CampaignEngagementResolver } from 'src/modules/emailing/resolvers/campaign-engagement.resolver';
 import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
@@ -124,6 +125,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     CampaignEngagementReportService,
     CampaignFollowUpService,
     ObjectRecordPermissionService,
+    PersonAccessService,
     CampaignEngagementResolver,
     RecordCampaignEngagementJob,
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),
