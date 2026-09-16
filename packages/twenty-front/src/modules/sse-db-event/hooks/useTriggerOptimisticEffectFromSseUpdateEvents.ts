@@ -12,10 +12,11 @@ import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { getUnknownRecordInputFields } from '@/object-record/utils/getUnknownRecordInputFields';
+import { isRecordUpdateAlreadyInCache } from '@/sse-db-event/utils/isRecordUpdateAlreadyInCache';
 import { captureMessage } from '@sentry/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   DatabaseEventAction,
   type ObjectRecordEvent,
@@ -49,6 +50,8 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
       const updateEvents = objectRecordEvents.filter((objectRecordEvent) => {
         return objectRecordEvent.action === DatabaseEventAction.UPDATED;
       });
+
+      let hasAppliedUpdate = false;
 
       for (const updateEvent of updateEvents) {
         const recordFromEvent = updateEvent.properties.after;
@@ -132,6 +135,13 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           continue;
         }
 
+        // The tab that made the change already holds the mutation response, so its own echo carries nothing new.
+        if (isRecordUpdateAlreadyInCache({ cachedRecord, updatedRecord })) {
+          continue;
+        }
+
+        hasAppliedUpdate = true;
+
         upsertRecordsInStore({ partialRecords: [updatedRecord] });
 
         updateRecordFromCache({
@@ -165,13 +175,13 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
         });
       }
 
-      if (isNonEmptyArray(updateEvents)) {
+      if (hasAppliedUpdate) {
         refetchAggregateQueriesForObjectMetadataItem({
           objectMetadataItem,
         });
       }
 
-      return isNonEmptyArray(updateEvents);
+      return hasAppliedUpdate;
     },
     [
       store,
