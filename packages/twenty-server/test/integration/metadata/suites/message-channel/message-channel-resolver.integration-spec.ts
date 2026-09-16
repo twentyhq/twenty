@@ -174,6 +174,44 @@ describe('messageChannelResolver (e2e)', () => {
       expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
     });
 
+    it('should not queue a group emails cleanup on a group channel', async () => {
+      try {
+        const response = await makeMetadataAPIRequest({
+          query: gql`
+            mutation UpdateMessageChannel($input: UpdateMessageChannelInput!) {
+              updateMessageChannel(input: $input) {
+                id
+                excludeGroupEmails
+              }
+            }
+          `,
+          variables: {
+            input: {
+              id: MESSAGE_CHANNEL_DATA_SEED_IDS.SUPPORT_GROUP,
+              update: { excludeGroupEmails: true },
+            },
+          },
+        });
+
+        expect(response.body.errors).toBeUndefined();
+        expect(response.body.data.updateMessageChannel.excludeGroupEmails).toBe(
+          true,
+        );
+
+        const [messageChannel] = await global.testDataSource.query(
+          `SELECT "pendingGroupEmailsAction" FROM core."messageChannel" WHERE id = $1`,
+          [MESSAGE_CHANNEL_DATA_SEED_IDS.SUPPORT_GROUP],
+        );
+
+        expect(messageChannel.pendingGroupEmailsAction).toBe('NONE');
+      } finally {
+        await global.testDataSource.query(
+          `UPDATE core."messageChannel" SET "excludeGroupEmails" = false, "pendingGroupEmailsAction" = 'NONE' WHERE id = $1`,
+          [MESSAGE_CHANNEL_DATA_SEED_IDS.SUPPORT_GROUP],
+        );
+      }
+    });
+
     it('should deny a member updating a workspace-shared group channel', async () => {
       const response = await makeMetadataAPIRequestWithMemberRole({
         query: gql`

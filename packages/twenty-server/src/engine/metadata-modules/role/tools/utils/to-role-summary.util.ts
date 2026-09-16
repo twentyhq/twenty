@@ -2,10 +2,10 @@ import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 
 type ObjectPermissionFields = {
   objectMetadataId: string;
-  canReadObjectRecords?: boolean;
-  canUpdateObjectRecords?: boolean;
-  canSoftDeleteObjectRecords?: boolean;
-  canDestroyObjectRecords?: boolean;
+  canReadObjectRecords?: boolean | null;
+  canUpdateObjectRecords?: boolean | null;
+  canSoftDeleteObjectRecords?: boolean | null;
+  canDestroyObjectRecords?: boolean | null;
 };
 
 // Narrows to the permission booleans the model needs, dropping restrictedFields

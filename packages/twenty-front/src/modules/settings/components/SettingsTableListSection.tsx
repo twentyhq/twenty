@@ -140,12 +140,13 @@ export const SettingsTableListSection = <
       {isDefined(footerButtonLabel) && isDefined(onFooterButtonClick) && (
         <StyledFooter>
           <Button
-            Icon={IconPlus}
-            title={footerButtonLabel}
-            variant="secondary"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={onFooterButtonClick}
-          />
+            variant="outline"
+          >
+            {footerButtonLabel}
+          </Button>
         </StyledFooter>
       )}
     </Section>

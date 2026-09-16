@@ -30,7 +30,7 @@ export const LayoutCustomizationBarResetConfirmationModal = ({
       subtitle={t`This action cannot be undone.`}
       onConfirmClick={handleConfirmReset}
       confirmButtonText={t`Reset`}
-      confirmButtonAccent="danger"
+      confirmButtonColor="danger"
     />
   );
 };

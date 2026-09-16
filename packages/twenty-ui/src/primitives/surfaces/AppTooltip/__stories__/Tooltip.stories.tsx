@@ -61,9 +61,10 @@ const meta: Meta<typeof Tooltip> = {
       <Button
         type="button"
         id={args.anchorSelect?.slice(1)}
-        title="Hover or focus me"
-        ariaLabel="Hover or focus me"
-      />
+        aria-label="Hover or focus me"
+      >
+        Hover or focus me
+      </Button>
       <Tooltip {...args} />
     </>
   ),
@@ -224,10 +225,11 @@ export const InteractiveCustomContent: Story = {
     children: (
       <Button
         type="button"
-        title="Show more"
-        ariaLabel="Show more"
+        aria-label="Show more"
         onClick={onCustomActionClick}
-      />
+      >
+        Show more
+      </Button>
     ),
   },
   decorators: [ComponentDecorator],
