@@ -23,7 +23,7 @@ import {
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingEntitlementService } from 'src/engine/core-modules/billing/services/billing-entitlement.service';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
@@ -54,8 +54,7 @@ export class BillingSubscriptionService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPriceService: BillingPriceService,
-    @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
-    private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
+    private readonly billingEntitlementService: BillingEntitlementService,
     @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     // Stripe webhooks resolve by stripeCustomerId before any workspaceId
@@ -240,25 +239,18 @@ export class BillingSubscriptionService {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
 
-    const entitlements = isBillingEnabled
-      ? await this.billingEntitlementRepository.find(workspaceId)
-      : [];
-
-    const entitlementsByKey = entitlements.reduce(
-      (acc, entitlement) => {
-        acc[entitlement.key] = entitlement;
-
-        return acc;
-      },
-      {} as Record<BillingEntitlementKey, BillingEntitlementEntity>,
-    );
+    const entitlementsByKey = isBillingEnabled
+      ? await this.billingEntitlementService.getWorkspaceEntitlements(
+          workspaceId,
+        )
+      : {};
 
     return Object.values(BillingEntitlementKey).map((key) => ({
       key,
       value: isEntitlementActive({
         hasValidEnterprisePlan,
         isBillingEnabled,
-        stripeEntitlementValue: entitlementsByKey[key]?.value ?? false,
+        stripeEntitlementValue: entitlementsByKey[key] ?? false,
       }),
     }));
   }
@@ -267,12 +259,12 @@ export class BillingSubscriptionService {
     workspaceId: string,
     key: BillingEntitlementKey,
   ): Promise<boolean> {
-    const entitlement = await this.billingEntitlementRepository.findOne(
-      workspaceId,
-      { where: { key, value: true } },
-    );
+    const entitlements =
+      await this.billingEntitlementService.getWorkspaceEntitlements(
+        workspaceId,
+      );
 
-    return entitlement?.value ?? false;
+    return entitlements[key] ?? false;
   }
 
   async getWorkspaceEntitlementValue(

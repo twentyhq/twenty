@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingEntitlementService } from 'src/engine/core-modules/billing/services/billing-entitlement.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BILLING_ENTITLEMENT_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-entitlement-state-lock-options.constant';
 import { buildBillingEntitlementStateLockKey } from 'src/engine/core-modules/billing/utils/build-billing-entitlement-state-lock-key.util';
@@ -33,6 +34,7 @@ export class BillingEntitlementSyncService {
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
     private readonly cacheLockService: CacheLockService,
+    private readonly billingEntitlementService: BillingEntitlementService,
   ) {}
 
   async syncEntitlements({
@@ -99,6 +101,10 @@ export class BillingEntitlementSyncService {
         conflictPaths: ['workspaceId', 'key'],
         skipUpdateIfNoValuesChanged: true,
       },
+    );
+
+    await this.billingEntitlementService.invalidateWorkspaceEntitlements(
+      workspaceId,
     );
 
     // The opposite order to the reset above, because the unsafe direction is

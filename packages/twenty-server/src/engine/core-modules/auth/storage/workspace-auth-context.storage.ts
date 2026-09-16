@@ -21,5 +21,8 @@ export const withWorkspaceAuthContext = <T>(
   context: WorkspaceAuthContext,
   fn: () => T | Promise<T>,
 ): T | Promise<T> => {
-  return workspaceAuthContextStorage.run(context, fn);
+  return workspaceAuthContextStorage.run(
+    { ...context, billingEntitlements: undefined },
+    fn,
+  );
 };

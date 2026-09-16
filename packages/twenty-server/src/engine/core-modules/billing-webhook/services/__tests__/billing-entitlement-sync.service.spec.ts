@@ -4,6 +4,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 
 import { BillingEntitlementSyncService } from 'src/engine/core-modules/billing-webhook/services/billing-entitlement-sync.service';
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
+import { BillingEntitlementService } from 'src/engine/core-modules/billing/services/billing-entitlement.service';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
@@ -28,6 +29,10 @@ describe('BillingEntitlementSyncService', () => {
 
   const usageLimitQuotaService = {
     dropIntraWorkspaceLimitCounters: jest.fn(),
+  };
+
+  const billingEntitlementService = {
+    invalidateWorkspaceEntitlements: jest.fn(),
   };
 
   // A real single-holder lock rather than a pass-through, so a test that runs
@@ -67,6 +72,9 @@ describe('BillingEntitlementSyncService', () => {
     heldLockKeys.clear();
     lockQueueByKey.clear();
     billingEntitlementRepository.upsert.mockResolvedValue(undefined);
+    billingEntitlementService.invalidateWorkspaceEntitlements.mockResolvedValue(
+      undefined,
+    );
     usageLimitQuotaService.dropIntraWorkspaceLimitCounters.mockResolvedValue(
       undefined,
     );
@@ -92,6 +100,10 @@ describe('BillingEntitlementSyncService', () => {
         {
           provide: CacheLockService,
           useValue: cacheLockService,
+        },
+        {
+          provide: BillingEntitlementService,
+          useValue: billingEntitlementService,
         },
       ],
     }).compile();
@@ -214,6 +226,66 @@ describe('BillingEntitlementSyncService', () => {
     // Two workspaces hold their own keys at once. A constant key would
     // serialize them and never show both held together.
     expect(new Set(heldKeysDuringOtherWorkspaceUpsert).size).toBe(2);
+  });
+
+  it('refreshes entitlements after persistence and before RLS cleanup', async () => {
+    givenStoredEntitlements([]);
+
+    await syncEntitlements([]);
+
+    expect(
+      billingEntitlementService.invalidateWorkspaceEntitlements,
+    ).toHaveBeenCalledWith(WORKSPACE_ID);
+    expect(
+      billingEntitlementService.invalidateWorkspaceEntitlements.mock
+        .invocationCallOrder[0],
+    ).toBeGreaterThan(
+      billingEntitlementRepository.upsert.mock.invocationCallOrder[0],
+    );
+    expect(
+      billingEntitlementService.invalidateWorkspaceEntitlements.mock
+        .invocationCallOrder[0],
+    ).toBeLessThan(
+      rowLevelPermissionPredicateGroupService
+        .deleteAllRowLevelPermissionPredicateGroups.mock.invocationCallOrder[0],
+    );
+  });
+
+  it('retries cache refresh even when the rows already match after a failed refresh', async () => {
+    givenStoredEntitlements([]);
+    billingEntitlementRepository.upsert.mockImplementation(async () => {
+      givenStoredEntitlements([
+        { key: BillingEntitlementKey.USAGE_LIMIT, value: true },
+      ]);
+    });
+    billingEntitlementService.invalidateWorkspaceEntitlements.mockRejectedValueOnce(
+      new Error('cache unavailable'),
+    );
+
+    await expect(
+      syncEntitlements([BillingEntitlementKey.USAGE_LIMIT]),
+    ).rejects.toThrow('cache unavailable');
+    await syncEntitlements([BillingEntitlementKey.USAGE_LIMIT]);
+
+    expect(
+      billingEntitlementService.invalidateWorkspaceEntitlements,
+    ).toHaveBeenCalledTimes(2);
+    expect(
+      usageLimitQuotaService.dropIntraWorkspaceLimitCounters,
+    ).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not refresh the cache if persisting entitlements fails', async () => {
+    givenStoredEntitlements([]);
+    billingEntitlementRepository.upsert.mockRejectedValueOnce(
+      new Error('database unavailable'),
+    );
+
+    await expect(syncEntitlements([])).rejects.toThrow('database unavailable');
+
+    expect(
+      billingEntitlementService.invalidateWorkspaceEntitlements,
+    ).not.toHaveBeenCalled();
   });
 
   it('holds the lock for the whole transition', async () => {
