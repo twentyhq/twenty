@@ -7,7 +7,7 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { AvatarOrIcon } from 'twenty-ui/data-display';
+import { AvatarOrIcon } from 'twenty-ui/primitives/data-display';
 import { IconApps, IconLock, useIcons } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme-constants';
 
@@ -90,10 +90,10 @@ export const useChatReferenceTarget = (
           path: isNonEmptyString(recordPath) ? recordPath : undefined,
           leftComponent: (
             <AvatarOrIcon
-              placeholder={reference.displayName}
-              placeholderColorSeed={reference.recordId}
-              avatarType="rounded"
-              avatarUrl=""
+              name={reference.displayName}
+              colorSeed={reference.recordId}
+              shape="circle"
+              src=""
             />
           ),
         };

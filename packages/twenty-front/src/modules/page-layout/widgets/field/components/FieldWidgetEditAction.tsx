@@ -5,7 +5,7 @@ import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlin
 import { useOpenFieldWidgetFieldInputEditMode } from '@/page-layout/widgets/field/hooks/useOpenFieldWidgetFieldInputEditMode';
 import { WidgetCardHeaderHoverReveal } from '@/page-layout/widgets/widget-card/components/WidgetCardHeaderHoverReveal';
 import { IconPencil } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 
 export const FieldWidgetEditAction = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);

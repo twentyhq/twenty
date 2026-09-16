@@ -9,9 +9,9 @@ import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/Spre
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 
-import { ModalContent } from 'twenty-ui/surfaces';
+import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { useLingui } from '@lingui/react/macro';
-import { Radio, RadioGroup } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type WorkBook } from 'xlsx-ugnis';
 

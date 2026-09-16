@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 import { RESTORE_CORE_WORKFLOW_VERSION_MODAL_ID } from '@/object-core/workflows/versions/constants/RestoreCoreWorkflowVersionModalId';
 import { useRestoreCoreWorkflowVersionAsDraft } from '@/object-core/workflows/versions/hooks/useRestoreCoreWorkflowVersionAsDraft';

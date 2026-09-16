@@ -2,7 +2,7 @@ import { t } from '@lingui/core/macro';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormRawJsonFieldInput } from '@/object-record/record-field/ui/form-types/components/FormRawJsonFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
-import { InputLabel } from 'twenty-ui/input';
+import { InputLabel } from 'twenty-ui/primitives/input';
 import { Select } from '@/ui/input/components/Select';
 import {
   BODY_TYPES,

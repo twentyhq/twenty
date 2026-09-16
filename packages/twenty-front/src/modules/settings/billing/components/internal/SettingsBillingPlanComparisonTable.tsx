@@ -14,7 +14,7 @@ import {
   Button,
   SegmentedControl,
   type SegmentedControlOption,
-} from 'twenty-ui/input';
+} from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   BillingPlanKey,

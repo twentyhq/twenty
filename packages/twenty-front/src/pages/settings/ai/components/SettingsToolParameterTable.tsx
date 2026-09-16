@@ -23,9 +23,9 @@ import {
   AppTooltip,
   OverflowingTextWithTooltip,
   TooltipDelay,
-} from 'twenty-ui/surfaces';
-import { Button } from 'twenty-ui/input';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/surfaces';
+import { Button } from 'twenty-ui/primitives/input';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SchemaProperty = {
@@ -130,6 +130,7 @@ export const SettingsToolParameterTable = ({
                   gridTemplateColumns={PARAMETER_TABLE_GRID}
                 >
                   <TableCell
+                    color={themeCssVariables.font.color.primary}
                     overflow="hidden"
                     textOverflow="ellipsis"
                     whiteSpace="nowrap"

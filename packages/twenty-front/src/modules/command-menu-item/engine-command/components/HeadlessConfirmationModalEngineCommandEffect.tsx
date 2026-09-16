@@ -8,7 +8,7 @@ import { type CommandMenuConfirmationModalResultBrowserEventDetail } from 'twent
 import { useUnmountCommand } from '@/command-menu-item/engine-command/hooks/useUnmountEngineCommand';
 import { CommandComponentInstanceContext } from '@/command-menu-item/engine-command/states/contexts/CommandComponentInstanceContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
-import { type ButtonAccent } from 'twenty-ui/input';
+import { type ButtonAccent } from 'twenty-ui/primitives/input';
 
 export type HeadlessConfirmationModalEngineCommandEffectProps = {
   title: string;

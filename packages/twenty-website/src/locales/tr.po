@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 12:23\n"
+"PO-Revision-Date: 2026-09-15 14:21\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -723,7 +723,7 @@ msgstr "Yeni bir bakım modu, yöneticilerin hassas işlemler sırasında çalı
 #. js-lingui-id: iIggw/
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "A new onboarding experience"
-msgstr "Yeni bir ilk kullanım deneyimi."
+msgstr "Yeni bir ilk kullanım deneyimi"
 
 #. js-lingui-id: P5BDuh
 #: src/case-studies/case-study-stories.ts
@@ -821,15 +821,15 @@ msgstr "Hesap Sahibi"
 msgid "Action"
 msgstr "Eylem"
 
-#. js-lingui-id: Kqfsda
+#. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
-msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
-msgstr "Ödeme sonrasında Twenty kurumsal lisansınızı etkinleştirin ve anahtarınızı kendi kendinize barındırdığınız örneğinize kopyalayın."
+msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
+msgstr "Ödeme sonrasında Twenty Organization lisansınızı etkinleştirin ve anahtarınızı kendi kendinize barındırdığınız örneğinize kopyalayın."
 
-#. js-lingui-id: muhZ+X
+#. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Activating your enterprise license…"
-msgstr "Kurumsal lisansınız etkinleştiriliyor…"
+msgid "Activating your Organization license…"
+msgstr "Organization lisansınız etkinleştiriliyor…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -1632,7 +1632,7 @@ msgstr "Canlı CRM verilerinden özel panolar oluşturun. Anlaşmalar, hesaplar,
 #. js-lingui-id: IQcVFZ
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Build dashboards with AI"
-msgstr "Yapay zekâ ile panolar oluşturun."
+msgstr "Yapay zekâ ile panolar oluşturun"
 
 #. js-lingui-id: rdvFK9
 #: src/sections/why-twenty-editorial/editorials.data.ts
@@ -2157,10 +2157,10 @@ msgstr "Kopyala"
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "Bir çağrı kaydının dökümünü veya video bağlantısını doğrudan kayıt sayfasından kopyalayın."
 
-#. js-lingui-id: 7qTWwB
+#. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Copy the enterprise key above."
-msgstr "Yukarıdaki kurumsal anahtarı kopyalayın."
+msgid "Copy the Organization key above."
+msgstr "Yukarıdaki Organization anahtarını kopyalayın."
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2996,11 +2996,6 @@ msgstr "Elevate Consulting, faturalaştırma, Teams, kaynak planlama ve müşter
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "Elevate'in CEO'su Twenty'den o kadar etkilendi ki, iç kurulum daha tamamlanmadan önce bile müşterilere önermeye başladı. Ekip, Twenty'yi danışmanlık uygulamalarının bir parçası olarak müşteri projelerine getirmeyi; belirli operasyonel ihtiyaçlara göre uyarlanmış, özel olarak oluşturulmuş ürünler için arka uç olarak kullanmayı araştırıyor."
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "E-posta ve Takvim"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -3042,6 +3037,7 @@ msgid "Emails"
 msgstr "E‑postalar"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "E-postalar ve Takvim"
@@ -3151,16 +3147,6 @@ msgstr "Geçerli bir URL girin (http:// veya https:// ile başlayan)."
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Enterprise"
 msgstr "Enterprise"
-
-#. js-lingui-id: 87BcPj
-#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
-msgid "Enterprise *activation*"
-msgstr "Kurumsal *aktivasyon*"
-
-#. js-lingui-id: NTskGY
-#: src/platform/routing/static-website-routes.ts
-msgid "Enterprise Activation | Twenty"
-msgstr "Kurumsal Aktivasyon | Twenty"
 
 #. js-lingui-id: aDpB6R
 #: src/sections/compare/compare-data.ts
@@ -3331,10 +3317,10 @@ msgstr "Uzun süreli gösterim!"
 msgid "Extra Dataverse storage (10 GB)"
 msgstr "Ek Dataverse depolaması (10 GB)"
 
-#. js-lingui-id: tX4pRm
+#. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Failed to activate enterprise key. Please try again."
-msgstr "Kurumsal anahtar etkinleştirilemedi. Lütfen tekrar deneyin."
+msgid "Failed to activate Organization key. Please try again."
+msgstr "Organization anahtarı etkinleştirilemedi. Lütfen tekrar deneyin."
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -3401,11 +3387,6 @@ msgstr "Öne çıkan uygulamalar"
 msgid "Feb"
 msgstr "Şub"
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "Alan Düzeyi İzin"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3424,6 +3405,11 @@ msgstr "Alan bileşenleri artık daha fazla ilişki türünü destekliyor; böyl
 #. js-lingui-id: e6BgMV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
+msgstr "Alan düzeyinde izinler"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
 msgstr "Alan düzeyinde izinler"
 
 #. js-lingui-id: RnX5oc
@@ -5630,10 +5616,10 @@ msgstr "Vaka çalışmasını aç: {0}"
 msgid "Open menu"
 msgstr "Menüyü aç"
 
-#. js-lingui-id: pkXQA+
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Enterprise."
-msgstr "Twenty self-hosted örneğinizin Ayarlar → Enterprise bölümünü açın."
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
+msgstr "Twenty self-hosted örneğinizin Ayarlar → Yönetici Paneli → Organizasyon bölümünü açın."
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5665,6 +5651,16 @@ msgstr "Fırsat"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Organization"
 msgstr "Organization"
+
+#. js-lingui-id: hjEu3O
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
+msgid "Organization *activation*"
+msgstr "Kuruluş *etkinleştirme*"
+
+#. js-lingui-id: CKppYD
+#: src/platform/routing/static-website-routes.ts
+msgid "Organization Activation | Twenty"
+msgstr "Kuruluş Etkinleştirme | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -6820,6 +6816,7 @@ msgstr "Öz barındırmalı çalışma alanları artık kullanım bazlı fatural
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6842,11 +6839,6 @@ msgstr "Kendi Kendine İlk Kullanım"
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "Self-servis, iş ortakları isteğe bağlı"
-
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "Selfhosting"
 
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -8156,15 +8148,15 @@ msgstr "Twenty ve SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty ve SAP Sales Cloud Fiyatlandırması — Gerçek Maliyet Karşılaştırması"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "İki Faktörlü Kimlik Doğrulama"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
 msgstr "İki faktörlü kimlik doğrulama"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
+msgstr "İki Faktörlü Kimlik Doğrulama"
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
@@ -8518,14 +8510,10 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "Özetinizi gönderemedik. Lütfen kısa bir süre sonra tekrar deneyin."
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Sorunu yamamak istemedik. Kurumların ölçekli olarak güvenebileceği bir şey inşa etmek istedik ve bu da aklımızdaki tüm karmaşıklığı taşıyabilecek kadar sağlam bir temelden başlamamız gerektiği anlamına geliyordu."
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "Sorunun üzerini yamamak istemedik. Kurumların ölçeklenebilir bir şekilde güvenebilecekleri bir şey inşa etmek istedik ve bu da aklımızdaki tüm karmaşıklığı taşıyabilecek kadar sağlam bir temelden başlamamız gerektiği anlamına geliyordu."
 
 #. js-lingui-id: GVxbgf
 #: src/platform/releases/ReleaseNotes.tsx
@@ -9155,16 +9143,6 @@ msgstr "Özetiniz"
 msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
 msgstr "Ödeme işleminiz tamamlandı. Lisans anahtarınızı Twenty örneğinize kopyalamak için aşağıdaki adımları izleyin."
 
-#. js-lingui-id: krHgj1
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise key"
-msgstr "Kurumsal anahtarınız"
-
-#. js-lingui-id: +dxjCu
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise license has been activated successfully."
-msgstr "Kurumsal lisansınız başarıyla etkinleştirildi."
-
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts
 msgid "Your name *"
@@ -9174,6 +9152,16 @@ msgstr "Adınız *"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Your network, fully mapped."
 msgstr "Ağınız, tamamen haritalanmış durumda."
+
+#. js-lingui-id: 91Ysnw
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization key"
+msgstr "Kuruluş anahtarınız"
+
+#. js-lingui-id: sarabV
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization license has been activated successfully."
+msgstr "Kuruluş lisansınız başarıyla etkinleştirildi."
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

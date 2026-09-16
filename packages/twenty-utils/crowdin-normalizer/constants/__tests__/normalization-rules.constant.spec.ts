@@ -19,10 +19,23 @@ describe('NORMALIZATION_RULES', () => {
   });
 
   it('keeps the ICU rules away from MDX, where braces are JSX', () => {
-    expect(namesFor('mdx')).toEqual(['escaped-inline-code-tags']);
+    expect(namesFor('mdx')).toEqual([
+      'escaped-every-character',
+      'escaped-inline-code-tags',
+      'translated-identifier',
+    ]);
   });
 
-  it('runs every rule against PO catalogs', () => {
-    expect(namesFor('po')).toHaveLength(NORMALIZATION_RULES.length);
+  // Identifiers, links and code spans are an MDX concern; every other rule
+  // reads an ICU catalog and belongs to PO.
+  it('runs every rule but the MDX-specific one against PO catalogs', () => {
+    const mdxOnly = NORMALIZATION_RULES.filter(
+      (rule) => !rule.formats.includes('po'),
+    ).map((rule) => rule.name);
+
+    expect(mdxOnly).toEqual(['translated-identifier']);
+    expect(namesFor('po')).toHaveLength(
+      NORMALIZATION_RULES.length - mdxOnly.length,
+    );
   });
 });
