@@ -19,9 +19,10 @@ export type InboxReplyAccount = {
 
 // A shared inbox answers from the address its mail arrived on, so the group
 // channel routed into the item's queue comes first. Then the channel that
-// received the thread, when the viewer may send from it, then the viewer's
-// only mailbox when there is exactly one. Nothing here is a guess the From
-// picker would not have offered.
+// received the thread, when the viewer may send from it, then the first
+// mailbox the viewer may send from (their own before shared ones, the order
+// myConnectedAccounts returns). Anything the viewer can see is answerable
+// as long as one mailbox in the workspace can send at all.
 export const useInboxReplyAccount = ({
   queueId,
   receivingMessageChannelId,
@@ -67,7 +68,7 @@ export const useInboxReplyAccount = ({
   const account =
     findSendableAccount(queueGroupChannel?.connectedAccountId) ??
     findSendableAccount(receivingChannel?.connectedAccountId) ??
-    (sendableAccounts.length === 1 ? sendableAccounts[0] : undefined);
+    sendableAccounts[0];
 
   return {
     replyAccount: isDefined(account)

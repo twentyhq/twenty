@@ -88,11 +88,6 @@ const StyledFooter = styled.div`
   padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
 `;
 
-const StyledFooterNote = styled.span`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.sm};
-`;
-
 const StyledFooterEnd = styled.div`
   align-items: center;
   display: flex;
@@ -167,7 +162,6 @@ export const InboxItemThreadView = ({
   const [isReplyOpen, setIsReplyOpen] = useState(false);
   const [draftFromMessage, setDraftFromMessage] =
     useState<InboxEmailComposerPrefill | null>(null);
-  const [hasPickedSender, setHasPickedSender] = useState(false);
   const [expandedToolCallIds, setExpandedToolCallIds] = useState<string[]>([]);
 
   const isDone = inboxItem.scope === InboxItemScope.DONE;
@@ -203,15 +197,11 @@ export const InboxItemThreadView = ({
     connectedAccountId: replyAccount?.connectedAccountId,
   };
 
-  // Without a sender nothing can go out, but the composer still shows: the
-  // person can pick one under From, and an empty pane would explain nothing.
-  const hasSender =
-    hasPickedSender ||
-    isDefined(replyAccount) ||
-    isNonEmptyString(proposalPrefill?.connectedAccountId);
-
+  // Anything in the inbox can be answered: the sender is resolved from the
+  // queue, the thread or the viewer's own mailboxes, and if no mailbox in the
+  // workspace can send, the run fails on the row with the tool's reason
+  // rather than the reply being withheld.
   const isComposerOpen = !isDone && (isDefined(emailToolCall) || isReplyOpen);
-  const canSend = !isBusy && hasSender;
   // A retry runs its own row only: the plan run leaves failed rows alone.
   const canRunRest = otherPendingCount > 0 && !isRetry;
 
@@ -365,7 +355,6 @@ export const InboxItemThreadView = ({
                       onSaveToolCallInput(emailToolCall.id, editedInput)
                   : undefined
               }
-              onSenderChange={setHasPickedSender}
               ref={setComposerHandle}
             />
           </>
@@ -388,9 +377,6 @@ export const InboxItemThreadView = ({
       )}
 
       <StyledFooter>
-        {isComposerOpen && !hasSender && (
-          <StyledFooterNote>{t`Pick a From address to send`}</StyledFooterNote>
-        )}
         <StyledFooterEnd>
           {footerControls}
           {isComposerOpen && isDefined(emailToolCall) && (
@@ -399,7 +385,7 @@ export const InboxItemThreadView = ({
                 <Button
                   size="small"
                   variant="secondary"
-                  disabled={!canSend}
+                  disabled={isBusy}
                   title={sendLabel}
                   onClick={() => void sendProposal(false)}
                 />
@@ -409,7 +395,7 @@ export const InboxItemThreadView = ({
                 accent="blue"
                 size="small"
                 variant="primary"
-                disabled={!canSend}
+                disabled={isBusy}
                 title={
                   canRunRest
                     ? t`${sendLabel} and do ${otherPendingCount} more`
@@ -425,7 +411,7 @@ export const InboxItemThreadView = ({
               accent="blue"
               size="small"
               variant="primary"
-              disabled={!canSend}
+              disabled={isBusy}
               title={t`Send`}
               onClick={() => void sendAdHoc()}
             />

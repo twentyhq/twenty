@@ -46,7 +46,6 @@ type InboxEmailComposerProps = {
   >;
   contextRecord?: EmailComposerContextRecord | null;
   onSave?: (editedInput: Record<string, unknown>) => Promise<void>;
-  onSenderChange?: (hasSender: boolean) => void;
 };
 
 // The real composer bound to a tool call: what the person types is the call's
@@ -56,7 +55,7 @@ type InboxEmailComposerProps = {
 export const InboxEmailComposer = forwardRef<
   InboxEmailComposerHandle,
   InboxEmailComposerProps
->(({ prefill, replyDefaults, contextRecord, onSave, onSenderChange }, ref) => {
+>(({ prefill, replyDefaults, contextRecord, onSave }, ref) => {
   const { data: accountsData } = useQuery<{
     myConnectedAccounts: Pick<
       ConnectedAccount,
@@ -64,8 +63,8 @@ export const InboxEmailComposer = forwardRef<
     >[];
   }>(GET_MY_CONNECTED_ACCOUNTS);
 
-  // With one sendable account there is no picker to choose it from, so it is
-  // the sender unless the proposal or the thread named another.
+  // The first mailbox the viewer may send from is the sender unless the
+  // proposal or the thread named another, so a reply never starts without one.
   const sendableAccounts = (accountsData?.myConnectedAccounts ?? []).filter(
     (connectedAccount) =>
       canConnectedAccountPerformEmailOperation({
@@ -73,8 +72,7 @@ export const InboxEmailComposer = forwardRef<
         operation: EmailOperation.SEND,
       }),
   );
-  const fallbackConnectedAccountId =
-    sendableAccounts.length === 1 ? sendableAccounts[0].id : undefined;
+  const fallbackConnectedAccountId = sendableAccounts[0]?.id;
 
   const resolvedPrefill: InboxEmailComposerPrefill = {
     ...prefill,
@@ -104,7 +102,6 @@ export const InboxEmailComposer = forwardRef<
     composerState: baseComposerState,
     prefill: resolvedPrefill,
     onSave,
-    onSenderChange,
   });
 
   const { openAttachmentPicker } = useAttachEmailFiles({
