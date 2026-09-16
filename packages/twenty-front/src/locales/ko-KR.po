@@ -4971,6 +4971,11 @@ msgstr "도메인 제공업체와 함께 이 DNS 기록 구성하기"
 msgid "Configure this widget to display fields"
 msgstr "필드를 표시하도록 이 위젯을 구성하세요"
 
+#. js-lingui-id: no/yG9
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Configure what emails should get synced"
+msgstr ""
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -7370,10 +7375,10 @@ msgstr "연락처를 자동 생성하지 않음."
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "Gmail, Outlook 이메일에서 연락처를 생성하지 마십시오."
 
-#. js-lingui-id: yjhBSV
+#. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don't sync emails from team@ support@ noreply@..."
-msgstr "team@, support@, noreply@ 이메일을 동기화하지 마십시오."
+msgid "Don't import emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -15289,6 +15294,7 @@ msgstr "Webhook 페이로드에 대한 HMAC 서명을 계산하는 데 사용되
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
