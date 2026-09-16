@@ -1,3 +1,4 @@
+import { NavigationMenuItemRecordAvatar } from '@/navigation-menu-item/edit/components/NavigationMenuItemRecordAvatar';
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
@@ -10,7 +11,6 @@ import {
   IconDotsVertical,
   IconBox,
   IconTable,
-  IconAddressBook,
   IconLink,
   IconFolder,
   IconPerspective,
@@ -131,7 +131,7 @@ export const NavigationMenuItemEditable = ({
   > = {
     OBJECT: { label: t`Object`, Icon: IconBox },
     VIEW: { label: t`View`, Icon: IconTable },
-    RECORD: { label: t`Record`, Icon: IconAddressBook },
+    RECORD: { label: t`Record`, Icon: NavigationMenuItemRecordAvatar },
     LINK: { label: t`Link`, Icon: IconLink },
     FOLDER: { label: t`Folder`, Icon: IconFolder },
     PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },

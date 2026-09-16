@@ -1,3 +1,4 @@
+import { NavigationMenuItemRecordAvatar } from '@/navigation-menu-item/edit/components/NavigationMenuItemRecordAvatar';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
@@ -200,7 +201,7 @@ export const NavigationMenuItemAddDropdownContent = ({
         {
           id: 'record',
           label: t`Record`,
-          icon: <Avatar name={t`Record`} shape="circle" size="md" />,
+          icon: <NavigationMenuItemRecordAvatar />,
           onClick: () => navigate('record'),
           hasSubMenu: true,
         },
