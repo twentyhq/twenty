@@ -1,3 +1,5 @@
+import { hoveredNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/hoveredNavigationMenuItemIdState';
+import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { NavigationMenuItemObjectColorEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemObjectColorEditor';
 import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
@@ -6,7 +8,7 @@ import {
   isDropdownOpenComponentState as isColorPickerOpenComponentState,
 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode, type PointerEvent } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -21,7 +23,11 @@ import {
   type IconComponent,
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
-import { AppTooltip, TooltipPosition } from 'twenty-ui/primitives/surfaces';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -74,11 +80,51 @@ export const NavigationMenuItemEditable = ({
   rightOptions,
 }: NavigationMenuItemEditableProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
-  const isExpanded = useIsNavigationDrawerContentExpanded();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
+  const [hoveredNavigationMenuItemId, setHoveredNavigationMenuItemId] =
+    useAtomState(hoveredNavigationMenuItemIdState);
+  const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
+  const [isTooltipDelayElapsed, setIsTooltipDelayElapsed] = useState(false);
+  const isHovered = hoveredNavigationMenuItemId === item.id;
+
+  useEffect(() => {
+    if (!isHovered) {
+      setIsTooltipDelayElapsed(false);
+      return;
+    }
+
+    const timeoutId = setTimeout(
+      () => setIsTooltipDelayElapsed(true),
+      Number.parseInt(TooltipDelay.mediumDelay, 10),
+    );
+
+    return () => clearTimeout(timeoutId);
+  }, [isHovered]);
+  const clearTooltip = () =>
+    setHoveredNavigationMenuItemId((hoveredId) =>
+      hoveredId === item.id ? null : hoveredId,
+    );
+  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
+    if (
+      !isLayoutCustomizationModeEnabled ||
+      activeDropdownFocusId !== null ||
+      !(event.target instanceof Element) ||
+      !event.currentTarget.contains(event.target) ||
+      event.target.closest('[data-navigation-actions]')
+    ) {
+      setHoveredNavigationMenuItemId(null);
+      return;
+    }
+    setHoveredNavigationMenuItemId(item.id);
+  };
+  useEffect(() => {
+    if (activeDropdownFocusId !== null) setHoveredNavigationMenuItemId(null);
+  }, [activeDropdownFocusId, setHoveredNavigationMenuItemId]);
+
+  const theme = useTheme();
+  const isExpanded = useIsNavigationDrawerContentExpanded();
   const [
     selectedNavigationMenuItemIdInEditMode,
     setSelectedNavigationMenuItemIdInEditMode,
@@ -216,6 +262,20 @@ export const NavigationMenuItemEditable = ({
   return (
     <StyledRow
       id={anchorId}
+      onPointerEnter={handlePointerMove}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={clearTooltip}
+      onPointerDownCapture={() => setHoveredNavigationMenuItemId(null)}
+      onFocusCapture={(event) => {
+        if (
+          isLayoutCustomizationModeEnabled &&
+          activeDropdownFocusId === null &&
+          event.target.matches(':focus-visible') &&
+          !event.target.closest('[data-navigation-actions]')
+        )
+          setHoveredNavigationMenuItemId(item.id);
+      }}
+      onBlurCapture={clearTooltip}
       onContextMenu={(event) => {
         if (!canOrganize || !event.currentTarget.contains(event.target as Node))
           return;
@@ -243,26 +303,30 @@ export const NavigationMenuItemEditable = ({
           />
         </StyledActions>
       )}
-      {isLayoutCustomizationModeEnabled && (
-        <AppTooltip
-          anchorSelect={`#${anchorId}`}
-          title={types[item.type as NavigationMenuItemType].label}
-          description={
-            item.type === NavigationMenuItemType.FOLDER
-              ? t`Click to edit`
-              : undefined
-          }
-          Icon={types[item.type as NavigationMenuItemType].Icon}
-          offset={theme.spacingMultiplicator}
-          hidden={
-            isDropdownOpen ||
-            isColorPickerOpen ||
-            selectedNavigationMenuItemIdInEditMode === item.id
-          }
-          place={TooltipPosition.Top}
-          positionStrategy="fixed"
-        />
-      )}
+      {isLayoutCustomizationModeEnabled &&
+        activeDropdownFocusId === null &&
+        isHovered &&
+        isTooltipDelayElapsed && (
+          <AppTooltip
+            isOpen
+            anchorSelect={`#${anchorId}`}
+            title={types[item.type as NavigationMenuItemType].label}
+            description={
+              item.type === NavigationMenuItemType.FOLDER
+                ? t`Click to edit`
+                : undefined
+            }
+            Icon={types[item.type as NavigationMenuItemType].Icon}
+            offset={theme.spacingMultiplicator}
+            hidden={
+              isDropdownOpen ||
+              isColorPickerOpen ||
+              selectedNavigationMenuItemIdInEditMode === item.id
+            }
+            place={TooltipPosition.Top}
+            positionStrategy="fixed"
+          />
+        )}
     </StyledRow>
   );
 };

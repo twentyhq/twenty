@@ -1,3 +1,4 @@
+import { hoveredNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/hoveredNavigationMenuItemIdState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { Fragment } from 'react';
@@ -73,6 +74,7 @@ const meta: Meta<typeof NavigationMenuItemEditable> = {
   ],
   parameters: { container: { width: 240 } },
   beforeEach: () => {
+    jotaiStore.set(hoveredNavigationMenuItemIdState.atom, null);
     jotaiStore.set(selectedNavigationMenuItemIdInEditModeState.atom, null);
     jotaiStore.set(navigationMenuItemIdToRenameState.atom, null);
     jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, true);
@@ -212,5 +214,36 @@ export const EditFolderInPlace: Story = {
       await body.findByRole('button', { name: 'Icon123' }),
     ).toBeVisible();
     await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const TooltipsStayOutOfActionMenus: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const docs = await canvas.findByText('Docs');
+    const status = await canvas.findByText('Status');
+
+    await userEvent.hover(docs);
+    await expect(await body.findByRole('tooltip')).toHaveTextContent('Link');
+    await userEvent.hover(status);
+    await expect(await body.findByRole('tooltip')).toHaveTextContent('Link');
+    await expect(body.getAllByRole('tooltip')).toHaveLength(1);
+
+    for (const name of ['Docs', 'Status']) {
+      await userEvent.tab();
+      await userEvent.tab();
+      await expect(canvas.getByText(name)).toHaveFocus();
+      const actions = (
+        await canvas.findAllByRole('button', { name: 'Menu item actions' })
+      )[name === 'Docs' ? 0 : 1];
+      await userEvent.hover(actions);
+      await expect(body.queryByRole('tooltip')).not.toBeInTheDocument();
+      await userEvent.click(actions);
+      await expect(await body.findByText('Remove from sidebar')).toBeVisible();
+      await expect(body.queryByRole('tooltip')).not.toBeInTheDocument();
+      await userEvent.keyboard('{Escape}');
+      await expect(body.queryByRole('tooltip')).not.toBeInTheDocument();
+    }
   },
 };

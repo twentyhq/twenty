@@ -1,3 +1,4 @@
+import { hoveredNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/hoveredNavigationMenuItemIdState';
 import { objectColorsDraftState } from '@/layout-customization/states/objectColorsDraftState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/commandMenuItemsDraftState';
@@ -33,6 +34,7 @@ export const useExitLayoutCustomizationMode = () => {
 
   const exitLayoutCustomizationMode = useCallback(() => {
     store.set(objectColorsDraftState.atom, {});
+    store.set(hoveredNavigationMenuItemIdState.atom, null);
     const activePageLayoutIds = store.get(
       activeCustomizationPageLayoutIdsState.atom,
     );
