@@ -26,19 +26,22 @@ export const OpenTrackingSwitch = () => {
       !currentWorkspace.isCampaignOpenTrackingEnabled;
 
     try {
-      setCurrentWorkspace((workspace) => ({
-        ...workspace,
-        isCampaignOpenTrackingEnabled,
-      }));
+      setCurrentWorkspace((workspace) =>
+        workspace ? { ...workspace, isCampaignOpenTrackingEnabled } : workspace,
+      );
 
       await updateWorkspace({
         variables: { input: { isCampaignOpenTrackingEnabled } },
       });
     } catch (err: any) {
-      setCurrentWorkspace((workspace) => ({
-        ...workspace,
-        isCampaignOpenTrackingEnabled: !isCampaignOpenTrackingEnabled,
-      }));
+      setCurrentWorkspace((workspace) =>
+        workspace
+          ? {
+              ...workspace,
+              isCampaignOpenTrackingEnabled: !isCampaignOpenTrackingEnabled,
+            }
+          : workspace,
+      );
       enqueueErrorSnackBar({
         apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
         message: err?.message,
