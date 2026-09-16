@@ -1,19 +1,20 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
+import { SlackIconPlus } from 'src/front-components/components/SlackButtonIcons';
 import { SlackChannelRuleForm } from 'src/front-components/components/SlackChannelRuleForm';
 import { SlackChannelRulesList } from 'src/front-components/components/SlackChannelRulesList';
 import { useRemoveSlackChannelRule } from 'src/front-components/hooks/use-remove-slack-channel-rule';
 import { useSetSlackChannelRule } from 'src/front-components/hooks/use-set-slack-channel-rule';
 import { useSlackChannelRules } from 'src/front-components/hooks/use-slack-channel-rules';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
+import { enqueueSlackToolResultSnackbar } from 'src/front-components/utils/enqueue-slack-tool-result-snackbar.util';
 import { type SlackChannelRuleCapability } from 'src/logic-functions/types/slack-channel-rule-capability.type';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
@@ -71,10 +72,7 @@ export const SlackChannelRulesSection = ({
       mode,
     });
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    enqueueSlackToolResultSnackbar(result);
 
     await refetchSlackChannelRules();
   };
@@ -97,10 +95,7 @@ export const SlackChannelRulesSection = ({
       capability,
     });
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    enqueueSlackToolResultSnackbar(result);
 
     await refetchSlackChannelRules();
   };
@@ -108,10 +103,7 @@ export const SlackChannelRulesSection = ({
   const handleRemove = async (rule: SlackChannelRuleRecord) => {
     const result = await removeSlackChannelRule(rule.id);
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    enqueueSlackToolResultSnackbar(result);
 
     if (result.success) {
       await refetchSlackChannelRules();
@@ -158,6 +150,7 @@ export const SlackChannelRulesSection = ({
             <Button
               type="button"
               title="Add a channel rule"
+              Icon={SlackIconPlus}
               size="small"
               variant="secondary"
               onClick={() => setIsFormOpen(true)}
