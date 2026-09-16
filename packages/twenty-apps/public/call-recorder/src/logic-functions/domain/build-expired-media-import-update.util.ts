@@ -4,10 +4,10 @@ import {
   AUDIO_IMPORT_EXPIRED_FAILURE_REASON,
   VIDEO_IMPORT_EXPIRED_FAILURE_REASON,
 } from 'src/logic-functions/constants/media-import-expired-failure-reasons';
+import { appendCallRecorderFailureReasons } from 'src/logic-functions/domain/append-call-recorder-failure-reasons.util';
 import { parseUnrecoverableMediaMarkers } from 'src/logic-functions/domain/parse-unrecoverable-media-markers.util';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
-import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 export const buildExpiredMediaImportUpdate = ({
   audio,
@@ -34,11 +34,9 @@ export const buildExpiredMediaImportUpdate = ({
   }
 
   return {
-    callRecorderFailureReason: [
+    callRecorderFailureReason: appendCallRecorderFailureReasons({
       callRecorderFailureReason,
-      ...expiredFailureReasons,
-    ]
-      .filter(isNonEmptyString)
-      .join(','),
+      failureReasons: expiredFailureReasons,
+    }),
   };
 };

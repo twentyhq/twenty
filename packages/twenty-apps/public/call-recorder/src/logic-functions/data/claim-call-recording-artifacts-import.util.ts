@@ -1,8 +1,11 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { ARTIFACTS_IMPORT_CLAIM_FIELD_BY_SCOPE } from 'src/logic-functions/constants/artifacts-import-claim-field-by-scope';
+import { CALL_RECORDING_FOR_ARTIFACTS_IMPORT_SELECTION } from 'src/logic-functions/constants/call-recording-for-artifacts-import-selection';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
+import { parseCallRecordingForArtifactsImportNode } from 'src/logic-functions/data/parse-call-recording-for-artifacts-import-node.util';
 import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
+import { type CallRecordingForArtifactsImport } from 'src/logic-functions/types/call-recording-for-artifacts-import.type';
 
 // The executor Lambda runs with this hard timeout regardless of the function's
 // timeoutSeconds, which only bounds how long the server waits for the invoke.
@@ -25,7 +28,7 @@ export const claimCallRecordingArtifactsImport = async (
     scope: CallRecordingArtifactImportScope;
     now: Date;
   },
-): Promise<boolean> => {
+): Promise<CallRecordingForArtifactsImport | undefined> => {
   const claimField = ARTIFACTS_IMPORT_CLAIM_FIELD_BY_SCOPE[scope];
   const staleBefore = new Date(
     now.getTime() - ARTIFACTS_IMPORT_CLAIM_TTL_MS,
@@ -44,11 +47,13 @@ export const claimCallRecordingArtifactsImport = async (
         },
         data: { [claimField]: now.toISOString() },
       },
-      id: true,
+      ...CALL_RECORDING_FOR_ARTIFACTS_IMPORT_SELECTION,
     },
   });
 
-  return (result.updateCallRecordings ?? []).length > 0;
+  return parseCallRecordingForArtifactsImportNode(
+    result.updateCallRecordings?.[0],
+  );
 };
 
 export const releaseCallRecordingArtifactsImportClaim = async (

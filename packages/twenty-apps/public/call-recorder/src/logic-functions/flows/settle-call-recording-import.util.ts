@@ -7,45 +7,36 @@ import { buildFailedCallRecordingImportUpdate } from 'src/logic-functions/domain
 import { shouldCompleteCallRecordingImport } from 'src/logic-functions/domain/should-complete-call-recording-import.util';
 import { completeAndChargeCallRecording } from 'src/logic-functions/flows/complete-and-charge-call-recording.util';
 
-export type SettleCallRecordingImportOutcome =
-  | 'completed'
-  | 'failed'
-  | 'pending';
-
 export const settleCallRecordingImport = async (
   client: CoreApiClient,
   { callRecordingId }: { callRecordingId: string },
-): Promise<SettleCallRecordingImportOutcome> => {
+): Promise<boolean> => {
   const callRecording = await findCallRecordingForArtifactsImport(
     client,
     callRecordingId,
   );
 
   if (isUndefined(callRecording)) {
-    return 'pending';
+    return false;
   }
 
   const failedImportUpdate =
     buildFailedCallRecordingImportUpdate(callRecording);
 
   if (!isUndefined(failedImportUpdate)) {
-    const hasFailed = await updateNonTerminalCallRecordingState(client, {
+    return updateNonTerminalCallRecordingState(client, {
       callRecordingId: callRecording.id,
       data: failedImportUpdate,
     });
-
-    return hasFailed ? 'failed' : 'pending';
   }
 
   if (!shouldCompleteCallRecordingImport(callRecording)) {
-    return 'pending';
+    return false;
   }
 
-  const hasCompleted = await completeAndChargeCallRecording(client, {
+  return completeAndChargeCallRecording(client, {
     id: callRecording.id,
     startedAt: callRecording.startedAt,
     endedAt: callRecording.endedAt,
   });
-
-  return hasCompleted ? 'completed' : 'pending';
 };

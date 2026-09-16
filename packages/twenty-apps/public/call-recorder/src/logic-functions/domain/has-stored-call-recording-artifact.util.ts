@@ -1,8 +1,8 @@
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';
 import { type FilesFieldValue } from 'src/logic-functions/types/files-field-value.type';
-import { isDefined } from 'src/logic-functions/utils/is-defined.util';
 
 export const hasStoredCallRecordingArtifact = ({
   transcript,

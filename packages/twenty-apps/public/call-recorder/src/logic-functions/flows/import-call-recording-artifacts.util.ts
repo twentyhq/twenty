@@ -3,10 +3,6 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
-import {
-  findCallRecordingForArtifactsImport,
-  type CallRecordingForArtifactsImport,
-} from 'src/logic-functions/data/find-call-recording-for-artifacts-import.util';
 import { updateClaimedCallRecordingArtifacts } from 'src/logic-functions/data/update-claimed-call-recording-artifacts.util';
 import { buildCallRecordingSyncUpdate } from 'src/logic-functions/domain/build-call-recording-sync-update.util';
 import { buildExpiredMediaImportUpdate } from 'src/logic-functions/domain/build-expired-media-import-update.util';
@@ -19,6 +15,7 @@ import { extractRecallBotSyncState } from 'src/logic-functions/recall-api/extrac
 import { getRecallBot } from 'src/logic-functions/recall-api/get-recall-bot.util';
 import { type CallRecordingArtifactImportScope } from 'src/logic-functions/types/call-recording-artifact-scope.type';
 import { type CallRecordingArtifactsImportRequest } from 'src/logic-functions/types/call-recording-artifacts-import-request.type';
+import { type CallRecordingForArtifactsImport } from 'src/logic-functions/types/call-recording-for-artifacts-import.type';
 import { type CallRecordingUpdateFields } from 'src/logic-functions/types/call-recording-update-fields.type';
 
 export type ImportCallRecordingArtifactsResult =
@@ -57,33 +54,10 @@ export const importCallRecordingArtifacts = async ({
   request: CallRecordingArtifactsImportRequest;
   scope: CallRecordingArtifactImportScope;
 }): Promise<ImportCallRecordingArtifactsResult> => {
-  const initialCallRecording = await findCallRecordingForArtifactsImport(
-    client,
-    request.callRecordingId,
-  );
-
-  if (isUndefined(initialCallRecording)) {
-    return {
-      status: 'skipped',
-      callRecordingId: request.callRecordingId,
-      scope,
-      reason: 'no matching call recording',
-    };
-  }
-
-  if (initialCallRecording.status !== CallRecordingStatus.PROCESSING) {
-    return {
-      status: 'skipped',
-      callRecordingId: request.callRecordingId,
-      scope,
-      reason: 'call recording is not processing',
-    };
-  }
-
   const now = new Date();
   const saveUnderClaim = (data: CallRecordingUpdateFields) =>
     updateClaimedCallRecordingArtifacts(client, {
-      callRecordingId: initialCallRecording.id,
+      callRecordingId: request.callRecordingId,
       scope,
       claimedAt: now.toISOString(),
       data,
@@ -91,7 +65,7 @@ export const importCallRecordingArtifacts = async ({
   const artifactImportExecution = await runCallRecordingArtifactImportWithClaim(
     {
       client,
-      callRecordingId: initialCallRecording.id,
+      callRecordingId: request.callRecordingId,
       scope,
       now,
       runImport: async (callRecording) => {
@@ -133,14 +107,11 @@ export const importCallRecordingArtifacts = async ({
           );
         }
 
-        const settlementOutcome = await settleCallRecordingImport(client, {
+        const hasSettled = await settleCallRecordingImport(client, {
           callRecordingId: callRecording.id,
         });
 
-        if (
-          !hasCallRecordingUpdateFields(updateData) &&
-          settlementOutcome === 'pending'
-        ) {
+        if (!hasCallRecordingUpdateFields(updateData) && !hasSettled) {
           return {
             status: 'skipped',
             callRecordingId: callRecording.id,
@@ -162,9 +133,9 @@ export const importCallRecordingArtifacts = async ({
   if (artifactImportExecution.status === 'skipped') {
     return {
       status: 'skipped',
-      callRecordingId: initialCallRecording.id,
+      callRecordingId: request.callRecordingId,
       scope,
-      reason: artifactImportExecution.reason,
+      reason: 'no claimable processing call recording',
     };
   }
 

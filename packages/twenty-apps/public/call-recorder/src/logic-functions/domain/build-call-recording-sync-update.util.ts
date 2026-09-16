@@ -1,7 +1,7 @@
 import { isNonEmptyArray, isUndefined } from '@sniptt/guards';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
-import { type CallRecordingForArtifactsImport } from 'src/logic-functions/data/find-call-recording-for-artifacts-import.util';
+import { type CallRecordingForArtifactsImport } from 'src/logic-functions/types/call-recording-for-artifacts-import.type';
 import { isCallRecordingStatusDowngrade } from 'src/logic-functions/domain/is-call-recording-status-downgrade.util';
 import { isUnavailableCallRecordingStatus } from 'src/logic-functions/domain/is-unavailable-call-recording-status.util';
 import { parseTranscriptMarker } from 'src/logic-functions/domain/parse-transcript-marker.util';

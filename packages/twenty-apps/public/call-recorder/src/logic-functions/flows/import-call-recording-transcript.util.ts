@@ -1,4 +1,5 @@
 import { isArray, isNonEmptyArray, isNull, isUndefined } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { RECALL_API_NOT_FOUND_STATUS } from 'src/logic-functions/constants/recall-api-not-found-status';
@@ -18,7 +19,6 @@ import {
 import { type RecallTranscriptSummary } from 'src/logic-functions/recall-api/recall-transcript-summary.type';
 import { downloadTranscript } from 'src/logic-functions/flows/download-transcript.util';
 import { type ImportCallRecordingTranscriptResult } from 'src/logic-functions/flows/import-call-recording-transcript-result.type';
-import { isDefined } from 'src/logic-functions/utils/is-defined.util';
 
 type CallRecordingTranscriptArtifactUpdateFields =
   ImportCallRecordingTranscriptResult['updateData'];
@@ -148,7 +148,6 @@ export const importCallRecordingTranscript = async ({
             subCode: `transcript_request_rejected:${createResult.status}`,
           }),
         },
-        requestedTranscript: false,
         hasRetryableFailure: false,
       };
     }
@@ -160,7 +159,6 @@ export const importCallRecordingTranscript = async ({
           requestedAt,
         }),
       },
-      requestedTranscript: true,
       hasRetryableFailure: false,
     };
   }
@@ -176,7 +174,6 @@ export const importCallRecordingTranscript = async ({
         transcriptId: transcriptArtifact.id,
         subCode: transcriptArtifact.statusSubCode ?? null,
       }),
-      requestedTranscript: false,
       hasRetryableFailure: false,
     };
   }
@@ -209,7 +206,6 @@ export const importCallRecordingTranscript = async ({
             })
           : (downloadResult.content as Record<string, unknown>),
       },
-      requestedTranscript: false,
       hasRetryableFailure: false,
     };
   }
@@ -227,7 +223,6 @@ export const importCallRecordingTranscript = async ({
         transcriptId: transcriptIdToDownload,
         subCode: downloadResult.subCode,
       }),
-      requestedTranscript: false,
       hasRetryableFailure: false,
     };
   }
@@ -249,7 +244,6 @@ const buildEmptyTranscriptArtifactResult = ({
   hasRetryableFailure?: boolean;
 } = {}): ImportCallRecordingTranscriptResult => ({
   updateData: {},
-  requestedTranscript: false,
   hasRetryableFailure,
 });
 
@@ -264,7 +258,6 @@ const buildExpiredTranscriptArtifactResult = ({
       subCode: TRANSCRIPT_EXPIRED_SUB_CODE,
     }),
   },
-  requestedTranscript: false,
   hasRetryableFailure: false,
 });
 
