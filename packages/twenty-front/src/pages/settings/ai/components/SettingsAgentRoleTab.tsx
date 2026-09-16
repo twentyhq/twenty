@@ -10,10 +10,9 @@ import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDr
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconPlus } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useMutation, useQuery } from '@apollo/client/react';
 import {
@@ -147,10 +146,10 @@ export const SettingsAgentRoleTab = ({
     Boolean(isRoleExclusiveToThisAgent);
 
   return (
-    <Section>
+    <Section.Root>
       {!formValues.role ? (
         <>
-          <SectionHeader
+          <Section.Header
             title={t`Role`}
             description={t`Create a role to define permissions for this agent.`}
           />
@@ -179,6 +178,6 @@ export const SettingsAgentRoleTab = ({
           )}
         </>
       )}
-    </Section>
+    </Section.Root>
   );
 };

@@ -6,6 +6,7 @@ import { t } from '@lingui/core/macro';
 import { AnimatePresence, motion } from 'framer-motion';
 import { type ElementType, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconCoins,
   IconHistory,
@@ -14,13 +15,10 @@ import {
 } from 'twenty-ui/icon';
 import { Button, Slider } from 'twenty-ui/primitives/input';
 import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/primitives/layout';
-import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
+  Dialog,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
-import { Heading } from 'twenty-ui/primitives/typography';
 
 const PACKAGE_SUMMARY_ROW_HEIGHT = 24;
 const PACKAGE_SUMMARY_ROW_GAP = 4;
@@ -267,18 +265,12 @@ export const ResourceCreditPackagePickerModal = ({
       autoHeight
     >
       <StyledCenteredTitle>
-        <Heading
-          level={2}
-          size="lg"
-        >{t`Choose ${intervalAdjective} credits`}</Heading>
+        <Dialog.Title>{t`Choose ${intervalAdjective} credits`}</Dialog.Title>
       </StyledCenteredTitle>
       <StyledSectionContainer>
-        <Section
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
+        <Section.Root align="center" color="primary">
           {t`Select the credit package to add to your ${intervalAdjective} bill.`}
-        </Section>
+        </Section.Root>
       </StyledSectionContainer>
       <StyledPackageCard>
         <StyledPackageHeader>

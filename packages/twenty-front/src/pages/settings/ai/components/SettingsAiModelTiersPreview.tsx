@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -68,8 +67,8 @@ export const SettingsAiModelTiersPreview = () => {
   const tiers = useAiModelTiers();
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Preview`}
         description={t`The modes people and agents choose between`}
       />
@@ -130,6 +129,6 @@ export const SettingsAiModelTiersPreview = () => {
           delay={TooltipDelay.shortDelay}
         />
       )}
-    </Section>
+    </Section.Root>
   );
 };

@@ -10,11 +10,10 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconArrowUpRight, IconUser, useIcons } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -124,8 +123,8 @@ export const MemberPermissionsTab = ({
 
   return (
     <>
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Role`}
           description={t`Customize what this user can view and perform`}
         />
@@ -147,7 +146,7 @@ export const MemberPermissionsTab = ({
           >{t`Open in Roles`}</Button>
         </StyledRoleContainer>
         <SettingsRolePermissions roleId={primaryRole.id} isEditable={false} />
-      </Section>
+      </Section.Root>
 
       {pendingRole && (
         <ConfirmationModal

@@ -1,8 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
-import { SectionHeader } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
 import { Switch } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledHeader = styled.div`
@@ -38,9 +37,9 @@ export const SettingsLogicFunctionTriggerSection = ({
   }
 
   return (
-    <Section>
+    <Section.Root>
       <StyledHeader>
-        <SectionHeader title={title} description={description} />
+        <Section.Header title={title} description={description} />
         {!readonly && (
           <Switch
             aria-label={title}
@@ -51,6 +50,6 @@ export const SettingsLogicFunctionTriggerSection = ({
         )}
       </StyledHeader>
       {enabled && children}
-    </Section>
+    </Section.Root>
   );
 };

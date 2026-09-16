@@ -13,9 +13,8 @@ import { SettingsSecuritySettings } from '@/settings/security/components/Setting
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { Section } from 'twenty-ui/components';
 import { IconHistory, IconKey, IconSettings } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';
@@ -57,29 +56,29 @@ export const SettingsGeneral = () => {
 
     return (
       <>
-        <Section>
-          <SectionHeader title={t`Picture`} />
+        <Section.Root>
+          <Section.Header title={t`Picture`} />
           <WorkspaceLogoUploader />
-        </Section>
-        <Section>
-          <SectionHeader
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Name`}
             description={t`Name of your workspace`}
           />
           <NameField />
-        </Section>
+        </Section.Root>
         {isMultiWorkspaceEnabled && (
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Workspace domain`}
               description={t`Edit your subdomain name or set a custom domain.`}
             />
             <SettingsWorkspaceDomainCard />
-          </Section>
+          </Section.Root>
         )}
-        <Section>
+        <Section.Root>
           <DeleteWorkspace />
-        </Section>
+        </Section.Root>
       </>
     );
   };

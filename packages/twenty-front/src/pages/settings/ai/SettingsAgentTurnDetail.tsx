@@ -14,9 +14,8 @@ import { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AgentMessage,
@@ -141,8 +140,8 @@ export const SettingsAgentTurnDetail = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Messages`}
             description={new Date(turn.createdAt).toLocaleString('en-US', {
               dateStyle: 'medium',
@@ -188,10 +187,10 @@ export const SettingsAgentTurnDetail = () => {
           ) : (
             <div>{t`No messages found for this turn`}</div>
           )}
-        </Section>
+        </Section.Root>
 
-        <Section>
-          <SectionHeader title={t`Evaluations`} />
+        <Section.Root>
+          <Section.Header title={t`Evaluations`} />
           {turn.evaluations.length > 0 ? (
             <StyledTableContainer>
               <Table>
@@ -243,7 +242,7 @@ export const SettingsAgentTurnDetail = () => {
           ) : (
             <div>{t`No evaluations yet for this turn`}</div>
           )}
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

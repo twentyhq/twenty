@@ -14,13 +14,12 @@ import {
   getValidTimeZoneOrUndefined,
   isDefined,
 } from 'twenty-shared/utils';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';
 
-const StyledSectionHeader = styled(SectionHeader)`
+const StyledSectionHeader = styled(Section.Header)`
   margin-block-end: 0;
 `;
 
@@ -105,7 +104,7 @@ export const SettingsAiPrompts = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <StyledTitleContainer>
             <StyledSectionHeader
               title={t`System Prompt`}
@@ -117,7 +116,7 @@ export const SettingsAiPrompts = () => {
               descriptionLineClamp={2}
             />
           </StyledTitleContainer>
-        </Section>
+        </Section.Root>
         {promptSections.map((section) => {
           const sectionTokenCount = t`~ ${formatNumber(
             section.estimatedTokenCount,
@@ -128,8 +127,8 @@ export const SettingsAiPrompts = () => {
           )} tokens`;
 
           return (
-            <Section key={section.title}>
-              <SectionHeader
+            <Section.Root key={section.title}>
+              <Section.Header
                 title={section.title}
                 description={[t`Read-only`, sectionTokenCount]
                   .filter(Boolean)
@@ -158,12 +157,12 @@ export const SettingsAiPrompts = () => {
                   minHeight={120}
                 />
               </StyledFormContainer>
-            </Section>
+            </Section.Root>
           );
         })}
 
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`User Context`}
             description={t`Information about the current user (auto-generated and included in each request)`}
           />
@@ -178,7 +177,7 @@ export const SettingsAiPrompts = () => {
               minHeight={80}
             />
           </StyledFormContainer>
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

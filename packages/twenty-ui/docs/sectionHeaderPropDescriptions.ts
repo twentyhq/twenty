@@ -1,4 +1,4 @@
-import { type SectionHeaderProps } from '../src/components/SectionHeader/types/SectionHeaderProps';
+import { type SectionHeaderProps } from '../src/components/Section/types/SectionHeaderProps';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 
 export const SECTION_HEADER_PROP_DESCRIPTIONS = {

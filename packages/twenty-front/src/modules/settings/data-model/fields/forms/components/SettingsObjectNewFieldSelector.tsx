@@ -12,13 +12,12 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { Section } from 'twenty-ui/primitives/layout';
 import { useContext, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconSearch } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -113,7 +112,7 @@ export const SettingsObjectNewFieldSelector = ({
   return (
     <>
       {' '}
-      <Section>
+      <Section.Root>
         <StyledSearchInputContainer>
           <SettingsTextInput
             instanceId="new-field-type-search"
@@ -123,15 +122,15 @@ export const SettingsObjectNewFieldSelector = ({
             onChange={setSearchQuery}
           />
         </StyledSearchInputContainer>
-      </Section>
+      </Section.Root>
       <Controller
         name="type"
         control={control}
         render={() => (
           <StyledTypeSelectContainer>
             {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
-              <Section key={category}>
-                <SectionHeader
+              <Section.Root key={category}>
+                <Section.Header
                   title={category}
                   description={
                     SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]
@@ -180,7 +179,7 @@ export const SettingsObjectNewFieldSelector = ({
                       </StyledCardContainer>
                     ))}
                 </StyledContainer>
-              </Section>
+              </Section.Root>
             ))}
           </StyledTypeSelectContainer>
         )}

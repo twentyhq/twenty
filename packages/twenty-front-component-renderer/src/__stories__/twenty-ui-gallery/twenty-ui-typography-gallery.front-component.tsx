@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SectionHeader } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
@@ -23,12 +23,12 @@ import {
   type GalleryEntry,
 } from '../shared/front-components/component-gallery';
 
-const SectionHeaderExample = () => {
+const SectionExample = () => {
   const [activations, setActivations] = useState(0);
 
   return (
-    <>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title="Workspace preferences"
         description="Manage the settings for your workspace."
         adornment={
@@ -38,7 +38,7 @@ const SectionHeaderExample = () => {
         }
       />
       <Text aria-label="Workspace edits">{activations}</Text>
-    </>
+    </Section.Root>
   );
 };
 
@@ -52,8 +52,8 @@ const TYPOGRAPHY_ENTRIES: GalleryEntry[] = [
     ),
   },
   {
-    name: 'SectionHeader',
-    node: <SectionHeaderExample />,
+    name: 'Section',
+    node: <SectionExample />,
   },
   {
     name: 'HeadingLevel',

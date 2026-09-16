@@ -11,6 +11,7 @@ import {
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import {
   IconClock,
   IconDatabase,
@@ -19,13 +20,11 @@ import {
   IconWebhook,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import {
   Button,
   CodeEditor,
   CoreEditorHeader,
 } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type TriggerButton = {
@@ -129,8 +128,8 @@ export const SettingsLogicFunctionTestTab = ({
   };
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Test your function`}
         description={t`Insert a JSON input, then press "Run Function".`}
       />
@@ -191,6 +190,6 @@ export const SettingsLogicFunctionTestTab = ({
           </StyledCodeEditorContainer>
         )}
       </StyledInputsContainer>
-    </Section>
+    </Section.Root>
   );
 };

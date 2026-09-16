@@ -1,4 +1,4 @@
-import { SectionHeader } from '@ui/components/SectionHeader/SectionHeader';
+import { Section } from '@ui/components/Section/Section';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
 import * as publicIconExports from '@ui/icon';
@@ -22,7 +22,7 @@ const IconDictionary = () => (
   <div className={styles.dictionary}>
     {TWENTY_ICON_DICTIONARY_CATEGORIES.map((category) => (
       <section className={styles.category} key={category.key}>
-        <SectionHeader
+        <Section.Header
           className={styles.categoryTitle}
           title={category.label}
         />

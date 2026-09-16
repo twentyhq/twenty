@@ -10,9 +10,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { SectionHeader } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
 import { Heading } from 'twenty-ui/primitives/typography';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -81,7 +80,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
             },
           }}
         >
-          <Section>
+          <Section.Root>
             <StyledTitleContainer>
               <Heading level={3} size="lg">
                 {data?.getIndicatorHealthStatus?.label}
@@ -92,18 +91,18 @@ export const SettingsAdminIndicatorHealthStatus = () => {
                 />
               )}
             </StyledTitleContainer>
-          </Section>
-          <Section>
+          </Section.Root>
+          <Section.Root>
             {data?.getIndicatorHealthStatus?.id !== HealthIndicatorId.worker &&
               data?.getIndicatorHealthStatus?.id !==
                 HealthIndicatorId.connectedAccount && (
-                <SectionHeader
+                <Section.Header
                   title={t`Status`}
                   description={data?.getIndicatorHealthStatus?.description}
                 />
               )}
             <SettingsAdminIndicatorHealthStatusContent />
-          </Section>
+          </Section.Root>
         </SettingsAdminIndicatorHealthContext.Provider>
       </SettingsPageContainer>
     </SettingsPageLayout>

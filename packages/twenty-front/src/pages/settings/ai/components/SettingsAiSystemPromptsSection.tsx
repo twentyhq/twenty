@@ -3,10 +3,9 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconPrompt } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
@@ -26,8 +25,8 @@ export const SettingsAiSystemPromptsSection = () => {
     : t`Read the system prompts to understand how the AI works`;
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`System Prompt`}
         description={systemPromptDescription}
       />
@@ -37,6 +36,6 @@ export const SettingsAiSystemPromptsSection = () => {
           title={t`Read system prompts`}
         />
       </UndecoratedLink>
-    </Section>
+    </Section.Root>
   );
 };

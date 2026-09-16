@@ -8,6 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { format, getYear } from 'date-fns';
+import { Section } from 'twenty-ui/components';
 import {
   AnimatedPlaceholder,
   AnimatedPlaceholderEmptyContainer,
@@ -15,7 +16,6 @@ import {
   AnimatedPlaceholderEmptyTextContainer,
   AnimatedPlaceholderEmptyTitle,
 } from 'twenty-ui/primitives/feedback';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { Heading } from 'twenty-ui/primitives/typography';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
@@ -103,7 +103,7 @@ export const CalendarEventsCardContent = ({
           });
 
           return (
-            <Section key={monthTime}>
+            <Section.Root key={monthTime}>
               <StyledTitleContainer>
                 <Heading level={3} size="lg">
                   {monthLabel}
@@ -111,7 +111,7 @@ export const CalendarEventsCardContent = ({
                 </Heading>
               </StyledTitleContainer>
               <CalendarMonthCard dayTimes={monthDayTimes} />
-            </Section>
+            </Section.Root>
           );
         })}
         <CustomResolverFetchMoreLoader

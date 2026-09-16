@@ -10,10 +10,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconEye } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { SectionHeader } from 'twenty-ui/components';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -120,8 +119,8 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Name`}
             description={t`The name recipients see for this topic.`}
           />
@@ -134,9 +133,9 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
             disabled={loading}
             fullWidth
           />
-        </Section>
-        <Section>
-          <SectionHeader
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Description`}
             description={t`Optional context shown to recipients on the preferences page.`}
           />
@@ -148,9 +147,9 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
             disabled={loading}
             fullWidth
           />
-        </Section>
-        <Section>
-          <SectionHeader
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Visibility`}
             description={t`Control whether recipients can find and manage this topic.`}
           />
@@ -163,7 +162,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
               onChange={setIsPublic}
             />
           </Card>
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

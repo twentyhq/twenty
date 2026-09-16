@@ -4,8 +4,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type ReactNode } from 'react';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type Column = {
@@ -38,8 +37,8 @@ export const SettingsLayoutItemTable = ({
   const gridTemplate = columns.map((c) => c.width ?? '1fr').join(' ');
 
   return (
-    <Section>
-      <SectionHeader title={title} description={description} />
+    <Section.Root>
+      <Section.Header title={title} description={description} />
       <Table>
         <TableRow gridTemplateColumns={gridTemplate}>
           {columns.map((col) => (
@@ -66,6 +65,6 @@ export const SettingsLayoutItemTable = ({
           ))}
         </TableBody>
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

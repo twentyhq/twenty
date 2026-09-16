@@ -17,6 +17,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { type GetUpgradeStatusQuery } from '~/generated-admin/graphql';
+import { Section } from 'twenty-ui/components';
 import {
   AvatarOrIcon,
   LinkChip,
@@ -31,8 +32,6 @@ import {
   IconUser,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -145,8 +144,8 @@ export const SettingsAdminWorkspaceContent = ({
 
   return (
     <StyledContainer>
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Workspace Info`}
           description={t`About this workspace`}
         />
@@ -154,10 +153,10 @@ export const SettingsAdminWorkspaceContent = ({
           items={workspaceInfoItems}
           gridAutoColumns="1fr 4fr"
         />
-      </Section>
+      </Section.Root>
       {workspaceUpgradeStatus && (
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Upgrade Status`}
             description={t`Workspace upgrade health`}
           />
@@ -230,7 +229,7 @@ export const SettingsAdminWorkspaceContent = ({
             ]}
             gridAutoColumns="2fr 3fr"
           />
-        </Section>
+        </Section.Root>
       )}
     </StyledContainer>
   );

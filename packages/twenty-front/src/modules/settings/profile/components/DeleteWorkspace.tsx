@@ -6,8 +6,8 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectToDefaultDomain';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { Section } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { useMutation } from '@apollo/client/react';
 import { AppPath } from 'twenty-shared/types';
@@ -33,7 +33,7 @@ export const DeleteWorkspace = () => {
 
   return (
     <>
-      <SectionHeader
+      <Section.Header
         title={t`Danger zone`}
         description={t`Delete your whole workspace`}
       />

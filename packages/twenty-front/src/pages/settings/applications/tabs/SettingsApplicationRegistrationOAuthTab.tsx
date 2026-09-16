@@ -8,11 +8,10 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
+import { Section } from 'twenty-ui/components';
 import { IconKey, IconRefresh, IconShield } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   RotateApplicationRegistrationClientSecretDocument,
@@ -130,8 +129,8 @@ export const SettingsApplicationRegistrationOAuthTab = ({
 
   return (
     <>
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`OAuth`}
           description={t`Credentials and scopes for OAuth authorization flows`}
         />
@@ -147,20 +146,20 @@ export const SettingsApplicationRegistrationOAuthTab = ({
             variant="outline"
           >{t`Rotate client secret`}</Button>
         </StyledRotateContainer>
-      </Section>
+      </Section.Root>
 
       {displayedSecret && (
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Client Secret`}
             description={t`Copy this secret as it will not be visible again`}
           />
           <ApiKeyInput apiKey={displayedSecret} />
-        </Section>
+        </Section.Root>
       )}
 
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Redirect URIs`}
           description={t`Allowed redirect URIs for OAuth flows`}
         />
@@ -172,7 +171,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           redirectUris={formRedirectUris}
           updateRedirectUris={handleSave}
         />
-      </Section>
+      </Section.Root>
 
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}

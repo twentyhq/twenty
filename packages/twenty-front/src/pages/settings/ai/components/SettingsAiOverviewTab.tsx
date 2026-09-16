@@ -12,11 +12,10 @@ import { t } from '@lingui/core/macro';
 import { Fragment, useContext, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconBook, IconMessage, IconSparkles, IconTool } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -80,8 +79,8 @@ export const SettingsAiOverviewTab = () => {
 
   return (
     <Fragment>
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`At a glance`}
           description={t`What's installed and being used in your workspace`}
         />
@@ -110,10 +109,10 @@ export const SettingsAiOverviewTab = () => {
             ],
           ]}
         />
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`MCP Server`}
           description={t`Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol`}
         />
@@ -123,10 +122,10 @@ export const SettingsAiOverviewTab = () => {
             title={t`Set up MCP`}
           />
         </UndecoratedLink>
-      </Section>
+      </Section.Root>
 
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Workspace Instructions`}
           description={t`Custom instructions appended to every system prompt`}
         />
@@ -149,7 +148,7 @@ export const SettingsAiOverviewTab = () => {
             minHeight={150}
           />
         </StyledInstructionsContainer>
-      </Section>
+      </Section.Root>
     </Fragment>
   );
 };

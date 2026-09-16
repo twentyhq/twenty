@@ -4607,65 +4607,159 @@
     ]
   },
   {
-    "name": "SectionHeader",
+    "name": "Section",
     "entryPoint": "twenty-ui/components",
-    "slug": "components/section-header",
-    "props": [
+    "slug": "components/section",
+    "props": [],
+    "parts": [
       {
-        "name": "adornment",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Content alongside the heading, such as an action button or status."
+        "name": "Root",
+        "props": [
+          {
+            "name": "align",
+            "type": "\"center\" | \"left\"",
+            "required": false,
+            "defaultValue": "left",
+            "description": "Text alignment within the section. Defaults to `left`."
+          },
+          {
+            "name": "color",
+            "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+            "required": false,
+            "defaultValue": "primary",
+            "description": "Text color within the section. Defaults to `primary`."
+          },
+          {
+            "name": "fullWidth",
+            "type": "boolean",
+            "required": false,
+            "defaultValue": "true",
+            "description": "Whether the section fills the available width. Defaults to `true`."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          }
+        ]
       },
       {
-        "name": "color",
-        "type": "\"primary\" | \"secondary\" | \"tertiary\"",
-        "required": false,
-        "defaultValue": "primary",
-        "description": "Theme font color. Defaults to `primary`."
-      },
+        "name": "Header",
+        "props": [
+          {
+            "name": "adornment",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Content alongside the heading, such as an action button or status."
+          },
+          {
+            "name": "color",
+            "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+            "required": false,
+            "defaultValue": "primary",
+            "description": "Theme font color. Defaults to `primary`."
+          },
+          {
+            "name": "description",
+            "type": "ReactNode",
+            "required": false,
+            "defaultValue": null,
+            "description": "Supporting text associated with the heading. Strings support links and overflow tooltips; React nodes render as supplied."
+          },
+          {
+            "name": "descriptionLineClamp",
+            "type": "number",
+            "required": false,
+            "defaultValue": "5",
+            "description": "Maximum visible lines for a string description. Defaults to `5`. Overflowing descriptions can be read in a tooltip on hover or focus."
+          },
+          {
+            "name": "level",
+            "type": "1 | 2 | 3 | 4 | 5 | 6",
+            "required": false,
+            "defaultValue": "2",
+            "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "size",
+            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+            "required": false,
+            "defaultValue": "md",
+            "description": "Visual font size, independent of the heading level. Defaults to `md`."
+          },
+          {
+            "name": "title",
+            "type": "ReactNode",
+            "required": true,
+            "defaultValue": null,
+            "description": "Content of the section heading."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Dialog",
+    "entryPoint": "twenty-ui/primitives/surfaces",
+    "slug": "surfaces/dialog",
+    "props": [],
+    "parts": [
       {
-        "name": "description",
-        "type": "ReactNode",
-        "required": false,
-        "defaultValue": null,
-        "description": "Supporting text associated with the heading. Strings support links and overflow tooltips; React nodes render as supplied."
-      },
-      {
-        "name": "descriptionLineClamp",
-        "type": "number",
-        "required": false,
-        "defaultValue": "5",
-        "description": "Maximum visible lines for a string description. Defaults to `5`. Overflowing descriptions can be read in a tooltip on hover or focus."
-      },
-      {
-        "name": "level",
-        "type": "1 | 2 | 3 | 4 | 5 | 6",
-        "required": false,
-        "defaultValue": "2",
-        "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-      },
-      {
-        "name": "size",
-        "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
-        "required": false,
-        "defaultValue": "md",
-        "description": "Visual font size, independent of the heading level. Defaults to `md`."
-      },
-      {
-        "name": "title",
-        "type": "ReactNode",
-        "required": true,
-        "defaultValue": null,
-        "description": "Content of the section heading."
+        "name": "Title",
+        "props": [
+          {
+            "name": "className",
+            "type": "string | ((state: DialogTitleState) => string | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
+          },
+          {
+            "name": "color",
+            "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+            "required": false,
+            "defaultValue": "primary",
+            "description": "Theme font color. Defaults to `primary`."
+          },
+          {
+            "name": "level",
+            "type": "1 | 2 | 3 | 4 | 5 | 6",
+            "required": false,
+            "defaultValue": "2",
+            "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
+          },
+          {
+            "name": "render",
+            "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, DialogTitleState>",
+            "required": false,
+            "defaultValue": null,
+            "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+          },
+          {
+            "name": "size",
+            "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+            "required": false,
+            "defaultValue": "lg",
+            "description": "Visual font size, independent of the heading level. Defaults to `lg`."
+          },
+          {
+            "name": "style",
+            "type": "CSSProperties | ((state: DialogTitleState) => CSSProperties | undefined)",
+            "required": false,
+            "defaultValue": null,
+            "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
+          }
+        ]
       }
     ]
   }

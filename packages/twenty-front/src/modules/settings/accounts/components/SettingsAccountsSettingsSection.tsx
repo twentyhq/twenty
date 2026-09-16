@@ -5,9 +5,8 @@ import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconCalendarEvent, IconMailCog } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import {
   MOBILE_VIEWPORT,
@@ -34,8 +33,8 @@ export const SettingsAccountsSettingsSection = () => {
   const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Settings`}
         description={t`Configure your emails and calendar settings.`}
       />
@@ -69,6 +68,6 @@ export const SettingsAccountsSettingsSection = () => {
           </UndecoratedLink>
         </StyledCardLinkSlot>
       </StyledCardsContainer>
-    </Section>
+    </Section.Root>
   );
 };

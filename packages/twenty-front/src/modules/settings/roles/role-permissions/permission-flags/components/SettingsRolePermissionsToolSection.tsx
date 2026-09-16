@@ -8,12 +8,9 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
+import { Section } from 'twenty-ui/components';
 import { IconTool } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
-import {
-  AnimatedExpandableContainer,
-  Section,
-} from 'twenty-ui/primitives/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -61,8 +58,8 @@ export const SettingsRolePermissionsToolSection = ({
     settingsDraftRole.canBeAssignedToUsers;
 
   return (
-    <Section>
-      <SectionHeader title={t`Actions`} description={t`Actions permissions`} />
+    <Section.Root>
+      <Section.Header title={t`Actions`} description={t`Actions permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
           <Card rounded>
@@ -112,6 +109,6 @@ export const SettingsRolePermissionsToolSection = ({
           </StyledTableRows>
         </StyledTable>
       </AnimatedExpandableContainer>
-    </Section>
+    </Section.Root>
   );
 };

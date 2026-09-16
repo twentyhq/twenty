@@ -7,12 +7,9 @@ import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAto
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import { IconSettings } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
-import {
-  AnimatedExpandableContainer,
-  Section,
-} from 'twenty-ui/primitives/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -60,8 +57,8 @@ export const SettingsRolePermissionsSettingsSection = ({
     settingsDraftRole.canBeAssignedToUsers;
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Settings`}
         description={t`Settings permissions`}
       />
@@ -114,6 +111,6 @@ export const SettingsRolePermissionsSettingsSection = ({
           </StyledTableRows>
         </StyledTable>
       </AnimatedExpandableContainer>
-    </Section>
+    </Section.Root>
   );
 };

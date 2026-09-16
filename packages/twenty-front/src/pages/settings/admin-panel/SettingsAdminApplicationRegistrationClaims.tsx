@@ -1,3 +1,4 @@
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -8,8 +9,6 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { FindAdminApplicationRegistrationClaimsDocument } from '~/generated-admin/graphql';
 
 const CLAIMS_TABLE_GRID = '1fr 140px';
@@ -34,8 +33,8 @@ export const SettingsAdminApplicationRegistrationClaims = ({
   }
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Ownership`}
         description={t`The workspace that claimed this app registration`}
       />
@@ -63,6 +62,6 @@ export const SettingsAdminApplicationRegistrationClaims = ({
           ))}
         </TableBody>
       </Table>
-    </Section>
+    </Section.Root>
   );
 };

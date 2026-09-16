@@ -9,14 +9,13 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext, useState } from 'react';
+import { Section } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { CommandBlock } from 'twenty-ui/primitives/data-display';
 import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import {
   type ApplicationRegistrationListItemFragment,
   FeatureFlagKey,
@@ -100,8 +99,8 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   return (
     <>
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Create an application`}
           description={t`You can either create a private app or share it to others`}
         />
@@ -122,15 +121,15 @@ export const SettingsApplicationsDeveloperTab = () => {
             variant="outline"
           >{t`Read documentation`}</Button>
         </StyledButtonContainer>
-      </Section>
+      </Section.Root>
 
       {canClaimApplications && isAppClaimingEnabled && (
         <SettingsClaimApplicationSection />
       )}
 
       {registrations.length > 0 && (
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`My apps`}
             description={t`Apps you're the developer of`}
           />
@@ -170,7 +169,7 @@ export const SettingsApplicationsDeveloperTab = () => {
               })}
             </StyledTableRowsContainer>
           </Table>
-        </Section>
+        </Section.Root>
       )}
     </>
   );

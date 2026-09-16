@@ -11,10 +11,9 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetServerAdminsDocument } from '~/generated-admin/graphql';
 
@@ -36,8 +35,8 @@ export const SettingsAdminServerAdmins = () => {
   const serverAdmins = data?.getServerAdmins ?? [];
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Administrators`}
         description={t`Users with server-level access. Open a user to grant or revoke access; use the search below to find anyone.`}
       />
@@ -92,6 +91,6 @@ export const SettingsAdminServerAdmins = () => {
           </TableBody>
         </Table>
       )}
-    </Section>
+    </Section.Root>
   );
 };

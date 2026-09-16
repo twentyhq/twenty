@@ -1,8 +1,7 @@
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
 import { IconArrowBarToDown, IconPinned, IconShield } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { UpdateAdminApplicationRegistrationDocument } from '~/generated-admin/graphql';
 import { styled } from '@linaria/react';
@@ -31,8 +30,8 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
   );
 
   return (
-    <Section>
-      <SectionHeader title={t`Installation`} />
+    <Section.Root>
+      <Section.Header title={t`Installation`} />
       <StyledSwitchContainer>
         <Card rounded fullWidth>
           <SettingsOptionCardContentSwitch
@@ -89,6 +88,6 @@ export const SettingsAdminApplicationRegistrationGeneralSwitches = ({
           />
         </Card>
       </StyledSwitchContainer>
-    </Section>
+    </Section.Root>
   );
 };

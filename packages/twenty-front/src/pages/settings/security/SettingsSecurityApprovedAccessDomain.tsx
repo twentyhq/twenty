@@ -9,9 +9,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { Controller, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { z } from 'zod';
 import { CreateApprovedAccessDomainDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -101,8 +100,8 @@ export const SettingsSecurityApprovedAccessDomain = () => {
         ]}
       >
         <SettingsPageContainer>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Domain`}
               description={t`The name of your Domain`}
             />
@@ -125,9 +124,9 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 />
               )}
             />
-          </Section>
-          <Section>
-            <SectionHeader
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Email verification`}
               description={t`We will send you a link to verify domain ownership`}
             />
@@ -149,7 +148,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
                 />
               )}
             />
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     </form>

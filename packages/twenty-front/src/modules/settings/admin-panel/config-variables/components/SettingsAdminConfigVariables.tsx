@@ -10,8 +10,6 @@ import { showHiddenGroupVariablesState } from '@/settings/admin-panel/config-var
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { useQuery } from '@apollo/client/react';
 import {
   ConfigSource,
@@ -20,6 +18,7 @@ import {
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { ConfigVariableSearchInput } from './ConfigVariableSearchInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { Section } from 'twenty-ui/components';
 
 const StyledControlsContainer = styled.div`
   display: flex;
@@ -165,8 +164,8 @@ export const SettingsAdminConfigVariables = () => {
 
   return (
     <>
-      <Section>
-        <SectionHeader title={t`Config Variables`} />
+      <Section.Root>
+        <Section.Header title={t`Config Variables`} />
 
         <ConfigVariableFilterContainer activeChips={activeChips}>
           <StyledControlsContainer>
@@ -182,20 +181,20 @@ export const SettingsAdminConfigVariables = () => {
             />
           </StyledControlsContainer>
         </ConfigVariableFilterContainer>
-      </Section>
+      </Section.Root>
       {groupedVariables.size === 0 && (
         <StyledTableContainer>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`No variables found`}
               description={t`No config variables match your current filters. Try adjusting your filters or search criteria.`}
             />
-          </Section>
+          </Section.Root>
         </StyledTableContainer>
       )}
       {[...groupedVariables.entries()].map(([groupName, groupData]) => (
         <StyledTableContainer key={groupName}>
-          <SectionHeader
+          <Section.Header
             title={groupName}
             description={groupData.description}
           />

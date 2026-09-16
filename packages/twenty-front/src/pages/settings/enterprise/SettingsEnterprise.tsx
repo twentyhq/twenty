@@ -32,6 +32,7 @@ import {
 } from 'twenty-shared/constants';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import {
   IconCalendarRepeat,
@@ -42,9 +43,7 @@ import {
   IconUser,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { SectionHeader } from 'twenty-ui/components';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
@@ -526,8 +525,8 @@ export const SettingsEnterprise = ({
   );
 
   const activateKeySection = (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Activate Organization Key`}
         description={t`Paste your Organization key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server.`}
       />
@@ -554,12 +553,12 @@ export const SettingsEnterprise = ({
           </Button>
         </StyledActivateButtonWrapper>
       </StyledInputContainer>
-    </Section>
+    </Section.Root>
   );
 
   const transferSection = (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Key in use on another server`}
         description={t`This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one.`}
       />
@@ -576,21 +575,21 @@ export const SettingsEnterprise = ({
           ? t`Transferring...`
           : t`Release & transfer to this server`}
       </Button>
-    </Section>
+    </Section.Root>
   );
 
   const enterpriseKeyInfoSection = (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Your Organization key`}
         description={t`This server has an Organization key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support.`}
       />
-    </Section>
+    </Section.Root>
   );
 
   const instanceTypeSection = (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Development instance`}
         description={
           instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
@@ -623,7 +622,7 @@ export const SettingsEnterprise = ({
             : t`Register as development instance`}
         </Button>
       )}
-    </Section>
+    </Section.Root>
   );
 
   const renderContent = () => {
@@ -634,8 +633,8 @@ export const SettingsEnterprise = ({
     if (hasOrphanedValidityToken) {
       return (
         <>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Organization License`}
               description={t`Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support.`}
             />
@@ -644,7 +643,7 @@ export const SettingsEnterprise = ({
               onClick={openCheckoutModal}
               variant="outline"
             >{t`Get Organization Key`}</Button>
-          </Section>
+          </Section.Root>
           {activateKeySection}
         </>
       );
@@ -653,8 +652,8 @@ export const SettingsEnterprise = ({
     if (!hasSignedEnterpriseKey) {
       return (
         <>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Get Organization`}
               description={t`Unlock premium features like SSO, row-level security, and audit logs.`}
             />
@@ -663,7 +662,7 @@ export const SettingsEnterprise = ({
               onClick={openCheckoutModal}
               variant="outline"
             >{t`Get Organization Key`}</Button>
-          </Section>
+          </Section.Root>
           {activateKeySection}
         </>
       );
@@ -672,8 +671,8 @@ export const SettingsEnterprise = ({
     if (isSubscriptionActiveOrTrialing && !hasValidityToken) {
       return (
         <>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Organization License`}
               description={t`Your subscription is active but your validity token is invalid or has expired. Try reloading it or contact support.`}
             />
@@ -717,10 +716,10 @@ export const SettingsEnterprise = ({
                 />
               )}
             </SubscriptionInfoContainer>
-          </Section>
+          </Section.Root>
           {isBoundToAnotherServer && transferSection}
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Manage billing information`}
               description={t`Edit payment method, see your invoices and more`}
             />
@@ -729,7 +728,7 @@ export const SettingsEnterprise = ({
               onClick={openBillingPortal}
               variant="outline"
             >{t`View billing details`}</Button>
-          </Section>
+          </Section.Root>
         </>
       );
     }
@@ -737,8 +736,8 @@ export const SettingsEnterprise = ({
     if (isSubscriptionActiveOrTrialing) {
       return (
         <>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Organization License`}
               description={
                 isCancelScheduled
@@ -785,9 +784,9 @@ export const SettingsEnterprise = ({
                 {cancellationMessage}
               </StyledCancellationNotice>
             )}
-          </Section>
-          <Section>
-            <SectionHeader
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Manage billing information`}
               description={t`Edit payment method, see your invoices and more`}
             />
@@ -796,10 +795,10 @@ export const SettingsEnterprise = ({
               onClick={openBillingPortal}
               variant="outline"
             >{t`View billing details`}</Button>
-          </Section>
+          </Section.Root>
           {!isCancelScheduled && (
-            <Section>
-              <SectionHeader
+            <Section.Root>
+              <Section.Header
                 title={t`Cancel your subscription`}
                 description={t`Your premium features will be disabled`}
               />
@@ -809,7 +808,7 @@ export const SettingsEnterprise = ({
                 variant="outline"
                 color="danger"
               >{t`Cancel Plan`}</Button>
-            </Section>
+            </Section.Root>
           )}
         </>
       );
@@ -818,8 +817,8 @@ export const SettingsEnterprise = ({
     if (isCanceled) {
       return (
         <>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Organization License`}
               description={t`Your Organization subscription has been canceled.`}
             />
@@ -846,9 +845,9 @@ export const SettingsEnterprise = ({
                 }
               />
             </SubscriptionInfoContainer>
-          </Section>
-          <Section>
-            <SectionHeader
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Get Organization`}
               description={t`Start a new Organization subscription to re-enable premium features.`}
             />
@@ -857,7 +856,7 @@ export const SettingsEnterprise = ({
               onClick={openCheckoutModal}
               variant="outline"
             >{t`Get Organization Key`}</Button>
-          </Section>
+          </Section.Root>
           {activateKeySection}
         </>
       );
@@ -866,8 +865,8 @@ export const SettingsEnterprise = ({
     if (isPastDue) {
       return (
         <>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Organization License`}
               description={
                 hasValidityToken
@@ -912,9 +911,9 @@ export const SettingsEnterprise = ({
                 {t`Update your payment method before ${licenseExpiresAtDate} to avoid losing access.`}
               </StyledCancellationNotice>
             )}
-          </Section>
-          <Section>
-            <SectionHeader
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Update payment method`}
               description={
                 hasValidityToken
@@ -928,7 +927,7 @@ export const SettingsEnterprise = ({
               variant="outline"
               color="accent"
             >{t`Go to billing portal`}</Button>
-          </Section>
+          </Section.Root>
         </>
       );
     }
@@ -936,8 +935,8 @@ export const SettingsEnterprise = ({
     if (isIncomplete) {
       return (
         <>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Organization License`}
               description={t`Your subscription setup was not completed.`}
             />
@@ -953,9 +952,9 @@ export const SettingsEnterprise = ({
                 }
               />
             </SubscriptionInfoContainer>
-          </Section>
-          <Section>
-            <SectionHeader
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Get Organization`}
               description={t`Start a new Organization subscription.`}
             />
@@ -963,7 +962,7 @@ export const SettingsEnterprise = ({
               startIcon={<IconKey />}
               onClick={openCheckoutModal}
             >{t`Get Organization Key`}</Button>
-          </Section>
+          </Section.Root>
           {activateKeySection}
         </>
       );
@@ -971,8 +970,8 @@ export const SettingsEnterprise = ({
 
     return (
       <>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Organization License`}
             description={(() => {
               const statusLabel = stripeStatus ?? 'unknown';
@@ -985,7 +984,7 @@ export const SettingsEnterprise = ({
             onClick={openBillingPortal}
             variant="outline"
           >{t`Go to billing portal`}</Button>
-        </Section>
+        </Section.Root>
         {activateKeySection}
       </>
     );

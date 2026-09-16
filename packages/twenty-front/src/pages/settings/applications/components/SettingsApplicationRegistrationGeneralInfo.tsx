@@ -1,3 +1,4 @@
+import { Section } from 'twenty-ui/components';
 import {
   IconBox,
   IconDownload,
@@ -5,7 +6,6 @@ import {
   IconVersions,
   IconWorld,
 } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
@@ -25,7 +25,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import { AvatarOrIcon, Chip, Tag } from 'twenty-ui/primitives/data-display';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/primitives/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsApplicationRegistrationShareLinkButtons } from '~/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -191,8 +190,8 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
   };
 
   return (
-    <Section>
-      <SectionHeader title={t`General`} description={t`About your app`} />
+    <Section.Root>
+      <Section.Header title={t`General`} description={t`About your app`} />
       <StyledGeneralContainer>
         <SettingsTableCard
           rounded
@@ -208,6 +207,6 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
           }
         />
       </StyledGeneralContainer>
-    </Section>
+    </Section.Root>
   );
 };

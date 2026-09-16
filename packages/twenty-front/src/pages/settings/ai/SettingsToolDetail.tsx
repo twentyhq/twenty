@@ -15,10 +15,9 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useNavigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -208,17 +207,17 @@ export const SettingsToolDetail = () => {
             highlightColor={theme.background.transparent.lighter}
             borderRadius={4}
           >
-            <Section>
+            <Section.Root>
               <Skeleton height={20} width={200} />
               <Skeleton height={20} width={400} />
 
               <Skeleton height={80} />
-            </Section>
+            </Section.Root>
           </SkeletonTheme>
         ) : (
           <>
-            <Section>
-              <SectionHeader
+            <Section.Root>
+              <Section.Header
                 title={t`Parameters`}
                 description={t`Input parameters accepted by this tool`}
               />
@@ -227,10 +226,10 @@ export const SettingsToolDetail = () => {
                 requiredFields={inputSchema?.required}
                 functionLink={functionLink}
               />
-            </Section>
+            </Section.Root>
 
-            <Section>
-              <SectionHeader
+            <Section.Root>
+              <Section.Header
                 title={t`Description`}
                 description={t`Define what this tool does`}
               />
@@ -243,11 +242,11 @@ export const SettingsToolDetail = () => {
                 onChange={handleDescriptionChange}
                 disabled={isReadOnly}
               />
-            </Section>
+            </Section.Root>
 
             {isCustomTool && !isManaged && (
-              <Section>
-                <SectionHeader
+              <Section.Root>
+                <Section.Header
                   title={t`Danger zone`}
                   description={t`Delete this tool`}
                 />
@@ -258,7 +257,7 @@ export const SettingsToolDetail = () => {
                   variant="outline"
                   color="danger"
                 >{t`Delete`}</Button>
-              </Section>
+              </Section.Root>
             )}
           </>
         )}

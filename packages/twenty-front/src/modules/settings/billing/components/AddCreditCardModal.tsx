@@ -3,28 +3,16 @@ import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStateful
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { Section } from 'twenty-ui/components';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
-import {
-  Section,
-  SectionAlignment,
-  SectionFontColor,
-} from 'twenty-ui/primitives/layout';
-import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledHeading = styled(Heading)`
-  margin-block-end: ${themeCssVariables.spacing[4]};
-`;
 
 type AddCreditCardModalProps = {
   modalInstanceId: string;
   finalRedirectPath?: string;
   onPaymentMethodAdded: () => Promise<void>;
 };
-
-const StyledCenteredTitle = styled.div`
-  text-align: center;
-`;
 
 const StyledSectionContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[6]};
@@ -60,19 +48,11 @@ export const AddCreditCardModal = ({
       smallBorderRadius
       autoHeight
     >
-      <StyledCenteredTitle>
-        <StyledHeading
-          level={2}
-          size="lg"
-        >{t`Add your credit card`}</StyledHeading>
-      </StyledCenteredTitle>
+      <Dialog.Title>{t`Add your credit card`}</Dialog.Title>
       <StyledSectionContainer>
-        <Section
-          alignment={SectionAlignment.Center}
-          fontColor={SectionFontColor.Primary}
-        >
+        <Section.Root align="center" color="primary">
           {t`Add your credit card below. Once added, your subscription will start automatically.`}
-        </Section>
+        </Section.Root>
       </StyledSectionContainer>
       <AddPaymentMethodForm
         finalRedirectPath={finalRedirectPath}

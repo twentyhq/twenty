@@ -4,9 +4,8 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import { IconClockHour8 } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -31,8 +30,8 @@ export const SettingsLogicFunctionNewForm = ({
   const nameTextInputId = `${formValues.name}-name`;
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`About`}
         description={t`Name and describe your function`}
       />
@@ -68,6 +67,6 @@ export const SettingsLogicFunctionNewForm = ({
           />
         </Card>
       </StyledInputsContainer>
-    </Section>
+    </Section.Root>
   );
 };

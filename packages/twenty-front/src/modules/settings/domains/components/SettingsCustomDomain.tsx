@@ -13,10 +13,9 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconReload, IconTrash } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { useCheckCustomDomainValidRecords } from '@/settings/domains/hooks/useCheckCustomDomainValidRecords';
@@ -74,8 +73,8 @@ export const SettingsCustomDomain = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Custom Domain`}
             description={t`Set the name of your custom domain and configure your DNS records.`}
           />
@@ -107,7 +106,7 @@ export const SettingsCustomDomain = () => {
               </StyledButtonsContainer>
             )}
           </StyledDomainFormWrapper>
-        </Section>
+        </Section.Root>
         {currentWorkspace?.customDomain && customDomainRecords && (
           <SettingsDomainRecords records={customDomainRecords.records} />
         )}

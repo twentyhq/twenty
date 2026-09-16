@@ -37,7 +37,7 @@ Keep imports narrow:
 
 The front component renderer provides a Twenty `ThemeProvider` around the remote root. For isolated examples or local story-style verification, wrapping the component in `ThemeProvider` from `twenty-ui/theme-constants` is also acceptable.
 
-The canonical Twenty UI front component example is `packages/twenty-front-component-renderer/src/__stories__/showcase/twenty-ui-example.front-component.tsx`. It imports `Button` from `twenty-ui/primitives/input`; `Chip`, `Status`, and `Tag` from `twenty-ui/primitives/data-display`; `SectionHeader` from `twenty-ui/components`; and `ThemeProvider` from `twenty-ui/theme-constants`.
+The canonical Twenty UI front component example is `packages/twenty-front-component-renderer/src/__stories__/showcase/twenty-ui-example.front-component.tsx`. It imports `Button` from `twenty-ui/primitives/input`; `Chip`, `Status`, and `Tag` from `twenty-ui/primitives/data-display`; `Section` from `twenty-ui/components`; and `ThemeProvider` from `twenty-ui/theme-constants`.
 
 Read theme tokens with the `useTheme()` hook from `twenty-ui/theme-constants` inside the component body. The same tokens are also exported as the `themeCssVariables` constant, but the SDK mocks `twenty-ui` during manifest extraction, so a module-level constant that dereferences `themeCssVariables` can fail before the component renders — prefer `useTheme()`.
 

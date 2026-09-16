@@ -6,8 +6,7 @@ import { SettingsAccountsBlocklistInput } from '@/settings/accounts/components/S
 import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/SettingsAccountsBlocklistTable';
 import { useLingui } from '@lingui/react/macro';
 import { BlocklistScope, CoreObjectNameSingular } from 'twenty-shared/types';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsWorkspaceBlocklistSection = () => {
   const { t } = useLingui();
@@ -42,8 +41,8 @@ export const SettingsWorkspaceBlocklistSection = () => {
   };
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Blocklist`}
         description={t`Exclude the following people and domains from the email and calendar sync of every workspace member`}
       />
@@ -55,6 +54,6 @@ export const SettingsWorkspaceBlocklistSection = () => {
         blocklist={workspaceBlocklist}
         handleBlockedEmailRemove={handleBlockedEmailRemove}
       />
-    </Section>
+    </Section.Root>
   );
 };

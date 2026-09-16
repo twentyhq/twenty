@@ -1,5 +1,5 @@
+import { Section } from '@ui/components/Section/Section';
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
-import { SectionHeader } from '@ui/components/SectionHeader/SectionHeader';
 import { Card } from '@ui/primitives/surfaces/Card/Card';
 import { i18n } from '@lingui/core';
 import { Button } from '@ui/primitives/input/Button/Button';
@@ -41,7 +41,7 @@ export const RecordingControls = ({
           size="xl"
           shape="rounded-square"
         />
-        <SectionHeader
+        <Section.Header
           className="grow live-section-header"
           title={active.title}
           level={2}

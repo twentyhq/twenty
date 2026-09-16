@@ -2,9 +2,11 @@ import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
+import { DIALOG_TITLE_PROP_DESCRIPTIONS } from './dialogTitlePropDescriptions';
 import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
+import { SECTION_ROOT_PROP_DESCRIPTIONS } from './sectionRootPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 
@@ -175,10 +177,20 @@ export const DOCUMENTED_COMPONENTS = [
     propDescriptions: HEADING_PROP_DESCRIPTIONS,
   },
   {
-    name: 'SectionHeader',
-    source: 'components/SectionHeader/SectionHeader.tsx',
+    name: 'Section',
+    source: 'components/Section/Section.tsx',
     entryPoint: 'twenty-ui/components',
-    slug: 'components/section-header',
-    propDescriptions: SECTION_HEADER_PROP_DESCRIPTIONS,
+    slug: 'components/section',
+    partPropDescriptions: {
+      Root: SECTION_ROOT_PROP_DESCRIPTIONS,
+      Header: SECTION_HEADER_PROP_DESCRIPTIONS,
+    },
+  },
+  {
+    name: 'Dialog',
+    source: 'primitives/surfaces/Dialog/Dialog.tsx',
+    entryPoint: 'twenty-ui/primitives/surfaces',
+    slug: 'surfaces/dialog',
+    partPropDescriptions: { Title: DIALOG_TITLE_PROP_DESCRIPTIONS },
   },
 ] as const;

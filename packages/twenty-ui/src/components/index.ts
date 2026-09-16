@@ -10,5 +10,6 @@
 export { LightButton } from './LightButton/LightButton';
 export type { LightButtonProps } from './LightButton/types/LightButtonProps';
 export { MainButton } from './MainButton/MainButton';
-export { SectionHeader } from './SectionHeader/SectionHeader';
-export type { SectionHeaderProps } from './SectionHeader/types/SectionHeaderProps';
+export { Section } from './Section/Section';
+export type { SectionHeaderProps } from './Section/types/SectionHeaderProps';
+export type { SectionRootProps } from './Section/types/SectionRootProps';

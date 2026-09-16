@@ -1,7 +1,7 @@
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useLingui } from '@lingui/react/macro';
-import { SectionHeader } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -19,7 +19,7 @@ export const SetOrChangePassword = () => {
 
   return (
     <>
-      <SectionHeader title={heading} description={description} />
+      <Section.Header title={heading} description={description} />
       <Button onClick={handleResetPassword()} variant="outline">
         {heading}
       </Button>

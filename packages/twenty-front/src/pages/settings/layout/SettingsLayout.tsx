@@ -8,10 +8,9 @@ import { useLingui } from '@lingui/react/macro';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconLayoutDashboard, IconPencil, IconSparkle2 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import coverDark from '~/pages/settings/layout/assets/cover-dark.png';
 import coverLight from '~/pages/settings/layout/assets/cover-light.png';
 
@@ -50,7 +49,7 @@ export const SettingsLayout = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
+        <Section.Root>
           <SettingsDiscoveryHeroCard
             lightSrc={coverLight}
             darkSrc={coverDark}
@@ -74,14 +73,14 @@ export const SettingsLayout = () => {
               />
             }
           />
-        </Section>
-        <Section>
-          <SectionHeader
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Overview`}
             description={t`All the layout items declared on your workspace`}
           />
           <SettingsLayoutItemsStats />
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

@@ -1,9 +1,8 @@
 import { useLingui } from '@lingui/react/macro';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
 import { SettingsApplicationRegistrationInstalledWorkspaces } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstalledWorkspaces';
 import { SettingsApplicationRegistrationInstallStats } from '~/pages/settings/applications/components/SettingsApplicationRegistrationInstallStats';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsApplicationRegistrationGeneralStats = ({
   registration,
@@ -13,8 +12,8 @@ export const SettingsApplicationRegistrationGeneralStats = ({
   const { t } = useLingui();
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Install Stats`}
         description={t`Usage across all non-deleted workspaces on this server`}
       />
@@ -24,6 +23,6 @@ export const SettingsApplicationRegistrationGeneralStats = ({
       <SettingsApplicationRegistrationInstalledWorkspaces
         registration={registration}
       />
-    </Section>
+    </Section.Root>
   );
 };

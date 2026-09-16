@@ -1,8 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
+import { Section } from 'twenty-ui/components';
 import { IconMessage, IconRobot, IconWand } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -49,8 +48,8 @@ export const SettingsAiModelsTab = () => {
 
   return (
     <>
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Models`}
           description={t`Choose the default modes for people and agents`}
         />
@@ -122,7 +121,7 @@ export const SettingsAiModelsTab = () => {
             </StyledSettingsSelectGroup>
           )}
         </Card>
-      </Section>
+      </Section.Root>
 
       <SettingsAiModelTiersPreview />
     </>

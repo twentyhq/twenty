@@ -2,9 +2,8 @@
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import { IconArrowUp, IconLock } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
 import { billingState } from '@/client-config/states/billingState';
@@ -44,8 +43,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
 
   if (!hasOrganizationPlan) {
     return (
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Record-level`}
           description={t`Ability to filter the records a user can interact with`}
           adornment={<OrganizationAdornment />}
@@ -74,13 +73,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
             />
           </Card>
         </StyledCardContainer>
-      </Section>
+      </Section.Root>
     );
   }
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Record-level`}
         description={t`Ability to filter the records a user can interact with.`}
       />
@@ -90,6 +89,6 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
           objectMetadataItem={objectMetadataItem}
         />
       </StyledContent>
-    </Section>
+    </Section.Root>
   );
 };

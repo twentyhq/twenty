@@ -19,12 +19,11 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { formatDistanceToNow } from 'date-fns';
 import { useContext, useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconMail, IconReload, IconTrash } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { IconButton } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -125,18 +124,18 @@ export const SettingsWorkspaceMembersInviteTab = () => {
       <SettingsRolesQueryEffect />
       {currentWorkspace?.inviteHash &&
         currentWorkspace?.isPublicInviteLinkEnabled && (
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Invite by link`}
               description={t`Share this link to invite users to join your workspace`}
             />
             <WorkspaceInviteLink
               inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
             />
-          </Section>
+          </Section.Root>
         )}
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Invite by email`}
           description={t`Send an invite email to your team`}
         />
@@ -234,14 +233,14 @@ export const SettingsWorkspaceMembersInviteTab = () => {
             </Table>
           </StyledTableContainer>
         )}
-      </Section>
-      <Section>
-        <SectionHeader
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Approved Domains`}
           description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
         />
         <SettingsApprovedAccessDomainsListCard />
-      </Section>
+      </Section.Root>
     </>
   );
 };

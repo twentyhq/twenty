@@ -19,10 +19,9 @@ import {
   isDefined,
   isValidUrl,
 } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconTrash } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
@@ -119,8 +118,8 @@ export const SettingsDevelopersWebhookForm = ({
         }
       >
         <SettingsPageContainer>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Endpoint URL`}
               description={t`We will send a POST request to this endpoint for each new event in application/json format`}
             />
@@ -144,9 +143,9 @@ export const SettingsDevelopersWebhookForm = ({
                 );
               }}
             />
-          </Section>
-          <Section>
-            <SectionHeader
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Description`}
               description={t`We will send a POST request to this endpoint for each new event in application/json format.`}
             />
@@ -164,9 +163,9 @@ export const SettingsDevelopersWebhookForm = ({
                 />
               )}
             />
-          </Section>
-          <Section>
-            <SectionHeader
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Filters`}
               description={t`Select the events you wish to send to this endpoint`}
             />
@@ -181,9 +180,9 @@ export const SettingsDevelopersWebhookForm = ({
                 />
               )}
             />
-          </Section>
-          <Section>
-            <SectionHeader
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
               title={t`Secret`}
               description={t`Optional secret used to compute the HMAC signature for webhook payloads`}
             />
@@ -200,10 +199,10 @@ export const SettingsDevelopersWebhookForm = ({
                 />
               )}
             />
-          </Section>
+          </Section.Root>
           {!isCreationMode && (
-            <Section>
-              <SectionHeader
+            <Section.Root>
+              <Section.Header
                 title={t`Danger zone`}
                 description={t`Delete this webhook`}
               />
@@ -213,7 +212,7 @@ export const SettingsDevelopersWebhookForm = ({
                 variant="outline"
                 color="danger"
               >{t`Delete`}</Button>
-            </Section>
+            </Section.Root>
           )}
         </SettingsPageContainer>
       </SettingsPageLayout>

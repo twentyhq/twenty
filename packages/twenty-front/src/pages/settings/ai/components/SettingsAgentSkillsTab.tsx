@@ -1,3 +1,4 @@
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -11,14 +12,12 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconArchive, IconSettings } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { SearchInput } from 'twenty-ui/primitives/input';
 import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/primitives/layout';
 import {
   ActivateSkillDocument,
   DeleteSkillDocument,
@@ -120,8 +119,8 @@ export const SettingsAgentSkillsTab = () => {
   };
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Skills`}
         description={t`Use filter to see existing skills or create your own`}
       />
@@ -169,6 +168,6 @@ export const SettingsAgentSkillsTab = () => {
         onActivate={handleActivate}
         onDelete={handleDelete}
       />
-    </Section>
+    </Section.Root>
   );
 };

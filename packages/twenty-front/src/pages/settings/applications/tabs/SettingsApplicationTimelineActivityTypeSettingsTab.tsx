@@ -7,12 +7,11 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
+import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { IconRestore, IconTimelineEvent } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { SectionHeader } from 'twenty-ui/components';
 import { type SettingsApplicationTimelineActivityType } from '~/pages/settings/applications/types/settingsApplicationTimelineActivityType';
 
 type SettingsApplicationTimelineActivityTypeSettingsTabProps = {
@@ -88,8 +87,8 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
 
   return (
     <>
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Details`}
           description={t`Configuration of this timeline activity type`}
         />
@@ -111,9 +110,9 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
             ))}
           </TableSection>
         </Table>
-      </Section>
-      <Section>
-        <SectionHeader
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Activity visibility`}
           description={t`Choose whether this activity type appears in record timelines`}
         />
@@ -127,10 +126,10 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
             onChange={onIsActiveChange}
           />
         </Card>
-      </Section>
+      </Section.Root>
       {canReset && (
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Reset`}
             description={t`Restore the activity type settings defined by the application`}
           />
@@ -141,7 +140,7 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
             onClick={onReset}
             variant="outline"
           >{t`Reset to default`}</Button>
-        </Section>
+        </Section.Root>
       )}
     </>
   );

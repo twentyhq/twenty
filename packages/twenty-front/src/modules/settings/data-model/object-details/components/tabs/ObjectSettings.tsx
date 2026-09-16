@@ -16,10 +16,9 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
+import { Section } from 'twenty-ui/components';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -103,30 +102,30 @@ export const ObjectSettings = ({
   return (
     <StyledContentContainer>
       <StyledFormSectionContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`About`}
             description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
           />
           <SettingsUpdateDataModelObjectAboutForm
             objectMetadataItem={objectMetadataItem}
           />
-        </Section>
+        </Section.Root>
       </StyledFormSectionContainer>
       <StyledFormSectionContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Options`}
             description={t`Choose the fields that will identify your records`}
           />
           <SettingsDataModelObjectSettingsFormCard
             objectMetadataItem={objectMetadataItem}
           />
-        </Section>
+        </Section.Root>
       </StyledFormSectionContainer>
       <StyledFormSectionContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Translations`}
             description={t`What each language displays for this object's labels`}
           />
@@ -137,12 +136,12 @@ export const ObjectSettings = ({
               label: objectMetadataItem.labelPlural,
             }}
           />
-        </Section>
+        </Section.Root>
       </StyledFormSectionContainer>
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Search`}
               description={t`Configure how this object appears in search results`}
             />
@@ -150,13 +149,13 @@ export const ObjectSettings = ({
               objectMetadataItem={objectMetadataItem}
               isReadOnly={isReadOnly}
             />
-          </Section>
+          </Section.Root>
         </StyledFormSectionContainer>
       </AdvancedSettingsWrapper>
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Indexes`}
               description={t`Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent.`}
             />
@@ -164,13 +163,13 @@ export const ObjectSettings = ({
               objectMetadataItem={objectMetadataItem}
               isReadOnly={isReadOnly}
             />
-          </Section>
+          </Section.Root>
         </StyledFormSectionContainer>
       </AdvancedSettingsWrapper>
       {!isReadOnly && (
         <StyledFormSectionContainer>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Danger zone`}
               description={t`Deactivate object`}
             />
@@ -190,7 +189,7 @@ export const ObjectSettings = ({
                 >{t`Delete`}</Button>
               )}
             </StyledDangerButtonsContainer>
-          </Section>
+          </Section.Root>
         </StyledFormSectionContainer>
       )}
       <ConfirmationModal

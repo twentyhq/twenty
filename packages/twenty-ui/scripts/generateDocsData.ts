@@ -162,6 +162,13 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
       };
     }
 
+    const partPropDescriptions: Record<
+      string,
+      Partial<Record<string, string>>
+    > = 'partPropDescriptions' in component
+      ? component.partPropDescriptions
+      : {};
+
     const parts = type.getProperties().map((part) => {
       const declaration = part.valueDeclaration;
 
@@ -184,6 +191,7 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
         props: extractProps({
           symbol: partSymbol,
           name: `${component.name}.${part.name}`,
+          propDescriptions: partPropDescriptions[part.name],
         }),
       };
     });

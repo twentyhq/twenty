@@ -10,9 +10,8 @@ import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
+import { Section } from 'twenty-ui/components';
 import { IconSearch } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -104,7 +103,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
 
   return (
     <StyledTypeSelectContainer>
-      <Section>
+      <Section.Root>
         <StyledSearchContainer>
           <StyledSearchInputContainer>
             <SettingsTextInput
@@ -118,11 +117,11 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
             />
           </StyledSearchInputContainer>
         </StyledSearchContainer>
-      </Section>
+      </Section.Root>
 
       {standardObjects.length > 0 && (
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Standard`}
             description={t`All the standard objects`}
           />
@@ -147,11 +146,11 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
               </StyledCardContainer>
             ))}
           </StyledContainer>
-        </Section>
+        </Section.Root>
       )}
       {customObjects.length > 0 && (
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Custom`}
             description={t`All your custom objects`}
           />
@@ -176,7 +175,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
               </StyledCardContainer>
             ))}
           </StyledContainer>
-        </Section>
+        </Section.Root>
       )}
     </StyledTypeSelectContainer>
   );

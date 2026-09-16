@@ -7,11 +7,10 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconId } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
@@ -82,8 +81,8 @@ export const SettingsAdminInferredVersion = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Inferred version`}
             description={t`Detected application version running on this instance`}
           />
@@ -104,7 +103,7 @@ export const SettingsAdminInferredVersion = () => {
               variant="outline"
             >{t`Refresh status`}</Button>
           </StyledRefreshButtonContainer>
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

@@ -1,6 +1,6 @@
-import { SectionHeader } from 'twenty-ui/components';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { useState } from 'react';
+import { Section } from 'twenty-ui/components';
 import { Chip, Status, Tag } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme-constants';
@@ -30,7 +30,7 @@ const TwentyUiComponent = () => {
   return (
     <ThemeProvider colorScheme="light">
       <div data-testid="twenty-ui-component" style={CARD_STYLE}>
-        <SectionHeader
+        <Section.Header
           title="Twenty UI"
           description="The CRM's own component library with theme-aware styling."
         />

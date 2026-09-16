@@ -18,9 +18,8 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsNewObject = () => {
   const { t } = useLingui();
@@ -101,8 +100,8 @@ export const SettingsNewObject = () => {
         }
       >
         <SettingsPageContainer>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`About`}
               description={t`Define the name and description of your object`}
             />
@@ -112,7 +111,7 @@ export const SettingsNewObject = () => {
                 !isLoading ? conflictingObjectMetadataItem : undefined
               }
             />
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
     </FormProvider>

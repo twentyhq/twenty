@@ -4,14 +4,13 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type Dispatch, type SetStateAction, useState } from 'react';
+import { Section } from 'twenty-ui/components';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const StyledSectionHeader = styled(SectionHeader)`
+const StyledSectionHeader = styled(Section.Header)`
   margin-block-end: 0;
 `;
 
@@ -117,7 +116,7 @@ export const ConfigVariableEdit = ({
 
   return (
     <SettingsPageContainer>
-      <Section>
+      <Section.Root>
         <StyledSectionHeader
           title={title}
           description={description}
@@ -125,9 +124,9 @@ export const ConfigVariableEdit = ({
           size="lg"
           descriptionLineClamp={2}
         />
-      </Section>
+      </Section.Root>
 
-      <Section>
+      <Section.Root>
         <StyledRow>
           {input}
           {!isEditing ? (
@@ -169,7 +168,7 @@ export const ConfigVariableEdit = ({
           />
         </StyledRow>
         {helpContent}
-      </Section>
+      </Section.Root>
     </SettingsPageContainer>
   );
 };

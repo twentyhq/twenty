@@ -1,8 +1,7 @@
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledSettingsTableCardContainer = styled.div`
@@ -47,8 +46,8 @@ export const SettingsAdminHealthAccountSyncCountersTable = ({
   ];
 
   return (
-    <Section>
-      <SectionHeader title={title} description={description} />
+    <Section.Root>
+      <Section.Header title={title} description={description} />
       <StyledSettingsTableCardContainer>
         <SettingsTableCard
           items={items}
@@ -58,6 +57,6 @@ export const SettingsAdminHealthAccountSyncCountersTable = ({
           valueAlign="right"
         />
       </StyledSettingsTableCardContainer>
-    </Section>
+    </Section.Root>
   );
 };

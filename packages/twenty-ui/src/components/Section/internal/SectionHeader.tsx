@@ -7,9 +7,9 @@ import { OverflowingTextWithTooltip } from '@ui/primitives/surfaces/OverflowingT
 import { Heading } from '@ui/primitives/typography/Heading/Heading';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
-import { type SectionHeaderProps } from './types/SectionHeaderProps';
+import { type SectionHeaderProps } from '../types/SectionHeaderProps';
 
-import styles from './SectionHeader.module.scss';
+import styles from '../SectionHeader.module.scss';
 
 export const SectionHeader = ({
   title,

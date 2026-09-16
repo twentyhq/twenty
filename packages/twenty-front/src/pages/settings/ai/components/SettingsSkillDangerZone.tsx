@@ -3,12 +3,11 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { SectionHeader } from 'twenty-ui/components';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -73,8 +72,8 @@ export const SettingsSkillDangerZone = ({
     );
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Danger zone`}
         description={t`Deactivate or delete this skill`}
       />
@@ -104,6 +103,6 @@ export const SettingsSkillDangerZone = ({
         confirmButtonText={t`Delete`}
         loading={isSubmitting}
       />
-    </Section>
+    </Section.Root>
   );
 };

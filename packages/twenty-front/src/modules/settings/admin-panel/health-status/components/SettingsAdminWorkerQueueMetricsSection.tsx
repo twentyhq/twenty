@@ -8,9 +8,8 @@ import { t } from '@lingui/core/macro';
 import { lazy, Suspense, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconList } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type AdminPanelWorkerQueueHealth,
@@ -52,9 +51,9 @@ export const SettingsAdminWorkerQueueMetricsSection = ({
 
   return (
     <StyledContainer>
-      <Section>
+      <Section.Root>
         <StyledControlsContainer>
-          <SectionHeader
+          <Section.Header
             title={queue.queueName}
             description={t`Queue performance`}
           />
@@ -80,7 +79,7 @@ export const SettingsAdminWorkerQueueMetricsSection = ({
             />
           </StyledRightControls>
         </StyledControlsContainer>
-      </Section>
+      </Section.Root>
       <Suspense fallback={<WidgetSkeletonLoader />}>
         <SettingsAdminWorkerMetricsGraph
           queueName={queue.queueName}

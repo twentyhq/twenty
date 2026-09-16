@@ -2,11 +2,10 @@ import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsO
 
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconRefresh } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { SectionHeader } from 'twenty-ui/components';
 import { UpdateApplicationDocument } from '~/generated-metadata/graphql';
 
 export const SettingsApplicationGeneralSection = ({
@@ -37,8 +36,8 @@ export const SettingsApplicationGeneralSection = ({
   };
 
   return (
-    <Section>
-      <SectionHeader title={t`General`} />
+    <Section.Root>
+      <Section.Header title={t`General`} />
       <Card rounded fullWidth>
         <SettingsOptionCardContentSwitch
           Icon={IconRefresh}
@@ -48,6 +47,6 @@ export const SettingsApplicationGeneralSection = ({
           onChange={handleAutoUpgradeChange}
         />
       </Card>
-    </Section>
+    </Section.Root>
   );
 };

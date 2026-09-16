@@ -27,9 +27,8 @@ import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import {
   BillingPlanKey,
   CancelSwitchBillingIntervalDocument,
@@ -473,8 +472,8 @@ export const SettingsBillingSubscriptionInfo = ({
   };
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Subscription`}
         description={subscriptionDescription}
       />
@@ -550,6 +549,6 @@ export const SettingsBillingSubscriptionInfo = ({
         switchToMonthlySubtitle={confirmationModalSwitchToMonthlyMessage()}
         switchToYearlySubtitle={confirmationModalSwitchToYearlyMessage()}
       />
-    </Section>
+    </Section.Root>
   );
 };

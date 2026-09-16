@@ -8,10 +8,9 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { Section } from 'twenty-ui/components';
 import { IconPlayerPlay } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { Button, CoreEditorHeader } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 
 const StyledTabListContainer = styled.div`
   > * {
@@ -59,8 +58,8 @@ export const SettingsLogicFunctionCodeEditorTab = ({
   );
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Code your function`}
         description={t`Write your function (in typescript) below`}
       />
@@ -73,6 +72,6 @@ export const SettingsLogicFunctionCodeEditorTab = ({
           applicationVariableKeys={applicationVariableKeys}
         />
       )}
-    </Section>
+    </Section.Root>
   );
 };

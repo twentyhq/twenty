@@ -14,9 +14,8 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Section } from 'twenty-ui/components';
 
 const StyledDomainFormWrapper = styled.div`
   align-items: center;
@@ -64,8 +63,8 @@ export const SettingsSubdomain = () => {
         }
       >
         <SettingsPageContainer>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Subdomain`}
               description={t`Set the name of your subdomain`}
             />
@@ -84,7 +83,7 @@ export const SettingsSubdomain = () => {
                 fullWidth
               />
             </StyledDomainFormWrapper>
-          </Section>
+          </Section.Root>
         </SettingsPageContainer>
       </SettingsPageLayout>
       <ConfirmationModal

@@ -3,11 +3,10 @@ import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/primitives/layout';
 import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { SectionHeader } from 'twenty-ui/components';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
@@ -162,8 +161,8 @@ export const SettingsSkillFormContent = ({
       links={getSettingsAiBreadcrumbLinks(breadcrumbText)}
     >
       <SettingsPageContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`About`}
             description={t`Define the name and instructions for this skill`}
           />
@@ -269,7 +268,7 @@ export const SettingsSkillFormContent = ({
               </StyledAdvancedSettingsOuterContainer>
             </AdvancedSettingsWrapper>
           </StyledFormContainer>
-        </Section>
+        </Section.Root>
 
         {isDefined(skill) && <SettingsSkillDangerZone skill={skill} />}
       </SettingsPageContainer>

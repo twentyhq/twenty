@@ -12,9 +12,8 @@ import { GET_ADMIN_CHAT_THREAD_MESSAGES } from '@/settings/admin-panel/graphql/q
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import { type GetAdminChatThreadMessagesQuery } from '~/generated-admin/graphql';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsAdminWorkspaceChatThread = () => {
   const { workspaceId, threadId } = useParams<{
@@ -62,13 +61,13 @@ export const SettingsAdminWorkspaceChatThread = () => {
       ]}
     >
       <SettingsPageContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={threadTitle}
             description={t`Chat conversation`}
           />
           <SettingsAdminChatThreadMessageList messages={messages} />
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

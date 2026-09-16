@@ -16,12 +16,11 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconLink, IconTool } from 'twenty-ui/icon';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { InputHint } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useToast } from 'twenty-ui/primitives/feedback';
@@ -192,8 +191,8 @@ export const SettingsAdminMaintenanceMode = () => {
     : undefined;
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Maintenance`}
         description={t`Schedule a maintenance window and notify all users`}
       />
@@ -249,6 +248,6 @@ export const SettingsAdminMaintenanceMode = () => {
           </CardContent>
         )}
       </Card>
-    </Section>
+    </Section.Root>
   );
 };

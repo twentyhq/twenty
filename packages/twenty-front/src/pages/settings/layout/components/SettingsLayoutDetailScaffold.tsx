@@ -11,8 +11,7 @@ import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
+import { Section } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type DetailRow = { key: string; label: string; value: ReactNode };
@@ -75,16 +74,16 @@ export const SettingsLayoutDetailScaffold = ({
         ) : (
           <>
             {isDefined(trimmedDescription) && trimmedDescription.length > 0 && (
-              <Section>
-                <SectionHeader
+              <Section.Root>
+                <Section.Header
                   title={t`About`}
                   description={t`Description provided by the application`}
                 />
                 <StyledDescription>{trimmedDescription}</StyledDescription>
-              </Section>
+              </Section.Root>
             )}
-            <Section>
-              <SectionHeader
+            <Section.Root>
+              <Section.Header
                 title={t`Details`}
                 description={t`Read-only ${entityTypeLabel} definition shipped by this app`}
               />
@@ -106,7 +105,7 @@ export const SettingsLayoutDetailScaffold = ({
                   ))}
                 </TableBody>
               </Table>
-            </Section>
+            </Section.Root>
             {children}
           </>
         )}

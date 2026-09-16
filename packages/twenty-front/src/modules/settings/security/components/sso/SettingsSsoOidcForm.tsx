@@ -4,10 +4,9 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
+import { Section } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
-import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -45,8 +44,8 @@ export const SettingsSsoOidcForm = () => {
 
   return (
     <>
-      <Section>
-        <SectionHeader
+      <Section.Root>
+        <Section.Header
           title={t`Client Settings`}
           description={t`Provide your OIDC provider details`}
         />
@@ -98,9 +97,9 @@ export const SettingsSsoOidcForm = () => {
             </StyledButtonCopy>
           </StyledContainer>
         </StyledInputsContainer>
-      </Section>
-      <Section>
-        <SectionHeader
+      </Section.Root>
+      <Section.Root>
+        <Section.Header
           title={t`Identity Provider`}
           description={t`Enter the credentials to set the connection`}
         />
@@ -152,7 +151,7 @@ export const SettingsSsoOidcForm = () => {
             )}
           />
         </StyledInputsContainer>
-      </Section>
+      </Section.Root>
     </>
   );
 };

@@ -20,10 +20,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconRepeat, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AssignRoleToApiKeyDocument,
@@ -272,10 +271,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
           ]}
         >
           <SettingsPageContainer>
-            <Section>
+            <Section.Root>
               {apiKeyToken ? (
                 <>
-                  <SectionHeader
+                  <Section.Header
                     title={t`API Key`}
                     description={t`Copy this key as it will not be visible again`}
                   />
@@ -283,7 +282,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 </>
               ) : (
                 <>
-                  <SectionHeader
+                  <Section.Header
                     title={t`API Key`}
                     description={t`Regenerate an API key`}
                   />
@@ -298,9 +297,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                   </StyledInputContainer>
                 </>
               )}
-            </Section>
-            <Section>
-              <SectionHeader
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Name`}
                 description={t`Name of your API key`}
               />
@@ -310,9 +309,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 disabled={isLoading}
                 onNameUpdate={setApiKeyName}
               />
-            </Section>
-            <Section>
-              <SectionHeader
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Role`}
                 description={t`What this API can do: Select a user role to define its permissions.`}
               />
@@ -321,9 +320,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 onChange={handleRoleChange}
                 roles={roles}
               />
-            </Section>
-            <Section>
-              <SectionHeader
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Expiration`}
                 description={t`When the key will be disabled`}
               />
@@ -334,9 +333,9 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 disabled
                 fullWidth
               />
-            </Section>
-            <Section>
-              <SectionHeader
+            </Section.Root>
+            <Section.Root>
+              <Section.Header
                 title={t`Danger zone`}
                 description={t`Delete this integration`}
               />
@@ -346,7 +345,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 variant="outline"
                 color="danger"
               >{t`Delete`}</Button>
-            </Section>
+            </Section.Root>
           </SettingsPageContainer>
         </SettingsPageLayout>
       )}

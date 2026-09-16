@@ -17,11 +17,10 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { IconReload, IconTrash } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
-import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   CreatePublicDomainDocument,
@@ -165,8 +164,8 @@ export const SettingPublicDomain = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Custom Domain`}
             description={t`Set the name of your custom domain and configure your DNS records.`}
           />
@@ -218,7 +217,7 @@ export const SettingPublicDomain = () => {
               )}
             </StyledRecordsWrapper>
           )}
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

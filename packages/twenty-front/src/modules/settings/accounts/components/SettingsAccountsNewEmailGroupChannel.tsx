@@ -4,8 +4,6 @@ import { z } from 'zod';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 
 import { useCreateEmailGroupChannel } from '@/settings/accounts/hooks/useCreateEmailGroupChannel';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -13,6 +11,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsAccountsNewEmailGroupChannel = () => {
   const { t } = useLingui();
@@ -66,8 +65,8 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Email Address`}
             description={t`The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains.`}
           />
@@ -84,9 +83,9 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
             }}
             disabled={loading}
           />
-        </Section>
-        <Section>
-          <SectionHeader
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Display Name`}
             description={t`The name recipients see next to your address in their inbox, instead of the address alone.`}
           />
@@ -104,7 +103,7 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
             }}
             disabled={loading}
           />
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

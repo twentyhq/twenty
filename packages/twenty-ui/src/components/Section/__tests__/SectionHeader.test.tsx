@@ -1,23 +1,23 @@
+import { Section } from '@ui/components/Section/Section';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { runComponentConformance } from '@test-utilities/conformance/runComponentConformance';
 
-import { SectionHeader } from '../SectionHeader';
 import styles from '../SectionHeader.module.scss';
 
 runComponentConformance({
-  name: 'SectionHeader',
-  element: <SectionHeader title="Workspace" description="Manage your team" />,
+  name: 'Section.Header',
+  element: <Section.Header title="Workspace" description="Manage your team" />,
   ownClassName: styles.header,
   refInstanceOf: HTMLDivElement,
   renderPropTagName: 'header',
 });
 
-describe('SectionHeader', () => {
+describe('Section.Header', () => {
   it('associates ordinary description text with the requested heading level', () => {
     render(
-      <SectionHeader
+      <Section.Header
         title="Workspace"
         description="Manage your team"
         level={3}
@@ -37,7 +37,7 @@ describe('SectionHeader', () => {
 
   it('accepts rich descriptions and omits their association when cleared', () => {
     const { rerender } = render(
-      <SectionHeader
+      <Section.Header
         title="Workspace"
         description={
           <span>
@@ -51,7 +51,7 @@ describe('SectionHeader', () => {
       'Manage your team',
     );
 
-    rerender(<SectionHeader title="Workspace" description="" />);
+    rerender(<Section.Header title="Workspace" description="" />);
 
     expect(screen.getByRole('heading')).not.toHaveAttribute('aria-describedby');
     expect(screen.queryByText('your team')).not.toBeInTheDocument();

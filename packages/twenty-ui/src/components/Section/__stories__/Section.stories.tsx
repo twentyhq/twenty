@@ -1,21 +1,20 @@
+import { Section } from '@ui/components/Section/Section';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
-import { Section } from '@ui/primitives/layout/Section/Section';
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
 
-import { SectionHeader } from '../SectionHeader';
-
-const meta: Meta<typeof SectionHeader> = {
-  title: 'UI/Components/SectionHeader',
-  component: SectionHeader,
+const meta: Meta<typeof Section.Header> = {
+  title: 'UI/Components/Section',
+  component: Section.Header,
   args: { title: 'Workspace settings' },
 };
 
 export default meta;
 
-type Story = StoryObj<typeof SectionHeader>;
+type Story = StoryObj<typeof Section.Header>;
 
 export const Default: Story = {
   decorators: [ComponentDecorator],
@@ -36,6 +35,33 @@ export const WithDescription: Story = {
 
 export const Documentation: Story = {
   ...WithDescription,
+  render: (args) => (
+    <Section.Root>
+      <Section.Header {...args} />
+      <Text>Workspace preferences appear here.</Text>
+    </Section.Root>
+  ),
+};
+
+export const Centered: Story = {
+  ...Default,
+  render: () => (
+    <Section.Root align="center">Centered section content</Section.Root>
+  ),
+  play: async ({ canvasElement }) => {
+    await expect(
+      within(canvasElement).getByText('Centered section content'),
+    ).toHaveStyle({ textAlign: 'center' });
+  },
+};
+
+export const SecondaryColor: Story = {
+  ...Default,
+  render: () => (
+    <Section.Root color="secondary" fullWidth={false}>
+      Supporting section content
+    </Section.Root>
+  ),
 };
 
 const handleEdit = fn();
@@ -90,18 +116,18 @@ export const LongDescription: Story = {
 export const Catalog: Story = {
   decorators: [ComponentDecorator],
   render: () => (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title="Workspace settings"
         description="Manage your workspace preferences."
       />
-      <SectionHeader
+      <Section.Header
         title="Team settings"
         description="Manage your team preferences."
         size="lg"
         level={3}
       />
-    </Section>
+    </Section.Root>
   ),
 };
 

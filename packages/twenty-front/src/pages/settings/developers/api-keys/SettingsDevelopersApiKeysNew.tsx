@@ -16,8 +16,6 @@ import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SectionHeader } from 'twenty-ui/components';
-import { Section } from 'twenty-ui/primitives/layout';
 import {
   CreateApiKeyDocument,
   GenerateApiKeyTokenDocument,
@@ -26,6 +24,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { Section } from 'twenty-ui/components';
 
 export const SettingsDevelopersApiKeysNew = () => {
   const { t } = useLingui();
@@ -166,8 +165,8 @@ export const SettingsDevelopersApiKeysNew = () => {
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <SectionHeader
+        <Section.Root>
+          <Section.Header
             title={t`Name`}
             description={t`Name of your API key`}
           />
@@ -191,9 +190,9 @@ export const SettingsDevelopersApiKeysNew = () => {
             }}
             fullWidth
           />
-        </Section>
-        <Section>
-          <SectionHeader
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Role`}
             description={t`What this API can do: Select a user role to define its permissions.`}
           />
@@ -207,9 +206,9 @@ export const SettingsDevelopersApiKeysNew = () => {
             }}
             roles={roles}
           />
-        </Section>
-        <Section>
-          <SectionHeader
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
             title={t`Expiration Date`}
             description={t`When the API key will expire.`}
           />
@@ -224,7 +223,7 @@ export const SettingsDevelopersApiKeysNew = () => {
               }));
             }}
           />
-        </Section>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

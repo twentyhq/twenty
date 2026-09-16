@@ -11,9 +11,8 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SectionHeader } from 'twenty-ui/components';
+import { Section } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledInputsContainer = styled.div`
@@ -55,7 +54,7 @@ export const SettingsRoleSettings = ({
 
   return (
     <>
-      <Section>
+      <Section.Root>
         <StyledInputsContainer>
           <StyledInputContainer>
             <IconPicker
@@ -98,7 +97,7 @@ export const SettingsRoleSettings = ({
           }}
           disabled={!isEditable}
         />
-      </Section>
+      </Section.Root>
 
       <SettingsRoleApplicability
         values={{
@@ -117,8 +116,8 @@ export const SettingsRoleSettings = ({
 
       {!isCreateMode && (
         <>
-          <Section>
-            <SectionHeader
+          <Section.Root>
+            <Section.Header
               title={t`Danger zone`}
               description={t`Delete this role and assign a new role to its members`}
             />
@@ -131,7 +130,7 @@ export const SettingsRoleSettings = ({
               variant="outline"
               color="danger"
             >{t`Delete role`}</Button>
-          </Section>
+          </Section.Root>
           <SettingsRoleSettingsDeleteRoleConfirmationModal roleId={roleId} />
         </>
       )}

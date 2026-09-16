@@ -20,6 +20,7 @@ import {
   SettingsPath,
 } from 'twenty-shared/types';
 import { generateILikeFiltersForCompositeFields } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import {
   IconArrowUpRight,
@@ -28,9 +29,7 @@ import {
   IconListDetails,
 } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import { SectionHeader } from 'twenty-ui/components';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
-import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -164,8 +163,8 @@ export const SettingsWorkspaceMembersTeamTab = () => {
   }, [workspaceMembers, searchFilter]);
 
   return (
-    <Section>
-      <SectionHeader
+    <Section.Root>
+      <Section.Header
         title={t`Manage Members`}
         description={t`Manage the members of your workspace here`}
       />
@@ -307,6 +306,6 @@ export const SettingsWorkspaceMembersTeamTab = () => {
           )}
         </Table>
       </StyledTableContainer>
-    </Section>
+    </Section.Root>
   );
 };
