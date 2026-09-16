@@ -5457,7 +5457,7 @@ msgstr "成本"
 #. js-lingui-id: R0dp36
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Cost index"
-msgstr ""
+msgstr "成本指數"
 
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
@@ -7784,7 +7784,7 @@ msgstr "編輯器"
 #. js-lingui-id: QyUT/d
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Effort"
-msgstr ""
+msgstr "努力程度"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -13042,7 +13042,7 @@ msgstr "需要提供模型 ID"
 #. js-lingui-id: E6zx5y
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Model information"
-msgstr ""
+msgstr "模型資訊"
 
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -14655,7 +14655,7 @@ msgstr "未列出"
 #. js-lingui-id: zLXWou
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Not measured at this effort yet, so these are the base model's readings."
-msgstr ""
+msgstr "此努力程度尚未進行測量，因此這些是基礎模型的讀數。"
 
 #. js-lingui-id: AjdrYY
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
@@ -22610,7 +22610,7 @@ msgstr "視覺化資料模型"
 #. js-lingui-id: Ii6BOL
 #: src/modules/ai/components/AiModelTierInformationButton.tsx
 msgid "Vs Balanced mode"
-msgstr ""
+msgstr "相較於平衡模式"
 
 #. js-lingui-id: IEcsBR
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
