@@ -733,6 +733,11 @@ msgstr "성장을 위해 준비된 *플랫폼*"
 msgid "A platform ready to grow"
 msgstr "성장을 준비한 플랫폼"
 
+#. js-lingui-id: GGXFEW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "A proper home on mobile"
+msgstr ""
+
 #. js-lingui-id: vbJW8I
 #: src/case-studies/case-study-stories.ts
 msgid ""
@@ -1865,6 +1870,11 @@ msgstr "범용 유니코드 날짜 형식을 사용해, 어떤 필드에서든 �
 msgid "Choose how your AI should behave on a single slider, from Extra Fast to Extra Smart, instead of picking a model by name. Each tier shows what it trades in speed, cost, and intelligence."
 msgstr ""
 
+#. js-lingui-id: oXetDh
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose where records open"
+msgstr ""
+
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose which part of a name or address field a view should sort by directly from the sort chip."
@@ -2666,6 +2676,11 @@ msgstr "딜, 연락처, 제품만 가능"
 msgid "Dear Team, I am pleased to submit our proposal for your consideration. We have carefully reviewed your requirements."
 msgstr "팀 여러분께, 검토를 위해 제안을 제출하게 되어 기쁩니다. 귀하의 요구 사항을 면밀히 검토했습니다."
 
+#. js-lingui-id: JG4DOf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Decide whether records open in the side panel or as a full page, set per object and as your own preference in Settings > Experience."
+msgstr ""
+
 #. js-lingui-id: 4UlR5Y
 #: src/sections/pricing-plans/plans-data.ts
 #: src/sections/pricing-plans/plans-data.ts
@@ -2677,6 +2692,11 @@ msgstr "전담 지원 및 SLA"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Default position/visibility for field…"
 msgstr "필드의 기본 위치/가시성…"
+
+#. js-lingui-id: IOhXZ5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Delete a workflow step from the diagram"
+msgstr ""
 
 #. js-lingui-id: 9RARjP
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -2968,6 +2988,11 @@ msgstr "Ecuador 🇪🇨"
 #: src/sections/product-stepper/LayoutVisual/LayoutVisual.tsx
 msgid "Edit actions"
 msgstr "동작 편집"
+
+#. js-lingui-id: V4B1Gm
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Edit deactivated objects"
+msgstr ""
 
 #. js-lingui-id: 0cnnX+
 #: src/platform/releases/ReleaseNotes.tsx
@@ -5633,6 +5658,11 @@ msgstr "1회 필수 온보딩 요금"
 msgid "Only $5 for SSO. Practically a charity program."
 msgstr "SSO는 단돈 5달러. 사실상 자선 프로그램 수준입니다."
 
+#. js-lingui-id: Av5T3E
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Open a deactivated object from Settings and change it, instead of deleting it and building it again."
+msgstr ""
+
 #. js-lingui-id: VWC0s5
 #. placeholder {0}: caseStudy.title
 #: src/partners-marketplace/PartnerSelectedWork.tsx
@@ -6358,6 +6388,11 @@ msgstr "{0} 필터 제거"
 msgid "Remove {skill}"
 msgstr "{skill} 제거"
 
+#. js-lingui-id: ChVv1j
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Remove a step from its node in the diagram, without opening the side panel first."
+msgstr ""
+
 #. js-lingui-id: a/aGHe
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Rename, download, and delete attachments"
@@ -6779,6 +6814,11 @@ msgstr "더 많은 기능 보기"
 msgid "See related records across relationships"
 msgstr "관계 전반에서 관련 레코드 보기"
 
+#. js-lingui-id: B79UH5
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See the devices on your account"
+msgstr ""
+
 #. js-lingui-id: 8Zhz04
 #: src/sections/compare/ComparePage.tsx
 msgid "See Twenty pricing"
@@ -6943,6 +6983,11 @@ msgstr "Serbia 🇷🇸"
 #: src/partners-marketplace/PartnerServices.tsx
 msgid "Services"
 msgstr "서비스"
+
+#. js-lingui-id: y/35JB
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Settings > Profile now lists every device with an active session, marks the one you are on, and lets you sign out any of the others."
+msgstr ""
 
 #. js-lingui-id: 62gxWx
 #: src/partner-application/data/partner-country-options.ts
@@ -7742,6 +7787,11 @@ msgid ""
 msgstr ""
 "리스트 가격은 시작에 불과합니다.\n"
 "실제 팀이 사용하기 시작하면 인보이스가 어떻게 바뀌는지 보여드립니다."
+
+#. js-lingui-id: 5V+Mch
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The navigation menu is now a page of its own, with a real address and a way back. Create actions appear as icons in page headers, and the bottom bar no longer sits on top of your content."
+msgstr ""
 
 #. js-lingui-id: nf1NnD
 #: src/platform/releases/ReleaseNotes.tsx
