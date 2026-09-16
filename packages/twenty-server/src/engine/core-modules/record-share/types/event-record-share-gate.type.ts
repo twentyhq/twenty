@@ -1,4 +1,4 @@
-import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-access-policy.type';
 
 export type EventRecordShareGate = {
   resolveAdmittedRecordIds: (

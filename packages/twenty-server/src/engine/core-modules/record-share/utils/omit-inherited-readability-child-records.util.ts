@@ -1,7 +1,7 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type InheritedReadabilityChildRecordsCarrier } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
+import { type InheritedReadabilityChildRecordsCarrier } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 
 export const omitInheritedReadabilityChildRecords = <
   TEvent extends ObjectRecordEvent,

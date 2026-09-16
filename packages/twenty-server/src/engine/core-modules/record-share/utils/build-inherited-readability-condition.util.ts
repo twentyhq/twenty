@@ -5,7 +5,7 @@ import {
   type RowAccessPolicy,
   type SqlCondition,
 } from 'src/engine/twenty-orm/types/row-access-policy.type';
-import { buildRecordShareCondition } from 'src/engine/twenty-orm/utils/build-record-share-condition.util';
+import { buildRecordShareCondition } from 'src/engine/core-modules/record-share/utils/build-record-share-condition.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 export type InheritedReadabilityParentCondition =

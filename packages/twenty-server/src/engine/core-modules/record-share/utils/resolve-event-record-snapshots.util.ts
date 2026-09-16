@@ -6,7 +6,7 @@ import {
 import {
   type InheritedReadabilityChildRecords,
   type InheritedReadabilityChildRecordsCarrier,
-} from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
+} from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 
 export type EventRecordSnapshot = {
   id: string;

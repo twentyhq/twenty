@@ -1,6 +1,6 @@
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 
-import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/utils/build-row-access-policy.util';
+import { type RowAccessPolicySubject } from 'src/engine/twenty-orm/types/row-access-policy.type';
 
 export const EVERYONE_ROW_ACCESS_POLICY_SUBJECT: RowAccessPolicySubject = {
   objectsPermissions: undefined,
