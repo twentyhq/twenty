@@ -82,7 +82,6 @@ export const setupMicrosoftMock = ({
   const sentMessageIds: string[] = [];
   const createdCalendarEvents: Event[] = [];
   const removedMessageIdsByFolderId: Record<string, string[]> = {};
-  const unfetchableMessageIds: string[] = [];
 
   const recordFolderRemoval = (messageId: string) => {
     const message = messages.find((candidate) => candidate.id === messageId);
@@ -113,7 +112,6 @@ export const setupMicrosoftMock = ({
       folderStore,
       messages,
       removedMessageIdsByFolderId,
-      unfetchableMessageIds,
     ),
     ...microsoftWebhookSubscriptionHandlers(subscriptionStore),
     http.post('*/me/messages', async ({ request }) => {
@@ -223,9 +221,15 @@ export const setupMicrosoftMock = ({
 
       messages.splice(messages.indexOf(message), 1);
     },
-    failMessageFetch: (messageId) => {
-      unfetchableMessageIds.push(messageId);
-    },
+    failMessageFetch: (messageId) =>
+      httpMock.use(
+        ...microsoftMailboxHandlers(
+          folderStore,
+          messages,
+          removedMessageIdsByFolderId,
+          { unfetchableMessageIds: [messageId] },
+        ),
+      ),
     failSubscriptionRenewal: () =>
       httpMock.use(
         ...microsoftWebhookSubscriptionHandlers(subscriptionStore, {

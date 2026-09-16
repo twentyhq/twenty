@@ -9,7 +9,7 @@ export const microsoftMailboxHandlers = (
   folderStore: MockEntityStore<MailFolder>,
   messages: Array<Record<string, unknown>> = [],
   removedMessageIdsByFolderId: Record<string, string[]> = {},
-  unfetchableMessageIds: string[] = [],
+  { unfetchableMessageIds = [] }: { unfetchableMessageIds?: string[] } = {},
 ): MswHandler[] => [
   http.get('*/me/mailFolders', () =>
     HttpResponse.json<{ value: MailFolder[] }>({ value: folderStore.list() }),

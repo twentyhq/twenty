@@ -76,10 +76,7 @@ export class MicrosoftGetMessagesService {
 
     const messages = parsedResponses.map((response) => {
       if ('error' in response) {
-        if (
-          response.error.statusCode === 404 ||
-          response.error.statusCode === 410
-        ) {
+        if (response.error.statusCode === 404) {
           return undefined;
         }
 
