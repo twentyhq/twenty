@@ -54,6 +54,26 @@ export class FileStorageService {
     private readonly usageLimitStockService: UsageLimitStockService,
   ) {}
 
+  async releaseStorageStock({
+    workspaceId,
+    applicationId,
+    bytes,
+    quantity,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    bytes: number;
+    quantity: number;
+  }): Promise<void> {
+    await this.usageLimitStockService.releaseStock({
+      workspaceId,
+      resourceType: UsageResourceType.STORAGE,
+      operationType: UsageOperationType.STORAGE_FILE,
+      spenders: { applicationId },
+      cost: { bytes, quantity },
+    });
+  }
+
   async invalidateStorageStock({
     workspaceId,
     applicationId,
@@ -69,7 +89,7 @@ export class FileStorageService {
     });
   }
 
-  private assertStorageStockAvailable({
+  private async assertStorageStockAvailable({
     workspaceId,
     applicationId,
     delta,
@@ -77,12 +97,12 @@ export class FileStorageService {
     workspaceId: string;
     applicationId: string;
     delta: StockCost;
-  }) {
+  }): Promise<void> {
     if (STOCK_METERS.every((meter) => (delta[meter] ?? 0) <= 0)) {
       return;
     }
 
-    return this.usageLimitStockService.assertStockAvailable({
+    await this.usageLimitStockService.assertStockAvailable({
       workspaceId,
       resourceType: UsageResourceType.STORAGE,
       operationType: UsageOperationType.STORAGE_FILE,
@@ -150,14 +170,8 @@ export class FileStorageService {
     }, new Map<string, { bytes: number; quantity: number }>());
 
     await Promise.all(
-      [...releasedByApplication.entries()].map(([applicationId, cost]) =>
-        this.usageLimitStockService.releaseStock({
-          workspaceId,
-          resourceType: UsageResourceType.STORAGE,
-          operationType: UsageOperationType.STORAGE_FILE,
-          spenders: { applicationId },
-          cost,
-        }),
+      [...releasedByApplication.entries()].map(([applicationId, released]) =>
+        this.releaseStorageStock({ workspaceId, applicationId, ...released }),
       ),
     );
   }
@@ -196,9 +210,11 @@ export class FileStorageService {
     };
 
     if ((delta.bytes ?? 0) < 0) {
-      return this.usageLimitStockService.releaseStock({
-        ...scope,
-        cost: { bytes: -(delta.bytes ?? 0), quantity: 0 },
+      return this.releaseStorageStock({
+        workspaceId,
+        applicationId,
+        bytes: -(delta.bytes ?? 0),
+        quantity: 0,
       });
     }
 

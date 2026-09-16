@@ -19,11 +19,9 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 
 @Module({
   imports: [
-    UsageLimitModule,
     JwtModule,
     TypeOrmModule.forFeature([
       FileEntity,

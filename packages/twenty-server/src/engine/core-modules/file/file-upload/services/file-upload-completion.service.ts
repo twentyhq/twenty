@@ -27,9 +27,6 @@ import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
-import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
@@ -58,7 +55,6 @@ export class FileUploadCompletionService {
     private readonly fileStorageService: FileStorageService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
-    private readonly usageLimitStockService: UsageLimitStockService,
   ) {}
 
   async completeUploadsBatch(
@@ -177,12 +173,11 @@ export class FileUploadCompletionService {
     }
 
     if (size < declaredSize) {
-      await this.usageLimitStockService.releaseStock({
+      await this.fileStorageService.releaseStorageStock({
         workspaceId,
-        resourceType: UsageResourceType.STORAGE,
-        operationType: UsageOperationType.STORAGE_FILE,
-        spenders: { applicationId: file.applicationId },
-        cost: { bytes: declaredSize - size },
+        applicationId: file.applicationId,
+        bytes: declaredSize - size,
+        quantity: 0,
       });
     }
 
