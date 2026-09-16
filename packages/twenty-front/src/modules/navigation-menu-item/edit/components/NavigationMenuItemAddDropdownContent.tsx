@@ -8,7 +8,7 @@ import {
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useEffect, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
@@ -68,6 +68,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   );
   const [step, setStep] = useState<Step>('main');
   const [search, setSearch] = useState('');
+  const isSearchingAllItems = step === 'main' && search.trim().length > 0;
   const [objectId, setObjectId] = useState<string | null>(null);
   const { currentItems, createItem } = useNavigationMenuItemEditController();
   const navigationMenuItemEditSection = useAtomStateValue(
@@ -114,7 +115,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   const { availableSearchRecords, recordSearchLoading, isSearchDebouncing } =
     useAvailableNavigationMenuItemSearchRecords({
       searchInput: search,
-      skip: step !== 'record',
+      skip: step !== 'record' && !isSearchingAllItems,
     });
   const {
     availableObjectMetadataItems,
@@ -157,8 +158,8 @@ export const NavigationMenuItemAddDropdownContent = ({
     record: t`Record`,
   };
 
-  const getItems = (): NavigationMenuItemOption[] => {
-    if (step === 'main')
+  const getItems = (targetStep: Step = step): NavigationMenuItemOption[] => {
+    if (targetStep === 'main')
       return [
         {
           id: 'object',
@@ -220,9 +221,12 @@ export const NavigationMenuItemAddDropdownContent = ({
           hasSubMenu: true,
         },
       ];
-    if (step === 'object' || (step === 'view' && !objectId)) {
+    if (
+      targetStep === 'object' ||
+      (targetStep === 'view' && !objectId && !isSearchingAllItems)
+    ) {
       const objects =
-        step === 'object'
+        targetStep === 'object'
           ? [
               ...availableObjectMetadataItems,
               ...availableSystemObjectMetadataItems,
@@ -231,7 +235,7 @@ export const NavigationMenuItemAddDropdownContent = ({
               ...objectMetadataItemsWithViews,
               ...availableSystemObjectMetadataItemsForView,
             ];
-      if (step === 'object') {
+      if (targetStep === 'object') {
         objects.sort(
           (firstObject, secondObject) =>
             Number(objectMetadataIdsAlreadyAdded.has(firstObject.id)) -
@@ -243,12 +247,14 @@ export const NavigationMenuItemAddDropdownContent = ({
         label: object.labelPlural,
         icon: <ObjectMetadataIcon objectMetadataItem={object} />,
         isAlreadyInNavbar:
-          step === 'object' && objectMetadataIdsAlreadyAdded.has(object.id),
+          targetStep === 'object' &&
+          objectMetadataIdsAlreadyAdded.has(object.id),
         isDisabled:
-          step === 'object' && objectMetadataIdsAlreadyAdded.has(object.id),
-        hasSubMenu: step === 'view',
+          targetStep === 'object' &&
+          objectMetadataIdsAlreadyAdded.has(object.id),
+        hasSubMenu: targetStep === 'view',
         onClick: () => {
-          if (step === 'view') {
+          if (targetStep === 'view') {
             setObjectId(object.id);
             setSearch('');
           } else
@@ -260,11 +266,16 @@ export const NavigationMenuItemAddDropdownContent = ({
         },
       }));
     }
-    if (step === 'view')
+    if (targetStep === 'view')
       return views
         .filter(
           (view) =>
-            view.objectMetadataId === objectId &&
+            (isSearchingAllItems
+              ? [
+                  ...objectMetadataItemsWithViews,
+                  ...availableSystemObjectMetadataItemsForView,
+                ].some((object) => object.id === view.objectMetadataId)
+              : view.objectMetadataId === objectId) &&
             isViewDisplayableInNavigationMenu(view),
         )
         .sort((a, b) => a.position - b.position)
@@ -280,7 +291,7 @@ export const NavigationMenuItemAddDropdownContent = ({
               addItem({ type: NavigationMenuItemType.VIEW, viewId: view.id }),
           };
         });
-    if (step === 'record')
+    if (targetStep === 'record')
       return availableSearchRecords.flatMap((record) => {
         const object = objectMetadataItems.find(
           (object) => object.nameSingular === record.objectNameSingular,
@@ -313,15 +324,39 @@ export const NavigationMenuItemAddDropdownContent = ({
       });
     return [];
   };
-  const items = getItems().filter(
-    (item) =>
-      step === 'record' ||
-      item.label
-        .toLocaleLowerCase()
-        .includes(search.trim().toLocaleLowerCase()),
-  );
+  const matchesSearch = (item: NavigationMenuItemOption) =>
+    item.label.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase());
+  const groups = isSearchingAllItems
+    ? [
+        { label: t`Objects`, items: getItems('object').filter(matchesSearch) },
+        { label: t`Views`, items: getItems('view').filter(matchesSearch) },
+        {
+          label: t`Records`,
+          items: isSearchDebouncing ? [] : getItems('record'),
+        },
+        {
+          label: t`Other`,
+          items: getItems('main').filter(
+            (item) =>
+              (item.id === 'folder' || item.id === 'link') &&
+              matchesSearch(item),
+          ),
+        },
+      ]
+    : [
+        {
+          label: '',
+          items: getItems().filter(
+            (item) => step === 'record' || matchesSearch(item),
+          ),
+        },
+      ];
+  const items = groups.flatMap((group) => group.items);
   let emptyMessage = t`No results found`;
-  if (step === 'record' && (recordSearchLoading || isSearchDebouncing))
+  if (
+    (step === 'record' || isSearchingAllItems) &&
+    (recordSearchLoading || isSearchDebouncing)
+  )
     emptyMessage = t`Loading...`;
 
   return (
@@ -354,9 +389,18 @@ export const NavigationMenuItemAddDropdownContent = ({
           .map((item) => item.id)}
       >
         <DropdownMenuItemsContainer hasMaxHeight>
-          {items.map((item) => (
-            <NavigationMenuItemSelectableItem key={item.id} item={item} />
-          ))}
+          {groups
+            .filter((group) => group.items.length > 0)
+            .map((group) => (
+              <Fragment key={group.label}>
+                {group.label && (
+                  <DropdownMenuSectionLabel label={group.label} />
+                )}
+                {group.items.map((item) => (
+                  <NavigationMenuItemSelectableItem key={item.id} item={item} />
+                ))}
+              </Fragment>
+            ))}
           {items.length === 0 && (
             <DropdownMenuSectionLabel label={emptyMessage} />
           )}
