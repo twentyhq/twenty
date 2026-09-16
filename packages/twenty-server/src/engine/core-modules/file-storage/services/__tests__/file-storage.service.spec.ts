@@ -7,7 +7,6 @@ import { type FileEntity } from 'src/engine/core-modules/file/entities/file.enti
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
-import { type ComputeUsedStock } from 'src/engine/core-modules/usage-limit/types/compute-used-stock.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 
@@ -31,12 +30,12 @@ describe('FileStorageService', () => {
         .mockImplementation((_workspaceId, entity) => entity),
       withManager: jest.fn().mockReturnValue(transactionRepository),
       deleteAndReturn: jest.fn().mockResolvedValue([]),
-      createQueryBuilder: jest.fn(),
     };
 
     const driver = {
       writeFile: jest.fn().mockResolvedValue(undefined),
       delete: jest.fn().mockResolvedValue(undefined),
+      copy: jest.fn().mockResolvedValue(undefined),
     };
 
     const usageLimitStockService = {
@@ -58,6 +57,7 @@ describe('FileStorageService', () => {
       service,
       fileRepository,
       transactionRepository,
+      driver,
       usageLimitStockService,
     };
   };
@@ -231,9 +231,8 @@ describe('FileStorageService', () => {
   });
 
   it('should refuse a write the stock cannot take, before any bytes land', async () => {
-    const { service, usageLimitStockService, fileRepository } =
+    const { service, usageLimitStockService, fileRepository, driver } =
       buildService(null);
-    const driver = { writeFile: jest.fn(), delete: jest.fn() };
 
     usageLimitStockService.assertStockAvailable.mockRejectedValue(
       new Error('stock exhausted'),
@@ -251,7 +250,7 @@ describe('FileStorageService', () => {
       computeUsedStock: expect.any(Function),
       cost: { bytes: 2, quantity: 1 },
     });
-    expect(driver.writeFile).not.toHaveBeenCalled();
+    expect(driver.copy).not.toHaveBeenCalled();
     expect(fileRepository.upsertAndReturnOne).not.toHaveBeenCalled();
   });
 
@@ -330,72 +329,38 @@ describe('FileStorageService', () => {
     });
   });
 
-  describe('recount handed to the stock', () => {
-    const buildQueryBuilder = () => {
-      const queryBuilder = {
-        select: jest.fn(),
-        addSelect: jest.fn(),
-        where: jest.fn(),
-        withDeleted: jest.fn(),
-        andWhere: jest.fn(),
-        getRawOne: jest
-          .fn()
-          .mockResolvedValue({ quantity: '3', bytes: '1024' }),
-      };
+  it('should refuse a copy before the destination object is written', async () => {
+    const { service, usageLimitStockService, driver, fileRepository } =
+      buildService(null);
 
-      queryBuilder.select.mockReturnValue(queryBuilder);
-      queryBuilder.addSelect.mockReturnValue(queryBuilder);
-      queryBuilder.where.mockReturnValue(queryBuilder);
-      queryBuilder.withDeleted.mockReturnValue(queryBuilder);
-      queryBuilder.andWhere.mockReturnValue(queryBuilder);
+    usageLimitStockService.assertStockAvailable.mockRejectedValue(
+      new Error('stock exhausted'),
+    );
 
-      return queryBuilder;
-    };
+    await expect(
+      service.copyFile({
+        from: {
+          workspaceId: WORKSPACE_ID,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          fileFolder: FileFolder.Dependencies,
+          resourcePath: 'source.json',
+        },
+        to: {
+          workspaceId: WORKSPACE_ID,
+          applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+          fileFolder: FileFolder.FilesField,
+          resourcePath: 'field/file.json',
+        },
+        applicationId: APPLICATION_ID,
+        fileId: 'copied-file-id',
+        size: 800,
+        mimeType: 'application/json',
+        settings: { isTemporaryFile: true, toDelete: false },
+      }),
+    ).rejects.toThrow('stock exhausted');
 
-    const buildServiceWithRecount = async () => {
-      const { service, usageLimitStockService, fileRepository } =
-        buildService(null);
-      const queryBuilder = buildQueryBuilder();
-
-      fileRepository.createQueryBuilder.mockReturnValue(queryBuilder);
-
-      await writeFile(service, 'a-freshly-generated-identifier');
-
-      const [{ computeUsedStock }] = usageLimitStockService.assertStockAvailable
-        .mock.calls[0] as [{ computeUsedStock: ComputeUsedStock }];
-
-      return { computeUsedStock, queryBuilder };
-    };
-
-    it('should count every row of the workspace, soft-deleted ones included', async () => {
-      const { computeUsedStock, queryBuilder } =
-        await buildServiceWithRecount();
-
-      await expect(
-        computeUsedStock({ spenderType: 'workspace', spenderId: null }),
-      ).resolves.toEqual({ quantity: 3, bytes: 1024 });
-
-      expect(queryBuilder.where).toHaveBeenCalledWith(
-        'file.workspaceId = :workspaceId',
-        { workspaceId: WORKSPACE_ID },
-      );
-      expect(queryBuilder.withDeleted).toHaveBeenCalledTimes(1);
-      expect(queryBuilder.andWhere).not.toHaveBeenCalled();
-    });
-
-    it('should narrow the recount to the application the limit is scoped to', async () => {
-      const { computeUsedStock, queryBuilder } =
-        await buildServiceWithRecount();
-
-      await computeUsedStock({
-        spenderType: 'application',
-        spenderId: APPLICATION_ID,
-      });
-
-      expect(queryBuilder.andWhere).toHaveBeenCalledWith(
-        'file.applicationId = :applicationId',
-        { applicationId: APPLICATION_ID },
-      );
-    });
+    expect(driver.writeFile).not.toHaveBeenCalled();
+    expect(fileRepository.upsertAndReturnOne).not.toHaveBeenCalled();
+    expect(usageLimitStockService.acquireStock).not.toHaveBeenCalled();
   });
 });

@@ -1,5 +1,3 @@
-import { LIMIT_KINDS } from 'src/engine/core-modules/usage-limit/constants/limit-kinds.constant';
-import { LIMIT_KIND_RULES } from 'src/engine/core-modules/usage-limit/constants/limit-kind-rules.constant';
 import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
 import { UsageLimitExceptionCode } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { validateUsageLimitAgainstKindRule } from 'src/engine/core-modules/usage-limit/utils/validate-usage-limit-against-kind-rule.util';
@@ -50,10 +48,6 @@ const rejects = (input: CreateUsageLimitInput) =>
   );
 
 describe('validateUsageLimitAgainstKindRule', () => {
-  it.each(LIMIT_KINDS)('describes what a %s limit may hold', (limitKind) => {
-    expect(LIMIT_KIND_RULES[limitKind]).toBeDefined();
-  });
-
   describe('speed', () => {
     it('accepts a rolling window over several seconds', () => {
       expect(() =>

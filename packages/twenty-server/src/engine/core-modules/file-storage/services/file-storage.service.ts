@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isString } from '@sniptt/guards';
 import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
@@ -401,7 +402,7 @@ export class FileStorageService {
       });
 
     const size =
-      typeof persistedSourceFile === 'string'
+      isString(persistedSourceFile)
         ? Buffer.byteLength(persistedSourceFile)
         : persistedSourceFile.length;
 
@@ -786,6 +787,53 @@ export class FileStorageService {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     return driver.copy(params);
+  }
+
+  async copyFile({
+    from,
+    to,
+    applicationId,
+    fileId,
+    size,
+    mimeType,
+    settings,
+  }: {
+    from: ResourceIdentifier;
+    to: ResourceIdentifier;
+    applicationId: string;
+    fileId: string;
+    size: number;
+    mimeType: string;
+    settings: FileSettings;
+  }): Promise<FileEntity> {
+    const { filePath } = this.validateAndBuildFileStoragePathOrThrow(to);
+    const delta = { bytes: size, quantity: 1 };
+
+    await this.assertStorageStockAvailable({
+      workspaceId: to.workspaceId,
+      applicationId,
+      delta,
+    });
+
+    await this.copy({ from, to });
+
+    const file = await this.fileRepository.insertAndReturnOne(to.workspaceId, {
+      id: fileId,
+      path: filePath,
+      applicationId,
+      mimeType,
+      size,
+      status: FILE_STATUS.UPLOADED,
+      settings,
+    });
+
+    await this.applyStorageStockDelta({
+      workspaceId: to.workspaceId,
+      applicationId,
+      delta,
+    });
+
+    return file;
   }
 
   async copy({
