@@ -2336,6 +2336,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "deletedAt": {
         "universalIdentifier": "c5d6b3bf-094d-5b26-8007-81b4b668c9b2",
       },
+      "emailTrackingConsent": {
+        "universalIdentifier": "4f6d0a3e-9b1c-4c7a-8e21-6d3f5b2a9c10",
+      },
       "emails": {
         "universalIdentifier": "20202020-3c51-43fa-8b6e-af39e29368ab",
       },
@@ -2486,6 +2489,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
           },
           "createdBy": {
             "universalIdentifier": "70971f69-dada-5a8c-899c-ef0ca8c77063",
+          },
+          "emailTrackingConsent": {
+            "universalIdentifier": "c8f9b16f-453a-5f64-92b9-ee042c6daccc",
           },
           "emails": {
             "universalIdentifier": "1d6d1486-bee4-5aa2-aa59-13bedc0f561d",

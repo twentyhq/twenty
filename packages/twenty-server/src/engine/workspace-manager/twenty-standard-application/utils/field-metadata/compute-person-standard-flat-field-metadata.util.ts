@@ -5,6 +5,7 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import {
   DateDisplayFormat,
   FieldMetadataType,
+  MetadataWritability,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -724,6 +725,52 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       },
       junctionTargetFieldUniversalIdentifier:
         STANDARD_OBJECTS.messageListMember.fields.list.universalIdentifier,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  emailTrackingConsent: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'emailTrackingConsent',
+      type: FieldMetadataType.SELECT,
+      label: i18nLabel(
+        msg({ message: `Email tracking`, context: 'fieldMetadata.label' }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Whether this person has opted in to or out of link click tracking on campaign emails. Empty means no preference was recorded`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconEye',
+      isNullable: true,
+      isUIEditable: false,
+      isAuditLogged: false,
+      writability: MetadataWritability.SYSTEM,
+      options: [
+        {
+          id: 'c1d2e3f4-5a6b-4c7d-8e9f-0a1b2c3d4e5f',
+          value: 'GRANTED',
+          label: i18nLabel(
+            msg({ message: `Opted in`, context: 'fieldMetadata.label' }),
+          ),
+          position: 0,
+          color: 'green',
+        },
+        {
+          id: 'd2e3f4a5-6b7c-4d8e-9f0a-1b2c3d4e5f60',
+          value: 'DENIED',
+          label: i18nLabel(
+            msg({ message: `Opted out`, context: 'fieldMetadata.label' }),
+          ),
+          position: 1,
+          color: 'red',
+        },
+      ],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

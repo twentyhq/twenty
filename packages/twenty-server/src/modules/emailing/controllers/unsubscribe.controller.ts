@@ -15,6 +15,7 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 import { type Request } from 'express';
 import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { type UnsubscribeTokenVerification } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-token-verification.type';
@@ -25,7 +26,10 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { throttlerToRestApiExceptionHandler } from 'src/engine/core-modules/throttler/utils/throttler-to-rest-api-exception-handler.util';
+import { MessageTrackingConsentDecision } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-decision.type';
+import { MessageTrackingConsentSource } from 'src/engine/core-modules/emailing-domain/types/message-tracking-consent-source.type';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
+import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
 
 const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,1024}$/;
 
@@ -42,6 +46,8 @@ const PREVIEW_RESULT_PAGE = buildUnsubscribeResultPage(
 type UnsubscribeFormBody = {
   t?: string;
   unsubscribeTopicId?: string | string[];
+  tracking?: string;
+  trackingBefore?: string;
 };
 
 const RATE_LIMIT = { maxRequests: 120, windowMs: 60_000 };
@@ -53,6 +59,7 @@ export class UnsubscribeController {
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     private readonly messageSuppressionService: MessageSuppressionService,
+    private readonly messageTrackingConsentService: MessageTrackingConsentService,
     private readonly throttlerService: ThrottlerService,
   ) {}
 
@@ -115,16 +122,23 @@ export class UnsubscribeController {
 
     const { payload, isExpired } = this.verifyTokenOrThrow(token);
 
-    const topics = isExpired
-      ? []
-      : await this.messageSuppressionService.getTopicOptOutState({
-          workspaceId: payload.workspaceId,
-          emailAddress: payload.emailAddress,
-        });
+    const [topics, trackingPreference] = isExpired
+      ? [[], undefined]
+      : await Promise.all([
+          this.messageSuppressionService.getTopicOptOutState({
+            workspaceId: payload.workspaceId,
+            emailAddress: payload.emailAddress,
+          }),
+          this.messageTrackingConsentService.findTrackingPreference({
+            workspaceId: payload.workspaceId,
+            emailAddress: payload.emailAddress,
+          }),
+        ]);
 
     return buildUnsubscribePreferencesPage({
       token,
       topics,
+      trackingPreference,
       updatePath: UPDATE_PREFERENCES_PATH,
       unsubscribeAllPath: UNSUBSCRIBE_ALL_PATH,
     });
@@ -159,6 +173,17 @@ export class UnsubscribeController {
       }),
     });
 
+    const trackingDecision = this.parseTrackingDecision(body.tracking);
+
+    if (isDefined(trackingDecision) && body.tracking !== body.trackingBefore) {
+      await this.messageTrackingConsentService.recordDecision({
+        workspaceId: payload.workspaceId,
+        emailAddress: payload.emailAddress,
+        decision: trackingDecision,
+        source: MessageTrackingConsentSource.PREFERENCES_PAGE,
+      });
+    }
+
     return buildUnsubscribeResultPage(
       'Preferences updated',
       'Your email preferences have been saved.',
@@ -188,6 +213,19 @@ export class UnsubscribeController {
       'You have been unsubscribed',
       'You will no longer receive marketing emails from this sender.',
     );
+  }
+
+  private parseTrackingDecision(
+    tracking: string | undefined,
+  ): MessageTrackingConsentDecision | undefined {
+    switch (tracking) {
+      case MessageTrackingConsentDecision.GRANTED:
+        return MessageTrackingConsentDecision.GRANTED;
+      case MessageTrackingConsentDecision.DENIED:
+        return MessageTrackingConsentDecision.DENIED;
+      default:
+        return undefined;
+    }
   }
 
   private normalizeTopicIds(
