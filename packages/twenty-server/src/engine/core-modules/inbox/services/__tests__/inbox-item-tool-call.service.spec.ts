@@ -225,7 +225,7 @@ describe('InboxItemToolCallService', () => {
         new InboxException('changed', InboxExceptionCode.INBOX_ITEM_CHANGED),
       );
 
-      await service.runAll({
+      const inboxItem = await service.runAll({
         ...actorArgs,
         inboxItemId: INBOX_ITEM_ID,
       });
