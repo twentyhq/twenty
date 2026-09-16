@@ -3,16 +3,11 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { SlackDropdownBackdrop } from 'src/front-components/components/SlackDropdownBackdrop';
 import { SlackPickerDropdownPanel } from 'src/front-components/components/SlackPickerDropdownPanel';
 import { useWorkspaceMemberSearch } from 'src/front-components/hooks/use-workspace-member-search';
 import { type WorkspaceMemberOption } from 'src/front-components/types/workspace-member-option.type';
 import { getMemberDisplayName } from 'src/front-components/utils/get-member-display-name.util';
-
-const StyledBackdrop = styled.div`
-  inset: 0;
-  position: fixed;
-  z-index: 1;
-`;
 
 const StyledSearchInput = styled.input`
   background: transparent;
@@ -48,7 +43,7 @@ export const InlineWorkspaceMemberPickerPanel = ({
 
   return (
     <>
-      <StyledBackdrop onClick={onClose} />
+      <SlackDropdownBackdrop onClose={onClose} />
       <SlackPickerDropdownPanel
         options={options.map((member) => {
           const displayedName = getMemberDisplayName(member);

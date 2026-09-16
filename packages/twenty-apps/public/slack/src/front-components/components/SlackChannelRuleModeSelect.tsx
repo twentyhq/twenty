@@ -1,8 +1,11 @@
-import { SlackNativeSelect } from 'src/front-components/components/SlackNativeSelect';
+import { SlackSelect } from 'src/front-components/components/SlackSelect';
 import { SLACK_CHANNEL_RULE_MODE_LABELS } from 'src/front-components/constants/slack-channel-rule-mode-labels.constant';
 import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-channel-rule-mode';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
-import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
+
+const SLACK_CHANNEL_RULE_MODE_OPTIONS = Object.values(
+  SLACK_CHANNEL_RULE_MODE,
+).map((mode) => ({ value: mode, label: SLACK_CHANNEL_RULE_MODE_LABELS[mode] }));
 
 type SlackChannelRuleModeSelectProps = {
   id?: string;
@@ -19,24 +22,15 @@ export const SlackChannelRuleModeSelect = ({
   onChange,
   disabled,
   ariaLabel,
-  size = 'medium',
+  size,
 }: SlackChannelRuleModeSelectProps) => (
-  <SlackNativeSelect
-    $size={size}
+  <SlackSelect
     id={id}
     value={value}
+    options={SLACK_CHANNEL_RULE_MODE_OPTIONS}
+    onChange={onChange}
+    ariaLabel={ariaLabel}
     disabled={disabled}
-    aria-label={ariaLabel}
-    onChange={(event) => {
-      if (isSlackChannelRuleMode(event.target.value)) {
-        onChange(event.target.value);
-      }
-    }}
-  >
-    {Object.values(SLACK_CHANNEL_RULE_MODE).map((mode) => (
-      <option key={mode} value={mode}>
-        {SLACK_CHANNEL_RULE_MODE_LABELS[mode]}
-      </option>
-    ))}
-  </SlackNativeSelect>
+    size={size}
+  />
 );

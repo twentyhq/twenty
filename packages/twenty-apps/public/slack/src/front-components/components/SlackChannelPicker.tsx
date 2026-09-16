@@ -39,11 +39,6 @@ export const SlackChannelPicker = ({
         key: channel.slackChannelId,
         name: `#${channel.name}`,
         meta: getChannelMeta(channel),
-        avatar: {
-          type: 'squared',
-          placeholder: channel.name,
-          placeholderColorSeed: channel.slackChannelId,
-        },
       })}
       searchLabel="Search Slack channels by name"
       emptyText={
