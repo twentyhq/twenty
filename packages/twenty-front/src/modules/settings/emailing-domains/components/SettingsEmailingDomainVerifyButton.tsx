@@ -37,7 +37,6 @@ export const SettingsEmailingDomainVerifyButton = ({
       isLoading={loading}
       variant="secondary"
       Icon={IconRefresh}
-      size="small"
       title={t`Check verification`}
       disabled={loading}
     />
