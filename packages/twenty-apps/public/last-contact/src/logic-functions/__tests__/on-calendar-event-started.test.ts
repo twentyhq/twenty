@@ -23,61 +23,52 @@ type Page = {
   pageInfo: { hasNextPage: boolean; endCursor: string | null };
 };
 
+const singlePage = (nodes: Record<string, unknown>[]): Page => ({
+  edges: nodes.map((node) => ({ node })),
+  pageInfo: { hasNextPage: false, endCursor: null },
+});
+
 const setupQueryMock = ({
   calendarEventsPages,
   participantsPages,
+  startedCalendarEvents = [],
 }: {
   calendarEventsPages: Page[];
   participantsPages: Page[];
+  startedCalendarEvents?: Record<string, unknown>[];
 }) => {
   const remainingEventsPages = [...calendarEventsPages];
   const remainingParticipantsPages = [...participantsPages];
 
   queryMock.mockImplementation((query) => {
     if (query.calendarEvents) {
-      return Promise.resolve({ calendarEvents: remainingEventsPages.shift() });
+      return Promise.resolve({
+        calendarEvents: query.calendarEvents.__args.filter.id
+          ? singlePage(startedCalendarEvents)
+          : remainingEventsPages.shift(),
+      });
+    }
+
+    if (query.calendarEventParticipants) {
+      return Promise.resolve({
+        calendarEventParticipants: query.calendarEventParticipants.__args.filter
+          .workspaceMemberId
+          ? singlePage([])
+          : remainingParticipantsPages.shift(),
+      });
     }
 
     if (query.person) {
       return Promise.resolve({ person: null });
     }
 
-    const filter = query.calendarEventParticipants.__args.filter;
-
-    if (filter.calendarEventId && filter.workspaceMemberId) {
-      return Promise.resolve({
-        calendarEventParticipants: { edges: [] },
-      });
+    if (query.people) {
+      return Promise.resolve({ people: singlePage([]) });
     }
 
-    if (filter.calendarEventId) {
-      return Promise.resolve({
-        calendarEventParticipants: remainingParticipantsPages.shift(),
-      });
-    }
-
-    return Promise.resolve({
-      calendarEventParticipants: {
-        edges: [
-          {
-            node: {
-              id: 'participant-latest',
-              calendarEvent: {
-                id: 'event-latest',
-                startsAt: PAST_EVENT_STARTS_AT,
-              },
-            },
-          },
-        ],
-      },
-    });
+    return Promise.resolve({ opportunities: singlePage([]) });
   });
 };
-
-const singlePage = (nodes: Record<string, unknown>[]): Page => ({
-  edges: nodes.map((node) => ({ node })),
-  pageInfo: { hasNextPage: false, endCursor: null },
-});
 
 beforeEach(() => {
   queryMock.mockReset();
@@ -114,7 +105,9 @@ describe('on-calendar-event-started handler', () => {
     );
     expect(calendarEventsCalls).toHaveLength(2);
     expect(calendarEventsCalls[0][0].calendarEvents.__args.first).toBe(200);
-    expect(calendarEventsCalls[0][0].calendarEvents.__args.after).toBeUndefined();
+    expect(
+      calendarEventsCalls[0][0].calendarEvents.__args.after,
+    ).toBeUndefined();
     expect(calendarEventsCalls[1][0].calendarEvents.__args.after).toBe(
       'events-cursor-1',
     );
@@ -135,15 +128,18 @@ describe('on-calendar-event-started handler', () => {
       participantsPages: [
         {
           edges: [
-            { node: { id: 'participant-1', personId: PERSON_ID_1 } },
-            { node: { id: 'participant-2', personId: null } },
+            { node: { personId: PERSON_ID_1, calendarEventId: 'event-1' } },
+            { node: { personId: null, calendarEventId: 'event-1' } },
           ],
           pageInfo: { hasNextPage: true, endCursor: 'participants-cursor-1' },
         },
         singlePage([
-          { id: 'participant-3', personId: PERSON_ID_1 },
-          { id: 'participant-4', personId: PERSON_ID_2 },
+          { personId: PERSON_ID_1, calendarEventId: 'event-1' },
+          { personId: PERSON_ID_2, calendarEventId: 'event-1' },
         ]),
+      ],
+      startedCalendarEvents: [
+        { id: 'event-1', startsAt: PAST_EVENT_STARTS_AT },
       ],
     });
 
@@ -159,18 +155,14 @@ describe('on-calendar-event-started handler', () => {
       participantsByEventCalls[1][0].calendarEventParticipants.__args.after,
     ).toBe('participants-cursor-1');
 
-    const perPersonCalls = queryMock.mock.calls.filter(
-      ([query]) => query.calendarEventParticipants?.__args.filter.personId,
+    const personUpdates = mutationMock.mock.calls.filter(
+      ([mutation]) => mutation.updatePeople,
     );
-    expect(
-      perPersonCalls.map(
-        ([query]) =>
-          query.calendarEventParticipants.__args.filter.personId.eq,
-      ),
-    ).toEqual([PERSON_ID_1, PERSON_ID_2]);
-    expect(
-      mutationMock.mock.calls.filter(([mutation]) => mutation.updatePeople),
-    ).toHaveLength(2);
+    expect(personUpdates).toHaveLength(2);
+    expect(personUpdates[0][0].updatePeople.__args.data).toMatchObject({
+      lastContactAt: PAST_EVENT_STARTS_AT,
+      lastContactItemCalendarEventId: 'event-1',
+    });
   });
 
   it('should do nothing when no event started in the time window', async () => {

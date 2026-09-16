@@ -4,7 +4,6 @@ export type InteractionKind = 'email' | 'meeting';
 export type InteractionDirection = 'outbound' | 'inbound';
 
 export type Interaction = {
-  personId: string;
   occurredAt: string;
   itemId: string;
   workspaceMemberId: string | null;
@@ -15,11 +14,39 @@ const isNewer = (
   current: string | null | undefined,
 ): boolean => !current || current < candidate;
 
-export const updatePersonForInteraction = async (
+const touchesOutbound = (interaction: Interaction): boolean =>
+  interaction.kind === 'meeting' || interaction.direction === 'outbound';
+
+const touchesInbound = (interaction: Interaction): boolean =>
+  interaction.kind === 'meeting' || interaction.direction === 'inbound';
+
+const pickLatest = (
+  interactions: Interaction[],
+  matches: (interaction: Interaction) => boolean = () => true,
+): Interaction | undefined =>
+  interactions.reduce<Interaction | undefined>(
+    (latest, interaction) =>
+      matches(interaction) &&
+      (!latest || interaction.occurredAt > latest.occurredAt)
+        ? interaction
+        : latest,
+    undefined,
+  );
+
+export const pickLatestInteraction = (
+  interactions: Interaction[],
+): Interaction | undefined => pickLatest(interactions);
+
+export const updatePersonForInteractions = async (
   client: CoreApiClient,
-  interaction: Interaction,
+  personId: string,
+  interactions: Interaction[],
 ): Promise<void> => {
-  const { personId, occurredAt, kind, itemId, workspaceMemberId } = interaction;
+  const latestContact = pickLatest(interactions);
+
+  if (!latestContact) {
+    return;
+  }
 
   const { person } = await client.query({
     person: {
@@ -42,35 +69,54 @@ export const updatePersonForInteraction = async (
   };
 
   const data: Record<string, string | null> = {};
+  const occurredAt = latestContact.occurredAt;
 
   if (isNewer(occurredAt, current.lastContactAt)) {
     data.lastContactAt = occurredAt;
-    data.lastContactById = workspaceMemberId ?? null;
-    if (kind === 'email') {
-      data.lastContactItemMessageId = itemId;
+    data.lastContactById = latestContact.workspaceMemberId ?? null;
+    if (latestContact.kind === 'email') {
+      data.lastContactItemMessageId = latestContact.itemId;
       data.lastContactItemCalendarEventId = null;
     } else {
-      data.lastContactItemCalendarEventId = itemId;
+      data.lastContactItemCalendarEventId = latestContact.itemId;
       data.lastContactItemMessageId = null;
     }
   }
 
-  const touchesOutbound =
-    interaction.kind === 'meeting' || interaction.direction === 'outbound';
-  const touchesInbound =
-    interaction.kind === 'meeting' || interaction.direction === 'inbound';
+  const latestOutbound = pickLatest(interactions, touchesOutbound);
+  const latestInbound = pickLatest(interactions, touchesInbound);
+  const latestEmail = pickLatest(
+    interactions,
+    (interaction) => interaction.kind === 'email',
+  );
+  const latestMeeting = pickLatest(
+    interactions,
+    (interaction) => interaction.kind === 'meeting',
+  );
 
-  if (touchesOutbound && isNewer(occurredAt, current.lastOutboundAt)) {
-    data.lastOutboundAt = occurredAt;
+  if (
+    latestOutbound &&
+    isNewer(latestOutbound.occurredAt, current.lastOutboundAt)
+  ) {
+    data.lastOutboundAt = latestOutbound.occurredAt;
   }
-  if (touchesInbound && isNewer(occurredAt, current.lastInboundAt)) {
-    data.lastInboundAt = occurredAt;
+  if (
+    latestInbound &&
+    isNewer(latestInbound.occurredAt, current.lastInboundAt)
+  ) {
+    data.lastInboundAt = latestInbound.occurredAt;
   }
-  if (kind === 'email' && isNewer(occurredAt, current.lastEmail?.receivedAt)) {
-    data.lastEmailId = itemId;
+  if (
+    latestEmail &&
+    isNewer(latestEmail.occurredAt, current.lastEmail?.receivedAt)
+  ) {
+    data.lastEmailId = latestEmail.itemId;
   }
-  if (kind === 'meeting' && isNewer(occurredAt, current.lastMeeting?.startsAt)) {
-    data.lastMeetingId = itemId;
+  if (
+    latestMeeting &&
+    isNewer(latestMeeting.occurredAt, current.lastMeeting?.startsAt)
+  ) {
+    data.lastMeetingId = latestMeeting.itemId;
   }
 
   if (Object.keys(data).length === 0) {

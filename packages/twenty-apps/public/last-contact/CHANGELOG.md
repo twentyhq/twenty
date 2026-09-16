@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.0
+
+- Run every database-event trigger in batch mode. A mailbox sync emits one `messageParticipant.updated` event per synced message, which used to enqueue one job per event and flood the workers; a batch now arrives as a single job. Each handler folds its batch down to the distinct records it has to touch (one update per person, company or opportunity, not one per event) and resolves them with `in` queries instead of one round trip per record.
+- Resolve a calendar interaction from the participant's own calendar event instead of re-querying the person's most recent past meeting. Participants linked to a future event are left to the `on-calendar-event-started` cron, as before.
+- Require Twenty `>=2.40.0`: batch mode for database event triggers only exists from 2.40.
+
 ## 1.2.4
 
 - Limit the app role to reading synced messages, calendar events, and their participants, and to reading and updating people, companies, and opportunities. The app no longer requests read and edit access to every record type.
