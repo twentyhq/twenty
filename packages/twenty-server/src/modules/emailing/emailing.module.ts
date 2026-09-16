@@ -31,8 +31,7 @@ import { CampaignEngagementEventService } from 'src/modules/emailing/services/ca
 import { CampaignEngagementRecordingService } from 'src/modules/emailing/services/campaign-engagement-recording.service';
 import { CampaignEngagementReportService } from 'src/modules/emailing/services/campaign-engagement-report.service';
 import { CampaignFollowUpService } from 'src/modules/emailing/services/campaign-follow-up.service';
-import { MessageCampaignAccessService } from 'src/modules/emailing/services/message-campaign-access.service';
-import { MessageListAccessService } from 'src/modules/emailing/services/message-list-access.service';
+import { ObjectRecordPermissionService } from 'src/modules/emailing/services/object-record-permission.service';
 import { CampaignEngagementResolver } from 'src/modules/emailing/resolvers/campaign-engagement.resolver';
 import { CampaignTrackingContentService } from 'src/modules/emailing/services/campaign-tracking-content.service';
 import { EmailingOngoingStaleCronCommand } from 'src/modules/emailing/crons/commands/emailing-ongoing-stale.cron.command';
@@ -124,8 +123,7 @@ import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool'
     CampaignEngagementEventService,
     CampaignEngagementReportService,
     CampaignFollowUpService,
-    MessageCampaignAccessService,
-    MessageListAccessService,
+    ObjectRecordPermissionService,
     CampaignEngagementResolver,
     RecordCampaignEngagementJob,
     provideWorkspaceScopedRepository(UnsubscribeTopicEntity),

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { In } from 'typeorm';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CampaignDeliveryEntity } from 'src/engine/core-modules/emailing-domain/campaign-delivery.entity';
@@ -23,7 +24,7 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
-import { MessageCampaignAccessService } from 'src/modules/emailing/services/message-campaign-access.service';
+import { ObjectRecordPermissionService } from 'src/modules/emailing/services/object-record-permission.service';
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type CampaignEngagementBucket } from 'src/modules/emailing/types/campaign-engagement-bucket.type';
 
@@ -43,7 +44,7 @@ export class CampaignEngagementReportService {
     private readonly userRoleService: UserRoleService,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
     private readonly shortLinkService: ShortLinkService,
-    private readonly messageCampaignAccessService: MessageCampaignAccessService,
+    private readonly objectRecordPermissionService: ObjectRecordPermissionService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
@@ -58,9 +59,13 @@ export class CampaignEngagementReportService {
     messageCampaignId: string;
     activityFilter: CampaignEngagementActivityFilter;
   }): Promise<MessageCampaignEngagementDTO> {
-    await this.messageCampaignAccessService.assertCanReadCampaigns({
+    await this.objectRecordPermissionService.assertObjectRecordPermissions({
       workspaceId,
       userWorkspaceId,
+      objectUniversalIdentifiers: [
+        STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+      ],
+      requiredPermissions: ['canReadObjectRecords'],
     });
 
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({

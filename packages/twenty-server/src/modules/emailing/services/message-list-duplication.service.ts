@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { appendCopySuffix, isDefined } from 'twenty-shared/utils';
 
 import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/services/actor-from-auth-context.service';
@@ -12,7 +13,7 @@ import {
   MessageListException,
   MessageListExceptionCode,
 } from 'src/modules/emailing/exceptions/message-list.exception';
-import { MessageListAccessService } from 'src/modules/emailing/services/message-list-access.service';
+import { ObjectRecordPermissionService } from 'src/modules/emailing/services/object-record-permission.service';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
 
@@ -21,7 +22,7 @@ export class MessageListDuplicationService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
-    private readonly messageListAccessService: MessageListAccessService,
+    private readonly objectRecordPermissionService: ObjectRecordPermissionService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
 
@@ -36,9 +37,14 @@ export class MessageListDuplicationService {
   }): Promise<DuplicatedMessageListDTO> {
     const workspaceId = authContext.workspace.id;
 
-    await this.messageListAccessService.assertCanReadAndUpdateLists({
+    await this.objectRecordPermissionService.assertObjectRecordPermissions({
       workspaceId,
       userWorkspaceId,
+      objectUniversalIdentifiers: [
+        STANDARD_OBJECTS.messageList.universalIdentifier,
+        STANDARD_OBJECTS.messageListMember.universalIdentifier,
+      ],
+      requiredPermissions: ['canReadObjectRecords', 'canUpdateObjectRecords'],
     });
 
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({

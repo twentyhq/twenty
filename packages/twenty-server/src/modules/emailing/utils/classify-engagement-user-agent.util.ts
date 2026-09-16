@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS } from 'src/modules/emailing/constants/campaign-engagement-activity-class.constant';
 import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
 
 const PRIVACY_PROXY_PATTERNS = [
@@ -24,16 +23,16 @@ export const classifyEngagementUserAgent = (
   userAgent: string | null,
 ): CampaignEngagementActivityClass => {
   if (!isNonEmptyString(userAgent)) {
-    return CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED;
+    return 'UNCLASSIFIED';
   }
 
   if (PRIVACY_PROXY_PATTERNS.some((pattern) => pattern.test(userAgent))) {
-    return CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.PRIVACY_PROXY;
+    return 'PRIVACY_PROXY';
   }
 
   if (AUTOMATION_PATTERNS.some((pattern) => pattern.test(userAgent))) {
-    return CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.SUSPECTED_AUTOMATION;
+    return 'SUSPECTED_AUTOMATION';
   }
 
-  return CAMPAIGN_ENGAGEMENT_ACTIVITY_CLASS.UNCLASSIFIED;
+  return 'UNCLASSIFIED';
 };
