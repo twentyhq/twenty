@@ -608,6 +608,34 @@ describe('ObjectRecordEventPublisher', () => {
       ).toEqual(['record-1']);
     });
 
+    it('should read the record sharing entitlement once for a batch whatever the subscriber count', async () => {
+      mockRecordSharingFeatureService.isRecordSharingEnabled.mockResolvedValue(
+        true,
+      );
+
+      mockEventStreamService.getStreamsData.mockResolvedValue(
+        new Map([
+          [streamChannelId, mockStreamData],
+          ['second-stream-channel-id', mockStreamData],
+          ['third-stream-channel-id', mockStreamData],
+        ]) as Map<string, EventStreamData | undefined>,
+      );
+
+      await service.publish({
+        name: 'company.created',
+        workspaceId,
+        objectMetadata: companyObjectMetadata,
+        events: [createMockEvent()],
+      } as WorkspaceEventBatch<never>);
+
+      expect(
+        mockSubscriptionService.publishToEventStream,
+      ).toHaveBeenCalledTimes(3);
+      expect(
+        mockRecordSharingFeatureService.isRecordSharingEnabled,
+      ).toHaveBeenCalledTimes(1);
+    });
+
     it('should not publish events when record does not match RLS filter', async () => {
       (
         isRecordMatchingRLSRowLevelPermissionPredicate as jest.Mock

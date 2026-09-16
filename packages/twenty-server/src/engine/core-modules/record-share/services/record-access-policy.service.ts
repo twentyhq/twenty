@@ -79,6 +79,13 @@ export class RecordAccessPolicyService {
         recordIds: events.map((event) => event.recordId),
       }));
 
+    // The gate is resolved once per subscriber, so the verdict is memoized
+    // alongside the shares to keep a batch to one entitlement read
+    let isRecordSharingEnabledPromise: Promise<boolean> | undefined;
+    const fetchIsRecordSharingEnabled = () =>
+      (isRecordSharingEnabledPromise ??=
+        this.recordSharingFeatureService.isRecordSharingEnabled(workspaceId));
+
     return {
       resolveAdmittedRecordIds: async (subject) => {
         const snapshots = await this.resolveSnapshotsReadableByRole({
@@ -93,11 +100,7 @@ export class RecordAccessPolicyService {
           return new Set();
         }
 
-        if (
-          !(await this.recordSharingFeatureService.isRecordSharingEnabled(
-            workspaceId,
-          ))
-        ) {
+        if (!(await fetchIsRecordSharingEnabled())) {
           return new Set(snapshots.map((snapshot) => snapshot.id));
         }
 
