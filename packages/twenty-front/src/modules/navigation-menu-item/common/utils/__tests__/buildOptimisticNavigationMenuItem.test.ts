@@ -1,4 +1,4 @@
-import { buildOptimisticNavigationMenuItem } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
+import { buildOptimisticNavigationMenuItem } from '@/navigation-menu-item/common/utils/buildOptimisticNavigationMenuItem';
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
 import { NavigationMenuItemType } from '~/generated-metadata/graphql';
 

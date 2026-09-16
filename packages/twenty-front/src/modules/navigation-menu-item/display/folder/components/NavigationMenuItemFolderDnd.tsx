@@ -2,10 +2,8 @@ import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
-import {
-  NavigationMenuItemFolderChevron,
-  NavigationMenuItemFolderChevronButton,
-} from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
+import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
+import { NavigationMenuItemFolderChevronButton } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevronButton';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
