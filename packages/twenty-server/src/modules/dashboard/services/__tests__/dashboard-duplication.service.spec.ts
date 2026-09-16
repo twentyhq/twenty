@@ -6,6 +6,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
+import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -91,6 +92,7 @@ describe('DashboardDuplicationService', () => {
     executeInWorkspaceContext: jest.Mock;
   };
   let pageLayoutDuplicationService: { duplicate: jest.Mock };
+  let pageLayoutService: { destroy: jest.Mock };
 
   beforeEach(async () => {
     workspaceContext = buildWorkspaceContext();
@@ -117,6 +119,7 @@ describe('DashboardDuplicationService', () => {
     pageLayoutDuplicationService = {
       duplicate: jest.fn().mockResolvedValue({ id: 'new-page-layout-id' }),
     };
+    pageLayoutService = { destroy: jest.fn().mockResolvedValue(true) };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -125,6 +128,7 @@ describe('DashboardDuplicationService', () => {
           provide: PageLayoutDuplicationService,
           useValue: pageLayoutDuplicationService,
         },
+        { provide: PageLayoutService, useValue: pageLayoutService },
         { provide: WorkspaceOrmManager, useValue: workspaceOrmManager },
         {
           provide: ActorFromAuthContextService,
@@ -193,6 +197,40 @@ describe('DashboardDuplicationService', () => {
     });
     expect(dashboardRepository.findOne).not.toHaveBeenCalled();
     expect(pageLayoutDuplicationService.duplicate).not.toHaveBeenCalled();
+  });
+
+  it('should destroy the duplicated layout when the dashboard insert is refused', async () => {
+    const permissionDenied = new PermissionsException(
+      'Entity performing the request does not have permission',
+      PermissionsExceptionCode.PERMISSION_DENIED,
+    );
+
+    dashboardRepository.insert.mockRejectedValue(permissionDenied);
+
+    await expect(
+      service.duplicateDashboard(DASHBOARD_ID, authContext),
+    ).rejects.toBe(permissionDenied);
+    expect(pageLayoutService.destroy).toHaveBeenCalledWith({
+      id: 'new-page-layout-id',
+      workspaceId: WORKSPACE_ID,
+    });
+  });
+
+  it('should surface the insert failure even when the layout cannot be destroyed', async () => {
+    const insertError = new Error('insert failed');
+
+    dashboardRepository.insert.mockRejectedValue(insertError);
+    pageLayoutService.destroy.mockRejectedValue(new Error('destroy failed'));
+
+    await expect(
+      service.duplicateDashboard(DASHBOARD_ID, authContext),
+    ).rejects.toBe(insertError);
+  });
+
+  it('should keep the duplicated layout when the dashboard is created', async () => {
+    await service.duplicateDashboard(DASHBOARD_ID, authContext);
+
+    expect(pageLayoutService.destroy).not.toHaveBeenCalled();
   });
 
   it('should report a missing dashboard when the source is out of the caller reach', async () => {

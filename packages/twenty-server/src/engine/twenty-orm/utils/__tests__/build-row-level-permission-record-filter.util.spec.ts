@@ -1,4 +1,7 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+} from 'twenty-shared/types';
 
 import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -22,6 +25,10 @@ const APPLICATION_ROLE_ID = 'application-role-1';
 const UNRESTRICTED_ROLE_ID = 'unrestricted-role-1';
 const LOCALE_BOUND_ROLE_ID = 'locale-bound-role-1';
 const TEAM_BOUND_ROLE_ID = 'team-bound-role-1';
+const OR_GROUP_ROLE_ID = 'or-group-role-1';
+const AND_GROUP_ROLE_ID = 'and-group-role-1';
+const NESTED_GROUP_ROLE_ID = 'nested-group-role-1';
+const OR_GROUP_ONLY_MEMBER_ROLE_ID = 'or-group-only-member-role-1';
 
 const buildMaps = (
   entities: ({ id: string; universalIdentifier: string } & Record<
@@ -119,10 +126,86 @@ const flatRowLevelPermissionPredicateMaps = buildMaps([
     operand: 'IS',
     workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_TEAM_FIELD_ID,
   }),
+  buildPredicate('predicate-or-static', OR_GROUP_ROLE_ID, {
+    value: 'shared-with-everyone',
+    rowLevelPermissionPredicateGroupId: 'or-group',
+  }),
+  buildPredicate('predicate-or-member', OR_GROUP_ROLE_ID, {
+    workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
+    rowLevelPermissionPredicateGroupId: 'or-group',
+  }),
+  buildPredicate('predicate-and-static', AND_GROUP_ROLE_ID, {
+    value: 'shared-with-everyone',
+    rowLevelPermissionPredicateGroupId: 'and-group',
+  }),
+  buildPredicate('predicate-and-member', AND_GROUP_ROLE_ID, {
+    workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
+    rowLevelPermissionPredicateGroupId: 'and-group',
+  }),
+  buildPredicate('predicate-nested-static', NESTED_GROUP_ROLE_ID, {
+    value: 'kept-branch',
+    rowLevelPermissionPredicateGroupId: 'nested-or-group',
+  }),
+  buildPredicate('predicate-nested-and-static', NESTED_GROUP_ROLE_ID, {
+    value: 'denied-branch',
+    rowLevelPermissionPredicateGroupId: 'nested-and-group',
+  }),
+  buildPredicate('predicate-nested-and-member', NESTED_GROUP_ROLE_ID, {
+    workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
+    rowLevelPermissionPredicateGroupId: 'nested-and-group',
+  }),
+  buildPredicate('predicate-only-member-first', OR_GROUP_ONLY_MEMBER_ROLE_ID, {
+    workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
+    rowLevelPermissionPredicateGroupId: 'or-group-only-member',
+  }),
+  buildPredicate('predicate-only-member-second', OR_GROUP_ONLY_MEMBER_ROLE_ID, {
+    workspaceMemberFieldMetadataId: WORKSPACE_MEMBER_LOCALE_FIELD_ID,
+    rowLevelPermissionPredicateGroupId: 'or-group-only-member',
+  }),
 ]) as unknown as FlatRowLevelPermissionPredicateMaps;
 
-const flatRowLevelPermissionPredicateGroupMaps =
-  createEmptyFlatEntityMaps() as unknown as FlatRowLevelPermissionPredicateGroupMaps;
+const buildPredicateGroup = (
+  id: string,
+  roleId: string,
+  logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,
+  parentRowLevelPermissionPredicateGroupId: string | null = null,
+) => ({
+  id,
+  universalIdentifier: id,
+  roleId,
+  logicalOperator,
+  parentRowLevelPermissionPredicateGroupId,
+  deletedAt: null,
+});
+
+const flatRowLevelPermissionPredicateGroupMaps = buildMaps([
+  buildPredicateGroup(
+    'or-group',
+    OR_GROUP_ROLE_ID,
+    RowLevelPermissionPredicateGroupLogicalOperator.OR,
+  ),
+  buildPredicateGroup(
+    'and-group',
+    AND_GROUP_ROLE_ID,
+    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+  ),
+  buildPredicateGroup(
+    'nested-or-group',
+    NESTED_GROUP_ROLE_ID,
+    RowLevelPermissionPredicateGroupLogicalOperator.OR,
+  ),
+  buildPredicateGroup(
+    'nested-and-group',
+    NESTED_GROUP_ROLE_ID,
+    RowLevelPermissionPredicateGroupLogicalOperator.AND,
+    'nested-or-group',
+  ),
+  buildPredicateGroup(
+    'or-group-only-member',
+    OR_GROUP_ONLY_MEMBER_ROLE_ID,
+    RowLevelPermissionPredicateGroupLogicalOperator.OR,
+  ),
+]) as unknown as FlatRowLevelPermissionPredicateGroupMaps;
 
 const buildWorkspaceMember = (workspaceMember: Record<string, unknown>) =>
   ({
@@ -209,6 +292,39 @@ describe('buildRowLevelPermissionRecordFilter', () => {
 
     it('should keep matching nothing when the other role is unrestricted', () => {
       expect(build([LOCALE_BOUND_ROLE_ID, UNRESTRICTED_ROLE_ID])).toEqual(
+        UNSATISFIABLE_RECORD_FILTER,
+      );
+    });
+
+    it('should keep the other branches of an OR group it cannot satisfy', () => {
+      expect(build([OR_GROUP_ROLE_ID])).toEqual({
+        or: [{ name: { ilike: '%shared-with-everyone%' } }],
+      });
+    });
+
+    it('should keep both branches of an OR group once the member carries the value', () => {
+      expect(
+        build([OR_GROUP_ROLE_ID], buildWorkspaceMember({ locale: 'fr-FR' })),
+      ).toEqual({
+        or: [
+          { name: { ilike: '%shared-with-everyone%' } },
+          { name: { ilike: '%fr-FR%' } },
+        ],
+      });
+    });
+
+    it('should match nothing when an AND group holds a branch it cannot satisfy', () => {
+      expect(build([AND_GROUP_ROLE_ID])).toEqual(UNSATISFIABLE_RECORD_FILTER);
+    });
+
+    it('should drop a nested AND branch it cannot satisfy and keep its sibling', () => {
+      expect(build([NESTED_GROUP_ROLE_ID])).toEqual({
+        or: [{ name: { ilike: '%kept-branch%' } }],
+      });
+    });
+
+    it('should match nothing when no branch of an OR group can be satisfied', () => {
+      expect(build([OR_GROUP_ONLY_MEMBER_ROLE_ID])).toEqual(
         UNSATISFIABLE_RECORD_FILTER,
       );
     });

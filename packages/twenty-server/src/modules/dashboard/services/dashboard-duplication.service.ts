@@ -6,6 +6,7 @@ import { ActorFromAuthContextService } from 'src/engine/core-modules/actor/servi
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-layout/services/page-layout-duplication.service';
+import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -36,6 +37,7 @@ export class DashboardDuplicationService {
 
   constructor(
     private readonly pageLayoutDuplicationService: PageLayoutDuplicationService,
+    private readonly pageLayoutService: PageLayoutService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
   ) {}
@@ -107,12 +109,13 @@ export class DashboardDuplicationService {
           },
         );
 
-        const newDashboard = await this.createDuplicatedDashboard(
+        const newDashboard = await this.createDuplicatedDashboardOrRollback({
           originalDashboard,
-          newPageLayout.id,
+          newPageLayoutId: newPageLayout.id,
           dashboardRepository,
           authContext,
-        );
+          workspaceId,
+        });
 
         return {
           id: newDashboard.id,
@@ -167,6 +170,45 @@ export class DashboardDuplicationService {
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
+    }
+  }
+
+  // The layout lives in the core schema, outside the dashboard insert, so a
+  // refused or failed insert has to take the layout it was created for with it
+  private async createDuplicatedDashboardOrRollback({
+    originalDashboard,
+    newPageLayoutId,
+    dashboardRepository,
+    authContext,
+    workspaceId,
+  }: {
+    originalDashboard: DashboardWorkspaceEntity;
+    newPageLayoutId: string;
+    dashboardRepository: WorkspaceRepository<DashboardWorkspaceEntity>;
+    authContext: WorkspaceAuthContext;
+    workspaceId: string;
+  }): Promise<DashboardWorkspaceEntity> {
+    try {
+      return await this.createDuplicatedDashboard(
+        originalDashboard,
+        newPageLayoutId,
+        dashboardRepository,
+        authContext,
+      );
+    } catch (error) {
+      try {
+        await this.pageLayoutService.destroy({
+          id: newPageLayoutId,
+          workspaceId,
+        });
+      } catch (rollbackError) {
+        this.logger.error(
+          `Failed to destroy page layout ${newPageLayoutId} left by a failed dashboard duplication: ${rollbackError.message}`,
+          rollbackError.stack,
+        );
+      }
+
+      throw error;
     }
   }
 
