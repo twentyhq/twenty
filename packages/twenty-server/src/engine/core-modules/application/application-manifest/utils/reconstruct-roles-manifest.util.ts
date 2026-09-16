@@ -10,11 +10,15 @@ import { fromFlatObjectPermissionToObjectPermissionManifest } from 'src/engine/c
 import { fromFlatPermissionFlagToPermissionFlagManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-permission-flag-to-permission-flag-manifest.util';
 import { fromFlatRoleToRoleManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-role-to-role-manifest.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
-import { type ParentStatus } from 'src/engine/core-modules/application/application-manifest/types/export-classification.type';
+import {
+  type ChildMetadataName,
+  type ParentStatus,
+} from 'src/engine/core-modules/application/application-manifest/types/export-classification.type';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
 import { compareByCodePoint } from 'src/engine/core-modules/application/application-manifest/utils/compare-by-code-point.util';
 import { createChildDecider } from 'src/engine/core-modules/application/application-manifest/utils/create-child-decider.util';
 import { getUnresolvableReferenceReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-reference-reason.util';
+import { reconstructRowLevelPermissionPredicatesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-row-level-permission-predicates-manifest.util';
 import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/sort-flat-entities-by-universal-identifier.util';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
@@ -101,7 +105,7 @@ export const reconstructRolesManifest = ({
     metadataName,
     objectMetadataUniversalIdentifier,
   }: {
-    metadataName: 'objectPermission' | 'fieldPermission';
+    metadataName: ChildMetadataName;
     objectMetadataUniversalIdentifier: string;
   }) =>
     getUnresolvableReferenceReason({
@@ -112,6 +116,22 @@ export const reconstructRolesManifest = ({
       allFlatEntityMaps,
       resolvableReferenceUniversalIdentifiers:
         exportedObjectUniversalIdentifiers,
+    });
+  const getUnresolvableFieldReferenceReason = ({
+    metadataName,
+    fieldMetadataUniversalIdentifier,
+  }: {
+    metadataName: ChildMetadataName;
+    fieldMetadataUniversalIdentifier: string | null;
+  }) =>
+    getUnresolvableReferenceReason({
+      metadataName,
+      referenceMetadataName: 'fieldMetadata',
+      referenceUniversalIdentifier: fieldMetadataUniversalIdentifier,
+      applicationAllFlatEntityMaps,
+      allFlatEntityMaps,
+      resolvableReferenceUniversalIdentifiers:
+        resolvableFieldUniversalIdentifiers,
     });
 
   for (const flatObjectPermission of sortFlatEntitiesByUniversalIdentifier(
@@ -151,15 +171,10 @@ export const reconstructRolesManifest = ({
             objectMetadataUniversalIdentifier:
               flatFieldPermission.objectMetadataUniversalIdentifier,
           }) ??
-          getUnresolvableReferenceReason({
+          getUnresolvableFieldReferenceReason({
             metadataName: 'fieldPermission',
-            referenceMetadataName: 'fieldMetadata',
-            referenceUniversalIdentifier:
+            fieldMetadataUniversalIdentifier:
               flatFieldPermission.fieldMetadataUniversalIdentifier,
-            applicationAllFlatEntityMaps,
-            allFlatEntityMaps,
-            resolvableReferenceUniversalIdentifiers:
-              resolvableFieldUniversalIdentifiers,
           }),
       }) === 'nested'
     ) {
@@ -200,6 +215,20 @@ export const reconstructRolesManifest = ({
     }
   }
 
+  const {
+    predicateGroupsByRoleUniversalIdentifier,
+    predicatesByRoleUniversalIdentifier,
+    coverage: rowLevelPermissionCoverage,
+  } = reconstructRowLevelPermissionPredicatesManifest({
+    applicationAllFlatEntityMaps,
+    allFlatEntityMaps,
+    exportedObjectUniversalIdentifiers,
+    resolvableFieldUniversalIdentifiers,
+    parentRoleStatusByUniversalIdentifier,
+  });
+
+  coverage.push(...rowLevelPermissionCoverage);
+
   const roles = flatRoles.map((flatRole) => {
     coverage.push(
       buildExportedCoverageEntry({
@@ -215,6 +244,14 @@ export const reconstructRolesManifest = ({
       children: {
         objectPermissions: children?.objectPermissions,
         fieldPermissions: children?.fieldPermissions,
+        rowLevelPermissionPredicateGroups:
+          predicateGroupsByRoleUniversalIdentifier.get(
+            flatRole.universalIdentifier,
+          ) ?? [],
+        rowLevelPermissionPredicates:
+          predicatesByRoleUniversalIdentifier.get(
+            flatRole.universalIdentifier,
+          ) ?? [],
         permissionFlagUniversalIdentifiers:
           children?.permissionFlagUniversalIdentifiers.sort(compareByCodePoint),
       },
