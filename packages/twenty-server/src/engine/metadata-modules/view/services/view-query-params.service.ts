@@ -62,7 +62,6 @@ export class ViewQueryParamsService {
       throw new Error(`View with id ${viewId} not found`);
     }
 
-    // Same error as a missing view so a non-owner cannot probe whether an UNLISTED view exists.
     if (!isViewVisibleToUser(view, currentUserWorkspaceId)) {
       throw new Error(`View with id ${viewId} not found`);
     }
