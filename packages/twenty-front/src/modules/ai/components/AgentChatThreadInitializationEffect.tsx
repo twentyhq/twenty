@@ -6,6 +6,7 @@ import {
   tipTapDocumentToMarkdown,
 } from 'twenty-shared/utils';
 
+import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -26,7 +27,10 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  type AgentChatThread,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const AGENT_CHAT_THREADS_REFRESH_RETRY_DELAY_MS = 3000;
 
@@ -97,12 +101,22 @@ export const AgentChatThreadInitializationEffect = () => {
   useEffect(() => {
     if (
       hasInitializedAgentChatThreads ||
-      (currentAiChatThread !== null && isValidUuid(currentAiChatThread))
+      (storeEntry.status === 'empty' && hasAiPermission)
     ) {
       return;
     }
 
-    if (storeEntry.status === 'empty' && hasAiPermission) {
+    if (isDefined(currentAiChatThread) && isValidUuid(currentAiChatThread)) {
+      const selectedThread = (storeEntry.current as AgentChatThread[]).find(
+        ({ id }) => id === currentAiChatThread,
+      );
+      if (isDefined(selectedThread)) {
+        store.set(
+          agentChatUsageFamilyCallback({ threadId: selectedThread.id }),
+          getAgentChatUsageFromThread(selectedThread),
+        );
+      }
+      setHasInitializedAgentChatThreads(true);
       return;
     }
 
@@ -127,23 +141,9 @@ export const AgentChatThreadInitializationEffect = () => {
         firstThread.title ?? null,
       );
 
-      const hasUsageData =
-        (firstThread.conversationSize ?? 0) > 0 &&
-        isDefined(firstThread.contextWindowTokens);
-
       store.set(
         agentChatUsageFamilyCallback(firstThreadFamilyKey),
-        hasUsageData
-          ? {
-              lastMessage: null,
-              conversationSize: firstThread.conversationSize ?? 0,
-              contextWindowTokens: firstThread.contextWindowTokens ?? 0,
-              inputTokens: firstThread.totalInputTokens,
-              outputTokens: firstThread.totalOutputTokens,
-              inputCredits: firstThread.totalInputCredits,
-              outputCredits: firstThread.totalOutputCredits,
-            }
-          : null,
+        getAgentChatUsageFromThread(firstThread),
       );
     } else {
       store.set(hasTriggeredCreateForDraftState.atom, false);
@@ -163,6 +163,7 @@ export const AgentChatThreadInitializationEffect = () => {
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     storeEntry.status,
+    storeEntry.current,
     setCurrentAiChatThread,
     setAgentChatInput,
     store,
