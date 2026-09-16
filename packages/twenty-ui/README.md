@@ -81,6 +81,8 @@ Component guides belong in `packages/twenty-docs/ui/primitives`. For each statef
 
 Explain state ownership before advanced behavior such as indeterminate selection or manual tab activation. Document independent states, such as selection and popup visibility, separately. For components that delegate state to a parent or group, explain that ownership and link to the relevant examples.
 
+For compound components, include an anatomy tree and identify required parts, optional parts, and elements supplied internally. Show supported composition with complete examples, use Twenty UI components for supporting controls, and explain how custom wrappers preserve props and refs. Use `text` fences for structural diagrams and `tsx` fences for runnable examples so the documentation checker validates the examples.
+
 ## Internal state
 
 twenty-ui uses Base UI's store for notification state. Each `ToastProvider` creates its own store, and the toaster subscribes to the toast list. Queue rules and rendering remain owned by twenty-ui. Consumers use `useToast()` without configuring a state library.
