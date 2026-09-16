@@ -10,6 +10,7 @@ import {
 
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
   computeMetadataSchemaComponents,
@@ -45,6 +46,7 @@ import {
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { assertRequestWorkspaceHasRequiredPlan } from 'src/engine/guards/utils/assert-request-workspace-has-required-plan.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getServerUrl } from 'src/utils/get-server-url';
@@ -55,6 +57,7 @@ export class OpenApiService {
     private readonly accessTokenService: AccessTokenService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly billingService: BillingService,
   ) {}
 
   private async getWorkspaceFromRequest(request: Request) {
@@ -107,6 +110,15 @@ export class OpenApiService {
     if (!isDefined(workspace)) {
       return schema;
     }
+
+    await assertRequestWorkspaceHasRequiredPlan({
+      isEnforcementEnabled: this.twentyConfigService.get(
+        'IS_PLAN_REQUIRED_API_ENFORCEMENT_ENABLED',
+      ),
+      workspaceId: workspace.id,
+      assertWorkspaceHasRequiredPlan: (workspaceId) =>
+        this.billingService.assertWorkspaceHasRequiredPlan(workspaceId),
+    });
 
     const {
       flatObjectMetadataArray,
@@ -220,6 +232,15 @@ export class OpenApiService {
     if (!isDefined(workspace)) {
       return schema;
     }
+
+    await assertRequestWorkspaceHasRequiredPlan({
+      isEnforcementEnabled: this.twentyConfigService.get(
+        'IS_PLAN_REQUIRED_API_ENFORCEMENT_ENABLED',
+      ),
+      workspaceId: workspace.id,
+      assertWorkspaceHasRequiredPlan: (workspaceId) =>
+        this.billingService.assertWorkspaceHasRequiredPlan(workspaceId),
+    });
 
     const metadata = [
       {

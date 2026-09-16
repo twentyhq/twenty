@@ -58,6 +58,9 @@ export class FileByIdGuard implements CanActivate {
     );
 
     request.workspaceId = decodedPayload.workspaceId;
+    // Bind workspace for WorkspacePlanRequiredGuard (APP_GUARD already ran
+    // before this token guard; route-level plan guard needs request.workspace).
+    request.workspace = { id: decodedPayload.workspaceId };
 
     if (decodedPayload.fileId !== fileId) {
       return false;

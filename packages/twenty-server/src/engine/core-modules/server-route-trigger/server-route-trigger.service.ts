@@ -6,6 +6,7 @@ import { isLogicFunctionHttpResponse } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import {
   LogicFunctionExecutionException,
   LogicFunctionExecutionExceptionCode,
@@ -31,6 +32,8 @@ import {
   ServerRouteTriggerExceptionCode,
 } from 'src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception';
 import { parseResolverDispatchResultOrThrow } from 'src/engine/core-modules/server-route-trigger/utils/parse-resolver-dispatch-result-or-throw.util';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { assertRequestWorkspaceHasRequiredPlan } from 'src/engine/guards/utils/assert-request-workspace-has-required-plan.util';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
@@ -49,6 +52,8 @@ export class ServerRouteTriggerService {
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     @InjectMessageQueue(MessageQueue.logicFunctionQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly billingService: BillingService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async handle({
@@ -100,6 +105,8 @@ export class ServerRouteTriggerService {
       );
     }
 
+    await this.assertPlanRequiredForWorkspace(resolver.workspaceId);
+
     const event = buildLogicFunctionEvent({
       request,
       pathParameters: {},
@@ -129,12 +136,27 @@ export class ServerRouteTriggerService {
       resolverResult.data,
     );
 
+    await this.assertPlanRequiredForWorkspace(dispatchResult.workspaceId);
+
     return await this.enqueueTargetFunction({
       logicFunctionUniversalIdentifier:
         dispatchResult.targetLogicFunctionUniversalIdentifier,
       workspaceId: dispatchResult.workspaceId,
       payload: dispatchResult.payload ?? event,
       applicationRegistrationId,
+    });
+  }
+
+  private async assertPlanRequiredForWorkspace(
+    workspaceId: string,
+  ): Promise<void> {
+    await assertRequestWorkspaceHasRequiredPlan({
+      isEnforcementEnabled: this.twentyConfigService.get(
+        'IS_PLAN_REQUIRED_API_ENFORCEMENT_ENABLED',
+      ),
+      workspaceId,
+      assertWorkspaceHasRequiredPlan: (id) =>
+        this.billingService.assertWorkspaceHasRequiredPlan(id),
     });
   }
 

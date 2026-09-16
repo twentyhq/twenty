@@ -28,6 +28,7 @@ import {
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
 import { PUBLIC_ASSET_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import {
   FileByIdGuard,
@@ -37,12 +38,13 @@ import { FileService } from 'src/engine/core-modules/file/services/file.service'
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
+import { WorkspacePlanRequiredGuard } from 'src/engine/guards/workspace-plan-required.guard';
 
 // workspaceId is bound onto the request by FileByIdGuard.
 type FileByIdRequest = Request & { workspaceId: string };
 
 @Controller()
-@UseFilters(FileApiExceptionFilter)
+@UseFilters(FileApiExceptionFilter, BillingRestApiExceptionFilter)
 export class FileController {
   private readonly logger = new Logger(FileController.name);
 
@@ -192,7 +194,7 @@ export class FileController {
   }
 
   @Get(`${ApiPath.File}/:fileFolder/:id`)
-  @UseGuards(FileByIdGuard, NoPermissionGuard)
+  @UseGuards(FileByIdGuard, WorkspacePlanRequiredGuard, NoPermissionGuard)
   async getFileById(
     @Res() res: Response,
     @Req() req: FileByIdRequest,

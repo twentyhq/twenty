@@ -36,6 +36,9 @@ export class FileUploadTokenGuard implements CanActivate {
     }
 
     request.workspaceId = payload.workspaceId;
+    // Bind workspace for WorkspacePlanRequiredGuard (APP_GUARD already ran
+    // before this token guard; route-level plan guard needs request.workspace).
+    request.workspace = { id: payload.workspaceId };
 
     return true;
   }

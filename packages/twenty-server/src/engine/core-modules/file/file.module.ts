@@ -2,12 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileDeletionJob } from 'src/engine/core-modules/file/jobs/file-deletion.job';
 import { FileWorkspaceFolderDeletionJob } from 'src/engine/core-modules/file/jobs/file-workspace-folder-deletion.job';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspacePlanRequiredGuard } from 'src/engine/guards/workspace-plan-required.guard';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { FileController } from './controllers/file.controller';
@@ -32,10 +34,12 @@ import { FileService } from './services/file.service';
     FileEmailAttachmentModule,
     FileUploadModule,
     SecureHttpClientModule,
+    BillingModule,
   ],
   providers: [
     FileService,
     FileByIdGuard,
+    WorkspacePlanRequiredGuard,
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
     provideWorkspaceScopedRepository(FileEntity),

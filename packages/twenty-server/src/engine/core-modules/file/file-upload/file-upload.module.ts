@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUploadController } from 'src/engine/core-modules/file/file-upload/controllers/file-upload.controller';
@@ -16,6 +17,7 @@ import { FileUploadTargetService } from 'src/engine/core-modules/file/file-uploa
 import { PendingFileCleanupService } from 'src/engine/core-modules/file/file-upload/services/pending-file-cleanup.service';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
+import { WorkspacePlanRequiredGuard } from 'src/engine/guards/workspace-plan-required.guard';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
@@ -32,6 +34,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     FileStorageModule,
     FileUrlModule,
     ApplicationModule,
+    BillingModule,
   ],
   providers: [
     FileUploadService,
@@ -39,6 +42,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     FileUploadCompletionService,
     FileUploadResolver,
     FileUploadTokenGuard,
+    WorkspacePlanRequiredGuard,
     PendingFileCleanupService,
     PendingFileCleanupCronJob,
     PendingFileCleanupCronCommand,

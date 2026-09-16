@@ -1,13 +1,15 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, Res, UseFilters, UseGuards } from '@nestjs/common';
 
 import { Request, Response } from 'express';
 import { ApiPath } from 'twenty-shared/types';
 
+import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { OpenApiService } from 'src/engine/core-modules/open-api/open-api.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 @Controller()
+@UseFilters(BillingRestApiExceptionFilter)
 export class OpenApiController {
   constructor(private readonly openApiService: OpenApiService) {}
 
