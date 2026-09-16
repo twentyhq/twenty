@@ -181,22 +181,9 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
       .returning('*')
       .execute();
 
-    return ((raw ?? []) as Record<string, unknown>[]).map((row) =>
-      this.repository.create(this.hydrateRawRow(row)),
+    return ((raw ?? []) as DeepPartial<T>[]).map((row) =>
+      this.repository.create(row),
     );
-  }
-
-  // DELETE ... RETURNING hands back driver output, which skips the hydration a
-  // find would do, so column transformers have to be applied by hand.
-  private hydrateRawRow(row: Record<string, unknown>): DeepPartial<T> {
-    const { driver } = this.repository.manager.connection;
-
-    return Object.fromEntries(
-      this.repository.metadata.columns.map((column) => [
-        column.propertyName,
-        driver.prepareHydratedValue(row[column.databaseName], column),
-      ]),
-    ) as DeepPartial<T>;
   }
 
   softDelete(
