@@ -117,6 +117,32 @@ describe('usageLimitToRestApiExceptionHandler', () => {
     );
   });
 
+  it('answers 409 without retry headers when a stock limit is exhausted', () => {
+    const error = catchThrown(
+      buildExhaustedScope({
+        resourceType: UsageResourceType.STORAGE,
+        limitKind: 'stock',
+        operationType: UsageOperationType.STORAGE_FILE,
+        periodCount: 1,
+        periodUnit: 'lifetime',
+      }),
+      {
+        message: 'Storage limit reached for this workspace',
+        code: UsageLimitExceptionCode.STOCK_EXHAUSTED,
+      },
+    );
+
+    expect(error.getStatus()).toBe(HttpStatus.CONFLICT);
+    expect(error.getResponseBody()).toEqual(
+      expect.objectContaining({
+        statusCode: HttpStatus.CONFLICT,
+        error: 'QUOTA_EXHAUSTED',
+        limitKind: 'stock',
+      }),
+    );
+    expect(error.getResponseHeaders()).toEqual({});
+  });
+
   it('answers 402 without retry headers when the credit allowance is exhausted', () => {
     const error = catchThrown(
       buildExhaustedScope({

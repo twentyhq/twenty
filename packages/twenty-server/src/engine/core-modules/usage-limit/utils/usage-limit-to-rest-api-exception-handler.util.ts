@@ -8,9 +8,6 @@ import { buildRateLimitResponseHeaders } from 'src/engine/core-modules/usage-lim
 import { getRetryAfterSeconds } from 'src/engine/core-modules/usage-limit/utils/get-retry-after-seconds.util';
 import { getUsageLimitErrorCode } from 'src/engine/core-modules/usage-limit/utils/get-usage-limit-error-code.util';
 
-// Paying only unblocks an exhausted allowance; configured limits reset with
-// time, so they answer 429 with retry headers whatever their period length. A
-// stock never resets, so retrying cannot help it.
 const getStatusCode = (
   exhaustedScope: UsageLimitException['exhaustedScope'],
 ): HttpStatus => {
