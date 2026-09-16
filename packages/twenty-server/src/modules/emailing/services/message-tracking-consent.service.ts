@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { In, QueryFailedError, Repository } from 'typeorm';
+import { In, Not, QueryFailedError, Repository } from 'typeorm';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type EmailsMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { type QueryFailedErrorWithCode } from 'src/engine/api/graphql/workspace-query-runner/utils/workspace-query-runner-graphql-api-exception-handler.util';
@@ -269,26 +269,26 @@ export class MessageTrackingConsentService {
     const existingConsents = await this.consentRepository.find(workspaceId, {
       where: { emailAddress: In(emailAddresses) },
     });
-    const isRecipientRefusal = (consent: MessageTrackingConsentEntity) =>
-      consent.decision === MessageTrackingConsentDecision.DENIED &&
-      consent.source === MessageTrackingConsentSource.PREFERENCES_PAGE;
-    const consentIdsToUpdate = existingConsents
-      .filter(
-        (consent) =>
-          !(
-            source === MessageTrackingConsentSource.WORKSPACE_MEMBER &&
-            decision === MessageTrackingConsentDecision.DENIED &&
-            isRecipientRefusal(consent)
-          ),
-      )
-      .map((consent) => consent.id);
+    const existingConsentIds = existingConsents.map((consent) => consent.id);
 
-    if (consentIdsToUpdate.length > 0) {
-      await this.consentRepository.update(
+    if (existingConsentIds.length > 0) {
+      const updatedCount = await this.updateDecisions({
         workspaceId,
-        { id: In(consentIdsToUpdate) },
-        { decision, source },
-      );
+        consentIds: existingConsentIds,
+        decision,
+        source,
+      });
+
+      if (
+        source === MessageTrackingConsentSource.WORKSPACE_MEMBER &&
+        decision === MessageTrackingConsentDecision.GRANTED &&
+        updatedCount < existingConsentIds.length
+      ) {
+        throw new EmailingDomainException(
+          'A recipient opted out of tracking themselves',
+          EmailingDomainExceptionCode.MESSAGE_TRACKING_CONSENT_REFUSED_BY_RECIPIENT,
+        );
+      }
     }
 
     const existingEmailAddresses = new Set(
@@ -327,6 +327,56 @@ export class MessageTrackingConsentService {
         decision,
         source,
       });
+    }
+  }
+
+  private async updateDecisions({
+    workspaceId,
+    consentIds,
+    decision,
+    source,
+  }: {
+    workspaceId: string;
+    consentIds: string[];
+    decision: MessageTrackingConsentDecision;
+    source: MessageTrackingConsentSource;
+  }): Promise<number> {
+    switch (source) {
+      case MessageTrackingConsentSource.PREFERENCES_PAGE: {
+        const { affected } = await this.consentRepository.update(
+          workspaceId,
+          { id: In(consentIds) },
+          { decision, source },
+        );
+
+        return affected ?? 0;
+      }
+      case MessageTrackingConsentSource.WORKSPACE_MEMBER: {
+        const outsidePreferencesPage = await this.consentRepository.update(
+          workspaceId,
+          {
+            id: In(consentIds),
+            source: Not(MessageTrackingConsentSource.PREFERENCES_PAGE),
+          },
+          { decision, source },
+        );
+        const grantedOnPreferencesPage = await this.consentRepository.update(
+          workspaceId,
+          {
+            id: In(consentIds),
+            source: MessageTrackingConsentSource.PREFERENCES_PAGE,
+            decision: Not(MessageTrackingConsentDecision.DENIED),
+          },
+          { decision, source },
+        );
+
+        return (
+          (outsidePreferencesPage.affected ?? 0) +
+          (grantedOnPreferencesPage.affected ?? 0)
+        );
+      }
+      default:
+        return assertUnreachable(source);
     }
   }
 
