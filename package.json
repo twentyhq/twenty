@@ -1,0 +1,17 @@
+{
+  "name": "twenty-agent-skills",
+  "version": "0.1.0",
+  "description": "Harness-agnostic Agent Skills for creating, developing, operating, and publishing Twenty apps.",
+  "license": "AGPL-3.0",
+  "private": true,
+  "files": [
+    ".codex-plugin",
+    ".mcp.json",
+    "AGENTS.md",
+    "README.md",
+    "assets",
+    "references",
+    "skills",
+    "scripts/setup-mcp.sh"
+  ]
+}
