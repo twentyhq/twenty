@@ -90,7 +90,7 @@ export const collectCalendarEventInteractions = async (
     const calendarEvent = participants[0]?.calendarEvent;
     const startsAt = calendarEvent?.startsAt ?? null;
 
-    if (!startsAt || calendarEvent?.isCanceled === true || startsAt > now) {
+    if (!startsAt || calendarEvent?.isCanceled || startsAt > now) {
       continue;
     }
 
