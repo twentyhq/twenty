@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import { type IconComponent } from 'twenty-ui/icon';
 import { useLingui } from '@lingui/react/macro';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
@@ -7,7 +8,8 @@ import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hoo
 export type NavigationMenuItemOption = {
   id: string;
   label: string;
-  icon: ReactNode;
+  Icon?: IconComponent;
+  icon?: ReactNode;
   onClick: () => void;
   isDisabled?: boolean;
   isAlreadyInNavbar?: boolean;
@@ -32,6 +34,7 @@ export const NavigationMenuItemSelectableItem = ({
       <MenuItem
         text={item.label}
         accent={item.accent}
+        LeftIcon={item.Icon}
         LeftComponent={item.icon}
         onClick={item.onClick}
         disabled={item.isDisabled}
