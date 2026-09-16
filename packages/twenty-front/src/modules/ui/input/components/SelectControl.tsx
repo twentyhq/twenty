@@ -3,7 +3,7 @@ import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVaria
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { TintedIconTile } from 'twenty-ui/primitives/data-display';
+import { Tag, TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { type SelectOption } from 'twenty-ui/primitives/input';
@@ -94,6 +94,7 @@ const StyledIconChevronDownWrapper = styled.div<{
 `;
 
 export type SelectControlProps = {
+  renderAsTag?: boolean;
   selectedOption: SelectOption<string | number | boolean | null>;
   LeftComponent?: ReactNode;
   isDisabled?: boolean;
@@ -105,6 +106,7 @@ export type SelectControlProps = {
 
 export const SelectControl = ({
   selectedOption,
+  renderAsTag = false,
   LeftComponent,
   isDisabled,
   selectSizeVariant,
@@ -152,13 +154,19 @@ export const SelectControl = ({
           {selectedOption.LeftComponent}
         </StyledLeadingContent>
       ) : null}
-      <OverflowingTextWithTooltip
-        text={
-          selectedOption.contextualText
-            ? `${selectedOption.label} · ${selectedOption.contextualText}`
-            : selectedOption.label
-        }
-      />
+      {renderAsTag && isDefined(selectedOption.color) ? (
+        <div>
+          <Tag color={selectedOption.color}>{selectedOption.label}</Tag>
+        </div>
+      ) : (
+        <OverflowingTextWithTooltip
+          text={
+            selectedOption.contextualText
+              ? `${selectedOption.label} · ${selectedOption.contextualText}`
+              : selectedOption.label
+          }
+        />
+      )}
       <StyledIconChevronDownWrapper disabled={isDisabled}>
         <IconChevronDown size={theme.icon.size.md} />
       </StyledIconChevronDownWrapper>

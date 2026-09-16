@@ -38,13 +38,17 @@ type FormMultiSelectFieldInputProps = {
   dropdownWidth?: number;
 };
 
+const StyledMultiSelectDisplay = styled(MultiSelectDisplay)`
+  flex-wrap: wrap;
+`;
+
 const StyledDisplayModeReadonlyContainer = styled.div`
   align-items: center;
   background: transparent;
   border: none;
   display: flex;
   font-family: inherit;
-  padding-inline: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -55,7 +59,7 @@ const StyledDisplayModeContainer = styled.div`
   cursor: pointer;
   display: flex;
   font-family: inherit;
-  padding-inline: ${themeCssVariables.spacing[2]};
+  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
@@ -219,7 +223,7 @@ export const FormMultiSelectFieldInput = ({
             readonly ? (
               <StyledDisplayModeReadonlyContainer>
                 {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
-                  <MultiSelectDisplay
+                  <StyledMultiSelectDisplay
                     values={selectedNames}
                     options={selectedOptions}
                   />
@@ -241,7 +245,7 @@ export const FormMultiSelectFieldInput = ({
                 <VisibilityHidden>{t`Edit`}</VisibilityHidden>
 
                 {isDefined(selectedOptions) && selectedOptions.length > 0 ? (
-                  <MultiSelectDisplay
+                  <StyledMultiSelectDisplay
                     values={selectedNames}
                     options={selectedOptions}
                   />
