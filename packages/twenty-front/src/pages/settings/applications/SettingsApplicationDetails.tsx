@@ -254,16 +254,15 @@ export const SettingsApplicationDetails = () => {
         actionButton={
           activeTabId === VARIABLES_TAB_ID ? (
             <Button
-              Icon={IconDeviceFloppy}
-              title={t`Save settings`}
-              variant="primary"
-              accent="blue"
-              size="small"
+              startIcon={<IconDeviceFloppy />}
+              variant="solid"
+              color="accent"
+              size="sm"
               onClick={saveApplicationVariables}
               disabled={
                 !hasUnsavedApplicationVariables || isSavingApplicationVariables
               }
-            />
+            >{t`Save settings`}</Button>
           ) : undefined
         }
         secondaryBar={

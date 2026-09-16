@@ -19,15 +19,13 @@ export const WorkflowStepFilterAddRootStepFilterButton = () => {
   return (
     <StyledButtonContainer>
       <Button
-        Icon={IconFilter}
-        size="small"
-        variant="secondary"
-        accent="default"
+        startIcon={<IconFilter />}
+        size="sm"
         onClick={addRootStepFilter}
-        ariaLabel={t`Add first filter`}
-        title={t`Add first filter`}
+        aria-label={t`Add first filter`}
         disabled={readonly}
-      />
+        variant="outline"
+      >{t`Add first filter`}</Button>
     </StyledButtonContainer>
   );
 };

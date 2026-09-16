@@ -1,3 +1,4 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { useMemo, useState } from 'react';
 
@@ -7,8 +8,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { IconMessage } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/primitives/input';
-import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { H2Title } from 'twenty-ui/primitives/typography';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
@@ -238,14 +237,12 @@ export const SettingsAdminAI = () => {
           title={t`Chats`}
           description={t`Browse AI chat threads across all workspaces, including onboarding chats`}
         />
-        <UndecoratedLink to={getSettingsPath(SettingsPath.AdminPanelChats)}>
-          <Button
-            Icon={IconMessage}
-            title={t`View all chats`}
-            size="small"
-            variant="secondary"
-          />
-        </UndecoratedLink>
+        <NavigationButton
+          to={getSettingsPath(SettingsPath.AdminPanelChats)}
+          startIcon={<IconMessage />}
+          size="sm"
+          variant="outline"
+        >{t`View all chats`}</NavigationButton>
       </Section>
 
       <Section>

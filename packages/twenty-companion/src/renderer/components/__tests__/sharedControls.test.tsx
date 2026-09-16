@@ -24,7 +24,7 @@ it('keeps the legacy accessible name when both name props are supplied', () => {
 });
 
 it('places the disclosure state on the actual button', () => {
-  render(<Button title="See more" ariaExpanded={false} />);
+  render(<Button aria-expanded={false}>See more</Button>);
   expect(
     screen
       .getByRole('button', { name: /See more/ })

@@ -3,7 +3,7 @@ import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { useState } from 'react';
 import { type CompanionState } from '../../shared/types/CompanionState';
 import { Field } from '@ui/primitives/input/Field/Field';
-import { MainButton } from '@ui/primitives/input/MainButton/MainButton';
+import { MainButton } from '@ui/components/MainButton/MainButton';
 import { IconArrowUpRight, IconRefresh } from 'twenty-ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { type ActionProps } from '../types/ActionProps';
@@ -49,13 +49,12 @@ const Welcome = ({ state, isPending, command }: ActionProps) => {
           fullWidth
           type="submit"
           disabled={isPending('connect') || (!window.companion && !IS_PREVIEW)}
-          title={
-            state.connection === 'connecting'
-              ? i18n._('Waiting for your browser…')
-              : i18n._('Connect to Twenty')
-          }
-          Icon={IconArrowUpRight}
-        />
+          startIcon={<IconArrowUpRight />}
+        >
+          {state.connection === 'connecting'
+            ? i18n._('Waiting for your browser…')
+            : i18n._('Connect to Twenty')}
+        </MainButton>
       </form>
     </section>
   );
@@ -89,10 +88,11 @@ const OnboardingContent = ({ state, isPending, command }: ActionProps) => {
             <Button
               disabled={isPending('refresh')}
               onClick={() => void command({ type: 'refresh' })}
-              variant="secondary"
-              size="medium"
-              title={i18n._('Try again')}
-            />
+              variant="outline"
+              size="md"
+            >
+              {i18n._('Try again')}
+            </Button>
           }
         >
           <p>

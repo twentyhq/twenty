@@ -17,28 +17,31 @@ const meta: Meta<typeof SettingsApplicationOverviewCard> = {
     actions: (
       <>
         <Button
-          Icon={IconShoppingBag}
-          title="See"
-          variant="secondary"
-          size="small"
+          startIcon={<IconShoppingBag />}
+          variant="outline"
+          size="sm"
           onClick={fn()}
-        />
+        >
+          See
+        </Button>
         <Button
-          Icon={IconUpload}
-          title="Upgrade"
-          variant="secondary"
-          accent="blue"
-          size="small"
+          startIcon={<IconUpload />}
+          variant="outline"
+          color="accent"
+          size="sm"
           onClick={fn()}
-        />
+        >
+          Upgrade
+        </Button>
         <Button
-          Icon={IconTrash}
-          title="Uninstall"
-          variant="secondary"
-          accent="danger"
-          size="small"
+          startIcon={<IconTrash />}
+          variant="outline"
+          color="danger"
+          size="sm"
           onClick={fn()}
-        />
+        >
+          Uninstall
+        </Button>
       </>
     ),
   },

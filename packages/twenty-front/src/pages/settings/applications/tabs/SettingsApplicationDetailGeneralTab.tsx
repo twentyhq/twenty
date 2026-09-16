@@ -69,34 +69,32 @@ export const SettingsApplicationDetailGeneralTab = ({
       ? [
           <Button
             key="see"
-            Icon={IconShoppingBag}
-            title={t`See`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconShoppingBag />}
+            variant="outline"
+            size="sm"
             onClick={() =>
               navigateSettings(SettingsPath.AvailableApplicationDetail, {
                 availableApplicationId: marketplaceUniversalIdentifier,
               })
             }
-          />,
+          >{t`See`}</Button>,
         ]
       : []),
     ...(canManageApplications && hasUpdate
       ? [
           <Button
             key="upgrade"
-            Icon={IconUpload}
-            title={
-              isUpgrading
-                ? t`Upgrading...`
-                : t`Upgrade to ${latestAvailableVersion ?? ''}`
-            }
-            variant="secondary"
-            accent="blue"
-            size="small"
+            startIcon={<IconUpload />}
+            variant="outline"
+            color="accent"
+            size="sm"
             onClick={onUpgrade}
             disabled={isUpgrading}
-          />,
+          >
+            {isUpgrading
+              ? t`Upgrading...`
+              : t`Upgrade to ${latestAvailableVersion ?? ''}`}
+          </Button>,
         ]
       : []),
     ...(canManageApplications && application.canBeUninstalled

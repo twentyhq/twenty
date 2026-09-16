@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { type MouseEvent, useId } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -7,7 +9,7 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/primitives/surfaces';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/primitives/input';
 
 export type CommandMenuButtonProps = {
   command: {
@@ -51,18 +53,19 @@ export const CommandMenuButton = ({
   return (
     <div data-tooltip-id={tooltipId}>
       {resolvedShortLabel !== undefined ? (
-        <Button
+        <NavigationButton
           id={tooltipId}
-          Icon={command.Icon}
-          size="small"
-          variant="primary"
-          accent={buttonAccent}
+          startIcon={isDefined(command.Icon) ? <command.Icon /> : undefined}
+          size="sm"
           to={to}
           onClick={onClick}
           disabled={disabled}
-          title={resolvedShortLabel}
-          ariaLabel={command.label}
-        />
+          aria-label={command.label}
+          variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
+          color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+        >
+          {resolvedShortLabel}
+        </NavigationButton>
       ) : (
         <IconButton
           id={tooltipId}

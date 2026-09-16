@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconDownload, IconSettings } from 'twenty-ui/icon';
@@ -20,15 +21,18 @@ export const SettingsApplicationActionButton = ({
   if (isDefined(installedApplicationId) && isInstalling !== true) {
     return (
       <Button
-        Icon={IconSettings}
-        title={t`Open settings`}
-        variant="primary"
-        accent="blue"
-        size="small"
-        to={getSettingsPath(SettingsPath.ApplicationDetail, {
-          applicationId: installedApplicationId,
-        })}
-      />
+        startIcon={<IconSettings />}
+        variant="solid"
+        color="accent"
+        size="sm"
+        render={
+          <Link
+            to={getSettingsPath(SettingsPath.ApplicationDetail, {
+              applicationId: installedApplicationId,
+            })}
+          />
+        }
+      >{t`Open settings`}</Button>
     );
   }
 
@@ -38,13 +42,14 @@ export const SettingsApplicationActionButton = ({
 
   return (
     <Button
-      Icon={IconDownload}
-      title={isInstalling ? t`Installing...` : t`Install`}
-      variant="primary"
-      accent="blue"
-      size="small"
+      startIcon={<IconDownload />}
+      variant="solid"
+      color="accent"
+      size="sm"
       onClick={onInstall}
       disabled={isInstalling}
-    />
+    >
+      {isInstalling ? t`Installing...` : t`Install`}
+    </Button>
   );
 };

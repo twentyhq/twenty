@@ -23,14 +23,15 @@ export const SettingsApplicationUninstallButton = ({
   return (
     <>
       <Button
-        Icon={IconTrash}
-        title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
-        variant="secondary"
-        accent="danger"
-        size="small"
+        startIcon={<IconTrash />}
+        variant="outline"
+        color="danger"
+        size="sm"
         onClick={() => openModal(uninstallModalId)}
         disabled={isUninstalling}
-      />
+      >
+        {isUninstalling ? t`Uninstalling...` : t`Uninstall`}
+      </Button>
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}
