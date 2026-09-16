@@ -3401,7 +3401,6 @@ export type MutationCreateManyViewGroupsArgs = {
 };
 
 
-
 export type MutationCreateMessageSuppressionArgs = {
   input: CreateMessageSuppressionInput;
 };
@@ -5535,7 +5534,6 @@ export type QueryIsApplicationStoppedArgs = {
 export type QueryLineChartDataArgs = {
   input: LineChartDataInput;
 };
-
 
 
 export type QueryMessageSuppressionsArgs = {
