@@ -7391,6 +7391,7 @@ export type Workspace = {
   inviteHash?: Maybe<Scalars['String']['output']>;
   isAutoModelSelectionEnabled: Scalars['Boolean']['output'];
   isCampaignClickTrackingEnabled: Scalars['Boolean']['output'];
+  isCampaignOpenTrackingEnabled: Scalars['Boolean']['output'];
   isCustomDomainEnabled: Scalars['Boolean']['output'];
   isGoogleAuthBypassEnabled: Scalars['Boolean']['output'];
   isGoogleAuthEnabled: Scalars['Boolean']['output'];
@@ -9484,7 +9485,6 @@ export type FindManyPublicDomainsQueryVariables = Exact<{ [key: string]: never; 
 
 
 export type FindManyPublicDomainsQuery = { __typename?: 'Query', findManyPublicDomains: Array<{ __typename?: 'PublicDomain', id: string, domain: string, isValidated: boolean, applicationId?: string | null, createdAt: string }> };
-
 
 export type VerifyEmailingDomainMutationVariables = Exact<{
   id: Scalars['String']['input'];
