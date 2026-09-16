@@ -23,7 +23,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
-import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import {
@@ -47,13 +46,10 @@ export const NavigationMenuItemActions = ({
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const items = useNavigationMenuItemEditSectionItems(section);
-  const { moveUp, moveDown, moveToFolder, remove } =
+  const { items, getSortedSiblings, moveUp, moveDown, moveToFolder, remove } =
     useNavigationMenuItemMoveRemove(section);
   const [page, setPage] = useState<'actions' | 'folders'>('actions');
-  const siblings = items
-    .filter((sibling) => (sibling.folderId ?? null) === (item.folderId ?? null))
-    .sort((a, b) => a.position - b.position);
+  const siblings = getSortedSiblings(item.id) ?? [];
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
   const run = (action: () => Promise<void>) => {
     void action();

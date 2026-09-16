@@ -73,7 +73,7 @@ export const NavigationMenuItemInlineEditor = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
-  const { updateItem, isDraftMode } = useNavigationMenuItemEditController(
+  const { updateItem } = useNavigationMenuItemEditController(
     item.userWorkspaceId ? 'favorite' : 'workspace',
   );
   const [
@@ -174,21 +174,11 @@ export const NavigationMenuItemInlineEditor = ({
         selectOnFocus
         copyButton={false}
         value={name}
-        onChange={(nextName) => {
-          setName(nextName);
-          if (isDraftMode) {
-            void updateItem(item.id, { name: nextName });
-          }
-        }}
+        onChange={setName}
         onEnter={finishRename}
         onTab={finishRename}
         onShiftTab={finishRename}
-        onEscape={() => {
-          if (isDraftMode) {
-            void updateItem(item.id, { name: initialName });
-          }
-          stopRenaming();
-        }}
+        onEscape={() => stopRenaming()}
         onClickOutside={(event, value) =>
           finishRename(
             value,

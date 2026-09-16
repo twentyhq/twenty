@@ -1,4 +1,3 @@
-import { useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -57,28 +56,20 @@ export const useNavigationMenuItemSearchRecords = ({
     SEARCH_DEBOUNCE_DELAY,
   );
 
-  const recordIdsAlreadyAdded = useMemo(
-    () =>
-      new Set(
-        currentItems.flatMap((item) =>
-          isDefined(item.targetRecordId) ? [item.targetRecordId] : [],
-        ),
-      ),
-    [currentItems],
+  const recordIdsAlreadyAdded = new Set(
+    currentItems.flatMap((item) =>
+      isDefined(item.targetRecordId) ? [item.targetRecordId] : [],
+    ),
   );
 
-  const navigationMenuItemSearchRecords = useMemo(
-    () =>
-      searchRecords.map(
-        (record): NavigationMenuItemSearchRecord => ({
-          recordId: record.recordId,
-          isAlreadyInSidebar: recordIdsAlreadyAdded.has(record.recordId),
-          objectNameSingular: record.objectNameSingular,
-          label: record.label,
-          imageUrl: record.imageUrl,
-        }),
-      ),
-    [recordIdsAlreadyAdded, searchRecords],
+  const navigationMenuItemSearchRecords = searchRecords.map(
+    (record): NavigationMenuItemSearchRecord => ({
+      recordId: record.recordId,
+      isAlreadyInSidebar: recordIdsAlreadyAdded.has(record.recordId),
+      objectNameSingular: record.objectNameSingular,
+      label: record.label,
+      imageUrl: record.imageUrl,
+    }),
   );
 
   return {

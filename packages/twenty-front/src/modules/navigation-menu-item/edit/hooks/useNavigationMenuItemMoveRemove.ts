@@ -137,5 +137,5 @@ export const useNavigationMenuItemMoveRemove = (
     });
   };
 
-  return { moveUp, moveDown, remove, moveToFolder };
+  return { items, getSortedSiblings, moveUp, moveDown, remove, moveToFolder };
 };

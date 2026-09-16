@@ -2,7 +2,10 @@ import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
-import { NavigationMenuItemFolderChevron } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
+import {
+  NavigationMenuItemFolderChevron,
+  NavigationMenuItemFolderChevronButton,
+} from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderChevron';
 import { NavigationMenuItemEntrance } from '@/navigation-menu-item/edit/components/NavigationMenuItemEntrance';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -321,13 +324,8 @@ export const NavigationMenuItemFolderDnd = ({
               rightOptions={
                 shouldUseEditModeClick &&
                 isExpanded && (
-                  <LightIconButton
-                    Icon={() => (
-                      <NavigationMenuItemFolderChevron isOpen={isOpen} />
-                    )}
-                    size="small"
-                    accent="tertiary"
-                    aria-label={isOpen ? t`Collapse folder` : t`Expand folder`}
+                  <NavigationMenuItemFolderChevronButton
+                    isOpen={isOpen}
                     onClick={(event) => {
                       event.stopPropagation();
                       handleToggle();

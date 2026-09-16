@@ -316,14 +316,18 @@ export const NavigationMenuItemAddDropdownContent = ({
       }));
     }
     if (targetStep === 'view') {
+      const objectIdsWithViews = new Set(
+        [
+          ...objectMetadataItemsWithViews,
+          ...availableSystemObjectMetadataItemsForView,
+        ].map((object) => object.id),
+      );
+
       return views
         .filter(
           (view) =>
             (isSearchingAllItems
-              ? [
-                  ...objectMetadataItemsWithViews,
-                  ...availableSystemObjectMetadataItemsForView,
-                ].some((object) => object.id === view.objectMetadataId)
+              ? objectIdsWithViews.has(view.objectMetadataId)
               : view.objectMetadataId === objectId) &&
             isViewDisplayableInNavigationMenu(view),
         )
@@ -345,13 +349,21 @@ export const NavigationMenuItemAddDropdownContent = ({
       const pageLayoutIdsAlreadyAdded = new Set(
         currentItems.map((item) => item.pageLayoutId),
       );
-      return (standalonePagesData?.getPageLayouts ?? [])
-        .map((page) => {
-          const navigationItem = [...currentItems, ...navigationMenuItems].find(
+      // Reversed relative to the lookup order: the last Map write wins, so
+      // currentItems must come second to keep taking precedence.
+      const navigationItemByPageLayoutId = new Map(
+        [...navigationMenuItems, ...currentItems]
+          .filter(
             (item) =>
               item.type === NavigationMenuItemType.PAGE_LAYOUT &&
-              item.pageLayoutId === page.id,
-          );
+              isDefined(item.pageLayoutId),
+          )
+          .map((item) => [item.pageLayoutId, item] as const),
+      );
+
+      return (standalonePagesData?.getPageLayouts ?? [])
+        .map((page) => {
+          const navigationItem = navigationItemByPageLayoutId.get(page.id);
           const name = navigationItem?.name ?? page.name;
           return {
             id: page.id,
