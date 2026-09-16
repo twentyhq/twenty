@@ -403,7 +403,7 @@ export enum InboxItemFieldType {
 }
 
 export enum InboxItemOutcome {
-  DISMISSED = 'DISMISSED',
+  ARCHIVED = 'ARCHIVED',
   DONE = 'DONE',
   PARTIAL = 'PARTIAL'
 }

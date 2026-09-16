@@ -42,7 +42,7 @@ export type InboxItemPlanContextValue = {
     toolCallId: string,
     flush: (() => Promise<void>) | null,
   ) => void;
-  dismissItem: () => void;
+  archiveItem: () => void;
   reopenItem: () => void;
 };
 

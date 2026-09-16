@@ -11,6 +11,7 @@ import { InboxItemMarkReadEffect } from '@/inbox/components/InboxItemMarkReadEff
 import { InboxItemPlacement } from '@/inbox/components/InboxItemPlacement';
 import { InboxItemBody } from '@/inbox/components/InboxItemBody';
 import { InboxItemFooter } from '@/inbox/components/InboxItemFooter';
+import { InboxItemInspectDropdown } from '@/inbox/components/InboxItemInspectDropdown';
 import { InboxItemPlanProvider } from '@/inbox/components/InboxItemPlanProvider';
 import { useInboxItem } from '@/inbox/hooks/useInboxItem';
 import { useInboxItemIcon } from '@/inbox/hooks/useInboxItemIcon';
@@ -74,8 +75,11 @@ const StyledTitleText = styled.span`
   white-space: nowrap;
 `;
 
-const StyledPlacementSlot = styled.div`
+const StyledTopBarActions = styled.div`
+  align-items: center;
+  display: flex;
   flex-shrink: 0;
+  gap: ${themeCssVariables.spacing[1]};
   margin-left: auto;
 `;
 
@@ -164,9 +168,10 @@ export const InboxItemDetail = ({
         {isDefined(inboxItem) && (
           <>
             <InboxItemDetailTitle inboxItem={inboxItem} />
-            <StyledPlacementSlot>
+            <StyledTopBarActions>
+              <InboxItemInspectDropdown inboxItem={inboxItem} />
               <InboxItemPlacement inboxItem={inboxItem} />
-            </StyledPlacementSlot>
+            </StyledTopBarActions>
           </>
         )}
       </StyledTopBar>

@@ -184,10 +184,10 @@ export const InboxItemPlanProvider = ({
       }),
     );
 
-  const dismissItem = () =>
+  const archiveItem = () =>
     void transitionInboxItem({
       inboxItemId: inboxItem.id,
-      transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DISMISSED },
+      transition: { kind: 'CLEAR', outcome: InboxItemOutcome.ARCHIVED },
       expectedVersion: inboxItem.version,
     }).catch(reportFailure);
 
@@ -217,7 +217,7 @@ export const InboxItemPlanProvider = ({
         saveToolCallInput,
         setToolCallRejected,
         registerFlush,
-        dismissItem,
+        archiveItem,
         reopenItem,
       }}
     >

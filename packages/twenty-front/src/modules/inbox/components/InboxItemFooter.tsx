@@ -1,12 +1,13 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconClockHour8, IconX } from 'twenty-ui/icon';
+import { IconArchive, IconCheck, IconClockHour8 } from 'twenty-ui/icon';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { Button, LightIconButton } from 'twenty-ui/primitives/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxSnoozeDropdown } from '@/inbox/components/InboxSnoozeDropdown';
+import { InboxTooltipIconButton } from '@/inbox/components/InboxTooltipIconButton';
 import { useInboxItemPlanContext } from '@/inbox/hooks/useInboxItemPlanContext';
 import { getInboxToolCallRenderer } from '@/inbox/tool-call-renderers/utils/getInboxToolCallRenderer';
 import { getInboxItemOutcomeLabel } from '@/inbox/utils/getInboxItemOutcomeLabel';
@@ -36,7 +37,7 @@ export const InboxItemFooter = () => {
     otherPendingToolCallCount,
     runAll,
     runToolCall,
-    dismissItem,
+    archiveItem,
     reopenItem,
   } = useInboxItemPlanContext();
 
@@ -76,22 +77,15 @@ export const InboxItemFooter = () => {
 
   return (
     <StyledFooter>
-      <LightIconButton
-        Icon={IconX}
-        accent="secondary"
-        aria-label={t`Dismiss`}
-        title={t`Dismiss`}
-        onClick={dismissItem}
+      <InboxTooltipIconButton
+        Icon={IconArchive}
+        label={t`Archive`}
+        onClick={archiveItem}
       />
       <InboxSnoozeDropdown
         inboxItem={inboxItem}
         clickableComponent={
-          <LightIconButton
-            Icon={IconClockHour8}
-            accent="secondary"
-            aria-label={t`Snooze`}
-            title={t`Snooze`}
-          />
+          <InboxTooltipIconButton Icon={IconClockHour8} label={t`Snooze`} />
         }
       />
       {isDefined(featuredToolCall) ? (

@@ -189,11 +189,11 @@ describe('InboxTransitionService', () => {
     it('should record how the item ended', async () => {
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DISMISSED },
+        transition: { kind: 'CLEAR', outcome: InboxItemOutcome.ARCHIVED },
       });
 
       expect(lastPartialUpdate()).toEqual(
-        expect.objectContaining({ outcome: InboxItemOutcome.DISMISSED }),
+        expect.objectContaining({ outcome: InboxItemOutcome.ARCHIVED }),
       );
     });
 

@@ -12,9 +12,9 @@ describe('toInboxItemTransition', () => {
     expect(
       toInboxItemTransition({
         kind: 'CLEAR',
-        outcome: InboxItemOutcome.DISMISSED,
+        outcome: InboxItemOutcome.ARCHIVED,
       }),
-    ).toEqual({ kind: 'CLEAR', outcome: InboxItemOutcome.DISMISSED });
+    ).toEqual({ kind: 'CLEAR', outcome: InboxItemOutcome.ARCHIVED });
   });
 
   it('should carry a time to come back as a clear that expires', () => {

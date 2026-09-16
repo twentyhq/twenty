@@ -143,7 +143,7 @@ export function buildInboxItemPartialUpdate({
       }
 
       // Handing work over is a fresh start for whoever receives it: the
-      // previous holder's snooze or dismissal is theirs, not the new
+      // previous holder's snooze or archive is theirs, not the new
       // assignee's, and inheriting it would land the item straight in the
       // recipient's Done where they would never see it.
       return {

@@ -8,7 +8,7 @@ export const getInboxItemOutcomeLabel = (outcome: InboxItemOutcome): string => {
       return t`Done`;
     case InboxItemOutcome.PARTIAL:
       return t`Partially done`;
-    case InboxItemOutcome.DISMISSED:
-      return t`Dismissed`;
+    case InboxItemOutcome.ARCHIVED:
+      return t`Archived`;
   }
 };
