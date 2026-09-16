@@ -4,6 +4,7 @@ import { InformationBannerComponentInstanceContext } from '@/information-banner/
 import { informationBannerIsOpenComponentState } from '@/information-banner/states/informationBannerIsOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
+import { css } from '@linaria/core';
 import { t } from '@lingui/core/macro';
 import {
   Banner,
@@ -19,7 +20,7 @@ const StyledText = styled.div`
   min-width: 0;
 `;
 
-const StyledInvertedIconButton = styled(IconButton)`
+const INVERTED_ICON_BUTTON_CLASS_NAME = css`
   color: ${themeCssVariables.font.color.inverted} !important;
 `;
 
@@ -94,22 +95,25 @@ export const InformationBanner = ({
           </StyledContent>
           {onClose &&
             (isPrimary ? (
-              <StyledInvertedIconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
+              <IconButton
+                className={INVERTED_ICON_BUTTON_CLASS_NAME}
+                size="sm"
+                variant="ghost"
                 onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
+                aria-label={t`Close banner`}
+              >
+                <IconX />
+              </IconButton>
             ) : (
               <IconButton
-                Icon={IconX}
-                size="small"
-                variant="tertiary"
-                accent={buttonAccent}
+                size="sm"
+                variant="ghost"
+                color={buttonAccent === 'blue' ? 'accent' : 'danger'}
                 onClick={onClose}
-                ariaLabel={t`Close banner`}
-              />
+                aria-label={t`Close banner`}
+              >
+                <IconX />
+              </IconButton>
             ))}
         </Banner>
       )}

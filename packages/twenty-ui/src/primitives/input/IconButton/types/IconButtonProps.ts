@@ -1,22 +1,17 @@
-import React from 'react';
-import { type IconComponent } from '@ui/icon';
-import { type IconButtonSize } from './IconButtonSize';
-import { type IconButtonPosition } from './IconButtonPosition';
-import { type IconButtonVariant } from './IconButtonVariant';
-import { type IconButtonAccent } from './IconButtonAccent';
+import { type ReactNode } from 'react';
 
-export type IconButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
-  className?: string;
-  Icon?: IconComponent;
-  variant?: IconButtonVariant;
-  size?: IconButtonSize;
-  position?: IconButtonPosition;
-  accent?: IconButtonAccent;
-  disabled?: boolean;
-  focus?: boolean;
-  dataTestId?: string;
-  ariaLabel?: string;
-  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-  to?: string;
-  children?: React.ReactNode;
+import { type ButtonProps } from '@ui/primitives/input/Button/types/ButtonProps';
+
+export type IconButtonProps = Omit<
+  ButtonProps,
+  | 'children'
+  | 'startIcon'
+  | 'endIcon'
+  | 'hotkeys'
+  | 'fullWidth'
+  | 'soon'
+  | 'soonLabel'
+> & {
+  children: ReactNode;
+  'aria-label': string;
 };

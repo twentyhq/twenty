@@ -235,11 +235,13 @@ const InteractiveModal = () => {
         <ModalHeader>
           <H2Title title="Create record" />
           <IconButton
-            Icon={IconX}
-            variant="tertiary"
-            size="small"
+            aria-label="Close"
+            variant="ghost"
+            size="sm"
             onClick={() => setIsOpen(false)}
-          />
+          >
+            <IconX />
+          </IconButton>
         </ModalHeader>
         <ModalContent>
           <Section>

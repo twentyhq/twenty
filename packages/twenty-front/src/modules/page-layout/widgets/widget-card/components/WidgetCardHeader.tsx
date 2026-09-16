@@ -129,11 +129,13 @@ export const WidgetCardHeader = ({
                 }}
               >
                 <IconButton
+                  aria-label={t`Remove widget`}
                   onClick={onRemove}
-                  Icon={IconTrash}
-                  variant="tertiary"
-                  size="small"
-                />
+                  variant="ghost"
+                  size="sm"
+                >
+                  <IconTrash />
+                </IconButton>
               </StyledIconButtonContainer>
             )}
         </AnimatePresence>

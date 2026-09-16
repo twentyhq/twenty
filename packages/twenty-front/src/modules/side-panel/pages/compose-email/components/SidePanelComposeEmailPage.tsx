@@ -95,20 +95,22 @@ export const SidePanelComposeEmailPage = () => {
         actions={[
           <IconButton
             key="discard"
-            size="small"
-            variant="primary"
-            Icon={IconTrash}
-            ariaLabel={t`Discard`}
+            size="sm"
+            variant="outline"
+            aria-label={t`Discard`}
             onClick={goBackFromSidePanel}
-          />,
+          >
+            <IconTrash />
+          </IconButton>,
           <IconButton
             key="attach"
-            size="small"
-            variant="primary"
-            Icon={IconPaperclip}
-            ariaLabel={t`Attach files`}
+            size="sm"
+            variant="outline"
+            aria-label={t`Attach files`}
             onClick={openAttachmentPicker}
-          />,
+          >
+            <IconPaperclip />
+          </IconButton>,
           <Button
             key="send"
             size="sm"

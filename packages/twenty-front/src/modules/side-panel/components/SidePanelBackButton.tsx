@@ -51,12 +51,13 @@ export const SidePanelBackButton = () => {
       clickableComponent={
         <StyledNavigationIcon onContextMenu={handleBackButtonContextMenu}>
           <IconButton
-            Icon={IconChevronLeft}
-            size="small"
-            variant="tertiary"
+            size="sm"
+            variant="ghost"
             onClick={goBackFromSidePanel}
-            ariaLabel={t`Back`}
-          />
+            aria-label={t`Back`}
+          >
+            <IconChevronLeft />
+          </IconButton>
         </StyledNavigationIcon>
       }
       dropdownComponents={

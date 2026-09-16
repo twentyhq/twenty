@@ -14,8 +14,8 @@ import { ColorSample } from 'twenty-ui/primitives/data-display';
 import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
 import {
   IconButton,
-  type IconButtonSize,
-  type IconButtonVariant,
+  type ButtonSize,
+  type ButtonVariant,
   LightIconButton,
 } from 'twenty-ui/primitives/input';
 import { type ThemeColor } from 'twenty-ui/theme';
@@ -52,9 +52,9 @@ export type IconPickerProps = {
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
-  variant?: IconButtonVariant;
+  variant?: ButtonVariant;
   className?: string;
-  size?: IconButtonSize;
+  size?: ButtonSize;
   clickableComponent?: ReactNode;
   dropdownWidth?: number;
   dropdownOffset?: DropdownOffset;
@@ -279,9 +279,9 @@ export const IconPicker = ({
   onClickOutside,
   onClose,
   onOpen,
-  variant = 'secondary',
+  variant = 'outline',
   className,
-  size = 'medium',
+  size = 'md',
   clickableComponent,
   dropdownWidth,
   dropdownOffset,
@@ -398,7 +398,7 @@ export const IconPicker = ({
 
   const BaseIcon = selectedIconKey ? getIcon(selectedIconKey) : IconApps;
 
-  const displayIcon: IconComponent = !isDefined(iconColorPicker)
+  const DisplayIcon: IconComponent = !isDefined(iconColorPicker)
     ? BaseIcon
     : (iconProps) => (
         <BaseIcon
@@ -438,12 +438,13 @@ export const IconPicker = ({
         clickableComponent={
           clickableComponent ?? (
             <IconButton
-              ariaLabel={t`Click to select icon ${iconAriaLabel}`}
+              aria-label={t`Click to select icon ${iconAriaLabel}`}
               disabled={disabled}
-              Icon={displayIcon}
               variant={variant}
               size={size}
-            />
+            >
+              <DisplayIcon />
+            </IconButton>
           )
         }
         dropdownComponents={

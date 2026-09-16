@@ -118,12 +118,13 @@ export const SettingsObjectIndexFieldsForm = ({
                     <StyledPlaceholder />
                   ) : (
                     <IconButton
-                      Icon={IconTrash}
-                      variant="tertiary"
-                      size="medium"
+                      variant="ghost"
+                      size="md"
                       onClick={() => handleRemove(rowIndex)}
-                      ariaLabel={t`Remove field`}
-                    />
+                      aria-label={t`Remove field`}
+                    >
+                      <IconTrash />
+                    </IconButton>
                   )}
                 </StyledFieldRow>
               );

@@ -131,7 +131,7 @@ export const ObjectOptionsDropdownMenuViewName = ({
         <DropdownMenuItemsContainer>
           <StyledDropdownMenuIconAndNameContainer>
             <IconPicker
-              size="small"
+              size="sm"
               onChange={handleIconChange}
               selectedIconKey={viewPickerSelectedIcon}
             />

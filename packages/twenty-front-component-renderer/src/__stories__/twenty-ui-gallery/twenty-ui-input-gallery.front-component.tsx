@@ -137,7 +137,11 @@ const INPUT_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'IconButton',
-    node: <IconButton Icon={IconPlus} ariaLabel="Add" onClick={() => {}} />,
+    node: (
+      <IconButton aria-label="Add" onClick={() => {}}>
+        <IconPlus />
+      </IconButton>
+    ),
   },
   {
     name: 'IconButtonGroup',

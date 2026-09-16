@@ -112,11 +112,19 @@ export const GlobalFilePreviewModal = (): JSX.Element | null => {
               <StyledModalTitle>{filePreview.label}</StyledModalTitle>
               <StyledButtonContainer>
                 <IconButton
-                  Icon={IconDownload}
+                  aria-label={t`Download file`}
                   onClick={handleDownload}
-                  size="small"
-                />
-                <IconButton Icon={IconX} onClick={handleClose} size="small" />
+                  size="sm"
+                >
+                  <IconDownload />
+                </IconButton>
+                <IconButton
+                  aria-label={t`Close preview`}
+                  onClick={handleClose}
+                  size="sm"
+                >
+                  <IconX />
+                </IconButton>
               </StyledButtonContainer>
             </StyledHeader>
           </StyledModalHeader>

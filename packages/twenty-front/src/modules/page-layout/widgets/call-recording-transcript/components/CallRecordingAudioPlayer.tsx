@@ -183,18 +183,16 @@ export const CallRecordingAudioPlayer = ({
       ) : (
         <>
           <IconButton
-            ariaLabel={isPlaying ? t`Pause` : t`Play`}
-            Icon={
-              isStalled
-                ? undefined
-                : isPlaying
-                  ? IconPlayerPause
-                  : IconPlayerPlay
-            }
-            size="small"
-            variant="tertiary"
+            aria-label={isPlaying ? t`Pause` : t`Play`}
+            size="sm"
+            variant="ghost"
             onClick={handleTogglePlayback}
           >
+            {isStalled ? undefined : isPlaying ? (
+              <IconPlayerPause />
+            ) : (
+              <IconPlayerPlay />
+            )}
             {isStalled && <CircularProgressBar barWidth={2} size={24} />}
           </IconButton>
           <StyledTrack>

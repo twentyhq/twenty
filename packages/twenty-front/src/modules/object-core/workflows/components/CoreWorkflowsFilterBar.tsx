@@ -60,12 +60,13 @@ export const CoreWorkflowsFilterBar = () => {
         />
       ))}
       <IconButton
-        Icon={IconFilter}
-        variant="secondary"
-        size="small"
-        ariaLabel={t`Filter`}
+        variant="outline"
+        size="sm"
+        aria-label={t`Filter`}
         onClick={openCoreWorkflowFiltersSidePanel}
-      />
+      >
+        <IconFilter />
+      </IconButton>
     </StyledContainer>
   );
 };

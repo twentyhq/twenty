@@ -27,12 +27,13 @@ export const EventCardToggleButton = ({
   return (
     <StyledButtonContainer>
       <IconButton
-        Icon={isOpen ? IconChevronUp : IconChevronDown}
         onClick={() => setIsOpen(!isOpen)}
-        ariaLabel={isOpen ? t`Collapse details` : t`Expand details`}
-        size="small"
-        variant="secondary"
-      />
+        aria-label={isOpen ? t`Collapse details` : t`Expand details`}
+        size="sm"
+        variant="outline"
+      >
+        {isOpen ? <IconChevronUp /> : <IconChevronDown />}
+      </IconButton>
     </StyledButtonContainer>
   );
 };

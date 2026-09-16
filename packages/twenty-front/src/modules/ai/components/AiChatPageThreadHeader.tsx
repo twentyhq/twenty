@@ -117,11 +117,12 @@ export const AiChatPageThreadHeader = ({
           onRenameRequested={startRename}
           clickableComponent={
             <IconButton
-              Icon={IconDotsVertical}
-              size="small"
-              variant="secondary"
-              ariaLabel={t`Chat actions`}
-            />
+              size="sm"
+              variant="outline"
+              aria-label={t`Chat actions`}
+            >
+              <IconDotsVertical />
+            </IconButton>
           }
         />
       </StyledActions>

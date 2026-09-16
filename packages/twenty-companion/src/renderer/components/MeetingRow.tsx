@@ -68,11 +68,12 @@ export const MeetingRow = ({
           <Menu.Trigger
             render={
               <IconButton
-                variant="tertiary"
-                Icon={IconDotsVertical}
-                size="medium"
-                ariaLabel={i18n._('Meeting options')}
-              />
+                variant="ghost"
+                size="md"
+                aria-label={i18n._('Meeting options')}
+              >
+                <IconDotsVertical />
+              </IconButton>
             }
           />
           <Menu.Portal>

@@ -92,12 +92,13 @@ export const SettingsDatabaseEventsForm = ({
           />
           {isDefined(operation.object) && !disabled ? (
             <IconButton
-              Icon={IconTrash}
-              variant="tertiary"
-              size="medium"
-              ariaLabel={t`Remove filter`}
+              variant="ghost"
+              size="md"
+              aria-label={t`Remove filter`}
               onClick={() => removeOperation?.(index)}
-            />
+            >
+              <IconTrash />
+            </IconButton>
           ) : (
             <StyledPlaceholder />
           )}

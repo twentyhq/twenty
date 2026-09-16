@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 
 import { IconX } from 'twenty-ui/icon';
@@ -23,7 +24,9 @@ export const SpreadSheetImportModalCloseButton = ({
 }: SpreadSheetImportModalCloseButtonProps) => {
   return (
     <StyledCloseButtonContainer>
-      <IconButton Icon={IconX} onClick={onClose} />
+      <IconButton aria-label={t`Close import`} onClick={onClose}>
+        <IconX />
+      </IconButton>
     </StyledCloseButtonContainer>
   );
 };

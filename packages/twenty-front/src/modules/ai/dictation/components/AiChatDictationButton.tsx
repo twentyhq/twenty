@@ -15,12 +15,13 @@ export const AiChatDictationButton = () => {
 
   return (
     <IconButton
-      variant="tertiary"
-      size="small"
-      accent={isRecording ? 'danger' : 'default'}
+      variant="ghost"
+      size="sm"
+      color={isRecording ? 'danger' : 'neutral'}
       onClick={toggleDictation}
-      Icon={IconMicrophone}
-      ariaLabel={ariaLabel}
-    />
+      aria-label={ariaLabel}
+    >
+      <IconMicrophone />
+    </IconButton>
   );
 };

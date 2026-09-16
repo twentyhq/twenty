@@ -207,25 +207,29 @@ export const SettingsWorkspaceMembersInviteTab = () => {
                     <TableCell align="right">
                       <StyledButtonContainer>
                         <IconButton
+                          aria-label={t`Resend invitation`}
                           onClick={() => {
                             handleResendWorkspaceInvitation(
                               workspaceInvitation.id,
                             );
                           }}
-                          variant="tertiary"
-                          size="medium"
-                          Icon={IconReload}
-                        />
+                          variant="ghost"
+                          size="md"
+                        >
+                          <IconReload />
+                        </IconButton>
                         <IconButton
+                          aria-label={t`Remove invitation`}
                           onClick={() => {
                             handleRemoveWorkspaceInvitation(
                               workspaceInvitation.id,
                             );
                           }}
-                          variant="tertiary"
-                          size="medium"
-                          Icon={IconTrash}
-                        />
+                          variant="ghost"
+                          size="md"
+                        >
+                          <IconTrash />
+                        </IconButton>
                       </StyledButtonContainer>
                     </TableCell>
                   </TableRow>

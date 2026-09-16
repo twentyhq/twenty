@@ -27,10 +27,11 @@ export const WorkflowStepFilterOptionsDropdown = ({
       clickableComponent={
         <IconButton
           aria-label={t`Step filter options`}
-          variant="tertiary"
-          Icon={IconDotsVertical}
+          variant="ghost"
           disabled={readonly}
-        />
+        >
+          <IconDotsVertical />
+        </IconButton>
       }
       dropdownComponents={
         <DropdownContent>

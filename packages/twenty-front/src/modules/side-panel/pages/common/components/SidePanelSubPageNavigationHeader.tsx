@@ -31,11 +31,12 @@ export const SidePanelSubPageNavigationHeader = ({
     <StyledContainer>
       <IconButton
         onClick={onBackClick}
-        Icon={IconChevronLeft}
-        variant="tertiary"
-        size="small"
-        ariaLabel="Go back"
-      />
+        variant="ghost"
+        size="sm"
+        aria-label="Go back"
+      >
+        <IconChevronLeft />
+      </IconButton>
       <StyledText>{title}</StyledText>
     </StyledContainer>
   );

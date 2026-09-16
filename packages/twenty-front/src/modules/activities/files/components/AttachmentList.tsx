@@ -191,16 +191,20 @@ export const AttachmentList = ({
                 <StyledButtonContainer>
                   {hasDownloadPermission && (
                     <IconButton
-                      Icon={IconDownload}
+                      aria-label={t`Download attachment`}
                       onClick={handleDownload}
-                      size="small"
-                    />
+                      size="sm"
+                    >
+                      <IconDownload />
+                    </IconButton>
                   )}
                   <IconButton
-                    Icon={IconX}
+                    aria-label={t`Close preview`}
                     onClick={handleClosePreview}
-                    size="small"
-                  />
+                    size="sm"
+                  >
+                    <IconX />
+                  </IconButton>
                 </StyledButtonContainer>
               </StyledHeader>
             </ModalHeader>

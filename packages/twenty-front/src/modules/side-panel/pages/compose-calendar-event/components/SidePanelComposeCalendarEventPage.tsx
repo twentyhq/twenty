@@ -95,12 +95,13 @@ export const SidePanelComposeCalendarEventPage = () => {
         actions={[
           <IconButton
             key="discard"
-            size="small"
-            variant="primary"
-            Icon={IconTrash}
-            ariaLabel={t`Discard`}
+            size="sm"
+            variant="outline"
+            aria-label={t`Discard`}
             onClick={goBackFromSidePanel}
-          />,
+          >
+            <IconTrash />
+          </IconButton>,
           <Button
             key="create"
             size="sm"

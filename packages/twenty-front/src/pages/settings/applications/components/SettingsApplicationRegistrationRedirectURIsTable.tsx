@@ -53,15 +53,17 @@ export const SettingsApplicationRegistrationRedirectURIsTable = ({
 
                     <TableCell align="right">
                       <IconButton
+                        aria-label={t`Remove redirect URI`}
                         onClick={() => {
                           updateRedirectUris(
                             redirectUris.filter((uri) => uri !== redirectUri),
                           );
                         }}
-                        variant="tertiary"
-                        size="small"
-                        Icon={IconX}
-                      />
+                        variant="ghost"
+                        size="sm"
+                      >
+                        <IconX />
+                      </IconButton>
                     </TableCell>
                   </TableRow>
                 ))}

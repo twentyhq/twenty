@@ -41,11 +41,9 @@ export const SearchInput = ({
   const inputId = id ?? generatedId;
 
   const filterButton = (
-    <IconButton
-      Icon={IconFilter}
-      variant="secondary"
-      ariaLabel={filterButtonAriaLabel}
-    />
+    <IconButton variant="outline" aria-label={filterButtonAriaLabel}>
+      <IconFilter />
+    </IconButton>
   );
 
   return (

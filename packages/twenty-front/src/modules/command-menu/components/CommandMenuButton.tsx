@@ -1,6 +1,7 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 
 import { type MouseEvent, useId } from 'react';
+import { Link } from 'react-router-dom';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
@@ -69,15 +70,18 @@ export const CommandMenuButton = ({
       ) : (
         <IconButton
           id={tooltipId}
-          Icon={command.Icon}
-          size="small"
-          variant="primary"
-          accent={buttonAccent}
-          to={to}
+          size="sm"
+          variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
+          color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+          render={isDefined(to) ? <Link to={to} /> : undefined}
+          nativeButton={!isDefined(to)}
+          role={isDefined(to) ? 'link' : undefined}
           onClick={onClick}
           disabled={disabled}
-          ariaLabel={command.label}
-        />
+          aria-label={command.label}
+        >
+          <command.Icon />
+        </IconButton>
       )}
       {(hasHotKeys || !isDefined(resolvedShortLabel)) && (
         <AppTooltip

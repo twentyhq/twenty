@@ -43,12 +43,13 @@ export const SidePanelTopBarRightCornerIcon = () => {
   return (
     <StyledIconButtonContainer>
       <IconButton
-        Icon={IconEdit}
-        size="small"
-        variant="tertiary"
+        size="sm"
+        variant="ghost"
         onClick={() => switchToNewChat()}
-        ariaLabel={t`New conversation`}
-      />
+        aria-label={t`New conversation`}
+      >
+        <IconEdit />
+      </IconButton>
     </StyledIconButtonContainer>
   );
 };

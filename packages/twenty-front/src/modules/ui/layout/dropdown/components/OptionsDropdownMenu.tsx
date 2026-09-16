@@ -93,12 +93,9 @@ export const OptionsDropdownMenu = ({
         data-select-disable
         clickableComponent={
           clickableComponent ?? (
-            <IconButton
-              Icon={IconDotsVertical}
-              ariaLabel={t`Options`}
-              size="small"
-              variant="primary"
-            />
+            <IconButton aria-label={t`Options`} size="sm" variant="outline">
+              <IconDotsVertical />
+            </IconButton>
           )
         }
         dropdownPlacement={dropdownPlacement}

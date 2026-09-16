@@ -23,7 +23,13 @@ export const KeyboardMenuDialog = ({
     <StyledDialog isMobile={isMobile}>
       <StyledHeading>
         {t`Keyboard shortcuts`}
-        <IconButton variant="tertiary" Icon={IconX} onClick={onClose} />
+        <IconButton
+          aria-label={t`Close keyboard shortcuts`}
+          variant="ghost"
+          onClick={onClose}
+        >
+          <IconX />
+        </IconButton>
       </StyledHeading>
       <StyledContainer>{children}</StyledContainer>
     </StyledDialog>

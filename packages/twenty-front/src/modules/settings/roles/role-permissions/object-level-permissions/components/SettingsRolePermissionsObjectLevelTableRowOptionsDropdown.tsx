@@ -38,10 +38,11 @@ export const SettingsRolePermissionsObjectLevelTableRowOptionsDropdown = ({
       clickableComponent={
         <IconButton
           aria-label={t`Object permission options`}
-          variant="tertiary"
-          size="small"
-          Icon={IconDotsVertical}
-        />
+          variant="ghost"
+          size="sm"
+        >
+          <IconDotsVertical />
+        </IconButton>
       }
       dropdownComponents={
         <DropdownContent>

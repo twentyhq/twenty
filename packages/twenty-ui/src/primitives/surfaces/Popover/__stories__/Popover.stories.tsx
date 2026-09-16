@@ -53,7 +53,11 @@ const PopoverStory = ({
         </Button>
         <Popover.Close
           style={{ alignSelf: 'flex-start' }}
-          render={<IconButton Icon={IconX} ariaLabel="Close" size="small" />}
+          render={
+            <IconButton aria-label="Close" size="sm">
+              <IconX />
+            </IconButton>
+          }
         />
       </Popover.Popup>
     </Popover.Root>

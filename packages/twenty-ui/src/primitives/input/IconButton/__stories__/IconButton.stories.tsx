@@ -1,199 +1,161 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { IconSearch } from '@ui/icon';
-import { expect, within } from 'storybook/test';
+import { expect, fn, userEvent, within } from 'storybook/test';
+
+import { IconPlus, IconSearch } from '@ui/icon';
+import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
+import { type ButtonColor } from '@ui/primitives/input/Button/types/ButtonColor';
+import { type ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
   type CatalogStory,
   ComponentDecorator,
 } from '@ui/testing';
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
-import type { IconButtonAccent } from '@ui/primitives/input/IconButton/types/IconButtonAccent';
-import type { IconButtonPosition } from '@ui/primitives/input/IconButton/types/IconButtonPosition';
-import type { IconButtonSize } from '@ui/primitives/input/IconButton/types/IconButtonSize';
-import type { IconButtonVariant } from '@ui/primitives/input/IconButton/types/IconButtonVariant';
+
+import { IconButton } from '../IconButton';
+import { type IconButtonProps } from '../types/IconButtonProps';
 
 const meta: Meta<typeof IconButton> = {
   title: 'UI/Input/Button/IconButton',
   component: IconButton,
+  args: { children: <IconSearch />, 'aria-label': 'Search' },
 };
 
 export default meta;
 type Story = StoryObj<typeof IconButton>;
 
-export const Default: Story = {
-  args: {
-    size: 'small',
-    variant: 'primary',
-    accent: 'danger',
-    disabled: false,
-    focus: false,
-    position: 'standalone',
-    Icon: IconSearch,
-    ariaLabel: 'Search',
+export const Default: Story = { decorators: [ComponentDecorator] };
+
+export const Keyboard: Story = {
+  ...Default,
+  args: { onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    button.focus();
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onClick).toHaveBeenCalledTimes(2);
   },
-  decorators: [ComponentDecorator],
 };
 
-export const TertiaryDefaultUsesSecondaryTextColor: Story = {
-  args: {
-    ...Default.args,
-    variant: 'tertiary',
-    accent: 'default',
-  },
-  play: async ({ canvasElement }) => {
-    const button = within(canvasElement).getByRole('button');
-    const computedStyle = getComputedStyle(button);
+export const Disabled: Story = {
+  ...Default,
+  args: { disabled: true, onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
 
-    await expect(
-      computedStyle.getPropertyValue('--icon-button-color').trim(),
-    ).toBe(computedStyle.getPropertyValue('--t-font-color-secondary').trim());
+    await expect(button).toBeDisabled();
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
   },
+};
+
+export const Loading: Story = {
+  ...Disabled,
+  args: { loading: true, onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    await expect(button).toHaveAttribute('aria-busy', 'true');
+    await expect(button).toBeDisabled();
+    await expect(button.getBoundingClientRect().width).toBe(
+      button.getBoundingClientRect().height,
+    );
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const Link: Story = {
+  ...Default,
+  args: { href: '#search', onClick: fn((event) => event.preventDefault()) },
+  play: async ({ canvasElement, args }) => {
+    const link = within(canvasElement).getByRole('link', { name: 'Search' });
+
+    await expect(link).toHaveAttribute('href', '#search');
+    link.focus();
+    await userEvent.keyboard('{Enter}');
+    await expect(args.onClick).toHaveBeenCalledOnce();
+  },
+};
+
+export const Grouped: Story = {
+  ...Default,
+  render: () => (
+    <ButtonGroup
+      aria-label="Record actions"
+      size="sm"
+      variant="solid"
+      color="accent"
+    >
+      <IconButton aria-label="Search">
+        <IconSearch />
+      </IconButton>
+      <IconButton aria-label="Create">
+        <IconPlus />
+      </IconButton>
+    </ButtonGroup>
+  ),
+  play: async ({ canvasElement }) => {
+    const buttons = within(canvasElement).getAllByRole('button');
+
+    for (const button of buttons) {
+      await expect(button).toHaveAttribute('data-variant', 'solid');
+      await expect(button.getBoundingClientRect().width).toBe(24);
+      await expect(button.getBoundingClientRect().height).toBe(24);
+    }
+  },
+};
+
+const CATALOG_STATES: Record<string, Partial<IconButtonProps>> = {
+  default: {},
+  small: { size: 'sm' },
+  hover: { className: 'hover' },
+  pressed: { className: 'pressed' },
+  focused: { className: 'focused' },
+  disabled: { disabled: true },
+  loading: { loading: true },
 };
 
 export const Catalog: CatalogStory<Story, typeof IconButton> = {
-  args: { Icon: IconSearch, ariaLabel: 'Search' },
-  argTypes: {
-    size: { control: false },
-    variant: { control: false },
-    focus: { control: false },
-    accent: { control: false },
-    disabled: { control: false },
-    Icon: { control: false },
-    position: { control: false },
-  },
+  decorators: [CatalogDecorator],
   parameters: {
     a11y: A11Y_DEFER_COLOR_CONTRAST,
-    pseudo: { hover: ['.hover'], active: ['.pressed'] },
+    pseudo: {
+      hover: ['.hover'],
+      active: ['.pressed'],
+      focusVisible: ['.focused'],
+    },
     catalog: {
       dimensions: [
         {
-          name: 'sizes',
-          values: ['small', 'medium'] satisfies IconButtonSize[],
-          props: (size: IconButtonSize) => ({ size }),
+          name: 'state',
+          values: Object.keys(CATALOG_STATES),
+          props: (state: string) => CATALOG_STATES[state],
         },
         {
-          name: 'states',
-          values: [
-            'default',
-            'hover',
-            'pressed',
-            'disabled',
-            'focus',
-            'disabled+focus',
-          ],
-          props: (state: string) => {
-            switch (state) {
-              case 'default':
-                return {};
-              case 'hover':
-              case 'pressed':
-                return { className: state };
-              case 'focus':
-                return { focus: true };
-              case 'disabled':
-                return { disabled: true };
-              case 'active':
-                return { active: true };
-              case 'disabled+focus':
-                return { focus: true, disabled: true };
-              default:
-                return {};
-            }
-          },
+          name: 'color',
+          values: ['neutral', 'accent', 'danger', 'success'],
+          props: (color: ButtonColor) => ({ color }),
         },
         {
-          name: 'accents',
-          values: ['default', 'blue', 'danger'] satisfies IconButtonAccent[],
-          props: (accent: IconButtonAccent) => ({ accent }),
-        },
-        {
-          name: 'variants',
-          values: [
-            'primary',
-            'secondary',
-            'tertiary',
-          ] satisfies IconButtonVariant[],
-          props: (variant: IconButtonVariant) => ({ variant }),
+          name: 'variant',
+          values: ['solid', 'outline', 'soft', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
         },
       ],
     },
   },
-  decorators: [CatalogDecorator],
 };
 
-export const PositionCatalog: CatalogStory<Story, typeof IconButton> = {
-  args: { Icon: IconSearch, ariaLabel: 'Search' },
-  argTypes: {
-    size: { control: false },
-    variant: { control: false },
-    focus: { control: false },
-    accent: { control: false },
-    disabled: { control: false },
-    position: { control: false },
-    Icon: { control: false },
-  },
-  parameters: {
-    a11y: A11Y_DEFER_COLOR_CONTRAST,
-    pseudo: { hover: ['.hover'], active: ['.pressed'] },
-    catalog: {
-      dimensions: [
-        {
-          name: 'positions',
-          values: [
-            'standalone',
-            'left',
-            'middle',
-            'right',
-          ] satisfies IconButtonPosition[],
-          props: (position: IconButtonPosition) => ({ position }),
-        },
-        {
-          name: 'states',
-          values: [
-            'default',
-            'hover',
-            'pressed',
-            'disabled',
-            'focus',
-            'disabled+focus',
-          ],
-          props: (state: string) => {
-            switch (state) {
-              case 'default':
-                return {};
-              case 'hover':
-              case 'pressed':
-                return { className: state };
-              case 'focus':
-                return { focus: true };
-              case 'disabled':
-                return { disabled: true };
-              case 'active':
-                return { active: true };
-              case 'disabled+focus':
-                return { focus: true, disabled: true };
-              default:
-                return {};
-            }
-          },
-        },
-        {
-          name: 'sizes',
-          values: ['small', 'medium'] satisfies IconButtonSize[],
-          props: (size: IconButtonSize) => ({ size }),
-        },
-        {
-          name: 'variants',
-          values: [
-            'primary',
-            'secondary',
-            'tertiary',
-          ] satisfies IconButtonVariant[],
-          props: (variant: IconButtonVariant) => ({ variant }),
-        },
-      ],
-    },
-  },
-  decorators: [CatalogDecorator],
+export const CatalogDark: CatalogStory<Story, typeof IconButton> = {
+  ...Catalog,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
 };

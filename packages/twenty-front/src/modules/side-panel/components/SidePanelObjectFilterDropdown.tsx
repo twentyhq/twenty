@@ -26,12 +26,13 @@ export const SidePanelObjectFilterDropdown = ({
       dropdownPlacement="bottom-end"
       clickableComponent={
         <IconButton
-          Icon={IconFilter}
-          variant="tertiary"
-          accent={isFilterActive ? 'blue' : 'default'}
-          size="small"
-          ariaLabel={t`Filter by object type`}
-        />
+          variant="ghost"
+          color={isFilterActive ? 'accent' : 'neutral'}
+          size="sm"
+          aria-label={t`Filter by object type`}
+        >
+          <IconFilter />
+        </IconButton>
       }
       dropdownComponents={
         <SidePanelObjectFilterDropdownContent

@@ -32,8 +32,8 @@ export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
       <div className="button-group shortcut-actions">
         {state.settings.openShortcut !== DEFAULT_SETTINGS.openShortcut && (
           <IconButton
-            variant="tertiary"
-            ariaLabel={i18n._('Reset shortcut')}
+            variant="ghost"
+            aria-label={i18n._('Reset shortcut')}
             disabled={isPending('settings')}
             onClick={() =>
               void command({
@@ -41,9 +41,10 @@ export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
                 settings: { openShortcut: DEFAULT_SETTINGS.openShortcut },
               })
             }
-            size="medium"
-            Icon={IconRestore}
-          />
+            size="md"
+          >
+            <IconRestore />
+          </IconButton>
         )}
         <div
           onBlur={() => setCapturing(false)}

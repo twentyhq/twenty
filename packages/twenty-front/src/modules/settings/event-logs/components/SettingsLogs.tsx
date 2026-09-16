@@ -246,12 +246,13 @@ export const SettingsLogs = () => {
             </StyledSelectorGrow>
             {canQuery && (
               <IconButton
-                Icon={isPaused ? IconPlayerPlay : IconPlayerPause}
-                variant="secondary"
-                size="medium"
-                ariaLabel={isPaused ? t`Resume` : t`Pause`}
+                variant="outline"
+                size="md"
+                aria-label={isPaused ? t`Resume` : t`Pause`}
                 onClick={() => setIsPaused((previous) => !previous)}
-              />
+              >
+                {isPaused ? <IconPlayerPlay /> : <IconPlayerPause />}
+              </IconButton>
             )}
           </StyledSelectorRow>
           <EventLogFilters

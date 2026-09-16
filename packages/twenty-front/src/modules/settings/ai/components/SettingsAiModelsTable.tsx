@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 
 import { css } from '@linaria/core';
@@ -193,15 +194,17 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                 {hasRemove && (
                   <TableCell align="right">
                     <IconButton
-                      Icon={IconTrash}
-                      accent="danger"
-                      variant="tertiary"
-                      size="small"
+                      aria-label={t`Remove model`}
+                      color="danger"
+                      variant="ghost"
+                      size="sm"
                       onClick={(event) => {
                         event.stopPropagation();
                         onRemove(model);
                       }}
-                    />
+                    >
+                      <IconTrash />
+                    </IconButton>
                   </TableCell>
                 )}
               </TableRow>

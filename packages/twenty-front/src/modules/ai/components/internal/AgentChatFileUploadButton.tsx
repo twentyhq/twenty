@@ -47,14 +47,15 @@ export const AgentChatFileUploadButton = () => {
       />
 
       <IconButton
-        variant="tertiary"
-        size="small"
+        variant="ghost"
+        size="sm"
         onClick={() => {
           fileInputRef.current?.click();
         }}
-        Icon={IconPaperclip}
-        ariaLabel={t`Attach files`}
-      />
+        aria-label={t`Attach files`}
+      >
+        <IconPaperclip />
+      </IconButton>
     </StyledFileUploadContainer>
   );
 };

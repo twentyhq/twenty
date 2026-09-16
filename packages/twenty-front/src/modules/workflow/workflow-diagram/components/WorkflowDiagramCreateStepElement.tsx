@@ -56,12 +56,9 @@ export const WorkflowDiagramCreateStepElement = ({
 
       {isDefined(Label) && <StyledLabelContainer>{Label}</StyledLabelContainer>}
 
-      <IconButton
-        Icon={IconPlus}
-        size="small"
-        ariaLabel={t`Add a step`}
-        onClick={addNode}
-      />
+      <IconButton size="sm" aria-label={t`Add a step`} onClick={addNode}>
+        <IconPlus />
+      </IconButton>
     </StyledContainer>
   );
 };

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { IconMinus, IconPlus } from 'twenty-ui/icon';
@@ -78,12 +79,14 @@ export const SettingsCounter = ({
     <StyledCounterContainer showButtons={showButtons}>
       {showButtons && (
         <IconButton
-          size="small"
-          Icon={IconMinus}
-          variant="secondary"
+          aria-label={t`Decrease value`}
+          size="sm"
+          variant="outline"
           onClick={handleDecrementCounter}
           disabled={disabled}
-        />
+        >
+          <IconMinus />
+        </IconButton>
       )}
       <StyledTextInputContainer>
         <SettingsTextInput
@@ -97,12 +100,14 @@ export const SettingsCounter = ({
       </StyledTextInputContainer>
       {showButtons && (
         <IconButton
-          size="small"
-          Icon={IconPlus}
-          variant="secondary"
+          aria-label={t`Increase value`}
+          size="sm"
+          variant="outline"
           onClick={handleIncrementCounter}
           disabled={disabled}
-        />
+        >
+          <IconPlus />
+        </IconButton>
       )}
     </StyledCounterContainer>
   );

@@ -68,11 +68,9 @@ export const AdvancedFilterRecordFilterOptionsDropdown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <IconButton
-          aria-label={t`Record filter rule options`}
-          variant="tertiary"
-          Icon={IconDotsVertical}
-        />
+        <IconButton aria-label={t`Record filter rule options`} variant="ghost">
+          <IconDotsVertical />
+        </IconButton>
       }
       dropdownComponents={
         <DropdownContent>

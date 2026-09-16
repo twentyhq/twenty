@@ -36,12 +36,13 @@ export const Notice = ({ state, command }: ActionProps) =>
         )}
         <IconButton
           className="notice-close"
-          variant="tertiary"
-          ariaLabel={i18n._('Dismiss message')}
+          variant="ghost"
+          aria-label={i18n._('Dismiss message')}
           onClick={() => void command({ type: 'dismiss-error' })}
-          size="medium"
-          Icon={IconX}
-        />
+          size="md"
+        >
+          <IconX />
+        </IconButton>
       </Banner>
     </div>
   ) : null;

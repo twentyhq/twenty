@@ -1,53 +1,41 @@
+import { useId } from 'react';
+
 import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
-import type { IconButtonProps } from '@ui/primitives/input/IconButton/types/IconButtonProps';
 import {
   AppTooltip,
   TooltipDelay,
   TooltipPosition,
 } from '@ui/primitives/surfaces';
-import { useId } from 'react';
 
-export type IconButtonWithTooltipProps = Pick<
-  IconButtonProps,
-  'Icon' | 'ariaLabel' | 'onClick' | 'size' | 'variant' | 'disabled'
-> & {
-  tooltipContent: string;
-  tooltipPlace?: TooltipPosition;
-  tooltipDelay?: TooltipDelay;
-  tooltipOffset?: number;
-};
+import { type IconButtonWithTooltipProps } from './types/IconButtonWithTooltipProps';
 
 export const IconButtonWithTooltip = ({
   tooltipContent,
   tooltipPlace = TooltipPosition.Bottom,
   tooltipDelay = TooltipDelay.longDelay,
   tooltipOffset = 5,
-  Icon,
-  ariaLabel,
-  onClick,
-  size,
-  variant,
   disabled,
+  loading,
+  ...props
 }: IconButtonWithTooltipProps) => {
   const tooltipId = useId();
+  const isDisabled = disabled || loading;
 
   return (
     <>
       <div data-tooltip-id={tooltipId}>
         <IconButton
-          Icon={Icon}
-          ariaLabel={ariaLabel}
-          onClick={onClick}
-          size={size}
-          variant={variant}
+          {...props}
+          data-tooltip-trigger
           disabled={disabled}
+          loading={loading}
         />
       </div>
       <AppTooltip
         anchorSelect={
-          disabled
+          isDisabled
             ? `[data-tooltip-id='${tooltipId}']`
-            : `[data-tooltip-id='${tooltipId}'] > button`
+            : `[data-tooltip-id='${tooltipId}'] > [data-tooltip-trigger]`
         }
         title={tooltipContent}
         delay={tooltipDelay}

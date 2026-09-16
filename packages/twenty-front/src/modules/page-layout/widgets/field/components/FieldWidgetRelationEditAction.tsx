@@ -88,17 +88,14 @@ export const FieldWidgetRelationEditAction = ({
     fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE ||
     hasAtLeastOneRelationRecord;
 
-  const triggerIcon = isEditAction ? IconPencil : IconPlus;
+  const TriggerIcon = isEditAction ? IconPencil : IconPlus;
   const triggerLabel = isEditAction ? t`Edit relation` : t`Add relation`;
 
   const dropdownTriggerClickableComponent = (
     <StyledEditButtonWrapper>
-      <IconButton
-        Icon={triggerIcon}
-        variant="tertiary"
-        size="small"
-        ariaLabel={triggerLabel}
-      />
+      <IconButton variant="ghost" size="sm" aria-label={triggerLabel}>
+        <TriggerIcon />
+      </IconButton>
     </StyledEditButtonWrapper>
   );
 

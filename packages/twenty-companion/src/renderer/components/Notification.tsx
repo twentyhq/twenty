@@ -45,12 +45,13 @@ export const Notification = ({
         />
         <span className={styles.message}>{message}</span>
         <IconButton
-          Icon={IconX}
-          ariaLabel={closeLabel}
+          aria-label={closeLabel}
           onClick={onClose}
-          variant="tertiary"
-          size="medium"
-        />
+          variant="ghost"
+          size="md"
+        >
+          <IconX />
+        </IconButton>
       </div>
     </div>
   );

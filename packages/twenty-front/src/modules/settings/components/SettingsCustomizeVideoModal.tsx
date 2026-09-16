@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStatefulWrapper';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -130,7 +131,9 @@ export const SettingsCustomizeVideoModal = ({
             <StyledTitleText>{activeTab.title}</StyledTitleText>
           </StyledTitle>
         )}
-        <IconButton Icon={IconX} onClick={handleClose} size="small" />
+        <IconButton aria-label={t`Close video`} onClick={handleClose} size="sm">
+          <IconX />
+        </IconButton>
       </StyledHeader>
       <StyledVideoContainer>
         <StyledVideoIframe
