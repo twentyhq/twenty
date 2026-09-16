@@ -21,13 +21,13 @@ const getViewId = ({
   indexViewId,
   lastVisitedViewId,
   firstAvailableViewId,
-  initialObjectViewId,
+  firstSelectableViewId,
 }: {
   viewIdFromQueryParams: string | null;
   indexViewId?: string;
   lastVisitedViewId?: string;
   firstAvailableViewId?: string;
-  initialObjectViewId?: string;
+  firstSelectableViewId?: string;
 }) => {
   if (isDefined(viewIdFromQueryParams)) {
     return viewIdFromQueryParams;
@@ -37,8 +37,8 @@ const getViewId = ({
     return lastVisitedViewId;
   }
 
-  if (isDefined(initialObjectViewId)) {
-    return initialObjectViewId;
+  if (isDefined(firstSelectableViewId)) {
+    return firstSelectableViewId;
   }
 
   if (isDefined(indexViewId)) {
@@ -114,7 +114,7 @@ export const RouteContextStoreProvider = () => {
     ? lastVisitedViewIdRaw
     : undefined;
 
-  const { initialObjectViewId, indexViewId, firstAvailableViewId } =
+  const { firstSelectableViewId, indexViewId, firstAvailableViewId } =
     computeObjectViewTargetIds({
       views,
       objectMetadataId: objectMetadataItem?.id,
@@ -126,7 +126,7 @@ export const RouteContextStoreProvider = () => {
     indexViewId,
     lastVisitedViewId,
     firstAvailableViewId,
-    initialObjectViewId,
+    firstSelectableViewId,
   });
 
   const shouldComputeContextStore =

@@ -25,7 +25,7 @@ export const getObjectNavigationMenuItemComputedLink = ({
     return '';
   }
 
-  const { initialObjectViewId, indexViewId } = computeObjectViewTargetIds({
+  const { firstSelectableViewId, indexViewId } = computeObjectViewTargetIds({
     views,
     objectMetadataId: objectMetadataItem.id,
     isInitialObjectViewEnabled,
@@ -37,7 +37,7 @@ export const getObjectNavigationMenuItemComputedLink = ({
       : lastVisitedViewId;
 
   const targetViewId =
-    applicableLastVisitedViewId ?? initialObjectViewId ?? indexViewId;
+    applicableLastVisitedViewId ?? firstSelectableViewId ?? indexViewId;
 
   return getAppPath(
     AppPath.RecordIndexPage,

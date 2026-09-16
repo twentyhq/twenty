@@ -16,7 +16,7 @@ export const computeObjectViewTargetIds = <
   objectMetadataId?: string;
   isInitialObjectViewEnabled: boolean;
 }): {
-  initialObjectViewId?: string;
+  firstSelectableViewId?: string;
   indexViewId?: string;
   firstAvailableViewId?: string;
 } => {
@@ -29,7 +29,7 @@ export const computeObjectViewTargetIds = <
     .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
 
   return {
-    initialObjectViewId: isInitialObjectViewEnabled
+    firstSelectableViewId: isInitialObjectViewEnabled
       ? selectableViewsOnObject.find((view) => view.key !== ViewKey.INDEX)?.id
       : undefined,
     indexViewId: selectableViewsOnObject.find(

@@ -58,14 +58,14 @@ export const useDefaultHomePagePath = () => {
 
   const getTargetViewId = useCallback(
     (objectMetadataItemId: string | undefined | null) => {
-      const { initialObjectViewId, indexViewId, firstAvailableViewId } =
+      const { firstSelectableViewId, indexViewId, firstAvailableViewId } =
         computeObjectViewTargetIds({
           views,
           objectMetadataId: objectMetadataItemId ?? undefined,
           isInitialObjectViewEnabled,
         });
 
-      return initialObjectViewId ?? indexViewId ?? firstAvailableViewId;
+      return firstSelectableViewId ?? indexViewId ?? firstAvailableViewId;
     },
     [views, isInitialObjectViewEnabled],
   );
