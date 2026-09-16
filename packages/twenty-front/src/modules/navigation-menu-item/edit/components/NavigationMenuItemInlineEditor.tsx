@@ -2,10 +2,8 @@ import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common
 import { getLinkNavigationMenuItemLabel } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemLabel';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useIcons } from 'twenty-ui/icon';
-import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
-import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
-import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { NavigationMenuItemNameInputFocusEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemNameInputFocusEffect';
+import { useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -58,6 +56,7 @@ type NavigationMenuItemInlineEditorProps = {
   item: NavigationMenuItem;
   children: ReactNode;
   dropdownId: string;
+  rowAnchorId: string;
   onEditLink: () => void;
 };
 
@@ -65,14 +64,11 @@ export const NavigationMenuItemInlineEditor = ({
   item,
   children,
   dropdownId,
+  rowAnchorId,
   onEditLink,
 }: NavigationMenuItemInlineEditorProps) => {
   const { t } = useLingui();
-  const editorRef = useRef<HTMLDivElement>(null);
   const { getIcon } = useIcons();
-  const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
-  const { removeFocusItemFromFocusStackById } =
-    useRemoveFocusItemFromFocusStackById();
   const { updateItem } = useNavigationMenuItemEditController(
     item.userWorkspaceId ? 'favorite' : 'workspace',
   );
@@ -108,24 +104,6 @@ export const NavigationMenuItemInlineEditor = ({
       currentId === item.id ? null : currentId,
     );
   };
-  useEffect(() => {
-    if (!isNameInputVisible) {
-      return;
-    }
-    pushFocusItemToFocusStack({
-      focusId,
-      component: { type: FocusComponentType.TEXT_INPUT, instanceId: focusId },
-      globalHotkeysConfig: {
-        enableGlobalHotkeysConflictingWithKeyboard: false,
-      },
-    });
-    return () => removeFocusItemFromFocusStackById({ focusId });
-  }, [
-    isNameInputVisible,
-    focusId,
-    pushFocusItemToFocusStack,
-    removeFocusItemFromFocusStackById,
-  ]);
   const isFolder = item.type === NavigationMenuItemType.FOLDER;
   const select = () => setSelectedNavigationMenuItemIdInEditMode(item.id);
   const finishRename = (value: string, clearSelection = true) => {
@@ -183,8 +161,8 @@ export const NavigationMenuItemInlineEditor = ({
           finishRename(
             value,
             !(
-              event.target instanceof Node &&
-              editorRef.current?.contains(event.target)
+              event.target instanceof Element &&
+              isDefined(event.target.closest(`#${rowAnchorId}`))
             ),
           )
         }
@@ -218,7 +196,10 @@ export const NavigationMenuItemInlineEditor = ({
           (!isFolder || !isExpanded || isDefined(item.userWorkspaceId)),
       }}
     >
-      <StyledEditor ref={editorRef}>{children}</StyledEditor>
+      {isNameInputVisible && (
+        <NavigationMenuItemNameInputFocusEffect focusId={focusId} />
+      )}
+      <StyledEditor>{children}</StyledEditor>
     </NavigationDrawerItemEditingContext.Provider>
   );
 };

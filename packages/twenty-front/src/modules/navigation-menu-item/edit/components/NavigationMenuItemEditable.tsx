@@ -5,26 +5,9 @@ import {
   isDropdownOpenComponentState as isColorPickerOpenComponentState,
 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import {
-  IconDotsVertical,
-  IconAddressBook,
-  IconBox,
-  IconTable,
-  IconLink,
-  IconFolder,
-  IconPerspective,
-  type IconComponent,
-} from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
@@ -36,6 +19,9 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { NavigationMenuItemActions } from '@/navigation-menu-item/edit/components/NavigationMenuItemActions';
+import { NavigationMenuItemRowActions } from '@/navigation-menu-item/edit/components/NavigationMenuItemRowActions';
+import { NavigationMenuItemTypeTooltip } from '@/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip';
+import { NavigationMenuItemLinkEditorOpenEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemLinkEditorOpenEffect';
 import { NavigationMenuItemLinkEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor';
 import { NavigationMenuItemInlineEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor';
 
@@ -53,16 +39,6 @@ const StyledRow = styled.div`
     pointer-events: auto;
   }
 `;
-const StyledActions = styled.div`
-  align-items: center;
-  bottom: ${themeCssVariables.spacing['0.5']};
-  display: flex;
-  opacity: 0;
-  pointer-events: none;
-  position: absolute;
-  right: ${themeCssVariables.spacing['0.5']};
-`;
-
 type NavigationMenuItemEditableProps = {
   item: NavigationMenuItem;
   children: ReactNode;
@@ -73,7 +49,6 @@ export const NavigationMenuItemEditable = ({
   children,
   rightOptions,
 }: NavigationMenuItemEditableProps) => {
-  const { t } = useLingui();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
@@ -101,36 +76,14 @@ export const NavigationMenuItemEditable = ({
   const canEdit =
     item.type === NavigationMenuItemType.LINK ||
     item.type === NavigationMenuItemType.FOLDER;
+  const openEditMode = useCallback(() => setMode('edit'), []);
   const open = (nextMode: 'actions' | 'edit') => {
     setMode(nextMode);
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
-  useEffect(() => {
-    if (
-      item.type === NavigationMenuItemType.LINK &&
-      selectedNavigationMenuItemIdInEditMode === item.id
-    ) {
-      setMode('edit');
-      openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
-    }
-  }, [
-    item.type,
-    selectedNavigationMenuItemIdInEditMode,
-    item.id,
-    dropdownId,
-    openDropdown,
-  ]);
-  const types: Record<
-    NavigationMenuItemType,
-    { label: string; Icon: IconComponent }
-  > = {
-    OBJECT: { label: t`Object`, Icon: IconBox },
-    VIEW: { label: t`View`, Icon: IconTable },
-    RECORD: { label: t`Record`, Icon: IconAddressBook },
-    LINK: { label: t`Link`, Icon: IconLink },
-    FOLDER: { label: t`Folder`, Icon: IconFolder },
-    PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
-  };
+  const shouldOpenLinkEditor =
+    item.type === NavigationMenuItemType.LINK &&
+    selectedNavigationMenuItemIdInEditMode === item.id;
   const canPickObjectColor =
     canOrganize && item.type === NavigationMenuItemType.OBJECT;
   const isSelectedFolder =
@@ -152,6 +105,7 @@ export const NavigationMenuItemEditable = ({
         <NavigationMenuItemInlineEditor
           item={item}
           dropdownId={dropdownId}
+          rowAnchorId={anchorId}
           onEditLink={() => open('edit')}
         >
           {children}
@@ -226,44 +180,28 @@ export const NavigationMenuItemEditable = ({
         open('actions');
       }}
     >
+      {shouldOpenLinkEditor && (
+        <NavigationMenuItemLinkEditorOpenEffect
+          dropdownId={dropdownId}
+          onOpen={openEditMode}
+        />
+      )}
       {content}
       {canOrganize && isExpanded && (
-        <StyledActions
-          data-navigation-actions
-          onMouseDown={(event) => event.stopPropagation()}
-        >
-          {rightOptions}
-          <LightIconButton
-            Icon={IconDotsVertical}
-            size="small"
-            accent="tertiary"
-            aria-label={t`Menu item actions`}
-            onClick={(event) => {
-              event.stopPropagation();
-              open('actions');
-            }}
-          />
-        </StyledActions>
+        <NavigationMenuItemRowActions
+          rightOptions={rightOptions}
+          onOpenActions={() => open('actions')}
+        />
       )}
       {isLayoutCustomizationModeEnabled && (
-        <AppTooltip
-          delay={TooltipDelay.mediumDelay}
-          anchorSelect={`#${anchorId}`}
-          title={types[item.type].label}
-          description={
-            item.type === NavigationMenuItemType.FOLDER
-              ? t`Click to edit`
-              : undefined
-          }
-          Icon={types[item.type].Icon}
-          offset={theme.spacingMultiplicator}
+        <NavigationMenuItemTypeTooltip
+          type={item.type}
+          anchorId={anchorId}
           hidden={
             isDropdownOpen ||
             isColorPickerOpen ||
             selectedNavigationMenuItemIdInEditMode === item.id
           }
-          place={TooltipPosition.Top}
-          positionStrategy="fixed"
         />
       )}
     </StyledRow>

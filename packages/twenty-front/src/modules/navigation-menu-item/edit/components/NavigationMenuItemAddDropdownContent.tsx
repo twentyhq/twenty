@@ -1,11 +1,11 @@
 import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
+import { NavigationMenuItemInsertionPreviewEffect } from '@/navigation-menu-item/edit/effect-components/NavigationMenuItemInsertionPreviewEffect';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { useQuery } from '@apollo/client/react';
 import { FindAllStandalonePageLayoutsDocument } from '~/generated-metadata/graphql';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
-import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   NavigationMenuItemSelectableItem,
@@ -14,7 +14,7 @@ import {
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { Fragment, useEffect, useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -95,34 +95,11 @@ export const NavigationMenuItemAddDropdownContent = ({
   const { currentItems, createItem } =
     useNavigationMenuItemEditController(section);
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
-  const setNavigationMenuItemInsertionPreview = useSetAtomState(
-    navigationMenuItemInsertionPreviewState,
-  );
   const insertionIndex =
     position ??
     currentItems.filter(
       (item) => (item.folderId ?? null) === (folderId ?? null),
     ).length;
-
-  // The preview follows the add flow's lifetime, including nested menu pages.
-  useEffect(() => {
-    setNavigationMenuItemInsertionPreview({
-      dropdownId,
-      section,
-      folderId: folderId ?? null,
-      index: insertionIndex,
-    });
-    return () =>
-      setNavigationMenuItemInsertionPreview((preview) =>
-        preview?.dropdownId === dropdownId ? null : preview,
-      );
-  }, [
-    dropdownId,
-    section,
-    folderId,
-    insertionIndex,
-    setNavigationMenuItemInsertionPreview,
-  ]);
 
   const { objectMetadataItems } = useObjectMetadataItems();
   const { activeNonSystemObjectMetadataItems } =
@@ -481,6 +458,12 @@ export const NavigationMenuItemAddDropdownContent = ({
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
+      <NavigationMenuItemInsertionPreviewEffect
+        dropdownId={dropdownId}
+        section={section}
+        folderId={folderId ?? null}
+        index={insertionIndex}
+      />
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
