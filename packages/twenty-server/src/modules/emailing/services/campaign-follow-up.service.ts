@@ -15,20 +15,26 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type CampaignEngagementActivityFilter } from 'src/modules/emailing/constants/campaign-engagement-activity-filter.constant';
 import { type MessageCampaignFollowUpDraftDTO } from 'src/modules/emailing/dtos/message-campaign-follow-up-draft.dto';
 import { CampaignEngagementEventService } from 'src/modules/emailing/services/campaign-engagement-event.service';
-import { ObjectRecordPermissionService } from 'src/modules/emailing/services/object-record-permission.service';
-import { PersonAccessService } from 'src/modules/emailing/services/person-access.service';
 import { type MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
+import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 type SourceCampaign = Pick<
   MessageCampaignWorkspaceEntity,
@@ -40,6 +46,12 @@ type SourceCampaign = Pick<
   | 'unsubscribeTopicId'
 >;
 
+const FOLLOW_UP_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+  STANDARD_OBJECTS.messageList.universalIdentifier,
+  STANDARD_OBJECTS.messageListMember.universalIdentifier,
+];
+
 const FIND_BY_IDS_CHUNK_SIZE = 5_000;
 
 @Injectable()
@@ -49,8 +61,8 @@ export class CampaignFollowUpService {
     private readonly campaignDeliveryRepository: WorkspaceScopedRepository<CampaignDeliveryEntity>,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly userRoleService: UserRoleService,
-    private readonly objectRecordPermissionService: ObjectRecordPermissionService,
-    private readonly personAccessService: PersonAccessService,
+    private readonly permissionsService: PermissionsService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly actorFromAuthContextService: ActorFromAuthContextService,
     private readonly campaignEngagementEventService: CampaignEngagementEventService,
   ) {}
@@ -68,15 +80,9 @@ export class CampaignFollowUpService {
   }): Promise<MessageCampaignFollowUpDraftDTO> {
     const workspaceId = authContext.workspace.id;
 
-    await this.objectRecordPermissionService.assertObjectRecordPermissions({
+    await this.assertCanReadAndUpdateFollowUpObjects({
       workspaceId,
       userWorkspaceId,
-      objectUniversalIdentifiers: [
-        STANDARD_OBJECTS.messageCampaign.universalIdentifier,
-        STANDARD_OBJECTS.messageList.universalIdentifier,
-        STANDARD_OBJECTS.messageListMember.universalIdentifier,
-      ],
-      requiredPermissions: ['canReadObjectRecords', 'canUpdateObjectRecords'],
     });
 
     const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
@@ -89,19 +95,12 @@ export class CampaignFollowUpService {
       messageCampaignId,
       activityFilter,
     });
-    const readablePersonIds =
-      await this.personAccessService.findReadablePersonIds({
-        roleId,
-        personIds: clickerPersonIds,
-      });
-
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction((transactionScope) =>
           this.createInTransaction({
             messageCampaignId,
             clickerPersonIds,
-            readablePersonIds,
             roleId,
             authContext,
             transactionScope,
@@ -153,14 +152,12 @@ export class CampaignFollowUpService {
   private async createInTransaction({
     messageCampaignId,
     clickerPersonIds,
-    readablePersonIds,
     roleId,
     authContext,
     transactionScope,
   }: {
     messageCampaignId: string;
     clickerPersonIds: string[];
-    readablePersonIds: Set<string>;
     roleId: string;
     authContext: WorkspaceAuthContext;
     transactionScope: WorkspaceTransactionScope;
@@ -170,6 +167,10 @@ export class CampaignFollowUpService {
         'messageCampaign',
         { unionOf: [roleId] },
       );
+    const personRepository =
+      transactionScope.getRepository<PersonWorkspaceEntity>('person', {
+        unionOf: [roleId],
+      });
     const messageListRepository =
       transactionScope.getRepository<MessageListWorkspaceEntity>(
         'messageList',
@@ -193,9 +194,14 @@ export class CampaignFollowUpService {
       );
     }
 
+    const readablePersonIds = await this.findReadablePersonIds({
+      personIds: clickerPersonIds,
+      personRepository,
+    });
+
     const listId = await this.createList({
       sourceCampaign,
-      personIds: [...readablePersonIds],
+      personIds: readablePersonIds,
       authContext,
       messageListRepository,
       messageListMemberRepository,
@@ -211,8 +217,8 @@ export class CampaignFollowUpService {
     return {
       messageCampaignId: draftCampaignId,
       listId,
-      memberCount: readablePersonIds.size,
-      skippedCount: clickerPersonIds.length - readablePersonIds.size,
+      memberCount: readablePersonIds.length,
+      skippedCount: clickerPersonIds.length - readablePersonIds.length,
     };
   }
 
@@ -298,5 +304,63 @@ export class CampaignFollowUpService {
     await campaignRepository.insert(draftWithActor);
 
     return draftCampaignId;
+  }
+
+  private async assertCanReadAndUpdateFollowUpObjects({
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+  }): Promise<void> {
+    const [{ objectsPermissions }, { flatObjectMetadataMaps }] =
+      await Promise.all([
+        this.permissionsService.getUserWorkspacePermissions({
+          workspaceId,
+          userWorkspaceId,
+        }),
+        this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatObjectMetadataMaps',
+        ]),
+      ]);
+
+    for (const objectUniversalIdentifier of FOLLOW_UP_OBJECT_UNIVERSAL_IDENTIFIERS) {
+      const objectMetadata =
+        flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier];
+      const objectPermissions = isDefined(objectMetadata)
+        ? objectsPermissions[objectMetadata.id]
+        : undefined;
+
+      if (
+        !objectPermissions?.canReadObjectRecords ||
+        !objectPermissions.canUpdateObjectRecords
+      ) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
+      }
+    }
+  }
+
+  private async findReadablePersonIds({
+    personIds,
+    personRepository,
+  }: {
+    personIds: string[];
+    personRepository: WorkspaceRepository<PersonWorkspaceEntity>;
+  }): Promise<string[]> {
+    const readablePersonIds: string[] = [];
+
+    for (const personIdsChunk of chunk(personIds, FIND_BY_IDS_CHUNK_SIZE)) {
+      const people = await personRepository.find({
+        where: { id: In(personIdsChunk) },
+        select: { id: true },
+      });
+
+      readablePersonIds.push(...people.map((person) => person.id));
+    }
+
+    return readablePersonIds;
   }
 }
