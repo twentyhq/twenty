@@ -96,7 +96,10 @@ export const WorkspaceSection = () => {
         isMobile ? undefined : (
           <StyledRightIconsContainer>
             {isLayoutCustomizationModeEnabled ? (
-              <NavigationMenuItemAddDropdown instanceId="workspace-header">
+              <NavigationMenuItemAddDropdown
+                instanceId="workspace-header"
+                position={0}
+              >
                 <LightIconButton
                   Icon={IconPlus}
                   accent="tertiary"

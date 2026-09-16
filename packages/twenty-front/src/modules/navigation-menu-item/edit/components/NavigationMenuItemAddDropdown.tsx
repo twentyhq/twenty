@@ -11,7 +11,7 @@ type NavigationMenuItemAddDropdownProps = {
   section?: 'workspace' | 'favorite';
 } & (
   | { folderId: string; position: number }
-  | { folderId?: never; position?: never }
+  | { folderId?: never; position?: number }
 );
 
 export const NavigationMenuItemAddDropdown = ({
