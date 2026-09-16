@@ -4,7 +4,7 @@ import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/comp
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { CalendarChannelVisibility } from '~/generated/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof SettingsAccountsCalendarChannelDetails> = {
   title:
@@ -13,7 +13,7 @@ const meta: Meta<typeof SettingsAccountsCalendarChannelDetails> = {
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   args: {
     calendarChannel: {

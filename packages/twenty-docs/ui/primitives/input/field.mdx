@@ -1,0 +1,86 @@
+---
+title: Field
+description: Connect a form control to its label, description, and validation feedback.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import FieldReference from '/snippets/ui/generated/input/field.mdx';
+
+Use `Field` to group one control with its accessible label and helper text. Components such as [Input](/ui/primitives/input/input) integrate with the field directly.
+
+<StoryEmbed
+  storyId="ui-input-field--default"
+  title="Field example"
+  height={240}
+/>
+
+## Anatomy
+
+Place one control and its supporting parts inside `Field.Root`. This tree shows a field built with the styled `Input` component.
+
+```text
+Field.Root
+├── Field.Label
+├── Input
+├── Field.Description
+└── Field.Error
+```
+
+| Part                                  | Requirement         | Purpose                                                                      |
+| ------------------------------------- | ------------------- | ---------------------------------------------------------------------------- |
+| `Root`                                | Required            | Shares the name, disabled state, and validation with the control.            |
+| `Label`                               | Recommended         | Supplies a visible, associated label. An accessible name is always required. |
+| `Input` or another integrated control | Required            | Receives user input and connects to the field.                               |
+| `Control`                             | Alternative control | Provides an unstyled input when you do not use an integrated control.        |
+| `Description`                         | Optional            | Adds persistent helper text associated with the control.                     |
+| `Error`                               | Optional            | Shows feedback for a matching validation state.                              |
+| `Validity`                            | Optional            | Exposes validity through a children render function.                         |
+
+`Input` and `Textarea` already integrate with the field. Place them directly inside `Root`; they supply the control behavior themselves. Compound controls such as [Select](/ui/primitives/input/select#compose-with-a-field) keep their own root and parts inside the field.
+
+## Labeled control
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root name="email" validationMode="onBlur">
+    <Field.Label>Work email</Field.Label>
+    <Input type="email" required placeholder="you@example.com" />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error match="valueMissing">Enter your email address.</Field.Error>
+    <Field.Error match="typeMismatch">Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+`Field.Root` manages the control's name, disabled state, and validity. `Field.Label` and `Field.Description` connect their content to the control. Set validation timing with `validationMode`; use `validate` for custom validation.
+
+## External errors
+
+Use `invalid` when your application owns the error state. An explicit `match` makes the error message visible.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+type UsernameFieldProps = { error?: string };
+
+export const UsernameField = ({ error }: UsernameFieldProps) => (
+  <Field.Root name="username" invalid={Boolean(error)}>
+    <Field.Label>Username</Field.Label>
+    <Input autoComplete="username" />
+    <Field.Error match={Boolean(error)}>{error}</Field.Error>
+  </Field.Root>
+);
+```
+
+Keep error messages actionable and provide a visible label even when the control has a placeholder.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<FieldReference />

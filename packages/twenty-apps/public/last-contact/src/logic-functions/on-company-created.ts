@@ -2,26 +2,33 @@ import {
   defineLogicFunction,
   type ObjectRecordCreateEvent,
 } from 'twenty-sdk/define';
-import { type DatabaseEventPayload } from 'twenty-sdk/logic-function';
+import { type DatabaseEventBatchPayload } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/constants/batch-handler-timeout-seconds';
 import { COMPANY_CREATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { recomputeCompanyLastContact } from 'src/utils/recompute-company-last-contact';
+import { recomputeCompaniesLastContact } from 'src/utils/recompute-company-last-contact';
 
 type CompanyCreate = { id?: string | null };
 
 const handler = async (
-  event: DatabaseEventPayload<ObjectRecordCreateEvent<CompanyCreate>>,
+  batch: DatabaseEventBatchPayload<ObjectRecordCreateEvent<CompanyCreate>>,
 ): Promise<void> => {
-  const companyId = event.properties.after.id ?? event.recordId;
+  const companyIds = new Set<string>();
 
-  if (!companyId) {
+  for (const event of batch.events) {
+    const companyId = event.properties.after.id ?? event.recordId;
+
+    if (companyId) {
+      companyIds.add(companyId);
+    }
+  }
+
+  if (companyIds.size === 0) {
     return;
   }
 
-  const client = new CoreApiClient();
-
-  await recomputeCompanyLastContact(client, companyId);
+  await recomputeCompaniesLastContact(new CoreApiClient(), [...companyIds]);
 };
 
 export default defineLogicFunction({
@@ -29,9 +36,10 @@ export default defineLogicFunction({
   name: 'on-company-created',
   description:
     "Computes a company's last contact from its people when the company is created.",
-  timeoutSeconds: 60,
+  timeoutSeconds: BATCH_HANDLER_TIMEOUT_SECONDS,
   databaseEventTriggerSettings: {
     eventName: 'company.created',
+    batchMode: true,
   },
   handler,
 });

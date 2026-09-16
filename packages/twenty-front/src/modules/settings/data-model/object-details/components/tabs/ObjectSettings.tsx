@@ -1,9 +1,8 @@
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useDeleteOneObjectMetadataItem } from '@/object-metadata/hooks/useDeleteOneObjectMetadataItem';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
-import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
@@ -11,19 +10,20 @@ import { SettingsObjectIndexesSection } from '@/settings/data-model/object-detai
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { SettingsTranslationsButton } from '@/settings/translations/components/SettingsTranslationsButton';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 type ObjectSettingsProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -60,7 +60,7 @@ export const ObjectSettings = ({
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
   const { deleteOneObjectMetadataItem } = useDeleteOneObjectMetadataItem();
-  const { enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { openModal, closeModal } = useModal();
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
@@ -88,9 +88,7 @@ export const ObjectSettings = ({
     const result = await deleteOneObjectMetadataItem(objectMetadataItem.id);
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({
-        message: t`Object deleted`,
-      });
+      enqueueToast({ variant: 'success', children: t`Object deleted` });
       closeModal(DELETE_OBJECT_MODAL_ID);
       navigate(SettingsPath.Objects);
       return;
@@ -178,20 +176,18 @@ export const ObjectSettings = ({
             />
             <StyledDangerButtonsContainer>
               <Button
-                Icon={IconArchive}
-                title={t`Deactivate`}
-                size="small"
+                startIcon={<IconArchive />}
+                size="sm"
                 onClick={handleDisable}
-              />
+              >{t`Deactivate`}</Button>
               {getIsMetadataItemCustom(objectMetadataItem) && (
                 <Button
-                  Icon={IconTrash}
-                  title={t`Delete`}
-                  size="small"
-                  accent="danger"
-                  variant="secondary"
+                  startIcon={<IconTrash />}
+                  size="sm"
                   onClick={handleDelete}
-                />
+                  variant="outline"
+                  color="danger"
+                >{t`Delete`}</Button>
               )}
             </StyledDangerButtonsContainer>
           </Section>

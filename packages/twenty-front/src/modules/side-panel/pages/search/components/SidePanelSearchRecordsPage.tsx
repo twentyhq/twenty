@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
@@ -33,7 +34,8 @@ const previewTooltipClass = css`
 
 export const SidePanelSearchRecordsPage = () => {
   const { t } = useLingui();
-  const { searchResultItems, loading, noResults } = useSidePanelSearchRecords();
+  const { searchResultItems, loading, noResults, error } =
+    useSidePanelSearchRecords();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
   const { closeCommandMenu } = useCloseCommandMenu();
   const navigate = useNavigate();
@@ -50,6 +52,8 @@ export const SidePanelSearchRecordsPage = () => {
 
   return (
     <>
+      <ToastOnQueryErrorEffect error={error} />
+
       <SidePanelList
         selectableItemIds={selectableItemIds}
         loading={loading}

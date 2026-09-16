@@ -16,7 +16,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const ROOT_PAGE: SidePanelNavigationStackItem = {
   page: SidePanelPages.CommandMenuDisplay,
@@ -48,7 +48,7 @@ const meta: Meta<typeof SidePanelTopBar> = {
   component: SidePanelTopBar,
   decorators: [
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     ComponentWithRouterDecorator,
   ],
 };
