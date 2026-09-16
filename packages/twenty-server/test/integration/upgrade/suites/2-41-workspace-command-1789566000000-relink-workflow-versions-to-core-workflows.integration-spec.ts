@@ -17,13 +17,14 @@ describe('RelinkWorkflowVersionsToCoreWorkflowsCommand (integration)', () => {
 
   const seedCoreWorkflow = async (
     workspaceWorkflowId: string,
+    createdAt?: string,
   ): Promise<string> => {
     const coreWorkflowId = v4();
 
     await dataSource.query(
       `INSERT INTO core."workflow"
-         ("id", "workspaceId", "name", "workspaceWorkflowId", "universalIdentifier", "applicationId")
-       VALUES ($1, $2, $3, $4, $5, $6)`,
+         ("id", "workspaceId", "name", "workspaceWorkflowId", "universalIdentifier", "applicationId", "createdAt")
+       VALUES ($1, $2, $3, $4, $5, $6, coalesce($7::timestamptz, now()))`,
       [
         coreWorkflowId,
         SEED_APPLE_WORKSPACE_ID,
@@ -31,6 +32,7 @@ describe('RelinkWorkflowVersionsToCoreWorkflowsCommand (integration)', () => {
         workspaceWorkflowId,
         v4(),
         applicationId,
+        createdAt ?? null,
       ],
     );
 
@@ -144,6 +146,25 @@ describe('RelinkWorkflowVersionsToCoreWorkflowsCommand (integration)', () => {
     await runCommand();
 
     expect(await readCoreWorkflowIdOfVersion(coreVersionId)).toBeNull();
+  });
+
+  it('links to the oldest core workflow when several mirror the same workspace workflow', async () => {
+    const workspaceWorkflowId = v4();
+
+    const oldestCoreWorkflowId = await seedCoreWorkflow(
+      workspaceWorkflowId,
+      '2020-01-01T00:00:00.000Z',
+    );
+
+    await seedCoreWorkflow(workspaceWorkflowId, '2021-01-01T00:00:00.000Z');
+
+    const coreVersionId = await seedUnlinkedCoreVersion(workspaceWorkflowId);
+
+    await runCommand();
+
+    expect(await readCoreWorkflowIdOfVersion(coreVersionId)).toBe(
+      oldestCoreWorkflowId,
+    );
   });
 
   it('writes nothing on a dry run', async () => {

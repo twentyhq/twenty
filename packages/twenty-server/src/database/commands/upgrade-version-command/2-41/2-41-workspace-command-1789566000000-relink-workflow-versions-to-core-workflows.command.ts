@@ -36,16 +36,26 @@ export class RelinkWorkflowVersionsToCoreWorkflowsCommand extends ProvisionedWor
 
     await queryRunner.connect();
 
+    // Same oldest-row rule as the runtime reverse lookup, so a version repaired
+    // here and a version linked by the mirror resolve to the same parent when
+    // several core rows share a workspaceWorkflowId.
+    const canonicalParentId = `
+      SELECT c."id"
+      FROM core."workflow" c
+      WHERE c."workspaceId" = v."workspaceId"
+        AND c."workspaceWorkflowId" = v."workflowId"
+      ORDER BY c."createdAt" ASC, c."id" ASC
+      LIMIT 1`;
+
     const predicate = `
       WHERE v."workspaceId" = $1
         AND v."coreWorkflowId" IS NULL
-        AND c."workspaceId" = v."workspaceId"
-        AND c."workspaceWorkflowId" = v."workflowId"`;
+        AND EXISTS (${canonicalParentId})`;
 
     try {
       const [counts] = await queryRunner.query(
         `SELECT count(*)::int AS total
-         FROM core."workflowVersion" v, core."workflow" c
+         FROM core."workflowVersion" v
          ${predicate}`,
         [workspaceId],
       );
@@ -64,8 +74,7 @@ export class RelinkWorkflowVersionsToCoreWorkflowsCommand extends ProvisionedWor
 
       await queryRunner.query(
         `UPDATE core."workflowVersion" v
-         SET "coreWorkflowId" = c."id"
-         FROM core."workflow" c
+         SET "coreWorkflowId" = (${canonicalParentId})
          ${predicate}`,
         [workspaceId],
       );
