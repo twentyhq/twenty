@@ -7,6 +7,7 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @RegisteredWorkspaceCommand('2.42.0', 1789593132221)
 @Command({
@@ -17,6 +18,7 @@ import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/ge
 export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {
     super(workspaceIteratorService);
   }
@@ -161,6 +163,9 @@ export class BackfillWorkflowExecutionCoreIdsCommand extends ProvisionedWorkspac
         this.logger.log(`[DRY RUN] Workflow execution mappings validated in workspace ${workspaceId}`);
       } else {
         await queryRunner.commitTransaction();
+        await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'workflowAutomatedTriggerMaps',
+        ]);
         this.logger.log(`Workflow execution mappings backfilled in workspace ${workspaceId}`);
       }
     } catch (error) {

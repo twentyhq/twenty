@@ -443,6 +443,44 @@ describe('core workflow execution and queue compatibility (e2e)', () => {
     expect(run.state.flow).toEqual(state.flow);
   });
 
+  it('defers the core trigger cache during historical upgrades and rebuilds it after backfill', async () => {
+    const fixture = await createFixture({
+      triggerType: 'CRON',
+      triggerSettings: { type: 'CUSTOM', pattern: '* * * * *' },
+    });
+    const { workspaceCache, upgradeState, backfill } =
+      global.workflowTestServices;
+    const hiddenColumns = jest
+      .spyOn(upgradeState, 'getHiddenColumnPropertyNames')
+      .mockReturnValueOnce(new Set(['workspaceWorkflowVersionId']));
+
+    await workspaceCache.invalidateAndRecompute(workspaceId, [
+      'workflowAutomatedTriggerMaps',
+    ]);
+    const duringUpgrade = await workspaceCache.getOrRecompute(workspaceId, [
+      'workflowAutomatedTriggerMaps',
+    ]);
+
+    expect(duringUpgrade.workflowAutomatedTriggerMaps.byWorkflowId).toEqual({});
+    hiddenColumns.mockRestore();
+    await backfill.runOnWorkspace({
+      workspaceId,
+      dataSource: global.testDataSource,
+      options: {},
+      index: 0,
+      total: 1,
+    });
+    const afterUpgrade = await workspaceCache.getOrRecompute(workspaceId, [
+      'workflowAutomatedTriggerMaps',
+    ]);
+
+    expect(
+      afterUpgrade.workflowAutomatedTriggerMaps.byWorkflowId[
+        fixture.coreWorkflowId
+      ],
+    ).toMatchObject({ coreWorkflowVersionId: fixture.coreWorkflowVersionId });
+  });
+
   it('normalizes overlapping old and core cron caches without duplicate runs', async () => {
     const fixture = await createFixture({
       triggerType: 'CRON',

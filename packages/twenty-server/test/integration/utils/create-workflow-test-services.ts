@@ -13,6 +13,7 @@ import { WorkflowTriggerJob } from 'src/modules/workflow/workflow-trigger/jobs/w
 import { RunWorkflowJob } from 'src/modules/workflow/workflow-runner/jobs/run-workflow.job';
 import { WorkflowCronTriggerCronJob } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/jobs/workflow-cron-trigger-cron.job';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { UpgradeAwareRepositoryState } from 'src/engine/twenty-orm/upgrade-aware/upgrade-aware-repository-state';
 
 export const createWorkflowTestServices = (app: INestApplication) => ({
   billing: app.get(BillingUsageService),
@@ -22,6 +23,7 @@ export const createWorkflowTestServices = (app: INestApplication) => ({
   userWorkspace: app.get(UserWorkspaceService),
   flags: app.get(FeatureFlagService),
   workspaceCache: app.get(WorkspaceCacheService),
+  upgradeState: UpgradeAwareRepositoryState.getInstance(),
   backfill: app.get(BackfillWorkflowExecutionCoreIdsCommand),
   triggerJob: () => app.resolve(WorkflowTriggerJob),
   runJob: () => app.resolve(RunWorkflowJob),

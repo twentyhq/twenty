@@ -696,18 +696,6 @@ export class WorkflowVersionCoreSyncService {
   }
 
   async invalidateAutomatedTriggerMaps(workspaceId: string): Promise<void> {
-    const hasExecutionMapping = await hasCoreWorkflowWorkspaceVersionIdColumn(
-      (query) => this.workspaceRepository.manager.query(query),
-    );
-
-    if (!hasExecutionMapping) {
-      await this.workspaceCacheService.flush(workspaceId, [
-        'workflowAutomatedTriggerMaps',
-      ]);
-
-      return;
-    }
-
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'workflowAutomatedTriggerMaps',
     ]);
