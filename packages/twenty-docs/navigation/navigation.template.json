@@ -203,23 +203,31 @@
             "uiGuides": {
               "label": "Guides"
             },
-            "uiDataDisplay": {
-              "label": "Data display"
+            "uiPrimitives": {
+              "label": "Primitives",
+              "groups": {
+                "uiDataDisplay": {
+                  "label": "Data display"
+                },
+                "uiForms": {
+                  "label": "Forms"
+                },
+                "uiNavigation": {
+                  "label": "Navigation"
+                },
+                "uiSurfaces": {
+                  "label": "Surfaces"
+                },
+                "uiFeedback": {
+                  "label": "Feedback"
+                },
+                "uiTypography": {
+                  "label": "Typography"
+                }
+              }
             },
-            "uiForms": {
-              "label": "Forms"
-            },
-            "uiNavigation": {
-              "label": "Navigation"
-            },
-            "uiSurfaces": {
-              "label": "Surfaces"
-            },
-            "uiFeedback": {
-              "label": "Feedback"
-            },
-            "uiTypography": {
-              "label": "Typography"
+            "uiComponents": {
+              "label": "Components"
             }
           }
         }

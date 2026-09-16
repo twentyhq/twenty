@@ -24,7 +24,7 @@ export const SettingsBillingSwitchModals = () => {
         subtitle={confirmationModalSwitchToYearlyMessage()}
         onConfirmClick={switchBillingInterval}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingIntervalToMonthly}
@@ -32,7 +32,7 @@ export const SettingsBillingSwitchModals = () => {
         subtitle={confirmationModalSwitchToMonthlyMessage()}
         onConfirmClick={switchBillingInterval}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingInterval}
@@ -40,7 +40,7 @@ export const SettingsBillingSwitchModals = () => {
         subtitle={confirmationModalCancelIntervalSwitchingMessage()}
         onConfirmClick={cancelIntervalSwitch}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingPlan}
@@ -48,7 +48,7 @@ export const SettingsBillingSwitchModals = () => {
         subtitle={confirmationModalCancelPlanSwitchingMessage()}
         onConfirmClick={cancelPlanSwitch}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
     </>
   );

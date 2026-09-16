@@ -519,60 +519,75 @@
               ]
             },
             {
-              "key": "uiDataDisplay",
-              "label": "Data display",
+              "key": "uiPrimitives",
+              "label": "Primitives",
               "pages": [
-                "ui/components/data-display/avatar",
-                "ui/components/data-display/chip",
-                "ui/components/data-display/tag",
-                "ui/components/data-display/status"
+                "ui/primitives/overview",
+                {
+                  "key": "uiDataDisplay",
+                  "label": "Data display",
+                  "pages": [
+                    "ui/primitives/data-display/avatar",
+                    "ui/primitives/data-display/chip",
+                    "ui/primitives/data-display/tag",
+                    "ui/primitives/data-display/status"
+                  ]
+                },
+                {
+                  "key": "uiForms",
+                  "label": "Forms",
+                  "pages": [
+                    "ui/primitives/input/button",
+                    "ui/primitives/input/button-group",
+                    "ui/primitives/input/field",
+                    "ui/primitives/input/input",
+                    "ui/primitives/input/input-group",
+                    "ui/primitives/input/textarea",
+                    "ui/primitives/input/checkbox",
+                    "ui/primitives/input/radio",
+                    "ui/primitives/input/radio-group",
+                    "ui/primitives/input/select",
+                    "ui/primitives/input/slider",
+                    "ui/primitives/input/switch"
+                  ]
+                },
+                {
+                  "key": "uiNavigation",
+                  "label": "Navigation",
+                  "pages": [
+                    "ui/primitives/navigation/list-item",
+                    "ui/primitives/navigation/tabs"
+                  ]
+                },
+                {
+                  "key": "uiSurfaces",
+                  "label": "Surfaces",
+                  "pages": [
+                    "ui/primitives/surfaces/alert-dialog",
+                    "ui/primitives/surfaces/menu",
+                    "ui/primitives/surfaces/popover"
+                  ]
+                },
+                {
+                  "key": "uiFeedback",
+                  "label": "Feedback",
+                  "pages": ["ui/primitives/feedback/toast"]
+                },
+                {
+                  "key": "uiTypography",
+                  "label": "Typography",
+                  "pages": ["ui/primitives/typography/text"]
+                }
               ]
             },
             {
-              "key": "uiForms",
-              "label": "Forms",
+              "key": "uiComponents",
+              "label": "Components",
               "pages": [
-                "ui/components/input/field",
-                "ui/components/input/input",
-                "ui/components/input/input-group",
-                "ui/components/input/textarea",
-                "ui/components/input/checkbox",
-                "ui/components/input/radio",
-                "ui/components/input/radio-group",
-                "ui/components/input/select",
-                "ui/components/input/slider",
-                "ui/components/input/switch"
-              ]
-            },
-            {
-              "key": "uiNavigation",
-              "label": "Navigation",
-              "pages": [
-                "ui/components/navigation/list-item",
-                "ui/components/navigation/tabs"
-              ]
-            },
-            {
-              "key": "uiSurfaces",
-              "label": "Surfaces",
-              "pages": [
-                "ui/components/surfaces/alert-dialog",
-                "ui/components/surfaces/menu",
-                "ui/components/surfaces/popover"
-              ]
-            },
-            {
-              "key": "uiFeedback",
-              "label": "Feedback",
-              "pages": [
-                "ui/components/feedback/toast"
-              ]
-            },
-            {
-              "key": "uiTypography",
-              "label": "Typography",
-              "pages": [
-                "ui/components/typography/text"
+                "ui/components/overview",
+                "ui/components/input/main-button",
+                "ui/components/input/light-button",
+                "ui/components/input/icon-button"
               ]
             }
           ]

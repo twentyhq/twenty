@@ -6,7 +6,7 @@ import { tmpdir } from 'os';
 import { isAbsolute, join, relative, resolve } from 'path';
 
 import { FileFolder } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
@@ -47,7 +47,6 @@ export class ApplicationTarballService {
 
   async uploadTarball(params: {
     tarballBuffer: Buffer;
-    universalIdentifier?: string;
     ownerWorkspaceId: string;
   }): Promise<ApplicationRegistrationEntity> {
     const tempDir = join(tmpdir(), 'twenty-tarball-upload', v4());
@@ -58,15 +57,7 @@ export class ApplicationTarballService {
       const { contentDir, manifest, packageJson } =
         await this.extractAndValidateTarball(tempDir, params.tarballBuffer);
 
-      const universalIdentifier =
-        params.universalIdentifier ?? manifest.application?.universalIdentifier;
-
-      if (!isDefined(universalIdentifier)) {
-        throw new ApplicationRegistrationException(
-          'universalIdentifier is required (in body or manifest)',
-          ApplicationRegistrationExceptionCode.INVALID_INPUT,
-        );
-      }
+      const universalIdentifier = manifest.application.universalIdentifier;
 
       const existingRegistration = await this.appRegistrationRepository.findOne(
         {
@@ -156,7 +147,7 @@ export class ApplicationTarballService {
     tarballBuffer: Buffer,
   ): Promise<{
     contentDir: string;
-    manifest: { application?: ApplicationManifest };
+    manifest: { application: ApplicationManifest };
     packageJson: { version: string; engines?: { twenty?: string } } | null;
   }> {
     const tarballPath = join(tempDir, 'app.tar.gz');
@@ -186,6 +177,16 @@ export class ApplicationTarballService {
       );
     }
 
+    if (
+      !isDefined(manifest.application) ||
+      !isValidUuid(manifest.application.universalIdentifier)
+    ) {
+      throw new ApplicationRegistrationException(
+        'Tarball manifest application universalIdentifier must be a valid UUID',
+        ApplicationRegistrationExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const versionValidation =
       await this.applicationVersionValidationService.validateServerCompatibility(
         packageJson?.engines?.twenty,
@@ -200,7 +201,11 @@ export class ApplicationTarballService {
       );
     }
 
-    return { contentDir, manifest, packageJson };
+    return {
+      contentDir,
+      manifest: { application: manifest.application },
+      packageJson,
+    };
   }
 
   private assertTarballCanReplaceRegistration({

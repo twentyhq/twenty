@@ -1,3 +1,4 @@
+import { getRolePermissionFlagUniversalIdentifier } from 'twenty-shared/application';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -21,8 +22,7 @@ export const fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate =
   >): UniversalFlatRolePermissionFlag & {
     id: string;
   } => {
-    const { roleId, permissionFlagId, universalIdentifier } =
-      createRolePermissionFlagInput;
+    const { roleId, permissionFlagId } = createRolePermissionFlagInput;
     const now = new Date().toISOString();
 
     const { permissionFlagUniversalIdentifier, roleUniversalIdentifier } =
@@ -34,7 +34,11 @@ export const fromCreateRolePermissionFlagInputToFlatRolePermissionFlagToCreate =
 
     return {
       id: v4(),
-      universalIdentifier: universalIdentifier ?? v4(),
+      universalIdentifier: getRolePermissionFlagUniversalIdentifier({
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        roleUniversalIdentifier,
+        permissionFlagUniversalIdentifier,
+      }),
       applicationUniversalIdentifier: flatApplication.universalIdentifier,
       permissionFlagUniversalIdentifier,
       roleUniversalIdentifier,

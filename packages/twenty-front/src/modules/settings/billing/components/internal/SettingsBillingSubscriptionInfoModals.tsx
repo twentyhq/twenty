@@ -38,7 +38,7 @@ export const SettingsBillingSubscriptionInfoModals = ({
           subtitle={startSubscriptionSubtitle}
           onConfirmClick={onEndTrialPeriod}
           confirmButtonText={t`Confirm`}
-          confirmButtonAccent="blue"
+          confirmButtonColor="accent"
           loading={isEndTrialPeriodLoading}
         />
       )}
@@ -48,7 +48,7 @@ export const SettingsBillingSubscriptionInfoModals = ({
         subtitle={t`You have scheduled a credit pack change. Do you want to cancel it?`}
         onConfirmClick={cancelResourceCreditSwitch}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
     </>
   );

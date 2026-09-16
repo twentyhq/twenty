@@ -19,12 +19,9 @@ import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-op
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { UsageRecorderService } from 'src/engine/core-modules/usage/services/usage-recorder.service';
+import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowHasRunningSteps } from 'src/modules/workflow/common/utils/workflow-has-running-steps.util';
-import {
-  WorkflowStepExecutorException,
-  WorkflowStepExecutorExceptionCode,
-} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import {
@@ -33,6 +30,7 @@ import {
 } from 'src/modules/workflow/workflow-executor/types/workflow-executor-input';
 import { getStepRetryAttempt } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-attempt.util';
 import { getStepRetryDelayMs } from 'src/modules/workflow/workflow-executor/utils/get-step-retry-delay-ms.util';
+import { isUserFacingWorkflowExecutorError } from 'src/modules/workflow/workflow-executor/utils/is-user-facing-workflow-executor-error.util';
 import { stepHasRetryAttemptsLeft } from 'src/modules/workflow/workflow-executor/utils/step-has-retry-attempts-left.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
@@ -475,13 +473,9 @@ export class WorkflowExecutorWorkspaceService {
         },
       });
     } catch (error) {
-      const isUserError =
-        error instanceof WorkflowStepExecutorException &&
-        (error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_TYPE ||
-          error.code === WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT ||
-          error.code === WorkflowStepExecutorExceptionCode.STEP_NOT_FOUND);
+      const isUserError = isUserFacingWorkflowExecutorError(error);
 
-      if (!isUserError) {
+      if (!isUserError && shouldCaptureException(error)) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
         });

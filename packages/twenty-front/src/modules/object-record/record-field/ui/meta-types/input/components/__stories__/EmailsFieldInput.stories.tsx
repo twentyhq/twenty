@@ -4,8 +4,8 @@ import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { useEmailsField } from '@/object-record/record-field/ui/meta-types/hooks/useEmailsField';
-import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { EmailsFieldInput } from '@/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput';
+import { getFieldInputEventContextProviderWithJestMocks } from '@/object-record/record-field/ui/meta-types/input/components/__stories__/utils/getFieldInputEventContextProviderWithJestMocks';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
 import { type FieldEmailsValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { RECORD_TABLE_CELL_INPUT_ID_PREFIX } from '@/object-record/record-table/constants/RecordTableCellInputIdPrefix';
@@ -13,7 +13,7 @@ import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFi
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const updateRecord = fn();
 
@@ -100,7 +100,7 @@ const EmailInputWithContext = ({
 const meta: Meta<typeof EmailInputWithContext> = {
   title: 'UI/Input/EmailsFieldInput',
   component: EmailInputWithContext,
-  decorators: [SnackBarDecorator],
+  decorators: [ToastDecorator],
 };
 
 export default meta;

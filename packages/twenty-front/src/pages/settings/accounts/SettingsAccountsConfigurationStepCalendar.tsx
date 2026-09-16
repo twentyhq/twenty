@@ -46,14 +46,13 @@ export const SettingsAccountsConfigurationStepCalendar = ({
       ]}
       actionButton={
         <Button
-          Icon={IconDeviceFloppy}
-          title={t`Finish Setup`}
-          accent="blue"
-          size="small"
-          variant="primary"
+          startIcon={<IconDeviceFloppy />}
+          size="sm"
           onClick={onAddAccount}
           disabled={isSubmitting}
-        />
+          variant="solid"
+          color="accent"
+        >{t`Finish Setup`}</Button>
       }
     >
       <SettingsPageContainer>

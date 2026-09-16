@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -51,28 +53,26 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
   if (isCancellationScheduled) {
     return (
       <Button
-        Icon={IconCreditCard}
-        title={t`Manage billing`}
-        variant="primary"
-        accent="blue"
-        size="small"
+        startIcon={<IconCreditCard />}
+        size="sm"
         onClick={onManageBilling}
         disabled={isManageBillingDisabled}
-      />
+        variant="solid"
+        color="accent"
+      >{t`Manage billing`}</Button>
     );
   }
 
   if (shouldUpdatePayment) {
     return (
       <Button
-        Icon={IconArrowUp}
-        title={t`Update payment`}
-        variant="primary"
-        accent="blue"
-        size="small"
+        startIcon={<IconArrowUp />}
+        size="sm"
         onClick={onUpdatePayment}
         disabled={isUpdatePaymentDisabled}
-      />
+        variant="solid"
+        color="accent"
+      >{t`Update payment`}</Button>
     );
   }
 
@@ -80,44 +80,40 @@ export const SettingsBillingSubscriptionInfoCardHeaderActions = ({
     <>
       {canCancelIntervalSwitch && (
         <Button
-          Icon={IconCircleX}
-          title={t`Cancel interval switching`}
-          variant="secondary"
-          size="small"
+          startIcon={<IconCircleX />}
+          size="sm"
           onClick={onCancelIntervalSwitch}
           disabled={isSubscriptionActionDisabled}
-        />
+          variant="outline"
+        >{t`Cancel interval switching`}</Button>
       )}
       {canComparePlans && (
-        <Button
-          Icon={IconColorSwatch}
-          title={t`Compare plans`}
-          variant={isComparePlansActionPrimary ? 'primary' : 'secondary'}
-          accent={isComparePlansActionPrimary ? 'blue' : 'default'}
-          size="small"
+        <NavigationButton
+          startIcon={<IconColorSwatch />}
+          size="sm"
           to={getSettingsPath(SettingsPath.BillingPlans)}
-        />
+          variant={isComparePlansActionPrimary ? 'solid' : 'outline'}
+          color={isComparePlansActionPrimary ? 'accent' : 'neutral'}
+        >{t`Compare plans`}</NavigationButton>
       )}
       {canStartSubscription && (
         <Button
-          Icon={IconArrowUp}
-          title={t`Subscribe Now`}
-          variant="primary"
-          accent="blue"
-          size="small"
+          startIcon={<IconArrowUp />}
+          size="sm"
           onClick={onEndTrialPeriod}
           disabled={isEndTrialPeriodDisabled}
-        />
+          variant="solid"
+          color="accent"
+        >{t`Subscribe Now`}</Button>
       )}
       {canCancelPlanSwitch && (
         <Button
-          Icon={IconCircleX}
-          title={t`Cancel plan switching`}
-          variant="secondary"
-          size="small"
+          startIcon={<IconCircleX />}
+          size="sm"
           onClick={onCancelPlanSwitch}
           disabled={isSubscriptionActionDisabled}
-        />
+          variant="outline"
+        >{t`Cancel plan switching`}</Button>
       )}
     </>
   );

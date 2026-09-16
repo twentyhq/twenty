@@ -5,7 +5,13 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { exportApplication } from 'test/integration/metadata/suites/application/utils/export-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
 import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata.util';
+import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
+import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
+import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
+import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { createOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/create-one-view-filter.util';
 import { destroyOneViewFilter } from 'test/integration/metadata/suites/view-filter/utils/destroy-one-view-filter.util';
 import { createOneView } from 'test/integration/metadata/suites/view/utils/create-one-view.util';
@@ -34,6 +40,10 @@ import {
   TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   type ViewManifest,
 } from 'twenty-shared/application';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metadata';
 import {
   AggregateOperations,
@@ -42,13 +52,15 @@ import {
   PageLayoutTabLayoutMode,
   RelationOnDeleteAction,
   RelationType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
   ViewSortDirection,
   ViewType,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { version as getUuidVersion } from 'uuid';
+import { version as getUuidVersion, v4 } from 'uuid';
 
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
@@ -92,6 +104,18 @@ const COMPANY_RECORD_PAGE_TAGLINE_TAB_ID =
   '7e3d1c2b-0027-4a7b-8c9d-0e1f2a3b4c5d';
 const TICKET_RECORD_PAGE_HOME_DOCS_WIDGET_ID =
   '7e3d1c2b-0028-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_TICKET_OBJECT_PERMISSION_ID =
+  '7e3d1c2b-0032-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION_ID =
+  '7e3d1c2b-0033-4a7b-8c9d-0e1f2a3b4c5d';
+const EXPORT_TICKETS_PERMISSION_FLAG_ID =
+  '7e3d1c2b-0034-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_TICKET_PREDICATE_GROUP_ID =
+  '7e3d1c2b-0035-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID =
+  '7e3d1c2b-0036-4a7b-8c9d-0e1f2a3b4c5d';
+const TEST_ROLE_TICKET_TITLE_PREDICATE_ID =
+  '7e3d1c2b-0037-4a7b-8c9d-0e1f2a3b4c5d';
 
 const ENGINE_DERIVED_FIELD_NAMES = [
   'id',
@@ -132,6 +156,21 @@ const buildIdentifierNames = (): Map<string, string> => {
   const names = new Map<string, string>([
     [TEST_APP_ID, 'TEST_APP'],
     [TEST_ROLE_ID, 'TEST_ROLE'],
+    [
+      TEST_ROLE_TICKET_OBJECT_PERMISSION_ID,
+      'TEST_ROLE_TICKET_OBJECT_PERMISSION',
+    ],
+    [
+      TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION_ID,
+      'TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION',
+    ],
+    [EXPORT_TICKETS_PERMISSION_FLAG_ID, 'EXPORT_TICKETS_PERMISSION_FLAG'],
+    [TEST_ROLE_TICKET_PREDICATE_GROUP_ID, 'TEST_ROLE_TICKET_PREDICATE_GROUP'],
+    [
+      TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID,
+      'TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP',
+    ],
+    [TEST_ROLE_TICKET_TITLE_PREDICATE_ID, 'TEST_ROLE_TICKET_TITLE_PREDICATE'],
     [TICKET_OBJECT_ID, 'TICKET_OBJECT'],
     [PROJECT_OBJECT_ID, 'PROJECT_OBJECT'],
     [TICKET_TITLE_FIELD_ID, 'TICKET_TITLE_FIELD'],
@@ -733,6 +772,72 @@ const manifest = buildBaseManifest({
   roleId: TEST_ROLE_ID,
   overrides: {
     translations: FIXTURE_TRANSLATIONS,
+    permissionFlags: [
+      {
+        universalIdentifier: EXPORT_TICKETS_PERMISSION_FLAG_ID,
+        key: 'EXPORT_TICKETS',
+        label: 'Export tickets',
+        permissionType: 'settings',
+      },
+    ],
+    roles: [
+      {
+        universalIdentifier: TEST_ROLE_ID,
+        label: 'Test Role',
+        description: 'A test role',
+        canReadAllObjectRecords: true,
+        canBeAssignedToApiKeys: false,
+        objectPermissions: [
+          {
+            universalIdentifier: TEST_ROLE_TICKET_OBJECT_PERMISSION_ID,
+            objectUniversalIdentifier: TICKET_OBJECT_ID,
+            canReadObjectRecords: true,
+            canUpdateObjectRecords: false,
+          },
+        ],
+        fieldPermissions: [
+          {
+            universalIdentifier: TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION_ID,
+            objectUniversalIdentifier: TICKET_OBJECT_ID,
+            fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+            canUpdateFieldValue: false,
+          },
+        ],
+        rowLevelPermissionPredicateGroups: [
+          {
+            universalIdentifier: TEST_ROLE_TICKET_PREDICATE_GROUP_ID,
+            objectUniversalIdentifier: TICKET_OBJECT_ID,
+            logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
+            position: 0,
+          },
+          {
+            universalIdentifier: TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID,
+            objectUniversalIdentifier: TICKET_OBJECT_ID,
+            logicalOperator:
+              RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            parentPredicateGroupUniversalIdentifier:
+              TEST_ROLE_TICKET_PREDICATE_GROUP_ID,
+            position: 1,
+          },
+        ],
+        rowLevelPermissionPredicates: [
+          {
+            universalIdentifier: TEST_ROLE_TICKET_TITLE_PREDICATE_ID,
+            objectUniversalIdentifier: TICKET_OBJECT_ID,
+            fieldUniversalIdentifier: TICKET_TITLE_FIELD_ID,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'bug',
+            predicateGroupUniversalIdentifier:
+              TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID,
+            position: 0,
+          },
+        ],
+        permissionFlagUniversalIdentifiers: [
+          EXPORT_TICKETS_PERMISSION_FLAG_ID,
+          SystemPermissionFlag.WORKSPACE,
+        ],
+      },
+    ],
     objects: [ticketObject, projectObject],
     fields: [companyTaglineField],
     indexes: [
@@ -885,7 +990,25 @@ describe('Application export - data model', () => {
       ApplicationExportCoverageStatus.EXPORTED,
     );
     expect(statusOf(TEST_ROLE_ID)).toBe(
-      ApplicationExportCoverageStatus.UNSUPPORTED,
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TEST_ROLE_TICKET_OBJECT_PERMISSION_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TEST_ROLE_TICKET_TITLE_FIELD_PERMISSION_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(EXPORT_TICKETS_PERMISSION_FLAG_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TEST_ROLE_TICKET_PREDICATE_GROUP_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TEST_ROLE_TICKET_CHILD_PREDICATE_GROUP_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
+    );
+    expect(statusOf(TEST_ROLE_TICKET_TITLE_PREDICATE_ID)).toBe(
+      ApplicationExportCoverageStatus.EXPORTED,
     );
     expect(statusOf(TICKET_INDEX_VIEW_ID)).toBe(
       ApplicationExportCoverageStatus.ENGINE_DERIVED,
@@ -1066,6 +1189,218 @@ describe('Application export - data model', () => {
       }
     } finally {
       await destroyOneView({ expectToFail: false, viewId: createdViewId });
+    }
+  }, 60000);
+
+  it('should round-trip a role with object, field and flag permissions created through the metadata API in the workspace Custom application without any action', async () => {
+    const { objects } = await findManyObjectMetadata({
+      expectToFail: false,
+      input: { filter: {}, paging: { first: 1000 } },
+      gqlFields: `
+        id
+        nameSingular
+        fieldsList {
+          id
+          name
+        }
+      `,
+    });
+    const personObject = objects.find(
+      ({ nameSingular }) => nameSingular === 'person',
+    );
+
+    jestExpectToBeDefined(personObject);
+
+    const personJobTitleField = personObject.fieldsList?.find(
+      ({ name }) => name === 'jobTitle',
+    );
+
+    jestExpectToBeDefined(personJobTitleField);
+
+    const { data: applicationsData } = await findManyApplications({
+      expectToFail: false,
+    });
+    const customApplication = applicationsData.findManyApplications.find(
+      ({ name }) => name === WORKSPACE_CUSTOM_APPLICATION_NAME,
+    );
+
+    jestExpectToBeDefined(customApplication);
+
+    const { data: createdRoleData } = await createOneRole({
+      expectToFail: false,
+      input: {
+        label: 'Export Custom Application Recruiter',
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+        canBeAssignedToUsers: true,
+      },
+    });
+    const createdRoleId = createdRoleData.createOneRole.id;
+
+    try {
+      await upsertObjectPermissions({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          objectPermissions: [
+            {
+              objectMetadataId: personObject.id,
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: false,
+            },
+          ],
+        },
+      });
+      await upsertFieldPermissions({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          fieldPermissions: [
+            {
+              objectMetadataId: personObject.id,
+              fieldMetadataId: personJobTitleField.id,
+              canUpdateFieldValue: false,
+            },
+          ],
+        },
+      });
+      await upsertPermissionFlags({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          permissionFlagKeys: [PermissionFlagType.EXPORT_CSV],
+        },
+      });
+
+      const predicateGroupId = v4();
+      const keptPredicateId = v4();
+      const removedPredicateId = v4();
+      const predicateGroupInput = {
+        id: predicateGroupId,
+        objectMetadataId: personObject.id,
+        logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.AND,
+      };
+      const keptPredicateInput = {
+        id: keptPredicateId,
+        fieldMetadataId: personJobTitleField.id,
+        operand: RowLevelPermissionPredicateOperand.CONTAINS,
+        value: 'Engineer',
+        rowLevelPermissionPredicateGroupId: predicateGroupId,
+        positionInRowLevelPermissionPredicateGroup: 0,
+      };
+
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          objectMetadataId: personObject.id,
+          predicateGroups: [predicateGroupInput],
+          predicates: [
+            keptPredicateInput,
+            {
+              id: removedPredicateId,
+              fieldMetadataId: personJobTitleField.id,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value: 'Manager',
+              rowLevelPermissionPredicateGroupId: predicateGroupId,
+              positionInRowLevelPermissionPredicateGroup: 1,
+            },
+          ],
+        },
+      });
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          objectMetadataId: personObject.id,
+          predicateGroups: [predicateGroupInput],
+          predicates: [keptPredicateInput],
+        },
+      });
+
+      const { data } = await exportApplication({
+        universalIdentifier: customApplication.universalIdentifier,
+        expectToFail: false,
+      });
+
+      expect(data.exportApplication.manifest.roles).toContainEqual(
+        expect.objectContaining({
+          label: 'Export Custom Application Recruiter',
+          objectPermissions: [
+            expect.objectContaining({
+              objectUniversalIdentifier:
+                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+              canReadObjectRecords: true,
+              canUpdateObjectRecords: false,
+            }),
+          ],
+          fieldPermissions: [
+            expect.objectContaining({
+              objectUniversalIdentifier:
+                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+              canUpdateFieldValue: false,
+            }),
+          ],
+          rowLevelPermissionPredicateGroups: [
+            expect.objectContaining({
+              universalIdentifier: predicateGroupId,
+              objectUniversalIdentifier:
+                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+              logicalOperator:
+                RowLevelPermissionPredicateGroupLogicalOperator.AND,
+            }),
+          ],
+          rowLevelPermissionPredicates: [
+            expect.objectContaining({
+              universalIdentifier: keptPredicateId,
+              objectUniversalIdentifier:
+                STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person,
+              operand: RowLevelPermissionPredicateOperand.CONTAINS,
+              value: 'Engineer',
+              predicateGroupUniversalIdentifier: predicateGroupId,
+              position: 0,
+            }),
+          ],
+          permissionFlagUniversalIdentifiers: [SystemPermissionFlag.EXPORT_CSV],
+        }),
+      );
+      expect(
+        data.exportApplication.coverage.find(
+          ({ universalIdentifier }) =>
+            universalIdentifier === removedPredicateId,
+        ),
+      ).toMatchObject({
+        metadataName: 'rowLevelPermissionPredicate',
+        status: ApplicationExportCoverageStatus.EXCLUDED,
+      });
+
+      const dryRun = await syncApplication({
+        manifest: data.exportApplication.manifest,
+        dryRun: true,
+        inferDeletionFromMissingEntities: false,
+        expectToFail: false,
+      });
+
+      expect(dryRun.errors).toBeUndefined();
+      expect(dryRun.data.syncApplication.actions).toEqual([]);
+    } finally {
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: createdRoleId,
+          objectMetadataId: personObject.id,
+          predicateGroups: [],
+          predicates: [],
+        },
+      });
+      await deleteOneRole({
+        expectToFail: false,
+        input: { idToDelete: createdRoleId },
+      });
     }
   }, 60000);
 });

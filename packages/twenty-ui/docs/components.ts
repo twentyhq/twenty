@@ -1,9 +1,48 @@
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
+import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
+import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
+import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
+import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'IconButton',
+    source: 'components/IconButton/IconButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/icon-button',
+    propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'MainButton',
+    source: 'components/MainButton/MainButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/main-button',
+    propDescriptions: BUTTON_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'LightButton',
+    source: 'components/LightButton/LightButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/light-button',
+    propDescriptions: LIGHT_BUTTON_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Button',
+    source: 'primitives/input/Button/Button.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/button',
+    propDescriptions: BUTTON_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'ButtonGroup',
+    source: 'primitives/input/ButtonGroup/ButtonGroup.tsx',
+    entryPoint: 'twenty-ui/primitives/input',
+    slug: 'input/button-group',
+    propDescriptions: BUTTON_GROUP_PROP_DESCRIPTIONS,
+  },
   {
     name: 'Field',
     source: 'primitives/input/Field/Field.tsx',

@@ -123,7 +123,7 @@ const MenuStory = ({ content = 'basic', ...props }: MenuStoryProps) => {
         id={triggerId}
         aria-label="Options"
         style={{ alignSelf: 'flex-start' }}
-        render={<Button title="Options" />}
+        render={<Button>Options</Button>}
       />
       <Menu.Popup>{MENU_STORY_CONTENT[content]}</Menu.Popup>
     </Menu.Root>
@@ -270,7 +270,7 @@ const MenuCatalogCell = ({ content = 'basic' }: MenuStoryProps) => {
         <Menu.Trigger
           id={triggerId}
           aria-label={`${content} options`}
-          render={<Button title="Options" />}
+          render={<Button>Options</Button>}
         />
         <Menu.Popup container={cellElement} side="bottom" align="start">
           {contentByType[content]}

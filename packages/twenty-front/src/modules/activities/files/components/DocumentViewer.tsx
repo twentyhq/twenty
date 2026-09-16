@@ -294,12 +294,11 @@ export const DocumentViewer = ({
             </Trans>
           </StyledLightMessage>
           <Button
-            Icon={IconDownload}
-            title={t`Download`}
+            startIcon={<IconDownload />}
             onClick={() => downloadFile(documentUrl, documentName)}
-            variant="secondary"
-            size="small"
-          />
+            size="sm"
+            variant="outline"
+          >{t`Download`}</Button>
         </StyledUnavailablePreviewContainer>
       </StyledDocumentViewerContainer>
     );

@@ -1,0 +1,25 @@
+.label {
+  text-align: center;
+  width: var(--t-spacing-6);
+  font-family: var(--t-font-family);
+  font-size: var(--t-font-size-md);
+  color: var(--t-font-color-primary);
+}
+.weekday {
+  color: var(--t-font-color-tertiary);
+  font-size: var(--t-font-size-xxs);
+  font-weight: var(--t-font-weight-semi-bold);
+}
+.day {
+  font-weight: var(--t-font-weight-medium);
+}
+.indicator {
+  background: var(--t-tag-background-gray);
+  border-radius: var(--t-border-radius-xs);
+  height: 100%;
+  width: var(--t-spacing-1);
+  flex-shrink: 0;
+}
+.indicator[data-active] {
+  background: var(--t-tag-background-red);
+}

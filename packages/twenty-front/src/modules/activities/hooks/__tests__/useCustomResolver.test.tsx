@@ -11,10 +11,6 @@ jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: jest.fn(() => ({})),
 }));
 
-jest.mock('@/apollo/hooks/useSnackBarOnQueryError', () => ({
-  useSnackBarOnQueryError: jest.fn(),
-}));
-
 const useQueryMock = jest.requireMock('@apollo/client/react').useQuery;
 
 describe('useCustomResolver', () => {
@@ -33,13 +29,16 @@ describe('useCustomResolver', () => {
 
   it('queries the timeline resolver by object name and record id for any object', () => {
     renderHook(() =>
-      useCustomResolver(
-        getTimelineThreadsFromObjectRecord,
-        'getTimelineThreadsFromObjectRecord',
-        'timelineThreads',
-        { id: 'record-id', targetObjectNameSingular: 'peopleList' },
-        10,
-      ),
+      useCustomResolver({
+        query: getTimelineThreadsFromObjectRecord,
+        queryName: 'getTimelineThreadsFromObjectRecord',
+        objectName: 'timelineThreads',
+        activityTargetableObject: {
+          id: 'record-id',
+          targetObjectNameSingular: 'peopleList',
+        },
+        pageSize: 10,
+      }),
     );
 
     expect(useQueryMock).toHaveBeenCalledWith(

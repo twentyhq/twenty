@@ -207,11 +207,10 @@ export const SettingsObjectRelationsTable = ({
           dropdownOffset={{ x: 0, y: 8 }}
           clickableComponent={
             <Button
-              Icon={IconFilter}
-              size="medium"
-              variant="secondary"
-              accent="default"
-              ariaLabel={t`Filter`}
+              startIcon={<IconFilter />}
+              size="md"
+              aria-label={t`Filter`}
+              variant="outline"
             />
           }
           dropdownComponents={

@@ -31,11 +31,6 @@ msgstr "연간 청구됨"
 msgid " must be one of {ratingValues} values"
 msgstr " {ratingValues} 값 중 하나여야 합니다."
 
-#. js-lingui-id: b2GdxK
-#: src/modules/ai/components/AiModelTierSlider.tsx
-msgid " Not measured at this effort yet, so this is the base model's reading."
-msgstr "아직 이 노력 수준에서는 측정되지 않았으므로, 이것은 기본 모델의 수치입니다."
-
 #. js-lingui-id: nA/hWD
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid " per {intervalLabel}"
@@ -340,37 +335,11 @@ msgstr "{0} 선택됨"
 msgid "{0} shown"
 msgstr "{0}개 표시됨"
 
-#. js-lingui-id: k+VWlm
-#. placeholder {0}: formatMetricDelta(costDelta)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0} the cost of Balanced."
-msgstr "균형 대비 비용 {0}"
-
-#. js-lingui-id: UWEjMJ
-#. placeholder {0}: formatMetricDelta(intelligenceDelta)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0} the score of Balanced"
-msgstr "균형 대비 점수 {0}"
-
 #. js-lingui-id: 0PXtku
 #. placeholder {0}: formatNumber(tier.model.outputTokensPerSecond, { decimals: 0 })
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "{0} tokens/s"
 msgstr "{0} 토큰/초"
-
-#. js-lingui-id: jSMnoW
-#. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
-#. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0} tokens/s, {1} the speed of Balanced Mode."
-msgstr "{0} 토큰/초, 균형 모드 대비 속도 {1}"
-
-#. js-lingui-id: NLWHJB
-#. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
-#. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0} tokens/s, a {1} change in speed compared with Balanced Mode."
-msgstr "{0} 토큰/초, 균형 모드 대비 속도 {1} 변경"
 
 #. js-lingui-id: nZUq+6
 #. placeholder {0}: formatNumber(counts.globallyUnsubscribed)
@@ -414,30 +383,6 @@ msgstr "워크스페이스 구성원 {0}명"
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{0}: {1}"
 msgstr "{0}: {1}"
-
-#. js-lingui-id: EAdDH3
-#. placeholder {0}: formatNumber(costDelta)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0}% higher cost than Balanced."
-msgstr "균형 대비 비용 {0}% 증가"
-
-#. js-lingui-id: c8VH5D
-#. placeholder {0}: formatNumber(intelligenceDelta)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0}% higher score than Balanced"
-msgstr "균형 대비 점수 {0}% 증가"
-
-#. js-lingui-id: nRAomq
-#. placeholder {0}: formatNumber(Math.abs(costDelta))
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0}% lower cost than Balanced."
-msgstr "균형 대비 비용 {0}% 감소"
-
-#. js-lingui-id: wq2vL5
-#. placeholder {0}: formatNumber(Math.abs(intelligenceDelta))
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0}% lower score than Balanced"
-msgstr "균형 대비 점수 {0}% 감소"
 
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
@@ -586,6 +531,13 @@ msgstr "{hiddenFieldCount, plural, other {입력된 필드 #개를 더 사용할
 #: src/pages/settings/admin-panel/SettingsAdminQueueDetail.tsx
 msgid "{hours, plural, one {{hours} hour} other {{hours} hours}}"
 msgstr "{hours, plural, other {{hours}시간}}"
+
+#. js-lingui-id: m+qcrh
+#. placeholder {0}: formatNumber(installCount)
+#. placeholder {1}: formatNumber(installCount)
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+msgid "{installCount, plural, one {{0} install} other {{1} installs}}"
+msgstr ""
 
 #. js-lingui-id: Z4Vsx1
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
@@ -862,6 +814,11 @@ msgstr "#"
 msgid "% left"
 msgstr "% 남음"
 
+#. js-lingui-id: rhCsft
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+msgid "+{estimatedInstallCount} installs"
+msgstr ""
+
 #. js-lingui-id: n9nj+X
 #. placeholder {0}: aiChatThreadPendingDelete?.threadTitle ?? ''
 #: src/modules/ai/components/AiChatThreadDeleteConfirmationModal.tsx
@@ -1111,6 +1068,7 @@ msgstr "중단"
 
 #. js-lingui-id: uyJsf6
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/logic-functions/components/SettingsLogicFunctionNewForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillFormContent.tsx
@@ -1990,8 +1948,6 @@ msgstr "1년 후"
 
 #. js-lingui-id: fcYF58
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "agent"
 msgstr "에이전트"
 
@@ -2029,12 +1985,6 @@ msgstr ""
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
 msgid "Agent tokens"
 msgstr "에이전트 토큰"
-
-#. js-lingui-id: ftfADk
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "agents"
-msgstr "에이전트들"
 
 #. js-lingui-id: 8Uv5e6
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
@@ -2201,7 +2151,7 @@ msgid "AKIA..."
 msgstr "AKIA..."
 
 #. js-lingui-id: Zdun41
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 msgid "Alert"
 msgstr "경고"
 
@@ -2581,7 +2531,10 @@ msgid "An error occurred while uploading the picture."
 msgstr "사진을 업로드하는 중 오류가 발생했습니다."
 
 #. js-lingui-id: XyOToQ
+#: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
+#: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
 #: src/modules/command-menu-item/edit/hooks/useResetCommandMenuItemToDefault.ts
+#: src/modules/error-handler/utils/getToastOptionsFromError.tsx
 #: src/modules/logic-functions/hooks/usePersistLogicFunction.ts
 #: src/modules/logic-functions/hooks/usePersistLogicFunction.ts
 #: src/modules/logic-functions/hooks/usePersistLogicFunction.ts
@@ -2597,7 +2550,7 @@ msgstr "사진을 업로드하는 중 오류가 발생했습니다."
 #: src/modules/page-layout/hooks/useResetPageLayoutToDefault.ts
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
-#: src/modules/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/views/hooks/internal/usePerformViewApiUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityApiPersistOperation.ts
 #: src/utils/get-error-message-from-apollo-error.util.ts
@@ -2834,6 +2787,7 @@ msgstr "응용 프로그램"
 
 #. js-lingui-id: vdieHo
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Application details"
 msgstr "응용 프로그램 세부정보"
 
@@ -2871,12 +2825,10 @@ msgstr "애플리케이션 변수"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationTimelineActivityTypeDetail.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Applications"
@@ -2922,6 +2874,8 @@ msgstr "승인된 도메인"
 #: src/modules/settings/billing/constants/UsageLimitResourceTypeLabels.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+#: src/pages/settings/applications/SettingsApplicationDetails.tsx
+#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Apps"
 msgstr "앱"
 
@@ -3753,6 +3707,7 @@ msgid "Button"
 msgstr "버튼"
 
 #. js-lingui-id: 8ds4Hj
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/pages/settings/applications/components/SettingsAvailableApplicationCard.tsx
 msgid "by {author}"
 msgstr "제작: {author}"
@@ -3986,7 +3941,8 @@ msgstr "스캔이 불가능합니까?"
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
 msgid "Cancel"
@@ -4081,12 +4037,6 @@ msgstr "취소 예정일"
 msgid "Cannot delete the only view"
 msgstr "유일한 보기는 삭제할 수 없습니다"
 
-#. js-lingui-id: 8fbdLj
-#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
-#: src/modules/ui/feedback/snack-bar-manager/utils/sanitizeMessageToRenderInSnackbar.ts
-msgid "Cannot display message"
-msgstr ""
-
 #. js-lingui-id: W3MumH
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -4134,11 +4084,6 @@ msgstr "카탈로니아어"
 #: src/pages/settings/applications/components/SettingsClaimApplicationSection.tsx
 msgid "Catalog sync started. Try your lookup again in a moment."
 msgstr "카탈로그 동기화를 시작했습니다. 잠시 후 다시 조회해 보세요."
-
-#. js-lingui-id: K7tIrx
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
-msgid "Category"
-msgstr "카테고리"
 
 #. js-lingui-id: RpYfjZ
 #: src/modules/activities/emails/components/EmailComposerFields.tsx
@@ -4606,7 +4551,9 @@ msgstr "클립보드는 보안 연결(HTTPS)이 필요합니다. 복사 기능�
 
 #. js-lingui-id: yz7wBu
 #: src/modules/ai/components/AiChatCloseButton.tsx
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 msgid "Close"
 msgstr "닫기"
 
@@ -4739,11 +4686,6 @@ msgstr "일치하지 않는 열:"
 msgid "Columns shown in this view, in display order"
 msgstr "이 보기에서 표시되는 열(표시 순서대로)"
 
-#. js-lingui-id: pOJNDA
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "command"
-msgstr "명령"
-
 #. js-lingui-id: cj9UFG
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Command copied to clipboard"
@@ -4782,11 +4724,6 @@ msgstr "명령 메뉴 항목"
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 msgid "Command menu items"
 msgstr "명령 메뉴 항목"
-
-#. js-lingui-id: 9HKBNN
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "commands"
-msgstr "명령"
 
 #. js-lingui-id: 45MZFs
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -5033,6 +4970,11 @@ msgstr "도메인 제공업체와 함께 이 DNS 기록 구성하기"
 msgid "Configure this widget to display fields"
 msgstr "필드를 표시하도록 이 위젯을 구성하세요"
 
+#. js-lingui-id: no/yG9
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
+msgid "Configure what emails should get synced"
+msgstr ""
+
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -5245,7 +5187,6 @@ msgid "Contains"
 msgstr "포함"
 
 #. js-lingui-id: 4b3oEV
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "Content"
@@ -5517,6 +5458,11 @@ msgstr "모서리 반경"
 msgid "Cost"
 msgstr "비용"
 
+#. js-lingui-id: R0dp36
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Cost index"
+msgstr "비용 지수"
+
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 msgid "Cost per 1M tokens"
@@ -5726,6 +5672,11 @@ msgstr "생성"
 #: src/modules/views/view-picker/components/ViewPickerEditButton.tsx
 msgid "Create"
 msgstr "생성"
+
+#. js-lingui-id: MKhSSw
+#: src/modules/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems.ts
+msgid "Create {objectLabelSingular}"
+msgstr ""
 
 #. js-lingui-id: QMLXwt
 #. placeholder {0}: objectMetadataItem.labelSingular
@@ -5947,11 +5898,6 @@ msgstr ""
 msgid "Created {objectLabel}"
 msgstr "{objectLabel} 생성됨"
 
-#. js-lingui-id: NCIYDF
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
-msgid "Created by"
-msgstr "작성자"
-
 #. js-lingui-id: t3sqJR
 #. placeholder {0}: beautifyExactDateTime(signingKey.createdAt)
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
@@ -6156,7 +6102,6 @@ msgstr "통화 코드"
 
 #. js-lingui-id: Hp1l6f
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 #: src/modules/settings/billing/components/internal/SubscriptionInfoRowContainer.tsx
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
@@ -6695,7 +6640,7 @@ msgid "Decide which Sub-address fields you want to display"
 msgstr "표시할 하위 주소 필드를 선택하세요"
 
 #. js-lingui-id: ovBPCi
-#: src/modules/ai/components/AiModelTierSlider.tsx
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -7209,11 +7154,6 @@ msgstr "개발자"
 msgid "Developers"
 msgstr "개발자"
 
-#. js-lingui-id: irW7LP
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
-msgid "Developers links"
-msgstr "개발자 링크"
-
 #. js-lingui-id: b9bH06
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Development instance"
@@ -7439,10 +7379,10 @@ msgstr "연락처를 자동 생성하지 않음."
 msgid "Don't create contacts from/to Gmail, Outlook emails"
 msgstr "Gmail, Outlook 이메일에서 연락처를 생성하지 마십시오."
 
-#. js-lingui-id: yjhBSV
+#. js-lingui-id: hHW6h5
 #: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
-msgid "Don't sync emails from team@ support@ noreply@..."
-msgstr "team@, support@, noreply@ 이메일을 동기화하지 마십시오."
+msgid "Don't import emails from team@ support@ noreply@..."
+msgstr ""
 
 #. js-lingui-id: DPfwMq
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupRenameInput.tsx
@@ -7849,6 +7789,11 @@ msgstr ""
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Editor"
 msgstr "편집기"
+
+#. js-lingui-id: QyUT/d
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Effort"
+msgstr "추론 노력"
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -8477,7 +8422,7 @@ msgstr "소프트 삭제된 기록 지우기"
 #. js-lingui-id: SlfejT
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetErrorDisplay.tsx
 #: src/modules/settings/admin-panel/chats/components/SettingsAdminChatsTableRow.tsx
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowRunStepLogsEmailDetail.tsx
@@ -9156,6 +9101,7 @@ msgstr "관련 레코드를 이 이벤트에 연결하지 못했습니다"
 
 #. js-lingui-id: LGNhPn
 #: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
+#: src/modules/settings/billing/components/SettingsBillingPageLayout.tsx
 msgid "Failed to load billing plans"
 msgstr "청구 플랜을 불러오지 못했습니다"
 
@@ -9171,7 +9117,7 @@ msgid "Failed to load front component: {0}"
 msgstr "프런트 컴포넌트 로드에 실패했습니다: {0}"
 
 #. js-lingui-id: BTjpvA
-#: src/modules/front-components/components/FrontComponentLoadErrorSnackBarEffect.tsx
+#: src/modules/front-components/components/FrontComponentLoadErrorToastEffect.tsx
 msgid "Failed to load front component: {errorMessage}"
 msgstr "프런트 컴포넌트 로드에 실패했습니다: {errorMessage}"
 
@@ -9192,7 +9138,7 @@ msgid "Failed to load the application."
 msgstr "애플리케이션을 로드하지 못했습니다."
 
 #. js-lingui-id: nKkohy
-#: src/modules/settings/developers/hooks/useWebhookForm.ts
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "Failed to load webhook"
 msgstr "웹훅을 불러오지 못했습니다"
 
@@ -9461,8 +9407,6 @@ msgstr "기능 활성 유지 기한"
 
 #. js-lingui-id: 2lOBKV
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "field"
 msgstr "필드"
 
@@ -9526,12 +9470,6 @@ msgstr "필드 위젯"
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
 msgid "Field-level permissions"
 msgstr "필드 수준 권한"
-
-#. js-lingui-id: RnX5oc
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "fields"
-msgstr "필드"
 
 #. js-lingui-id: vF68cg
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
@@ -9980,7 +9918,6 @@ msgstr "{startDay}에서 {endDay}까지"
 
 #. js-lingui-id: zaEHSY
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "front component"
 msgstr "프런트 컴포넌트"
 
@@ -9991,11 +9928,6 @@ msgstr "프런트 컴포넌트"
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
 msgid "Front component"
 msgstr "프런트 컴포넌트"
-
-#. js-lingui-id: +M+QLN
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
-msgid "front components"
-msgstr "프론트 컴포넌트"
 
 #. js-lingui-id: IvIKDS
 #: src/pages/settings/applications/SettingsApplicationFrontComponentDetail.tsx
@@ -10184,7 +10116,8 @@ msgid "Go back"
 msgstr "뒤로 가기"
 
 #. js-lingui-id: y0SPQU
-#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
 msgid "Go to billing"
 msgstr "청구로 이동"
 
@@ -11096,7 +11029,7 @@ msgid "Inferred version"
 msgstr "추론된 버전"
 
 #. js-lingui-id: CE+M2e
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 msgid "Info"
 msgstr "정보"
@@ -11180,6 +11113,7 @@ msgid "Insert your billing details to get a free trial and more AI credits"
 msgstr "청구 정보를 입력하면 무료 체험과 더 많은 AI 크레딧을 받을 수 있습니다"
 
 #. js-lingui-id: TKQ7K+
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
@@ -11188,7 +11122,6 @@ msgstr "청구 정보를 입력하면 무료 체험과 더 많은 AI 크레딧�
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 #: src/pages/onboarding/InstallAppsContent.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Install"
 msgstr "설치"
 
@@ -11237,9 +11170,9 @@ msgid "Installation"
 msgstr "설치"
 
 #. js-lingui-id: eQkgKV
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Installed"
 msgstr "설치됨"
 
@@ -11249,8 +11182,8 @@ msgid "Installed apps"
 msgstr "설치된 앱"
 
 #. js-lingui-id: wJJ+Wy
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 msgid "Installing..."
 msgstr "설치 중..."
 
@@ -11287,15 +11220,10 @@ msgid "Integrations - Settings"
 msgstr "통합 - 설정"
 
 #. js-lingui-id: Gzw2pq
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Intelligence"
 msgstr "지능"
-
-#. js-lingui-id: EYz4Ok
-#. placeholder {0}: formatNumber(model?.intelligenceIndex ?? 0)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "Intelligence score: {0}"
-msgstr "지능 점수: {0}"
 
 #. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -12005,7 +11933,6 @@ msgstr "마지막 업데이트"
 
 #. js-lingui-id: wL3cK8
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Latest"
 msgstr "최신"
 
@@ -12308,6 +12235,7 @@ msgstr "링크 콘텐츠"
 
 #. js-lingui-id: pQjjYo
 #: src/modules/command-menu-item/display/hooks/useCommandMenuAppActions.ts
+#: src/modules/marketplace/hooks/useCopyMarketplaceAppLink.ts
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownDefaultView.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
@@ -12559,20 +12487,12 @@ msgstr "로직"
 
 #. js-lingui-id: sTlKkx
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "logic function"
 msgstr "로직 함수"
 
 #. js-lingui-id: U/kVJF
 #: src/modules/settings/billing/constants/UsageLimitSpenderTypeLabels.ts
 msgid "Logic function"
-msgstr "로직 함수"
-
-#. js-lingui-id: qqnB9E
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "logic functions"
 msgstr "로직 함수"
 
 #. js-lingui-id: QTVVDd
@@ -13121,6 +13041,7 @@ msgid "Mode"
 msgstr "모드"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 msgid "Model"
 msgstr "모델"
@@ -13151,6 +13072,11 @@ msgstr "모델 ID"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Model ID is required"
 msgstr "모델 ID가 필요합니다"
+
+#. js-lingui-id: E6zx5y
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Model information"
+msgstr "모델 정보"
 
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -13797,6 +13723,11 @@ msgstr "다음 청구일 {totalRenewDate}. 기간 사이에 멤버나 크레딧�
 #: src/modules/object-record/record-calendar/components/RecordCalendarTopBar.tsx
 msgid "Next period"
 msgstr "다음 기간"
+
+#. js-lingui-id: tgnDjk
+#: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
+msgid "Next screenshot"
+msgstr ""
 
 #. js-lingui-id: AxNmtI
 #: src/modules/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep.tsx
@@ -14709,6 +14640,9 @@ msgid "Not all columns matched"
 msgstr "모든 열이 일치하지 않음"
 
 #. js-lingui-id: OJx3wK
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Not available"
@@ -14751,6 +14685,11 @@ msgstr "포함되지 않음"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not listed"
 msgstr "목록에 없음"
+
+#. js-lingui-id: zLXWou
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Not measured at this effort yet, so these are the base model's readings."
+msgstr "이 추론 노력에서는 아직 측정되지 않았으므로, 기본 모델의 측정값입니다."
 
 #. js-lingui-id: AjdrYY
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
@@ -14827,6 +14766,12 @@ msgstr "이 애플리케이션에 대해 구성할 항목이 없습니다"
 #: src/modules/page-layout/widgets/components/StandaloneWidgetPlaceholder.tsx
 msgid "Nothing to see"
 msgstr "표시할 내용이 없습니다"
+
+#. js-lingui-id: iDNBZe
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
+#: src/modules/ui/feedback/toast/components/AppToaster.tsx
+msgid "Notifications"
+msgstr ""
 
 #. js-lingui-id: YwzE9K
 #: src/utils/date-utils.ts
@@ -14912,8 +14857,6 @@ msgstr "이 애플리케이션 연결에 대한 OAuth 자격 증명 메타데이
 
 #. js-lingui-id: pNEViR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "object"
 msgstr "개체"
 
@@ -14988,12 +14931,6 @@ msgstr "고유 필드 개체"
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel.tsx
 msgid "Object-Level"
 msgstr "객체 레벨"
-
-#. js-lingui-id: Oq4fl6
-#: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "objects"
-msgstr "개체"
 
 #. js-lingui-id: B3toQF
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemSearchResults.tsx
@@ -15369,6 +15306,7 @@ msgstr "Webhook 페이로드에 대한 HMAC 서명을 계산하는 데 사용되
 
 #. js-lingui-id: 0zpgxV
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdown.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsMessageChannelDetails.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableFilterDropdown.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -15787,7 +15725,7 @@ msgid "Payment method added. Retrying your payment..."
 msgstr "결제 수단이 추가되었습니다. 결제를 다시 시도하는 중..."
 
 #. js-lingui-id: OvqmUS
-#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
 msgid "Payment successful."
 msgstr "결제에 성공했습니다."
 
@@ -16102,7 +16040,7 @@ msgid "Please type \"{confirmationValue}\" to confirm you want to delete this ap
 msgstr "이 앱을 삭제하려면 확인을 위해 \"{confirmationValue}\"를 입력하세요. 연결된 모든 워크스페이스 설치는 OAuth 자격 증명을 잃게 됩니다."
 
 #. js-lingui-id: L0SEpC
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 msgid "Please type \"{confirmationValue}\" to confirm you want to uninstall this application."
 msgstr ""
 
@@ -16250,8 +16188,12 @@ msgstr "지난 7일"
 msgid "Previous period"
 msgstr "이전 기간"
 
+#. js-lingui-id: k7xxm/
+#: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
+msgid "Previous screenshot"
+msgstr ""
+
 #. js-lingui-id: aHCEmh
-#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Pricing"
 msgstr "가격"
@@ -16599,11 +16541,6 @@ msgstr "이유"
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowRunStepLogsAiAgentDetail.tsx
 msgid "Reasoning"
 msgstr "추론"
-
-#. js-lingui-id: 49IkcQ
-#: src/modules/ai/components/AiModelTierSlider.tsx
-msgid "Reasoning effort: {reasoningEffort}"
-msgstr "추론 노력: {reasoningEffort}"
 
 #. js-lingui-id: PG5XPp
 #. placeholder {0}: getAiModelEffortLabel(availableEffort)
@@ -17308,6 +17245,11 @@ msgstr "리소스 크레딧이 업데이트되었습니다."
 msgid "Resource Type"
 msgstr "리소스 유형"
 
+#. js-lingui-id: s+MGs7
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+msgid "Resources"
+msgstr ""
+
 #. js-lingui-id: ZlCDf+
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/HttpRequestExecutionResult.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/WorkflowRunStepLogsHttpRequestDetail.tsx
@@ -17471,7 +17413,6 @@ msgstr "서식 있는 텍스트"
 
 #. js-lingui-id: E1BXUR
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "role"
 msgstr "역할"
 
@@ -17517,11 +17458,6 @@ msgstr ""
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "Role updated successfully"
 msgstr "역할이 성공적으로 업데이트되었습니다."
-
-#. js-lingui-id: i9AFmv
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "roles"
-msgstr "역할"
 
 #. js-lingui-id: 5dJK4M
 #: src/modules/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectForm.tsx
@@ -17660,16 +17596,6 @@ msgstr "러시아어"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "영업"
-
-#. js-lingui-id: 342JYO
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "Same cost as Balanced."
-msgstr "균형과 동일한 비용입니다."
-
-#. js-lingui-id: wQnd1t
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "Same score as Balanced"
-msgstr "균형과 동일한 점수"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -18838,6 +18764,11 @@ msgstr "2단계 인증 설정하기"
 msgid "Seventh"
 msgstr "일곱 번째"
 
+#. js-lingui-id: Z8lGw6
+#: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
+msgid "Share"
+msgstr ""
+
 #. js-lingui-id: Vy9kmk
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 msgid "Share this link to invite users to join your workspace"
@@ -19057,7 +18988,6 @@ msgstr "sk-..."
 
 #. js-lingui-id: vJRTzI
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "skill"
 msgstr "스킬"
 
@@ -19088,11 +19018,6 @@ msgstr "스킬 이름"
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 msgid "Skill not found"
 msgstr "스킬을 찾을 수 없음"
-
-#. js-lingui-id: gPdJ1+
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "skills"
-msgstr "스킬"
 
 #. js-lingui-id: PCSkw2
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
@@ -19321,6 +19246,7 @@ msgid "Speech recognition could not be reached. Check your connection."
 msgstr "음성 인식 서비스에 연결할 수 없습니다. 연결 상태를 확인하세요."
 
 #. js-lingui-id: l9wI00
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
 msgstr "속도"
@@ -19737,7 +19663,8 @@ msgid "Subtitle"
 msgstr "부제목"
 
 #. js-lingui-id: zzDlyQ
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 #: src/modules/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowRunStepLogsCodeDetail.tsx
 msgid "Success"
 msgstr "성공"
@@ -21516,13 +21443,13 @@ msgstr ""
 
 #. js-lingui-id: fo0VXg
 #: src/modules/logic-functions/utils/getLogicFunctionTriggerLabel.ts
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 msgid "Uninstall"
 msgstr ""
 
 #. js-lingui-id: Qtg9Qc
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 msgid "Uninstall Application?"
 msgstr ""
 
@@ -21532,7 +21459,7 @@ msgid "Uninstall this app from all workspaces before deleting it"
 msgstr "삭제하기 전에 모든 워크스페이스에서 이 앱을 먼저 제거하세요"
 
 #. js-lingui-id: ItfvBz
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 msgid "Uninstalling..."
 msgstr "제거 중..."
 
@@ -21998,7 +21925,7 @@ msgstr "업그레이드 상태를 새로고침했습니다"
 
 #. js-lingui-id: doMiaH
 #. placeholder {0}: latestAvailableVersion ?? ''
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 msgid "Upgrade to {0}"
 msgstr "{0}(으)로 업그레이드"
 
@@ -22042,7 +21969,7 @@ msgid "Upgrading subscription..."
 msgstr "구독 업그레이드 중..."
 
 #. js-lingui-id: +Gi3x1
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 msgid "Upgrading..."
 msgstr "업그레이드 중..."
 
@@ -22598,7 +22525,8 @@ msgid "View Docs"
 msgstr "문서 보기"
 
 #. js-lingui-id: Mv1YVf
-#: src/modules/ui/feedback/snack-bar-manager/utils/buildErrorAction.ts
+#: src/modules/error-handler/utils/getToastOptionsFromError.tsx
+#: src/modules/error-handler/utils/getToastOptionsFromError.tsx
 msgid "View existing record"
 msgstr "기존 레코드 보기"
 
@@ -22656,6 +22584,11 @@ msgstr ""
 #. js-lingui-id: mzftV9
 #: src/modules/workflow/workflow-steps/components/WorkflowStepFooter.tsx
 msgid "View Role"
+msgstr ""
+
+#. js-lingui-id: 0XIngj
+#: src/modules/settings/applications/components/SettingsApplicationScreenshotGallery.tsx
+msgid "View screenshot in full screen"
 msgstr ""
 
 #. js-lingui-id: 4y776f
@@ -22747,6 +22680,11 @@ msgstr "시각화"
 msgid "Visualize data model"
 msgstr "데이터 모델 시각화"
 
+#. js-lingui-id: Ii6BOL
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Vs Balanced mode"
+msgstr "균형 모드와 비교"
+
 #. js-lingui-id: IEcsBR
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
 msgid "VS Code"
@@ -22783,7 +22721,7 @@ msgid "Walkthrough"
 msgstr "둘러보기"
 
 #. js-lingui-id: r6y+jM
-#: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
+#: src/modules/ui/feedback/toast/utils/getLocalizedToastProps.ts
 msgid "Warning"
 msgstr "경고"
 
@@ -23123,11 +23061,6 @@ msgstr "이 모델이 Chain-of-Thought 추론을 지원하는지 여부"
 msgid "Whole list"
 msgstr "전체 목록"
 
-#. js-lingui-id: dmoPOu
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "widget"
-msgstr "위젯"
-
 #. js-lingui-id: AHXN2z
 #: src/modules/side-panel/components/hooks/usePageLayoutHeaderInfo.ts
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
@@ -23138,11 +23071,6 @@ msgstr "위젯"
 #: src/modules/side-panel/pages/page-layout/utils/getPageLayoutPageTitle.ts
 msgid "Widget Settings"
 msgstr "위젯 설정"
-
-#. js-lingui-id: YR3K7M
-#: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
-msgid "widgets"
-msgstr "위젯"
 
 #. js-lingui-id: tL6W2K
 #: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
@@ -23472,10 +23400,10 @@ msgid "Yellow"
 msgstr "노란색"
 
 #. js-lingui-id: 3d1wCB
+#: src/modules/settings/applications/components/SettingsApplicationActionButton.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "yes"
@@ -23644,7 +23572,7 @@ msgid "Your billing interval will switch to yearly immediately and your trial wi
 msgstr "결제 주기가 즉시 연간으로 변경되며 체험판은 계속됩니다. 체험판 종료 시 사용자당 연간 ${yearlyPrice}(연간 결제 기준)가 청구됩니다."
 
 #. js-lingui-id: u1O1GV
-#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.ts
+#: src/modules/settings/billing/hooks/useWaitForPaymentRecovery.tsx
 msgid "Your card was saved, but the payment still needs attention."
 msgstr "카드는 저장되었지만, 결제에 여전히 조치가 필요합니다."
 

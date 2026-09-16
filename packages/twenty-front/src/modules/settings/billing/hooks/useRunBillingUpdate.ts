@@ -4,7 +4,7 @@ import {
 } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { isBillingUpdateRunningState } from '@/settings/billing/states/isBillingUpdateRunningState';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useStore } from 'jotai';
 
@@ -13,7 +13,7 @@ export const useRunBillingUpdate = ({
 }: {
   mutate: () => Promise<CurrentWorkspaceBillingUpdate | null | undefined>;
 }) => {
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
   const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
@@ -41,13 +41,13 @@ export const useRunBillingUpdate = ({
       );
 
       if (!isBillingUpdateApplied) {
-        enqueueErrorSnackBar({ message: getErrorMessage() });
+        enqueueToast({ variant: 'error', children: getErrorMessage() });
         return;
       }
 
-      enqueueSuccessSnackBar({ message: getSuccessMessage() });
+      enqueueToast({ variant: 'success', children: getSuccessMessage() });
     } catch (error) {
-      enqueueErrorSnackBar({ message: getErrorMessage() });
+      enqueueToast({ variant: 'error', children: getErrorMessage() });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;

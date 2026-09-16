@@ -56,11 +56,10 @@ export const NotesCardContent = ({
         </AnimatedPlaceholderEmptyTextContainer>
         {isDefined(onCreateNote) && (
           <Button
-            Icon={IconPlus}
-            title={t`New note`}
-            variant="secondary"
+            startIcon={<IconPlus />}
             onClick={onCreateNote}
-          />
+            variant="outline"
+          >{t`New note`}</Button>
         )}
       </AnimatedPlaceholderEmptyContainer>
     );

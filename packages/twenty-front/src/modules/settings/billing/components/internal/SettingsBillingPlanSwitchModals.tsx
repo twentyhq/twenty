@@ -21,7 +21,7 @@ export const SettingsBillingPlanSwitchModals = () => {
         subtitle={confirmationModalSwitchToOrganizationMessage()}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.ENTERPRISE)}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
       <ConfirmationModal
         modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
@@ -29,7 +29,7 @@ export const SettingsBillingPlanSwitchModals = () => {
         subtitle={confirmationModalSwitchToProMessage()}
         onConfirmClick={() => switchBillingPlan(BillingPlanKey.PRO)}
         confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
+        confirmButtonColor="accent"
       />
     </>
   );

@@ -76,7 +76,7 @@ export const useBillingPlanActions = ({
     disabled: isBillingPortalSessionDisabled,
     onClick: openBillingPortal,
     title,
-    variant: 'secondary',
+    variant: 'outline',
   });
 
   const createDisabledAction = (
@@ -86,20 +86,20 @@ export const useBillingPlanActions = ({
     disabled: true,
     Icon,
     title,
-    variant: 'secondary',
+    variant: 'outline',
   });
 
   const createCancelAction = (
     modalId: string,
     title: string,
   ): SettingsBillingPlanAction => ({
-    accent: 'blue',
+    color: 'accent',
     disabled: isBillingUpdateRunning,
     Icon: IconCircleX,
     isLoading: isBillingUpdateRunning,
     onClick: () => openModal(modalId),
     title,
-    variant: 'primary',
+    variant: 'solid',
   });
 
   const createSwitchAction = ({
@@ -111,13 +111,13 @@ export const useBillingPlanActions = ({
     modalId: string;
     title: string;
   }): SettingsBillingPlanAction => ({
-    accent: isUpgrade ? 'blue' : 'default',
+    color: isUpgrade ? 'accent' : 'neutral',
     disabled: isBillingUpdateRunning,
     Icon: isUpgrade ? IconArrowUp : IconArrowDown,
     isLoading: isBillingUpdateRunning,
     onClick: () => openModal(modalId),
     title,
-    variant: isUpgrade ? 'primary' : 'secondary',
+    variant: isUpgrade ? 'solid' : 'outline',
   });
 
   const getPlanAction = (
