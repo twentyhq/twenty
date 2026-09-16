@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Kan ikke fuldføre handlingen på grund af relaterede poster."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Kan ikke oprette flere kladdeversioner til den samme arbejdsproces"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Kan ikke oprette arbejdsprocesversion med anden status end kladde"
 
@@ -10439,7 +10439,7 @@ msgstr "Feltet happensAt, der bruges af denne tidslinjeaktivitetstype, er ikke t
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Den oprindelige version af en arbejdsproces kan ikke slettes"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Dette felt kan ikke ændres."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Dette felt kan ikke opdateres direkte i en arbejdsgangsversion"
 
@@ -11249,6 +11249,16 @@ msgstr "Denne version er ikke nyere end den aktuelt udrullede version. Hæv vers
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Denne version af applikationen er allerede installeret i dette arbejdsområde."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Denne workflowversion indeholder fejlbehæftede data og kan ikke gemmes."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Denne workflowversion er ikke klar til at blive aktiveret."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "Du har ikke tilladelse til at udgive dig for at være bruger i dette arb
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Du har ikke adgang til at efterligne brugere. Kontakt venligst din workspace administrator for adgang."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Du har ikke tilladelse til at administrere forbindelser, der deles med arbejdsområdet. Kontakt venligst din arbejdsområdeadministrator for adgang."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

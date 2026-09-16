@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Kan bewerking niet voltooien vanwege gerelateerde records."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Kan geen meerdere kladversies voor dezelfde workflow maken."
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Kan geen workflowversie maken met een status anders dan klad."
 
@@ -10439,7 +10439,7 @@ msgstr "Het veld happensAt dat door dit tijdlijnactiviteitstype wordt gebruikt, 
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "De eerste versie van een workflow kan niet worden verwijderd."
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Dit veld kan niet worden gewijzigd."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Dit veld kan niet rechtstreeks worden bijgewerkt op een workflowversie"
 
@@ -11249,6 +11249,16 @@ msgstr "Deze versie is niet hoger dan de momenteel uitgerolde versie. Verhoog he
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Deze versie van de applicatie is al in deze werkruimte geïnstalleerd."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Deze workflowversie bevat onjuist gevormde gegevens en kan niet worden opgeslagen."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Deze workflowversie is niet klaar om te worden geactiveerd."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "Je hebt geen toestemming om je voor te doen als gebruikers in deze werkr
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "U heeft geen toestemming om gebruikers te imiteren. Neem contact op met uw werkruimtebeheerder voor toegang."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "U heeft geen toestemming om verbindingen te beheren die met de werkruimte worden gedeeld. Neem contact op met uw werkruimtebeheerder voor toegang."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

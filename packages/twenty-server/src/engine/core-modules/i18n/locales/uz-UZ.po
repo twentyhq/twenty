@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Bog‘liq yozuvlar tufayli operatsiyani yakunlab bo‘lmaydi."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Bir xil ish jarayoni uchun bir nechta qoralama versiyalarini yaratib bo‘lmaydi"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Ish jarayoni versiyasini qoralamadan boshqa holat bilan yaratib bo‘lmaydi"
 
@@ -10439,7 +10439,7 @@ msgstr "Ushbu vaqt jadvali faoliyati turi foydalanadigan happensAt maydoni mavju
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Ish jarayonining boshlang‘ich versiyasini o‘chirib bo‘lmaydi"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Ushbu maydonni o‘zgartirib bo‘lmaydi."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Ushbu maydonni ish jarayonining versiyasida to‘g‘ridan-to‘g‘ri yangilab bo‘lmaydi"
 
@@ -11249,6 +11249,16 @@ msgstr "Bu versiya hozirda ishga tushirilgan versiyadan yuqori emas. Iltimos, qa
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Ilovaning ushbu versiyasi bu ish maydoniga allaqachon o‘rnatilgan."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Ushbu ish jarayoni versiyasida noto‘g‘ri shakllangan ma’lumotlar mavjud va uni saqlab bo‘lmaydi."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Ushbu ish jarayoni versiyasi faollashtirishga tayyor emas."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "Ushbu ish maydonida foydalanuvchilar nomidan kirish uchun sizda ruxsat y
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Foydalanuvchilarni taqlid qilish huquqiga ega emassiz. Iltimos, ish maydoni administratoriga murojaat qiling."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Sizda ish maydoni bilan ulashilgan ulanishlarni boshqarish uchun ruxsat yo‘q. Iltimos, kirish uchun ish maydoni administratoringiz bilan bog‘laning."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

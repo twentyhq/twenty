@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Operaciju nije moguće dovršiti zbog povezanih zapisa."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Ne može se kreirati više nacrt verzija za isti tok rada"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Ne može se kreirati verzija toka rada sa statusom različitim od nacrta"
 
@@ -10439,7 +10439,7 @@ msgstr "Polje happensAt koje koristi ovaj tip aktivnosti vremenske linije nije d
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Početna verzija toka rada ne može se izbrisati"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Ovo polje nije moguće izmeniti."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Ovo polje ne može biti direktno ažurirano na verziji radnog toka"
 
@@ -11249,6 +11249,16 @@ msgstr "Ova verzija nije novija od trenutno raspoređene verzije. Povećajte bro
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Ova verzija aplikacije je već instalirana u ovom radnom prostoru."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Ova verzija toka rada sadrži neispravne podatke i ne može da se sačuva."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Ova verzija toka rada nije spremna za aktiviranje."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "Nemate dozvolu da preuzimate identitet korisnika u ovom prostoru za rad.
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Nemate dozvolu da imitirate korisnike. Molimo kontaktirajte administratora vaše radne površine za pristup."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Nemate dozvolu da upravljate vezama koje se dele sa radnim prostorom. Molimo kontaktirajte administratora radnog prostora za pristup."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

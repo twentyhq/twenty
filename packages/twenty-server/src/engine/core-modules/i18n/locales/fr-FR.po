@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Impossible de terminer l'opération en raison d'enregistrements associés."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Impossible de créer plusieurs versions brouillon pour le même flux de travail"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Impossible de créer une version de flux de travail avec un statut autre que brouillon"
 
@@ -10439,7 +10439,7 @@ msgstr "Le champ happensAt utilisé par ce type d'activité de chronologie n'est
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "La version initiale d'un flux de travail ne peut pas être supprimée"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Ce champ ne peut pas être modifié."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Ce champ ne peut pas être mis à jour directement sur une version de workflow"
 
@@ -11249,6 +11249,16 @@ msgstr "Cette version n'est pas supérieure à la version actuellement déployé
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Cette version de l'application est déjà installée dans cet espace de travail."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Cette version de workflow contient des données malformées et ne peut pas être enregistrée."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Cette version de workflow n'est pas prête à être activée."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "Vous n'avez pas l'autorisation d'usurper l'identité d'utilisateurs dans
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Vous n'avez pas la permission d'usurper l'identité des utilisateurs. Veuillez contacter votre administrateur de l'espace de travail pour obtenir l'accès."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Vous n'avez pas la permission de gérer les connexions partagées avec l'espace de travail. Veuillez contacter votre administrateur de l'espace de travail pour obtenir l'accès."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Գործողությունն անհնար է ավարտել կապված գրառումների պատճառով։"
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Չի կարելի ստեղծել միাধিক սևագիր տարբերակ նույն աշխատանքային հոսքի համար"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Չի կարելի ստեղծել աշխատանքային հոսքի տարբերակ սևագրից տարբեր վիճակով"
 
@@ -10439,7 +10439,7 @@ msgstr "Այս ժամանակագծի գործունեության տեսակի 
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Workflow-ի սկզբնական տարբերակը չի կարող ջնջվել"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Այս դաշտը չի կարող փոփոխվել։"
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Այս դաշտը չի կարող անմիջապես թարմացվել աշխատանքային հոսքի տարբերակի վրա"
 
@@ -11249,6 +11249,16 @@ msgstr "Այս տարբերակը ավելի բարձր չէ, քան ներկա�
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Հավելվածի այս տարբերակը արդեն տեղադրված է այս աշխատանքային տարածքում։"
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Աշխատանքային հոսքի այս տարբերակը պարունակում է սխալ ձևաչափված տվյալներ և չի կարող պահպանվել։"
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Աշխատանքային հոսքի այս տարբերակը պատրաստ չէ ակտիվացվելու։"
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "Դուք չունեք թույլտվություն այս աշխատան
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Դուք չունեք օգտատերերին ներկայացնելու իրավունք։ Խնդրում ենք կապվել աշխատատարածքի ադմինիստրատորի հետ՝ հասանելիություն ստանալու համար։"
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Դուք չունեք workspace-ի հետ համօգտագործվող կապերը կառավարելու թույլտվություն։ Խնդրում ենք հասանելիություն ստանալու համար կապվեք ձեր workspace-ի ադմինիստրատորի հետ։"
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

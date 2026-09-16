@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Δεν είναι δυνατή η ολοκλήρωση της λειτουργίας λόγω σχετικών εγγραφών."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Δεν είναι δυνατή η δημιουργία πολλαπλών προσχεδίων για την ίδια ροή εργασίας"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Δεν είναι δυνατή η δημιουργία έκδοσης ροής εργασίας με καθεστώς διαφορετικό από προσχέδιο"
 
@@ -10439,7 +10439,7 @@ msgstr "Το πεδίο happensAt που χρησιμοποιείται από �
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Η αρχική έκδοση μιας ροής εργασίας δεν μπορεί να διαγραφεί"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Αυτό το πεδίο δεν μπορεί να τροποποιηθεί."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Αυτό το πεδίο δεν μπορεί να ενημερωθεί απευθείας σε μια έκδοση ροής εργασίας"
 
@@ -11249,6 +11249,16 @@ msgstr "Αυτή η έκδοση δεν είναι νεότερη από την 
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Αυτή η έκδοση της εφαρμογής είναι ήδη εγκατεστημένη σε αυτόν τον χώρο εργασίας."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Αυτή η έκδοση της ροής εργασίας περιέχει κακώς διαμορφωμένα δεδομένα και δεν μπορεί να αποθηκευτεί."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Αυτή η έκδοση της ροής εργασίας δεν είναι έτοιμη να ενεργοποιηθεί."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "Δεν έχετε δικαίωμα να υποδύεστε χρήστε�
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Δεν έχετε δικαίωμα να προσωποποιήσετε χρήστες. Παρακαλώ επικοινωνήστε με τον διαχειριστή του workspace σας για πρόσβαση."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Δεν έχετε άδεια να διαχειριστείτε συνδέσεις που είναι κοινόχρηστες με τον χώρο εργασίας. Παρακαλώ επικοινωνήστε με τον διαχειριστή του χώρου εργασίας σας για πρόσβαση."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

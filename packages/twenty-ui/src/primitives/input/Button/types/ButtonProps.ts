@@ -29,5 +29,29 @@ export type ButtonProps = {
   ariaLabel?: string;
   ariaExpanded?: boolean;
   isLoading?: boolean;
-} & Pick<React.ComponentProps<'button'>, 'type'> &
+  'data-base-ui-click-trigger'?: string;
+  'data-popup-open'?: string;
+  'data-pressed'?: string;
+} & Pick<
+  React.ComponentPropsWithRef<'button'>,
+  | 'ref'
+  | 'type'
+  | 'role'
+  | 'tabIndex'
+  | 'style'
+  | 'aria-label'
+  | 'aria-expanded'
+  | 'aria-controls'
+  | 'aria-haspopup'
+  | 'aria-disabled'
+  | 'onFocus'
+  | 'onBlur'
+  | 'onKeyDown'
+  | 'onKeyUp'
+  | 'onMouseDown'
+  | 'onMouseMove'
+  | 'onMouseLeave'
+  | 'onPointerDown'
+  | 'onPointerEnter'
+> &
   ClickOutsideAttributes;

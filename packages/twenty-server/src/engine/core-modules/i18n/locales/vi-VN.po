@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Không thể hoàn tất thao tác do các bản ghi liên quan."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Không thể tạo nhiều phiên bản nháp cho cùng một quy trình làm việc"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Không thể tạo phiên bản quy trình làm việc với trạng thái khác nháp"
 
@@ -10439,7 +10439,7 @@ msgstr "Trường happensAt được loại hoạt động dòng thời gian nà
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Phiên bản ban đầu của quy trình làm việc không thể bị xóa"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Không thể sửa đổi trường này."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Trường này không thể được cập nhật trực tiếp trên một phiên bản quy trình làm việc"
 
@@ -11249,6 +11249,16 @@ msgstr "Phiên bản này không cao hơn phiên bản hiện đang được tri
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Phiên bản này của ứng dụng đã được cài đặt trong không gian làm việc này."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Phiên bản quy trình làm việc này chứa dữ liệu không hợp lệ và không thể lưu."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Phiên bản quy trình làm việc này chưa sẵn sàng để được kích hoạt."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "Bạn không có quyền mạo danh người dùng trong không gian là
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Bạn không có quyền giả lập người dùng. Vui lòng liên hệ quản trị viên không gian làm việc của bạn để được truy cập."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Bạn không có quyền quản lý các kết nối được chia sẻ với không gian làm việc. Vui lòng liên hệ quản trị viên không gian làm việc của bạn để được truy cập."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

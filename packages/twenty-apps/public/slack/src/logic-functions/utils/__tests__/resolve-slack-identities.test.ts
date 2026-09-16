@@ -168,6 +168,26 @@ describe('resolveSlackIdentities', () => {
     expect(resolution?.outcome).toBe('membershipNotConfirmed');
   });
 
+  it('should report membership as unverifiable when the installing team is unreadable', async () => {
+    authTestMock.mockRejectedValue(new Error('slack unreachable'));
+    findWorkspaceMemberIdsByEmailsMock.mockResolvedValue({
+      workspaceMemberIdByEmail: new Map([['alice@twenty.com', 'member-1']]),
+      ambiguousEmailCount: 0,
+    });
+
+    const resolution = (await resolve([identity()])).get('U04ABC');
+
+    expect(resolution?.outcome).toBe('membershipUnverifiable');
+  });
+
+  it('should report membership as unverifiable when the account names no team', async () => {
+    const resolution = (
+      await resolve([identity({ slackTeamId: undefined })])
+    ).get('U04ABC');
+
+    expect(resolution?.outcome).toBe('membershipUnverifiable');
+  });
+
   it('should keep the stored link of a member linked under an external team', async () => {
     findSlackUserLinksBySlackUserIdsMock.mockResolvedValue(
       new Map([['U04ABC', link({ slackTeamId: EXTERNAL_TEAM_ID })]]),

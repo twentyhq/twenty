@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "関連レコードがあるため、操作を完了できません。"
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "同じワークフローに対して複数の草稿バージョンを作成することはできません"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "草稿以外のステータスでワークフローバージョンを作成することはできません"
 
@@ -10439,7 +10439,7 @@ msgstr "このタイムラインアクティビティタイプで使用されて
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "ワークフローの最初のバージョンは削除できません"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "このフィールドは変更できません。"
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "このフィールドはワークフローのバージョンでは直接更新できません"
 
@@ -11249,6 +11249,16 @@ msgstr "このバージョンは現在デプロイされているバージョン
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "このアプリケーションのこのバージョンは、既にこのワークスペースにインストールされています。"
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "このワークフローバージョンには不正な形式のデータが含まれているため、保存できません。"
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "このワークフローバージョンは有効化の準備ができていません。"
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "このワークスペースでユーザーになりすます権限があ
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "ユーザーの偽装権限がありません。アクセ..."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "ワークスペースと共有されている接続を管理する権限がありません。アクセスするには、ワークスペース管理者にお問い合わせください。"
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "Toimintoa ei voi suorittaa loppuun liittyvien tietueiden vuoksi."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "Ei voi luoda useita luonnosversioita samaan työnkulkuun"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "Ei voi luoda työnkulkuversiota muulla tilalla kuin luonnos"
 
@@ -10439,7 +10439,7 @@ msgstr "Tämän aikajanan aktiviteettityypin käyttämä happensAt-kenttä ei ol
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "Työnkulun alkuperäistä versiota ei voi poistaa"
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "Tätä kenttää ei voi muokata."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "Tätä kenttää ei voi päivittää suoraan työnkulkuversiossa"
 
@@ -11249,6 +11249,16 @@ msgstr "Tämä versio ei ole nykyistä käyttöönotettua versiota uudempi. Koro
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "Tämä sovellusversio on jo asennettu tähän työtilaan."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "Tämä työnkulkuversio sisältää virheellisiä tietoja eikä sitä voi tallentaa."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "Tämä työnkulkuversio ei ole valmis aktivoitavaksi."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "Sinulla ei ole oikeutta toimia käyttäjänä tässä työtilassa."
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "Sinulla ei ole lupaa jäljitellä käyttäjiä. Ota yhteyttä työtilan ylläpitäjään saadaksesi käyttöoikeuden."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "Sinulla ei ole lupaa hallita työtilan kanssa jaettuja yhteyksiä. Ota yhteyttä työtilan ylläpitäjään saadaksesi käyttöoikeuden."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

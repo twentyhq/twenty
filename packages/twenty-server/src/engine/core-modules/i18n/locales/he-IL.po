@@ -1861,12 +1861,12 @@ msgid "Cannot complete operation due to related records."
 msgstr "לא ניתן להשלים את הפעולה בשל רשומות קשורות."
 
 #. js-lingui-id: LIPsWu
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create multiple draft versions for the same workflow"
 msgstr "לא ניתן ליצור מספר גרסאות טיוטה לאותו תהליך עבודה"
 
 #. js-lingui-id: RggZr4
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "Cannot create workflow version with status other than draft"
 msgstr "לא ניתן ליצור גרסת תהליך עבודה במצב שאינו טיוטה"
 
@@ -10439,7 +10439,7 @@ msgstr "השדה happensAt המשמש את סוג פעילות ציר הזמן �
 
 #. js-lingui-id: EJUSll
 #: src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service.ts
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "The initial version of a workflow can not be deleted"
 msgstr "לא ניתן למחוק את גרסת המוצא של תהליך עבודה."
 
@@ -10954,7 +10954,7 @@ msgid "This field cannot be modified."
 msgstr "לא ניתן לשנות שדה זה."
 
 #. js-lingui-id: dxfM0y
-#: src/modules/workflow/common/workspace-services/workflow-version-validation.workspace-service.ts
+#: src/modules/workflow/common/workspace-services/workflow-version-query-validation.workspace-service.ts
 msgid "This field cannot be updated directly on a workflow version"
 msgstr "לא ניתן לעדכן שדה זה ישירות בגרסת תהליך עבודה"
 
@@ -11249,6 +11249,16 @@ msgstr "גרסה זו אינה חדשה יותר מהגרסה שפרוסה כר�
 #: src/engine/core-modules/application/application.exception.ts
 msgid "This version of the application is already installed in this workspace."
 msgstr "גרסה זו של היישום כבר מותקנת במרחב עבודה זה."
+
+#. js-lingui-id: eL+KOJ
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version contains malformed data and cannot be saved."
+msgstr "גרסת זרימת עבודה זו מכילה נתונים פגומים ולא ניתן לשמור אותה."
+
+#. js-lingui-id: YBQFPm
+#: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
+msgid "This workflow version is not ready to be activated."
+msgstr "גרסת זרימת עבודה זו אינה מוכנה להפעלה."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13316,6 +13326,11 @@ msgstr "אין לך הרשאה להתחזות למשתמשים במרחב עבו
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "אין לך הרשאה להיכנס למשתמשים אחרים. אנא פנה למנהל המרחב שלך לקבלת גישה."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "אין לך הרשאה לנהל חיבורים המשותפים עם מרחב העבודה. נא לפנות למנהל מרחב העבודה שלך לקבלת גישה."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts
