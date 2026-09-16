@@ -1,3 +1,4 @@
+import { getObjectPermissionUniversalIdentifier } from 'twenty-shared/application';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -25,7 +26,6 @@ export const fromCreateObjectPermissionInputToUniversalFlatObjectPermission = ({
     canUpdateObjectRecords,
     canSoftDeleteObjectRecords,
     canDestroyObjectRecords,
-    universalIdentifier,
   } = createObjectPermissionInput;
   const now = new Date().toISOString();
 
@@ -40,7 +40,11 @@ export const fromCreateObjectPermissionInputToUniversalFlatObjectPermission = ({
     });
   return {
     id: v4(),
-    universalIdentifier: universalIdentifier ?? v4(),
+    universalIdentifier: getObjectPermissionUniversalIdentifier({
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      roleUniversalIdentifier,
+      objectUniversalIdentifier: objectMetadataUniversalIdentifier,
+    }),
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     roleUniversalIdentifier,
     objectMetadataUniversalIdentifier,

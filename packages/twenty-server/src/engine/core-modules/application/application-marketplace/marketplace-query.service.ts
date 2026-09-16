@@ -1,6 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { type RoleManifest } from 'twenty-shared/application';
+import {
+  getFieldPermissionUniversalIdentifier,
+  getObjectPermissionUniversalIdentifier,
+  type RoleManifest,
+} from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
@@ -89,6 +93,7 @@ export class MarketplaceQueryService {
       this.applicationRegistrationAssetUrlService.buildGalleryImageUrls(
         registration,
       );
+    const manifest = registration.manifest;
 
     const installCount =
       await this.applicationService.countInstalledWorkspacesForApplication(
@@ -149,14 +154,27 @@ export class MarketplaceQueryService {
       installCount,
       defaultRoleUniversalIdentifier:
         registration.manifest?.application?.defaultRoleUniversalIdentifier,
-      roles: registration.manifest?.roles?.map((role) =>
-        this.toMarketplaceAppRoleDTO(role),
-      ),
+      roles: isDefined(manifest)
+        ? manifest.roles?.map((role) =>
+            this.toMarketplaceAppRoleDTO({
+              role,
+              applicationUniversalIdentifier:
+                manifest.application?.universalIdentifier ??
+                registration.universalIdentifier,
+            }),
+          )
+        : undefined,
       manifest: registration.manifest ?? undefined,
     };
   }
 
-  private toMarketplaceAppRoleDTO(role: RoleManifest): MarketplaceAppRoleDTO {
+  private toMarketplaceAppRoleDTO({
+    role,
+    applicationUniversalIdentifier,
+  }: {
+    role: RoleManifest;
+    applicationUniversalIdentifier: string;
+  }): MarketplaceAppRoleDTO {
     return {
       universalIdentifier: role.universalIdentifier,
       label: role.label,
@@ -171,7 +189,13 @@ export class MarketplaceQueryService {
       permissionFlagUniversalIdentifiers:
         role.permissionFlagUniversalIdentifiers,
       objectPermissions: role.objectPermissions?.map((permission) => ({
-        universalIdentifier: permission.universalIdentifier,
+        universalIdentifier:
+          permission.universalIdentifier ??
+          getObjectPermissionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            roleUniversalIdentifier: role.universalIdentifier,
+            objectUniversalIdentifier: permission.objectUniversalIdentifier,
+          }),
         objectUniversalIdentifier: permission.objectUniversalIdentifier,
         canReadObjectRecords: permission.canReadObjectRecords,
         canUpdateObjectRecords: permission.canUpdateObjectRecords,
@@ -179,7 +203,13 @@ export class MarketplaceQueryService {
         canDestroyObjectRecords: permission.canDestroyObjectRecords,
       })),
       fieldPermissions: role.fieldPermissions?.map((permission) => ({
-        universalIdentifier: permission.universalIdentifier,
+        universalIdentifier:
+          permission.universalIdentifier ??
+          getFieldPermissionUniversalIdentifier({
+            applicationUniversalIdentifier,
+            roleUniversalIdentifier: role.universalIdentifier,
+            fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
+          }),
         objectUniversalIdentifier: permission.objectUniversalIdentifier,
         fieldUniversalIdentifier: permission.fieldUniversalIdentifier,
         canReadFieldValue: permission.canReadFieldValue,

@@ -699,7 +699,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       description: 'Default role for function Twenty client',
       fieldPermissions: [
         {
-          universalIdentifier: 'dbc86ced-bd2c-5874-93f1-1f72c5111991',
+          universalIdentifier: 'd0b74fcb-3993-5ff9-bbd6-d76ea9b6493f',
           canReadFieldValue: false,
           canUpdateFieldValue: false,
           fieldUniversalIdentifier: '58a0a314-d7ea-4865-9850-7fb84e72f30b',
@@ -709,7 +709,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       label: 'Default function role',
       objectPermissions: [
         {
-          universalIdentifier: '99c7c326-04ca-5c8b-ad11-da6c5b819813',
+          universalIdentifier: 'fab82874-880a-556f-93d9-626610bb0770',
           canDestroyObjectRecords: false,
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,
@@ -717,7 +717,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
         {
-          universalIdentifier: 'd92786b1-eedb-50f6-9397-7a6c2591578a',
+          universalIdentifier: '518fbc62-c198-5e31-8df8-c79402aa84b4',
           canDestroyObjectRecords: false,
           canReadObjectRecords: true,
           canSoftDeleteObjectRecords: false,

@@ -5,7 +5,7 @@ import {
   type RowLevelPermissionPredicateValue,
 } from '@/types';
 
-export type ObjectPermissionManifest = SyncableEntityOptions & {
+export type ObjectPermissionManifest = Partial<SyncableEntityOptions> & {
   objectUniversalIdentifier: string;
   canReadObjectRecords?: boolean;
   canUpdateObjectRecords?: boolean;
@@ -13,7 +13,7 @@ export type ObjectPermissionManifest = SyncableEntityOptions & {
   canDestroyObjectRecords?: boolean;
 };
 
-export type FieldPermissionManifest = SyncableEntityOptions & {
+export type FieldPermissionManifest = Partial<SyncableEntityOptions> & {
   objectUniversalIdentifier: string;
   fieldUniversalIdentifier: string;
   canReadFieldValue?: boolean;
