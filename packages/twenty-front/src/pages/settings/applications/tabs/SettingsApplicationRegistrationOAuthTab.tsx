@@ -12,7 +12,7 @@ import { IconKey, IconRefresh, IconShield } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   RotateApplicationRegistrationClientSecretDocument,
@@ -131,7 +131,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
   return (
     <>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`OAuth`}
           description={t`Credentials and scopes for OAuth authorization flows`}
         />
@@ -152,7 +152,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
 
       {displayedSecret && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Client Secret`}
             description={t`Copy this secret as it will not be visible again`}
           />
@@ -161,7 +161,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
       )}
 
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Redirect URIs`}
           description={t`Allowed redirect URIs for OAuth flows`}
         />

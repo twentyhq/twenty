@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { SearchInput } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { type ApplicationDisplayData } from '@/applications/types/applicationDisplayData.type';
@@ -233,7 +233,7 @@ export const SettingsApplicationDetailContentTab = ({
 
       {hasData && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Data`}
             description={t`Schema this app contributes to your workspace`}
           />
@@ -256,7 +256,7 @@ export const SettingsApplicationDetailContentTab = ({
 
       {hasLayout && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Layout`}
             description={t`How records, pages, and navigation are displayed`}
           />
@@ -297,7 +297,7 @@ export const SettingsApplicationDetailContentTab = ({
 
       {hasLogic && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Logic`}
             description={t`Automation, AI, and access this app provides`}
           />

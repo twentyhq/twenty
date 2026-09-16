@@ -8,7 +8,7 @@ import {
   type MessageFolderImportPolicy,
 } from 'twenty-shared/types';
 import { IconBriefcase, IconUsers } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -93,7 +93,7 @@ export const SettingsAccountsMessageChannelDetails = ({
     <StyledDetailsContainer>
       {supportsFolderImportPolicy && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Import`}
             description={t`Emails from the blocklist will be ignored. Manage blocklist on the "Accounts" setting page.`}
           />
@@ -105,7 +105,7 @@ export const SettingsAccountsMessageChannelDetails = ({
       )}
       {!isGroupMailbox && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Visibility`}
             description={t`Define what will be visible to other users in your workspace`}
           />
@@ -116,7 +116,7 @@ export const SettingsAccountsMessageChannelDetails = ({
         </Section>
       )}
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Contact auto-creation`}
           description={t`Automatically create People records when receiving or sending emails`}
         />
@@ -126,7 +126,7 @@ export const SettingsAccountsMessageChannelDetails = ({
         />
       </Section>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Options`}
           description={t`Configure what emails should get synced`}
         />

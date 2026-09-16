@@ -26,7 +26,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 
 type TabKey =
@@ -126,7 +126,7 @@ export const SettingsApiWebhooks = () => {
         {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API && (
           <StyledTabContent>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Documentation`}
                 description={t`Try our REST or GraphQL API playgrounds`}
               />
@@ -134,7 +134,7 @@ export const SettingsApiWebhooks = () => {
             </Section>
 
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`API Keys`}
                 description={t`Active API keys created by you or your team.`}
               />
@@ -163,7 +163,7 @@ export const SettingsApiWebhooks = () => {
         {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS && (
           <StyledTabContent>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Webhooks`}
                 description={t`Establish Webhook endpoints for notifications on asynchronous events.`}
               />

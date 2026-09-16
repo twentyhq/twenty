@@ -10,7 +10,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, H3Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
@@ -25,6 +26,10 @@ const StyledTitleContainer = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
   margin-top: ${themeCssVariables.spacing[2]};
+
+  h3 {
+    line-height: inherit;
+  }
 `;
 
 export const SettingsAdminIndicatorHealthStatus = () => {
@@ -78,7 +83,9 @@ export const SettingsAdminIndicatorHealthStatus = () => {
         >
           <Section>
             <StyledTitleContainer>
-              <H3Title title={data?.getIndicatorHealthStatus?.label} />
+              <Heading level={3} size="lg">
+                {data?.getIndicatorHealthStatus?.label}
+              </Heading>
               {data?.getIndicatorHealthStatus?.status && (
                 <SettingsAdminHealthStatusRightContainer
                   status={data?.getIndicatorHealthStatus.status}
@@ -90,7 +97,7 @@ export const SettingsAdminIndicatorHealthStatus = () => {
             {data?.getIndicatorHealthStatus?.id !== HealthIndicatorId.worker &&
               data?.getIndicatorHealthStatus?.id !==
                 HealthIndicatorId.connectedAccount && (
-                <H2Title
+                <SectionHeader
                   title={t`Status`}
                   description={data?.getIndicatorHealthStatus?.description}
                 />

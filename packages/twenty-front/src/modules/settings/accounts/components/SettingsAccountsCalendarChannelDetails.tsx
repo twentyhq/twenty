@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Section } from 'twenty-ui/primitives/layout';
 import { IconUserPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type CalendarChannelVisibility } from '~/generated/graphql';
@@ -47,7 +47,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
   return (
     <StyledDetailsContainer>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Event visibility`}
           description={t`Define what will be visible to other users in your workspace`}
         />
@@ -57,7 +57,7 @@ export const SettingsAccountsCalendarChannelDetails = ({
         />
       </Section>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Contact auto-creation`}
           description={t`Automatically create contacts for people you've participated in an event with.`}
         />

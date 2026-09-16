@@ -10,7 +10,7 @@ import { showHiddenGroupVariablesState } from '@/settings/admin-panel/config-var
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -166,7 +166,7 @@ export const SettingsAdminConfigVariables = () => {
   return (
     <>
       <Section>
-        <H2Title title={t`Config Variables`} />
+        <SectionHeader title={t`Config Variables`} />
 
         <ConfigVariableFilterContainer activeChips={activeChips}>
           <StyledControlsContainer>
@@ -186,7 +186,7 @@ export const SettingsAdminConfigVariables = () => {
       {groupedVariables.size === 0 && (
         <StyledTableContainer>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`No variables found`}
               description={t`No config variables match your current filters. Try adjusting your filters or search criteria.`}
             />
@@ -195,7 +195,10 @@ export const SettingsAdminConfigVariables = () => {
       )}
       {[...groupedVariables.entries()].map(([groupName, groupData]) => (
         <StyledTableContainer key={groupName}>
-          <H2Title title={groupName} description={groupData.description} />
+          <SectionHeader
+            title={groupName}
+            description={groupData.description}
+          />
 
           <SettingsAdminConfigVariablesTable variables={groupData.variables} />
         </StyledTableContainer>

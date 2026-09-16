@@ -7,7 +7,7 @@ import { SettingsAccountsBlocklistTable } from '@/settings/accounts/components/S
 import { useLingui } from '@lingui/react/macro';
 import { BlocklistScope, CoreObjectNameSingular } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 
 export const SettingsWorkspaceBlocklistSection = () => {
   const { t } = useLingui();
@@ -43,7 +43,7 @@ export const SettingsWorkspaceBlocklistSection = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Blocklist`}
         description={t`Exclude the following people and domains from the email and calendar sync of every workspace member`}
       />

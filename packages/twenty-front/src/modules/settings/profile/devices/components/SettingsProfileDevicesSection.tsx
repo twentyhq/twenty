@@ -13,7 +13,7 @@ import { IconDeviceDesktop, IconLogout } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import {
   CurrentUserSessionsDocument,
   type CurrentUserSessionsQuery,
@@ -101,7 +101,7 @@ export const SettingsProfileDevicesSection = () => {
       <ToastOnQueryErrorEffect error={error} />
       {(loading || isNonEmptyArray(sessions)) && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Devices`}
             description={t`Devices with an active session on your account`}
           />

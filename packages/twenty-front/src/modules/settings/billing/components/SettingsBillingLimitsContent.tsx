@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 
 import { SettingsBillingLimitsTable } from '@/settings/billing/components/SettingsBillingLimitsTable';
 import { useUsageQuotasWithConsumption } from '@/settings/billing/hooks/useUsageQuotasWithConsumption';
@@ -25,7 +25,7 @@ export const SettingsBillingLimitsContent = () => {
     return (
       <SettingsPageContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Limits`}
             description={t`Limits could not be loaded.`}
           />

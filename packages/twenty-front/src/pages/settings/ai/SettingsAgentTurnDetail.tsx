@@ -15,7 +15,7 @@ import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -142,7 +142,7 @@ export const SettingsAgentTurnDetail = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Messages`}
             description={new Date(turn.createdAt).toLocaleString('en-US', {
               dateStyle: 'medium',
@@ -191,7 +191,7 @@ export const SettingsAgentTurnDetail = () => {
         </Section>
 
         <Section>
-          <H2Title title={t`Evaluations`} />
+          <SectionHeader title={t`Evaluations`} />
           {turn.evaluations.length > 0 ? (
             <StyledTableContainer>
               <Table>

@@ -8,7 +8,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconSettings } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import {
   AnimatedExpandableContainer,
   Section,
@@ -61,7 +61,10 @@ export const SettingsRolePermissionsSettingsSection = ({
 
   return (
     <Section>
-      <H2Title title={t`Settings`} description={t`Settings permissions`} />
+      <SectionHeader
+        title={t`Settings`}
+        description={t`Settings permissions`}
+      />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
           <Card rounded>

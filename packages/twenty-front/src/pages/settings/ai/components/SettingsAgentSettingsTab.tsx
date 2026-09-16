@@ -10,7 +10,7 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -158,7 +158,10 @@ export const SettingsAgentSettingsTab = ({
       </StyledFormContainer>
       {!disabled && agent && formValues.isCustom && (
         <Section>
-          <H2Title title={t`Danger zone`} description={t`Delete this agent`} />
+          <SectionHeader
+            title={t`Danger zone`}
+            description={t`Delete this agent`}
+          />
           <Button
             accent="danger"
             variant="secondary"

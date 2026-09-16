@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { type ApplicationVariableOption } from 'twenty-shared/application';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
@@ -37,7 +37,10 @@ export const SettingsApplicationDetailEnvironmentVariablesTable = ({
       : t`No variables to set for this application`;
   return (
     <Section>
-      <H2Title title={t`Configuration`} description={sectionDescription} />
+      <SectionHeader
+        title={t`Configuration`}
+        description={sectionDescription}
+      />
       <StyledContainer>
         {editedEnvVariables.map((editedEnvVariable) => {
           return (

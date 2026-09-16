@@ -7,7 +7,7 @@ import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
 import { useDeleteUsageLimit } from '@/settings/billing/hooks/useDeleteUsageLimit';
@@ -129,7 +129,7 @@ export const SettingsBillingLimitEditForm = ({
               onChange={setValues}
             />
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Danger zone`}
                 description={t`Spending stays capped by your plan allowance and the other limits.`}
               />

@@ -5,7 +5,7 @@ import { useUnsubscribeTopics } from '@/activities/emails/hooks/useUnsubscribeTo
 import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { HorizontalSeparator, Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 
@@ -64,7 +64,7 @@ export const SettingsUnsubscribePreview = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Unsubscribe page`}
         description={
           hasPublicTopics
@@ -76,7 +76,7 @@ export const SettingsUnsubscribePreview = () => {
         {!loading && (
           <StyledCard rounded>
             <StyledHeader>
-              <H2Title
+              <SectionHeader
                 title={t`Do you want to unsubscribe?`}
                 description={
                   hasPublicTopics

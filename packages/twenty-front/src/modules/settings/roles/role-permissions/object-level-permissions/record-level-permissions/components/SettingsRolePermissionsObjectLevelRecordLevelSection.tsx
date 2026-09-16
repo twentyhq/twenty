@@ -3,7 +3,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconArrowUp, IconLock } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 
@@ -45,7 +45,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
   if (!hasOrganizationPlan) {
     return (
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Record-level`}
           description={t`Ability to filter the records a user can interact with`}
           adornment={<OrganizationAdornment />}
@@ -81,7 +81,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Record-level`}
         description={t`Ability to filter the records a user can interact with.`}
       />

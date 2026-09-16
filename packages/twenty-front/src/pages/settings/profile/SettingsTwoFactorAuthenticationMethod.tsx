@@ -15,7 +15,7 @@ import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/ut
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Loader } from 'twenty-ui/primitives/feedback';
 import { Section } from 'twenty-ui/primitives/layout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -150,7 +150,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
           ) : (
             <Section>
               <TwoFactorAuthenticationSetupForSettingsEffect />
-              <H2Title
+              <SectionHeader
                 title={t`Authenticator app`}
                 description={t`Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in.`}
               />
@@ -176,7 +176,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
 
               <StyledDivider />
 
-              <H2Title
+              <SectionHeader
                 title={t`Verify the code from the app`}
                 description={t`Copy paste the code below`}
               />

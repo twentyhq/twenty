@@ -13,7 +13,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetServerAdminsDocument } from '~/generated-admin/graphql';
@@ -37,7 +37,7 @@ export const SettingsAdminServerAdmins = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Administrators`}
         description={t`Users with server-level access. Open a user to grant or revoke access; use the search below to find anyone.`}
       />

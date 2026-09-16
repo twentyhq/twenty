@@ -4171,5 +4171,103 @@
         "description": "Font weight of the label."
       }
     ]
+  },
+  {
+    "name": "Heading",
+    "entryPoint": "twenty-ui/primitives/typography",
+    "slug": "typography/heading",
+    "props": [
+      {
+        "name": "color",
+        "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": "primary",
+        "description": "Theme font color. Defaults to `primary`."
+      },
+      {
+        "name": "level",
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
+        "required": false,
+        "defaultValue": "2",
+        "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Visual font size, independent of the heading level. Defaults to `md`."
+      }
+    ]
+  },
+  {
+    "name": "SectionHeader",
+    "entryPoint": "twenty-ui/components",
+    "slug": "components/section-header",
+    "props": [
+      {
+        "name": "adornment",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Content alongside the heading, such as an action button or status."
+      },
+      {
+        "name": "color",
+        "type": "\"primary\" | \"secondary\" | \"tertiary\"",
+        "required": false,
+        "defaultValue": "primary",
+        "description": "Theme font color. Defaults to `primary`."
+      },
+      {
+        "name": "description",
+        "type": "ReactNode",
+        "required": false,
+        "defaultValue": null,
+        "description": "Supporting text associated with the heading. Strings support links and overflow tooltips; React nodes render as supplied."
+      },
+      {
+        "name": "descriptionLineClamp",
+        "type": "number",
+        "required": false,
+        "defaultValue": "5",
+        "description": "Maximum visible lines for a string description. Defaults to `5`. Overflowing descriptions can be read in a tooltip on hover or focus."
+      },
+      {
+        "name": "level",
+        "type": "1 | 2 | 3 | 4 | 5 | 6",
+        "required": false,
+        "defaultValue": "2",
+        "description": "Semantic heading level, from `h1` through `h6`. Does not change the visual size. Defaults to `2`."
+      },
+      {
+        "name": "render",
+        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, {}>",
+        "required": false,
+        "defaultValue": null,
+        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+      },
+      {
+        "name": "size",
+        "type": "\"sm\" | \"md\" | \"lg\" | \"xs\"",
+        "required": false,
+        "defaultValue": "md",
+        "description": "Visual font size, independent of the heading level. Defaults to `md`."
+      },
+      {
+        "name": "title",
+        "type": "ReactNode",
+        "required": true,
+        "defaultValue": null,
+        "description": "Content of the section heading."
+      }
+    ]
   }
 ]

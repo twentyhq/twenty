@@ -5,7 +5,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
 import { IconCopy } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -46,7 +46,7 @@ export const SettingsSsoOidcForm = () => {
   return (
     <>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Client Settings`}
           description={t`Provide your OIDC provider details`}
         />
@@ -102,7 +102,7 @@ export const SettingsSsoOidcForm = () => {
         </StyledInputsContainer>
       </Section>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Identity Provider`}
           description={t`Enter the credentials to set the connection`}
         />

@@ -7,7 +7,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { IconCopy } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContent = styled.div`
@@ -27,7 +27,7 @@ export const SettingsApplicationFunctionDomainSection = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`App URL`}
         description={t`This app's routes are served from this URL. Add a custom domain to use your own.`}
       />

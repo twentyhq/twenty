@@ -11,7 +11,7 @@ import { useContext, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -122,7 +122,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
 
       {standardObjects.length > 0 && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Standard`}
             description={t`All the standard objects`}
           />
@@ -151,7 +151,10 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
       )}
       {customObjects.length > 0 && (
         <Section>
-          <H2Title title={t`Custom`} description={t`All your custom objects`} />
+          <SectionHeader
+            title={t`Custom`}
+            description={t`All your custom objects`}
+          />
           <StyledContainer>
             {customObjects.map((objectMetadataItem) => (
               <StyledCardContainer

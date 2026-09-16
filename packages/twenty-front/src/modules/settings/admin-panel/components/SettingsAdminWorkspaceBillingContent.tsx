@@ -17,7 +17,7 @@ import {
   IconTag,
   IconUsers,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { type ThemeColor } from 'twenty-ui/theme';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -157,7 +157,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
     return (
       <StyledContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Billing`}
             description={t`No billing data is available for this workspace.`}
           />
@@ -358,7 +358,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
   return (
     <StyledContainer>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Customer`}
           description={t`Stripe customer linked to this workspace`}
         />
@@ -370,7 +370,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
       </Section>
 
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Usage`}
           description={
             isDefined(usage)
@@ -388,7 +388,7 @@ export const SettingsAdminWorkspaceBillingContent = ({
       </Section>
 
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Subscription`}
           description={
             subscription

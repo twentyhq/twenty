@@ -7,7 +7,7 @@ import { useRedirectToDefaultDomain } from '@/domain-manager/hooks/useRedirectTo
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { useMutation } from '@apollo/client/react';
 import { DeleteCurrentWorkspaceDocument } from '~/generated-metadata/graphql';
@@ -32,7 +32,7 @@ export const DeleteWorkspace = () => {
 
   return (
     <>
-      <H2Title
+      <SectionHeader
         title={t`Danger zone`}
         description={t`Delete your whole workspace`}
       />

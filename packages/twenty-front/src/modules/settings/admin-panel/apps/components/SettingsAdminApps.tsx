@@ -32,7 +32,7 @@ import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebounce } from 'use-debounce';
 import {
@@ -188,7 +188,7 @@ export const SettingsAdminApps = () => {
   return (
     <>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`General`}
           description={t`Manage the marketplace application catalog`}
         />
@@ -203,7 +203,7 @@ export const SettingsAdminApps = () => {
         />
       </Section>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`All App Registrations`}
           description={t`All application registrations across the platform, including orphaned marketplace apps (${totalCount} matching)`}
         />

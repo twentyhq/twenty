@@ -14,7 +14,7 @@ import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconReload, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -75,7 +75,7 @@ export const SettingsCustomDomain = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Custom Domain`}
             description={t`Set the name of your custom domain and configure your DNS records.`}
           />

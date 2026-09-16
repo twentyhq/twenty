@@ -13,7 +13,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { DeleteTwoFactorAuthenticationMethodDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -83,7 +83,7 @@ export const DeleteTwoFactorAuthentication = () => {
 
   return (
     <>
-      <H2Title
+      <SectionHeader
         title={t`Delete Two-Factor Authentication Method`}
         description={t`Deleting this method will remove it permanently from your account.`}
       />

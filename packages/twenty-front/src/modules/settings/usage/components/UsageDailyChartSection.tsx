@@ -7,7 +7,7 @@ import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsD
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
 import { formatDate } from '~/utils/date-utils';
@@ -74,7 +74,7 @@ export const UsageDailyChartSection = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={title}
         description={description}
         adornment={

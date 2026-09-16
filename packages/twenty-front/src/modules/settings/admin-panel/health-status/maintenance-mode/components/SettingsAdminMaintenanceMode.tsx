@@ -21,7 +21,7 @@ import { Status } from 'twenty-ui/primitives/data-display';
 import { InputHint } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card, CardContent } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useToast } from 'twenty-ui/primitives/feedback';
@@ -193,7 +193,7 @@ export const SettingsAdminMaintenanceMode = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Maintenance`}
         description={t`Schedule a maintenance window and notify all users`}
       />

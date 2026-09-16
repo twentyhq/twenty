@@ -20,7 +20,7 @@ import {
   isValidUrl,
 } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -120,7 +120,7 @@ export const SettingsDevelopersWebhookForm = ({
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Endpoint URL`}
               description={t`We will send a POST request to this endpoint for each new event in application/json format`}
             />
@@ -146,7 +146,7 @@ export const SettingsDevelopersWebhookForm = ({
             />
           </Section>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Description`}
               description={t`We will send a POST request to this endpoint for each new event in application/json format.`}
             />
@@ -166,7 +166,7 @@ export const SettingsDevelopersWebhookForm = ({
             />
           </Section>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Filters`}
               description={t`Select the events you wish to send to this endpoint`}
             />
@@ -183,7 +183,7 @@ export const SettingsDevelopersWebhookForm = ({
             />
           </Section>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Secret`}
               description={t`Optional secret used to compute the HMAC signature for webhook payloads`}
             />
@@ -203,7 +203,7 @@ export const SettingsDevelopersWebhookForm = ({
           </Section>
           {!isCreationMode && (
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Danger zone`}
                 description={t`Delete this webhook`}
               />

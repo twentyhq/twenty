@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/primitives/layout';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 
 import { SettingsBillingLimitUsageSelect } from '@/settings/billing/components/SettingsBillingLimitUsageSelect';
 import { SettingsBillingLimitAmount } from '@/settings/billing/components/internal/SettingsBillingLimitAmount';
@@ -152,7 +152,7 @@ export const SettingsBillingLimitForm = ({
   return (
     <>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Scope`}
           description={t`The usage this limit applies to.`}
         />
@@ -176,7 +176,7 @@ export const SettingsBillingLimitForm = ({
         </StyledRow>
       </Section>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Limit`}
           description={t`How much can be spent, and how often it resets.`}
         />

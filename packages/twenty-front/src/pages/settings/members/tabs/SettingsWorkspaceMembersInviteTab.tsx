@@ -24,7 +24,7 @@ import { Status } from 'twenty-ui/primitives/data-display';
 import { IconButton } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetWorkspaceInvitationsDocument } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -126,7 +126,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
       {currentWorkspace?.inviteHash &&
         currentWorkspace?.isPublicInviteLinkEnabled && (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Invite by link`}
               description={t`Share this link to invite users to join your workspace`}
             />
@@ -136,7 +136,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
           </Section>
         )}
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Invite by email`}
           description={t`Send an invite email to your team`}
         />
@@ -236,7 +236,7 @@ export const SettingsWorkspaceMembersInviteTab = () => {
         )}
       </Section>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Approved Domains`}
           description={t`Anyone with an email address at these domains is allowed to sign up for this workspace.`}
         />

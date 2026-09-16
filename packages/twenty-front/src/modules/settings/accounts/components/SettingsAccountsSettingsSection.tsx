@@ -6,7 +6,7 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconCalendarEvent, IconMailCog } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import {
@@ -35,7 +35,7 @@ export const SettingsAccountsSettingsSection = () => {
   const { t } = useLingui();
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Settings`}
         description={t`Configure your emails and calendar settings.`}
       />

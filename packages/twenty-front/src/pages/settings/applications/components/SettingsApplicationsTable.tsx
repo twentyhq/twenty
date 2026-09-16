@@ -1,5 +1,5 @@
 import { IconChevronRight } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -62,7 +62,7 @@ export const SettingsApplicationsTable = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Installed apps`}
         description={t`All the applications currently installed on this workspace`}
       />

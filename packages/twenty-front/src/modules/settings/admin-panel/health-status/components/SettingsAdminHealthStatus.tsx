@@ -7,7 +7,7 @@ import { SettingsAdminSigningKeysTable } from '@/settings/admin-panel/signing-ke
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
@@ -43,7 +43,7 @@ export const SettingsAdminHealthStatus = () => {
     <>
       <SettingsAdminMaintenanceModeFetchEffect />
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Health Status`}
           description={t`How your system is doing`}
         />
@@ -54,7 +54,7 @@ export const SettingsAdminHealthStatus = () => {
       </Section>
       {upgradeStatus && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Upgrade Status`}
             description={t`Upgrade health across instance and workspaces`}
           />
@@ -62,7 +62,7 @@ export const SettingsAdminHealthStatus = () => {
         </Section>
       )}
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Signing Keys`}
           description={t`Asymmetric public keys used to sign and verify access tokens. Revoking a key immediately invalidates every JWT signed with it.`}
         />

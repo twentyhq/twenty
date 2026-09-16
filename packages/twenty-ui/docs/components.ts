@@ -1,5 +1,7 @@
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
+import { HEADING_PROP_DESCRIPTIONS } from './headingPropDescriptions';
+import { SECTION_HEADER_PROP_DESCRIPTIONS } from './sectionHeaderPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 
@@ -133,5 +135,19 @@ export const DOCUMENTED_COMPONENTS = [
     entryPoint: 'twenty-ui/primitives/data-display',
     slug: 'data-display/status',
     propDescriptions: STATUS_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'Heading',
+    source: 'primitives/typography/Heading/Heading.tsx',
+    entryPoint: 'twenty-ui/primitives/typography',
+    slug: 'typography/heading',
+    propDescriptions: HEADING_PROP_DESCRIPTIONS,
+  },
+  {
+    name: 'SectionHeader',
+    source: 'components/SectionHeader/SectionHeader.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'components/section-header',
+    propDescriptions: SECTION_HEADER_PROP_DESCRIPTIONS,
   },
 ] as const;

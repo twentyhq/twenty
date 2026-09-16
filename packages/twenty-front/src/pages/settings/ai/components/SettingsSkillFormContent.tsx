@@ -7,7 +7,7 @@ import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/primitives/layout';
 import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 
 import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/FormAdvancedTextFieldInput';
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
@@ -163,7 +163,7 @@ export const SettingsSkillFormContent = ({
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`About`}
             description={t`Define the name and instructions for this skill`}
           />

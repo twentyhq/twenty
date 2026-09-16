@@ -6,7 +6,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconPrompt } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
@@ -27,7 +27,10 @@ export const SettingsAiSystemPromptsSection = () => {
 
   return (
     <Section>
-      <H2Title title={t`System Prompt`} description={systemPromptDescription} />
+      <SectionHeader
+        title={t`System Prompt`}
+        description={systemPromptDescription}
+      />
       <UndecoratedLink to={getSettingsPath(SettingsPath.AiPrompts)}>
         <SettingsCard
           Icon={<IconPrompt size={theme.icon.size.md} />}

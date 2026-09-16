@@ -7,4 +7,5 @@
  *                              |___/
  */
 
-export {};
+export { SectionHeader } from './SectionHeader/SectionHeader';
+export type { SectionHeaderProps } from './SectionHeader/types/SectionHeaderProps';

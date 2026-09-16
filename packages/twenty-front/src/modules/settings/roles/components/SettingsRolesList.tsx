@@ -19,7 +19,7 @@ import {
   IconPlus,
   IconSearch,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
@@ -80,7 +80,7 @@ export const SettingsRolesList = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`All roles`}
         description={t`Assign roles to specify access permissions`}
       />

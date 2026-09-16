@@ -8,7 +8,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Status, Tag } from 'twenty-ui/primitives/data-display';
 import { IconRefresh, IconTrash, IconUsers } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -316,7 +316,7 @@ export const SettingsApplicationConnectionDetail = () => {
           <SettingsSectionSkeletonLoader />
         ) : connection === undefined || provider === undefined ? (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Connection not found`}
               description={t`This connection does not exist or is not available for this application.`}
             />
@@ -324,7 +324,7 @@ export const SettingsApplicationConnectionDetail = () => {
         ) : (
           <>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={connectionLabel}
                 description={t`Manage this application's OAuth connection.`}
               />
@@ -357,7 +357,7 @@ export const SettingsApplicationConnectionDetail = () => {
               </StyledActions>
             </Section>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Details`}
                 description={t`OAuth credential metadata for this application connection`}
               />

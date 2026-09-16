@@ -14,7 +14,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { CommandBlock } from 'twenty-ui/primitives/data-display';
 import { IconArrowUpRight, IconChevronRight, IconCopy } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import {
@@ -101,7 +101,7 @@ export const SettingsApplicationsDeveloperTab = () => {
   return (
     <>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Create an application`}
           description={t`You can either create a private app or share it to others`}
         />
@@ -131,7 +131,7 @@ export const SettingsApplicationsDeveloperTab = () => {
 
       {registrations.length > 0 && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`My apps`}
             description={t`Apps you're the developer of`}
           />

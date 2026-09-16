@@ -18,13 +18,17 @@ import {
   SectionAlignment,
   SectionFontColor,
 } from 'twenty-ui/primitives/layout';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { v4 } from 'uuid';
 import { BillingCreditGrantType } from '~/generated-admin/graphql';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useToast } from 'twenty-ui/primitives/feedback';
+
+const StyledHeading = styled(Heading)`
+  margin-block-end: ${themeCssVariables.spacing[4]};
+`;
 
 type SettingsAdminWorkspaceCreditGrantModalProps = {
   modalInstanceId: string;
@@ -159,10 +163,7 @@ export const SettingsAdminWorkspaceCreditGrantModal = ({
       autoHeight
     >
       <StyledCenteredTitle>
-        <H1Title
-          title={t`Grant credits`}
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <StyledHeading level={2} size="lg">{t`Grant credits`}</StyledHeading>
       </StyledCenteredTitle>
       <StyledSectionContainer>
         <Section

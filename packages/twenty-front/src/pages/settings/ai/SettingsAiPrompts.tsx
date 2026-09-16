@@ -14,11 +14,15 @@ import {
   getValidTimeZoneOrUndefined,
   isDefined,
 } from 'twenty-shared/utils';
-import { H2Title, H3Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetAiSystemPromptPreviewDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';
+
+const StyledSectionHeader = styled(SectionHeader)`
+  margin-block-end: 0;
+`;
 
 const StyledFormContainer = styled.div`
   display: flex;
@@ -103,11 +107,14 @@ export const SettingsAiPrompts = () => {
       <SettingsPageContainer>
         <Section>
           <StyledTitleContainer>
-            <H3Title
+            <StyledSectionHeader
               title={t`System Prompt`}
               description={[t`Read-only`, totalTokenCount]
                 .filter(Boolean)
                 .join(' ')}
+              level={3}
+              size="lg"
+              descriptionLineClamp={2}
             />
           </StyledTitleContainer>
         </Section>
@@ -122,7 +129,7 @@ export const SettingsAiPrompts = () => {
 
           return (
             <Section key={section.title}>
-              <H2Title
+              <SectionHeader
                 title={section.title}
                 description={[t`Read-only`, sectionTokenCount]
                   .filter(Boolean)
@@ -156,7 +163,7 @@ export const SettingsAiPrompts = () => {
         })}
 
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`User Context`}
             description={t`Information about the current user (auto-generated and included in each request)`}
           />

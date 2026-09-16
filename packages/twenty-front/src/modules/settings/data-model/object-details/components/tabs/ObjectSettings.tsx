@@ -19,7 +19,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { IconArchive, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -104,7 +104,7 @@ export const ObjectSettings = ({
     <StyledContentContainer>
       <StyledFormSectionContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`About`}
             description={t`Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms.`}
           />
@@ -115,7 +115,7 @@ export const ObjectSettings = ({
       </StyledFormSectionContainer>
       <StyledFormSectionContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Options`}
             description={t`Choose the fields that will identify your records`}
           />
@@ -126,7 +126,7 @@ export const ObjectSettings = ({
       </StyledFormSectionContainer>
       <StyledFormSectionContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Translations`}
             description={t`What each language displays for this object's labels`}
           />
@@ -142,7 +142,7 @@ export const ObjectSettings = ({
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Search`}
               description={t`Configure how this object appears in search results`}
             />
@@ -156,7 +156,7 @@ export const ObjectSettings = ({
       <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Indexes`}
               description={t`Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent.`}
             />
@@ -170,7 +170,7 @@ export const ObjectSettings = ({
       {!isReadOnly && (
         <StyledFormSectionContainer>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Danger zone`}
               description={t`Deactivate object`}
             />

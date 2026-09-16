@@ -28,7 +28,7 @@ import {
   IconListDetails,
 } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
@@ -165,7 +165,7 @@ export const SettingsWorkspaceMembersTeamTab = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Manage Members`}
         description={t`Manage the members of your workspace here`}
       />

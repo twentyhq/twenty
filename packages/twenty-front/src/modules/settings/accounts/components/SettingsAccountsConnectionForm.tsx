@@ -9,7 +9,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SettingsAccountsPasswordController } from '@/settings/accounts/components/SettingsAccountsPasswordController';
 import { type ConnectionFormData } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { type AccountType } from 'twenty-shared/constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -95,7 +95,7 @@ export const SettingsAccountsConnectionForm = ({
 
   return (
     <Section>
-      <H2Title title={t`Mail Account`} description={getDescription()} />
+      <SectionHeader title={t`Mail Account`} description={getDescription()} />
       <StyledFormContainer>
         <Controller
           name="name"

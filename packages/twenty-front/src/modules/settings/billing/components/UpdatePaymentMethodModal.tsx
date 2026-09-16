@@ -14,8 +14,12 @@ import {
   SectionAlignment,
   SectionFontColor,
 } from 'twenty-ui/primitives/layout';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledHeading = styled(Heading)`
+  margin-block-end: ${themeCssVariables.spacing[4]};
+`;
 
 type UpdatePaymentMethodModalProps = {
   modalInstanceId: string;
@@ -75,10 +79,10 @@ export const UpdatePaymentMethodModal = ({
       autoHeight
     >
       <StyledCenteredTitle>
-        <H1Title
-          title={t`Update your payment method`}
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <StyledHeading
+          level={2}
+          size="lg"
+        >{t`Update your payment method`}</StyledHeading>
       </StyledCenteredTitle>
       <StyledSectionContainer>
         <Section

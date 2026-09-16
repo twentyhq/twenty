@@ -20,7 +20,11 @@ import {
 } from 'twenty-ui/primitives/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
+
+const StyledHeading = styled(Heading)`
+  margin-block-end: ${themeCssVariables.spacing[4]};
+`;
 
 const PACKAGE_SUMMARY_ROW_HEIGHT = 24;
 const PACKAGE_SUMMARY_ROW_GAP = 4;
@@ -267,10 +271,10 @@ export const ResourceCreditPackagePickerModal = ({
       autoHeight
     >
       <StyledCenteredTitle>
-        <H1Title
-          title={t`Choose ${intervalAdjective} credits`}
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <StyledHeading
+          level={2}
+          size="lg"
+        >{t`Choose ${intervalAdjective} credits`}</StyledHeading>
       </StyledCenteredTitle>
       <StyledSectionContainer>
         <Section

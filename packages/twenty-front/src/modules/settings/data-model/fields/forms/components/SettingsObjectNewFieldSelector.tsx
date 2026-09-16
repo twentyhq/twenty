@@ -18,7 +18,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -131,7 +131,7 @@ export const SettingsObjectNewFieldSelector = ({
           <StyledTypeSelectContainer>
             {SETTINGS_FIELD_TYPE_CATEGORIES.map((category) => (
               <Section key={category}>
-                <H2Title
+                <SectionHeader
                   title={category}
                   description={
                     SETTINGS_FIELD_TYPE_CATEGORY_DESCRIPTIONS[category]

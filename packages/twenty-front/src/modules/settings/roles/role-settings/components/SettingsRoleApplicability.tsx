@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { IconKey, IconLego, IconUsers } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { useContext } from 'react';
@@ -70,7 +70,7 @@ export const SettingsRoleApplicability = ({
   ];
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Applicability`}
         description={t`Control which types of entities this role can be assigned to`}
       />

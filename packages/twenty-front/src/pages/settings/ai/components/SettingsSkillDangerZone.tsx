@@ -8,7 +8,7 @@ import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -74,7 +74,7 @@ export const SettingsSkillDangerZone = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Danger zone`}
         description={t`Deactivate or delete this skill`}
       />

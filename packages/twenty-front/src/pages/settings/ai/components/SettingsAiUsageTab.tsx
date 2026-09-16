@@ -14,7 +14,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
@@ -38,7 +38,7 @@ export const SettingsAiUsageTab = () => {
   if (!hasEnterpriseAccess) {
     return (
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`AI Usage`}
           description={t`Track AI consumption across your workspace.`}
           adornment={<OrganizationAdornment />}
@@ -55,7 +55,7 @@ export const SettingsAiUsageTab = () => {
   if (!isClickHouseConfigured) {
     return (
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`AI Usage`}
           description={t`Track AI consumption across your workspace.`}
         />
@@ -83,7 +83,7 @@ export const SettingsAiUsageTab = () => {
   if (!hasData) {
     return (
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`AI Usage`}
           description={t`Track AI consumption across your workspace.`}
         />

@@ -14,7 +14,7 @@ import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconHistory, IconKey, IconSettings } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
@@ -58,16 +58,19 @@ export const SettingsGeneral = () => {
     return (
       <>
         <Section>
-          <H2Title title={t`Picture`} />
+          <SectionHeader title={t`Picture`} />
           <WorkspaceLogoUploader />
         </Section>
         <Section>
-          <H2Title title={t`Name`} description={t`Name of your workspace`} />
+          <SectionHeader
+            title={t`Name`}
+            description={t`Name of your workspace`}
+          />
           <NameField />
         </Section>
         {isMultiWorkspaceEnabled && (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Workspace domain`}
               description={t`Edit your subdomain name or set a custom domain.`}
             />

@@ -4,7 +4,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { type ReactNode } from 'react';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -39,7 +39,7 @@ export const SettingsLayoutItemTable = ({
 
   return (
     <Section>
-      <H2Title title={title} description={description} />
+      <SectionHeader title={title} description={description} />
       <Table>
         <TableRow gridTemplateColumns={gridTemplate}>
           {columns.map((col) => (

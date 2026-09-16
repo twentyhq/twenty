@@ -38,7 +38,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
@@ -362,7 +362,7 @@ export const SettingsObjectFieldEdit = () => {
         >
           <SettingsPageContainer>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Icon and Name`}
                 description={t`The name and icon of this field`}
               />
@@ -376,12 +376,12 @@ export const SettingsObjectFieldEdit = () => {
             {!isReverseJunctionRelation && (
               <Section>
                 {fieldMetadataItem.isUnique ? (
-                  <H2Title
+                  <SectionHeader
                     title={t`Values`}
                     description={t`The values of this field must be unique`}
                   />
                 ) : (
-                  <H2Title
+                  <SectionHeader
                     title={t`Values`}
                     description={t`The values of this field`}
                   />
@@ -395,7 +395,7 @@ export const SettingsObjectFieldEdit = () => {
               </Section>
             )}
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Description`}
                 description={t`The description of this field`}
               />
@@ -406,7 +406,7 @@ export const SettingsObjectFieldEdit = () => {
             </Section>
 
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Translations`}
                 description={t`What each language displays for this field's labels`}
               />
@@ -422,7 +422,7 @@ export const SettingsObjectFieldEdit = () => {
 
             {!isLabelIdentifier && !readonly && fieldCanBeDeactivated && (
               <Section>
-                <H2Title
+                <SectionHeader
                   title={t`Danger zone`}
                   description={t`Deactivate this field`}
                 />

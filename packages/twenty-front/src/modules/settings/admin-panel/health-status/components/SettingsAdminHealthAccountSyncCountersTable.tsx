@@ -1,7 +1,7 @@
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -48,7 +48,7 @@ export const SettingsAdminHealthAccountSyncCountersTable = ({
 
   return (
     <Section>
-      <H2Title title={title} description={description} />
+      <SectionHeader title={title} description={description} />
       <StyledSettingsTableCardContainer>
         <SettingsTableCard
           items={items}

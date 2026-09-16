@@ -5,7 +5,7 @@ import {
   IconVersions,
   IconWorld,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
 import {
@@ -192,7 +192,7 @@ export const SettingsApplicationRegistrationGeneralInfo = ({
 
   return (
     <Section>
-      <H2Title title={t`General`} description={t`About your app`} />
+      <SectionHeader title={t`General`} description={t`About your app`} />
       <StyledGeneralContainer>
         <SettingsTableCard
           rounded

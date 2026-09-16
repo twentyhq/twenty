@@ -20,6 +20,7 @@ import {
   chipControlsTest,
 } from '@/__stories__/twenty-ui-gallery/utils/displayControlTests';
 import { createGalleryStory } from '@/__stories__/twenty-ui-gallery/utils/createGalleryStory';
+import { typographyTest } from '@/__stories__/twenty-ui-gallery/utils/typographyTest';
 import {
   codeEditorTest,
   dataDisplayTest,
@@ -169,12 +170,12 @@ export const CodeEditorPreact: Story = createGalleryStory({
 export const TypographyReact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-typography-gallery',
   runtime: 'react',
-  play: galleryRenderTest,
+  play: typographyTest,
 });
 export const TypographyPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-typography-gallery',
   runtime: 'preact',
-  play: galleryRenderTest,
+  play: typographyTest,
 });
 
 export const ThemeTokensReact: Story = createGalleryStory({

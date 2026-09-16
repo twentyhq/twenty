@@ -9,7 +9,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconUserPin, useIcons } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useMutation } from '@apollo/client/react';
@@ -72,7 +72,7 @@ export const SettingsRoleDefaultRole = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Default Role`}
         description={t`Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted`}
       />

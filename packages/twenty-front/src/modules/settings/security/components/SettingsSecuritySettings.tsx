@@ -22,7 +22,7 @@ import { useLingui } from '@lingui/react/macro';
 import { IconClockHour8, IconHistory, IconTrash } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
@@ -150,7 +150,7 @@ export const SettingsSecuritySettings = () => {
       <StyledMainContent>
         <StyledSectionContainer>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`SSO`}
               description={t`Configure an SSO connection`}
               adornment={<OrganizationAdornment />}
@@ -161,7 +161,7 @@ export const SettingsSecuritySettings = () => {
 
         <Section>
           <StyledContainer>
-            <H2Title
+            <SectionHeader
               title={t`Authentication`}
               description={t`Customize your workspace security`}
             />
@@ -170,7 +170,7 @@ export const SettingsSecuritySettings = () => {
         </Section>
         <Section>
           <StyledContainer>
-            <H2Title
+            <SectionHeader
               title={t`Editable Profile Fields`}
               description={t`Choose which profile fields users with the Edit Profile permission can modify`}
             />
@@ -181,7 +181,7 @@ export const SettingsSecuritySettings = () => {
         {shouldShowBypassSection && (
           <Section>
             <StyledContainer>
-              <H2Title
+              <SectionHeader
                 title={t`SSO Bypass`}
                 description={t`Configure fallback login methods for users with SSO bypass permissions`}
               />
@@ -191,7 +191,7 @@ export const SettingsSecuritySettings = () => {
         )}
         {isMultiWorkspaceEnabled && (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Support`}
               description={t`Manage support access settings`}
             />
@@ -199,7 +199,7 @@ export const SettingsSecuritySettings = () => {
           </Section>
         )}
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Audit Logs`}
             description={t`Configure how long audit logs are retained`}
             adornment={<OrganizationAdornment />}
@@ -234,7 +234,10 @@ export const SettingsSecuritySettings = () => {
           )}
         </Section>
         <Section>
-          <H2Title title={t`Other`} description={t`Other security settings`} />
+          <SectionHeader
+            title={t`Other`}
+            description={t`Other security settings`}
+          />
           <Card rounded>
             <SettingsOptionCardContentCounter
               Icon={IconTrash}

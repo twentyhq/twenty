@@ -13,7 +13,7 @@ import { IconEye, IconPlus, IconSparkle2 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';
 
 const SETTINGS_DATA_MODEL_HERO_INSTANCE_ID_PREFIX = 'settings-data-model-hero';
@@ -76,14 +76,14 @@ export const SettingsObjects = () => {
           />
         </Section>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Objects`}
             description={t`Manage objects, fields and relationships`}
           />
           <SettingsObjectTable objectMetadataItems={objectMetadataItems} />
         </Section>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Visualize data model`}
             description={t`See your data structure as an interactive diagram`}
           />

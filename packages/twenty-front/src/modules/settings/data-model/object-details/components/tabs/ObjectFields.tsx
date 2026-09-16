@@ -9,7 +9,7 @@ import { useLingui } from '@lingui/react/macro';
 import { FieldMetadataType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
@@ -54,7 +54,7 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
     <StyledContentContainer>
       {hasRelations && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Relations`}
             description={t`Relation between this object and other objects`}
           />
@@ -82,7 +82,7 @@ export const ObjectFields = ({ objectMetadataItem }: ObjectFieldsProps) => {
         </Section>
       )}
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Fields`}
           description={t`Customise the fields available in the ${objectLabelSingular} views and their display order in the ${objectLabelSingular} detail view and menus.`}
         />

@@ -36,7 +36,7 @@ import {
 import { Button, SearchInput } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { RoundedLink, UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import {
   type AdminAiModelConfig,
   SetAdminAiModelEnabledDocument,
@@ -320,7 +320,7 @@ export const SettingsAdminAiProviderDetail = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={provider?.label ?? providerName ?? ''}
             description={provider?.npm ?? ''}
           />
@@ -335,7 +335,7 @@ export const SettingsAdminAiProviderDetail = () => {
         </Section>
 
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Models`}
             description={
               isCustomProvider
@@ -408,7 +408,7 @@ export const SettingsAdminAiProviderDetail = () => {
 
         {isCustomProvider && (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Danger zone`}
               description={t`Remove this provider and disconnect all its models`}
             />

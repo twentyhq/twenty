@@ -11,7 +11,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { IconArchive, IconSettings } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { SearchInput } from 'twenty-ui/primitives/input';
 import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -121,7 +121,7 @@ export const SettingsAgentSkillsTab = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Skills`}
         description={t`Use filter to see existing skills or create your own`}
       />

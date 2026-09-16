@@ -8,8 +8,12 @@ import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H3Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledSectionHeader = styled(SectionHeader)`
+  margin-block-end: 0;
+`;
 
 const RESET_VARIABLE_MODAL_ID =
   'reset-application-registration-config-variable-modal';
@@ -117,7 +121,13 @@ export const ConfigVariableEdit = ({
   return (
     <SettingsPageContainer>
       <Section>
-        <H3Title title={title} description={description} />
+        <StyledSectionHeader
+          title={title}
+          description={description}
+          level={3}
+          size="lg"
+          descriptionLineClamp={2}
+        />
       </Section>
 
       <Section>

@@ -14,7 +14,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -65,7 +65,7 @@ export const SettingsSubdomain = () => {
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Subdomain`}
               description={t`Set the name of your subdomain`}
             />

@@ -31,7 +31,7 @@ import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import {
   PermissionFlagType,
@@ -217,7 +217,7 @@ export const SettingsBillingCreditsSection = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Credits`}
         description={t`Credits are used by workflows, AI chats, agents, and approved apps`}
       />

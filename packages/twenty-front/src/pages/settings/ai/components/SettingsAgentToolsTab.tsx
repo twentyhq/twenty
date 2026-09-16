@@ -7,7 +7,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock, IconPuzzle, IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { SearchInput } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { MenuItemSwitch } from 'twenty-ui/primitives/navigation';
@@ -77,7 +77,7 @@ export const SettingsAgentToolsTab = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Tools`}
         description={t`Use filter to see existing tools or create your own`}
       />

@@ -11,7 +11,7 @@ import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -76,7 +76,7 @@ export const SettingsLayoutDetailScaffold = ({
           <>
             {isDefined(trimmedDescription) && trimmedDescription.length > 0 && (
               <Section>
-                <H2Title
+                <SectionHeader
                   title={t`About`}
                   description={t`Description provided by the application`}
                 />
@@ -84,7 +84,7 @@ export const SettingsLayoutDetailScaffold = ({
               </Section>
             )}
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Details`}
                 description={t`Read-only ${entityTypeLabel} definition shipped by this app`}
               />

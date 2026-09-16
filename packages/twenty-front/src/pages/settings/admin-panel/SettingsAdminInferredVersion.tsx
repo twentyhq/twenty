@@ -11,7 +11,7 @@ import { IconId } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetInstanceAndAllWorkspacesUpgradeStatusDocument,
@@ -83,7 +83,7 @@ export const SettingsAdminInferredVersion = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Inferred version`}
             description={t`Detected application version running on this instance`}
           />

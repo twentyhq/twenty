@@ -10,7 +10,7 @@ import { Select } from '@/ui/input/components/Select';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { type UsageOperationType } from '~/generated-metadata/graphql';
@@ -97,7 +97,7 @@ export const UsageBreakdownPieSection = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={title}
         description={resolvedDescription}
         adornment={

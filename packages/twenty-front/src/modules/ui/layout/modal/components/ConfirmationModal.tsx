@@ -8,7 +8,7 @@ import { ModalStatefulWrapper } from '@/ui/layout/modal/components/ModalStateful
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { Button, type ButtonAccent } from 'twenty-ui/primitives/input';
 import {
   Section,
@@ -17,6 +17,10 @@ import {
 } from 'twenty-ui/primitives/layout';
 import { type ModalOverlay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledHeading = styled(Heading)`
+  margin-block-end: ${themeCssVariables.spacing[4]};
+`;
 
 export type ConfirmationModalProps = {
   modalInstanceId: string;
@@ -148,7 +152,9 @@ export const ConfirmationModal = ({
       autoHeight
     >
       <StyledCenteredTitle>
-        <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
+        <StyledHeading level={2} size="lg">
+          {title}
+        </StyledHeading>
       </StyledCenteredTitle>
       <StyledSectionContainer>
         <Section

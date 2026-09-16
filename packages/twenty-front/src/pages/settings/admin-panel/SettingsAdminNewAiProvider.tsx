@@ -26,7 +26,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
 import { Info, useToast } from 'twenty-ui/primitives/feedback';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 type ModelsDevProvider = { id: string; modelCount: number; npm: AiSdkPackage };
@@ -282,7 +282,7 @@ export const SettingsAdminNewAiProvider = () => {
           )}
 
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Provider`}
               description={t`Select a known provider or create a custom one`}
               adornment={
@@ -316,7 +316,7 @@ export const SettingsAdminNewAiProvider = () => {
           {hasSelected && (
             <>
               <Section>
-                <H2Title
+                <SectionHeader
                   title={t`Label`}
                   description={t`A display name for this provider`}
                 />
@@ -344,7 +344,7 @@ export const SettingsAdminNewAiProvider = () => {
 
               {needsApiKey && (
                 <Section>
-                  <H2Title
+                  <SectionHeader
                     title={t`API Key`}
                     description={t`Your provider API key for authentication`}
                   />
@@ -370,7 +370,7 @@ export const SettingsAdminNewAiProvider = () => {
 
               {isOpenAiCompatible && (
                 <Section>
-                  <H2Title
+                  <SectionHeader
                     title={t`Base URL`}
                     description={t`The API endpoint for your OpenAI-compatible provider`}
                   />
@@ -394,7 +394,7 @@ export const SettingsAdminNewAiProvider = () => {
               )}
 
               <Section>
-                <H2Title
+                <SectionHeader
                   title={t`Data Residency`}
                   description={t`Region where inference data is processed (optional)`}
                 />
@@ -419,7 +419,7 @@ export const SettingsAdminNewAiProvider = () => {
               {isBedrock && (
                 <>
                   <Section>
-                    <H2Title
+                    <SectionHeader
                       title={t`Region`}
                       description={t`The AWS region for Bedrock`}
                     />
@@ -442,7 +442,7 @@ export const SettingsAdminNewAiProvider = () => {
                   </Section>
 
                   <Section>
-                    <H2Title
+                    <SectionHeader
                       title={t`Access Key ID`}
                       description={t`Optional — uses IAM role if empty`}
                     />
@@ -465,7 +465,7 @@ export const SettingsAdminNewAiProvider = () => {
                   </Section>
 
                   <Section>
-                    <H2Title
+                    <SectionHeader
                       title={t`Secret Access Key`}
                       description={t`Optional — uses IAM role if empty`}
                     />

@@ -29,7 +29,7 @@ import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import {
   BillingPlanKey,
   CancelSwitchBillingIntervalDocument,
@@ -474,7 +474,10 @@ export const SettingsBillingSubscriptionInfo = ({
 
   return (
     <Section>
-      <H2Title title={t`Subscription`} description={subscriptionDescription} />
+      <SectionHeader
+        title={t`Subscription`}
+        description={subscriptionDescription}
+      />
       <SettingsBillingSubscriptionInfoCard
         canDisplaySwitchToMonthlyAction={canDisplaySwitchToMonthlyAction}
         canDisplaySwitchToYearlyAction={canDisplaySwitchToYearlyAction}

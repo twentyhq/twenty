@@ -1,12 +1,12 @@
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { t } from '@lingui/core/macro';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 
 export const SettingsNewAccountSection = () => {
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`New account`}
         description={t`Connect a new account to your workspace`}
       />

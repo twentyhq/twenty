@@ -24,7 +24,7 @@ import { IconCopy, IconTrash } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { GetEmailingDomainsDocument } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -166,7 +166,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Shared email`}
             description={t`The shared email you want to use.`}
           />
@@ -178,7 +178,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
           />
         </Section>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Forwarding address`}
             description={t`Set up forwarding from the source address to this destination.`}
           />
@@ -205,7 +205,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         </Section>
         {isNonEmptyString(channel.displayName) && (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Sender name`}
               description={t`The name recipients see next to your address. It is set when the channel is created.`}
             />
@@ -219,7 +219,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
         )}
         {isDefined(emailingDomain) && (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Sending domain`}
               description={t`Add these records at your DNS provider. Twenty checks them automatically.`}
             />

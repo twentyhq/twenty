@@ -23,7 +23,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconRepeat, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AssignRoleToApiKeyDocument,
@@ -275,7 +275,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
             <Section>
               {apiKeyToken ? (
                 <>
-                  <H2Title
+                  <SectionHeader
                     title={t`API Key`}
                     description={t`Copy this key as it will not be visible again`}
                   />
@@ -283,7 +283,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
                 </>
               ) : (
                 <>
-                  <H2Title
+                  <SectionHeader
                     title={t`API Key`}
                     description={t`Regenerate an API key`}
                   />
@@ -301,7 +301,10 @@ export const SettingsDevelopersApiKeyDetail = () => {
               )}
             </Section>
             <Section>
-              <H2Title title={t`Name`} description={t`Name of your API key`} />
+              <SectionHeader
+                title={t`Name`}
+                description={t`Name of your API key`}
+              />
               <ApiKeyNameInput
                 apiKeyName={apiKeyName}
                 apiKeyId={apiKey?.id}
@@ -310,7 +313,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               />
             </Section>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Role`}
                 description={t`What this API can do: Select a user role to define its permissions.`}
               />
@@ -321,7 +324,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               />
             </Section>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Expiration`}
                 description={t`When the key will be disabled`}
               />
@@ -334,7 +337,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               />
             </Section>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Danger zone`}
                 description={t`Delete this integration`}
               />

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -69,7 +69,7 @@ export const SettingsAiModelTiersPreview = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Preview`}
         description={t`The modes people and agents choose between`}
       />

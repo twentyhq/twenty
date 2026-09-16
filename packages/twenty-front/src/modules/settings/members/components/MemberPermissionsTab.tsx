@@ -14,7 +14,7 @@ import { IconArrowUpRight, IconUser, useIcons } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -125,7 +125,7 @@ export const MemberPermissionsTab = ({
   return (
     <>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Role`}
           description={t`Customize what this user can view and perform`}
         />

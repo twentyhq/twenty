@@ -6,7 +6,7 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { DpaDocumentPreview } from '@/settings/legal/components/DpaDocumentPreview';
@@ -68,7 +68,7 @@ export const SettingsLegalDpa = () => {
           <SettingsSkeletonLoader />
         ) : hasAgreements ? (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Executed copies`}
               description={t`Accepted and signed DPAs for this workspace, with their template version and date.`}
             />
@@ -82,7 +82,7 @@ export const SettingsLegalDpa = () => {
               </Section>
             )}
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Data Processing Agreement`}
                 description={t`No copy has been generated yet. This is the agreement that applies to your deployment — generate a signed copy from the top-right.`}
               />

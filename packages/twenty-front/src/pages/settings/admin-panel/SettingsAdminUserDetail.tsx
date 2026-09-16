@@ -35,7 +35,7 @@ import {
   IconUser,
 } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -177,7 +177,10 @@ export const SettingsAdminUserDetail = () => {
         {userLookupResult && (
           <>
             <Section>
-              <H2Title title={t`User Info`} description={t`About this user`} />
+              <SectionHeader
+                title={t`User Info`}
+                description={t`About this user`}
+              />
               <SettingsTableCard
                 items={userInfoItems}
                 rounded
@@ -185,7 +188,7 @@ export const SettingsAdminUserDetail = () => {
               />
             </Section>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Workspaces`}
                 description={t`All workspaces this user is a member of`}
               />

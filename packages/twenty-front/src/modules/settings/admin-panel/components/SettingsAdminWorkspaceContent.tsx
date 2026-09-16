@@ -31,7 +31,7 @@ import {
   IconUser,
 } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
@@ -146,7 +146,7 @@ export const SettingsAdminWorkspaceContent = ({
   return (
     <StyledContainer>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Workspace Info`}
           description={t`About this workspace`}
         />
@@ -157,7 +157,7 @@ export const SettingsAdminWorkspaceContent = ({
       </Section>
       {workspaceUpgradeStatus && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Upgrade Status`}
             description={t`Workspace upgrade health`}
           />

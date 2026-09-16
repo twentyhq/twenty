@@ -7,9 +7,8 @@
  *                              |___/
  */
 
-export { H1TitleFontColor, H1Title } from './H1Title/H1Title';
-export { H2Title } from './H2Title/H2Title';
-export { H3Title } from './H3Title/H3Title';
+export { Heading } from './Heading/Heading';
+export type { HeadingProps } from './Heading/types/HeadingProps';
 export type { LabelVariant } from './Label/Label';
 export { Label } from './Label/Label';
 export { LinkifiedText } from './LinkifiedText/LinkifiedText';

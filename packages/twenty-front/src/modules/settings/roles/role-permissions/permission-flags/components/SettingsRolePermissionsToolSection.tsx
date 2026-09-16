@@ -9,7 +9,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { IconTool } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import {
   AnimatedExpandableContainer,
   Section,
@@ -62,7 +62,7 @@ export const SettingsRolePermissionsToolSection = ({
 
   return (
     <Section>
-      <H2Title title={t`Actions`} description={t`Actions permissions`} />
+      <SectionHeader title={t`Actions`} description={t`Actions permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
           <Card rounded>

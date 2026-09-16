@@ -53,7 +53,8 @@ import {
   OverflowingTextWithTooltip,
   TooltipPosition,
 } from 'twenty-ui/primitives/surfaces';
-import { H2Title, Text } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
+import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   GetUpgradeStatusDocument,
@@ -350,7 +351,10 @@ export const SettingsAdminWorkspaceDetail = () => {
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.MEMBERS && workspace && (
           <Section>
-            <H2Title title={t`Members`} description={t`Workspace members`} />
+            <SectionHeader
+              title={t`Members`}
+              description={t`Workspace members`}
+            />
             <Table>
               <TableBody>
                 <TableRow gridTemplateColumns="1fr 2fr 100px">
@@ -433,7 +437,7 @@ export const SettingsAdminWorkspaceDetail = () => {
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.CHATS && (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Chat Sessions`}
               description={t`AI chat threads for this workspace`}
             />

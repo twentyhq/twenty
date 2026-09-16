@@ -16,7 +16,7 @@ import { IconBook, IconMessage, IconSparkles, IconTool } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Section } from 'twenty-ui/primitives/layout';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -81,7 +81,7 @@ export const SettingsAiOverviewTab = () => {
   return (
     <Fragment>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`At a glance`}
           description={t`What's installed and being used in your workspace`}
         />
@@ -113,7 +113,7 @@ export const SettingsAiOverviewTab = () => {
       </Section>
 
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`MCP Server`}
           description={t`Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol`}
         />
@@ -126,7 +126,7 @@ export const SettingsAiOverviewTab = () => {
       </Section>
 
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Workspace Instructions`}
           description={t`Custom instructions appended to every system prompt`}
         />

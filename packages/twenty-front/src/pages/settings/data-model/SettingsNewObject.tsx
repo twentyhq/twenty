@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -102,7 +102,7 @@ export const SettingsNewObject = () => {
       >
         <SettingsPageContainer>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`About`}
               description={t`Define the name and description of your object`}
             />

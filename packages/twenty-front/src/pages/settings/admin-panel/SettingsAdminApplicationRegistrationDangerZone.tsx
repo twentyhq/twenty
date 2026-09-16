@@ -17,11 +17,8 @@ import {
   SectionFontColor,
 } from 'twenty-ui/primitives/layout';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import {
-  H1Title,
-  H1TitleFontColor,
-  H2Title,
-} from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   type ApplicationRegistration,
@@ -38,6 +35,10 @@ import {
   StyledAppModalSection,
   StyledAppModalTitle,
 } from '~/pages/settings/applications/components/SettingsAppModalLayout';
+
+const StyledHeading = styled(Heading)`
+  margin-block-end: ${themeCssVariables.spacing[4]};
+`;
 
 const DELETE_REGISTRATION_MODAL_ID = 'delete-application-registration-modal';
 
@@ -202,7 +203,7 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
   return (
     <>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Danger zone`}
           description={t`Delete or transfer this app registration`}
         />
@@ -288,10 +289,10 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
         dataGloballyPreventClickOutside
       >
         <StyledAppModalTitle>
-          <H1Title
-            title={t`Transfer ownership`}
-            fontColor={H1TitleFontColor.Primary}
-          />
+          <StyledHeading
+            level={2}
+            size="lg"
+          >{t`Transfer ownership`}</StyledHeading>
         </StyledAppModalTitle>
         <StyledAppModalSection
           alignment={SectionAlignment.Center}

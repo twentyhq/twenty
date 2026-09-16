@@ -44,7 +44,7 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 const RELEASE_ENTERPRISE_BINDING_CONFIRMATION_MODAL_ID =
@@ -527,7 +527,7 @@ export const SettingsEnterprise = ({
 
   const activateKeySection = (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Activate Organization Key`}
         description={t`Paste your Organization key below to activate. Keep a copy of this key somewhere safe: the same key is reused to set up a development instance or to move your license to a replacement server.`}
       />
@@ -557,7 +557,7 @@ export const SettingsEnterprise = ({
 
   const transferSection = (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Key in use on another server`}
         description={t`This Organization key is already bound to a different server instance. Releasing it here will transfer the license to this server and stop counting seats on the previous one.`}
       />
@@ -580,7 +580,7 @@ export const SettingsEnterprise = ({
 
   const enterpriseKeyInfoSection = (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Your Organization key`}
         description={t`This server has an Organization key configured. Make sure you keep a copy of it somewhere safe: you need the same key to activate a development instance or to move your license to a replacement server. If you no longer have access to your key, contact support.`}
       />
@@ -589,7 +589,7 @@ export const SettingsEnterprise = ({
 
   const instanceTypeSection = (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Development instance`}
         description={
           instanceType === ENTERPRISE_INSTANCE_TYPE.DEVELOPMENT
@@ -636,7 +636,7 @@ export const SettingsEnterprise = ({
       return (
         <>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Organization License`}
               description={t`Your premium features are active but your Organization key is missing or invalid. This may be expected, but if not, please set a valid signed Organization key to manage your subscription, or contact support.`}
             />
@@ -656,7 +656,7 @@ export const SettingsEnterprise = ({
       return (
         <>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Get Organization`}
               description={t`Unlock premium features like SSO, row-level security, and audit logs.`}
             />
@@ -676,7 +676,7 @@ export const SettingsEnterprise = ({
       return (
         <>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Organization License`}
               description={t`Your subscription is active but your validity token is invalid or has expired. Try reloading it or contact support.`}
             />
@@ -724,7 +724,7 @@ export const SettingsEnterprise = ({
           </Section>
           {isBoundToAnotherServer && transferSection}
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Manage billing information`}
               description={t`Edit payment method, see your invoices and more`}
             />
@@ -743,7 +743,7 @@ export const SettingsEnterprise = ({
       return (
         <>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Organization License`}
               description={
                 isCancelScheduled
@@ -792,7 +792,7 @@ export const SettingsEnterprise = ({
             )}
           </Section>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Manage billing information`}
               description={t`Edit payment method, see your invoices and more`}
             />
@@ -805,7 +805,7 @@ export const SettingsEnterprise = ({
           </Section>
           {!isCancelScheduled && (
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Cancel your subscription`}
                 description={t`Your premium features will be disabled`}
               />
@@ -826,7 +826,7 @@ export const SettingsEnterprise = ({
       return (
         <>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Organization License`}
               description={t`Your Organization subscription has been canceled.`}
             />
@@ -856,7 +856,7 @@ export const SettingsEnterprise = ({
             </SubscriptionInfoContainer>
           </Section>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Get Organization`}
               description={t`Start a new Organization subscription to re-enable premium features.`}
             />
@@ -876,7 +876,7 @@ export const SettingsEnterprise = ({
       return (
         <>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Organization License`}
               description={
                 hasValidityToken
@@ -924,7 +924,7 @@ export const SettingsEnterprise = ({
             )}
           </Section>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Update payment method`}
               description={
                 hasValidityToken
@@ -948,7 +948,7 @@ export const SettingsEnterprise = ({
       return (
         <>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Organization License`}
               description={t`Your subscription setup was not completed.`}
             />
@@ -966,7 +966,7 @@ export const SettingsEnterprise = ({
             </SubscriptionInfoContainer>
           </Section>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Get Organization`}
               description={t`Start a new Organization subscription.`}
             />
@@ -984,7 +984,7 @@ export const SettingsEnterprise = ({
     return (
       <>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Organization License`}
             description={(() => {
               const statusLabel = stripeStatus ?? 'unknown';

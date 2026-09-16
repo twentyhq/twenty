@@ -19,7 +19,7 @@ import { IconEye, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -160,7 +160,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Name`}
             description={t`The name recipients see for this topic.`}
           />
@@ -174,7 +174,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
           />
         </Section>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Description`}
             description={t`Optional context shown to recipients on the preferences page.`}
           />
@@ -188,7 +188,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
           />
         </Section>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Visibility`}
             description={t`Control whether recipients can find and manage this topic.`}
           />

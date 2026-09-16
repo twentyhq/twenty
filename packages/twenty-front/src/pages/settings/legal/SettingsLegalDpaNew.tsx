@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 
 import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -140,7 +140,7 @@ export const SettingsLegalDpaNew = () => {
         )}
 
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Your details`}
             description={t`The PDF is pre-signed by Twenty and executed with your legal entity and authorized signatory.`}
           />
@@ -172,7 +172,7 @@ export const SettingsLegalDpaNew = () => {
 
         {preview && (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Preview`}
               description={t`The full agreement with fields resolved for your deployment.`}
             />

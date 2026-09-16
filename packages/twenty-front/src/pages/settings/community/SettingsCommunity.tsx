@@ -13,7 +13,7 @@ import {
   type IconComponent,
   useIcons,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -97,7 +97,7 @@ export const SettingsCommunity = () => {
         </Section>
 
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Join the community`}
             description={t`Stay up to date with product news and community updates.`}
           />
@@ -125,7 +125,7 @@ export const SettingsCommunity = () => {
         </Section>
 
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Partners`}
             description={t`Hire a partner to help you implement and customize Twenty.`}
           />
@@ -147,7 +147,7 @@ export const SettingsCommunity = () => {
         </Section>
 
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Features`}
             description={t`Try our upcoming features. Note they are still in beta. Please bear with us and report any issues you find.`}
           />

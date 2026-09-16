@@ -9,7 +9,7 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { FindAdminApplicationRegistrationClaimsDocument } from '~/generated-admin/graphql';
 
 const CLAIMS_TABLE_GRID = '1fr 140px';
@@ -35,7 +35,7 @@ export const SettingsAdminApplicationRegistrationClaims = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Ownership`}
         description={t`The workspace that claimed this app registration`}
       />

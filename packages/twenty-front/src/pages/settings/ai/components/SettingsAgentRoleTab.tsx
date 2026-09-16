@@ -11,7 +11,7 @@ import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAt
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPlus } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -150,7 +150,7 @@ export const SettingsAgentRoleTab = ({
     <Section>
       {!formValues.role ? (
         <>
-          <H2Title
+          <SectionHeader
             title={t`Role`}
             description={t`Create a role to define permissions for this agent.`}
           />

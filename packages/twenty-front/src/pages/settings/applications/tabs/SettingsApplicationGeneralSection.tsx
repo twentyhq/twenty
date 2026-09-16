@@ -6,7 +6,7 @@ import { useToast } from 'twenty-ui/primitives/feedback';
 import { IconRefresh } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { UpdateApplicationDocument } from '~/generated-metadata/graphql';
 
 export const SettingsApplicationGeneralSection = ({
@@ -38,7 +38,7 @@ export const SettingsApplicationGeneralSection = ({
 
   return (
     <Section>
-      <H2Title title={t`General`} />
+      <SectionHeader title={t`General`} />
       <Card rounded fullWidth>
         <SettingsOptionCardContentSwitch
           Icon={IconRefresh}

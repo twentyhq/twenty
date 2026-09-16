@@ -14,7 +14,7 @@ import {
 import { CodeEditor, CoreEditorHeader } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const StyledMcpEditorHeaderTitle = styled.div`
@@ -59,7 +59,7 @@ export const SettingsMcpSetup = () => {
       {categories.map((category) => (
         <Fragment key={category.title}>
           <Section>
-            <H2Title
+            <SectionHeader
               title={category.title}
               description={category.description}
             />
@@ -72,7 +72,7 @@ export const SettingsMcpSetup = () => {
 
           {category.showManualConfigurationAfter && (
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Manual configuration`}
                 description={t`Access your workspace data from your favorite MCP client like Claude, Codex or Cursor.`}
               />

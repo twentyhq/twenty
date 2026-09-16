@@ -9,8 +9,12 @@ import {
   SectionAlignment,
   SectionFontColor,
 } from 'twenty-ui/primitives/layout';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+
+const StyledHeading = styled(Heading)`
+  margin-block-end: ${themeCssVariables.spacing[4]};
+`;
 
 type AddCreditCardModalProps = {
   modalInstanceId: string;
@@ -57,10 +61,10 @@ export const AddCreditCardModal = ({
       autoHeight
     >
       <StyledCenteredTitle>
-        <H1Title
-          title={t`Add your credit card`}
-          fontColor={H1TitleFontColor.Primary}
-        />
+        <StyledHeading
+          level={2}
+          size="lg"
+        >{t`Add your credit card`}</StyledHeading>
       </StyledCenteredTitle>
       <StyledSectionContainer>
         <Section

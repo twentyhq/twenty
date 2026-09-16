@@ -9,7 +9,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconPlayerPlay } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button, CoreEditorHeader } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 
@@ -61,7 +61,7 @@ export const SettingsLogicFunctionCodeEditorTab = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Code your function`}
         description={t`Write your function (in typescript) below`}
       />

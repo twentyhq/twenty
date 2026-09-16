@@ -18,7 +18,7 @@ import { getSettingsPath, isDefined, isValidUuid } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
@@ -218,7 +218,7 @@ export const SettingsToolDetail = () => {
         ) : (
           <>
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Parameters`}
                 description={t`Input parameters accepted by this tool`}
               />
@@ -230,7 +230,7 @@ export const SettingsToolDetail = () => {
             </Section>
 
             <Section>
-              <H2Title
+              <SectionHeader
                 title={t`Description`}
                 description={t`Define what this tool does`}
               />
@@ -247,7 +247,7 @@ export const SettingsToolDetail = () => {
 
             {isCustomTool && !isManaged && (
               <Section>
-                <H2Title
+                <SectionHeader
                   title={t`Danger zone`}
                   description={t`Delete this tool`}
                 />

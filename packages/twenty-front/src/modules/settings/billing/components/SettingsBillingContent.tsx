@@ -13,7 +13,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { isDefined } from 'twenty-shared/utils';
 import { IconCircleX, IconCreditCard } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { SubscriptionStatus } from '~/generated-metadata/graphql';
@@ -90,7 +90,7 @@ export const SettingsBillingContent = () => {
           />
         )}
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Manage billing information`}
           description={t`Edit payment method, see your invoices and more`}
         />
@@ -104,7 +104,7 @@ export const SettingsBillingContent = () => {
       </Section>
       {canCancelCurrentSubscription && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Cancel your subscription`}
             description={t`Your workspace will be disabled`}
           />

@@ -11,7 +11,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconLayoutDashboard, IconPencil, IconSparkle2 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import coverDark from '~/pages/settings/layout/assets/cover-dark.png';
 import coverLight from '~/pages/settings/layout/assets/cover-light.png';
 
@@ -77,7 +77,7 @@ export const SettingsLayout = () => {
           />
         </Section>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Overview`}
             description={t`All the layout items declared on your workspace`}
           />

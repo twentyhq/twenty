@@ -12,7 +12,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   DeleteUserAccountDocument,
@@ -70,7 +70,7 @@ export const DeleteAccount = () => {
 
   return (
     <>
-      <H2Title
+      <SectionHeader
         title={t`Danger zone`}
         description={
           userHasMultipleWorkspaces

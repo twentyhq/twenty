@@ -11,7 +11,7 @@ import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { SearchInput } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -78,7 +78,7 @@ export const UsageByUserTableSection = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={title}
         description={description}
         adornment={

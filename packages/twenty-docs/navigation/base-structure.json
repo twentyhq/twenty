@@ -574,14 +574,14 @@
                 {
                   "key": "uiTypography",
                   "label": "Typography",
-                  "pages": ["ui/primitives/typography/text"]
+                  "pages": ["ui/primitives/typography/heading", "ui/primitives/typography/text"]
                 }
               ]
             },
             {
               "key": "uiComponents",
               "label": "Components",
-              "pages": ["ui/components/overview"]
+              "pages": ["ui/components/overview", "ui/components/section-header"]
             }
           ]
         }

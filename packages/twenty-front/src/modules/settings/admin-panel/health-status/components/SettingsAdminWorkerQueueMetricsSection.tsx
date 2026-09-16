@@ -7,7 +7,7 @@ import { lazy, Suspense, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconList } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -53,7 +53,10 @@ export const SettingsAdminWorkerQueueMetricsSection = ({
     <StyledContainer>
       <Section>
         <StyledControlsContainer>
-          <H2Title title={queue.queueName} description={t`Queue performance`} />
+          <SectionHeader
+            title={queue.queueName}
+            description={t`Queue performance`}
+          />
           <StyledRightControls>
             <Button
               Icon={IconList}

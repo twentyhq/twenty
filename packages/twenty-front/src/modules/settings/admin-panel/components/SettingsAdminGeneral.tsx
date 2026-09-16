@@ -23,7 +23,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { IconChevronRight } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -85,7 +85,7 @@ export const SettingsAdminGeneral = () => {
       {canAccessFullAdminPanel && (
         <>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`About`}
               description={t`Version of the application`}
             />
@@ -97,7 +97,7 @@ export const SettingsAdminGeneral = () => {
 
       {(canImpersonate || canAccessFullAdminPanel) && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Recent Users`}
             description={
               canManageFeatureFlags
@@ -199,7 +199,7 @@ export const SettingsAdminGeneral = () => {
 
       {canImpersonate && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Top Workspaces`}
             description={t`Top 10 workspaces by number of users`}
           />

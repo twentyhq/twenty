@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconCheck, IconCopy, IconDownload, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { HorizontalSeparator, Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
@@ -119,7 +119,7 @@ export const SettingsSsoSamlForm = () => {
   return (
     <>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Identity Provider Metadata XML`}
           description={t`Upload the XML file with your connection infos`}
         />
@@ -146,7 +146,7 @@ export const SettingsSsoSamlForm = () => {
         </StyledUploadFileContainer>
       </Section>
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Service Provider Details`}
           description={t`Enter the infos to set the connection`}
         />

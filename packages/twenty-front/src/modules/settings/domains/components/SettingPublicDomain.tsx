@@ -21,7 +21,7 @@ import { IconReload, IconTrash } from 'twenty-ui/icon';
 import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   CreatePublicDomainDocument,
@@ -166,7 +166,7 @@ export const SettingPublicDomain = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`Custom Domain`}
             description={t`Set the name of your custom domain and configure your DNS records.`}
           />

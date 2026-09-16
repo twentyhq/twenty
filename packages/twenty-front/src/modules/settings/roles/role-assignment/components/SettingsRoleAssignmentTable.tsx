@@ -13,7 +13,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 
 import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
@@ -140,7 +140,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
 
   return (
     <>
-      <H2Title
+      <SectionHeader
         title={t`Assigned ${roleTargetDisplayName}`}
         description={t`This role is assigned to these ${roleTargetDisplayName}.`}
       />

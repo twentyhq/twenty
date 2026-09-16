@@ -17,7 +17,7 @@ import {
   IconMailX,
   IconPhone,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
@@ -92,7 +92,7 @@ export const SettingsWorkspaceCommunications = () => {
         <SettingsWorkspaceEmailGroupSection />
         {isMessageCampaignFeatureEnabled && (
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Unsubscribe`}
               description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
             />

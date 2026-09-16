@@ -17,7 +17,7 @@ import {
 } from 'twenty-ui/primitives/feedback';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { H3Title } from 'twenty-ui/primitives/typography';
+import { Heading } from 'twenty-ui/primitives/typography';
 import { type TimelineCalendarEvent } from '~/generated/graphql';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 
@@ -36,6 +36,7 @@ const StyledTitleContainer = styled.div`
     color: ${themeCssVariables.font.color.secondary};
     font-size: ${themeCssVariables.font.size.md};
     font-weight: ${themeCssVariables.font.weight.regular};
+    line-height: inherit;
   }
 `;
 
@@ -104,14 +105,10 @@ export const CalendarEventsCardContent = ({
           return (
             <Section key={monthTime}>
               <StyledTitleContainer>
-                <H3Title
-                  title={
-                    <>
-                      {monthLabel}
-                      {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
-                    </>
-                  }
-                />
+                <Heading level={3} size="lg">
+                  {monthLabel}
+                  {isLastMonthOfYear && <StyledYear> {year}</StyledYear>}
+                </Heading>
               </StyledTitleContainer>
               <CalendarMonthCard dayTimes={monthDayTimes} />
             </Section>

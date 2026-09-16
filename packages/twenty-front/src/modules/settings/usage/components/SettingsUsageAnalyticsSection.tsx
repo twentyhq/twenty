@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconSparkles } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
@@ -27,7 +27,7 @@ export const SettingsUsageAnalyticsSection = () => {
   if (!isClickHouseConfigured) {
     return (
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Usage Analytics`}
           description={t`Credit usage breakdown for your workspace.`}
         />
@@ -54,7 +54,7 @@ export const SettingsUsageAnalyticsSection = () => {
   if (!hasData) {
     return (
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Usage Analytics`}
           description={t`Credit usage breakdown for your workspace.`}
         />

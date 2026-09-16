@@ -22,7 +22,7 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconAlertTriangle } from 'twenty-ui/icon';
 import { Callout, useToast } from 'twenty-ui/primitives/feedback';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { IndexType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -166,14 +166,14 @@ export const SettingsObjectNewIndex = () => {
             />
           </Section>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Fields`}
               description={t`Pick one or more fields. The order you select them in becomes the column order in the index — important for composite queries. For composite fields like Address, pick the specific sub-column to index.`}
             />
             <SettingsObjectIndexFieldsForm indexableFields={indexableFields} />
           </Section>
           <Section>
-            <H2Title
+            <SectionHeader
               title={t`Options`}
               description={t`Pick the index type. BTREE covers most queries; GIN is for full-text and JSONB.`}
             />

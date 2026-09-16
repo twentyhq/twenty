@@ -6,7 +6,7 @@ import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type ReactNode } from 'react';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -103,7 +103,7 @@ export const SettingsApplicationFrontComponentSettingsTab = ({
     <>
       {trimmedDescription !== undefined && trimmedDescription.length > 0 && (
         <Section>
-          <H2Title
+          <SectionHeader
             title={t`About`}
             description={t`Description provided by the application`}
           />
@@ -111,7 +111,7 @@ export const SettingsApplicationFrontComponentSettingsTab = ({
         </Section>
       )}
       <Section>
-        <H2Title
+        <SectionHeader
           title={t`Details`}
           description={t`Build and runtime metadata for this component`}
         />

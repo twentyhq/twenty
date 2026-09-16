@@ -5,7 +5,7 @@ import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { IconClockHour8 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -32,7 +32,7 @@ export const SettingsLogicFunctionNewForm = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`About`}
         description={t`Name and describe your function`}
       />

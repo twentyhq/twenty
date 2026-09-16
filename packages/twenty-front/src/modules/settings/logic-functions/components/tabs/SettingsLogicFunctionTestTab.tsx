@@ -19,7 +19,7 @@ import {
   IconWebhook,
   type IconComponent,
 } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import {
   Button,
   CodeEditor,
@@ -130,7 +130,7 @@ export const SettingsLogicFunctionTestTab = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Test your function`}
         description={t`Insert a JSON input, then press "Run Function".`}
       />

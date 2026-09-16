@@ -21,7 +21,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconSearch } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { sortByProperty } from '~/utils/array/sortByProperty';
@@ -92,7 +92,7 @@ export const SettingsRolePermissionsObjectLevelObjectFieldPermissionTable = ({
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Fields Permissions`}
         description={t`Ability to interact with this object's fields.`}
       />

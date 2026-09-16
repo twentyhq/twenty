@@ -1,7 +1,9 @@
+import { SectionHeader } from '@ui/components/SectionHeader/SectionHeader';
+import { Heading } from '@ui/primitives/typography/Heading/Heading';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { IconX } from '@ui/icon';
-import { H1Title, H1TitleFontColor, H2Title } from '@ui/primitives/typography';
+
 import { Button, IconButton } from '@ui/primitives/input';
 import {
   Section,
@@ -57,7 +59,7 @@ export const Default: Story = {
       ariaLabel="Edit workspace"
     >
       <ModalHeader>
-        <H2Title
+        <SectionHeader
           title="Edit workspace"
           description="Update your workspace settings"
         />
@@ -106,7 +108,13 @@ export const Confirmation: Story = {
       gap={gap}
     >
       <div className={styles.centeredTitle}>
-        <H1Title title="Delete record?" fontColor={H1TitleFontColor.Primary} />
+        <Heading
+          level={2}
+          size="lg"
+          style={{ marginBlockEnd: 'var(--t-spacing-4)' }}
+        >
+          Delete record?
+        </Heading>
       </div>
       <div className={styles.sectionContainer}>
         <Section
@@ -145,7 +153,7 @@ export const Small: Story = {
       ariaLabel="Archive item"
     >
       <ModalHeader>
-        <H2Title title="Archive item" />
+        <SectionHeader title="Archive item" />
       </ModalHeader>
       <ModalContent>
         <Section>Are you sure you want to archive this item?</Section>
@@ -175,7 +183,7 @@ export const ExtraLarge: Story = {
       ariaLabel="Import contacts"
     >
       <ModalHeader>
-        <H2Title
+        <SectionHeader
           title="Import contacts"
           description="Upload a CSV file to import your contacts"
         />
@@ -227,7 +235,7 @@ const InteractiveModal = () => {
         onBackdropMouseDown={() => setIsOpen(false)}
       >
         <ModalHeader>
-          <H2Title title="Create record" />
+          <SectionHeader title="Create record" />
           <IconButton
             Icon={IconX}
             variant="tertiary"

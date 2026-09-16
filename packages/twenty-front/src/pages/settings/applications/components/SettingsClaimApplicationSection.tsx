@@ -21,7 +21,7 @@ import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
 import { Callout, useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { SectionHeader } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   FindClaimableApplicationRegistrationDocument,
@@ -221,7 +221,7 @@ export const SettingsClaimApplicationSection = () => {
 
   return (
     <Section>
-      <H2Title
+      <SectionHeader
         title={t`Claim an application`}
         description={t`Take ownership of an app you published to npm. Enter its exact package name (or universal identifier) to find it.`}
       />
