@@ -40,7 +40,7 @@ export default defineLogicFunction({
           },
           minLikelihood: {
             type: 'number',
-            label: 'Minimum likelihood',
+            label: 'Minimum likelihood (1-10)',
           },
         },
       },
