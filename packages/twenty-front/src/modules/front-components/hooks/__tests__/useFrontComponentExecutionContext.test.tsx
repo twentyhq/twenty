@@ -752,33 +752,43 @@ describe('useFrontComponentExecutionContext', () => {
   });
 
   describe('openCommandConfirmationModal', () => {
-    it('should call openConfirmationModal with frontComponent caller', async () => {
-      const { result } = renderUseFrontComponentExecutionContext({
-        frontComponentId: FRONT_COMPONENT_ID,
-      });
-
-      await act(async () => {
-        await result.current.frontComponentHostCommunicationApi.openCommandConfirmationModal(
-          {
-            title: 'Confirm?',
-            subtitle: 'Are you sure?',
-            confirmButtonText: 'Yes',
-            confirmButtonAccent: 'danger',
-          },
-        );
-      });
-
-      expect(mockOpenConfirmationModal).toHaveBeenCalledWith({
-        caller: {
-          type: 'frontComponent',
+    it.each([
+      { confirmButtonAccent: 'danger' as const, confirmButtonColor: 'danger' },
+      { confirmButtonAccent: 'blue' as const, confirmButtonColor: 'accent' },
+      {
+        confirmButtonAccent: 'default' as const,
+        confirmButtonColor: 'neutral',
+      },
+    ])(
+      'maps the $confirmButtonAccent SDK confirmation accent',
+      async ({ confirmButtonAccent, confirmButtonColor }) => {
+        const { result } = renderUseFrontComponentExecutionContext({
           frontComponentId: FRONT_COMPONENT_ID,
-        },
-        title: 'Confirm?',
-        subtitle: 'Are you sure?',
-        confirmButtonText: 'Yes',
-        confirmButtonAccent: 'danger',
-      });
-    });
+        });
+
+        await act(async () => {
+          await result.current.frontComponentHostCommunicationApi.openCommandConfirmationModal(
+            {
+              title: 'Confirm?',
+              subtitle: 'Are you sure?',
+              confirmButtonText: 'Yes',
+              confirmButtonAccent,
+            },
+          );
+        });
+
+        expect(mockOpenConfirmationModal).toHaveBeenCalledWith({
+          caller: {
+            type: 'frontComponent',
+            frontComponentId: FRONT_COMPONENT_ID,
+          },
+          title: 'Confirm?',
+          subtitle: 'Are you sure?',
+          confirmButtonText: 'Yes',
+          confirmButtonColor,
+        });
+      },
+    );
 
     it('should preserve danger as the default confirmation accent', async () => {
       const { result } = renderUseFrontComponentExecutionContext({
@@ -802,7 +812,7 @@ describe('useFrontComponentExecutionContext', () => {
         title: 'Confirm?',
         subtitle: 'Are you sure?',
         confirmButtonText: undefined,
-        confirmButtonAccent: 'danger',
+        confirmButtonColor: 'danger',
       });
     });
   });

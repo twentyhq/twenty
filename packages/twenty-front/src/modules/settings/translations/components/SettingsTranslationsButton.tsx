@@ -24,10 +24,8 @@ export const SettingsTranslationsButton = ({
 
   return (
     <Button
-      Icon={IconLanguage}
-      title={t`Edit translations`}
-      variant="secondary"
-      size="small"
+      startIcon={<IconLanguage />}
+      size="sm"
       onClick={() => {
         setSettingsTranslationsSidePanelTarget(target);
         navigateSidePanel({
@@ -37,6 +35,7 @@ export const SettingsTranslationsButton = ({
           resetNavigationStack: true,
         });
       }}
-    />
+      variant="outline"
+    >{t`Edit translations`}</Button>
   );
 };

@@ -3,13 +3,13 @@ import { PAYMENT_RECOVERY_POLLING_MAX_ATTEMPTS } from '@/settings/billing/consta
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useMarkBillingPaymentMethodAsAdded } from '@/settings/billing/hooks/useMarkBillingPaymentMethodAsAdded';
 import { waitForSubscriptionRecovery } from '@/settings/billing/utils/waitForSubscriptionRecovery';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { Button } from 'twenty-ui/primitives/input';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { logError } from '~/utils/logError';
 import { sleep } from '~/utils/sleep';
@@ -49,13 +49,13 @@ export const useWaitForPaymentRecovery = () => {
         variant: 'warning',
         children: t`Your card was saved, but the payment still needs attention.`,
         action: (
-          <Button
-            title={t`Go to billing`}
-            ariaLabel={t`Go to billing`}
+          <NavigationButton
             to={getSettingsPath(SettingsPath.Billing)}
-            variant="tertiary"
-            size="small"
-          />
+            variant="ghost"
+            size="sm"
+          >
+            {t`Go to billing`}
+          </NavigationButton>
         ),
       });
 

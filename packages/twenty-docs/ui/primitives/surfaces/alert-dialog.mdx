@@ -124,7 +124,7 @@ type DeleteConfirmationProps = { onDelete: () => void };
 export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
   <AlertDialog.Root>
     <AlertDialog.Trigger
-      render={<Button title="Delete record" accent="danger" />}
+      render={<Button color="danger">Delete record</Button>}
     />
     <AlertDialog.Popup>
       <AlertDialog.Header>
@@ -134,12 +134,10 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
         </AlertDialog.Description>
       </AlertDialog.Header>
       <AlertDialog.Footer>
-        <AlertDialog.Close
-          render={<Button title="Cancel" variant="secondary" />}
-        />
+        <AlertDialog.Close render={<Button variant="outline">Cancel</Button>} />
         <AlertDialog.Close
           onClick={onDelete}
-          render={<Button title="Delete" accent="danger" />}
+          render={<Button color="danger">Delete</Button>}
         />
       </AlertDialog.Footer>
     </AlertDialog.Popup>

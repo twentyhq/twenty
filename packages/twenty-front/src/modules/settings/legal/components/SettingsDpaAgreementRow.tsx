@@ -48,12 +48,11 @@ export const SettingsDpaAgreementRow = ({
       <TableCell align="right">
         {agreement.downloadUrl ? (
           <Button
-            Icon={IconDownload}
-            title={t`Download`}
-            size="small"
-            variant="tertiary"
+            startIcon={<IconDownload />}
+            size="sm"
             onClick={() => onDownload(agreement)}
-          />
+            variant="ghost"
+          >{t`Download`}</Button>
         ) : (
           '—'
         )}

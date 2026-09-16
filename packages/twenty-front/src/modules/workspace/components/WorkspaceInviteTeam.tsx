@@ -216,13 +216,12 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
           />
         </StyledRoleContainer>
         <Button
-          Icon={IconSend}
-          variant="primary"
-          accent="blue"
-          title={t`Invite`}
+          startIcon={<IconSend />}
           type="submit"
           disabled={isEmailsEmpty || !!errors.emails}
-        />
+          variant="solid"
+          color="accent"
+        >{t`Invite`}</Button>
       </StyledContainer>
     </form>
   );

@@ -14,9 +14,9 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import QRCodeModule from 'react-qr-code';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { MainButton } from 'twenty-ui/components';
 import { IconCopy } from 'twenty-ui/icon';
 import { Loader } from 'twenty-ui/primitives/feedback';
-import { MainButton } from 'twenty-ui/primitives/input';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -90,12 +90,7 @@ export const SignInUpTwoFactorAuthenticationProvision = () => {
             </StyledCopySetupKeyLink>
           )}
         </StyledTwoFactorMainContent>
-        <MainButton
-          title={t`Next`}
-          onClick={handleClick}
-          variant="primary"
-          fullWidth
-        />
+        <MainButton onClick={handleClick} fullWidth>{t`Next`}</MainButton>
       </StyledForm>
     </>
   );

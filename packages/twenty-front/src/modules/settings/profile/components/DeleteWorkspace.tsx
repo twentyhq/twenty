@@ -38,12 +38,11 @@ export const DeleteWorkspace = () => {
         description={t`Delete your whole workspace`}
       />
       <Button
-        accent="danger"
-        variant="secondary"
-        title={t`Delete workspace`}
-        Icon={IconTrash}
+        startIcon={<IconTrash />}
         onClick={() => openModal(DELETE_WORKSPACE_MODAL_ID)}
-      />
+        variant="outline"
+        color="danger"
+      >{t`Delete workspace`}</Button>
 
       <ConfirmationModal
         modalInstanceId={DELETE_WORKSPACE_MODAL_ID}

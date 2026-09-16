@@ -81,18 +81,16 @@ export const DeleteAccount = () => {
       <StyledDangerActions>
         {userHasMultipleWorkspaces && (
           <Button
-            accent="danger"
             onClick={() => openModal(LEAVE_WORKSPACE_MODAL_ID)}
-            variant="secondary"
-            title={t`Leave workspace`}
-          />
+            variant="outline"
+            color="danger"
+          >{t`Leave workspace`}</Button>
         )}
         <Button
-          accent="danger"
           onClick={() => openModal(DELETE_ACCOUNT_MODAL_ID)}
-          variant="secondary"
-          title={t`Delete account`}
-        />
+          variant="outline"
+          color="danger"
+        >{t`Delete account`}</Button>
       </StyledDangerActions>
       {userHasMultipleWorkspaces && (
         <ConfirmationModal
