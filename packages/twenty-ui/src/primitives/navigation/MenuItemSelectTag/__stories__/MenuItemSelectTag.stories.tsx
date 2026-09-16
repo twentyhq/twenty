@@ -1,4 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
+import { expect, within } from 'storybook/test';
 
 import {
   A11Y_DEFER_COLOR_CONTRAST,
@@ -93,4 +94,19 @@ export const Catalog: CatalogStory<Story, typeof MenuItemSelectTag> = {
     },
   },
   decorators: [CatalogDecorator],
+};
+
+export const Selected: Story = {
+  args: {
+    color: 'green',
+    selected: true,
+    text: 'Selected option',
+  },
+  decorators: [ComponentDecorator],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole('option', { name: 'Selected option', selected: true }),
+    ).toBeVisible();
+  },
 };

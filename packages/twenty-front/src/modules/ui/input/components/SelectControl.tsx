@@ -93,6 +93,15 @@ const StyledIconChevronDownWrapper = styled.div<{
   display: flex;
 `;
 
+const StyledTagContainer = styled.div`
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const StyledTag = styled(Tag)`
+  max-width: 100%;
+`;
+
 export type SelectControlProps = {
   renderAsTag?: boolean;
   selectedOption: SelectOption<string | number | boolean | null>;
@@ -155,9 +164,11 @@ export const SelectControl = ({
         </StyledLeadingContent>
       ) : null}
       {renderAsTag && isDefined(selectedOption.color) ? (
-        <div>
-          <Tag color={selectedOption.color}>{selectedOption.label}</Tag>
-        </div>
+        <StyledTagContainer>
+          <StyledTag color={selectedOption.color}>
+            {selectedOption.label}
+          </StyledTag>
+        </StyledTagContainer>
       ) : (
         <OverflowingTextWithTooltip
           text={

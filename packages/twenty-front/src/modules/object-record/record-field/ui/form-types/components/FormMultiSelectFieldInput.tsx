@@ -38,6 +38,11 @@ type FormMultiSelectFieldInputProps = {
   dropdownWidth?: number;
 };
 
+const StyledFormFieldInputRowContainer = styled(FormFieldInputRowContainer)`
+  height: auto;
+  min-height: 32px;
+`;
+
 const StyledMultiSelectDisplay = styled(MultiSelectDisplay)`
   flex-wrap: wrap;
 `;
@@ -65,7 +70,7 @@ const StyledDisplayModeContainer = styled.div`
 
 const StyledSelectInputContainer = styled.div`
   position: absolute;
-  top: ${themeCssVariables.spacing[9]};
+  top: calc(100% + ${themeCssVariables.spacing[1]});
   z-index: 1;
 `;
 
@@ -213,7 +218,7 @@ export const FormMultiSelectFieldInput = ({
     <FormFieldInputContainer data-testid={testId}>
       {label ? <Field.Label>{label}</Field.Label> : null}
 
-      <FormFieldInputRowContainer>
+      <StyledFormFieldInputRowContainer>
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={instanceId}
           hasRightElement={isDefined(VariablePicker) && !readonly}
@@ -296,7 +301,7 @@ export const FormMultiSelectFieldInput = ({
             onVariableSelect={handleVariableTagInsert}
           />
         )}
-      </FormFieldInputRowContainer>
+      </StyledFormFieldInputRowContainer>
       {hint ? <Field.Description>{hint}</Field.Description> : null}
     </FormFieldInputContainer>
   );
