@@ -5,7 +5,7 @@ import { expect, within } from 'storybook/test';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { ComponentDecorator, RouterDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/WorkflowStepActionDrawerDecorator';
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
@@ -24,7 +24,7 @@ const meta: Meta<typeof WorkflowEditActionFormFiller> = {
     RouterDecorator,
     ObjectMetadataItemsDecorator,
     WorkspaceDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
 };
 

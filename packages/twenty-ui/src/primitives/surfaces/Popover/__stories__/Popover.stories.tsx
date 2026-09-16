@@ -3,6 +3,8 @@ import { type CSSProperties, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconX } from '@ui/icon';
+import { Button } from '@ui/primitives/input/Button/Button';
+import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
 import {
   A11Y_DEFER_COLOR_CONTRAST,
   CatalogDecorator,
@@ -33,10 +35,10 @@ const PopoverStory = ({
   <>
     <Popover.Root {...props}>
       <Popover.Trigger
+        aria-label="Open"
         style={{ alignSelf: 'flex-start', marginInline: 'auto' }}
-      >
-        Open
-      </Popover.Trigger>
+        render={<Button>Open</Button>}
+      />
       <Popover.Popup
         side={side}
         align={align}
@@ -46,13 +48,18 @@ const PopoverStory = ({
       >
         <Popover.Title>Details</Popover.Title>
         <Popover.Description>More information</Popover.Description>
-        <button type="button">First action</button>
-        <Popover.Close aria-label="Close" style={{ alignSelf: 'flex-start' }}>
-          <IconX size={16} />
-        </Popover.Close>
+        <Button type="button" aria-label="First action">
+          First action
+        </Button>
+        <Popover.Close
+          style={{ alignSelf: 'flex-start' }}
+          render={<IconButton Icon={IconX} ariaLabel="Close" size="small" />}
+        />
       </Popover.Popup>
     </Popover.Root>
-    <button type="button">Outside</button>
+    <Button type="button" aria-label="Outside">
+      Outside
+    </Button>
   </>
 );
 
@@ -127,15 +134,17 @@ export const Documentation: Story = {
   parameters: { container: { width: 240, height: 200 } },
   render: () => (
     <Popover.Root>
-      <Popover.Trigger style={{ alignSelf: 'flex-start' }}>
-        Show details
-      </Popover.Trigger>
+      <Popover.Trigger
+        aria-label="Show details"
+        style={{ alignSelf: 'flex-start' }}
+        render={<Button>Show details</Button>}
+      />
       <Popover.Popup>
         <Popover.Title>Contact details</Popover.Title>
         <Popover.Description>
           Add notes and contact information here.
         </Popover.Description>
-        <Popover.Close>Close</Popover.Close>
+        <Popover.Close aria-label="Close" render={<Button>Close</Button>} />
       </Popover.Popup>
     </Popover.Root>
   ),
@@ -174,9 +183,13 @@ const ArrowPopoverStory = (props: PopoverStoryProps) => {
   return (
     <div style={{ paddingTop: 160, paddingInlineStart: 160 }}>
       <PopoverStory {...props} open arrow={arrow} />
-      <button type="button" onClick={() => setArrow(!arrow)}>
+      <Button
+        type="button"
+        aria-label="Toggle arrow"
+        onClick={() => setArrow(!arrow)}
+      >
         Toggle arrow
-      </button>
+      </Button>
     </div>
   );
 };
@@ -314,7 +327,7 @@ export const WithoutTabbableContent: Story = {
   args: {},
   render: (args) => (
     <Popover.Root {...args}>
-      <Popover.Trigger>Open</Popover.Trigger>
+      <Popover.Trigger aria-label="Open" render={<Button>Open</Button>} />
       <Popover.Popup>
         <Popover.Title>Details</Popover.Title>
       </Popover.Popup>
@@ -363,9 +376,13 @@ const ControlledPopoverStory = (props: PopoverStoryProps) => {
   return (
     <>
       <PopoverStory {...props} open={open} />
-      <button type="button" onClick={() => setOpen(false)}>
+      <Button
+        type="button"
+        aria-label="Apply closed state"
+        onClick={() => setOpen(false)}
+      >
         Apply closed state
-      </button>
+      </Button>
     </>
   );
 };

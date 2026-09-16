@@ -1,0 +1,235 @@
+---
+title: Menu
+description: Present commands, checked options, radio choices, and nested menus.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import MenuReference from '/snippets/ui/generated/surfaces/menu.mdx';
+
+Use `Menu` for actions opened from a trigger. Its items supply keyboard navigation and the visual layout of [ListItem](/ui/primitives/navigation/list-item).
+
+<StoryEmbed
+  storyId="ui-surfaces-menu--documentation"
+  title="Menu example"
+  height={440}
+/>
+
+## Anatomy
+
+Keep the trigger and popup inside the same `Menu.Root`. Put action or selection items inside the popup.
+
+```text
+Menu.Root
+├── Menu.Trigger
+└── Menu.Popup
+    ├── Menu.Item
+    ├── Menu.Separator
+    └── Menu.Item
+```
+
+| Part                            | Requirement                       | Purpose                                                                    |
+| ------------------------------- | --------------------------------- | -------------------------------------------------------------------------- |
+| `Root`                          | Required                          | Owns open state and coordinates menu interaction.                          |
+| `Trigger`                       | Required for a trigger-based menu | Opens the menu and provides its accessible name.                           |
+| `Popup`                         | Required                          | Renders the positioned, portaled menu with keyboard navigation.            |
+| `Item`                          | One per action                    | Runs a command when selected.                                              |
+| `CheckboxItem`                  | Optional                          | Toggles an independent boolean option.                                     |
+| `RadioGroup`, `RadioItem`       | Optional                          | Coordinate mutually exclusive options. Put radio items inside their group. |
+| `Group`, `GroupLabel`           | Optional                          | Group related items under a label.                                         |
+| `Separator`                     | Optional                          | Separates groups visually.                                                 |
+| `SubmenuRoot`, `SubmenuTrigger` | Optional                          | Add a nested menu with its own popup.                                      |
+
+`Popup` includes the portal and positioner. Menu items include the row layout and selection indicators. Supply labels as children and use `startIcon`, `endIcon`, and `description` for supporting content.
+
+## Uncontrolled state
+
+Use `defaultOpen` to set the initial visibility. The menu owns subsequent changes from its trigger, item selection, and dismissal interactions.
+
+```tsx
+import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import { Menu } from 'twenty-ui/primitives/surfaces';
+
+type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
+
+export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => (
+  <Menu.Root defaultOpen={false}>
+    <Menu.Trigger>Record actions</Menu.Trigger>
+    <Menu.Popup>
+      <Menu.Item startIcon={<IconCopy />} onClick={onDuplicate}>
+        Duplicate
+      </Menu.Item>
+      <Menu.Separator />
+      <Menu.Item startIcon={<IconTrash />} color="danger" onClick={onDelete}>
+        Delete
+      </Menu.Item>
+    </Menu.Popup>
+  </Menu.Root>
+);
+```
+
+`defaultOpen` defaults to `false`, so it can be omitted. Action items close the menu when selected by default. `disabled` prevents selection. `hotkeys` displays shortcut hints; register shortcut handlers in your application.
+
+## Controlled state
+
+Pass `open` and update it with `onOpenChange` to own the same menu's visibility in React state. The callback receives the next boolean and event details, including dismissal and item selection.
+
+```tsx
+import { useState } from 'react';
+import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import { Menu } from 'twenty-ui/primitives/surfaces';
+
+type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
+
+export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Menu.Root open={open} onOpenChange={setOpen}>
+      <Menu.Trigger>Record actions</Menu.Trigger>
+      <Menu.Popup>
+        <Menu.Item startIcon={<IconCopy />} onClick={onDuplicate}>
+          Duplicate
+        </Menu.Item>
+        <Menu.Separator />
+        <Menu.Item startIcon={<IconTrash />} color="danger" onClick={onDelete}>
+          Delete
+        </Menu.Item>
+      </Menu.Popup>
+    </Menu.Root>
+  );
+};
+```
+
+## Selection and submenus
+
+Item selection is independent of popup visibility. Checkbox items use `defaultChecked` or `checked` with `onCheckedChange`. Radio groups use `defaultValue` or `value` with `onValueChange`.
+
+For a submenu, place `SubmenuRoot` inside the parent popup, with its own trigger and popup. Each nested popup retains its own positioning and keyboard behavior.
+
+```text
+Menu.Popup
+└── Menu.SubmenuRoot
+    ├── Menu.SubmenuTrigger
+    └── Menu.Popup
+        └── Menu.RadioGroup
+            ├── Menu.RadioItem
+            └── Menu.RadioItem
+```
+
+### Uncontrolled item state
+
+Each checkbox item and radio group owns its selection. Both the menu and submenu also manage their own visibility.
+
+```tsx
+import { Menu } from 'twenty-ui/primitives/surfaces';
+
+export const ViewMenu = () => (
+  <Menu.Root>
+    <Menu.Trigger>View options</Menu.Trigger>
+    <Menu.Popup>
+      <Menu.CheckboxItem defaultChecked={false}>
+        Show archived records
+      </Menu.CheckboxItem>
+      <Menu.Separator />
+      <Menu.SubmenuRoot>
+        <Menu.SubmenuTrigger>Layout</Menu.SubmenuTrigger>
+        <Menu.Popup>
+          <Menu.RadioGroup defaultValue="list">
+            <Menu.RadioItem value="list">List</Menu.RadioItem>
+            <Menu.RadioItem value="board">Board</Menu.RadioItem>
+          </Menu.RadioGroup>
+        </Menu.Popup>
+      </Menu.SubmenuRoot>
+    </Menu.Popup>
+  </Menu.Root>
+);
+```
+
+### Controlled item state
+
+The application owns the same selections in React state. Popup visibility remains uncontrolled because neither root receives `open`.
+
+```tsx
+import { useState } from 'react';
+import { Menu } from 'twenty-ui/primitives/surfaces';
+
+export const ViewMenu = () => {
+  const [showArchived, setShowArchived] = useState(false);
+  const [view, setView] = useState('list');
+
+  return (
+    <Menu.Root>
+      <Menu.Trigger>View options</Menu.Trigger>
+      <Menu.Popup>
+        <Menu.CheckboxItem
+          checked={showArchived}
+          onCheckedChange={setShowArchived}
+        >
+          Show archived records
+        </Menu.CheckboxItem>
+        <Menu.Separator />
+        <Menu.SubmenuRoot>
+          <Menu.SubmenuTrigger>Layout</Menu.SubmenuTrigger>
+          <Menu.Popup>
+            <Menu.RadioGroup value={view} onValueChange={setView}>
+              <Menu.RadioItem value="list">List</Menu.RadioItem>
+              <Menu.RadioItem value="board">Board</Menu.RadioItem>
+            </Menu.RadioGroup>
+          </Menu.Popup>
+        </Menu.SubmenuRoot>
+      </Menu.Popup>
+    </Menu.Root>
+  );
+};
+```
+
+Checkbox and radio items keep the popup open by default so users can adjust options. Use `closeOnClick` to change that behavior. Nest a `SubmenuRoot`, `SubmenuTrigger`, and `Popup` inside a parent popup for submenus. Each `SubmenuRoot` has its own `defaultOpen`, `open`, and `onOpenChange` props, independent of the parent menu.
+
+## Compose a trigger
+
+Use `render` to make a Twenty UI `Button` the trigger. The menu supplies the button's activation handlers and accessibility attributes.
+
+```tsx
+import { IconCopy, IconTrash } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Menu } from 'twenty-ui/primitives/surfaces';
+
+type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
+
+export const RecordMenu = ({ onDuplicate, onDelete }: RecordMenuProps) => (
+  <Menu.Root>
+    <Menu.Trigger render={<Button variant="outline">Record actions</Button>} />
+    <Menu.Popup>
+      <Menu.Item startIcon={<IconCopy />} onClick={onDuplicate}>
+        Duplicate
+      </Menu.Item>
+      <Menu.Separator />
+      <Menu.Item startIcon={<IconTrash />} color="danger" onClick={onDelete}>
+        Delete
+      </Menu.Item>
+    </Menu.Popup>
+  </Menu.Root>
+);
+```
+
+Put `Button` in the trigger's `render` prop to preserve a single interactive control. For custom wrapper components, [forward the supplied props and ref](/ui/primitives/overview#custom-components).
+
+## Keyboard and placement
+
+Arrow keys move through the items, including disabled ones, which receive focus but cannot be selected; typeahead finds items by their text. Enter or Space selects an item. Escape closes the menu and returns focus to its trigger. Use clear text labels even when items have icons.
+
+`Popup` owns its portal and accepts placement props and a `container` override. Placement defaults depend on whether it is a top-level menu or a submenu:
+
+| Popup          | `side`       | `align` | `sideOffset` | `alignOffset` |
+| -------------- | ------------ | ------- | ------------ | ------------- |
+| Top-level menu | `bottom`     | `start` | `8`          | `0`           |
+| Submenu        | `inline-end` | `start` | `0`          | `-4`          |
+
+It uses the [theme's portal container](/ui/theming) by default.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<MenuReference />

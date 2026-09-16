@@ -8,7 +8,7 @@ import { TimelineActivityContext } from '@/activities/timeline-activities/contex
 import { EventCardMessage } from '@/activities/timeline-activities/rows/message/components/EventCardMessage';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof EventCardMessage> = {
   title: 'Modules/TimelineActivities/Rows/Message/EventCardMessage',
@@ -17,7 +17,7 @@ const meta: Meta<typeof EventCardMessage> = {
     MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     (Story) => (
       <TimelineActivityContext.Provider value={{ recordId: 'mock-id' }}>
         <Story />

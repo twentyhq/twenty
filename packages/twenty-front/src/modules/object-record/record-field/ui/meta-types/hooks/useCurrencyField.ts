@@ -10,7 +10,6 @@ import { recordStoreFamilySelector } from '@/object-record/record-store/states/s
 import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { DEFAULT_DECIMAL_VALUE } from '~/utils/format/formatNumber';
 
 export const useCurrencyField = () => {
   const { recordId, fieldDefinition } = useContext(FieldContext);
@@ -36,9 +35,6 @@ export const useCurrencyField = () => {
 
   const defaultValue = fieldDefinition.defaultValue;
 
-  const decimals =
-    fieldDefinition.metadata.settings?.decimals ?? DEFAULT_DECIMAL_VALUE;
-
   return {
     fieldDefinition,
     fieldValue,
@@ -46,6 +42,5 @@ export const useCurrencyField = () => {
     setDraftValue,
     setFieldValue,
     defaultValue,
-    decimals,
   };
 };

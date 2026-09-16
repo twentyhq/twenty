@@ -135,13 +135,12 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
             description={t`Restore the activity type settings defined by the application`}
           />
           <Button
-            title={t`Reset to default`}
-            variant="secondary"
-            size="small"
-            Icon={IconRestore}
+            size="sm"
+            startIcon={<IconRestore />}
             disabled={disabled}
             onClick={onReset}
-          />
+            variant="outline"
+          >{t`Reset to default`}</Button>
         </Section>
       )}
     </>

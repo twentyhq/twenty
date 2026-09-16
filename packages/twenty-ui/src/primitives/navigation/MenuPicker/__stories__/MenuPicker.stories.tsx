@@ -4,6 +4,7 @@ import { TooltipDelay } from '@ui/primitives/surfaces';
 import { MenuPicker } from '@ui/primitives/navigation/MenuPicker/MenuPicker';
 import { A11Y_DEFER_COLOR_CONTRAST, ComponentDecorator } from '@ui/testing';
 import { type ReactNode } from 'react';
+import { H3Title } from '@ui/primitives/typography/H3Title/H3Title';
 
 import styles from './MenuPicker.stories.module.scss';
 
@@ -54,7 +55,7 @@ export const WithoutLabel: Story = {
 };
 
 const SectionTitle = ({ children }: { children?: ReactNode }) => {
-  return <h4 className={styles.title}>{children}</h4>;
+  return <H3Title className={styles.title} title={children} />;
 };
 
 export const AllStates: Story = {

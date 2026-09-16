@@ -1,3 +1,4 @@
+import { getFieldPermissionUniversalIdentifier } from 'twenty-shared/application';
 import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -43,7 +44,11 @@ export const fromCreateFieldPermissionInputToUniversalFlatFieldPermission = ({
 
   return {
     id: v4(),
-    universalIdentifier: v4(),
+    universalIdentifier: getFieldPermissionUniversalIdentifier({
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      roleUniversalIdentifier,
+      fieldUniversalIdentifier: fieldMetadataUniversalIdentifier,
+    }),
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
     roleUniversalIdentifier,
     objectMetadataUniversalIdentifier,

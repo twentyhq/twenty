@@ -22,13 +22,14 @@ export const WorkflowStepCmdEnterButton = ({
 
   return (
     <Button
-      title={title}
-      variant={disabled ? 'secondary' : 'primary'}
-      accent="blue"
-      size="small"
+      size="sm"
       onClick={onClick}
       disabled={disabled}
       hotkeys={[getOsControlSymbol(), '⏎']}
-    />
+      variant={disabled ? 'outline' : 'solid'}
+      color="accent"
+    >
+      {title}
+    </Button>
   );
 };

@@ -1,3 +1,4 @@
+import { isDefined } from '@ui/utilities/utils/isDefined';
 import { clsx } from 'clsx';
 import { OverflowingTextWithTooltip } from '@ui/primitives/surfaces/OverflowingTextWithTooltip/OverflowingTextWithTooltip';
 import { useTheme } from '@ui/theme-constants';
@@ -54,14 +55,15 @@ export const InlineBanner = ({
       </div>
       {button && !button.hidden && (
         <Button
-          size="small"
-          variant="secondary"
-          accent={color}
-          title={button?.title}
+          size="sm"
           onClick={button?.onClick}
           disabled={button.disabled}
-          Icon={button.Icon}
-        />
+          startIcon={isDefined(button.Icon) ? <button.Icon /> : undefined}
+          variant="outline"
+          color={color === 'danger' ? 'danger' : 'accent'}
+        >
+          {button?.title}
+        </Button>
       )}
     </Banner>
   );

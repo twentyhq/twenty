@@ -50,15 +50,16 @@ export const MergeRecordsFooter = ({
     <StyledFooterContainer>
       <StyledFooterActions>
         <Button
-          title={isMerging ? t`Merging...` : t`Merge`}
-          variant="primary"
-          accent="blue"
-          size="medium"
-          Icon={IconArrowMerge}
+          size="md"
+          startIcon={<IconArrowMerge />}
           hotkeys={isMerging ? undefined : ['⌘', '⏎']}
           onClick={handleMergeRecords}
           disabled={isMerging}
-        />
+          variant="solid"
+          color="accent"
+        >
+          {isMerging ? t`Merging...` : t`Merge`}
+        </Button>
       </StyledFooterActions>
     </StyledFooterContainer>
   );

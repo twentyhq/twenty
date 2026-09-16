@@ -1596,6 +1596,7 @@ export interface ApplicationConnectedAccountDTO {
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     connectionParameters?: PublicImapSmtpCaldavConnectionParameters
+    /** @deprecated Ownership no longer gates connection actions, every application admin manages a workspace-shared connection */
     isOwnedByCurrentUser: Scalars['Boolean']
     __typename: 'ApplicationConnectedAccountDTO'
 }
@@ -1606,7 +1607,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED'
+export type FeatureFlagKey = 'IS_APP_CLAIMING_ENABLED' | 'IS_UNIQUE_INDEXES_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_JSON_FILTER_ENABLED' | 'IS_MESSAGE_CAMPAIGN_ENABLED' | 'IS_JUNCTION_RELATIONS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED' | 'IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED' | 'IS_API_RATE_LIMIT_V2_ENABLED' | 'IS_MESSAGE_CALENDAR_TARGET_READ_ENABLED' | 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_SHARING_ENABLED' | 'IS_INITIAL_OBJECT_VIEW_ENABLED' | 'IS_WEBHOOK_RATE_LIMIT_ENABLED'
 
 export interface WorkspaceUrls {
     customUrl?: Scalars['String']
@@ -2030,6 +2031,7 @@ export interface MarketplaceAppDetail {
     /** @deprecated Use galleryImages instead */
     screenshots: Scalars['String'][]
     galleryImages: Scalars['String'][]
+    installCount: Scalars['Int']
     defaultRoleUniversalIdentifier?: Scalars['String']
     roles?: MarketplaceAppRole[]
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
@@ -2227,7 +2229,7 @@ export interface BillingEntitlement {
     __typename: 'BillingEntitlement'
 }
 
-export type BillingEntitlementKey = 'SSO' | 'CUSTOM_DOMAIN' | 'RLS' | 'AUDIT_LOGS' | 'USAGE_LIMIT'
+export type BillingEntitlementKey = 'SSO' | 'CUSTOM_DOMAIN' | 'RLS' | 'RECORD_SHARING' | 'AUDIT_LOGS' | 'USAGE_LIMIT'
 
 export interface DomainRecord {
     validationType: Scalars['String']
@@ -2900,6 +2902,13 @@ export interface EventLogQueryResult {
     __typename: 'EventLogQueryResult'
 }
 
+export interface AiChatUsage {
+    limitValue: Scalars['BigInt']
+    consumedValue?: Scalars['BigInt']
+    periodEnd?: Scalars['DateTime']
+    __typename: 'AiChatUsage'
+}
+
 export interface Skill {
     id: Scalars['UUID']
     name: Scalars['String']
@@ -2932,6 +2941,7 @@ export interface AgentMessage {
 export interface AgentChatThread {
     id: Scalars['ID']
     title?: Scalars['String']
+    totalCacheReadTokens: Scalars['Int']
     totalInputTokens: Scalars['Int']
     totalOutputTokens: Scalars['Int']
     contextWindowTokens?: Scalars['Int']
@@ -3275,6 +3285,7 @@ export interface Query {
     appConnections: AppConnection[]
     appConnection: AppConnection
     findWorkspaceAiStats: WorkspaceAiStats
+    aiChatUsage?: AiChatUsage
     chatThreads: AgentChatThread[]
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
@@ -5225,6 +5236,7 @@ export interface ApplicationConnectedAccountDTOGenqlSelection{
     createdAt?: boolean | number
     updatedAt?: boolean | number
     connectionParameters?: PublicImapSmtpCaldavConnectionParametersGenqlSelection
+    /** @deprecated Ownership no longer gates connection actions, every application admin manages a workspace-shared connection */
     isOwnedByCurrentUser?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -5690,6 +5702,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     /** @deprecated Use galleryImages instead */
     screenshots?: boolean | number
     galleryImages?: boolean | number
+    installCount?: boolean | number
     defaultRoleUniversalIdentifier?: boolean | number
     roles?: MarketplaceAppRoleGenqlSelection
     /** @deprecated Use the explicit MarketplaceAppDetail fields (description, author, roles, ...) instead */
@@ -6612,6 +6625,14 @@ export interface EventLogQueryResultGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface AiChatUsageGenqlSelection{
+    limitValue?: boolean | number
+    consumedValue?: boolean | number
+    periodEnd?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface SkillGenqlSelection{
     id?: boolean | number
     name?: boolean | number
@@ -6646,6 +6667,7 @@ export interface AgentMessageGenqlSelection{
 export interface AgentChatThreadGenqlSelection{
     id?: boolean | number
     title?: boolean | number
+    totalCacheReadTokens?: boolean | number
     totalInputTokens?: boolean | number
     totalOutputTokens?: boolean | number
     contextWindowTokens?: boolean | number
@@ -7003,6 +7025,7 @@ export interface QueryGenqlSelection{
     appConnections?: (AppConnectionGenqlSelection & { __args?: {filter?: (ListAppConnectionsInput | null)} })
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
     findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
+    aiChatUsage?: AiChatUsageGenqlSelection
     chatThreads?: AgentChatThreadGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
@@ -7701,7 +7724,9 @@ export interface CreateEmailingDomainInput {domain: Scalars['String']}
 
 export interface RunAgentInput {agentUniversalIdentifier: Scalars['String'],prompt?: (Scalars['String'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),messages?: (RunAgentMessageInput[] | null)}
 
-export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String']}
+export interface RunAgentMessageInput {role: RunAgentMessageRole,content: Scalars['String'],attachments?: (RunAgentMessageAttachmentInput[] | null)}
+
+export interface RunAgentMessageAttachmentInput {fileId: Scalars['UUID'],filename?: (Scalars['String'] | null)}
 
 export interface CreateWebhookInput {id?: (Scalars['UUID'] | null),targetUrl: Scalars['String'],operations: Scalars['String'][],description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
@@ -9943,6 +9968,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const AiChatUsage_possibleTypes: string[] = ['AiChatUsage']
+    export const isAiChatUsage = (obj?: { __typename?: any } | null): obj is AiChatUsage => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUsage"')
+      return AiChatUsage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const Skill_possibleTypes: string[] = ['Skill']
     export const isSkill = (obj?: { __typename?: any } | null): obj is Skill => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isSkill"')
@@ -10725,6 +10758,7 @@ export const enumFeatureFlagKey = {
    IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED: 'IS_QUOTA_ENGINE_CREDIT_BOUND_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_SHARING_ENABLED: 'IS_RECORD_SHARING_ENABLED' as const,
+   IS_INITIAL_OBJECT_VIEW_ENABLED: 'IS_INITIAL_OBJECT_VIEW_ENABLED' as const,
    IS_WEBHOOK_RATE_LIMIT_ENABLED: 'IS_WEBHOOK_RATE_LIMIT_ENABLED' as const
 }
 
@@ -10811,6 +10845,7 @@ export const enumBillingEntitlementKey = {
    SSO: 'SSO' as const,
    CUSTOM_DOMAIN: 'CUSTOM_DOMAIN' as const,
    RLS: 'RLS' as const,
+   RECORD_SHARING: 'RECORD_SHARING' as const,
    AUDIT_LOGS: 'AUDIT_LOGS' as const,
    USAGE_LIMIT: 'USAGE_LIMIT' as const
 }

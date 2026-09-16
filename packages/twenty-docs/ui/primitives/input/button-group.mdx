@@ -1,0 +1,31 @@
+---
+title: ButtonGroup
+description: Group related buttons with joined borders and shared appearance.
+---
+
+import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
+
+Give a group an accessible name and place related buttons inside it. The group joins adjacent borders and can apply a shared size, variant, and color. Buttons retain their own tab stops.
+
+## State ownership
+
+`ButtonGroup` coordinates appearance, not selection. It has no controlled or uncontrolled selection mode. Each button receives its own action handler and application state; see [Button's state ownership example](/ui/primitives/input/button#state-ownership) for loading behavior.
+
+For a mutually exclusive choice, use [RadioGroup](/ui/primitives/input/radio-group), which owns selection for its radio controls.
+
+## Usage
+
+```tsx
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const RecordActions = () => (
+  <ButtonGroup aria-label="Record actions" size="sm">
+    <Button>Edit</Button>
+    <Button>Duplicate</Button>
+  </ButtonGroup>
+);
+```
+
+## Props
+
+<ButtonGroupReference />

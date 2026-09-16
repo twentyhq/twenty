@@ -1,21 +1,21 @@
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Select } from '@/ui/input/components/Select';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight, IconUser, useIcons } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceMemberRoleDocument } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -54,7 +54,7 @@ export const MemberPermissionsTab = ({
   const primaryRole = roles?.[0];
   const { getIcon } = useIcons();
   const navigateSettings = useNavigateSettings();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { openModal } = useModal();
   const [pendingRole, setPendingRole] = useState<RoleWithPartialMembers | null>(
     null,
@@ -92,10 +92,14 @@ export const MemberPermissionsTab = ({
         },
         refetchQueries: ['GetRoles'],
       });
-      enqueueSuccessSnackBar({ message: t`Role updated successfully` });
+      enqueueToast({
+        variant: 'success',
+        children: t`Role updated successfully`,
+      });
     } catch (error) {
-      enqueueErrorSnackBar({
-        message:
+      enqueueToast({
+        variant: 'error',
+        children:
           error instanceof Error ? error.message : t`Failed to update role`,
       });
     } finally {
@@ -137,11 +141,10 @@ export const MemberPermissionsTab = ({
             />
           </StyledRoleSelector>
           <Button
-            Icon={IconArrowUpRight}
-            title={t`Open in Roles`}
-            variant="secondary"
+            startIcon={<IconArrowUpRight />}
             onClick={handleOpenRole}
-          />
+            variant="outline"
+          >{t`Open in Roles`}</Button>
         </StyledRoleContainer>
         <SettingsRolePermissions roleId={primaryRole.id} isEditable={false} />
       </Section>
@@ -153,7 +156,7 @@ export const MemberPermissionsTab = ({
           subtitle={t`Are you sure you want to update the role of this user from "${oldRoleLabel}" to "${newRoleLabel}"?`}
           onConfirmClick={handleConfirmRoleChange}
           confirmButtonText={t`Update role`}
-          confirmButtonAccent="blue"
+          confirmButtonColor="accent"
         />
       )}
     </>
