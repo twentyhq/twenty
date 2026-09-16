@@ -8,8 +8,6 @@ import { SettingsBillingSubscriptionInfoCardHeaderActions } from '@/settings/bil
 import { SettingsBillingSubscriptionInfoModals } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals';
 import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
-import { useBillingUpdateMutation } from '@/settings/billing/hooks/useBillingUpdateMutation';
-import { useCancelBillingSwitch } from '@/settings/billing/hooks/useCancelBillingSwitch';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
@@ -17,14 +15,13 @@ import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSu
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
-import { useSwitchBillingInterval } from '@/settings/billing/hooks/useSwitchBillingInterval';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
+import { runningBillingUpdateState } from '@/settings/billing/states/runningBillingUpdateState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
-import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
@@ -32,7 +29,6 @@ import { H2Title } from 'twenty-ui/primitives/typography';
 import { Section } from 'twenty-ui/primitives/layout';
 import {
   BillingPlanKey,
-  CancelSwitchResourceCreditPriceDocument,
   PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
@@ -83,18 +79,8 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount ?? null;
 
-  const {
-    getIntervalLabelAsAdjectiveCapitalize,
-    confirmationModalSwitchToMonthlyMessage,
-    confirmationModalSwitchToYearlyMessage,
-    confirmationModalCancelPlanSwitchingMessage,
-    confirmationModalCancelIntervalSwitchingMessage,
-    getBeautifiedRenewDate,
-  } = useBillingWording();
-
-  const [cancelSwitchResourceCreditPrice] = useMutation(
-    CancelSwitchResourceCreditPriceDocument,
-  );
+  const { getIntervalLabelAsAdjectiveCapitalize, getBeautifiedRenewDate } =
+    useBillingWording();
 
   const currentWorkspaceMembers = useAtomStateValue(
     currentWorkspaceMembersState,
@@ -118,18 +104,7 @@ export const SettingsBillingSubscriptionInfo = ({
   const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
     useEndSubscriptionTrialPeriod();
 
-  const { isSwitchingInterval, switchBillingInterval } =
-    useSwitchBillingInterval();
-  const {
-    cancelIntervalSwitch,
-    cancelPlanSwitch,
-    isCancellingIntervalSwitch,
-    isCancellingPlanSwitch,
-  } = useCancelBillingSwitch();
-  const {
-    isMutationRunning: isCancellingMeteredSwitch,
-    runBillingUpdateMutation: runResourceCreditSwitchCancellation,
-  } = useBillingUpdateMutation();
+  const runningBillingUpdate = useAtomStateValue(runningBillingUpdateState);
 
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
@@ -322,23 +297,10 @@ export const SettingsBillingSubscriptionInfo = ({
   ];
 
   const isAnyActionLoading =
-    isSwitchingInterval ||
-    isCancellingPlanSwitch ||
-    isCancellingIntervalSwitch ||
-    isCancellingMeteredSwitch ||
-    isEndTrialPeriodLoading;
+    isDefined(runningBillingUpdate) || isEndTrialPeriodLoading;
 
   const isSubscriptionActionDisabled =
     !canSwitchSubscription || isAnyActionLoading;
-
-  const cancelResourceCreditSwitching = async () =>
-    await runResourceCreditSwitchCancellation({
-      errorMessage: t`Error while cancelling credit pack switching.`,
-      mutate: async () =>
-        (await cancelSwitchResourceCreditPrice()).data
-          ?.cancelSwitchResourceCreditPrice,
-      successMessage: t`Credit pack switching has been cancelled.`,
-    });
 
   return (
     <Section>
@@ -398,22 +360,10 @@ export const SettingsBillingSubscriptionInfo = ({
       />
       <SettingsBillingSubscriptionInfoModals
         billingHasPaymentMethod={billingHasPaymentMethod}
-        cancelIntervalSwitchingSubtitle={confirmationModalCancelIntervalSwitchingMessage()}
-        cancelPlanSwitchingSubtitle={confirmationModalCancelPlanSwitchingMessage()}
-        isCancellingIntervalSwitch={isCancellingIntervalSwitch}
-        isCancellingMeteredSwitch={isCancellingMeteredSwitch}
-        isCancellingPlanSwitch={isCancellingPlanSwitch}
         isEndTrialPeriodLoading={isEndTrialPeriodLoading}
-        isSwitchingInterval={isSwitchingInterval}
-        onCancelIntervalSwitching={cancelIntervalSwitch}
-        onCancelPlanSwitching={cancelPlanSwitch}
-        onCancelResourceCreditSwitching={cancelResourceCreditSwitching}
         onEndTrialPeriod={endTrialPeriod}
         onPaymentMethodAdded={startSubscriptionAfterPaymentMethodAdded}
-        onSwitchInterval={switchBillingInterval}
         startSubscriptionSubtitle={startSubscriptionSubtitle}
-        switchToMonthlySubtitle={confirmationModalSwitchToMonthlyMessage()}
-        switchToYearlySubtitle={confirmationModalSwitchToYearlyMessage()}
       />
     </Section>
   );

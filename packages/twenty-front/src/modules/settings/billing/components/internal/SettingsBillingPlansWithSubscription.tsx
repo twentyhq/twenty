@@ -1,15 +1,13 @@
 import { SettingsBillingPlanComparisonTable } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTable';
-import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
+import { SettingsBillingPlanSwitchModals } from '@/settings/billing/components/internal/SettingsBillingPlanSwitchModals';
+import { SettingsBillingSwitchModals } from '@/settings/billing/components/internal/SettingsBillingSwitchModals';
 import { useBillingPlanActions } from '@/settings/billing/hooks/useBillingPlanActions';
-import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import {
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
 } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useLingui } from '@lingui/react/macro';
-import { BillingPlanKey } from '~/generated-metadata/graphql';
+import { type BillingPlanKey } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlansWithSubscriptionProps = {
   billingInterval: SettingsBillingPlanInterval;
@@ -26,26 +24,7 @@ export const SettingsBillingPlansWithSubscription = ({
   onBillingIntervalChange,
   planPrices,
 }: SettingsBillingPlansWithSubscriptionProps) => {
-  const { t } = useLingui();
-  const {
-    confirmationModalCancelIntervalSwitchingMessage,
-    confirmationModalCancelPlanSwitchingMessage,
-    confirmationModalSwitchToMonthlyMessage,
-    confirmationModalSwitchToOrganizationMessage,
-    confirmationModalSwitchToProMessage,
-    confirmationModalSwitchToYearlyMessage,
-  } = useBillingWording();
-  const {
-    cancelIntervalSwitch,
-    cancelPlanSwitch,
-    isCancellingIntervalSwitch,
-    isCancellingPlanSwitch,
-    isSwitchingInterval,
-    isSwitchingPlan,
-    planActions,
-    switchBillingInterval,
-    switchBillingPlan,
-  } = useBillingPlanActions({
+  const { planActions } = useBillingPlanActions({
     currentPlanKey,
     selectedInterval: billingInterval,
   });
@@ -58,60 +37,8 @@ export const SettingsBillingPlansWithSubscription = ({
         planActions={planActions}
         planPrices={planPrices}
       />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToEnterprise}
-        title={t`Change to Organization Plan?`}
-        subtitle={confirmationModalSwitchToOrganizationMessage()}
-        onConfirmClick={() => switchBillingPlan(BillingPlanKey.ENTERPRISE)}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingPlan}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingPlanToPro}
-        title={t`Change to Pro Plan?`}
-        subtitle={confirmationModalSwitchToProMessage()}
-        onConfirmClick={() => switchBillingPlan(BillingPlanKey.PRO)}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingPlan}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingIntervalToYearly}
-        title={t`Change to Yearly?`}
-        subtitle={confirmationModalSwitchToYearlyMessage()}
-        onConfirmClick={switchBillingInterval}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingInterval}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.switchBillingIntervalToMonthly}
-        title={t`Change to Monthly?`}
-        subtitle={confirmationModalSwitchToMonthlyMessage()}
-        onConfirmClick={switchBillingInterval}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isSwitchingInterval}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingPlan}
-        title={t`Cancel plan switching?`}
-        subtitle={confirmationModalCancelPlanSwitchingMessage()}
-        onConfirmClick={cancelPlanSwitch}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isCancellingPlanSwitch}
-      />
-      <ConfirmationModal
-        modalInstanceId={BILLING_MODAL_IDS.cancelSwitchBillingInterval}
-        title={t`Cancel interval switching?`}
-        subtitle={confirmationModalCancelIntervalSwitchingMessage()}
-        onConfirmClick={cancelIntervalSwitch}
-        confirmButtonText={t`Confirm`}
-        confirmButtonAccent="blue"
-        loading={isCancellingIntervalSwitch}
-      />
+      <SettingsBillingPlanSwitchModals />
+      <SettingsBillingSwitchModals />
     </SettingsPageContainer>
   );
 };

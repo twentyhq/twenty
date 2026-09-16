@@ -1,5 +1,5 @@
-import { useBillingUpdateMutation } from '@/settings/billing/hooks/useBillingUpdateMutation';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
+import { useRunBillingUpdate } from '@/settings/billing/hooks/useRunBillingUpdate';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -13,10 +13,14 @@ export const useSwitchBillingPlan = () => {
   const { t } = useLingui();
   const subscriptionStatus = useSubscriptionStatus();
   const { getBeautifiedRenewDate } = useBillingWording();
-  const { isMutationRunning, runBillingUpdateMutation } =
-    useBillingUpdateMutation();
 
   const [switchBillingPlanMutation] = useMutation(SwitchBillingPlanDocument);
+
+  const { isBillingUpdateRunning, runBillingUpdate } = useRunBillingUpdate({
+    kind: 'PLAN_SWITCH',
+    mutate: async () =>
+      (await switchBillingPlanMutation()).data?.switchBillingPlan,
+  });
 
   const getTargetPlanLabel = (targetPlanKey: BillingPlanKey) =>
     targetPlanKey === BillingPlanKey.ENTERPRISE ? t`Organization` : t`Pro`;
@@ -28,15 +32,13 @@ export const useSwitchBillingPlan = () => {
       : t`Subscription will be switched to ${getTargetPlanLabel(targetPlanKey)} Plan the ${getBeautifiedRenewDate()}.`;
 
   const switchBillingPlan = async (targetPlanKey: BillingPlanKey) =>
-    await runBillingUpdateMutation({
-      errorMessage: t`Error while switching subscription.`,
-      mutate: async () =>
-        (await switchBillingPlanMutation()).data?.switchBillingPlan,
-      successMessage: getSuccessMessage(targetPlanKey),
+    await runBillingUpdate({
+      getErrorMessage: () => t`Error while switching subscription.`,
+      getSuccessMessage: () => getSuccessMessage(targetPlanKey),
     });
 
   return {
-    isSwitchingPlan: isMutationRunning,
+    isSwitchingPlan: isBillingUpdateRunning,
     switchBillingPlan,
   };
 };

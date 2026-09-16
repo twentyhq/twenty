@@ -1,10 +1,10 @@
 import { type SettingsBillingPlanActionType } from '@/settings/billing/types/settingsBillingPlanAction.type';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
+import { getBillingStateAfterScheduledChange } from '@/settings/billing/utils/getBillingStateAfterScheduledChange';
 import {
   type BillingPlanKey,
   type SubscriptionInterval,
 } from '~/generated-metadata/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 type GetBillingPlanActionTypeParams = {
   canSwitchSubscription: boolean;
@@ -60,28 +60,24 @@ export const getBillingPlanActionType = ({
     return hasPermissionToManageBilling ? 'UNAVAILABLE' : 'CONTACT_ADMIN';
   }
 
-  const isPlanSwitchScheduled =
-    isDefined(scheduledPlanKey) && scheduledPlanKey !== currentPlanKey;
-  const isIntervalSwitchScheduled =
-    isDefined(scheduledInterval) && scheduledInterval !== currentInterval;
+  const stateAfterScheduledChange = getBillingStateAfterScheduledChange({
+    currentInterval,
+    currentPlanKey,
+    scheduledInterval,
+    scheduledPlanKey,
+  });
 
-  const planKeyAfterScheduledChange = isPlanSwitchScheduled
-    ? scheduledPlanKey
-    : currentPlanKey;
-  const intervalAfterScheduledChange = isIntervalSwitchScheduled
-    ? scheduledInterval
-    : currentInterval;
-
-  const isPlanAfterScheduledChange = planKey === planKeyAfterScheduledChange;
+  const isPlanAfterScheduledChange =
+    planKey === stateAfterScheduledChange.planKey;
   const isIntervalAfterScheduledChange =
-    selectedInterval === intervalAfterScheduledChange;
+    selectedInterval === stateAfterScheduledChange.interval;
 
   if (!isPlanAfterScheduledChange && !isIntervalAfterScheduledChange) {
-    if (isPlanSwitchScheduled) {
+    if (stateAfterScheduledChange.isPlanSwitchScheduled) {
       return 'CANCEL_PLAN_SWITCH';
     }
 
-    if (isIntervalSwitchScheduled) {
+    if (stateAfterScheduledChange.isIntervalSwitchScheduled) {
       return 'CANCEL_INTERVAL_SWITCH';
     }
 

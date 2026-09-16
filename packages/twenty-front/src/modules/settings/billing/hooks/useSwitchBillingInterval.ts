@@ -1,6 +1,6 @@
-import { useBillingUpdateMutation } from '@/settings/billing/hooks/useBillingUpdateMutation';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
+import { useRunBillingUpdate } from '@/settings/billing/hooks/useRunBillingUpdate';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
@@ -14,12 +14,17 @@ export const useSwitchBillingInterval = () => {
   const subscriptionStatus = useSubscriptionStatus();
   const { isMonthlyPlan } = useCurrentBillingFlags();
   const { getBeautifiedRenewDate } = useBillingWording();
-  const { isMutationRunning, runBillingUpdateMutation } =
-    useBillingUpdateMutation();
 
   const [switchSubscriptionIntervalMutation] = useMutation(
     SwitchSubscriptionIntervalDocument,
   );
+
+  const { isBillingUpdateRunning, runBillingUpdate } = useRunBillingUpdate({
+    kind: 'INTERVAL_SWITCH',
+    mutate: async () =>
+      (await switchSubscriptionIntervalMutation()).data
+        ?.switchSubscriptionInterval,
+  });
 
   const getSuccessMessage = () => {
     if (isMonthlyPlan) {
@@ -32,16 +37,13 @@ export const useSwitchBillingInterval = () => {
   };
 
   const switchBillingInterval = async () =>
-    await runBillingUpdateMutation({
-      errorMessage: t`Error while switching subscription.`,
-      mutate: async () =>
-        (await switchSubscriptionIntervalMutation()).data
-          ?.switchSubscriptionInterval,
-      successMessage: getSuccessMessage(),
+    await runBillingUpdate({
+      getErrorMessage: () => t`Error while switching subscription.`,
+      getSuccessMessage,
     });
 
   return {
-    isSwitchingInterval: isMutationRunning,
+    isSwitchingInterval: isBillingUpdateRunning,
     switchBillingInterval,
   };
 };
