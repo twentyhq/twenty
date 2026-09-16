@@ -1,16 +1,16 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { IconClick } from 'twenty-ui/icon';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 export const ClickTrackingSwitch = () => {
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -34,15 +34,12 @@ export const ClickTrackingSwitch = () => {
       await updateWorkspace({
         variables: { input: { isCampaignClickTrackingEnabled } },
       });
-    } catch (err: any) {
+    } catch (error) {
       setCurrentWorkspace({
         ...currentWorkspace,
         isCampaignClickTrackingEnabled: !isCampaignClickTrackingEnabled,
       });
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
-        message: err?.message,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     }
   };
 
