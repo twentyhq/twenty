@@ -25,7 +25,9 @@ export const NavigationMenuItemLinkEditor = ({
   onClose,
 }: NavigationMenuItemLinkEditorProps) => {
   const { t } = useLingui();
-  const { updateItem } = useNavigationMenuItemEditController();
+  const { updateItem } = useNavigationMenuItemEditController(
+    item.userWorkspaceId ? 'favorite' : 'workspace',
+  );
   const [error, setError] = useState(false);
   const saveLink = ({
     firstValue,

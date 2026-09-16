@@ -1,3 +1,4 @@
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
@@ -5,7 +6,6 @@ import { useQuery } from '@apollo/client/react';
 import { FindAllStandalonePageLayoutsDocument } from '~/generated-metadata/graphql';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
   NavigationMenuItemSelectableItem,
@@ -41,7 +41,7 @@ import {
   type NewNavigationMenuItemInput,
 } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuObjectMetadataForSection } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataForSection';
-import { useAvailableNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useAvailableNavigationMenuItemSearchRecords';
+import { useNavigationMenuItemSearchRecords } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSearchRecords';
 import { getAvailableObjectMetadataForNewSidebarItem } from '@/navigation-menu-item/edit/utils/getAvailableObjectMetadataForNewSidebarItem';
 import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/utils/isViewDisplayableInNavigationMenu';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -58,6 +58,7 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 type Step = 'main' | 'object' | 'view' | 'record' | 'page';
 type NavigationMenuItemAddDropdownContentProps = {
   dropdownId: string;
+  section: NavigationMenuItemSection;
   folderId?: string;
   position?: number;
   onClose: () => void;
@@ -65,6 +66,7 @@ type NavigationMenuItemAddDropdownContentProps = {
 
 export const NavigationMenuItemAddDropdownContent = ({
   dropdownId,
+  section,
   folderId,
   position,
   onClose,
@@ -88,11 +90,9 @@ export const NavigationMenuItemAddDropdownContent = ({
     skip: step !== 'page' && !isSearchingAllItems,
   });
   const [objectId, setObjectId] = useState<string | null>(null);
-  const { currentItems, createItem } = useNavigationMenuItemEditController();
+  const { currentItems, createItem } =
+    useNavigationMenuItemEditController(section);
   const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
-  const navigationMenuItemEditSection = useAtomStateValue(
-    navigationMenuItemEditSectionState,
-  );
   const setNavigationMenuItemInsertionPreview = useSetAtomState(
     navigationMenuItemInsertionPreviewState,
   );
@@ -106,7 +106,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   useEffect(() => {
     setNavigationMenuItemInsertionPreview({
       dropdownId,
-      section: navigationMenuItemEditSection,
+      section,
       folderId: folderId ?? null,
       index: insertionIndex,
     });
@@ -116,7 +116,7 @@ export const NavigationMenuItemAddDropdownContent = ({
       );
   }, [
     dropdownId,
-    navigationMenuItemEditSection,
+    section,
     folderId,
     insertionIndex,
     setNavigationMenuItemInsertionPreview,
@@ -131,11 +131,15 @@ export const NavigationMenuItemAddDropdownContent = ({
     objectMetadataIdsAlreadyAdded,
     viewIdsAlreadyAdded,
   } = useNavigationMenuObjectMetadataForSection(currentItems);
-  const { availableSearchRecords, recordSearchLoading, isSearchDebouncing } =
-    useAvailableNavigationMenuItemSearchRecords({
-      searchInput: search,
-      skip: step !== 'record' && !isSearchingAllItems,
-    });
+  const {
+    navigationMenuItemSearchRecords,
+    recordSearchLoading,
+    isSearchDebouncing,
+  } = useNavigationMenuItemSearchRecords({
+    searchInput: search,
+    currentItems,
+    skip: step !== 'record' && !isSearchingAllItems,
+  });
   const {
     availableObjectMetadataItems,
     availableSystemObjectMetadataItems,
@@ -278,7 +282,7 @@ export const NavigationMenuItemAddDropdownContent = ({
         id: object.id,
         label: object.labelPlural,
         icon: <ObjectMetadataIcon objectMetadataItem={object} />,
-        isAlreadyInNavbar:
+        isAlreadyInSidebar:
           targetStep === 'object' &&
           objectMetadataIdsAlreadyAdded.has(object.id),
         isDisabled:
@@ -318,7 +322,7 @@ export const NavigationMenuItemAddDropdownContent = ({
             label: view.name,
             icon: <TintedIconTile Icon={Icon} />,
             isDisabled: viewIdsAlreadyAdded.has(view.id),
-            isAlreadyInNavbar: viewIdsAlreadyAdded.has(view.id),
+            isAlreadyInSidebar: viewIdsAlreadyAdded.has(view.id),
             onClick: () =>
               addItem({ type: NavigationMenuItemType.VIEW, viewId: view.id }),
           };
@@ -344,7 +348,7 @@ export const NavigationMenuItemAddDropdownContent = ({
               <TintedIconTile Icon={IconPerspective} />
             ),
             isDisabled: pageLayoutIdsAlreadyAdded.has(page.id),
-            isAlreadyInNavbar: pageLayoutIdsAlreadyAdded.has(page.id),
+            isAlreadyInSidebar: pageLayoutIdsAlreadyAdded.has(page.id),
             onClick: () =>
               addItem({
                 type: NavigationMenuItemType.PAGE_LAYOUT,
@@ -357,19 +361,21 @@ export const NavigationMenuItemAddDropdownContent = ({
         })
         .sort(
           (firstPage, secondPage) =>
-            Number(firstPage.isAlreadyInNavbar) -
-              Number(secondPage.isAlreadyInNavbar) ||
+            Number(firstPage.isAlreadyInSidebar) -
+              Number(secondPage.isAlreadyInSidebar) ||
             firstPage.label.localeCompare(secondPage.label),
         );
     }
     if (targetStep === 'record')
-      return availableSearchRecords.flatMap((record) => {
+      return navigationMenuItemSearchRecords.flatMap((record) => {
         const object = objectMetadataItems.find(
           (object) => object.nameSingular === record.objectNameSingular,
         );
         if (!object) return [];
         return [
           {
+            isDisabled: record.isAlreadyInSidebar,
+            isAlreadyInSidebar: record.isAlreadyInSidebar,
             id: record.recordId,
             label: record.label,
             icon: (

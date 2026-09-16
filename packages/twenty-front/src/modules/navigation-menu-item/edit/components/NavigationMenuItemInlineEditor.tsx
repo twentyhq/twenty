@@ -72,7 +72,9 @@ export const NavigationMenuItemInlineEditor = ({
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
-  const { updateItem, isDraftMode } = useNavigationMenuItemEditController();
+  const { updateItem, isDraftMode } = useNavigationMenuItemEditController(
+    item.userWorkspaceId ? 'favorite' : 'workspace',
+  );
   const [
     selectedNavigationMenuItemIdInEditMode,
     setSelectedNavigationMenuItemIdInEditMode,

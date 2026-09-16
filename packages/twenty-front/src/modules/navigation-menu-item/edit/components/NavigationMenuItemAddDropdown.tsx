@@ -3,8 +3,6 @@ import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/c
 import { type ReactNode } from 'react';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { NavigationMenuItemAddDropdownContent } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent';
 
 type NavigationMenuItemAddDropdownProps = {
@@ -28,9 +26,6 @@ export const NavigationMenuItemAddDropdown = ({
   );
   const dropdownId = `navigation-add-item-${instanceId ?? folderId ?? 'workspace'}`;
   const { closeDropdown } = useCloseDropdown();
-  const setNavigationMenuItemEditSection = useSetAtomState(
-    navigationMenuItemEditSectionState,
-  );
 
   return (
     <Dropdown
@@ -42,11 +37,9 @@ export const NavigationMenuItemAddDropdown = ({
       }
       dropdownPlacement="right-start"
       clickableComponent={children}
-      onOpen={() => {
-        setNavigationMenuItemEditSection(section);
-      }}
       dropdownComponents={
         <NavigationMenuItemAddDropdownContent
+          section={section}
           dropdownId={dropdownId}
           folderId={folderId}
           position={position}

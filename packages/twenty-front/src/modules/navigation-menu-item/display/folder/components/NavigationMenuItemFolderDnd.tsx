@@ -206,7 +206,6 @@ export const NavigationMenuItemFolderDnd = ({
       itemCount={navigationMenuItems.length}
       onEdit={favoritesEdit.startEditing}
       onDelete={favoritesEdit.handleFolderDelete}
-      closeDropdown={favoritesEdit.closeDropdown}
     />
   ) : (
     <NavigationMenuItemFolderChevron isOpen={isOpen} />

@@ -13,7 +13,7 @@ export type NavigationMenuItemOption = {
   icon?: ReactNode;
   onClick: () => void;
   isDisabled?: boolean;
-  isAlreadyInNavbar?: boolean;
+  isAlreadyInSidebar?: boolean;
   hasSubMenu?: boolean;
   accent?: 'default' | 'danger';
 };
@@ -40,7 +40,7 @@ export const NavigationMenuItemSelectableItem = ({
         onClick={item.onClick}
         disabled={item.isDisabled}
         contextualText={
-          item.isAlreadyInNavbar ? t`Already in navbar` : item.contextualText
+          item.isAlreadyInSidebar ? t`Already in sidebar` : item.contextualText
         }
         contextualTextPosition="left"
         hasSubMenu={item.hasSubMenu}

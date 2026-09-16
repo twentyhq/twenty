@@ -11,7 +11,6 @@ import { IconLink } from 'twenty-ui/icon';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
@@ -79,7 +78,6 @@ const meta: Meta<typeof NavigationMenuItemEditable> = {
     jotaiStore.set(navigationMenuItemIdToRenameState.atom, null);
     jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, true);
     jotaiStore.set(navigationMenuItemsDraftState.atom, ITEMS);
-    jotaiStore.set(navigationMenuItemEditSectionState.atom, 'workspace');
     jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
   },
   render: () => <EditableNavigation />,

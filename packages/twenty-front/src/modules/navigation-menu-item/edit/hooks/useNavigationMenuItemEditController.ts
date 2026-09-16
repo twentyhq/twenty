@@ -1,3 +1,4 @@
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
 import { useLingui } from '@lingui/react/macro';
 import { type NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -7,13 +8,11 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useCreateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useCreateManyNavigationMenuItems';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
 import { useUpdateManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useUpdateManyNavigationMenuItems';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export type NewNavigationMenuItemInput = {
@@ -34,18 +33,13 @@ type CreateItemOptions = {
   targetIndex?: number;
 };
 
-// The single create/update/delete API for navigation item editing. It forks on
-// the active section (mirroring useHandleNavigationMenuItemDragAndDrop): the
-// workspace section stages changes in the draft (saved on layout exit), while
-// the favorite section persists personal items immediately and optimistically.
-// On the immediate path the mutation hooks roll back on failure, so errors are
-// surfaced here and the rejection is swallowed — callers fire-and-forget.
-export const useNavigationMenuItemEditController = () => {
+// Workspace edits stay in the layout draft; favorites persist immediately.
+// Mutation hooks roll back failed optimistic updates, so report errors here.
+export const useNavigationMenuItemEditController = (
+  section: NavigationMenuItemSection,
+) => {
   const { t } = useLingui();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const navigationMenuItemEditSection = useAtomStateValue(
-    navigationMenuItemEditSectionState,
-  );
   const {
     navigationMenuItems,
     workspaceNavigationMenuItems,
@@ -58,7 +52,7 @@ export const useNavigationMenuItemEditController = () => {
   const { updateManyNavigationMenuItems } = useUpdateManyNavigationMenuItems();
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  const isDraftMode = navigationMenuItemEditSection === 'workspace';
+  const isDraftMode = section === 'workspace';
   const currentItems = isDraftMode
     ? workspaceNavigationMenuItems
     : navigationMenuItems;

@@ -10,7 +10,6 @@ import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/co
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
@@ -30,7 +29,8 @@ import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common
 
 export const useHandleAddToNavigationDrop = () => {
   const store = useStore();
-  const { currentItems, createItem } = useNavigationMenuItemEditController();
+  const { currentItems, createItem } =
+    useNavigationMenuItemEditController('workspace');
   const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
     selectedNavigationMenuItemIdInEditModeState,
   );
@@ -43,12 +43,6 @@ export const useHandleAddToNavigationDrop = () => {
 
   const handleAddToNavigationDrop = useCallback(
     (result: NavigationMenuItemDropResult) => {
-      // Drag-to-add always targets the workspace sidebar; favorites are added
-      // by click only.
-      if (store.get(navigationMenuItemEditSectionState.atom) === 'favorite') {
-        return;
-      }
-
       const { source, destination, draggableId } = result;
       if (
         source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID ||

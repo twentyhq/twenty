@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useDebounce } from 'use-debounce';
 
-import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { useObjectRecordSearchRecords } from '@/object-record/hooks/useObjectRecordSearchRecords';
 import { useSearchableObjectNameSingulars } from '@/side-panel/hooks/useSearchableObjectNameSingulars';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,23 +11,25 @@ const SEARCH_DEBOUNCE_DELAY = 300;
 
 export type NavigationMenuItemSearchRecord = {
   recordId: string;
+  isAlreadyInSidebar: boolean;
   objectNameSingular: string;
   label: string;
   imageUrl?: string | null;
 };
 
-type UseAvailableNavigationMenuItemSearchRecordsParams = {
+type UseNavigationMenuItemSearchRecordsParams = {
   searchInput: string;
+  currentItems: NavigationMenuItem[];
   selectedObjectNameSingular?: string | null;
   skip?: boolean;
 };
 
-export const useAvailableNavigationMenuItemSearchRecords = ({
+export const useNavigationMenuItemSearchRecords = ({
   searchInput,
+  currentItems,
   selectedObjectNameSingular = null,
   skip = false,
-}: UseAvailableNavigationMenuItemSearchRecordsParams) => {
-  const { currentItems } = useNavigationMenuItemEditController();
+}: UseNavigationMenuItemSearchRecordsParams) => {
   const trimmedSearchInput = searchInput.trim();
 
   const [deferredSearchInput] = useDebounce(
@@ -65,23 +67,22 @@ export const useAvailableNavigationMenuItemSearchRecords = ({
     [currentItems],
   );
 
-  const availableSearchRecords = useMemo(
+  const navigationMenuItemSearchRecords = useMemo(
     () =>
-      searchRecords
-        .filter((record) => !recordIdsAlreadyAdded.has(record.recordId))
-        .map(
-          (record): NavigationMenuItemSearchRecord => ({
-            recordId: record.recordId,
-            objectNameSingular: record.objectNameSingular,
-            label: record.label,
-            imageUrl: record.imageUrl,
-          }),
-        ),
+      searchRecords.map(
+        (record): NavigationMenuItemSearchRecord => ({
+          recordId: record.recordId,
+          isAlreadyInSidebar: recordIdsAlreadyAdded.has(record.recordId),
+          objectNameSingular: record.objectNameSingular,
+          label: record.label,
+          imageUrl: record.imageUrl,
+        }),
+      ),
     [recordIdsAlreadyAdded, searchRecords],
   );
 
   return {
-    availableSearchRecords,
+    navigationMenuItemSearchRecords,
     deferredSearchInput,
     isSearchDebouncing,
     recordSearchLoading:

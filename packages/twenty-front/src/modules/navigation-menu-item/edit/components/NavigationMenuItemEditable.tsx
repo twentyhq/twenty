@@ -1,7 +1,6 @@
 import { hoveredNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/hoveredNavigationMenuItemIdState';
 import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { NavigationMenuItemObjectColorEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemObjectColorEditor';
-import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import {
   isDropdownOpenComponentState,
@@ -30,17 +29,14 @@ import {
 } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { NavigationMenuItemMenu } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { NavigationMenuItemActions } from '@/navigation-menu-item/edit/components/NavigationMenuItemActions';
 import { NavigationMenuItemLinkEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemLinkEditor';
 import { NavigationMenuItemInlineEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemInlineEditor';
@@ -129,15 +125,8 @@ export const NavigationMenuItemEditable = ({
     selectedNavigationMenuItemIdInEditMode,
     setSelectedNavigationMenuItemIdInEditMode,
   ] = useAtomState(selectedNavigationMenuItemIdInEditModeState);
-  const setNavigationMenuItemEditSection = useSetAtomState(
-    navigationMenuItemEditSectionState,
-  );
   const { openDropdown } = useOpenDropdown();
-  const { closeDropdown } = useCloseDropdown();
   const [mode, setMode] = useState<'actions' | 'edit'>('actions');
-  const navigationMenuItemInsertionAnchor = useAtomStateValue(
-    navigationMenuItemInsertionAnchorState,
-  );
   const dropdownId = `navigation-item-${item.id}`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -153,14 +142,7 @@ export const NavigationMenuItemEditable = ({
   const canEdit =
     item.type === NavigationMenuItemType.LINK ||
     item.type === NavigationMenuItemType.FOLDER;
-  const close = () => {
-    closeDropdown(dropdownId);
-    setSelectedNavigationMenuItemIdInEditMode((selectedId) =>
-      selectedId === item.id ? null : selectedId,
-    );
-  };
   const open = (nextMode: 'actions' | 'edit') => {
-    setNavigationMenuItemEditSection(isWorkspace ? 'workspace' : 'favorite');
     setMode(nextMode);
     openDropdown({ dropdownComponentInstanceIdFromProps: dropdownId });
   };
@@ -214,32 +196,10 @@ export const NavigationMenuItemEditable = ({
     canOrganize ||
     (canEdit && selectedNavigationMenuItemIdInEditMode === item.id)
   ) {
-    let dropdownComponents = (
-      <NavigationMenuItemActions
-        item={item}
-        dropdownId={dropdownId}
-        onClose={close}
-      />
-    );
-    if (mode === 'edit' && item.type === NavigationMenuItemType.LINK) {
-      dropdownComponents = (
-        <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
-          <NavigationMenuItemLinkEditor
-            item={item}
-            dropdownId={dropdownId}
-            onClose={close}
-          />
-        </DropdownContent>
-      );
-    }
     content = (
-      <Dropdown
+      <NavigationMenuItemMenu
+        section={isWorkspace ? 'workspace' : 'favorite'}
         dropdownId={dropdownId}
-        positionReference={
-          navigationMenuItemInsertionAnchor?.dropdownId === dropdownId
-            ? navigationMenuItemInsertionAnchor.element
-            : undefined
-        }
         clickableComponent={row}
         disableClickForClickableComponent
         dropdownPlacement={mode === 'edit' ? 'top-start' : 'right-start'}
@@ -255,7 +215,27 @@ export const NavigationMenuItemEditable = ({
             selectedId === item.id ? null : selectedId,
           )
         }
-        dropdownComponents={dropdownComponents}
+        renderMenu={({ onClose, onAdd }) =>
+          mode === 'edit' && item.type === NavigationMenuItemType.LINK ? (
+            <DropdownContent
+              widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+            >
+              <NavigationMenuItemLinkEditor
+                item={item}
+                dropdownId={dropdownId}
+                onClose={onClose}
+              />
+            </DropdownContent>
+          ) : (
+            <NavigationMenuItemActions
+              item={item}
+              section={isWorkspace ? 'workspace' : 'favorite'}
+              dropdownId={dropdownId}
+              onClose={onClose}
+              onAdd={onAdd}
+            />
+          )
+        }
       />
     );
   }

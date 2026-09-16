@@ -1,4 +1,3 @@
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
@@ -6,7 +5,6 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID } from '@/navigation-menu-item/common/constants/NavigationMenuItemFolderDeleteModalId';
 import { useDeleteNavigationMenuItemFolder } from '@/navigation-menu-item/edit/folder/hooks/useDeleteNavigationMenuItemFolder';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
@@ -21,9 +19,6 @@ export const useFavoritesFolderEdit = ({
   folderId,
   navigationMenuItems,
 }: UseFavoritesFolderEditParams) => {
-  const setNavigationMenuItemEditSection = useSetAtomState(
-    navigationMenuItemEditSectionState,
-  );
   const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
     selectedNavigationMenuItemIdInEditModeState,
   );
@@ -32,7 +27,6 @@ export const useFavoritesFolderEdit = ({
   );
 
   const startEditing = () => {
-    setNavigationMenuItemEditSection('favorite');
     setSelectedNavigationMenuItemIdInEditMode(folderId);
     setNavigationMenuItemIdToRename(folderId);
   };
@@ -46,7 +40,6 @@ export const useFavoritesFolderEdit = ({
     isDropdownOpenComponentState,
     dropdownId,
   );
-  const { closeDropdown } = useCloseDropdown();
 
   const modalId = `${NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID}-${folderId}`;
   const isModalOpened = useAtomComponentStateValue(
@@ -57,10 +50,8 @@ export const useFavoritesFolderEdit = ({
   const handleFolderDelete = async () => {
     if (navigationMenuItems.length > 0) {
       openModal(modalId);
-      closeDropdown(dropdownId);
     } else {
       await deleteNavigationMenuItemFolder(folderId);
-      closeDropdown(dropdownId);
     }
   };
 
@@ -73,8 +64,6 @@ export const useFavoritesFolderEdit = ({
     handleFolderDelete,
     handleConfirmDelete,
     isDropdownOpen,
-    dropdownId,
-    closeDropdown: () => closeDropdown(dropdownId),
     modalId,
     isModalOpened,
     navigationMenuItemCount: navigationMenuItems.length,

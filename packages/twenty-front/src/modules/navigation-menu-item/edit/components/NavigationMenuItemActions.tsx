@@ -24,7 +24,8 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
-import { NavigationMenuItemAddDropdownContent } from '@/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent';
+import { type NavigationMenuItemSection } from '@/navigation-menu-item/common/types/NavigationMenuItemSection';
+import { type NavigationMenuItemAddTarget } from '@/navigation-menu-item/edit/components/NavigationMenuItemMenu';
 import {
   NavigationMenuItemSelectableItem,
   type NavigationMenuItemOption,
@@ -32,35 +33,28 @@ import {
 
 type NavigationMenuItemActionsProps = {
   item: NavigationMenuItem;
+  section: NavigationMenuItemSection;
+  onAdd: (target: NavigationMenuItemAddTarget) => void;
   dropdownId: string;
   onClose: () => void;
 };
 export const NavigationMenuItemActions = ({
   item,
+  section,
+  onAdd,
   dropdownId,
   onClose,
 }: NavigationMenuItemActionsProps) => {
   const { t } = useLingui();
   const { getIcon } = useIcons();
-  const items = useNavigationMenuItemEditSectionItems();
+  const items = useNavigationMenuItemEditSectionItems(section);
   const { moveUp, moveDown, moveToFolder, remove } =
-    useNavigationMenuItemMoveRemove();
-  const [page, setPage] = useState<'actions' | 'folders' | 'before' | 'after'>(
-    'actions',
-  );
+    useNavigationMenuItemMoveRemove(section);
+  const [page, setPage] = useState<'actions' | 'folders'>('actions');
   const siblings = items
     .filter((sibling) => (sibling.folderId ?? null) === (item.folderId ?? null))
     .sort((a, b) => a.position - b.position);
   const index = siblings.findIndex((sibling) => sibling.id === item.id);
-  if (page === 'before' || page === 'after')
-    return (
-      <NavigationMenuItemAddDropdownContent
-        dropdownId={dropdownId}
-        folderId={item.folderId ?? undefined}
-        position={index + (page === 'after' ? 1 : 0)}
-        onClose={onClose}
-      />
-    );
   const run = (action: () => Promise<void>) => {
     void action();
     onClose();
@@ -93,14 +87,16 @@ export const NavigationMenuItemActions = ({
       label: t`Add menu item before`,
       Icon: IconRowInsertTop,
       hasSubMenu: true,
-      onClick: () => setPage('before'),
+      onClick: () =>
+        onAdd({ folderId: item.folderId ?? undefined, position: index }),
     },
     {
       id: 'after',
       label: t`Add menu item after`,
       Icon: IconRowInsertBottom,
       hasSubMenu: true,
-      onClick: () => setPage('after'),
+      onClick: () =>
+        onAdd({ folderId: item.folderId ?? undefined, position: index + 1 }),
     },
     {
       id: 'remove',
