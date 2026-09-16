@@ -67,7 +67,10 @@ export const InboxSnoozeDropdown = ({
         expectedVersion: inboxItem.version,
       });
     } catch {
-      enqueueToast({ variant: 'error', children: t`That could not be applied` });
+      enqueueToast({
+        variant: 'error',
+        children: t`That could not be applied`,
+      });
     }
 
     closeDropdown(dropdownId);

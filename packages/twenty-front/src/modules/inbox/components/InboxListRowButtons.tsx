@@ -43,7 +43,10 @@ export const InboxListRowButtons = ({
       ...(inboxItem.isAssignedToMe ? { toUserWorkspaceId: null } : {}),
       expectedVersion: inboxItem.version,
     }).catch(() =>
-      enqueueToast({ variant: 'error', children: t`That could not be applied` }),
+      enqueueToast({
+        variant: 'error',
+        children: t`That could not be applied`,
+      }),
     );
 
   // Taking work a colleague already holds is a different act from picking up

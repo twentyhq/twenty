@@ -101,7 +101,10 @@ export const SettingsInboxQueueEdit = () => {
       });
       goBack();
     } catch {
-      enqueueToast({ variant: 'error', children: t`This shared inbox could not be saved` });
+      enqueueToast({
+        variant: 'error',
+        children: t`This shared inbox could not be saved`,
+      });
     } finally {
       setIsSaving(false);
     }
@@ -111,7 +114,10 @@ export const SettingsInboxQueueEdit = () => {
     try {
       await deleteInboxQueue(inboxQueue.id);
     } catch {
-      enqueueToast({ variant: 'error', children: t`This shared inbox could not be deleted` });
+      enqueueToast({
+        variant: 'error',
+        children: t`This shared inbox could not be deleted`,
+      });
 
       return;
     }
