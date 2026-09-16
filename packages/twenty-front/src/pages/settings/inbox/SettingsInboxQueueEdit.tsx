@@ -160,12 +160,14 @@ export const SettingsInboxQueueEdit = () => {
               description={t`Work still in this inbox moves to Triage rather than being deleted`}
             />
             <Button
-              Icon={IconTrash}
-              title={t`Delete shared inbox`}
-              accent="danger"
-              size="small"
+              startIcon={<IconTrash />}
+              color="danger"
+              size="sm"
+              variant="outline"
               onClick={() => openModal(DELETE_INBOX_QUEUE_MODAL_ID)}
-            />
+            >
+              {t`Delete shared inbox`}
+            </Button>
           </Section>
         )}
       </SettingsPageContainer>
@@ -175,7 +177,7 @@ export const SettingsInboxQueueEdit = () => {
         subtitle={t`Everyone loses access to this inbox. Work still in it moves to Triage.`}
         onConfirmClick={handleDelete}
         confirmButtonText={t`Delete`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </SettingsPageLayout>
   );

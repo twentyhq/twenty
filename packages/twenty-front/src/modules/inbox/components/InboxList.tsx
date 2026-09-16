@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { LightButton } from 'twenty-ui/primitives/input';
+import { LightButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxListRow } from '@/inbox/components/InboxListRow';
@@ -108,11 +108,9 @@ export const InboxList = ({
       )}
       {hasMoreItems && (
         <StyledLoadMore>
-          <LightButton
-            accent="tertiary"
-            title={t`Load older`}
-            onClick={onLoadMoreItems}
-          />
+          <LightButton emphasis="subtle" onClick={onLoadMoreItems}>
+            {t`Load older`}
+          </LightButton>
         </StyledLoadMore>
       )}
     </StyledContainer>

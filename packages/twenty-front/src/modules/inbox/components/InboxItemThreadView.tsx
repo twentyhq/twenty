@@ -383,38 +383,39 @@ export const InboxItemThreadView = ({
             <>
               {canRunRest && (
                 <Button
-                  size="small"
-                  variant="secondary"
+                  size="sm"
+                  variant="outline"
                   disabled={isBusy}
-                  title={sendLabel}
                   onClick={() => void sendProposal(false)}
-                />
+                >
+                  {sendLabel}
+                </Button>
               )}
               <Button
-                Icon={IconSend}
-                accent="blue"
-                size="small"
-                variant="primary"
+                startIcon={<IconSend />}
+                color="accent"
+                size="sm"
+                variant="solid"
                 disabled={isBusy}
-                title={
-                  canRunRest
-                    ? t`${sendLabel} and do ${otherPendingCount} more`
-                    : sendLabel
-                }
                 onClick={() => void sendProposal(canRunRest)}
-              />
+              >
+                {canRunRest
+                  ? t`${sendLabel} and do ${otherPendingCount} more`
+                  : sendLabel}
+              </Button>
             </>
           )}
           {isComposerOpen && !isDefined(emailToolCall) && (
             <Button
-              Icon={IconSend}
-              accent="blue"
-              size="small"
-              variant="primary"
+              startIcon={<IconSend />}
+              color="accent"
+              size="sm"
+              variant="solid"
               disabled={isBusy}
-              title={t`Send`}
               onClick={() => void sendAdHoc()}
-            />
+            >
+              {t`Send`}
+            </Button>
           )}
         </StyledFooterEnd>
       </StyledFooter>

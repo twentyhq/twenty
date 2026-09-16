@@ -112,12 +112,13 @@ export const SettingsInboxQueueRolePicker = ({
           dropdownOffset={{ x: 0, y: 4 }}
           clickableComponent={
             <Button
-              Icon={IconPlus}
-              title={t`Add role`}
-              variant="secondary"
-              size="small"
+              startIcon={<IconPlus />}
+              variant="outline"
+              size="sm"
               disabled={availableRoles.length === 0}
-            />
+            >
+              {t`Add role`}
+            </Button>
           }
           dropdownComponents={
             <DropdownContent

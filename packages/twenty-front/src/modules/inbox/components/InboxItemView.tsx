@@ -334,12 +334,9 @@ export const InboxItemView = ({
       {isDefined(inboxItem.outcome) && (
         <Tag color="gray">{getInboxItemOutcomeLabel(inboxItem.outcome)}</Tag>
       )}
-      <Button
-        onClick={reopenItem}
-        size="small"
-        title={t`Move to inbox`}
-        variant="secondary"
-      />
+      <Button onClick={reopenItem} size="sm" variant="outline">
+        {t`Move to inbox`}
+      </Button>
     </>
   ) : (
     <>
@@ -499,14 +496,15 @@ export const InboxItemView = ({
           {footerControls}
           {!isDone && (
             <Button
-              Icon={IconCheck}
-              accent="blue"
+              startIcon={<IconCheck />}
+              color="accent"
               disabled={isBusy}
               onClick={() => void doItem()}
-              size="small"
-              title={doLabel}
-              variant="primary"
-            />
+              size="sm"
+              variant="solid"
+            >
+              {doLabel}
+            </Button>
           )}
         </StyledFooterEnd>
       </StyledFooter>

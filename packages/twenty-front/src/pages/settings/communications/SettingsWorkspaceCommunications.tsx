@@ -1,6 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsWorkspaceBlocklistSection } from '@/settings/workspace/components/SettingsWorkspaceBlocklistSection';
@@ -24,7 +25,6 @@ import {
   IconPlus,
 } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/primitives/typography';
-import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
@@ -163,13 +163,15 @@ export const SettingsWorkspaceCommunications = () => {
               />
               <SettingsInboxQueuesTable inboxQueues={inboxQueues} />
               <StyledButtonRow>
-                <Button
-                  Icon={IconPlus}
-                  title={t`New shared inbox`}
-                  accent="blue"
-                  size="small"
+                <NavigationButton
+                  startIcon={<IconPlus />}
+                  color="accent"
+                  size="sm"
+                  variant="solid"
                   to={getSettingsPath(SettingsPath.InboxQueueNew)}
-                />
+                >
+                  {t`New shared inbox`}
+                </NavigationButton>
               </StyledButtonRow>
             </Section>
             <Section>

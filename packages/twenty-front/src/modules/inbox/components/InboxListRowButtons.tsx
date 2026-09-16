@@ -62,16 +62,17 @@ export const InboxListRowButtons = ({
   return (
     <StyledButtons>
       <Button
-        accent={
+        color={
           inboxItem.isAssignedToMe || isAssignedToSomeoneElse
-            ? 'default'
-            : 'blue'
+            ? 'neutral'
+            : 'accent'
         }
         onClick={toggleOwnership}
-        size="small"
-        title={getOwnershipLabel()}
-        variant="secondary"
-      />
+        size="sm"
+        variant="outline"
+      >
+        {getOwnershipLabel()}
+      </Button>
     </StyledButtons>
   );
 };
