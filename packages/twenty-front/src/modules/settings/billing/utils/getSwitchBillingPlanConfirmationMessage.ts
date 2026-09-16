@@ -1,4 +1,3 @@
-import { getBillingIntervalAdjective } from '@/settings/billing/utils/getBillingIntervalAdjective';
 import { t } from '@lingui/core/macro';
 import { capitalize } from 'twenty-shared/utils';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
@@ -22,9 +21,9 @@ export const getSwitchBillingPlanConfirmationMessage = ({
   targetInterval,
   targetPlanKey,
 }: GetSwitchBillingPlanConfirmationMessageParams): string => {
-  const intervalAdjective = getBillingIntervalAdjective(targetInterval);
-  const suffix =
-    targetInterval === SubscriptionInterval.Year ? t` billed annually` : '';
+  const isYearly = targetInterval === SubscriptionInterval.Year;
+  const intervalAdjective = isYearly ? t`yearly` : t`monthly`;
+  const suffix = isYearly ? t` billed annually` : '';
   const intervalUnchangedNotice = t`Your billing interval stays ${intervalAdjective}, this only changes your plan.`;
 
   if (targetPlanKey === BillingPlanKey.ENTERPRISE) {

@@ -13,11 +13,12 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
 import { beautifyExactDate } from '~/utils/date-utils';
-import { useBillingStateAfterScheduledChange } from '@/settings/billing/hooks/useBillingStateAfterScheduledChange';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
+import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
+import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
-import { getBillingIntervalAdjective } from '@/settings/billing/utils/getBillingIntervalAdjective';
+import { getBillingStateAfterScheduledChange } from '@/settings/billing/utils/getBillingStateAfterScheduledChange';
 import { getSubscriptionPlanKey } from '@/settings/billing/utils/getSubscriptionPlanKey';
 import { getSwitchBillingIntervalConfirmationMessage } from '@/settings/billing/utils/getSwitchBillingIntervalConfirmationMessage';
 import { getSwitchBillingPlanConfirmationMessage } from '@/settings/billing/utils/getSwitchBillingPlanConfirmationMessage';
@@ -40,8 +41,8 @@ export const useBillingWording = () => {
 
   const subscriptionStatus = useSubscriptionStatus();
 
-  const { intervalAfterScheduledChange, planKeyAfterScheduledChange } =
-    useBillingStateAfterScheduledChange();
+  const { nextPlan } = useNextPlan();
+  const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
 
   const isTrialing = subscriptionStatus === SubscriptionStatus.Trialing;
 
@@ -49,13 +50,13 @@ export const useBillingWording = () => {
     isMonthly: boolean,
     asAdjective: boolean = false,
   ): string =>
-    asAdjective
-      ? getBillingIntervalAdjective(
-          isMonthly ? SubscriptionInterval.Month : SubscriptionInterval.Year,
-        )
-      : isMonthly
-        ? t`month`
-        : t`year`;
+    isMonthly && asAdjective
+      ? t`monthly`
+      : asAdjective
+        ? t`yearly`
+        : isMonthly
+          ? t`month`
+          : t`year`;
 
   const getBeautifiedRenewDate = () => {
     assertIsDefinedOrThrow(
@@ -92,12 +93,20 @@ export const useBillingWording = () => {
       currentBillingSubscription.interval === SubscriptionInterval.Month,
     );
 
+  const stateAfterScheduledChange = getBillingStateAfterScheduledChange({
+    currentInterval: currentBillingSubscription.interval,
+    currentPlanKey,
+    scheduledInterval:
+      splitedPhaseItemsInPrices.nextBasePrice?.recurringInterval,
+    scheduledPlanKey: nextPlan?.planKey,
+  });
+
   const targetPlanKeyAfterScheduledChange =
-    planKeyAfterScheduledChange === BillingPlanKey.ENTERPRISE
+    stateAfterScheduledChange.planKey === BillingPlanKey.ENTERPRISE
       ? BillingPlanKey.ENTERPRISE
       : BillingPlanKey.PRO;
   const targetIntervalAfterScheduledChange =
-    intervalAfterScheduledChange === SubscriptionInterval.Month
+    stateAfterScheduledChange.interval === SubscriptionInterval.Month
       ? SubscriptionInterval.Month
       : SubscriptionInterval.Year;
 

@@ -1,5 +1,7 @@
-import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
-import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
+import {
+  type CurrentWorkspaceBillingUpdate,
+  useApplyCurrentWorkspaceBillingUpdate,
+} from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { runningBillingUpdateState } from '@/settings/billing/states/runningBillingUpdateState';
 import { type BillingUpdateKind } from '@/settings/billing/types/billingUpdateKind.type';
@@ -9,22 +11,9 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
-type BillingUpdate =
-  | Pick<
-      CurrentWorkspace,
-      'billingSubscriptions' | 'currentBillingSubscription'
-    >
-  | null
-  | undefined;
-
 type UseRunBillingUpdateParams = {
   kind: BillingUpdateKind;
-  mutate: () => Promise<BillingUpdate>;
-};
-
-type RunBillingUpdateParams = {
-  getErrorMessage: () => string;
-  getSuccessMessage: () => string;
+  mutate: () => Promise<CurrentWorkspaceBillingUpdate | null | undefined>;
 };
 
 export const useRunBillingUpdate = ({
@@ -42,7 +31,10 @@ export const useRunBillingUpdate = ({
   const runBillingUpdate = async ({
     getErrorMessage,
     getSuccessMessage,
-  }: RunBillingUpdateParams) => {
+  }: {
+    getErrorMessage: () => string;
+    getSuccessMessage: () => string;
+  }) => {
     if (isDefined(store.get(runningBillingUpdateState.atom))) {
       return;
     }

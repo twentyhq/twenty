@@ -5,7 +5,7 @@ import {
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 
-type CurrentWorkspaceBillingUpdate = Pick<
+export type CurrentWorkspaceBillingUpdate = Pick<
   CurrentWorkspace,
   'billingSubscriptions' | 'currentBillingSubscription'
 >;
