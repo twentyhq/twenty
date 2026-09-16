@@ -1,5 +1,7 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { executeWithRetry } from 'src/utils/execute-with-retry';
+
 export type InteractionKind = 'email' | 'meeting';
 export type InteractionDirection = 'outbound' | 'inbound';
 
@@ -48,17 +50,19 @@ export const updatePersonForInteractions = async (
     return;
   }
 
-  const { person } = await client.query({
-    person: {
-      __args: { filter: { id: { eq: personId } } },
-      id: true,
-      lastContactAt: true,
-      lastOutboundAt: true,
-      lastInboundAt: true,
-      lastEmail: { receivedAt: true },
-      lastMeeting: { startsAt: true },
-    },
-  });
+  const { person } = await executeWithRetry(() =>
+    client.query({
+      person: {
+        __args: { filter: { id: { eq: personId } } },
+        id: true,
+        lastContactAt: true,
+        lastOutboundAt: true,
+        lastInboundAt: true,
+        lastEmail: { receivedAt: true },
+        lastMeeting: { startsAt: true },
+      },
+    }),
+  );
 
   const current = (person ?? {}) as {
     lastContactAt?: string | null;
@@ -124,25 +128,27 @@ export const updatePersonForInteractions = async (
   }
 
   if ('lastContactAt' in data) {
-    const { updatePeople } = await client.mutation({
-      updatePeople: {
-        __args: {
-          data,
-          filter: {
-            and: [
-              { id: { eq: personId } },
-              {
-                or: [
-                  { lastContactAt: { is: 'NULL' } },
-                  { lastContactAt: { lt: occurredAt } },
-                ],
-              },
-            ],
+    const { updatePeople } = await executeWithRetry(() =>
+      client.mutation({
+        updatePeople: {
+          __args: {
+            data,
+            filter: {
+              and: [
+                { id: { eq: personId } },
+                {
+                  or: [
+                    { lastContactAt: { is: 'NULL' } },
+                    { lastContactAt: { lt: occurredAt } },
+                  ],
+                },
+              ],
+            },
           },
+          id: true,
         },
-        id: true,
-      },
-    });
+      }),
+    );
 
     if (Array.isArray(updatePeople) && updatePeople.length > 0) {
       return;
@@ -158,19 +164,23 @@ export const updatePersonForInteractions = async (
       return;
     }
 
-    await client.mutation({
-      updatePerson: {
-        __args: { id: personId, data: directionalData },
-        id: true,
-      },
-    });
+    await executeWithRetry(() =>
+      client.mutation({
+        updatePerson: {
+          __args: { id: personId, data: directionalData },
+          id: true,
+        },
+      }),
+    );
     return;
   }
 
-  await client.mutation({
-    updatePerson: {
-      __args: { id: personId, data },
-      id: true,
-    },
-  });
+  await executeWithRetry(() =>
+    client.mutation({
+      updatePerson: {
+        __args: { id: personId, data },
+        id: true,
+      },
+    }),
+  );
 };
