@@ -1,4 +1,5 @@
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
@@ -39,7 +40,8 @@ export const useReadableNavigationMenuItems = ({
 
   const filteredTopLevelItems = topLevelItems.filter((item) =>
     isNavigationMenuItemFolder(item)
-      ? (filteredFolderChildrenById.get(item.id) ?? []).length > 0
+      ? isDefined(item.userWorkspaceId) ||
+        (filteredFolderChildrenById.get(item.id) ?? []).length > 0
       : isItemReadable(item),
   );
 
