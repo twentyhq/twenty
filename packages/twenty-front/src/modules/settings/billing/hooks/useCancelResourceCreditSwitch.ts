@@ -11,7 +11,6 @@ export const useCancelResourceCreditSwitch = () => {
   );
 
   const { isBillingUpdateRunning, runBillingUpdate } = useRunBillingUpdate({
-    kind: 'RESOURCE_CREDIT_SWITCH_CANCELLATION',
     mutate: async () =>
       (await cancelSwitchResourceCreditPriceMutation()).data
         ?.cancelSwitchResourceCreditPrice,

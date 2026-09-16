@@ -20,7 +20,6 @@ export const useCancelBillingSwitch = () => {
     isBillingUpdateRunning: isCancellingPlanSwitch,
     runBillingUpdate: runPlanSwitchCancellation,
   } = useRunBillingUpdate({
-    kind: 'PLAN_SWITCH_CANCELLATION',
     mutate: async () =>
       (await cancelSwitchBillingPlanMutation()).data?.cancelSwitchBillingPlan,
   });
@@ -29,7 +28,6 @@ export const useCancelBillingSwitch = () => {
     isBillingUpdateRunning: isCancellingIntervalSwitch,
     runBillingUpdate: runIntervalSwitchCancellation,
   } = useRunBillingUpdate({
-    kind: 'INTERVAL_SWITCH_CANCELLATION',
     mutate: async () =>
       (await cancelSwitchBillingIntervalMutation()).data
         ?.cancelSwitchBillingInterval,

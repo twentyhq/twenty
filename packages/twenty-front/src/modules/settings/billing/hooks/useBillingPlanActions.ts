@@ -3,7 +3,7 @@ import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds'
 import { useBillingPortalSession } from '@/settings/billing/hooks/useBillingPortalSession';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
-import { runningBillingUpdateState } from '@/settings/billing/states/runningBillingUpdateState';
+import { isBillingUpdateRunningState } from '@/settings/billing/states/isBillingUpdateRunningState';
 import { type SettingsBillingPlanAction } from '@/settings/billing/types/settingsBillingPlanAction.type';
 import { type SettingsBillingPlanInterval } from '@/settings/billing/types/settingsBillingPlanComparison.type';
 import { getBillingPlanActionType } from '@/settings/billing/utils/getBillingPlanActionType';
@@ -45,7 +45,7 @@ export const useBillingPlanActions = ({
   const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
   const permissionMap = usePermissionFlagMap();
 
-  const runningBillingUpdate = useAtomStateValue(runningBillingUpdateState);
+  const isBillingUpdateRunning = useAtomStateValue(isBillingUpdateRunningState);
 
   const { isBillingPortalSessionDisabled, openBillingPortal } =
     useBillingPortalSession(getSettingsPath(SettingsPath.BillingPlans));
@@ -68,8 +68,6 @@ export const useBillingPlanActions = ({
     !isSubscriptionCanceled &&
     !isCancellationScheduled &&
     hasPermissionToManageBilling;
-
-  const isAnyBillingUpdateRunning = isDefined(runningBillingUpdate);
 
   const createBillingPortalAction = (
     title: string,
@@ -131,9 +129,9 @@ export const useBillingPlanActions = ({
       case 'CANCEL_PLAN_SWITCH':
         return {
           accent: 'blue',
-          disabled: isAnyBillingUpdateRunning,
+          disabled: isBillingUpdateRunning,
           Icon: IconCircleX,
-          isLoading: runningBillingUpdate === 'PLAN_SWITCH_CANCELLATION',
+          isLoading: isBillingUpdateRunning,
           onClick: () => openModal(BILLING_MODAL_IDS.cancelSwitchBillingPlan),
           title: t`Cancel plan switching`,
           variant: 'primary',
@@ -141,9 +139,9 @@ export const useBillingPlanActions = ({
       case 'CANCEL_INTERVAL_SWITCH':
         return {
           accent: 'blue',
-          disabled: isAnyBillingUpdateRunning,
+          disabled: isBillingUpdateRunning,
           Icon: IconCircleX,
-          isLoading: runningBillingUpdate === 'INTERVAL_SWITCH_CANCELLATION',
+          isLoading: isBillingUpdateRunning,
           onClick: () =>
             openModal(BILLING_MODAL_IDS.cancelSwitchBillingInterval),
           title: t`Cancel interval switching`,
@@ -160,9 +158,9 @@ export const useBillingPlanActions = ({
           selectedInterval === SubscriptionInterval.Year;
 
         return {
-          disabled: isAnyBillingUpdateRunning,
+          disabled: isBillingUpdateRunning,
           Icon: isUpgradeToAnnual ? IconArrowUp : IconArrowDown,
-          isLoading: runningBillingUpdate === 'INTERVAL_SWITCH',
+          isLoading: isBillingUpdateRunning,
           onClick: () =>
             openModal(
               isUpgradeToAnnual
@@ -180,9 +178,9 @@ export const useBillingPlanActions = ({
         const isUpgradeToOrganization = planKey === BillingPlanKey.ENTERPRISE;
 
         return {
-          disabled: isAnyBillingUpdateRunning,
+          disabled: isBillingUpdateRunning,
           Icon: isUpgradeToOrganization ? IconArrowUp : IconArrowDown,
-          isLoading: runningBillingUpdate === 'PLAN_SWITCH',
+          isLoading: isBillingUpdateRunning,
           onClick: () =>
             openModal(
               isUpgradeToOrganization

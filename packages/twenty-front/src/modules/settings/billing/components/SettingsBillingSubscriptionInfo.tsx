@@ -16,7 +16,7 @@ import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhas
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
-import { runningBillingUpdateState } from '@/settings/billing/states/runningBillingUpdateState';
+import { isBillingUpdateRunningState } from '@/settings/billing/states/isBillingUpdateRunningState';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -104,7 +104,7 @@ export const SettingsBillingSubscriptionInfo = ({
   const { endTrialPeriod, isLoading: isEndTrialPeriodLoading } =
     useEndSubscriptionTrialPeriod();
 
-  const runningBillingUpdate = useAtomStateValue(runningBillingUpdateState);
+  const isBillingUpdateRunning = useAtomStateValue(isBillingUpdateRunningState);
 
   const billingHasPaymentMethod = useAtomStateValue(
     billingHasPaymentMethodSelector,
@@ -296,8 +296,7 @@ export const SettingsBillingSubscriptionInfo = ({
       : []),
   ];
 
-  const isAnyActionLoading =
-    isDefined(runningBillingUpdate) || isEndTrialPeriodLoading;
+  const isAnyActionLoading = isBillingUpdateRunning || isEndTrialPeriodLoading;
 
   const isSubscriptionActionDisabled =
     !canSwitchSubscription || isAnyActionLoading;

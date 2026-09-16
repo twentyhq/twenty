@@ -20,7 +20,6 @@ export const useSwitchBillingInterval = () => {
   );
 
   const { isBillingUpdateRunning, runBillingUpdate } = useRunBillingUpdate({
-    kind: 'INTERVAL_SWITCH',
     mutate: async () =>
       (await switchSubscriptionIntervalMutation()).data
         ?.switchSubscriptionInterval,

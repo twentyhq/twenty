@@ -17,7 +17,6 @@ export const useSwitchBillingPlan = () => {
   const [switchBillingPlanMutation] = useMutation(SwitchBillingPlanDocument);
 
   const { isBillingUpdateRunning, runBillingUpdate } = useRunBillingUpdate({
-    kind: 'PLAN_SWITCH',
     mutate: async () =>
       (await switchBillingPlanMutation()).data?.switchBillingPlan,
   });

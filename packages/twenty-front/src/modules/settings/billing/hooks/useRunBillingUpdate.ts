@@ -3,30 +3,24 @@ import {
   useApplyCurrentWorkspaceBillingUpdate,
 } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
-import { runningBillingUpdateState } from '@/settings/billing/states/runningBillingUpdateState';
-import { type BillingUpdateKind } from '@/settings/billing/types/billingUpdateKind.type';
+import { isBillingUpdateRunningState } from '@/settings/billing/states/isBillingUpdateRunningState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useStore } from 'jotai';
-import { isDefined } from 'twenty-shared/utils';
-
-type UseRunBillingUpdateParams = {
-  kind: BillingUpdateKind;
-  mutate: () => Promise<CurrentWorkspaceBillingUpdate | null | undefined>;
-};
 
 export const useRunBillingUpdate = ({
-  kind,
   mutate,
-}: UseRunBillingUpdateParams) => {
+}: {
+  mutate: () => Promise<CurrentWorkspaceBillingUpdate | null | undefined>;
+}) => {
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
   const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
 
   const store = useStore();
-  const runningBillingUpdate = useAtomStateValue(runningBillingUpdateState);
+  const isBillingUpdateRunning = useAtomStateValue(isBillingUpdateRunningState);
 
   const runBillingUpdate = async ({
     getErrorMessage,
@@ -35,11 +29,11 @@ export const useRunBillingUpdate = ({
     getErrorMessage: () => string;
     getSuccessMessage: () => string;
   }) => {
-    if (isDefined(store.get(runningBillingUpdateState.atom))) {
+    if (store.get(isBillingUpdateRunningState.atom)) {
       return;
     }
 
-    store.set(runningBillingUpdateState.atom, kind);
+    store.set(isBillingUpdateRunningState.atom, true);
 
     try {
       const billingUpdate = await mutate();
@@ -61,12 +55,12 @@ export const useRunBillingUpdate = ({
         throw error;
       }
     } finally {
-      store.set(runningBillingUpdateState.atom, null);
+      store.set(isBillingUpdateRunningState.atom, false);
     }
   };
 
   return {
-    isBillingUpdateRunning: runningBillingUpdate === kind,
+    isBillingUpdateRunning,
     runBillingUpdate,
   };
 };
