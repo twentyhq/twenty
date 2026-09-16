@@ -84,7 +84,15 @@ export const NavigationMenuItemInlineEditor = ({
     (isRenaming || navigationMenuItemIdToRename === item.id) &&
     isExpanded &&
     isSelected;
+  const clearFavoriteSelection = () => {
+    if (item.userWorkspaceId) {
+      setSelectedNavigationMenuItemIdInEditMode((currentId) =>
+        currentId === item.id ? null : currentId,
+      );
+    }
+  };
   const stopRenaming = () => {
+    clearFavoriteSelection();
     setIsRenaming(false);
     setNavigationMenuItemIdToRename((currentId) =>
       currentId === item.id ? null : currentId,
@@ -133,6 +141,7 @@ export const NavigationMenuItemInlineEditor = ({
       dropdownId={`${dropdownId}-icon`}
       selectedIconKey={item.icon ?? FOLDER_ICON_DEFAULT}
       onOpen={select}
+      onClose={clearFavoriteSelection}
       onChange={({ iconKey }) => void updateItem(item.id, { icon: iconKey })}
       iconColorPicker={{
         selectedColor: (item.color ??

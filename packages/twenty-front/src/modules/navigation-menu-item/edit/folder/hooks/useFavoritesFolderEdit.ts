@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
+import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NAVIGATION_MENU_ITEM_FOLDER_DELETE_MODAL_ID } from '@/navigation-menu-item/common/constants/NavigationMenuItemFolderDeleteModalId';
 import { useDeleteNavigationMenuItemFolder } from '@/navigation-menu-item/edit/folder/hooks/useDeleteNavigationMenuItemFolder';
-import { useRenameNavigationMenuItemFolder } from '@/navigation-menu-item/edit/folder/hooks/useRenameNavigationMenuItemFolder';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
@@ -12,20 +14,29 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 
 type UseFavoritesFolderEditParams = {
   folderId: string;
-  folderName: string;
   navigationMenuItems: NavigationMenuItem[];
 };
 
 export const useFavoritesFolderEdit = ({
   folderId,
-  folderName: initialFolderName,
   navigationMenuItems,
 }: UseFavoritesFolderEditParams) => {
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [folderNameValue, setFolderNameValue] = useState(initialFolderName);
+  const setNavigationMenuItemEditSection = useSetAtomState(
+    navigationMenuItemEditSectionState,
+  );
+  const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
+    selectedNavigationMenuItemIdInEditModeState,
+  );
+  const setNavigationMenuItemIdToRename = useSetAtomState(
+    navigationMenuItemIdToRenameState,
+  );
 
-  const { renameNavigationMenuItemFolder } =
-    useRenameNavigationMenuItemFolder();
+  const startRenaming = () => {
+    setNavigationMenuItemEditSection('favorite');
+    setSelectedNavigationMenuItemIdInEditMode(folderId);
+    setNavigationMenuItemIdToRename(folderId);
+  };
+
   const { deleteNavigationMenuItemFolder } =
     useDeleteNavigationMenuItemFolder();
   const { openModal } = useModal();
@@ -43,30 +54,6 @@ export const useFavoritesFolderEdit = ({
     modalId,
   );
 
-  const handleSubmitRename = async (value: string) => {
-    if (value === '') return;
-    await renameNavigationMenuItemFolder(folderId, value);
-    setIsRenaming(false);
-    return true;
-  };
-
-  const handleCancelRename = () => {
-    setFolderNameValue(initialFolderName);
-    setIsRenaming(false);
-  };
-
-  const handleClickOutsideRename = async (
-    _event: MouseEvent | TouchEvent,
-    value: string,
-  ) => {
-    if (!value) {
-      setIsRenaming(false);
-      return;
-    }
-    await renameNavigationMenuItemFolder(folderId, value);
-    setIsRenaming(false);
-  };
-
   const handleFolderDelete = async () => {
     if (navigationMenuItems.length > 0) {
       openModal(modalId);
@@ -82,13 +69,7 @@ export const useFavoritesFolderEdit = ({
   };
 
   return {
-    isRenaming,
-    setIsRenaming,
-    folderNameValue,
-    setFolderNameValue,
-    handleSubmitRename,
-    handleCancelRename,
-    handleClickOutsideRename,
+    startRenaming,
     handleFolderDelete,
     handleConfirmDelete,
     isDropdownOpen,

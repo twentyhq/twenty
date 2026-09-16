@@ -8,7 +8,7 @@ import { useLingui } from '@lingui/react/macro';
 import React, { Fragment, useContext } from 'react';
 import { createPortal } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFolder, IconHeartOff, IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconHeartOff, IconPlus, useIcons } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
@@ -44,7 +44,6 @@ import { NavigationMenuItemAddDropdown } from '@/navigation-menu-item/edit/compo
 import type { EditModeProps } from '@/object-metadata/components/EditModeProps';
 
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSubItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSubItem';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
@@ -140,7 +139,6 @@ export const NavigationMenuItemFolderDnd = ({
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
   const favoritesEdit = useFavoritesFolderEdit({
     folderId,
-    folderName,
     navigationMenuItems,
   });
 
@@ -189,7 +187,7 @@ export const NavigationMenuItemFolderDnd = ({
   const headerRightOptions = isEditInPlace ? (
     <NavigationMenuItemFolderNavigationDrawerItemDropdown
       folderId={folderId}
-      onRename={() => favoritesEdit.setIsRenaming(true)}
+      onRename={favoritesEdit.startRenaming}
       onDelete={favoritesEdit.handleFolderDelete}
       closeDropdown={favoritesEdit.closeDropdown}
     />
@@ -197,19 +195,7 @@ export const NavigationMenuItemFolderDnd = ({
     <NavigationMenuItemFolderChevron isOpen={isOpen} />
   );
 
-  const headerOverride =
-    isEditInPlace && favoritesEdit.isRenaming ? (
-      <NavigationDrawerInput
-        Icon={IconFolder}
-        value={favoritesEdit.folderNameValue}
-        onChange={favoritesEdit.setFolderNameValue}
-        onSubmit={favoritesEdit.handleSubmitRename}
-        onCancel={favoritesEdit.handleCancelRename}
-        onClickOutside={favoritesEdit.handleClickOutsideRename}
-      />
-    ) : undefined;
-
-  const header = headerOverride ?? (
+  const header = (
     <NavigationDrawerItem
       label={folderName}
       Icon={() => <ColoredIcon Icon={FolderIcon} color={iconColor} />}
