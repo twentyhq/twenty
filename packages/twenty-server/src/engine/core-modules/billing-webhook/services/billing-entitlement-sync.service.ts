@@ -13,6 +13,7 @@ import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-mod
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { workspaceDataContextStorage } from 'src/engine/workspace-cache/storage/workspace-data-context.storage';
 
 type EntitlementTransitionArgs = {
   workspaceId: string;
@@ -103,9 +104,17 @@ export class BillingEntitlementSyncService {
       },
     );
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'billingEntitlements',
-    ]);
+    try {
+      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+        'billingEntitlements',
+      ]);
+    } finally {
+      const dataContext = workspaceDataContextStorage.getStore();
+
+      if (dataContext?.workspaceId === workspaceId) {
+        dataContext.billingEntitlements = undefined;
+      }
+    }
 
     // The opposite order to the reset above, because the unsafe direction is
     // reversed: predicates deleted while the row still grants RLS would leave

@@ -21,6 +21,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { getWorkspaceBillingEntitlements } from 'src/engine/core-modules/billing/utils/get-workspace-billing-entitlements.util';
 import { BillingEntitlementDTO } from 'src/engine/core-modules/billing/dtos/billing-entitlement.dto';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
@@ -237,11 +238,12 @@ export class BillingSubscriptionService {
     const isBillingEnabled = this.twentyConfigService.get('IS_BILLING_ENABLED');
     const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
 
-    const { billingEntitlements } = isBillingEnabled
-      ? await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'billingEntitlements',
-        ])
-      : { billingEntitlements: {} };
+    const billingEntitlements = isBillingEnabled
+      ? await getWorkspaceBillingEntitlements(
+          workspaceId,
+          this.workspaceCacheService,
+        )
+      : {};
 
     return Object.values(BillingEntitlementKey).map((key) => ({
       key,
@@ -257,10 +259,10 @@ export class BillingSubscriptionService {
     workspaceId: string,
     key: BillingEntitlementKey,
   ): Promise<boolean> {
-    const { billingEntitlements } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'billingEntitlements',
-      ]);
+    const billingEntitlements = await getWorkspaceBillingEntitlements(
+      workspaceId,
+      this.workspaceCacheService,
+    );
 
     return billingEntitlements[key] ?? false;
   }

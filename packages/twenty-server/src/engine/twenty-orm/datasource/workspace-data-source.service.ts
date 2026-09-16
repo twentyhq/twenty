@@ -119,6 +119,7 @@ export class WorkspaceDataSourceService
         workspaceContext.flatRowLevelPermissionPredicateGroupMaps,
       objectIdByNameSingular: workspaceContext.objectIdByNameSingular,
       featureFlagsMap: workspaceContext.featureFlagsMap,
+      billingEntitlements: workspaceContext.billingEntitlements,
       userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
       apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
       eventEmitterService: this.workspaceEventEmitter,
