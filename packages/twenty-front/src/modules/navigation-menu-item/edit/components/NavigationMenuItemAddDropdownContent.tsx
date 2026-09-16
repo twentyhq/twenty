@@ -19,7 +19,7 @@ import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconChevronLeft,
-  IconCompass,
+  IconX,
   IconBox,
   IconPerspective,
   IconFolder,
@@ -443,8 +443,8 @@ export const NavigationMenuItemAddDropdownContent = ({
       <DropdownMenuHeader
         StartComponent={
           <DropdownMenuHeaderLeftComponent
-            Icon={step === 'main' ? IconCompass : IconChevronLeft}
-            onClick={step === 'main' ? undefined : goBack}
+            Icon={step === 'main' ? IconX : IconChevronLeft}
+            onClick={step === 'main' ? onClose : goBack}
           />
         }
       >
