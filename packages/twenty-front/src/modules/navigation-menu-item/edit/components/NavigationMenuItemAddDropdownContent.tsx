@@ -231,6 +231,13 @@ export const NavigationMenuItemAddDropdownContent = ({
               ...objectMetadataItemsWithViews,
               ...availableSystemObjectMetadataItemsForView,
             ];
+      if (step === 'object') {
+        objects.sort(
+          (firstObject, secondObject) =>
+            Number(objectMetadataIdsAlreadyAdded.has(firstObject.id)) -
+            Number(objectMetadataIdsAlreadyAdded.has(secondObject.id)),
+        );
+      }
       return objects.map((object) => ({
         id: object.id,
         label: object.labelPlural,
