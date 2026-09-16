@@ -119,13 +119,7 @@ export const UpdateViewButtonGroup = () => {
           <Dropdown
             dropdownId={updateViewButtonDropdownId}
             clickableComponent={
-              <IconButton
-                aria-label={t`View update options`}
-                style={{ borderStartStartRadius: 0, borderEndStartRadius: 0 }}
-                variant="solid"
-                size="sm"
-                color="accent"
-              >
+              <IconButton aria-label={t`View update options`}>
                 <IconChevronDown />
               </IconButton>
             }
