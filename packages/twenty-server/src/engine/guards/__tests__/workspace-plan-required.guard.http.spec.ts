@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+// oxlint-disable twenty/rest-api-methods-should-be-guarded
 import {
   Catch,
   Controller,
@@ -158,9 +159,7 @@ describe('WorkspacePlanRequiredGuard HTTP harness (Nest/supertest)', () => {
       .set('x-workspace-id', 'ws-unpaid')
       .expect(402);
 
-    expect(response.body.code).toBe(
-      BillingExceptionCode.BILLING_PLAN_REQUIRED,
-    );
+    expect(response.body.code).toBe(BillingExceptionCode.BILLING_PLAN_REQUIRED);
     expect(assertWorkspaceHasRequiredPlan).toHaveBeenCalledWith('ws-unpaid');
   });
 

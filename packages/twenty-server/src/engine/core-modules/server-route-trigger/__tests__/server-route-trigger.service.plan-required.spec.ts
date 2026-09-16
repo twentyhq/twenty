@@ -35,6 +35,7 @@ describe('ServerRouteTriggerService plan-required gate', () => {
 
   const ownerWorkspaceId = '11111111-1111-4111-8111-111111111111';
   const unpaidWorkspaceId = '22222222-2222-4222-8222-222222222222';
+  const paidWorkspaceId = '55555555-5555-4555-8555-555555555555';
   const resolverUid = '33333333-3333-4333-8333-333333333333';
   const targetUid = '44444444-4444-4444-8444-444444444444';
 
@@ -95,26 +96,40 @@ describe('ServerRouteTriggerService plan-required gate', () => {
     });
   });
 
-  it('asserts plan for resolver workspace before sync execution', async () => {
+  it('does not assert plan on marketplace owner before sync execution', async () => {
     assertWorkspaceHasRequiredPlan.mockRejectedValue(
       new BillingException(
         'Workspace subscription plan is required',
         BillingExceptionCode.BILLING_PLAN_REQUIRED,
       ),
     );
+    findOne.mockResolvedValue({
+      id: 'fn-1',
+      universalIdentifier: resolverUid,
+    });
+    execute.mockResolvedValue({
+      data: {
+        __twentyHttpResponse: true,
+        status: 200,
+        headers: {},
+        body: { ok: true },
+      },
+    });
 
     const service = buildService();
+
+    // Owner unpaid must NOT block HTTP response path (no customer target).
+    assertWorkspaceHasRequiredPlan.mockReset();
+    assertWorkspaceHasRequiredPlan.mockResolvedValue(undefined);
 
     await expect(
       service.handle({
         request: mockRequest,
         resolverLogicFunctionUniversalIdentifier: resolverUid,
       }),
-    ).rejects.toMatchObject({
-      code: BillingExceptionCode.BILLING_PLAN_REQUIRED,
-    });
-    expect(execute).not.toHaveBeenCalled();
-    expect(assertWorkspaceHasRequiredPlan).toHaveBeenCalledWith(
+    ).resolves.toBeDefined();
+
+    expect(assertWorkspaceHasRequiredPlan).not.toHaveBeenCalledWith(
       ownerWorkspaceId,
     );
   });
@@ -141,10 +156,78 @@ describe('ServerRouteTriggerService plan-required gate', () => {
     });
 
     expect(assertWorkspaceHasRequiredPlan).toHaveBeenCalledWith(
+      unpaidWorkspaceId,
+    );
+    expect(assertWorkspaceHasRequiredPlan).not.toHaveBeenCalledWith(
       ownerWorkspaceId,
     );
+    expect(add).toHaveBeenCalled();
+  });
+
+  it('402s when dispatch target is unpaid even if owner would be paid', async () => {
+    assertWorkspaceHasRequiredPlan.mockImplementation(async (id: string) => {
+      if (id === unpaidWorkspaceId) {
+        throw new BillingException(
+          'Workspace subscription plan is required',
+          BillingExceptionCode.BILLING_PLAN_REQUIRED,
+        );
+      }
+    });
+    findOne.mockResolvedValue({
+      id: 'fn-1',
+      universalIdentifier: targetUid,
+    });
+    execute.mockResolvedValue({
+      data: {
+        targetLogicFunctionUniversalIdentifier: targetUid,
+        workspaceId: unpaidWorkspaceId,
+        payload: {},
+      },
+    });
+
+    const service = buildService();
+
+    await expect(
+      service.handle({
+        request: mockRequest,
+        resolverLogicFunctionUniversalIdentifier: resolverUid,
+      }),
+    ).rejects.toMatchObject({
+      code: BillingExceptionCode.BILLING_PLAN_REQUIRED,
+    });
+    expect(add).not.toHaveBeenCalled();
+  });
+
+  it('allows enqueue when owner is unpaid but target customer is paid', async () => {
+    assertWorkspaceHasRequiredPlan.mockImplementation(async (id: string) => {
+      if (id === ownerWorkspaceId) {
+        throw new BillingException(
+          'Workspace subscription plan is required',
+          BillingExceptionCode.BILLING_PLAN_REQUIRED,
+        );
+      }
+    });
+    findOne.mockResolvedValue({
+      id: 'fn-1',
+      universalIdentifier: targetUid,
+    });
+    execute.mockResolvedValue({
+      data: {
+        targetLogicFunctionUniversalIdentifier: targetUid,
+        workspaceId: paidWorkspaceId,
+        payload: {},
+      },
+    });
+
+    const service = buildService();
+
+    await service.handle({
+      request: mockRequest,
+      resolverLogicFunctionUniversalIdentifier: resolverUid,
+    });
+
     expect(assertWorkspaceHasRequiredPlan).toHaveBeenCalledWith(
-      unpaidWorkspaceId,
+      paidWorkspaceId,
     );
     expect(add).toHaveBeenCalled();
   });

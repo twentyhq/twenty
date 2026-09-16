@@ -1,5 +1,6 @@
 /* @license Enterprise */
 
+// oxlint-disable twenty/rest-api-methods-should-be-guarded
 import {
   Catch,
   Controller,

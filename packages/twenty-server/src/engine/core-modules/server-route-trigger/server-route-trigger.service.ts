@@ -105,8 +105,10 @@ export class ServerRouteTriggerService {
       );
     }
 
-    await this.assertPlanRequiredForWorkspace(resolver.workspaceId);
-
+    // Do NOT assert plan on resolver.workspaceId (marketplace publisher /
+    // application owner). That falsely 402s all installs when the publisher
+    // workspace is unpaid. Gate only the customer dispatch target below;
+    // MQ also asserts on job.workspaceId for the async path.
     const event = buildLogicFunctionEvent({
       request,
       pathParameters: {},

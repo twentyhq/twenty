@@ -48,10 +48,7 @@ const createWrapper =
     </MemoryRouter>
   );
 
-const Wrapper = createWrapper(
-  ['/welcome', '/verify', '/opportunities'],
-  2,
-);
+const Wrapper = createWrapper(['/welcome', '/verify', '/opportunities'], 2);
 
 const mutateTrack = async (factory: ReturnType<typeof useApolloFactory>) => {
   await factory.mutate({

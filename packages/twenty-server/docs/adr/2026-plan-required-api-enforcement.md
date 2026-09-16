@@ -20,8 +20,8 @@ After a workspace completes checkout/trial, `/plan-required` remains reachable a
 
 ## Decision
 
-1. **Server is source of truth.** When billing is enabled and the workspace has no subscription row (same definition as onboarding `PLAN_REQUIRED`), product APIs must fail with a stable billing error.
-2. **Reuse** `BillingService.isSubscriptionIncompleteOnboardingStatus` — do not invent a second “is paid” predicate in v1.
+1. **Server is source of truth.** When billing is enabled and the workspace lacks a satisfying subscription status (`active` / `trialing` / `past_due` / `unpaid`), product APIs must fail with a stable billing error. Incomplete Stripe checkout rows do **not** satisfy the gate.
+2. **Onboarding PLAN_REQUIRED** still uses “any subscription row” for SPA navigation. API enforcement is intentionally stricter so `createSubscriptionPaymentIntent` cannot unlock CRM before payment. Front ErrorLink maps `BILLING_PLAN_REQUIRED` → `/plan-required`.
 3. **HTTP 402** via new `BillingExceptionCode.BILLING_PLAN_REQUIRED` (map in `get-billing-exception-status-code.util.ts`). Prefer a dedicated code over overloading `BILLING_SUBSCRIPTION_INACTIVE` for clearer client handling.
 4. **Allowlist via opt-out:** `@SkipPlanRequired()` on resolvers/controllers that unpaid users must call. Default = enforce once the global guard is enabled.
 5. **Feature flag / config:** `IS_PLAN_REQUIRED_API_ENFORCEMENT_ENABLED` (default `false`) wraps enforcement for staged rollout. When `IS_BILLING_ENABLED=false`, enforcement is always off.
@@ -138,9 +138,9 @@ Closed additional APP_GUARD timing holes found in edge-case audit:
 
 1. **File upload/download** — `FileUploadTokenGuard` / `FileByIdGuard` now bind `request.workspace = { id }`; route-level `WorkspacePlanRequiredGuard` + `BillingRestApiExceptionFilter` on upload PUT and workspace file GET.
 2. **OpenAPI** — `/open-api/core|metadata` (non-`/rest` alias) asserts plan after token→workspace resolve before returning enriched schema.
-3. **`/webhooks/server`** — assert plan for resolver owner workspace before sync execute, and for dispatch target workspace before enqueue.
-4. **Known v1 gap (unchanged):** Incomplete Stripe subscription row still clears the gate (any-row predicate). Characterized in `billing.service.spec.ts`. Follow-up: tighten to `active|trialing`.
+3. **`/webhooks/server`** — assert plan **only** for dispatch target (customer) workspace before enqueue. Do **not** assert on marketplace publisher/owner workspace (false-positive 402 for all installs).
+4. **Predicate tighten:** API gate requires `active|trialing|past_due|unpaid`. Incomplete checkout rows no longer unlock CRM.
 
 ### Live fixture note (2026-09-16)
 
-`bughunt.twenty.com` under `afluxed1@gmail.com` is on **Pro Trial** (not unpaid). Soft CRM access there is expected under v1. True unpaid production fixture blocked by email verification for new signup. Rely on unit/harness/integration specs + prior FREE pretest screenshots.
+`bughunt.twenty.com` under `afluxed1@gmail.com` is on **Pro Trial** (not unpaid). Soft CRM access there is expected under a satisfying status. True unpaid production fixture blocked by email verification for new signup. Rely on unit/harness/integration specs + prior FREE pretest screenshots.

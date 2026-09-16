@@ -210,7 +210,11 @@ export class ApolloFactory implements ApolloManager {
         if (CombinedGraphQLErrors.is(error)) {
           // Handle plan-required before optional onError to avoid a toast flash
           // before redirect to /plan-required.
-          if (error.errors.some((graphQLError) => isBillingPlanRequiredError(graphQLError))) {
+          if (
+            error.errors.some((graphQLError) =>
+              isBillingPlanRequiredError(graphQLError),
+            )
+          ) {
             onBillingPlanRequired?.();
             return;
           }

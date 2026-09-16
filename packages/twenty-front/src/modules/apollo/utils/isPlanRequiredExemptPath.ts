@@ -11,6 +11,4 @@ const PLAN_REQUIRED_EXEMPT_PATHS = [
 
 /** Paths where BILLING_PLAN_REQUIRED must not navigate (avoid redirect loops). */
 export const isPlanRequiredExemptPath = (location: Location): boolean =>
-  PLAN_REQUIRED_EXEMPT_PATHS.some((path) =>
-    isMatchingLocation(location, path),
-  );
+  PLAN_REQUIRED_EXEMPT_PATHS.some((path) => isMatchingLocation(location, path));

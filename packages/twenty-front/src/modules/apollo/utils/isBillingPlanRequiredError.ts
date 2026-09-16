@@ -5,7 +5,9 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const BILLING_PLAN_REQUIRED_ERROR_CODE = 'BILLING_PLAN_REQUIRED';
 
-const parseRestErrorBody = (bodyText: string): Record<string, unknown> | null => {
+const parseRestErrorBody = (
+  bodyText: string,
+): Record<string, unknown> | null => {
   try {
     const parsed: unknown = JSON.parse(bodyText);
 

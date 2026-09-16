@@ -1,19 +1,19 @@
 /* @license Enterprise */
 
-import { Test, type TestingModule } from '@nestjs/testing';
-
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { Test, type TestingModule } from '@nestjs/testing';
 
 describe('BillingService.assertWorkspaceHasRequiredPlan', () => {
   let service: BillingService;
@@ -34,9 +34,7 @@ describe('BillingService.assertWorkspaceHasRequiredPlan', () => {
         { provide: BillingProductService, useValue: {} },
         { provide: StripeCustomerService, useValue: {} },
         {
-          provide: getWorkspaceScopedRepositoryToken(
-            BillingSubscriptionEntity,
-          ),
+          provide: getWorkspaceScopedRepositoryToken(BillingSubscriptionEntity),
           useValue: { findOne },
         },
         {
@@ -68,12 +66,15 @@ describe('BillingService.assertWorkspaceHasRequiredPlan', () => {
       code: BillingExceptionCode.BILLING_PLAN_REQUIRED,
       statusCode: 402,
     });
-    expect(findOne).toHaveBeenCalledWith(workspaceId, { where: {} });
+    expect(findOne).toHaveBeenCalled();
   });
 
-  it('does not throw when billing is on and a subscription row exists', async () => {
+  it('does not throw when billing is on and an active subscription exists', async () => {
     getConfig.mockReturnValue(true);
-    findOne.mockResolvedValue({ id: 'sub-row' });
+    findOne.mockResolvedValue({
+      id: 'sub-row',
+      status: SubscriptionStatus.Active,
+    });
 
     await expect(
       service.assertWorkspaceHasRequiredPlan(workspaceId),
@@ -89,18 +90,40 @@ describe('BillingService.assertWorkspaceHasRequiredPlan', () => {
     ).rejects.toBeInstanceOf(BillingException);
   });
 
-  // v1 product decision (ADR): any subscription row clears the gate, including
-  // Stripe Incomplete created by createSubscriptionPaymentIntent before card
-  // succeeds. Documented paywall hole — tighten to active|trialing in a follow-up.
-  it('v1: Incomplete subscription row still clears PLAN_REQUIRED (known gap)', async () => {
+  it('throws when only an Incomplete Stripe checkout row exists', async () => {
     getConfig.mockReturnValue(true);
-    findOne.mockResolvedValue({
-      id: 'sub-incomplete',
-      status: 'incomplete',
-    });
+    // findOne with status In(active|trialing|...) returns null for Incomplete-only
+    findOne.mockResolvedValue(null);
 
     await expect(
       service.assertWorkspaceHasRequiredPlan(workspaceId),
-    ).resolves.toBeUndefined();
+    ).rejects.toMatchObject({
+      code: BillingExceptionCode.BILLING_PLAN_REQUIRED,
+    });
+
+    expect(findOne).toHaveBeenCalledWith(
+      workspaceId,
+      expect.objectContaining({
+        where: expect.objectContaining({
+          status: expect.anything(),
+        }),
+      }),
+    );
+  });
+
+  it('does not throw for trialing / past_due / unpaid statuses', async () => {
+    getConfig.mockReturnValue(true);
+
+    for (const status of [
+      SubscriptionStatus.Trialing,
+      SubscriptionStatus.PastDue,
+      SubscriptionStatus.Unpaid,
+    ]) {
+      findOne.mockResolvedValue({ id: `sub-${status}`, status });
+
+      await expect(
+        service.assertWorkspaceHasRequiredPlan(workspaceId),
+      ).resolves.toBeUndefined();
+    }
   });
 });
