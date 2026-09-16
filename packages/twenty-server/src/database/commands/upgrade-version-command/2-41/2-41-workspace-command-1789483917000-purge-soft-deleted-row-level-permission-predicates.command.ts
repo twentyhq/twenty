@@ -1,10 +1,9 @@
 import { Command } from 'nest-commander';
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
+import { computeRowLevelPermissionRowsToPurge } from 'src/database/commands/upgrade-version-command/2-41/utils/compute-row-level-permission-rows-to-purge.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -40,45 +39,11 @@ export class PurgeSoftDeletedRowLevelPermissionPredicatesCommand extends Provisi
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
-    const flatGroups = Object.values(
-      flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
-    ).filter(isDefined);
-    const flatPredicates = Object.values(
-      flatRowLevelPermissionPredicateMaps.byUniversalIdentifier,
-    ).filter(isDefined);
-
-    const groupIdsToDelete = new Set(
-      flatGroups
-        .filter((group) => isDefined(group.deletedAt))
-        .map((group) => group.id),
-    );
-
-    let hasFoundNestedGroup = true;
-
-    while (hasFoundNestedGroup) {
-      hasFoundNestedGroup = false;
-
-      for (const group of flatGroups) {
-        if (
-          !groupIdsToDelete.has(group.id) &&
-          isDefined(group.parentRowLevelPermissionPredicateGroupId) &&
-          groupIdsToDelete.has(group.parentRowLevelPermissionPredicateGroupId)
-        ) {
-          groupIdsToDelete.add(group.id);
-          hasFoundNestedGroup = true;
-        }
-      }
-    }
-
-    const groupsToDelete = flatGroups.filter((group) =>
-      groupIdsToDelete.has(group.id),
-    );
-    const predicatesToDelete = flatPredicates.filter(
-      (predicate) =>
-        isDefined(predicate.deletedAt) ||
-        (isDefined(predicate.rowLevelPermissionPredicateGroupId) &&
-          groupIdsToDelete.has(predicate.rowLevelPermissionPredicateGroupId)),
-    );
+    const { groupsToDelete, predicatesToDelete } =
+      computeRowLevelPermissionRowsToPurge({
+        flatRowLevelPermissionPredicateGroupMaps,
+        flatRowLevelPermissionPredicateMaps,
+      });
 
     if (groupsToDelete.length === 0 && predicatesToDelete.length === 0) {
       this.logger.log(
