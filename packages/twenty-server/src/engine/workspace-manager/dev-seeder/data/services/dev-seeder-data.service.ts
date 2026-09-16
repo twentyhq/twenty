@@ -348,8 +348,15 @@ export class DevSeederDataService {
     const { seeds: attachmentSeeds, fileSeedMetadata: attachmentFileMeta } =
       generateAttachmentSeedsForWorkspace(workspaceId);
 
-    await this.coreDataSource.transaction(
-      async (entityManager: EntityManager) => {
+    const twentyStandardApplication = light
+      ? undefined
+      : await this.applicationService.findByUniversalIdentifier({
+          workspaceId,
+          universalIdentifier: TWENTY_STANDARD_APPLICATION.universalIdentifier,
+        });
+
+    await this.coreDataSource
+      .transaction(async (entityManager: EntityManager) => {
         await this.seedRecordsInBatches({
           entityManager,
           schemaName,
@@ -381,8 +388,17 @@ export class DevSeederDataService {
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         );
-      },
-    );
+      })
+      .catch(async (error: unknown) => {
+        if (!light) {
+          await this.fileStorageService.invalidateStorageStock({
+            workspaceId,
+            applicationId: twentyStandardApplication?.id,
+          });
+        }
+
+        throw error;
+      });
 
     await prefillWorkflowCommandMenuItems({
       workspaceId,

@@ -24,6 +24,7 @@ import {
   type AppTokenEntity,
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { BillingCreditGrantType } from 'src/engine/core-modules/billing/enums/billing-credit-grant-type.enum';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
@@ -96,6 +97,7 @@ export class SignInUpService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationService: ApplicationService,
     private readonly fileCorePictureService: FileCorePictureService,
+    private readonly fileStorageService: FileStorageService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly eventLogEmitterService: EventLogEmitterService,
@@ -738,113 +740,122 @@ export class SignInUpService {
 
     try {
       const { user, workspace, customApplicationUniversalIdentifier } =
-        await this.dataSource.transaction(async (entityManager) => {
-          const queryRunner = entityManager.queryRunner as QueryRunner;
+        await this.dataSource
+          .transaction(async (entityManager) => {
+            const queryRunner = entityManager.queryRunner as QueryRunner;
 
-          const workspaceToCreate = this.workspaceRepository.create({
-            id: workspaceId,
-            subdomain: isDefined(requestedSubdomain)
-              ? requestedSubdomain
-              : await this.subdomainManagerService.generateSubdomain(
-                  isWorkEmailFound ? { userEmail: email } : {},
-                ),
-            workspaceCustomApplicationId,
-            displayName,
-            inviteHash: v4(),
-            activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-          });
+            const workspaceToCreate = this.workspaceRepository.create({
+              id: workspaceId,
+              subdomain: isDefined(requestedSubdomain)
+                ? requestedSubdomain
+                : await this.subdomainManagerService.generateSubdomain(
+                    isWorkEmailFound ? { userEmail: email } : {},
+                  ),
+              workspaceCustomApplicationId,
+              displayName,
+              inviteHash: v4(),
+              activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
+            });
 
-          const workspace = await queryRunner.manager.save(
-            WorkspaceEntity,
-            workspaceToCreate,
-          );
-
-          const customApplication =
-            await this.applicationService.createWorkspaceCustomApplication(
-              {
-                workspaceId,
-                applicationId: workspaceCustomApplicationId,
-              },
-              queryRunner,
+            const workspace = await queryRunner.manager.save(
+              WorkspaceEntity,
+              workspaceToCreate,
             );
 
-          const isExistingUser = userData.type === 'existingUser';
-          const user = isExistingUser
-            ? userData.existingUser
-            : await this.saveNewUser(
-                userData.newUserWithPicture,
+            const customApplication =
+              await this.applicationService.createWorkspaceCustomApplication(
                 {
-                  canImpersonate: shouldGrantServerAdmin,
-                  canAccessFullAdminPanel: shouldGrantServerAdmin,
+                  workspaceId,
+                  applicationId: workspaceCustomApplicationId,
                 },
                 queryRunner,
               );
 
-          await this.userWorkspaceService.create(
-            {
-              userId: user.id,
-              workspaceId: workspace.id,
-              isExistingUser,
-              pictureUrl: isExistingUser
-                ? undefined
-                : userData.newUserWithPicture.picture,
-              applicationUniversalIdentifier:
-                customApplication.universalIdentifier,
-              locale: user.locale,
-            },
-            queryRunner,
-          );
+            const isExistingUser = userData.type === 'existingUser';
+            const user = isExistingUser
+              ? userData.existingUser
+              : await this.saveNewUser(
+                  userData.newUserWithPicture,
+                  {
+                    canImpersonate: shouldGrantServerAdmin,
+                    canAccessFullAdminPanel: shouldGrantServerAdmin,
+                  },
+                  queryRunner,
+                );
 
-          await this.activateOnboardingForUser(
-            {
+            await this.userWorkspaceService.create(
+              {
+                userId: user.id,
+                workspaceId: workspace.id,
+                isExistingUser,
+                pictureUrl: isExistingUser
+                  ? undefined
+                  : userData.newUserWithPicture.picture,
+                applicationUniversalIdentifier:
+                  customApplication.universalIdentifier,
+                locale: user.locale,
+              },
+              queryRunner,
+            );
+
+            await this.activateOnboardingForUser(
+              {
+                user,
+                workspace,
+                shouldShowConnectAccountStep: true,
+                shouldShowInstallAppsStep: true,
+              },
+              queryRunner,
+            );
+
+            await this.onboardingService.setOnboardingInviteTeamPending(
+              {
+                workspaceId: workspace.id,
+                value: true,
+              },
+              queryRunner,
+            );
+
+            // Click-through DPA: the DPA is incorporated by reference into the
+            // ToS/signup, so acceptance = execution. Only relevant on Twenty's
+            // managed cloud (multi-workspace), where Twenty is the Processor
+            // hosting the data; on self-hosted deployments Twenty is not the
+            // Processor, so there is nothing to record. Done atomically with
+            // workspace creation so we can later prove what was agreed. (Billing
+            // is an independent feature flag and must not be used to detect cloud.)
+            if (
+              this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') === true
+            ) {
+              await queryRunner.manager.save(
+                DpaAgreementEntity,
+                buildDpaAgreementRecord({
+                  workspaceId: workspace.id,
+                  type: DpaAgreementType.CLICK_THROUGH,
+                  region:
+                    this.twentyConfigService.get('DPA_DEPLOYMENT_REGION') ??
+                    DEFAULT_DPA_REGION,
+                  acceptedAt: new Date(),
+                  acceptedByUserId: user.id,
+                  acceptedByEmail: email,
+                }),
+              );
+            }
+
+            return {
               user,
               workspace,
-              shouldShowConnectAccountStep: true,
-              shouldShowInstallAppsStep: true,
-            },
-            queryRunner,
-          );
+              customApplicationUniversalIdentifier:
+                customApplication.universalIdentifier,
+            };
+          })
+          .catch(async (error: unknown) => {
+            await this.fileStorageService.invalidateStorageStock({
+              workspaceId,
+              applicationId: workspaceCustomApplicationId,
+            });
 
-          await this.onboardingService.setOnboardingInviteTeamPending(
-            {
-              workspaceId: workspace.id,
-              value: true,
-            },
-            queryRunner,
-          );
-
-          // Click-through DPA: the DPA is incorporated by reference into the
-          // ToS/signup, so acceptance = execution. Only relevant on Twenty's
-          // managed cloud (multi-workspace), where Twenty is the Processor
-          // hosting the data; on self-hosted deployments Twenty is not the
-          // Processor, so there is nothing to record. Done atomically with
-          // workspace creation so we can later prove what was agreed. (Billing
-          // is an independent feature flag and must not be used to detect cloud.)
-          if (
-            this.twentyConfigService.get('IS_MULTIWORKSPACE_ENABLED') === true
-          ) {
-            await queryRunner.manager.save(
-              DpaAgreementEntity,
-              buildDpaAgreementRecord({
-                workspaceId: workspace.id,
-                type: DpaAgreementType.CLICK_THROUGH,
-                region:
-                  this.twentyConfigService.get('DPA_DEPLOYMENT_REGION') ??
-                  DEFAULT_DPA_REGION,
-                acceptedAt: new Date(),
-                acceptedByUserId: user.id,
-                acceptedByEmail: email,
-              }),
-            );
-          }
-
-          return {
-            user,
-            workspace,
-            customApplicationUniversalIdentifier:
-              customApplication.universalIdentifier,
-          };
-        });
+            throw error;
+          });
 
       if (isWorkEmailFound) {
         const inferredLogoFileId = await this.uploadInferredWorkspaceLogo({

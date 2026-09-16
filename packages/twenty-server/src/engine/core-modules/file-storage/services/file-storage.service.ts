@@ -53,6 +53,21 @@ export class FileStorageService {
     private readonly usageLimitStockService: UsageLimitStockService,
   ) {}
 
+  async invalidateStorageStock({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId?: string;
+  }): Promise<void> {
+    await this.usageLimitStockService.invalidateStock({
+      workspaceId,
+      resourceType: UsageResourceType.STORAGE,
+      operationType: UsageOperationType.STORAGE_FILE,
+      spenders: { applicationId },
+    });
+  }
+
   private assertStorageStockAvailable({
     workspaceId,
     applicationId,
