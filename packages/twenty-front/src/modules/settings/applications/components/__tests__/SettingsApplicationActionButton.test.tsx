@@ -1,47 +1,37 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MemoryRouter } from 'react-router-dom';
 
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 
+const INSTALLED_APPLICATION_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+
 type RenderActionButtonOptions = {
-  isInstalled?: boolean;
+  installedApplicationId?: string;
   canInstallMarketplaceApps?: boolean;
   onInstall?: () => void;
   isInstalling?: boolean;
-  hasUpdate?: boolean;
-  latestAvailableVersion?: string;
-  onUpgrade?: () => void;
-  canBeUninstalled?: boolean;
-  onUninstall?: () => void;
 };
 
 const renderActionButton = ({
-  isInstalled = false,
+  installedApplicationId,
   canInstallMarketplaceApps = true,
   onInstall,
   isInstalling,
-  hasUpdate,
-  latestAvailableVersion,
-  onUpgrade,
-  canBeUninstalled,
-  onUninstall,
 }: RenderActionButtonOptions = {}) =>
   render(
-    <I18nProvider i18n={i18n}>
-      <SettingsApplicationActionButton
-        isInstalled={isInstalled}
-        canInstallMarketplaceApps={canInstallMarketplaceApps}
-        onInstall={onInstall}
-        isInstalling={isInstalling}
-        hasUpdate={hasUpdate}
-        latestAvailableVersion={latestAvailableVersion}
-        onUpgrade={onUpgrade}
-        canBeUninstalled={canBeUninstalled}
-        onUninstall={onUninstall}
-      />
-    </I18nProvider>,
+    <MemoryRouter>
+      <I18nProvider i18n={i18n}>
+        <SettingsApplicationActionButton
+          installedApplicationId={installedApplicationId}
+          canInstallMarketplaceApps={canInstallMarketplaceApps}
+          onInstall={onInstall}
+          isInstalling={isInstalling}
+        />
+      </I18nProvider>
+    </MemoryRouter>,
   );
 
 describe('SettingsApplicationActionButton', () => {
@@ -72,57 +62,25 @@ describe('SettingsApplicationActionButton', () => {
     ).toBeDisabled();
   });
 
-  it('offers the upgrade when a newer version is available', async () => {
-    const user = userEvent.setup();
-    const onUpgrade = jest.fn();
-
-    renderActionButton({
-      isInstalled: true,
-      hasUpdate: true,
-      latestAvailableVersion: '2.0.0',
-      onUpgrade,
-    });
-
-    await user.click(
-      screen.getByRole('button', { name: /^Upgrade to 2\.0\.0\b/ }),
-    );
-
-    expect(onUpgrade).toHaveBeenCalledTimes(1);
-  });
-
-  it('asks for confirmation before uninstalling', async () => {
-    const user = userEvent.setup();
-    const onUninstall = jest.fn();
-
-    renderActionButton({
-      isInstalled: true,
-      canBeUninstalled: true,
-      onUninstall,
-    });
-
-    await user.click(screen.getByRole('button', { name: /^Uninstall\b/ }));
-
-    const confirmationDialog = await screen.findByRole('dialog');
+  it('links to the application settings once installed', () => {
+    renderActionButton({ installedApplicationId: INSTALLED_APPLICATION_ID });
 
     expect(
-      within(confirmationDialog).getByText('Uninstall Application?'),
-    ).toBeVisible();
-    expect(onUninstall).not.toHaveBeenCalled();
-
-    await user.type(
-      within(confirmationDialog).getByPlaceholderText('yes'),
-      'yes',
+      screen.getByRole('link', { name: /^Open settings\b/ }),
+    ).toHaveAttribute(
+      'href',
+      `/settings/applications/${INSTALLED_APPLICATION_ID}`,
     );
-    await user.click(
-      within(confirmationDialog).getByRole('button', { name: /^Uninstall\b/ }),
-    );
-
-    expect(onUninstall).toHaveBeenCalledTimes(1);
   });
 
-  it('shows a disabled installed state when nothing else applies', () => {
-    renderActionButton({ isInstalled: true });
+  it('offers the settings link even without the applications permission', () => {
+    renderActionButton({
+      installedApplicationId: INSTALLED_APPLICATION_ID,
+      canInstallMarketplaceApps: false,
+    });
 
-    expect(screen.getByRole('button', { name: /^Installed\b/ })).toBeDisabled();
+    expect(
+      screen.getByRole('link', { name: /^Open settings\b/ }),
+    ).toBeVisible();
   });
 });

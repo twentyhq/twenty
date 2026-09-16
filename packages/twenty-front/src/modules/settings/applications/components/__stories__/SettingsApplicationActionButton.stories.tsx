@@ -12,30 +12,18 @@ const meta: Meta<typeof SettingsApplicationActionButton> = {
   args: {
     canInstallMarketplaceApps: true,
     onInstall: fn(),
-    onUpgrade: fn(),
-    onUninstall: fn(),
   },
 };
 
 export default meta;
 type Story = StoryObj<typeof SettingsApplicationActionButton>;
 
-export const Install: Story = {
-  args: { isInstalled: false },
-};
+export const Install: Story = {};
 
 export const Installing: Story = {
-  args: { isInstalled: false, isInstalling: true },
-};
-
-export const Upgrade: Story = {
-  args: { isInstalled: true, hasUpdate: true, latestAvailableVersion: '2.1.0' },
-};
-
-export const Uninstall: Story = {
-  args: { isInstalled: true, canBeUninstalled: true },
+  args: { isInstalling: true },
 };
 
 export const Installed: Story = {
-  args: { isInstalled: true },
+  args: { installedApplicationId: '20202020-1c25-4d02-bf25-6aeccf7ea419' },
 };
