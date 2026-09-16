@@ -26,6 +26,7 @@ const VARIABLE_ID = 'var-1';
 const KEY = 'API_KEY';
 const OLD_VALUE = 'old';
 const NEW_VALUE = 'new';
+const LATER_VALUE = 'later';
 
 const buildApplicationVariable = (value: string): ApplicationVariable => ({
   __typename: 'ApplicationVariable',
@@ -73,6 +74,21 @@ const renderVariablesDraft = (applicationId: string) => {
     data: { findOneApplication: buildApplication(applicationId, OLD_VALUE) },
   });
 
+  const findOneApplicationMock = {
+    request: {
+      query: FindOneApplicationDocument,
+      variables: { id: applicationId },
+    },
+    result: {
+      data: {
+        findOneApplication: buildApplication(applicationId, NEW_VALUE),
+      },
+    },
+    // The hook watches the application and refetches it once the save
+    // completes, so the same request is issued more than once.
+    maxUsageCount: Number.POSITIVE_INFINITY,
+  };
+
   const mocks = [
     {
       request: {
@@ -81,17 +97,7 @@ const renderVariablesDraft = (applicationId: string) => {
       },
       result: { data: { updateOneApplicationVariable: true } },
     },
-    {
-      request: {
-        query: FindOneApplicationDocument,
-        variables: { id: applicationId },
-      },
-      result: {
-        data: {
-          findOneApplication: buildApplication(applicationId, NEW_VALUE),
-        },
-      },
-    },
+    findOneApplicationMock,
   ];
 
   const wrapper = ({ children }: { children: ReactNode }) => (
@@ -154,5 +160,24 @@ describe('useApplicationVariablesDraft', () => {
     });
 
     expect(result.current.hasUnsavedApplicationVariables).toBe(false);
+  });
+
+  it('keeps a value edited while the save is in flight', async () => {
+    const { result } = renderVariablesDraft('app-edited-during-save');
+
+    act(() => {
+      result.current.setApplicationVariableValue(KEY, NEW_VALUE);
+    });
+
+    await act(async () => {
+      const savePromise = result.current.saveApplicationVariables();
+
+      result.current.setApplicationVariableValue(KEY, LATER_VALUE);
+
+      await savePromise;
+    });
+
+    expect(result.current.draftApplicationVariables[0].value).toBe(LATER_VALUE);
+    expect(result.current.hasUnsavedApplicationVariables).toBe(true);
   });
 });

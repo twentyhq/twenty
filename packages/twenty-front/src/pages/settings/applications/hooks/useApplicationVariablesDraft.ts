@@ -56,11 +56,15 @@ export const useApplicationVariablesDraft = ({
   };
 
   const saveApplicationVariables = async () => {
+    const submittedValueByKey = Object.fromEntries(
+      editedApplicationVariables.map(({ key, value }) => [key, value]),
+    );
+
     setIsSavingApplicationVariables(true);
 
     try {
       await Promise.all(
-        editedApplicationVariables.map(({ key, value }) =>
+        Object.entries(submittedValueByKey).map(([key, value]) =>
           updateOneApplicationVariable({
             variables: { key, value, applicationId },
           }),
@@ -72,7 +76,15 @@ export const useApplicationVariablesDraft = ({
       // a snapshot taken before the last write.
       await refetchApplication();
 
-      setDraftValueByKey({});
+      // Only the entries that still hold what was submitted are dropped, so a
+      // variable edited again while the save was in flight keeps that edit.
+      setDraftValueByKey((previousDraftValueByKey) =>
+        Object.fromEntries(
+          Object.entries(previousDraftValueByKey).filter(
+            ([key, value]) => submittedValueByKey[key] !== value,
+          ),
+        ),
+      );
     } catch {
       enqueueToast({
         variant: 'error',
