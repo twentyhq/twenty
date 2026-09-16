@@ -27,22 +27,37 @@ type SettingsApplicationDetailAboutTabProps = {
   onShare?: () => void;
 };
 
+const SIDEBAR_COLUMN_MIN_WIDTH_PX = 160;
+const MAIN_COLUMN_WIDTH_PX = 472;
+const COLUMN_GAP_PX = 16;
+const TWO_COLUMN_LAYOUT_MIN_WIDTH_PX =
+  SIDEBAR_COLUMN_MIN_WIDTH_PX + COLUMN_GAP_PX + MAIN_COLUMN_WIDTH_PX;
+
 const StyledContentContainer = styled.div`
   align-items: flex-start;
+  container-name: application-about;
+  container-type: inline-size;
   display: flex;
   flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[4]};
+  gap: ${COLUMN_GAP_PX}px;
   width: 100%;
 `;
 
+// The sidebar only sticks while both columns fit side by side: once they
+// stack, a sticky sidebar would cover the description below it
 const StyledSidebarColumn = styled.div`
   flex: 1 1 0;
-  min-width: 160px;
+  min-width: ${SIDEBAR_COLUMN_MIN_WIDTH_PX}px;
+
+  @container application-about (min-width: ${TWO_COLUMN_LAYOUT_MIN_WIDTH_PX}px) {
+    position: sticky;
+    top: 0;
+  }
 `;
 
 const StyledMainColumn = styled.div`
   display: flex;
-  flex: 0 0 472px;
+  flex: 0 0 ${MAIN_COLUMN_WIDTH_PX}px;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
   max-width: 100%;

@@ -4,7 +4,7 @@ import { getInstallCountEstimate } from '@/settings/applications/utils/getInstal
 import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useId } from 'react';
+import { useContext } from 'react';
 import { isDefined, isSafeUrl } from 'twenty-shared/utils';
 import {
   IconAlertTriangle,
@@ -21,7 +21,7 @@ import {
   IconWorld,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type DeveloperLinks = {
@@ -49,7 +49,6 @@ type SettingsApplicationAboutSidebarProps = {
 type AboutRow = {
   Icon: IconComponent;
   label: string;
-  id?: string;
   tooltip?: string;
 };
 
@@ -86,7 +85,7 @@ const StyledName = styled.div`
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
   line-height: 1.4;
-  overflow-wrap: anywhere;
+  min-width: 0;
 `;
 
 const StyledDescription = styled.div`
@@ -142,11 +141,6 @@ const StyledRowIcon = styled.div`
   flex-shrink: 0;
 `;
 
-const StyledRowLabel = styled.span`
-  min-width: 0;
-  overflow-wrap: anywhere;
-`;
-
 export const SettingsApplicationAboutSidebar = ({
   applicationId,
   logoUrl,
@@ -162,8 +156,6 @@ export const SettingsApplicationAboutSidebar = ({
 }: SettingsApplicationAboutSidebarProps) => {
   const { theme } = useContext(ThemeContext);
   const { formatNumber } = useNumberFormat();
-  // The tooltip anchors on a CSS id selector, which cannot contain the colons of useId
-  const installCountLabelId = useId().replace(/:/g, '');
 
   const getInstallCountRows = (): AboutRow[] => {
     if (!isDefined(installCount) || installCount <= 0) {
@@ -185,7 +177,6 @@ export const SettingsApplicationAboutSidebar = ({
     return [
       {
         Icon: IconDownload,
-        id: installCountLabelId,
         label: t`+${estimatedInstallCount} installs`,
         tooltip: exactInstallCountLabel,
       },
@@ -255,7 +246,9 @@ export const SettingsApplicationAboutSidebar = ({
           chipOnly
         />
         <StyledIdentity>
-          <StyledName>{displayName}</StyledName>
+          <StyledName>
+            <OverflowingTextWithTooltip text={displayName} />
+          </StyledName>
           {isNonEmptyString(description) && (
             <StyledDescription>{description}</StyledDescription>
           )}
@@ -274,19 +267,16 @@ export const SettingsApplicationAboutSidebar = ({
       {aboutRows.length > 0 && (
         <StyledSection>
           <StyledSectionLabel>{t`About`}</StyledSectionLabel>
-          {aboutRows.map(({ Icon, label, id, tooltip }) => (
+          {aboutRows.map(({ Icon, label, tooltip }) => (
             <StyledRow key={label}>
               <StyledRowIcon>
                 <Icon size={theme.icon.size.sm} />
               </StyledRowIcon>
-              <StyledRowLabel id={id}>{label}</StyledRowLabel>
-              {isDefined(id) && isDefined(tooltip) && (
-                <AppTooltip
-                  anchorSelect={`#${id}`}
-                  title={tooltip}
-                  delay={TooltipDelay.shortDelay}
-                />
-              )}
+              <OverflowingTextWithTooltip
+                text={label}
+                tooltipContent={tooltip}
+                alwaysShowTooltip={isDefined(tooltip)}
+              />
             </StyledRow>
           ))}
         </StyledSection>
@@ -305,7 +295,7 @@ export const SettingsApplicationAboutSidebar = ({
               <StyledRowIcon>
                 <Icon size={theme.icon.size.sm} />
               </StyledRowIcon>
-              <StyledRowLabel>{label}</StyledRowLabel>
+              <OverflowingTextWithTooltip text={label} />
             </StyledResourceLink>
           ))}
         </StyledSection>
