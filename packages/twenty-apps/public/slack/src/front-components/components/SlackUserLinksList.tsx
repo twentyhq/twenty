@@ -19,7 +19,10 @@ import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user
 import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
 import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
-import { isFromDisconnectedSlackWorkspace } from 'src/front-components/utils/is-from-disconnected-slack-workspace.util';
+import {
+  DISCONNECTED_SLACK_WORKSPACE_LABEL,
+  isFromDisconnectedSlackWorkspace,
+} from 'src/front-components/utils/is-from-disconnected-slack-workspace.util';
 
 const LINKS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) minmax(0, 2fr) 320px 156px';
 const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
@@ -94,8 +97,6 @@ const CONSENT_COLORS: Record<SlackUserLinkConsentState, TagColor> = {
   [SLACK_USER_LINK_CONSENT_STATE.DECLINED]: 'red',
   [SLACK_USER_LINK_CONSENT_STATE.ADMIN_SET]: 'gray',
 };
-
-const DISCONNECTED_WORKSPACE_LABEL = 'Slack workspace disconnected';
 
 type SlackUserLinksListProps = {
   slackUserLinks: SlackUserLinkRecord[];
@@ -198,7 +199,7 @@ export const SlackUserLinksList = ({
               </SlackTableCell>
               <SlackTableCell>
                 {isDisconnected ? (
-                  <Tag color="gray" text={DISCONNECTED_WORKSPACE_LABEL} />
+                  <Tag color="gray" text={DISCONNECTED_SLACK_WORKSPACE_LABEL} />
                 ) : (
                   isDefined(consentState) && (
                     <Tag
