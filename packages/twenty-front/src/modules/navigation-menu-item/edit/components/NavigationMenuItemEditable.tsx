@@ -1,3 +1,4 @@
+import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -83,6 +84,9 @@ export const NavigationMenuItemEditable = ({
   const { openDropdown } = useOpenDropdown();
   const { closeDropdown } = useCloseDropdown();
   const [mode, setMode] = useState<'actions' | 'edit'>('actions');
+  const navigationMenuItemInsertionAnchor = useAtomStateValue(
+    navigationMenuItemInsertionAnchorState,
+  );
   const dropdownId = `navigation-item-${item.id}`;
   const isDropdownOpen = useAtomComponentStateValue(
     isDropdownOpenComponentState,
@@ -153,6 +157,11 @@ export const NavigationMenuItemEditable = ({
     content = (
       <Dropdown
         dropdownId={dropdownId}
+        positionReference={
+          navigationMenuItemInsertionAnchor?.dropdownId === dropdownId
+            ? navigationMenuItemInsertionAnchor.element
+            : undefined
+        }
         clickableComponent={children}
         disableClickForClickableComponent
         dropdownPlacement="right-start"

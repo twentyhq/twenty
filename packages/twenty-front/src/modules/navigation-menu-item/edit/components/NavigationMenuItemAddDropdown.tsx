@@ -1,3 +1,5 @@
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
 import { type ReactNode } from 'react';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -21,6 +23,9 @@ export const NavigationMenuItemAddDropdown = ({
   folderId,
   position,
 }: NavigationMenuItemAddDropdownProps) => {
+  const navigationMenuItemInsertionAnchor = useAtomStateValue(
+    navigationMenuItemInsertionAnchorState,
+  );
   const dropdownId = `navigation-add-item-${folderId ?? instanceId}`;
   const { closeDropdown } = useCloseDropdown();
   const setNavigationMenuItemEditSection = useSetAtomState(
@@ -30,6 +35,11 @@ export const NavigationMenuItemAddDropdown = ({
   return (
     <Dropdown
       dropdownId={dropdownId}
+      positionReference={
+        navigationMenuItemInsertionAnchor?.dropdownId === dropdownId
+          ? navigationMenuItemInsertionAnchor.element
+          : undefined
+      }
       dropdownPlacement="right-start"
       clickableComponent={children}
       onOpen={() => {

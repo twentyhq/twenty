@@ -1,3 +1,6 @@
+import { useCallback } from 'react';
+import { navigationMenuItemInsertionAnchorState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionAnchorState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -13,8 +16,9 @@ type NavigationMenuItemInsertionPreviewProps = {
   sectionId: NavigationSections;
 };
 
-const StyledPreview = styled.div`
-  margin-bottom: ${themeCssVariables.betweenSiblingsGap};
+const StyledPreview = styled.div<{ isInFolder: boolean }>`
+  margin-bottom: ${({ isInFolder }) =>
+    isInFolder ? 0 : themeCssVariables.betweenSiblingsGap};
 `;
 
 export const NavigationMenuItemInsertionPreview = ({
@@ -24,6 +28,21 @@ export const NavigationMenuItemInsertionPreview = ({
 }: NavigationMenuItemInsertionPreviewProps) => {
   const navigationMenuItemInsertionPreview = useAtomStateValue(
     navigationMenuItemInsertionPreviewState,
+  );
+  const setNavigationMenuItemInsertionAnchor = useSetAtomState(
+    navigationMenuItemInsertionAnchorState,
+  );
+  const dropdownId = navigationMenuItemInsertionPreview?.dropdownId;
+  const setAnchor = useCallback(
+    (element: HTMLDivElement | null) => {
+      if (!dropdownId) return;
+      const button = element?.querySelector('button');
+      setNavigationMenuItemInsertionAnchor((anchor) => {
+        if (button) return { dropdownId, element: button };
+        return anchor?.dropdownId === dropdownId ? null : anchor;
+      });
+    },
+    [dropdownId, setNavigationMenuItemInsertionAnchor],
   );
   const { t } = useLingui();
   const { getIcon } = useIcons();
@@ -39,7 +58,12 @@ export const NavigationMenuItemInsertionPreview = ({
   }
 
   return (
-    <StyledPreview role="status" aria-label={t`Select a menu item`}>
+    <StyledPreview
+      ref={setAnchor}
+      isInFolder={Boolean(folderId)}
+      role="status"
+      aria-label={t`Select a menu item`}
+    >
       <NavigationDrawerItem
         label={t`Select a menu item`}
         Icon={getIcon('IconFold')}
