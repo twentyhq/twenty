@@ -1,7 +1,7 @@
 import {
   DOCUMENTATION_DEFAULT_LANGUAGE,
   DOCUMENTATION_SUPPORTED_LANGUAGES,
-  type DocumentationSupportedLanguage
+  type DocumentationSupportedLanguage,
 } from 'twenty-shared/constants';
 
 const APP_SITE_HREF = 'https://twenty.com';
@@ -11,8 +11,10 @@ export const getSiteUrl = (locale: string, page: string): string => {
 
   const isLocalizedWebsitePath =
     language !== DOCUMENTATION_DEFAULT_LANGUAGE &&
-    DOCUMENTATION_SUPPORTED_LANGUAGES
-    .some((supportedLanguage: DocumentationSupportedLanguage) => supportedLanguage === language);
+    DOCUMENTATION_SUPPORTED_LANGUAGES.some(
+      (supportedLanguage: DocumentationSupportedLanguage) =>
+        supportedLanguage === language,
+    );
 
   const url = new URL(
     isLocalizedWebsitePath ? `/${language}/${page}` : `/${page}`,
