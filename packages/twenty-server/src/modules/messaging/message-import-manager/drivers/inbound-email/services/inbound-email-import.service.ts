@@ -19,6 +19,7 @@ import { type MessageWithParticipants } from 'src/modules/messaging/message-impo
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import { isExcludedGroupEmailMessage } from 'src/modules/messaging/message-import-manager/utils/is-excluded-group-email-message.util';
 
 type ImportInboundMessageParams = {
   messageReference: InboundEmailMessageReference;
@@ -108,6 +109,19 @@ export class InboundEmailImportService {
       throw new Error(
         `Email group channel ${messageChannel.id} has no connected account`,
       );
+    }
+
+    if (
+      messageChannel.excludeGroupEmails &&
+      isExcludedGroupEmailMessage(message, [connectedAccount.handle])
+    ) {
+      await messageSource.cleanup(messageReference.reference);
+
+      return {
+        kind: 'excluded',
+        workspaceId,
+        messageChannelId: messageChannel.id,
+      };
     }
 
     await this.workspaceOrmManager.executeInWorkspaceContext(

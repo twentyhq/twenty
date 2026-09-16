@@ -15,6 +15,28 @@ import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
   height={240}
 />
 
+## Anatomy
+
+Place the input inside `InputGroup` and keep field labels and messages outside the shared border.
+
+```text
+Field.Root
+├── Field.Label
+├── InputGroup
+│   └── Input
+└── Field.Description
+```
+
+| Part or slot                                  | Requirement          | Purpose                                                                  |
+| --------------------------------------------- | -------------------- | ------------------------------------------------------------------------ |
+| `InputGroup`                                  | Required             | Supplies the shared border, layout, and size.                            |
+| `Input` as `children`                         | Required             | Owns the input value, native attributes, and editing behavior.           |
+| `startElement`                                | Optional prop        | Adds a prefix, icon, or other content before the input.                  |
+| `endElement`                                  | Optional prop        | Adds a suffix or action after the input.                                 |
+| `Field.Root`, `Label`, `Description`, `Error` | Optional composition | Associates a label, helper text, and validation feedback with the input. |
+
+`startElement` and `endElement` are React node props, not separate components. `InputGroup` does not supply a label or manage validation. Give the input an accessible name, either through `Field.Label` or its own labeling attributes.
+
 ## Prefix and suffix
 
 ```tsx
@@ -37,7 +59,7 @@ export const WebsiteField = () => (
 
 ```tsx
 import { useState } from 'react';
-import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
+import { Button, Field, Input, InputGroup } from 'twenty-ui/primitives/input';
 
 export const PasswordField = () => {
   const [visible, setVisible] = useState(false);
@@ -47,14 +69,15 @@ export const PasswordField = () => {
       <Field.Label>Password</Field.Label>
       <InputGroup
         endElement={
-          <button
+          <Button
             type="button"
-            aria-label="Show password"
-            aria-pressed={visible}
+            aria-label={visible ? 'Hide password' : 'Show password'}
+            variant="ghost"
+            size="sm"
             onClick={() => setVisible(!visible)}
           >
-            Show
-          </button>
+            {visible ? 'Hide' : 'Show'}
+          </Button>
         }
       >
         <Input
