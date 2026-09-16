@@ -3,12 +3,13 @@ import { fn } from 'storybook/test';
 
 import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { RootDecorator } from '~/testing/decorators/RootDecorator';
 
 const meta: Meta<typeof SettingsApplicationActionButton> = {
   title: 'Modules/Settings/Applications/SettingsApplicationActionButton',
   component: SettingsApplicationActionButton,
-  decorators: [RootDecorator, ComponentDecorator],
+  decorators: [RootDecorator, ComponentDecorator, MemoryRouterDecorator],
   args: {
     canInstallMarketplaceApps: true,
     onInstall: fn(),
