@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
-import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
-import { buildRecordShareInputsForCreatedRecords } from 'src/engine/record-share/utils/build-record-share-inputs-for-created-records.util';
-import { validateShareWithArgOrThrow } from 'src/engine/record-share/utils/validate-share-with-arg-or-throw.util';
-import { validateShareWithPrincipalsOrThrow } from 'src/engine/record-share/utils/validate-share-with-principals-or-throw.util';
+import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
+import { buildRecordShareInputsForCreatedRecords } from 'src/engine/core-modules/record-share/utils/build-record-share-inputs-for-created-records.util';
+import { validateShareWithArgOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util';
+import { validateShareWithPrincipalsOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 

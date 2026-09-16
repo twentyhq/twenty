@@ -4,8 +4,8 @@ import {
   RecordShareRowCause,
 } from 'twenty-shared/types';
 
-import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
-import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/record-share/utils/resolve-record-ids-shared-with-principals.util';
+import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
+import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
 
 const buildRecordShare = (
   recordId: string,

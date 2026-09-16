@@ -1,6 +1,6 @@
 import { MetadataReadability } from 'twenty-shared/types';
 
-import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
+import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 
 describe('resolveRecordShareGateKind', () => {
   it.each([

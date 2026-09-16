@@ -1,6 +1,6 @@
 import { RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { validateShareWithArgOrThrow } from 'src/engine/record-share/utils/validate-share-with-arg-or-throw.util';
+import { validateShareWithArgOrThrow } from 'src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 const userAuthContext = {

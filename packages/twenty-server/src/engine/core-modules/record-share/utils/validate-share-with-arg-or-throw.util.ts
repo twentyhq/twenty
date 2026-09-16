@@ -6,9 +6,9 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import {
   RecordShareException,
   RecordShareExceptionCode,
-} from 'src/engine/record-share/record-share.exception';
-import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
-import { resolveShareWithPrincipalOrThrow } from 'src/engine/record-share/utils/resolve-share-with-principal-or-throw.util';
+} from 'src/engine/core-modules/record-share/record-share.exception';
+import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
+import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 
 export const validateShareWithArgOrThrow = ({
   authContext,

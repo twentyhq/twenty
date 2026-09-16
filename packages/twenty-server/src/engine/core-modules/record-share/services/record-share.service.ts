@@ -6,9 +6,9 @@ import { In } from 'typeorm';
 import {
   RecordShareException,
   RecordShareExceptionCode,
-} from 'src/engine/record-share/record-share.exception';
-import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
-import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+} from 'src/engine/core-modules/record-share/record-share.exception';
+import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
+import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';

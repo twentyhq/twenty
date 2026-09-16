@@ -1,6 +1,6 @@
 import { type RecordShareAccessLevel } from 'twenty-shared/types';
 
-import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 
 export const resolveRecordIdsSharedWithPrincipals = ({
   recordShares,

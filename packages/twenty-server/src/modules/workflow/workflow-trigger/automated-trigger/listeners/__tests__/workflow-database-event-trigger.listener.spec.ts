@@ -12,8 +12,8 @@ import {
 
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
-import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';

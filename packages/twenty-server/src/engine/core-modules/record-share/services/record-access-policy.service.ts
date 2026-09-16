@@ -9,15 +9,15 @@ import { In } from 'typeorm';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { RecordShareService } from 'src/engine/record-share/services/record-share.service';
-import { type EventRecordShareGate } from 'src/engine/record-share/types/event-record-share-gate.type';
-import { type RecordShare } from 'src/engine/record-share/types/record-share.type';
+import { RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
+import { type EventRecordShareGate } from 'src/engine/core-modules/record-share/types/event-record-share-gate.type';
+import { type RecordShare } from 'src/engine/core-modules/record-share/types/record-share.type';
 import {
   type EventRecordSnapshot,
   resolveEventRecordSnapshots,
-} from 'src/engine/record-share/utils/resolve-event-record-snapshots.util';
-import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/record-share/utils/resolve-record-ids-shared-with-principals.util';
-import { resolveRecordShareGateKind } from 'src/engine/record-share/utils/resolve-record-share-gate-kind.util';
+} from 'src/engine/core-modules/record-share/utils/resolve-event-record-snapshots.util';
+import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/core-modules/record-share/utils/resolve-record-ids-shared-with-principals.util';
+import { resolveRecordShareGateKind } from 'src/engine/core-modules/record-share/utils/resolve-record-share-gate-kind.util';
 import { MAX_INHERITED_READABILITY_DEPTH } from 'src/engine/twenty-orm/constants/max-inherited-readability-depth.constant';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/twenty-orm/repository/resolve-required-record-share-access-levels.util';
 import { type InheritedReadabilityChildrenParent } from 'src/engine/twenty-orm/types/inherited-readability-children-parent.type';

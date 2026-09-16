@@ -1,23 +1,22 @@
-import {
-  BadRequestException,
-  InternalServerErrorException,
-} from '@nestjs/common';
-
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import {
+  InternalServerError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import {
   type RecordShareException,
   RecordShareExceptionCode,
-} from 'src/engine/record-share/record-share.exception';
+} from 'src/engine/core-modules/record-share/record-share.exception';
 
-export const recordShareRestApiExceptionHandler = (
+export const recordShareGraphqlApiExceptionHandler = (
   error: RecordShareException,
-): never => {
+) => {
   switch (error.code) {
     case RecordShareExceptionCode.INVALID_SHARE_WITH:
-      throw new BadRequestException(error.message);
+      throw new UserInputError(error);
     case RecordShareExceptionCode.TRANSACTION_SCOPE_WORKSPACE_MISMATCH:
-      throw new InternalServerErrorException(error.message);
+      throw new InternalServerError(error);
     default: {
       return assertUnreachable(error.code);
     }

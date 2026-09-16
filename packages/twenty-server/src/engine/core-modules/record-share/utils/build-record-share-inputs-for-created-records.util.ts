@@ -10,9 +10,9 @@ import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
-import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
-import { resolveShareWithPrincipalOrThrow } from 'src/engine/record-share/utils/resolve-share-with-principal-or-throw.util';
+import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
+import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
+import { resolveShareWithPrincipalOrThrow } from 'src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util';
 
 type RecordShareInputForRecord = Omit<
   RecordShareInput,

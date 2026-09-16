@@ -6,9 +6,9 @@ import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import {
   RecordShareException,
   RecordShareExceptionCode,
-} from 'src/engine/record-share/record-share.exception';
-import { type RecordShareInput } from 'src/engine/record-share/types/record-share-input.type';
-import { type ShareWithInput } from 'src/engine/record-share/types/share-with-input.type';
+} from 'src/engine/core-modules/record-share/record-share.exception';
+import { type RecordShareInput } from 'src/engine/core-modules/record-share/types/record-share-input.type';
+import { type ShareWithInput } from 'src/engine/core-modules/record-share/types/share-with-input.type';
 
 const buildSingleTargetException = () =>
   new RecordShareException(
