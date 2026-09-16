@@ -43,79 +43,40 @@ function _isEventProp(name) {
   );
 }
 
-var _eventRefEvents = new WeakMap();
-var _elementEventHandlers = new WeakMap();
-
-export function splitEventProps({ props, previousRef }) {
-  var previousEvents = _eventRefEvents.get(previousRef);
-  var events = previousEvents ? Object.assign({}, previousEvents) : null;
-  var cleanProps = props ? Object.assign({}, props) : props;
-
-  if (props) {
-    for (var name in props) {
-      if (!_isEventProp(name)) continue;
-      if (typeof props[name] !== 'function' && !(events && name in events)) continue;
-      if (!events) events = {};
-      events[name] = typeof props[name] === 'function' ? props[name] : null;
-      delete cleanProps[name];
+export function splitEventProps(props) {
+  if (!props) return { cleanProps: props, events: null };
+  var events = null;
+  var cleanProps = null;
+  for (var k in props) {
+    if (_isEventProp(k) && typeof props[k] === 'function') {
+      if (!events) {
+        events = {};
+        cleanProps = {};
+        for (var j in props) {
+          if (j === k) break;
+          cleanProps[j] = props[j];
+        }
+      }
+      events[k] = props[k];
+    } else if (events) {
+      cleanProps[k] = props[k];
     }
   }
-
-  return { cleanProps: cleanProps, events: events };
+  return { cleanProps: cleanProps || props, events: events };
 }
 
-function setRemoteEventHandler({ element, eventName, handler }) {
-  var elementHandlers = _elementEventHandlers.get(element);
-  if (!elementHandlers) {
-    elementHandlers = new Map();
-    _elementEventHandlers.set(element, elementHandlers);
-  }
-
-  var currentHandler = elementHandlers.get(eventName);
-  if (typeof handler !== 'function') {
-    elementHandlers.delete(eventName);
-    element[eventName] = null;
-    return;
-  }
-
-  var handlerState = currentHandler || { handler: handler, dispatcher: null, installedHandler: null };
-  handlerState.handler = handler;
-  if (currentHandler && element[eventName] === handlerState.installedHandler) {
-    return;
-  }
-
-  if (!currentHandler) {
-    elementHandlers.set(eventName, handlerState);
-    handlerState.dispatcher = function(event) {
-      if (!('nativeEvent' in event)) event.nativeEvent = event;
-      return handlerState.handler.apply(this, arguments);
-    };
-  }
-
-  element[eventName] = handlerState.dispatcher;
-  handlerState.installedHandler = element[eventName];
-}
-
-export function makeEventRef({ events, userRef }) {
-  var eventRef = function(el) {
-    var cleanup;
-    if (typeof userRef === 'function') cleanup = userRef(el);
-    else if (userRef != null && typeof userRef === 'object') userRef.current = el;
-
+export function makeEventRef(events, userRef) {
+  return function(el) {
     if (el) {
       for (var name in events) {
         var domName = _reactToDomEvent[name.toLowerCase()] || name.toLowerCase();
-        setRemoteEventHandler({ element: el, eventName: domName, handler: events[name] });
+        el[domName] = events[name];
       }
     }
-
-    return cleanup;
+    if (typeof userRef === 'function') userRef(el);
+    else if (userRef != null && typeof userRef === 'object') userRef.current = el;
   };
-
-  _eventRefEvents.set(eventRef, events);
-  return eventRef;
 }
-
 `.trim();
 
 const JSX_RUNTIME_WRAPPER = `
@@ -147,10 +108,10 @@ function _wrapJsxFactory(originalFactory) {
 
       var customTag = customElementMap[type];
       if (customTag) {
-        var split = splitEventProps({ props: props });
+        var split = splitEventProps(props);
         if (split.events) {
           var cp = split.cleanProps;
-          cp.ref = makeEventRef({ events: split.events, userRef: cp.ref });
+          cp.ref = makeEventRef(split.events, cp.ref);
           return originalFactory(customTag, cp, key);
         }
         return originalFactory(customTag, props, key);
@@ -178,7 +139,6 @@ import {
 } from '__jsx_shared_helpers__';
 
 var _originalCreateElement = _React.createElement;
-var _originalCloneElement = _React.cloneElement;
 
 function createElement(type) {
   var args = arguments;
@@ -197,10 +157,10 @@ function createElement(type) {
     var customTag = customElementMap[type];
     if (customTag) {
       var ceProps = args.length > 1 ? args[1] : null;
-      var split = splitEventProps({ props: ceProps });
+      var split = splitEventProps(ceProps);
       if (split.events) {
         var cp = split.cleanProps || {};
-        cp.ref = makeEventRef({ events: split.events, userRef: cp.ref });
+        cp.ref = makeEventRef(split.events, cp.ref);
         var newArgs = [customTag, cp];
         for (var i = 2; i < args.length; i++) newArgs.push(args[i]);
         return _originalCreateElement.apply(null, newArgs);
@@ -213,38 +173,8 @@ function createElement(type) {
   return _originalCreateElement.apply(null, args);
 }
 
-function cloneElement(element) {
-  var args = arguments;
-  if (!element || typeof element.type !== 'string') {
-    return _originalCloneElement.apply(null, args);
-  }
-
-  var isRemoteTag = !!customElementMap[element.type];
-  for (var nativeTag in customElementMap) {
-    if (customElementMap[nativeTag] === element.type) isRemoteTag = true;
-  }
-  if (!isRemoteTag) return _originalCloneElement.apply(null, args);
-
-  var props = args.length > 1 ? args[1] : null;
-  var originalRef = element.props.ref;
-  var split = splitEventProps({ props: props, previousRef: originalRef });
-  if (!split.events) return _originalCloneElement.apply(null, args);
-
-  var cleanProps = split.cleanProps || {};
-  var userRef = cleanProps.ref === undefined ? originalRef : cleanProps.ref;
-  cleanProps.ref = makeEventRef({ events: split.events, userRef: userRef });
-  var cloneArgs = [element, cleanProps];
-  for (var childIndex = 2; childIndex < args.length; childIndex++) {
-    cloneArgs.push(args[childIndex]);
-  }
-  return _originalCloneElement.apply(null, cloneArgs);
-}
-
-export { cloneElement, createElement };
-export default Object.assign({}, _React, {
-  cloneElement: cloneElement,
-  createElement: createElement,
-});
+export { createElement };
+export default Object.assign({}, _React, { createElement: createElement });
 `.trim();
 
 type JsxRuntimeRemoteWrapperPluginOptions = {

@@ -12,12 +12,10 @@ import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomEleme
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installClassAttributeAccessors } from '@/polyfills/dom/utils/installClassAttributeAccessors';
 import { installDocumentGetElementById } from '@/polyfills/dom/utils/installDocumentGetElementById';
-import { installElementClosest } from '@/polyfills/dom/utils/installElementClosest';
 import { installGetComputedStyle } from '@/polyfills/dom/utils/installGetComputedStyle';
 import { installGetElementsByClassName } from '@/polyfills/dom/utils/installGetElementsByClassName';
 import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLocalStyleOnBaseElements';
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
-import { installNodeContains } from '@/polyfills/dom/utils/installNodeContains';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
@@ -46,8 +44,6 @@ patchRemoteElementAttributes();
 installErrorEventBridge();
 
 installDocumentGetElementById(document);
-installElementClosest(Element.prototype);
-installNodeContains(Node.prototype);
 installGetElementsByClassName(Element.prototype);
 installGetElementsByClassName(document);
 installClassAttributeAccessors({
