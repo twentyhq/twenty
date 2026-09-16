@@ -107,14 +107,20 @@ export const SettingsAdminQueueJobsTable = ({
     fetchPolicy: 'network-only',
   });
 
-  const { retryJobs, isRetrying } = useRetryJobs(queueName, () => {
-    refetch();
-    setSelectedJobIds(new Set());
+  const { retryJobs, isRetrying } = useRetryJobs({
+    queueName,
+    onSuccess: () => {
+      refetch();
+      setSelectedJobIds(new Set());
+    },
   });
 
-  const { deleteJobs, isDeleting } = useDeleteJobs(queueName, () => {
-    refetch();
-    setSelectedJobIds(new Set());
+  const { deleteJobs, isDeleting } = useDeleteJobs({
+    queueName,
+    onSuccess: () => {
+      refetch();
+      setSelectedJobIds(new Set());
+    },
   });
 
   const jobs = data?.getQueueJobs?.jobs || [];
@@ -222,40 +228,41 @@ export const SettingsAdminQueueJobsTable = ({
         <StyledButtonGroup>
           {selectedCount > 0 && (
             <Button
-              Icon={IconTrash}
-              title={plural(selectedCount, {
+              startIcon={<IconTrash />}
+              onClick={handleDeleteSelected}
+              disabled={isDeleting || loading}
+              size="sm"
+              variant="outline"
+              color="danger"
+            >
+              {plural(selectedCount, {
                 one: `Delete ${selectedCount} Job`,
                 other: `Delete ${selectedCount} Jobs`,
               })}
-              onClick={handleDeleteSelected}
-              disabled={isDeleting || loading}
-              size="small"
-              variant="secondary"
-              accent="danger"
-            />
+            </Button>
           )}
           {allSelectedAreFailed && (
             <Button
-              Icon={IconRefresh}
-              title={plural(selectedCount, {
+              startIcon={<IconRefresh />}
+              onClick={handleRetrySelected}
+              disabled={isRetrying || loading}
+              size="sm"
+              variant="outline"
+            >
+              {plural(selectedCount, {
                 one: `Retry ${selectedCount} Job`,
                 other: `Retry ${selectedCount} Jobs`,
               })}
-              onClick={handleRetrySelected}
-              disabled={isRetrying || loading}
-              size="small"
-              variant="secondary"
-            />
+            </Button>
           )}
           {failedJobs.length > 0 && selectedCount === 0 && (
             <Button
-              Icon={IconRefresh}
-              title={t`Retry All Failed`}
+              startIcon={<IconRefresh />}
               onClick={handleRetrySelected}
               disabled={isRetrying || loading}
-              size="small"
-              variant="secondary"
-            />
+              size="sm"
+              variant="outline"
+            >{t`Retry All Failed`}</Button>
           )}
         </StyledButtonGroup>
       </StyledControlsContainer>
@@ -362,23 +369,21 @@ export const SettingsAdminQueueJobsTable = ({
 
           <StyledPaginationContainer>
             <Button
-              title={t`Previous`}
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0 || loading}
-              size="small"
-              variant="secondary"
-            />
+              size="sm"
+              variant="outline"
+            >{t`Previous`}</Button>
             <div>
               {t`Page`} {page + 1} {totalCount > 0 ? t`of` : ''}{' '}
               {totalCount > 0 ? Math.max(1, Math.ceil(totalCount / LIMIT)) : ''}
             </div>
             <Button
-              title={t`Next`}
               onClick={() => setPage((p) => p + 1)}
               disabled={!hasMore || loading}
-              size="small"
-              variant="secondary"
-            />
+              size="sm"
+              variant="outline"
+            >{t`Next`}</Button>
           </StyledPaginationContainer>
         </>
       )}

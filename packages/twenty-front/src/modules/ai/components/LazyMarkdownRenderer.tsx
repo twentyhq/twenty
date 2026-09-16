@@ -104,6 +104,11 @@ const MARKDOWN_COMPONENTS = {
   ),
 };
 
+const MARKDOWN_COMPONENTS_WITHOUT_IMAGES = {
+  ...MARKDOWN_COMPONENTS,
+  img: () => null,
+};
+
 const MarkdownRenderer = lazy(async () => {
   const [{ default: Markdown }, { default: remarkGfm }] = await Promise.all([
     import('react-markdown'),
@@ -113,8 +118,19 @@ const MarkdownRenderer = lazy(async () => {
   const remarkPlugins = [remarkGfm];
 
   return {
-    default: ({ children }: { children: string }) => (
-      <Markdown remarkPlugins={remarkPlugins} components={MARKDOWN_COMPONENTS}>
+    default: ({
+      children,
+      noImage,
+    }: {
+      children: string;
+      noImage?: boolean;
+    }) => (
+      <Markdown
+        remarkPlugins={remarkPlugins}
+        components={
+          noImage ? MARKDOWN_COMPONENTS_WITHOUT_IMAGES : MARKDOWN_COMPONENTS
+        }
+      >
         {children}
       </Markdown>
     ),
@@ -141,13 +157,23 @@ export const MarkdownLoadingSkeleton = () => {
 
 // Protecting per block behind the memo means only the streaming tail blocks
 // pay the reference-parsing cost on each flush; settled blocks never re-run it.
-const MemoizedMarkdownBlock = memo(({ blockText }: { blockText: string }) => (
-  <MarkdownRenderer>
-    {protectChatReferencesForMarkdown(blockText)}
-  </MarkdownRenderer>
-));
+const MemoizedMarkdownBlock = memo(
+  ({ blockText, noImage }: { blockText: string; noImage?: boolean }) => (
+    <MarkdownRenderer noImage={noImage}>
+      {protectChatReferencesForMarkdown(blockText)}
+    </MarkdownRenderer>
+  ),
+);
 
-export const LazyMarkdownContent = ({ text }: { text: string }) => {
+type LazyMarkdownContentProps = {
+  text: string;
+  noImage?: boolean;
+};
+
+export const LazyMarkdownContent = ({
+  text,
+  noImage,
+}: LazyMarkdownContentProps) => {
   // Not state: the blocks are a pure function of `text`, the ref only caches
   // the previous split so streaming appends skip re-tokenizing settled blocks.
   // oxlint-disable-next-line twenty/no-state-useref
@@ -166,14 +192,23 @@ export const LazyMarkdownContent = ({ text }: { text: string }) => {
       data-replay-ignore-mutations="true"
     >
       {markdownBlocks.map((blockText, blockIndex) => (
-        <MemoizedMarkdownBlock key={blockIndex} blockText={blockText} />
+        <MemoizedMarkdownBlock
+          key={blockIndex}
+          blockText={blockText}
+          noImage={noImage}
+        />
       ))}
     </StyledMarkdownContainer>
   );
 };
 
-export const LazyMarkdownRenderer = ({ text }: { text: string }) => (
+type LazyMarkdownRendererProps = LazyMarkdownContentProps;
+
+export const LazyMarkdownRenderer = ({
+  text,
+  noImage,
+}: LazyMarkdownRendererProps) => (
   <Suspense fallback={<MarkdownLoadingSkeleton />}>
-    <LazyMarkdownContent text={text} />
+    <LazyMarkdownContent text={text} noImage={noImage} />
   </Suspense>
 );

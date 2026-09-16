@@ -32,7 +32,7 @@ export const SettingsAdminDeleteJobsConfirmationModal = ({
       onConfirmClick={onConfirm}
       onClose={onClose}
       confirmButtonText={t`Delete`}
-      confirmButtonAccent="danger"
+      confirmButtonColor="danger"
     />
   );
 };

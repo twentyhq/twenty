@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { randomUUID } from 'node:crypto';
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
@@ -30,8 +32,8 @@ import {
 
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { type RecordAccessPolicyService } from 'src/engine/record-share/services/record-access-policy.service';
-import { type RecordShareService } from 'src/engine/record-share/services/record-share.service';
+import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { type RecordShareService } from 'src/engine/core-modules/record-share/services/record-share.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -474,7 +476,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         await getAppProviderByClassName<RecordAccessPolicyService>(
           'RecordAccessPolicyService',
         )
-          .buildEventRecordShareGate({
+          .buildEventRecordAccessGate({
             name: 'note.created',
             workspaceId: SEED_APPLE_WORKSPACE_ID,
             objectMetadata: noteObjectMetadata!,
@@ -641,7 +643,7 @@ describe('inheritedThroughChildrenReadabilityObjectRecordsPermissions', () => {
         getAppProviderByClassName<RecordAccessPolicyService>(
           'RecordAccessPolicyService',
         )
-          .buildEventRecordShareGate({
+          .buildEventRecordAccessGate({
             name: 'note.deleted',
             workspaceId: SEED_APPLE_WORKSPACE_ID,
             objectMetadata: noteObjectMetadata!,

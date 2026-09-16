@@ -123,13 +123,13 @@ export const SettingsAdminSigningKeysTable = () => {
                     alwaysShowTooltip
                   />
                   <Button
-                    Icon={IconCopy}
-                    size="small"
-                    variant="tertiary"
-                    ariaLabel={t`Copy key ID`}
+                    startIcon={<IconCopy />}
+                    size="sm"
+                    aria-label={t`Copy key ID`}
                     onClick={() =>
                       copyToClipboard(signingKey.id, t`Key ID copied`)
                     }
+                    variant="ghost"
                   />
                 </TableCell>
                 <TableCell>
@@ -153,10 +153,7 @@ export const SettingsAdminSigningKeysTable = () => {
                 </TableCell>
                 <TableCell align="right">
                   <Button
-                    title={t`Revoke`}
-                    size="small"
-                    variant="secondary"
-                    accent="danger"
+                    size="sm"
                     disabled={isRevoked || isRevoking}
                     onClick={() =>
                       handleRevokeClick({
@@ -164,7 +161,9 @@ export const SettingsAdminSigningKeysTable = () => {
                         isCurrent: signingKey.isCurrent,
                       })
                     }
-                  />
+                    variant="outline"
+                    color="danger"
+                  >{t`Revoke`}</Button>
                 </TableCell>
               </TableRow>
             );

@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { t } from '@lingui/core/macro';
 import { SettingsDataModelOverviewEffect } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewEffect';
 import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject';
 import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
@@ -30,7 +32,7 @@ import {
   IconPlus,
   IconX,
 } from 'twenty-ui/icon';
-import { Button, IconButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const nodeTypes: NodeTypes = {
@@ -186,10 +188,11 @@ export const SettingsDataModelOverview = () => {
   return (
     <StyledContainer>
       <StyledCloseButton>
-        <Button
-          Icon={IconX}
+        <NavigationButton
+          startIcon={<IconX />}
+          aria-label={t`Close overview`}
           to={getSettingsPath(SettingsPath.Objects)}
-        ></Button>
+        ></NavigationButton>
       </StyledCloseButton>
       <SettingsDataModelOverviewEffect
         setEdges={setEdges}

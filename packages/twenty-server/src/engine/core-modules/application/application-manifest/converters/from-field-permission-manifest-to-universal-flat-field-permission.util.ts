@@ -1,4 +1,7 @@
-import { type FieldPermissionManifest } from 'twenty-shared/application';
+import {
+  type FieldPermissionManifest,
+  getFieldPermissionUniversalIdentifier,
+} from 'twenty-shared/application';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 
 export const fromFieldPermissionManifestToUniversalFlatFieldPermission = ({
@@ -13,7 +16,14 @@ export const fromFieldPermissionManifestToUniversalFlatFieldPermission = ({
   now: string;
 }): UniversalFlatFieldPermission => {
   return {
-    universalIdentifier: fieldPermissionManifest.universalIdentifier,
+    universalIdentifier:
+      fieldPermissionManifest.universalIdentifier ??
+      getFieldPermissionUniversalIdentifier({
+        applicationUniversalIdentifier,
+        roleUniversalIdentifier,
+        fieldUniversalIdentifier:
+          fieldPermissionManifest.fieldUniversalIdentifier,
+      }),
     applicationUniversalIdentifier,
     roleUniversalIdentifier,
     objectMetadataUniversalIdentifier:

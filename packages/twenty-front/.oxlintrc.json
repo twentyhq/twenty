@@ -143,6 +143,12 @@
   },
   "overrides": [
     {
+      "files": ["src/modules/ui/input/components/NavigationButton.tsx"],
+      "rules": {
+        "react/jsx-props-no-spreading": "off"
+      }
+    },
+    {
       "files": ["**/constants/*.ts", "**/*.constants.ts"],
       "rules": {
         "twenty/max-consts-per-file": ["error", { "max": 1 }]

@@ -4,16 +4,11 @@ import {
   type SystemViewKey,
 } from 'twenty-shared/application';
 import { VIEW_TYPE_DEFAULT_ICONS } from 'twenty-shared/constants';
-import {
-  ViewKey,
-  ViewOpenRecordIn,
-  ViewType,
-  ViewVisibility,
-} from 'twenty-shared/types';
-import { v4 } from 'uuid';
+import { ViewKey, ViewType } from 'twenty-shared/types';
 
 import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
+import { buildBaseUniversalFlatView } from 'src/engine/metadata-modules/view/utils/build-base-universal-flat-view.util';
 import { type UniversalFlatView } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view.type';
 
 type SystemViewObjectMetadata = Pick<
@@ -55,50 +50,23 @@ export const computeSystemViewToCreate = ({
 }): UniversalFlatView & { id: string } => {
   const { type, icon, computeName } =
     SYSTEM_VIEW_PROPERTIES_BY_VIEW_KEY[viewKey];
-  const createdAt = new Date().toISOString();
 
-  return {
-    id: v4(),
+  return buildBaseUniversalFlatView({
     objectMetadataUniversalIdentifier: objectMetadata.universalIdentifier,
-    name: computeName(objectMetadata),
-    // Only INDEX is a persisted key; FIELDS_WIDGET exists solely in the
-    // universal identifier derivation.
-    key: viewKey === SYSTEM_VIEW_KEYS.INDEX ? ViewKey.INDEX : null,
-    icon,
-    type,
-    createdAt,
-    updatedAt: createdAt,
-    deletedAt: null,
-    isCustom: true,
-    anyFieldFilterValue: null,
-    calendarFieldMetadataUniversalIdentifier: null,
-    calendarEndFieldMetadataUniversalIdentifier: null,
-    calendarLayout: null,
-    isCompact: false,
-    shouldHideEmptyGroups: false,
-    kanbanColumnWidth: null,
-    kanbanAggregateOperation: null,
-    kanbanAggregateOperationFieldMetadataUniversalIdentifier: null,
-    mainGroupByFieldMetadataUniversalIdentifier: null,
-    openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
-    position: 0,
+    applicationUniversalIdentifier,
     universalIdentifier: getSystemViewUniversalIdentifier({
       objectMetadataApplicationUniversalIdentifier:
         applicationUniversalIdentifier,
       objectUniversalIdentifier: objectMetadata.universalIdentifier,
       viewKey,
     }),
-    visibility: ViewVisibility.WORKSPACE,
-    createdByUserWorkspaceId: null,
-    isActive: true,
+    name: computeName(objectMetadata),
+    // Only INDEX is a persisted key; FIELDS_WIDGET exists solely in the
+    // universal identifier derivation.
+    key: viewKey === SYSTEM_VIEW_KEYS.INDEX ? ViewKey.INDEX : null,
+    icon,
+    type,
+    position: 0,
     isSystemSideEffect: true,
-    universalOverrides: null,
-    viewFieldUniversalIdentifiers: [],
-    viewFieldGroupUniversalIdentifiers: [],
-    viewFilterUniversalIdentifiers: [],
-    viewGroupUniversalIdentifiers: [],
-    viewFilterGroupUniversalIdentifiers: [],
-    viewSortUniversalIdentifiers: [],
-    applicationUniversalIdentifier,
-  };
+  });
 };

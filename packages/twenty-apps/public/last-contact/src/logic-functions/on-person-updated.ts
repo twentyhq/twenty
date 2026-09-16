@@ -2,35 +2,38 @@ import {
   defineLogicFunction,
   type ObjectRecordUpdateEvent,
 } from 'twenty-sdk/define';
-import { type DatabaseEventPayload } from 'twenty-sdk/logic-function';
+import { type DatabaseEventBatchPayload } from 'twenty-sdk/logic-function';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/constants/batch-handler-timeout-seconds';
 import { PERSON_UPDATED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
-import { recomputeCompanyLastContact } from 'src/utils/recompute-company-last-contact';
+import { recomputeCompaniesLastContact } from 'src/utils/recompute-company-last-contact';
 
 type PersonUpdate = { companyId?: string | null };
 
 const handler = async (
-  event: DatabaseEventPayload<ObjectRecordUpdateEvent<PersonUpdate>>,
+  batch: DatabaseEventBatchPayload<ObjectRecordUpdateEvent<PersonUpdate>>,
 ): Promise<void> => {
-  const before = event.properties.before?.companyId ?? null;
-  const after = event.properties.after?.companyId ?? null;
-
-  const companyIds = [...new Set([before, after])].filter(
-    (id): id is string => Boolean(id),
-  );
-
-  if (companyIds.length === 0) {
-    return;
-  }
-
-  const client = new CoreApiClient();
+  const companyIds = new Set<string>();
 
   // Both the person's former and current company can lose or gain their most
   // recent contact when the person moves.
-  for (const companyId of companyIds) {
-    await recomputeCompanyLastContact(client, companyId);
+  for (const event of batch.events) {
+    for (const companyId of [
+      event.properties.before?.companyId,
+      event.properties.after?.companyId,
+    ]) {
+      if (companyId) {
+        companyIds.add(companyId);
+      }
+    }
   }
+
+  if (companyIds.size === 0) {
+    return;
+  }
+
+  await recomputeCompaniesLastContact(new CoreApiClient(), [...companyIds]);
 };
 
 export default defineLogicFunction({
@@ -38,10 +41,11 @@ export default defineLogicFunction({
   name: 'on-person-updated',
   description:
     "Recomputes the former and current company's last contact when a person's company changes.",
-  timeoutSeconds: 60,
+  timeoutSeconds: BATCH_HANDLER_TIMEOUT_SECONDS,
   databaseEventTriggerSettings: {
     eventName: 'person.updated',
     updatedFields: ['companyId'],
+    batchMode: true,
   },
   handler,
 });
