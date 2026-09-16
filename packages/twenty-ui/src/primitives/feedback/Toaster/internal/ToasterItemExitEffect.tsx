@@ -1,18 +1,20 @@
 import { type RefObject, useLayoutEffect } from 'react';
 
+import { useToastContext } from '@ui/primitives/feedback/Toast/hooks/useToastContext';
 import { type ToastEntry } from '@ui/primitives/feedback/Toast/types/ToastEntry';
+import { completeToastExit } from '@ui/primitives/feedback/Toast/utils/completeToastExit';
 
 type ToasterItemExitEffectProps = {
   elementRef: RefObject<HTMLDivElement | null>;
   toastEntry: ToastEntry;
-  onExitComplete: (toast: ToastEntry) => void;
 };
 
 export const ToasterItemExitEffect = ({
   elementRef,
   toastEntry,
-  onExitComplete,
 }: ToasterItemExitEffectProps) => {
+  const store = useToastContext();
+
   useLayoutEffect(() => {
     if (toastEntry.status === 'visible') {
       return;
@@ -21,7 +23,7 @@ export const ToasterItemExitEffect = ({
     const exitAnimations = elementRef.current?.getAnimations?.() ?? [];
 
     if (exitAnimations.length === 0) {
-      onExitComplete(toastEntry);
+      completeToastExit({ store, toast: toastEntry });
       return;
     }
 
@@ -30,14 +32,14 @@ export const ToasterItemExitEffect = ({
       exitAnimations.map((animation) => animation.finished),
     ).then(() => {
       if (!isCancelled) {
-        onExitComplete(toastEntry);
+        completeToastExit({ store, toast: toastEntry });
       }
     });
 
     return () => {
       isCancelled = true;
     };
-  }, [elementRef, toastEntry, onExitComplete]);
+  }, [elementRef, toastEntry, store]);
 
   return <></>;
 };

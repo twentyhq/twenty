@@ -3,15 +3,14 @@ import { useMemo } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type ToastOptions } from '../types/ToastOptions';
+import { dismissToasts } from '../utils/dismissToasts';
 import { isToastVisible } from '../utils/isToastVisible';
-import { useDismissToasts } from './useDismissToasts';
 import { useToastContext } from './useToastContext';
 
 let lastToastId = 0;
 
 export const useEnqueueToast = () => {
   const store = useToastContext();
-  const { dismissToasts } = useDismissToasts();
 
   const enqueueToast = useMemo(() => {
     function enqueueToast(options: ToastOptions): string;
@@ -39,6 +38,7 @@ export const useEnqueueToast = () => {
       const removedCount = Math.max(0, visibleToasts.length - limit + 1);
 
       dismissToasts({
+        store,
         toastsToClose: visibleToasts.slice(0, removedCount),
         nextToasts: [
           ...toasts,
@@ -54,7 +54,7 @@ export const useEnqueueToast = () => {
     }
 
     return enqueueToast;
-  }, [store, dismissToasts]);
+  }, [store]);
 
   return { enqueueToast };
 };

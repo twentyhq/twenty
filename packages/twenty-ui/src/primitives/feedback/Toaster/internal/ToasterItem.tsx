@@ -11,14 +11,12 @@ type ToasterItemProps = {
   toastEntry: ToastEntry;
   getToastProps?: ToasterProps['getToastProps'];
   onClose: (id: string) => void;
-  onExitComplete: (toast: ToastEntry) => void;
 };
 
 export const ToasterItem = ({
   toastEntry,
   getToastProps,
   onClose,
-  onExitComplete,
 }: ToasterItemProps) => {
   const { notification, status } = toastEntry;
   const { id, ...toastProps } = notification;
@@ -41,11 +39,7 @@ export const ToasterItem = ({
           />
         </div>
       </div>
-      <ToasterItemExitEffect
-        elementRef={elementRef}
-        toastEntry={toastEntry}
-        onExitComplete={onExitComplete}
-      />
+      <ToasterItemExitEffect elementRef={elementRef} toastEntry={toastEntry} />
     </>
   );
 };

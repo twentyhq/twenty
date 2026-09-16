@@ -1,29 +1,50 @@
 import { render, renderHook } from '@testing-library/react';
-import { StrictMode } from 'react';
+import { StrictMode, useEffect } from 'react';
 import { expect, it, vi } from 'vitest';
 
 import { ToastContext } from '../../contexts/ToastContext';
 import { ToasterLifecycleEffect } from '../../../Toaster/internal/ToasterLifecycleEffect';
 import { createToastStore } from '../../stores/createToastStore';
-import { useCompleteToastExit } from '../useCompleteToastExit';
+import { completeToastExit } from '../../utils/completeToastExit';
 import { useToast } from '../useToast';
 
 const renderToastHooks = ({ hasToaster = true } = {}) => {
   const store = createToastStore();
-  const hook = renderHook(
-    () => ({ ...useToast(), ...useCompleteToastExit() }),
+  const hook = renderHook(() => useToast(), {
+    wrapper: ({ children }) => (
+      <ToastContext.Provider value={store}>
+        {hasToaster && <ToasterLifecycleEffect />}
+        {children}
+      </ToastContext.Provider>
+    ),
+  });
+
+  return { store, ...hook };
+};
+
+it('does not repeat an enqueue effect when its consumer rerenders', () => {
+  const store = createToastStore();
+  const { rerender } = renderHook(
+    () => {
+      const { enqueueToast } = useToast();
+
+      useEffect(() => {
+        enqueueToast({ children: 'Saved' });
+      }, [enqueueToast]);
+    },
     {
       wrapper: ({ children }) => (
-        <ToastContext.Provider value={store}>
-          {hasToaster && <ToasterLifecycleEffect />}
-          {children}
-        </ToastContext.Provider>
+        <ToastContext.Provider value={store}>{children}</ToastContext.Provider>
       ),
     },
   );
 
-  return { store, ...hook };
-};
+  rerender();
+
+  expect(
+    store.state.toasts.map(({ notification }) => notification.children),
+  ).toEqual(['Saved']);
+});
 
 it('generates distinct ids for each new notification', () => {
   const { store, result } = renderToastHooks();
@@ -83,7 +104,7 @@ it('retains a dismissed toast until its exit finishes and calls onClose once', (
   expect(onClose).toHaveBeenCalledOnce();
   expect(listener).toHaveBeenCalledTimes(2);
 
-  result.current.completeToastExit(closingToast);
+  completeToastExit({ store, toast: closingToast });
   expect(store.state.toasts).toEqual([]);
   expect(onClose).toHaveBeenCalledOnce();
   expect(listener).toHaveBeenCalledTimes(3);
@@ -158,14 +179,14 @@ it('reopens a dismissed toast with a new id and completes each exit independentl
   expect(restoredId).not.toBe(firstId);
   result.current.closeToast(firstId);
   expect(store.state.toasts).toBe(restoredToasts);
-  result.current.completeToastExit(firstExit);
+  completeToastExit({ store, toast: firstExit });
   expect(store.state.toasts[1].notification.children).toBe('Restored');
 
   result.current.closeToast(restoredId);
   const snapshot = store.state.toasts;
-  result.current.completeToastExit(firstExit);
+  completeToastExit({ store, toast: firstExit });
   expect(store.state.toasts).toBe(snapshot);
-  result.current.completeToastExit(snapshot[1]);
+  completeToastExit({ store, toast: snapshot[1] });
   expect(store.state.toasts.map(({ notification }) => notification.id)).toEqual(
     [secondId],
   );
@@ -275,7 +296,7 @@ it('ignores unknown dismissals and completion for visible notifications', () => 
   const snapshot = store.state.toasts;
 
   result.current.closeToast('unknown');
-  result.current.completeToastExit(snapshot[0]);
+  completeToastExit({ store, toast: snapshot[0] });
 
   expect(store.state.toasts).toBe(snapshot);
   expect(listener).toHaveBeenCalledOnce();

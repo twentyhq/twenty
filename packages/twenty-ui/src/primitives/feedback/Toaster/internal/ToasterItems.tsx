@@ -1,5 +1,4 @@
 import { useCloseToast } from '@ui/primitives/feedback/Toast/hooks/useCloseToast';
-import { useCompleteToastExit } from '@ui/primitives/feedback/Toast/hooks/useCompleteToastExit';
 import { useToastEntries } from '@ui/primitives/feedback/Toast/hooks/useToastEntries';
 
 import { type ToasterProps } from '../types/ToasterProps';
@@ -12,7 +11,6 @@ type ToasterItemsProps = {
 export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
   const toasts = useToastEntries();
   const { closeToast } = useCloseToast();
-  const { completeToastExit } = useCompleteToastExit();
 
   return toasts.map((toast) => (
     <ToasterItem
@@ -20,7 +18,6 @@ export const ToasterItems = ({ getToastProps }: ToasterItemsProps) => {
       toastEntry={toast}
       getToastProps={getToastProps}
       onClose={closeToast}
-      onExitComplete={completeToastExit}
     />
   ));
 };
