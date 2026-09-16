@@ -56,6 +56,8 @@ export const useSaveLayoutCustomization = () => {
       );
 
       if (objectColorEntries.length > 0) {
+        // TODO: replace with an updateManyObjectMetadataItems endpoint so this
+        // is one request instead of one per object.
         // Each update otherwise refetches the command menu, so send them
         // together and refetch once.
         const colorResults = await Promise.all(

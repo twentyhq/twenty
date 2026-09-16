@@ -374,7 +374,7 @@ export const NavigationDrawerItem = ({
           {editingContent ? (
             <StyledIcon>{editingContent.icon}</StyledIcon>
           ) : (
-            Icon && (
+            isDefined(Icon) && (
               <StyledIcon>
                 <Icon
                   size={theme.icon.size.md}

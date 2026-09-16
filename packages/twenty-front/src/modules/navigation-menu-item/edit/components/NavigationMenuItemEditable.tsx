@@ -120,54 +120,53 @@ export const NavigationMenuItemEditable = ({
   };
 
   const row = renderRow();
-  let content = row;
-  if (
+  const shouldWrapInMenu =
     canOrganize ||
-    (canEdit && selectedNavigationMenuItemIdInEditMode === item.id)
-  ) {
-    content = (
-      <NavigationMenuItemMenu
-        section={isWorkspace ? 'workspace' : 'favorite'}
-        dropdownId={dropdownId}
-        clickableComponent={row}
-        disableClickForClickableComponent
-        dropdownPlacement={mode === 'edit' ? 'top-start' : 'right-start'}
-        dropdownOffset={
-          mode === 'edit' ? { y: theme.spacingMultiplicator } : undefined
-        }
-        excludedClickOutsideIds={[
-          `${dropdownId}-icon`,
-          `${dropdownId}-icon-icon-color-picker`,
-        ]}
-        onClose={() =>
-          setSelectedNavigationMenuItemIdInEditMode((selectedId) =>
-            selectedId === item.id ? null : selectedId,
-          )
-        }
-        renderMenu={({ onClose, onAdd }) =>
-          mode === 'edit' && item.type === NavigationMenuItemType.LINK ? (
-            <DropdownContent
-              widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-            >
-              <NavigationMenuItemLinkEditor
-                item={item}
-                dropdownId={dropdownId}
-                onClose={onClose}
-              />
-            </DropdownContent>
-          ) : (
-            <NavigationMenuItemActions
+    (canEdit && selectedNavigationMenuItemIdInEditMode === item.id);
+  const content = shouldWrapInMenu ? (
+    <NavigationMenuItemMenu
+      section={isWorkspace ? 'workspace' : 'favorite'}
+      dropdownId={dropdownId}
+      clickableComponent={row}
+      disableClickForClickableComponent
+      dropdownPlacement={mode === 'edit' ? 'top-start' : 'right-start'}
+      dropdownOffset={
+        mode === 'edit' ? { y: theme.spacingMultiplicator } : undefined
+      }
+      excludedClickOutsideIds={[
+        `${dropdownId}-icon`,
+        `${dropdownId}-icon-icon-color-picker`,
+      ]}
+      onClose={() =>
+        setSelectedNavigationMenuItemIdInEditMode((selectedId) =>
+          selectedId === item.id ? null : selectedId,
+        )
+      }
+      renderMenu={({ onClose, onAdd }) =>
+        mode === 'edit' && item.type === NavigationMenuItemType.LINK ? (
+          <DropdownContent
+            widthInPixels={GenericDropdownContentWidth.ExtraLarge}
+          >
+            <NavigationMenuItemLinkEditor
               item={item}
-              section={isWorkspace ? 'workspace' : 'favorite'}
               dropdownId={dropdownId}
               onClose={onClose}
-              onAdd={onAdd}
             />
-          )
-        }
-      />
-    );
-  }
+          </DropdownContent>
+        ) : (
+          <NavigationMenuItemActions
+            item={item}
+            section={isWorkspace ? 'workspace' : 'favorite'}
+            dropdownId={dropdownId}
+            onClose={onClose}
+            onAdd={onAdd}
+          />
+        )
+      }
+    />
+  ) : (
+    row
+  );
   return (
     <StyledRow
       id={anchorId}

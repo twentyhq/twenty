@@ -153,20 +153,26 @@ export const NavigationMenuItemAddDropdownContent = ({
         },
       ];
   const items = groups.flatMap((group) => group.items);
-  let emptyMessage = t`No results found`;
-  if (
-    (step === 'record' || isSearchingAllItems) &&
-    (recordSearchLoading || isSearchDebouncing)
-  ) {
-    emptyMessage = t`Loading...`;
-  }
+  const getEmptyMessage = () => {
+    if (step === 'page' && isDefined(standalonePagesError)) {
+      return t`Couldn't load pages`;
+    }
 
-  if ((step === 'page' || isSearchingAllItems) && standalonePagesLoading) {
-    emptyMessage = t`Loading...`;
-  }
-  if (step === 'page' && standalonePagesError) {
-    emptyMessage = t`Couldn't load pages`;
-  }
+    if (
+      (step === 'record' || isSearchingAllItems) &&
+      (recordSearchLoading || isSearchDebouncing)
+    ) {
+      return t`Loading...`;
+    }
+
+    if ((step === 'page' || isSearchingAllItems) && standalonePagesLoading) {
+      return t`Loading...`;
+    }
+
+    return t`No results found`;
+  };
+
+  const emptyMessage = getEmptyMessage();
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
