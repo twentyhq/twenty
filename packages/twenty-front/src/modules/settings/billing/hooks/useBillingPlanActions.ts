@@ -124,6 +124,12 @@ export const useBillingPlanActions = ({
           title: t`Contact admin`,
           variant: 'secondary',
         };
+      case 'CANCEL_CHANGE_FIRST':
+        return {
+          disabled: true,
+          title: t`Cancel change first`,
+          variant: 'secondary',
+        };
       case 'SWITCH_INTERVAL_FIRST':
         return {
           disabled: true,

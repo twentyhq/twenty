@@ -15,6 +15,7 @@ export type SettingsBillingPlanAction = {
 };
 
 export type SettingsBillingPlanActionType =
+  | 'CANCEL_CHANGE_FIRST'
   | 'CONTACT_ADMIN'
   | 'CURRENT'
   | 'MANAGE_BILLING'

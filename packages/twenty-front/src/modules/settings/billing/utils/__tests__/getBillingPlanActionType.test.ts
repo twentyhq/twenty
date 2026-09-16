@@ -68,30 +68,62 @@ describe('getBillingPlanActionType', () => {
     ).toBe('SCHEDULED');
   });
 
-  it('does not mark another plan as scheduled when only the interval matches the schedule', () => {
+  it('blocks the other cells while a change is scheduled, rather than rewriting it', () => {
+    const scheduledProMonthly = {
+      currentInterval: SubscriptionInterval.Year,
+      currentPlanKey: BillingPlanKey.ENTERPRISE,
+      scheduledInterval: SubscriptionInterval.Month,
+      scheduledPlanKey: BillingPlanKey.PRO,
+    };
+
     expect(
       getBillingPlanActionType(
         buildParams({
+          ...scheduledProMonthly,
           planKey: BillingPlanKey.PRO,
-          scheduledInterval: SubscriptionInterval.Year,
-          scheduledPlanKey: BillingPlanKey.ENTERPRISE,
           selectedInterval: SubscriptionInterval.Year,
         }),
       ),
-    ).toBe('SWITCH_INTERVAL');
+    ).toBe('CANCEL_CHANGE_FIRST');
+
+    expect(
+      getBillingPlanActionType(
+        buildParams({
+          ...scheduledProMonthly,
+          planKey: BillingPlanKey.ENTERPRISE,
+          selectedInterval: SubscriptionInterval.Month,
+        }),
+      ),
+    ).toBe('CANCEL_CHANGE_FIRST');
   });
 
-  it('does not mark another interval as scheduled when only the plan matches the schedule', () => {
+  it('still marks the subscribed and the scheduled cells while a change is scheduled', () => {
+    const scheduledProMonthly = {
+      currentInterval: SubscriptionInterval.Year,
+      currentPlanKey: BillingPlanKey.ENTERPRISE,
+      scheduledInterval: SubscriptionInterval.Month,
+      scheduledPlanKey: BillingPlanKey.PRO,
+    };
+
     expect(
       getBillingPlanActionType(
         buildParams({
+          ...scheduledProMonthly,
           planKey: BillingPlanKey.ENTERPRISE,
-          scheduledInterval: SubscriptionInterval.Month,
-          scheduledPlanKey: BillingPlanKey.ENTERPRISE,
           selectedInterval: SubscriptionInterval.Year,
         }),
       ),
-    ).toBe('SWITCH_INTERVAL_FIRST');
+    ).toBe('CURRENT');
+
+    expect(
+      getBillingPlanActionType(
+        buildParams({
+          ...scheduledProMonthly,
+          planKey: BillingPlanKey.PRO,
+          selectedInterval: SubscriptionInterval.Month,
+        }),
+      ),
+    ).toBe('SCHEDULED');
   });
 
   it('sends a canceled subscription to the billing portal', () => {

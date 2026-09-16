@@ -4,6 +4,7 @@ import {
   type BillingPlanKey,
   type SubscriptionInterval,
 } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type GetBillingPlanActionTypeParams = {
   canSwitchSubscription: boolean;
@@ -57,6 +58,14 @@ export const getBillingPlanActionType = ({
 
   if (!canSwitchSubscription) {
     return hasPermissionToManageBilling ? 'UNAVAILABLE' : 'CONTACT_ADMIN';
+  }
+
+  const hasScheduledChange =
+    (isDefined(scheduledPlanKey) && scheduledPlanKey !== currentPlanKey) ||
+    (isDefined(scheduledInterval) && scheduledInterval !== currentInterval);
+
+  if (hasScheduledChange) {
+    return 'CANCEL_CHANGE_FIRST';
   }
 
   if (!isCurrentPlan && !isCurrentInterval) {
