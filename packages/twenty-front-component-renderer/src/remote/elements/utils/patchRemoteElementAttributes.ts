@@ -1,3 +1,4 @@
+import { type RemoteElementConstructor as RemoteDomElementConstructor } from '@remote-dom/core/elements';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ALLOWED_HTML_ELEMENTS } from '@/constants/AllowedHtmlElements';
@@ -24,16 +25,11 @@ type RemoteElementWithAttributeUpdater = Element &
     updateRemoteProperty: (propertyName: string, value?: unknown) => void;
   };
 
-type RemotePropertyDefinition = {
-  name: string;
-  attribute?: string;
-};
-
-type RemoteElementConstructor = CustomElementConstructor & {
-  observedAttributes?: string[];
-  remotePropertyDefinitions?: Map<string, RemotePropertyDefinition>;
-  prototype: RemoteElementWithAttributeUpdater;
-};
+type RemoteElementConstructor = CustomElementConstructor &
+  Partial<Pick<RemoteDomElementConstructor, 'remotePropertyDefinitions'>> & {
+    observedAttributes?: string[];
+    prototype: RemoteElementWithAttributeUpdater;
+  };
 
 export const patchRemoteElementAttributes = (): void => {
   for (const allowedHtmlElement of ALLOWED_HTML_ELEMENTS) {
@@ -55,9 +51,6 @@ export const patchRemoteElementAttributes = (): void => {
       isAriaOrDataAttribute(attributeName) &&
       !attributeNamesAlreadySyncedByRemoteDom.has(attributeName);
 
-    // React 18 writes camelCase prop names (className, viewBox, strokeWidth)
-    // as raw attributes on custom elements, while remote-dom only observes
-    // their kebab-case attribute form.
     const toCanonicalAttributeName = (attributeName: string): string => {
       if (attributeName === 'className') {
         return 'class';

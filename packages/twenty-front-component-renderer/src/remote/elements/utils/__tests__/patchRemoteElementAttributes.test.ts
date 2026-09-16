@@ -5,10 +5,19 @@ import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveR
 
 import { patchRemoteElementAttributes } from '../patchRemoteElementAttributes';
 
-const createHtmlDivElement = (): HTMLElement =>
+type RemoteElementWithPropertyUpdater = HTMLElement & {
+  updateRemoteProperty: (propertyName: string, value?: unknown) => void;
+};
+
+type RemoteSvgElement = RemoteElementWithPropertyUpdater & {
+  viewBox?: string;
+  strokeWidth?: string;
+};
+
+const createHtmlDivElement = (): RemoteElementWithPropertyUpdater =>
   document.createElement('html-div');
 
-const createHtmlSvgElement = (): HTMLElement =>
+const createHtmlSvgElement = (): RemoteSvgElement =>
   document.createElement('html-svg');
 
 describe('patchRemoteElementAttributes', () => {
@@ -165,10 +174,6 @@ describe('patchRemoteElementAttributes', () => {
   });
 
   describe('className attribute alias', () => {
-    type RemoteElementWithPropertyUpdater = HTMLElement & {
-      updateRemoteProperty: (propertyName: string, value?: unknown) => void;
-    };
-
     it('should store a className attribute as the class attribute', () => {
       const element = createHtmlDivElement();
 
@@ -182,12 +187,12 @@ describe('patchRemoteElementAttributes', () => {
     });
 
     it('should forward a className attribute to the host as the className property', () => {
-      const element =
-        createHtmlDivElement() as RemoteElementWithPropertyUpdater;
+      const element = createHtmlDivElement();
       const updateRemoteProperty = jest.spyOn(element, 'updateRemoteProperty');
 
       element.setAttribute('className', 'from-react-18');
 
+      expect(updateRemoteProperty).toHaveBeenCalledTimes(1);
       expect(updateRemoteProperty).toHaveBeenCalledWith(
         'className',
         'from-react-18',
@@ -195,8 +200,7 @@ describe('patchRemoteElementAttributes', () => {
     });
 
     it('should clear the class attribute when removing the className alias', () => {
-      const element =
-        createHtmlDivElement() as RemoteElementWithPropertyUpdater;
+      const element = createHtmlDivElement();
 
       element.setAttribute('className', 'from-react-18');
 
@@ -206,18 +210,14 @@ describe('patchRemoteElementAttributes', () => {
 
       expect(element.getAttribute('class')).toBeNull();
       expect(element.hasAttribute('className')).toBe(false);
+      expect(updateRemoteProperty).toHaveBeenCalledTimes(1);
       expect(updateRemoteProperty).toHaveBeenCalledWith('className', undefined);
     });
   });
 
   describe('camelCase remote property names written as attributes', () => {
-    type RemoteSvgElement = HTMLElement & {
-      viewBox?: string;
-      strokeWidth?: string;
-    };
-
     it('should store a camelCase property name under its kebab-case attribute', () => {
-      const element = createHtmlSvgElement() as RemoteSvgElement;
+      const element = createHtmlSvgElement();
 
       element.setAttribute('viewBox', '0 0 24 24');
 
@@ -229,7 +229,7 @@ describe('patchRemoteElementAttributes', () => {
     });
 
     it('should assign the camelCase remote property that remote-dom forwards', () => {
-      const element = createHtmlSvgElement() as RemoteSvgElement;
+      const element = createHtmlSvgElement();
 
       element.setAttribute('strokeWidth', '2');
 
@@ -238,7 +238,7 @@ describe('patchRemoteElementAttributes', () => {
     });
 
     it('should clear the property when removing the camelCase attribute', () => {
-      const element = createHtmlSvgElement() as RemoteSvgElement;
+      const element = createHtmlSvgElement();
 
       element.setAttribute('viewBox', '0 0 24 24');
       element.removeAttribute('viewBox');
