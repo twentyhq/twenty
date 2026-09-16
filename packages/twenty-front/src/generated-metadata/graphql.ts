@@ -4397,7 +4397,6 @@ export type MutationUpgradeApplicationArgs = {
 
 export type MutationUploadAppTarballArgs = {
   file: Scalars['Upload']['input'];
-  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 
