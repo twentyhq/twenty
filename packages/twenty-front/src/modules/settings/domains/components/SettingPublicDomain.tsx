@@ -2,6 +2,7 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/components/CheckPublicDomainValidRecordsEffect';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCheckPublicDomainValidRecords';
@@ -65,15 +66,31 @@ export const SettingPublicDomain = () => {
     CreatePublicDomainDocument,
   );
 
-  const { data: publicDomainsData, refetch: refetchPublicDomains } = useQuery(
-    FindManyPublicDomainsDocument,
-  );
+  const {
+    data: publicDomainsData,
+    loading: publicDomainsLoading,
+    refetch: refetchPublicDomains,
+  } = useQuery(FindManyPublicDomainsDocument);
 
-  const selectedPublicDomain = isDefined(publicDomainId)
+  const isEditingPublicDomain = isDefined(publicDomainId);
+
+  // Scoped to the application in the URL: the query is workspace-wide, so a
+  // domain id from another application would otherwise be editable and
+  // deletable from this page.
+  const selectedPublicDomain = isEditingPublicDomain
     ? publicDomainsData?.findManyPublicDomains?.find(
-        ({ id }) => id === publicDomainId,
+        (publicDomain) =>
+          publicDomain.id === publicDomainId &&
+          publicDomain.applicationId === applicationId,
       )
     : undefined;
+
+  const isLoadingSelectedPublicDomain =
+    isEditingPublicDomain && publicDomainsLoading;
+  const isPublicDomainNotFound =
+    isEditingPublicDomain &&
+    !publicDomainsLoading &&
+    !isDefined(selectedPublicDomain);
 
   const { data: applicationData } = useQuery(FindOneApplicationNameDocument, {
     variables: { id: applicationId },
@@ -180,66 +197,79 @@ export const SettingPublicDomain = () => {
       actionButton={
         <SaveAndCancelButtons
           onCancel={navigateToApplication}
-          isSaveDisabled={loading || isDefined(selectedPublicDomain)}
+          isSaveDisabled={loading || isEditingPublicDomain}
           onSave={onCreate}
         />
       }
     >
       <SettingsPageContainer>
-        <Section>
-          <H2Title
-            title={t`Custom Domain`}
-            description={t`Set the name of your custom domain and configure your DNS records.`}
-          />
-          {isDefined(selectedPublicDomain) && (
-            <CheckPublicDomainValidRecordsEffect
-              publicDomain={selectedPublicDomain}
+        {isLoadingSelectedPublicDomain ? (
+          <SettingsSectionSkeletonLoader />
+        ) : isPublicDomainNotFound ? (
+          <Section>
+            <H2Title
+              title={t`Custom domain not found`}
+              description={t`This custom domain does not exist or does not belong to this application.`}
             />
-          )}
-          <StyledDomainFormWrapper>
-            <TextInput
-              value={selectedPublicDomain?.domain ?? newPublicDomain}
-              onChange={setNewPublicDomain}
-              error={newPublicDomainError}
-              type="text"
-              disabled={isDefined(selectedPublicDomain)}
-              placeholder="app.yourdomain.com"
-              fullWidth
+          </Section>
+        ) : (
+          <Section>
+            <H2Title
+              title={t`Custom Domain`}
+              description={t`Set the name of your custom domain and configure your DNS records.`}
             />
             {isDefined(selectedPublicDomain) && (
-              <StyledButtonGroupContainer>
-                <ButtonGroup>
-                  <StyledButtonContainer>
-                    <Button
-                      loading={isLoading}
-                      startIcon={<IconReload />}
-                      onClick={() =>
-                        checkPublicDomainRecords(selectedPublicDomain.domain)
-                      }
-                      type="button"
-                      variant="outline"
-                    >{t`Reload`}</Button>
-                  </StyledButtonContainer>
-                  <StyledButtonContainer>
-                    <Button
-                      startIcon={<IconTrash />}
-                      aria-label={t`Delete`}
-                      onClick={onDelete}
-                      variant="outline"
-                    />
-                  </StyledButtonContainer>
-                </ButtonGroup>
-              </StyledButtonGroupContainer>
+              <CheckPublicDomainValidRecordsEffect
+                publicDomain={selectedPublicDomain}
+              />
             )}
-          </StyledDomainFormWrapper>
-          {isDefined(selectedPublicDomain) && publicDomainRecords?.domain && (
-            <StyledRecordsWrapper>
-              {isDefined(publicDomainRecords.records) && (
-                <SettingsDomainRecords records={publicDomainRecords.records} />
+            <StyledDomainFormWrapper>
+              <TextInput
+                value={selectedPublicDomain?.domain ?? newPublicDomain}
+                onChange={setNewPublicDomain}
+                error={newPublicDomainError}
+                type="text"
+                disabled={isDefined(selectedPublicDomain)}
+                placeholder="app.yourdomain.com"
+                fullWidth
+              />
+              {isDefined(selectedPublicDomain) && (
+                <StyledButtonGroupContainer>
+                  <ButtonGroup>
+                    <StyledButtonContainer>
+                      <Button
+                        loading={isLoading}
+                        startIcon={<IconReload />}
+                        onClick={() =>
+                          checkPublicDomainRecords(selectedPublicDomain.domain)
+                        }
+                        type="button"
+                        variant="outline"
+                      >{t`Reload`}</Button>
+                    </StyledButtonContainer>
+                    <StyledButtonContainer>
+                      <Button
+                        startIcon={<IconTrash />}
+                        aria-label={t`Delete`}
+                        onClick={onDelete}
+                        variant="outline"
+                      />
+                    </StyledButtonContainer>
+                  </ButtonGroup>
+                </StyledButtonGroupContainer>
               )}
-            </StyledRecordsWrapper>
-          )}
-        </Section>
+            </StyledDomainFormWrapper>
+            {isDefined(selectedPublicDomain) && publicDomainRecords?.domain && (
+              <StyledRecordsWrapper>
+                {isDefined(publicDomainRecords.records) && (
+                  <SettingsDomainRecords
+                    records={publicDomainRecords.records}
+                  />
+                )}
+              </StyledRecordsWrapper>
+            )}
+          </Section>
+        )}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

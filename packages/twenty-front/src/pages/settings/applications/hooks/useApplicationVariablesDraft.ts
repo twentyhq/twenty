@@ -1,10 +1,14 @@
 import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/primitives/feedback';
-import { type ApplicationVariable } from '~/generated-metadata/graphql';
-import { useUpdateOneApplicationVariable } from '~/pages/settings/applications/hooks/useUpdateOneApplicationVariable';
+import {
+  type ApplicationVariable,
+  FindOneApplicationDocument,
+  UpdateOneApplicationVariableDocument,
+} from '~/generated-metadata/graphql';
 import { applicationVariablesDraftFamilyState } from '~/pages/settings/applications/states/applicationVariablesDraftFamilyState';
 
 export const useApplicationVariablesDraft = ({
@@ -18,7 +22,13 @@ export const useApplicationVariablesDraft = ({
     applicationVariablesDraftFamilyState,
     applicationId,
   );
-  const { updateOneApplicationVariable } = useUpdateOneApplicationVariable();
+  const [updateOneApplicationVariable] = useMutation(
+    UpdateOneApplicationVariableDocument,
+  );
+  const { refetch: refetchApplication } = useQuery(FindOneApplicationDocument, {
+    variables: { id: applicationId },
+    skip: !applicationId,
+  });
   const { enqueueToast } = useToast();
   const [isSavingApplicationVariables, setIsSavingApplicationVariables] =
     useState(false);
@@ -51,9 +61,16 @@ export const useApplicationVariablesDraft = ({
     try {
       await Promise.all(
         editedApplicationVariables.map(({ key, value }) =>
-          updateOneApplicationVariable({ key, value, applicationId }),
+          updateOneApplicationVariable({
+            variables: { key, value, applicationId },
+          }),
         ),
       );
+
+      // A single refetch after every mutation settled, awaited before dropping
+      // the draft: per-mutation refetches can land out of order and write back
+      // a snapshot taken before the last write.
+      await refetchApplication();
 
       setDraftValueByKey({});
     } catch {
