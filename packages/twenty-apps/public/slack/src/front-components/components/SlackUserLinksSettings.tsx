@@ -14,6 +14,7 @@ import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/typography';
 
 import { SlackAccessModeSection } from 'src/front-components/components/SlackAccessModeSection';
+import { SlackIconPlus } from 'src/front-components/components/SlackButtonIcons';
 import { SlackChannelRulesSection } from 'src/front-components/components/SlackChannelRulesSection';
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
@@ -27,6 +28,7 @@ import { useResendSlackUserLinkConsent } from 'src/front-components/hooks/use-re
 import { useSlackUserLinks } from 'src/front-components/hooks/use-slack-user-links';
 import { useUnlinkedSlackUsers } from 'src/front-components/hooks/use-unlinked-slack-users';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
+import { enqueueSlackToolResultSnackbar } from 'src/front-components/utils/enqueue-slack-tool-result-snackbar.util';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -132,10 +134,7 @@ const SlackUserLinksSettingsContent = () => {
   const handleRemove = async (slackUserLink: SlackUserLinkRecord) => {
     const result = await removeSlackUserLink(slackUserLink.id);
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    enqueueSlackToolResultSnackbar(result);
 
     if (result.success) {
       await handleLinkSaved();
@@ -162,10 +161,7 @@ const SlackUserLinksSettingsContent = () => {
       slackUserId: slackUserLink.slackUserId,
     });
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    enqueueSlackToolResultSnackbar(result);
 
     if (result.success) {
       await refetchSlackUserLinks();
@@ -287,6 +283,7 @@ const SlackUserLinksSettingsContent = () => {
             <Button
               type="button"
               title="Link someone not listed above"
+              Icon={SlackIconPlus}
               size="small"
               variant="secondary"
               onClick={() => setIsManualFormOpen(true)}

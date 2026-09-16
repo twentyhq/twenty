@@ -1,11 +1,10 @@
 import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useId, useState } from 'react';
-import { enqueueSnackbar } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { SlackIconSave } from 'src/front-components/components/SlackButtonIcons';
 import { SlackChannelPicker } from 'src/front-components/components/SlackChannelPicker';
 import { SlackChannelRuleModeSelect } from 'src/front-components/components/SlackChannelRuleModeSelect';
 import { SlackPickedEntityButton } from 'src/front-components/components/SlackPickedEntityButton';
@@ -14,6 +13,7 @@ import { SlackUserLinkFormHint } from 'src/front-components/components/SlackUser
 import { SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS } from 'src/front-components/constants/slack-channel-rule-mode-descriptions.constant';
 import { useSetSlackChannelRule } from 'src/front-components/hooks/use-set-slack-channel-rule';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
+import { enqueueSlackToolResultSnackbar } from 'src/front-components/utils/enqueue-slack-tool-result-snackbar.util';
 import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-channel-rule-mode';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
 import { type SlackChannelSearchOption } from 'src/logic-functions/types/slack-channel-search.type';
@@ -68,10 +68,7 @@ export const SlackChannelRuleForm = ({
       mode,
     });
 
-    enqueueSnackbar({
-      message: isNonEmptyString(result.error) ? result.error : result.message,
-      variant: result.success ? 'success' : 'error',
-    });
+    enqueueSlackToolResultSnackbar(result);
 
     if (result.success) {
       setSelectedChannel(null);
@@ -125,18 +122,20 @@ export const SlackChannelRuleForm = ({
       <StyledActions>
         <Button
           type="button"
-          title={isSubmitting ? 'Saving…' : 'Save rule'}
-          variant="primary"
-          accent="blue"
-          disabled={!canSubmit}
-          onClick={handleSubmit}
-        />
-        <Button
-          type="button"
           title="Cancel"
-          variant="secondary"
+          variant="tertiary"
           disabled={isSubmitting}
           onClick={onCancel}
+        />
+        <Button
+          type="submit"
+          title="Save rule"
+          Icon={SlackIconSave}
+          variant="primary"
+          accent="blue"
+          isLoading={isSubmitting}
+          disabled={!canSubmit}
+          onClick={handleSubmit}
         />
       </StyledActions>
     </StyledForm>
