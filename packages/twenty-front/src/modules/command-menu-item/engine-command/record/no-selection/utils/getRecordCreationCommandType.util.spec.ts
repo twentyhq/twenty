@@ -1,3 +1,4 @@
+// oxlint-disable twenty/folder-structure -- Utility specs intentionally live beside their implementation.
 import { getRecordCreationCommandType } from '@/command-menu-item/engine-command/record/no-selection/utils/getRecordCreationCommandType';
 
 it.each([

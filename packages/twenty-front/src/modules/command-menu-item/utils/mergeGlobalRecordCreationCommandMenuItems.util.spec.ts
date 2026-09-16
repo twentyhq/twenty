@@ -1,3 +1,4 @@
+// oxlint-disable twenty/folder-structure -- Utility specs intentionally live beside their implementation.
 import { mergeGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/utils/mergeGlobalRecordCreationCommandMenuItems';
 import { EngineComponentKey } from '~/generated-metadata/graphql';
 import { mockedCommandMenuItems } from '~/testing/mock-data/generated/metadata/command-menu-items/mock-command-menu-items-data';

@@ -139,13 +139,13 @@ const RecordCreationFlow = ({
         }),
         commandOrigin === 'task'
           ? getMockObjectMetadataItemOrThrow('task').id
-          : null,
+          : undefined,
       );
       store.set(
         contextStoreCurrentViewIdComponentState.atomFamily({
           instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
         }),
-        null,
+        undefined,
       );
     }
     applyChanges();
