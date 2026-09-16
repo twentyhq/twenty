@@ -29,7 +29,8 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { logError } from '~/utils/logError';
 
 export const useSaveLayoutCustomization = () => {
-  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
+  const { updateOneObjectMetadataItem, refetchCommandMenuItems } =
+    useUpdateOneObjectMetadataItem();
   const [isSaving, setIsSaving] = useState(false);
   const store = useStore();
   const { t } = useLingui();
@@ -50,20 +51,43 @@ export const useSaveLayoutCustomization = () => {
   const save = useCallback(async () => {
     setIsSaving(true);
     try {
-      for (const [objectId, color] of Object.entries(
+      const objectColorEntries = Object.entries(
         store.get(objectColorsDraftState.atom),
-      )) {
-        const result = await updateOneObjectMetadataItem({
-          idToUpdate: objectId,
-          updatePayload: { color },
-        });
-        if (result.status === 'failed') {
+      );
+
+      if (objectColorEntries.length > 0) {
+        // Each update otherwise refetches the command menu, so send them
+        // together and refetch once.
+        const colorResults = await Promise.all(
+          objectColorEntries.map(async ([objectId, color]) => ({
+            objectId,
+            result: await updateOneObjectMetadataItem({
+              idToUpdate: objectId,
+              updatePayload: { color },
+              shouldRefetchCommandMenuItems: false,
+            }),
+          })),
+        );
+
+        const savedObjectIds = new Set(
+          colorResults
+            .filter(({ result }) => result.status === 'successful')
+            .map(({ objectId }) => objectId),
+        );
+
+        store.set(objectColorsDraftState.atom, (draft) =>
+          Object.fromEntries(
+            Object.entries(draft).filter(
+              ([objectId]) => !savedObjectIds.has(objectId),
+            ),
+          ),
+        );
+
+        await refetchCommandMenuItems();
+
+        if (savedObjectIds.size !== objectColorEntries.length) {
           return;
         }
-        store.set(objectColorsDraftState.atom, (draft) => {
-          const { [objectId]: _savedColor, ...remainingColors } = draft;
-          return remainingColors;
-        });
       }
       const navigationDraft = store.get(navigationMenuItemsDraftState.atom);
       const prefetchItems = store.get(navigationMenuItemsSelector.atom);
@@ -172,6 +196,7 @@ export const useSaveLayoutCustomization = () => {
     }
   }, [
     updateOneObjectMetadataItem,
+    refetchCommandMenuItems,
     saveDraft,
     saveCommandMenuItemsDraft,
     isCommandMenuItemsDirty,

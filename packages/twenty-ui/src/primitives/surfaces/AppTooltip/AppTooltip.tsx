@@ -227,13 +227,32 @@ export const AppTooltip = ({
       }, HIDE_DELAY_MS);
     };
 
+    // Dragging or replacing a row can prevent its mouseleave event. Only
+    // watched while an anchor is hovered, so idle tooltips cost nothing.
+    const handlePointerMove = (event: PointerEvent) => {
+      if (
+        isDefined(hoveredAnchor) &&
+        event.target instanceof Node &&
+        !hoveredAnchor.contains(event.target)
+      ) {
+        stopWatchingPointer();
+        handleAnchorLeave();
+      }
+    };
+
+    const stopWatchingPointer = () => {
+      hoveredAnchor = null;
+      document.removeEventListener('pointermove', handlePointerMove);
+    };
+
     const removeListeners = anchorElements.map((anchorElement) => {
       const handleEnter = () => {
         hoveredAnchor = anchorElement;
+        document.addEventListener('pointermove', handlePointerMove);
         handleAnchorEnter(anchorElement);
       };
       const handleLeave = () => {
-        hoveredAnchor = null;
+        stopWatchingPointer();
         handleAnchorLeave();
       };
       const handleFocus = () => handleAnchorEnter(anchorElement);
@@ -252,19 +271,6 @@ export const AppTooltip = ({
         anchorElement.removeEventListener('blur', handleLeave);
       };
     });
-
-    // Dragging or replacing a row can prevent its mouseleave event.
-    const handlePointerMove = (event: PointerEvent) => {
-      if (
-        hoveredAnchor &&
-        event.target instanceof Node &&
-        !hoveredAnchor.contains(event.target)
-      ) {
-        hoveredAnchor = null;
-        handleAnchorLeave();
-      }
-    };
-    document.addEventListener('pointermove', handlePointerMove);
 
     return () => {
       document.removeEventListener('pointermove', handlePointerMove);

@@ -1,4 +1,3 @@
-import { hoveredNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/hoveredNavigationMenuItemIdState';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { Fragment } from 'react';
@@ -73,7 +72,6 @@ const meta: Meta<typeof NavigationMenuItemEditable> = {
   ],
   parameters: { container: { width: 240 } },
   beforeEach: () => {
-    jotaiStore.set(hoveredNavigationMenuItemIdState.atom, null);
     jotaiStore.set(selectedNavigationMenuItemIdInEditModeState.atom, null);
     jotaiStore.set(navigationMenuItemIdToRenameState.atom, null);
     jotaiStore.set(isLayoutCustomizationModeEnabledState.atom, true);

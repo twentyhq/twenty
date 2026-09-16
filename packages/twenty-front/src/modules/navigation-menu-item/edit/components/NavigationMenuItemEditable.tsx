@@ -1,5 +1,3 @@
-import { hoveredNavigationMenuItemIdState } from '@/navigation-menu-item/common/states/hoveredNavigationMenuItemIdState';
-import { activeDropdownFocusIdState } from '@/ui/layout/dropdown/states/activeDropdownFocusIdState';
 import { NavigationMenuItemObjectColorEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemObjectColorEditor';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import {
@@ -7,7 +5,7 @@ import {
   isDropdownOpenComponentState as isColorPickerOpenComponentState,
 } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useEffect, useState, type ReactNode, type PointerEvent } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -79,47 +77,6 @@ export const NavigationMenuItemEditable = ({
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
-  const [hoveredNavigationMenuItemId, setHoveredNavigationMenuItemId] =
-    useAtomState(hoveredNavigationMenuItemIdState);
-  const activeDropdownFocusId = useAtomStateValue(activeDropdownFocusIdState);
-  const [isTooltipDelayElapsed, setIsTooltipDelayElapsed] = useState(false);
-  const isHovered = hoveredNavigationMenuItemId === item.id;
-
-  useEffect(() => {
-    if (!isHovered) {
-      setIsTooltipDelayElapsed(false);
-      return;
-    }
-
-    const timeoutId = setTimeout(
-      () => setIsTooltipDelayElapsed(true),
-      Number.parseInt(TooltipDelay.mediumDelay, 10),
-    );
-
-    return () => clearTimeout(timeoutId);
-  }, [isHovered]);
-  const clearTooltip = () =>
-    setHoveredNavigationMenuItemId((hoveredId) =>
-      hoveredId === item.id ? null : hoveredId,
-    );
-  const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
-    if (
-      !isLayoutCustomizationModeEnabled ||
-      activeDropdownFocusId !== null ||
-      !(event.target instanceof Element) ||
-      !event.currentTarget.contains(event.target) ||
-      event.target.closest('[data-navigation-actions]')
-    ) {
-      setHoveredNavigationMenuItemId(null);
-      return;
-    }
-    setHoveredNavigationMenuItemId(item.id);
-  };
-  useEffect(() => {
-    if (activeDropdownFocusId !== null) {
-      setHoveredNavigationMenuItemId(null);
-    }
-  }, [activeDropdownFocusId, setHoveredNavigationMenuItemId]);
 
   const theme = useTheme();
   const isExpanded = useIsNavigationDrawerContentExpanded();
@@ -257,21 +214,6 @@ export const NavigationMenuItemEditable = ({
   return (
     <StyledRow
       id={anchorId}
-      onPointerEnter={handlePointerMove}
-      onPointerMove={handlePointerMove}
-      onPointerLeave={clearTooltip}
-      onPointerDownCapture={() => setHoveredNavigationMenuItemId(null)}
-      onFocusCapture={(event) => {
-        if (
-          isLayoutCustomizationModeEnabled &&
-          activeDropdownFocusId === null &&
-          event.target.matches(':focus-visible') &&
-          !event.target.closest('[data-navigation-actions]')
-        ) {
-          setHoveredNavigationMenuItemId(item.id);
-        }
-      }}
-      onBlurCapture={clearTooltip}
       onContextMenu={(event) => {
         if (
           !canOrganize ||
@@ -303,30 +245,27 @@ export const NavigationMenuItemEditable = ({
           />
         </StyledActions>
       )}
-      {isLayoutCustomizationModeEnabled &&
-        activeDropdownFocusId === null &&
-        isHovered &&
-        isTooltipDelayElapsed && (
-          <AppTooltip
-            isOpen
-            anchorSelect={`#${anchorId}`}
-            title={types[item.type].label}
-            description={
-              item.type === NavigationMenuItemType.FOLDER
-                ? t`Click to edit`
-                : undefined
-            }
-            Icon={types[item.type].Icon}
-            offset={theme.spacingMultiplicator}
-            hidden={
-              isDropdownOpen ||
-              isColorPickerOpen ||
-              selectedNavigationMenuItemIdInEditMode === item.id
-            }
-            place={TooltipPosition.Top}
-            positionStrategy="fixed"
-          />
-        )}
+      {isLayoutCustomizationModeEnabled && (
+        <AppTooltip
+          delay={TooltipDelay.mediumDelay}
+          anchorSelect={`#${anchorId}`}
+          title={types[item.type].label}
+          description={
+            item.type === NavigationMenuItemType.FOLDER
+              ? t`Click to edit`
+              : undefined
+          }
+          Icon={types[item.type].Icon}
+          offset={theme.spacingMultiplicator}
+          hidden={
+            isDropdownOpen ||
+            isColorPickerOpen ||
+            selectedNavigationMenuItemIdInEditMode === item.id
+          }
+          place={TooltipPosition.Top}
+          positionStrategy="fixed"
+        />
+      )}
     </StyledRow>
   );
 };
