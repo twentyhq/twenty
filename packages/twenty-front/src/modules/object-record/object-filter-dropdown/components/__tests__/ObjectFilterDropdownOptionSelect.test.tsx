@@ -27,7 +27,10 @@ jest.mock('@/ui/layout/dropdown/hooks/useCloseDropdown', () => ({
 }));
 
 jest.mock('@/ui/layout/selectable-list/hooks/useSelectableList', () => ({
-  useSelectableList: () => ({ resetSelectedItem: jest.fn() }),
+  useSelectableList: () => ({
+    resetSelectedItem: jest.fn(),
+    setSelectedItemId: jest.fn(),
+  }),
 }));
 
 jest.mock(
