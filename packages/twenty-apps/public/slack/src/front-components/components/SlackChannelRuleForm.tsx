@@ -35,6 +35,11 @@ const StyledActions = styled.div`
   gap: ${() => themeCssVariables.spacing[2]};
 `;
 
+const DEFAULT_MODE: SlackChannelRuleMode =
+  SLACK_CHANNEL_RULE_MODE.LINKED_MEMBERS_ONLY;
+const DEFAULT_CAPABILITY: SlackChannelRuleCapability =
+  SLACK_CHANNEL_RULE_CAPABILITY.FULL;
+
 type SlackChannelRuleFormProps = {
   existingRules: SlackChannelRuleRecord[];
   onRuleSaved: () => void;
@@ -50,12 +55,9 @@ export const SlackChannelRuleForm = ({
   const capabilitySelectId = useId();
   const [selectedChannel, setSelectedChannel] =
     useState<SlackChannelSearchOption | null>(null);
-  const [mode, setMode] = useState<SlackChannelRuleMode>(
-    SLACK_CHANNEL_RULE_MODE.LINKED_MEMBERS_ONLY,
-  );
-  const [capability, setCapability] = useState<SlackChannelRuleCapability>(
-    SLACK_CHANNEL_RULE_CAPABILITY.FULL,
-  );
+  const [mode, setMode] = useState<SlackChannelRuleMode>(DEFAULT_MODE);
+  const [capability, setCapability] =
+    useState<SlackChannelRuleCapability>(DEFAULT_CAPABILITY);
   const { setSlackChannelRule, savingChannelId } = useSetSlackChannelRule();
 
   const isSubmitting = isDefined(savingChannelId);
@@ -76,17 +78,18 @@ export const SlackChannelRuleForm = ({
       (rule) => rule.slackChannelId === channel.slackChannelId,
     );
 
-    if (!isDefined(matchedRule)) {
-      return;
-    }
-
-    if (isSlackChannelRuleMode(matchedRule.mode)) {
-      setMode(matchedRule.mode);
-    }
-
-    if (isSlackChannelRuleCapability(matchedRule.capability)) {
-      setCapability(matchedRule.capability);
-    }
+    // A channel without a rule starts from the defaults again, so nothing
+    // carries over from a previously picked channel.
+    setMode(
+      isSlackChannelRuleMode(matchedRule?.mode)
+        ? matchedRule.mode
+        : DEFAULT_MODE,
+    );
+    setCapability(
+      isSlackChannelRuleCapability(matchedRule?.capability)
+        ? matchedRule.capability
+        : DEFAULT_CAPABILITY,
+    );
   };
 
   const handleSubmit = async () => {
@@ -108,6 +111,8 @@ export const SlackChannelRuleForm = ({
 
     if (result.success) {
       setSelectedChannel(null);
+      setMode(DEFAULT_MODE);
+      setCapability(DEFAULT_CAPABILITY);
       onRuleSaved();
     }
   };
