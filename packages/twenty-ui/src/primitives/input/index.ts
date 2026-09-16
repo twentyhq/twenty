@@ -11,13 +11,11 @@ export type { AnimatedButtonProps } from './AnimatedButton/AnimatedButton';
 export { AnimatedButton } from './AnimatedButton/AnimatedButton';
 export type { AnimatedLightIconButtonProps } from './AnimatedLightIconButton/AnimatedLightIconButton';
 export { AnimatedLightIconButton } from './AnimatedLightIconButton/AnimatedLightIconButton';
-export type {
-  ButtonSize,
-  ButtonPosition,
-  ButtonVariant,
-  ButtonAccent,
-  ButtonProps,
-} from './Button/Button';
+export type { ButtonSize } from './Button/types/ButtonSize';
+export type { ButtonPosition } from './Button/types/ButtonPosition';
+export type { ButtonVariant } from './Button/types/ButtonVariant';
+export type { ButtonAccent } from './Button/types/ButtonAccent';
+export type { ButtonProps } from './Button/types/ButtonProps';
 export { Button } from './Button/Button';
 export { baseTransitionTiming } from './Button/constant';
 export type { ButtonGroupProps } from './ButtonGroup/ButtonGroup';
@@ -60,13 +58,11 @@ export type {
 export { FloatingIconButton } from './FloatingIconButton/FloatingIconButton';
 export type { FloatingIconButtonGroupProps } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
 export { FloatingIconButtonGroup } from './FloatingIconButtonGroup/FloatingIconButtonGroup';
-export type {
-  IconButtonSize,
-  IconButtonPosition,
-  IconButtonVariant,
-  IconButtonAccent,
-  IconButtonProps,
-} from './IconButton/IconButton';
+export type { IconButtonSize } from './IconButton/types/IconButtonSize';
+export type { IconButtonPosition } from './IconButton/types/IconButtonPosition';
+export type { IconButtonVariant } from './IconButton/types/IconButtonVariant';
+export type { IconButtonAccent } from './IconButton/types/IconButtonAccent';
+export type { IconButtonProps } from './IconButton/types/IconButtonProps';
 export { IconButton } from './IconButton/IconButton';
 export type { IconButtonGroupProps } from './IconButtonGroup/IconButtonGroup';
 export { IconButtonGroup } from './IconButtonGroup/IconButtonGroup';

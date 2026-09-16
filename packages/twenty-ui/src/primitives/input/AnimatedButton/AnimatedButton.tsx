@@ -7,12 +7,10 @@ import { themeCssVariables, useTheme } from '@ui/theme-constants';
 import { GRAY_SCALE_LIGHT } from '@ui/theme/constants/GrayScaleLight';
 import { useIsMobile } from '@ui/utilities';
 import { getOsShortcutSeparator } from '@ui/utilities/device/getOsShortcutSeparator';
-import {
-  type ButtonAccent,
-  type ButtonPosition,
-  type ButtonProps,
-  type ButtonVariant,
-} from '@ui/primitives/input/Button/Button';
+import type { ButtonAccent } from '@ui/primitives/input/Button/types/ButtonAccent';
+import type { ButtonPosition } from '@ui/primitives/input/Button/types/ButtonPosition';
+import type { ButtonProps } from '@ui/primitives/input/Button/types/ButtonProps';
+import type { ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
 
 import styles from './AnimatedButton.module.scss';
 

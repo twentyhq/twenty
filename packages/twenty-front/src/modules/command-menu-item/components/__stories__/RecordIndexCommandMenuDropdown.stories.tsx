@@ -15,7 +15,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { RouterDecorator } from 'twenty-ui/testing';
 import { ContextStoreDecorator } from '~/testing/decorators/ContextStoreDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
   title: 'Modules/CommandMenu/RecordIndexCommandMenuDropdown',
@@ -57,7 +57,7 @@ const meta: Meta<typeof RecordIndexCommandMenuDropdown> = {
     },
     ContextStoreDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     RouterDecorator,
   ],
 };

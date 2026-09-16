@@ -4,7 +4,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
 import { ARGOS_CAPTURE_DISABLED } from '~/testing/constants/ArgosCaptureDisabled';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const samplePythonCode = `import pandas as pd
 import matplotlib.pyplot as plt
@@ -31,7 +31,7 @@ plt.savefig('revenue_chart.png')`;
 const meta: Meta<typeof CodeExecutionDisplay> = {
   title: 'Modules/AI/CodeExecutionDisplay',
   component: CodeExecutionDisplay,
-  decorators: [SnackBarDecorator, ComponentDecorator],
+  decorators: [ToastDecorator, ComponentDecorator],
   parameters: {
     argos: ARGOS_CAPTURE_DISABLED,
     container: { width: 600 },
