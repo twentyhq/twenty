@@ -1,4 +1,4 @@
-import { EMAIL_TOOL_NAMES } from '@/inbox/tool-call-renderers/email/constants/EmailToolNames';
+import { SEND_EMAIL_TOOL_NAME } from '@/inbox/tool-call-renderers/email/constants/SendEmailToolName';
 
 export const isEmailToolName = (toolName: string): boolean =>
-  EMAIL_TOOL_NAMES.some((emailToolName) => emailToolName === toolName);
+  toolName === SEND_EMAIL_TOOL_NAME;

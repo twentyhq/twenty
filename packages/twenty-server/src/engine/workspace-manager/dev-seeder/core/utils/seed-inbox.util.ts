@@ -154,11 +154,11 @@ const EMAIL_INPUT_SCHEMA: InboxItemFieldSchema[] = [
 ];
 
 // Plans an agent proposed from incoming mail, each carrying the context it was
-// drawn from and the calls it wants to make. Running a plan now dispatches for
-// real, so the email calls name draft_email rather than send_email: seeding a
-// workspace must not arm something that leaves the building. The record-writing
-// names here stay illustrative and report as unknown tools until each is
-// mapped to its create_one_/update_one_ equivalent.
+// drawn from and the calls it wants to make. Running a plan dispatches for
+// real: a send_email call goes out through the approver's connected account,
+// which in a seeded workspace has no live credentials and so lands as a failed
+// step. The record-writing names stay illustrative and report as unknown tools
+// until each is mapped to its create_one_/update_one_ equivalent.
 const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
   {
     seedName: 'plan-move-google-renewal-forward',
@@ -206,7 +206,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
     },
     toolCalls: [
       {
-        toolName: 'draft_email',
+        toolName: 'send_email',
         label: 'Send email',
         description: 'Send Marie a reply confirming the renewal pricing.',
         icon: 'IconMail',
@@ -365,7 +365,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
         proposedInput: { amount: 24000, currency: 'USD', dueInDays: 30 },
       },
       {
-        toolName: 'draft_email',
+        toolName: 'send_email',
         label: 'Send email',
         description: 'Send the invoice to accounts payable with Anna in copy.',
         icon: 'IconMail',
@@ -537,7 +537,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
         },
       },
       {
-        toolName: 'draft_email',
+        toolName: 'send_email',
         label: 'Send email',
         description: 'Confirm the slot and share the agenda.',
         icon: 'IconMail',
@@ -709,7 +709,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_1 },
     toolCalls: [
       {
-        toolName: 'draft_email',
+        toolName: 'send_email',
         label: 'Send the renewal quote',
         description: 'Email Marie the quote with the invoice attached.',
         icon: 'IconMail',
@@ -997,7 +997,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
     },
     toolCalls: [
       {
-        toolName: 'draft_email',
+        toolName: 'send_email',
         label: 'Reply to Priya',
         description: 'Confirm the refund and say when it will land.',
         icon: 'IconMail',
@@ -1006,6 +1006,17 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
           recipients: { to: 'priya@northwind.com', cc: '' },
           subject: 'Re: Duplicate charge on invoice 4482',
           body: 'Hi Priya,\n\nYou are right, invoice 4482 was charged twice. I have refunded the second charge; it should reach your account in three to five working days.\n\nSorry for the trouble.',
+        },
+      },
+      {
+        toolName: 'create_task',
+        label: 'Create task',
+        description: 'Have finance refund the second charge on invoice 4482.',
+        icon: 'IconCheckbox',
+        inputSchema: TASK_INPUT_SCHEMA,
+        proposedInput: {
+          title: 'Refund the duplicate charge on invoice 4482',
+          dueDate: '2026-09-18',
         },
       },
     ],

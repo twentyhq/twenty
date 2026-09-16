@@ -1,7 +1,6 @@
 import { t } from '@lingui/core/macro';
 
 import { InboxEmailToolCallEditor } from '@/inbox/tool-call-renderers/email/components/InboxEmailToolCallEditor';
-import { DRAFT_EMAIL_TOOL_NAME } from '@/inbox/tool-call-renderers/email/constants/DraftEmailToolName';
 import { SEND_EMAIL_TOOL_NAME } from '@/inbox/tool-call-renderers/email/constants/SendEmailToolName';
 import { type InboxToolCallRenderer } from '@/inbox/tool-call-renderers/types/InboxToolCallRenderer';
 
@@ -13,9 +12,5 @@ export const INBOX_TOOL_CALL_RENDERERS: Record<string, InboxToolCallRenderer> =
     [SEND_EMAIL_TOOL_NAME]: {
       Editor: InboxEmailToolCallEditor,
       runLabel: () => t`Send`,
-    },
-    [DRAFT_EMAIL_TOOL_NAME]: {
-      Editor: InboxEmailToolCallEditor,
-      runLabel: () => t`Save draft`,
     },
   };

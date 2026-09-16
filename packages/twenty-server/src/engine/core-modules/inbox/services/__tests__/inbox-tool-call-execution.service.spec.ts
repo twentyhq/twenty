@@ -46,7 +46,7 @@ describe('InboxToolCallExecutionService', () => {
     service.execute({
       workspaceId: WORKSPACE_ID,
       actorUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
-      toolName: 'draft_email',
+      toolName: 'send_email',
       input: { recipients: { to: 'marie@google.com' }, subject: 'Hello' },
     });
 
@@ -62,7 +62,7 @@ describe('InboxToolCallExecutionService', () => {
       agentActorContextService.buildUserAndAgentActorContext,
     ).toHaveBeenCalledWith(ACTOR_USER_WORKSPACE_ID, WORKSPACE_ID);
     expect(toolRegistryService.resolveAndExecute).toHaveBeenCalledWith(
-      'draft_email',
+      'send_email',
       { recipients: { to: 'marie@google.com' }, subject: 'Hello' },
       expect.objectContaining({
         workspaceId: WORKSPACE_ID,
@@ -126,7 +126,7 @@ describe('InboxToolCallExecutionService', () => {
 
     await expect(execute()).resolves.toEqual({
       status: 'FAILED',
-      error: 'Tool draft_email failed without reporting a reason',
+      error: 'Tool send_email failed without reporting a reason',
     });
   });
 });

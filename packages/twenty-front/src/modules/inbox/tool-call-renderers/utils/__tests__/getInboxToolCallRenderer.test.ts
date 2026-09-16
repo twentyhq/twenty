@@ -2,20 +2,14 @@ import { InboxEmailToolCallEditor } from '@/inbox/tool-call-renderers/email/comp
 import { getInboxToolCallRenderer } from '@/inbox/tool-call-renderers/utils/getInboxToolCallRenderer';
 
 describe('getInboxToolCallRenderer', () => {
-  it('should give both email tools the composer', () => {
+  it('should give the email tool the composer', () => {
     expect(getInboxToolCallRenderer('send_email')?.Editor).toBe(
-      InboxEmailToolCallEditor,
-    );
-    expect(getInboxToolCallRenderer('draft_email')?.Editor).toBe(
       InboxEmailToolCallEditor,
     );
   });
 
-  it('should say what running each email tool does', () => {
+  it('should say what running the email tool does', () => {
     expect(getInboxToolCallRenderer('send_email')?.runLabel()).toBe('Send');
-    expect(getInboxToolCallRenderer('draft_email')?.runLabel()).toBe(
-      'Save draft',
-    );
   });
 
   // Anything else falls back to the schema form, which the caller owns.
