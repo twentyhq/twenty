@@ -19,6 +19,7 @@ import { selectSlackConversationMessages } from 'src/logic-functions/utils/selec
 type SlackAssistantContext = {
   conversationMessages: SlackAssistantAgentMessage[];
   sharedFileNames: string[];
+  historySharedFileNames: string[];
   requesterName: string | undefined;
   requesterIdentity: SlackUserIdentity | undefined;
   requestMessage: SlackThreadMessage | undefined;
@@ -31,6 +32,7 @@ type SlackAssistantContext = {
 const UNREACHABLE_SLACK_CONTEXT: SlackAssistantContext = {
   conversationMessages: [],
   sharedFileNames: [],
+  historySharedFileNames: [],
   requesterName: undefined,
   requesterIdentity: undefined,
   requestMessage: undefined,
@@ -87,6 +89,9 @@ const readSlackThreadContext = async ({
     }),
     sharedFileNames: collectSlackSharedFileNames(
       [requestMessage, ...conversationThreadMessages].filter(isDefined),
+    ),
+    historySharedFileNames: collectSlackSharedFileNames(
+      conversationThreadMessages,
     ),
     requesterName: requesterIdentity?.displayName,
     requesterIdentity,

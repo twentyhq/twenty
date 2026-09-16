@@ -28,6 +28,7 @@ const importFiles = async (files: (typeof PNG_FILE)[]) =>
     client: slackClient,
     files,
     botToken: 'xoxb-token',
+    deadlineAtMs: Date.now() + 60_000,
   });
 
 describe('importSlackAssistantAttachments', () => {
@@ -47,6 +48,7 @@ describe('importSlackAssistantAttachments', () => {
         client: slackClient,
         files: undefined,
         botToken: 'xoxb-token',
+        deadlineAtMs: Date.now() + 60_000,
       }),
     ).toEqual({ attachments: [], attachedFileNames: [] });
   });
@@ -57,6 +59,7 @@ describe('importSlackAssistantAttachments', () => {
         client: slackClient,
         files: [PNG_FILE],
         botToken: undefined,
+        deadlineAtMs: Date.now() + 60_000,
       }),
     ).toEqual({ attachments: [], attachedFileNames: [] });
 
@@ -121,6 +124,54 @@ describe('importSlackAssistantAttachments', () => {
     const result = await importFiles(files);
 
     expect(result.attachments).toHaveLength(10);
+  });
+
+  it('should count the limit in imported files, not in attempts', async () => {
+    vi.mocked(downloadSlackFile).mockResolvedValueOnce({
+      success: false,
+      error: 'status 403',
+    });
+
+    const files = Array.from({ length: 12 }, (_, index) => ({
+      ...PNG_FILE,
+      id: `F${index}`,
+      name: `screenshot-${index}.png`,
+    }));
+
+    const result = await importFiles(files);
+
+    expect(result.attachments).toHaveLength(10);
+    expect(result.attachedFileNames).not.toContain('screenshot-0.png');
+  });
+
+  it('should attach nothing once the import window has already closed', async () => {
+    const result = await importSlackAssistantAttachments({
+      client: slackClient,
+      files: [PNG_FILE],
+      botToken: 'xoxb-token',
+      deadlineAtMs: Date.now() - 1,
+    });
+
+    expect(result).toEqual({ attachments: [], attachedFileNames: [] });
+    expect(downloadSlackFile).not.toHaveBeenCalled();
+  });
+
+  it('should leave the remaining files as names when the window closes mid-import', async () => {
+    vi.mocked(uploadFileToAgentChat).mockImplementation(async () => {
+      vi.setSystemTime(Date.now() + 61_000);
+
+      return 'file-id-1';
+    });
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+
+    const result = await importFiles([
+      PNG_FILE,
+      { ...PNG_FILE, id: 'F2', name: 'chart.png' },
+    ]);
+
+    vi.useRealTimers();
+
+    expect(result.attachedFileNames).toEqual(['screenshot.png']);
   });
 
   it('should resolve a Slack Connect stub through files.info before reading it', async () => {

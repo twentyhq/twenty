@@ -6,6 +6,8 @@ import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/univer
 import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
 import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
+import { SLACK_ASSISTANT_AGENT_MIN_BUDGET_MS } from 'src/logic-functions/constants/slack-assistant-agent-min-budget-ms';
+import { SLACK_ASSISTANT_ATTACHMENT_IMPORT_MAX_MS } from 'src/logic-functions/constants/slack-assistant-attachment-import-max-ms';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { claimSlackAssistantRequest } from 'src/logic-functions/data/claim-slack-assistant-request';
@@ -90,6 +92,7 @@ export const slackAssistantWorkerHandler = async (
       {
         conversationMessages,
         sharedFileNames,
+        historySharedFileNames,
         requesterName,
         requesterIdentity,
         requestMessage,
@@ -184,6 +187,10 @@ export const slackAssistantWorkerHandler = async (
         botToken: slackConnection?.success
           ? slackConnection.accessToken
           : undefined,
+        deadlineAtMs: Math.min(
+          Date.now() + SLACK_ASSISTANT_ATTACHMENT_IMPORT_MAX_MS,
+          agentDeadlineAtMs - SLACK_ASSISTANT_AGENT_MIN_BUDGET_MS,
+        ),
       });
 
     const resolvedMentions = await resolveSlackAssistantMentions({
@@ -211,6 +218,7 @@ export const slackAssistantWorkerHandler = async (
         workspaceBaseUrl: workspaceBaseUrls[0],
         hasMentionedUsers: resolvedMentions.hasMentionedUsers,
         sharedFileNames,
+        historySharedFileNames,
         attachments,
         attachedFileNames,
       }),

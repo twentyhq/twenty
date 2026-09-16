@@ -1,29 +1,87 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
-import { SLACK_ASSISTANT_ATTACHMENT_DOWNLOAD_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-attachment-download-timeout-ms';
 import { SLACK_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES } from 'src/logic-functions/constants/slack-assistant-max-attachment-size-bytes';
 
 type DownloadSlackFileResult =
   | { success: true; bytes: Uint8Array<ArrayBuffer>; contentType: string }
   | { success: false; error: string };
 
+const TOO_LARGE_ERROR = `file is over the ${SLACK_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES} byte limit`;
+
+const parseContentLengthBytes = (
+  headerValue: string | null,
+): number | undefined => {
+  if (!isNonEmptyString(headerValue)) {
+    return undefined;
+  }
+
+  const parsedBytes = Number(headerValue.trim());
+
+  return Number.isFinite(parsedBytes) && parsedBytes >= 0
+    ? parsedBytes
+    : undefined;
+};
+
+// Slack reports the size on the file event, but that is member-controlled and
+// absent on stubs, so the limit is enforced against the bytes as they arrive
+const readBoundedBody = async (
+  body: ReadableStream<Uint8Array>,
+): Promise<Uint8Array<ArrayBuffer> | undefined> => {
+  const reader = body.getReader();
+  const chunks: Uint8Array[] = [];
+  let totalBytes = 0;
+
+  try {
+    for (;;) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break;
+      }
+
+      totalBytes += value.byteLength;
+
+      if (totalBytes > SLACK_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES) {
+        await reader.cancel().catch(() => undefined);
+
+        return undefined;
+      }
+
+      chunks.push(value);
+    }
+  } finally {
+    reader.releaseLock();
+  }
+
+  const bytes = new Uint8Array(totalBytes);
+  let offset = 0;
+
+  for (const chunk of chunks) {
+    bytes.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+
+  return bytes;
+};
+
 export const downloadSlackFile = async ({
   urlPrivate,
   mimeType,
   botToken,
+  timeoutMs,
 }: {
   urlPrivate: string;
   mimeType: string;
   botToken: string;
+  timeoutMs: number;
 }): Promise<DownloadSlackFileResult> => {
   let response: Response;
 
   try {
     response = await fetch(urlPrivate, {
       headers: { Authorization: `Bearer ${botToken}` },
-      signal: AbortSignal.timeout(
-        SLACK_ASSISTANT_ATTACHMENT_DOWNLOAD_TIMEOUT_MS,
-      ),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   } catch (error) {
     return {
@@ -47,13 +105,27 @@ export const downloadSlackFile = async ({
     };
   }
 
-  const bytes = new Uint8Array(await response.arrayBuffer());
+  const contentLengthBytes = parseContentLengthBytes(
+    response.headers.get('content-length'),
+  );
 
-  if (bytes.byteLength > SLACK_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES) {
-    return {
-      success: false,
-      error: `file is ${bytes.byteLength} bytes, over the ${SLACK_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES} byte limit`,
-    };
+  if (
+    isDefined(contentLengthBytes) &&
+    contentLengthBytes > SLACK_ASSISTANT_MAX_ATTACHMENT_SIZE_BYTES
+  ) {
+    await response.body?.cancel().catch(() => undefined);
+
+    return { success: false, error: TOO_LARGE_ERROR };
+  }
+
+  if (isNull(response.body)) {
+    return { success: false, error: 'Slack returned no body' };
+  }
+
+  const bytes = await readBoundedBody(response.body);
+
+  if (!isDefined(bytes)) {
+    return { success: false, error: TOO_LARGE_ERROR };
   }
 
   return { success: true, bytes, contentType: mimeType };

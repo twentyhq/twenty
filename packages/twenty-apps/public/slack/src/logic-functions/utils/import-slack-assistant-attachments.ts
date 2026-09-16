@@ -3,6 +3,8 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { SLACK_ASSISTANT_ATTACHMENT_DOWNLOAD_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-attachment-download-timeout-ms';
+import { SLACK_ASSISTANT_ATTACHMENT_UPLOAD_TIMEOUT_MS } from 'src/logic-functions/constants/slack-assistant-attachment-upload-timeout-ms';
 import { SLACK_ASSISTANT_MAX_ATTACHMENTS } from 'src/logic-functions/constants/slack-assistant-max-attachments';
 import { type ImportedSlackAttachments } from 'src/logic-functions/types/imported-slack-attachments.type';
 import { type SlackMessageFile } from 'src/logic-functions/types/slack-message-file.type';
@@ -21,15 +23,18 @@ export const importSlackAssistantAttachments = async ({
   client,
   files,
   botToken,
+  deadlineAtMs,
 }: {
   client: WebClient | undefined;
   files: SlackMessageFile[] | undefined;
   botToken: string | undefined;
+  deadlineAtMs: number;
 }): Promise<ImportedSlackAttachments> => {
   if (
     !isNonEmptyArray(files) ||
     !isDefined(client) ||
-    !isNonEmptyString(botToken)
+    !isNonEmptyString(botToken) ||
+    deadlineAtMs - Date.now() <= 0
   ) {
     return NO_ATTACHMENTS;
   }
@@ -37,9 +42,7 @@ export const importSlackAssistantAttachments = async ({
   const resolvedFiles = await Promise.all(
     files.map(async (file) => await resolveSlackFileDetails({ client, file })),
   );
-  const candidates = resolvedFiles
-    .filter(isSlackAttachmentCandidate)
-    .slice(0, SLACK_ASSISTANT_MAX_ATTACHMENTS);
+  const candidates = resolvedFiles.filter(isSlackAttachmentCandidate);
 
   if (!isNonEmptyArray(candidates)) {
     return NO_ATTACHMENTS;
@@ -52,11 +55,31 @@ export const importSlackAssistantAttachments = async ({
   };
 
   for (const candidate of candidates) {
+    if (imported.attachments.length >= SLACK_ASSISTANT_MAX_ATTACHMENTS) {
+      break;
+    }
+
+    // Whatever is left when the import window closes stays a name in the
+    // prompt: an answer without the file beats a deadline error with it
+    const remainingMs = deadlineAtMs - Date.now();
+
+    if (remainingMs <= 0) {
+      console.warn(
+        '[slack] attachment import ran out of time, the remaining files stay names in the prompt',
+      );
+
+      break;
+    }
+
     const [fileName] = getSlackMessageFileNames([candidate]);
     const download = await downloadSlackFile({
       urlPrivate: candidate.url_private,
       mimeType: candidate.mimetype,
       botToken,
+      timeoutMs: Math.min(
+        SLACK_ASSISTANT_ATTACHMENT_DOWNLOAD_TIMEOUT_MS,
+        remainingMs,
+      ),
     });
 
     if (!download.success) {
@@ -72,6 +95,10 @@ export const importSlackAssistantAttachments = async ({
         metadataClient,
         fileName,
         bytes: download.bytes,
+        timeoutMs: Math.min(
+          SLACK_ASSISTANT_ATTACHMENT_UPLOAD_TIMEOUT_MS,
+          Math.max(deadlineAtMs - Date.now(), 1),
+        ),
       });
 
       imported.attachments.push({ fileId, filename: fileName });

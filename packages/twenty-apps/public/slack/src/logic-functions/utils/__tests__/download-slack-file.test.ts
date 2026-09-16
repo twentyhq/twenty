@@ -4,6 +4,18 @@ import { downloadSlackFile } from 'src/logic-functions/utils/download-slack-file
 
 const PNG_BYTES = new Uint8Array([137, 80, 78, 71]);
 
+const streamOf = (
+  chunks: Uint8Array<ArrayBuffer>[],
+): ReadableStream<Uint8Array<ArrayBuffer>> =>
+  new ReadableStream({
+    start(controller) {
+      for (const chunk of chunks) {
+        controller.enqueue(chunk);
+      }
+      controller.close();
+    },
+  });
+
 const mockFetchResponse = (response: Partial<Response>) => {
   vi.stubGlobal(
     'fetch',
@@ -11,7 +23,7 @@ const mockFetchResponse = (response: Partial<Response>) => {
       ok: true,
       status: 200,
       headers: new Headers({ 'content-type': 'image/png' }),
-      arrayBuffer: async () => PNG_BYTES.buffer,
+      body: streamOf([PNG_BYTES]),
       ...response,
     }),
   );
@@ -22,6 +34,7 @@ const downloadPngFile = async () =>
     urlPrivate: 'https://files.slack.com/screenshot.png',
     mimeType: 'image/png',
     botToken: 'xoxb-token',
+    timeoutMs: 20_000,
   });
 
 describe('downloadSlackFile', () => {
@@ -59,11 +72,7 @@ describe('downloadSlackFile', () => {
       headers: new Headers({ 'content-type': 'text/html; charset=utf-8' }),
     });
 
-    const result = await downloadSlackFile({
-      urlPrivate: 'https://files.slack.com/screenshot.png',
-      mimeType: 'image/png',
-      botToken: 'xoxb-token',
-    });
+    const result = await downloadPngFile();
 
     expect(result.success).toBe(false);
     expect(result).toHaveProperty(
@@ -88,14 +97,42 @@ describe('downloadSlackFile', () => {
     expect(result).toEqual({ success: false, error: 'timed out' });
   });
 
-  it('should reject a body larger than the size limit', async () => {
+  it('should refuse an oversized file on its content length without reading it', async () => {
+    const cancel = vi.fn().mockResolvedValue(undefined);
+
     mockFetchResponse({
-      arrayBuffer: async () => new Uint8Array(11 * 1024 * 1024).buffer,
+      headers: new Headers({
+        'content-type': 'image/png',
+        'content-length': String(11 * 1024 * 1024),
+      }),
+      body: { cancel } as unknown as ReadableStream<Uint8Array<ArrayBuffer>>,
     });
 
     const result = await downloadPngFile();
 
     expect(result.success).toBe(false);
-    expect(result).toHaveProperty('error', expect.stringContaining('over the'));
+    expect(result).toHaveProperty('error', expect.stringContaining('limit'));
+    expect(cancel).toHaveBeenCalled();
+  });
+
+  it('should stop reading a body that grows past the limit without a content length', async () => {
+    const megabyte = new Uint8Array(1024 * 1024);
+    let enqueuedChunks = 0;
+
+    mockFetchResponse({
+      body: new ReadableStream<Uint8Array<ArrayBuffer>>({
+        pull(controller) {
+          enqueuedChunks += 1;
+          controller.enqueue(megabyte);
+        },
+      }),
+    });
+
+    const result = await downloadPngFile();
+
+    expect(result.success).toBe(false);
+    expect(result).toHaveProperty('error', expect.stringContaining('limit'));
+    // the read stops at the limit instead of draining an endless body
+    expect(enqueuedChunks).toBeLessThan(14);
   });
 });
