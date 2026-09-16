@@ -18,12 +18,13 @@ vi.mock('src/logic-functions/utils/get-slack-access-mode', () => ({
 
 const client = {} as CoreApiClient;
 
-const buildRule = (mode: string) => ({
+const buildRule = (mode: string, capability = 'FULL') => ({
   id: 'rule-1',
   name: 'finance',
   slackChannelId: 'C0FIN',
   slackTeamId: 'T0INSTALLED',
   mode,
+  capability,
 });
 
 const resolve = (isDirectMessage = false) =>
@@ -44,6 +45,7 @@ describe('resolveSlackChannelAccessPolicy', () => {
     expect(await resolve(true)).toEqual({
       status: 'ANSWER',
       accessMode: 'ONLY_LINKED_MEMBERS',
+      capability: 'FULL',
       isChannelRule: false,
     });
     expect(findSlackChannelRuleMock).not.toHaveBeenCalled();
@@ -53,6 +55,7 @@ describe('resolveSlackChannelAccessPolicy', () => {
     expect(await resolve()).toEqual({
       status: 'ANSWER',
       accessMode: 'ONLY_LINKED_MEMBERS',
+      capability: 'FULL',
       isChannelRule: false,
     });
   });
@@ -73,6 +76,7 @@ describe('resolveSlackChannelAccessPolicy', () => {
     expect(await resolve()).toEqual({
       status: 'ANSWER',
       accessMode: 'ONLY_LINKED_MEMBERS',
+      capability: 'FULL',
       isChannelRule: true,
     });
   });
@@ -83,9 +87,21 @@ describe('resolveSlackChannelAccessPolicy', () => {
     expect(await resolve()).toEqual({
       status: 'ANSWER',
       accessMode: 'ANYONE',
+      capability: 'FULL',
       isChannelRule: true,
     });
     expect(getSlackAccessModeMock).not.toHaveBeenCalled();
+  });
+
+  it('should carry a read-only cap from the rule into the policy', async () => {
+    findSlackChannelRuleMock.mockResolvedValue(buildRule('OPEN', 'READ_ONLY'));
+
+    expect(await resolve()).toEqual({
+      status: 'ANSWER',
+      accessMode: 'ANYONE',
+      capability: 'READ_ONLY',
+      isChannelRule: true,
+    });
   });
 
   it('should report an unreadable rule rather than falling back to the workspace mode', async () => {

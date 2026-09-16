@@ -17,6 +17,7 @@ type SlackChannelRuleRestRecord = {
   slackChannelId?: string | null;
   slackTeamId?: string | null;
   mode?: string | null;
+  capability?: string | null;
 };
 
 type SlackChannelRulesResponse = {
@@ -117,6 +118,7 @@ export const useSlackChannelRules = ({
           slackChannelId: record.slackChannelId ?? null,
           slackTeamId: record.slackTeamId ?? null,
           mode: record.mode ?? null,
+          capability: record.capability ?? null,
         });
       }
 
