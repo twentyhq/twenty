@@ -11,7 +11,7 @@ import { RecordExportStatus } from 'src/engine/core-modules/record-export/enums/
 import { RecordExportCacheService } from 'src/engine/core-modules/record-export/services/record-export-cache.service';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { type RecordExportParameters } from 'src/engine/core-modules/record-export/types/record-export-parameters.type';
-import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
+import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 
 @Injectable()
 export class RecordExportStreamWorkspaceService {
@@ -27,137 +27,79 @@ export class RecordExportStreamWorkspaceService {
     parameters: RecordExportParameters;
     authContext: WorkspaceAuthContext;
   }): Promise<AsyncIterableIterator<RecordExportDTO>> {
-    const abortController = new AbortController();
     const service = this;
     const recordExport = await this.recordExportWorkspaceService.create({
       parameters,
       authContext,
     });
     let downloadReady = false;
-    let connectionError: unknown;
-    let cleanup: Promise<void> | undefined;
-    const close = () => {
-      abortController.abort();
-      if (!downloadReady) {
-        cleanup ??= service.recordExportWorkspaceService.cancel(recordExport);
-      }
-      return cleanup ?? Promise.resolve();
-    };
-    const keepAlive = async (created: RecordExport) => {
-      try {
-        while (!abortController.signal.aborted) {
-          await setTimeout(RECORD_EXPORT_PROGRESS_INTERVAL_MS, undefined, {
-            signal: abortController.signal,
-          });
-          const current = await service.recordExportCacheService.findOne({
-            workspaceId: created.workspaceId,
-            id: created.id,
-            keepAlive: true,
-          });
-          if (
-            !isDefined(current) ||
-            current.expiresAt.getTime() <= Date.now()
-          ) {
-            throw new BadRequestException(
-              t`The export was interrupted. Please try again.`,
-            );
-          }
-          if (
-            current.status === RecordExportStatus.COMPLETED ||
-            current.status === RecordExportStatus.FAILED
-          ) {
+
+    async function* events(
+      signal: AbortSignal,
+    ): AsyncGenerator<RecordExportDTO> {
+      while (!signal.aborted) {
+        const current =
+          await service.recordExportWorkspaceService.findOrThrow(recordExport);
+        const updated =
+          await service.recordExportWorkspaceService.reconcile(current);
+        if (signal.aborted) {
+          return;
+        }
+        if (updated.status === RecordExportStatus.COMPLETED) {
+          const downloadUrl =
+            await service.recordExportWorkspaceService.getDownloadUrl({
+              id: updated.id,
+              authContext,
+            });
+          if (signal.aborted) {
             return;
           }
+          downloadReady = true;
+          yield { ...updated, downloadUrl };
+          return;
         }
-      } catch (error) {
-        if (!abortController.signal.aborted) {
-          connectionError = error;
-          await close();
+        yield updated;
+        if (updated.status === RecordExportStatus.FAILED) {
+          return;
         }
+        await setTimeout(RECORD_EXPORT_PROGRESS_INTERVAL_MS, undefined, {
+          signal,
+        });
       }
-    };
+    }
 
-    const heartbeat = keepAlive(recordExport).catch((error: unknown) => {
-      connectionError = error;
+    const stream = wrapAsyncIteratorWithLifecycle(events, {
+      heartbeatStart: 'immediate',
+      heartbeatErrorBehavior: 'close',
+      heartbeatIntervalMs: RECORD_EXPORT_PROGRESS_INTERVAL_MS,
+      onHeartbeat: async () => {
+        const current = await this.recordExportCacheService.findOne({
+          workspaceId: recordExport.workspaceId,
+          id: recordExport.id,
+          keepAlive: true,
+        });
+        if (!isDefined(current) || current.expiresAt.getTime() <= Date.now()) {
+          throw new BadRequestException(
+            t`The export was interrupted. Please try again.`,
+          );
+        }
+        return (
+          current.status !== RecordExportStatus.COMPLETED &&
+          current.status !== RecordExportStatus.FAILED
+        );
+      },
+      onCleanup: async () => {
+        if (!downloadReady) {
+          await this.recordExportWorkspaceService.cancel(recordExport);
+        }
+      },
     });
     try {
       await this.recordExportWorkspaceService.enqueue(recordExport);
-      if (isDefined(connectionError)) {
-        throw connectionError;
-      }
     } catch (error) {
-      await close();
-      await heartbeat;
+      await stream.return?.();
       throw error;
     }
-
-    async function* events(): AsyncGenerator<RecordExportDTO> {
-      try {
-        while (!abortController.signal.aborted) {
-          const current =
-            await service.recordExportWorkspaceService.findOrThrow(
-              recordExport,
-            );
-          const updated =
-            await service.recordExportWorkspaceService.reconcile(current);
-          if (abortController.signal.aborted) {
-            break;
-          }
-          if (updated.status === RecordExportStatus.COMPLETED) {
-            const downloadUrl =
-              await service.recordExportWorkspaceService.getDownloadUrl({
-                id: updated.id,
-                authContext,
-              });
-            if (abortController.signal.aborted) {
-              break;
-            }
-            downloadReady = true;
-            yield { ...updated, downloadUrl };
-            return;
-          }
-          yield updated;
-          if (updated.status === RecordExportStatus.FAILED) {
-            return;
-          }
-          await setTimeout(RECORD_EXPORT_PROGRESS_INTERVAL_MS, undefined, {
-            signal: abortController.signal,
-          });
-        }
-      } catch (error) {
-        if (!abortController.signal.aborted) {
-          throw error;
-        }
-      } finally {
-        await close();
-        await heartbeat;
-      }
-      if (isDefined(connectionError)) {
-        throw connectionError;
-      }
-    }
-    const iterator = events();
-    return {
-      next: () => iterator.next(),
-      return: async () => {
-        try {
-          await close();
-        } finally {
-          await iterator.return(undefined);
-        }
-        return { done: true, value: undefined };
-      },
-      throw: async (error: unknown) => {
-        try {
-          await close();
-        } finally {
-          await iterator.return(undefined);
-        }
-        throw error;
-      },
-      [Symbol.asyncIterator]() {
-        return this;
-      },
-    };
+    return stream;
   }
 }
