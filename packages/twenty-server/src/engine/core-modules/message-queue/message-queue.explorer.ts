@@ -50,7 +50,6 @@ export class MessageQueueExplorer implements OnModuleInit {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly eventLoopStallMonitorService: EventLoopStallMonitorService,
-    private readonly billingService: BillingService,
     private readonly reflector: Reflector,
   ) {}
 
@@ -286,8 +285,12 @@ export class MessageQueueExplorer implements OnModuleInit {
           ),
           workspaceId: job.data?.workspaceId as string | undefined,
           skipPlanRequired,
+          // Lazy resolve avoids BillingModule ↔ MessageQueueModule import cycle
+          // (which TDZ-crashed EventLogEmitterModule during database:init).
           assertWorkspaceHasRequiredPlan: (workspaceId) =>
-            this.billingService.assertWorkspaceHasRequiredPlan(workspaceId),
+            this.moduleRef
+              .get(BillingService, { strict: false })
+              .assertWorkspaceHasRequiredPlan(workspaceId),
         });
 
         await processMethod.call(instance, job.data, {

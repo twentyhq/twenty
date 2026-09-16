@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { Module, forwardRef } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
@@ -62,8 +62,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     CoreEntityCacheModule,
     FeatureFlagModule,
     StripeModule,
-    // MessageQueueExplorer injects BillingService — both sides forwardRef.
-    forwardRef(() => MessageQueueModule),
+    MessageQueueModule,
     PermissionsModule,
     WorkspaceCacheModule,
     WorkspaceDomainsModule,
