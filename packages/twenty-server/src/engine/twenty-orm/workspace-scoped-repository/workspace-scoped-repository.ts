@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   type DeepPartial,
   type DeleteResult,
@@ -11,7 +12,6 @@ import {
   type SelectQueryBuilder,
   type UpdateResult,
 } from 'typeorm';
-import { isDefined } from 'twenty-shared/utils';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
@@ -165,6 +165,24 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.delete(
       this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
     );
+  }
+
+  async deleteAndReturn<TColumn extends keyof T & string>(
+    workspaceId: string,
+    criteria: FindOptionsWhere<T>,
+    columns: TColumn[],
+  ): Promise<Pick<T, TColumn>[]> {
+    this.assertWorkspaceId(workspaceId);
+
+    const { raw } = await this.repository
+      .createQueryBuilder()
+      .delete()
+      .from(this.repository.target)
+      .where(this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria))
+      .returning(columns)
+      .execute();
+
+    return (raw ?? []) as Pick<T, TColumn>[];
   }
 
   softDelete(

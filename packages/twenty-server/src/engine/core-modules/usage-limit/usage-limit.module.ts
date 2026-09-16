@@ -4,10 +4,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
+import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { UsagePeriodService } from 'src/engine/core-modules/usage-limit/services/usage-period.service';
-import { UsageModule } from 'src/engine/core-modules/usage/usage.module';
+import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
@@ -16,6 +17,7 @@ import { UsageQuotaConsumptionService } from 'src/engine/core-modules/usage-limi
 import { UsageQuotaDefinitionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-definition.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { UsageLimitSpeedService } from 'src/engine/core-modules/usage-limit/services/usage-limit-speed.service';
+import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 import { UsageLimitResolver } from 'src/engine/core-modules/usage-limit/usage-limit.resolver';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitsCacheService } from 'src/engine/core-modules/usage-limit/services/usage-limits-cache.service';
@@ -33,17 +35,19 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       UserWorkspaceEntity,
       AgentEntity,
       LogicFunctionEntity,
+      FileEntity,
     ]),
     WorkspaceCacheModule,
     PermissionsModule,
     DiscoveryModule,
     CacheLockModule,
     MetricsModule,
-    UsageModule,
+    UsageAnalyticsModule,
   ],
   providers: [
     UsageLimitQuotaService,
     UsageLimitSpeedService,
+    UsageLimitStockService,
     UsageLimitEntitlementService,
     UsageLimitsCacheService,
     UsagePeriodService,
@@ -57,10 +61,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(UserWorkspaceEntity),
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(LogicFunctionEntity),
+    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
     UsageLimitQuotaService,
     UsageLimitSpeedService,
+    UsageLimitStockService,
     UsageLimitsCacheService,
   ],
 })

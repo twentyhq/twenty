@@ -5,8 +5,8 @@ import { Readable } from 'stream';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { type FileStorageMetadata } from 'src/engine/core-modules/file-storage/types/file-storage-metadata.type';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FILE_CONTENT_SNIFF_BYTE_COUNT } from 'src/engine/core-modules/file/file-upload/constants/file-content-sniff.constant';
@@ -27,6 +27,9 @@ import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.type
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { StreamSizeExceededError } from 'src/utils/stream-size-exceeded-error';
@@ -55,6 +58,7 @@ export class FileUploadCompletionService {
     private readonly fileStorageService: FileStorageService,
     @InjectWorkspaceScopedRepository(FileEntity)
     private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
+    private readonly usageLimitStockService: UsageLimitStockService,
   ) {}
 
   async completeUploadsBatch(
@@ -170,6 +174,16 @@ export class FileUploadCompletionService {
           userFriendlyMessage: msg`This upload expired before it was confirmed. Please upload the file again.`,
         },
       );
+    }
+
+    if (size < declaredSize) {
+      await this.usageLimitStockService.releaseStock({
+        workspaceId,
+        resourceType: UsageResourceType.STORAGE,
+        operationType: UsageOperationType.STORAGE_FILE,
+        spenders: { applicationId: file.applicationId },
+        cost: { bytes: declaredSize - size },
+      });
     }
 
     return {

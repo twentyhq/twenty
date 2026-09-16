@@ -16,10 +16,13 @@ export const buildUsageLimitHttpException = (
   // Paying only unblocks an exhausted allowance; configured limits reset with
   // time, so they answer 429 with retry headers whatever their period length.
   const isAllowanceExhausted = exhaustedScope?.exhaustedKind === 'allowance';
+  const isStockExhausted = exhaustedScope?.limitKind === 'stock';
 
   const statusCode = isAllowanceExhausted
     ? HttpStatus.PAYMENT_REQUIRED
-    : HttpStatus.TOO_MANY_REQUESTS;
+    : isStockExhausted
+      ? HttpStatus.CONFLICT
+      : HttpStatus.TOO_MANY_REQUESTS;
 
   if (!isDefined(exhaustedScope)) {
     return new HttpException(error.message, statusCode);
@@ -45,7 +48,7 @@ export const buildUsageLimitHttpException = (
       periodUnit: exhaustedScope.periodUnit,
       retryAfterSeconds,
     },
-    isAllowanceExhausted
+    isAllowanceExhausted || isStockExhausted
       ? {}
       : buildRateLimitResponseHeaders({ exhaustedScope, retryAfterSeconds }),
   );

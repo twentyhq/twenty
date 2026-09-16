@@ -8,6 +8,9 @@ import { IsNull, LessThan, Not, Repository } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import {
   PENDING_FILE_CLEANUP_BATCH_SIZE,
   PENDING_FILE_MAX_AGE_MS,
@@ -28,6 +31,7 @@ export class PendingFileCleanupService {
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     private readonly fileStorageService: FileStorageService,
+    private readonly usageLimitStockService: UsageLimitStockService,
   ) {}
 
   // Deletes file records stuck in PENDING (direct uploads that were initiated
@@ -61,6 +65,16 @@ export class PendingFileCleanupService {
 
         if (!isDefined(affected) || affected === 0) {
           continue;
+        }
+
+        if (isDefined(file.workspaceId)) {
+          await this.usageLimitStockService.releaseStock({
+            workspaceId: file.workspaceId,
+            resourceType: UsageResourceType.STORAGE,
+            operationType: UsageOperationType.STORAGE_FILE,
+            spenders: { applicationId: file.applicationId },
+            cost: { bytes: Number(file.size), quantity: 1 },
+          });
         }
 
         await this.deleteStorageObject(file);

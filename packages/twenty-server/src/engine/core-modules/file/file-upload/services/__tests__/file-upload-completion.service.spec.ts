@@ -10,6 +10,7 @@ import { FileUploadCompletionService } from 'src/engine/core-modules/file/file-u
 import { buildPendingUploadResourcePath } from 'src/engine/core-modules/file/file-upload/utils/build-pending-upload-resource-path.util';
 import { FILE_STATUS } from 'src/engine/core-modules/file/types/file-status.types';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { UsageLimitStockService } from 'src/engine/core-modules/usage-limit/services/usage-limit-stock.service';
 
 describe('FileUploadCompletionService.completeUploadedFile', () => {
   const workspaceId = '20202020-0000-4000-8000-000000000001';
@@ -43,7 +44,11 @@ describe('FileUploadCompletionService.completeUploadedFile', () => {
     }) as FileEntity;
 
   const buildService = () =>
-    new FileUploadCompletionService(fileStorageService, fileRepository);
+    new FileUploadCompletionService(fileStorageService, fileRepository, {
+      assertStockAvailable: jest.fn().mockResolvedValue(undefined),
+      acquireStock: jest.fn().mockResolvedValue(undefined),
+      releaseStock: jest.fn().mockResolvedValue(undefined),
+    } as unknown as UsageLimitStockService);
 
   beforeEach(() => {
     fileStorageService = {
