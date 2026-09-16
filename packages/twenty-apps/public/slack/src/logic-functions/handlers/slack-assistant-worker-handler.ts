@@ -3,6 +3,8 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { SLACK_ASSISTANT_AGENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
+import { SLACK_ACCESS_UNVERIFIABLE_ERROR } from 'src/logic-functions/constants/slack-access-unverifiable-error';
 import { SLACK_ASSISTANT_AGENT_BUDGET_SECONDS } from 'src/logic-functions/constants/slack-assistant-agent-budget-seconds';
 import { SLACK_ASSISTANT_EMPTY_RESPONSE_ERROR } from 'src/logic-functions/constants/slack-assistant-empty-response-error';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
@@ -22,7 +24,9 @@ import { getSlackConnection } from 'src/logic-functions/utils/get-slack-connecti
 import { importSlackAssistantAttachments } from 'src/logic-functions/utils/import-slack-assistant-attachments';
 import { isSlackAssistantRequestResumable } from 'src/logic-functions/utils/is-slack-assistant-request-resumable';
 import { finishSlackAssistantRequestWithFailure } from 'src/logic-functions/utils/finish-slack-assistant-request-with-failure';
+import { getSlackAccessMode } from 'src/logic-functions/utils/get-slack-access-mode';
 import { getSlackAssistantParentMessageTimestamp } from 'src/logic-functions/utils/get-slack-assistant-parent-message-timestamp';
+import { resolveSlackAccessDecision } from 'src/logic-functions/utils/resolve-slack-access-decision';
 import { resolveSlackAssistantMentions } from 'src/logic-functions/utils/resolve-slack-assistant-mentions';
 import { resolveSlackRunAsForRequest } from 'src/logic-functions/utils/resolve-slack-run-as-for-request';
 import { runSlackAssistantAgentWithDeadline } from 'src/logic-functions/utils/run-slack-assistant-agent-with-deadline';
@@ -122,6 +126,51 @@ export const slackAssistantWorkerHandler = async (
         id: record.id,
         workspaceMemberId: runAsWorkspaceMemberId,
       }).catch(() => undefined);
+    }
+
+    const accessDecision = await resolveSlackAccessDecision({
+      accessMode: await getSlackAccessMode(),
+      client,
+      slackClient,
+      identity: requesterIdentity,
+      runAsWorkspaceMemberId,
+    });
+
+    if (accessDecision.status === 'UNVERIFIABLE') {
+      await stopStatusUpdates();
+
+      return await finishSlackAssistantRequestWithFailure({
+        ...failureContext,
+        errorMessage: SLACK_ACCESS_UNVERIFIABLE_ERROR,
+      });
+    }
+
+    if (accessDecision.status === 'DENIED') {
+      await stopStatusUpdates();
+
+      const denialDelivery = await sendSlackMessage({
+        slackChannelId,
+        messageText: SLACK_ACCESS_DENIED_TEXT,
+        parentMessageTimestamp,
+        messageFormat: 'markdown',
+        unfurlLinks: false,
+        unfurlMedia: false,
+      });
+
+      if (!denialDelivery.success) {
+        return await finishSlackAssistantRequestWithFailure({
+          ...failureContext,
+          errorMessage: buildSlackAnswerDeliveryFailureMessage(denialDelivery),
+        });
+      }
+
+      await updateSlackAssistantRequest(client, {
+        id: record.id,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: SLACK_ACCESS_DENIED_TEXT,
+      });
+
+      return { done: true, declined: true };
     }
 
     const requestFiles = requestMessage?.files;

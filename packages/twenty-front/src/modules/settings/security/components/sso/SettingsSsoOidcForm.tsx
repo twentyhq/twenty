@@ -63,8 +63,7 @@ export const SettingsSsoOidcForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(
                     authorizedUrl,
@@ -72,7 +71,7 @@ export const SettingsSsoOidcForm = () => {
                   );
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
           <StyledContainer>
@@ -87,8 +86,7 @@ export const SettingsSsoOidcForm = () => {
             </StyledLinkContainer>
             <StyledButtonCopy>
               <Button
-                Icon={IconCopy}
-                title={t`Copy`}
+                startIcon={<IconCopy />}
                 onClick={() => {
                   copyToClipboard(
                     redirectionUrl,
@@ -96,7 +94,7 @@ export const SettingsSsoOidcForm = () => {
                   );
                 }}
                 type="button"
-              />
+              >{t`Copy`}</Button>
             </StyledButtonCopy>
           </StyledContainer>
         </StyledInputsContainer>

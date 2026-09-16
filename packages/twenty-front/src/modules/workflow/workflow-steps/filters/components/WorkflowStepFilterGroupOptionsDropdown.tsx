@@ -7,7 +7,7 @@ import { WorkflowStepFilterContext } from '@/workflow/workflow-steps/filters/sta
 import { useContext } from 'react';
 import { t } from '@lingui/core/macro';
 import { IconDotsVertical, IconTrash } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type WorkflowStepFilterGroupOptionsDropdownProps = {
@@ -27,10 +27,11 @@ export const WorkflowStepFilterGroupOptionsDropdown = ({
       clickableComponent={
         <IconButton
           aria-label={t`Step filter group options`}
-          variant="tertiary"
-          Icon={IconDotsVertical}
+          variant="ghost"
           disabled={readonly}
-        />
+        >
+          <IconDotsVertical />
+        </IconButton>
       }
       dropdownComponents={
         <DropdownContent>

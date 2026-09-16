@@ -5,8 +5,20 @@ import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveR
 
 import { patchRemoteElementAttributes } from '../patchRemoteElementAttributes';
 
-const createHtmlDivElement = (): HTMLElement =>
+type RemoteElementWithPropertyUpdater = HTMLElement & {
+  updateRemoteProperty: (propertyName: string, value?: unknown) => void;
+};
+
+type RemoteSvgElement = RemoteElementWithPropertyUpdater & {
+  viewBox?: string;
+  strokeWidth?: string;
+};
+
+const createHtmlDivElement = (): RemoteElementWithPropertyUpdater =>
   document.createElement('html-div');
+
+const createHtmlSvgElement = (): RemoteSvgElement =>
+  document.createElement('html-svg');
 
 describe('patchRemoteElementAttributes', () => {
   beforeAll(() => {
@@ -158,6 +170,91 @@ describe('patchRemoteElementAttributes', () => {
       element.removeAttribute('class');
 
       expect(element.getAttributeNames()).toEqual(['id']);
+    });
+  });
+
+  describe('className attribute alias', () => {
+    it('should store a className attribute as the class attribute', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('className', 'from-react-18');
+
+      expect(element.getAttribute('class')).toBe('from-react-18');
+      expect(element.getAttribute('className')).toBe('from-react-18');
+      expect(element.hasAttribute('className')).toBe(true);
+      expect(element.className).toBe('from-react-18');
+      expect(element.getAttributeNames()).toEqual(['class']);
+    });
+
+    it('should forward a className attribute to the host as the className property', () => {
+      const element = createHtmlDivElement();
+      const updateRemoteProperty = jest.spyOn(element, 'updateRemoteProperty');
+
+      element.setAttribute('className', 'from-react-18');
+
+      expect(updateRemoteProperty).toHaveBeenCalledTimes(1);
+      expect(updateRemoteProperty).toHaveBeenCalledWith(
+        'className',
+        'from-react-18',
+      );
+    });
+
+    it('should clear the class attribute when removing the className alias', () => {
+      const element = createHtmlDivElement();
+
+      element.setAttribute('className', 'from-react-18');
+
+      const updateRemoteProperty = jest.spyOn(element, 'updateRemoteProperty');
+
+      element.removeAttribute('className');
+
+      expect(element.getAttribute('class')).toBeNull();
+      expect(element.hasAttribute('className')).toBe(false);
+      expect(updateRemoteProperty).toHaveBeenCalledTimes(1);
+      expect(updateRemoteProperty).toHaveBeenCalledWith('className', undefined);
+    });
+  });
+
+  describe('camelCase remote property names written as attributes', () => {
+    it('should store a camelCase property name under its kebab-case attribute', () => {
+      const element = createHtmlSvgElement();
+
+      element.setAttribute('viewBox', '0 0 24 24');
+
+      expect(element.getAttribute('view-box')).toBe('0 0 24 24');
+      expect(element.getAttribute('viewBox')).toBe('0 0 24 24');
+      expect(element.hasAttribute('viewBox')).toBe(true);
+      expect(element.viewBox).toBe('0 0 24 24');
+      expect(element.getAttributeNames()).toEqual(['view-box']);
+    });
+
+    it('should assign the camelCase remote property that remote-dom forwards', () => {
+      const element = createHtmlSvgElement();
+
+      element.setAttribute('strokeWidth', '2');
+
+      expect(element.strokeWidth).toBe('2');
+      expect(element.getAttribute('stroke-width')).toBe('2');
+    });
+
+    it('should clear the property when removing the camelCase attribute', () => {
+      const element = createHtmlSvgElement();
+
+      element.setAttribute('viewBox', '0 0 24 24');
+      element.removeAttribute('viewBox');
+
+      expect(element.getAttribute('viewBox')).toBeNull();
+      expect(element.hasAttribute('view-box')).toBe(false);
+      expect(element.viewBox).toBeUndefined();
+    });
+
+    it('should leave attributes that are not remote properties untouched', () => {
+      const element = createHtmlSvgElement();
+
+      element.setAttribute('data-icon', 'lock');
+
+      expect(element.getAttribute('data-icon')).toBe('lock');
+      expect(element.getAttributeNames()).toEqual(['data-icon']);
     });
   });
 

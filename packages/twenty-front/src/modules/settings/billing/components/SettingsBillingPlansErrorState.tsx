@@ -30,11 +30,10 @@ export const SettingsBillingPlansErrorState = ({
         </AnimatedPlaceholderErrorSubTitle>
       </AnimatedPlaceholderErrorTextContainer>
       <Button
-        Icon={IconRefresh}
-        title={t`Try again`}
-        variant="secondary"
+        startIcon={<IconRefresh />}
         onClick={onRetry}
-      />
+        variant="outline"
+      >{t`Try again`}</Button>
     </AnimatedPlaceholderErrorContainer>
   );
 };

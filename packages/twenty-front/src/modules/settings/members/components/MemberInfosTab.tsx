@@ -91,19 +91,17 @@ export const MemberInfosTab = ({
         <StyledActionRow>
           {onImpersonate && (
             <Button
-              title={t`Impersonate`}
-              variant="secondary"
-              size="small"
+              size="sm"
               onClick={onImpersonate}
-            />
+              variant="outline"
+            >{t`Impersonate`}</Button>
           )}
           <Button
-            accent="danger"
-            title={t`Delete account`}
-            variant="secondary"
-            size="small"
+            size="sm"
             onClick={onDelete}
-          />
+            variant="outline"
+            color="danger"
+          >{t`Delete account`}</Button>
         </StyledActionRow>
       </Section>
     </>

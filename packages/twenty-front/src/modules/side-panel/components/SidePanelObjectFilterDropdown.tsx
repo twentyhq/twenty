@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconFilter } from 'twenty-ui/icon';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 
 import { SidePanelObjectFilterDropdownContent } from '@/side-panel/components/SidePanelObjectFilterDropdownContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -26,12 +26,13 @@ export const SidePanelObjectFilterDropdown = ({
       dropdownPlacement="bottom-end"
       clickableComponent={
         <IconButton
-          Icon={IconFilter}
-          variant="tertiary"
-          accent={isFilterActive ? 'blue' : 'default'}
-          size="small"
-          ariaLabel={t`Filter by object type`}
-        />
+          variant="ghost"
+          color={isFilterActive ? 'accent' : 'neutral'}
+          size="sm"
+          aria-label={t`Filter by object type`}
+        >
+          <IconFilter />
+        </IconButton>
       }
       dropdownComponents={
         <SidePanelObjectFilterDropdownContent

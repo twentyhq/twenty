@@ -95,12 +95,11 @@ export const SettingsBillingContent = () => {
           description={t`Edit payment method, see your invoices and more`}
         />
         <Button
-          Icon={IconCreditCard}
-          title={t`View billing details`}
-          variant="secondary"
+          startIcon={<IconCreditCard />}
           onClick={openBillingPortal}
           disabled={isBillingPortalSessionDisabled}
-        />
+          variant="outline"
+        >{t`View billing details`}</Button>
       </Section>
       {canCancelCurrentSubscription && (
         <Section>
@@ -109,13 +108,12 @@ export const SettingsBillingContent = () => {
             description={t`Your workspace will be disabled`}
           />
           <Button
-            Icon={IconCircleX}
-            title={t`Cancel Plan`}
-            variant="secondary"
-            accent="danger"
+            startIcon={<IconCircleX />}
             onClick={openBillingPortal}
             disabled={isBillingPortalSessionDisabled}
-          />
+            variant="outline"
+            color="danger"
+          >{t`Cancel Plan`}</Button>
         </Section>
       )}
       {shouldAddPaymentMethodInProduct && (

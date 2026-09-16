@@ -3,7 +3,7 @@ import { clsx } from 'clsx';
 import { type ReactNode, useId, useState } from 'react';
 
 import { IconFilter, IconSearch } from '@ui/icon';
-import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
+import { Button } from '@ui/primitives/input/Button/Button';
 import { useTheme } from '@ui/theme-constants';
 
 import styles from './SearchInput.module.scss';
@@ -41,10 +41,15 @@ export const SearchInput = ({
   const inputId = id ?? generatedId;
 
   const filterButton = (
-    <IconButton
-      Icon={IconFilter}
-      variant="secondary"
-      ariaLabel={filterButtonAriaLabel}
+    <Button
+      variant="outline"
+      aria-label={filterButtonAriaLabel}
+      startIcon={
+        <span className={styles.filterIcon}>
+          <IconFilter size={theme.icon.size.md} />
+        </span>
+      }
+      className={styles.filterButton}
     />
   );
 

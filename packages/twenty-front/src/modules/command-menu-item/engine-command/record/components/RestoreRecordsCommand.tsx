@@ -88,7 +88,7 @@ export const RestoreRecordsCommand = () => {
       title={title}
       subtitle={subtitle}
       confirmButtonText={title}
-      confirmButtonAccent="default"
+      confirmButtonColor="neutral"
       execute={handleExecute}
     />
   );

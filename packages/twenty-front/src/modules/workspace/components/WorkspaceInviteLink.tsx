@@ -40,14 +40,13 @@ export const WorkspaceInviteLink = ({
         />
       </StyledLinkContainer>
       <Button
-        Icon={IconLink}
-        variant="primary"
-        accent="blue"
-        title={t`Copy link`}
+        startIcon={<IconLink />}
         onClick={() => {
           copyToClipboard(inviteLink, t`Link copied to clipboard`);
         }}
-      />
+        variant="solid"
+        color="accent"
+      >{t`Copy link`}</Button>
     </StyledContainer>
   );
 };

@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { useContext, useState } from 'react';
 
 import { css } from '@linaria/core';
@@ -6,7 +7,8 @@ import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconTrash } from 'twenty-ui/icon';
 import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
-import { Checkbox, IconButton } from 'twenty-ui/primitives/input';
+import { Checkbox } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
@@ -193,15 +195,17 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
                 {hasRemove && (
                   <TableCell align="right">
                     <IconButton
-                      Icon={IconTrash}
-                      accent="danger"
-                      variant="tertiary"
-                      size="small"
+                      aria-label={t`Remove model`}
+                      color="danger"
+                      variant="ghost"
+                      size="sm"
                       onClick={(event) => {
                         event.stopPropagation();
                         onRemove(model);
                       }}
-                    />
+                    >
+                      <IconTrash />
+                    </IconButton>
                   </TableCell>
                 )}
               </TableRow>

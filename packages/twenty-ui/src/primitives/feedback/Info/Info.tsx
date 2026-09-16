@@ -39,24 +39,26 @@ export const Info = ({
       </div>
       {buttonTitle && to && (
         <span className={styles.linkContainer}>
-          <Link to={to}>
-            <Button
-              title={buttonTitle}
-              size="small"
-              variant="secondary"
-              accent={accent}
-            />
-          </Link>
+          <Button
+            href={to}
+            render={<Link to={to} />}
+            size="sm"
+            variant="outline"
+            color={accent === 'blue' ? 'accent' : 'danger'}
+          >
+            {buttonTitle}
+          </Button>
         </span>
       )}
       {buttonTitle && onClick && !to && (
         <Button
-          title={buttonTitle}
           onClick={onClick}
-          size="small"
-          variant="secondary"
-          accent={accent}
-        />
+          size="sm"
+          variant="outline"
+          color={accent === 'blue' ? 'accent' : 'danger'}
+        >
+          {buttonTitle}
+        </Button>
       )}
     </div>
   );

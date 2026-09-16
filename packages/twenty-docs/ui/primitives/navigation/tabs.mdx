@@ -1,0 +1,126 @@
+---
+title: Tabs
+description: Switch between related panels with accessible tab navigation.
+---
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
+
+`Tabs` connects each tab to a panel using a shared `value`. Keep the values unique within a root.
+
+<StoryEmbed
+  storyId="ui-navigation-tabs--documentation"
+  title="Tabs example"
+  height={240}
+/>
+
+## Anatomy
+
+Place tabs inside `Tabs.List` and their panels alongside the list, all within the same `Tabs.Root`.
+
+```text
+Tabs.Root
+├── Tabs.List
+│   ├── Tabs.Tab
+│   └── Tabs.Tab
+├── Tabs.Panel
+└── Tabs.Panel
+```
+
+| Part    | Requirement          | Purpose                                                                    |
+| ------- | -------------------- | -------------------------------------------------------------------------- |
+| `Root`  | Required             | Owns the active value and orientation.                                     |
+| `List`  | Required             | Groups the tabs and supplies keyboard navigation and the active indicator. |
+| `Tab`   | One per panel        | Activates the panel with the same `value`.                                 |
+| `Panel` | One per content view | Displays its content when its `value` is active.                           |
+
+Give the list an accessible name and match each selectable tab's `value` to its panel's `value`. Twenty UI includes the active indicator in `List`. Use `Tab.startIcon` and `Tab.badge` for optional supporting content while keeping the tab label in its children.
+
+## Uncontrolled state
+
+Use `defaultValue` to set the initial active tab. The tabs own subsequent selection changes.
+
+```tsx
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => (
+  <Tabs.Root defaultValue="overview">
+    <Tabs.List aria-label="Record details">
+      <Tabs.Tab value="overview">Overview</Tabs.Tab>
+      <Tabs.Tab value="activity" badge={3}>
+        Activity
+      </Tabs.Tab>
+    </Tabs.List>
+    <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
+    <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
+  </Tabs.Root>
+);
+```
+
+`Tabs.Tab` accepts `startIcon`, `badge`, and a `size` of `sm` or `md` (default `sm`). The active indicator is included in `Tabs.List`.
+
+## Controlled state
+
+Pass `value` and update it with `onValueChange` to own the same active tab in React state. The callback receives the next value and event details.
+
+```tsx
+import { useState } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const RecordTabs = () => {
+  const [tab, setTab] = useState<string | number | null>('overview');
+
+  return (
+    <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs.List aria-label="Record details">
+        <Tabs.Tab value="overview">Overview</Tabs.Tab>
+        <Tabs.Tab value="activity" badge={3}>
+          Activity
+        </Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="overview">Company and contact details.</Tabs.Panel>
+      <Tabs.Panel value="activity">Recent calls and emails.</Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+## Manual activation
+
+Keyboard activation is independent of state ownership. Use `activateOnFocus={false}` with either controlled or uncontrolled tabs.
+
+```tsx
+import { useState } from 'react';
+import { Tabs } from 'twenty-ui/primitives/navigation';
+
+export const SettingsTabs = () => {
+  const [tab, setTab] = useState<string | number | null>('profile');
+
+  return (
+    <Tabs.Root value={tab} onValueChange={setTab}>
+      <Tabs.List aria-label="Settings" activateOnFocus={false}>
+        <Tabs.Tab value="profile">Profile</Tabs.Tab>
+        <Tabs.Tab value="notifications">Notifications</Tabs.Tab>
+        <Tabs.Tab value="billing" disabled>
+          Billing
+        </Tabs.Tab>
+      </Tabs.List>
+      <Tabs.Panel value="profile">Profile settings.</Tabs.Panel>
+      <Tabs.Panel value="notifications">Notification settings.</Tabs.Panel>
+    </Tabs.Root>
+  );
+};
+```
+
+With `activateOnFocus={false}`, arrow keys move focus and Enter or Space activates the focused tab. `loopFocus` defaults to `true`. Disabled tabs are skipped. Use `orientation="vertical"` on `Root` for vertical navigation.
+
+## Panel lifetime
+
+Use `keepMounted` on a panel when its contents must remain mounted while inactive.
+
+## Props
+
+The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
+
+<TabsReference />

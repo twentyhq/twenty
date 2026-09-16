@@ -1,9 +1,10 @@
+import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type BlocklistItem } from '@/accounts/types/BlocklistItem';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { formatToHumanReadableDate } from '~/utils/date-utils';
-import { IconButton } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { IconX } from 'twenty-ui/icon';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 
@@ -32,13 +33,15 @@ export const SettingsAccountsBlocklistTableRow = ({
       </TableCell>
       <TableCell align="right">
         <IconButton
+          aria-label={t`Remove from blocklist`}
           onClick={() => {
             onRemove(blocklistItem.id);
           }}
-          variant="tertiary"
-          size="small"
-          Icon={IconX}
-        />
+          variant="ghost"
+          size="sm"
+        >
+          <IconX />
+        </IconButton>
       </TableCell>
     </TableRow>
   );

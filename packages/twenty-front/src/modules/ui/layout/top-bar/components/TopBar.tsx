@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  margin-left: ${themeCssVariables.spacing[3]};
+  margin-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledTopBar = styled.div`
@@ -28,6 +28,7 @@ const StyledTopBar = styled.div`
   font-weight: ${themeCssVariables.font.weight.medium};
   height: 39px;
   justify-content: space-between;
+  margin-left: ${themeCssVariables.spacing[1]};
   padding-right: ${themeCssVariables.spacing[2]};
 
   z-index: 7;

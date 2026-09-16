@@ -261,14 +261,13 @@ export const WorkflowEditActionIfElseBody = ({
                 <>
                   <HorizontalSeparator noMargin />
                   <Button
-                    Icon={IconPlus}
-                    title={t`Add route`}
-                    variant="secondary"
-                    size="small"
+                    startIcon={<IconPlus />}
+                    size="sm"
                     onClick={(event: React.MouseEvent<HTMLButtonElement>) =>
                       handleAddRoute(event)
                     }
-                  />
+                    variant="outline"
+                  >{t`Add route`}</Button>
                 </>
               )}
               <WorkflowIfElseBranchEditor

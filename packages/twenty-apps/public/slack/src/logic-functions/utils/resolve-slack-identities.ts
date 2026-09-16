@@ -105,6 +105,16 @@ const buildResolution = ({
       : { slackUserId, identity, link, outcome: 'membershipNotConfirmed' };
   }
 
+  // The link lookup is keyed on team plus user and the email rule compares
+  // against the installing team, so with either team id missing nothing ran
+  // that could establish this account is not a member.
+  if (
+    !isNonEmptyString(installedSlackTeamId) ||
+    !isNonEmptyString(identity.slackTeamId)
+  ) {
+    return { slackUserId, identity, link, outcome: 'membershipUnverifiable' };
+  }
+
   if (!isLinkableSlackIdentity({ identity, installedSlackTeamId })) {
     return { slackUserId, identity, link, outcome: 'membershipNotConfirmed' };
   }

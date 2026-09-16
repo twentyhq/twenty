@@ -88,7 +88,7 @@ export const SettingsApplicationRegistrationRedirectURIsInput = ({
             )}
           />
         </StyledLinkContainer>
-        <Button title={t`Add URI`} type="submit" />
+        <Button type="submit">{t`Add URI`}</Button>
       </StyledContainer>
     </form>
   );

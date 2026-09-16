@@ -56,12 +56,11 @@ export const SettingsAccountsConnectedAccountsListCard = ({
       <StyledAddAccountSectionContainer>
         <Section>
           <Button
-            Icon={IconPlus}
-            title={t`Add account`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconPlus />}
+            size="sm"
             onClick={() => navigateSettings(SettingsPath.NewAccount)}
-          />
+            variant="outline"
+          >{t`Add account`}</Button>
         </Section>
       </StyledAddAccountSectionContainer>
     </Section>

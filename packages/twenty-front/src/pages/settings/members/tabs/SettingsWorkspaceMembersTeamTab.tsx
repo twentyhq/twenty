@@ -179,11 +179,10 @@ export const SettingsWorkspaceMembersTeamTab = () => {
           dropdownId="workspace-members-open-dropdown"
           clickableComponent={
             <Button
-              Icon={IconArrowUpRight}
-              title={t`Open`}
-              variant="secondary"
-              size="medium"
-            />
+              startIcon={<IconArrowUpRight />}
+              size="md"
+              variant="outline"
+            >{t`Open`}</Button>
           }
           dropdownPlacement="bottom-end"
           dropdownOffset={{ y: 8 }}

@@ -2,6 +2,7 @@ import { useCreateBlockNote } from '@blocknote/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useId, useState } from 'react';
 import { isNonEmptyArray } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 import { Field } from 'twenty-ui/primitives/input';
 
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
@@ -11,7 +12,6 @@ import { countBlocksDeep } from '@/blocknote-editor/utils/countBlocksDeep';
 import { filterBlocksSupportedBySchema } from '@/blocknote-editor/utils/filterBlocksSupportedBySchema';
 import { parseInitialBlocknote } from '@/blocknote-editor/utils/parseInitialBlocknote';
 import { type FieldRichTextValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
@@ -43,7 +43,7 @@ export const FormRecordRichTextFieldInput = ({
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [{ initialBlocks, hasUnreadableStoredValue }] = useState(() => {
     const parsedBlocks = parseInitialBlocknote(
@@ -65,8 +65,9 @@ export const FormRecordRichTextFieldInput = ({
   });
 
   const handleUploadFile = async (): Promise<string> => {
-    enqueueErrorSnackBar({
-      message: t`Save the record before attaching a file`,
+    enqueueToast({
+      variant: 'error',
+      children: t`Save the record before attaching a file`,
     });
 
     return '';
@@ -112,11 +113,12 @@ export const FormRecordRichTextFieldInput = ({
 
   useEffect(() => {
     if (hasUnreadableStoredValue) {
-      enqueueErrorSnackBar({
-        message: t`This content was saved in an older format and cannot be edited here`,
+      enqueueToast({
+        variant: 'error',
+        children: t`This content was saved in an older format and cannot be edited here`,
       });
     }
-  }, [hasUnreadableStoredValue, enqueueErrorSnackBar, t]);
+  }, [hasUnreadableStoredValue, enqueueToast, t]);
 
   return (
     <FormFieldInputContainer>
