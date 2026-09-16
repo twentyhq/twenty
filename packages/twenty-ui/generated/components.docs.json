@@ -47,18 +47,11 @@
         "description": "Shows a loading indicator and disables activation while preserving the button width."
       },
       {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
-      },
-      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
       },
       {
         "name": "size",
@@ -75,93 +68,9 @@
         "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
       },
       {
-        "name": "variant",
-        "type": "\"solid\" | \"outline\" | \"ghost\" | \"soft\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Visual treatment of the button surface."
-      }
-    ]
-  },
-  {
-    "name": "IconButtonWithTooltip",
-    "entryPoint": "twenty-ui/components",
-    "slug": "input/icon-button-with-tooltip",
-    "props": [
-      {
-        "name": "aria-label",
+        "name": "tooltip",
         "type": "string",
-        "required": true,
-        "defaultValue": null,
-        "description": "Required accessible name describing the action."
-      },
-      {
-        "name": "className",
-        "type": "string | ((state: ButtonState) => string | undefined)",
         "required": false,
-        "defaultValue": null,
-        "description": "CSS class applied to the element, or a function that\nreturns a class based on the component's state."
-      },
-      {
-        "name": "color",
-        "type": "\"neutral\" | \"accent\" | \"danger\" | \"success\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Semantic color of the button."
-      },
-      {
-        "name": "elevated",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Adds a shadow to the button."
-      },
-      {
-        "name": "focusableWhenDisabled",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "false",
-        "description": "Whether the button should be focusable when disabled."
-      },
-      {
-        "name": "loading",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": null,
-        "description": "Shows a loading indicator and disables activation while preserving the button width."
-      },
-      {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
-      },
-      {
-        "name": "render",
-        "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
-        "required": false,
-        "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
-      },
-      {
-        "name": "size",
-        "type": "\"sm\" | \"md\"",
-        "required": false,
-        "defaultValue": null,
-        "description": "Square button size: `sm` (24px) or `md` (32px)."
-      },
-      {
-        "name": "style",
-        "type": "CSSProperties | ((state: ButtonState) => CSSProperties | undefined)",
-        "required": false,
-        "defaultValue": null,
-        "description": "Style applied to the element, or a function that\nreturns a style object based on the component's state."
-      },
-      {
-        "name": "tooltipContent",
-        "type": "string",
-        "required": true,
         "defaultValue": null,
         "description": "Text displayed when hovering or focusing the button."
       },
@@ -257,18 +166,11 @@
         "description": "Shows a loading indicator and disables activation while preserving the button width."
       },
       {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
-      },
-      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
       },
       {
         "name": "size",
@@ -383,18 +285,11 @@
         "description": "Shows a loading indicator and disables activation while preserving the button width."
       },
       {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
-      },
-      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
       },
       {
         "name": "size",
@@ -502,18 +397,11 @@
         "description": "Shows a loading indicator and disables activation while preserving the button width."
       },
       {
-        "name": "nativeButton",
-        "type": "boolean",
-        "required": false,
-        "defaultValue": "true",
-        "description": "Whether the component renders a native `<button>` element when replacing it\nvia the `render` prop.\nSet to `false` if the rendered element is not a button (for example, `<div>`)."
-      },
-      {
         "name": "render",
         "type": "ReactElement<unknown, string | JSXElementConstructor<any>> | ComponentRenderFn<HTMLProps, ButtonState>",
         "required": false,
         "defaultValue": null,
-        "description": "Allows you to replace the component's HTML element\nwith a different tag, or compose it with another component.\n\nAccepts a `ReactElement` or a function that returns the element to render."
+        "description": "Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller."
       },
       {
         "name": "size",

@@ -27,13 +27,36 @@ export const CreateRecordButton = () => (
 );
 ```
 
-Sizes are `sm` (24px) and `md` (32px). The defaults are `md`, `outline`, and `neutral`. Variants and colors match Button. Use [IconButtonWithTooltip](/ui/components/input/icon-button-with-tooltip) to add a tooltip.
+Sizes are `sm` (24px) and `md` (32px). The defaults are `md`, `outline`, and `neutral`. Variants and colors match Button.
 
 <StoryEmbed
   title="Icon button example"
   storyId="ui-components-iconbutton--catalog"
   height={620}
 />
+
+## Tooltip
+
+Add `tooltip` to show text on hover and keyboard focus. Keep `aria-label` as the accessible name of the action. Disabled and loading buttons retain hover tooltips.
+
+```tsx
+import { IconButton } from 'twenty-ui/components';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchRecordsButton = () => (
+  <IconButton aria-label="Search" tooltip="Search records" variant="ghost">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+<StoryEmbed
+  title="Icon button with tooltip"
+  storyId="ui-components-iconbutton--tooltip"
+  height={180}
+/>
+
+The tooltip defaults to the bottom, with a 1000ms delay and a 5px offset. Use `tooltipPlace`, `tooltipDelay`, and `tooltipOffset` to adjust it. Omitting `tooltip` renders the button directly.
 
 ## State ownership
 
@@ -62,7 +85,7 @@ export const RecordActions = () => (
 
 ## Links and forms
 
-Use `href` to render an anchor. For a router link, pass `render={<Link to="/settings" />}`, `nativeButton={false}`, and `role="link"`. Disabled links cannot activate. Routing stays in the application.
+Use `href` to render an anchor. The caller can provide a custom `render` element, including its own router link. Supply `href` to select link semantics; the renderer must preserve an anchor. Without `href`, preserve a native button. Neither `nativeButton` nor `role` is part of the public button interface. Disabled links cannot activate. Routing stays in the application.
 
 Native attributes, event handlers, refs, and render composition pass through to Button. The default is `type="button"`; set `type="submit"` explicitly for form submission.
 

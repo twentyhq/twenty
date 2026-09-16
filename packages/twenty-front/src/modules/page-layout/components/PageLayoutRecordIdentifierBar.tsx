@@ -10,7 +10,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconPinned } from 'twenty-ui/icon';
-import { IconButtonWithTooltip } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 import { TooltipDelay } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -112,16 +112,16 @@ export const PageLayoutRecordIdentifierBar = ({
 
         {isPinnedTabEditable && isDefined(pinnedTab) && (
           <StyledPinnedTab>
-            <IconButtonWithTooltip
+            <IconButton
               aria-label={t`Edit pinned tab: ${pinnedTab.title}`}
               onClick={() => openTabSettings(pinnedTab.id)}
-              tooltipContent={t`Pinned tab, always shown on the left`}
+              tooltip={t`Pinned tab, always shown on the left`}
               tooltipDelay={TooltipDelay.shortDelay}
               size="sm"
               variant="ghost"
             >
               <IconPinned />
-            </IconButtonWithTooltip>
+            </IconButton>
           </StyledPinnedTab>
         )}
       </StyledIdentifierCell>

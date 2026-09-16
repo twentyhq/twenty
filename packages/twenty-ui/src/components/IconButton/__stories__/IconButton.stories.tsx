@@ -2,6 +2,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconPlus, IconSearch } from '@ui/icon';
+import { TooltipDelay } from '@ui/primitives/surfaces/AppTooltip/AppTooltip';
 import { ButtonGroup } from '@ui/primitives/input/ButtonGroup/ButtonGroup';
 import { type ButtonColor } from '@ui/primitives/input/Button/types/ButtonColor';
 import { type ButtonVariant } from '@ui/primitives/input/Button/types/ButtonVariant';
@@ -85,6 +86,69 @@ export const Link: Story = {
   },
 };
 
+export const Tooltip: Story = {
+  ...Default,
+  args: { tooltip: 'Search records', tooltipDelay: TooltipDelay.noDelay },
+  play: async ({ canvasElement }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    button.focus();
+    await expect(button).toHaveFocus();
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Search records');
+  },
+};
+
+export const TooltipDisabled: Story = {
+  ...Tooltip,
+  args: { ...Tooltip.args, disabled: true, onClick: fn() },
+  play: async ({ canvasElement, args }) => {
+    const button = within(canvasElement).getByRole('button', {
+      name: 'Search',
+    });
+
+    await expect(button).toBeDisabled();
+    await userEvent.hover(button);
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Search records');
+    await userEvent.click(button);
+    await expect(args.onClick).not.toHaveBeenCalled();
+  },
+};
+
+export const TooltipLoading: Story = {
+  ...TooltipDisabled,
+  args: { ...Tooltip.args, loading: true, onClick: fn() },
+};
+
+export const TooltipLink: Story = {
+  ...Tooltip,
+  args: {
+    ...Tooltip.args,
+    href: '#search',
+    render: (props) => (
+      <a {...props} data-custom-render>
+        {props.children}
+      </a>
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const link = within(canvasElement).getByRole('link', { name: 'Search' });
+
+    await expect(link).toHaveAttribute('href', '#search');
+    await expect(link).toHaveAttribute('data-custom-render');
+    await expect(link).not.toHaveAttribute('type');
+    link.focus();
+    await expect(
+      await within(canvasElement.ownerDocument.body).findByRole('tooltip'),
+    ).toHaveTextContent('Search records');
+  },
+};
+
 export const Grouped: Story = {
   ...Default,
   render: () => (
@@ -97,7 +161,7 @@ export const Grouped: Story = {
       <IconButton aria-label="Search">
         <IconSearch />
       </IconButton>
-      <IconButton aria-label="Create">
+      <IconButton aria-label="Create" tooltip="Create record">
         <IconPlus />
       </IconButton>
     </ButtonGroup>

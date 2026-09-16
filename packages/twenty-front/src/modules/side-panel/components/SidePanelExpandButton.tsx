@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { IconMaximize } from 'twenty-ui/icon';
-import { IconButtonWithTooltip } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 import {
   getOsControlSymbol,
   getOsShortcutSeparator,
@@ -47,8 +47,8 @@ const SidePanelExpandButtonContent = () => {
       {expandTarget.hasExpandShortcut && !isDisabled && (
         <SidePanelExpandShortcutEffect expand={expandTarget.expand} />
       )}
-      <IconButtonWithTooltip
-        tooltipContent={tooltipContent}
+      <IconButton
+        tooltip={tooltipContent}
         disabled={isDisabled}
         size="sm"
         variant="ghost"
@@ -56,7 +56,7 @@ const SidePanelExpandButtonContent = () => {
         aria-label={expandTarget.label}
       >
         <IconMaximize />
-      </IconButtonWithTooltip>
+      </IconButton>
     </>
   );
 };

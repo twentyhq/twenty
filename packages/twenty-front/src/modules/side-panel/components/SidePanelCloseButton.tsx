@@ -1,7 +1,7 @@
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { useLingui } from '@lingui/react/macro';
 import { IconX } from 'twenty-ui/icon';
-import { IconButtonWithTooltip } from 'twenty-ui/components';
+import { IconButton } from 'twenty-ui/components';
 
 export const SidePanelCloseButton = () => {
   const { t } = useLingui();
@@ -10,14 +10,14 @@ export const SidePanelCloseButton = () => {
   const closeSidePanelLabel = t`Close side panel`;
 
   return (
-    <IconButtonWithTooltip
-      tooltipContent={closeSidePanelLabel}
+    <IconButton
+      tooltip={closeSidePanelLabel}
       size="sm"
       variant="outline"
       onClick={closeSidePanelMenu}
       aria-label={closeSidePanelLabel}
     >
       <IconX />
-    </IconButtonWithTooltip>
+    </IconButton>
   );
 };

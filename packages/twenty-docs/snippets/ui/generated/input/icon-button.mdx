@@ -36,17 +36,8 @@
   Shows a loading indicator and disables activation while preserving the button width.
 </ParamField>
 
-<ParamField body="nativeButton" type="boolean" default="true">
-  Whether the component renders a native `<button>` element when replacing it
-  via the `render` prop.
-  Set to `false` if the rendered element is not a button (for example, `<div>`).
-</ParamField>
-
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ButtonState&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
-
-  Accepts a `ReactElement` or a function that returns the element to render.
+  Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
 </ParamField>
 
 <ParamField body="size" type="&quot;sm&quot; | &quot;md&quot;">
@@ -56,6 +47,22 @@
 <ParamField body="style" type="CSSProperties | ((state: ButtonState) =&gt; CSSProperties | undefined)">
   Style applied to the element, or a function that
   returns a style object based on the component's state.
+</ParamField>
+
+<ParamField body="tooltip" type="string">
+  Text displayed when hovering or focusing the button.
+</ParamField>
+
+<ParamField body="tooltipDelay" type="&quot;0ms&quot; | &quot;300ms&quot; | &quot;500ms&quot; | &quot;1000ms&quot;" default="TooltipDelay.longDelay">
+  Delay before showing the tooltip.
+</ParamField>
+
+<ParamField body="tooltipOffset" type="number" default="5">
+  Distance in pixels between the button and the tooltip.
+</ParamField>
+
+<ParamField body="tooltipPlace" type="&quot;top&quot; | &quot;left&quot; | &quot;right&quot; | &quot;bottom&quot;" default="TooltipPosition.Bottom">
+  Preferred placement of the tooltip relative to the button.
 </ParamField>
 
 <ParamField body="variant" type="&quot;solid&quot; | &quot;outline&quot; | &quot;ghost&quot; | &quot;soft&quot;">

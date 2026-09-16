@@ -16,12 +16,6 @@
     "limit": "95 kB"
   },
   {
-    "name": "components (tree-shaken IconButton)",
-    "path": "dist/components.mjs",
-    "limit": "65 kB",
-    "import": "{ IconButton }"
-  },
-  {
     "name": "primitives",
     "path": "dist/primitives.mjs",
     "limit": "210 kB"

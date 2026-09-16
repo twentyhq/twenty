@@ -9,8 +9,6 @@
 
 export { IconButton } from './IconButton/IconButton';
 export type { IconButtonProps } from './IconButton/types/IconButtonProps';
-export { IconButtonWithTooltip } from './IconButtonWithTooltip/IconButtonWithTooltip';
-export type { IconButtonWithTooltipProps } from './IconButtonWithTooltip/types/IconButtonWithTooltipProps';
 export { LightButton } from './LightButton/LightButton';
 export type { LightButtonProps } from './LightButton/types/LightButtonProps';
 export { MainButton } from './MainButton/MainButton';

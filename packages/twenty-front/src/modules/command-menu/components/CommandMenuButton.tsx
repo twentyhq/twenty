@@ -74,8 +74,7 @@ export const CommandMenuButton = ({
           variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
           color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
           render={isDefined(to) ? <Link to={to} /> : undefined}
-          nativeButton={!isDefined(to)}
-          role={isDefined(to) ? 'link' : undefined}
+          href={to}
           onClick={onClick}
           disabled={disabled}
           aria-label={command.label}

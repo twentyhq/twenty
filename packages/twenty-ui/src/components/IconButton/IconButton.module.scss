@@ -2,6 +2,10 @@
   @include square-button;
 }
 
+.tooltipAnchor {
+  display: inline-flex;
+}
+
 .icon {
   align-items: center;
   display: flex;

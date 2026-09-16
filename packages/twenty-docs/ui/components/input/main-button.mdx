@@ -36,8 +36,10 @@ Keep page layout in your application's styling.
 `loading`, `disabled`, and `soon` props. Buttons default to `type="button"`;
 set `type="submit"` explicitly for form submission.
 
-Use `href` for a link or compose a router link through `render`,
-`nativeButton={false}`, and `role="link"`. Routing belongs to the application.
+Use `href` for a link. Supply `render` to choose a custom root, including an
+application-owned router link. The root must preserve a native button, or an
+anchor when `href` is set. Button derives the interaction behavior from `href`.
+
 [ButtonGroup](/ui/primitives/input/button-group) can set a shared size, surface,
 and color. Consumer classes, including state functions, pass through to the root.
 
