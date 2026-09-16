@@ -12,6 +12,11 @@ import { useIsMobile } from 'twenty-ui/utilities';
 
 import { InboxItemDetail } from '@/inbox/components/InboxItemDetail';
 import { InboxList } from '@/inbox/components/InboxList';
+import { DEFAULT_INBOX_QUEUE_VIEW } from '@/inbox/constants/DefaultInboxQueueView';
+import {
+  INBOX_QUEUE_VIEWS,
+  type InboxQueueViewKey,
+} from '@/inbox/constants/InboxQueueViews';
 import { useInboxItems } from '@/inbox/hooks/useInboxItems';
 import { useInboxQueues } from '@/inbox/hooks/useInboxQueues';
 import { useOpenInboxItem } from '@/inbox/hooks/useOpenInboxItem';
@@ -25,11 +30,7 @@ import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import {
-  type InboxItem,
-  InboxItemScope,
-  InboxQueueAssignment,
-} from '~/generated/graphql';
+import { type InboxItem, InboxItemScope } from '~/generated/graphql';
 
 const INBOX_LIST_PANE_WIDTH = 400;
 
@@ -105,10 +106,8 @@ const InboxSplitViewEffect = () => {
 
 export const InboxPage = () => {
   const { t } = useLingui();
-  // A shared inbox opens on what nobody has picked up, because that is the
-  // question it exists to answer.
-  const [queueAssignment, setQueueAssignment] = useState<InboxQueueAssignment>(
-    InboxQueueAssignment.UNASSIGNED,
+  const [inboxQueueViewKey, setInboxQueueViewKey] = useState<InboxQueueViewKey>(
+    DEFAULT_INBOX_QUEUE_VIEW.key,
   );
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
@@ -122,6 +121,12 @@ export const InboxPage = () => {
 
   const inboxQueue = inboxQueues.find((queue) => queue.name === inboxQueueName);
   const inboxSection = findInboxSectionBySlug(inboxSectionSlug);
+  const inboxQueueView =
+    INBOX_QUEUE_VIEWS.find((view) => view.key === inboxQueueViewKey) ??
+    DEFAULT_INBOX_QUEUE_VIEW;
+  const listScope = isDefined(inboxQueueName)
+    ? inboxQueueView.scope
+    : inboxSection.scope;
   const QueueIcon = getIcon(inboxQueue?.icon);
   const SectionIcon = isDefined(inboxQueueName) ? QueueIcon : inboxSection.Icon;
   const inboxSectionSlugToUse = inboxSection.slug;
@@ -141,15 +146,14 @@ export const InboxPage = () => {
     hasMoreItems,
     loadMoreItems,
   } = useInboxItems({
-    scope: isDefined(inboxQueueName)
-      ? InboxItemScope.INBOX
-      : inboxSection.scope,
+    scope: listScope,
     queueName: inboxQueueName,
-    assignment: isDefined(inboxQueueName) ? queueAssignment : undefined,
+    assignment: isDefined(inboxQueueName)
+      ? inboxQueueView.assignment
+      : undefined,
   });
   const { openInboxItem } = useOpenInboxItem(inboxListLocation);
-  const shouldSplitByPriority =
-    isDefined(inboxQueueName) || inboxSection.scope === InboxItemScope.INBOX;
+  const shouldSplitByPriority = listScope === InboxItemScope.INBOX;
 
   const openItem = (inboxItem: InboxItem) =>
     openInboxItem(
@@ -180,19 +184,12 @@ export const InboxPage = () => {
                   <SegmentedControl
                     ariaLabel={t`Filter this shared inbox`}
                     itemWidth="content"
-                    value={queueAssignment}
-                    onChange={setQueueAssignment}
-                    options={[
-                      {
-                        value: InboxQueueAssignment.UNASSIGNED,
-                        label: t`Unassigned`,
-                      },
-                      {
-                        value: InboxQueueAssignment.ASSIGNED,
-                        label: t`Assigned`,
-                      },
-                      { value: InboxQueueAssignment.ALL, label: t`All` },
-                    ]}
+                    value={inboxQueueViewKey}
+                    onChange={setInboxQueueViewKey}
+                    options={INBOX_QUEUE_VIEWS.map((view) => ({
+                      value: view.key,
+                      label: t(view.label),
+                    }))}
                   />
                 )
               }
