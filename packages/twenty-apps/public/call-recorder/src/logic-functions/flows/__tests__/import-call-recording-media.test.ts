@@ -405,6 +405,7 @@ describe('importCallRecordingMedia', () => {
     expect(mediaImportResult).toEqual({
       updateData: {},
       hasRetryableFailure: false,
+      isRecordingGone: false,
     });
     expect(mutationMock).not.toHaveBeenCalled();
   });
@@ -429,6 +430,7 @@ describe('importCallRecordingMedia', () => {
     expect(mediaImportResult).toEqual({
       updateData: {},
       hasRetryableFailure: true,
+      isRecordingGone: false,
     });
     expect(mutationMock).not.toHaveBeenCalled();
     expect(console.warn).toHaveBeenCalledWith(
@@ -524,6 +526,7 @@ describe('importCallRecordingMedia', () => {
         callRecorderFailureReason: 'video_import_expired',
       },
       hasRetryableFailure: false,
+      isRecordingGone: false,
     });
     expect(getUploadRequestCall('video.mp4')).toBeUndefined();
   });

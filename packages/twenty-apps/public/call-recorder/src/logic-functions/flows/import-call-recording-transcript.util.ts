@@ -127,13 +127,10 @@ export const importCallRecordingTranscript = async ({
 
       // The idempotency key makes a retried create safe, so a lost response
       // is retried now instead of waiting for the next run.
-      if (isNull(createResult.status)) {
-        return buildEmptyTranscriptArtifactResult({
-          hasRetryableFailure: true,
-        });
-      }
-
-      if (isRetryableRecallApiStatus(createResult.status)) {
+      if (
+        isNull(createResult.status) ||
+        isRetryableRecallApiStatus(createResult.status)
+      ) {
         return buildEmptyTranscriptArtifactResult({
           hasRetryableFailure: true,
         });

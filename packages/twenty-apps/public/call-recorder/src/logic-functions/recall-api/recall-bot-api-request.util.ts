@@ -18,7 +18,6 @@ type RecallBotApiRequestArgs = {
   body?: unknown;
   idempotencyKey?: string;
   allowNotFound?: boolean;
-  maxAttempts?: number;
   signal?: AbortSignal;
 };
 
@@ -39,7 +38,6 @@ type RecallBotApiRequestResult<TData> =
 export const recallBotApiRequest = async <TData>(
   requestArgs: RecallBotApiRequestArgs,
 ): Promise<RecallBotApiRequestResult<TData>> => {
-  const maxAttempts = requestArgs.maxAttempts ?? RECALL_API_MAX_ATTEMPTS;
   let totalRetryWaitMs = 0;
 
   for (let attemptNumber = 1; ; attemptNumber++) {
@@ -47,7 +45,7 @@ export const recallBotApiRequest = async <TData>(
     const { result, isRetryable, retryAfterMs } =
       await performRecallBotApiRequestAttempt<TData>(requestArgs);
 
-    if (!isRetryable || attemptNumber >= maxAttempts) {
+    if (!isRetryable || attemptNumber >= RECALL_API_MAX_ATTEMPTS) {
       return result;
     }
 
@@ -99,6 +97,10 @@ const performRecallBotApiRequestAttempt = async <TData>({
       ...(isUndefined(body) ? {} : { body: JSON.stringify(body) }),
     });
   } catch (error) {
+    if (signal?.aborted) {
+      throw error;
+    }
+
     return {
       isRetryable: true,
       result: {

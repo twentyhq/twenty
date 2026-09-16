@@ -15,6 +15,7 @@ import {
   AUDIO_IMPORT_EXPIRED_FAILURE_REASON,
   VIDEO_IMPORT_EXPIRED_FAILURE_REASON,
 } from 'src/logic-functions/constants/media-import-expired-failure-reasons';
+import { appendCallRecorderFailureReasons } from 'src/logic-functions/domain/append-call-recorder-failure-reasons.util';
 import { parseUnrecoverableMediaMarkers } from 'src/logic-functions/domain/parse-unrecoverable-media-markers.util';
 import { putMediaDownloadBodyToUploadTarget } from 'src/logic-functions/flows/put-media-download-body-to-upload-target.util';
 import { extractRecallMediaArtifacts } from 'src/logic-functions/recall-api/extract-recall-media-artifacts.util';
@@ -34,7 +35,7 @@ type ImportCallRecordingMediaResult = {
   updateData: CallRecordingMediaUpdateFields;
   hasRetryableFailure: boolean;
   // Recall answers 404 for a recording whose media retention has elapsed.
-  isRecordingGone?: true;
+  isRecordingGone: boolean;
 };
 
 type ImportMediaArtifactResult =
@@ -98,7 +99,11 @@ export const importCallRecordingMedia = async ({
     (hasAudio || isAudioUnrecoverable) &&
     (hasVideo || isVideoUnrecoverable)
   ) {
-    return { updateData: {}, hasRetryableFailure: false };
+    return {
+      updateData: {},
+      hasRetryableFailure: false,
+      isRecordingGone: false,
+    };
   }
 
   const recordingResult = await getRecallRecording({
@@ -119,7 +124,11 @@ export const importCallRecordingMedia = async ({
       };
     }
 
-    return { updateData: {}, hasRetryableFailure: true };
+    return {
+      updateData: {},
+      hasRetryableFailure: true,
+      isRecordingGone: false,
+    };
   }
 
   const mediaArtifacts = extractRecallMediaArtifacts(recordingResult.recording);
@@ -131,12 +140,10 @@ export const importCallRecordingMedia = async ({
   const unrecoverableFailureReasons: string[] = [];
   const recordUnrecoverableFailure = async (failureReason: string) => {
     unrecoverableFailureReasons.push(failureReason);
-    updateFields.callRecorderFailureReason = [
+    updateFields.callRecorderFailureReason = appendCallRecorderFailureReasons({
       callRecorderFailureReason,
-      ...unrecoverableFailureReasons,
-    ]
-      .filter(isNonEmptyString)
-      .join(',');
+      failureReasons: unrecoverableFailureReasons,
+    });
     await saveProgress({
       callRecorderFailureReason: updateFields.callRecorderFailureReason,
     });
@@ -201,6 +208,7 @@ export const importCallRecordingMedia = async ({
   return {
     updateData: updateFields,
     hasRetryableFailure: isNonEmptyArray(failedMediaArtifactFields),
+    isRecordingGone: false,
   };
 };
 
