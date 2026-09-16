@@ -1,8 +1,4 @@
 import { computeRowLevelPermissionRowsToPurge } from 'src/database/commands/upgrade-version-command/2-41/utils/compute-row-level-permission-rows-to-purge.util';
-import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
-import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 
 const DELETED_AT = '2026-09-16T10:00:00.000Z';
 
@@ -18,18 +14,9 @@ type PredicateInput = {
   deletedAt?: string | null;
 };
 
-const buildMaps = <TFlatEntity extends SyncableFlatEntity>(
-  entities: { id: string }[],
-): FlatEntityMaps<TFlatEntity> =>
-  ({
-    byUniversalIdentifier: Object.fromEntries(
-      entities.map((entity) => [entity.id, entity]),
-    ),
-    universalIdentifierById: Object.fromEntries(
-      entities.map((entity) => [entity.id, entity.id]),
-    ),
-    universalIdentifiersByApplicationId: {},
-  }) as unknown as FlatEntityMaps<TFlatEntity>;
+const buildMaps = <TRow extends { id: string }>(rows: TRow[]) => ({
+  byUniversalIdentifier: Object.fromEntries(rows.map((row) => [row.id, row])),
+});
 
 const purge = ({
   groups = [],
@@ -40,22 +27,20 @@ const purge = ({
 }) => {
   const { groupsToDelete, predicatesToDelete } =
     computeRowLevelPermissionRowsToPurge({
-      flatRowLevelPermissionPredicateGroupMaps:
-        buildMaps<FlatRowLevelPermissionPredicateGroup>(
-          groups.map((group) => ({
-            parentRowLevelPermissionPredicateGroupId: null,
-            deletedAt: null,
-            ...group,
-          })),
-        ),
-      flatRowLevelPermissionPredicateMaps:
-        buildMaps<FlatRowLevelPermissionPredicate>(
-          predicates.map((predicate) => ({
-            rowLevelPermissionPredicateGroupId: null,
-            deletedAt: null,
-            ...predicate,
-          })),
-        ),
+      flatRowLevelPermissionPredicateGroupMaps: buildMaps(
+        groups.map((group) => ({
+          parentRowLevelPermissionPredicateGroupId: null,
+          deletedAt: null,
+          ...group,
+        })),
+      ),
+      flatRowLevelPermissionPredicateMaps: buildMaps(
+        predicates.map((predicate) => ({
+          rowLevelPermissionPredicateGroupId: null,
+          deletedAt: null,
+          ...predicate,
+        })),
+      ),
     });
 
   return {

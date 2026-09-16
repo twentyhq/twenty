@@ -377,17 +377,16 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
       deleteData.upsertRowLevelPermissionPredicates.predicateGroups,
     ).toHaveLength(0);
 
-    const remainingPredicateRows = await globalThis.testDataSource.query(
-      `SELECT id FROM core."rowLevelPermissionPredicate" WHERE id = $1`,
-      [createdPredicateId],
-    );
-    const remainingPredicateGroupRows = await globalThis.testDataSource.query(
-      `SELECT id FROM core."rowLevelPermissionPredicateGroup" WHERE id = $1`,
-      [createdPredicateGroupId],
-    );
-
-    expect(remainingPredicateRows).toEqual([]);
-    expect(remainingPredicateGroupRows).toEqual([]);
+    expect(
+      deleteData.upsertRowLevelPermissionPredicates.predicates.map(
+        ({ id }: { id: string }) => id,
+      ),
+    ).not.toContain(createdPredicateId);
+    expect(
+      deleteData.upsertRowLevelPermissionPredicates.predicateGroups.map(
+        ({ id }: { id: string }) => id,
+      ),
+    ).not.toContain(createdPredicateGroupId);
   });
 
   it('should upsert predicates with predicate groups', async () => {

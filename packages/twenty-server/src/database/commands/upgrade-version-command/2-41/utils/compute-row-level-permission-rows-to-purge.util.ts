@@ -1,23 +1,35 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
-import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
-
-type ComputeRowLevelPermissionRowsToPurgeArgs = {
-  flatRowLevelPermissionPredicateGroupMaps: FlatEntityMaps<FlatRowLevelPermissionPredicateGroup>;
-  flatRowLevelPermissionPredicateMaps: FlatEntityMaps<FlatRowLevelPermissionPredicate>;
+type PurgeableRow = {
+  id: string;
+  deletedAt?: string | Date | null;
 };
 
-type ComputeRowLevelPermissionRowsToPurgeReturnType = {
-  groupsToDelete: FlatRowLevelPermissionPredicateGroup[];
-  predicatesToDelete: FlatRowLevelPermissionPredicate[];
+type PurgeableGroup = PurgeableRow & {
+  parentRowLevelPermissionPredicateGroupId?: string | null;
 };
 
-export const computeRowLevelPermissionRowsToPurge = ({
+type PurgeablePredicate = PurgeableRow & {
+  rowLevelPermissionPredicateGroupId?: string | null;
+};
+
+type RowsByUniversalIdentifier<TRow> = {
+  byUniversalIdentifier: Partial<Record<string, TRow>>;
+};
+
+export const computeRowLevelPermissionRowsToPurge = <
+  TGroup extends PurgeableGroup,
+  TPredicate extends PurgeablePredicate,
+>({
   flatRowLevelPermissionPredicateGroupMaps,
   flatRowLevelPermissionPredicateMaps,
-}: ComputeRowLevelPermissionRowsToPurgeArgs): ComputeRowLevelPermissionRowsToPurgeReturnType => {
+}: {
+  flatRowLevelPermissionPredicateGroupMaps: RowsByUniversalIdentifier<TGroup>;
+  flatRowLevelPermissionPredicateMaps: RowsByUniversalIdentifier<TPredicate>;
+}): {
+  groupsToDelete: TGroup[];
+  predicatesToDelete: TPredicate[];
+} => {
   const flatGroups = Object.values(
     flatRowLevelPermissionPredicateGroupMaps.byUniversalIdentifier,
   ).filter(isDefined);
