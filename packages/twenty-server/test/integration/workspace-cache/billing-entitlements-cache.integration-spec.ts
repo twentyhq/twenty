@@ -4,6 +4,8 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { type BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { type BillingUsageLimitEntitlementProvider } from 'src/engine/core-modules/billing/services/billing-usage-limit-entitlement-provider.service';
 import { type EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 import {
@@ -17,12 +19,13 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
 (isBillingEnabled ? describe.skip : describe)(
   'Billing entitlement cache without billing',
   () => {
+    const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
+
     it('returns an empty map without loading unregistered billing entities', async () => {
       const workspaceCacheService =
         getAppProviderByClassName<WorkspaceCacheService>(
           'WorkspaceCacheService',
         );
-      const workspaceId = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
       await workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'billingEntitlements',
@@ -33,6 +36,24 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
         ]),
       ).toEqual({ billingEntitlements: {} });
     });
+
+    it.each([false, true])(
+      'creates a repository with empty entitlements when billing is disabled (lite: %s)',
+      async (lite) => {
+        const workspaceOrmManager =
+          getAppProviderByClassName<WorkspaceOrmManager>('WorkspaceOrmManager');
+
+        await workspaceOrmManager.executeInWorkspaceContext(
+          () => {
+            const repository = workspaceOrmManager.getRepository('company');
+
+            expect(repository.internalContext.billingEntitlements).toEqual({});
+          },
+          buildSystemAuthContext(workspaceId),
+          { lite },
+        );
+      },
+    );
   },
 );
 
@@ -132,6 +153,48 @@ const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
         value: false,
       });
     });
+
+    it.each([false, true])(
+      'keeps the repository snapshot until a new workspace context is created (lite: %s)',
+      async (lite) => {
+        const workspaceOrmManager =
+          getAppProviderByClassName<WorkspaceOrmManager>('WorkspaceOrmManager');
+        const authContext = buildSystemAuthContext(workspaceId);
+
+        await workspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const repository = workspaceOrmManager.getRepository('company');
+            const snapshot = repository.internalContext.billingEntitlements;
+
+            expect(snapshot[BillingEntitlementKey.USAGE_LIMIT]).toBe(true);
+            await setUsageLimitEntitlement(false);
+            await refreshEntitlements();
+
+            expect(snapshot[BillingEntitlementKey.USAGE_LIMIT]).toBe(true);
+            expect(
+              workspaceOrmManager.getRepository('company').internalContext
+                .billingEntitlements,
+            ).toBe(snapshot);
+          },
+          authContext,
+          { lite },
+        );
+
+        await workspaceOrmManager.executeInWorkspaceContext(
+          () => {
+            const repository = workspaceOrmManager.getRepository('company');
+
+            expect(
+              repository.internalContext.billingEntitlements[
+                BillingEntitlementKey.USAGE_LIMIT
+              ],
+            ).toBe(false);
+          },
+          authContext,
+          { lite },
+        );
+      },
+    );
 
     it('evaluates license validity again while the entitlement remains cached', async () => {
       expect(
