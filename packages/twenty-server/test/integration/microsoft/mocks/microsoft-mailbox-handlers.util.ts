@@ -9,6 +9,7 @@ export const microsoftMailboxHandlers = (
   folderStore: MockEntityStore<MailFolder>,
   messages: Array<Record<string, unknown>> = [],
   removedMessageIdsByFolderId: Record<string, string[]> = {},
+  unfetchableMessageIds: string[] = [],
 ): MswHandler[] => [
   http.get('*/me/mailFolders', () =>
     HttpResponse.json<{ value: MailFolder[] }>({ value: folderStore.list() }),
@@ -55,7 +56,8 @@ export const microsoftMailboxHandlers = (
           (candidate) => candidate.id === messageId,
         );
 
-        return isDefined(message)
+        return isDefined(message) &&
+          !unfetchableMessageIds.includes(messageId ?? '')
           ? { id, status: 200, body: message }
           : { id, status: 404, body: { error: { message: 'Not Found' } } };
       }),

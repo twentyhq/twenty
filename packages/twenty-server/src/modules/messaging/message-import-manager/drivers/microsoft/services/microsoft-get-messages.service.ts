@@ -76,6 +76,13 @@ export class MicrosoftGetMessagesService {
 
     const messages = parsedResponses.map((response) => {
       if ('error' in response) {
+        if (
+          response.error.statusCode === 404 ||
+          response.error.statusCode === 410
+        ) {
+          return undefined;
+        }
+
         throw new MicrosoftImportDriverException(
           response.error.message,
           response.error.code,
