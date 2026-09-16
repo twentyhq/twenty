@@ -4,9 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { isValidReturnToPath } from '@/auth/utils/isValidReturnToPath';
 
-// The default domain only serves authentication: any other path is a deep link
-// into a workspace, kept as returnToPath so sign-in and workspace selection can
-// land the user on it once they reach their workspace subdomain.
 export const RootDeepLinkRedirect = () => {
   const { hash, pathname, search } = useLocation();
 

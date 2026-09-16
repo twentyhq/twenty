@@ -28,9 +28,6 @@ export const DeleteWorkspace = () => {
   const deleteWorkspace = async () => {
     await deleteCurrentWorkspace();
     await signOut();
-    // signOut's navigation to the sign-in page has not landed yet, so without
-    // an explicit pathname the deleted workspace's settings path would ride
-    // along to the default domain and come back as a returnToPath.
     redirectToDefaultDomain({ pathname: AppPath.SignInUp });
   };
 
