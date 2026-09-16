@@ -37,13 +37,14 @@ export const SettingsEnterpriseFeatureGateCard = ({
         Button={
           canDisplayUpgradeButton ? (
             <Button
-              title={buttonTitle}
-              variant="primary"
-              accent="blue"
-              size="small"
-              Icon={IconArrowUp}
+              size="sm"
+              startIcon={<IconArrowUp />}
               onClick={() => navigateSettings(upgradeSettingsPath)}
-            />
+              variant="solid"
+              color="accent"
+            >
+              {buttonTitle}
+            </Button>
           ) : undefined
         }
       />

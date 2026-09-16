@@ -1,33 +1,34 @@
-import { Section } from 'twenty-ui/primitives/layout';
-import { IconReload, IconTrash } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
-import { Trans, useLingui } from '@lingui/react/macro';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { SettingsPath } from 'twenty-shared/types';
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { TextInput } from '@/ui/input/components/TextInput';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
-import { styled } from '@linaria/react';
+import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/components/CheckPublicDomainValidRecordsEffect';
 import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDomainRecords';
 import { useCheckPublicDomainValidRecords } from '@/settings/domains/hooks/useCheckPublicDomainValidRecords';
+import { selectedApplicationIdForPublicDomainState } from '@/settings/domains/states/selectedApplicationIdForPublicDomainState';
+import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
+import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
+import { TextInput } from '@/ui/input/components/TextInput';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
+import { Trans, useLingui } from '@lingui/react/macro';
+import { useState } from 'react';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { IconReload, IconTrash } from 'twenty-ui/icon';
+import { useToast } from 'twenty-ui/primitives/feedback';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   CreatePublicDomainDocument,
   DeletePublicDomainDocument,
   FindManyPublicDomainsDocument,
 } from '~/generated-metadata/graphql';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { CheckPublicDomainValidRecordsEffect } from '@/settings/domains/components/CheckPublicDomainValidRecordsEffect';
-import { selectedApplicationIdForPublicDomainState } from '@/settings/domains/states/selectedApplicationIdForPublicDomainState';
-import { selectedPublicDomainState } from '@/settings/domains/states/selectedPublicDomainState';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useState } from 'react';
-import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
-import { getDomainValidationSchema } from '@/settings/domains/utils/getDomainValidationSchema';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 const StyledButtonGroupContainer = styled.div`
   > * > :not(:first-of-type) > button {
@@ -61,7 +62,7 @@ export const SettingPublicDomain = () => {
   );
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const [createPublicDomain, { loading }] = useMutation(
     CreatePublicDomainDocument,
@@ -92,16 +93,14 @@ export const SettingPublicDomain = () => {
     await deletePublicDomain({
       variables: { domain: selectedPublicDomain.domain },
       onCompleted: () => {
-        enqueueSuccessSnackBar({
-          message: t`Custom domain successfully deleted`,
+        enqueueToast({
+          variant: 'success',
+          children: t`Custom domain successfully deleted`,
         });
         navigate(SettingsPath.Applications);
         refetchPublicDomains();
       },
-      onError: (error) =>
-        enqueueErrorSnackBar({
-          apolloError: error,
-        }),
+      onError: (error) => enqueueToast(getToastOptionsFromError({ error })),
     });
   };
 
@@ -131,15 +130,14 @@ export const SettingPublicDomain = () => {
       },
       onCompleted: (data) => {
         setSelectedPublicDomain(data.createPublicDomain);
-        enqueueSuccessSnackBar({
-          message: t`Custom domain successfully created`,
+        enqueueToast({
+          variant: 'success',
+          children: t`Custom domain successfully created`,
         });
       },
       onError: (error) => {
         setNewPublicDomainError(error.message);
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
+        enqueueToast(getToastOptionsFromError({ error }));
       },
     });
   };
@@ -192,21 +190,21 @@ export const SettingPublicDomain = () => {
                 <ButtonGroup>
                   <StyledButtonContainer>
                     <Button
-                      isLoading={isLoading}
-                      Icon={IconReload}
-                      title={t`Reload`}
-                      variant="primary"
+                      loading={isLoading}
+                      startIcon={<IconReload />}
                       onClick={() =>
                         checkPublicDomainRecords(selectedPublicDomain.domain)
                       }
                       type="button"
-                    />
+                      variant="outline"
+                    >{t`Reload`}</Button>
                   </StyledButtonContainer>
                   <StyledButtonContainer>
                     <Button
-                      Icon={IconTrash}
-                      variant="primary"
+                      startIcon={<IconTrash />}
+                      aria-label={t`Delete`}
                       onClick={onDelete}
+                      variant="outline"
                     />
                   </StyledButtonContainer>
                 </ButtonGroup>

@@ -1,25 +1,23 @@
-import { styled } from '@linaria/react';
-import { type MouseEvent } from 'react';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
+import { type MouseEvent, useId } from 'react';
+import { Link } from 'react-router-dom';
 import { type Nullable } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
 import {
   AppTooltip,
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/primitives/surfaces';
-import { Button, IconButton } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-
-const StyledWrapper = styled.div`
-  font-size: ${themeCssVariables.font.size.md};
-`;
+import { IconButton } from 'twenty-ui/components';
 
 export type CommandMenuButtonProps = {
   command: {
     key: string;
     label: string;
     shortLabel?: Nullable<string>;
+    hotKeys?: Nullable<string[]>;
     Icon: IconComponent;
     isPrimaryCTA?: boolean;
   };
@@ -38,6 +36,13 @@ export const CommandMenuButton = ({
   isPrimaryAction = false,
   shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
+  const tooltipId = useId();
+  const { hotKeys } = command;
+  const hasHotKeys = isNonEmptyArray(hotKeys);
+  const tooltipTitle = hasHotKeys
+    ? `${command.label} (${hotKeys.join(' → ')})`
+    : command.label;
+
   const resolvedShortLabel =
     isDefined(command.shortLabel) && !shouldHideLabel
       ? command.shortLabel
@@ -47,43 +52,50 @@ export const CommandMenuButton = ({
     isPrimaryAction || command.isPrimaryCTA === true ? 'blue' : 'default';
 
   return (
-    <>
+    <div data-tooltip-id={tooltipId}>
       {resolvedShortLabel !== undefined ? (
-        <Button
-          Icon={command.Icon}
-          size="small"
-          variant="primary"
-          accent={buttonAccent}
+        <NavigationButton
+          id={tooltipId}
+          startIcon={isDefined(command.Icon) ? <command.Icon /> : undefined}
+          size="sm"
           to={to}
           onClick={onClick}
           disabled={disabled}
-          title={resolvedShortLabel}
-          ariaLabel={command.label}
-        />
+          aria-label={command.label}
+          variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
+          color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+        >
+          {resolvedShortLabel}
+        </NavigationButton>
       ) : (
-        <div id={`command-menu-item-entry-${command.key}`} key={command.key}>
-          <IconButton
-            Icon={command.Icon}
-            size="small"
-            variant="primary"
-            accent={buttonAccent}
-            to={to}
-            onClick={onClick}
-            disabled={disabled}
-            ariaLabel={command.label}
-          />
-          <StyledWrapper>
-            <AppTooltip
-              anchorSelect={`#command-menu-item-entry-${command.key}`}
-              title={command.label}
-              delay={TooltipDelay.longDelay}
-              place={TooltipPosition.Bottom}
-              offset={5}
-              noArrow
-            />
-          </StyledWrapper>
-        </div>
+        <IconButton
+          id={tooltipId}
+          size="sm"
+          variant={buttonAccent === 'blue' ? 'solid' : 'outline'}
+          color={buttonAccent === 'blue' ? 'accent' : 'neutral'}
+          render={isDefined(to) ? <Link to={to} /> : undefined}
+          href={to}
+          onClick={onClick}
+          disabled={disabled}
+          aria-label={command.label}
+        >
+          <command.Icon />
+        </IconButton>
       )}
-    </>
+      {(hasHotKeys || !isDefined(resolvedShortLabel)) && (
+        <AppTooltip
+          anchorSelect={
+            disabled
+              ? `[data-tooltip-id='${tooltipId}']`
+              : `[id='${tooltipId}']`
+          }
+          title={tooltipTitle}
+          delay={TooltipDelay.longDelay}
+          place={TooltipPosition.Bottom}
+          offset={5}
+          noArrow
+        />
+      )}
+    </div>
   );
 };

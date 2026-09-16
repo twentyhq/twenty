@@ -33,22 +33,21 @@ export const BackgroundMockPage = () => {
           actionButton={
             <>
               <Button
-                Icon={IconPlus}
-                title={t`New Company`}
-                variant="primary"
-                accent="blue"
-                size="small"
-              />
+                startIcon={<IconPlus />}
+                size="sm"
+                variant="solid"
+                color="accent"
+              >{t`New Company`}</Button>
               <LightIconButton
                 Icon={IconDotsVertical}
                 accent="tertiary"
                 size="small"
               />
               <Button
-                Icon={IconLayoutSidebarRight}
-                variant="secondary"
-                accent="default"
-                size="small"
+                startIcon={<IconLayoutSidebarRight />}
+                aria-label={t`Open side panel`}
+                size="sm"
+                variant="outline"
               />
             </>
           }

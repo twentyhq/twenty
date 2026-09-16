@@ -1,3 +1,4 @@
+import { buttonControlsTest } from '@/__stories__/twenty-ui-gallery/utils/buttonControlsTest';
 import { type Meta } from '@storybook/react-vite';
 
 import {
@@ -383,6 +384,18 @@ export const TagControlsPreact: Story = createGalleryStory({
   frontComponentBundleName: 'twenty-ui-tag-controls',
   runtime: 'preact',
   play: tagControlsTest,
+});
+
+export const ButtonControlsReact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-controls',
+  runtime: 'react',
+  play: buttonControlsTest,
+});
+
+export const ButtonControlsPreact: Story = createGalleryStory({
+  frontComponentBundleName: 'twenty-ui-button-controls',
+  runtime: 'preact',
+  play: buttonControlsTest,
 });
 
 export const AvatarControlsReact: Story = createGalleryStory({

@@ -16,6 +16,8 @@ import {
   PageLayoutType,
   RelationOnDeleteAction,
   RelationType,
+  RowLevelPermissionPredicateGroupLogicalOperator,
+  RowLevelPermissionPredicateOperand,
   ViewCalendarLayout,
   ViewFilterGroupLogicalOperator,
   ViewFilterOperand,
@@ -25,6 +27,7 @@ import {
   ViewVisibility,
   WidgetType,
 } from 'twenty-shared/types';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 const MAX_IMPORT_LINE_LENGTH = 80;
@@ -86,6 +89,24 @@ export const OBJECT_ENUM_BINDINGS: EnumBinding[] = [
 
 export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
+];
+
+export const ROLE_ENUM_BINDINGS: EnumBinding[] = [
+  {
+    path: ['rowLevelPermissionPredicateGroups', '[]', 'logicalOperator'],
+    symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
+    members: RowLevelPermissionPredicateGroupLogicalOperator,
+  },
+  {
+    path: ['rowLevelPermissionPredicates', '[]', 'operand'],
+    symbol: 'RowLevelPermissionPredicateOperand',
+    members: RowLevelPermissionPredicateOperand,
+  },
+  {
+    path: ['permissionFlagUniversalIdentifiers', '[]'],
+    symbol: 'SystemPermissionFlag',
+    members: SystemPermissionFlag,
+  },
 ];
 
 const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({

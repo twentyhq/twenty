@@ -28,6 +28,7 @@ describe('scanProjectSourceFiles', () => {
       {
         relativePath: join('src', 'objects', 'helpers.ts'),
         entityKey: null,
+        targetFunctionName: null,
         universalIdentifier: null,
         isReadable: true,
       },

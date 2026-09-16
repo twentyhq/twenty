@@ -23,7 +23,8 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { t } from '@lingui/core/macro';
 import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
-import { Button, ButtonGroup, IconButton } from 'twenty-ui/primitives/input';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -110,21 +111,17 @@ export const UpdateViewButtonGroup = () => {
   return (
     <StyledContainer>
       {currentView?.key !== 'INDEX' ? (
-        <ButtonGroup size="small" accent="blue">
+        <ButtonGroup size="sm" variant="solid" color="accent">
           <Button
-            title={t`Update view`}
             onClick={handleUpdateViewClick}
             disabled={!canPersistChanges}
-          />
+          >{t`Update view`}</Button>
           <Dropdown
             dropdownId={updateViewButtonDropdownId}
             clickableComponent={
-              <IconButton
-                size="small"
-                accent="blue"
-                Icon={IconChevronDown}
-                position="right"
-              />
+              <IconButton aria-label={t`View update options`}>
+                <IconChevronDown />
+              </IconButton>
             }
             dropdownComponents={
               <DropdownContent>
@@ -141,12 +138,11 @@ export const UpdateViewButtonGroup = () => {
         </ButtonGroup>
       ) : (
         <Button
-          title={t`Save as new view`}
           onClick={handleSaveAsNewViewClick}
-          accent="blue"
-          size="small"
-          variant="secondary"
-        />
+          size="sm"
+          variant="outline"
+          color="accent"
+        >{t`Save as new view`}</Button>
       )}
     </StyledContainer>
   );

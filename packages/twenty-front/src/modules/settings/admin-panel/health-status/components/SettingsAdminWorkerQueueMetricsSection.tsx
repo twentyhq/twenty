@@ -1,3 +1,5 @@
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
+
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { WORKER_QUEUE_METRICS_SELECT_OPTIONS } from '@/settings/admin-panel/health-status/constants/WorkerQueueMetricsSelectOptions';
 import { Select } from '@/ui/input/components/Select';
@@ -8,7 +10,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconList } from 'twenty-ui/icon';
 import { H2Title } from 'twenty-ui/primitives/typography';
-import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
@@ -55,15 +56,14 @@ export const SettingsAdminWorkerQueueMetricsSection = ({
         <StyledControlsContainer>
           <H2Title title={queue.queueName} description={t`Queue performance`} />
           <StyledRightControls>
-            <Button
-              Icon={IconList}
-              title={t`View Jobs`}
-              size="small"
-              variant="secondary"
+            <NavigationButton
+              startIcon={<IconList />}
+              size="sm"
               to={getSettingsPath(SettingsPath.AdminPanelQueueDetail, {
                 queueName: queue.queueName,
               })}
-            />
+              variant="outline"
+            >{t`View Jobs`}</NavigationButton>
             <Select
               dropdownId={`timerange-${queue.queueName}`}
               value={timeRange}

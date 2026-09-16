@@ -30,10 +30,11 @@ const ControlledExample = (props: CheckboxProps) => {
       <Checkbox {...props} checked={checked} />
       <Button
         type="button"
-        title="Apply selection"
-        ariaLabel="Apply selection"
+        aria-label="Apply selection"
         onClick={() => setChecked(true)}
-      />
+      >
+        Apply selection
+      </Button>
     </>
   );
 };

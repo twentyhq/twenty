@@ -1,10 +1,10 @@
 /* @license Enterprise */
 
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { Link } from 'react-router-dom';
 
 import { SettingsPath } from 'twenty-shared/types';
 
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsSsoIdentitiesProvidersListCardWrapper } from '@/settings/security/components/sso/SettingsSsoIdentitiesProvidersListCardWrapper';
@@ -51,21 +51,28 @@ export const SettingsSsoIdentitiesProvidersListCard = () => {
     }
   }, [ssoData, setSsoIdentitiesProviders]);
 
-  useSnackBarOnQueryError(ssoError);
-
-  return loading || !ssoIdentitiesProviders.length ? (
-    <StyledLinkContainer
-      isDisabled={currentWorkspace?.hasValidEnterpriseValidityToken !== true}
-    >
-      <Link to={getSettingsPath(SettingsPath.NewSsoIdentityProvider)}>
-        <SettingsCard
-          title={t`Add SSO Identity Provider`}
-          disabled={currentWorkspace?.hasValidEnterpriseValidityToken !== true}
-          Icon={<IconKey />}
-        />
-      </Link>
-    </StyledLinkContainer>
-  ) : (
-    <SettingsSsoIdentitiesProvidersListCardWrapper />
+  return (
+    <>
+      <ToastOnQueryErrorEffect error={ssoError} />
+      {loading || !ssoIdentitiesProviders.length ? (
+        <StyledLinkContainer
+          isDisabled={
+            currentWorkspace?.hasValidEnterpriseValidityToken !== true
+          }
+        >
+          <Link to={getSettingsPath(SettingsPath.NewSsoIdentityProvider)}>
+            <SettingsCard
+              title={t`Add SSO Identity Provider`}
+              disabled={
+                currentWorkspace?.hasValidEnterpriseValidityToken !== true
+              }
+              Icon={<IconKey />}
+            />
+          </Link>
+        </StyledLinkContainer>
+      ) : (
+        <SettingsSsoIdentitiesProvidersListCardWrapper />
+      )}
+    </>
   );
 };

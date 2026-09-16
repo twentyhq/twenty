@@ -1,9 +1,9 @@
 declare const classNames: {
-  readonly wrapper: 'wrapper';
-  readonly wrapperLoading: 'wrapperLoading';
   readonly button: 'button';
-  readonly small: 'small';
-  readonly medium: 'medium';
-  readonly fullWidth: 'fullWidth';
+  readonly content: 'content';
+  readonly label: 'label';
+  readonly icon: 'icon';
+  readonly hidden: 'hidden';
+  readonly loader: 'loader';
 };
 export default classNames;

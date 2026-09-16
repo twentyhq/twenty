@@ -3,6 +3,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
 import { EMPTY_USAGE_LIMIT_FORM_VALUES } from '@/settings/billing/constants/EmptyUsageLimitFormValues';
@@ -14,13 +15,12 @@ import { buildCreateUsageLimitInput } from '@/settings/billing/utils/buildCreate
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 export const SettingsBillingNewLimit = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { usageQuotaDefinitions, loading: definitionsLoading } =
     useUsageQuotaDefinitions();
   const { createUsageLimit, loading: isSaving } = useCreateUsageLimit();
@@ -39,7 +39,7 @@ export const SettingsBillingNewLimit = () => {
 
     try {
       await createUsageLimit({ variables: { input } });
-      enqueueSuccessSnackBar({ message: t`Limit created.` });
+      enqueueToast({ variant: 'success', children: t`Limit created.` });
       navigate(SettingsPath.BillingLimits);
     } catch (error) {
       const serverMessage =
@@ -47,8 +47,9 @@ export const SettingsBillingNewLimit = () => {
           ? error.errors[0]?.message
           : undefined;
 
-      enqueueErrorSnackBar({
-        message: serverMessage ?? t`Failed to create the limit.`,
+      enqueueToast({
+        variant: 'error',
+        children: serverMessage ?? t`Failed to create the limit.`,
       });
     }
   };

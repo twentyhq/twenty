@@ -1,3 +1,4 @@
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
@@ -18,6 +19,7 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
   >(null);
   const {
     availableSearchRecords,
+    error,
     isSearchDebouncing,
     recordSearchLoading,
     trimmedSearchInput,
@@ -37,41 +39,44 @@ export const SidePanelNewSidebarItemRecordSubPage = () => {
     : t`Type to search records`;
 
   return (
-    <SidePanelSubViewWithSearch
-      searchPlaceholder={t`Search records...`}
-      searchValue={recordSearchInput}
-      onSearchChange={setRecordSearchInput}
-      rightElement={
-        <SidePanelObjectFilterDropdown
-          selectedObjectNameSingular={selectedObjectNameSingular}
-          onSelectObject={setSelectedObjectNameSingular}
-        />
-      }
-    >
-      <SidePanelAddToNavigationDroppable>
-        {({ innerRef, droppableProps, placeholder }) => (
-          <SidePanelList
-            selectableItemIds={selectableItemIds}
-            loading={isRecordSearchLoading}
-            noResults={isEmpty}
-            noResultsText={noResultsText}
-          >
-            {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
-            <div ref={innerRef} {...droppableProps}>
-              <SidePanelGroup heading={t`Results`}>
-                {availableSearchRecords.map((record, index) => (
-                  <SidePanelNewSidebarItemRecordItem
-                    key={record.recordId}
-                    record={record}
-                    dragIndex={index}
-                  />
-                ))}
-              </SidePanelGroup>
-              {placeholder}
-            </div>
-          </SidePanelList>
-        )}
-      </SidePanelAddToNavigationDroppable>
-    </SidePanelSubViewWithSearch>
+    <>
+      <ToastOnQueryErrorEffect error={error} />
+      <SidePanelSubViewWithSearch
+        searchPlaceholder={t`Search records...`}
+        searchValue={recordSearchInput}
+        onSearchChange={setRecordSearchInput}
+        rightElement={
+          <SidePanelObjectFilterDropdown
+            selectedObjectNameSingular={selectedObjectNameSingular}
+            onSelectObject={setSelectedObjectNameSingular}
+          />
+        }
+      >
+        <SidePanelAddToNavigationDroppable>
+          {({ innerRef, droppableProps, placeholder }) => (
+            <SidePanelList
+              selectableItemIds={selectableItemIds}
+              loading={isRecordSearchLoading}
+              noResults={isEmpty}
+              noResultsText={noResultsText}
+            >
+              {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
+              <div ref={innerRef} {...droppableProps}>
+                <SidePanelGroup heading={t`Results`}>
+                  {availableSearchRecords.map((record, index) => (
+                    <SidePanelNewSidebarItemRecordItem
+                      key={record.recordId}
+                      record={record}
+                      dragIndex={index}
+                    />
+                  ))}
+                </SidePanelGroup>
+                {placeholder}
+              </div>
+            </SidePanelList>
+          )}
+        </SidePanelAddToNavigationDroppable>
+      </SidePanelSubViewWithSearch>
+    </>
   );
 };
