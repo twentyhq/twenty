@@ -42,12 +42,17 @@ export class ViewQueryParamsService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
-  async resolveViewToQueryParams(
-    viewId: string,
-    workspaceId: string,
-    currentWorkspaceMemberId?: string,
-    currentUserWorkspaceId?: string,
-  ): Promise<ViewQueryParams> {
+  async resolveViewToQueryParams({
+    viewId,
+    workspaceId,
+    currentWorkspaceMemberId,
+    currentUserWorkspaceId,
+  }: {
+    viewId: string;
+    workspaceId: string;
+    currentWorkspaceMemberId?: string;
+    currentUserWorkspaceId?: string;
+  }): Promise<ViewQueryParams> {
     const view = await this.viewService.findByIdWithRelations(
       viewId,
       workspaceId,
