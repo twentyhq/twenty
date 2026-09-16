@@ -117,7 +117,7 @@ describe('usageLimitToRestApiExceptionHandler', () => {
     );
   });
 
-  it('answers 402 without retry headers when a stock limit is exhausted', () => {
+  it('answers 409 without retry headers when a stock limit is exhausted', () => {
     const error = catchThrown(
       buildExhaustedScope({
         resourceType: UsageResourceType.STORAGE,
@@ -132,10 +132,10 @@ describe('usageLimitToRestApiExceptionHandler', () => {
       },
     );
 
-    expect(error.getStatus()).toBe(HttpStatus.PAYMENT_REQUIRED);
+    expect(error.getStatus()).toBe(HttpStatus.CONFLICT);
     expect(error.getResponseBody()).toEqual(
       expect.objectContaining({
-        statusCode: HttpStatus.PAYMENT_REQUIRED,
+        statusCode: HttpStatus.CONFLICT,
         error: 'QUOTA_EXHAUSTED',
         limitKind: 'stock',
       }),

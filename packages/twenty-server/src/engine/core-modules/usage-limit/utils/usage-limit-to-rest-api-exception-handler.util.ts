@@ -16,7 +16,7 @@ const getStatusCode = (
   }
 
   if (exhaustedScope?.limitKind === 'stock') {
-    return HttpStatus.PAYMENT_REQUIRED;
+    return HttpStatus.CONFLICT;
   }
 
   return HttpStatus.TOO_MANY_REQUESTS;
