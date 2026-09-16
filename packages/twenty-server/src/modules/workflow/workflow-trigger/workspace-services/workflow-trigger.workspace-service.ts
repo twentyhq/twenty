@@ -85,11 +85,6 @@ export class WorkflowTriggerWorkspaceService {
     workflowRunId?: string;
     workspaceId: string;
   }) {
-    await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-      workflowVersionId,
-      workspaceId,
-    });
-
     return this.workflowRunnerWorkspaceService.run({
       workspaceId,
       workflowRunId,
