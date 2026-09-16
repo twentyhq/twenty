@@ -11,6 +11,7 @@ import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkflowVersionStatus } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
+import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { WorkflowRunnerWorkspaceService } from 'src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service';
@@ -75,7 +76,7 @@ export class WorkflowTriggerJob {
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
-    workspaceWorkflowVersionId: string;
+    workspaceWorkflowVersionId?: string;
     payload: object;
   }): Promise<void> {
     const coreWorkflowVersion =
@@ -110,42 +111,59 @@ export class WorkflowTriggerJob {
       return;
     }
 
-    const workspaceWorkflowVersion =
-      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-        workspaceId,
-        workflowVersionId: workspaceWorkflowVersionId,
-      });
+    // Old queue entries carry the workspace id. It is only validated as a
+    // mapping during the rolling deployment and never used to load content.
+    if (isDefined(workspaceWorkflowVersionId)) {
+      const workspaceWorkflowVersion =
+        await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+          workspaceId,
+          workflowVersionId: workspaceWorkflowVersionId,
+        });
 
-    if (
-      workspaceWorkflowVersion.coreWorkflowVersionId !== coreWorkflowVersionId
-    ) {
-      this.logger.error(
-        `Workspace version ${workspaceWorkflowVersionId} is linked to core version ${workspaceWorkflowVersion.coreWorkflowVersionId} instead of dispatched ${coreWorkflowVersionId} in workspace ${workspaceId}`,
-      );
-      this.exceptionHandlerService.captureExceptions([
-        new Error(
-          `Dispatched core version ${coreWorkflowVersionId} no longer matches the twin link of workspace version ${workspaceWorkflowVersionId} in workspace ${workspaceId}`,
-        ),
-      ]);
-
-      return;
+      if (
+        workspaceWorkflowVersion.coreWorkflowVersionId !== coreWorkflowVersionId
+      ) {
+        this.logger.error(
+          `Workspace version ${workspaceWorkflowVersionId} is not mapped to dispatched core version ${coreWorkflowVersionId} in workspace ${workspaceId}`,
+        );
+        return;
+      }
     }
 
     const authContext = buildSystemAuthContext(workspaceId);
-    const workspaceWorkflow =
-      await this.workspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          this.workspaceOrmManager
-            .getRepository<WorkflowWorkspaceEntity>('workflow', {
-              shouldBypassPermissionChecks: true,
-            })
-            .findOneBy({ id: coreWorkflowVersion.workflowId }),
-        authContext,
+    const { workspaceWorkflow, resolvedWorkspaceWorkflowVersionId } =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workspaceWorkflow = await this.workspaceOrmManager
+          .getRepository<WorkflowWorkspaceEntity>('workflow', {
+            shouldBypassPermissionChecks: true,
+          })
+          .findOneBy({ coreWorkflowId: coreWorkflowVersion.coreWorkflowId });
+        const workspaceWorkflowVersion = await this.workspaceOrmManager
+          .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+            shouldBypassPermissionChecks: true,
+          })
+          .findOne({
+            where: { coreWorkflowVersionId },
+            select: { id: true },
+          });
+
+        return {
+          workspaceWorkflow,
+          resolvedWorkspaceWorkflowVersionId:
+            workspaceWorkflowVersionId ?? workspaceWorkflowVersion?.id,
+        };
+      }, authContext);
+
+    if (!isDefined(resolvedWorkspaceWorkflowVersionId)) {
+      this.logger.error(
+        `Core workflow version ${coreWorkflowVersionId} has no rollback mapping in workspace ${workspaceId}`,
       );
+      return;
+    }
 
     await this.workflowRunnerWorkspaceService.run({
       workspaceId,
-      workflowVersionId: workspaceWorkflowVersionId,
+      workflowVersionId: resolvedWorkspaceWorkflowVersionId,
       payload,
       source: buildWorkflowRunSource(workspaceWorkflow?.name),
     });

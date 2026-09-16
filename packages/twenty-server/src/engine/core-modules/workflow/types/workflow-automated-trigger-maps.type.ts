@@ -2,7 +2,7 @@ import { type AutomatedTriggerType } from 'src/modules/workflow/common/standard-
 import { type AutomatedTriggerSettings } from 'src/modules/workflow/workflow-trigger/automated-trigger/constants/automated-trigger-settings';
 
 export type CoreDispatchIds =
-  | { coreWorkflowVersionId: string; workspaceWorkflowVersionId: string }
+  | { coreWorkflowVersionId: string; workspaceWorkflowVersionId?: string }
   | { coreWorkflowVersionId?: null; workspaceWorkflowVersionId?: null };
 
 export type CachedWorkflowAutomatedTrigger = {

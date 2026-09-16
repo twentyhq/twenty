@@ -13,13 +13,10 @@ describe('buildCoreDispatchIds', () => {
     });
   });
 
-  it('should collapse a half resolved pair to the legacy shape', () => {
+  it('should build a core-only dispatch envelope', () => {
     expect(
       buildCoreDispatchIds({ coreWorkflowVersionId: 'core-version-1' }),
-    ).toEqual({
-      coreWorkflowVersionId: null,
-      workspaceWorkflowVersionId: null,
-    });
+    ).toEqual({ coreWorkflowVersionId: 'core-version-1' });
     expect(
       buildCoreDispatchIds({
         workspaceWorkflowVersionId: 'workspace-version-1',
