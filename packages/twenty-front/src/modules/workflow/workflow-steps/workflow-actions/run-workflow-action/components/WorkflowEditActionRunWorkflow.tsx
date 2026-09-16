@@ -12,8 +12,7 @@ import { t } from '@lingui/core/macro';
 import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
-import { Callout } from 'twenty-ui/feedback';
+import { Callout } from 'twenty-ui/primitives/feedback';
 import { IconAlertTriangle } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -111,8 +110,7 @@ export const WorkflowEditActionRunWorkflow = ({
 
   const selectedWorkflowId = action.settings.input.workflowId;
   const shouldShowNoActiveVersionWarning =
-    isDefined(selectedWorkflowId) &&
-    selectedWorkflowId !== '' &&
+    isNonEmptyString(selectedWorkflowId) &&
     getWorkflowHasNoActiveVersion(selectedWorkflowId);
 
   return (

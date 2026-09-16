@@ -1,6 +1,7 @@
+import { useEffect } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type SelectOption } from 'twenty-ui/input';
+import { type SelectOption } from 'twenty-ui/primitives/input';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useSidePanelWorkflowIdOrThrow } from '@/side-panel/pages/workflow/hooks/useSidePanelWorkflowIdOrThrow';
@@ -9,7 +10,12 @@ import { type Workflow } from '@/workflow/types/Workflow';
 export const useRunWorkflowActionWorkflowOptions = () => {
   const currentWorkflowId = useSidePanelWorkflowIdOrThrow();
 
-  const { records: workflows, loading } = useFindManyRecords<Workflow>({
+  const {
+    records: workflows,
+    loading,
+    fetchMoreRecords,
+    hasNextPage,
+  } = useFindManyRecords<Workflow>({
     objectNameSingular: CoreObjectNameSingular.Workflow,
     recordGqlFields: {
       id: true,
@@ -17,11 +23,15 @@ export const useRunWorkflowActionWorkflowOptions = () => {
       lastPublishedVersionId: true,
     },
     orderBy: [{ name: 'AscNullsLast' }],
-    // Workspaces can have more than the default page size of workflows;
-    // this picker has no fetchMore/cursor pagination yet, so raise the
-    // cap well above the default rather than silently hiding options.
-    limit: 200,
   });
+
+  // The picker needs every workflow up front, so exhaust cursor pagination
+  // rather than truncating at the default page size.
+  useEffect(() => {
+    if (!loading && hasNextPage) {
+      fetchMoreRecords();
+    }
+  }, [fetchMoreRecords, loading, hasNextPage]);
 
   const eligibleWorkflows = workflows.filter(
     (workflow) => workflow.id !== currentWorkflowId,
