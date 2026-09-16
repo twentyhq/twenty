@@ -14,28 +14,14 @@ type SigningKey = { keyId: Buffer; key: Buffer };
 
 const CAMPAIGN_TRACKING_TOKEN_VERSION = 1;
 
-const CAMPAIGN_TRACKING_TOKEN_HMAC_PURPOSE = 'campaign-tracking';
-
-const CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE = {
-  CLICK: 1,
-} as const;
-
-const VERSION_BYTE_LENGTH = 1;
-const KEY_ID_BYTE_LENGTH = 4;
-const PURPOSE_BYTE_LENGTH = 1;
-const UUID_BYTE_LENGTH = 16;
-const SIGNATURE_BYTE_LENGTH = 16;
-
-const CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH = {
-  keyId: KEY_ID_BYTE_LENGTH,
-  uuid: UUID_BYTE_LENGTH,
-  signature: SIGNATURE_BYTE_LENGTH,
-  clickPayload:
-    VERSION_BYTE_LENGTH +
-    KEY_ID_BYTE_LENGTH +
-    PURPOSE_BYTE_LENGTH +
-    UUID_BYTE_LENGTH +
-    UUID_BYTE_LENGTH,
+const CAMPAIGN_TRACKING_TOKEN_LAYOUT = {
+  version: 0,
+  keyId: 1,
+  purpose: 5,
+  deliveryId: 6,
+  shortLinkId: 22,
+  signature: 38,
+  length: 54,
 } as const;
 
 @Injectable()
@@ -61,25 +47,28 @@ export class CampaignTrackingTokenService {
       return null;
     }
 
-    const payloadByteLength =
-      decodedToken.length - CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.signature;
+    if (decodedToken.length !== CAMPAIGN_TRACKING_TOKEN_LAYOUT.length) {
+      return null;
+    }
+
+    const encodedPayload = decodedToken.subarray(
+      0,
+      CAMPAIGN_TRACKING_TOKEN_LAYOUT.signature,
+    );
+    const signature = decodedToken.subarray(
+      CAMPAIGN_TRACKING_TOKEN_LAYOUT.signature,
+    );
 
     if (
-      payloadByteLength !== CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.clickPayload
+      encodedPayload.readUInt8(CAMPAIGN_TRACKING_TOKEN_LAYOUT.version) !==
+      CAMPAIGN_TRACKING_TOKEN_VERSION
     ) {
       return null;
     }
 
-    const encodedPayload = decodedToken.subarray(0, payloadByteLength);
-    const signature = decodedToken.subarray(payloadByteLength);
-
-    if (encodedPayload.readUInt8(0) !== CAMPAIGN_TRACKING_TOKEN_VERSION) {
-      return null;
-    }
-
     const keyId = encodedPayload.subarray(
-      1,
-      1 + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.keyId,
+      CAMPAIGN_TRACKING_TOKEN_LAYOUT.keyId,
+      CAMPAIGN_TRACKING_TOKEN_LAYOUT.purpose,
     );
     const signingKey = this.resolveSigningKeys().find((candidate) =>
       candidate.keyId.equals(keyId),
@@ -105,11 +94,7 @@ export class CampaignTrackingTokenService {
     payload: CampaignTrackingTokenPayload,
     keyId: Buffer,
   ): Buffer {
-    const header = Buffer.from([
-      CAMPAIGN_TRACKING_TOKEN_VERSION,
-      ...keyId,
-      CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE[payload.purpose],
-    ]);
+    const header = Buffer.from([CAMPAIGN_TRACKING_TOKEN_VERSION, ...keyId, 1]);
     const identifiers = Buffer.concat([
       this.encodeUuid(payload.deliveryId),
       this.encodeUuid(payload.shortLinkId),
@@ -121,29 +106,26 @@ export class CampaignTrackingTokenService {
   private decodePayload(
     encodedPayload: Buffer,
   ): CampaignTrackingTokenPayload | null {
-    const purposeOffset = 1 + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.keyId;
-    const purposeByte = encodedPayload.readUInt8(purposeOffset);
+    const purposeByte = encodedPayload.readUInt8(
+      CAMPAIGN_TRACKING_TOKEN_LAYOUT.purpose,
+    );
 
-    if (purposeByte !== CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE.CLICK) {
+    if (purposeByte !== 1) {
       return null;
     }
-
-    const deliveryIdOffset = purposeOffset + 1;
-    const shortLinkIdOffset =
-      deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid;
 
     return {
       purpose: 'CLICK',
       deliveryId: this.decodeUuid(
         encodedPayload.subarray(
-          deliveryIdOffset,
-          deliveryIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
+          CAMPAIGN_TRACKING_TOKEN_LAYOUT.deliveryId,
+          CAMPAIGN_TRACKING_TOKEN_LAYOUT.shortLinkId,
         ),
       ),
       shortLinkId: this.decodeUuid(
         encodedPayload.subarray(
-          shortLinkIdOffset,
-          shortLinkIdOffset + CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.uuid,
+          CAMPAIGN_TRACKING_TOKEN_LAYOUT.shortLinkId,
+          CAMPAIGN_TRACKING_TOKEN_LAYOUT.signature,
         ),
       ),
     };
@@ -153,7 +135,11 @@ export class CampaignTrackingTokenService {
     return createHmac('sha256', key)
       .update(encodedPayload)
       .digest()
-      .subarray(0, CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH.signature);
+      .subarray(
+        0,
+        CAMPAIGN_TRACKING_TOKEN_LAYOUT.length -
+          CAMPAIGN_TRACKING_TOKEN_LAYOUT.signature,
+      );
   }
 
   private resolveSigningKeys(): SigningKey[] {
@@ -172,7 +158,7 @@ export class CampaignTrackingTokenService {
       keyId: Buffer.from(computeEncryptionKeyId({ rawKey }), 'hex'),
       key: deriveInstanceHmacKey({
         rawKey,
-        purpose: CAMPAIGN_TRACKING_TOKEN_HMAC_PURPOSE,
+        purpose: 'campaign-tracking',
       }),
     }));
 
