@@ -50,6 +50,18 @@ export class WorkflowCoreSyncService {
         liveWorkflows,
       );
 
+    const reverseMappedCoreWorkflowIdByWorkspaceWorkflowId =
+      await this.resolveReverseMappedCoreWorkflowIds(
+        workspaceId,
+        liveWorkflows.filter(
+          (workflow) =>
+            !isNonEmptyString(workflow.coreWorkflowId) ||
+            !workspaceWorkflowIdByOwnedCoreWorkflowId.has(
+              workflow.coreWorkflowId,
+            ),
+        ),
+      );
+
     const coreVersionIdByWorkspaceVersionId =
       await this.resolveCoreVersionIdByWorkspaceVersionId(
         workspaceId,
@@ -65,11 +77,13 @@ export class WorkflowCoreSyncService {
         isNonEmptyString(candidateCoreWorkflowId) &&
         workspaceWorkflowIdByOwnedCoreWorkflowId.has(candidateCoreWorkflowId)
           ? candidateCoreWorkflowId
-          : null;
+          : (reverseMappedCoreWorkflowIdByWorkspaceWorkflowId.get(
+              workflow.id,
+            ) ?? null);
 
       const coreWorkflowId = linkedCoreWorkflowId ?? uuidv4();
 
-      if (!isDefined(linkedCoreWorkflowId)) {
+      if (workflow.coreWorkflowId !== coreWorkflowId) {
         coreWorkflowIdByWorkspaceRecordId.set(workflow.id, coreWorkflowId);
       }
 
@@ -107,6 +121,44 @@ export class WorkflowCoreSyncService {
       workspaceId,
       coreWorkflowIdByWorkspaceRecordId,
     );
+  }
+
+  private async resolveReverseMappedCoreWorkflowIds(
+    workspaceId: string,
+    workflows: WorkflowWorkspaceEntity[],
+  ): Promise<Map<string, string>> {
+    const workspaceWorkflowIds = workflows.map((workflow) => workflow.id);
+
+    if (workspaceWorkflowIds.length === 0) {
+      return new Map();
+    }
+
+    const reverseMappedCoreWorkflows = await this.coreWorkflowRepository.find(
+      workspaceId,
+      {
+        where: { workspaceWorkflowId: In(workspaceWorkflowIds) },
+        select: { id: true, workspaceWorkflowId: true, createdAt: true },
+        order: { createdAt: 'ASC', id: 'ASC' },
+      },
+    );
+
+    const coreWorkflowIdByWorkspaceWorkflowId = new Map<string, string>();
+
+    for (const coreWorkflow of reverseMappedCoreWorkflows) {
+      if (
+        isNonEmptyString(coreWorkflow.workspaceWorkflowId) &&
+        !coreWorkflowIdByWorkspaceWorkflowId.has(
+          coreWorkflow.workspaceWorkflowId,
+        )
+      ) {
+        coreWorkflowIdByWorkspaceWorkflowId.set(
+          coreWorkflow.workspaceWorkflowId,
+          coreWorkflow.id,
+        );
+      }
+    }
+
+    return coreWorkflowIdByWorkspaceWorkflowId;
   }
 
   private async resolveCoreVersionIdByWorkspaceVersionId(

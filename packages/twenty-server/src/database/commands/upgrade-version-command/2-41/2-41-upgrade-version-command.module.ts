@@ -12,6 +12,7 @@ import { MoveMessageCampaignCommandsToCampaignFlagCommand } from 'src/database/c
 import { RemoveSeeActiveVersionCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789470915878-remove-see-active-version-command-menu-item.command';
 import { NormalizeWorkflowRecordCrudRichTextFieldsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789482628000-normalize-workflow-record-crud-rich-text-fields.command';
 import { BackfillDeterministicPermissionUniversalIdentifiersCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789553327000-backfill-deterministic-permission-universal-identifiers.command';
+import { RelinkWorkflowVersionsToCoreWorkflowsCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-workspace-command-1789566000000-relink-workflow-versions-to-core-workflows.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -42,6 +43,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     RemoveSeeActiveVersionCommandMenuItemCommand,
     NormalizeWorkflowRecordCrudRichTextFieldsCommand,
     BackfillDeterministicPermissionUniversalIdentifiersCommand,
+    RelinkWorkflowVersionsToCoreWorkflowsCommand,
   ],
 })
 export class V2_41_UpgradeVersionCommandModule {}

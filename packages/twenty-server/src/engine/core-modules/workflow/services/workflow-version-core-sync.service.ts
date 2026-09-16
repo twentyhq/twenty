@@ -343,8 +343,16 @@ export class WorkflowVersionCoreSyncService {
       return pointedCoreWorkflowId;
     }
 
+    await transactionScope.executeRawQuery(
+      `SELECT pg_advisory_xact_lock(hashtext($1), hashtext($2))`,
+      [workspaceId, workflowId],
+    );
+
     const reverseRows = (await transactionScope.executeRawQuery(
-      `SELECT "id" FROM core."workflow" WHERE "workspaceId" = $1 AND "workspaceWorkflowId" = $2 LIMIT 1`,
+      `SELECT "id" FROM core."workflow"
+       WHERE "workspaceId" = $1 AND "workspaceWorkflowId" = $2
+       ORDER BY "createdAt" ASC, "id" ASC
+       LIMIT 1`,
       [workspaceId, workflowId],
     )) as { id: string }[];
 
@@ -361,24 +369,39 @@ export class WorkflowVersionCoreSyncService {
       return reverseResolvedCoreWorkflowId;
     }
 
-    if (!isDefined(workflow)) {
+    // upsertToCore only ever creates core rows for live workflows; creating one
+    // here for a soft-deleted workflow would leak a row the delete listener
+    // cannot find, since it keys on the pointer that is still null.
+    if (!isDefined(workflow) || isDefined(workflow.deletedAt)) {
       return null;
     }
 
     const createdCoreWorkflowId = uuidv4();
 
+    const lastPublishedVersionId = isNonEmptyString(
+      workflow.lastPublishedVersionId,
+    )
+      ? workflow.lastPublishedVersionId
+      : null;
+
+    const lastPublishedCoreWorkflowVersionId = isDefined(lastPublishedVersionId)
+      ? await this.resolveCoreVersionIdOfWorkspaceVersionInTransaction({
+          workspaceWorkflowVersionId: lastPublishedVersionId,
+          transactionScope,
+        })
+      : null;
+
     await transactionScope.executeRawQuery(
       `INSERT INTO core."workflow"
-         ("id", "workspaceId", "name", "workspaceWorkflowId", "lastPublishedVersionId", "createdAt", "universalIdentifier", "applicationId")
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+         ("id", "workspaceId", "name", "workspaceWorkflowId", "lastPublishedVersionId", "lastPublishedCoreWorkflowVersionId", "createdAt", "universalIdentifier", "applicationId")
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         createdCoreWorkflowId,
         workspaceId,
         workflow.name ?? null,
         workflowId,
-        isNonEmptyString(workflow.lastPublishedVersionId)
-          ? workflow.lastPublishedVersionId
-          : null,
+        lastPublishedVersionId,
+        lastPublishedCoreWorkflowVersionId,
         new Date(workflow.createdAt),
         uuidv4(),
         applicationId,
@@ -391,6 +414,30 @@ export class WorkflowVersionCoreSyncService {
     );
 
     return createdCoreWorkflowId;
+  }
+
+  private async resolveCoreVersionIdOfWorkspaceVersionInTransaction({
+    workspaceWorkflowVersionId,
+    transactionScope,
+  }: {
+    workspaceWorkflowVersionId: string;
+    transactionScope: WorkspaceTransactionScope;
+  }): Promise<string | null> {
+    const workspaceVersion = await transactionScope
+      .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
+        shouldBypassPermissionChecks: true,
+      })
+      .findOne({
+        where: { id: workspaceWorkflowVersionId },
+        withDeleted: true,
+      });
+
+    const coreWorkflowVersionId =
+      workspaceVersion?.coreWorkflowVersionId ?? null;
+
+    return isNonEmptyString(coreWorkflowVersionId)
+      ? coreWorkflowVersionId
+      : null;
   }
 
   // Must run inside the caller's transaction so the ownership answer cannot go

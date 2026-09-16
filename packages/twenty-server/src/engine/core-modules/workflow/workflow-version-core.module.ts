@@ -15,7 +15,11 @@ import { WorkflowMetadataReadModule } from 'src/modules/workflow/common/workspac
 @Module({
   imports: [
     RecordPositionModule,
-    TypeOrmModule.forFeature([WorkflowVersionEntity, WorkspaceEntity]),
+    TypeOrmModule.forFeature([
+      WorkflowVersionEntity,
+      WorkflowEntity,
+      WorkspaceEntity,
+    ]),
     WorkspaceCacheModule,
     WorkflowMetadataReadModule,
   ],
