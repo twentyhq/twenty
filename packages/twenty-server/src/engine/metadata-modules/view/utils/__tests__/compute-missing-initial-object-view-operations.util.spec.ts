@@ -1,10 +1,8 @@
-import {
-  getInitialObjectViewUniversalIdentifier,
-  getViewFieldUniversalIdentifier,
-} from 'twenty-shared/application';
+import { getViewFieldUniversalIdentifier } from 'twenty-shared/application';
 import { type AggregateOperations, ViewKey } from 'twenty-shared/types';
 
 import { computeMissingInitialObjectViewOperations } from 'src/engine/metadata-modules/view/utils/compute-missing-initial-object-view-operations.util';
+import { getInitialObjectViewUniversalIdentifier } from 'src/engine/metadata-modules/view/utils/get-initial-object-view-universal-identifier.util';
 
 const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
   '5f4a1c1e-0000-4000-8000-000000000001';
