@@ -11,7 +11,7 @@ import { SlackChannelRuleModeSelect } from 'src/front-components/components/Slac
 import { SlackPickedEntityButton } from 'src/front-components/components/SlackPickedEntityButton';
 import { SlackUserLinkFormField } from 'src/front-components/components/SlackUserLinkFormField';
 import { SlackUserLinkFormHint } from 'src/front-components/components/SlackUserLinkFormHint';
-import { SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS } from 'src/front-components/constants/slack-channel-rule-mode-labels.constant';
+import { SLACK_CHANNEL_RULE_MODE_DESCRIPTIONS } from 'src/front-components/constants/slack-channel-rule-mode-descriptions.constant';
 import { useSetSlackChannelRule } from 'src/front-components/hooks/use-set-slack-channel-rule';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
 import { SLACK_CHANNEL_RULE_MODE } from 'src/logic-functions/constants/slack-channel-rule-mode';

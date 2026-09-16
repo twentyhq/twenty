@@ -2,12 +2,11 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { isDefined } from 'twenty-sdk/utils';
-import { Tag } from 'twenty-ui/data-display';
 import { Button } from 'twenty-ui/input';
 import { OverflowingTextWithTooltip } from 'twenty-ui/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { SlackChannelRuleModeSelect } from 'src/front-components/components/SlackChannelRuleModeSelect';
+import { SlackChannelRuleModeCell } from 'src/front-components/components/SlackChannelRuleModeCell';
 import {
   SlackTable,
   SlackTableBody,
@@ -16,8 +15,8 @@ import {
   SlackTableRow,
 } from 'src/front-components/components/SlackSettingsTable';
 import { type SlackChannelRuleRecord } from 'src/front-components/types/slack-channel-rule-record.type';
+import { isFromDisconnectedSlackWorkspace } from 'src/front-components/utils/is-from-disconnected-slack-workspace.util';
 import { type SlackChannelRuleMode } from 'src/logic-functions/types/slack-channel-rule-mode.type';
-import { isSlackChannelRuleMode } from 'src/logic-functions/utils/is-slack-channel-rule-mode';
 
 const RULES_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) 220px 156px';
 const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
@@ -49,19 +48,6 @@ const StyledEmptyState = styled.div`
   font-size: ${() => themeCssVariables.font.size.sm};
   padding: ${() => themeCssVariables.spacing[2]};
 `;
-
-const DISCONNECTED_WORKSPACE_LABEL = 'Slack workspace disconnected';
-
-const isFromDisconnectedSlackWorkspace = ({
-  rule,
-  installedSlackTeamId,
-}: {
-  rule: SlackChannelRuleRecord;
-  installedSlackTeamId: string | undefined;
-}): boolean =>
-  isNonEmptyString(installedSlackTeamId) &&
-  isNonEmptyString(rule.slackTeamId) &&
-  rule.slackTeamId !== installedSlackTeamId;
 
 const getDisplayedName = (rule: SlackChannelRuleRecord): string =>
   isNonEmptyString(rule.name)
@@ -129,14 +115,7 @@ export const SlackChannelRulesList = ({
       </SlackTableRow>
       <SlackTableBody>
         {slackChannelRules.map((rule) => {
-          const isDisconnected = isFromDisconnectedSlackWorkspace({
-            rule,
-            installedSlackTeamId,
-          });
           const displayedName = getDisplayedName(rule);
-          const mode = isSlackChannelRuleMode(rule.mode)
-            ? rule.mode
-            : undefined;
 
           return (
             <SlackTableRow
@@ -152,18 +131,16 @@ export const SlackChannelRulesList = ({
                 </StyledDetails>
               </SlackTableCell>
               <SlackTableCell>
-                {isDisconnected ? (
-                  <Tag color="gray" text={DISCONNECTED_WORKSPACE_LABEL} />
-                ) : isDefined(mode) ? (
-                  <SlackChannelRuleModeSelect
-                    value={mode}
-                    onChange={(nextMode) => onModeChange(rule, nextMode)}
-                    disabled={!canManage || isActionInFlight}
-                    ariaLabel={`Rule mode for ${displayedName}`}
-                  />
-                ) : (
-                  <Tag color="red" text="Unknown mode" />
-                )}
+                <SlackChannelRuleModeCell
+                  rule={rule}
+                  displayedName={displayedName}
+                  isDisconnected={isFromDisconnectedSlackWorkspace({
+                    slackTeamId: rule.slackTeamId,
+                    installedSlackTeamId,
+                  })}
+                  disabled={!canManage || isActionInFlight}
+                  onModeChange={(nextMode) => onModeChange(rule, nextMode)}
+                />
               </SlackTableCell>
               <SlackTableCell align="right">
                 {canManage &&

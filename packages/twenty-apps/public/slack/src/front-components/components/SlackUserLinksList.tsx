@@ -19,6 +19,7 @@ import { SLACK_USER_LINK_SOURCE } from 'src/logic-functions/constants/slack-user
 import { type SlackUserLinkConsentState } from 'src/logic-functions/types/slack-user-link-consent-state.type';
 import { isSlackUserLinkConsentState } from 'src/logic-functions/utils/is-slack-user-link-consent-state';
 import { type SlackUserLinkRecord } from 'src/front-components/types/slack-user-link-record.type';
+import { isFromDisconnectedSlackWorkspace } from 'src/front-components/utils/is-from-disconnected-slack-workspace.util';
 
 const LINKS_GRID_TEMPLATE_COLUMNS = 'minmax(0, 2fr) minmax(0, 2fr) 320px 156px';
 const REMOVAL_CONFIRM_TIMEOUT_MS = 4000;
@@ -96,17 +97,6 @@ const CONSENT_COLORS: Record<SlackUserLinkConsentState, TagColor> = {
 
 const DISCONNECTED_WORKSPACE_LABEL = 'Slack workspace disconnected';
 
-const isFromDisconnectedSlackWorkspace = ({
-  slackUserLink,
-  installedSlackTeamId,
-}: {
-  slackUserLink: SlackUserLinkRecord;
-  installedSlackTeamId: string | undefined;
-}): boolean =>
-  isNonEmptyString(installedSlackTeamId) &&
-  isNonEmptyString(slackUserLink.slackTeamId) &&
-  slackUserLink.slackTeamId !== installedSlackTeamId;
-
 type SlackUserLinksListProps = {
   slackUserLinks: SlackUserLinkRecord[];
   canManage: boolean;
@@ -163,7 +153,7 @@ export const SlackUserLinksList = ({
       <SlackTableBody>
         {slackUserLinks.map((slackUserLink) => {
           const isDisconnected = isFromDisconnectedSlackWorkspace({
-            slackUserLink,
+            slackTeamId: slackUserLink.slackTeamId,
             installedSlackTeamId,
           });
           const consentState = toDisplayedConsentState(

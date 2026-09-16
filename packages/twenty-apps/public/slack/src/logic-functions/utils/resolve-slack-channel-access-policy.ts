@@ -35,15 +35,13 @@ const toChannelRulePolicy = (
   }
 };
 
-// A channel rule is the finer grain, so an explicit rule wins over the
-// workspace access mode in both directions. Direct messages never carry a
-// rule: the requester is the only person there, so the workspace mode applies.
+// A rule is the finer grain, so it wins over the workspace mode in both directions
 export const resolveSlackChannelAccessPolicy = async ({
   client,
   slackChannelId,
   isDirectMessage,
 }: {
-  client: CoreApiClient;
+  client: Pick<CoreApiClient, 'query'>;
   slackChannelId: string;
   isDirectMessage: boolean;
 }): Promise<SlackChannelAccessPolicy> => {
