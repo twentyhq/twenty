@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { In, QueryFailedError, Repository } from 'typeorm';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { type EmailsMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
@@ -22,8 +23,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type TrackingPreference } from 'src/modules/emailing/types/tracking-preference.type';
-import { collectPersonEmailAddresses } from 'src/modules/emailing/utils/collect-person-email-addresses.util';
-import { normalizeEmailAddress } from 'src/modules/emailing/utils/normalize-email-address.util';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
@@ -46,7 +45,7 @@ export class MessageTrackingConsentService {
     emailAddress: string;
   }): Promise<MessageTrackingConsentDecision | null> {
     const consent = await this.consentRepository.findOneBy(workspaceId, {
-      emailAddress: normalizeEmailAddress(emailAddress),
+      emailAddress: this.normalizeEmailAddress(emailAddress),
     });
 
     return consent?.decision ?? null;
@@ -88,7 +87,11 @@ export class MessageTrackingConsentService {
     emailAddresses: string[];
   }): Promise<Set<string>> {
     const normalizedEmailAddresses = [
-      ...new Set(emailAddresses.map(normalizeEmailAddress)),
+      ...new Set(
+        emailAddresses.map((emailAddress) =>
+          this.normalizeEmailAddress(emailAddress),
+        ),
+      ),
     ].filter(isNonEmptyString);
 
     if (normalizedEmailAddresses.length === 0) {
@@ -117,7 +120,7 @@ export class MessageTrackingConsentService {
     decision: MessageTrackingConsentDecision;
     source: MessageTrackingConsentSource;
   }): Promise<void> {
-    const normalizedEmailAddress = normalizeEmailAddress(emailAddress);
+    const normalizedEmailAddress = this.normalizeEmailAddress(emailAddress);
 
     if (!isNonEmptyString(normalizedEmailAddress)) {
       return;
@@ -151,7 +154,7 @@ export class MessageTrackingConsentService {
       return false;
     }
 
-    const emailAddresses = collectPersonEmailAddresses(person.emails);
+    const emailAddresses = this.collectPersonEmailAddresses(person.emails);
 
     if (emailAddresses.length === 0) {
       return false;
@@ -357,7 +360,7 @@ export class MessageTrackingConsentService {
     const primaryEmailAddressByPersonId = new Map(
       people.map((person) => [
         person.id,
-        normalizeEmailAddress(person.emails?.primaryEmail ?? ''),
+        this.normalizeEmailAddress(person.emails?.primaryEmail ?? ''),
       ]),
     );
 
@@ -453,5 +456,22 @@ export class MessageTrackingConsentService {
 
       return people.filter((person) => !isDefined(person.deletedAt));
     }, buildSystemAuthContext(workspaceId));
+  }
+
+  private normalizeEmailAddress(emailAddress: string): string {
+    return emailAddress.trim().toLowerCase();
+  }
+
+  private collectPersonEmailAddresses(
+    emails: EmailsMetadata | null | undefined,
+  ): string[] {
+    const emailAddresses = [
+      emails?.primaryEmail,
+      ...(emails?.additionalEmails ?? []),
+    ]
+      .filter(isNonEmptyString)
+      .map((emailAddress) => this.normalizeEmailAddress(emailAddress));
+
+    return [...new Set(emailAddresses)];
   }
 }

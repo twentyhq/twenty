@@ -23,7 +23,6 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { TRACKABLE_URL_PATTERN } from 'src/modules/emailing/constants/trackable-url-pattern.constant';
 import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
-import { normalizeEmailAddress } from 'src/modules/emailing/utils/normalize-email-address.util';
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
 
@@ -119,7 +118,7 @@ export class CampaignTrackingContentService {
         emailAddresses: recipients.map((recipient) => recipient.email),
       });
     const isTracked = (recipient: TrackingRecipient) =>
-      !deniedEmailAddresses.has(normalizeEmailAddress(recipient.email));
+      !deniedEmailAddresses.has(recipient.email.trim().toLowerCase());
 
     const shortLinkIdByUrl = await this.registerShortLinks({
       workspaceId,
@@ -267,7 +266,7 @@ export class CampaignTrackingContentService {
     const replacements: Record<string, string> = {};
 
     urlTemplates.forEach((urlTemplate, index) => {
-      const { url } = resolveTrackedLinkUrl({
+      const { url } = this.resolveLinkUrl({
         urlTemplate,
         replacements: recipient.replacements,
       });

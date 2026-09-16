@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import {
   type ObjectRecordCreateEvent,
   type ObjectRecordUpdateEvent,
@@ -10,7 +11,6 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { objectRecordChangedProperties } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-properties.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { MessageTrackingConsentService } from 'src/modules/emailing/services/message-tracking-consent.service';
-import { collectPersonEmailAddresses } from 'src/modules/emailing/utils/collect-person-email-addresses.util';
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
@@ -26,9 +26,8 @@ export class MessageTrackingConsentPersonListener {
     >,
   ): Promise<void> {
     const personIds = payload.events
-      .filter(
-        (event) =>
-          collectPersonEmailAddresses(event.properties.after.emails).length > 0,
+      .filter((event) =>
+        isNonEmptyString(event.properties.after.emails?.primaryEmail),
       )
       .map((event) => event.recordId);
 
