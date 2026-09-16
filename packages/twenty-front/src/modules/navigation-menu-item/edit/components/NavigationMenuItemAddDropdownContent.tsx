@@ -1,3 +1,5 @@
+import { useQuery } from '@apollo/client/react';
+import { FindAllStandalonePageLayoutsDocument } from '~/generated-metadata/graphql';
 import { navigationMenuItemIdToRenameState } from '@/navigation-menu-item/common/states/navigationMenuItemIdToRenameState';
 import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
 import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
@@ -15,6 +17,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import {
   IconChevronLeft,
   IconBox,
+  IconPerspective,
   IconFolder,
   IconLink,
   IconTable,
@@ -49,7 +52,7 @@ import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/
 import { ViewKey } from '@/views/types/ViewKey';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
-type Step = 'main' | 'object' | 'view' | 'record';
+type Step = 'main' | 'object' | 'view' | 'record' | 'page';
 type NavigationMenuItemAddDropdownContentProps = {
   dropdownId: string;
   folderId?: string;
@@ -74,6 +77,13 @@ export const NavigationMenuItemAddDropdownContent = ({
   const [step, setStep] = useState<Step>('main');
   const [search, setSearch] = useState('');
   const isSearchingAllItems = step === 'main' && search.trim().length > 0;
+  const {
+    data: standalonePagesData,
+    loading: standalonePagesLoading,
+    error: standalonePagesError,
+  } = useQuery(FindAllStandalonePageLayoutsDocument, {
+    skip: step !== 'page' && !isSearchingAllItems,
+  });
   const [objectId, setObjectId] = useState<string | null>(null);
   const { currentItems, createItem } = useNavigationMenuItemEditController();
   const navigationMenuItemEditSection = useAtomStateValue(
@@ -167,6 +177,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     object: t`Object`,
     view: t`View`,
     record: t`Record`,
+    page: t`Page`,
   };
 
   const getItems = (targetStep: Step = step): NavigationMenuItemOption[] => {
@@ -191,6 +202,13 @@ export const NavigationMenuItemAddDropdownContent = ({
           label: t`Record`,
           icon: <TintedIconTile Icon={IconUser} />,
           onClick: () => navigate('record'),
+          hasSubMenu: true,
+        },
+        {
+          id: 'page',
+          label: t`Page`,
+          icon: <TintedIconTile Icon={IconPerspective} />,
+          onClick: () => navigate('page'),
           hasSubMenu: true,
         },
         {
@@ -302,6 +320,32 @@ export const NavigationMenuItemAddDropdownContent = ({
               addItem({ type: NavigationMenuItemType.VIEW, viewId: view.id }),
           };
         });
+    if (targetStep === 'page') {
+      const pageLayoutIdsAlreadyAdded = new Set(
+        currentItems.map((item) => item.pageLayoutId),
+      );
+      return [...(standalonePagesData?.getPageLayouts ?? [])]
+        .sort(
+          (firstPage, secondPage) =>
+            Number(pageLayoutIdsAlreadyAdded.has(firstPage.id)) -
+              Number(pageLayoutIdsAlreadyAdded.has(secondPage.id)) ||
+            firstPage.name.localeCompare(secondPage.name),
+        )
+        .map((page) => ({
+          id: page.id,
+          label: page.name,
+          icon: <TintedIconTile Icon={IconPerspective} />,
+          isDisabled: pageLayoutIdsAlreadyAdded.has(page.id),
+          isAlreadyInNavbar: pageLayoutIdsAlreadyAdded.has(page.id),
+          onClick: () =>
+            addItem({
+              type: NavigationMenuItemType.PAGE_LAYOUT,
+              pageLayoutId: page.id,
+              name: page.name,
+              icon: 'IconPerspective',
+            }),
+        }));
+    }
     if (targetStep === 'record')
       return availableSearchRecords.flatMap((record) => {
         const object = objectMetadataItems.find(
@@ -341,6 +385,7 @@ export const NavigationMenuItemAddDropdownContent = ({
     ? [
         { label: t`Objects`, items: getItems('object').filter(matchesSearch) },
         { label: t`Views`, items: getItems('view').filter(matchesSearch) },
+        { label: t`Pages`, items: getItems('page').filter(matchesSearch) },
         {
           label: t`Records`,
           items: isSearchDebouncing ? [] : getItems('record'),
@@ -369,6 +414,11 @@ export const NavigationMenuItemAddDropdownContent = ({
     (recordSearchLoading || isSearchDebouncing)
   )
     emptyMessage = t`Loading...`;
+
+  if ((step === 'page' || isSearchingAllItems) && standalonePagesLoading)
+    emptyMessage = t`Loading...`;
+  if (step === 'page' && standalonePagesError)
+    emptyMessage = t`Couldn't load pages`;
 
   return (
     <DropdownContent widthInPixels={GenericDropdownContentWidth.ExtraLarge}>
