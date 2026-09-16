@@ -68,7 +68,7 @@ export const NavigationMenuItemInsertionPreview = ({
   return (
     <StyledPreview
       ref={setAnchor}
-      isInFolder={Boolean(folderId)}
+      isInFolder={isDefined(folderId)}
       role="status"
       aria-label={t`Select a menu item`}
     >
