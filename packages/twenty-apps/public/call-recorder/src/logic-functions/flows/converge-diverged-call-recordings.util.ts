@@ -72,11 +72,12 @@ export const convergeDivergedCallRecordings = async ({
     throw new Error('Call recording recovery returned no connection');
   }
 
-  const nextCursor =
-    page.pageInfo?.hasNextPage === true ? page.pageInfo.endCursor : undefined;
+  const nextCursor = page.pageInfo?.hasNextPage
+    ? page.pageInfo.endCursor
+    : undefined;
 
   if (
-    page.pageInfo?.hasNextPage === true &&
+    page.pageInfo?.hasNextPage &&
     (!isNonEmptyString(nextCursor) || nextCursor === after)
   ) {
     throw new Error('Call recording recovery returned an invalid next cursor');
