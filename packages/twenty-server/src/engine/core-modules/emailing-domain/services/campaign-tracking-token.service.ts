@@ -4,10 +4,6 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-byte-length.constant';
-import { CAMPAIGN_TRACKING_TOKEN_HMAC_PURPOSE } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-hmac-purpose.constant';
-import { CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-purpose-byte.constant';
-import { CAMPAIGN_TRACKING_TOKEN_VERSION } from 'src/engine/core-modules/emailing-domain/constants/campaign-tracking-token-version.constant';
 import { type CampaignTrackingTokenPayload } from 'src/engine/core-modules/emailing-domain/types/campaign-tracking-token-payload.type';
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { deriveInstanceHmacKey } from 'src/engine/core-modules/secret-encryption/utils/derive-instance-hmac-key.util';
@@ -15,6 +11,32 @@ import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-enc
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type SigningKey = { keyId: Buffer; key: Buffer };
+
+const CAMPAIGN_TRACKING_TOKEN_VERSION = 1;
+
+const CAMPAIGN_TRACKING_TOKEN_HMAC_PURPOSE = 'campaign-tracking';
+
+const CAMPAIGN_TRACKING_TOKEN_PURPOSE_BYTE = {
+  CLICK: 1,
+} as const;
+
+const VERSION_BYTE_LENGTH = 1;
+const KEY_ID_BYTE_LENGTH = 4;
+const PURPOSE_BYTE_LENGTH = 1;
+const UUID_BYTE_LENGTH = 16;
+const SIGNATURE_BYTE_LENGTH = 16;
+
+const CAMPAIGN_TRACKING_TOKEN_BYTE_LENGTH = {
+  keyId: KEY_ID_BYTE_LENGTH,
+  uuid: UUID_BYTE_LENGTH,
+  signature: SIGNATURE_BYTE_LENGTH,
+  clickPayload:
+    VERSION_BYTE_LENGTH +
+    KEY_ID_BYTE_LENGTH +
+    PURPOSE_BYTE_LENGTH +
+    UUID_BYTE_LENGTH +
+    UUID_BYTE_LENGTH,
+} as const;
 
 @Injectable()
 export class CampaignTrackingTokenService {
