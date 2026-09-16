@@ -15,7 +15,39 @@ Use `AlertDialog` for a decision that interrupts the current workflow, such as c
   height={440}
 />
 
-## Confirmation
+## Uncontrolled state
+
+Use `defaultOpen` to set the initial visibility. The dialog owns subsequent changes from its trigger, close controls, and dismissal interactions.
+
+```tsx
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root defaultOpen={false}>
+    <AlertDialog.Trigger>Delete record</AlertDialog.Trigger>
+    <AlertDialog.Popup>
+      <AlertDialog.Header>
+        <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+        <AlertDialog.Description>
+          This action cannot be undone.
+        </AlertDialog.Description>
+      </AlertDialog.Header>
+      <AlertDialog.Footer>
+        <AlertDialog.Close>Cancel</AlertDialog.Close>
+        <AlertDialog.Close onClick={onDelete}>Delete</AlertDialog.Close>
+      </AlertDialog.Footer>
+    </AlertDialog.Popup>
+  </AlertDialog.Root>
+);
+```
+
+`defaultOpen` defaults to `false`, so it can be omitted. This example uses a synchronous confirmation callback and closes after the action runs.
+
+## Controlled state
+
+Pass `open` and update it with `onOpenChange` to own the same dialog's visibility in React state. The callback receives the next boolean and event details, including changes requested by the trigger and close controls.
 
 ```tsx
 import { useState } from 'react';
@@ -38,15 +70,7 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
         </AlertDialog.Header>
         <AlertDialog.Footer>
           <AlertDialog.Close>Cancel</AlertDialog.Close>
-          <button
-            type="button"
-            onClick={() => {
-              onDelete();
-              setOpen(false);
-            }}
-          >
-            Delete
-          </button>
+          <AlertDialog.Close onClick={onDelete}>Delete</AlertDialog.Close>
         </AlertDialog.Footer>
       </AlertDialog.Popup>
     </AlertDialog.Root>
@@ -54,7 +78,7 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
 };
 ```
 
-`Root` owns open state. Run the confirmed action in its event handler and close the dialog when it completes. For asynchronous actions, keep it open while pending and show an error if the action fails.
+For asynchronous confirmation, use a `Button` with your action handler instead of `AlertDialog.Close`. Keep `open` true while the action is pending, call `setOpen(false)` after it succeeds, and show an error inside the dialog if it fails.
 
 ## Parts and sizing
 
@@ -67,7 +91,7 @@ export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
 | `Header`               | Groups the title and description.                            |
 | `Body`                 | Holds optional additional content.                           |
 | `Footer`               | Groups confirmation and cancellation actions.                |
-| `Close`                | Closes the dialog without running the confirmation action.   |
+| `Close`                | Closes the dialog; `onClick` can run a synchronous action.   |
 
 `Popup.size` defaults to `md`; see the reference for supported sizes. Use `container` to override the theme's portal container and `keepMounted` to retain mounted content when closed.
 

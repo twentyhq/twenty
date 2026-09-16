@@ -15,7 +15,9 @@ import InputReference from '/snippets/ui/generated/input/input.mdx';
   height={240}
 />
 
-## Label an input
+## Uncontrolled state
+
+Use `defaultValue` to set the initial email address. The input owns subsequent changes.
 
 ```tsx
 import { Field, Input } from 'twenty-ui/primitives/input';
@@ -23,29 +25,40 @@ import { Field, Input } from 'twenty-ui/primitives/input';
 export const EmailField = () => (
   <Field.Root>
     <Field.Label>Email</Field.Label>
-    <Input name="email" type="email" autoComplete="email" />
+    <Input
+      name="email"
+      type="email"
+      autoComplete="email"
+      defaultValue="alex@example.com"
+    />
     <Field.Description>Use your work email address.</Field.Description>
   </Field.Root>
 );
 ```
 
-## Control the value
+## Controlled state
 
-`onValueChange` receives the next string value and event details. For an uncontrolled input, use `defaultValue` instead of `value`.
+Pass `value` and update it with `onValueChange` to own the same email address in React state. The callback receives the next string value and event details.
 
 ```tsx
 import { useState } from 'react';
-import { Input } from 'twenty-ui/primitives/input';
+import { Field, Input } from 'twenty-ui/primitives/input';
 
-export const SearchField = () => {
-  const [query, setQuery] = useState('');
+export const EmailField = () => {
+  const [email, setEmail] = useState('alex@example.com');
 
   return (
-    <Input
-      aria-label="Search contacts"
-      value={query}
-      onValueChange={setQuery}
-    />
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input
+        name="email"
+        type="email"
+        autoComplete="email"
+        value={email}
+        onValueChange={setEmail}
+      />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
   );
 };
 ```

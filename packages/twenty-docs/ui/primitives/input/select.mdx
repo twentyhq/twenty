@@ -15,7 +15,9 @@ Use `Select` for a form value chosen from a list. Use [Menu](/ui/primitives/surf
   height={400}
 />
 
-## Single selection
+## Uncontrolled state
+
+Use `defaultValue` to set the initial priority. The select owns subsequent selection changes.
 
 ```tsx
 import { Select } from 'twenty-ui/primitives/input';
@@ -42,7 +44,46 @@ export const PrioritySelect = () => (
 );
 ```
 
-Supply `items` on `Root` so `Value` renders the selected item's label; without it, the trigger shows the raw value. `defaultValue` initializes uncontrolled state; use `value` and `onValueChange` for controlled state. The selected value can be `null` when nothing is selected.
+Supply `items` on `Root` so `Value` renders the selected item's label; without it, the trigger shows the raw value. The selected value can be `null` when nothing is selected.
+
+## Controlled state
+
+Pass `value` and update it with `onValueChange` to own the same priority in React state. The callback receives the next value and event details.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [priority, setPriority] = useState<string | null>('normal');
+
+  return (
+    <Select.Root
+      name="priority"
+      value={priority}
+      onValueChange={setPriority}
+      items={PRIORITIES}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+      </Select.Trigger>
+      <Select.Popup>
+        {PRIORITIES.map(({ value, label }) => (
+          <Select.Item key={value} value={value}>
+            {label}
+          </Select.Item>
+        ))}
+      </Select.Popup>
+    </Select.Root>
+  );
+};
+```
 
 ## Multiple selection
 
@@ -81,7 +122,49 @@ export const LanguageSelect = () => {
 };
 ```
 
-With `multiple`, the value is an array. The generic root types represent the option value and whether multiple selection is enabled.
+With `multiple`, the value is an array. Use `defaultValue={['en']}` instead of `value` and `onValueChange` for an uncontrolled multiple selection. The generic root types represent the option value and whether multiple selection is enabled.
+
+## Open state
+
+Selection and popup visibility are independent. The examples above leave popup visibility uncontrolled. Selecting a single value closes the popup; multiple selection keeps it open. Use `defaultOpen` to set its initial visibility; it defaults to `false`.
+
+Pass `open` and update it with `onOpenChange` to control visibility. This example controls the popup while leaving the selected priority uncontrolled.
+
+```tsx
+import { useState } from 'react';
+import { Select } from 'twenty-ui/primitives/input';
+
+const PRIORITIES = [
+  { value: 'low', label: 'Low' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'high', label: 'High' },
+];
+
+export const PrioritySelect = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Select.Root
+      name="priority"
+      defaultValue="normal"
+      items={PRIORITIES}
+      open={open}
+      onOpenChange={setOpen}
+    >
+      <Select.Trigger aria-label="Priority">
+        <Select.Value placeholder="Choose a priority" />
+      </Select.Trigger>
+      <Select.Popup>
+        {PRIORITIES.map(({ value, label }) => (
+          <Select.Item key={value} value={value}>
+            {label}
+          </Select.Item>
+        ))}
+      </Select.Popup>
+    </Select.Root>
+  );
+};
+```
 
 ## Parts and placement
 
