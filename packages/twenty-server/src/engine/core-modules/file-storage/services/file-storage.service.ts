@@ -77,7 +77,6 @@ export class FileStorageService {
     });
   }
 
-  // Soft-deleted rows keep their stock until the hard delete releases it
   private async computeStorageUsedStock({
     workspaceId,
     spenderType,
