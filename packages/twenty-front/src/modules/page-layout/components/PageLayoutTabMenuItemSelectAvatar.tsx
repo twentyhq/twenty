@@ -4,13 +4,13 @@ import { type MouseEvent, useContext, useState } from 'react';
 import { TabAvatar } from '@/ui/layout/tab-list/components/TabAvatar';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { IconPencil } from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/input';
+import { LightIconButton } from 'twenty-ui/primitives/input';
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemIconCheck,
   StyledMenuItemLabel,
   StyledMenuItemLeftContent,
-} from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/navigation';
 import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 const StyledTextContainer = styled.div`
   align-items: center;

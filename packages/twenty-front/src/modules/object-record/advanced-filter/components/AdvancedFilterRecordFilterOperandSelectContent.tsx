@@ -21,7 +21,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { type ViewFilterOperand } from 'twenty-shared/types';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 
 type AdvancedFilterRecordFilterOperandSelectContentProps = {
   recordFilterId: string;

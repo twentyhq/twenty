@@ -18,7 +18,7 @@ import { styled } from '@linaria/react';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { IconRefresh, IconTrash } from 'twenty-ui/icon';
-import { Button, Checkbox } from 'twenty-ui/input';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useQuery } from '@apollo/client/react';
 import {
@@ -312,6 +312,7 @@ export const SettingsAdminQueueJobsTable = ({
                         <Checkbox checked={isSelected} />
                       </TableCell>
                       <TableCell
+                        color={themeCssVariables.font.color.primary}
                         title={job.name}
                         maxWidth="200px"
                         overflow="hidden"

@@ -3,14 +3,22 @@ title: InputGroup
 description: Add prefixes, suffixes, and actions around a text input.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import InputGroupReference from '/snippets/ui/generated/input/input-group.mdx';
 
 `InputGroup` gives an [Input](/ui/components/input/input) a shared border and optional leading or trailing content. Set `size` on the group to size both the container and its input.
 
+<StoryEmbed
+  storyId="ui-input-inputgroup--default"
+  title="InputGroup example"
+  height={240}
+/>
+
 ## Prefix and suffix
 
 ```tsx
-import { Field, Input, InputGroup } from 'twenty-ui/input';
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
 
 export const WebsiteField = () => (
   <Field.Root name="website">
@@ -29,7 +37,7 @@ export const WebsiteField = () => (
 
 ```tsx
 import { useState } from 'react';
-import { Field, Input, InputGroup } from 'twenty-ui/input';
+import { Field, Input, InputGroup } from 'twenty-ui/primitives/input';
 
 export const PasswordField = () => {
   const [visible, setVisible] = useState(false);

@@ -16,8 +16,8 @@ import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { Loader } from 'twenty-ui/feedback';
-import { MenuItem } from 'twenty-ui/navigation';
+import { Loader } from 'twenty-ui/primitives/feedback';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';
 
 const StyledPreviewWrapper = styled.div`

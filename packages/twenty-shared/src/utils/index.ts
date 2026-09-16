@@ -309,6 +309,7 @@ export { isImageIdentifierFieldMetadataType } from './validation/isImageIdentifi
 export { isLabelIdentifierFieldMetadataTypes } from './validation/isLabelIdentifierFieldMetadataTypes';
 export type { SearchableFieldType } from './validation/isSearchableFieldType';
 export { isSearchableFieldType } from './validation/isSearchableFieldType';
+export { isTagColor } from './validation/isTagColor';
 export { isValidLocale } from './validation/isValidLocale';
 export { isValidTwentySubdomain } from './validation/isValidTwentySubdomain';
 export { isValidUuid } from './validation/isValidUuid';
@@ -316,6 +317,10 @@ export { isValidVariable } from './validation/isValidVariable';
 export { normalizeLocale } from './validation/normalizeLocale';
 export { getCountryCodesForCallingCode } from './validation/phones-value/getCountryCodesForCallingCode';
 export { isValidCountryCode } from './validation/phones-value/isValidCountryCode';
-export { isVariableReference, resolveInput } from './variable-resolver';
+export {
+  isVariableReference,
+  resolveInput,
+  resolveStringTemplate,
+} from './variable-resolver';
 export { getViewLayoutFromViewType } from './views/getViewLayoutFromViewType';
 export { isWidgetViewType } from './views/isWidgetViewType';

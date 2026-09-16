@@ -3,15 +3,23 @@ title: Menu
 description: Present commands, checked options, radio choices, and nested menus.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import MenuReference from '/snippets/ui/generated/surfaces/menu.mdx';
 
 Use `Menu` for actions opened from a trigger. Its items supply keyboard navigation and the visual layout of [ListItem](/ui/components/navigation/list-item).
+
+<StoryEmbed
+  storyId="ui-surfaces-menu--documentation"
+  title="Menu example"
+  height={440}
+/>
 
 ## Action menu
 
 ```tsx
 import { IconCopy, IconTrash } from 'twenty-ui/icon';
-import { Menu } from 'twenty-ui/surfaces';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 type RecordMenuProps = { onDuplicate: () => void; onDelete: () => void };
 
@@ -37,7 +45,7 @@ Action items close the menu when selected by default. `disabled` prevents select
 
 ```tsx
 import { useState } from 'react';
-import { Menu } from 'twenty-ui/surfaces';
+import { Menu } from 'twenty-ui/primitives/surfaces';
 
 export const ViewMenu = () => {
   const [showArchived, setShowArchived] = useState(false);

@@ -5,7 +5,10 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, getIconTileColorShades } from 'twenty-ui/data-display';
+import {
+  Avatar,
+  getIconTileColorShades,
+} from 'twenty-ui/primitives/data-display';
 import {
   IconEdit,
   IconPlus,
@@ -96,10 +99,10 @@ export const SettingsToolIcon = ({
   if (isDefined(application) && isDefined(marketplaceApp?.logoUrl)) {
     return (
       <Avatar
-        avatarUrl={getAbsoluteImageUrl(marketplaceApp.logoUrl)}
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
+        src={getAbsoluteImageUrl(marketplaceApp.logoUrl)}
+        name={application.name}
+        colorSeed={application.name}
+        shape="square"
         size="xs"
       />
     );
@@ -108,9 +111,9 @@ export const SettingsToolIcon = ({
   if (isDefined(application)) {
     return (
       <Avatar
-        placeholder={application.name}
-        placeholderColorSeed={application.name}
-        type="squared"
+        name={application.name}
+        colorSeed={application.name}
+        shape="square"
         size="xs"
       />
     );

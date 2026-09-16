@@ -11,7 +11,7 @@ import { AppPath } from 'twenty-shared/types';
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
 import { PageTitle } from '@/ui/utilities/page-title/components/PageTitle';
 import { styled } from '@linaria/react';
-import { MainButton } from 'twenty-ui/input';
+import { MainButton } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AnimatedPlaceholder,
@@ -19,8 +19,8 @@ import {
   AnimatedPlaceholderErrorContainer,
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
-} from 'twenty-ui/feedback';
-import { UndecoratedLink } from 'twenty-ui/navigation';
+} from 'twenty-ui/primitives/feedback';
+import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
 
 const StyledBackDrop = styled.div`
   align-items: center;

@@ -27,7 +27,8 @@ describe('isTranslationAlreadyPresentError', () => {
       isTranslationAlreadyPresentError(
         buildDetailError({
           code: 'validationError',
-          message: 'Duplicate translation. Please vote or approve the original.',
+          message:
+            'Duplicate translation. Please vote or approve the original.',
         }),
       ),
     ).toBe(true);
@@ -59,6 +60,8 @@ describe('isTranslationAlreadyPresentError', () => {
     expect(
       isTranslationAlreadyPresentError(buildError('<html>502</html>')),
     ).toBe(false);
-    expect(isTranslationAlreadyPresentError(new Error('identical'))).toBe(false);
+    expect(isTranslationAlreadyPresentError(new Error('identical'))).toBe(
+      false,
+    );
   });
 });

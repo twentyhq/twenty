@@ -3,14 +3,22 @@ title: Tabs
 description: Switch between related panels with accessible tab navigation.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import TabsReference from '/snippets/ui/generated/navigation/tabs.mdx';
 
 `Tabs` connects each tab to a panel using a shared `value`. Keep the values unique within a root.
 
+<StoryEmbed
+  storyId="ui-navigation-tabs--documentation"
+  title="Tabs example"
+  height={240}
+/>
+
 ## Tab panels
 
 ```tsx
-import { Tabs } from 'twenty-ui/navigation';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 
 export const RecordTabs = () => (
   <Tabs.Root defaultValue="overview">
@@ -32,7 +40,7 @@ export const RecordTabs = () => (
 
 ```tsx
 import { useState } from 'react';
-import { Tabs } from 'twenty-ui/navigation';
+import { Tabs } from 'twenty-ui/primitives/navigation';
 
 export const SettingsTabs = () => {
   const [tab, setTab] = useState<string | number | null>('profile');

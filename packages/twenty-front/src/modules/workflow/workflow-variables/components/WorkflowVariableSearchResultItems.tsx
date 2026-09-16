@@ -1,6 +1,6 @@
 import { type WorkflowVariableSearchResult } from '@/workflow/workflow-variables/types/WorkflowVariableSearchResult';
 import { useIcons } from 'twenty-ui/icon';
-import { MenuItemSelect } from 'twenty-ui/navigation';
+import { MenuItemSelect } from 'twenty-ui/primitives/navigation';
 
 type WorkflowVariableSearchResultItemsProps = {
   searchResults: WorkflowVariableSearchResult[];

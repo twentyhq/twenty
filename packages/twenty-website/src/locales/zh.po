@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 21:09\n"
+"PO-Revision-Date: 2026-09-15 14:21\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -821,15 +821,15 @@ msgstr "账户负责人"
 msgid "Action"
 msgstr "动作"
 
-#. js-lingui-id: Kqfsda
+#. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
-msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
-msgstr "在结账后激活你的 Twenty 企业许可证，并将密钥复制到你的自托管实例中。"
+msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
+msgstr "结账后激活你的 Twenty 组织版许可证，并将密钥复制到你的自托管实例中。"
 
-#. js-lingui-id: muhZ+X
+#. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Activating your enterprise license…"
-msgstr "正在激活你的企业版许可证…"
+msgid "Activating your Organization license…"
+msgstr "正在激活你的组织版许可证…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2157,10 +2157,10 @@ msgstr "复制"
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "直接从记录页面复制通话录音的转录文本或视频链接。"
 
-#. js-lingui-id: 7qTWwB
+#. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Copy the enterprise key above."
-msgstr "复制上方的企业密钥。"
+msgid "Copy the Organization key above."
+msgstr "复制上方的组织密钥。"
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -3148,16 +3148,6 @@ msgstr "请输入有效的 URL（以 http:// 或 https:// 开头）。"
 msgid "Enterprise"
 msgstr "Enterprise"
 
-#. js-lingui-id: 87BcPj
-#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
-msgid "Enterprise *activation*"
-msgstr "企业版*激活*"
-
-#. js-lingui-id: NTskGY
-#: src/platform/routing/static-website-routes.ts
-msgid "Enterprise Activation | Twenty"
-msgstr "企业版激活 | Twenty"
-
 #. js-lingui-id: aDpB6R
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise edition"
@@ -3327,10 +3317,10 @@ msgstr "延长加演！"
 msgid "Extra Dataverse storage (10 GB)"
 msgstr "额外 Dataverse 存储（10 GB）"
 
-#. js-lingui-id: tX4pRm
+#. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Failed to activate enterprise key. Please try again."
-msgstr "企业密钥激活失败。请重试。"
+msgid "Failed to activate Organization key. Please try again."
+msgstr "组织密钥激活失败。请重试。"
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -5626,10 +5616,10 @@ msgstr "打开案例研究：{0}"
 msgid "Open menu"
 msgstr "打开菜单"
 
-#. js-lingui-id: pkXQA+
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Enterprise."
-msgstr "打开你 Twenty 自托管实例中的 Settings → Enterprise。"
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
+msgstr "打开你的 Twenty 自托管实例中的 Settings → Admin Panel → Organization。"
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5661,6 +5651,16 @@ msgstr "机会"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Organization"
 msgstr "组织"
+
+#. js-lingui-id: hjEu3O
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
+msgid "Organization *activation*"
+msgstr "组织*激活*"
+
+#. js-lingui-id: CKppYD
+#: src/platform/routing/static-website-routes.ts
+msgid "Organization Activation | Twenty"
+msgstr "组织激活 | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -9153,16 +9153,6 @@ msgstr "你的概要"
 msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
 msgstr "你的结账已完成。按照下方步骤，将你的许可证密钥复制到你的 Twenty 实例中。"
 
-#. js-lingui-id: krHgj1
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise key"
-msgstr "你的企业密钥"
-
-#. js-lingui-id: +dxjCu
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise license has been activated successfully."
-msgstr "你的企业许可证已成功激活。"
-
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts
 msgid "Your name *"
@@ -9172,6 +9162,16 @@ msgstr "你的姓名 *"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Your network, fully mapped."
 msgstr "你的关系网络，一览无余。"
+
+#. js-lingui-id: 91Ysnw
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization key"
+msgstr "你的组织密钥"
+
+#. js-lingui-id: sarabV
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization license has been activated successfully."
+msgstr "你的组织许可证已成功激活。"
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

@@ -68,6 +68,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
     '/developers/extend/apps/logic/logic-functions',
+  DEVELOPERS_EXTEND_APPS_LOGIC_MESSAGING_CHANNELS:
+    '/developers/extend/apps/logic/messaging-channels',
   DEVELOPERS_EXTEND_APPS_LOGIC_OVERVIEW:
     '/developers/extend/apps/logic/overview',
   DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
@@ -126,6 +128,10 @@ export const DOCUMENTATION_PATHS = {
   GETTING_STARTED_KEY_FEATURES: '/getting-started/key-features',
   GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
   UI_ACCESSIBILITY: '/ui/accessibility',
+  UI_COMPONENTS_DATA_DISPLAY_AVATAR: '/ui/components/data-display/avatar',
+  UI_COMPONENTS_DATA_DISPLAY_CHIP: '/ui/components/data-display/chip',
+  UI_COMPONENTS_DATA_DISPLAY_STATUS: '/ui/components/data-display/status',
+  UI_COMPONENTS_DATA_DISPLAY_TAG: '/ui/components/data-display/tag',
   UI_COMPONENTS_FEEDBACK_TOAST: '/ui/components/feedback/toast',
   UI_COMPONENTS_INPUT_CHECKBOX: '/ui/components/input/checkbox',
   UI_COMPONENTS_INPUT_FIELD: '/ui/components/input/field',

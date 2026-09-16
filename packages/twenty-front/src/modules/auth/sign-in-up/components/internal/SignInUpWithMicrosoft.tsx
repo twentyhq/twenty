@@ -10,8 +10,8 @@ import { type SocialSsoSignInUpActionType } from '@/auth/types/socialSsoSignInUp
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { IconMicrosoft } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/layout';
-import { MainButton } from 'twenty-ui/input';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { MainButton } from 'twenty-ui/primitives/input';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { LastUsedPill } from './LastUsedPill';

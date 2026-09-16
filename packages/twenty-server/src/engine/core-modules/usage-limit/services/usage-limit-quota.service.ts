@@ -205,6 +205,54 @@ export class UsageLimitQuotaService implements OnModuleInit {
     });
   }
 
+  async getAllowanceUsage(workspaceId: string): Promise<{
+    limitValue: number;
+    consumedValue: number | null;
+    periodEnd: Date;
+  } | null> {
+    const counter = await this.buildAllowanceCounter(workspaceId);
+
+    if (!isDefined(counter)) {
+      return null;
+    }
+
+    const allowance =
+      await this.creditAllowanceProvider.getCreditAllowance(workspaceId);
+
+    if (!isDefined(allowance)) {
+      return null;
+    }
+
+    if (allowance.periodStart.getTime() !== counter.periodStart.getTime()) {
+      return {
+        limitValue: allowance.allowanceMicro,
+        consumedValue: null,
+        periodEnd: allowance.periodEnd,
+      };
+    }
+
+    let consumedValue: number | null = null;
+
+    try {
+      const [remaining] = await this.readRemainings({
+        workspaceId,
+        counters: [counter],
+      });
+
+      consumedValue = isDefined(remaining)
+        ? Math.max(0, allowance.allowanceMicro - remaining)
+        : null;
+    } catch (error) {
+      this.admitOnFailure({ error, workspaceId, admitted: null });
+    }
+
+    return {
+      limitValue: allowance.allowanceMicro,
+      consumedValue,
+      periodEnd: allowance.periodEnd,
+    };
+  }
+
   async getAllowanceRemainingMicro(
     workspaceId: string,
   ): Promise<number | null> {

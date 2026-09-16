@@ -3,15 +3,23 @@ title: RadioGroup
 description: Manage a single selection across a set of radio options.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
 
 `RadioGroup` coordinates the value, keyboard navigation, and form submission of its [Radio](/ui/components/input/radio) children.
+
+<StoryEmbed
+  storyId="ui-input-radiogroup--default"
+  title="RadioGroup example"
+  height={240}
+/>
 
 ## Default selection
 
 ```tsx
 import { useId } from 'react';
-import { Radio, RadioGroup } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 
 export const BillingFrequency = () => {
   const labelId = useId();
@@ -44,7 +52,7 @@ Use `defaultValue` for an uncontrolled group. Its `name` identifies the selected
 
 ```tsx
 import { useState } from 'react';
-import { Radio, RadioGroup } from 'twenty-ui/input';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
 
 export const DisplayDensity = () => {
   const [density, setDensity] = useState('comfortable');

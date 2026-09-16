@@ -3,14 +3,22 @@ title: Popover
 description: Display contextual content anchored to a trigger.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import PopoverReference from '/snippets/ui/generated/surfaces/popover.mdx';
 
 Use `Popover` for contextual information or lightweight controls. `Popup` includes positioning and a portal, so you can compose content directly inside it.
 
+<StoryEmbed
+  storyId="ui-surfaces-popover--documentation"
+  title="Popover example"
+  height={440}
+/>
+
 ## Contextual content
 
 ```tsx
-import { Popover } from 'twenty-ui/surfaces';
+import { Popover } from 'twenty-ui/primitives/surfaces';
 
 export const ImportHelp = () => (
   <Popover.Root>
@@ -32,7 +40,7 @@ Use `Title` and `Description` to identify the popup. The trigger renders a butto
 
 ```tsx
 import { useState } from 'react';
-import { Popover } from 'twenty-ui/surfaces';
+import { Popover } from 'twenty-ui/primitives/surfaces';
 
 export const FilterPopover = () => {
   const [open, setOpen] = useState(false);

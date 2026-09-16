@@ -8,7 +8,7 @@ msgstr ""
 "Language: tr\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 21:09\n"
+"PO-Revision-Date: 2026-09-15 14:21\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -821,15 +821,15 @@ msgstr "Hesap Sahibi"
 msgid "Action"
 msgstr "Eylem"
 
-#. js-lingui-id: Kqfsda
+#. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
-msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
-msgstr "Ödeme sonrasında Twenty kurumsal lisansınızı etkinleştirin ve anahtarınızı kendi kendinize barındırdığınız örneğinize kopyalayın."
+msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
+msgstr "Ödeme sonrasında Twenty Organization lisansınızı etkinleştirin ve anahtarınızı kendi kendinize barındırdığınız örneğinize kopyalayın."
 
-#. js-lingui-id: muhZ+X
+#. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Activating your enterprise license…"
-msgstr "Kurumsal lisansınız etkinleştiriliyor…"
+msgid "Activating your Organization license…"
+msgstr "Organization lisansınız etkinleştiriliyor…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2157,10 +2157,10 @@ msgstr "Kopyala"
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "Bir çağrı kaydının dökümünü veya video bağlantısını doğrudan kayıt sayfasından kopyalayın."
 
-#. js-lingui-id: 7qTWwB
+#. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Copy the enterprise key above."
-msgstr "Yukarıdaki kurumsal anahtarı kopyalayın."
+msgid "Copy the Organization key above."
+msgstr "Yukarıdaki Organization anahtarını kopyalayın."
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -3148,16 +3148,6 @@ msgstr "Geçerli bir URL girin (http:// veya https:// ile başlayan)."
 msgid "Enterprise"
 msgstr "Enterprise"
 
-#. js-lingui-id: 87BcPj
-#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
-msgid "Enterprise *activation*"
-msgstr "Kurumsal *aktivasyon*"
-
-#. js-lingui-id: NTskGY
-#: src/platform/routing/static-website-routes.ts
-msgid "Enterprise Activation | Twenty"
-msgstr "Kurumsal Aktivasyon | Twenty"
-
 #. js-lingui-id: aDpB6R
 #: src/sections/compare/compare-data.ts
 msgid "Enterprise edition"
@@ -3327,10 +3317,10 @@ msgstr "Uzun süreli gösterim!"
 msgid "Extra Dataverse storage (10 GB)"
 msgstr "Ek Dataverse depolaması (10 GB)"
 
-#. js-lingui-id: tX4pRm
+#. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Failed to activate enterprise key. Please try again."
-msgstr "Kurumsal anahtar etkinleştirilemedi. Lütfen tekrar deneyin."
+msgid "Failed to activate Organization key. Please try again."
+msgstr "Organization anahtarı etkinleştirilemedi. Lütfen tekrar deneyin."
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -5626,10 +5616,10 @@ msgstr "Vaka çalışmasını aç: {0}"
 msgid "Open menu"
 msgstr "Menüyü aç"
 
-#. js-lingui-id: pkXQA+
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Enterprise."
-msgstr "Twenty self-hosted örneğinizin Ayarlar → Enterprise bölümünü açın."
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
+msgstr "Twenty self-hosted örneğinizin Ayarlar → Yönetici Paneli → Organizasyon bölümünü açın."
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5661,6 +5651,16 @@ msgstr "Fırsat"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Organization"
 msgstr "Organization"
+
+#. js-lingui-id: hjEu3O
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
+msgid "Organization *activation*"
+msgstr "Kuruluş *etkinleştirme*"
+
+#. js-lingui-id: CKppYD
+#: src/platform/routing/static-website-routes.ts
+msgid "Organization Activation | Twenty"
+msgstr "Kuruluş Etkinleştirme | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -9143,16 +9143,6 @@ msgstr "Özetiniz"
 msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
 msgstr "Ödeme işleminiz tamamlandı. Lisans anahtarınızı Twenty örneğinize kopyalamak için aşağıdaki adımları izleyin."
 
-#. js-lingui-id: krHgj1
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise key"
-msgstr "Kurumsal anahtarınız"
-
-#. js-lingui-id: +dxjCu
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise license has been activated successfully."
-msgstr "Kurumsal lisansınız başarıyla etkinleştirildi."
-
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts
 msgid "Your name *"
@@ -9162,6 +9152,16 @@ msgstr "Adınız *"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Your network, fully mapped."
 msgstr "Ağınız, tamamen haritalanmış durumda."
+
+#. js-lingui-id: 91Ysnw
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization key"
+msgstr "Kuruluş anahtarınız"
+
+#. js-lingui-id: sarabV
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization license has been activated successfully."
+msgstr "Kuruluş lisansınız başarıyla etkinleştirildi."
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

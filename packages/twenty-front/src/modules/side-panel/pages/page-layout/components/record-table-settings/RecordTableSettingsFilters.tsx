@@ -6,7 +6,7 @@ import { getRecordIndexIdFromObjectNamePluralAndViewId } from '@/object-record/u
 import { useRecordTableWidgetFilterCallbacks } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetFilterCallbacks';
 import { useRecordTableWidgetViewForDisplay } from '@/page-layout/widgets/record-table/hooks/useRecordTableWidgetViewForDisplay';
 import { RecordTableSettingsFiltersInitializeStateEffect } from '@/side-panel/pages/page-layout/components/record-table-settings/RecordTableSettingsFiltersInitializeStateEffect';
-import { InputLabel } from 'twenty-ui/input';
+import { InputLabel } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';

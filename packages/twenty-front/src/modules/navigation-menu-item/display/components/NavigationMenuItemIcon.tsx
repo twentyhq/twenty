@@ -4,7 +4,7 @@ import {
   Avatar,
   StyledTintedIconTileContainer,
   getIconTileColorShades,
-} from 'twenty-ui/data-display';
+} from 'twenty-ui/primitives/data-display';
 import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -74,7 +74,7 @@ export const NavigationMenuItemIcon = ({
   }
 
   if (navigationMenuItem.type === NavigationMenuItemType.PAGE_LAYOUT) {
-    const pageLayoutIcon = isDefined(navigationMenuItem.icon)
+    const PageLayoutIcon = isDefined(navigationMenuItem.icon)
       ? getIcon(navigationMenuItem.icon)
       : undefined;
     const pageLayoutColor = getNavigationMenuItemColor(navigationMenuItem);
@@ -87,10 +87,13 @@ export const NavigationMenuItemIcon = ({
       >
         <Avatar
           size="sm"
-          type="icon"
-          Icon={pageLayoutIcon}
-          iconColor={pageLayoutIconStyle.iconColor}
-          placeholder={navigationMenuItem.name ?? ''}
+          shape="rounded-square"
+          icon={
+            isDefined(PageLayoutIcon) ? (
+              <PageLayoutIcon color={pageLayoutIconStyle.iconColor} />
+            ) : undefined
+          }
+          name={navigationMenuItem.name ?? ''}
         />
       </StyledTintedIconTileContainer>
     );
@@ -117,7 +120,7 @@ export const NavigationMenuItemIcon = ({
     : objectMetadataItem?.icon
       ? getIcon(objectMetadataItem.icon)
       : undefined;
-  const iconToUse = StandardIcon ?? itemIcon;
+  const IconToUse = StandardIcon ?? itemIcon;
 
   const effectiveColor = getNavigationMenuItemColor(
     navigationMenuItem,
@@ -153,12 +156,13 @@ export const NavigationMenuItemIcon = ({
   const avatar = (
     <Avatar
       size={iconStyle ? 'sm' : 'md'}
-      type={recordIdentifier?.avatarType ?? 'icon'}
-      Icon={iconToUse}
-      iconColor={iconColorToUse}
-      avatarUrl={getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? '')}
-      placeholder={labelIdentifier}
-      placeholderColorSeed={navigationMenuItem.targetRecordId ?? undefined}
+      shape={recordIdentifier?.avatarShape ?? 'rounded-square'}
+      icon={
+        isDefined(IconToUse) ? <IconToUse color={iconColorToUse} /> : undefined
+      }
+      src={getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? '')}
+      name={labelIdentifier}
+      colorSeed={navigationMenuItem.targetRecordId ?? undefined}
     />
   );
 

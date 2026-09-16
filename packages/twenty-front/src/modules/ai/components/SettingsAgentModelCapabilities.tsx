@@ -1,11 +1,11 @@
 import { useResolvedAiModel } from '@/ai/hooks/useResolvedAiModel';
-import { InputLabel, Checkbox } from 'twenty-ui/input';
+import { InputLabel, Checkbox } from 'twenty-ui/primitives/input';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconBrandX, IconWorld } from 'twenty-ui/icon';
-import { Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/primitives/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledCheckboxContainer = styled.div<{ disabled: boolean }>`

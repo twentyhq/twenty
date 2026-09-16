@@ -5,7 +5,7 @@ import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMe
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { t } from '@lingui/core/macro';
 import { IconArrowsVertical } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledButtonContainer = styled.div`

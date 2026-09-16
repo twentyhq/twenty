@@ -77,7 +77,7 @@ jest.mock('@/object-record/record-card/components/RecordCard', () => ({
     </button>
   ),
 }));
-jest.mock('twenty-ui/layout', () => ({
+jest.mock('twenty-ui/primitives/layout', () => ({
   AnimatedEaseInOut: ({
     children,
     isOpen,

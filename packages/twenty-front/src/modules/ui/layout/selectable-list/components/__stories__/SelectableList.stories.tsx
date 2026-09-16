@@ -6,7 +6,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useEffect, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
-import { MenuItem } from 'twenty-ui/navigation';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 const ITEM_LABELS = [
