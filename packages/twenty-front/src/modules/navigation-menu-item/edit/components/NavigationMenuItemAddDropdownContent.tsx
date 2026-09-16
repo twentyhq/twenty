@@ -226,7 +226,6 @@ export const NavigationMenuItemAddDropdownContent = ({
             });
           },
           isDisabled: Boolean(folderId),
-          hasSubMenu: true,
         },
         {
           id: 'link',
