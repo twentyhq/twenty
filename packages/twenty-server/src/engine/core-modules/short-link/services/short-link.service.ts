@@ -1,21 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { createHash } from 'node:crypto';
-
-import chunk from 'lodash.chunk';
 import { In, Repository } from 'typeorm';
 
 import { ShortLinkEntity } from 'src/engine/core-modules/short-link/short-link.entity';
+import { hashShortLink } from 'src/engine/core-modules/short-link/utils/hash-short-link.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-export type ShortLinkToRegister = { url: string; authoredUrl: string };
-
-export const hashLink = ({ url, authoredUrl }: ShortLinkToRegister): string =>
-  createHash('sha256').update(`${authoredUrl}\n${url}`).digest('hex');
-
-const FIND_BY_IDS_CHUNK_SIZE = 5000;
 
 @Injectable()
 export class ShortLinkService {
@@ -34,9 +25,9 @@ export class ShortLinkService {
   }: {
     workspaceId: string;
     messageCampaignId: string;
-    links: ShortLinkToRegister[];
+    links: { url: string; authoredUrl: string }[];
   }): Promise<Map<string, string>> {
-    const linkHashes = links.map(hashLink);
+    const linkHashes = links.map(hashShortLink);
 
     await this.shortLinkRepository
       .createQueryBuilder()
@@ -66,41 +57,6 @@ export class ShortLinkService {
   ): Promise<ShortLinkEntity | null> {
     return this.globalShortLinkRepository.findOne({
       where: { id: shortLinkId },
-    });
-  }
-
-  async findByIds({
-    workspaceId,
-    shortLinkIds,
-  }: {
-    workspaceId: string;
-    shortLinkIds: string[];
-  }): Promise<ShortLinkEntity[]> {
-    const shortLinks: ShortLinkEntity[] = [];
-
-    for (const shortLinkIdsChunk of chunk(
-      shortLinkIds,
-      FIND_BY_IDS_CHUNK_SIZE,
-    )) {
-      shortLinks.push(
-        ...(await this.shortLinkRepository.find(workspaceId, {
-          where: { id: In(shortLinkIdsChunk) },
-        })),
-      );
-    }
-
-    return shortLinks;
-  }
-
-  async findCampaignLinks({
-    workspaceId,
-    messageCampaignId,
-  }: {
-    workspaceId: string;
-    messageCampaignId: string;
-  }): Promise<ShortLinkEntity[]> {
-    return this.shortLinkRepository.find(workspaceId, {
-      where: { messageCampaignId },
     });
   }
 }
