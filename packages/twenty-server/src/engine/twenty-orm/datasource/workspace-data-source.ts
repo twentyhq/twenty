@@ -200,6 +200,7 @@ export class WorkspaceDataSource {
       flatObjectMetadata,
       internalContext,
       authContext: this.authContext,
+      rolePermissionConfig,
       executor,
       objectRecordsPermissions,
       shouldBypassPermissionChecks,

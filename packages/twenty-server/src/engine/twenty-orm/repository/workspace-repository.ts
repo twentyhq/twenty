@@ -35,6 +35,7 @@ import { type InheritedReadabilityChildrenParent } from 'src/engine/twenty-orm/t
 import { type InheritedReadabilityColumnParent } from 'src/engine/twenty-orm/types/inherited-readability-column-parent.type';
 import { type InheritedReadabilityParent } from 'src/engine/twenty-orm/types/inherited-readability-parent.type';
 import { type InheritedReadabilityParentLink } from 'src/engine/twenty-orm/types/inherited-readability-parent-link.type';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { type RowAccessPolicy } from 'src/engine/twenty-orm/types/row-access-policy.type';
 import {
   buildRowAccessPolicy,
@@ -121,6 +122,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   flatObjectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
+  rolePermissionConfig?: RolePermissionConfig;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
   shouldBypassPermissionChecks: boolean;
@@ -1717,6 +1719,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       objectMetadata: this.options.flatObjectMetadata,
       internalContext: this.options.internalContext,
       authContext: this.options.authContext,
+      rolePermissionConfig: this.options.rolePermissionConfig,
       shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
       ...(isDefined(errorMessage) ? { errorMessage } : {}),
     });
@@ -1944,6 +1947,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           internalContext: this.options.internalContext,
           authContext: this.options.authContext,
           objectMetadata,
+          rolePermissionConfig: this.options.rolePermissionConfig,
         }),
     };
   }

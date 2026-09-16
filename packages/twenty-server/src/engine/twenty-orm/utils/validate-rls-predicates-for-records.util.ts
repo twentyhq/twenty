@@ -12,6 +12,7 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/twenty-orm/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/twenty-orm/utils/resolve-row-level-permission-record-filter.util';
 
@@ -20,6 +21,7 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   objectMetadata: FlatObjectMetadata;
   internalContext: WorkspaceInternalContext;
   authContext: WorkspaceAuthContext;
+  rolePermissionConfig?: RolePermissionConfig;
   shouldBypassPermissionChecks: boolean;
   errorMessage?: string;
 };
@@ -29,6 +31,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   objectMetadata,
   internalContext,
   authContext,
+  rolePermissionConfig,
   shouldBypassPermissionChecks,
   errorMessage = 'Record does not satisfy row-level security constraints of your current role',
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
@@ -40,6 +43,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
     internalContext,
     authContext,
     objectMetadata,
+    rolePermissionConfig,
   });
 
   if (!isDefined(recordFilter)) {
