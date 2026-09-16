@@ -12,7 +12,6 @@ import { useInboxItemMessageThreadId } from '@/inbox/hooks/useInboxItemMessageTh
 import { getFeaturedInboxToolCall } from '@/inbox/utils/getFeaturedInboxToolCall';
 import {
   type InboxItem,
-  InboxItemOutcome,
   InboxItemScope,
   InboxItemToolCallStatus,
 } from '~/generated/graphql';
@@ -46,11 +45,13 @@ export const InboxItemPlanProvider = ({
   } = useInboxItemActions();
   const messageThreadId = useInboxItemMessageThreadId(inboxItem);
 
-  const isDone = inboxItem.scope === InboxItemScope.DONE;
+  const isArchived = inboxItem.scope === InboxItemScope.ARCHIVED;
   const toolCalls = inboxItem.toolCalls;
-  // A done item has nothing left to run, so nothing takes the body: every
-  // call reads as a row of what happened.
-  const featuredToolCall = isDone ? null : getFeaturedInboxToolCall(toolCalls);
+  // An archived item has nothing left to run, so nothing takes the body:
+  // every call reads as a row of what happened.
+  const featuredToolCall = isArchived
+    ? null
+    : getFeaturedInboxToolCall(toolCalls);
   const otherToolCalls = toolCalls.filter(
     (toolCall) => toolCall.id !== featuredToolCall?.id,
   );
@@ -145,7 +146,7 @@ export const InboxItemPlanProvider = ({
 
       const inboxItemAfterRun = await run();
 
-      if (inboxItemAfterRun?.scope === InboxItemScope.DONE) {
+      if (inboxItemAfterRun?.scope === InboxItemScope.ARCHIVED) {
         onItemCompleted?.();
       }
     } catch {
@@ -199,12 +200,15 @@ export const InboxItemPlanProvider = ({
       }),
     );
 
+  // Putting an item away moves the list on, the same as finishing its plan.
   const archiveItem = () =>
     void transitionInboxItem({
       inboxItemId: inboxItem.id,
-      transition: { kind: 'CLEAR', outcome: InboxItemOutcome.ARCHIVED },
+      transition: { kind: 'CLEAR' },
       expectedVersion: inboxItem.version,
-    }).catch(reportFailure);
+    })
+      .then(() => onItemCompleted?.())
+      .catch(reportFailure);
 
   const reopenItem = () =>
     void reopenInboxItem({
@@ -217,7 +221,7 @@ export const InboxItemPlanProvider = ({
       value={{
         inboxItem,
         messageThreadId,
-        isDone,
+        isArchived,
         isBusy:
           isRunning ||
           inFlightEditCount > 0 ||

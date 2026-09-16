@@ -19,17 +19,8 @@ export const toInboxItemTransition = (
 ): InboxItemTransition => {
   switch (input.kind) {
     case 'CLEAR':
-      // An outcome says how the item ended; a resurfacing time says it has not.
-      if (isDefined(input.outcome) && isDefined(input.resurfaceAt)) {
-        throw new InboxException(
-          'A clear that comes back cannot also carry an outcome',
-          InboxExceptionCode.INVALID_INBOX_ACTION,
-        );
-      }
-
       return {
         kind: 'CLEAR',
-        ...(isDefined(input.outcome) ? { outcome: input.outcome } : {}),
         ...(isDefined(input.resurfaceAt)
           ? { resurfaceAt: input.resurfaceAt }
           : {}),

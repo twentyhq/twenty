@@ -31,10 +31,10 @@ describe('getInboxItemScope', () => {
     expect(scope).toBe(InboxItemScope.INBOX);
   });
 
-  it('should report a cleared item as done', () => {
+  it('should report a cleared item as archived', () => {
     const scope = getInboxItemScope(buildInboxItem({ clearedAt: NOW }), NOW);
 
-    expect(scope).toBe(InboxItemScope.DONE);
+    expect(scope).toBe(InboxItemScope.ARCHIVED);
   });
 
   it('should report a clear that has not expired yet as snoozed', () => {
@@ -113,9 +113,9 @@ describe('buildInboxItemScopeCriteria', () => {
     );
   });
 
-  it('should separate snoozed from done by whether the clear expires', () => {
+  it('should separate snoozed from archived by whether the clear expires', () => {
     const snoozed = buildInboxItemScopeCriteria(InboxItemScope.SNOOZED, NOW);
-    const done = buildInboxItemScopeCriteria(InboxItemScope.DONE, NOW);
+    const archived = buildInboxItemScopeCriteria(InboxItemScope.ARCHIVED, NOW);
 
     // Both stand on the same clear-is-current test, so it is pinned rather
     // than only compared to itself
@@ -123,14 +123,14 @@ describe('buildInboxItemScopeCriteria', () => {
       '("InboxItemEntity"."clearedAt" IS NOT NULL AND "InboxItemEntity"."lastEventAt" <= "InboxItemEntity"."clearedAt")';
 
     expect(renderSql(snoozed, 'clearedAt')).toBe(clearIsCurrent);
-    expect(renderSql(done, 'clearedAt')).toBe(clearIsCurrent);
-    expect(snoozed.resurfaceAt).not.toEqual(done.resurfaceAt);
+    expect(renderSql(archived, 'clearedAt')).toBe(clearIsCurrent);
+    expect(snoozed.resurfaceAt).not.toEqual(archived.resurfaceAt);
   });
 
   // The alias TypeORM passes is not guaranteed to be quoted, and an unquoted
   // table reference reaches Postgres as a missing FROM-clause entry
   it('should quote the sibling table however the alias arrives', () => {
-    const criteria = buildInboxItemScopeCriteria(InboxItemScope.DONE, NOW);
+    const criteria = buildInboxItemScopeCriteria(InboxItemScope.ARCHIVED, NOW);
     const sql = (criteria.clearedAt as FindOperator<unknown>).getSql?.(
       'InboxItemEntity."clearedAt"',
     );

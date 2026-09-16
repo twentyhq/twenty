@@ -6,7 +6,7 @@ import { registerEnumType } from '@nestjs/graphql';
 export enum InboxItemScope {
   INBOX = 'INBOX',
   SNOOZED = 'SNOOZED',
-  DONE = 'DONE',
+  ARCHIVED = 'ARCHIVED',
 }
 
 registerEnumType(InboxItemScope, { name: 'InboxItemScope' });

@@ -7,7 +7,6 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
-import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import {
   InboxException,
@@ -349,10 +348,6 @@ export class InboxItemToolCallService {
       return inboxItemAfterRun;
     }
 
-    const wasAnyRejected = toolCallsAfterRun.some(
-      (toolCall) => toolCall.status === InboxItemToolCallStatus.REJECTED,
-    );
-
     // The clear is guarded on the version the run started from: an event
     // folded into the plan while the calls were running must stay visible
     // rather than be swallowed by clearedAt. The calls have run either way, so
@@ -365,12 +360,7 @@ export class InboxItemToolCallService {
         accessibleQueueIds,
         expectedVersion: versionBeforeRun,
         loadedInboxItem: inboxItemAfterRun,
-        transition: {
-          kind: 'CLEAR',
-          outcome: wasAnyRejected
-            ? InboxItemOutcome.PARTIAL
-            : InboxItemOutcome.DONE,
-        },
+        transition: { kind: 'CLEAR' },
       });
     } catch (error) {
       if (

@@ -80,7 +80,6 @@ export class CreateInboxTablesFastInstanceCommand
         "clearedAt" TIMESTAMP WITH TIME ZONE,
         "resurfaceAt" TIMESTAMP WITH TIME ZONE,
         "clearedByUserWorkspaceId" uuid,
-        "outcome" character varying,
         "readAt" TIMESTAMP WITH TIME ZONE,
         "threadId" uuid,
         "subjectObjectMetadataId" uuid,

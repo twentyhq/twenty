@@ -78,7 +78,6 @@ export const toInboxItemDto = (
     toolCalls: [...(inboxItem.toolCalls ?? [])]
       .sort((left, right) => left.position - right.position)
       .map(toInboxItemToolCallDto),
-    outcome: inboxItem.outcome,
     lastEventAt: inboxItem.lastEventAt,
     queueId: inboxItem.queueId,
     assigneeUserWorkspaceId: inboxItem.assigneeUserWorkspaceId,

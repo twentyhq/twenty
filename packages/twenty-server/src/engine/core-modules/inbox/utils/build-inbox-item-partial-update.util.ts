@@ -83,7 +83,6 @@ export function buildInboxItemPartialUpdate({
         resurfaceAt: isDefined(transition.resurfaceAt)
           ? atTime(transition.resurfaceAt)
           : null,
-        outcome: transition.outcome ?? null,
         // Clearing something means having seen it.
         readAt: () => 'clock_timestamp()',
       };
@@ -93,7 +92,6 @@ export function buildInboxItemPartialUpdate({
         clearedAt: null,
         clearedByUserWorkspaceId: null,
         resurfaceAt: null,
-        outcome: null,
       };
 
     case 'MOVE': {
@@ -126,7 +124,6 @@ export function buildInboxItemPartialUpdate({
         clearedAt: null,
         clearedByUserWorkspaceId: null,
         resurfaceAt: null,
-        outcome: null,
       };
     }
 
@@ -145,14 +142,13 @@ export function buildInboxItemPartialUpdate({
       // Handing work over is a fresh start for whoever receives it: the
       // previous holder's snooze or archive is theirs, not the new
       // assignee's, and inheriting it would land the item straight in the
-      // recipient's Done where they would never see it.
+      // recipient's Archived where they would never see it.
       return {
         assigneeUserWorkspaceId: assignee,
         readAt: null,
         clearedAt: null,
         clearedByUserWorkspaceId: null,
         resurfaceAt: null,
-        outcome: null,
       };
     }
   }

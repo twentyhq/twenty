@@ -1,8 +1,7 @@
 import { Field, GraphQLISODateTime, InputType } from '@nestjs/graphql';
 
-import { IsDate, IsEnum, IsIn, IsOptional, IsUUID } from 'class-validator';
+import { IsDate, IsIn, IsOptional, IsUUID } from 'class-validator';
 
-import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { INBOX_ITEM_TRANSITION_KINDS } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -13,11 +12,6 @@ export class TransitionInboxItemInput {
   @Field(() => String)
   @IsIn(INBOX_ITEM_TRANSITION_KINDS)
   kind: string;
-
-  @Field(() => InboxItemOutcome, { nullable: true })
-  @IsOptional()
-  @IsEnum(InboxItemOutcome)
-  outcome?: InboxItemOutcome;
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   @IsOptional()

@@ -12,7 +12,6 @@ import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient
 import {
   type InboxItem,
   type InboxItemField,
-  type InboxItemOutcome,
   type InboxItemToolCall,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
@@ -26,7 +25,6 @@ type InboxItemTransitionKind = 'CLEAR' | 'REOPEN' | 'ASSIGN' | 'MOVE';
 
 type InboxItemTransitionInput = {
   kind: InboxItemTransitionKind;
-  outcome?: InboxItemOutcome;
   resurfaceAt?: string;
   toUserWorkspaceId?: string | null;
   toQueueId?: string | null;

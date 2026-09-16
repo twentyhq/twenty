@@ -17,7 +17,6 @@ import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-ite
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
@@ -131,10 +130,6 @@ export class InboxItemEntity {
   @Column({ nullable: true, type: 'uuid' })
   clearedByUserWorkspaceId: string | null;
 
-  // Metadata about the last clear, not state of its own.
-  @Column({ nullable: true, type: 'varchar' })
-  outcome: InboxItemOutcome | null;
-
   @Column({ type: 'timestamptz', nullable: true })
   readAt: Date | null;
 
@@ -185,8 +180,7 @@ export class InboxItemEntity {
   slotKey: string | null;
 
   // A caller that read the item at version N can only transition it while it is
-  // still at N, so two people clearing the same approval with different
-  // outcomes cannot both win.
+  // still at N, so two people acting on the same approval cannot both win.
   @Column({ nullable: false, type: 'integer', default: 1 })
   version: number;
 

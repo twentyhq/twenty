@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { type MessageDescriptor } from '@lingui/core';
 import {
-  IconCheckbox,
+  IconArchive,
   IconClockHour8,
   IconInbox,
   type IconComponent,
@@ -30,9 +30,9 @@ export const INBOX_SECTIONS: InboxSection[] = [
     Icon: IconClockHour8,
   },
   {
-    slug: 'done',
-    scope: InboxItemScope.DONE,
-    label: msg`Done`,
-    Icon: IconCheckbox,
+    slug: 'archived',
+    scope: InboxItemScope.ARCHIVED,
+    label: msg`Archived`,
+    Icon: IconArchive,
   },
 ];

@@ -8,7 +8,6 @@ export const INBOX_ITEM_FRAGMENT = gql`
     priority
     version
     title
-    outcome
     lastEventAt
     queueId
     assigneeUserWorkspaceId

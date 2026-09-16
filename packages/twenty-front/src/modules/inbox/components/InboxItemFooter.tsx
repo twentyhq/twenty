@@ -2,7 +2,6 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconArchive, IconCheck, IconClockHour8 } from 'twenty-ui/icon';
-import { Tag } from 'twenty-ui/primitives/data-display';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -10,7 +9,6 @@ import { InboxSnoozeDropdown } from '@/inbox/components/InboxSnoozeDropdown';
 import { InboxTooltipIconButton } from '@/inbox/components/InboxTooltipIconButton';
 import { useInboxItemPlanContext } from '@/inbox/hooks/useInboxItemPlanContext';
 import { getInboxToolCallRenderer } from '@/inbox/tool-call-renderers/utils/getInboxToolCallRenderer';
-import { getInboxItemOutcomeLabel } from '@/inbox/utils/getInboxItemOutcomeLabel';
 import { InboxItemToolCallStatus } from '~/generated/graphql';
 
 const StyledFooter = styled.div`
@@ -25,12 +23,13 @@ const StyledFooter = styled.div`
 
 // Pinned under the body whatever the item is about. Two operations exist,
 // run the featured call and run the plan; the labels come from the featured
-// call's tool and the counts from the plan, never from a layout.
+// call's tool and the counts from the plan, never from a layout. With nothing
+// left to run, putting the item away is the primary action itself.
 export const InboxItemFooter = () => {
   const { t } = useLingui();
   const {
     inboxItem,
-    isDone,
+    isArchived,
     isBusy,
     featuredToolCall,
     pendingToolCallCount,
@@ -41,12 +40,9 @@ export const InboxItemFooter = () => {
     reopenItem,
   } = useInboxItemPlanContext();
 
-  if (isDone) {
+  if (isArchived) {
     return (
       <StyledFooter>
-        {isDefined(inboxItem.outcome) && (
-          <Tag color="gray">{getInboxItemOutcomeLabel(inboxItem.outcome)}</Tag>
-        )}
         <Button onClick={reopenItem} size="sm" variant="outline">
           {t`Move to inbox`}
         </Button>
@@ -60,6 +56,8 @@ export const InboxItemFooter = () => {
   // A retry runs its own row only: the plan run leaves failed rows alone.
   const isRetry = featuredToolCall?.status === InboxItemToolCallStatus.FAILED;
   const canRunRest = otherPendingToolCallCount > 0 && !isRetry;
+  const isArchivePrimary =
+    !isDefined(featuredToolCall) && pendingToolCallCount === 0;
 
   const featuredLabel = isRetry
     ? t`Try again`
@@ -69,19 +67,17 @@ export const InboxItemFooter = () => {
   const planLabel =
     pendingToolCallCount === 1
       ? t`Do 1 action`
-      : pendingToolCallCount > 1
-        ? t`Do ${pendingToolCallCount} actions`
-        : inboxItem.toolCalls.length > 0
-          ? t`Close plan`
-          : t`Mark done`;
+      : t`Do ${pendingToolCallCount} actions`;
 
   return (
     <StyledFooter>
-      <InboxTooltipIconButton
-        Icon={IconArchive}
-        label={t`Archive`}
-        onClick={archiveItem}
-      />
+      {!isArchivePrimary && (
+        <InboxTooltipIconButton
+          Icon={IconArchive}
+          label={t`Archive`}
+          onClick={archiveItem}
+        />
+      )}
       <InboxSnoozeDropdown
         inboxItem={inboxItem}
         clickableComponent={
@@ -115,6 +111,17 @@ export const InboxItemFooter = () => {
               : featuredLabel}
           </Button>
         </>
+      ) : isArchivePrimary ? (
+        <Button
+          startIcon={<IconArchive />}
+          color="accent"
+          size="sm"
+          variant="solid"
+          disabled={isBusy}
+          onClick={archiveItem}
+        >
+          {t`Archive`}
+        </Button>
       ) : (
         <Button
           startIcon={<IconCheck />}

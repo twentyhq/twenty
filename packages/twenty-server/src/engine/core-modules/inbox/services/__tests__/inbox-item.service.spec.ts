@@ -103,7 +103,7 @@ describe('InboxItemService', () => {
     it.each([
       InboxItemScope.INBOX,
       InboxItemScope.SNOOZED,
-      InboxItemScope.DONE,
+      InboxItemScope.ARCHIVED,
     ])('should filter by the one scope predicate for %s', async (scope) => {
       await service.findMany({
         workspaceId: WORKSPACE_ID,

@@ -7,7 +7,6 @@ import {
   InboxItemRecordDTO,
 } from 'src/engine/core-modules/inbox/dtos/inbox-item-context.dto';
 import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
-import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import { InboxItemScope } from 'src/engine/core-modules/inbox/enums/inbox-item-scope.enum';
@@ -127,12 +126,9 @@ export class InboxItemDTO {
   @Field(() => [InboxItemRecordDTO])
   records: InboxItemRecordDTO[];
 
-  // Empty is a valid plan: doing it just marks the item done.
+  // Empty is a valid plan: doing it just archives the item.
   @Field(() => [InboxItemToolCallDTO])
   toolCalls: InboxItemToolCallDTO[];
-
-  @Field(() => InboxItemOutcome, { nullable: true })
-  outcome: InboxItemOutcome | null;
 
   @Field(() => Date)
   lastEventAt: Date;

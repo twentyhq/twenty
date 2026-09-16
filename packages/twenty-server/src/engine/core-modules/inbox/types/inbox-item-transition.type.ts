@@ -1,11 +1,9 @@
-import { type InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
-
 // Snoozing is not a transition of its own, it is a clear that expires, which is
-// why new activity wakes a snoozed item and a done one by the same comparison.
+// why new activity wakes a snoozed item and an archived one by the same
+// comparison.
 export type InboxItemTransition =
   | {
       kind: 'CLEAR';
-      outcome?: InboxItemOutcome;
       resurfaceAt?: Date;
     }
   | { kind: 'REOPEN' }

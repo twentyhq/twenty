@@ -1,7 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
-import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { SELF_ASSIGNMENT } from 'src/engine/core-modules/inbox/types/inbox-item-transition.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -93,7 +92,7 @@ describe('InboxTransitionService', () => {
     it('should put the expected version in the write predicate so a stale caller loses', async () => {
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
+        transition: { kind: 'CLEAR' },
         expectedVersion: 3,
       });
 
@@ -117,7 +116,7 @@ describe('InboxTransitionService', () => {
       await expect(
         service.transition({
           ...transitionArgs,
-          transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
+          transition: { kind: 'CLEAR' },
           expectedVersion: 2,
         }),
       ).rejects.toMatchObject({
@@ -186,17 +185,6 @@ describe('InboxTransitionService', () => {
       expect(lastPartialUpdate()).not.toHaveProperty('lastEventAt');
     });
 
-    it('should record how the item ended', async () => {
-      await service.transition({
-        ...transitionArgs,
-        transition: { kind: 'CLEAR', outcome: InboxItemOutcome.ARCHIVED },
-      });
-
-      expect(lastPartialUpdate()).toEqual(
-        expect.objectContaining({ outcome: InboxItemOutcome.ARCHIVED }),
-      );
-    });
-
     it('should apply to an item that was already cleared, since clearing is not a state change', async () => {
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(
         buildInboxItem({ clearedAt: new Date('2026-08-07T09:30:00.000Z') }),
@@ -204,7 +192,7 @@ describe('InboxTransitionService', () => {
 
       await service.transition({
         ...transitionArgs,
-        transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
+        transition: { kind: 'CLEAR' },
       });
 
       const partialUpdate = lastPartialUpdate() as Record<string, () => string>;
@@ -275,7 +263,6 @@ describe('InboxTransitionService', () => {
           clearedAt: null,
           clearedByUserWorkspaceId: null,
           resurfaceAt: null,
-          outcome: null,
         }),
       );
     });
@@ -411,7 +398,6 @@ describe('InboxTransitionService', () => {
         clearedAt: new Date('2026-01-01T00:00:00.000Z'),
         clearedByUserWorkspaceId: ACTOR_USER_WORKSPACE_ID,
         resurfaceAt: new Date('2099-01-01T00:00:00.000Z'),
-        outcome: InboxItemOutcome.DONE,
       });
 
       inboxItemService.findVisibleItemOrThrow.mockResolvedValue(snoozedItem);
@@ -441,7 +427,6 @@ describe('InboxTransitionService', () => {
           clearedAt: null,
           clearedByUserWorkspaceId: null,
           resurfaceAt: null,
-          outcome: null,
         }),
       );
     });

@@ -5,7 +5,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
-import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
 import {
   InboxException,
@@ -151,7 +150,7 @@ describe('InboxItemToolCallService', () => {
   });
 
   describe('runAll', () => {
-    it('should run the edited input when there is one and clear the item as done', async () => {
+    it('should run the edited input when there is one and clear the item', async () => {
       const first = buildToolCall({
         id: 'first',
         editedInput: { to: 'paul@example.com' },
@@ -170,7 +169,7 @@ describe('InboxItemToolCallService', () => {
         ],
       );
 
-      const inboxItem = await service.runAll({
+      await service.runAll({
         ...actorArgs,
         inboxItemId: INBOX_ITEM_ID,
         expectedVersion: 3,
@@ -183,10 +182,9 @@ describe('InboxItemToolCallService', () => {
       expect(inboxToolCallExecutionService.execute).toHaveBeenCalledTimes(2);
       expect(inboxTransitionService.transition).toHaveBeenCalledWith(
         expect.objectContaining({
-          transition: { kind: 'CLEAR', outcome: 'DONE' },
+          transition: { kind: 'CLEAR' },
         }),
       );
-      expect(inboxItem).toMatchObject({ outcome: 'DONE' });
     });
 
     // An event folded into the plan while its calls were running must stay
@@ -227,7 +225,7 @@ describe('InboxItemToolCallService', () => {
         new InboxException('changed', InboxExceptionCode.INBOX_ITEM_CHANGED),
       );
 
-      const inboxItem = await service.runAll({
+      await service.runAll({
         ...actorArgs,
         inboxItemId: INBOX_ITEM_ID,
       });
@@ -352,7 +350,7 @@ describe('InboxItemToolCallService', () => {
       expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
       expect(inboxTransitionService.transition).toHaveBeenCalledWith(
         expect.objectContaining({
-          transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
+          transition: { kind: 'CLEAR' },
         }),
       );
     });
@@ -386,8 +384,8 @@ describe('InboxItemToolCallService', () => {
       expect(inboxTransitionService.transition).not.toHaveBeenCalled();
     });
 
-    // A skipped step is the person's veto, and the outcome should say so
-    it('should clear the item as partial when a step was skipped', async () => {
+    // A skipped step is the person's veto; the plan still ends without it
+    it('should clear the item when a step was skipped', async () => {
       const first = buildToolCall({ id: 'first' });
       const second = buildToolCall({
         id: 'second',
@@ -405,12 +403,12 @@ describe('InboxItemToolCallService', () => {
       expect(inboxToolCallExecutionService.execute).toHaveBeenCalledTimes(1);
       expect(inboxTransitionService.transition).toHaveBeenCalledWith(
         expect.objectContaining({
-          transition: { kind: 'CLEAR', outcome: 'PARTIAL' },
+          transition: { kind: 'CLEAR' },
         }),
       );
     });
 
-    it('should clear the item as partial when every step was skipped', async () => {
+    it('should clear the item when every step was skipped', async () => {
       const first = buildToolCall({
         id: 'first',
         status: InboxItemToolCallStatus.REJECTED,
@@ -423,7 +421,7 @@ describe('InboxItemToolCallService', () => {
       expect(inboxToolCallExecutionService.execute).not.toHaveBeenCalled();
       expect(inboxTransitionService.transition).toHaveBeenCalledWith(
         expect.objectContaining({
-          transition: { kind: 'CLEAR', outcome: 'PARTIAL' },
+          transition: { kind: 'CLEAR' },
         }),
       );
     });
@@ -584,7 +582,7 @@ describe('InboxItemToolCallService', () => {
         { ...reply, status: InboxItemToolCallStatus.EXECUTED },
       ]);
 
-      const result = await service.runOne({
+      await service.runOne({
         ...actorArgs,
         inboxItemToolCallId: 'reply',
         expectedVersion: 3,
@@ -597,10 +595,9 @@ describe('InboxItemToolCallService', () => {
       expect(inboxTransitionService.transition).toHaveBeenCalledWith(
         expect.objectContaining({
           expectedVersion: 3,
-          transition: { kind: 'CLEAR', outcome: InboxItemOutcome.DONE },
+          transition: { kind: 'CLEAR' },
         }),
       );
-      expect(result).toMatchObject({ outcome: InboxItemOutcome.DONE });
     });
 
     // Sending a reply must not commit the person to the steps beside it.
@@ -679,7 +676,7 @@ describe('InboxItemToolCallService', () => {
         { ...failedReply, status: InboxItemToolCallStatus.EXECUTED },
       ]);
 
-      const result = await service.runOne({
+      await service.runOne({
         ...actorArgs,
         inboxItemToolCallId: 'reply',
       });
@@ -694,7 +691,6 @@ describe('InboxItemToolCallService', () => {
         }),
       );
       expect(inboxToolCallExecutionService.execute).toHaveBeenCalledTimes(1);
-      expect(result).toMatchObject({ outcome: InboxItemOutcome.DONE });
     });
 
     it('should refuse to run a plan that changed since it was read', async () => {

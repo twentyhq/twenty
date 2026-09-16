@@ -91,7 +91,7 @@ type SeededInboxItem = {
   // row per record.
   content: SeededInboxContent;
   toolCalls?: SeededToolCall[];
-  cleared?: { hoursAgo: number; outcome?: string; resurfaceInHours?: number };
+  cleared?: { hoursAgo: number; resurfaceInHours?: number };
 };
 
 type SeededEntityKind =
@@ -682,7 +682,7 @@ const SEEDED_PLAN_ITEMS: SeededInboxItem[] = [
         status: InboxItemToolCallStatus.EXECUTED,
       },
     ],
-    cleared: { hoursAgo: 27, outcome: 'DONE' },
+    cleared: { hoursAgo: 27 },
   },
 ];
 
@@ -753,7 +753,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     hoursAgo: 4,
     assignee: 'me',
     subject: { kind: 'thread', which: 'review' },
-    cleared: { hoursAgo: 20, outcome: 'DONE' },
+    cleared: { hoursAgo: 20 },
   },
   {
     seedName: 'q4-pipeline-review',
@@ -792,7 +792,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     isRead: true,
     assignee: 'me',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_6 },
-    cleared: { hoursAgo: 48, outcome: 'DONE' },
+    cleared: { hoursAgo: 48 },
   },
   {
     seedName: 'salesforce-profile-update',
@@ -807,7 +807,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     isRead: true,
     assignee: 'me',
     subject: { kind: 'thread', which: 'review' },
-    cleared: { hoursAgo: 70, outcome: 'DONE' },
+    cleared: { hoursAgo: 70 },
   },
   {
     seedName: 'move-google-renewal-forward',
@@ -871,7 +871,7 @@ const SEEDED_INBOX_ITEMS: SeededInboxItem[] = [
     isRead: true,
     queueName: 'support',
     subject: { kind: 'company', companyId: COMPANY_DATA_SEED_IDS.ID_8 },
-    cleared: { hoursAgo: 28, outcome: 'DONE' },
+    cleared: { hoursAgo: 28 },
   },
   {
     seedName: 'update-q4-pipeline',
@@ -1053,7 +1053,7 @@ const SEEDED_LAUNCH_ITEMS: SeededInboxItem[] = [
     // Answered yesterday and back this morning, which is the case a shared
     // inbox has to get right: the reply reopens the item rather than starting
     // a second one beside it.
-    cleared: { hoursAgo: 20, outcome: 'DONE' },
+    cleared: { hoursAgo: 20 },
     content: {
       summary:
         'Answered yesterday with a shipping date. They have written back to say it still has not arrived.',
@@ -1419,7 +1419,6 @@ export const seedInbox = async ({
       'clearedAt',
       'resurfaceAt',
       'clearedByUserWorkspaceId',
-      'outcome',
       'readAt',
       'threadId',
       'subjectObjectMetadataId',
@@ -1466,7 +1465,6 @@ export const seedInbox = async ({
                   )
                 : null,
             clearedByUserWorkspaceId: isCleared ? people.me : null,
-            outcome: item.cleared?.outcome ?? null,
             // Read means seen since the last event; a cleared item was seen too.
             readAt: item.isRead || isCleared ? lastEventAt : null,
             threadId:

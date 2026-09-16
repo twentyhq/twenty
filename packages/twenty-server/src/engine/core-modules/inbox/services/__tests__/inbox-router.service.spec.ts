@@ -7,7 +7,6 @@ import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemRecordEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-record.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
-import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemPriority } from 'src/engine/core-modules/inbox/enums/inbox-item-priority.enum';
 import { InboxExceptionCode } from 'src/engine/core-modules/inbox/inbox.exception';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
@@ -426,7 +425,6 @@ describe('InboxRouterService', () => {
           clearedByUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
           resurfaceAt: new Date('2026-03-01T00:00:00.000Z'),
           readAt: new Date('2026-02-01T00:00:00.000Z'),
-          outcome: InboxItemOutcome.DONE,
         }),
       );
 

@@ -30,7 +30,7 @@ export const getInboxItemScope = (
   }
 
   if (!isDefined(inboxItem.resurfaceAt)) {
-    return InboxItemScope.DONE;
+    return InboxItemScope.ARCHIVED;
   }
 
   return toTime(inboxItem.resurfaceAt) > toTime(now)
@@ -79,7 +79,7 @@ export const buildInboxItemScopeCriteria = (
       return { clearedAt: Raw(wantsAttentionSql, { now }) };
     case InboxItemScope.SNOOZED:
       return { clearedAt: Raw(clearIsCurrentSql), resurfaceAt: MoreThan(now) };
-    case InboxItemScope.DONE:
+    case InboxItemScope.ARCHIVED:
       return { clearedAt: Raw(clearIsCurrentSql), resurfaceAt: IsNull() };
   }
 };

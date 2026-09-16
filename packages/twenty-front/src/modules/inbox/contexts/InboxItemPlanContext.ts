@@ -19,7 +19,7 @@ export type InboxItemToolCallDraft = {
 export type InboxItemPlanContextValue = {
   inboxItem: InboxItem;
   messageThreadId: string | null;
-  isDone: boolean;
+  isArchived: boolean;
   // A run or a save is on the wire, or a save failed and the editor still
   // shows what the server never got. Nothing runs until it clears.
   isBusy: boolean;

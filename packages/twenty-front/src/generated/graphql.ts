@@ -342,7 +342,6 @@ export type InboxItem = {
   isAssignedToMe: Scalars['Boolean']['output'];
   isUnread: Scalars['Boolean']['output'];
   lastEventAt: Scalars['DateTime']['output'];
-  outcome?: Maybe<InboxItemOutcome>;
   priority: InboxItemPriority;
   queueId?: Maybe<Scalars['UUID']['output']>;
   records: Array<InboxItemRecord>;
@@ -402,12 +401,6 @@ export enum InboxItemFieldType {
   TEXT = 'TEXT'
 }
 
-export enum InboxItemOutcome {
-  ARCHIVED = 'ARCHIVED',
-  DONE = 'DONE',
-  PARTIAL = 'PARTIAL'
-}
-
 export enum InboxItemPriority {
   NEEDS_ACTION = 'NEEDS_ACTION',
   UPDATE = 'UPDATE'
@@ -425,7 +418,7 @@ export type InboxItemRecord = {
 };
 
 export enum InboxItemScope {
-  DONE = 'DONE',
+  ARCHIVED = 'ARCHIVED',
   INBOX = 'INBOX',
   SNOOZED = 'SNOOZED'
 }
@@ -1052,7 +1045,6 @@ export type TimelineThreadsWithTotal = {
 
 export type TransitionInboxItemInput = {
   kind: Scalars['String']['input'];
-  outcome?: InputMaybe<InboxItemOutcome>;
   resurfaceAt?: InputMaybe<Scalars['DateTime']['input']>;
   toQueueId?: InputMaybe<Scalars['UUID']['input']>;
   toUserWorkspaceId?: InputMaybe<Scalars['UUID']['input']>;

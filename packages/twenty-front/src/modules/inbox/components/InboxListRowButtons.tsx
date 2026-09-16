@@ -28,7 +28,7 @@ export const InboxListRowButtons = ({
   const { enqueueToast } = useToast();
 
   const isInQueue =
-    isDefined(inboxItem.queueId) && inboxItem.scope !== InboxItemScope.DONE;
+    isDefined(inboxItem.queueId) && inboxItem.scope !== InboxItemScope.ARCHIVED;
 
   if (!isInQueue) {
     return null;

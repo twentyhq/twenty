@@ -4,9 +4,9 @@ import { getInboxSectionPath } from '@/inbox/utils/getInboxSectionPath';
 
 describe('getInboxSectionPath', () => {
   it('should build the path from the section slug', () => {
-    const path = getInboxSectionPath(findInboxSectionBySlug('done'));
+    const path = getInboxSectionPath(findInboxSectionBySlug('archived'));
 
-    expect(path).toBe('/inbox/done');
+    expect(path).toBe('/inbox/archived');
   });
 
   it('should round trip every declared section back to itself', () => {

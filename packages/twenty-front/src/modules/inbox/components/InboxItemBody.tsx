@@ -57,7 +57,7 @@ const StyledSection = styled.div`
 // preview and which starters apply are registry lookups on the subject's
 // object, so a new kind of subject is an entry, not a branch here.
 export const InboxItemBody = () => {
-  const { inboxItem, isDone, featuredToolCall } = useInboxItemPlanContext();
+  const { inboxItem, isArchived, featuredToolCall } = useInboxItemPlanContext();
   const objectMetadataItemsByIdMap = useAtomStateValue(
     objectMetadataItemsByIdMapSelector,
   );
@@ -75,7 +75,7 @@ export const InboxItemBody = () => {
   // A starter adds a step by hand, which only makes sense while nothing is
   // already taking the body and the item is still open.
   const starters =
-    isDefined(previewSubject) && !isDone && !isDefined(featuredToolCall)
+    isDefined(previewSubject) && !isArchived && !isDefined(featuredToolCall)
       ? getInboxToolCallStarters(previewSubject.objectNameSingular)
       : [];
 
