@@ -56,6 +56,10 @@ export class ObjectMetadataService {
     updateObjectInputs: UpdateOneObjectInput[];
     ownerFlatApplication?: FlatApplication;
   }): Promise<FlatObjectMetadata[]> {
+    if (updateObjectInputs.length === 0) {
+      return [];
+    }
+
     const objectMetadataIds = updateObjectInputs.map(({ id }) => id);
 
     if (new Set(objectMetadataIds).size !== objectMetadataIds.length) {
@@ -65,6 +69,49 @@ export class ObjectMetadataService {
       );
     }
 
+    // Renaming an object rewrites indexes and morph fields on the objects
+    // related to it, so two renames in one batch can emit the same index twice
+    // and the transpiler rejects the duplicate. Renames go one at a time, each
+    // against freshly recomputed maps.
+    const hasRename = updateObjectInputs.some(
+      ({ update }) =>
+        isDefined(update.nameSingular) || isDefined(update.namePlural),
+    );
+
+    if (hasRename) {
+      const updatedFlatObjectMetadatas: FlatObjectMetadata[] = [];
+
+      for (const updateObjectInput of updateObjectInputs) {
+        updatedFlatObjectMetadatas.push(
+          await this.updateOneObject({
+            updateObjectInput,
+            workspaceId,
+            ownerFlatApplication,
+          }),
+        );
+      }
+
+      return updatedFlatObjectMetadatas;
+    }
+
+    return await this.updateObjectsInOneMigration({
+      updateObjectInputs,
+      workspaceId,
+      ownerFlatApplication,
+    });
+  }
+
+  // Shared by updateOneObject and updateManyObjects: one validate-build-run
+  // migration for however many inputs it is given.
+  private async updateObjectsInOneMigration({
+    updateObjectInputs,
+    workspaceId,
+    ownerFlatApplication,
+  }: {
+    workspaceId: string;
+    updateObjectInputs: UpdateOneObjectInput[];
+    ownerFlatApplication?: FlatApplication;
+  }): Promise<FlatObjectMetadata[]> {
     const { workspaceCustomFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -94,8 +141,6 @@ export class ObjectMetadataService {
       },
     );
 
-    // Safe to convert every input against the same pre-update maps because a
-    // batch may not touch the same object twice.
     const conversions = updateObjectInputs.map((updateObjectInput) =>
       fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities({
         flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
@@ -213,7 +258,6 @@ export class ObjectMetadataService {
 
     return updatedFlatObjectMetadatas;
   }
-
   async updateOneObject({
     updateObjectInput,
     workspaceId,
@@ -223,132 +267,11 @@ export class ObjectMetadataService {
     updateObjectInput: UpdateOneObjectInput;
     ownerFlatApplication?: FlatApplication;
   }): Promise<FlatObjectMetadata> {
-    const { workspaceCustomFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const resolvedOwnerFlatApplication =
-      ownerFlatApplication ?? workspaceCustomFlatApplication;
-
-    const {
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      flatIndexMaps: existingFlatIndexMaps,
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
-    } = await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-      {
-        workspaceId,
-        flatMapsKeys: [
-          'flatObjectMetadataMaps',
-          'flatIndexMaps',
-          'flatFieldMetadataMaps',
-          'flatViewFieldMaps',
-          'flatViewMaps',
-          'flatSearchFieldMetadataMaps',
-        ],
-      },
-    );
-
-    const {
-      otherObjectFlatFieldMetadatasToUpdate,
-      flatObjectMetadataToUpdate,
-      flatIndexMetadatasToUpdate,
-      flatViewFieldsToCreate,
-      flatViewFieldsToUpdate,
-      searchFieldMetadatasToCreate,
-    } = fromUpdateObjectInputToFlatObjectMetadataAndRelatedFlatEntities({
-      flatFieldMetadataMaps: existingFlatFieldMetadataMaps,
-      flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
-      updateObjectInput,
-      flatIndexMaps: existingFlatIndexMaps,
-      flatViewFieldMaps: existingFlatViewFieldMaps,
-      flatViewMaps: existingFlatViewMaps,
-      flatSearchFieldMetadataMaps: existingFlatSearchFieldMetadataMaps,
-      workspaceCustomApplicationUniversalIdentifier:
-        workspaceCustomFlatApplication.universalIdentifier,
+    const [updatedFlatObjectMetadata] = await this.updateObjectsInOneMigration({
+      updateObjectInputs: [updateObjectInput],
+      workspaceId,
+      ownerFlatApplication,
     });
-
-    const isActiveChangeDefined = isDefined(updateObjectInput.update.isActive);
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            objectMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [flatObjectMetadataToUpdate],
-            },
-            index: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: flatIndexMetadatasToUpdate,
-            },
-            fieldMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [...otherObjectFlatFieldMetadatasToUpdate],
-            },
-            viewField: {
-              flatEntityToCreate: flatViewFieldsToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: flatViewFieldsToUpdate,
-            },
-            searchFieldMetadata: {
-              flatEntityToCreate: searchFieldMetadatasToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-          },
-          workspaceId,
-          isSystemBuild: false,
-          applicationUniversalIdentifier:
-            resolvedOwnerFlatApplication.universalIdentifier,
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(
-        validateAndBuildResult,
-        'Multiple validation errors occurred while updating object',
-      );
-    }
-
-    const { flatObjectMetadataMaps: recomputedFlatObjectMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
-
-    const updatedFlatObjectMetadata = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatObjectMetadataToUpdate.universalIdentifier,
-      flatEntityMaps: recomputedFlatObjectMetadataMaps,
-    });
-
-    if (!isDefined(updatedFlatObjectMetadata)) {
-      throw new ObjectMetadataException(
-        'Updated object metadata not found in recomputed cache',
-        ObjectMetadataExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    }
-
-    if (isDefined(updateObjectInput.update.labelIdentifierFieldMetadataId)) {
-      await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
-    }
-
-    if (isActiveChangeDefined) {
-      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
-        workspaceId,
-        flatMapsKeys: ['flatNavigationMenuItemMaps', 'flatCommandMenuItemMaps'],
-      });
-    }
 
     return updatedFlatObjectMetadata;
   }

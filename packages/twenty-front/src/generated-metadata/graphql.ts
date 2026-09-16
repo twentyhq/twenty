@@ -3158,6 +3158,7 @@ export type Mutation = {
   updateFrontComponent: FrontComponent;
   updateLabPublicFeatureFlag: FeatureFlag;
   updateManyNavigationMenuItems: Array<NavigationMenuItem>;
+  updateManyObjects: Array<Object>;
   updateManyViewGroups: Array<ViewGroup>;
   updateMessageChannel: MessageChannel;
   updateMessageFolder: MessageFolder;
@@ -4216,6 +4217,11 @@ export type MutationUpdateLabPublicFeatureFlagArgs = {
 
 export type MutationUpdateManyNavigationMenuItemsArgs = {
   inputs: Array<UpdateOneNavigationMenuItemInput>;
+};
+
+
+export type MutationUpdateManyObjectsArgs = {
+  input: UpdateManyObjectsInput;
 };
 
 
@@ -6337,6 +6343,10 @@ export type UpdateLogicFunctionFromSourceInputUpdates = {
   timeoutSeconds?: InputMaybe<Scalars['Float']['input']>;
   toolTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
   workflowActionTriggerSettings?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type UpdateManyObjectsInput = {
+  updates: Array<UpdateOneObjectInput>;
 };
 
 export type UpdateMessageChannelInput = {

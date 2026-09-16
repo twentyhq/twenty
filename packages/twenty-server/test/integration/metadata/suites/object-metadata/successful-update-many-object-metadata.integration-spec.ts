@@ -16,6 +16,7 @@ describe('Bulk object metadata update', () => {
       gqlFields: `
         id
         nameSingular
+        labelSingular
         color
         icon
       `,
@@ -36,7 +37,11 @@ describe('Bulk object metadata update', () => {
         expectToFail: false,
         input: {
           idToUpdate: object.id,
-          updatePayload: { color: object.color, icon: object.icon },
+          updatePayload: {
+            color: object.color,
+            icon: object.icon,
+            labelSingular: object.labelSingular,
+          },
         },
       });
     }
@@ -63,6 +68,29 @@ describe('Bulk object metadata update', () => {
 
     expect(updatedById.get(companyObject.id)?.color).toBe('red');
     expect(updatedById.get(personObject.id)?.color).toBe('purple');
+  });
+
+  it('should apply a batch of label updates', async () => {
+    const { data } = await updateManyObjectsMetadata({
+      expectToFail: false,
+      input: {
+        updates: [
+          { id: companyObject.id, update: { labelSingular: 'Business' } },
+          { id: personObject.id, update: { labelSingular: 'Human' } },
+        ],
+      },
+      gqlFields: `
+        id
+        labelSingular
+      `,
+    });
+
+    const updatedById = new Map(
+      data.updateManyObjects.map((object) => [object.id, object]),
+    );
+
+    expect(updatedById.get(companyObject.id)?.labelSingular).toBe('Business');
+    expect(updatedById.get(personObject.id)?.labelSingular).toBe('Human');
   });
 
   it('should reject a batch updating the same object twice', async () => {
