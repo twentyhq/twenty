@@ -39,7 +39,7 @@ export class MessageTrackingConsentResolver {
   ) {}
 
   @Mutation(() => Boolean)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async setPersonEmailTrackingConsent(
     @Args('input') input: SetPersonEmailTrackingConsentInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,

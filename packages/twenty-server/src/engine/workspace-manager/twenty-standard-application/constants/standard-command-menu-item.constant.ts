@@ -1037,7 +1037,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     ),
     availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
     conditionalAvailabilityExpression:
-      'numberOfSelectedRecords == 1 and objectPermissions.canUpdateObjectRecords and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_EMAIL_GROUP_ENABLED',
+      'numberOfSelectedRecords == 1 and objectPermissions.canUpdateObjectRecords and noneDefined(selectedRecords, "deletedAt") and featureFlags.IS_MESSAGE_CAMPAIGN_ENABLED',
     availabilityObjectMetadataUniversalIdentifier:
       STANDARD_OBJECTS.person.universalIdentifier,
     frontComponentUniversalIdentifier: null,
