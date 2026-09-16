@@ -1,10 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectDataSource } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { type DataSource, type EntityManager, IsNull } from 'typeorm';
+import {
+  type DataSource,
+  type EntityManager,
+  IsNull,
+  type Repository,
+} from 'typeorm';
 
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
@@ -28,6 +33,7 @@ import {
   type RouteInboxItemArgs,
 } from 'src/engine/core-modules/inbox/types/route-inbox-item.type';
 import { buildClaimableToolCallPredicate } from 'src/engine/core-modules/inbox/utils/inbox-tool-call-claim.util';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique-violation.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -45,6 +51,8 @@ export class InboxRouterService {
     private readonly inboxItemToolCallRepository: WorkspaceScopedRepository<InboxItemToolCallEntity>,
     @InjectWorkspaceScopedRepository(InboxItemRecordEntity)
     private readonly inboxItemRecordRepository: WorkspaceScopedRepository<InboxItemRecordEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly inboxItemTypeService: InboxItemTypeService,
     private readonly inboxQueueService: InboxQueueService,
     private readonly featureFlagService: FeatureFlagService,
@@ -139,6 +147,20 @@ export class InboxRouterService {
       return { kind: 'queue', queueId: args.target.queueId };
     }
 
+    if (args.target?.kind === 'messageChannel') {
+      const queueId = await this.findMessageChannelQueueId({
+        workspaceId: args.workspaceId,
+        messageChannelId: args.target.messageChannelId,
+      });
+
+      // A channel with no shared inbox configured is not an error: it falls
+      // through to the routing for this kind of work, which is what a channel
+      // nobody has configured already does.
+      if (isDefined(queueId)) {
+        return { kind: 'queue', queueId };
+      }
+    }
+
     if (isDefined(inboxItemType.defaultQueueId)) {
       return { kind: 'queue', queueId: inboxItemType.defaultQueueId };
     }
@@ -148,6 +170,21 @@ export class InboxRouterService {
     });
 
     return { kind: 'queue', queueId: defaultQueue.id };
+  }
+
+  private async findMessageChannelQueueId({
+    workspaceId,
+    messageChannelId,
+  }: {
+    workspaceId: string;
+    messageChannelId: string;
+  }): Promise<string | null> {
+    const messageChannel = await this.messageChannelRepository.findOne({
+      where: { id: messageChannelId, workspaceId },
+      select: { defaultInboxQueueId: true },
+    });
+
+    return messageChannel?.defaultInboxQueueId ?? null;
   }
 
   private resolveSubjectKey(subject?: InboxSubject): string | null {

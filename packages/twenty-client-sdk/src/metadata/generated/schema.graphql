@@ -2944,6 +2944,7 @@ type MessageChannel {
   throttleFailureCount: Float!
   throttleRetryAfter: DateTime
   connectedAccountId: UUID!
+  defaultInboxQueueId: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
   connectedAccount: ConnectedAccountPublicDTO
@@ -4924,6 +4925,7 @@ input CreateEmailGroupChannelInput {
 input UpdateEmailGroupChannelInput {
   id: UUID!
   displayName: String
+  defaultInboxQueueId: UUID
 }
 
 input CreateAppMessageChannelInput {

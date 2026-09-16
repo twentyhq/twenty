@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
+import { InboxQueueEntity } from 'src/engine/core-modules/inbox/entities/inbox-queue.entity';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -15,6 +16,7 @@ import { ApplicationMessageChannelsService } from 'src/engine/metadata-modules/m
 import { ApplicationMessageIngestionService } from 'src/engine/metadata-modules/message-channel/services/application-message-ingestion.service';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceEventEmitterModule } from 'src/engine/workspace-event-emitter/workspace-event-emitter.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 
@@ -24,6 +26,7 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
       MessageChannelEntity,
       MessageFolderEntity,
       ConnectedAccountEntity,
+      InboxQueueEntity,
     ]),
     CacheLockModule,
     PermissionsModule,
@@ -33,6 +36,7 @@ import { MessagingImportManagerModule } from 'src/modules/messaging/message-impo
     WorkspaceEventEmitterModule,
   ],
   providers: [
+    provideWorkspaceScopedRepository(InboxQueueEntity),
     MessageChannelMetadataService,
     MessageChannelResolver,
     ApplicationMessageChannelsService,

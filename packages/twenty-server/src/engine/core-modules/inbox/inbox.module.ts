@@ -21,6 +21,7 @@ import { InboxTransitionService } from 'src/engine/core-modules/inbox/services/i
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -39,6 +40,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       InboxQueueEntity,
       InboxQueueRoleEntity,
       ApplicationEntity,
+      MessageChannelEntity,
       RoleEntity,
     ]),
     FeatureFlagModule,

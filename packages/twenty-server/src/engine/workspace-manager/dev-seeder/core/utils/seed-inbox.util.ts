@@ -21,6 +21,7 @@ import {
 import { generateSeedId } from 'src/engine/workspace-manager/dev-seeder/core/utils/generate-seed-id.util';
 import { AGENT_CHAT_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/agent-chat-seeds.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { EMAIL_GROUP_CHANNEL_SEED_HANDLES } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
 import { COMPANY_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import { MESSAGE_THREAD_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-thread-data-seeds.constant';
 import { InboxItemFieldType } from 'src/engine/core-modules/inbox/enums/inbox-item-field-type.enum';
@@ -32,6 +33,7 @@ const inboxItemTableName = 'inboxItem';
 const inboxItemToolCallTableName = 'inboxItemToolCall';
 const inboxItemRecordTableName = 'inboxItemRecord';
 const agentChatThreadTableName = 'agentChatThread';
+const messageChannelTableName = 'messageChannel';
 
 const HOUR_IN_MS = 60 * 60 * 1000;
 
@@ -1258,6 +1260,17 @@ const SEEDED_QUEUES: SeededQueue[] = [
   },
 ];
 
+const SEEDED_GROUP_CHANNEL_QUEUES: { handle: string; queueName: string }[] = [
+  {
+    handle: EMAIL_GROUP_CHANNEL_SEED_HANDLES.SUPPORT_GROUP,
+    queueName: 'support',
+  },
+  {
+    handle: EMAIL_GROUP_CHANNEL_SEED_HANDLES.CONTACT_GROUP,
+    queueName: 'sales',
+  },
+];
+
 const hoursAgo = (now: Date, hours: number): Date =>
   new Date(now.getTime() - hours * HOUR_IN_MS);
 
@@ -1381,6 +1394,18 @@ export const seedInbox = async ({
       ),
     )
     .execute();
+
+  // The launch case the shared inboxes exist for: mail forwarded to a shared
+  // address lands in the team inbox that watches it, not in whichever account
+  // happens to hold the forwarding.
+  for (const { handle, queueName } of SEEDED_GROUP_CHANNEL_QUEUES) {
+    await queryRunner.query(
+      `UPDATE ${schemaName}."${messageChannelTableName}"
+       SET "defaultInboxQueueId" = $1
+       WHERE "workspaceId" = $2 AND "handle" = $3`,
+      [queueIdByName[queueName], workspaceId, handle],
+    );
+  }
 
   // A second thread, so the conversations are not all the same chat.
   const reviewThreadId = generateSeedId(workspaceId, 'inbox-review-thread');

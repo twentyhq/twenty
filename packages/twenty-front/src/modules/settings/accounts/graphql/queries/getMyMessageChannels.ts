@@ -18,6 +18,7 @@ export const GET_MY_MESSAGE_CHANNELS = gql`
       syncStage
       syncStageStartedAt
       connectedAccountId
+      defaultInboxQueueId
       connectedAccount {
         id
         handle

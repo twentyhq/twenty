@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import { IsNull, QueryFailedError } from 'typeorm';
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getDataSourceToken } from '@nestjs/typeorm';
+import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
 
 import { type InboxItemTypeEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-type.entity';
 import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
@@ -16,6 +16,7 @@ import { InboxItemTypeService } from 'src/engine/core-modules/inbox/services/inb
 import { InboxQueueService } from 'src/engine/core-modules/inbox/services/inbox-queue.service';
 import { InboxRouterService } from 'src/engine/core-modules/inbox/services/inbox-router.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 // What Postgres actually raises through TypeORM when a partial unique index
@@ -40,6 +41,7 @@ const THREAD_SLOT_KEY = `thread:${THREAD_ID}`;
 const RUN_SLOT_KEY = 'workflow-run:run-id';
 const TRIAGE_QUEUE_ID = 'triage-queue-id';
 const SUPPORT_QUEUE_ID = 'support-queue-id';
+const MESSAGE_CHANNEL_ID = 'message-channel-id';
 const NOW = new Date('2026-08-07T10:00:00.000Z');
 
 const CONVERSATION_TYPE = {
@@ -121,6 +123,10 @@ describe('InboxRouterService', () => {
     findOrCreateDefaultQueue: jest.fn(),
   };
 
+  const messageChannelRepository = {
+    findOne: jest.fn(),
+  };
+
   const userWorkspaceService = {
     getWorkspaceMember: jest.fn(),
     getUserWorkspaceForUser: jest.fn(),
@@ -140,6 +146,7 @@ describe('InboxRouterService', () => {
     });
     userWorkspaceService.getWorkspaceMember.mockResolvedValue(null);
     userWorkspaceService.getUserWorkspaceForUser.mockResolvedValue(null);
+    messageChannelRepository.findOne.mockResolvedValue(null);
     inboxItemRepository.findOne.mockResolvedValue(null);
     inboxItemRepository.findOneBy.mockResolvedValue(null);
     inboxItemRepository.update.mockResolvedValue({ affected: 1 });
@@ -174,6 +181,10 @@ describe('InboxRouterService', () => {
         {
           provide: getDataSourceToken(),
           useValue: coreDataSource,
+        },
+        {
+          provide: getRepositoryToken(MessageChannelEntity),
+          useValue: messageChannelRepository,
         },
         {
           provide: InboxItemTypeService,
@@ -777,6 +788,115 @@ describe('InboxRouterService', () => {
         expect.objectContaining({
           queueId: SUPPORT_QUEUE_ID,
           assigneeUserWorkspaceId: null,
+        }),
+      );
+    });
+
+    // A shared address is watched by a team, so its mail belongs to the shared
+    // inbox the workspace pointed that channel at.
+    it('should send work arriving on a message channel to the queue that channel is pointed at', async () => {
+      messageChannelRepository.findOne.mockResolvedValue({
+        defaultInboxQueueId: SUPPORT_QUEUE_ID,
+      });
+
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
+        typeName: 'conversation',
+        title: 'Mail to a shared address',
+        target: {
+          kind: 'messageChannel',
+          messageChannelId: MESSAGE_CHANNEL_ID,
+        },
+      });
+
+      expect(messageChannelRepository.findOne).toHaveBeenCalledWith({
+        where: { id: MESSAGE_CHANNEL_ID, workspaceId: WORKSPACE_ID },
+        select: { defaultInboxQueueId: true },
+      });
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({
+          queueId: SUPPORT_QUEUE_ID,
+          assigneeUserWorkspaceId: null,
+        }),
+      );
+      expect(inboxQueueService.findOrCreateDefaultQueue).not.toHaveBeenCalled();
+    });
+
+    // Nobody has configured this channel yet, which is not a reason to drop the
+    // work on the floor.
+    it('should fall back to the type default when the channel names no queue', async () => {
+      messageChannelRepository.findOne.mockResolvedValue({
+        defaultInboxQueueId: null,
+      });
+      inboxItemTypeService.findByName.mockResolvedValue({
+        ...CONVERSATION_TYPE,
+        defaultQueueId: SUPPORT_QUEUE_ID,
+      });
+
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
+        typeName: 'conversation',
+        title: 'Mail to an unconfigured shared address',
+        target: {
+          kind: 'messageChannel',
+          messageChannelId: MESSAGE_CHANNEL_ID,
+        },
+      });
+
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ queueId: SUPPORT_QUEUE_ID }),
+      );
+    });
+
+    it('should send work to triage when neither the channel nor the type names a queue', async () => {
+      messageChannelRepository.findOne.mockResolvedValue(null);
+
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
+        typeName: 'conversation',
+        title: 'Mail to a channel that went away',
+        target: {
+          kind: 'messageChannel',
+          messageChannelId: MESSAGE_CHANNEL_ID,
+        },
+      });
+
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({ queueId: TRIAGE_QUEUE_ID }),
+      );
+    });
+
+    // The thread's own owner is a stronger statement about who this is for
+    // than the channel it arrived on.
+    it('should let the thread owner outrank the channel queue', async () => {
+      messageChannelRepository.findOne.mockResolvedValue({
+        defaultInboxQueueId: SUPPORT_QUEUE_ID,
+      });
+
+      await service.routeItem({
+        workspaceId: WORKSPACE_ID,
+        producer: 'agentChat',
+        typeName: 'conversation',
+        title: 'A reply on a thread somebody owns',
+        subject: threadSubject,
+        target: {
+          kind: 'messageChannel',
+          messageChannelId: MESSAGE_CHANNEL_ID,
+        },
+      });
+
+      expect(messageChannelRepository.findOne).not.toHaveBeenCalled();
+      expect(inboxItemRepository.insertAndReturnOne).toHaveBeenCalledWith(
+        WORKSPACE_ID,
+        expect.objectContaining({
+          queueId: null,
+          assigneeUserWorkspaceId: THREAD_OWNER_USER_WORKSPACE_ID,
         }),
       );
     });

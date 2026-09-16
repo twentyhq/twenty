@@ -7,15 +7,12 @@ import {
   CREATE_INBOX_QUEUE,
   DELETE_INBOX_QUEUE,
   GET_INBOX_ITEM_TYPE_SETTINGS,
-  GET_INBOX_QUEUE_SETTINGS,
   SET_INBOX_ITEM_TYPE_DEFAULT_QUEUE,
   SET_INBOX_QUEUE_ROLES,
   UPDATE_INBOX_QUEUE,
 } from '@/settings/inbox/graphql/inboxSettingsOperations';
-import {
-  type InboxItemTypeSettings,
-  type InboxQueueSettings,
-} from '~/generated/graphql';
+import { useInboxQueueSettings } from '@/settings/inbox/hooks/useInboxQueueSettings';
+import { type InboxItemTypeSettings } from '~/generated/graphql';
 
 const INBOX_SETTINGS_REFETCH_QUERIES = [
   'GetInboxQueueSettings',
@@ -36,12 +33,7 @@ export const useInboxSettings = () => {
     refetchQueries: INBOX_SETTINGS_REFETCH_QUERIES,
   };
 
-  const { data: queuesData, loading: queuesLoading } = useQuery<{
-    inboxQueueSettings: InboxQueueSettings[];
-  }>(GET_INBOX_QUEUE_SETTINGS, {
-    client: apolloCoreClient,
-    skip: !isInboxFeatureEnabled,
-  });
+  const { inboxQueues, loading: queuesLoading } = useInboxQueueSettings();
 
   const { data: typesData, loading: typesLoading } = useQuery<{
     inboxItemTypeSettings: InboxItemTypeSettings[];
@@ -110,7 +102,7 @@ export const useInboxSettings = () => {
   );
 
   return {
-    inboxQueues: queuesData?.inboxQueueSettings ?? [],
+    inboxQueues,
     inboxItemTypes: typesData?.inboxItemTypeSettings ?? [],
     loading: queuesLoading || typesLoading,
     createInboxQueue,

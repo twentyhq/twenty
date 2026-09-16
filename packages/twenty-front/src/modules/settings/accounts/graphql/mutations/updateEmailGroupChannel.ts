@@ -5,6 +5,7 @@ export const UPDATE_EMAIL_GROUP_CHANNEL = gql`
     updateEmailGroupChannel(input: $input) {
       id
       displayName
+      defaultInboxQueueId
     }
   }
 `;

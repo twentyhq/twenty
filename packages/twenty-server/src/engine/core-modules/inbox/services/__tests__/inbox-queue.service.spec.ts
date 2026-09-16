@@ -68,11 +68,15 @@ describe('InboxQueueService', () => {
     setLock: jest.fn().mockReturnThis(),
     getOne: jest.fn().mockResolvedValue({ id: QUEUE_ID }),
   };
+  // Message channels are reached through the transaction's manager rather than
+  // an injected repository, so the mock stands in for both.
+  const messageChannelRepository = { update: jest.fn() };
   const coreDataSource = {
     transaction: jest.fn((run: (manager: unknown) => unknown) =>
       run({
         getRepository: () => ({
           createQueryBuilder: () => queueLockQueryBuilder,
+          update: messageChannelRepository.update,
         }),
       }),
     ),
@@ -331,6 +335,10 @@ describe('InboxQueueService', () => {
         WORKSPACE_ID,
         { defaultQueueId: QUEUE_ID },
         { defaultQueueId: null },
+      );
+      expect(messageChannelRepository.update).toHaveBeenCalledWith(
+        { workspaceId: WORKSPACE_ID, defaultInboxQueueId: QUEUE_ID },
+        { defaultInboxQueueId: null },
       );
       expect(inboxItemRepository.update).toHaveBeenCalledWith(
         WORKSPACE_ID,

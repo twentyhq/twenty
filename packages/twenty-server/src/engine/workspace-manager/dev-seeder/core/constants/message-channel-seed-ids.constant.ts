@@ -8,3 +8,10 @@ export const MESSAGE_CHANNEL_DATA_SEED_IDS = {
   SUPPORT_GROUP: '20202020-5a1e-4b2c-9d3e-200000000001',
   CONTACT_GROUP: '20202020-5a1e-4b2c-9d3e-200000000002',
 } as const;
+
+// Shared by the channel seed and the inbox seed, which links each shared
+// address to the shared inbox its mail lands in.
+export const EMAIL_GROUP_CHANNEL_SEED_HANDLES = {
+  SUPPORT_GROUP: 'emailgroup-support@demo.invalid',
+  CONTACT_GROUP: 'emailgroup-contact@demo.invalid',
+} as const;

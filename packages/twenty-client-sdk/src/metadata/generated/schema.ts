@@ -2552,6 +2552,7 @@ export interface MessageChannel {
     throttleFailureCount: Scalars['Float']
     throttleRetryAfter?: Scalars['DateTime']
     connectedAccountId: Scalars['UUID']
+    defaultInboxQueueId?: Scalars['UUID']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     connectedAccount?: ConnectedAccountPublicDTO
@@ -6256,6 +6257,7 @@ export interface MessageChannelGenqlSelection{
     throttleFailureCount?: boolean | number
     throttleRetryAfter?: boolean | number
     connectedAccountId?: boolean | number
+    defaultInboxQueueId?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     connectedAccount?: ConnectedAccountPublicDTOGenqlSelection
@@ -7622,7 +7624,7 @@ export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelV
 
 export interface CreateEmailGroupChannelInput {handle: Scalars['String'],displayName?: (Scalars['String'] | null)}
 
-export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null)}
+export interface UpdateEmailGroupChannelInput {id: Scalars['UUID'],displayName?: (Scalars['String'] | null),defaultInboxQueueId?: (Scalars['UUID'] | null)}
 
 export interface CreateAppMessageChannelInput {connectedAccountId: Scalars['UUID'],handle: Scalars['String'],displayName?: (Scalars['String'] | null),visibility: MessageChannelVisibility}
 

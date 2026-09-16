@@ -5766,6 +5766,9 @@ export default {
             "connectedAccountId": [
                 3
             ],
+            "defaultInboxQueueId": [
+                3
+            ],
             "createdAt": [
                 4
             ],
@@ -12572,6 +12575,9 @@ export default {
             ],
             "displayName": [
                 1
+            ],
+            "defaultInboxQueueId": [
+                3
             ],
             "__typename": [
                 1

@@ -17,10 +17,13 @@ export type InboxSubject =
       ownerUserWorkspaceId?: string;
     };
 
-// A producer names one of these; it never resolves the recipient itself.
+// A producer names one of these; it never resolves the recipient itself. A
+// message channel is named rather than resolved because where a channel's work
+// lands is a setting an admin can change between two events on one thread.
 export type InboxPrincipalRef =
   | { kind: 'userWorkspace'; userWorkspaceId: string }
-  | { kind: 'queue'; queueId: string };
+  | { kind: 'queue'; queueId: string }
+  | { kind: 'messageChannel'; messageChannelId: string };
 
 export type RouteInboxItemArgs = {
   workspaceId: string;

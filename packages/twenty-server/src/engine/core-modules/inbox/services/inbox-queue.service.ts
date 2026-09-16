@@ -17,6 +17,7 @@ import {
   InboxExceptionCode,
 } from 'src/engine/core-modules/inbox/inbox.exception';
 import { isUniqueViolation } from 'src/engine/core-modules/inbox/utils/is-unique-violation.util';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import {
   PermissionsException,
@@ -334,6 +335,13 @@ export class InboxQueueService {
           workspaceId,
           { defaultQueueId: queue.id },
           { defaultQueueId: null },
+        );
+
+      await manager
+        .getRepository(MessageChannelEntity)
+        .update(
+          { workspaceId, defaultInboxQueueId: queue.id },
+          { defaultInboxQueueId: null },
         );
 
       await this.lockQueueOrThrow({ manager, workspaceId, queueId: queue.id });
