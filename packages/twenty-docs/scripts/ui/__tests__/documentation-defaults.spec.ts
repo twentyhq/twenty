@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { normalizeDocumentationDefaultValue } from '../../../../twenty-ui/docs/normalizeDocumentationDefaultValue';
-import { renderComponentReference } from '../render-ui-reference';
+import { renderComponentReference } from '../render-component-reference';
 
 describe('documentation defaults', () => {
   it.each([

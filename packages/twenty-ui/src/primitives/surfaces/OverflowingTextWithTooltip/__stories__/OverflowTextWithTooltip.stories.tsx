@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { userEvent, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { ComponentDecorator } from '@ui/testing';
 
@@ -25,6 +25,12 @@ export const SingleLineOverflowing: Story = {
     const canvas = within(canvasElement);
     const tooltip = await canvas.findByTestId('tooltip');
     await userEvent.hover(tooltip);
+
+    const canvasBody = within(canvasElement.ownerDocument.body);
+
+    const popup = await canvasBody.findByRole('tooltip');
+
+    await waitFor(() => expect(popup).toBeVisible());
   },
 };
 
@@ -50,6 +56,12 @@ export const MultilineOverflowing: Story = {
     const canvas = within(canvasElement);
     const tooltip = await canvas.findByTestId('tooltip');
     await userEvent.hover(tooltip);
+
+    const canvasBody = within(canvasElement.ownerDocument.body);
+
+    const popup = await canvasBody.findByRole('tooltip');
+
+    await waitFor(() => expect(popup).toBeVisible());
   },
 };
 
@@ -80,6 +92,12 @@ export const SingleLineWithReactNodeOverflowing: Story = {
     const canvas = within(canvasElement);
     const tooltip = await canvas.findByTestId('tooltip');
     await userEvent.hover(tooltip);
+
+    const canvasBody = within(canvasElement.ownerDocument.body);
+
+    const popup = await canvasBody.findByRole('tooltip');
+
+    await waitFor(() => expect(popup).toBeVisible());
   },
 };
 
@@ -115,6 +133,12 @@ export const MultilineWithReactNodeOverflowing: Story = {
     const canvas = within(canvasElement);
     const tooltip = await canvas.findByTestId('tooltip');
     await userEvent.hover(tooltip);
+
+    const canvasBody = within(canvasElement.ownerDocument.body);
+
+    const popup = await canvasBody.findByRole('tooltip');
+
+    await waitFor(() => expect(popup).toBeVisible());
   },
 };
 

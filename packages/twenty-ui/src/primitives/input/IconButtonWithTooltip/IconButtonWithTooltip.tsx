@@ -1,26 +1,12 @@
 import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
-import type { IconButtonProps } from '@ui/primitives/input/IconButton/types/IconButtonProps';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from '@ui/primitives/surfaces';
-import { useId } from 'react';
+import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 
-export type IconButtonWithTooltipProps = Pick<
-  IconButtonProps,
-  'Icon' | 'ariaLabel' | 'onClick' | 'size' | 'variant' | 'disabled'
-> & {
-  tooltipContent: string;
-  tooltipPlace?: TooltipPosition;
-  tooltipDelay?: TooltipDelay;
-  tooltipOffset?: number;
-};
+import { type IconButtonWithTooltipProps } from './types/IconButtonWithTooltipProps';
 
 export const IconButtonWithTooltip = ({
   tooltipContent,
-  tooltipPlace = TooltipPosition.Bottom,
-  tooltipDelay = TooltipDelay.longDelay,
+  tooltipPlace = 'bottom',
+  tooltipDelay = 1000,
   tooltipOffset = 5,
   Icon,
   ariaLabel,
@@ -29,32 +15,25 @@ export const IconButtonWithTooltip = ({
   variant,
   disabled,
 }: IconButtonWithTooltipProps) => {
-  const tooltipId = useId();
+  const iconButton = (
+    <IconButton
+      Icon={Icon}
+      ariaLabel={ariaLabel}
+      onClick={onClick}
+      size={size}
+      variant={variant}
+      disabled={disabled}
+    />
+  );
 
   return (
-    <>
-      <div data-tooltip-id={tooltipId}>
-        <IconButton
-          Icon={Icon}
-          ariaLabel={ariaLabel}
-          onClick={onClick}
-          size={size}
-          variant={variant}
-          disabled={disabled}
-        />
-      </div>
-      <AppTooltip
-        anchorSelect={
-          disabled
-            ? `[data-tooltip-id='${tooltipId}']`
-            : `[data-tooltip-id='${tooltipId}'] > button`
-        }
-        title={tooltipContent}
-        delay={tooltipDelay}
-        place={tooltipPlace}
-        offset={tooltipOffset}
-        noArrow
-      />
-    </>
+    <Tooltip
+      content={tooltipContent}
+      delay={tooltipDelay}
+      side={tooltipPlace}
+      sideOffset={tooltipOffset}
+    >
+      {disabled ? <div>{iconButton}</div> : iconButton}
+    </Tooltip>
   );
 };

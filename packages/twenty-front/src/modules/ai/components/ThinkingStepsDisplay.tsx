@@ -4,10 +4,7 @@ import { useState } from 'react';
 import { type DynamicToolUIPart, getToolName, type ToolUIPart } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight, IconCpu } from 'twenty-ui/icon';
-import {
-  OverflowingTextWithTooltip,
-  TooltipDelay,
-} from 'twenty-ui/primitives/surfaces';
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/surfaces';
 import { JsonTree } from 'twenty-ui/primitives/json-visualizer';
 import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -324,7 +321,7 @@ const ThinkingToolStepRow = ({
             ) : (
               <OverflowingTextWithTooltip
                 text={displayMessage}
-                tooltipDelay={TooltipDelay.shortDelay}
+                tooltipDelay={300}
               />
             )}
           </StyledToolRowLabel>

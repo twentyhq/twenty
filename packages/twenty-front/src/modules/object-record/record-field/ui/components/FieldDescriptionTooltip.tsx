@@ -2,6 +2,7 @@ import { FieldDescriptionTooltipContext } from '@/object-record/record-field/ui/
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useContext, useId } from 'react';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { isDefined } from 'twenty-shared/utils';
 
 const StyledLabel = styled.span`
@@ -23,32 +24,29 @@ export const FieldDescriptionTooltip = ({
   description,
   fallback,
 }: FieldDescriptionTooltipProps) => {
-  const context = useContext(FieldDescriptionTooltipContext);
+  const tooltipHandle = useContext(FieldDescriptionTooltipContext);
   const descriptionId = useId();
 
   if (
-    !isDefined(context) ||
+    !isDefined(tooltipHandle) ||
     !isNonEmptyString(label) ||
     !isNonEmptyString(description)
   ) {
     return fallback ?? <StyledLabel>{label}</StyledLabel>;
   }
 
-  const handleEnter = () => {
-    context.setTooltipContent({ title: label, description });
-  };
-
   return (
     <>
-      <StyledLabel
-        data-tooltip-id={context.tooltipId}
+      <Tooltip.Trigger
+        handle={tooltipHandle}
+        delay={1000}
+        payload={{ title: label, description }}
+        render={<StyledLabel />}
         aria-describedby={descriptionId}
         tabIndex={0}
-        onMouseEnter={handleEnter}
-        onFocus={handleEnter}
       >
         {label}
-      </StyledLabel>
+      </Tooltip.Trigger>
       <span id={descriptionId} hidden>
         {description}
       </span>

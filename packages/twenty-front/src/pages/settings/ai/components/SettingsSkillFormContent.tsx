@@ -5,7 +5,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconRefresh, useIcons } from 'twenty-ui/icon';
 import { Section } from 'twenty-ui/primitives/layout';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip, Card } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/primitives/typography';
 
@@ -232,23 +232,20 @@ export const SettingsSkillFormContent = ({
                     fullWidth
                     RightIcon={() =>
                       apiNameTooltipText && (
-                        <>
+                        <Tooltip
+                          content={apiNameTooltipText}
+                          sideOffset={5}
+                          side="bottom"
+                          positionMethod="fixed"
+                          delay={300}
+                        >
                           <IconInfoCircle
                             id="info-circle-id-skill-name"
                             size={theme.icon.size.md}
                             color={theme.font.color.tertiary}
                             style={{ outline: 'none' }}
                           />
-                          <AppTooltip
-                            anchorSelect="#info-circle-id-skill-name"
-                            title={apiNameTooltipText}
-                            offset={5}
-                            noArrow
-                            place="bottom"
-                            positionStrategy="fixed"
-                            delay={TooltipDelay.shortDelay}
-                          />
-                        </>
+                        </Tooltip>
                       )
                     }
                   />

@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { INTERNAL_CREDITS_PER_DISPLAY_CREDIT } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/primitives/layout';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { H2Title } from 'twenty-ui/primitives/typography';
 
@@ -195,36 +195,39 @@ export const SettingsBillingLimitForm = ({
               fullWidth
               disabled={!hasResource}
               RightIcon={() => (
-                <StyledRingAnchor id={RING_ANCHOR_ID}>
-                  <ProgressRing
-                    value={consumedPercentage}
-                    barColor={getUsageLimitRingColor({
-                      consumedPercentage,
-                      isExhausted,
-                    })}
-                  />
-                </StyledRingAnchor>
+                <Tooltip
+                  side="top"
+                  delay={300}
+                  positionMethod="fixed"
+                  content={
+                    <>
+                      {hasConsumption ? (
+                        <StyledTooltipRow>
+                          {t`Used`}
+                          <SettingsBillingLimitAmount
+                            text={consumedText}
+                            isCreditsMeter={isCreditsMeter}
+                          />
+                          {`· ${periodSpanLabel}`}
+                        </StyledTooltipRow>
+                      ) : (
+                        t`Nothing counted against this scope yet`
+                      )}
+                    </>
+                  }
+                >
+                  <StyledRingAnchor id={RING_ANCHOR_ID}>
+                    <ProgressRing
+                      value={consumedPercentage}
+                      barColor={getUsageLimitRingColor({
+                        consumedPercentage,
+                        isExhausted,
+                      })}
+                    />
+                  </StyledRingAnchor>
+                </Tooltip>
               )}
             />
-            <AppTooltip
-              anchorSelect={`#${RING_ANCHOR_ID}`}
-              place="top"
-              delay={TooltipDelay.shortDelay}
-              positionStrategy="fixed"
-            >
-              {hasConsumption ? (
-                <StyledTooltipRow>
-                  {t`Used`}
-                  <SettingsBillingLimitAmount
-                    text={consumedText}
-                    isCreditsMeter={isCreditsMeter}
-                  />
-                  {`· ${periodSpanLabel}`}
-                </StyledTooltipRow>
-              ) : (
-                t`Nothing counted against this scope yet`
-              )}
-            </AppTooltip>
           </StyledAmountField>
           <StyledMeterRow>
             <Select

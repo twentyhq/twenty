@@ -1,18 +1,12 @@
 import { clsx } from 'clsx';
-import { useId } from 'react';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { IconAlertTriangle, IconInfoCircle } from '@ui/icon';
-import { AppTooltip } from '@ui/primitives/surfaces';
+import { Tooltip } from '@ui/primitives/surfaces/Tooltip/Tooltip';
 
 import styles from './SidePanelInformationBanner.module.scss';
 
-export type SidePanelInformationBannerProps = {
-  message: string;
-  className?: string;
-  variant?: 'default' | 'warning';
-  tooltipMessage?: string;
-};
+import { type SidePanelInformationBannerProps } from './types/SidePanelInformationBannerProps';
 
 export const SidePanelInformationBanner = ({
   message,
@@ -20,28 +14,23 @@ export const SidePanelInformationBanner = ({
   variant = 'default',
   tooltipMessage,
 }: SidePanelInformationBannerProps) => {
-  const tooltipId = useId();
-
   return (
-    <div
-      className={clsx(styles.banner, className)}
-      data-tooltip-id={tooltipMessage ? tooltipId : undefined}
+    <Tooltip
+      content={tooltipMessage}
+      disabled={!isDefined(tooltipMessage)}
+      side="bottom"
+      delay={500}
     >
-      <div className={styles.iconContainer}>
-        {variant === 'default' ? (
-          <IconInfoCircle size={16} />
-        ) : (
-          <IconAlertTriangle size={16} />
-        )}
+      <div className={clsx(styles.banner, className)}>
+        <div className={styles.iconContainer}>
+          {variant === 'default' ? (
+            <IconInfoCircle size={16} />
+          ) : (
+            <IconAlertTriangle size={16} />
+          )}
+        </div>
+        <p className={styles.message}>{message}</p>
       </div>
-      <p className={styles.message}>{message}</p>
-      {isDefined(tooltipMessage) && (
-        <AppTooltip
-          anchorSelect={`[data-tooltip-id='${tooltipId}']`}
-          title={tooltipMessage}
-          place="bottom"
-        />
-      )}
-    </div>
+    </Tooltip>
   );
 };

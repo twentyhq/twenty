@@ -6,10 +6,8 @@ import {
   type TokenDocumentation,
 } from '../../twenty-ui/docs/types';
 import { checkUiReferenceImports } from './ui/check-ui-reference-imports';
-import {
-  renderComponentReference,
-  renderTokenReference,
-} from './ui/render-ui-reference';
+import { renderComponentReference } from './ui/render-component-reference';
+import { renderTokenReference } from './ui/render-ui-reference';
 import { syncUiReferenceFiles } from './ui/sync-ui-reference-files';
 
 const GENERATED_HEADER = `{/*

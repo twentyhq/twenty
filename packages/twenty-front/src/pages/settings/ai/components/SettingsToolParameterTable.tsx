@@ -20,9 +20,8 @@ import {
   IllustrationIconToggle,
 } from 'twenty-ui/icon';
 import {
-  AppTooltip,
+  Tooltip,
   OverflowingTextWithTooltip,
-  TooltipDelay,
 } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
@@ -149,21 +148,20 @@ export const SettingsToolParameterTable = ({
                   <TableCell>
                     {property.description && (
                       <StyledInfoIconContainer>
-                        <IconInfoCircle
-                          id={infoIconId}
-                          size={theme.icon.size.md}
-                          color={theme.font.color.tertiary}
-                          style={{ outline: 'none', cursor: 'pointer' }}
-                        />
-                        <AppTooltip
-                          anchorSelect={`#${infoIconId}`}
-                          title={property.description}
-                          offset={5}
-                          noArrow
-                          place="bottom"
-                          positionStrategy="fixed"
-                          delay={TooltipDelay.shortDelay}
-                        />
+                        <Tooltip
+                          content={property.description}
+                          sideOffset={5}
+                          side="bottom"
+                          positionMethod="fixed"
+                          delay={300}
+                        >
+                          <IconInfoCircle
+                            id={infoIconId}
+                            size={theme.icon.size.md}
+                            color={theme.font.color.tertiary}
+                            style={{ outline: 'none', cursor: 'pointer' }}
+                          />
+                        </Tooltip>
                       </StyledInfoIconContainer>
                     )}
                   </TableCell>

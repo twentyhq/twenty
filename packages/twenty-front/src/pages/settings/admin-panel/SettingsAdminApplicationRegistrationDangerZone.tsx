@@ -16,7 +16,7 @@ import {
   SectionAlignment,
   SectionFontColor,
 } from 'twenty-ui/primitives/layout';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
   H1Title,
   H1TitleFontColor,
@@ -207,25 +207,26 @@ export const SettingsAdminApplicationRegistrationDangerZone = ({
           description={t`Delete or transfer this app registration`}
         />
         <StyledDangerButtonGroup>
-          <Button
-            id={DELETE_REGISTRATION_BUTTON_ID}
-            accent="danger"
-            variant="secondary"
-            title={t`Delete app`}
-            Icon={IconTrash}
-            disabled={hasActiveInstalls}
-            onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
-          />
-          {hasActiveInstalls && (
-            <AppTooltip
-              anchorSelect={`#${DELETE_REGISTRATION_BUTTON_ID}`}
-              title={t`Uninstall this app from all workspaces before deleting it`}
-              noArrow
-              place="bottom"
-              positionStrategy="fixed"
-              delay={TooltipDelay.shortDelay}
-            />
-          )}
+          <Tooltip
+            content={t`Uninstall this app from all workspaces before deleting it`}
+            side="bottom"
+            positionMethod="fixed"
+            delay={300}
+            disabled={!hasActiveInstalls}
+          >
+            <span tabIndex={hasActiveInstalls ? 0 : undefined}>
+              <Button
+                id={DELETE_REGISTRATION_BUTTON_ID}
+                accent="danger"
+                variant="secondary"
+                title={t`Delete app`}
+                Icon={IconTrash}
+                disabled={hasActiveInstalls}
+                onClick={() => openModal(DELETE_REGISTRATION_MODAL_ID)}
+              />
+            </span>
+          </Tooltip>
+
           {isUnclaimed
             ? fromAdmin && (
                 <Button

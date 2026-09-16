@@ -16,7 +16,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import { IconInfoCircle, IconLink, IconRefresh } from 'twenty-ui/icon';
-import { AppTooltip, Card, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip, Card } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { parseThemeColor } from 'twenty-ui/utilities';
 import { type StringKeyOf } from 'type-fest';
@@ -330,21 +330,20 @@ export const SettingsDataModelObjectAboutForm = ({
                             RightIcon={() =>
                               tooltip && (
                                 <>
-                                  <IconInfoCircle
-                                    id={infoCircleElementId + fieldName}
-                                    size={theme.icon.size.md}
-                                    color={theme.font.color.tertiary}
-                                    style={{ outline: 'none' }}
-                                  />
-                                  <AppTooltip
-                                    anchorSelect={`#${infoCircleElementId}${fieldName}`}
-                                    title={tooltip}
-                                    offset={5}
-                                    noArrow
-                                    place="bottom"
-                                    positionStrategy="fixed"
-                                    delay={TooltipDelay.shortDelay}
-                                  />
+                                  <Tooltip
+                                    content={tooltip}
+                                    sideOffset={5}
+                                    side="bottom"
+                                    positionMethod="fixed"
+                                    delay={300}
+                                  >
+                                    <IconInfoCircle
+                                      id={infoCircleElementId + fieldName}
+                                      size={theme.icon.size.md}
+                                      color={theme.font.color.tertiary}
+                                      style={{ outline: 'none' }}
+                                    />
+                                  </Tooltip>
                                 </>
                               )
                             }

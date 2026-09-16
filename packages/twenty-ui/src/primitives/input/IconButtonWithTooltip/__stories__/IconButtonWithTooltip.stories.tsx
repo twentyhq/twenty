@@ -1,7 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { IconSearch } from '@ui/icon';
 import { IconButtonWithTooltip } from '@ui/primitives/input/IconButtonWithTooltip/IconButtonWithTooltip';
-import { TooltipDelay } from '@ui/primitives/surfaces';
 import { ComponentDecorator } from '@ui/testing';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -21,7 +20,7 @@ export const Default: Story = {
     variant: 'tertiary',
     size: 'small',
     tooltipContent: 'Search',
-    tooltipDelay: TooltipDelay.noDelay,
+    tooltipDelay: 0,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);

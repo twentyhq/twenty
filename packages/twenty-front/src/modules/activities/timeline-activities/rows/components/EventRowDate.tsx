@@ -4,7 +4,7 @@ import { useId } from 'react';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import { dateLocaleState } from '~/localization/states/dateLocaleState';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
@@ -47,17 +47,10 @@ export const EventRowDate = ({ happensAt }: EventRowDateProps) => {
   });
 
   return (
-    <>
+    <Tooltip content={exactHappensAt} delay={500} side="left">
       <StyledEventRowDate id={dateElementId} tabIndex={0}>
         {relativeHappensAt}
       </StyledEventRowDate>
-      <AppTooltip
-        anchorSelect={`#${dateElementId}`}
-        title={exactHappensAt}
-        delay={TooltipDelay.mediumDelay}
-        noArrow
-        place="left"
-      />
-    </>
+    </Tooltip>
   );
 };

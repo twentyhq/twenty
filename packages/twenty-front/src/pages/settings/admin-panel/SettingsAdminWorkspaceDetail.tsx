@@ -51,7 +51,6 @@ import { Section } from 'twenty-ui/primitives/layout';
 import {
   Card,
   OverflowingTextWithTooltip,
-  TooltipPosition,
 } from 'twenty-ui/primitives/surfaces';
 import { H2Title, Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -262,7 +261,7 @@ export const SettingsAdminWorkspaceDetail = () => {
           <OverflowingTextWithTooltip
             text={<>{item.label}</>}
             tooltipContent={item.id}
-            tooltipPlace={TooltipPosition.Top}
+            tooltipPlace={'top'}
             alwaysShowTooltip
             isFocusable
           />

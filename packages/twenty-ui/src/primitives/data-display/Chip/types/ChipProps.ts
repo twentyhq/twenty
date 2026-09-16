@@ -1,7 +1,7 @@
 import { type useRender } from '@base-ui/react/use-render';
 import { type ReactNode } from 'react';
 
-import { type TooltipPosition } from '@ui/primitives/surfaces/AppTooltip/AppTooltip';
+import { type TooltipSide } from '@ui/primitives/surfaces/Tooltip/types/TooltipSide';
 
 import { type ChipSize } from './ChipSize';
 import { type ChipVariant } from './ChipVariant';
@@ -20,7 +20,7 @@ export type ChipProps = Omit<useRender.ComponentProps<'div'>, 'color'> & {
   endElementDivider?: boolean;
   maxWidth?: number;
   tooltipLabel?: string;
-  tooltipPlace?: TooltipPosition;
+  tooltipPlace?: TooltipSide;
   alwaysShowTooltip?: boolean;
   isLabelHidden?: boolean;
   forceEmptyText?: boolean;

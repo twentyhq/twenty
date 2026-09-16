@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { IconInfoCircle } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsBillingLabelValueItemProps = {
@@ -56,17 +56,15 @@ export const SettingsBillingLabelValueItem = ({
       <StyledLabelWrapper>
         <StyledLabelSpan>{label}</StyledLabelSpan>
         {tooltipText && tooltipId && (
-          <>
+          <Tooltip
+            content={tooltipText}
+            arrow
+            side="top"
+            delay={300}
+            positionMethod="fixed"
+          >
             <StyledInfoIcon id={tooltipId} size={12} />
-            <AppTooltip
-              anchorSelect={`#${tooltipId}`}
-              title={tooltipText}
-              noArrow={false}
-              place="top"
-              delay={TooltipDelay.shortDelay}
-              positionStrategy="fixed"
-            />
-          </>
+          </Tooltip>
         )}
       </StyledLabelWrapper>
       <StyledValueSpan isPrimaryColor={isValueInPrimaryColor}>

@@ -16,10 +16,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { Pill, TintedIconTile } from 'twenty-ui/primitives/data-display';
 import { type IconComponent, type TablerIconsProps } from 'twenty-ui/icon';
 import {
-  AppTooltip,
+  Tooltip,
   OverflowingTextWithTooltip,
-  TooltipDelay,
-  TooltipPosition,
 } from 'twenty-ui/primitives/surfaces';
 import { Label } from 'twenty-ui/primitives/typography';
 import {
@@ -325,44 +323,67 @@ export const NavigationDrawerItem = ({
 
   return (
     <StyledNavigationDrawerItemContainer>
-      <StyledItem
-        id={navigationItemId}
-        className={`navigation-drawer-item ${className || ''}`}
-        onClick={handleMouseDownNavigationClickClick}
-        onMouseDown={handleMouseDown}
-        active={active}
-        aria-current={isDefined(to) && active ? 'page' : undefined}
-        isSoon={isSoon}
-        variant={variant}
-        indentationLevel={indentationLevel}
-        isNavigationDrawerExpanded={isExpanded}
-        isDragging={isDragging}
-        hasRightOptions={isDefined(rightOptions)}
-        isSelectedInEditMode={isSelectedInEditMode}
-        as={elementType}
-        role={!to && isDefined(rightOptions) ? 'button' : undefined}
-        to={isInternalLink ? to : undefined}
-        href={isExternalLink ? to : undefined}
-        target={isExternalLink ? '_blank' : undefined}
-        rel={isExternalLink ? 'noopener noreferrer' : undefined}
-        draggable={isInternalLink ? false : undefined}
+      <Tooltip
+        content={label}
+        side="right"
+        delay={0}
+        positionMethod="fixed"
+        disabled={!(!isExpanded && !isMobile)}
       >
-        <StyledItemElementsContainer>
-          {showBreadcrumb && (
-            <NavigationDrawerAnimatedCollapseWrapper>
-              <NavigationDrawerItemBreadcrumb state={subItemState} />
-            </NavigationDrawerAnimatedCollapseWrapper>
-          )}
+        <StyledItem
+          id={navigationItemId}
+          className={`navigation-drawer-item ${className || ''}`}
+          onClick={handleMouseDownNavigationClickClick}
+          onMouseDown={handleMouseDown}
+          active={active}
+          aria-current={isDefined(to) && active ? 'page' : undefined}
+          isSoon={isSoon}
+          variant={variant}
+          indentationLevel={indentationLevel}
+          isNavigationDrawerExpanded={isExpanded}
+          isDragging={isDragging}
+          hasRightOptions={isDefined(rightOptions)}
+          isSelectedInEditMode={isSelectedInEditMode}
+          as={elementType}
+          role={!to && isDefined(rightOptions) ? 'button' : undefined}
+          to={isInternalLink ? to : undefined}
+          href={isExternalLink ? to : undefined}
+          target={isExternalLink ? '_blank' : undefined}
+          rel={isExternalLink ? 'noopener noreferrer' : undefined}
+          draggable={isInternalLink ? false : undefined}
+        >
+          <StyledItemElementsContainer>
+            {showBreadcrumb && (
+              <NavigationDrawerAnimatedCollapseWrapper>
+                <NavigationDrawerItemBreadcrumb state={subItemState} />
+              </NavigationDrawerAnimatedCollapseWrapper>
+            )}
 
-          {Icon &&
-            (isNonEmptyString(iconColor) ? (
-              <StyledIcon>
-                <TintedIconTile Icon={Icon} color={iconColor} />
-              </StyledIcon>
-            ) : withIconBackground ? (
-              <StyledIcon>
-                <StyledIconBackgroundTile>
+            {Icon &&
+              (isNonEmptyString(iconColor) ? (
+                <StyledIcon>
+                  <TintedIconTile Icon={Icon} color={iconColor} />
+                </StyledIcon>
+              ) : withIconBackground ? (
+                <StyledIcon>
+                  <StyledIconBackgroundTile>
+                    <Icon
+                      size={theme.icon.size.md}
+                      stroke={theme.icon.stroke.md}
+                      color={
+                        showBreadcrumb && !isExpanded
+                          ? theme.font.color.light
+                          : 'currentColor'
+                      }
+                    />
+                  </StyledIconBackgroundTile>
+                </StyledIcon>
+              ) : (
+                <StyledIcon>
                   <Icon
+                    style={{
+                      minWidth: theme.icon.size.md,
+                    }}
                     size={theme.icon.size.md}
                     stroke={theme.icon.stroke.md}
                     color={
@@ -371,103 +392,73 @@ export const NavigationDrawerItem = ({
                         : 'currentColor'
                     }
                   />
-                </StyledIconBackgroundTile>
-              </StyledIcon>
-            ) : (
-              <StyledIcon>
-                <Icon
-                  style={{
-                    minWidth: theme.icon.size.md,
-                  }}
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.md}
-                  color={
-                    showBreadcrumb && !isExpanded
-                      ? theme.font.color.light
-                      : 'currentColor'
-                  }
-                />
-              </StyledIcon>
-            ))}
+                </StyledIcon>
+              ))}
 
-          <StyledLabelParent>
-            <OverflowingTextWithTooltip
-              text={
-                <>
-                  <StyledItemLabel>{label}</StyledItemLabel>
-                  {secondaryLabel && (
-                    <StyledItemSecondaryLabel>
-                      {' · '}
-                      {secondaryLabel}
-                    </StyledItemSecondaryLabel>
-                  )}
-                </>
-              }
-              tooltipContent={
-                secondaryLabel ? `${label} · ${secondaryLabel}` : label
-              }
-            />
-          </StyledLabelParent>
+            <StyledLabelParent>
+              <OverflowingTextWithTooltip
+                text={
+                  <>
+                    <StyledItemLabel>{label}</StyledItemLabel>
+                    {secondaryLabel && (
+                      <StyledItemSecondaryLabel>
+                        {' · '}
+                        {secondaryLabel}
+                      </StyledItemSecondaryLabel>
+                    )}
+                  </>
+                }
+                tooltipContent={
+                  secondaryLabel ? `${label} · ${secondaryLabel}` : label
+                }
+              />
+            </StyledLabelParent>
 
-          {showStyledSpacer && <StyledSpacer />}
+            {showStyledSpacer && <StyledSpacer />}
 
-          {isSoon && (
-            <NavigationDrawerAnimatedCollapseWrapper>
-              <Pill label={t`Soon`} />
-            </NavigationDrawerAnimatedCollapseWrapper>
-          )}
+            {isSoon && (
+              <NavigationDrawerAnimatedCollapseWrapper>
+                <Pill label={t`Soon`} />
+              </NavigationDrawerAnimatedCollapseWrapper>
+            )}
 
-          {isNew && (
-            <NavigationDrawerAnimatedCollapseWrapper>
-              <Pill label={t`New`} />
-            </NavigationDrawerAnimatedCollapseWrapper>
-          )}
+            {isNew && (
+              <NavigationDrawerAnimatedCollapseWrapper>
+                <Pill label={t`New`} />
+              </NavigationDrawerAnimatedCollapseWrapper>
+            )}
 
-          {isDefined(keyboardKeys) && (
-            <NavigationDrawerAnimatedCollapseWrapper>
-              <StyledKeyBoardShortcut className="keyboard-shortcuts">
-                <Label>{keyboardKeys}</Label>
-              </StyledKeyBoardShortcut>
-            </NavigationDrawerAnimatedCollapseWrapper>
-          )}
+            {isDefined(keyboardKeys) && (
+              <NavigationDrawerAnimatedCollapseWrapper>
+                <StyledKeyBoardShortcut className="keyboard-shortcuts">
+                  <Label>{keyboardKeys}</Label>
+                </StyledKeyBoardShortcut>
+              </NavigationDrawerAnimatedCollapseWrapper>
+            )}
 
-          {isDefined(rightOptions) && (
-            <NavigationDrawerAnimatedCollapseWrapper>
-              {/* When StyledItem renders as a Link, we need both handlers to
-                  prevent navigation when interacting with rightOptions:
-                  - onMouseDown: stops useMouseDownNavigation from calling navigate()
-                  - onClickCapture: prevents the native <a> follow since the child's
-                    stopPropagation blocks Link's own preventDefault */}
-              <StyledRightOptionsContainer
-                onMouseDown={(e) => e.stopPropagation()}
-                onClickCapture={(e) => e.preventDefault()}
-              >
-                <StyledRightOptionsVisbility
-                  data-visible={
-                    isMobile ||
-                    isRightOptionsDropdownOpen ||
-                    alwaysShowRightOptions
-                      ? 'true'
-                      : undefined
-                  }
+            {isDefined(rightOptions) && (
+              <NavigationDrawerAnimatedCollapseWrapper>
+                <StyledRightOptionsContainer
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClickCapture={(e) => e.preventDefault()}
                 >
-                  {rightOptions}
-                </StyledRightOptionsVisbility>
-              </StyledRightOptionsContainer>
-            </NavigationDrawerAnimatedCollapseWrapper>
-          )}
-        </StyledItemElementsContainer>
-      </StyledItem>
-
-      {!isExpanded && !isMobile && (
-        <AppTooltip
-          anchorSelect={`#${navigationItemId}`}
-          title={label}
-          place={TooltipPosition.Right}
-          delay={TooltipDelay.noDelay}
-          positionStrategy="fixed"
-        />
-      )}
+                  <StyledRightOptionsVisbility
+                    data-visible={
+                      isMobile ||
+                      isRightOptionsDropdownOpen ||
+                      alwaysShowRightOptions
+                        ? 'true'
+                        : undefined
+                    }
+                  >
+                    {rightOptions}
+                  </StyledRightOptionsVisbility>
+                </StyledRightOptionsContainer>
+              </NavigationDrawerAnimatedCollapseWrapper>
+            )}
+          </StyledItemElementsContainer>
+        </StyledItem>
+      </Tooltip>
     </StyledNavigationDrawerItemContainer>
   );
 };

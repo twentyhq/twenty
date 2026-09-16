@@ -12,11 +12,7 @@ import { t } from '@lingui/core/macro';
 import { SidePanelPages } from 'twenty-shared/types';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { IconButton } from 'twenty-ui/primitives/input';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { getOsControlSymbol, useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -30,10 +26,6 @@ const StyledButtonWrapper = styled.div<{ alignToTop: boolean }>`
     alignToTop ? themeCssVariables.spacing[3] : 'auto'};
   top: ${({ alignToTop }) => (alignToTop ? '0' : 'auto')};
   z-index: ${RootStackingContextZIndices.SidePanelButton};
-`;
-
-const StyledTooltipWrapper = styled.div`
-  font-size: ${themeCssVariables.font.size.md};
 `;
 
 export const SidePanelToggleButton = () => {
@@ -77,31 +69,27 @@ export const SidePanelToggleButton = () => {
 
   return (
     <StyledButtonWrapper alignToTop={alignWithSidePanelTopBar}>
-      <div
-        id="toggle-side-panel-button"
-        data-click-outside-id={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
+      <Tooltip
+        content={tooltipContent}
+        delay={1000}
+        side="bottom"
+        sideOffset={5}
       >
-        <IconButton
-          Icon={IconDotsVertical}
-          dataTestId="page-header-side-panel-button"
-          size="small"
-          variant="primary"
-          accent="default"
-          ariaLabel={ariaLabel}
-          onClick={openSidePanelMenu}
-        />
-      </div>
-
-      <StyledTooltipWrapper>
-        <AppTooltip
-          anchorSelect="#toggle-side-panel-button"
-          title={tooltipContent}
-          delay={TooltipDelay.longDelay}
-          place={TooltipPosition.Bottom}
-          offset={5}
-          noArrow
-        />
-      </StyledTooltipWrapper>
+        <div
+          id="toggle-side-panel-button"
+          data-click-outside-id={PAGE_HEADER_SIDE_PANEL_BUTTON_CLICK_OUTSIDE_ID}
+        >
+          <IconButton
+            Icon={IconDotsVertical}
+            dataTestId="page-header-side-panel-button"
+            size="small"
+            variant="primary"
+            accent="default"
+            ariaLabel={ariaLabel}
+            onClick={openSidePanelMenu}
+          />
+        </div>
+      </Tooltip>
     </StyledButtonWrapper>
   );
 };

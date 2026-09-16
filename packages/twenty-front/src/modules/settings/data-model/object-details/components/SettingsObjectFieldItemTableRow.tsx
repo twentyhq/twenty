@@ -28,7 +28,7 @@ import {
 } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { UndecoratedLink } from 'twenty-ui/primitives/navigation';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { RelationType } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -195,16 +195,14 @@ export const SettingsObjectFieldItemTableRow = ({
               </SettingsNameCellSecondaryLabel>
             )}
             {fieldMetadataItem.isActive && isMostlyEmpty && (
-              <>
+              <Tooltip
+                content={t`Appears filled in fewer than 5% of ${objectMetadataItem.labelPlural}. Fields that stay empty can be deactivated.`}
+                delay={300}
+              >
                 <SettingsNameCellSecondaryLabel id={mostlyEmptyLabelId}>
                   {t`Mostly empty`}
                 </SettingsNameCellSecondaryLabel>
-                <AppTooltip
-                  anchorSelect={`#${mostlyEmptyLabelId}`}
-                  title={t`Appears filled in fewer than 5% of ${objectMetadataItem.labelPlural}. Fields that stay empty can be deactivated.`}
-                  delay={TooltipDelay.shortDelay}
-                />
-              </>
+              </Tooltip>
             )}
           </StyledNameContainer>
         </TableCell>

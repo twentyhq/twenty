@@ -54,8 +54,8 @@ export type { MenuItemSuggestionProps } from './MenuItemSuggestion/MenuItemSugge
 export { MenuItemSuggestion } from './MenuItemSuggestion/MenuItemSuggestion';
 export type { MenuItemSwitchProps } from './MenuItemSwitch/MenuItemSwitch';
 export { MenuItemSwitch } from './MenuItemSwitch/MenuItemSwitch';
-export type { MenuPickerProps } from './MenuPicker/MenuPicker';
 export { MenuPicker } from './MenuPicker/MenuPicker';
+export type { MenuPickerProps } from './MenuPicker/types/MenuPickerProps';
 export { NavigationBar } from './NavigationBar/NavigationBar';
 export { NavigationBarItem } from './NavigationBarItem/NavigationBarItem';
 export { RawLink } from './RawLink/RawLink';

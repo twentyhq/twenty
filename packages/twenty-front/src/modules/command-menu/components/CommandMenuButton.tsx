@@ -1,12 +1,8 @@
-import { type MouseEvent, useId } from 'react';
+import { type MouseEvent } from 'react';
 import { type Nullable } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import {
-  AppTooltip,
-  TooltipDelay,
-  TooltipPosition,
-} from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Button, IconButton } from 'twenty-ui/primitives/input';
 
 export type CommandMenuButtonProps = {
@@ -33,7 +29,6 @@ export const CommandMenuButton = ({
   isPrimaryAction = false,
   shouldHideLabel = false,
 }: CommandMenuButtonProps) => {
-  const tooltipId = useId();
   const { hotKeys } = command;
   const hasHotKeys = isNonEmptyArray(hotKeys);
   const tooltipTitle = hasHotKeys
@@ -49,47 +44,39 @@ export const CommandMenuButton = ({
     isPrimaryAction || command.isPrimaryCTA === true ? 'blue' : 'default';
 
   return (
-    <div data-tooltip-id={tooltipId}>
-      {resolvedShortLabel !== undefined ? (
-        <Button
-          id={tooltipId}
-          Icon={command.Icon}
-          size="small"
-          variant="primary"
-          accent={buttonAccent}
-          to={to}
-          onClick={onClick}
-          disabled={disabled}
-          title={resolvedShortLabel}
-          ariaLabel={command.label}
-        />
-      ) : (
-        <IconButton
-          id={tooltipId}
-          Icon={command.Icon}
-          size="small"
-          variant="primary"
-          accent={buttonAccent}
-          to={to}
-          onClick={onClick}
-          disabled={disabled}
-          ariaLabel={command.label}
-        />
-      )}
-      {(hasHotKeys || !isDefined(resolvedShortLabel)) && (
-        <AppTooltip
-          anchorSelect={
-            disabled
-              ? `[data-tooltip-id='${tooltipId}']`
-              : `[id='${tooltipId}']`
-          }
-          title={tooltipTitle}
-          delay={TooltipDelay.longDelay}
-          place={TooltipPosition.Bottom}
-          offset={5}
-          noArrow
-        />
-      )}
-    </div>
+    <Tooltip
+      content={tooltipTitle}
+      delay={1000}
+      side="bottom"
+      sideOffset={5}
+      disabled={!hasHotKeys && isDefined(resolvedShortLabel)}
+    >
+      <div>
+        {resolvedShortLabel !== undefined ? (
+          <Button
+            Icon={command.Icon}
+            size="small"
+            variant="primary"
+            accent={buttonAccent}
+            to={to}
+            onClick={onClick}
+            disabled={disabled}
+            title={resolvedShortLabel}
+            ariaLabel={command.label}
+          />
+        ) : (
+          <IconButton
+            Icon={command.Icon}
+            size="small"
+            variant="primary"
+            accent={buttonAccent}
+            to={to}
+            onClick={onClick}
+            disabled={disabled}
+            ariaLabel={command.label}
+          />
+        )}
+      </div>
+    </Tooltip>
   );
 };

@@ -5,7 +5,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { IconPlus } from 'twenty-ui/icon';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -66,8 +66,14 @@ export const RoleAssignmentSection = ({
           dropdownId={config.dropdownId}
           dropdownOffset={{ x: 0, y: 4 }}
           clickableComponent={
-            <>
-              <div id={config.tooltip?.anchorId}>
+            <Tooltip
+              content={config.tooltip?.content()}
+              delay={0}
+              disabled={
+                !config.tooltip?.shouldShow(allWorkspaceMembersHaveThisRole)
+              }
+            >
+              <div>
                 <Button
                   Icon={IconPlus}
                   title={config.buttonTitle()}
@@ -76,17 +82,7 @@ export const RoleAssignmentSection = ({
                   disabled={allWorkspaceMembersHaveThisRole}
                 />
               </div>
-              {config.tooltip && (
-                <AppTooltip
-                  anchorSelect={`#${config.tooltip.anchorId}`}
-                  title={config.tooltip.content()}
-                  delay={TooltipDelay.noDelay}
-                  hidden={
-                    !config.tooltip.shouldShow(allWorkspaceMembersHaveThisRole)
-                  }
-                />
-              )}
-            </>
+            </Tooltip>
           }
           dropdownComponents={
             roleTargetType === 'member' ? (

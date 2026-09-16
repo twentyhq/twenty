@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { type KeyboardEvent, useContext, useMemo, useState } from 'react';
 import { type AskQuestionAnswer, type AskQuestionItem } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import {
   IconArrowUp,
   IconChevronLeft,
@@ -454,7 +454,7 @@ export const AiChatQuestionCard = ({
                   )}
                 </StyledOptionLeft>
                 {isDefined(option.description) && (
-                  <>
+                  <Tooltip content={option.description} delay={300} side="left">
                     <span
                       id={tooltipId}
                       onClick={(event) => event.stopPropagation()}
@@ -465,13 +465,7 @@ export const AiChatQuestionCard = ({
                         accent="tertiary"
                       />
                     </span>
-                    <AppTooltip
-                      anchorSelect={`#${tooltipId}`}
-                      title={option.description}
-                      delay={TooltipDelay.shortDelay}
-                      place="left"
-                    />
-                  </>
+                  </Tooltip>
                 )}
               </StyledOptionRow>
             );

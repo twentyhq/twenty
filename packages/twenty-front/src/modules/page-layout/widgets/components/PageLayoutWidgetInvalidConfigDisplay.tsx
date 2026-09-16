@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { type FallbackProps } from 'react-error-boundary';
 import { Status } from 'twenty-ui/primitives/data-display';
-import { AppTooltip } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type PageLayoutWidgetInvalidConfigDisplayProps = FallbackProps;
 
@@ -25,14 +25,11 @@ export const PageLayoutWidgetInvalidConfigDisplay = ({
 
   return (
     <StyledInvalidConfigContainer>
-      <div id={tooltipId}>
-        <Status color="red">{text}</Status>
-      </div>
-      <AppTooltip
-        anchorSelect={`#${tooltipId}`}
-        title={tooltipContent}
-        place="top"
-      />
+      <Tooltip delay={500} content={tooltipContent} side="top">
+        <div id={tooltipId}>
+          <Status color="red">{text}</Status>
+        </div>
+      </Tooltip>
     </StyledInvalidConfigContainer>
   );
 };

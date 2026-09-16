@@ -25,7 +25,7 @@ import {
   IconSwitchHorizontal,
   IconTrash,
 } from 'twenty-ui/icon';
-import { AppTooltip } from 'twenty-ui/primitives/surfaces';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 const RESET_WIDGET_TO_DEFAULT_MODAL_ID = 'reset-widget-to-default-modal';
 const RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID =
@@ -109,28 +109,28 @@ export const WidgetSettingsManageSection = ({
             contextualTextPosition="right"
           />
         </SelectableListItem>
-        <div id={RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID}>
-          <SelectableListItem
-            itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-            onEnter={handleResetToDefault}
-          >
-            <CommandMenuItem
-              id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
-              Icon={IconRefreshDot}
-              label={t`Reset to default`}
-              onClick={handleResetToDefault}
-              disabled={isResetToDefaultDisabled}
-            />
-          </SelectableListItem>
-        </div>
-        {isResetToDefaultDisabled && (
-          <AppTooltip
-            anchorSelect={`#${RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID}`}
-            title={t`No default configuration available for this widget`}
-            noArrow
-            place="bottom"
-          />
-        )}
+        <Tooltip
+          delay={500}
+          content={t`No default configuration available for this widget`}
+          side="bottom"
+          disabled={!isResetToDefaultDisabled}
+        >
+          <div id={RESET_WIDGET_TO_DEFAULT_MENU_ITEM_ID}>
+            <SelectableListItem
+              itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+              onEnter={handleResetToDefault}
+            >
+              <CommandMenuItem
+                id={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.RESET_TO_DEFAULT}
+                Icon={IconRefreshDot}
+                label={t`Reset to default`}
+                onClick={handleResetToDefault}
+                disabled={isResetToDefaultDisabled}
+              />
+            </SelectableListItem>
+          </div>
+        </Tooltip>
+
         <SelectableListItem
           itemId={WIDGET_SETTINGS_SELECTABLE_ITEM_IDS.REPLACE_WIDGET}
           onEnter={openReplaceWidgetPicker}
