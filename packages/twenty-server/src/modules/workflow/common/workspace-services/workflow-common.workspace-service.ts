@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
@@ -167,7 +169,7 @@ export class WorkflowCommonWorkspaceService {
     workflow: WorkflowWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
-    if (!isDefined(workflow.lastPublishedVersionId)) {
+    if (!isNonEmptyString(workflow.lastPublishedVersionId)) {
       return;
     }
 
