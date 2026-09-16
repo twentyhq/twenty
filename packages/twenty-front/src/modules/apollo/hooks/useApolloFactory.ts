@@ -3,6 +3,7 @@ import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { ApolloFactory, type Options } from '@/apollo/services/apollo.factory';
+import { isPlanRequiredExemptPath } from '@/apollo/utils/isPlanRequiredExemptPath';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { isCookieAuthActiveState } from '@/auth/states/isCookieAuthActiveState';
@@ -86,6 +87,13 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
           }
           navigate(AppPath.SignInUp);
         }
+      },
+      onBillingPlanRequired: () => {
+        if (isPlanRequiredExemptPath(locationRef.current)) {
+          return;
+        }
+
+        navigate(AppPath.PlanRequired, { replace: true });
       },
       onAppVersionMismatch: (message) => {
         enqueueErrorSnackBar({

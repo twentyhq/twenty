@@ -17,6 +17,7 @@ import { logDebug } from '~/utils/logDebug';
 
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { type ApolloManager } from '@/apollo/types/apolloManager.interface';
+import { isBillingPlanRequiredError } from '@/apollo/utils/isBillingPlanRequiredError';
 import { isUnauthenticatedGraphQLError } from '@/apollo/utils/isUnauthenticatedGraphQLError';
 import { loggerLink } from '@/apollo/utils/loggerLink';
 import { StreamingRestLink } from '@/apollo/utils/streamingRestLink';
@@ -42,6 +43,7 @@ export interface Options {
   onError?: (err: readonly GraphQLFormattedError[] | undefined) => void;
   onNetworkError?: (err: Error | ServerParseError | ServerError) => void;
   onUnauthenticatedError?: () => void;
+  onBillingPlanRequired?: () => void;
   onAppVersionMismatch?: (message: string) => void;
   onPayloadTooLarge?: (message: string) => void;
   currentWorkspaceMember: CurrentWorkspaceMember | null;
@@ -67,6 +69,7 @@ export class ApolloFactory implements ApolloManager {
       onError: onErrorCb,
       onNetworkError,
       onUnauthenticatedError,
+      onBillingPlanRequired,
       onAppVersionMismatch,
       onPayloadTooLarge,
       currentWorkspaceMember,
@@ -205,6 +208,13 @@ export class ApolloFactory implements ApolloManager {
           requestSessionGeneration === getSessionGeneration();
 
         if (CombinedGraphQLErrors.is(error)) {
+          // Handle plan-required before optional onError to avoid a toast flash
+          // before redirect to /plan-required.
+          if (error.errors.some((graphQLError) => isBillingPlanRequiredError(graphQLError))) {
+            onBillingPlanRequired?.();
+            return;
+          }
+
           onErrorCb?.(error.errors);
           for (const graphQLError of error.errors) {
             if (isUnauthenticatedGraphQLError(graphQLError)) {
@@ -255,6 +265,11 @@ export class ApolloFactory implements ApolloManager {
               onUnauthenticatedError?.();
             }
 
+            return;
+          }
+
+          if (isBillingPlanRequiredError(error)) {
+            onBillingPlanRequired?.();
             return;
           }
 
