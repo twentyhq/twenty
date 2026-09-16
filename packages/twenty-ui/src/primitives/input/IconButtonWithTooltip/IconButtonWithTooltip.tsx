@@ -1,6 +1,10 @@
 import { IconButton } from '@ui/primitives/input/IconButton/IconButton';
 import type { IconButtonProps } from '@ui/primitives/input/IconButton/types/IconButtonProps';
-import { AppTooltip, TooltipDelay, TooltipPosition } from '@ui/primitives/surfaces';
+import {
+  AppTooltip,
+  TooltipDelay,
+  TooltipPosition,
+} from '@ui/primitives/surfaces';
 import { useId } from 'react';
 
 export type IconButtonWithTooltipProps = Pick<
