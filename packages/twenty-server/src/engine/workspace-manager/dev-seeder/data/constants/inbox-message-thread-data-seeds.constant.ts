@@ -37,7 +37,10 @@ const getSeededThreadMessages = (
     handle: `support@${getSeededEmailGroupDomains(workspaceId).verified}`,
     displayName: 'Support',
   };
-  const tim = { ...support, workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM };
+  const tim = {
+    ...support,
+    workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+  };
 
   return [
     {
@@ -88,7 +91,8 @@ const getSeededThreadMessages = (
 };
 
 const threadSubjects: Record<string, string> = {
-  [INBOX_MESSAGE_THREAD_DATA_SEED_IDS.REFUND]: 'Duplicate charge on invoice 4482',
+  [INBOX_MESSAGE_THREAD_DATA_SEED_IDS.REFUND]:
+    'Duplicate charge on invoice 4482',
   [INBOX_MESSAGE_THREAD_DATA_SEED_IDS.SHIPPING]: 'Order 10431 still not here',
 };
 
