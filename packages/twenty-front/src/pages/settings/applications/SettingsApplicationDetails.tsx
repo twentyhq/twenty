@@ -5,9 +5,10 @@ import { useResolvedApplicationDescription } from '@/applications/hooks/useResol
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { SettingsApplicationActionButton } from '@/settings/applications/components/SettingsApplicationActionButton';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -19,7 +20,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
@@ -28,11 +29,7 @@ import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import {
   IconAlertTriangle,
   IconBox,
-  IconBrandTypescript,
-  IconGraph,
-  IconInfoCircle,
-  IconLego,
-  IconListDetails,
+  IconInfoSquareRounded,
   IconLock,
   IconSettings,
 } from 'twenty-ui/icon';
@@ -131,6 +128,7 @@ export const SettingsApplicationDetails = () => {
   const screenshots = getScreenshots();
 
   const { upgrade, isUpgrading } = useUpgradeApplication();
+  const { copyMarketplaceAppLink } = useCopyMarketplaceAppLink();
 
   const { isInstalling } = useInstallMarketplaceApp({
     universalIdentifier: application?.universalIdentifier,
@@ -173,62 +171,8 @@ export const SettingsApplicationDetails = () => {
     onCompleted: handleUninstallCompleted,
   });
 
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-
-  const applicationObjectIds = useMemo(
-    () => new Set((application?.objects ?? []).map((obj) => obj.id)),
-    [application?.objects],
-  );
-
-  const appFieldExtensionsCount = useMemo(() => {
-    if (!isDefined(application)) return 0;
-
-    return objectMetadataItems
-      .filter((item) => !applicationObjectIds.has(item.id))
-      .reduce(
-        (total, item) =>
-          total +
-          item.fields.filter((field) => field.applicationId === application.id)
-            .length,
-        0,
-      );
-  }, [objectMetadataItems, applicationObjectIds, application]);
-
-  const contentEntries = [
-    {
-      icon: IconBox,
-      count: (application?.objects ?? []).length,
-      one: t`object`,
-      many: t`objects`,
-    },
-    {
-      icon: IconListDetails,
-      count: appFieldExtensionsCount,
-      one: t`field`,
-      many: t`fields`,
-    },
-    {
-      icon: IconBrandTypescript,
-      count: (application?.logicFunctions ?? []).length,
-      one: t`logic function`,
-      many: t`logic functions`,
-    },
-    {
-      icon: IconGraph,
-      count: (application?.frontComponents ?? []).length,
-      one: t`front component`,
-      many: t`front components`,
-    },
-    {
-      icon: IconLego,
-      count: (application?.agents ?? []).length,
-      one: t`agent`,
-      many: t`agents`,
-    },
-  ];
-
   const tabs: SingleTabProps[] = [
-    { id: 'about', title: t`About`, Icon: IconInfoCircle },
+    { id: 'about', title: t`About`, Icon: IconInfoSquareRounded },
     { id: 'content', title: t`Content`, Icon: IconBox },
     {
       id: 'permissions',
@@ -279,16 +223,17 @@ export const SettingsApplicationDetails = () => {
       case 'about':
         return (
           <SettingsApplicationDetailAboutTab
+            applicationId={application.id}
+            logoUrl={application.logoUrl}
             displayName={displayName}
             description={description}
             aboutDescription={detail?.aboutDescription ?? undefined}
             pricingDescription={detail?.pricingDescription ?? undefined}
             screenshots={screenshots}
             author={detail?.author ?? undefined}
+            version={currentVersion ?? undefined}
+            installCount={detail?.installCount}
             category={detail?.category ?? undefined}
-            contentEntries={contentEntries}
-            currentVersion={currentVersion ?? undefined}
-            latestAvailableVersion={latestAvailableVersion ?? undefined}
             developerLinks={
               isDefined(detail)
                 ? {
@@ -299,15 +244,11 @@ export const SettingsApplicationDetails = () => {
                   }
                 : undefined
             }
-            isInstalled={true}
-            isInstalling={isInstalling}
-            canInstallMarketplaceApps={canInstallMarketplaceApps}
-            hasUpdate={hasUpdate}
-            onUpgrade={handleUpgrade}
-            isUpgrading={isUpgrading}
-            canBeUninstalled={application.canBeUninstalled}
-            onUninstall={uninstall}
-            isUninstalling={isUninstalling}
+            onShare={
+              isDefined(detail)
+                ? () => copyMarketplaceAppLink(detail.universalIdentifier)
+                : undefined
+            }
           />
         );
       case 'content':
@@ -362,11 +303,27 @@ export const SettingsApplicationDetails = () => {
             href: getSettingsPath(SettingsPath.General),
           },
           {
-            children: t`Applications`,
+            children: t`Apps`,
             href: getSettingsPath(SettingsPath.Applications),
           },
           { children: displayName },
         ]}
+        actionButton={
+          isDefined(application) ? (
+            <SettingsApplicationActionButton
+              isInstalled
+              canInstallMarketplaceApps={canInstallMarketplaceApps}
+              isInstalling={isInstalling}
+              hasUpdate={hasUpdate}
+              latestAvailableVersion={latestAvailableVersion ?? undefined}
+              onUpgrade={handleUpgrade}
+              isUpgrading={isUpgrading}
+              canBeUninstalled={application.canBeUninstalled}
+              onUninstall={uninstall}
+              isUninstalling={isUninstalling}
+            />
+          ) : undefined
+        }
         secondaryBar={
           <SettingsTabBar
             tabs={tabs}
@@ -374,7 +331,7 @@ export const SettingsApplicationDetails = () => {
           />
         }
       >
-        <SettingsPageContainer>
+        <SettingsPageContainer overflow="visible">
           {isApplicationStopped && (
             <InlineBanner
               color="danger"

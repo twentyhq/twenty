@@ -31,11 +31,6 @@ msgstr " naplaćuje se godišnje"
 msgid " must be one of {ratingValues} values"
 msgstr " mora biti jedna od {ratingValues} vrednosti"
 
-#. js-lingui-id: b2GdxK
-#: src/modules/ai/components/AiModelTierSlider.tsx
-msgid " Not measured at this effort yet, so this is the base model's reading."
-msgstr " Još nije izmereno pri ovom naporu, pa je ovo očitavanje osnovnog modela."
-
 #. js-lingui-id: nA/hWD
 #: src/modules/settings/billing/components/internal/ResourceCreditPackagePickerModal.tsx
 msgid " per {intervalLabel}"
@@ -340,37 +335,11 @@ msgstr "{0} izabrano"
 msgid "{0} shown"
 msgstr "{0} prikazano"
 
-#. js-lingui-id: k+VWlm
-#. placeholder {0}: formatMetricDelta(costDelta)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0} the cost of Balanced."
-msgstr "{0} trošak u odnosu na Balanced."
-
-#. js-lingui-id: UWEjMJ
-#. placeholder {0}: formatMetricDelta(intelligenceDelta)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0} the score of Balanced"
-msgstr "{0} rezultat u odnosu na Balanced"
-
 #. js-lingui-id: 0PXtku
 #. placeholder {0}: formatNumber(tier.model.outputTokensPerSecond, { decimals: 0 })
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "{0} tokens/s"
 msgstr "{0} tokena/s"
-
-#. js-lingui-id: jSMnoW
-#. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
-#. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0} tokens/s, {1} the speed of Balanced Mode."
-msgstr "{0} tokena/s, {1} brzina u odnosu na Balanced Mode."
-
-#. js-lingui-id: NLWHJB
-#. placeholder {0}: formatNumber(model?.outputTokensPerSecond ?? 0)
-#. placeholder {1}: formatMetricDelta(resolvedTier.speedDeltaPercent ?? 0)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0} tokens/s, a {1} change in speed compared with Balanced Mode."
-msgstr "{0} tokena/s, promena brzine od {1} u poređenju sa Balanced Mode."
 
 #. js-lingui-id: nZUq+6
 #. placeholder {0}: formatNumber(counts.globallyUnsubscribed)
@@ -414,30 +383,6 @@ msgstr "{0} članova radnog prostora"
 #: src/modules/ai/components/AiModelTierDropdown.tsx
 msgid "{0}: {1}"
 msgstr "{0}: {1}"
-
-#. js-lingui-id: EAdDH3
-#. placeholder {0}: formatNumber(costDelta)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0}% higher cost than Balanced."
-msgstr "{0}% veći trošak nego Balanced."
-
-#. js-lingui-id: c8VH5D
-#. placeholder {0}: formatNumber(intelligenceDelta)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0}% higher score than Balanced"
-msgstr "{0}% veći rezultat nego Balanced"
-
-#. js-lingui-id: nRAomq
-#. placeholder {0}: formatNumber(Math.abs(costDelta))
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0}% lower cost than Balanced."
-msgstr "{0}% manji trošak nego Balanced."
-
-#. js-lingui-id: wq2vL5
-#. placeholder {0}: formatNumber(Math.abs(intelligenceDelta))
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "{0}% lower score than Balanced"
-msgstr "{0}% manji rezultat nego Balanced"
 
 #. js-lingui-id: qdQhzv
 #: src/modules/views/advanced-filter-chip/components/AdvancedFilterChip.tsx
@@ -5517,6 +5462,11 @@ msgstr "Poluprečnik ugla"
 msgid "Cost"
 msgstr "Cena"
 
+#. js-lingui-id: R0dp36
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Cost index"
+msgstr ""
+
 #. js-lingui-id: Z9Z9PX
 #: src/modules/settings/ai/components/SettingsAiModelHoverCard.tsx
 msgid "Cost per 1M tokens"
@@ -6695,7 +6645,7 @@ msgid "Decide which Sub-address fields you want to display"
 msgstr "Odlučite koja polja pod-adrese želite da prikažete"
 
 #. js-lingui-id: ovBPCi
-#: src/modules/ai/components/AiModelTierSlider.tsx
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
@@ -7849,6 +7799,11 @@ msgstr "Polja profila koja se mogu uređivati"
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 msgid "Editor"
 msgstr "Uređivač"
+
+#. js-lingui-id: QyUT/d
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Effort"
+msgstr ""
 
 #. js-lingui-id: hpAStM
 #: src/modules/object-record/record-merge/utils/getPositionWordLabel.ts
@@ -11287,15 +11242,10 @@ msgid "Integrations - Settings"
 msgstr "Integracije - Podešavanja"
 
 #. js-lingui-id: Gzw2pq
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Intelligence"
 msgstr "Inteligencija"
-
-#. js-lingui-id: EYz4Ok
-#. placeholder {0}: formatNumber(model?.intelligenceIndex ?? 0)
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "Intelligence score: {0}"
-msgstr "Rezultat inteligencije: {0}"
 
 #. js-lingui-id: GfnKOF
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
@@ -13121,6 +13071,7 @@ msgid "Mode"
 msgstr "Režim"
 
 #. js-lingui-id: scu3wk
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/AiModelTierSlider.tsx
 msgid "Model"
 msgstr "Model"
@@ -13151,6 +13102,11 @@ msgstr "ID modela"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
 msgid "Model ID is required"
 msgstr "ID modela je obavezan"
+
+#. js-lingui-id: E6zx5y
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Model information"
+msgstr ""
 
 #. js-lingui-id: iaurWj
 #: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
@@ -14709,6 +14665,9 @@ msgid "Not all columns matched"
 msgstr "Nisu sve kolone uparene"
 
 #. js-lingui-id: OJx3wK
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/modules/ai/components/internal/AiChatContextUsageButton.tsx
 #: src/modules/ai/utils/getAiChatUsageLabel.ts
 msgid "Not available"
@@ -14751,6 +14710,11 @@ msgstr "Nije uključeno"
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Not listed"
 msgstr "Nije navedeno"
+
+#. js-lingui-id: zLXWou
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Not measured at this effort yet, so these are the base model's readings."
+msgstr ""
 
 #. js-lingui-id: AjdrYY
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
@@ -16600,11 +16564,6 @@ msgstr "Razlog"
 msgid "Reasoning"
 msgstr "Rasuđivanje"
 
-#. js-lingui-id: 49IkcQ
-#: src/modules/ai/components/AiModelTierSlider.tsx
-msgid "Reasoning effort: {reasoningEffort}"
-msgstr "Napor rezonovanja: {reasoningEffort}"
-
 #. js-lingui-id: PG5XPp
 #. placeholder {0}: getAiModelEffortLabel(availableEffort)
 #: src/modules/settings/ai/components/AiModelPinSelect.tsx
@@ -17660,16 +17619,6 @@ msgstr "Ruski"
 #: src/modules/settings/admin-panel/constants/CreditGrantTypeLabels.ts
 msgid "Sales"
 msgstr "Prodaja"
-
-#. js-lingui-id: 342JYO
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "Same cost as Balanced."
-msgstr "Isti trošak kao Balanced."
-
-#. js-lingui-id: wQnd1t
-#: src/modules/ai/utils/getAiModelTierMetrics.ts
-msgid "Same score as Balanced"
-msgstr "Isti rezultat kao Balanced"
 
 #. js-lingui-id: QeF0zb
 #: src/modules/side-panel/pages/email-block-settings/components/EmailBoxSidesInput.tsx
@@ -19321,6 +19270,7 @@ msgid "Speech recognition could not be reached. Check your connection."
 msgstr "Prepoznavanje govora nije dostupno. Proverite vezu."
 
 #. js-lingui-id: l9wI00
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
 #: src/pages/settings/ai/components/SettingsAiModelTiersPreview.tsx
 msgid "Speed"
 msgstr "Brzina"
@@ -22746,6 +22696,11 @@ msgstr "Vizualizuj"
 #: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Visualize data model"
 msgstr "Vizualizujte model podataka"
+
+#. js-lingui-id: Ii6BOL
+#: src/modules/ai/components/AiModelTierInformationButton.tsx
+msgid "Vs Balanced mode"
+msgstr ""
 
 #. js-lingui-id: IEcsBR
 #: src/modules/settings/mcp-and-apis/utils/buildMcpSetupCategories.tsx
