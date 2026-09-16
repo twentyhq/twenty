@@ -1,8 +1,8 @@
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   Avatar,
-  StyledTintedIconTileContainer,
   getIconTileColorShades,
 } from 'twenty-ui/primitives/data-display';
 import { IconLink, IconWorld, useIcons } from 'twenty-ui/icon';
@@ -16,6 +16,7 @@ import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/
 import { getNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/utils/getNavigationMenuItemComputedLink';
 import { getNavigationMenuItemLabel } from '@/navigation-menu-item/display/utils/getNavigationMenuItemLabel';
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useGetStandardObjectIcon } from '@/object-metadata/hooks/useGetStandardObjectIcon';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -80,22 +81,18 @@ export const NavigationMenuItemIcon = ({
     const pageLayoutColor = getNavigationMenuItemColor(navigationMenuItem);
     const pageLayoutIconStyle = getIconTileColorShades(pageLayoutColor);
 
+    if (isDefined(PageLayoutIcon)) {
+      return <ColoredIcon Icon={PageLayoutIcon} color={pageLayoutColor} />;
+    }
+
     return (
-      <StyledTintedIconTileContainer
-        $backgroundColor={pageLayoutIconStyle.backgroundColor}
-        $borderColor={pageLayoutIconStyle.borderColor}
-      >
-        <Avatar
-          size="sm"
-          shape="rounded-square"
-          icon={
-            isDefined(PageLayoutIcon) ? (
-              <PageLayoutIcon color={pageLayoutIconStyle.iconColor} />
-            ) : undefined
-          }
-          name={navigationMenuItem.name ?? ''}
-        />
-      </StyledTintedIconTileContainer>
+      <Avatar
+        size="md"
+        shape="rounded-square"
+        name={navigationMenuItem.name ?? ''}
+        color={pageLayoutIconStyle.iconColor}
+        backgroundColor={pageLayoutIconStyle.backgroundColor}
+      />
     );
   }
 
@@ -115,27 +112,9 @@ export const NavigationMenuItemIcon = ({
     );
   }
 
-  const itemIcon = isRecord
-    ? undefined
-    : objectMetadataItem?.icon
-      ? getIcon(objectMetadataItem.icon)
-      : undefined;
-  const IconToUse = StandardIcon ?? itemIcon;
-
-  const effectiveColor = getNavigationMenuItemColor(
-    navigationMenuItem,
-    objectMetadataItem,
-  );
-  const useStyledIcon = !isRecord;
-  const iconStyle = useStyledIcon
-    ? getIconTileColorShades(effectiveColor)
-    : null;
-
-  const iconColorToUse = iconStyle
-    ? iconStyle.iconColor
-    : StandardIcon
-      ? IconColor
-      : themeCssVariables.font.color.secondary;
+  if (!isRecord) {
+    return <ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />;
+  }
 
   const labelIdentifier = getNavigationMenuItemLabel(
     navigationMenuItem,
@@ -153,29 +132,20 @@ export const NavigationMenuItemIcon = ({
         })
       : null;
 
-  const avatar = (
+  return (
     <Avatar
-      size={iconStyle ? 'sm' : 'md'}
+      size="md"
       shape={recordIdentifier?.avatarShape ?? 'rounded-square'}
       icon={
-        isDefined(IconToUse) ? <IconToUse color={iconColorToUse} /> : undefined
+        isDefined(StandardIcon) ? (
+          <StandardIcon
+            color={IconColor ?? themeCssVariables.font.color.secondary}
+          />
+        ) : undefined
       }
       src={getAbsoluteImageUrl(recordIdentifier?.avatarUrl ?? '')}
       name={labelIdentifier}
       colorSeed={navigationMenuItem.targetRecordId ?? undefined}
     />
-  );
-
-  if (!iconStyle) {
-    return avatar;
-  }
-
-  return (
-    <StyledTintedIconTileContainer
-      $backgroundColor={iconStyle.backgroundColor}
-      $borderColor={iconStyle.borderColor}
-    >
-      {avatar}
-    </StyledTintedIconTileContainer>
   );
 };
