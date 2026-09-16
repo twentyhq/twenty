@@ -26,7 +26,7 @@ import {
   TRIGGER_STEP_ID,
 } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
-import { InputHint } from 'twenty-ui/input';
+import { InputHint } from 'twenty-ui/primitives/input';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {

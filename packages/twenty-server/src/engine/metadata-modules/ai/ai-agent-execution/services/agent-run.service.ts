@@ -149,6 +149,13 @@ export class AgentRunService {
         success: true,
       };
     } catch (error) {
+      if (
+        error instanceof AiException &&
+        error.code === AiExceptionCode.INVALID_AGENT_INPUT
+      ) {
+        throw error;
+      }
+
       this.logger.error(
         `Agent execution failed for ${input.agentUniversalIdentifier}`,
         error instanceof Error ? error.stack : error,

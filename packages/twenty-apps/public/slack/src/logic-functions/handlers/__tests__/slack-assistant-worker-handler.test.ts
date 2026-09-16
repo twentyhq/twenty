@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { SLACK_ACCESS_DENIED_TEXT } from 'src/logic-functions/constants/slack-access-denied-text';
+import { SLACK_ACCESS_MODE } from 'src/logic-functions/constants/slack-access-mode';
 import { SLACK_ASSISTANT_REQUEST_STATUS } from 'src/logic-functions/constants/slack-assistant-request-status';
 import { SLACK_ASSISTANT_REQUEST_TIMEOUT_SECONDS } from 'src/logic-functions/constants/slack-assistant-request-timeout-seconds';
 import { slackAssistantWorkerHandler } from 'src/logic-functions/handlers/slack-assistant-worker-handler';
@@ -20,6 +22,8 @@ const {
   finishSlackAssistantRequestWithFailureMock,
   setSlackAssistantThreadTitleMock,
   subscribeSlackThreadMock,
+  getSlackAccessModeMock,
+  resolveSlackAccessDecisionMock,
 } = vi.hoisted(() => ({
   callLog: [] as string[],
   coreApiClientMock: vi.fn(),
@@ -35,6 +39,16 @@ const {
   finishSlackAssistantRequestWithFailureMock: vi.fn(),
   setSlackAssistantThreadTitleMock: vi.fn(),
   subscribeSlackThreadMock: vi.fn(),
+  getSlackAccessModeMock: vi.fn(),
+  resolveSlackAccessDecisionMock: vi.fn(),
+}));
+
+vi.mock('src/logic-functions/utils/resolve-slack-access-decision', () => ({
+  resolveSlackAccessDecision: resolveSlackAccessDecisionMock,
+}));
+
+vi.mock('src/logic-functions/utils/get-slack-access-mode', () => ({
+  getSlackAccessMode: getSlackAccessModeMock,
 }));
 
 vi.mock('twenty-client-sdk/core', () => ({
@@ -106,6 +120,14 @@ const REQUEST_RECORD: SlackAssistantRequestRecord = {
   requestText: 'how many open deals does Acme have?',
 };
 
+const REQUESTER_IDENTITY = {
+  slackUserId: 'U123',
+  slackTeamId: 'T0INSTALLED',
+  displayName: 'Ada',
+  email: 'ada@example.com',
+  isRegularUserAccount: true,
+};
+
 const SLACK_CONTEXT = {
   conversationMessages: [],
   requesterName: 'Ada',
@@ -129,6 +151,8 @@ describe('slackAssistantWorkerHandler', () => {
     updateSlackAssistantRequestMock.mockResolvedValue(undefined);
     fetchWorkspaceBaseUrlsMock.mockResolvedValue(['https://acme.twenty.com']);
     resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+    getSlackAccessModeMock.mockResolvedValue(SLACK_ACCESS_MODE.ANYONE);
+    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'ALLOWED' });
     setSlackAssistantThreadTitleMock.mockResolvedValue(undefined);
     subscribeSlackThreadMock.mockResolvedValue(undefined);
 
@@ -162,6 +186,106 @@ describe('slackAssistantWorkerHandler', () => {
         return { failed: true, reason: errorMessage };
       },
     );
+  });
+
+  it('should decline an unlinked Slack user when access is restricted to linked members', async () => {
+    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'DENIED' });
+
+    await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
+      done: true,
+      declined: true,
+    });
+
+    expect(runSlackAssistantAgentWithDeadlineMock).not.toHaveBeenCalled();
+    expect(sendSlackMessageMock).toHaveBeenCalledTimes(1);
+    expect(sendSlackMessageMock).toHaveBeenCalledWith(
+      expect.objectContaining({ messageText: SLACK_ACCESS_DENIED_TEXT }),
+    );
+    expect(updateSlackAssistantRequestMock).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        id: REQUEST_RECORD.id,
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: SLACK_ACCESS_DENIED_TEXT,
+      }),
+    );
+  });
+
+  it('should fail the request when the denial message cannot be delivered', async () => {
+    resolveSlackAccessDecisionMock.mockResolvedValue({ status: 'DENIED' });
+    sendSlackMessageMock.mockImplementation(async () => {
+      callLog.push('reply:denied');
+
+      return { success: false, message: 'channel_not_found' };
+    });
+
+    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
+
+    expect(result).toEqual(expect.objectContaining({ failed: true }));
+    expect(finishSlackAssistantRequestWithFailureMock).toHaveBeenCalledTimes(1);
+    expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        status: SLACK_ASSISTANT_REQUEST_STATUS.DONE,
+        responseText: SLACK_ACCESS_DENIED_TEXT,
+      }),
+    );
+  });
+
+  it('should fail rather than deny when access could not be established', async () => {
+    resolveSlackAccessDecisionMock.mockResolvedValue({
+      status: 'UNVERIFIABLE',
+    });
+
+    const result = await slackAssistantWorkerHandler(REQUEST_RECORD);
+
+    expect(result).toEqual(expect.objectContaining({ failed: true }));
+    expect(finishSlackAssistantRequestWithFailureMock).toHaveBeenCalledTimes(1);
+    expect(runSlackAssistantAgentWithDeadlineMock).not.toHaveBeenCalled();
+    expect(sendSlackMessageMock).not.toHaveBeenCalled();
+    expect(updateSlackAssistantRequestMock).not.toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ responseText: SLACK_ACCESS_DENIED_TEXT }),
+    );
+  });
+
+  it('should ask for the access decision with the stored mode and the resolved requester', async () => {
+    getSlackAccessModeMock.mockResolvedValue(
+      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+    );
+    resolveSlackRunAsForRequestMock.mockResolvedValue('workspace-member-1');
+    fetchSlackAssistantContextMock.mockImplementation(async () => {
+      callLog.push('context:fetch');
+
+      return {
+        ...SLACK_CONTEXT,
+        slackClient: {},
+        requesterIdentity: REQUESTER_IDENTITY,
+      };
+    });
+
+    await slackAssistantWorkerHandler(REQUEST_RECORD);
+
+    expect(resolveSlackAccessDecisionMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        accessMode: SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+        identity: REQUESTER_IDENTITY,
+        runAsWorkspaceMemberId: 'workspace-member-1',
+      }),
+    );
+  });
+
+  it('should answer a request access allowed', async () => {
+    getSlackAccessModeMock.mockResolvedValue(
+      SLACK_ACCESS_MODE.ONLY_LINKED_MEMBERS,
+    );
+    resolveSlackRunAsForRequestMock.mockResolvedValue(undefined);
+
+    await expect(slackAssistantWorkerHandler(REQUEST_RECORD)).resolves.toEqual({
+      done: true,
+    });
+
+    expect(runSlackAssistantAgentWithDeadlineMock).toHaveBeenCalledTimes(1);
   });
 
   it('should show the thinking status before fetching the Slack context', async () => {

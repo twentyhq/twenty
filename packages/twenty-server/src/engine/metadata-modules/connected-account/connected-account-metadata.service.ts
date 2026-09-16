@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { In, IsNull, Repository } from 'typeorm';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { ConnectedAccountProvider, EmailOperation } from 'twenty-shared/types';
 import {
   assertUnreachable,
@@ -26,6 +25,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { type ConnectedAccountDeletedEvent } from 'src/engine/metadata-modules/connected-account/types/connected-account-deleted.type';
 import { type ConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/types/connected-account-usable-by-caller.type';
 import { buildConnectedAccountUsableByCallerWhere } from 'src/engine/metadata-modules/connected-account/utils/build-connected-account-usable-by-caller-where.util';
+import { getConnectedAccountAdministrationPermissionFlag } from 'src/engine/metadata-modules/connected-account/utils/get-connected-account-administration-permission-flag.util';
 import { isConnectedAccountUsableByCaller } from 'src/engine/metadata-modules/connected-account/utils/is-connected-account-usable-by-caller.util';
 import { MESSAGE_CHANNEL_DELETED_EVENT } from 'src/engine/metadata-modules/message-channel/constants/message-channel-deleted.constant';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -221,7 +221,7 @@ export class ConnectedAccountMetadataService {
   }: {
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'visibility' | 'userWorkspaceId'
+      'visibility' | 'userWorkspaceId' | 'provider'
     >;
     userWorkspaceId: string;
     workspaceId: string;
@@ -237,7 +237,9 @@ export class ConnectedAccountMetadataService {
           userWorkspaceId,
           workspaceId,
           applicationId,
-          setting: PermissionFlagType.WORKSPACE,
+          setting: getConnectedAccountAdministrationPermissionFlag(
+            connectedAccount.provider,
+          ),
         });
       case 'user':
         return false;

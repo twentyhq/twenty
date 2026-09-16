@@ -1,75 +1,107 @@
 import { LazyMarkdownRenderer } from '@/ai/components/LazyMarkdownRenderer';
-import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
-import { Trans } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconDownload, IconTrash, IconUpload } from 'twenty-ui/icon';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
-  type ContentEntry,
   type DeveloperLinks,
   SettingsApplicationAboutSidebar,
 } from '@/settings/applications/components/SettingsApplicationAboutSidebar';
 import { SettingsApplicationScreenshotGallery } from '@/settings/applications/components/SettingsApplicationScreenshotGallery';
-
-const UNINSTALL_APPLICATION_MODAL_ID = 'uninstall-application-modal';
+import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 
 type SettingsApplicationDetailAboutTabProps = {
+  applicationId?: string | null;
+  logoUrl?: string | null;
   displayName: string;
   description?: string;
   aboutDescription?: string;
   pricingDescription?: string;
   screenshots?: string[];
   author?: string;
+  version?: string;
+  installCount?: number;
   category?: string;
-  contentEntries?: ContentEntry[];
-  currentVersion?: string;
-  latestAvailableVersion?: string;
   developerLinks?: DeveloperLinks;
-  isInstalled: boolean;
-  canInstallMarketplaceApps?: boolean;
-  onInstall?: () => void;
-  isInstalling?: boolean;
-  hasUpdate?: boolean;
-  onUpgrade?: () => void;
-  isUpgrading?: boolean;
-  canBeUninstalled?: boolean;
-  onUninstall?: () => void;
-  isUninstalling?: boolean;
+  onShare?: () => void;
 };
 
+const SIDEBAR_COLUMN_MIN_WIDTH_PX = 160;
+const MAIN_COLUMN_WIDTH_PX = 472;
+const COLUMN_GAP_PX = 16;
+const TWO_COLUMN_LAYOUT_MIN_WIDTH_PX =
+  SIDEBAR_COLUMN_MIN_WIDTH_PX + COLUMN_GAP_PX + MAIN_COLUMN_WIDTH_PX;
+
 const StyledContentContainer = styled.div`
+  align-items: flex-start;
+  container-name: application-about;
+  container-type: inline-size;
   display: flex;
-  gap: ${themeCssVariables.spacing[4]};
+  flex-wrap: wrap;
+  gap: ${COLUMN_GAP_PX}px;
+  width: 100%;
 `;
 
-const StyledMainContent = styled.div`
-  flex: 1;
+// The sidebar only sticks while both columns fit side by side: once they
+// stack, a sticky sidebar would cover the description below it. It sticks
+// at the page's top padding so it does not jump when scrolling starts.
+const StyledSidebarColumn = styled.div`
+  flex: 1 1 0;
+  min-width: ${SIDEBAR_COLUMN_MIN_WIDTH_PX}px;
+
+  @container application-about (min-width: ${TWO_COLUMN_LAYOUT_MIN_WIDTH_PX}px) {
+    position: sticky;
+    top: var(--settings-page-container-padding-top, 0);
+  }
+`;
+
+const StyledMainColumn = styled.div`
+  display: flex;
+  flex: 0 0 ${MAIN_COLUMN_WIDTH_PX}px;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+  max-width: 100%;
   min-width: 0;
-  overflow: hidden;
+  padding-bottom: ${themeCssVariables.spacing[4]};
 `;
 
 const StyledMarkdownContent = styled.div`
   .markdown-section {
+    color: ${themeCssVariables.font.color.secondary};
+    font-size: ${themeCssVariables.font.size.md};
+    line-height: 1.4;
     margin: 0;
   }
 
+  .markdown-section h1,
+  .markdown-section h2 {
+    color: ${themeCssVariables.font.color.primary};
+    font-size: ${themeCssVariables.font.size.xl};
+    line-height: 1.2;
+    margin-bottom: ${themeCssVariables.spacing[2]};
+    margin-top: ${themeCssVariables.spacing[6]};
+  }
+
+  .markdown-section h3,
   .markdown-section h4 {
+    color: ${themeCssVariables.font.color.primary};
     font-size: ${themeCssVariables.font.size.lg};
     font-weight: ${themeCssVariables.font.weight.semiBold};
-    line-height: 1.35;
+    line-height: 1.2;
     margin-bottom: ${themeCssVariables.spacing[2]};
     margin-top: ${themeCssVariables.spacing[5]};
   }
 
-  .markdown-section ul {
+  .markdown-section > :first-child {
+    margin-top: 0;
+  }
+
+  .markdown-section ul,
+  .markdown-section ol {
     margin-bottom: ${themeCssVariables.spacing[3]};
     margin-top: ${themeCssVariables.spacing[2]};
-    padding-left: ${themeCssVariables.spacing[4]};
+    padding-left: ${themeCssVariables.spacing[5]};
   }
 
   .markdown-section li {
@@ -96,145 +128,73 @@ const StyledMarkdownContent = styled.div`
 `;
 
 export const SettingsApplicationDetailAboutTab = ({
+  applicationId,
+  logoUrl,
   displayName,
   description,
   aboutDescription,
   pricingDescription,
   screenshots,
   author,
+  version,
+  installCount,
   category,
-  contentEntries,
-  currentVersion,
-  latestAvailableVersion,
   developerLinks,
-  isInstalled,
-  canInstallMarketplaceApps,
-  onInstall,
-  isInstalling,
-  hasUpdate,
-  onUpgrade,
-  isUpgrading,
-  canBeUninstalled,
-  onUninstall,
-  isUninstalling,
+  onShare,
 }: SettingsApplicationDetailAboutTabProps) => {
-  const { openModal } = useModal();
-
   const hasScreenshots = isDefined(screenshots) && screenshots.length > 0;
 
-  const markdownText =
-    aboutDescription ??
-    description ??
-    t`No description available for this application`;
+  const descriptionSummary = getApplicationDescriptionSummary(description);
 
-  const getActionButton = () => {
-    if (!canInstallMarketplaceApps) {
-      return null;
+  // The sidebar shows the first paragraph of the description, so the content
+  // column only renders the description itself when it holds more than that.
+  const getMarkdownText = () => {
+    if (isNonEmptyString(aboutDescription)) {
+      return aboutDescription;
     }
 
-    if (!isInstalled || isInstalling) {
-      return (
-        <Button
-          Icon={IconDownload}
-          title={isInstalling ? t`Installing...` : t`Install`}
-          variant={'primary'}
-          accent={'blue'}
-          onClick={onInstall}
-          disabled={isInstalling}
-        />
-      );
+    if (isNonEmptyString(description)) {
+      return description.trim() === descriptionSummary
+        ? undefined
+        : description;
     }
 
-    if (hasUpdate) {
-      return (
-        <Button
-          Icon={IconUpload}
-          title={
-            isUpgrading
-              ? t`Upgrading...`
-              : t`Upgrade to ${latestAvailableVersion ?? ''}`
-          }
-          variant={'secondary'}
-          accent={'blue'}
-          onClick={onUpgrade}
-          disabled={isUpgrading}
-        />
-      );
-    }
-
-    if (canBeUninstalled) {
-      return (
-        <Button
-          Icon={IconTrash}
-          title={isUninstalling ? t`Uninstalling...` : t`Uninstall`}
-          variant={'secondary'}
-          accent={'danger'}
-          onClick={() => openModal(UNINSTALL_APPLICATION_MODAL_ID)}
-          disabled={isUninstalling}
-        />
-      );
-    }
-
-    return (
-      <Button
-        Icon={IconCheck}
-        title={t`Installed`}
-        variant={'secondary'}
-        accent={'default'}
-        disabled={true}
-      />
-    );
+    return t`No description available for this application`;
   };
 
-  const confirmationValue = t`yes`;
+  const markdownText = getMarkdownText();
 
   return (
-    <>
-      {hasScreenshots && (
-        <SettingsApplicationScreenshotGallery
-          screenshots={screenshots}
-          displayName={displayName}
-        />
-      )}
-
-      <StyledContentContainer>
-        <StyledMainContent>
-          <Section>
-            <StyledMarkdownContent>
-              <LazyMarkdownRenderer text={markdownText} />
-            </StyledMarkdownContent>
-          </Section>
-        </StyledMainContent>
-
+    <StyledContentContainer>
+      <StyledSidebarColumn>
         <SettingsApplicationAboutSidebar
-          actionButton={getActionButton()}
-          pricingDescription={pricingDescription}
+          applicationId={applicationId}
+          logoUrl={logoUrl}
+          displayName={displayName}
+          description={descriptionSummary}
+          onShare={onShare}
           author={author}
+          version={version}
+          installCount={installCount}
           category={category}
-          contentEntries={contentEntries}
-          currentVersion={currentVersion}
-          latestAvailableVersion={latestAvailableVersion}
+          pricingDescription={pricingDescription}
           developerLinks={developerLinks}
         />
-      </StyledContentContainer>
+      </StyledSidebarColumn>
 
-      {canBeUninstalled && isDefined(onUninstall) && (
-        <ConfirmationModal
-          confirmationPlaceholder={confirmationValue}
-          confirmationValue={confirmationValue}
-          modalInstanceId={UNINSTALL_APPLICATION_MODAL_ID}
-          title={t`Uninstall Application?`}
-          subtitle={
-            <Trans>
-              Please type {`"${confirmationValue}"`} to confirm you want to
-              uninstall this application.
-            </Trans>
-          }
-          onConfirmClick={onUninstall}
-          confirmButtonText={t`Uninstall`}
-          loading={isUninstalling}
-        />
-      )}
-    </>
+      <StyledMainColumn>
+        {hasScreenshots && (
+          <SettingsApplicationScreenshotGallery
+            screenshots={screenshots}
+            displayName={displayName}
+          />
+        )}
+        {isDefined(markdownText) && (
+          <StyledMarkdownContent>
+            <LazyMarkdownRenderer text={markdownText} noImage />
+          </StyledMarkdownContent>
+        )}
+      </StyledMainColumn>
+    </StyledContentContainer>
   );
 };

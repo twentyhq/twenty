@@ -26,8 +26,7 @@ describe('INVENTED_ARGUMENT_RULE', () => {
 
   it('deletes a translation that adds an argument nothing will supply', () => {
     const sourceText = 'We keep your data for {dataRetentionDays} days.';
-    const translationText =
-      'Чувамо податке {dataRetentionDays} {dayOrDays}.';
+    const translationText = 'Чувамо податке {dataRetentionDays} {dayOrDays}.';
 
     expect(fix(translationText, sourceText)).toBe('');
   });
@@ -58,7 +57,10 @@ describe('INVENTED_ARGUMENT_RULE', () => {
 
   it('is idempotent', () => {
     const sourceText = 'Found for {conflictingFieldsValues}.';
-    const once = fix('{ConflictingFieldsValues} で見つかりました。', sourceText);
+    const once = fix(
+      '{ConflictingFieldsValues} で見つかりました。',
+      sourceText,
+    );
 
     expect(detect(once, sourceText)).toBe(false);
     expect(fix(once, sourceText)).toBe(once);

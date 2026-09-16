@@ -6,23 +6,29 @@
 
 Twenty's open-source React UI component library: components, icons, and design tokens built on a zero-runtime, CSS-variable styling layer.
 
+Read the [twenty-ui documentation](https://docs.twenty.com/ui/getting-started) for setup, theming, and component guides.
+
 > **Alpha:** `twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
 
 # Installation
 
+For a standalone React application, install the library and its peer dependencies. React 19 is required.
+
 ```bash
-npm install twenty-ui
+npm install twenty-ui monaco-editor react@^19 react-dom@^19
 ```
 
-`react`, `react-dom`, and `monaco-editor` are peer dependencies (install them in your app). `monaco-editor` is only required if you use the code editor components.
+Install `monaco-editor` even if you never render a code editor: the `twenty-ui/primitives/input`, `twenty-ui/primitives/feedback`, and `twenty-ui/primitives/navigation` entry points reference it, and bundlers fail to resolve it otherwise.
+
+For Twenty apps, follow [Using Twenty UI components](https://docs.twenty.com/developers/extend/apps/layout/front-components#using-twenty-ui-components). The front component renderer supplies the workspace theme. Keep `twenty-ui`, `twenty-sdk`, and `twenty-client-sdk` on the same version.
 
 # Usage
 
-Import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
+For a standalone React application, import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
 
 ```tsx
 import { ThemeProvider } from 'twenty-ui/theme-constants';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 
 import 'twenty-ui/style.css';
 import 'twenty-ui/theme-light.css';
@@ -34,11 +40,10 @@ export const App = () => (
 );
 ```
 
-Components are available from the root entry point or from a specific subpath for better tree-shaking:
+Prefer the matching subpath for better tree-shaking. Imports from the `twenty-ui` root entry point are also supported.
 
 ```tsx
-import { Button } from 'twenty-ui';
-import { Button } from 'twenty-ui/input';
+import { Button } from 'twenty-ui/primitives/input';
 ```
 
 # Entry points
@@ -46,20 +51,22 @@ import { Button } from 'twenty-ui/input';
 | Subpath | Contents |
 | --- | --- |
 | `twenty-ui` | All components, icons, theme tokens, and utilities |
-| `twenty-ui/accessibility` | Accessibility helpers |
 | `twenty-ui/assets` | Logos and static assets |
-| `twenty-ui/data-display` | Avatars, chips, tags, and other display components |
-| `twenty-ui/feedback` | Progress bars, loaders, and status feedback |
+| `twenty-ui/components` | Reserved for reusable app building blocks |
 | `twenty-ui/icon` | Icon components and the icon provider |
-| `twenty-ui/input` | Buttons, switches, and form inputs |
-| `twenty-ui/json-visualizer` | JSON tree viewer |
-| `twenty-ui/layout` | Layout primitives |
-| `twenty-ui/navigation` | Menus, links, and navigation components |
-| `twenty-ui/surfaces` | Cards, tooltips, and surface components |
+| `twenty-ui/primitives` | All existing UI component families |
+| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers |
+| `twenty-ui/primitives/data-display` | Avatars, chips, tags, status indicators, and display helpers |
+| `twenty-ui/primitives/feedback` | Toasts, banners, progress bars, and loaders |
+| `twenty-ui/primitives/input` | Buttons, form controls, pickers, and code editors |
+| `twenty-ui/primitives/json-visualizer` | JSON tree viewer |
+| `twenty-ui/primitives/layout` | Layout, animation, resizing, and section components |
+| `twenty-ui/primitives/navigation` | Links, list items, menus, and tabs |
+| `twenty-ui/primitives/surfaces` | Cards, dialogs, menus, popovers, and tooltips |
+| `twenty-ui/primitives/typography` | Text, headings, labels, and typography helpers |
 | `twenty-ui/testing` | Storybook and test decorators |
 | `twenty-ui/theme` | Theme types and helpers |
 | `twenty-ui/theme-constants` | Design tokens, `ThemeProvider`, and `useTheme` |
-| `twenty-ui/typography` | Text and typography components |
 | `twenty-ui/utilities` | Hooks and shared utilities |
 
 # Theming

@@ -1,21 +1,12 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ChangeEvent, useContext, useId } from 'react';
-import {
-  AI_MODEL_TIERS,
-  type AiModelTier,
-  isAiModelEffort,
-} from 'twenty-shared/ai';
+import { type ChangeEvent } from 'react';
+import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { AppTooltip, TooltipDelay } from 'twenty-ui/surfaces';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiModelTierInformationButton } from '@/ai/components/AiModelTierInformationButton';
 import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
-import { getAiModelEffortLabel } from '@/ai/utils/getAiModelEffortLabel';
-import { formatMetricDelta } from '@/ai/utils/formatMetricDelta';
-import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
-import { getAiModelTierMetrics } from '@/ai/utils/getAiModelTierMetrics';
 
 const TRACK_HEIGHT_PX = 24;
 const TRACK_INSET_PX = 0;
@@ -45,25 +36,6 @@ const StyledTitle = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-`;
-
-const StyledMetrics = styled.div`
-  align-items: center;
-  display: flex;
-  flex-shrink: 0;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledMetric = styled.span<{ isInherited: boolean }>`
-  align-items: center;
-  color: ${({ isInherited }) =>
-    isInherited
-      ? themeCssVariables.font.color.light
-      : themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.regular};
-  gap: ${themeCssVariables.spacing[1]};
 `;
 
 const StyledTrack = styled.div<{ disabled: boolean }>`
@@ -169,32 +141,10 @@ export const AiModelTierSlider = ({
   disabled = false,
 }: AiModelTierSliderProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
   const tiers = useAiModelTiers();
-  const tooltipId = useId().replace(/:/g, '');
 
   const selectedStep = AI_MODEL_TIERS.indexOf(selectedTier);
   const resolvedTier = tiers[selectedStep];
-  const model = resolvedTier.model;
-
-  // The base model's reading stands in until the sync measures this effort.
-  const isBenchmarkInherited = model?.isBenchmarkInherited ?? false;
-  const inheritedNote = isBenchmarkInherited
-    ? t` Not measured at this effort yet, so this is the base model's reading.`
-    : '';
-
-  const modelEffort = model?.effort;
-  const modelName = getAiModelModeDescription(resolvedTier, {
-    showAutomatic: false,
-    showEffort: false,
-  });
-  const reasoningEffort =
-    isDefined(modelEffort) && isAiModelEffort(modelEffort)
-      ? getAiModelEffortLabel(modelEffort)
-      : t`Default`;
-
-  const metrics = getAiModelTierMetrics(resolvedTier);
-
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const tier = AI_MODEL_TIERS[Number(event.target.value)];
 
@@ -206,21 +156,8 @@ export const AiModelTierSlider = ({
   return (
     <StyledContainer>
       <StyledHeader>
-        <StyledTitle id={`ai-model-tier-name-${tooltipId}`}>
-          {title ?? resolvedTier.label}
-        </StyledTitle>
-        <StyledMetrics>
-          {metrics.map(({ key, Icon, deltaPercent }) => (
-            <StyledMetric
-              key={key}
-              id={`ai-model-tier-${key}-${tooltipId}`}
-              isInherited={isBenchmarkInherited}
-            >
-              <Icon size={theme.icon.size.sm} />
-              {formatMetricDelta(deltaPercent)}
-            </StyledMetric>
-          ))}
-        </StyledMetrics>
+        <StyledTitle>{title ?? resolvedTier.label}</StyledTitle>
+        <AiModelTierInformationButton resolvedTier={resolvedTier} />
       </StyledHeader>
       <StyledTrack
         disabled={disabled}
@@ -246,27 +183,6 @@ export const AiModelTierSlider = ({
           aria-valuetext={resolvedTier.label}
         />
       </StyledTrack>
-      {isDefined(model) &&
-        metrics.map(({ key, description, tooltipTitle }) => (
-          <AppTooltip
-            key={key}
-            anchorSelect={`#ai-model-tier-${key}-${tooltipId}`}
-            title={tooltipTitle ?? modelName}
-            description={`${description}${inheritedNote}`}
-            delay={TooltipDelay.shortDelay}
-            place="bottom"
-          />
-        ))}
-      {isDefined(model) && (
-        <AppTooltip
-          anchorSelect={`#ai-model-tier-name-${tooltipId}`}
-          Icon={getModelIcon(model.modelFamily, model.providerName)}
-          title={modelName}
-          description={t`Reasoning effort: ${reasoningEffort}`}
-          delay={TooltipDelay.shortDelay}
-          place="bottom"
-        />
-      )}
     </StyledContainer>
   );
 };

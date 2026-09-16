@@ -16,7 +16,7 @@ import { SOURCE_LOCALE, type APP_LOCALES } from 'twenty-shared/translations';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { toOpenRecordInPreference } from '@/workspace-member/utils/toOpenRecordInPreference';
-import { type ColorScheme } from 'twenty-ui/input';
+import { type ColorScheme } from 'twenty-ui/primitives/input';
 import { useApolloClient } from '@apollo/client/react';
 import { GetCurrentUserDocument } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';

@@ -189,6 +189,10 @@ import { MigrateWorkspaceModelsToTiersSlowInstanceCommand } from 'src/database/c
 import { AddIsSystemToSkillFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-fast-1789129759228-add-is-system-to-skill';
 import { MigrateCanvasTabsToVerticalListSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-40/2-40-instance-command-slow-1789139070588-migrate-canvas-tabs-to-vertical-list';
 import { AddWorkspaceWorkflowIdToWorkflowFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789350000001-add-workspace-workflow-id-to-workflow';
+import { AddCoreVersionPointersFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789370101008-add-core-version-pointers';
+import { AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789373200000-add-readability-parent-fields-to-object-metadata';
+import { AddAppMessageChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789395506192-add-app-message-channel-type';
+import { AddAppMessageChannelUniqueHandleFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-41/2-41-instance-command-fast-1789418882171-add-app-message-channel-unique-handle';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -380,4 +384,8 @@ export const INSTANCE_COMMANDS = [
   AddIsSystemToSkillFastInstanceCommand,
   MigrateCanvasTabsToVerticalListSlowInstanceCommand,
   AddWorkspaceWorkflowIdToWorkflowFastInstanceCommand,
+  AddCoreVersionPointersFastInstanceCommand,
+  AddReadabilityParentFieldsToObjectMetadataFastInstanceCommand,
+  AddAppMessageChannelTypeFastInstanceCommand,
+  AddAppMessageChannelUniqueHandleFastInstanceCommand,
 ];

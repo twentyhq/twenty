@@ -44,7 +44,7 @@ export class MessageSuppressionResolver {
   ) {}
 
   @Query(() => MessageSuppressionListDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async messageSuppressions(
     @Args('input') input: FindMessageSuppressionsInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -62,7 +62,7 @@ export class MessageSuppressionResolver {
   }
 
   @Mutation(() => MessageSuppressionDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async createMessageSuppression(
     @Args('input') input: CreateMessageSuppressionInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
@@ -77,7 +77,7 @@ export class MessageSuppressionResolver {
   }
 
   @Mutation(() => Boolean)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async deleteMessageSuppression(
     @Args('id', { type: () => UUIDScalarType }) suppressionId: string,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
