@@ -21,6 +21,7 @@ import {
   useIcons,
 } from 'twenty-ui/icon';
 import { Avatar, TintedIconTile } from 'twenty-ui/primitives/data-display';
+import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { DropdownMenuHeaderLeftComponent } from '@/ui/layout/dropdown/components/DropdownMenuHeader/internal/DropdownMenuHeaderLeftComponent';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader/DropdownMenuHeader';
@@ -402,7 +403,7 @@ export const NavigationMenuItemAddDropdownContent = ({
               </Fragment>
             ))}
           {items.length === 0 && (
-            <DropdownMenuSectionLabel label={emptyMessage} />
+            <MenuItem disabled text={emptyMessage} accent="placeholder" />
           )}
         </DropdownMenuItemsContainer>
       </SelectableList>
