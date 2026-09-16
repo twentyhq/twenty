@@ -73,7 +73,7 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
               LeftIcon={IconTrash}
               onClick={handleDelete}
               accent="danger"
-              text={t`Delete`}
+              text={t`Remove from sidebar`}
             />
           </DropdownMenuItemsContainer>
         </DropdownContent>

@@ -1,3 +1,4 @@
+import { navigationMenuItemInsertionPreviewState } from '@/navigation-menu-item/common/states/navigationMenuItemInsertionPreviewState';
 import { NavigationMenuItemEditable } from '@/navigation-menu-item/edit/components/NavigationMenuItemEditable';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
@@ -69,6 +70,10 @@ const StyledFolderContainer = styled.div<{
   }
 `;
 
+const StyledAddMenuItem = styled.div<{ isHidden: boolean }>`
+  display: ${({ isHidden }) => (isHidden ? 'none' : 'contents')};
+`;
+
 const StyledFolderDroppableContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -110,6 +115,14 @@ export const NavigationMenuItemFolderDnd = ({
     isNavigationDrawerExpandedState,
   );
   const isExpanded = isNavigationDrawerExpanded || isMobile;
+
+  const navigationMenuItemInsertionPreview = useAtomStateValue(
+    navigationMenuItemInsertionPreviewState,
+  );
+  const isAddingFavoriteFolderItem =
+    isEditInPlace &&
+    navigationMenuItemInsertionPreview?.section === 'favorite' &&
+    navigationMenuItemInsertionPreview.folderId === folderId;
 
   const section: NavigationMenuItemSection = isEditInPlace
     ? 'favorite'
@@ -382,26 +395,28 @@ export const NavigationMenuItemFolderDnd = ({
                 )}
               />
               {showAddMenuItem && (
-                <NavigationMenuItemEntrance>
-                  <NavigationMenuItemAddDropdown
-                    folderId={folderId}
-                    section={section}
-                    position={navigationMenuItems.length}
-                  >
-                    <NavigationDrawerSubItem
-                      label={t`Add menu item`}
-                      Icon={IconPlus}
-                      triggerEvent="CLICK"
-                      variant="tertiary"
-                      isSelectedInEditMode={false}
-                      subItemState={getNavigationSubItemLeftAdornment({
-                        index: navigationMenuItems.length,
-                        arrayLength: folderContentLength,
-                        selectedIndex: -1,
-                      })}
-                    />
-                  </NavigationMenuItemAddDropdown>
-                </NavigationMenuItemEntrance>
+                <StyledAddMenuItem isHidden={isAddingFavoriteFolderItem}>
+                  <NavigationMenuItemEntrance>
+                    <NavigationMenuItemAddDropdown
+                      folderId={folderId}
+                      section={section}
+                      position={navigationMenuItems.length}
+                    >
+                      <NavigationDrawerSubItem
+                        label={t`Add menu item`}
+                        Icon={IconPlus}
+                        triggerEvent="CLICK"
+                        variant="tertiary"
+                        isSelectedInEditMode={false}
+                        subItemState={getNavigationSubItemLeftAdornment({
+                          index: navigationMenuItems.length,
+                          arrayLength: folderContentLength,
+                          selectedIndex: -1,
+                        })}
+                      />
+                    </NavigationMenuItemAddDropdown>
+                  </NavigationMenuItemEntrance>
+                </StyledAddMenuItem>
               )}
             </NavigationMenuItemDroppableSlot>
           </StyledFolderDroppableContent>
