@@ -22,7 +22,10 @@ export const CoreWorkflowVersionCard = ({
     workspaceWorkflowVersionId,
   );
 
-  if (!isDefined(coreWorkflowVersion)) {
+  if (
+    !isDefined(coreWorkflowVersion) ||
+    !isDefined(coreWorkflowVersion.workspaceWorkflowId)
+  ) {
     return null;
   }
 

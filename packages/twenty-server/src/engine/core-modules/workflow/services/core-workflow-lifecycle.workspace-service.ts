@@ -3,17 +3,47 @@ import { Injectable } from '@nestjs/common';
 import { type ActorMetadata } from 'twenty-shared/types';
 
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
+import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-validation/workflow-version-validation.workspace-service';
 import { WorkflowTriggerWorkspaceService } from 'src/modules/workflow/workflow-trigger/workspace-services/workflow-trigger.workspace-service';
 
-// Core-id twins of the lifecycle mutations. The core row is the entry
-// authority; the activation machinery then updates both stores in one
-// transaction, the workspace row being kept only as the rollback mirror.
 @Injectable()
 export class CoreWorkflowLifecycleWorkspaceService {
   constructor(
     private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
     private readonly workflowTriggerWorkspaceService: WorkflowTriggerWorkspaceService,
+    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
   ) {}
+
+  async validateCoreWorkflowVersion({
+    workspaceId,
+    coreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId: string;
+  }): Promise<boolean> {
+    const { workspaceWorkflowVersionId } =
+      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
+        { workspaceId, coreWorkflowVersionId },
+      );
+
+    const workflowVersion =
+      await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
+        workspaceId,
+        workflowVersionId: workspaceWorkflowVersionId,
+      });
+
+    await this.workflowVersionValidationWorkspaceService.assertWorkflowVersionIsActivableOrThrow(
+      {
+        workspaceId,
+        trigger: workflowVersion.trigger,
+        steps: workflowVersion.steps,
+      },
+    );
+
+    return true;
+  }
 
   async activateCoreWorkflowVersion({
     workspaceId,

@@ -13,8 +13,8 @@ const CORE_WORKFLOW_VERSIONS_BY_CORE_WORKFLOW_ID = `
 `;
 
 const CORE_WORKFLOW_VERSION_BY_ID = `
-  query CoreWorkflowVersionById($id: UUID!) {
-    coreWorkflowVersionById(id: $id) {
+  query CoreWorkflowVersionById($coreWorkflowVersionId: UUID!) {
+    coreWorkflowVersionById(coreWorkflowVersionId: $coreWorkflowVersionId) {
       id
       label
       status
@@ -98,7 +98,7 @@ describe('core workflow id native queries (e2e)', () => {
       versionsResponse.body.data.coreWorkflowVersionsByCoreWorkflowId[0].id;
 
     const response = await workflowGraphqlRequest(CORE_WORKFLOW_VERSION_BY_ID, {
-      id: coreWorkflowVersionId,
+      coreWorkflowVersionId,
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -144,7 +144,7 @@ describe('core workflow id native queries (e2e)', () => {
   it('returns nothing for ids that exist in neither table', async () => {
     const versionResponse = await workflowGraphqlRequest(
       CORE_WORKFLOW_VERSION_BY_ID,
-      { id: ABSENT_ID },
+      { coreWorkflowVersionId: ABSENT_ID },
     );
 
     expect(versionResponse.body.data.coreWorkflowVersionById).toBeNull();

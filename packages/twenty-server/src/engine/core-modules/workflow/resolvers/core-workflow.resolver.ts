@@ -22,7 +22,6 @@ import { CoreWorkflowByIdArgs } from 'src/engine/core-modules/workflow/dtos/core
 import { CoreWorkflowArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow.input';
 import { DuplicateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/duplicate-core-workflow.input';
 import { UpdateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/update-core-workflow.input';
-import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
@@ -55,7 +54,6 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowListService: CoreWorkflowListService,
     private readonly coreWorkflowMutationWorkspaceService: CoreWorkflowMutationWorkspaceService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
-    private readonly coreWorkflowVersionMutationWorkspaceService: CoreWorkflowVersionMutationWorkspaceService,
   ) {}
 
   @Mutation(() => CoreWorkflowDTO, { nullable: true })
@@ -83,7 +81,7 @@ export class CoreWorkflowResolver {
       coreWorkflowVersionIdToCopy,
     }: DuplicateCoreWorkflowInput,
   ): Promise<CoreWorkflowDTO> {
-    return this.coreWorkflowVersionMutationWorkspaceService.duplicateWorkflow({
+    return this.coreWorkflowMutationWorkspaceService.duplicateWorkflow({
       workspaceId,
       coreWorkflowIdToDuplicate,
       coreWorkflowVersionIdToCopy,
@@ -206,11 +204,11 @@ export class CoreWorkflowResolver {
   @Query(() => CoreWorkflowVersionDTO, { nullable: true })
   async coreWorkflowVersionById(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @Args() { id }: CoreWorkflowVersionByIdArgs,
+    @Args() { coreWorkflowVersionId }: CoreWorkflowVersionByIdArgs,
   ): Promise<CoreWorkflowVersionDTO | null> {
     return this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
       workspaceId,
-      coreWorkflowVersionId: id,
+      coreWorkflowVersionId,
     });
   }
 }

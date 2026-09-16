@@ -8,5 +8,5 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 export class CoreWorkflowVersionByIdArgs {
   @Field(() => UUIDScalarType)
   @IsUUID()
-  id: string;
+  coreWorkflowVersionId: string;
 }

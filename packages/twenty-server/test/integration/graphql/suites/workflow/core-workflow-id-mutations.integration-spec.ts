@@ -14,8 +14,8 @@ const CORE_WORKFLOW_VERSIONS = `
 `;
 
 const CORE_WORKFLOW_VERSION_BY_ID = `
-  query CoreWorkflowVersionById($id: UUID!) {
-    coreWorkflowVersionById(id: $id) {
+  query CoreWorkflowVersionById($coreWorkflowVersionId: UUID!) {
+    coreWorkflowVersionById(coreWorkflowVersionId: $coreWorkflowVersionId) {
       id
       status
       trigger
@@ -50,7 +50,7 @@ describe('core workflow id mutations (e2e)', () => {
 
   const getVersionById = async (id: string) => {
     const response = await workflowGraphqlRequest(CORE_WORKFLOW_VERSION_BY_ID, {
-      id,
+      coreWorkflowVersionId: id,
     });
 
     expect(response.body.errors).toBeUndefined();
@@ -182,7 +182,7 @@ describe('core workflow id mutations (e2e)', () => {
     const deleteEdgeResponse = await workflowGraphqlRequest(
       `
         mutation DeleteCoreWorkflowVersionEdge(
-          $input: CreateCoreWorkflowVersionEdgeInput!
+          $input: DeleteCoreWorkflowVersionEdgeInput!
         ) {
           deleteCoreWorkflowVersionEdge(input: $input) {
             triggerDiff
@@ -217,6 +217,20 @@ describe('core workflow id mutations (e2e)', () => {
   });
 
   it('activates, runs and deactivates by core ids', async () => {
+    const validateResponse = await workflowGraphqlRequest(
+      `
+        mutation ValidateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
+          validateCoreWorkflowVersion(
+            coreWorkflowVersionId: $coreWorkflowVersionId
+          )
+        }
+      `,
+      { coreWorkflowVersionId },
+    );
+
+    expect(validateResponse.body.errors).toBeUndefined();
+    expect(validateResponse.body.data.validateCoreWorkflowVersion).toBe(true);
+
     const activateResponse = await workflowGraphqlRequest(
       `
         mutation ActivateCoreWorkflowVersion($coreWorkflowVersionId: UUID!) {
@@ -406,5 +420,6 @@ describe('core workflow id mutations (e2e)', () => {
     );
 
     expect(response.body.errors).toBeDefined();
+    expect(response.body.errors[0].message).toContain('not found');
   });
 });

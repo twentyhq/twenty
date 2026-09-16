@@ -2,15 +2,9 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import {
-  WORKFLOW_TRIGGER_METADATA_KEY,
-  WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY,
-  WORKFLOW_TRIGGER_PAYLOAD_KEY,
-} from 'twenty-shared/workflow';
 
 import { CoreResolver } from 'src/engine/api/graphql/graphql-config/decorators/core-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { buildCreatedByFromFullNameMetadata } from 'src/engine/core-modules/actor/utils/build-created-by-from-full-name-metadata.util';
 import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -18,6 +12,7 @@ import { CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/co
 import { CreateCoreWorkflowVersionEdgeInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow-version-edge.input';
 import { CreateCoreWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/create-core-workflow-version-step.input';
 import { CreateDraftFromCoreWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/create-draft-from-core-workflow-version.input';
+import { DeleteCoreWorkflowVersionEdgeInput } from 'src/engine/core-modules/workflow/dtos/delete-core-workflow-version-edge.input';
 import { DeleteCoreWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/delete-core-workflow-version-step.input';
 import { DuplicateCoreWorkflowVersionStepInput } from 'src/engine/core-modules/workflow/dtos/duplicate-core-workflow-version-step.input';
 import { RunCoreWorkflowVersionInput } from 'src/engine/core-modules/workflow/dtos/run-core-workflow-version.input';
@@ -43,6 +38,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { buildWorkflowRunTriggerContext } from 'src/modules/workflow/workflow-trigger/utils/build-workflow-run-trigger-context.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @CoreResolver()
@@ -66,6 +62,20 @@ export class CoreWorkflowVersionMutationResolver {
     private readonly coreWorkflowLifecycleWorkspaceService: CoreWorkflowLifecycleWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
+
+  @Mutation(() => Boolean)
+  async validateCoreWorkflowVersion(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('coreWorkflowVersionId', { type: () => UUIDScalarType })
+    coreWorkflowVersionId: string,
+  ): Promise<boolean> {
+    return this.coreWorkflowLifecycleWorkspaceService.validateCoreWorkflowVersion(
+      {
+        workspaceId,
+        coreWorkflowVersionId,
+      },
+    );
+  }
 
   @Mutation(() => Boolean)
   async activateCoreWorkflowVersion(
@@ -119,25 +129,15 @@ export class CoreWorkflowVersionMutationResolver {
         });
       }, buildSystemAuthContext(workspaceId));
 
+    const { payload: triggerPayload, createdBy } =
+      buildWorkflowRunTriggerContext({ workspaceMember, payload });
+
     return this.coreWorkflowLifecycleWorkspaceService.runCoreWorkflowVersion({
       workspaceId,
       coreWorkflowVersionId,
       workflowRunId: workflowRunId ?? undefined,
-      payload: {
-        ...(payload ?? {}),
-        [WORKFLOW_TRIGGER_PAYLOAD_KEY]: { ...(payload ?? {}) },
-        [WORKFLOW_TRIGGER_METADATA_KEY]: {
-          [WORKFLOW_TRIGGER_METADATA_WORKSPACE_MEMBER_ID_KEY]:
-            workspaceMember.id,
-        },
-      },
-      createdBy: buildCreatedByFromFullNameMetadata({
-        fullNameMetadata: {
-          firstName: workspaceMember.name.firstName,
-          lastName: workspaceMember.name.lastName,
-        },
-        workspaceMemberId: workspaceMember.id,
-      }),
+      payload: triggerPayload,
+      createdBy,
     });
   }
 
@@ -251,7 +251,7 @@ export class CoreWorkflowVersionMutationResolver {
       source,
       target,
       sourceConnectionOptions,
-    }: CreateCoreWorkflowVersionEdgeInput,
+    }: DeleteCoreWorkflowVersionEdgeInput,
   ): Promise<WorkflowVersionStepChangesDTO> {
     return this.coreWorkflowVersionMutationWorkspaceService.deleteEdge({
       workspaceId,

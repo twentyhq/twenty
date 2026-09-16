@@ -47,10 +47,12 @@ export const SidePanelCoreWorkflowVersionPage = () => {
       <StyledActions>
         <Tag color={tagProps.color}>{t(tagProps.label)}</Tag>
         <StyledSpacer />
-        <CoreWorkflowVersionRestoreButton
-          workflowId={coreWorkflowVersion.workspaceWorkflowId}
-          workspaceWorkflowVersionId={workspaceWorkflowVersionId}
-        />
+        {isDefined(coreWorkflowVersion.workspaceWorkflowId) && (
+          <CoreWorkflowVersionRestoreButton
+            workflowId={coreWorkflowVersion.workspaceWorkflowId}
+            workspaceWorkflowVersionId={workspaceWorkflowVersionId}
+          />
+        )}
       </StyledActions>
       <CoreWorkflowVersionCard
         workspaceWorkflowVersionId={workspaceWorkflowVersionId}

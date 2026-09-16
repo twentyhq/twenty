@@ -13,6 +13,7 @@ import { type DeletedCoreWorkflowDTO } from 'src/engine/core-modules/workflow/dt
 import { type DiscardCoreWorkflowDraftInput } from 'src/engine/core-modules/workflow/dtos/discard-core-workflow-draft.input';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
+import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -33,6 +34,7 @@ import {
   type WorkflowWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
+import { WorkflowVersionWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version/workflow-version.workspace-service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type DiscardDraftVersionOutcome =
@@ -53,9 +55,81 @@ export class CoreWorkflowMutationWorkspaceService {
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
     private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
+    private readonly coreWorkflowListService: CoreWorkflowListService,
+    private readonly workflowVersionWorkspaceService: WorkflowVersionWorkspaceService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
   ) {}
+
+  async duplicateWorkflow({
+    workspaceId,
+    coreWorkflowIdToDuplicate,
+    coreWorkflowVersionIdToCopy,
+  }: {
+    workspaceId: string;
+    coreWorkflowIdToDuplicate: string;
+    coreWorkflowVersionIdToCopy: string;
+  }): Promise<CoreWorkflowDTO> {
+    const { workspaceWorkflowId } =
+      await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
+        { workspaceId, coreWorkflowId: coreWorkflowIdToDuplicate },
+      );
+
+    const { workspaceWorkflowVersionId } =
+      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
+        { workspaceId, coreWorkflowVersionId: coreWorkflowVersionIdToCopy },
+      );
+
+    const duplicatedVersion =
+      await this.workflowVersionWorkspaceService.duplicateWorkflow({
+        workspaceId,
+        workflowIdToDuplicate: workspaceWorkflowId,
+        workflowVersionIdToCopy: workspaceWorkflowVersionId,
+      });
+
+    const duplicatedCoreWorkflowId =
+      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+        const workflowRepository =
+          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
+            'workflow',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const duplicatedWorkflow = await workflowRepository.findOne({
+          where: { id: duplicatedVersion.workflowId },
+        });
+
+        return duplicatedWorkflow?.coreWorkflowId ?? null;
+      }, buildSystemAuthContext(workspaceId));
+
+    if (!isDefined(duplicatedCoreWorkflowId)) {
+      throw new WorkflowQueryValidationException(
+        `Duplicated workflow '${duplicatedVersion.workflowId}' has no core row`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Workflow duplication failed, please retry`,
+        },
+      );
+    }
+
+    const duplicatedCoreWorkflow =
+      await this.coreWorkflowListService.findOneById({
+        workspaceId,
+        coreWorkflowId: duplicatedCoreWorkflowId,
+      });
+
+    if (!isDefined(duplicatedCoreWorkflow)) {
+      throw new WorkflowQueryValidationException(
+        `Core row '${duplicatedCoreWorkflowId}' of the duplicated workflow not found`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Workflow duplication failed, please retry`,
+        },
+      );
+    }
+
+    return duplicatedCoreWorkflow;
+  }
 
   async updateWorkflow(
     workspaceId: string,
@@ -70,7 +144,7 @@ export class CoreWorkflowMutationWorkspaceService {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
           await transactionScope.executeRawQuery(
-            `UPDATE core."workflow" SET "name" = $1 WHERE "id" = $2 AND "workspaceId" = $3`,
+            `UPDATE core."workflow" SET "name" = $1, "updatedAt" = now() WHERE "id" = $2 AND "workspaceId" = $3`,
             [name, coreWorkflowId, workspaceId],
           );
 
@@ -353,22 +427,12 @@ export class CoreWorkflowMutationWorkspaceService {
       );
     }
 
-    const coreVersion =
-      await this.workflowVersionCoreSyncService.findCoreVersionById(
-        workspaceId,
-        coreWorkflowVersionId,
-      );
-
-    if (!isDefined(coreVersion)) {
-      return null;
-    }
-
-    const { workspaceWorkflowVersionId: resolvedWorkspaceVersionId } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
+    const resolved =
+      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdIfCoreVersionExists(
         { workspaceId, coreWorkflowVersionId },
       );
 
-    return resolvedWorkspaceVersionId;
+    return resolved?.workspaceWorkflowVersionId ?? null;
   }
 
   private async rollbackCreatedWorkflow(

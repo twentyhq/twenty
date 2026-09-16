@@ -36,12 +36,12 @@ export class CoreWorkflowIdResolutionService {
     coreWorkflowVersion: WorkflowVersionEntity;
     workspaceWorkflowVersionId: string;
   }> {
-    const coreWorkflowVersion =
-      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
-        where: { id: coreWorkflowVersionId },
-      });
+    const resolved = await this.resolveWorkspaceVersionIdIfCoreVersionExists({
+      workspaceId,
+      coreWorkflowVersionId,
+    });
 
-    if (!isDefined(coreWorkflowVersion)) {
+    if (!isDefined(resolved)) {
       throw new WorkflowQueryValidationException(
         `Core workflow version '${coreWorkflowVersionId}' not found`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
@@ -49,6 +49,28 @@ export class CoreWorkflowIdResolutionService {
           userFriendlyMessage: msg`Workflow version not found`,
         },
       );
+    }
+
+    return resolved;
+  }
+
+  async resolveWorkspaceVersionIdIfCoreVersionExists({
+    workspaceId,
+    coreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    coreWorkflowVersionId: string;
+  }): Promise<{
+    coreWorkflowVersion: WorkflowVersionEntity;
+    workspaceWorkflowVersionId: string;
+  } | null> {
+    const coreWorkflowVersion =
+      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+        where: { id: coreWorkflowVersionId },
+      });
+
+    if (!isDefined(coreWorkflowVersion)) {
+      return null;
     }
 
     const workspaceTwins =
@@ -69,7 +91,7 @@ export class CoreWorkflowIdResolutionService {
         `Core workflow version '${coreWorkflowVersionId}' resolves to ${workspaceTwins.length} workspace rows instead of exactly one`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: msg`Workflow version is not writable right now, please retry`,
+          userFriendlyMessage: msg`Workflow version is not correctly linked to its mirror`,
         },
       );
     }
@@ -112,7 +134,7 @@ export class CoreWorkflowIdResolutionService {
         `Core workflow '${coreWorkflowId}' has no workspace mirror row`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: msg`Workflow is not writable right now, please retry`,
+          userFriendlyMessage: msg`Workflow is not correctly linked to its mirror`,
         },
       );
     }
@@ -135,7 +157,7 @@ export class CoreWorkflowIdResolutionService {
         `Workspace mirror row '${workspaceWorkflowId}' of core workflow '${coreWorkflowId}' not found`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
-          userFriendlyMessage: msg`Workflow is not writable right now, please retry`,
+          userFriendlyMessage: msg`Workflow is not correctly linked to its mirror`,
         },
       );
     }
