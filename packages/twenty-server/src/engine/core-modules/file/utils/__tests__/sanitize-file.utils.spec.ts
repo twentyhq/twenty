@@ -43,13 +43,70 @@ describe('sanitizeFile', () => {
     expect(sanitized).not.toContain('<script');
   });
 
-  it('should return non-SVG files unchanged', () => {
-    const file = Buffer.from('not an svg');
+  it('should strip EXIF APP1 metadata from a JPEG file', () => {
+    const jpegWithExif = Buffer.concat([
+      Buffer.from([0xff, 0xd8]),
+      Buffer.from([0xff, 0xe1, 0x00, 0x08]),
+      Buffer.from('Exif\0\0', 'binary'),
+      Buffer.from([0xff, 0xdb, 0x00, 0x04, 0x01, 0x02]),
+      Buffer.from([0xff, 0xda, 0x00, 0x02]),
+      Buffer.from('scan-data', 'binary'),
+      Buffer.from([0xff, 0xd9]),
+    ]);
+
+    const sanitized = sanitizeFile({
+      file: jpegWithExif,
+      ext: 'jpg',
+      mimeType: 'image/jpeg',
+    }) as Buffer;
+
+    expect(sanitized.includes(Buffer.from('Exif'))).toBe(false);
+    expect(sanitized.includes(Buffer.from([0xff, 0xe1]))).toBe(false);
+    expect(sanitized.includes(Buffer.from('scan-data'))).toBe(true);
+    expect(sanitized[0]).toBe(0xff);
+    expect(sanitized[1]).toBe(0xd8);
+  });
+
+  it('should strip eXIf metadata chunk from a PNG file', () => {
+    const pngSig = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+    const exifChunk = Buffer.from([
+      0x00, 0x00, 0x00, 0x04,
+      0x65, 0x58, 0x49, 0x66, // 'eXIf'
+      0x01, 0x02, 0x03, 0x04,
+      0x00, 0x00, 0x00, 0x00,
+    ]);
+    const idatChunk = Buffer.from([
+      0x00, 0x00, 0x00, 0x04,
+      0x49, 0x44, 0x41, 0x54, // 'IDAT'
+      0x11, 0x22, 0x33, 0x44,
+      0x00, 0x00, 0x00, 0x00,
+    ]);
+    const iendChunk = Buffer.from([
+      0x00, 0x00, 0x00, 0x00,
+      0x49, 0x45, 0x4e, 0x44, // 'IEND'
+      0xae, 0x42, 0x60, 0x82,
+    ]);
+
+    const pngWithExif = Buffer.concat([pngSig, exifChunk, idatChunk, iendChunk]);
+
+    const sanitized = sanitizeFile({
+      file: pngWithExif,
+      ext: 'png',
+      mimeType: 'image/png',
+    }) as Buffer;
+
+    expect(sanitized.includes(Buffer.from('eXIf'))).toBe(false);
+    expect(sanitized.includes(Buffer.from('IDAT'))).toBe(true);
+    expect(sanitized.includes(Buffer.from('IEND'))).toBe(true);
+  });
+
+  it('should return non-image files unchanged', () => {
+    const file = Buffer.from('plain text file content');
 
     const result = sanitizeFile({
       file,
-      ext: 'png',
-      mimeType: 'image/png',
+      ext: 'txt',
+      mimeType: 'text/plain',
     });
 
     expect(result).toBe(file);
