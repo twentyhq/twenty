@@ -42,7 +42,7 @@ export class CampaignEngagementResolver {
   ) {}
 
   @Mutation(() => MessageCampaignFollowUpDraftDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async createMessageCampaignFollowUpDraft(
     @Args('input') input: MessageCampaignEngagementInput,
     @AuthUserWorkspaceId() userWorkspaceId: string,
@@ -59,7 +59,7 @@ export class CampaignEngagementResolver {
   }
 
   @Query(() => MessageCampaignEngagementDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
+  @RequireFeatureFlag(FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED)
   async messageCampaignEngagement(
     @Args('input') input: MessageCampaignEngagementInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
