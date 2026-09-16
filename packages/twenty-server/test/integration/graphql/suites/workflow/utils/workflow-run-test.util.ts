@@ -147,6 +147,32 @@ export const waitForWorkflowCompletion = async (
   return workflowRun;
 };
 
+// The run reaches RUNNING as soon as its trigger completes, while each step
+// moves out of NOT_STARTED on a later write, so a step assertion needs its own wait
+export const waitForWorkflowRunStepStatus = async (
+  workflowRunId: string,
+  stepId: string,
+  expectedStatus: string,
+  maxAttempts = 30,
+  intervalMs = 500,
+): Promise<WorkflowRunResponse | null> => {
+  let workflowRun = await getWorkflowRun(workflowRunId);
+  let attempts = 0;
+
+  while (
+    attempts < maxAttempts &&
+    workflowRun?.state?.stepInfos?.[stepId]?.status !== expectedStatus &&
+    (workflowRun === null ||
+      PENDING_WORKFLOW_RUN_STATUSES.includes(workflowRun.status))
+  ) {
+    await new Promise((resolve) => setTimeout(resolve, intervalMs));
+    workflowRun = await getWorkflowRun(workflowRunId);
+    attempts++;
+  }
+
+  return workflowRun;
+};
+
 export const waitForWorkflowRunStatus = async (
   workflowRunId: string,
   expectedStatus: WorkflowRunStatusType,
