@@ -1107,6 +1107,11 @@ msgstr "IA no *fluxo de migração*"
 msgid "AI in the migration workflow"
 msgstr "IA no fluxo de trabalho de migração"
 
+#. js-lingui-id: CKvvwf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "AI settings now show each model’s provider, price per million tokens, context window, maximum output, and data residency."
+msgstr ""
+
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
 msgid "AI-assisted"
@@ -1275,6 +1280,11 @@ msgstr "Abr"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Arabic"
 msgstr "Árabe"
+
+#. js-lingui-id: Qrqy7n
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Arabic and Hebrew read right to left"
+msgstr ""
 
 #. js-lingui-id: uicv6Z
 #: src/case-studies/case-study-stories.ts
@@ -1699,6 +1709,11 @@ msgstr "Link de calendário / agendamento"
 msgid "Calendar View for Objects"
 msgstr "Visualização em calendário para objetos"
 
+#. js-lingui-id: RZgOeI
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
+msgstr ""
+
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
 msgid "Cambodia 🇰🇭"
@@ -1846,6 +1861,11 @@ msgstr "Escolha exatamente quais marcadores do Gmail ou pastas do Outlook sincro
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose how to display dates in any field using a universal Unicode date format that best suits your use case."
 msgstr "Escolha como exibir datas em qualquer campo usando um formato de data Unicode universal que melhor se adapte ao seu caso de uso."
+
+#. js-lingui-id: BZEHq1
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose how your AI should behave on a single slider, from Extra Fast to Extra Smart, instead of picking a model by name. Each tier shows what it trades in speed, cost, and intelligence."
+msgstr ""
 
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3387,6 +3407,11 @@ msgstr "Aplicativos em destaque"
 msgid "Feb"
 msgstr "Fev"
 
+#. js-lingui-id: ATTTRk
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field descriptions on hover"
+msgstr ""
+
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -4000,6 +4025,11 @@ msgstr "Por hora"
 #: src/partner-application/partner-application-copy.ts
 msgid "Hourly rate *"
 msgstr "Valor por hora *"
+
+#. js-lingui-id: c+5807
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
+msgstr ""
 
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
@@ -5810,6 +5840,11 @@ msgstr "Parcerias - Estratégia para Q4"
 msgid "Paste the key and click Activate."
 msgstr "Cole a chave e clique em Activate."
 
+#. js-lingui-id: oKV11Q
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Pause the recording bot"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -5866,6 +5901,11 @@ msgstr "Peru 🇵🇪"
 msgid "Philippines 🇵🇭"
 msgstr "Filipinas 🇵🇭"
 
+#. js-lingui-id: hyGrEm
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Pick an AI model by tier"
+msgstr ""
+
 #. js-lingui-id: we6gj5
 #: src/partner-application/partner-application-copy.ts
 msgid "Pick every category that applies."
@@ -5900,6 +5940,11 @@ msgstr "Pipeline, contatos, sincronização de e-mail"
 #: src/platform/routing/static-website-routes.ts
 msgid "Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use."
 msgstr "Pipelines, objetos personalizados, assistentes de IA e uma API nativa sobre Postgres. O Twenty é o CRM open source com a UX moderna que as equipes realmente querem usar."
+
+#. js-lingui-id: NjL3pD
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Play audio-only recordings"
+msgstr ""
 
 #. js-lingui-id: z7gnI9
 #: src/partner-application/partner-application-copy.ts
@@ -6251,6 +6296,11 @@ msgstr "Eventos recorrentes de calendários Google conectados agora permanecem s
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Recurring Google Calendar events"
 msgstr "Eventos recorrentes do Google Calendar"
+
+#. js-lingui-id: pRH3vs
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Reference records and skills in AI chat"
+msgstr ""
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6740,6 +6790,11 @@ msgstr "Ver preços do Twenty"
 #: src/sections/three-cards/product-three-cards-data.ts
 msgid "See updates as they happen. Work with your team and agents seamlessly."
 msgstr "Veja as atualizações conforme acontecem. Trabalhe com seu time e agentes sem atrito."
+
+#. js-lingui-id: DlPcBc
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See what a model costs and where it runs"
+msgstr ""
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
@@ -7236,6 +7291,11 @@ msgstr "Pare de lutar com o custom. *Comece a construir com a Twenty*"
 msgid "Stop settling for trade-offs."
 msgstr "Pare de aceitar trocas ruins."
 
+#. js-lingui-id: 8b3N0u
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Stop the call recorder from joining calendar meetings with one workspace setting, rather than uninstalling the app. The Recording Bot preference now reads On only when a bot is really scheduled."
+msgstr ""
+
 #. js-lingui-id: hjgBcp
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Stop Workflow Button"
@@ -7646,6 +7706,11 @@ msgstr "O grande monólito"
 #: src/sections/problem/problem.data.ts
 msgid "The In-house Burden"
 msgstr "O peso do in-house"
+
+#. js-lingui-id: 6U7fek
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
+msgstr ""
 
 #. js-lingui-id: ZNzKXV
 #: src/case-studies/case-study-stories.ts
@@ -8157,6 +8222,11 @@ msgstr "Autenticação em duas etapas"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Two-Factor Authentication"
 msgstr "Autenticação em duas etapas"
+
+#. js-lingui-id: QMyFdb
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Type <0>@</0> to point the chat at a record, or <1>/</1> to pick one of your workspace’s skills. Both suggest matches as you type."
+msgstr ""
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts
