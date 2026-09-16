@@ -69,7 +69,6 @@ export class CampaignEngagementReportService {
     });
 
     const campaign = await this.findReadableCampaignOrThrow({
-      workspaceId,
       roleId,
       messageCampaignId,
     });
@@ -136,11 +135,9 @@ export class CampaignEngagementReportService {
   }
 
   private async findReadableCampaignOrThrow({
-    workspaceId,
     roleId,
     messageCampaignId,
   }: {
-    workspaceId: string;
     roleId: string;
     messageCampaignId: string;
   }): Promise<ReportedCampaign> {
