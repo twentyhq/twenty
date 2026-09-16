@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react';
 import { useDebouncedCallback } from 'use-debounce';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type CreateAgentInput,
   CreateOneAgentDocument,
@@ -34,7 +35,7 @@ export const useSettingsAgentSave = ({
   validateForm: () => boolean;
 }) => {
   const navigate = useNavigateSettings();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [originalFormValues, setOriginalFormValues] =
     useState(initialFormValues);
@@ -54,14 +55,13 @@ export const useSettingsAgentSave = ({
       return true;
     } catch (error) {
       if (CombinedGraphQLErrors.is(error)) {
-        enqueueErrorSnackBar({
-          apolloError: error,
-        });
+        enqueueToast(getToastOptionsFromError({ error }));
       } else {
         const errorMessage =
           error instanceof Error ? error.message : String(error);
-        enqueueErrorSnackBar({
-          message: t`Failed to save role permissions: ${errorMessage}`,
+        enqueueToast({
+          variant: 'error',
+          children: t`Failed to save role permissions: ${errorMessage}`,
         });
       }
 
@@ -117,9 +117,7 @@ export const useSettingsAgentSave = ({
 
       setOriginalFormValues({ ...formValues });
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsSubmitting(false);
     }
@@ -183,9 +181,7 @@ export const useSettingsAgentSave = ({
 
       navigate(SettingsPath.AI);
     } catch (error) {
-      enqueueErrorSnackBar({
-        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsSubmitting(false);
     }

@@ -16,9 +16,14 @@ export type ChildMetadataName = Extract<
   | 'viewSort'
   | 'pageLayoutTab'
   | 'pageLayoutWidget'
+  | 'objectPermission'
+  | 'fieldPermission'
+  | 'rolePermissionFlag'
+  | 'rowLevelPermissionPredicate'
+  | 'rowLevelPermissionPredicateGroup'
 >;
 
 export type ParentMetadataName = Extract<
   AllMetadataName,
-  'view' | 'pageLayout' | 'pageLayoutTab'
+  'view' | 'pageLayout' | 'pageLayoutTab' | 'role'
 >;

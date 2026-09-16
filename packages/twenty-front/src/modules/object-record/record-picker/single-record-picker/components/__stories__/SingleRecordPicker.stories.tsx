@@ -3,7 +3,7 @@ import { expect, userEvent, within } from 'storybook/test';
 
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/utils/sleep';
 
@@ -36,7 +36,7 @@ const meta: Meta<typeof SingleRecordPicker> = {
   decorators: [
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
   args: {
     objectNameSingulars: [CoreObjectNameSingular.WorkspaceMember],
