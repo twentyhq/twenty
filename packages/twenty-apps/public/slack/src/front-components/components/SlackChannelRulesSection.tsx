@@ -71,7 +71,9 @@ export const SlackChannelRulesSection = ({
 
     enqueueSlackToolResultSnackbar(result);
 
-    await refetchSlackChannelRules();
+    if (result.success) {
+      await refetchSlackChannelRules();
+    }
   };
 
   const handleRemove = async (rule: SlackChannelRuleRecord) => {
