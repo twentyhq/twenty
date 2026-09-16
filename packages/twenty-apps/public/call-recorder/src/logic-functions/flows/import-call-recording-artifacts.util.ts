@@ -239,10 +239,9 @@ const importScopeArtifacts = async ({
     saveProgress,
     signal,
   });
-  const expiredMediaUpdate =
-    mediaImport.isRecordingGone === true
-      ? buildExpiredMediaImportUpdate(callRecording)
-      : {};
+  const expiredMediaUpdate = mediaImport.isRecordingGone
+    ? buildExpiredMediaImportUpdate(callRecording)
+    : {};
 
   await saveProgress(expiredMediaUpdate);
 
