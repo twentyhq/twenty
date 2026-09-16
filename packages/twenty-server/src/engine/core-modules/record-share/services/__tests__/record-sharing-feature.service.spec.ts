@@ -80,10 +80,10 @@ describe('RecordSharingFeatureService', () => {
     ).not.toHaveBeenCalled();
   });
 
-  it('falls back to entitled when no provider is registered', async () => {
+  it('stays off when no entitlement provider is registered', async () => {
     givenRegisteredProviders([undefined]);
     service = await buildService();
 
-    expect(await service.isRecordSharingEnabled(WORKSPACE_ID)).toBe(true);
+    expect(await service.isRecordSharingEnabled(WORKSPACE_ID)).toBe(false);
   });
 });
