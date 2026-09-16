@@ -7,7 +7,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
@@ -68,7 +67,6 @@ export class DevSeederService {
     private readonly devSeederPermissionsService: DevSeederPermissionsService,
     private readonly devSeederDataService: DevSeederDataService,
     private readonly applicationService: ApplicationService,
-    private readonly fileStorageService: FileStorageService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly sdkClientGenerationService: SdkClientGenerationService,
@@ -282,9 +280,9 @@ export class DevSeederService {
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const workspaceCustomApplicationId = v4();
-
     try {
+      const workspaceCustomApplicationId = v4();
+
       await createWorkspace({
         queryRunner,
         schemaName,
@@ -356,10 +354,6 @@ export class DevSeederService {
       await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
-      await this.fileStorageService.invalidateStorageStock({
-        workspaceId,
-        applicationId: workspaceCustomApplicationId,
-      });
       throw error;
     } finally {
       await queryRunner.release();
