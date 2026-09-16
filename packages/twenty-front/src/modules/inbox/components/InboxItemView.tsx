@@ -1,17 +1,16 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
-import { IconCheck, IconClockHour8, IconX, useIcons } from 'twenty-ui/icon';
+import { IconCheck, IconClockHour8, IconX } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/primitives/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { InboxItemSubjectChip } from '@/inbox/components/InboxItemSubjectChip';
-import { InboxItemPlacement } from '@/inbox/components/InboxItemPlacement';
 import { InboxItemThreadView } from '@/inbox/components/InboxItemThreadView';
 import { InboxPlanActionsSummary } from '@/inbox/components/InboxPlanActionsSummary';
 import { InboxPlanEntityGraph } from '@/inbox/components/InboxPlanEntityGraph';
@@ -29,7 +28,6 @@ import {
   InboxItemToolCallStatus,
 } from '~/generated/graphql';
 import { EMAIL_TOOL_CALL_INPUT_SCHEMA } from '@/inbox/tool-call-renderers/email/constants/EmailToolCallInputSchema';
-import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledView = styled.div`
   display: flex;
@@ -46,34 +44,6 @@ const StyledScroll = styled.div`
   min-height: 0;
   overflow-y: auto;
   padding: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledHeaderEnd = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledHeader = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
-  font-size: ${themeCssVariables.font.size.xs};
-  gap: ${themeCssVariables.spacing[1]};
-  justify-content: space-between;
-`;
-
-const StyledType = styled.span`
-  align-items: center;
-  display: inline-flex;
-  gap: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledTitle = styled.h1`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xl};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin: 0;
 `;
 
 const StyledSectionTitle = styled.div`
@@ -132,8 +102,6 @@ export const InboxItemView = ({
   onItemCompleted,
 }: InboxItemViewProps) => {
   const { t } = useLingui();
-  const { theme } = useContext(ThemeContext);
-  const { getIcon } = useIcons();
   const { enqueueToast } = useToast();
   const { objectMetadataItems } = useObjectMetadataItems();
   const {
@@ -162,7 +130,6 @@ export const InboxItemView = ({
     (toolCall) => toolCall.status === InboxItemToolCallStatus.PROPOSED,
   );
   const isDone = inboxItem.scope === InboxItemScope.DONE;
-  const InboxItemTypeIcon = getIcon(inboxItem.inboxItemType.icon);
   const hasContext =
     isNonEmptyString(summary) ||
     isDefined(context.source) ||
@@ -365,22 +332,6 @@ export const InboxItemView = ({
     return (
       <StyledView>
         <StyledScroll>
-          <StyledHeader>
-            <StyledType>
-              <InboxItemTypeIcon
-                size={theme.icon.size.sm}
-                color="currentColor"
-              />
-              {inboxItem.inboxItemType.label}
-            </StyledType>
-            <StyledHeaderEnd>
-              <InboxItemPlacement inboxItem={inboxItem} />
-              <span>
-                {t`Updated ${beautifyPastDateRelativeToNow(inboxItem.lastEventAt)}`}
-              </span>
-            </StyledHeaderEnd>
-          </StyledHeader>
-          <StyledTitle>{inboxItem.title}</StyledTitle>
           {isNonEmptyString(summary) && (
             <StyledSummary>{summary}</StyledSummary>
           )}
@@ -421,20 +372,6 @@ export const InboxItemView = ({
   return (
     <StyledView>
       <StyledScroll>
-        <StyledHeader>
-          <StyledType>
-            <InboxItemTypeIcon size={theme.icon.size.sm} color="currentColor" />
-            {inboxItem.inboxItemType.label}
-          </StyledType>
-          <StyledHeaderEnd>
-            <InboxItemPlacement inboxItem={inboxItem} />
-            <span>
-              {t`Updated ${beautifyPastDateRelativeToNow(inboxItem.lastEventAt)}`}
-            </span>
-          </StyledHeaderEnd>
-        </StyledHeader>
-        <StyledTitle>{inboxItem.title}</StyledTitle>
-
         {hasContext && (
           <StyledContextCard>
             {isNonEmptyString(summary) && (

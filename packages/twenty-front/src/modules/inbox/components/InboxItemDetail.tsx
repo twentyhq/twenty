@@ -4,15 +4,11 @@ import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
-import {
-  IconChevronDown,
-  IconChevronLeft,
-  IconChevronUp,
-} from 'twenty-ui/icon';
-import { LightIconButton } from 'twenty-ui/primitives/input';
+import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxItemMarkReadEffect } from '@/inbox/components/InboxItemMarkReadEffect';
+import { InboxItemPlacement } from '@/inbox/components/InboxItemPlacement';
 import { InboxItemView } from '@/inbox/components/InboxItemView';
 import { useInboxItem } from '@/inbox/hooks/useInboxItem';
 import { useInboxItemPagination } from '@/inbox/hooks/useInboxItemPagination';
@@ -44,17 +40,38 @@ const StyledBackLink = styled(Link)`
   align-items: center;
   color: ${themeCssVariables.font.color.secondary};
   display: flex;
+  flex-shrink: 0;
   font-size: ${themeCssVariables.font.size.md};
   gap: ${themeCssVariables.spacing[1]};
   text-decoration: none;
 `;
 
-const StyledPagination = styled.div`
+const StyledTitle = styled.h1`
   align-items: center;
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${themeCssVariables.font.color.primary};
   display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[1]};
+  flex: 1;
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.medium};
+  gap: ${themeCssVariables.spacing[2]};
+  margin: 0;
+  min-width: 0;
+`;
+
+const StyledTitleIcon = styled.span`
+  color: ${themeCssVariables.font.color.tertiary};
+  display: inline-flex;
+  flex-shrink: 0;
+`;
+
+const StyledTitleText = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const StyledPlacementSlot = styled.div`
+  flex-shrink: 0;
   margin-left: auto;
 `;
 
@@ -90,9 +107,15 @@ export const InboxItemDetail = ({
 }: InboxItemDetailProps) => {
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
+  const { getIcon } = useIcons();
   const { inboxItem, loading, error } = useInboxItem(inboxItemId);
-  const { hasPrevious, hasNext, position, total, goToPrevious, goToNext } =
-    useInboxItemPagination({ inboxListLocation, inboxItemId });
+  // The list moves on after a send the way a mail client does, so the next
+  // item is still resolved even though the bar no longer offers to step.
+  const { hasNext, goToNext } = useInboxItemPagination({
+    inboxListLocation,
+    inboxItemId,
+  });
+  const InboxItemTypeIcon = getIcon(inboxItem?.inboxItemType.icon);
 
   const listPath = isDefined(inboxListLocation.inboxQueueName)
     ? getInboxQueuePath(inboxListLocation.inboxQueueName)
@@ -118,27 +141,22 @@ export const InboxItemDetail = ({
             {listTitle}
           </StyledBackLink>
         )}
-        <StyledPagination>
-          {isDefined(position) && isDefined(total) && (
-            <span>
-              {position} / {total}
-            </span>
-          )}
-          <LightIconButton
-            Icon={IconChevronUp}
-            accent="secondary"
-            aria-label={t`Previous item`}
-            disabled={!hasPrevious}
-            onClick={goToPrevious}
-          />
-          <LightIconButton
-            Icon={IconChevronDown}
-            accent="secondary"
-            aria-label={t`Next item`}
-            disabled={!hasNext}
-            onClick={goToNext}
-          />
-        </StyledPagination>
+        {isDefined(inboxItem) && (
+          <>
+            <StyledTitle title={inboxItem.title}>
+              <StyledTitleIcon aria-label={inboxItem.inboxItemType.label}>
+                <InboxItemTypeIcon
+                  size={theme.icon.size.sm}
+                  color="currentColor"
+                />
+              </StyledTitleIcon>
+              <StyledTitleText>{inboxItem.title}</StyledTitleText>
+            </StyledTitle>
+            <StyledPlacementSlot>
+              <InboxItemPlacement inboxItem={inboxItem} />
+            </StyledPlacementSlot>
+          </>
+        )}
       </StyledTopBar>
       {!isDefined(inboxItem) ? (
         <StyledPlaceholder>
