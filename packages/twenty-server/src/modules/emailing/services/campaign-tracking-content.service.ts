@@ -50,7 +50,7 @@ type PrepareBatchArgs = {
   emailingDomainId: string;
   messageCampaignId: string;
   template: EmailingDomainEmailTemplate;
-  textPartHtml: string;
+  plainTextSourceHtml: string;
   variableNames: string[];
   recipients: TrackingRecipient[];
 };
@@ -72,7 +72,7 @@ export class CampaignTrackingContentService {
     emailingDomainId,
     messageCampaignId,
     template,
-    textPartHtml,
+    plainTextSourceHtml,
     variableNames,
     recipients,
   }: PrepareBatchArgs): Promise<TrackedCampaignBatch> {
@@ -118,7 +118,7 @@ export class CampaignTrackingContentService {
     return {
       template: this.buildTrackedTemplate({
         template,
-        textPartHtml,
+        plainTextSourceHtml,
         urlTemplates,
       }),
       replacementsByDeliveryId: new Map(
@@ -140,11 +140,11 @@ export class CampaignTrackingContentService {
 
   private buildTrackedTemplate({
     template,
-    textPartHtml,
+    plainTextSourceHtml,
     urlTemplates,
   }: {
     template: EmailingDomainEmailTemplate;
-    textPartHtml: string;
+    plainTextSourceHtml: string;
     urlTemplates: string[];
   }): EmailingDomainEmailTemplate {
     const tagByUrl = (messagePart: CampaignMessagePart) =>
@@ -159,7 +159,7 @@ export class CampaignTrackingContentService {
       ...template,
       html: replaceTrackableLinkUrls(template.html ?? '', tagByUrl('HTML')),
       text: toPlainText(
-        replaceTrackableLinkUrls(textPartHtml, tagByUrl('TEXT')),
+        replaceTrackableLinkUrls(plainTextSourceHtml, tagByUrl('TEXT')),
       ),
     };
   }
