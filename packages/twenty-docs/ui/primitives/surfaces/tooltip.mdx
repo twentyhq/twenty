@@ -20,7 +20,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 export const ExportHelp = () => (
   <Tooltip content="Download the visible records as a CSV file" side="top">
     <span>
-      <Button title="Export records" />
+      <Button>Export records</Button>
     </span>
   </Tooltip>
 );
@@ -50,7 +50,7 @@ export const ControlledExportHelp = () => {
       delay={300}
     >
       <span>
-        <Button title="Export records" />
+        <Button>Export records</Button>
       </span>
     </Tooltip>
   );
@@ -69,7 +69,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 export const ExportDetails = () => (
   <Tooltip.Root>
     <Tooltip.Trigger render={<span />}>
-      <Button title="Export records" />
+      <Button>Export records</Button>
     </Tooltip.Trigger>
     <Tooltip.Popup side="right" align="start" arrow>
       <Tooltip.Content
@@ -104,7 +104,7 @@ import { Tooltip } from 'twenty-ui/primitives/surfaces';
 export const UnavailableExport = () => (
   <Tooltip content="Select at least one record to export">
     <span tabIndex={0} aria-label="Export records unavailable">
-      <Button title="Export records" disabled />
+      <Button disabled>Export records</Button>
     </span>
   </Tooltip>
 );

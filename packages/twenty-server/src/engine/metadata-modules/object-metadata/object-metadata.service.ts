@@ -13,6 +13,7 @@ import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-many-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
+import { computeInitialObjectViewOperationsOnObjectCreation } from 'src/engine/metadata-modules/view/utils/compute-initial-object-view-operations-on-object-creation.util';
 import { FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { fromCreateObjectInputToFlatObjectMetadataAndFlatFieldMetadatasToCreate } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-create-object-input-to-flat-object-metadata-and-flat-field-metadatas-to-create.util';
@@ -396,6 +397,17 @@ export class ObjectMetadataService {
           workspaceCustomFlatApplication.universalIdentifier,
       });
 
+    const isWorkspaceCustomApplicationBuild =
+      resolvedOwnerFlatApplication.universalIdentifier ===
+      workspaceCustomFlatApplication.universalIdentifier;
+
+    const initialObjectViewOperations = isWorkspaceCustomApplicationBuild
+      ? computeInitialObjectViewOperationsOnObjectCreation({
+          flatObjectMetadataToCreate,
+          callerFlatFieldMetadatasToCreate: flatFieldMetadataToCreateOnObject,
+        })
+      : undefined;
+
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -415,6 +427,23 @@ export class ObjectMetadataService {
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
+            ...(isDefined(initialObjectViewOperations)
+              ? {
+                  view: {
+                    flatEntityToCreate: [
+                      initialObjectViewOperations.flatInitialViewToCreate,
+                    ],
+                    flatEntityToDelete: [],
+                    flatEntityToUpdate: [],
+                  },
+                  viewField: {
+                    flatEntityToCreate:
+                      initialObjectViewOperations.flatInitialViewFieldsToCreate,
+                    flatEntityToDelete: [],
+                    flatEntityToUpdate: [],
+                  },
+                }
+              : {}),
             ...(isDefined(flatNavigationMenuItemToCreate)
               ? {
                   navigationMenuItem: {

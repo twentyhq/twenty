@@ -100,12 +100,13 @@ export const ContactRow = ({ onOpen }: ContactRowProps) => (
     actions={
       <Button
         type="button"
-        title="Open"
-        ariaLabel="Open Alex Morgan's profile"
-        variant="tertiary"
-        size="small"
+        aria-label="Open Alex Morgan's profile"
+        variant="ghost"
+        size="sm"
         onClick={onOpen}
-      />
+      >
+        Open
+      </Button>
     }
   >
     Alex Morgan

@@ -7,7 +7,7 @@ import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { MainButton } from 'twenty-ui/primitives/input';
+import { MainButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { read, type WorkBook } from 'xlsx-ugnis';
 
@@ -189,13 +189,12 @@ export const DropZone = ({ onContinue, isLoading }: DropZoneProps) => {
             <Trans>Upload .xlsx, .xls or .csv file</Trans>
           </StyledText>
           <StyledButtonsContainer>
-            <MainButton onClick={open} title={t`Select file`} fullWidth />
+            <MainButton onClick={open} fullWidth>{t`Select file`}</MainButton>
             <MainButton
               onClick={downloadSample}
-              title={t`Download sample`}
-              variant="secondary"
               fullWidth
-            />
+              variant="outline"
+            >{t`Download sample`}</MainButton>
           </StyledButtonsContainer>
           <StyledFooterText>
             {t`Max import capacity: ${formatSpreadsheetMaxRecordImportCapacity} records. Otherwise, consider splitting your file or using the API.`}

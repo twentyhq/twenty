@@ -82,14 +82,12 @@ export const AdvancedFilterSidePanelCreateRootFilterButton = ({
 
   return (
     <Button
-      Icon={IconFilter}
-      size="small"
-      variant="secondary"
-      accent="default"
+      startIcon={<IconFilter />}
+      size="sm"
       onClick={addRootRecordFilterGroup}
-      ariaLabel={t`Add filter`}
-      title={t`Add filter`}
+      aria-label={t`Add filter`}
       disabled={readonly}
-    />
+      variant="outline"
+    >{t`Add filter`}</Button>
   );
 };

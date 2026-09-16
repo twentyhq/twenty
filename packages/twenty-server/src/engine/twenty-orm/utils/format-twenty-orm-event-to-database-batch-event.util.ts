@@ -28,7 +28,7 @@ import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
-import { type InheritedReadabilityChildRecords } from 'src/engine/twenty-orm/types/inherited-readability-child-records.type';
+import { type InheritedReadabilityChildRecords } from 'src/engine/core-modules/record-share/types/inherited-readability-child-records.type';
 import { type DatabaseBatchEventInput } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 export const formatTwentyOrmEventToDatabaseBatchEvent = <

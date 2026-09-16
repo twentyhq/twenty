@@ -24,12 +24,12 @@ const TooltipExample = () => {
           delay={0}
         >
           <span>
-            <Button title="Export records" ariaLabel="Export records" />
+            <Button>Export records</Button>
           </span>
         </Tooltip>
         <Tooltip.Root>
           <Tooltip.Trigger render={<span />} delay={0}>
-            <Button title="Export details" ariaLabel="Export details" />
+            <Button>Export details</Button>
           </Tooltip.Trigger>
           <Tooltip.Popup arrow>
             <Tooltip.Content description="Your current filters are applied.">

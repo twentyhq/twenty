@@ -26,7 +26,7 @@ const SURFACES_ENTRIES: GalleryEntry[] = [
     node: (
       <Tooltip content="Tooltip content">
         <span>
-          <Button title="Tooltip anchor" />
+          <Button>Tooltip anchor</Button>
         </span>
       </Tooltip>
     ),

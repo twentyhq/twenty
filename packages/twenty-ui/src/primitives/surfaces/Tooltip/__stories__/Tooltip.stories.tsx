@@ -30,7 +30,7 @@ const meta: Meta<typeof Tooltip> = {
   render: (args) => (
     <Tooltip {...args}>
       <span>
-        <Button title="Show details" />
+        <Button>Show details</Button>
       </span>
     </Tooltip>
   ),
@@ -97,7 +97,7 @@ const ControlledExample = () => {
   return (
     <Tooltip content="Amount" open={open} onOpenChange={setOpen}>
       <span>
-        <Button title="Show details" />
+        <Button>Show details</Button>
       </span>
     </Tooltip>
   );
@@ -111,7 +111,7 @@ export const DisabledButton: Story = {
   render: (args) => (
     <Tooltip {...args}>
       <span>
-        <Button title="Show details" disabled />
+        <Button disabled>Show details</Button>
       </span>
     </Tooltip>
   ),
@@ -157,10 +157,10 @@ export const SharedPopup: Story = {
       {({ payload }) => (
         <>
           <Tooltip.Trigger payload="First amount" render={<span />}>
-            <Button title="First field" ariaLabel="First field" />
+            <Button>First field</Button>
           </Tooltip.Trigger>
           <Tooltip.Trigger payload="Second amount" render={<span />}>
-            <Button title="Second field" ariaLabel="Second field" />
+            <Button>Second field</Button>
           </Tooltip.Trigger>
           <Tooltip.Popup>{payload}</Tooltip.Popup>
         </>

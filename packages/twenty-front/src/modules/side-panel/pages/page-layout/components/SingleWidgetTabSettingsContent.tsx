@@ -160,7 +160,7 @@ export const SingleWidgetTabSettingsContent = ({
         subtitle={t`This will cancel all modifications done on the tab and its widgets. Edit mode will be canceled and the page will refresh. This action cannot be undone.`}
         onConfirmClick={onResetToDefault}
         confirmButtonText={t`Reset`}
-        confirmButtonAccent="danger"
+        confirmButtonColor="danger"
       />
     </>
   );

@@ -9,7 +9,7 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { IconCheck, IconPencil, IconX } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { Button } from 'twenty-ui/primitives/input';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -101,29 +101,26 @@ export const EmailField = () => {
           onInputEnter={handleSave}
         />
         {isEditing ? (
-          <StyledActionWrapper key="editing">
-            <StyledActionButtonContainer>
-              <Button
-                Icon={IconCheck}
-                variant="secondary"
-                position="left"
-                size="medium"
-                onClick={handleSave}
-                disabled={isSaveDisabled}
-                type="button"
-              />
-            </StyledActionButtonContainer>
-            <StyledActionButtonContainer>
-              <Button
-                Icon={IconX}
-                variant="secondary"
-                position="right"
-                size="medium"
-                onClick={handleCancelEditing}
-                type="button"
-              />
-            </StyledActionButtonContainer>
-          </StyledActionWrapper>
+          <ButtonGroup key="editing" aria-label={t`Edit email`}>
+            <Button
+              startIcon={<IconCheck />}
+              aria-label={t`Save`}
+              size="md"
+              onClick={handleSave}
+              disabled={isSaveDisabled}
+              type="button"
+              variant="outline"
+            />
+
+            <Button
+              startIcon={<IconX />}
+              aria-label={t`Cancel`}
+              size="md"
+              onClick={handleCancelEditing}
+              type="button"
+              variant="outline"
+            />
+          </ButtonGroup>
         ) : (
           <StyledActionWrapper key="view">
             <Tooltip
@@ -134,9 +131,10 @@ export const EmailField = () => {
             >
               <StyledActionButtonContainer>
                 <Button
-                  Icon={IconPencil}
-                  variant="secondary"
-                  size="medium"
+                  startIcon={<IconPencil />}
+                  aria-label={t`Edit`}
+                  variant="outline"
+                  size="md"
                   onClick={handleStartEditing}
                   disabled={!canEdit}
                   type="button"

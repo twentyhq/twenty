@@ -357,13 +357,12 @@ export const ResourceCreditPriceSelector = ({
       <StyledActionContainer>
         {canCancelCreditPackSwitch && (
           <Button
-            Icon={IconCircleX}
-            title={t`Cancel credit pack switching`}
-            variant="secondary"
-            size="small"
+            startIcon={<IconCircleX />}
+            size="sm"
             onClick={onCancelCreditPackSwitch}
             disabled={isUpdating}
-          />
+            variant="outline"
+          >{t`Cancel credit pack switching`}</Button>
         )}
         {!isTrialing &&
           !canCancelCreditPackSwitch &&
@@ -375,31 +374,23 @@ export const ResourceCreditPriceSelector = ({
             return (
               <Button
                 key={price.stripePriceId}
-                Icon={IconArrowUp}
-                title={t`Increase to $${priceDisplay}`}
-                variant="secondary"
-                size="small"
+                startIcon={<IconArrowUp />}
+                size="sm"
                 onClick={() => openConfirmationForPrice(price)}
                 disabled={
                   isUpdating ||
                   (shouldRedirectToManageBilling && isManageBillingDisabled)
                 }
-              />
+                variant="outline"
+              >{t`Increase to $${priceDisplay}`}</Button>
             );
           })}
         {shouldShowPrimaryAction && (
           <Button
-            Icon={PrimaryActionIcon}
-            title={
-              shouldRedirectToUpdatePayment
-                ? t`Update payment`
-                : shouldRedirectToManageBilling
-                  ? t`Manage billing`
-                  : t`Manage`
+            startIcon={
+              isDefined(PrimaryActionIcon) ? <PrimaryActionIcon /> : undefined
             }
-            variant="primary"
-            accent="green"
-            size="small"
+            size="sm"
             onClick={handlePrimaryActionClick}
             disabled={
               isUpdating ||
@@ -410,7 +401,15 @@ export const ResourceCreditPriceSelector = ({
                 !isTrialing &&
                 !hasAlternativeResourceCreditPrice)
             }
-          />
+            variant="solid"
+            color="success"
+          >
+            {shouldRedirectToUpdatePayment
+              ? t`Update payment`
+              : shouldRedirectToManageBilling
+                ? t`Manage billing`
+                : t`Manage`}
+          </Button>
         )}
       </StyledActionContainer>
       <ResourceCreditPackagePickerModal
@@ -444,7 +443,7 @@ export const ResourceCreditPriceSelector = ({
             : t`Confirm changing your current resource credit allocation.`
         }
         confirmButtonText={isUpgrade() ? t`Upgrade` : t`Downgrade`}
-        confirmButtonAccent={isUpgrade() ? 'blue' : 'danger'}
+        confirmButtonColor={isUpgrade() ? 'accent' : 'danger'}
         loading={isUpdating}
         onConfirmClick={handleConfirmClick}
       />
