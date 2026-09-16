@@ -1,3 +1,5 @@
+import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
+import { NavigationMenuItemIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemIcon';
 import { getAvatarShape } from '@/object-metadata/utils/getAvatarShape';
 import { useQuery } from '@apollo/client/react';
 import { FindAllStandalonePageLayoutsDocument } from '~/generated-metadata/graphql';
@@ -86,6 +88,7 @@ export const NavigationMenuItemAddDropdownContent = ({
   });
   const [objectId, setObjectId] = useState<string | null>(null);
   const { currentItems, createItem } = useNavigationMenuItemEditController();
+  const navigationMenuItems = useAtomStateValue(navigationMenuItemsSelector);
   const navigationMenuItemEditSection = useAtomStateValue(
     navigationMenuItemEditSectionState,
   );
@@ -211,7 +214,9 @@ export const NavigationMenuItemAddDropdownContent = ({
         {
           id: 'folder',
           label: t`Folder`,
-          contextualText: folderId ? t`Cannot nest folders into folders` : undefined,
+          contextualText: folderId
+            ? t`Cannot nest folders into folders`
+            : undefined,
           Icon: folderId ? IconFolder : undefined,
           icon: folderId ? undefined : (
             <ColoredIcon
@@ -323,27 +328,40 @@ export const NavigationMenuItemAddDropdownContent = ({
       const pageLayoutIdsAlreadyAdded = new Set(
         currentItems.map((item) => item.pageLayoutId),
       );
-      return [...(standalonePagesData?.getPageLayouts ?? [])]
+      return (standalonePagesData?.getPageLayouts ?? [])
+        .map((page) => {
+          const navigationItem = [...currentItems, ...navigationMenuItems].find(
+            (item) =>
+              item.type === NavigationMenuItemType.PAGE_LAYOUT &&
+              item.pageLayoutId === page.id,
+          );
+          const name = navigationItem?.name ?? page.name;
+          return {
+            id: page.id,
+            label: name,
+            icon: navigationItem ? (
+              <NavigationMenuItemIcon navigationMenuItem={navigationItem} />
+            ) : (
+              <TintedIconTile Icon={IconPerspective} />
+            ),
+            isDisabled: pageLayoutIdsAlreadyAdded.has(page.id),
+            isAlreadyInNavbar: pageLayoutIdsAlreadyAdded.has(page.id),
+            onClick: () =>
+              addItem({
+                type: NavigationMenuItemType.PAGE_LAYOUT,
+                pageLayoutId: page.id,
+                name,
+                icon: navigationItem ? navigationItem.icon : 'IconPerspective',
+                color: navigationItem?.color,
+              }),
+          };
+        })
         .sort(
           (firstPage, secondPage) =>
-            Number(pageLayoutIdsAlreadyAdded.has(firstPage.id)) -
-              Number(pageLayoutIdsAlreadyAdded.has(secondPage.id)) ||
-            firstPage.name.localeCompare(secondPage.name),
-        )
-        .map((page) => ({
-          id: page.id,
-          label: page.name,
-          icon: <TintedIconTile Icon={IconPerspective} />,
-          isDisabled: pageLayoutIdsAlreadyAdded.has(page.id),
-          isAlreadyInNavbar: pageLayoutIdsAlreadyAdded.has(page.id),
-          onClick: () =>
-            addItem({
-              type: NavigationMenuItemType.PAGE_LAYOUT,
-              pageLayoutId: page.id,
-              name: page.name,
-              icon: 'IconPerspective',
-            }),
-        }));
+            Number(firstPage.isAlreadyInNavbar) -
+              Number(secondPage.isAlreadyInNavbar) ||
+            firstPage.label.localeCompare(secondPage.label),
+        );
     }
     if (targetStep === 'record')
       return availableSearchRecords.flatMap((record) => {
