@@ -5,6 +5,7 @@ export const PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED: ObjectMetadataSeed = {
   labelSingular: 'Pet Care Agreement',
   namePlural: 'petCareAgreements',
   nameSingular: 'petCareAgreement',
+  color: 'gray',
   icon: 'IconPaw',
   skipNameField: true,
 };

@@ -5,6 +5,7 @@ export const ROCKET_CUSTOM_OBJECT_SEED: ObjectMetadataSeed = {
   labelSingular: 'Rocket',
   namePlural: 'rockets',
   nameSingular: 'rocket',
+  color: 'gray',
   icon: 'IconRocket',
   description: 'A rocket',
   isRemote: false,

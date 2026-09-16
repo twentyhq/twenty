@@ -3,11 +3,19 @@ title: LightButton
 description: Present lightweight actions with standard or subtle emphasis.
 ---
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import LightButtonReference from '/snippets/ui/generated/input/light-button.mdx';
 
 Use the shared `LightButton` component for a lightweight action. It composes
 [Button](/ui/primitives/input/button) with a ghost surface, small size, regular
 font weight, and no elevation.
+
+<StoryEmbed
+  storyId="ui-components-lightbutton--default"
+  title="LightButton example"
+  height={240}
+/>
 
 ## State ownership
 
@@ -39,8 +47,9 @@ and color; subtle emphasis does not replace the group's semantic color.
 `LightButton` accepts Button's native attributes, refs, event handlers, icon
 slots, loading and disabled states, and render composition. Its native default
 is `type="button"`. Set `type="submit"` for submission or use `href` for a link.
-Router links use `render`, `nativeButton={false}`, and `role="link"` at the
-application routing seam. Consumer classes and state functions pass through.
+Supply `render` to choose a custom root, including an application-owned router
+link. The root must preserve a native button, or an anchor when `href` is set.
+Button derives the interaction behavior from `href`.
 
 ## Props
 

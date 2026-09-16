@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { useThemeContainer } from '@ui/theme-constants';
+import { useTheme, useThemeContainer } from '@ui/theme-constants';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './AppTooltip.module.scss';
@@ -95,6 +95,7 @@ export const AppTooltip = ({
   };
 
   const themeContainer = useThemeContainer();
+  const theme = useTheme();
 
   const [show, setShow] = useState(false);
   const [anchorElements, setAnchorElements] = useState<Element[]>([]);
@@ -167,13 +168,19 @@ export const AppTooltip = ({
       return;
     }
 
+    setShow(false);
     setActiveAnchor(anchorElements[0] ?? null);
   }, [anchorElements, activeAnchor]);
 
   useEffect(() => {
-    if (anchorElements.length === 0) {
+    if (hidden || anchorElements.length === 0) {
+      setShow(false);
+      isHoveringTooltipRef.current = false;
       return;
     }
+
+    let hoveredAnchor: Element | null = null;
+    let focusedAnchor: Element | null = null;
 
     const handleShow = (value: boolean) => {
       if (!isControlled) {
@@ -205,42 +212,87 @@ export const AppTooltip = ({
       clearTimeout(hideDelayTimerRef.current);
     };
 
-    const handleAnchorLeave = (anchorElement: Element) => {
-      if (anchorElement.contains(anchorElement.ownerDocument.activeElement)) {
-        return;
-      }
-
+    // Always defer the hide: a shared tooltip moved between anchors would
+    // otherwise unmount and remount, losing the popup node mid-swap.
+    const handleAnchorLeave = () => {
+      clearTimeout(showDelayTimerRef.current);
       clearTimeout(hideDelayTimerRef.current);
+
       hideDelayTimerRef.current = setTimeout(() => {
         if (isHoveringTooltipRef.current) {
           return;
         }
         handleShow(false);
       }, HIDE_DELAY_MS);
-      clearTimeout(showDelayTimerRef.current);
+    };
+
+    // Dragging or replacing a row can prevent its mouseleave event. Only
+    // watched while an anchor is hovered, so idle tooltips cost nothing.
+    const handlePointerMove = (event: PointerEvent) => {
+      if (
+        isDefined(hoveredAnchor) &&
+        event.target instanceof Node &&
+        !hoveredAnchor.contains(event.target)
+      ) {
+        stopWatchingPointer();
+        if (!isDefined(focusedAnchor)) {
+          handleAnchorLeave();
+        }
+      }
+    };
+
+    const stopWatchingPointer = () => {
+      hoveredAnchor = null;
+      document.removeEventListener('pointermove', handlePointerMove);
     };
 
     const removeListeners = anchorElements.map((anchorElement) => {
-      const handleEnter = () => handleAnchorEnter(anchorElement);
-      const handleLeave = () => handleAnchorLeave(anchorElement);
+      const handleEnter = () => {
+        hoveredAnchor = anchorElement;
+        document.addEventListener('pointermove', handlePointerMove);
+        handleAnchorEnter(anchorElement);
+      };
+      // Keyboard focus keeps the tooltip up on its own, so only a blur closes
+      // one the anchor itself was focused into.
+      const handlePointerLeave = () => {
+        stopWatchingPointer();
+        if (isDefined(focusedAnchor)) {
+          return;
+        }
+        handleAnchorLeave();
+      };
+      const handleFocus = () => {
+        focusedAnchor = anchorElement;
+        handleAnchorEnter(anchorElement);
+      };
+      const handleBlur = () => {
+        focusedAnchor = null;
+        stopWatchingPointer();
+        handleAnchorLeave();
+      };
 
-      // mouseover/mouseout instead of mouseenter/mouseleave to replicate
-      // react-tooltip's default open and close events
-      anchorElement.addEventListener('mouseover', handleEnter);
-      anchorElement.addEventListener('mouseout', handleLeave);
-      anchorElement.addEventListener('focus', handleEnter);
-      anchorElement.addEventListener('blur', handleLeave);
+      // Deliberately not react-tooltip's mouseover/mouseout parity: those fire
+      // per descendant, so child-to-child movement restarted the show timer.
+      anchorElement.addEventListener('mouseenter', handleEnter);
+      anchorElement.addEventListener('mouseleave', handlePointerLeave);
+      anchorElement.addEventListener('focus', handleFocus);
+      anchorElement.addEventListener('blur', handleBlur);
 
       return () => {
-        anchorElement.removeEventListener('mouseover', handleEnter);
-        anchorElement.removeEventListener('mouseout', handleLeave);
-        anchorElement.removeEventListener('focus', handleEnter);
-        anchorElement.removeEventListener('blur', handleLeave);
+        anchorElement.removeEventListener('mouseenter', handleEnter);
+        anchorElement.removeEventListener('mouseleave', handlePointerLeave);
+        anchorElement.removeEventListener('focus', handleFocus);
+        anchorElement.removeEventListener('blur', handleBlur);
       };
     });
 
-    return () => removeListeners.forEach((removeListener) => removeListener());
-  }, [anchorElements, isControlled, delayShowMs]);
+    return () => {
+      document.removeEventListener('pointermove', handlePointerMove);
+      removeListeners.forEach((removeListener) => removeListener());
+      clearTimeout(showDelayTimerRef.current);
+      clearTimeout(hideDelayTimerRef.current);
+    };
+  }, [anchorElements, isControlled, delayShowMs, interactive, hidden]);
 
   useEffect(() => {
     return () => {
@@ -278,7 +330,13 @@ export const AppTooltip = ({
         <div className={styles.textContent}>
           {hasTitle && (
             <div className={styles.title}>
-              {isDefined(Icon) && <Icon className={styles.icon} aria-hidden />}
+              {isDefined(Icon) && (
+                <Icon
+                  className={styles.icon}
+                  size={theme.icon.size.sm}
+                  aria-hidden
+                />
+              )}
               <span>{title}</span>
             </div>
           )}

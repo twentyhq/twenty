@@ -1,4 +1,4 @@
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerCollapsedButtonSize';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
 import { styled } from '@linaria/react';
 import { type ReactNode, useContext } from 'react';
@@ -8,8 +8,6 @@ import {
   type TargetAndTransition,
 } from 'framer-motion';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-
-const COLLAPSED_GROUP_WIDTH = 24;
 
 const StyledAnimationGroupContainerBase = styled.div<{
   isCollapsedGroup: boolean;
@@ -42,13 +40,11 @@ export const NavigationDrawerItemsCollapsableContainer = ({
   children,
 }: NavigationDrawerItemsCollapsableContainerProps) => {
   const { theme } = useContext(ThemeContext);
-  const isSettingsPage = useIsSettingsPage();
-  const isNavigationDrawerExpanded = useIsNavigationDrawerContentExpanded();
-  const isExpanded = isNavigationDrawerExpanded || isSettingsPage;
+  const isExpanded = useIsNavigationDrawerContentExpanded();
 
   const animate: AnimationControls | TargetAndTransition = isExpanded
     ? { width: 'auto' }
-    : { width: COLLAPSED_GROUP_WIDTH };
+    : { width: NAVIGATION_DRAWER_COLLAPSED_BUTTON_SIZE };
 
   return (
     <StyledAnimationGroupContainer
