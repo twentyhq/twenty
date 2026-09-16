@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import {
@@ -69,6 +69,10 @@ type ResolvedCoreVersion = {
 
 @Injectable()
 export class CoreWorkflowLifecycleWorkspaceService {
+  private readonly logger = new Logger(
+    CoreWorkflowLifecycleWorkspaceService.name,
+  );
+
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
@@ -195,27 +199,17 @@ export class CoreWorkflowLifecycleWorkspaceService {
       );
     }
 
-    const previousTwin = isDefined(previousPublishedCoreVersionId)
-      ? await this.resolveTwinIfCoreVersionExists({
-          workspaceId,
-          coreWorkflowVersionId: previousPublishedCoreVersionId,
-        })
-      : null;
-
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       await this.workspaceOrmManager.runInWorkspaceTransaction(
         async (transactionScope) => {
           if (
             isDefined(previousPublishedCoreVersionId) &&
-            previousPublishedCoreVersionId !== coreWorkflowVersion.id &&
-            isDefined(previousTwin)
+            previousPublishedCoreVersionId !== coreWorkflowVersion.id
           ) {
             await this.writeVersionStatusInTransaction({
               transactionScope,
               workspaceId,
               coreWorkflowVersionId: previousPublishedCoreVersionId,
-              workspaceWorkflowVersionId:
-                previousTwin.workspaceWorkflowVersionId,
               status: WorkflowVersionStatus.ARCHIVED,
             });
           }
@@ -252,7 +246,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
             transactionScope,
             workspaceId,
             coreWorkflowVersionId: coreWorkflowVersion.id,
-            workspaceWorkflowVersionId: resolved.workspaceWorkflowVersionId,
             status: WorkflowVersionStatus.ACTIVE,
           });
 
@@ -311,7 +304,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
             transactionScope,
             workspaceId,
             coreWorkflowVersionId: resolved.coreWorkflowVersion.id,
-            workspaceWorkflowVersionId: resolved.workspaceWorkflowVersionId,
             status: WorkflowVersionStatus.DEACTIVATED,
           });
 
@@ -400,29 +392,15 @@ export class CoreWorkflowLifecycleWorkspaceService {
     };
   }
 
-  private async resolveTwinIfCoreVersionExists({
-    workspaceId,
-    coreWorkflowVersionId,
-  }: {
-    workspaceId: string;
-    coreWorkflowVersionId: string;
-  }) {
-    return this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdIfCoreVersionExists(
-      { workspaceId, coreWorkflowVersionId },
-    );
-  }
-
   private async writeVersionStatusInTransaction({
     transactionScope,
     workspaceId,
     coreWorkflowVersionId,
-    workspaceWorkflowVersionId,
     status,
   }: {
     transactionScope: WorkspaceTransactionScope;
     workspaceId: string;
     coreWorkflowVersionId: string;
-    workspaceWorkflowVersionId: string;
     status: WorkflowVersionStatus;
   }): Promise<void> {
     await transactionScope.executeRawQuery(
@@ -436,7 +414,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
       .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
         shouldBypassPermissionChecks: true,
       })
-      .update({ id: workspaceWorkflowVersionId }, { status });
+      .update({ coreWorkflowVersionId }, { status });
   }
 
   private async enableAutomatedTrigger({
@@ -446,8 +424,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     resolved: ResolvedCoreVersion;
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
-    const { trigger, workspaceWorkflowId, workspaceWorkflowVersionId } =
-      resolved;
+    const { trigger, workspaceWorkflowId } = resolved;
     const workspaceId = resolved.coreWorkflowVersion.workspaceId;
 
     if (!isDefined(trigger)) {
@@ -487,8 +464,6 @@ export class CoreWorkflowLifecycleWorkspaceService {
     }
   }
 
-  // Redis does not join the database transaction, so the cache entry is only
-  // published once the activation transaction has committed.
   private async writeCronTriggerCacheEntryAfterCommit({
     resolved,
   }: {
@@ -511,11 +486,18 @@ export class CoreWorkflowLifecycleWorkspaceService {
       }),
     };
 
-    await this.cacheStorageService.hashSetIfExists({
-      key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-      field: workspaceWorkflowId,
-      value: JSON.stringify(cachedTrigger),
-    });
+    try {
+      await this.cacheStorageService.hashSetIfExists({
+        key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+        field: workspaceWorkflowId,
+        value: JSON.stringify(cachedTrigger),
+      });
+    } catch (error) {
+      this.logger.error(
+        `Cron trigger cache entry not published for workflow ${workspaceWorkflowId}, the cron cache will rebuild it`,
+        error,
+      );
+    }
   }
 
   private async disableAutomatedTrigger({
@@ -576,7 +558,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     }
 
     const { availabilityType, availabilityObjectMetadataId } =
-      await this.resolveManualTriggerAvailability(trigger, workspaceId);
+      await this.resolveManualTriggerAvailability({ trigger, workspaceId });
 
     const label = getWorkflowCommandMenuItemLabel({
       name: resolved.coreWorkflow.name,
@@ -588,7 +570,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
         workspaceId,
       );
 
-    if (existingCommandMenuItem) {
+    if (isDefined(existingCommandMenuItem)) {
       await this.commandMenuItemService.update(
         {
           id: existingCommandMenuItem.id,
@@ -638,7 +620,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
         workspaceId,
       );
 
-    if (existingCommandMenuItem) {
+    if (isDefined(existingCommandMenuItem)) {
       await this.commandMenuItemService.delete(
         existingCommandMenuItem.id,
         workspaceId,
@@ -646,10 +628,13 @@ export class CoreWorkflowLifecycleWorkspaceService {
     }
   }
 
-  private async resolveManualTriggerAvailability(
-    trigger: WorkflowManualTrigger,
-    workspaceId: string,
-  ): Promise<{
+  private async resolveManualTriggerAvailability({
+    trigger,
+    workspaceId,
+  }: {
+    trigger: WorkflowManualTrigger;
+    workspaceId: string;
+  }): Promise<{
     availabilityType: CommandMenuItemAvailabilityType;
     availabilityObjectMetadataId: string | undefined;
   }> {
@@ -658,7 +643,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
     let availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
     let availabilityObjectMetadataId: string | undefined;
 
-    if (availability) {
+    if (isDefined(availability)) {
       switch (availability.type) {
         case 'GLOBAL':
           availabilityType = CommandMenuItemAvailabilityType.GLOBAL;
@@ -675,7 +660,7 @@ export class CoreWorkflowLifecycleWorkspaceService {
           const objectId =
             objectIdByNameSingular[availability.objectNameSingular];
 
-          if (!objectId) {
+          if (!isDefined(objectId)) {
             throw new WorkflowTriggerException(
               `Object metadata not found for object: ${availability.objectNameSingular}`,
               WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,

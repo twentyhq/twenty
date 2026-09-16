@@ -166,3 +166,16 @@ export const buildSourceStepWithRemovedEdge = ({
       return buildSourceStepWithRemovedNextStepId({ sourceStep, target });
   }
 };
+
+export const assertEdgeConnectionOptionsAreSupported = (
+  sourceConnectionOptions?: WorkflowStepConnectionOptions,
+): void => {
+  if (
+    sourceConnectionOptions?.connectedStepType === WorkflowActionType.IF_ELSE
+  ) {
+    throw new WorkflowVersionEdgeException(
+      'If/Else connections must be updated through their branch settings',
+      WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
+    );
+  }
+};

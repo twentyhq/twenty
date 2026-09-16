@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Equal, In, LessThan, LessThanOrEqual } from 'typeorm';
+import { DataSource, In } from 'typeorm';
 
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
@@ -20,6 +21,8 @@ export class CoreWorkflowVersionListService {
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
     @InjectWorkspaceScopedRepository(WorkflowEntity)
     private readonly coreWorkflowRepository: WorkspaceScopedRepository<WorkflowEntity>,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
@@ -199,24 +202,11 @@ export class CoreWorkflowVersionListService {
       },
     );
 
-    const olderSiblingsCount = await this.coreWorkflowVersionRepository.count(
+    const versionRank = await this.computeCoreWorkflowVersionRank({
       workspaceId,
-      {
-        where: {
-          coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
-          createdAt: LessThan(coreWorkflowVersion.createdAt),
-        },
-      },
-    );
-
-    const tiedOlderSiblingsCount =
-      await this.coreWorkflowVersionRepository.count(workspaceId, {
-        where: {
-          coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
-          createdAt: Equal(coreWorkflowVersion.createdAt),
-          id: LessThanOrEqual(coreWorkflowVersion.id),
-        },
-      });
+      coreWorkflowId: coreWorkflowVersion.coreWorkflowId,
+      coreWorkflowVersionId: coreWorkflowVersion.id,
+    });
 
     const workspaceWorkflowVersionId =
       await this.findWorkspaceVersionIdForCoreVersionId({
@@ -226,9 +216,7 @@ export class CoreWorkflowVersionListService {
 
     return {
       id: coreWorkflowVersion.id,
-      label: buildCoreWorkflowVersionLabel(
-        olderSiblingsCount + tiedOlderSiblingsCount,
-      ),
+      label: buildCoreWorkflowVersionLabel(versionRank),
       status: coreWorkflowVersion.status,
       workspaceWorkflowVersionId,
       workspaceWorkflowId: coreWorkflow?.workspaceWorkflowId ?? null,
@@ -237,6 +225,29 @@ export class CoreWorkflowVersionListService {
       createdAt: coreWorkflowVersion.createdAt.toISOString(),
       updatedAt: coreWorkflowVersion.updatedAt.toISOString(),
     };
+  }
+
+  private async computeCoreWorkflowVersionRank({
+    workspaceId,
+    coreWorkflowId,
+    coreWorkflowVersionId,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+    coreWorkflowVersionId: string;
+  }): Promise<number> {
+    const [{ rank }]: [{ rank: number }] = await this.coreDataSource.query(
+      `SELECT count(*)::int AS "rank"
+       FROM core."workflowVersion" sibling
+       JOIN core."workflowVersion" target
+         ON target."id" = $2 AND target."workspaceId" = $1
+       WHERE sibling."coreWorkflowId" = $3
+         AND sibling."workspaceId" = $1
+         AND (sibling."createdAt", sibling."id") <= (target."createdAt", target."id")`,
+      [workspaceId, coreWorkflowVersionId, coreWorkflowId],
+    );
+
+    return rank;
   }
 
   private async findWorkspaceVersionIdForCoreVersionId({

@@ -162,15 +162,9 @@ export class CoreWorkflowMutationWorkspaceService {
       );
     }
 
-    const { workspaceWorkflowVersionId } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
-        { workspaceId, coreWorkflowVersionId: initialDraft.id },
-      );
-
     await this.coreWorkflowVersionWriteService.writeContentAndMirror({
       workspaceId,
       coreWorkflowVersionId: initialDraft.id,
-      workspaceWorkflowVersionId,
       trigger,
       steps,
     });

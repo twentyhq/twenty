@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { TRIGGER_STEP_ID, WorkflowActionType } from 'twenty-shared/workflow';
+import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 import { type WorkflowVersionStepChangesDTO } from 'src/engine/core-modules/workflow/dtos/workflow-version-step-changes.dto';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -16,6 +16,7 @@ import { assertWorkflowVersionIsDraft } from 'src/modules/workflow/common/utils/
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { computeWorkflowVersionStepChanges } from 'src/modules/workflow/workflow-builder/utils/compute-workflow-version-step-updates.util';
 import {
+  assertEdgeConnectionOptionsAreSupported,
   buildSourceStepWithAddedEdge,
   buildSourceStepWithRemovedEdge,
 } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
@@ -44,7 +45,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     workspaceId: string;
     sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    this.assertConnectionOptionsAreSupported(sourceConnectionOptions);
+    assertEdgeConnectionOptionsAreSupported(sourceConnectionOptions);
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -106,7 +107,7 @@ export class WorkflowVersionEdgeWorkspaceService {
     workspaceId: string;
     sourceConnectionOptions?: WorkflowStepConnectionOptions;
   }): Promise<WorkflowVersionStepChangesDTO> {
-    this.assertConnectionOptionsAreSupported(sourceConnectionOptions);
+    assertEdgeConnectionOptionsAreSupported(sourceConnectionOptions);
 
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -402,18 +403,5 @@ export class WorkflowVersionEdgeWorkspaceService {
       existingSteps: steps,
       updatedSteps,
     });
-  }
-
-  private assertConnectionOptionsAreSupported(
-    sourceConnectionOptions?: WorkflowStepConnectionOptions,
-  ) {
-    if (
-      sourceConnectionOptions?.connectedStepType === WorkflowActionType.IF_ELSE
-    ) {
-      throw new WorkflowVersionEdgeException(
-        'If/Else connections must be updated through their branch settings',
-        WorkflowVersionEdgeExceptionCode.INVALID_REQUEST,
-      );
-    }
   }
 }

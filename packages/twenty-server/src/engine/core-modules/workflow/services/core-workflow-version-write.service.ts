@@ -9,7 +9,6 @@ import {
   WorkflowVersionEntity,
   WorkflowVersionStatus as CoreWorkflowVersionStatus,
 } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
-import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
@@ -32,7 +31,6 @@ export type ValidatedDraftCoreWorkflowVersion = {
   coreWorkflowVersion: WorkflowVersionEntity;
   trigger: WorkflowTrigger | null;
   steps: WorkflowAction[] | null;
-  workspaceWorkflowVersionId: string;
 };
 
 @Injectable()
@@ -40,7 +38,6 @@ export class CoreWorkflowVersionWriteService {
   constructor(
     @InjectWorkspaceScopedRepository(WorkflowVersionEntity)
     private readonly coreWorkflowVersionRepository: WorkspaceScopedRepository<WorkflowVersionEntity>,
-    private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowMetadataReadService: WorkflowMetadataReadService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
@@ -54,10 +51,20 @@ export class CoreWorkflowVersionWriteService {
     workspaceId: string;
     coreWorkflowVersionId: string;
   }): Promise<ValidatedDraftCoreWorkflowVersion> {
-    const { coreWorkflowVersion, workspaceWorkflowVersionId } =
-      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
-        { workspaceId, coreWorkflowVersionId },
+    const coreWorkflowVersion =
+      await this.coreWorkflowVersionRepository.findOne(workspaceId, {
+        where: { id: coreWorkflowVersionId },
+      });
+
+    if (!isDefined(coreWorkflowVersion)) {
+      throw new WorkflowQueryValidationException(
+        `Core workflow version '${coreWorkflowVersionId}' not found`,
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Workflow version not found`,
+        },
       );
+    }
 
     if (coreWorkflowVersion.status !== CoreWorkflowVersionStatus.DRAFT) {
       throw new WorkflowQueryValidationException(
@@ -73,20 +80,17 @@ export class CoreWorkflowVersionWriteService {
       coreWorkflowVersion,
       trigger: coreWorkflowVersion.triggers?.[0] ?? null,
       steps: coreWorkflowVersion.steps,
-      workspaceWorkflowVersionId,
     };
   }
 
   async writeContentAndMirror({
     workspaceId,
     coreWorkflowVersionId,
-    workspaceWorkflowVersionId,
     trigger,
     steps,
   }: {
     workspaceId: string;
     coreWorkflowVersionId: string;
-    workspaceWorkflowVersionId: string;
     trigger: WorkflowTrigger | null;
     steps: WorkflowAction[] | null;
   }): Promise<void> {
@@ -116,7 +120,7 @@ export class CoreWorkflowVersionWriteService {
             .getRepository<WorkflowVersionWorkspaceEntity>('workflowVersion', {
               shouldBypassPermissionChecks: true,
             })
-            .update({ id: workspaceWorkflowVersionId }, { trigger, steps });
+            .update({ coreWorkflowVersionId }, { trigger, steps });
         },
       );
     }, buildSystemAuthContext(workspaceId));

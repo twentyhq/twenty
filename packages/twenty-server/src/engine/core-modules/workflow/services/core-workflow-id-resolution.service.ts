@@ -14,7 +14,6 @@ import {
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
-import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @Injectable()
 export class CoreWorkflowIdResolutionService {
@@ -132,29 +131,6 @@ export class CoreWorkflowIdResolutionService {
     if (!isDefined(workspaceWorkflowId)) {
       throw new WorkflowQueryValidationException(
         `Core workflow '${coreWorkflowId}' has no workspace mirror row`,
-        WorkflowQueryValidationExceptionCode.FORBIDDEN,
-        {
-          userFriendlyMessage: msg`Workflow is not correctly linked to its mirror`,
-        },
-      );
-    }
-
-    const workspaceTwinExists =
-      await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const workflowRepository =
-          this.workspaceOrmManager.getRepository<WorkflowWorkspaceEntity>(
-            'workflow',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        return workflowRepository.exists({
-          where: { id: workspaceWorkflowId },
-        });
-      }, buildSystemAuthContext(workspaceId));
-
-    if (!workspaceTwinExists) {
-      throw new WorkflowQueryValidationException(
-        `Workspace mirror row '${workspaceWorkflowId}' of core workflow '${coreWorkflowId}' not found`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
           userFriendlyMessage: msg`Workflow is not correctly linked to its mirror`,
