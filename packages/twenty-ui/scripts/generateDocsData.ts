@@ -17,6 +17,7 @@ import {
 } from '../docs/types';
 
 const HIDDEN_PROP_TAGS = ['ignore', 'internal'];
+const COMPONENT_PART_NAME_PATTERN = /^[A-Z]/;
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const sourceRoot = resolve(packageRoot, 'src');
@@ -162,31 +163,34 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
       };
     }
 
-    const parts = type.getProperties().map((part) => {
-      const declaration = part.valueDeclaration;
+    const parts = type
+      .getProperties()
+      .filter((part) => COMPONENT_PART_NAME_PATTERN.test(part.name))
+      .map((part) => {
+        const declaration = part.valueDeclaration;
 
-      if (!declaration || !ts.isPropertyAssignment(declaration)) {
-        throw new Error(`Could not resolve ${component.name}.${part.name}`);
-      }
+        if (!declaration || !ts.isPropertyAssignment(declaration)) {
+          throw new Error(`Could not resolve ${component.name}.${part.name}`);
+        }
 
-      let partSymbol = checker.getSymbolAtLocation(declaration.initializer);
+        let partSymbol = checker.getSymbolAtLocation(declaration.initializer);
 
-      if (!partSymbol) {
-        throw new Error(`Could not find ${component.name}.${part.name}`);
-      }
+        if (!partSymbol) {
+          throw new Error(`Could not find ${component.name}.${part.name}`);
+        }
 
-      if (partSymbol.flags & ts.SymbolFlags.Alias) {
-        partSymbol = checker.getAliasedSymbol(partSymbol);
-      }
+        if (partSymbol.flags & ts.SymbolFlags.Alias) {
+          partSymbol = checker.getAliasedSymbol(partSymbol);
+        }
 
-      return {
-        name: part.name,
-        props: extractProps({
-          symbol: partSymbol,
-          name: `${component.name}.${part.name}`,
-        }),
-      };
-    });
+        return {
+          name: part.name,
+          props: extractProps({
+            symbol: partSymbol,
+            name: `${component.name}.${part.name}`,
+          }),
+        };
+      });
 
     if (parts.length === 0) {
       throw new Error(`Could not extract parts for ${component.name}`);

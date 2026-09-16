@@ -110,6 +110,8 @@ For an asynchronous form, keep the dialog open while submitting. Close it after 
 
 Nest another `Dialog.Root` inside a popup to open a second dialog. Closing the nested dialog returns focus to its trigger in the parent.
 
+To open one dialog from triggers outside `Root`, create a handle once with `Dialog.createHandle()` and pass it to `handle` on both `Root` and each `Trigger`. Trigger `payload` values are available in `Root`'s render function.
+
 ## Focus, scrolling, and dismissal
 
 `Root.modal` controls the interaction boundary:

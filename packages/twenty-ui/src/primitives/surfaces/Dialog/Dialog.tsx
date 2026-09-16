@@ -8,6 +8,7 @@ import { DialogPopup } from './internal/DialogPopup';
 import { DialogTitle } from './internal/DialogTitle';
 
 export const Dialog = {
+  createHandle: DialogPrimitive.createHandle,
   Root: DialogPrimitive.Root,
   Trigger: DialogPrimitive.Trigger,
   Popup: DialogPopup,
