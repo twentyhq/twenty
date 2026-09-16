@@ -84,3 +84,10 @@ helm install my-twenty ./packages/twenty-docker/helm/twenty -f values-secrets.ya
 - **Image versioning:** The chart defaults to `Chart.yaml`'s `appVersion` (currently v1.14.0). Override via `image.tag` in values to pin a different version or use `latest` for rolling updates.
 - **Keep secrets secure:** Avoid `--set` for sensitive values; use `-f values-secrets.yaml` or reference existing Kubernetes Secrets via `server.extraEnvFrom`.
   - S3 credentials can be referenced via `storage.s3.secretName + accessKeyIdKey/secretAccessKeyKey` to avoid embedding them in pod specs.
+- **Cloud IAM via ServiceAccount:** Server and worker pods run under `serviceAccount.name` (defaults to the release name; set `serviceAccount.create=false` to use an existing one). Grant cloud permissions (e.g. S3 access) without static credentials by annotating it:
+  ```yaml
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: arn:aws:iam::123456789012:role/twenty-role   # AWS IRSA
+      # iam.gke.io/gcp-service-account: twenty@my-project.iam.gserviceaccount.com  # GCP Workload Identity
+  ```
