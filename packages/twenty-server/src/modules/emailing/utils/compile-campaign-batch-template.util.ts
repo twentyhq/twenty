@@ -48,6 +48,7 @@ export const compileCampaignBatchTemplate = async ({
   bodyTemplate: string;
 }): Promise<{
   template: EmailingDomainEmailTemplate;
+  textPartHtml: string;
   variableNames: string[];
 }> => {
   const variableNames: string[] = [];
@@ -72,7 +73,11 @@ export const compileCampaignBatchTemplate = async ({
   const subject = toTags(subjectTemplate, 'raw');
 
   if (bodyTemplate.trim() === '') {
-    return { template: { subject, text: '', html: '' }, variableNames };
+    return {
+      template: { subject, text: '', html: '' },
+      textPartHtml: '',
+      variableNames,
+    };
   }
 
   const parseResult = parseCanonicalEmailDocument(
@@ -99,12 +104,13 @@ export const compileCampaignBatchTemplate = async ({
     );
 
   const { html } = await compileTaggedDocument(HTML_BODY_TAG_FAMILY_BY_CONTEXT);
-  const { plainText } = await compileTaggedDocument(
+  const { html: textPartHtml, plainText } = await compileTaggedDocument(
     PLAIN_TEXT_BODY_TAG_FAMILY_BY_CONTEXT,
   );
 
   return {
     template: { subject, text: plainText, html: isDefined(html) ? html : '' },
+    textPartHtml: isDefined(textPartHtml) ? textPartHtml : '',
     variableNames,
   };
 };

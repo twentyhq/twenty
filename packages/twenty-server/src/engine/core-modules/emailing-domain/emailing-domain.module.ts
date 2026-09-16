@@ -25,6 +25,7 @@ import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/s
 import { UnsubscribeContentService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-content.service';
 import { DmarcRecordService } from 'src/engine/core-modules/emailing-domain/services/dmarc-record.service';
 import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
+import { CampaignTrackingTokenService } from 'src/engine/core-modules/emailing-domain/services/campaign-tracking-token.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -49,6 +50,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainTenantStatusService,
     EmailingDomainDriverFactory,
     UnsubscribeTokenService,
+    CampaignTrackingTokenService,
     EmailGroupAccessService,
     CheckEmailingDomainVerificationCronCommand,
   ],
@@ -59,6 +61,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainService,
     EmailingDomainTenantStatusService,
     UnsubscribeTokenService,
+    CampaignTrackingTokenService,
     UnsubscribeContentService,
     UnsubscribeHostnameService,
     DmarcRecordService,
