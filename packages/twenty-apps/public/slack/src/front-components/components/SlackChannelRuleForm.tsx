@@ -78,8 +78,6 @@ export const SlackChannelRuleForm = ({
       (rule) => rule.slackChannelId === channel.slackChannelId,
     );
 
-    // A channel without a rule starts from the defaults again, so nothing
-    // carries over from a previously picked channel.
     setMode(
       isSlackChannelRuleMode(matchedRule?.mode)
         ? matchedRule.mode
