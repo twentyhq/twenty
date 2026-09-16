@@ -8,6 +8,7 @@ import { Tag } from 'twenty-ui/primitives/data-display';
 import { IconCheck, IconClockHour8, IconX, useIcons } from 'twenty-ui/icon';
 import { Button, LightIconButton } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { InboxItemSubjectChip } from '@/inbox/components/InboxItemSubjectChip';
 import { InboxItemPlacement } from '@/inbox/components/InboxItemPlacement';
@@ -20,7 +21,6 @@ import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { getInboxItemMessageThreadId } from '@/inbox/utils/getInboxItemMessageThreadId';
 import { getInboxItemOutcomeLabel } from '@/inbox/utils/getInboxItemOutcomeLabel';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   type InboxItem,
   type InboxItemField,
@@ -134,7 +134,7 @@ export const InboxItemView = ({
   const { t } = useLingui();
   const { theme } = useContext(ThemeContext);
   const { getIcon } = useIcons();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { objectMetadataItems } = useObjectMetadataItems();
   const {
     transitionInboxItem,
@@ -190,7 +190,7 @@ export const InboxItemView = ({
   );
 
   const reportFailure = () =>
-    enqueueErrorSnackBar({ message: t`That could not be applied` });
+    enqueueToast({ variant: 'error', children: t`That could not be applied` });
 
   // A blur save or a skip still on the wire must land before the item is done,
   // or the run could use the input from before the edit. A save that failed

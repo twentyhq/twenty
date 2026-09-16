@@ -7,6 +7,7 @@ import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/primitives/layout';
 import { H2Title } from 'twenty-ui/primitives/typography';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -20,13 +21,12 @@ import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRo
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 const DELETE_INBOX_QUEUE_MODAL_ID = 'delete-inbox-queue';
 
 export const SettingsInboxQueueEdit = () => {
   const { t } = useLingui();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const navigateSettings = useNavigateSettings();
   const { queueId } = useParams<{ queueId?: string }>();
   const { openModal } = useModal();
@@ -101,9 +101,7 @@ export const SettingsInboxQueueEdit = () => {
       });
       goBack();
     } catch {
-      enqueueErrorSnackBar({
-        message: t`This shared inbox could not be saved`,
-      });
+      enqueueToast({ variant: 'error', children: t`This shared inbox could not be saved` });
     } finally {
       setIsSaving(false);
     }
@@ -113,9 +111,7 @@ export const SettingsInboxQueueEdit = () => {
     try {
       await deleteInboxQueue(inboxQueue.id);
     } catch {
-      enqueueErrorSnackBar({
-        message: t`This shared inbox could not be deleted`,
-      });
+      enqueueToast({ variant: 'error', children: t`This shared inbox could not be deleted` });
 
       return;
     }

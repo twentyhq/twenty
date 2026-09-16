@@ -3,9 +3,9 @@ import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type InboxItem, InboxItemScope } from '~/generated/graphql';
 
 const StyledButtons = styled.div`
@@ -25,7 +25,7 @@ export const InboxListRowButtons = ({
 }: InboxListRowButtonsProps) => {
   const { t } = useLingui();
   const { assignInboxItem } = useInboxItemActions();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const isInQueue =
     isDefined(inboxItem.queueId) && inboxItem.scope !== InboxItemScope.DONE;
@@ -43,7 +43,7 @@ export const InboxListRowButtons = ({
       ...(inboxItem.isAssignedToMe ? { toUserWorkspaceId: null } : {}),
       expectedVersion: inboxItem.version,
     }).catch(() =>
-      enqueueErrorSnackBar({ message: t`That could not be applied` }),
+      enqueueToast({ variant: 'error', children: t`That could not be applied` }),
     );
 
   // Taking work a colleague already holds is a different act from picking up

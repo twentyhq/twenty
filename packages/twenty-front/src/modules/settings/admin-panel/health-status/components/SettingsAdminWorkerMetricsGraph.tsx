@@ -1,17 +1,17 @@
-import { isDefined } from 'twenty-shared/utils';
-import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
+import { ToastOnQueryErrorEffect } from '@/apollo/components/ToastOnQueryErrorEffect';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminWorkerMetricsTooltip } from '@/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsTooltip';
-import { useSnackBarOnQueryError } from '@/apollo/hooks/useSnackBarOnQueryError';
+import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { ResponsiveLine } from '@nivo/line';
 import { useContext } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import { useQuery } from '@apollo/client/react';
 import {
-  QueueMetricsTimeRange,
   GetQueueMetricsDocument,
+  QueueMetricsTimeRange,
 } from '~/generated-admin/graphql';
 
 const StyledGraphContainer = styled.div`
@@ -61,8 +61,6 @@ export const SettingsAdminWorkerMetricsGraph = ({
     fetchPolicy: 'no-cache',
   });
 
-  useSnackBarOnQueryError(error);
-
   const metricsData = data?.getQueueMetrics?.data || [];
   const hasData =
     metricsData.length > 0 &&
@@ -107,6 +105,8 @@ export const SettingsAdminWorkerMetricsGraph = ({
 
   return (
     <>
+      <ToastOnQueryErrorEffect error={error} />
+
       <StyledGraphContainer>
         {loading ? (
           <StyledNoDataMessage>{t`Loading metrics data...`}</StyledNoDataMessage>

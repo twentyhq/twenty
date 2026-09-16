@@ -6,12 +6,12 @@ import { isDefined } from 'twenty-shared/utils';
 import { useIcons, IconInbox, IconUser } from 'twenty-ui/icon';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { useInboxQueues } from '@/inbox/hooks/useInboxQueues';
 import { Select } from '@/ui/input/components/Select';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { type InboxItem } from '~/generated/graphql';
 
 const StyledPlacement = styled.div`
@@ -39,10 +39,10 @@ export const InboxItemPlacement = ({ inboxItem }: InboxItemPlacementProps) => {
     currentWorkspaceMembersState,
   );
   const { assignInboxItem, moveInboxItem } = useInboxItemActions();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const reportFailure = () =>
-    enqueueErrorSnackBar({ message: t`That could not be applied` });
+    enqueueToast({ variant: 'error', children: t`That could not be applied` });
 
   const queueOptions: SelectOption<string>[] = [
     { value: PERSONAL_QUEUE_VALUE, label: t`No shared inbox`, Icon: IconUser },

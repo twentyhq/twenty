@@ -11,10 +11,10 @@ import {
 } from 'twenty-ui/icon';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 import { useInboxItemActions } from '@/inbox/hooks/useInboxItemActions';
 import { getInboxSnoozeOptions } from '@/inbox/utils/getInboxSnoozeOptions';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { DateTimePicker } from '@/ui/input/components/internal/date/components/DateTimePicker';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -44,7 +44,7 @@ export const InboxSnoozeDropdown = ({
 }: InboxSnoozeDropdownProps) => {
   const { t, i18n } = useLingui();
   const { transitionInboxItem } = useInboxItemActions();
-  const { enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
   const { closeDropdown } = useCloseDropdown();
   // A day or a time picked is held until the moment is confirmed, so either can
   // still be changed.
@@ -67,7 +67,7 @@ export const InboxSnoozeDropdown = ({
         expectedVersion: inboxItem.version,
       });
     } catch {
-      enqueueErrorSnackBar({ message: t`That could not be applied` });
+      enqueueToast({ variant: 'error', children: t`That could not be applied` });
     }
 
     closeDropdown(dropdownId);

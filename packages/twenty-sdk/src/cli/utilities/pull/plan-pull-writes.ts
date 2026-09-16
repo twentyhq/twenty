@@ -42,6 +42,8 @@ const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   object: ManifestEntityKey.Objects,
   field: ManifestEntityKey.Fields,
   index: ManifestEntityKey.Indexes,
+  permissionFlag: ManifestEntityKey.PermissionFlags,
+  role: ManifestEntityKey.Roles,
   view: ManifestEntityKey.Views,
   viewField: ManifestEntityKey.ViewFields,
   pageLayout: ManifestEntityKey.PageLayouts,
@@ -164,23 +166,18 @@ const reserveRelativePath = ({
   );
 };
 
-const findExistingPath = ({
+const findExistingSourceFile = ({
   entity,
   applicationFile,
-  pathByUniversalIdentifier,
+  scannedFileByUniversalIdentifier,
 }: {
   entity: PullEntity;
   applicationFile: ScannedSourceFile | undefined;
-  pathByUniversalIdentifier: Map<string, string>;
-}): string | undefined => {
-  if (entity.kind !== 'application') {
-    return pathByUniversalIdentifier.get(entity.universalIdentifier);
-  }
-
-  return isDefined(applicationFile)
-    ? toPosixPath(applicationFile.relativePath)
-    : undefined;
-};
+  scannedFileByUniversalIdentifier: Map<string, ScannedSourceFile>;
+}): ScannedSourceFile | undefined =>
+  entity.kind === 'application'
+    ? applicationFile
+    : scannedFileByUniversalIdentifier.get(entity.universalIdentifier);
 
 const buildConfigByUniversalIdentifier = (
   manifest: Manifest | null,
@@ -215,16 +212,16 @@ export const planPullWrites = ({
     buildConfigByUniversalIdentifier(baseManifest);
   const fileBaseNameByUniversalIdentifier = resolveFileBaseNames(entities);
 
-  const pathByUniversalIdentifier = new Map<string, string>();
+  const scannedFileByUniversalIdentifier = new Map<string, ScannedSourceFile>();
   const applicationFile = scannedFiles.find(
     (scannedFile) => scannedFile.entityKey === ManifestEntityKey.Application,
   );
 
   for (const scannedFile of scannedFiles) {
     if (isDefined(scannedFile.universalIdentifier)) {
-      pathByUniversalIdentifier.set(
+      scannedFileByUniversalIdentifier.set(
         scannedFile.universalIdentifier,
-        toPosixPath(scannedFile.relativePath),
+        scannedFile,
       );
     }
   }
@@ -239,11 +236,14 @@ export const planPullWrites = ({
   );
 
   for (const entity of entities) {
-    const existingPath = findExistingPath({
+    const existingSourceFile = findExistingSourceFile({
       entity,
       applicationFile,
-      pathByUniversalIdentifier,
+      scannedFileByUniversalIdentifier,
     });
+    const existingPath = isDefined(existingSourceFile)
+      ? toPosixPath(existingSourceFile.relativePath)
+      : undefined;
 
     const folder =
       findExistingFolderForKind({
@@ -271,7 +271,8 @@ export const planPullWrites = ({
     );
 
     if (
-      isDefined(existingPath) &&
+      isDefined(existingSourceFile) &&
+      existingSourceFile.targetFunctionName === entity.definer &&
       isDefined(baseConfig) &&
       baseConfig === JSON.stringify(entity.config)
     ) {
@@ -302,7 +303,12 @@ export const planPullWrites = ({
       continue;
     }
 
-    const relativePath = pathByUniversalIdentifier.get(baseUniversalIdentifier);
+    const scannedFile = scannedFileByUniversalIdentifier.get(
+      baseUniversalIdentifier,
+    );
+    const relativePath = isDefined(scannedFile)
+      ? toPosixPath(scannedFile.relativePath)
+      : undefined;
 
     if (!isDefined(relativePath) || usedRelativePaths.has(relativePath)) {
       continue;

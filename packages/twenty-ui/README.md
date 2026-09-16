@@ -81,6 +81,16 @@ Component guides belong in `packages/twenty-docs/ui/primitives`. For each statef
 
 Explain state ownership before advanced behavior such as indeterminate selection or manual tab activation. Document independent states, such as selection and popup visibility, separately. For components that delegate state to a parent or group, explain that ownership and link to the relevant examples.
 
+For compound components, include an anatomy tree and identify required parts, optional parts, and elements supplied internally. Show supported composition with complete examples, use Twenty UI components for supporting controls, and explain how custom wrappers preserve props and refs. Use `text` fences for structural diagrams and `tsx` fences for runnable examples so the documentation checker validates the examples.
+
+## Internal state
+
+twenty-ui uses Base UI's store for notification state. Each `ToastProvider` creates its own store, and the toaster subscribes to the toast list. Queue rules and rendering remain owned by twenty-ui. Consumers use `useToast()` without configuring a state library.
+
+The store factory and subscription hook are internal to the toast module. `@base-ui/utils` is a direct dependency pinned to the version used by `@base-ui/react`, and the library build keeps it external. Review its store API changes when upgrading the dependency.
+
+## Testing
+
 Component interaction and behavior tests belong in Storybook stories (`*.stories.tsx`) using `play` functions. Component unit tests are reserved for conformance (native props, refs, class names, rendering, and prop types). Keep non-interactive utility, hook, and token tests in the Vitest unit project; avoid duplicating story coverage there.
 
 ```bash
