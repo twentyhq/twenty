@@ -1,3 +1,5 @@
+import { AppToaster } from '@/ui/feedback/toast/components/AppToaster';
+import { ThemeProvider } from 'twenty-ui/theme-constants';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { render, screen } from '@testing-library/react';
@@ -34,6 +36,34 @@ const Wrapper = getJestMetadataAndApolloMocksWrapper({
 });
 
 describe('SettingsProfileDevicesSection', () => {
+  it('displays a query error when no device sessions are available', async () => {
+    const ErrorWrapper = getJestMetadataAndApolloMocksWrapper({
+      apolloMocks: [
+        {
+          request: { query: CurrentUserSessionsDocument },
+          error: new Error('Could not load devices'),
+        },
+      ],
+    });
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <ThemeProvider colorScheme="light">
+          <MemoryRouter>
+            <SettingsProfileDevicesSection />
+            <AppToaster />
+          </MemoryRouter>
+        </ThemeProvider>
+      </I18nProvider>,
+      { wrapper: ErrorWrapper },
+    );
+
+    expect(await screen.findByRole('status')).toHaveTextContent(
+      'Could not load devices',
+    );
+    expect(screen.queryByText('Devices')).not.toBeInTheDocument();
+  });
+
   it('keeps a session row mounted across a re-render of the section', async () => {
     const tree = (
       <I18nProvider i18n={i18n}>

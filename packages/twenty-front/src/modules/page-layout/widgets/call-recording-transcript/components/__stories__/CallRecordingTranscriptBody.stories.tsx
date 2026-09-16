@@ -1,11 +1,11 @@
 import { PAGE_LAYOUT_TEST_INSTANCE_ID } from '@/page-layout/hooks/__tests__/PageLayoutTestWrapper';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
+import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
+import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { getCallRecordingWidgetStoryDecorator } from '@/page-layout/widgets/call-recording/testing/getCallRecordingWidgetStoryDecorator';
 import { type WidgetCallRecordingCandidate } from '@/page-layout/widgets/call-recording/types/WidgetCallRecordingCandidate';
 import { getCallRecordingPlaybackMedia } from '@/page-layout/widgets/call-recording/utils/getCallRecordingPlaybackMedia';
-import { CallRecordingTranscriptBody } from '@/page-layout/widgets/call-recording-transcript/components/CallRecordingTranscriptBody';
-import { CALL_RECORDING_TRANSCRIPT_CURRENT_SPOKEN_WORD_DATA_ATTRIBUTE } from '@/page-layout/widgets/call-recording-transcript/constants/CallRecordingTranscriptCurrentSpokenWordDataAttribute';
 import { WidgetHeaderCountEffect } from '@/page-layout/widgets/components/WidgetHeaderCountEffect';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
@@ -32,7 +32,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { CallRecordingStatus } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { MOCK_CALL_RECORDING_AUDIO_DATA_URI } from './mockCallRecordingAudio';
 import { MOCK_CALL_RECORDING_VIDEO_DATA_URI } from './mockCallRecordingVideo';
 
@@ -337,7 +337,7 @@ const meta: Meta<typeof CallRecordingTranscriptBodyStory> = {
       widgetId: TRANSCRIPT_WIDGET_ID,
     }),
     MemoryRouterDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
     ComponentDecorator,
   ],
   parameters: {

@@ -6,7 +6,7 @@ import { SpreadSheetImportModalWrapper } from '@/spreadsheet-import/components/S
 import { MatchColumnsStep } from '@/spreadsheet-import/steps/components/MatchColumnsStep/MatchColumnsStep';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { DialogComponentInstanceContext } from '@/ui/feedback/dialog-manager/contexts/DialogComponentInstanceContext';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof MatchColumnsStep> = {
   title: 'Modules/SpreadsheetImport/MatchColumnsStep',
@@ -14,7 +14,7 @@ const meta: Meta<typeof MatchColumnsStep> = {
   parameters: {
     layout: 'fullscreen',
   },
-  decorators: [SnackBarDecorator],
+  decorators: [ToastDecorator],
 };
 
 export default meta;

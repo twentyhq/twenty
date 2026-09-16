@@ -5,7 +5,7 @@ import { ComponentDecorator } from 'twenty-ui/testing';
 import { EventCardCalendarEvent } from '@/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
-import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
+import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 
 const meta: Meta<typeof EventCardCalendarEvent> = {
   title: 'Modules/TimelineActivities/Rows/CalendarEvent/EventCardCalendarEvent',
@@ -14,7 +14,7 @@ const meta: Meta<typeof EventCardCalendarEvent> = {
     MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
-    SnackBarDecorator,
+    ToastDecorator,
   ],
 };
 

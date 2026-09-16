@@ -1,11 +1,10 @@
-import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-
-import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { SettingsBillingSubscriptionInfoCard } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCard';
 import { SettingsBillingSubscriptionInfoCardHeaderActions } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions';
 import { SettingsBillingSubscriptionInfoModals } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals';
+import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingSubscriptionCost } from '@/settings/billing/hooks/useBillingSubscriptionCost';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
@@ -18,11 +17,10 @@ import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhas
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
+import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { usePermissionFlagMap } from '@/settings/roles/hooks/usePermissionFlagMap';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
@@ -30,8 +28,8 @@ import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/primitives/typography';
 import { Section } from 'twenty-ui/primitives/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
 import {
   BillingPlanKey,
   CancelSwitchBillingIntervalDocument,
@@ -43,6 +41,8 @@ import {
   SwitchSubscriptionIntervalDocument,
 } from '~/generated-metadata/graphql';
 import { beautifyExactDate } from '~/utils/date-utils';
+
+import { useToast } from 'twenty-ui/primitives/feedback';
 
 export const SettingsBillingSubscriptionInfo = ({
   currentWorkspace,
@@ -66,7 +66,7 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { openModal } = useModal();
 
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueToast } = useToast();
 
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
@@ -374,11 +374,9 @@ export const SettingsBillingSubscriptionInfo = ({
     try {
       await action();
 
-      enqueueSuccessSnackBar({ message: getSuccessMessage() });
+      enqueueToast({ variant: 'success', children: getSuccessMessage() });
     } catch (error) {
-      enqueueErrorSnackBar({
-        message: getErrorMessage(),
-      });
+      enqueueToast({ variant: 'error', children: getErrorMessage() });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;
