@@ -1,7 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
+import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
@@ -47,6 +49,11 @@ describe('InboxItemToolCallService', () => {
     findOne: jest.fn(),
     update: jest.fn(),
     insertAndReturnOne: jest.fn(),
+    withManager: jest.fn(),
+  };
+  const inboxItemRepository = { findOne: jest.fn(), withManager: jest.fn() };
+  const coreDataSource = {
+    transaction: jest.fn((run: (manager: unknown) => unknown) => run({})),
   };
   const inboxItemService = { findVisibleItemOrThrow: jest.fn() };
   const inboxTransitionService = { transition: jest.fn() };
@@ -104,6 +111,14 @@ describe('InboxItemToolCallService', () => {
       version: 3,
     });
     inboxItemToolCallRepository.update.mockResolvedValue({ affected: 1 });
+    inboxItemToolCallRepository.withManager.mockReturnValue(
+      inboxItemToolCallRepository,
+    );
+    inboxItemRepository.withManager.mockReturnValue(inboxItemRepository);
+    inboxItemRepository.findOne.mockResolvedValue({ id: INBOX_ITEM_ID });
+    coreDataSource.transaction.mockImplementation(
+      (run: (manager: unknown) => unknown) => run({}),
+    );
     inboxTransitionService.transition.mockImplementation(
       async ({ transition }) => ({ id: INBOX_ITEM_ID, ...transition }),
     );
@@ -114,6 +129,11 @@ describe('InboxItemToolCallService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         InboxItemToolCallService,
+        { provide: getDataSourceToken(), useValue: coreDataSource },
+        {
+          provide: getWorkspaceScopedRepositoryToken(InboxItemEntity),
+          useValue: inboxItemRepository,
+        },
         {
           provide: getWorkspaceScopedRepositoryToken(InboxItemToolCallEntity),
           useValue: inboxItemToolCallRepository,
@@ -726,6 +746,51 @@ describe('InboxItemToolCallService', () => {
         proposedInput: { recipients: { to: 'priya@northwind.com' } },
       });
       expect(created.id).toBe('created');
+    });
+
+    it('should lock the item before reading the plan it appends to', async () => {
+      inboxItemToolCallRepository.find.mockResolvedValueOnce([]);
+      inboxItemToolCallRepository.insertAndReturnOne.mockImplementation(
+        async (
+          _workspaceId: string,
+          toolCall: Partial<InboxItemToolCallEntity>,
+        ) => ({ id: 'created', ...toolCall }) as InboxItemToolCallEntity,
+      );
+
+      await service.create({
+        ...actorArgs,
+        inboxItemId: INBOX_ITEM_ID,
+        draft: { toolName: 'send_email', label: 'Reply', proposedInput: {} },
+      });
+
+      expect(coreDataSource.transaction).toHaveBeenCalledTimes(1);
+      expect(inboxItemRepository.findOne).toHaveBeenCalledWith(WORKSPACE_ID, {
+        where: { id: INBOX_ITEM_ID },
+        lock: { mode: 'pessimistic_write' },
+      });
+      expect(
+        inboxItemRepository.findOne.mock.invocationCallOrder[0],
+      ).toBeLessThan(
+        inboxItemToolCallRepository.find.mock.invocationCallOrder[0],
+      );
+    });
+
+    it('should refuse to add a call to an item that went away before the lock', async () => {
+      inboxItemRepository.findOne.mockResolvedValueOnce(null);
+
+      await expect(
+        service.create({
+          ...actorArgs,
+          inboxItemId: INBOX_ITEM_ID,
+          draft: { toolName: 'send_email', label: 'Reply', proposedInput: {} },
+        }),
+      ).rejects.toMatchObject({
+        code: InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+      });
+
+      expect(
+        inboxItemToolCallRepository.insertAndReturnOne,
+      ).not.toHaveBeenCalled();
     });
 
     it('should refuse to add a call to an item the actor cannot see', async () => {

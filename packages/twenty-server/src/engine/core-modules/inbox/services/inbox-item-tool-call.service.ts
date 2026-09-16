@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
+import { type DataSource } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-import { type InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
+import { InboxItemEntity } from 'src/engine/core-modules/inbox/entities/inbox-item.entity';
 import { InboxItemToolCallEntity } from 'src/engine/core-modules/inbox/entities/inbox-item-tool-call.entity';
 import { InboxItemOutcome } from 'src/engine/core-modules/inbox/enums/inbox-item-outcome.enum';
 import { InboxItemToolCallStatus } from 'src/engine/core-modules/inbox/enums/inbox-item-tool-call-status.enum';
@@ -34,6 +36,10 @@ type ToolCallActorArgs = {
 @Injectable()
 export class InboxItemToolCallService {
   constructor(
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
+    @InjectWorkspaceScopedRepository(InboxItemEntity)
+    private readonly inboxItemRepository: WorkspaceScopedRepository<InboxItemEntity>,
     @InjectWorkspaceScopedRepository(InboxItemToolCallEntity)
     private readonly inboxItemToolCallRepository: WorkspaceScopedRepository<InboxItemToolCallEntity>,
     private readonly inboxItemService: InboxItemService,
@@ -266,21 +272,45 @@ export class InboxItemToolCallService {
       accessibleQueueIds,
     });
 
-    const toolCalls = await this.findToolCallsInOrder(workspaceId, inboxItemId);
-    const position = toolCalls.reduce(
-      (max, toolCall) => Math.max(max, toolCall.position + 1),
-      0,
-    );
+    // The item row is the lock every plan write takes, the same one a fold
+    // takes, so two additions read the plan one after the other and cannot
+    // land on the same position.
+    return this.coreDataSource.transaction(async (manager) => {
+      const lockedItem = await this.inboxItemRepository
+        .withManager(manager)
+        .findOne(workspaceId, {
+          where: { id: inboxItemId },
+          lock: { mode: 'pessimistic_write' },
+        });
 
-    return this.inboxItemToolCallRepository.insertAndReturnOne(workspaceId, {
-      inboxItemId,
-      position,
-      toolName: draft.toolName,
-      label: draft.label,
-      description: draft.description ?? null,
-      icon: draft.icon ?? null,
-      inputSchema: draft.inputSchema ?? [],
-      proposedInput: draft.proposedInput,
+      if (!isDefined(lockedItem)) {
+        throw new InboxException(
+          `Inbox item ${inboxItemId} not found`,
+          InboxExceptionCode.INBOX_ITEM_NOT_FOUND,
+        );
+      }
+
+      const toolCallRepository =
+        this.inboxItemToolCallRepository.withManager(manager);
+      const toolCalls = await toolCallRepository.find(workspaceId, {
+        where: { inboxItemId },
+        select: { position: true },
+      });
+      const position = toolCalls.reduce(
+        (max, toolCall) => Math.max(max, toolCall.position + 1),
+        0,
+      );
+
+      return toolCallRepository.insertAndReturnOne(workspaceId, {
+        inboxItemId,
+        position,
+        toolName: draft.toolName,
+        label: draft.label,
+        description: draft.description ?? null,
+        icon: draft.icon ?? null,
+        inputSchema: draft.inputSchema ?? [],
+        proposedInput: draft.proposedInput,
+      });
     });
   }
 
