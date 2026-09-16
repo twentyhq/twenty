@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro';
-import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui/icon';
+import { IconDotsVertical, IconEdit, IconTrash } from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { MenuItem } from 'twenty-ui/primitives/navigation';
 
@@ -10,21 +10,21 @@ import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/Gene
 
 type NavigationMenuItemFolderNavigationDrawerItemDropdownProps = {
   folderId: string;
-  onRename: () => void;
+  onEdit: () => void;
   onDelete: () => void;
   closeDropdown: () => void;
 };
 
 export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
   folderId,
-  onRename,
+  onEdit,
   onDelete,
   closeDropdown,
 }: NavigationMenuItemFolderNavigationDrawerItemDropdownProps) => {
   const { t } = useLingui();
-  const handleRename = () => {
+  const handleEdit = () => {
     closeDropdown();
-    onRename();
+    onEdit();
   };
 
   const handleDelete = () => {
@@ -44,10 +44,10 @@ export const NavigationMenuItemFolderNavigationDrawerItemDropdown = ({
         <DropdownContent widthInPixels={GenericDropdownContentWidth.Narrow}>
           <DropdownMenuItemsContainer>
             <MenuItem
-              LeftIcon={IconPencil}
-              onClick={handleRename}
+              LeftIcon={IconEdit}
+              onClick={handleEdit}
               accent="default"
-              text={t`Rename`}
+              text={t`Edit`}
             />
             <MenuItem
               LeftIcon={IconTrash}

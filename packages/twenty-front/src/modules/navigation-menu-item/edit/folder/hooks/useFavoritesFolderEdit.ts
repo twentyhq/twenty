@@ -31,7 +31,7 @@ export const useFavoritesFolderEdit = ({
     navigationMenuItemIdToRenameState,
   );
 
-  const startRenaming = () => {
+  const startEditing = () => {
     setNavigationMenuItemEditSection('favorite');
     setSelectedNavigationMenuItemIdInEditMode(folderId);
     setNavigationMenuItemIdToRename(folderId);
@@ -69,7 +69,7 @@ export const useFavoritesFolderEdit = ({
   };
 
   return {
-    startRenaming,
+    startEditing,
     handleFolderDelete,
     handleConfirmDelete,
     isDropdownOpen,

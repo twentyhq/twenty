@@ -5,7 +5,7 @@ import { useIcons } from 'twenty-ui/icon';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
@@ -22,6 +22,10 @@ import { NavigationDrawerItemEditingContext } from '@/ui/navigation/navigation-d
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+
+const StyledEditor = styled.div`
+  display: contents;
+`;
 
 const StyledButton = styled.button`
   align-items: center;
@@ -63,6 +67,7 @@ export const NavigationMenuItemInlineEditor = ({
   onEditLink,
 }: NavigationMenuItemInlineEditorProps) => {
   const { t } = useLingui();
+  const editorRef = useRef<HTMLDivElement>(null);
   const { getIcon } = useIcons();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -91,8 +96,8 @@ export const NavigationMenuItemInlineEditor = ({
       );
     }
   };
-  const stopRenaming = () => {
-    clearFavoriteSelection();
+  const stopRenaming = (clearSelection = true) => {
+    if (clearSelection) clearFavoriteSelection();
     setIsRenaming(false);
     setNavigationMenuItemIdToRename((currentId) =>
       currentId === item.id ? null : currentId,
@@ -116,9 +121,9 @@ export const NavigationMenuItemInlineEditor = ({
   ]);
   const isFolder = item.type === NavigationMenuItemType.FOLDER;
   const select = () => setSelectedNavigationMenuItemIdInEditMode(item.id);
-  const finishRename = (value: string) => {
+  const finishRename = (value: string, clearSelection = true) => {
     void updateItem(item.id, { name: value.trim() || initialName });
-    stopRenaming();
+    stopRenaming(clearSelection);
   };
   const iconButton = (
     <StyledButton
@@ -172,7 +177,15 @@ export const NavigationMenuItemInlineEditor = ({
           if (isDraftMode) void updateItem(item.id, { name: initialName });
           stopRenaming();
         }}
-        onClickOutside={(_, value) => finishRename(value)}
+        onClickOutside={(event, value) =>
+          finishRename(
+            value,
+            !(
+              event.target instanceof Node &&
+              editorRef.current?.contains(event.target)
+            ),
+          )
+        }
       />
     ) : (
       <StyledLabelButton
@@ -201,7 +214,7 @@ export const NavigationMenuItemInlineEditor = ({
           (!isFolder || !isExpanded || Boolean(item.userWorkspaceId)),
       }}
     >
-      {children}
+      <StyledEditor ref={editorRef}>{children}</StyledEditor>
     </NavigationDrawerItemEditingContext.Provider>
   );
 };

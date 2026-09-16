@@ -187,7 +187,7 @@ export const NavigationMenuItemFolderDnd = ({
   const headerRightOptions = isEditInPlace ? (
     <NavigationMenuItemFolderNavigationDrawerItemDropdown
       folderId={folderId}
-      onRename={favoritesEdit.startRenaming}
+      onEdit={favoritesEdit.startEditing}
       onDelete={favoritesEdit.handleFolderDelete}
       closeDropdown={favoritesEdit.closeDropdown}
     />
@@ -249,10 +249,9 @@ export const NavigationMenuItemFolderDnd = ({
     ? isLayoutCustomizationModeEnabled || navigationMenuItems.length === 0
     : true;
 
+  const showAddMenuItem = isEditInPlace || isLayoutCustomizationModeEnabled;
   const folderContentLength =
-    isWorkspace && isLayoutCustomizationModeEnabled
-      ? navigationMenuItems.length + 1
-      : navigationMenuItems.length;
+    navigationMenuItems.length + (showAddMenuItem ? 1 : 0);
 
   const deleteModal =
     isEditInPlace && favoritesEdit.isModalOpened
@@ -379,10 +378,11 @@ export const NavigationMenuItemFolderDnd = ({
                   navigationMenuItems.length,
                 )}
               />
-              {isWorkspace && isLayoutCustomizationModeEnabled && (
+              {showAddMenuItem && (
                 <NavigationMenuItemEntrance>
                   <NavigationMenuItemAddDropdown
                     folderId={folderId}
+                    section={section}
                     position={navigationMenuItems.length}
                   >
                     <NavigationDrawerSubItem
