@@ -5,10 +5,19 @@ import { useEffect, useState, type ReactNode } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { IconDotsVertical } from 'twenty-ui/icon';
+import {
+  IconDotsVertical,
+  IconBox,
+  IconTable,
+  IconAddressBook,
+  IconLink,
+  IconFolder,
+  IconPerspective,
+  type IconComponent,
+} from 'twenty-ui/icon';
 import { LightIconButton } from 'twenty-ui/primitives/input';
 import { AppTooltip, TooltipPosition } from 'twenty-ui/primitives/surfaces';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables, useTheme } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -59,6 +68,7 @@ export const NavigationMenuItemEditable = ({
   rightOptions,
 }: NavigationMenuItemEditableProps) => {
   const { t } = useLingui();
+  const theme = useTheme();
   const isExpanded = useIsNavigationDrawerContentExpanded();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -106,13 +116,16 @@ export const NavigationMenuItemEditable = ({
     dropdownId,
     openDropdown,
   ]);
-  const types: Record<NavigationMenuItemType, string> = {
-    OBJECT: t`Object`,
-    VIEW: t`View`,
-    RECORD: t`Record`,
-    LINK: t`Link`,
-    FOLDER: t`Folder`,
-    PAGE_LAYOUT: t`Page`,
+  const types: Record<
+    NavigationMenuItemType,
+    { label: string; Icon: IconComponent }
+  > = {
+    OBJECT: { label: t`Object`, Icon: IconBox },
+    VIEW: { label: t`View`, Icon: IconTable },
+    RECORD: { label: t`Record`, Icon: IconAddressBook },
+    LINK: { label: t`Link`, Icon: IconLink },
+    FOLDER: { label: t`Folder`, Icon: IconFolder },
+    PAGE_LAYOUT: { label: t`Page`, Icon: IconPerspective },
   };
   let content = children;
   if (
@@ -196,13 +209,17 @@ export const NavigationMenuItemEditable = ({
           />
         </StyledActions>
       )}
-      <AppTooltip
-        anchorSelect={`#${anchorId}`}
-        title={types[item.type as NavigationMenuItemType]}
-        hidden={isDropdownOpen}
-        place={TooltipPosition.Top}
-        positionStrategy="fixed"
-      />
+      {isLayoutCustomizationModeEnabled && (
+        <AppTooltip
+          anchorSelect={`#${anchorId}`}
+          title={types[item.type as NavigationMenuItemType].label}
+          Icon={types[item.type as NavigationMenuItemType].Icon}
+          offset={theme.spacingMultiplicator}
+          hidden={isDropdownOpen}
+          place={TooltipPosition.Top}
+          positionStrategy="fixed"
+        />
+      )}
     </StyledRow>
   );
 };
