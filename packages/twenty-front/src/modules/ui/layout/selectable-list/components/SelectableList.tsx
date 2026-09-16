@@ -28,7 +28,7 @@ export const SelectableList = ({
   selectableListInstanceId,
   onSelect,
   focusId,
-  shouldPreselectFirstItem,
+  shouldPreselectFirstItem = true,
 }: SelectableListProps) => {
   useSelectableListHotKeys(selectableListInstanceId, focusId, onSelect);
 
@@ -90,6 +90,13 @@ export const SelectableList = ({
     setSelectedItemId,
     store,
   ]);
+
+  useEffect(
+    () => () => {
+      if (shouldPreselectFirstItem) resetSelectedItem();
+    },
+    [resetSelectedItem, shouldPreselectFirstItem],
+  );
 
   return (
     <SelectableListComponentInstanceContext.Provider
