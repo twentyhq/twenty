@@ -6707,6 +6707,7 @@ export type UpdateWorkspaceInput = {
   eventLogRetentionDays?: InputMaybe<Scalars['Float']['input']>;
   inviteHash?: InputMaybe<Scalars['String']['input']>;
   isAutoModelSelectionEnabled?: InputMaybe<Scalars['Boolean']['input']>;
+  isCampaignClickTrackingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isGoogleAuthBypassEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isGoogleAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isInternalMessagesImportEnabled?: InputMaybe<Scalars['Boolean']['input']>;
@@ -6715,7 +6716,6 @@ export type UpdateWorkspaceInput = {
   isPasswordAuthBypassEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isPasswordAuthEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isPublicInviteLinkEnabled?: InputMaybe<Scalars['Boolean']['input']>;
-  isCampaignClickTrackingEnabled?: InputMaybe<Scalars['Boolean']['input']>;
   isTwoFactorAuthenticationEnforced?: InputMaybe<Scalars['Boolean']['input']>;
   logo?: InputMaybe<Scalars['String']['input']>;
   subdomain?: InputMaybe<Scalars['String']['input']>;
@@ -7390,6 +7390,7 @@ export type Workspace = {
   installedApplications: Array<Application>;
   inviteHash?: Maybe<Scalars['String']['output']>;
   isAutoModelSelectionEnabled: Scalars['Boolean']['output'];
+  isCampaignClickTrackingEnabled: Scalars['Boolean']['output'];
   isCustomDomainEnabled: Scalars['Boolean']['output'];
   isGoogleAuthBypassEnabled: Scalars['Boolean']['output'];
   isGoogleAuthEnabled: Scalars['Boolean']['output'];
@@ -7399,7 +7400,6 @@ export type Workspace = {
   isPasswordAuthBypassEnabled: Scalars['Boolean']['output'];
   isPasswordAuthEnabled: Scalars['Boolean']['output'];
   isPublicInviteLinkEnabled: Scalars['Boolean']['output'];
-  isCampaignClickTrackingEnabled: Scalars['Boolean']['output'];
   isTwoFactorAuthenticationEnforced: Scalars['Boolean']['output'];
   logo?: Maybe<Scalars['String']['output']>;
   logoFileId?: Maybe<Scalars['UUID']['output']>;
