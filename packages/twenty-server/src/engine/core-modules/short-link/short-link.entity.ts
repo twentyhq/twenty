@@ -6,18 +6,19 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
+import { ADD_SHORT_LINK_AND_MESSAGE_TRACKING_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-short-link-and-message-tracking-upgrade-command-name.constant';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'shortLink', schema: 'core' })
+@WasIntroducedInUpgrade({
+  upgradeCommandName: ADD_SHORT_LINK_AND_MESSAGE_TRACKING_UPGRADE_COMMAND_NAME,
+})
 @Index(
   'IDX_SHORT_LINK_URL_UNIQUE',
   ['workspaceId', 'messageCampaignId', 'urlHash'],
   { unique: true },
 )
-@Index('IDX_SHORT_LINK_MESSAGE_CAMPAIGN_ID', [
-  'workspaceId',
-  'messageCampaignId',
-])
 export class ShortLinkEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

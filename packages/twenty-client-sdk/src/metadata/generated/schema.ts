@@ -562,6 +562,8 @@ export interface Workspace {
     updatedAt: Scalars['DateTime']
     allowImpersonation: Scalars['Boolean']
     isPublicInviteLinkEnabled: Scalars['Boolean']
+    isCampaignClickTrackingEnabled: Scalars['Boolean']
+    isCampaignOpenTrackingEnabled: Scalars['Boolean']
     workspaceDiscoverability: WorkspaceDiscoverability
     trashRetentionDays: Scalars['Float']
     eventLogRetentionDays: Scalars['Float']
@@ -4161,6 +4163,8 @@ export interface WorkspaceGenqlSelection{
     updatedAt?: boolean | number
     allowImpersonation?: boolean | number
     isPublicInviteLinkEnabled?: boolean | number
+    isCampaignClickTrackingEnabled?: boolean | number
+    isCampaignOpenTrackingEnabled?: boolean | number
     workspaceDiscoverability?: boolean | number
     trashRetentionDays?: boolean | number
     eventLogRetentionDays?: boolean | number
@@ -7606,7 +7610,7 @@ export interface ActivateWorkspaceInput {
 /** Deprecated: the workspace name is set at creation (signUpInNewWorkspace) and this field is ignored during activation. Kept for backward compatibility. */
 displayName?: (Scalars['String'] | null)}
 
-export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),aiChatModelTier?: (AiModelTier | null),aiAgentModelTier?: (AiModelTier | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
+export interface UpdateWorkspaceInput {subdomain?: (Scalars['String'] | null),customDomain?: (Scalars['String'] | null),displayName?: (Scalars['String'] | null),logo?: (Scalars['String'] | null),inviteHash?: (Scalars['String'] | null),isPublicInviteLinkEnabled?: (Scalars['Boolean'] | null),isCampaignClickTrackingEnabled?: (Scalars['Boolean'] | null),workspaceDiscoverability?: (WorkspaceDiscoverability | null),allowImpersonation?: (Scalars['Boolean'] | null),isGoogleAuthEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthEnabled?: (Scalars['Boolean'] | null),isPasswordAuthEnabled?: (Scalars['Boolean'] | null),isGoogleAuthBypassEnabled?: (Scalars['Boolean'] | null),isMicrosoftAuthBypassEnabled?: (Scalars['Boolean'] | null),isPasswordAuthBypassEnabled?: (Scalars['Boolean'] | null),defaultRoleId?: (Scalars['UUID'] | null),isTwoFactorAuthenticationEnforced?: (Scalars['Boolean'] | null),trashRetentionDays?: (Scalars['Float'] | null),eventLogRetentionDays?: (Scalars['Float'] | null),aiChatModelTier?: (AiModelTier | null),aiAgentModelTier?: (AiModelTier | null),isAutoModelSelectionEnabled?: (Scalars['Boolean'] | null),aiModelIdByTier?: (Scalars['JSON'] | null),aiAdditionalInstructions?: (Scalars['String'] | null),editableProfileFields?: (Scalars['String'][] | null),isInternalMessagesImportEnabled?: (Scalars['Boolean'] | null)}
 
 export interface CreateApplicationRegistrationInput {name: Scalars['String'],universalIdentifier?: (Scalars['String'] | null),oAuthRedirectUris?: (Scalars['String'][] | null),oAuthScopes?: (Scalars['String'][] | null)}
 

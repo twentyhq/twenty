@@ -820,6 +820,8 @@ type Workspace {
   updatedAt: DateTime!
   allowImpersonation: Boolean!
   isPublicInviteLinkEnabled: Boolean!
+  isCampaignClickTrackingEnabled: Boolean!
+  isCampaignOpenTrackingEnabled: Boolean!
   workspaceDiscoverability: WorkspaceDiscoverability!
   trashRetentionDays: Float!
   eventLogRetentionDays: Float!
@@ -4867,6 +4869,7 @@ input UpdateWorkspaceInput {
   logo: String
   inviteHash: String
   isPublicInviteLinkEnabled: Boolean
+  isCampaignClickTrackingEnabled: Boolean
   workspaceDiscoverability: WorkspaceDiscoverability
   allowImpersonation: Boolean
   isGoogleAuthEnabled: Boolean
