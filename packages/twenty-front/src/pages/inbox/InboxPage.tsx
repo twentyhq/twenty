@@ -1,12 +1,11 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
-import { SegmentedControl } from 'twenty-ui/primitives/input';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
@@ -25,12 +24,12 @@ import { type InboxListLocation } from '@/inbox/types/InboxListLocation';
 import { collapseNavigationDrawerForInboxPanel } from '@/inbox/utils/collapseNavigationDrawerForInboxPanel';
 import { restoreNavigationDrawerAfterInboxPanel } from '@/inbox/utils/restoreNavigationDrawerAfterInboxPanel';
 import { findInboxSectionBySlug } from '@/inbox/utils/findInboxSectionBySlug';
-import { getRenderedInboxItemOrder } from '@/inbox/utils/getRenderedInboxItemOrder';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { PageCardLayout } from '@/ui/layout/page/components/PageCardLayout';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { type InboxItem, InboxItemScope } from '~/generated/graphql';
+import { type InboxItem } from '~/generated/graphql';
 
 const INBOX_LIST_PANE_WIDTH = 400;
 
@@ -49,6 +48,10 @@ const StyledListPane = styled.div<{ isAlone: boolean }>`
   flex-shrink: 0;
   min-height: 0;
   width: ${({ isAlone }) => (isAlone ? '100%' : `${INBOX_LIST_PANE_WIDTH}px`)};
+`;
+
+const StyledTabsContainer = styled.div`
+  padding: 0 ${themeCssVariables.spacing[2]};
 `;
 
 const StyledListBody = styled.div`
@@ -153,13 +156,17 @@ export const InboxPage = () => {
       : undefined,
   });
   const { openInboxItem } = useOpenInboxItem(inboxListLocation);
-  const shouldSplitByPriority = listScope === InboxItemScope.INBOX;
 
   const openItem = (inboxItem: InboxItem) =>
-    openInboxItem(
-      inboxItem,
-      getRenderedInboxItemOrder({ inboxItems, shouldSplitByPriority }),
-    );
+    openInboxItem(inboxItem, inboxItems);
+
+  const handleQueueViewChange = useCallback((tabId: string) => {
+    const view = INBOX_QUEUE_VIEWS.find((candidate) => candidate.key === tabId);
+
+    if (isDefined(view)) {
+      setInboxQueueViewKey(view.key);
+    }
+  }, []);
 
   // With the flag off the inbox is not a surface, so a direct visit lands on
   // the app index rather than on an empty shell.
@@ -179,21 +186,20 @@ export const InboxPage = () => {
             <PageCardHeader
               icon={<SectionIcon size={theme.icon.size.md} />}
               title={inboxQueue?.label ?? t(inboxSection.label)}
-              actionButton={
-                isDefined(inboxQueueName) && (
-                  <SegmentedControl
-                    ariaLabel={t`Filter this shared inbox`}
-                    itemWidth="content"
-                    value={inboxQueueViewKey}
-                    onChange={setInboxQueueViewKey}
-                    options={INBOX_QUEUE_VIEWS.map((view) => ({
-                      value: view.key,
-                      label: t(view.label),
-                    }))}
-                  />
-                )
-              }
             />
+            {isDefined(inboxQueueName) && (
+              <StyledTabsContainer>
+                <TabList
+                  tabs={INBOX_QUEUE_VIEWS.map((view) => ({
+                    id: view.key,
+                    title: t(view.label),
+                  }))}
+                  behaveAsLinks={false}
+                  componentInstanceId={`inbox-queue-views-${inboxQueueName}`}
+                  onChangeTab={handleQueueViewChange}
+                />
+              </StyledTabsContainer>
+            )}
             <StyledListBody>
               {isDefined(error) && inboxItems.length === 0 ? (
                 <StyledErrorState>
@@ -205,7 +211,6 @@ export const InboxPage = () => {
                   inboxItems={inboxItems}
                   selectedInboxItemId={inboxItemId ?? null}
                   hasMoreItems={hasMoreItems}
-                  shouldSplitByPriority={shouldSplitByPriority}
                   isSharedInboxList={isDefined(inboxQueueName)}
                   onInboxItemClick={openItem}
                   onLoadMoreItems={loadMoreItems}

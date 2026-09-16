@@ -4,9 +4,7 @@ import { LightButton } from 'twenty-ui/components';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { InboxListRow } from '@/inbox/components/InboxListRow';
-import { InboxListSection } from '@/inbox/components/InboxListSection';
 import { InboxListSkeletonLoader } from '@/inbox/components/InboxListSkeletonLoader';
-import { partitionInboxItemsByPriority } from '@/inbox/utils/partitionInboxItemsByPriority';
 import { type InboxItem } from '~/generated/graphql';
 
 const StyledLoadMore = styled.div`
@@ -39,8 +37,6 @@ type InboxListProps = {
   inboxItems: InboxItem[];
   selectedInboxItemId: string | null;
   hasMoreItems: boolean;
-  // Splitting by priority only earns its keep where work is still pending.
-  shouldSplitByPriority: boolean;
   // Taking work off a row is triage, which only happens where the team's
   // unclaimed work is listed.
   isSharedInboxList: boolean;
@@ -53,17 +49,11 @@ export const InboxList = ({
   inboxItems,
   selectedInboxItemId,
   hasMoreItems,
-  shouldSplitByPriority,
   isSharedInboxList,
   onInboxItemClick,
   onLoadMoreItems,
 }: InboxListProps) => {
   const { t } = useLingui();
-
-  const { needsActionItems, otherItems } =
-    partitionInboxItemsByPriority(inboxItems);
-  const hasNeedsActionSection =
-    shouldSplitByPriority && needsActionItems.length > 0;
 
   if (inboxItems.length === 0) {
     return loading ? (
@@ -73,39 +63,17 @@ export const InboxList = ({
     );
   }
 
-  const renderRows = (rowItems: InboxItem[]) =>
-    rowItems.map((inboxItem) => (
-      <InboxListRow
-        key={inboxItem.id}
-        inboxItem={inboxItem}
-        isSelected={selectedInboxItemId === inboxItem.id}
-        isSharedInboxList={isSharedInboxList}
-        onClick={() => onInboxItemClick(inboxItem)}
-      />
-    ));
-
   return (
     <StyledContainer>
-      {hasNeedsActionSection ? (
-        <>
-          <InboxListSection
-            title={t`Needs attention`}
-            itemCount={needsActionItems.length}
-          >
-            {renderRows(needsActionItems)}
-          </InboxListSection>
-          {otherItems.length > 0 && (
-            <InboxListSection
-              title={t`Everything else`}
-              itemCount={otherItems.length}
-            >
-              {renderRows(otherItems)}
-            </InboxListSection>
-          )}
-        </>
-      ) : (
-        renderRows(inboxItems)
-      )}
+      {inboxItems.map((inboxItem) => (
+        <InboxListRow
+          key={inboxItem.id}
+          inboxItem={inboxItem}
+          isSelected={selectedInboxItemId === inboxItem.id}
+          isSharedInboxList={isSharedInboxList}
+          onClick={() => onInboxItemClick(inboxItem)}
+        />
+      ))}
       {hasMoreItems && (
         <StyledLoadMore>
           <LightButton emphasis="subtle" onClick={onLoadMoreItems}>
