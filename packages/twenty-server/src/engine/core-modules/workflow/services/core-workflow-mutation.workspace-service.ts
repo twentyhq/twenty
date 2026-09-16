@@ -10,7 +10,9 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { RecordPositionService } from 'src/engine/core-modules/record-position/services/record-position.service';
 import { type CoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow.dto';
 import { type DeletedCoreWorkflowDTO } from 'src/engine/core-modules/workflow/dtos/deleted-core-workflow.dto';
+import { type DiscardCoreWorkflowDraftInput } from 'src/engine/core-modules/workflow/dtos/discard-core-workflow-draft.input';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
+import { CoreWorkflowIdResolutionService } from 'src/engine/core-modules/workflow/services/core-workflow-id-resolution.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -50,9 +52,37 @@ export class CoreWorkflowMutationWorkspaceService {
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
+    private readonly coreWorkflowIdResolutionService: CoreWorkflowIdResolutionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly recordPositionService: RecordPositionService,
   ) {}
+
+  async updateWorkflow(
+    workspaceId: string,
+    { coreWorkflowId, name }: { coreWorkflowId: string; name: string },
+  ): Promise<void> {
+    const { workspaceWorkflowId } =
+      await this.coreWorkflowIdResolutionService.resolveWorkspaceWorkflowIdOrThrow(
+        { workspaceId, coreWorkflowId },
+      );
+
+    await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
+      await this.workspaceOrmManager.runInWorkspaceTransaction(
+        async (transactionScope) => {
+          await transactionScope.executeRawQuery(
+            `UPDATE core."workflow" SET "name" = $1 WHERE "id" = $2 AND "workspaceId" = $3`,
+            [name, coreWorkflowId, workspaceId],
+          );
+
+          await transactionScope
+            .getRepository<WorkflowWorkspaceEntity>('workflow', {
+              shouldBypassPermissionChecks: true,
+            })
+            .update({ id: workspaceWorkflowId }, { name });
+        },
+      );
+    }, buildSystemAuthContext(workspaceId));
+  }
 
   async createWorkflow(
     workspaceId: string,
@@ -216,8 +246,15 @@ export class CoreWorkflowMutationWorkspaceService {
 
   async discardDraftVersion(
     workspaceId: string,
-    { workspaceWorkflowVersionId }: { workspaceWorkflowVersionId: string },
+    input: DiscardCoreWorkflowDraftInput,
   ): Promise<string | null> {
+    const workspaceWorkflowVersionId =
+      await this.resolveDiscardTargetWorkspaceVersionId(workspaceId, input);
+
+    if (!isDefined(workspaceWorkflowVersionId)) {
+      return null;
+    }
+
     const authContext = buildSystemAuthContext(workspaceId);
 
     const outcome: DiscardDraftVersionOutcome =
@@ -293,6 +330,45 @@ export class CoreWorkflowMutationWorkspaceService {
     }
 
     return outcome.workflowId;
+  }
+
+  private async resolveDiscardTargetWorkspaceVersionId(
+    workspaceId: string,
+    {
+      workspaceWorkflowVersionId,
+      coreWorkflowVersionId,
+    }: DiscardCoreWorkflowDraftInput,
+  ): Promise<string | null> {
+    if (isDefined(workspaceWorkflowVersionId)) {
+      return workspaceWorkflowVersionId;
+    }
+
+    if (!isDefined(coreWorkflowVersionId)) {
+      throw new WorkflowQueryValidationException(
+        'Either workspaceWorkflowVersionId or coreWorkflowVersionId must be provided',
+        WorkflowQueryValidationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Workflow version is missing from the request`,
+        },
+      );
+    }
+
+    const coreVersion =
+      await this.workflowVersionCoreSyncService.findCoreVersionById(
+        workspaceId,
+        coreWorkflowVersionId,
+      );
+
+    if (!isDefined(coreVersion)) {
+      return null;
+    }
+
+    const { workspaceWorkflowVersionId: resolvedWorkspaceVersionId } =
+      await this.coreWorkflowIdResolutionService.resolveWorkspaceVersionIdOrThrow(
+        { workspaceId, coreWorkflowVersionId },
+      );
+
+    return resolvedWorkspaceVersionId;
   }
 
   private async rollbackCreatedWorkflow(

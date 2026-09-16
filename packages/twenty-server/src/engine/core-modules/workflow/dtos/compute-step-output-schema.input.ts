@@ -19,4 +19,10 @@ export class ComputeStepOutputSchemaInput {
     nullable: true,
   })
   workflowVersionId?: string;
+
+  @Field(() => UUIDScalarType, {
+    description: 'Core workflow version ID',
+    nullable: true,
+  })
+  coreWorkflowVersionId?: string;
 }

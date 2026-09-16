@@ -16,7 +16,13 @@ import { WorkflowQueryValidationGraphqlApiExceptionFilter } from 'src/engine/cor
 import { CoreWorkflowVersionDTO } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.dto';
 import { CoreWorkflowVersionArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-version.input';
 import { CoreWorkflowVersionsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions.input';
+import { CoreWorkflowVersionByIdArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-version-by-id.input';
+import { CoreWorkflowVersionsByCoreWorkflowIdArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-versions-by-core-workflow-id.input';
+import { CoreWorkflowByIdArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow-by-id.input';
 import { CoreWorkflowArgs } from 'src/engine/core-modules/workflow/dtos/core-workflow.input';
+import { DuplicateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/duplicate-core-workflow.input';
+import { UpdateCoreWorkflowInput } from 'src/engine/core-modules/workflow/dtos/update-core-workflow.input';
+import { CoreWorkflowVersionMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-version-mutation.workspace-service';
 import { CoreWorkflowsArgs } from 'src/engine/core-modules/workflow/dtos/core-workflows.input';
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowMutationWorkspaceService } from 'src/engine/core-modules/workflow/services/core-workflow-mutation.workspace-service';
@@ -49,7 +55,40 @@ export class CoreWorkflowResolver {
     private readonly coreWorkflowListService: CoreWorkflowListService,
     private readonly coreWorkflowMutationWorkspaceService: CoreWorkflowMutationWorkspaceService,
     private readonly coreWorkflowVersionListService: CoreWorkflowVersionListService,
+    private readonly coreWorkflowVersionMutationWorkspaceService: CoreWorkflowVersionMutationWorkspaceService,
   ) {}
+
+  @Mutation(() => CoreWorkflowDTO, { nullable: true })
+  async updateCoreWorkflow(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('input') input: UpdateCoreWorkflowInput,
+  ): Promise<CoreWorkflowDTO | null> {
+    await this.coreWorkflowMutationWorkspaceService.updateWorkflow(
+      workspaceId,
+      input,
+    );
+
+    return this.coreWorkflowListService.findOneById({
+      workspaceId,
+      coreWorkflowId: input.coreWorkflowId,
+    });
+  }
+
+  @Mutation(() => CoreWorkflowDTO)
+  async duplicateCoreWorkflow(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args('input')
+    {
+      coreWorkflowIdToDuplicate,
+      coreWorkflowVersionIdToCopy,
+    }: DuplicateCoreWorkflowInput,
+  ): Promise<CoreWorkflowDTO> {
+    return this.coreWorkflowVersionMutationWorkspaceService.duplicateWorkflow({
+      workspaceId,
+      coreWorkflowIdToDuplicate,
+      coreWorkflowVersionIdToCopy,
+    });
+  }
 
   @Mutation(() => CoreWorkflowDTO)
   async createCoreWorkflow(
@@ -108,6 +147,17 @@ export class CoreWorkflowResolver {
   }
 
   @Query(() => CoreWorkflowDTO, { nullable: true })
+  async coreWorkflowById(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args() { coreWorkflowId }: CoreWorkflowByIdArgs,
+  ): Promise<CoreWorkflowDTO | null> {
+    return this.coreWorkflowListService.findOneById({
+      workspaceId,
+      coreWorkflowId,
+    });
+  }
+
+  @Query(() => CoreWorkflowDTO, { nullable: true })
   async coreWorkflow(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args() { workspaceWorkflowId }: CoreWorkflowArgs,
@@ -140,5 +190,27 @@ export class CoreWorkflowResolver {
         workspaceWorkflowVersionId,
       },
     );
+  }
+
+  @Query(() => [CoreWorkflowVersionDTO])
+  async coreWorkflowVersionsByCoreWorkflowId(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args() { coreWorkflowId }: CoreWorkflowVersionsByCoreWorkflowIdArgs,
+  ): Promise<CoreWorkflowVersionDTO[]> {
+    return this.coreWorkflowVersionListService.findManyByCoreWorkflowId({
+      workspaceId,
+      coreWorkflowId,
+    });
+  }
+
+  @Query(() => CoreWorkflowVersionDTO, { nullable: true })
+  async coreWorkflowVersionById(
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @Args() { id }: CoreWorkflowVersionByIdArgs,
+  ): Promise<CoreWorkflowVersionDTO | null> {
+    return this.coreWorkflowVersionListService.findOneByCoreWorkflowVersionId({
+      workspaceId,
+      coreWorkflowVersionId: id,
+    });
   }
 }
