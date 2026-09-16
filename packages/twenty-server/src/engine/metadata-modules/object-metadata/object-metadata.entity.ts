@@ -19,6 +19,7 @@ import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database
 import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_OPEN_RECORD_IN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-27/add-object-metadata-open-record-in-upgrade-command-name.constant';
 import { ADD_OBJECT_METADATA_READABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-39/add-object-metadata-readability-upgrade-command-name.constant';
+import { ADD_OBJECT_METADATA_READABILITY_PARENT_FIELDS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-41/add-object-metadata-readability-parent-fields-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
 import { type WorkspaceEntityDuplicateCriteria } from 'src/engine/api/graphql/workspace-query-builder/types/workspace-entity-duplicate-criteria.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -34,6 +35,7 @@ import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entiti
 import { SearchFieldMetadataEntity } from 'src/engine/metadata-modules/search-field-metadata/search-field-metadata.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
+import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { type JsonbProperty } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/jsonb-property.type';
 
 @Entity('objectMetadata')
@@ -91,7 +93,7 @@ export class ObjectMetadataEntity
     upgradeCommandName: ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME,
   })
   @Column({ type: 'jsonb', nullable: true })
-  overrides: JsonbProperty<ObjectMetadataOverrides> | null;
+  overrides: JsonbProperty<AuthoredOverrides<ObjectMetadataOverrides>> | null;
 
   /**
    * @deprecated Please use `overrides` instead.
@@ -165,6 +167,13 @@ export class ObjectMetadataEntity
     default: MetadataReadability.OPEN,
   })
   readability: MetadataReadability;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_OBJECT_METADATA_READABILITY_PARENT_FIELDS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: true, type: 'uuid', array: true })
+  readabilityParentFieldUniversalIdentifiers: string[] | null;
 
   @Column({ default: true })
   isAuditLogged: boolean;

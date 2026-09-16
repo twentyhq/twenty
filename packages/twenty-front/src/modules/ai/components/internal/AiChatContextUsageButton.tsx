@@ -1,253 +1,255 @@
+import { getAiChatUsageLabel } from '@/ai/utils/getAiChatUsageLabel';
+import { formatAiChatTokens } from '@/ai/utils/formatAiChatTokens';
+import { useQuery } from '@apollo/client/react';
+import {
+  FloatingPortal,
+  autoUpdate,
+  flip,
+  offset,
+  safePolygon,
+  shift,
+  useClick,
+  useDismiss,
+  useFloating,
+  useFocus,
+  useHover,
+  useInteractions,
+  useRole,
+  useTransitionStyles,
+} from '@floating-ui/react';
 import { styled } from '@linaria/react';
-import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator } from 'twenty-ui/layout';
-import { ProgressBar } from 'twenty-ui/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+import { IconWindow, IconGauge } from 'twenty-ui/icon';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
 import { ContextUsageProgressRing } from '@/ai/components/internal/ContextUsageProgressRing';
-import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
-import {
-  agentChatUsageComponentFamilyState,
-  type AgentChatLastMessageUsage,
-} from '@/ai/states/agentChatUsageComponentFamilyState';
+import { useAiModelTiers } from '@/ai/hooks/useAiModelTiers';
+import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
+import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
+import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUserSelectedModelTierState } from '@/ai/states/agentChatUserSelectedModelTierState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { billingState } from '@/client-config/states/billingState';
-import { SettingsBillingLabelValueItem } from '@/settings/billing/components/internal/SettingsBillingLabelValueItem';
-import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
+import { getUsageLimitRingColor } from '@/settings/billing/utils/getUsageLimitRingColor';
+import { computeUsageLimitProgress } from '@/settings/billing/utils/computeUsageLimitProgress';
+import { StyledInformationCard } from '@/ui/layout/information-card/components/StyledInformationCard';
+import { UsageProgressRow } from '@/ui/feedback/progress-ring/components/UsageProgressRow';
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { GetAiChatUsageDocument } from '~/generated-metadata/graphql';
 import { formatNumber } from '~/utils/format/formatNumber';
 
-const StyledContainer = styled.div`
-  position: relative;
-`;
-
-const StyledTrigger = styled.div<{ hasUsage: boolean }>`
+const StyledTrigger = styled.button`
   align-items: center;
+  background: transparent;
+  border: none;
   border-radius: ${themeCssVariables.border.radius.md};
-  cursor: ${({ hasUsage }) => (hasUsage ? 'pointer' : 'default')};
+  cursor: pointer;
   display: flex;
   height: 24px;
   justify-content: center;
-  min-width: 24px;
-  transition: background calc(${themeCssVariables.animation.duration.fast} * 1s)
-    ease;
+  padding: 0;
+  width: 24px;
 
   &:hover {
-    background: ${({ hasUsage }) =>
-      hasUsage
-        ? themeCssVariables.background.transparent.light
-        : 'transparent'};
+    background: ${themeCssVariables.background.transparent.light};
+  }
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
   }
 `;
 
-const StyledHoverCard = styled.div`
-  background: ${themeCssVariables.background.primary};
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  bottom: calc(100% + 8px);
-  box-shadow: ${themeCssVariables.boxShadow.strong};
-  left: 0;
-  min-width: 280px;
-  position: absolute;
-  z-index: ${themeCssVariables.lastLayerZIndex};
-`;
-
-const StyledSection = styled.div`
+const StyledFooter = styled.div`
   display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[3]};
+  justify-content: flex-end;
+  padding-top: ${themeCssVariables.spacing[1]};
 `;
-
-const StyledRow = styled.div`
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-`;
-
-const StyledContextWindowValue = styled.span`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-`;
-
-const StyledSectionTitle = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding-bottom: ${themeCssVariables.spacing[2]};
-`;
-
-const getCachedLabel = (lastMessage: AgentChatLastMessageUsage): string => {
-  if (lastMessage.cachedInputTokens <= 0 || lastMessage.inputTokens <= 0) {
-    return '';
-  }
-
-  const cachedPercent = Math.round(
-    (lastMessage.cachedInputTokens / lastMessage.inputTokens) * 100,
-  );
-
-  return ` (${t`${cachedPercent}% cached`})`;
-};
 
 export const AiChatContextUsageButton = () => {
   const { t } = useLingui();
-  const [isHovered, setIsHovered] = useState(false);
+
+  const shouldReduceMotion = useReducedMotion();
+
+  const [isOpen, setIsOpen] = useState(false);
+
+  const [showDetails, setShowDetails] = useState(false);
+
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+
   const agentChatUsage = useAtomComponentFamilyStateValue(
     agentChatUsageComponentFamilyState,
     { threadId: currentAiChatThread },
   );
-  const billing = useAtomStateValue(billingState);
-  const isBillingEnabled = billing?.isBillingEnabled ?? false;
-  const { formatUsageValue } = useUsageValueFormatter();
 
-  // Values from the streaming API arrive as display credits (micro-credits).
-  const formatChatCost = (displayCredits: number): string => {
-    if (isBillingEnabled) {
-      return `${formatUsageValue(displayCredits)}`;
-    }
-    const dollars = displayCredits / 1000;
+  const tiers = useAiModelTiers();
 
-    return `$${formatNumber(dollars, { decimals: 2 })}`;
-  };
+  const { chatTier } = useWorkspaceAiModelTiers();
 
-  const hasMessages = useAtomComponentSelectorValue(
-    agentChatHasMessageComponentSelector,
+  const agentChatUserSelectedModelTier = useAtomStateValue(
+    agentChatUserSelectedModelTierState,
   );
 
-  if (!hasMessages) {
-    return null;
-  }
+  const isWorkspaceSetupChat = useIsWorkspaceSetupChat();
 
-  if (!agentChatUsage) {
-    return (
-      <StyledContainer>
-        <StyledTrigger hasUsage={false}>
-          <ContextUsageProgressRing percentage={0} />
-        </StyledTrigger>
-      </StyledContainer>
-    );
-  }
+  const modelTier = isWorkspaceSetupChat
+    ? 'fast'
+    : (agentChatUserSelectedModelTier ?? chatTier);
 
-  const percentage = Math.min(
-    (agentChatUsage.conversationSize / agentChatUsage.contextWindowTokens) *
-      100,
-    100,
-  );
-  const formattedPercentage = percentage.toFixed(1);
-  const totalCredits =
-    agentChatUsage.inputCredits + agentChatUsage.outputCredits;
-  const lastMessage = agentChatUsage.lastMessage;
+  const contextWindow =
+    agentChatUsage?.contextWindowTokens ??
+    tiers.find(({ tier }) => tier === modelTier)?.model?.contextWindowTokens ??
+    0;
+
+  const conversationSize = agentChatUsage?.conversationSize ?? 0;
+
+  const percentage =
+    contextWindow > 0
+      ? Math.min(100, Math.max(0, (conversationSize / contextWindow) * 100))
+      : 0;
+
+  const { data, loading, error } = useQuery(GetAiChatUsageDocument, {
+    skip: !isOpen || isWorkspaceSetupChat,
+    fetchPolicy: 'network-only',
+  });
+
+  const creditUsage = data?.aiChatUsage;
+
+  const limitValue = isDefined(creditUsage)
+    ? Number(creditUsage.limitValue)
+    : null;
+
+  const consumedValue = isDefined(creditUsage?.consumedValue)
+    ? Number(creditUsage?.consumedValue)
+    : null;
+
+  const progress = isDefined(limitValue)
+    ? computeUsageLimitProgress({ limitValue, consumedValue })
+    : null;
+
+  const creditPercentage =
+    limitValue === 0 ? 100 : (progress?.consumedPercentage ?? null);
+
+  const daysUntilReset = isDefined(creditUsage?.periodEnd)
+    ? Math.max(
+        0,
+        Math.ceil(
+          (new Date(creditUsage.periodEnd).getTime() - Date.now()) / 86400000,
+        ),
+      )
+    : null;
+
+  const { refs, floatingStyles, context } = useFloating({
+    open: isOpen,
+    onOpenChange: (open) => {
+      setIsOpen(open);
+      if (open) {
+        setShowDetails(false);
+      }
+    },
+    placement: 'top-start',
+    middleware: [offset(8), flip(), shift({ padding: 8 })],
+    whileElementsMounted: autoUpdate,
+  });
+
+  const { isMounted, styles: transitionStyles } = useTransitionStyles(context, {
+    duration: shouldReduceMotion ? 0 : { open: 150, close: 100 },
+    initial: { opacity: 0 },
+  });
+
+  const hover = useHover(context, { handleClose: safePolygon() });
+
+  const focus = useFocus(context);
+
+  const click = useClick(context);
+
+  const dismiss = useDismiss(context);
+
+  const role = useRole(context, { role: 'dialog' });
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([
+    hover,
+    focus,
+    click,
+    dismiss,
+    role,
+  ]);
 
   return (
-    <StyledContainer
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <StyledTrigger hasUsage={true}>
+    <>
+      <StyledTrigger
+        ref={refs.setReference}
+        type="button"
+        aria-label={t`Context and usage`}
+        // oxlint-disable-next-line react/jsx-props-no-spreading
+        {...getReferenceProps()}
+      >
         <ContextUsageProgressRing percentage={percentage} />
       </StyledTrigger>
-
-      {isHovered && (
-        <StyledHoverCard>
-          <StyledSection>
-            <StyledSectionTitle>{t`Context window`}</StyledSectionTitle>
-            <StyledRow>
-              <StyledContextWindowValue>
-                {formattedPercentage}%
-              </StyledContextWindowValue>
-              <StyledContextWindowValue>
-                {formatNumber(agentChatUsage.conversationSize, {
-                  abbreviate: true,
-                  decimals: 1,
-                })}{' '}
-                /{' '}
-                {formatNumber(agentChatUsage.contextWindowTokens, {
-                  abbreviate: true,
-                  decimals: 1,
-                })}{' '}
-                {t`tokens`}
-              </StyledContextWindowValue>
-            </StyledRow>
-            <ProgressBar
+      {isMounted && (
+        <FloatingPortal>
+          <StyledInformationCard
+            ref={refs.setFloating}
+            style={{ ...floatingStyles, ...transitionStyles }}
+            aria-label={t`Context and usage`}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...getFloatingProps()}
+          >
+            <UsageProgressRow
+              Icon={IconWindow}
+              label={t`Context window`}
               value={percentage}
-              barColor={
-                percentage > 80
-                  ? themeCssVariables.color.red
-                  : percentage > 60
-                    ? themeCssVariables.color.orange
-                    : themeCssVariables.color.blue
+              valueLabel={
+                contextWindow > 0
+                  ? `(${formatAiChatTokens(conversationSize)}/${formatAiChatTokens(contextWindow)}) ${formatNumber(percentage, { decimals: 1 })}%`
+                  : t`Not available`
               }
-              backgroundColor={themeCssVariables.background.tertiary}
-              withBorderRadius
+              barColor={getUsageLimitRingColor({
+                consumedPercentage: percentage,
+                isExhausted: percentage >= 100,
+              })}
             />
-          </StyledSection>
-
-          {isDefined(lastMessage) && (
-            <>
-              <HorizontalSeparator
-                noMargin
-                color={themeCssVariables.background.tertiary}
+            {!isWorkspaceSetupChat && (
+              <UsageProgressRow
+                Icon={IconGauge}
+                label={t`Usage`}
+                value={
+                  loading || isDefined(error) ? 0 : (creditPercentage ?? 0)
+                }
+                valueLabel={getAiChatUsageLabel({
+                  loading,
+                  hasError: isDefined(error),
+                  hasUsage: isDefined(creditUsage),
+                  daysUntilReset,
+                  creditPercentage,
+                })}
+                barColor={getUsageLimitRingColor({
+                  consumedPercentage: creditPercentage ?? 0,
+                  isExhausted: creditPercentage === 100,
+                })}
               />
-              <StyledSection>
-                <StyledSectionTitle>{t`Last message`}</StyledSectionTitle>
-                <SettingsBillingLabelValueItem
-                  label={t`Input tokens`}
-                  value={`${formatNumber(lastMessage.inputTokens, {
-                    abbreviate: true,
-                    decimals: 1,
-                  })}${getCachedLabel(lastMessage)}`}
-                />
-                <SettingsBillingLabelValueItem
-                  label={t`Output tokens`}
-                  value={formatNumber(lastMessage.outputTokens, {
-                    abbreviate: true,
-                    decimals: 1,
-                  })}
-                />
-                <SettingsBillingLabelValueItem
-                  label={t`Cost`}
-                  value={formatChatCost(
-                    lastMessage.inputCredits + lastMessage.outputCredits,
-                  )}
-                />
-              </StyledSection>
-            </>
-          )}
-
-          <HorizontalSeparator
-            noMargin
-            color={themeCssVariables.background.tertiary}
-          />
-          <StyledSection>
-            <StyledSectionTitle>{t`Conversation`}</StyledSectionTitle>
-            <SettingsBillingLabelValueItem
-              label={t`Input tokens`}
-              value={formatNumber(agentChatUsage.inputTokens, {
-                abbreviate: true,
-                decimals: 1,
-              })}
-            />
-            <SettingsBillingLabelValueItem
-              label={t`Output tokens`}
-              value={formatNumber(agentChatUsage.outputTokens, {
-                abbreviate: true,
-                decimals: 1,
-              })}
-            />
-            <SettingsBillingLabelValueItem
-              label={t`Total cost`}
-              value={formatChatCost(totalCredits)}
-            />
-          </StyledSection>
-        </StyledHoverCard>
+            )}
+            {showDetails && <AiChatContextUsageDetails />}
+            {isDefined(agentChatUsage) && (
+              <>
+                <HorizontalSeparator noMargin />
+                <StyledFooter>
+                  <Button
+                    title={showDetails ? t`Less` : t`More`}
+                    size="small"
+                    variant="secondary"
+                    onClick={() => setShowDetails(!showDetails)}
+                  />
+                </StyledFooter>
+              </>
+            )}
+          </StyledInformationCard>
+        </FloatingPortal>
       )}
-    </StyledContainer>
+    </>
   );
 };

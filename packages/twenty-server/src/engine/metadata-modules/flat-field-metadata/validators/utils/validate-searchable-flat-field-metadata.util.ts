@@ -58,7 +58,7 @@ export const validateSearchableFlatFieldMetadata = ({
     errors.push({
       code: FieldMetadataExceptionCode.INVALID_FIELD_INPUT,
       message: 'Id field is not supported for search',
-      userFriendlyMessage: msg`Id field cannot be searched`,
+      userFriendlyMessage: msg`ID field cannot be searched`,
     });
   }
 

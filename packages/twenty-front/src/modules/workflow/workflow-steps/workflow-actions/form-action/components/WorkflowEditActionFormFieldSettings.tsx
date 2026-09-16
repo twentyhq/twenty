@@ -1,6 +1,6 @@
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { FormSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormSelectFieldInput';
-import { InputLabel, LightIconButton } from 'twenty-ui/input';
+import { InputLabel, LightIconButton } from 'twenty-ui/primitives/input';
 import { WorkflowFormFieldSettingsByType } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowFormFieldSettingsByType';
 import { FORM_SELECT_FIELD_TYPE_OPTIONS } from '@/workflow/workflow-steps/workflow-actions/form-action/constants/FormSelectFieldTypeOptions';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';

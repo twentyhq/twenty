@@ -14,6 +14,8 @@ export enum SettingsPath {
   Usage = 'billing/usage',
   UsageUserDetail = 'billing/usage/user/:userWorkspaceId',
   BillingLimits = 'billing/limits',
+  BillingNewLimit = 'billing/limits/new',
+  BillingLimitEdit = 'billing/limits/:usageLimitId/edit',
   Enterprise = 'enterprise',
   Objects = 'objects',
   ObjectOverview = 'objects/overview',
@@ -74,7 +76,7 @@ export enum SettingsPath {
   NewSsoIdentityProvider = 'security/sso/new',
 
   AdminPanel = 'admin-panel',
-  AdminPanelEnterprise = 'admin-panel#enterprise',
+  AdminPanelOrganization = 'admin-panel#organization',
   AdminPanelHealthStatus = 'admin-panel#health-status',
   AdminPanelIndicatorHealthStatus = 'admin-panel/health-status/:indicatorId',
   AdminPanelInferredVersion = 'admin-panel/health-status/inferred-version',

@@ -216,10 +216,10 @@ export const SidePanelSearchRecordPreviewCard = ({
         <StyledHeader>
           <HeaderIdentifier
             avatar={{
-              avatarUrl: getAbsoluteImageUrl(recordIdentifier?.avatarUrl),
-              placeholder: recordIdentifier?.name ?? label,
-              placeholderColorSeed: recordId,
-              type: recordIdentifier?.avatarType ?? 'rounded',
+              src: getAbsoluteImageUrl(recordIdentifier?.avatarUrl),
+              name: recordIdentifier?.name ?? label,
+              colorSeed: recordId,
+              shape: recordIdentifier?.avatarShape ?? 'circle',
             }}
             title={
               <StyledTitleText>

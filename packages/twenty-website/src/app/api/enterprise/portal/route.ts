@@ -36,7 +36,7 @@ export async function POST(request: Request) {
 
     if (!payload) {
       return NextResponse.json(
-        { error: 'Invalid enterprise key' },
+        { error: 'Invalid Organization key' },
         { status: 403 },
       );
     }

@@ -5,7 +5,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { IconLifebuoy } from 'twenty-ui/icon';
-import { Card } from 'twenty-ui/surfaces';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 

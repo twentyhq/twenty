@@ -1,3 +1,7 @@
+import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
+import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
+import { type AgentChatThread } from '~/generated-metadata/graphql';
 import { act, renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
@@ -56,5 +60,42 @@ describe('useSelectAiChatThread', () => {
     expect(jotaiStore.get(shouldOpenAiChatAfterOnboardingState.atom)).toBe(
       true,
     );
+  });
+  it('restores usage from an archived thread and preserves it on reselection', () => {
+    const thread = {
+      id: 'archived-thread',
+      deletedAt: '2026-09-01',
+      createdAt: '2026-08-01',
+      updatedAt: '2026-09-01',
+      conversationSize: 120,
+      contextWindowTokens: 1000,
+      totalInputTokens: 250,
+      totalOutputTokens: 30,
+      totalCacheReadTokens: 80,
+      totalInputCredits: 0.125,
+      totalOutputCredits: 0.05,
+    } satisfies AgentChatThread;
+    const metadataAtom = metadataStoreState.atomFamily('agentChatThreads');
+    jotaiStore.set(metadataAtom, {
+      ...jotaiStore.get(metadataAtom),
+      current: [thread],
+    });
+    const usageAtom = agentChatUsageComponentFamilyState.atomFamily({
+      instanceId: AGENT_CHAT_INSTANCE_ID,
+      familyKey: { threadId: thread.id },
+    });
+    const { result } = renderHook(() => useSelectAiChatThread(), {
+      wrapper: Wrapper,
+    });
+    act(() => result.current.selectAiChatThread(thread.id));
+    expect(jotaiStore.get(usageAtom)).toMatchObject({
+      inputTokens: 250,
+      cachedInputTokens: 80,
+      lastMessage: null,
+    });
+    const liveUsage = { ...jotaiStore.get(usageAtom)!, inputTokens: 500 };
+    jotaiStore.set(usageAtom, liveUsage);
+    act(() => result.current.selectAiChatThread(thread.id));
+    expect(jotaiStore.get(usageAtom)).toEqual(liveUsage);
   });
 });

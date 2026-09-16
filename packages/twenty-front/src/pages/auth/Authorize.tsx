@@ -16,8 +16,8 @@ import {
   IconDatabase,
   IconUserCircle,
 } from 'twenty-ui/icon';
-import { H1Title, H1TitleFontColor } from 'twenty-ui/typography';
-import { ModalContent } from 'twenty-ui/surfaces';
+import { H1Title, H1TitleFontColor } from 'twenty-ui/primitives/typography';
+import { ModalContent } from 'twenty-ui/primitives/surfaces';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AuthorizeAppDocument,

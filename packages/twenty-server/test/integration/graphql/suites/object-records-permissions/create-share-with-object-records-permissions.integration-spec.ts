@@ -157,10 +157,10 @@ describe('createShareWithObjectRecordsPermissions', () => {
   const createdPersonIds: string[] = [];
 
   const findRecordShares = (recordId: string) =>
-    recordShareService.findByRecord({
+    recordShareService.findByRecordIds({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       objectMetadataId,
-      recordId,
+      recordIds: [recordId],
     });
 
   const trackRecordId = (): string => {

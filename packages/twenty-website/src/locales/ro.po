@@ -8,7 +8,7 @@ msgstr ""
 "Language: ro\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 12:23\n"
+"PO-Revision-Date: 2026-09-15 14:21\n"
 "Last-Translator: \n"
 "Language-Team: Romanian\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100>0 && n%100<20)) ? 1 : 2);\n"
@@ -821,15 +821,15 @@ msgstr "Proprietar de cont"
 msgid "Action"
 msgstr "Acțiune"
 
-#. js-lingui-id: Kqfsda
+#. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
-msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
-msgstr "Activează-ți licența Twenty enterprise după finalizarea plății și copiază cheia în instanța ta self-hosted."
+msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
+msgstr "Activează-ți licența Twenty Organization după finalizarea plății și copiază cheia în instanța ta self-hosted."
 
-#. js-lingui-id: muhZ+X
+#. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Activating your enterprise license…"
-msgstr "Se activează licența dvs. enterprise…"
+msgid "Activating your Organization license…"
+msgstr "Se activează licența dvs. Organization…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2157,10 +2157,10 @@ msgstr "Copiază"
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "Copiază transcrierea sau linkul video al unei înregistrări de apel direct din pagina înregistrării."
 
-#. js-lingui-id: 7qTWwB
+#. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Copy the enterprise key above."
-msgstr "Copiază cheia enterprise de mai sus."
+msgid "Copy the Organization key above."
+msgstr "Copiază cheia Organization de mai sus."
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2996,11 +2996,6 @@ msgstr "Elevate Consulting folosește Twenty ca backbone de API care conectează
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "CEO-ul Elevate a fost atât de impresionat de Twenty încât a început să îl recomande clienților înainte ca setup-ul intern să fie măcar complet. Echipa explorează aducerea Twenty în proiectele pentru clienți ca parte a practicii lor de consultanță, inclusiv ca backend pentru produse custom create pentru nevoi operaționale specifice."
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "Email & Calendar"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -3042,6 +3037,7 @@ msgid "Emails"
 msgstr "Emailuri"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "Emailuri & Calendar"
@@ -3151,16 +3147,6 @@ msgstr "Introdu un URL valid (care începe cu http:// sau https://)."
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Enterprise"
 msgstr "Enterprise"
-
-#. js-lingui-id: 87BcPj
-#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
-msgid "Enterprise *activation*"
-msgstr "*Activare* Enterprise"
-
-#. js-lingui-id: NTskGY
-#: src/platform/routing/static-website-routes.ts
-msgid "Enterprise Activation | Twenty"
-msgstr "Enterprise Activation | Twenty"
 
 #. js-lingui-id: aDpB6R
 #: src/sections/compare/compare-data.ts
@@ -3331,10 +3317,10 @@ msgstr "Rulare extinsă!"
 msgid "Extra Dataverse storage (10 GB)"
 msgstr "Stocare Dataverse suplimentară (10 GB)"
 
-#. js-lingui-id: tX4pRm
+#. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Failed to activate enterprise key. Please try again."
-msgstr "Nu s-a reușit activarea cheii enterprise. Te rugăm să încerci din nou."
+msgid "Failed to activate Organization key. Please try again."
+msgstr "Nu s-a reușit activarea cheii Organization. Te rugăm să încerci din nou."
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -3401,11 +3387,6 @@ msgstr "Aplicații recomandate"
 msgid "Feb"
 msgstr "Feb"
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "Permisiune la nivel de câmp"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3424,6 +3405,11 @@ msgstr "Widgeturile de câmp acceptă acum mai multe tipuri de relații, astfel 
 #. js-lingui-id: e6BgMV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
+msgstr "Permisiuni la nivel de câmp"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
 msgstr "Permisiuni la nivel de câmp"
 
 #. js-lingui-id: RnX5oc
@@ -5630,10 +5616,10 @@ msgstr "Deschide studiul de caz: {0}"
 msgid "Open menu"
 msgstr "Deschide meniul"
 
-#. js-lingui-id: pkXQA+
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Enterprise."
-msgstr "Deschide Settings → Enterprise în instanța ta Twenty self-hosted."
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
+msgstr "Deschide Settings → Admin Panel → Organization în instanța ta Twenty self-hosted."
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5665,6 +5651,16 @@ msgstr "Oportunitate"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Organization"
 msgstr "Organizație"
+
+#. js-lingui-id: hjEu3O
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
+msgid "Organization *activation*"
+msgstr "*Activarea* organizației"
+
+#. js-lingui-id: CKppYD
+#: src/platform/routing/static-website-routes.ts
+msgid "Organization Activation | Twenty"
+msgstr "Activarea organizației | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -6820,6 +6816,7 @@ msgstr "Spațiile de lucru self-hosted își pot urmări acum utilizarea mai cla
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6842,11 +6839,6 @@ msgstr "Self-Onboarding"
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "Self-serve, parteneri opționali"
-
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "Selfhosting"
 
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -8156,14 +8148,14 @@ msgstr "Twenty vs SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty vs SAP Sales Cloud Pricing — Compararea costului real"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "Autentificare cu doi factori"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
+msgstr "Autentificare cu doi factori"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
 msgstr "Autentificare cu doi factori"
 
 #. js-lingui-id: O+vc/1
@@ -8518,14 +8510,10 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "Nu am putut trimite brief-ul tău. Te rugăm să încerci din nou peste puțin timp."
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Nu am vrut doar să acoperim problema. Am vrut să construim ceva pe care instituțiile să se poată baza la scară, iar asta a însemnat să pornim de la un fundament suficient de solid pentru a susține întreaga complexitate a ceea ce aveam în minte."
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "Nu am vrut doar să acoperim problema. Am vrut să construim ceva pe care instituțiile să se poată baza la scară, iar asta însemna să pornim de la o fundație suficient de solidă pentru a susține întreaga complexitate a ceea ce aveam în minte."
 
 #. js-lingui-id: GVxbgf
 #: src/platform/releases/ReleaseNotes.tsx
@@ -9165,16 +9153,6 @@ msgstr "Brief-ul tău"
 msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
 msgstr "Checkout-ul tău este finalizat. Urmează pașii de mai jos pentru a copia cheia de licență în instanța ta Twenty."
 
-#. js-lingui-id: krHgj1
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise key"
-msgstr "Cheia ta enterprise"
-
-#. js-lingui-id: +dxjCu
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise license has been activated successfully."
-msgstr "Licența ta enterprise a fost activată cu succes."
-
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts
 msgid "Your name *"
@@ -9184,6 +9162,16 @@ msgstr "Numele tău *"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Your network, fully mapped."
 msgstr "Rețeaua ta, cartografiată complet."
+
+#. js-lingui-id: 91Ysnw
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization key"
+msgstr "Cheia organizației tale"
+
+#. js-lingui-id: sarabV
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization license has been activated successfully."
+msgstr "Licența organizației tale a fost activată cu succes."
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

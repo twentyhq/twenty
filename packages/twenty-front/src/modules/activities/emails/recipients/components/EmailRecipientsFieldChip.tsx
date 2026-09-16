@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 
 import { EmailRecipientChipMenuContent } from '@/activities/emails/recipients/components/EmailRecipientChipMenuContent';
 import { type EmailRecipientResolution } from '@/activities/emails/recipients/hooks/useEmailRecipientsResolution';
@@ -58,13 +58,13 @@ export const EmailRecipientsFieldChip = ({
   const avatar =
     isDefined(workspaceMember) || isDefined(person) ? (
       <Avatar
-        avatarUrl={getAbsoluteImageUrl(
+        src={getAbsoluteImageUrl(
           workspaceMember?.avatarUrl ?? person?.avatarUrl,
         )}
-        placeholder={resolvedLabel}
-        placeholderColorSeed={workspaceMember?.id ?? person?.id}
+        name={resolvedLabel}
+        colorSeed={workspaceMember?.id ?? person?.id}
         size="sm"
-        type="rounded"
+        shape="circle"
       />
     ) : undefined;
 

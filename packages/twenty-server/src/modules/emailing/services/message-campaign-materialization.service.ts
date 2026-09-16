@@ -29,6 +29,7 @@ import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-ob
 import { type CampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/campaign-recipient.type';
 import { type CampaignMessageRecipient } from 'src/modules/emailing/types/campaign-message-recipient.type';
 import { buildCampaignMessageId } from 'src/modules/emailing/utils/build-campaign-message-id.util';
+import { buildCampaignThreadExternalId } from 'src/modules/emailing/utils/build-campaign-thread-external-id.util';
 import { compileCampaignEmailContent } from 'src/modules/emailing/utils/compile-campaign-email-content.util';
 import { MessageDirection } from 'src/modules/messaging/common/enums/message-direction.enum';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
@@ -478,7 +479,10 @@ export class MessageCampaignMaterializationService {
             messageId: row.messageId,
             messageChannelId,
             messageExternalId: row.temporaryExternalId,
-            messageThreadExternalId: row.temporaryExternalId,
+            messageThreadExternalId: buildCampaignThreadExternalId({
+              messageId: row.messageId,
+              fromAddress,
+            }),
             direction: MessageDirection.OUTGOING,
           })),
         );

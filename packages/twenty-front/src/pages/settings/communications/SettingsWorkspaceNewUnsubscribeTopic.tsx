@@ -14,9 +14,9 @@ import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { UnsubscribeTopicVisibility } from '~/generated-metadata/graphql';
 import { IconEye } from 'twenty-ui/icon';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
-import { Card } from 'twenty-ui/surfaces';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
@@ -25,8 +25,8 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
   const navigate = useNavigateSettings();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { createUnsubscribeTopic, loading } = useCreateUnsubscribeTopic();
-  const isEmailGroupEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
+  const isMessageCampaignEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
   );
 
   const [name, setName] = useState('');
@@ -81,7 +81,7 @@ export const SettingsWorkspaceNewUnsubscribeTopic = () => {
     t,
   ]);
 
-  if (!isEmailGroupEnabled) {
+  if (!isMessageCampaignEnabled) {
     return <NotFound />;
   }
 

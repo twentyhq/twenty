@@ -74,20 +74,6 @@ export class RecordShareService {
     );
   }
 
-  async findByRecord({
-    workspaceId,
-    objectMetadataId,
-    recordId,
-  }: {
-    workspaceId: string;
-    objectMetadataId: string;
-    recordId: string;
-  }): Promise<RecordShare[]> {
-    return this.withRepository({ workspaceId }, (repository) =>
-      repository.find({ where: { objectMetadataId, recordId } }),
-    );
-  }
-
   async findByRecordIds({
     workspaceId,
     objectMetadataId,

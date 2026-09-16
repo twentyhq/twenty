@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { RoundedLink, SocialLink } from 'twenty-ui/navigation';
+import { RoundedLink, SocialLink } from 'twenty-ui/primitives/navigation';
 import { checkUrlType } from '~/utils/checkUrlType';
 import { isSocialLinkType } from '~/utils/isSocialLinkType';
 import { getSafeUrl } from 'twenty-shared/utils';

@@ -13,8 +13,8 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { IconLock } from 'twenty-ui/icon';
-import { HorizontalSeparator } from 'twenty-ui/layout';
-import { MainButton } from 'twenty-ui/input';
+import { HorizontalSeparator } from 'twenty-ui/primitives/layout';
+import { MainButton } from 'twenty-ui/primitives/input';
 import { LastUsedPill } from './LastUsedPill';
 import { StyledSsoButtonContainer } from './SignInUpSsoButtonStyles';
 import { useContext } from 'react';

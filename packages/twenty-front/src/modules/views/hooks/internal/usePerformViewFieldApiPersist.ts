@@ -8,11 +8,9 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   type CreateManyViewFieldsMutationVariables,
-  type DeleteViewFieldMutationVariables,
   type DestroyViewFieldMutationVariables,
   type UpdateViewFieldMutationVariables,
   CreateManyViewFieldsDocument,
-  DeleteViewFieldDocument,
   DestroyViewFieldDocument,
   UpdateViewFieldDocument,
 } from '~/generated-metadata/graphql';
@@ -22,7 +20,6 @@ export const usePerformViewFieldApiPersist = () => {
     CreateManyViewFieldsDocument,
   );
   const [updateViewFieldMutation] = useMutation(UpdateViewFieldDocument);
-  const [deleteViewFieldMutation] = useMutation(DeleteViewFieldDocument);
   const [destroyViewFieldMutation] = useMutation(DestroyViewFieldDocument);
 
   const {
@@ -92,27 +89,6 @@ export const usePerformViewFieldApiPersist = () => {
     [updateViewFieldMutation, performViewEntityApiPersistBatchOperation],
   );
 
-  const performViewFieldApiDelete = useCallback(
-    async (
-      deleteViewFieldInputs: DeleteViewFieldMutationVariables[],
-    ): Promise<
-      MetadataRequestResult<
-        Awaited<ReturnType<typeof deleteViewFieldMutation>>[]
-      >
-    > =>
-      performViewEntityApiPersistBatchOperation({
-        inputs: deleteViewFieldInputs,
-        mutate: (variables) => deleteViewFieldMutation({ variables }),
-        applyResultToDraft: (fulfilledMutations, { removeFromDraft }) =>
-          removeFromDraft({
-            key: 'viewFields',
-            itemIds: fulfilledMutations.map(({ input }) => input.input.id),
-          }),
-        operationType: CrudOperationType.DELETE,
-      }),
-    [deleteViewFieldMutation, performViewEntityApiPersistBatchOperation],
-  );
-
   const performViewFieldApiDestroy = useCallback(
     async (
       destroyViewFieldInputs: DestroyViewFieldMutationVariables[],
@@ -137,7 +113,6 @@ export const usePerformViewFieldApiPersist = () => {
   return {
     performViewFieldApiCreate,
     performViewFieldApiUpdate,
-    performViewFieldApiDelete,
     performViewFieldApiDestroy,
   };
 };

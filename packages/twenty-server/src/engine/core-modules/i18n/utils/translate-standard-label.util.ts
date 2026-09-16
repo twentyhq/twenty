@@ -6,7 +6,7 @@ import {
   METADATA_LABEL_PLACEHOLDER_PASS_THROUGH,
 } from 'twenty-shared/i18n';
 
-import { type MessageIdTranslator } from 'src/engine/metadata-modules/utils/message-id-translator.type';
+import { type MessageIdTranslator } from 'src/engine/metadata-modules/overrides/types/message-id-translator.type';
 
 export const translateStandardLabel = ({
   sourceValue,

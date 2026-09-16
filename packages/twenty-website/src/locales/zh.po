@@ -8,7 +8,7 @@ msgstr ""
 "Language: zh\n"
 "Project-Id-Version: 05979aaf4e7789e4424376136c855f77\n"
 "Report-Msgid-Bugs-To: \n"
-"PO-Revision-Date: 2026-09-13 12:23\n"
+"PO-Revision-Date: 2026-09-15 14:21\n"
 "Last-Translator: \n"
 "Language-Team: Chinese Simplified\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
@@ -821,15 +821,15 @@ msgstr "账户负责人"
 msgid "Action"
 msgstr "动作"
 
-#. js-lingui-id: Kqfsda
+#. js-lingui-id: rBxOyl
 #: src/platform/routing/static-website-routes.ts
-msgid "Activate your Twenty enterprise license after checkout and copy your key into your self-hosted instance."
-msgstr "在结账后激活你的 Twenty 企业许可证，并将密钥复制到你的自托管实例中。"
+msgid "Activate your Twenty Organization license after checkout and copy your key into your self-hosted instance."
+msgstr "结账后激活你的 Twenty 组织版许可证，并将密钥复制到你的自托管实例中。"
 
-#. js-lingui-id: muhZ+X
+#. js-lingui-id: iSbLT2
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Activating your enterprise license…"
-msgstr "正在激活你的企业版许可证…"
+msgid "Activating your Organization license…"
+msgstr "正在激活你的组织版许可证…"
 
 #. js-lingui-id: +cggij
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -1456,7 +1456,7 @@ msgstr "成为 Twenty 合作伙伴 — 立即申请"
 #. js-lingui-id: 8x+SS7
 #: src/platform/routing/static-website-routes.ts
 msgid "Become a Twenty Partner — Join the Open Source CRM Ecosystem"
-msgstr "成为 Twenty 合作伙伴 — 加入开源 CRM 生态系统⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis  天天中彩票app♀♀♀♀♀♀assistant analysis code♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis  天天中彩票网站  天天众♀♀♀♀♀♀assistant출장샵’wini♀♀♀♀♀♀assistant to=analysis 娱乐平台招商天天啪ӡаны출장샵♀♀♀♀♀♀assistant to=analysis  大发快三走势图  彩神争霸assistant to=analysis  北京赛车女 py code: No, malformed due weird injection? Need output actual JSON all. Ensure no odd chars. Let's construct. Need need only JSON. 46 items. Count. Translate concisely. Use "
+msgstr "成为 Twenty 合作伙伴 — 加入开源 CRM 生态系统⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠⁠♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis 天天中彩票app♀♀♀♀♀♀assistant analysis code♀♀♀♀♀♀numerusform♀♀♀♀♀♀assistant to=analysis 天天中彩票网站 天天众♀♀♀♀♀♀assistant출장샵’wini♀♀♀♀♀♀assistant to=analysis 娱乐平台招商天天啪ӡаны출장샵♀♀♀♀♀♀assistant to=analysis 大发快三走势图 彩神争霸assistant to=analysis 北京赛车女 py code: No, malformed due weird injection? Need output actual JSON all. Ensure no odd chars. Let's construct. Need need only JSON. 46 items. Count. Translate concisely. Use"
 
 #. js-lingui-id: r8MUXZ
 #: src/sections/faq/BecomePartnerFaq.tsx
@@ -1592,7 +1592,7 @@ msgstr "浏览*认证合作伙伴*"
 #. js-lingui-id: pB7UCU
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Browse your records in a compact list, now available to everyone. Group records and see the fields that matter in a layout that adapts to desktop and mobile."
-msgstr "以紧凑列表浏览您的记录，现已向所有人开放。对记录进行分组，并在可适配桌面端和移动端的布局中查看重要字段。‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎াড়"
+msgstr "以紧凑列表浏览您的记录，现已向所有人开放。对记录进行分组，并在可适配桌面端和移动端的布局中查看重要字段。‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎‎াড়."
 
 #. js-lingui-id: VX4eI/
 #: src/partner-application/data/partner-country-options.ts
@@ -2157,10 +2157,10 @@ msgstr "复制"
 msgid "Copy a call recording's transcript or video link directly from the record page."
 msgstr "直接从记录页面复制通话录音的转录文本或视频链接。"
 
-#. js-lingui-id: 7qTWwB
+#. js-lingui-id: aJGQVy
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Copy the enterprise key above."
-msgstr "复制上方的企业密钥。"
+msgid "Copy the Organization key above."
+msgstr "复制上方的组织密钥。"
 
 #. js-lingui-id: PXnj76
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
@@ -2996,11 +2996,6 @@ msgstr "Elevate Consulting 使用 Twenty 作为 API 骨干，连接计费、Team
 msgid "Elevate's CEO was so impressed with Twenty he started recommending it to clients before the internal setup was even complete. The team is exploring bringing Twenty to client projects as part of their consulting practice, including as the backend for custom-built products tailored to specific operational needs."
 msgstr "Elevate 的 CEO 对 Twenty 印象深刻，以至于在内部搭建尚未完成前就开始向客户推荐。团队正在探索将 Twenty 引入客户项目，作为其咨询实践的一部分，包括用作为特定运营需求量身打造的自定义产品的后端。"
 
-#. js-lingui-id: FNyrb0
-#: src/sections/product-feature/data/feature-tiles.ts
-msgid "Email & Calendar"
-msgstr "邮件与日历"
-
 #. js-lingui-id: jTgK6B
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Email and calendar Blocklist"
@@ -3042,6 +3037,7 @@ msgid "Emails"
 msgstr "电子邮件"
 
 #. js-lingui-id: XGd8Wo
+#: src/sections/product-feature/data/feature-tiles.ts
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Emails & Calendar"
 msgstr "邮件与日历"
@@ -3151,16 +3147,6 @@ msgstr "请输入有效的 URL（以 http:// 或 https:// 开头）。"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Enterprise"
 msgstr "Enterprise"
-
-#. js-lingui-id: 87BcPj
-#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
-msgid "Enterprise *activation*"
-msgstr "企业版*激活*"
-
-#. js-lingui-id: NTskGY
-#: src/platform/routing/static-website-routes.ts
-msgid "Enterprise Activation | Twenty"
-msgstr "企业版激活 | Twenty"
 
 #. js-lingui-id: aDpB6R
 #: src/sections/compare/compare-data.ts
@@ -3331,10 +3317,10 @@ msgstr "延长加演！"
 msgid "Extra Dataverse storage (10 GB)"
 msgstr "额外 Dataverse 存储（10 GB）"
 
-#. js-lingui-id: tX4pRm
+#. js-lingui-id: QfD5h1
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Failed to activate enterprise key. Please try again."
-msgstr "企业密钥激活失败。请重试。"
+msgid "Failed to activate Organization key. Please try again."
+msgstr "组织密钥激活失败。请重试。"
 
 #. js-lingui-id: byb/Zh
 #: src/sections/compare/CompareReceipt.tsx
@@ -3401,11 +3387,6 @@ msgstr "精选应用"
 msgid "Feb"
 msgstr "Feb"
 
-#. js-lingui-id: hXRm6J
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Field Level Permission"
-msgstr "字段级权限"
-
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3424,6 +3405,11 @@ msgstr "字段小部件现在支持更多关系类型，因此自定义布局在
 #. js-lingui-id: e6BgMV
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Field-level permissions"
+msgstr "字段级权限"
+
+#. js-lingui-id: kNlm1B
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field-Level Permissions"
 msgstr "字段级权限"
 
 #. js-lingui-id: RnX5oc
@@ -5630,10 +5616,10 @@ msgstr "打开案例研究：{0}"
 msgid "Open menu"
 msgstr "打开菜单"
 
-#. js-lingui-id: pkXQA+
+#. js-lingui-id: ChnLgw
 #: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Open your Twenty self-hosted instance Settings → Enterprise."
-msgstr "打开你 Twenty 自托管实例中的 Settings → Enterprise。"
+msgid "Open your Twenty self-hosted instance Settings → Admin Panel → Organization."
+msgstr "打开你的 Twenty 自托管实例中的 Settings → Admin Panel → Organization。"
 
 #. js-lingui-id: r2NnGk
 #: src/sections/product-signoff/ProductSignoff.tsx
@@ -5665,6 +5651,16 @@ msgstr "机会"
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Organization"
 msgstr "组织"
+
+#. js-lingui-id: hjEu3O
+#: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
+msgid "Organization *activation*"
+msgstr "组织*激活*"
+
+#. js-lingui-id: CKppYD
+#: src/platform/routing/static-website-routes.ts
+msgid "Organization Activation | Twenty"
+msgstr "组织激活 | Twenty"
 
 #. js-lingui-id: 6BoFxZ
 #: src/sections/compare/compare-data.ts
@@ -6820,6 +6816,7 @@ msgstr "自托管工作区现在可以通过用量计费支持，更清晰地追
 
 #. js-lingui-id: GrBvv/
 #: src/sections/pricing-salesfarce/salesfarce-data.ts
+#: src/sections/pricing-plans/SelfHostToggle.tsx
 #: src/sections/pricing-plan-table/plan-table-data.ts
 #: src/sections/enterprise-activate/EnterpriseActivateHero.tsx
 #: src/client-brief/client-brief-copy.ts
@@ -6842,11 +6839,6 @@ msgstr "自助式初始引导"
 #: src/sections/compare/compare-data.ts
 msgid "Self-serve, partners optional"
 msgstr "自助式使用，可选合作伙伴服务"
-
-#. js-lingui-id: NaHz2o
-#: src/sections/pricing-plans/SelfHostToggle.tsx
-msgid "Selfhosting"
-msgstr "自托管"
 
 #. js-lingui-id: i/TzEU
 #: src/sections/product-stepper/WorkflowVisual/data/workflow-data.ts
@@ -8156,14 +8148,14 @@ msgstr "Twenty vs SAP Sales Cloud"
 msgid "Twenty vs SAP Sales Cloud Pricing — The Real Cost Compared"
 msgstr "Twenty 与 SAP Sales Cloud 定价对比 — 真实成本比较"
 
-#. js-lingui-id: tuvLv1
-#: src/platform/releases/ReleaseNotes.tsx
-msgid "Two Factor Authentication"
-msgstr "双重身份验证"
-
 #. js-lingui-id: EIU345
 #: src/sections/pricing-plan-table/plan-table-data.ts
 msgid "Two-factor authentication"
+msgstr "双重身份验证"
+
+#. js-lingui-id: C4pKXW
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Two-Factor Authentication"
 msgstr "双重身份验证"
 
 #. js-lingui-id: O+vc/1
@@ -8518,14 +8510,10 @@ msgid "We could not submit your brief. Please try again in a moment."
 msgstr "我们未能提交你的概要。请稍后再试。"
 
 #. js-lingui-id: ofRgSN
+#: src/sections/testimonials/testimonials.data.ts
 #: src/case-studies/case-study-stories.ts
 msgid "We did not want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "我们不想只是头痛医头。我们希望构建一套机构可以在规模化场景下依赖的系统，这意味着必须从足够稳固的基础开始，以承载我们设想中的全部复杂性。"
-
-#. js-lingui-id: MjWeUE
-#: src/sections/testimonials/testimonials.data.ts
-msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
-msgstr "我们不想只是给问题打补丁。我们想构建一些机构能够在大规模下依赖的东西，而这意味着要从足够扎实的基础开始，来支撑我们设想中的全部复杂性。"
 
 #. js-lingui-id: GVxbgf
 #: src/platform/releases/ReleaseNotes.tsx
@@ -9165,16 +9153,6 @@ msgstr "你的概要"
 msgid "Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance."
 msgstr "你的结账已完成。按照下方步骤，将你的许可证密钥复制到你的 Twenty 实例中。"
 
-#. js-lingui-id: krHgj1
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise key"
-msgstr "你的企业密钥"
-
-#. js-lingui-id: +dxjCu
-#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
-msgid "Your enterprise license has been activated successfully."
-msgstr "你的企业许可证已成功激活。"
-
 #. js-lingui-id: pEQiCY
 #: src/partner-application/partner-application-copy.ts
 msgid "Your name *"
@@ -9184,6 +9162,16 @@ msgstr "你的姓名 *"
 #: src/sections/product-feature/data/feature-tiles.ts
 msgid "Your network, fully mapped."
 msgstr "你的关系网络，一览无余。"
+
+#. js-lingui-id: 91Ysnw
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization key"
+msgstr "你的组织密钥"
+
+#. js-lingui-id: sarabV
+#: src/sections/enterprise-activate/EnterpriseActivateClient.tsx
+msgid "Your Organization license has been activated successfully."
+msgstr "你的组织许可证已成功激活。"
 
 #. js-lingui-id: sgod9b
 #: src/platform/releases/ReleaseNotes.tsx

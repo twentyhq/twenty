@@ -4,8 +4,8 @@ import { z } from 'zod';
 
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/typography';
-import { Section } from 'twenty-ui/layout';
+import { H2Title } from 'twenty-ui/primitives/typography';
+import { Section } from 'twenty-ui/primitives/layout';
 
 import { useCreateEmailGroupChannel } from '@/settings/accounts/hooks/useCreateEmailGroupChannel';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';

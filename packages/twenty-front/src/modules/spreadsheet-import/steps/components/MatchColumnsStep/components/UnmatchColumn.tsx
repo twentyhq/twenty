@@ -11,7 +11,7 @@ import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { AnimatedExpandableContainer } from 'twenty-ui/layout';
+import { AnimatedExpandableContainer } from 'twenty-ui/primitives/layout';
 
 const getExpandableContainerTitle = (
   fields: SpreadsheetImportFields,

@@ -24,7 +24,7 @@ import { useParams } from 'react-router-dom';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/feedback';
+import { InlineBanner } from 'twenty-ui/primitives/feedback';
 import {
   IconAlertTriangle,
   IconBox,
