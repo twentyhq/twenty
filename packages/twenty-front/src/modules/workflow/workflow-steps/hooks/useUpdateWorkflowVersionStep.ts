@@ -1,4 +1,5 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -29,8 +30,11 @@ import {
 export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
   const apolloCoreClient = useApolloCoreClient();
   const isCore = useIsWorkflowCoreEnabled();
+  const handleCoreMutationError =
+    useWorkflowEditorMutationErrorHandler(instanceId);
   const [mutateCore] = useMutation(UpdateCoreWorkflowVersionStepDocument, {
     client: apolloCoreClient,
+    onError: handleCoreMutationError,
   });
   const { objectMetadataItems } = useObjectMetadataItems();
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
@@ -59,9 +63,6 @@ export const useUpdateWorkflowVersionStep = (instanceId?: string) => {
       ? await mutateCore({
           variables: {
             input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
-          },
-          onError: (error) => {
-            enqueueToast(getToastOptionsFromError({ error }));
           },
         })
       : await mutate({

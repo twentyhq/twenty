@@ -1,9 +1,14 @@
+import { createStore, Provider } from 'jotai';
+import { flowComponentState } from '@/workflow/states/flowComponentState';
+import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/states/workflowDiagramComponentState';
 import { WorkflowVisualizerComponentInstanceContext } from '@/workflow/workflow-diagram/states/contexts/WorkflowVisualizerComponentInstanceContext';
 import { useUpdateWorkflowVersionStep } from '@/workflow/workflow-steps/hooks/useUpdateWorkflowVersionStep';
 import { act, renderHook } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
 
 const mockMutate = jest.fn();
+let mockOnCoreError: (error: Error) => void;
+const jotaiStore = createStore();
 let mockIsCore = false;
 const mockInvalidate = jest.fn();
 jest.mock('@/workflow/hooks/useIsWorkflowCoreEnabled', () => ({
@@ -57,20 +62,34 @@ jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
 }));
 
 jest.mock('@apollo/client/react', () => ({
-  useMutation: () => [mockMutate],
+  useMutation: (
+    _document: unknown,
+    options: { onError?: (error: Error) => void },
+  ) => {
+    if (options.onError) mockOnCoreError = options.onError;
+    return [mockMutate];
+  },
 }));
 
 const Wrapper = ({ children }: { children: ReactNode }) =>
   createElement(
-    WorkflowVisualizerComponentInstanceContext.Provider,
-    { value: { instanceId: 'workflow-visualizer-test' } },
-    children,
+    Provider,
+    { store: jotaiStore },
+    createElement(
+      WorkflowVisualizerComponentInstanceContext.Provider,
+      { value: { instanceId: 'workflow-visualizer-test' } },
+      children,
+    ),
   );
 
 describe('useUpdateWorkflowVersionStep', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsCore = false;
+    jotaiStore.set(
+      flowComponentState.atomFamily({ instanceId: 'workflow-visualizer-test' }),
+      undefined,
+    );
   });
 
   it('should mark step for recomputation after successful update', async () => {
@@ -152,7 +171,7 @@ describe('useUpdateWorkflowVersionStep', () => {
       workflowVersionId: 'version-1',
     });
   });
-  it('sends the returned core draft ID and preserves business record IDs in step input', async () => {
+  it('sends a core version ID and preserves business record IDs in step input', async () => {
     mockIsCore = true;
     const step = {
       id: 'step-1',
@@ -174,5 +193,47 @@ describe('useUpdateWorkflowVersionStep', () => {
     });
     expect(mockGetRecordFromCache).not.toHaveBeenCalled();
     expect(mockInvalidate).toHaveBeenCalled();
+  });
+  it('reports a failed core edit and removes unpersisted diagram changes', async () => {
+    mockIsCore = true;
+    const error = new Error('Core save failed');
+    const instance = { instanceId: 'workflow-visualizer-test' };
+    jotaiStore.set(flowComponentState.atomFamily(instance), {
+      workflowVersionId: 'core-draft-id',
+      trigger: null,
+      steps: [],
+    });
+    jotaiStore.set(workflowDiagramComponentState.atomFamily(instance), {
+      nodes: [],
+      edges: [
+        {
+          id: 'unsaved',
+          source: 'source',
+          target: 'target',
+          sourceHandle: 'source',
+          targetHandle: 'target',
+        },
+      ],
+    });
+    mockMutate.mockImplementationOnce(async () => {
+      mockOnCoreError(error);
+      return { data: null };
+    });
+    const { result } = renderHook(() => useUpdateWorkflowVersionStep(), {
+      wrapper: Wrapper,
+    });
+    await act(() =>
+      result.current.updateWorkflowVersionStep({
+        workflowVersionId: 'core-draft-id',
+        step: { id: 'step-1', type: 'CODE' },
+      }),
+    );
+    expect(mockEnqueueErrorSnackBar).toHaveBeenCalledWith({
+      apolloError: error,
+    });
+    expect(
+      jotaiStore.get(workflowDiagramComponentState.atomFamily(instance))?.edges,
+    ).toEqual([]);
+    expect(mockMarkStepForRecomputation).not.toHaveBeenCalled();
   });
 });

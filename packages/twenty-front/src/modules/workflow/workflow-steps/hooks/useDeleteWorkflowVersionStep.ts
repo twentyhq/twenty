@@ -1,4 +1,5 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
@@ -18,8 +19,10 @@ import {
 export const useDeleteWorkflowVersionStep = () => {
   const apolloCoreClient = useApolloCoreClient();
   const isCore = useIsWorkflowCoreEnabled();
+  const handleCoreMutationError = useWorkflowEditorMutationErrorHandler();
   const [mutateCore] = useMutation(DeleteCoreWorkflowVersionStepDocument, {
     client: apolloCoreClient,
+    onError: handleCoreMutationError,
   });
 
   const { applyWorkflowVersionStepChanges } =
@@ -46,9 +49,6 @@ export const useDeleteWorkflowVersionStep = () => {
       ? await mutateCore({
           variables: {
             input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
-          },
-          onError: (error) => {
-            enqueueToast(getToastOptionsFromError({ error }));
           },
         })
       : await mutate({

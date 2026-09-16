@@ -1,3 +1,4 @@
+import { buildWorkflowVersionFromCore } from '@/object-core/workflows/utils/buildWorkflowVersionFromCore';
 import { useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -38,15 +39,5 @@ export const useCoreWorkflowVersionContent = ({
     return undefined;
   }
 
-  return {
-    __typename: 'WorkflowVersion',
-    id: coreWorkflowVersionId,
-    name: coreWorkflowVersion.label,
-    status: coreWorkflowVersion.status,
-    workflowId: coreWorkflowId,
-    createdAt: coreWorkflowVersion.createdAt,
-    updatedAt: coreWorkflowVersion.updatedAt,
-    trigger: coreWorkflowVersion.trigger,
-    steps: coreWorkflowVersion.steps,
-  };
+  return buildWorkflowVersionFromCore(coreWorkflowVersion);
 };
