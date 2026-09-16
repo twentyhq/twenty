@@ -45,6 +45,7 @@ export type ClientConfig = {
   isOnboardingAiChatEnabled: boolean;
   onboarding: OnboardingConfig | null;
   publicFeatureFlags: Array<PublicFeatureFlag>;
+  recordGroupPageSize: number;
   sentry: Sentry;
   signInPrefilled: boolean;
   support: Support;

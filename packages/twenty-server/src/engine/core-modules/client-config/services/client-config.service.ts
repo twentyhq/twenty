@@ -26,6 +26,7 @@ import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-mo
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelBenchmark } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-benchmark.type';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { getRecordGroupPageSize } from 'src/engine/core-modules/client-config/utils/get-record-group-page-size.util';
 
 @Injectable()
 export class ClientConfigService {
@@ -278,6 +279,9 @@ export class ClientConfigService {
       ),
       isOnboardingAiChatEnabled: this.twentyConfigService.get(
         'IS_ONBOARDING_AI_CHAT_ENABLED',
+      ),
+      recordGroupPageSize: getRecordGroupPageSize(
+        this.twentyConfigService.get('RECORD_GROUP_PAGE_SIZE'),
       ),
       enterpriseInstanceType:
         this.twentyConfigService.get('ENTERPRISE_INSTANCE_TYPE') ??
