@@ -550,7 +550,6 @@
                       {
                         "group": "Surfaces",
                         "pages": [
-                          "ui/primitives/surfaces/dialog",
                           "ui/primitives/surfaces/alert-dialog",
                           "ui/primitives/surfaces/menu",
                           "ui/primitives/surfaces/popover"
