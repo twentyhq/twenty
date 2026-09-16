@@ -1,6 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { MemoryRouter, Link, useLocation } from 'react-router-dom';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { IconArrowRight, IconPlus } from '@ui/icon';
@@ -138,37 +137,10 @@ export const DisabledLink: Story = {
     await expect(args.onClick).not.toHaveBeenCalled();
   },
 };
-const RouterExample = () => {
-  const location = useLocation();
-  return (
-    <>
-      <Button render={<Link to="/settings" />} nativeButton={false} role="link">
-        Open settings
-      </Button>
-      <p>Current path: {location.pathname}</p>
-    </>
-  );
-};
-export const RouterLink: Story = {
-  ...Default,
-  render: () => (
-    <MemoryRouter>
-      <RouterExample />
-    </MemoryRouter>
-  ),
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const link = canvas.getByRole('link');
-    link.focus();
-    await userEvent.keyboard('{Enter}');
-    await expect(canvas.getByText('Current path: /settings')).toBeVisible();
-  },
-};
 export const CustomRender: Story = {
   ...Keyboard,
   args: {
-    render: <span />,
-    nativeButton: false,
+    render: <button data-custom-render />,
     onClick: fn(),
     onFocus: fn(),
     onBlur: fn(),

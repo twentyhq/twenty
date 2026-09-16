@@ -48,17 +48,8 @@
   Shows a loading indicator and disables activation while preserving the button width.
 </ParamField>
 
-<ParamField body="nativeButton" type="boolean" default="true">
-  Whether the component renders a native `<button>` element when replacing it
-  via the `render` prop.
-  Set to `false` if the rendered element is not a button (for example, `<div>`).
-</ParamField>
-
 <ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ButtonState&gt;">
-  Allows you to replace the component's HTML element
-  with a different tag, or compose it with another component.
-
-  Accepts a `ReactElement` or a function that returns the element to render.
+  Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
 </ParamField>
 
 <ParamField body="size" type="&quot;sm&quot; | &quot;md&quot;" default="sm">

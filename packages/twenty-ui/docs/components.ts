@@ -1,12 +1,20 @@
 import { AVATAR_PROP_DESCRIPTIONS } from './avatarPropDescriptions';
 import { BUTTON_GROUP_PROP_DESCRIPTIONS } from './buttonGroupPropDescriptions';
 import { BUTTON_PROP_DESCRIPTIONS } from './buttonPropDescriptions';
+import { ICON_BUTTON_PROP_DESCRIPTIONS } from './iconButtonPropDescriptions';
 import { CHIP_PROP_DESCRIPTIONS } from './chipPropDescriptions';
 import { LIGHT_BUTTON_PROP_DESCRIPTIONS } from './lightButtonPropDescriptions';
 import { STATUS_PROP_DESCRIPTIONS } from './statusPropDescriptions';
 import { TAG_PROP_DESCRIPTIONS } from './tagPropDescriptions';
 
 export const DOCUMENTED_COMPONENTS = [
+  {
+    name: 'IconButton',
+    source: 'components/IconButton/IconButton.tsx',
+    entryPoint: 'twenty-ui/components',
+    slug: 'input/icon-button',
+    propDescriptions: ICON_BUTTON_PROP_DESCRIPTIONS,
+  },
   {
     name: 'MainButton',
     source: 'components/MainButton/MainButton.tsx',
