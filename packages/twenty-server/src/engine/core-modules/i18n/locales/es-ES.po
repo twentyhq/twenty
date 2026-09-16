@@ -11253,12 +11253,12 @@ msgstr "Esta versión de la aplicación ya está instalada en este espacio de tr
 #. js-lingui-id: eL+KOJ
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version contains malformed data and cannot be saved."
-msgstr ""
+msgstr "Esta versión del flujo de trabajo contiene datos malformados y no se puede guardar."
 
 #. js-lingui-id: YBQFPm
 #: src/modules/workflow/workflow-builder/workflow-validation/exceptions/workflow-version-validation.exception.ts
 msgid "This workflow version is not ready to be activated."
-msgstr ""
+msgstr "Esta versión del flujo de trabajo no está lista para activarse."
 
 #. js-lingui-id: o/Kt/Y
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -13326,6 +13326,11 @@ msgstr "No tienes permiso para suplantar usuarios en este espacio de trabajo."
 #: src/engine/guards/impersonate-permission.guard.ts
 msgid "You do not have permission to impersonate users. Please contact your workspace administrator for access."
 msgstr "No tiene permiso para suplantar usuarios. Por favor, contacte con su administrador de espacio de trabajo para obtener acceso."
+
+#. js-lingui-id: wFDl+C
+#: src/engine/core-modules/application/connection-provider/app-connection-access.service.ts
+msgid "You do not have permission to manage connections shared with the workspace. Please contact your workspace administrator for access."
+msgstr "No tiene permiso para gestionar las conexiones compartidas con el espacio de trabajo. Por favor, contacte con su administrador del espacio de trabajo para obtener acceso."
 
 #. js-lingui-id: cpivo2
 #: src/modules/blocklist/blocklist-validation-manager/services/blocklist-access.service.ts

@@ -105,6 +105,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       const verificationRecords = buildAwsSesVerificationRecords({
         domain: input.domain,
         dkimTokens: identityResponse.DkimAttributes?.Tokens ?? [],
+        mailFromDomain: identityResponse.MailFromAttributes?.MailFromDomain,
         region: this.config.region,
       });
 
@@ -285,6 +286,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       const verificationRecords = buildAwsSesVerificationRecords({
         domain,
         dkimTokens: existingIdentity.DkimAttributes?.Tokens ?? [],
+        mailFromDomain: existingIdentity.MailFromAttributes?.MailFromDomain,
         region: this.config.region,
       });
 

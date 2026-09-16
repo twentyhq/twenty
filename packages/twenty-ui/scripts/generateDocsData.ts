@@ -73,10 +73,15 @@ const parser = new DocumentationParser(program, {
   propFilter: (prop) => !isReactNativeAttribute(prop) && !isHiddenProp(prop),
 });
 
-const extractProps = (
-  symbol: ts.Symbol,
-  name: string,
-): ComponentDocumentation['props'] => {
+const extractProps = ({
+  symbol,
+  name,
+  propDescriptions = {},
+}: {
+  symbol: ts.Symbol;
+  name: string;
+  propDescriptions?: Partial<Record<string, string>>;
+}): ComponentDocumentation['props'] => {
   const declaration = symbol.valueDeclaration;
 
   if (!declaration) {
@@ -96,11 +101,13 @@ const extractProps = (
   return Object.values(parsed.props)
     .sort((left, right) => left.name.localeCompare(right.name, 'en'))
     .map((prop) => {
-      const description = prop.description.trim();
+      const description = (
+        propDescriptions[prop.name] ?? prop.description
+      ).trim();
 
       if (description.length === 0 && isDeclaredInTwentyUi(prop)) {
         throw new Error(
-          `Missing JSDoc description for ${name}.${prop.name}. Document the prop in its props type.`,
+          `Missing description for ${name}.${prop.name}. Document the prop in its props type or documentation metadata.`,
         );
       }
 
@@ -142,7 +149,17 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
     };
 
     if (type.getCallSignatures().length > 0) {
-      return { ...metadata, props: extractProps(symbol, component.name) };
+      return {
+        ...metadata,
+        props: extractProps({
+          symbol,
+          name: component.name,
+          propDescriptions:
+            'propDescriptions' in component
+              ? component.propDescriptions
+              : undefined,
+        }),
+      };
     }
 
     const parts = type.getProperties().map((part) => {
@@ -164,7 +181,10 @@ const components: ComponentDocumentation[] = DOCUMENTED_COMPONENTS.map(
 
       return {
         name: part.name,
-        props: extractProps(partSymbol, `${component.name}.${part.name}`),
+        props: extractProps({
+          symbol: partSymbol,
+          name: `${component.name}.${part.name}`,
+        }),
       };
     });
 

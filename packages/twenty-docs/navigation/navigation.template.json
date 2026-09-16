@@ -203,6 +203,9 @@
             "uiGuides": {
               "label": "Guides"
             },
+            "uiDataDisplay": {
+              "label": "Data display"
+            },
             "uiForms": {
               "label": "Forms"
             },

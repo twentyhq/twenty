@@ -511,6 +511,15 @@
                     ]
                   },
                   {
+                    "group": "Data display",
+                    "pages": [
+                      "ui/components/data-display/avatar",
+                      "ui/components/data-display/chip",
+                      "ui/components/data-display/tag",
+                      "ui/components/data-display/status"
+                    ]
+                  },
+                  {
                     "group": "Forms",
                     "pages": [
                       "ui/components/input/field",
