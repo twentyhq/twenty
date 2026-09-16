@@ -60,12 +60,12 @@ export const getBillingPlanActionType = ({
     return hasPermissionToManageBilling ? 'UNAVAILABLE' : 'CONTACT_ADMIN';
   }
 
-  const hasScheduledChange =
-    (isDefined(scheduledPlanKey) && scheduledPlanKey !== currentPlanKey) ||
-    (isDefined(scheduledInterval) && scheduledInterval !== currentInterval);
+  if (isDefined(scheduledPlanKey) && scheduledPlanKey !== currentPlanKey) {
+    return 'CANCEL_PLAN_SWITCH_FIRST';
+  }
 
-  if (hasScheduledChange) {
-    return 'CANCEL_CHANGE_FIRST';
+  if (isDefined(scheduledInterval) && scheduledInterval !== currentInterval) {
+    return 'CANCEL_INTERVAL_SWITCH_FIRST';
   }
 
   if (!isCurrentPlan && !isCurrentInterval) {

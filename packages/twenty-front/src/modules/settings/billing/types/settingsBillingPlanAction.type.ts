@@ -15,7 +15,8 @@ export type SettingsBillingPlanAction = {
 };
 
 export type SettingsBillingPlanActionType =
-  | 'CANCEL_CHANGE_FIRST'
+  | 'CANCEL_INTERVAL_SWITCH_FIRST'
+  | 'CANCEL_PLAN_SWITCH_FIRST'
   | 'CONTACT_ADMIN'
   | 'CURRENT'
   | 'MANAGE_BILLING'
