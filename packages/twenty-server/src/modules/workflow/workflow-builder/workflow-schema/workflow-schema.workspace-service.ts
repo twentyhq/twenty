@@ -68,12 +68,10 @@ export class WorkflowSchemaWorkspaceService {
   async computeStepOutputSchema({
     step,
     workspaceId,
-    workflowVersionId,
     workflowVersionContent,
   }: {
     step: WorkflowTrigger | WorkflowAction;
     workspaceId: string;
-    workflowVersionId?: string;
     workflowVersionContent?: WorkflowVersionContent;
   }): Promise<OutputSchema> {
     const stepType = step.type;
@@ -129,7 +127,6 @@ export class WorkflowSchemaWorkspaceService {
           currentItem: await this.computeLoopCurrentItemOutputSchema({
             items,
             workspaceId,
-            workflowVersionId,
             workflowVersionContent,
           }),
           currentItemIndex: {
@@ -177,12 +174,10 @@ export class WorkflowSchemaWorkspaceService {
   async enrichOutputSchema({
     step,
     workspaceId,
-    workflowVersionId,
     workflowVersionContent,
   }: {
     step: WorkflowAction;
     workspaceId: string;
-    workflowVersionId?: string;
     workflowVersionContent?: WorkflowVersionContent;
   }): Promise<WorkflowAction> {
     const BACKEND_ENRICHED_TYPES = [
@@ -198,7 +193,6 @@ export class WorkflowSchemaWorkspaceService {
     const outputSchema = await this.computeStepOutputSchema({
       step,
       workspaceId,
-      workflowVersionId,
       workflowVersionContent,
     });
 
@@ -562,12 +556,10 @@ export class WorkflowSchemaWorkspaceService {
   private async computeLoopCurrentItemOutputSchema({
     items,
     workspaceId,
-    workflowVersionId,
     workflowVersionContent,
   }: {
     items: string | undefined | unknown[];
     workspaceId: string;
-    workflowVersionId?: string;
     workflowVersionContent?: WorkflowVersionContent;
   }): Promise<Leaf | Node> {
     if (!isDefined(items)) {
@@ -578,7 +570,6 @@ export class WorkflowSchemaWorkspaceService {
       return this.computeIteratorCurrentItemFromVariable({
         items,
         workspaceId,
-        workflowVersionId,
         workflowVersionContent,
       });
     }
@@ -589,26 +580,17 @@ export class WorkflowSchemaWorkspaceService {
   private async computeIteratorCurrentItemFromVariable({
     items,
     workspaceId,
-    workflowVersionId,
     workflowVersionContent,
   }: {
     items: string;
     workspaceId: string;
-    workflowVersionId?: string;
     workflowVersionContent?: WorkflowVersionContent;
   }): Promise<Leaf | Node> {
-    const workflowVersion = isDefined(workflowVersionContent)
-      ? workflowVersionContent
-      : isDefined(workflowVersionId)
-        ? await this.workflowCommonWorkspaceService.getWorkflowVersionOrFail({
-            workflowVersionId,
-            workspaceId,
-          })
-        : null;
-
-    if (!isDefined(workflowVersion)) {
+    if (!isDefined(workflowVersionContent)) {
       return DEFAULT_ITERATOR_CURRENT_ITEM;
     }
+
+    const workflowVersion = workflowVersionContent;
 
     const stepId = extractRawVariableNamePart({
       rawVariableName: items,
