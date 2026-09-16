@@ -1105,6 +1105,11 @@ msgstr "마이그레이션 *워크플로에서의 AI 활용*"
 msgid "AI in the migration workflow"
 msgstr "마이그레이션 워크플로에서의 AI 활용"
 
+#. js-lingui-id: CKvvwf
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "AI settings now show each model’s provider, price per million tokens, context window, maximum output, and data residency."
+msgstr ""
+
 #. js-lingui-id: t97j+F
 #: src/case-studies/case-study-catalog.ts
 msgid "AI-assisted"
@@ -1273,6 +1278,11 @@ msgstr "4월"
 #: src/partner-application/data/partner-language-options.ts
 msgid "Arabic"
 msgstr "아랍어"
+
+#. js-lingui-id: Qrqy7n
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Arabic and Hebrew read right to left"
+msgstr ""
 
 #. js-lingui-id: uicv6Z
 #: src/case-studies/case-study-stories.ts
@@ -1697,6 +1707,11 @@ msgstr "캘린더 / 예약 링크"
 msgid "Calendar View for Objects"
 msgstr "오브젝트용 캘린더 뷰"
 
+#. js-lingui-id: RZgOeI
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Call recordings that have no video now come with an audio player, so click-to-seek and transcript highlighting work there too."
+msgstr ""
+
 #. js-lingui-id: 4yFkf9
 #: src/partner-application/data/partner-country-options.ts
 msgid "Cambodia 🇰🇭"
@@ -1844,6 +1859,11 @@ msgstr "워크스페이스에서 싱크할 Gmail 라벨이나 Outlook 폴더를 
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Choose how to display dates in any field using a universal Unicode date format that best suits your use case."
 msgstr "범용 유니코드 날짜 형식을 사용해, 어떤 필드에서든 용도에 가장 적합한 방식으로 날짜를 표시할 수 있습니다."
+
+#. js-lingui-id: BZEHq1
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Choose how your AI should behave on a single slider, from Extra Fast to Extra Smart, instead of picking a model by name. Each tier shows what it trades in speed, cost, and intelligence."
+msgstr ""
 
 #. js-lingui-id: uOuvkn
 #: src/platform/releases/ReleaseNotes.tsx
@@ -3385,6 +3405,11 @@ msgstr "추천 앱"
 msgid "Feb"
 msgstr "2월"
 
+#. js-lingui-id: ATTTRk
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Field descriptions on hover"
+msgstr ""
+
 #. js-lingui-id: 3Y3//3
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Field widgets"
@@ -3998,6 +4023,11 @@ msgstr "시간당"
 #: src/partner-application/partner-application-copy.ts
 msgid "Hourly rate *"
 msgstr "시간당 요율 *"
+
+#. js-lingui-id: c+5807
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Hover a column header or a field label to read that field’s description, instead of opening settings to find it."
+msgstr ""
 
 #. js-lingui-id: XnFo3G
 #: src/case-studies/case-study-stories.ts
@@ -5808,6 +5838,11 @@ msgstr "파트너십 - 4분기 전략"
 msgid "Paste the key and click Activate."
 msgstr "키를 붙여넣고 Activate를 클릭하세요."
 
+#. js-lingui-id: oKV11Q
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Pause the recording bot"
+msgstr ""
+
 #. js-lingui-id: 1wdjme
 #: src/sections/product-stepper/LayoutVisual/data/layout-data.ts
 #: src/sections/product-stepper/DataModelVisual/data/data-model-data.ts
@@ -5864,6 +5899,11 @@ msgstr "Peru 🇵🇪"
 msgid "Philippines 🇵🇭"
 msgstr "Philippines 🇵🇭"
 
+#. js-lingui-id: hyGrEm
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Pick an AI model by tier"
+msgstr ""
+
 #. js-lingui-id: we6gj5
 #: src/partner-application/partner-application-copy.ts
 msgid "Pick every category that applies."
@@ -5898,6 +5938,11 @@ msgstr "파이프라인, 연락처, 이메일 동기화"
 #: src/platform/routing/static-website-routes.ts
 msgid "Pipelines, custom objects, AI assistants, and a native API on top of Postgres. Twenty is the open source CRM with the modern UX teams actually want to use."
 msgstr "파이프라인, 커스텀 오브젝트, AI 도우미, Postgres 위의 네이티브 API까지. Twenty는 팀이 실제로 쓰고 싶어 하는 현대적 UX를 갖춘 오픈 소스 CRM입니다."
+
+#. js-lingui-id: NjL3pD
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Play audio-only recordings"
+msgstr ""
 
 #. js-lingui-id: z7gnI9
 #: src/partner-application/partner-application-copy.ts
@@ -6249,6 +6294,11 @@ msgstr "이제 연결된 Google 캘린더의 반복 이벤트가 Twenty와 동�
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Recurring Google Calendar events"
 msgstr "반복되는 Google 캘린더 이벤트"
+
+#. js-lingui-id: pRH3vs
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Reference records and skills in AI chat"
+msgstr ""
 
 #. js-lingui-id: q45OlW
 #: src/partners-marketplace/PartnerReachFacts.tsx
@@ -6738,6 +6788,11 @@ msgstr "Twenty 요금제 보기"
 #: src/sections/three-cards/product-three-cards-data.ts
 msgid "See updates as they happen. Work with your team and agents seamlessly."
 msgstr "변경 사항이 발생하는 즉시 확인하고, 팀과 에이전트와의 협업을 끊김 없이 이어가세요."
+
+#. js-lingui-id: DlPcBc
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "See what a model costs and where it runs"
+msgstr ""
 
 #. js-lingui-id: 0kgOPB
 #. placeholder {0}: LATEST_RELEASE.release
@@ -7234,6 +7289,11 @@ msgstr "커스텀과 싸우는 건 그만두고, *Twenty와 함께 구축을 시
 msgid "Stop settling for trade-offs."
 msgstr "타협에 만족하는 일을 멈추세요."
 
+#. js-lingui-id: 8b3N0u
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Stop the call recorder from joining calendar meetings with one workspace setting, rather than uninstalling the app. The Recording Bot preference now reads On only when a bot is really scheduled."
+msgstr ""
+
 #. js-lingui-id: hjgBcp
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Stop Workflow Button"
@@ -7644,6 +7704,11 @@ msgstr "거대한 모놀리식 시스템"
 #: src/sections/problem/problem.data.ts
 msgid "The In-house Burden"
 msgstr "사내 구축의 짐"
+
+#. js-lingui-id: 6U7fek
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "The interface now mirrors for right-to-left languages, so Arabic and Hebrew workspaces read in their own direction."
+msgstr ""
 
 #. js-lingui-id: ZNzKXV
 #: src/case-studies/case-study-stories.ts
@@ -8155,6 +8220,11 @@ msgstr "2단계 인증"
 #: src/platform/releases/ReleaseNotes.tsx
 msgid "Two-Factor Authentication"
 msgstr "2단계 인증"
+
+#. js-lingui-id: QMyFdb
+#: src/platform/releases/ReleaseNotes.tsx
+msgid "Type <0>@</0> to point the chat at a record, or <1>/</1> to pick one of your workspace’s skills. Both suggest matches as you type."
+msgstr ""
 
 #. js-lingui-id: O+vc/1
 #: src/partner-application/partner-application-copy.ts

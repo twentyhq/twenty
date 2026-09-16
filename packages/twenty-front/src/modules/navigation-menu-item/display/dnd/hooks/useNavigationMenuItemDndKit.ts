@@ -48,7 +48,6 @@ export const useNavigationMenuItemDndKit = (
     section === NavigationSections.FAVORITES ? 'favorite' : 'workspace';
   const isWorkspaceSection = sectionType === 'workspace';
 
-
   const [isDragging, setIsDragging] = useState(false);
   const [sourceDroppableId, setSourceDroppableId] = useState<string | null>(
     null,
@@ -59,8 +58,7 @@ export const useNavigationMenuItemDndKit = (
   const [forbiddenDropTargetId, setForbiddenDropTargetId] = useState<
     string | null
   >(null);
-  const [
-  ] = useState<DropDestination | null>(null);
+  const [] = useState<DropDestination | null>(null);
 
   const { navigationMenuItems } = useNavigationMenuItemsData();
   const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
@@ -70,7 +68,6 @@ export const useNavigationMenuItemDndKit = (
   const items = isWorkspaceSection
     ? workspaceNavigationMenuItems
     : navigationMenuItems;
-
 
   const getNavItemById = useCallback(
     (id: string | undefined) =>
