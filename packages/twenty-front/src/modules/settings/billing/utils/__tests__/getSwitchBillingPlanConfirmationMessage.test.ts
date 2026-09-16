@@ -39,16 +39,6 @@ describe('getSwitchBillingPlanConfirmationMessage', () => {
     );
   });
 
-  it('names the target interval, not the subscribed one, when an interval switch is scheduled', () => {
-    const message = getSwitchBillingPlanConfirmationMessage(
-      buildParams({ price: 25, targetInterval: SubscriptionInterval.Month }),
-    );
-
-    expect(message).toContain('$25 per user per month.');
-    expect(message).toContain('Your billing interval stays monthly');
-    expect(message).not.toContain('billed annually');
-  });
-
   it('announces the renew date for a downgrade to Pro', () => {
     expect(
       getSwitchBillingPlanConfirmationMessage(

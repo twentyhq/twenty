@@ -39,7 +39,7 @@ describe('getSwitchBillingIntervalConfirmationMessage', () => {
     );
   });
 
-  it('names the plan a scheduled plan switch lands on, not the subscribed one', () => {
+  it('names the target plan in the notice', () => {
     expect(
       getSwitchBillingIntervalConfirmationMessage(
         buildParams({ targetPlanKey: BillingPlanKey.ENTERPRISE }),
